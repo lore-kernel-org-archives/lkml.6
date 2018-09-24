@@ -2,97 +2,81 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0330BECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908A6ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE44F21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:43:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE44F21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 436662148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:44:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436662148C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbeIXRpZ (ORCPT
+        id S1729615AbeIXRpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:45:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51224 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728919AbeIXRpY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:45:24 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 638B41072;
-        Mon, 24 Sep 2018 11:43:43 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 099/105] ARM: hisi: check of_iomap and fix missing of_node_put
-Date:   Mon, 24 Sep 2018 13:34:25 +0200
-Message-Id: <20180924113122.603469336@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
-References: <20180924113113.268650190@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 13:45:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46572 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728958AbeIXRpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:45:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A7E63084250;
+        Mon, 24 Sep 2018 11:44:09 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 511FF5D9C8;
+        Mon, 24 Sep 2018 11:44:02 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 13:43:59 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v10 14/26] s390: vfio-ap: implement VFIO_DEVICE_RESET
+ ioctl
+Message-ID: <20180924134359.06ab283a.cohuck@redhat.com>
+In-Reply-To: <1536781396-13601-15-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1536781396-13601-15-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 24 Sep 2018 11:44:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Wed, 12 Sep 2018 15:43:04 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-------------------
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Implements the VFIO_DEVICE_RESET ioctl. This ioctl zeroizes
+> all of the AP queues assigned to the guest.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c |    5 ++++-
+>  1 files changed, 4 insertions(+), 1 deletions(-)
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
-
-[ Upstream commit 81646a3d39ef14749301374a3a0b8311384cd412 ]
-
-of_find_compatible_node() returns a device node with refcount incremented
-and thus needs an explicit of_node_put(). Further relying on an unchecked
-of_iomap() which can return NULL is problematic here, after all ctrl_base
-is critical enough for hix5hd2_set_cpu() to call BUG() if not available
-so a check seems mandated here.
-
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-0002 Fixes: commit 06cc5c1d4d73 ("ARM: hisi: enable hix5hd2 SoC")
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/mach-hisi/hotplug.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
---- a/arch/arm/mach-hisi/hotplug.c
-+++ b/arch/arm/mach-hisi/hotplug.c
-@@ -177,11 +177,15 @@ static bool hix5hd2_hotplug_init(void)
- 	struct device_node *np;
- 
- 	np = of_find_compatible_node(NULL, NULL, "hisilicon,cpuctrl");
--	if (np) {
--		ctrl_base = of_iomap(np, 0);
--		return true;
--	}
--	return false;
-+	if (!np)
-+		return false;
-+
-+	ctrl_base = of_iomap(np, 0);
-+	of_node_put(np);
-+	if (!ctrl_base)
-+		return false;
-+
-+	return true;
- }
- 
- void hix5hd2_set_cpu(int cpu, bool enable)
-
-
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
