@@ -2,302 +2,172 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F775ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EE5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4022098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E09A02098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:17:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cm6rZG0k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4022098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKJaxZ/J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09A02098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731395AbeIYBSr (ORCPT
+        id S1731639AbeIYBVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:18:47 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42487 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730914AbeIYBSr (ORCPT
+        Mon, 24 Sep 2018 21:21:04 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34227 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730681AbeIYBVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:18:47 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y4-v6so9621752pgp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:15:10 -0700 (PDT)
+        Mon, 24 Sep 2018 21:21:04 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t15so12915278wrx.1;
+        Mon, 24 Sep 2018 12:17:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8oKy/FMnmlf4VEFI0GiByfl+vIaUvF0ghpDr8GF9mHU=;
-        b=cm6rZG0ktgaWNezYnEbTDdDN7mP3ntKXwsoUHTjgNsZTwZL6kMa7cpyn5Z5TLdt/wf
-         fsCUgiVURGALPXRF3EZtsNBMrxuQdl7YA55RPpqtx659R9tOt6RJETnC7ObXmFiodjY3
-         Ivov952iviWlZzKaIkrtOG7BWwyEyQDNUyKVs=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mI0VhqjqHJgFeHfXnmatpmd9I9QlezueoYPSRX+mdhw=;
+        b=NKJaxZ/J36AZwdCf86InvwcudL9Vk8Z44AK2l76QDrXLOTbd/T3Ivkv7i6stfUS7T4
+         hN4zaPyojPPuse0tTaerOwmFj5CBHDlU8LkKMSgha+d7jVTBA001n6at/mGvVGUSuAy1
+         PCjVGI7AaIlV6c/FYneXKQV6b+qftxS9IXmfmdeUOiAIs8WrdIecHUMMODYy46sCZ+nM
+         aimc5BeqbNES7kzCuKi+L8OaQsNVtO7141Pux12znwusTNQzU9bB1EJAwz8GmTHlBbgP
+         EFKFnAvLYDkexI+4gODl3caS76oBhyEEiwc8OVM1q/f3+klMCQrTO2zBI6OcfGONykCG
+         mMKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8oKy/FMnmlf4VEFI0GiByfl+vIaUvF0ghpDr8GF9mHU=;
-        b=UkyMB52WAbG0gfkobBWTKcgSifyNuUEX5ZGbILxkF7en4lUYh0MZGyVpPHL6ZhMydk
-         S/tbw4jllmTtRGXRCCMNlfebdz8Z2rp/FskBxjD/APU15PI6vWFkj9A74AdHooTKQDue
-         0LIlWgMmOjyTJBWTz8QVCRnnAvmHi75ONpNmcZnYY9zJo+/1iH3uwuumoCin3PojTEQ+
-         5/F3js90FhJPzj7nxglh0k2+RWpW+LnuCqiZBtbSwkKc3mQnxMUjkjGsHOzHj4hfF4Fq
-         O7LZV9ABPL9hLZdHJ7PFOF7doYtXveUYRsGsPy/6eb4vvXzuKjM/50dpjuWrYhmIoCQl
-         Tfcg==
-X-Gm-Message-State: ABuFfogY1KcIZgaEDdMsccRukRDVpE3GUcGfWhy1dTwe0FK4lslBJ9d3
-        VcSNaroKD6MPtHDGt7p4HJ1WOQ==
-X-Google-Smtp-Source: ACcGV63fzTW9H1A2aIvuDdPyg2QY/eHCoqKLCZBWWPopuSukdzGGA83S0zkz1OIyZDMeR65Se8EKsA==
-X-Received: by 2002:a63:ce14:: with SMTP id y20-v6mr209259pgf.248.1537816509476;
-        Mon, 24 Sep 2018 12:15:09 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm125263pfn.53.2018.09.24.12.15.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 12:15:08 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 12:19:29 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: sdm630 SoC and Sony Pioneer (Xperia XA2)
- support
-Message-ID: <20180924191929.GQ1367@tuxbook-pro>
-References: <20180811162549.12312-1-ctatlor97@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mI0VhqjqHJgFeHfXnmatpmd9I9QlezueoYPSRX+mdhw=;
+        b=MEAcq69vMaw1dLOJ2rQS2TaWzwBMZtM7mZnPJ75kYCjS07MwkgGYaUZTpetF7aV80g
+         CEx6kKu8qPIhtMm0z7oH38uJadcgd9eAnLHlkrDu5HIPqZZCoJPIbf2qokRorS0cz3a8
+         P2Lq6FLqr2hcK5YBUz68SwthLO0cQxSNZItQJJrCr0YNWQ+kfHnrF3a70C+ryYUu7Kaz
+         LGiXJ4KdvWOlgc8Xhp2NdrMEyO0/vLRH8gygODUaDg70wpK3PUI6jCDEv+tUKQhTrAzw
+         uT3vLzEzaZFUlysvhSaNeG5jsJEyyy4qYqmcPUGfWKi37NQRs3slP4xsVbQu/OpywHsg
+         Yt4g==
+X-Gm-Message-State: ABuFfohpQhRUWnnFUXcg8pSOuDqV67PmPtPSShqfx2t2GtwyGbZ0p9FJ
+        5PUctoRMqPobzNFx0j0+FrA=
+X-Google-Smtp-Source: ACcGV63NSRHd9HA2aVNbJS4wHAPwNXhmvt2eeRvcVtBsM/mfo801Z6srqUkCE/3drM+C47z09U/okA==
+X-Received: by 2002:adf:fa84:: with SMTP id h4-v6mr209057wrr.74.1537816644318;
+        Mon, 24 Sep 2018 12:17:24 -0700 (PDT)
+Received: from [10.67.50.87] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id g2-v6sm4512990wmh.16.2018.09.24.12.17.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 12:17:23 -0700 (PDT)
+Subject: Re: [PATCH v2 7/7] net: stmmac: dwmac-meson8b: use xxxsetbits32
+To:     Corentin Labbe <clabbe@baylibre.com>, Gilles.Muller@lip6.fr,
+        Julia.Lawall@lip6.fr, agust@denx.de, airlied@linux.ie,
+        alexandre.torgue@st.com, alistair@popple.id.au,
+        benh@kernel.crashing.org, carlo@caione.org, davem@davemloft.net,
+        galak@kernel.crashing.org, joabreu@synopsys.com,
+        khilman@baylibre.com, maxime.ripard@bootlin.com,
+        michal.lkml@markovi.net, mpe@ellerman.id.au,
+        mporter@kernel.crashing.org, narmstrong@baylibre.com,
+        nicolas.palix@imag.fr, oss@buserror.net, paulus@samba.org,
+        peppe.cavallaro@st.com, tj@kernel.org, vitb@kernel.crashing.org,
+        wens@csie.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-ide@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        cocci@systeme.lip6.fr, linux-arm-kernel@lists.infradead.org
+References: <1537815856-31728-1-git-send-email-clabbe@baylibre.com>
+ <1537815856-31728-8-git-send-email-clabbe@baylibre.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <a8d06d0a-b13b-384c-ade6-b0a3b0ee61f6@gmail.com>
+Date:   Mon, 24 Sep 2018 12:17:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180811162549.12312-1-ctatlor97@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1537815856-31728-8-git-send-email-clabbe@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 11 Aug 09:25 PDT 2018, Craig Tatlor wrote:
-
-> Initial device tree support for Qualcomm SDM630 SoC and
-> Sony Pioneer (Xperia XA2).
+On 09/24/2018 12:04 PM, Corentin Labbe wrote:
+> This patch convert meson stmmac glue driver to use all xxxsetbits32 functions.
 > 
-> SDM630 is based off of the SDM660 soc and all SDM660 specific drivers are
-> compatible with it. SDM660 is also based off of MSM8998 so it uses some
-> of its drivers aswell.
-
-Consider adding both sdm630 and sdm660 compatibles to the bindings and
-drivers and use the right one in the dts, in case we find details that
-differs in the future.
-
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  .../net/ethernet/stmicro/stmmac/dwmac-meson8b.c    | 56 +++++++++-------------
+>  1 file changed, 22 insertions(+), 34 deletions(-)
 > 
-> The device tree is based on the CAF 4.4 kernel tree.
-> 
-> The device can be booted into the initrd with a shell over UART.
-> 
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-[..]
-> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm630-pins.dtsi
-> new file mode 100644
-> index 000000000000..78b79c1076f1
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm630-pins.dtsi
-> @@ -0,0 +1,17 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2018, Craig Tatlor. */
-> +
-> +&tlmm {
-> +	blsp1_uart1_default: blsp1_uart1_default {
-> +		pinmux {
-> +			pins = "gpio0", "gpio1", "gpio2", "gpio3";
-> +			function = "gpio";
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+> index c5979569fd60..abcf65588576 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/stmmac.h>
+> +#include <linux/setbits.h>
+>  
+>  #include "stmmac_platform.h"
+>  
+> @@ -75,18 +76,6 @@ struct meson8b_dwmac_clk_configs {
+>  	struct clk_gate		rgmii_tx_en;
+>  };
+>  
+> -static void meson8b_dwmac_mask_bits(struct meson8b_dwmac *dwmac, u32 reg,
+> -				    u32 mask, u32 value)
+> -{
+> -	u32 data;
+> -
+> -	data = readl(dwmac->regs + reg);
+> -	data &= ~mask;
+> -	data |= (value & mask);
+> -
+> -	writel(data, dwmac->regs + reg);
+> -}
 
-Please put these in the sdm630.dtsi directly, rather than spreading the
-pins out in a separate file.
-
-> +		};
-> +
-> +		pinconf {
-> +			pins = "gpio0", "gpio1", "gpio2", "gpio3";
-> +			drive-strength = <2>;
-> +			bias-disable;
-
-Please extend &blsp1_uart1_default in the pioneer dtsi with these
-"electrical properties".
-
-> +		};
-> +	};
-> +};
-[..]
-> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pioneer.dtsi b/arch/arm64/boot/dts/qcom/sdm630-pioneer.dtsi
-> new file mode 100644
-> index 000000000000..512792c23369
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm630-pioneer.dtsi
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2018, Craig Tatlor. */
-> +
-> +#include "sdm630.dtsi"
-> +
-> +/ {
-> +	aliases {
-> +		serial0 = &blsp1_uart1;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&soc {
-> +	serial@c170000 {
-
-Please reference this by &blsp1_uart1, rather than duplicating the
-hierarchy.
-
-> +		status = "okay";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&blsp1_uart1_default>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> new file mode 100644
-> index 000000000000..8a544979b7c0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> @@ -0,0 +1,383 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2018, Craig Tatlor. */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/qcom,gcc-sdm660.h>
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. SDM630";
-
-We expect the board to always override this, so no need to specify it
-here.
-
-> +
-> +	interrupt-parent = <&intc>;
-> +
-> +	qcom,msm-id = <318 0x0>;
-> +
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	chosen { };
-> +
-> +	memory {
-> +		device_type = "memory";
-> +		/* We expect the bootloader to fill in the reg */
-> +		reg = <0 0 0 0>;
-> +	};
-> +
-> +
-
-Extra empty line.
-
-> +	cpus {
-[..]
-> +
-> +	timer {
-
-Please sort these nodes by name, except for "soc" which is convenient
-to have last.
-
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 2 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 3 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 0 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-[..]
-> +	firmware {
-> +		scm {
-> +			compatible = "qcom,scm-sdm660";
-> +		};
-> +	};
-> +
-> +
-
-Extra empty line.
-
-> +	rpm-glink {
-> +		compatible = "qcom,glink-rpm";
-> +
-> +		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-> +
-> +		qcom,rpm-msg-ram = <&rpm_msg_ram>;
-> +
-> +		mboxes = <&apcs_glb 0>;
-
-Remove a few of these extra empty lines and add the rpm_requests channel
-here while you're at it:
-
-		rpm_requests: glink-channel {
-                        compatible = "qcom,rpm-sdm660";
-                        qcom,glink-channels = "rpm_requests";
-                };
-
-> +	};
-> +
-> +	soc: soc {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0 0 0xffffffff>;
-> +		compatible = "simple-bus";
-> +
-> +		intc: interrupt-controller@17a00000 {
-
-Please sort these nodes by base address.
-
-> +			compatible = "arm,gic-v3";
-> +			reg = <0x17a00000 0x10000>,
-> +			      <0x17b00000 0x100000>;
-> +			#interrupt-cells = <3>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +			interrupt-controller;
-> +			#redistributor-regions = <1>;
-> +			redistributor-stride = <0x0 0x20000>;
-> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		gcc: clock-controller@100000 {
-> +			compatible = "qcom,gcc-sdm660";
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +			reg = <0x100000 0x94000>;
-
-Please 0-pad addresses in "reg", makes it easier to sort them as well
-(but keep the @address after the node name unpadded).
-
-> +		};
-> +
-[..]
-> +		rpm_msg_ram: memory@778000 {
-> +			compatible = "qcom,rpm-msg-ram";
-> +			reg = <0x778000 0x7000>;
-> +		};
-> +
-> +		apcs_glb: mailbox@17911000 {
-> +			compatible = "qcom,msm8998-apcs-hmss-global";
-
-Please update the apcs ipc driver with a sdm660 compatible and update
-this.
-
-> +			reg = <0x17911000 0x1000>;
-> +
-> +			#mbox-cells = <1>;
-> +		};
-
-Regards,
-Bjorn
+Why not make mseon8b_dwmac_mask_bits() a wrapper around
+clrsetbits_le32() whose purpose is only to dereference dwmac->regs and
+pass it to clrsetbits_le32()? That would be far less changes to review
+and audit for correctness, same goes with every other patch in this
+series touching the meson drivers.
+-- 
+Florian
