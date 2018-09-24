@@ -2,124 +2,163 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB157C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACAEC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A30372148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 515E22087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:06:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5JhvJU4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A30372148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="pC243/6G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515E22087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbeIXQGq (ORCPT
+        id S1728275AbeIXQHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:06:46 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52537 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeIXQGq (ORCPT
+        Mon, 24 Sep 2018 12:07:30 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:54844 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbeIXQHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:06:46 -0400
-Received: by mail-wm1-f67.google.com with SMTP id l7-v6so4224445wme.2;
-        Mon, 24 Sep 2018 03:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gIJcpWbHbNHTaa5JmRfvZAm8Urcwd2xDE3D7bIusbZ4=;
-        b=m5JhvJU44sH8y7ioLcm/3FlbGeqqL9Uz74iGgbsi8yl0RtAPswIe5QnTzEHCRR4QdB
-         QlKwsNuWa1Ez5g/3jsmFVbBkZO8694iP3lpkB+2FQtdnVoN9USIJS4RTTA61U8BGjssC
-         z3q5ImJPcioHIPJoxOV8dq20rkn1jskK5Um0qL1wQChrdQJv2oqmzSXPZYwH0mH9++b6
-         2/FwdejQtEkViyz4YH+3Tgqqc8vTEuctjWJVB8yBc+6u2s2eD+w77gh+obRmDaXm3GEG
-         /AN6za7OCx+Up2euvwelpWXmXzKIWlPKzX5o71Wz8bmDlDVR8APBFpjKBYMSEiIm991o
-         4HJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gIJcpWbHbNHTaa5JmRfvZAm8Urcwd2xDE3D7bIusbZ4=;
-        b=asAxicloh33Ej9YDa+IDMlEuhMM1qLCQOd7JX7bRWzMSSFLFQ0Ap5uDutFCE2fnmgl
-         SEbyJjsdIFbmTiZhIflUE5iEss8j9m/o7l3lBTnKgJ52r0VAU2ERQo9WQirBiN+y+B5d
-         eQb0PqQJGTYOAqQwIqs13yvTAjZCtz2JZu197ilelDVrrQG2JDhVuTawDb82jMsf6bEf
-         k8NuDbRfikZdwMwQ73PWAYBKZWdPioB6iJDpSIgTRw8ypHsn35NrYOIwIr+DeVJq/JoP
-         8HFRknd/oLw/o70OppDiasS0ei8CV3Lfs9maOmROlo9ADd37IlQT+hnCvpB3Lw+2zh5N
-         0d2A==
-X-Gm-Message-State: ABuFfoiN4Fcf9APnqwNfVMEIlfTkQjK2sV+DXiOAio+qX03HEqhLA7bw
-        TprkDd3GCkI9dceKx7bK+cU=
-X-Google-Smtp-Source: ACcGV61qWEs8AicWtT+envh7XYE2S9+zSiKAoL94O92PtgvZX+RCc22o9ss68C4j0/M5OZuc7dYtPQ==
-X-Received: by 2002:a1c:ed1a:: with SMTP id l26-v6mr6594100wmh.61.1537783527252;
-        Mon, 24 Sep 2018 03:05:27 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id 132-v6sm10926732wmd.13.2018.09.24.03.05.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 03:05:26 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 12:05:25 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 03/20] iommu/tegra: gart: Ignore devices without IOMMU
- phandle in DT
-Message-ID: <20180924100525.GE21032@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-4-digetx@gmail.com>
+        Mon, 24 Sep 2018 12:07:30 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C837C8364F
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 22:06:09 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1537783569;
+        bh=UJ4/6K28w5aR3QsehUlYCbYi2kakI3CFR31K9gIs9f0=;
+        h=From:To:CC:Subject:Date:References;
+        b=pC243/6GeIGpLli8bAhYzzFdy1nquMMTpCYzVJPlXe/hpzfeFzQOenZBKVbegu4/5
+         PBjU04dH+40QhomwzCDT0VX0tKkUbrrgpupAUcb1HYDIoQav26SdhxGNDDGj3YKlta
+         2iIKwkEdlADfvkM5r+4Xb7ElCfKtUdPBtnzT8YDc=
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5ba8b7100001>; Mon, 24 Sep 2018 22:06:08 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Mon, 24 Sep 2018 22:06:09 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Mon, 24 Sep 2018 22:06:09 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Olof Johansson <olof@lixom.net>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>
+CC:     "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "ylefloch@online.net" <ylefloch@online.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5] ARM: mvebu: use dt_fixup to provide fallback for
+ enable-method
+Thread-Topic: [PATCH v5] ARM: mvebu: use dt_fixup to provide fallback for
+ enable-method
+Thread-Index: AQHUJJOYtPQMfuhSv0GqI5ViUnwscA==
+Date:   Mon, 24 Sep 2018 10:06:09 +0000
+Message-ID: <63e0f13b8081419a813fba4c4d6faa8b@svr-chch-ex1.atlnz.lc>
+References: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz>
+ <8736u3jhc3.fsf@bootlin.com> <20180924095332.lrfobc5dhxahm6g5@localhost>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.32.1.10]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Ns7jmDPpOpCD+GE/"
-Content-Disposition: inline
-In-Reply-To: <20180924004153.8232-4-digetx@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Ns7jmDPpOpCD+GE/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Sep 24, 2018 at 03:41:36AM +0300, Dmitry Osipenko wrote:
-> GART can't handle all devices, hence ignore devices that aren't related
-> to GART. IOMMU phandle must be explicitly assign to devices in the device
-> tree.
-
-I think technically the GART can indeed handle all devices since it is
-just a physical address region that can be used to remap other physical
-addresses. That's not to say that doing so would be a good idea. So the
-commit message here is slightly confusing, but other than that the idea
-is good, so:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---Ns7jmDPpOpCD+GE/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluotuUACgkQ3SOs138+
-s6FALBAAihy4Koa8dQIhpVPATIDDQsyRjFl4jqvkGh5jHGBULZGdXN8uUyzuMj7/
-5aOiJQ/HgbzR+U/eX/rwOLMQmcr6aLYw2TqwcpwcERhOvDyQNRI8U9PtTIAxcuhO
-DFqTwYCX+aZGy2MCfF+P9hl3MKweAXFCqvj+ckBh1GIGkU5lqYM8r1sgfz/mB/xc
-QDcODaJcIYy/umpDO5ADZK+Q9A6KC/ZGY6xdS4BppKlasG8wKGG6nC0PbiSKhpby
-mjeIRFo2XULhp7/+0Nqj2V5gGDUcu+yRe2lKKMzmELeaIJ7LgxkD3uva4mQ4nxFK
-mx/kuCeSZrvxWiV12whALZ0c2znYamDXzlLHb9orgEsV4zrb6OhBAh5LK733AQ/e
-+5FpejQ+Tna8pWVzRDTkvx2GAeYS+EdmDXjZT+OLGVk2DvAPfx1ORFKIGaWrisZQ
-B/yASM3fEXX4/fpQaz6WN6XLUtZu4SWRJR5QIF+E5t6jAPhBVHyaD6ItNGb+Vbpm
-KoEHJfg4eIFwlN5r6aSV/UVS9Ik014fxUu5DtPr3U5+7jLcL6N7/rhYuF1fE01yv
-A1B6bjK9NeCwo4qgUiU+xKHR/2VBw9OaL06qYakzz0K6XADzDbyBYsolqU/TdbMG
-/NI2DduseQE3DzaSuvREtm3fQbJN4s/tbdcTW/VGygIvHL+RTU0=
-=Cw72
------END PGP SIGNATURE-----
-
---Ns7jmDPpOpCD+GE/--
+On 24/09/18 21:54, Olof Johansson wrote:=0A=
+> On Fri, Sep 21, 2018 at 12:05:48PM +0200, Gregory CLEMENT wrote:=0A=
+>> Hi Chris,=0A=
+>>   =0A=
+>>   On jeu., juil. 26 2018, Chris Packham <chris.packham@alliedtelesis.co.=
+nz> wrote:=0A=
+>>=0A=
+>>> We need to maintain backwards compatibility with device trees that don'=
+t=0A=
+>>> define an enable method. At the same time we want the device tree to be=
+=0A=
+>>> able to specify an enable-method and have it stick.=0A=
+>>>=0A=
+>>> Previously by having smp assigned in the DT_MACHINE definition this=0A=
+>>> would be picked up by setup_arch() and override whatever=0A=
+>>> arm_dt_init_cpu_maps() had configured. Now we move the initial=0A=
+>>> assignment of default smp_ops to a dt_fixup and let=0A=
+>>> arm_dt_init_cpu_maps() override that if the device tree defines an=0A=
+>>> enable-method.=0A=
+>>>=0A=
+>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+>>=0A=
+>> I made several tests on an Armada XP based board: OpenBlock AX3: I=0A=
+>> modify the enable-method in the decvice tree, and I confirm that without=
+=0A=
+>> your patch it is not taken into account whereas with this patch the=0A=
+>> enable-method is applied form the device tree. I also didn't see any=0A=
+>> regression with the original dtb.=0A=
+>>=0A=
+>> So I added my:=0A=
+>> Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>=0A=
+>>=0A=
+>> and applied on mvebu/soc=0A=
+> =0A=
+> Hi,=0A=
+> =0A=
+> Looks like this broke non-SMP. Not a huge deal, but please apply this as=
+=0A=
+> closely as possible on top of the previous patch (or squash it in).=0A=
+> =0A=
+> =0A=
+> - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< -=
+=0A=
+> =0A=
+> =0A=
+> =0A=
+>  From 3190d9502607995c7aecce79beec36714574d494 Mon Sep 17 00:00:00 2001=
+=0A=
+> From: Olof Johansson <olof@lixom.net>=0A=
+> Date: Mon, 24 Sep 2018 02:37:31 -0700=0A=
+> Subject: [PATCH] ARM: mvebu: fix !SMP build=0A=
+> =0A=
+> Wrap set_smp_ops() in CONFIG_SMP.=0A=
+> =0A=
+> Fixes: d6ec59de9a0a8 ("ARM: mvebu: use dt_fixup to provide fallback for e=
+nable-method")=0A=
+> Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+> Signed-off-by: Olof Johansson <olof@lixom.net>=0A=
+> ---=0A=
+>   arch/arm/mach-mvebu/board-v7.c | 2 ++=0A=
+>   1 file changed, 2 insertions(+)=0A=
+> =0A=
+> diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v=
+7.c=0A=
+> index 5bbde5e..0b10acd 100644=0A=
+> --- a/arch/arm/mach-mvebu/board-v7.c=0A=
+> +++ b/arch/arm/mach-mvebu/board-v7.c=0A=
+> @@ -147,7 +147,9 @@ static void __init mvebu_dt_init(void)=0A=
+>   =0A=
+>   static void __init armada_370_xp_dt_fixup(void)=0A=
+>   {=0A=
+> +#ifdef CONFIG_SMP=0A=
+>   	smp_set_ops(smp_ops(armada_xp_smp_ops));=0A=
+> +#endif=0A=
+>   }=0A=
+>   =0A=
+>   static const char * const armada_370_xp_dt_compat[] __initconst =3D {=
+=0A=
+> =0A=
+=0A=
+Makes sense to me.=0A=
+=0A=
+Gregory, do you want me to send a v6 or are you able to squash this in?=0A=
