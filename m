@@ -2,112 +2,202 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64481ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27928ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28EDF2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:37:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28EDF2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B66112083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:38:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oyoXxFah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66112083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730936AbeIXVj5 (ORCPT
+        id S1730421AbeIXVl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:39:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44671 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbeIXVj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:39:57 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4A28B20725; Mon, 24 Sep 2018 17:37:10 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F28CE204AE;
-        Mon, 24 Sep 2018 17:37:09 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     davem@davemloft.net, yelena@marvell.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net] net: mvneta: fix the remaining Rx descriptor unmapping issues
-References: <20180924145613.27307-1-antoine.tenart@bootlin.com>
-Date:   Mon, 24 Sep 2018 17:37:10 +0200
-In-Reply-To: <20180924145613.27307-1-antoine.tenart@bootlin.com> (Antoine
-        Tenart's message of "Mon, 24 Sep 2018 16:56:13 +0200")
-Message-ID: <874leegb4p.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 24 Sep 2018 17:41:29 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39830 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeIXVl2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:41:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s14-v6so20151287wrw.6;
+        Mon, 24 Sep 2018 08:38:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=o3FyP2jco71996jGdaIIk834N/BVDrFl+zt7fThFWA8=;
+        b=oyoXxFahIyuL2b2feYmDejrMFuuT3Ku2ZS6p8exy//NmGzeQV8qX1JaDuv7sYylreG
+         EPX4Nh5x+zhiFP6s5rKJBkpvcM71bDCgiSsKiVPyUOB+XxC8vwhT16PUdwCvfR/YCMi6
+         5zV4g4t7nvci0tfVqd2MWunPNONeAY1SzXRETCcd4KByNf4R39ARaTO5CjeWXtoaigf4
+         1ZqCl27uX9PEojhg56Tkuqz1YY9hAO5R180bsOFjsjvmo5z0pojYtj6d1lvegsDmExLF
+         Tqpdu0/kDZQkh6pHwMBkeIKdYRpiv9Gy+cfqPqg/Hd1cZTdBjFSUxyZubvJVCa/WBKC5
+         DPGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=o3FyP2jco71996jGdaIIk834N/BVDrFl+zt7fThFWA8=;
+        b=qQh9cjdcyR19cCKJ/U8ntDN5ZTQtrl4CO2HrHjMfsClfVNnViZb+RTbakIHuEH9i8j
+         2xdhIPbp75UV08+iqoLLhHXe+tk4NZ1gn0J/xeqshyjejVtjB0uZR8ARDPxwoVBxKpSJ
+         quv8D/n457qbj5w5ONhzkbUluKkVpC5oX2ZCtph8owT/OUEONNva95KM54AdI8aszk6h
+         RmSKK5rcDHRHmGFYvGWScd8aAjqw11hIptP0oVP8FqqhpnYpIAa1SNS8srx+Pk1SrSlO
+         PQtUoH+QCBPu86F46QSg0+JrZoEQEzGqjNYwTwZAMHOl1FeZ092E804Sm0Ky3V4UC5+Z
+         EZfA==
+X-Gm-Message-State: ABuFfoh07OddEIDOh4pVcEcB8TA7bwXJOZ6sw2V/89X5257Zfq7RHt16
+        z6pLzOR8vU6x5UKMaNFlgh31v2/s
+X-Google-Smtp-Source: ACcGV63jK+zl3kpye4mMlZtrx0Tp4d5WSqQO+sz5AjFsdKBKjL6Faa7jXBu8zbf/cfAtFJGmfd5BOg==
+X-Received: by 2002:a5d:51ce:: with SMTP id n14-v6mr9066337wrv.107.1537803521118;
+        Mon, 24 Sep 2018 08:38:41 -0700 (PDT)
+Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
+        by smtp.gmail.com with ESMTPSA id x15-v6sm29421152wrt.53.2018.09.24.08.38.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 08:38:40 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH] KVM: x86: never trap MSR_KERNEL_GS_BASE
+Date:   Mon, 24 Sep 2018 17:38:39 +0200
+Message-Id: <1537803519-17941-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Antoine,
+KVM has an old optimization whereby accesses to the kernel GS base MSR
+are trapped when the guest is in 32-bit and not when it is in 64-bit mode.
+The idea is that swapgs is not available in 32-bit mode and thus the
+guest has no reason to access the MSR unless in 64-bit mode.  Therefore
+32-bit applications need not pay the price of switching the kernel GS
+base between the host and the guest values, 64-bit applications.
+
+However, this optimization adds complexity to the code for little
+benefit (these days most guests are going to be 64-bit anyway) and in fact
+broke after commit 678e315e78a7 ("KVM: vmx: add dedicated utility to
+access guest's kernel_gs_base", 2018-08-06); the guest kernel GS base
+can be corrupted across SMIs and UEFI Secure Boot is therefore broken
+(a secure boot Linux guest, for example, fails to reach the login prompt
+about half the time).  This patch just removes the optimization; the
+kernel GS base MSR is now never trapped by KVM, similarly to the FS and
+GS base MSRs.
+
+Fixes: 678e315e78a780dbef384b92339c8414309dbc11
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 47 ++++++++++-------------------------------------
+ 1 file changed, 10 insertions(+), 37 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 06412ba46aa3..8b066480224b 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -121,7 +121,6 @@
  
- On lun., sept. 24 2018, Antoine Tenart <antoine.tenart@bootlin.com> wrote:
-
-> With CONFIG_DMA_API_DEBUG enabled we get DMA unmapping warning in
-> various places of the mvneta driver, for example when putting down an
-> interface while traffic is passing through.
->
-> The issue is when using s/w buffer management, the Rx buffers are mapped
-> using dma_map_page but unmapped with dma_unmap_single. This patch fixes
-> this by using the right unmapping function.
->
-> Fixes: 562e2f467e71 ("net: mvneta: Improve the buffer allocation method for SWBM")
-> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-
-Given the clarification provided by Yelen, this patch looks good:
-
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-
-Thanks,
-
-Gregory
-
-
-> ---
->  drivers/net/ethernet/marvell/mvneta.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-> index 2db9708f2e24..b4ed7d394d07 100644
-> --- a/drivers/net/ethernet/marvell/mvneta.c
-> +++ b/drivers/net/ethernet/marvell/mvneta.c
-> @@ -1890,8 +1890,8 @@ static void mvneta_rxq_drop_pkts(struct mvneta_port *pp,
->  		if (!data || !(rx_desc->buf_phys_addr))
->  			continue;
->  
-> -		dma_unmap_single(pp->dev->dev.parent, rx_desc->buf_phys_addr,
-> -				 MVNETA_RX_BUF_SIZE(pp->pkt_size), DMA_FROM_DEVICE);
-> +		dma_unmap_page(pp->dev->dev.parent, rx_desc->buf_phys_addr,
-> +			       PAGE_SIZE, DMA_FROM_DEVICE);
->  		__free_page(data);
->  	}
->  }
-> @@ -2039,9 +2039,8 @@ static int mvneta_rx_swbm(struct napi_struct *napi,
->  						frag_offset, frag_size,
->  						PAGE_SIZE);
->  
-> -				dma_unmap_single(dev->dev.parent, phys_addr,
-> -						 PAGE_SIZE,
-> -						 DMA_FROM_DEVICE);
-> +				dma_unmap_page(dev->dev.parent, phys_addr,
-> +					       PAGE_SIZE, DMA_FROM_DEVICE);
->  
->  				rxq->left_size -= frag_size;
->  			}
-> -- 
-> 2.17.1
->
-
+ #define MSR_BITMAP_MODE_X2APIC		1
+ #define MSR_BITMAP_MODE_X2APIC_APICV	2
+-#define MSR_BITMAP_MODE_LM		4
+ 
+ #define KVM_VMX_TSC_MULTIPLIER_MAX     0xffffffffffffffffULL
+ 
+@@ -2899,8 +2898,7 @@ static void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+ 		vmx->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
+ 	}
+ 
+-	if (is_long_mode(&vmx->vcpu))
+-		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
++	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+ #else
+ 	savesegment(fs, fs_sel);
+ 	savesegment(gs, gs_sel);
+@@ -2951,8 +2949,7 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
+ 	vmx->loaded_cpu_state = NULL;
+ 
+ #ifdef CONFIG_X86_64
+-	if (is_long_mode(&vmx->vcpu))
+-		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
++	rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+ #endif
+ 	if (host_state->ldt_sel || (host_state->gs_sel & 7)) {
+ 		kvm_load_ldt(host_state->ldt_sel);
+@@ -2980,24 +2977,19 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
+ #ifdef CONFIG_X86_64
+ static u64 vmx_read_guest_kernel_gs_base(struct vcpu_vmx *vmx)
+ {
+-	if (is_long_mode(&vmx->vcpu)) {
+-		preempt_disable();
+-		if (vmx->loaded_cpu_state)
+-			rdmsrl(MSR_KERNEL_GS_BASE,
+-			       vmx->msr_guest_kernel_gs_base);
+-		preempt_enable();
+-	}
++	preempt_disable();
++	if (vmx->loaded_cpu_state)
++		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
++	preempt_enable();
+ 	return vmx->msr_guest_kernel_gs_base;
+ }
+ 
+ static void vmx_write_guest_kernel_gs_base(struct vcpu_vmx *vmx, u64 data)
+ {
+-	if (is_long_mode(&vmx->vcpu)) {
+-		preempt_disable();
+-		if (vmx->loaded_cpu_state)
+-			wrmsrl(MSR_KERNEL_GS_BASE, data);
+-		preempt_enable();
+-	}
++	preempt_disable();
++	if (vmx->loaded_cpu_state)
++		wrmsrl(MSR_KERNEL_GS_BASE, data);
++	preempt_enable();
+ 	vmx->msr_guest_kernel_gs_base = data;
+ }
+ #endif
+@@ -5073,19 +5065,6 @@ static void vmx_set_efer(struct kvm_vcpu *vcpu, u64 efer)
+ 	if (!msr)
+ 		return;
+ 
+-	/*
+-	 * MSR_KERNEL_GS_BASE is not intercepted when the guest is in
+-	 * 64-bit mode as a 64-bit kernel may frequently access the
+-	 * MSR.  This means we need to manually save/restore the MSR
+-	 * when switching between guest and host state, but only if
+-	 * the guest is in 64-bit mode.  Sync our cached value if the
+-	 * guest is transitioning to 32-bit mode and the CPU contains
+-	 * guest state, i.e. the cache is stale.
+-	 */
+-#ifdef CONFIG_X86_64
+-	if (!(efer & EFER_LMA))
+-		(void)vmx_read_guest_kernel_gs_base(vmx);
+-#endif
+ 	vcpu->arch.efer = efer;
+ 	if (efer & EFER_LMA) {
+ 		vm_entry_controls_setbit(to_vmx(vcpu), VM_ENTRY_IA32E_MODE);
+@@ -6078,9 +6057,6 @@ static u8 vmx_msr_bitmap_mode(struct kvm_vcpu *vcpu)
+ 			mode |= MSR_BITMAP_MODE_X2APIC_APICV;
+ 	}
+ 
+-	if (is_long_mode(vcpu))
+-		mode |= MSR_BITMAP_MODE_LM;
+-
+ 	return mode;
+ }
+ 
+@@ -6121,9 +6097,6 @@ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu)
+ 	if (!changed)
+ 		return;
+ 
+-	vmx_set_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW,
+-				  !(mode & MSR_BITMAP_MODE_LM));
+-
+ 	if (changed & (MSR_BITMAP_MODE_X2APIC | MSR_BITMAP_MODE_X2APIC_APICV))
+ 		vmx_update_msr_bitmap_x2apic(msr_bitmap, mode);
+ 
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+1.8.3.1
+
