@@ -2,95 +2,115 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98B5ECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6B3C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1512087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E744F20676
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:55:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="okLMIFFa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1512087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUBw5jpf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E744F20676
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbeIYC7I (ORCPT
+        id S1728318AbeIYC7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:59:08 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:51421 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeIYC7H (ORCPT
+        Mon, 24 Sep 2018 22:59:21 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36088 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbeIYC7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:59:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1537822511; x=1569358511;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=7HoNZHAIVceRRl8V9absbQdxVJL1GpmgDBfkNWWq6Fc=;
-  b=okLMIFFaPP3IG8m6FC5j913N/TM/MYFZqWYwXk/u+i8NEZKakW42k7tM
-   6gzdX4ZvQEOKxgzLs+arSVChuHuD+lqgTnrL9AZp7qo6sajRFk8ohfluA
-   LosZJKv8E02lrU+KoEIvx3R0y+g8F2Zkec/qSBnwnohZlPVni0GTwTr/B
-   2LOWYkYDQhCcR7m7duQ3KnwnXw2lXQCeq1dYayBJby6EV48YPGYUzApiA
-   tD90pPUCZ2/lVX4myPBTDx9MYiSOcQ8JtZ3ruD7rRjInMtPbNEHGNjs07
-   8ViUVG60T6cFGSE61gZziZacOewMFFtqJ4j4T5/fKUHlB7IQBHYffaj9H
-   g==;
-X-IronPort-AV: E=Sophos;i="5.54,299,1534780800"; 
-   d="scan'208";a="188061111"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Sep 2018 04:55:11 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 24 Sep 2018 13:41:01 -0700
-Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
-  by uls-op-cesaip01.wdc.com with ESMTP; 24 Sep 2018 13:55:05 -0700
-Subject: Re: [PATCH] RISCV: Fix end PFN for low memory
-To:     "palmer@sifive.com" <palmer@sifive.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "terpstra@sifive.com" <terpstra@sifive.com>
-References: <1536690618-9157-1-git-send-email-atish.patra@wdc.com>
- <20180917140816.GA28689@infradead.org>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <50f35396-9e2b-c177-6a96-9c450c7abdde@wdc.com>
-Date:   Mon, 24 Sep 2018 13:55:04 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180917140816.GA28689@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 24 Sep 2018 22:59:21 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d1-v6so9800782pgo.3;
+        Mon, 24 Sep 2018 13:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=W5ObGYohiYh3opXCQL0ZqmiKFuQBEQhB9NwwFc7+YYU=;
+        b=NUBw5jpf/bvHpWkqHv0Yn0k7ySOorDInBK22/3WelQV7G5ADfnVVpGYV/QWZv36qyn
+         LVldLifbBX10AMl4LXPvZ+HOfNTTP3ECtfcQuoixr/eYJamZ8dNr0G5DxBF3f5IPIgA7
+         TKC1kpDsokWkKkKkMDaKOW1Man6cKOW5UOenupF72Hx8wfuS1LOCT4FNfqZphqWhKl22
+         Op1C506j59YKt2YRLeMPd15mhtedvS9cHgoF98R+kFmi8NJxlaX6mDqrg1pOvW1x8TcZ
+         ITmHc0eBZ93iNv7pV+JNQb9buwUStTibk8xS5pXcYBjWJEIUgf2nICZfadC55rpZhUoY
+         56dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=W5ObGYohiYh3opXCQL0ZqmiKFuQBEQhB9NwwFc7+YYU=;
+        b=fJtjBb/RSEY9wADEHGwz3Hp4F0fErCKnDktsbXnN3FbvOc5G838wgnNMwSqjARzkEC
+         Z2uuopmx1x+qDd//AyxyxLdWWWju2hQi1VkxsnoTaBCq2dPluZfi2yaLMI3S2XNHMsPB
+         vVgC/0txQWACUOn/+qEEj+3X5ZQ+tqTR+RU3etTIPbf5O5dAJwountyJW4GDxGAx6WWF
+         26si5QwQITpOgoIkUlZFeBDyMZVs3ab/4YBS4blx6sqJff5BX9HU4rrp49jIn4I99gqg
+         L37BW1qfTWOoD0RbEJ9v785NcA93smhU5P9AAJ7igu8xgZn9/y7vVQcGnKcgMDl7K8iU
+         LJ/w==
+X-Gm-Message-State: ABuFfog6GCAaIFg7WLgoCTikrzbQSjexrqT0UrqbCTVFIj6O5msIdH7q
+        Re7ZEiWEHNJjq/MFkd59WxdMXbJD
+X-Google-Smtp-Source: ACcGV62o1Ma5YxI6PzVyjTNKGMNkeh3JuAQ4jEFv6Hoc3yNWrV/7IS/UQWOlyXS/RlTmRzw1iEmJig==
+X-Received: by 2002:a17:902:748b:: with SMTP id h11-v6mr478269pll.192.1537822517105;
+        Mon, 24 Sep 2018 13:55:17 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm260160pfm.183.2018.09.24.13.55.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 13:55:16 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Steve Glendinning <steve.glendinning@shawell.net>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Kurz <akurz@blala.de>,
+        Hayes Wang <hayeswang@realtek.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Grant Grundler <grundler@chromium.org>,
+        zhong jiang <zhongjiang@huawei.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Ran Wang <ran.wang_1@nxp.com>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net 0/7] net: usb: Check for Wake-on-LAN modes
+Date:   Mon, 24 Sep 2018 13:54:13 -0700
+Message-Id: <20180924205420.31309-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/17/18 7:08 AM, Christoph Hellwig wrote:
-> On Tue, Sep 11, 2018 at 11:30:18AM -0700, Atish Patra wrote:
->> Use memblock_end_of_DRAM which provides correct last low memory
->> PFN. Without that, DMA32 region becomes empty resulting in zero
->> pages being allocated for DMA32.
->>
->> This patch is based on earlier patch from palmer which never
->> merged into 4.19. I just edited the commit text to make more
->> sense.
-> 
-> Looks good,
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> Palmer, can you queue this up for 4.19?
-> 
-Hi Palmer,
-I did not see this one pulled into your rc6 PR.
-Not sure if it was intentional or just lost in heap of emails.
+Hi all,
 
+Most of our USB Ethernet drivers don't seem to be checking properly
+whether the user is supplying a correct Wake-on-LAN mode to enter, so
+the experience as an user could be confusing, since it would generally
+lead to either no wake-up, or the device not being marked for wake-up.
 
-Regards,
-Atish
+Please review!
+
+Florian Fainelli (7):
+  asix: Check for supported Wake-on-LAN modes
+  ax88179_178a: Check for supported Wake-on-LAN modes
+  lan78xx: Check for supported Wake-on-LAN modes
+  sr9800: Check for supported Wake-on-LAN modes
+  r8152: Check for supported Wake-on-LAN Modes
+  smsc75xx: Check for Wake-on-LAN modes
+  smsc95xx: Check for Wake-on-LAN modes
+
+ drivers/net/usb/asix_common.c  | 3 +++
+ drivers/net/usb/ax88179_178a.c | 3 +++
+ drivers/net/usb/lan78xx.c      | 3 +++
+ drivers/net/usb/r8152.c        | 3 +++
+ drivers/net/usb/smsc75xx.c     | 3 +++
+ drivers/net/usb/smsc95xx.c     | 3 +++
+ drivers/net/usb/sr9800.c       | 3 +++
+ 7 files changed, 21 insertions(+)
+
+-- 
+2.17.1
+
