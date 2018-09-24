@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD887ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469EFC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8575B20877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8575B20877
+	by mail.kernel.org (Postfix) with ESMTP id E7D97214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7D97214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730971AbeIXSGk (ORCPT
+        id S1730945AbeIXSGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:06:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53856 "EHLO
+        Mon, 24 Sep 2018 14:06:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53868 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728666AbeIXSGj (ORCPT
+        with ESMTP id S1726417AbeIXSGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:06:39 -0400
+        Mon, 24 Sep 2018 14:06:49 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 973E1107A;
-        Mon, 24 Sep 2018 12:04:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 446791080;
+        Mon, 24 Sep 2018 12:04:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Piotr Sawicki <p.sawicki2@partner.samsung.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 032/111] Smack: Fix handling of IPv4 traffic received by PF_INET6 sockets
-Date:   Mon, 24 Sep 2018 13:51:59 +0200
-Message-Id: <20180924113107.794721923@linuxfoundation.org>
+        stable@vger.kernel.org, Mariusz Bialonczyk <manio@skyboo.net>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.9 068/111] Revert "cdc-acm: implement put_char() and flush_chars()"
+Date:   Mon, 24 Sep 2018 13:52:35 +0200
+Message-Id: <20180924113111.782014315@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -53,83 +51,170 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Piotr Sawicki <p.sawicki2@partner.samsung.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit 129a99890936766f4b69b9da7ed88366313a9210 ]
+commit df3aa13c7bbb307e172c37f193f9a7aa058d4739 upstream.
 
-A socket which has sk_family set to PF_INET6 is able to receive not
-only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
+This reverts commit a81cf9799ad7299b03a4dff020d9685f9ac5f3e0.
 
-Prior to this patch, the smk_skb_to_addr_ipv6() could have been
-called for socket buffers containing IPv4 packets, in result such
-traffic was allowed.
+The patch causes a regression, which I cannot find the reason for.
+So let's revert for now, as a revert hurts only performance.
 
-Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Original report:
+I was trying to resolve the problem with Oliver but we don't get any conclusion
+for 5 months, so I am now sending this to mail list and cdc_acm authors.
+
+I am using simple request-response protocol to obtain the boiller parameters
+in constant intervals.
+
+A simple one transaction is:
+1. opening the /dev/ttyACM0
+2. sending the following 10-bytes request to the device:
+   unsigned char req[] = {0x02, 0xfe, 0x01, 0x05, 0x08, 0x02, 0x01, 0x69, 0xab, 0x03};
+3. reading response (frame of 74 bytes length).
+4. closing the descriptor
+I am doing this transaction with 5 seconds intervals.
+
+Before the bad commit everything was working correctly: I've got a requests and
+a responses in a timely manner.
+
+After the bad commit more time I am using the kernel module, more problems I have.
+The graph [2] is showing the problem.
+
+As you can see after module load all seems fine but after about 30 minutes I've got
+a plenty of EAGAINs when doing read()'s and trying to read back the data.
+
+When I rmmod and insmod the cdc_acm module again, then the situation is starting
+over again: running ok shortly after load, and more time it is running, more EAGAINs
+I have when calling read().
+
+As a bonus I can see the problem on the device itself:
+The device is configured as you can see here on this screen [3].
+It has two transmision LEDs: TX and RX. Blink duration is set for 100ms.
+This is a recording before the bad commit when all is working fine: [4]
+And this is with the bad commit: [5]
+As you can see the TX led is blinking wrongly long (indicating transmission?)
+and I have problems doing read() calls (EAGAIN).
+
+Reported-by: Mariusz Bialonczyk <manio@skyboo.net>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Fixes: a81cf9799ad7 ("cdc-acm: implement put_char() and flush_chars()")
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- security/smack/smack_lsm.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3966,15 +3966,19 @@ static int smack_socket_sock_rcv_skb(str
- 	struct smack_known *skp = NULL;
- 	int rc = 0;
- 	struct smk_audit_info ad;
-+	u16 family = sk->sk_family;
- #ifdef CONFIG_AUDIT
- 	struct lsm_network_audit net;
- #endif
- #if IS_ENABLED(CONFIG_IPV6)
- 	struct sockaddr_in6 sadd;
- 	int proto;
-+
-+	if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
-+		family = PF_INET;
- #endif /* CONFIG_IPV6 */
+---
+ drivers/usb/class/cdc-acm.c |   73 --------------------------------------------
+ drivers/usb/class/cdc-acm.h |    1 
+ 2 files changed, 74 deletions(-)
+
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -705,20 +705,9 @@ static int acm_tty_write(struct tty_stru
+ 	}
  
--	switch (sk->sk_family) {
-+	switch (family) {
- 	case PF_INET:
- #ifdef CONFIG_SECURITY_SMACK_NETFILTER
- 		/*
-@@ -3992,7 +3996,7 @@ static int smack_socket_sock_rcv_skb(str
- 		 */
- 		netlbl_secattr_init(&secattr);
+ 	if (acm->susp_count) {
+-		if (acm->putbuffer) {
+-			/* now to preserve order */
+-			usb_anchor_urb(acm->putbuffer->urb, &acm->delayed);
+-			acm->putbuffer = NULL;
+-		}
+ 		usb_anchor_urb(wb->urb, &acm->delayed);
+ 		spin_unlock_irqrestore(&acm->write_lock, flags);
+ 		return count;
+-	} else {
+-		if (acm->putbuffer) {
+-			/* at this point there is no good way to handle errors */
+-			acm_start_wb(acm, acm->putbuffer);
+-			acm->putbuffer = NULL;
+-		}
+ 	}
  
--		rc = netlbl_skbuff_getattr(skb, sk->sk_family, &secattr);
-+		rc = netlbl_skbuff_getattr(skb, family, &secattr);
- 		if (rc == 0)
- 			skp = smack_from_secattr(&secattr, ssp);
- 		else
-@@ -4005,7 +4009,7 @@ access_check:
- #endif
- #ifdef CONFIG_AUDIT
- 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
--		ad.a.u.net->family = sk->sk_family;
-+		ad.a.u.net->family = family;
- 		ad.a.u.net->netif = skb->skb_iif;
- 		ipv4_skb_to_auditdata(skb, &ad.a, NULL);
- #endif
-@@ -4019,7 +4023,7 @@ access_check:
- 		rc = smk_bu_note("IPv4 delivery", skp, ssp->smk_in,
- 					MAY_WRITE, rc);
- 		if (rc != 0)
--			netlbl_skbuff_err(skb, sk->sk_family, rc, 0);
-+			netlbl_skbuff_err(skb, family, rc, 0);
- 		break;
- #if IS_ENABLED(CONFIG_IPV6)
- 	case PF_INET6:
-@@ -4035,7 +4039,7 @@ access_check:
- 			skp = smack_net_ambient;
- #ifdef CONFIG_AUDIT
- 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
--		ad.a.u.net->family = sk->sk_family;
-+		ad.a.u.net->family = family;
- 		ad.a.u.net->netif = skb->skb_iif;
- 		ipv6_skb_to_auditdata(skb, &ad.a, NULL);
- #endif /* CONFIG_AUDIT */
+ 	stat = acm_start_wb(acm, wb);
+@@ -729,66 +718,6 @@ static int acm_tty_write(struct tty_stru
+ 	return count;
+ }
+ 
+-static void acm_tty_flush_chars(struct tty_struct *tty)
+-{
+-	struct acm *acm = tty->driver_data;
+-	struct acm_wb *cur;
+-	int err;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&acm->write_lock, flags);
+-
+-	cur = acm->putbuffer;
+-	if (!cur) /* nothing to do */
+-		goto out;
+-
+-	acm->putbuffer = NULL;
+-	err = usb_autopm_get_interface_async(acm->control);
+-	if (err < 0) {
+-		cur->use = 0;
+-		acm->putbuffer = cur;
+-		goto out;
+-	}
+-
+-	if (acm->susp_count)
+-		usb_anchor_urb(cur->urb, &acm->delayed);
+-	else
+-		acm_start_wb(acm, cur);
+-out:
+-	spin_unlock_irqrestore(&acm->write_lock, flags);
+-	return;
+-}
+-
+-static int acm_tty_put_char(struct tty_struct *tty, unsigned char ch)
+-{
+-	struct acm *acm = tty->driver_data;
+-	struct acm_wb *cur;
+-	int wbn;
+-	unsigned long flags;
+-
+-overflow:
+-	cur = acm->putbuffer;
+-	if (!cur) {
+-		spin_lock_irqsave(&acm->write_lock, flags);
+-		wbn = acm_wb_alloc(acm);
+-		if (wbn >= 0) {
+-			cur = &acm->wb[wbn];
+-			acm->putbuffer = cur;
+-		}
+-		spin_unlock_irqrestore(&acm->write_lock, flags);
+-		if (!cur)
+-			return 0;
+-	}
+-
+-	if (cur->len == acm->writesize) {
+-		acm_tty_flush_chars(tty);
+-		goto overflow;
+-	}
+-
+-	cur->buf[cur->len++] = ch;
+-	return 1;
+-}
+-
+ static int acm_tty_write_room(struct tty_struct *tty)
+ {
+ 	struct acm *acm = tty->driver_data;
+@@ -1940,8 +1869,6 @@ static const struct tty_operations acm_o
+ 	.cleanup =		acm_tty_cleanup,
+ 	.hangup =		acm_tty_hangup,
+ 	.write =		acm_tty_write,
+-	.put_char =		acm_tty_put_char,
+-	.flush_chars =		acm_tty_flush_chars,
+ 	.write_room =		acm_tty_write_room,
+ 	.ioctl =		acm_tty_ioctl,
+ 	.throttle =		acm_tty_throttle,
+--- a/drivers/usb/class/cdc-acm.h
++++ b/drivers/usb/class/cdc-acm.h
+@@ -94,7 +94,6 @@ struct acm {
+ 	unsigned long read_urbs_free;
+ 	struct urb *read_urbs[ACM_NR];
+ 	struct acm_rb read_buffers[ACM_NR];
+-	struct acm_wb *putbuffer;			/* for acm_tty_put_char() */
+ 	int rx_buflimit;
+ 	spinlock_t read_lock;
+ 	int write_used;					/* number of non-empty write buffers */
 
 
