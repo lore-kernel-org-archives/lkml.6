@@ -2,38 +2,38 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D488C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DACEECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F6B20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:59:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F6B20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 4941B208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:59:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4941B208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbeIXPAU (ORCPT
+        id S1728029AbeIXPAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:00:20 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:26099 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726350AbeIXPAU (ORCPT
+        Mon, 24 Sep 2018 11:00:39 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:30183 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726218AbeIXPAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:00:20 -0400
-X-UUID: 4519e54766f6474897a8f2b4d4192e48-20180924
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Mon, 24 Sep 2018 11:00:39 -0400
+X-UUID: f001f2e1d6cb465ea8d23f246efed922-20180924
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 386453536; Mon, 24 Sep 2018 16:59:12 +0800
+        with ESMTP id 1205749172; Mon, 24 Sep 2018 16:59:27 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 24 Sep 2018 16:59:11 +0800
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 24 Sep 2018 16:59:26 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 24 Sep 2018 16:59:10 +0800
+ Transport; Mon, 24 Sep 2018 16:59:25 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -48,19 +48,22 @@ CC:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
         <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
         <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
         <youlin.pei@mediatek.com>
-Subject: [PATCH v2 00/14] MT8183 IOMMU SUPPORT
-Date:   Mon, 24 Sep 2018 16:58:40 +0800
-Message-ID: <1537779534-23575-1-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v2 01/14] dt-bindings: mediatek: Add binding for mt8183 IOMMU and SMI
+Date:   Mon, 24 Sep 2018 16:58:41 +0800
+Message-ID: <1537779534-23575-2-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1537779534-23575-1-git-send-email-yong.wu@mediatek.com>
+References: <1537779534-23575-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: FE4A4EAB29786D440BD41B6D94218E316213FD5E0AF2740024B8662BA5218C752000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset mainly adds support for mt8183 IOMMU and SMI.
+This patch adds decriptions for mt8183 IOMMU and SMI.
 
 mt8183 has only one M4U like mt8173 and is also MTK IOMMU gen2 which
 uses ARM Short-Descriptor translation table format.
@@ -109,63 +112,250 @@ Control Unit) is connected with smi-common directly, we can take them
 as "larb2", "larb3" and "larb7", and their register spaces are
 different with the normal larb.
 
-This patchset is based on v4.19-rc1.
-the patch 1/2/3/4/5/6 add the iommu/smi support for mt8183;
-the patch 7/8/9/10 add mmu1 support;
-the last patches contain some minor changes:
-   -patch 11 fix a issue.
-   -patch 12 improve the code flow(add shutdown).
-   -patch 13 cleanup some smi codes(delete need_larbid).
-   -patch 14 switch to SPDX license.
-this patchset don't contain the dtsi part since it need depend on the
-ccf and power-domain nodes which has not been accepted.
-
-change notes:
-v2: 1) Fix typo in the commit message of dt-binding.
-    2) Change larb2/larb3 to the special larbs.
-    3) Refactor the larb-id remapped array(larbid_remapped), then we
-    don't need add the new function(mtk_iommu_get_larbid).
-    4) Add a new patch for v7s two helpers(paddr_to_iopte and
-    iopte_to_paddr).
-    5) Change some comment for MTK 4GB mode.
-
-v1:
-http://lists.infradead.org/pipermail/linux-mediatek/2018-September/014881.html
-
-Yong Wu (14):
-  dt-bindings: mediatek: Add binding for mt8183 IOMMU and SMI
-  iommu/mediatek: Use a struct as the platform data
-  memory: mtk-smi: Use a general config_port interface
-  iommu/io-pgtable-arm-v7s: Add paddr_to_iopte and iopte_to_paddr
-    helpers
-  iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB Mode
-  iommu/mediatek: Add mt8183 IOMMU support
-  iommu/mediatek: Add mmu1 support
-  memory: mtk-smi: Invoke pm runtime_callback to enable clocks
-  memory: mtk-smi: Use a struct for the platform data for smi-common
-  memory: mtk-smi: Add bus_sel for mt8183
-  iommu/mediatek: Add VLD_PA_RANGE register backup when suspend
-  iommu/mediatek: Add shutdown callback
-  memory: mtk-smi: Get rid of need_larbid
-  iommu/mediatek: Switch to SPDX license identifier
-
- .../devicetree/bindings/iommu/mediatek,iommu.txt   |  15 +-
+Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/iommu/mediatek,iommu.txt   |  15 ++-
  .../memory-controllers/mediatek,smi-common.txt     |  11 +-
  .../memory-controllers/mediatek,smi-larb.txt       |   3 +
- drivers/iommu/io-pgtable-arm-v7s.c                 |  75 ++++--
- drivers/iommu/io-pgtable.h                         |   7 +-
- drivers/iommu/mtk_iommu.c                          | 133 ++++++----
- drivers/iommu/mtk_iommu.h                          |  23 +-
- drivers/iommu/mtk_iommu_v1.c                       |  10 +-
- drivers/memory/mtk-smi.c                           | 267 ++++++++++++++-------
- include/dt-bindings/memory/mt2701-larb-port.h      |  10 +-
- include/dt-bindings/memory/mt8173-larb-port.h      |  10 +-
- include/dt-bindings/memory/mt8183-larb-port.h      | 130 ++++++++++
- include/soc/mediatek/smi.h                         |  10 +-
- 13 files changed, 492 insertions(+), 212 deletions(-)
+ include/dt-bindings/memory/mt8183-larb-port.h      | 130 +++++++++++++++++++++
+ 4 files changed, 153 insertions(+), 6 deletions(-)
  create mode 100644 include/dt-bindings/memory/mt8183-larb-port.h
 
+diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt b/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
+index df5db73..c4908ea 100644
+--- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
++++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
+@@ -36,24 +36,33 @@ each local arbiter.
+ like display, video decode, and camera. And there are different ports
+ in each larb. Take a example, There are many ports like MC, PP, VLD in the
+ video decode local arbiter, all these ports are according to the video HW.
++  In some Socs, there may be a GALS(Global Async Local Sync) module between
++smi-common and m4u, and additional GALS module between smi-larb and
++smi-common. GALS can been seen as a "asynchronous fifo" which could help
++synchronize for the modules in different clock frequency.
+ 
+ Required properties:
+ - compatible : must be one of the following string:
+ 	"mediatek,mt2701-m4u" for mt2701 which uses generation one m4u HW.
+ 	"mediatek,mt2712-m4u" for mt2712 which uses generation two m4u HW.
+ 	"mediatek,mt8173-m4u" for mt8173 which uses generation two m4u HW.
++	"mediatek,mt8183-m4u" for mt8183 which uses generation two m4u HW.
+ - reg : m4u register base and size.
+ - interrupts : the interrupt of m4u.
+ - clocks : must contain one entry for each clock-names.
+-- clock-names : must be "bclk", It is the block clock of m4u.
++- clock-names : Only 1 optional clock:
++  - "bclk": the block clock of m4u.
++  Note that m4u use the EMI clock which always has been enabled before kernel
++  if there is no this "bclk".
+ - mediatek,larbs : List of phandle to the local arbiters in the current Socs.
+ 	Refer to bindings/memory-controllers/mediatek,smi-larb.txt. It must sort
+ 	according to the local arbiter index, like larb0, larb1, larb2...
+ - iommu-cells : must be 1. This is the mtk_m4u_id according to the HW.
+ 	Specifies the mtk_m4u_id as defined in
+ 	dt-binding/memory/mt2701-larb-port.h for mt2701,
+-	dt-binding/memory/mt2712-larb-port.h for mt2712, and
+-	dt-binding/memory/mt8173-larb-port.h for mt8173.
++	dt-binding/memory/mt2712-larb-port.h for mt2712,
++	dt-binding/memory/mt8173-larb-port.h for mt8173, and
++	dt-binding/memory/mt8183-larb-port.h for mt8183.
+ 
+ Example:
+ 	iommu: iommu@10205000 {
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
+index 615abdd..abab51b 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
+@@ -2,9 +2,10 @@ SMI (Smart Multimedia Interface) Common
+ 
+ The hardware block diagram please check bindings/iommu/mediatek,iommu.txt
+ 
+-Mediatek SMI have two generations of HW architecture, mt2712 and mt8173 use
+-the second generation of SMI HW while mt2701 uses the first generation HW of
+-SMI.
++Mediatek SMI have two generations of HW architecture, here is the list
++which generation the Socs use:
++generation 1: mt2701.
++generation 2: mt2712, mt8173 and mt8183.
+ 
+ There's slight differences between the two SMI, for generation 2, the
+ register which control the iommu port is at each larb's register base. But
+@@ -18,6 +19,7 @@ Required properties:
+ 	"mediatek,mt2701-smi-common"
+ 	"mediatek,mt2712-smi-common"
+ 	"mediatek,mt8173-smi-common"
++	"mediatek,mt8183-smi-common"
+ - reg : the register and size of the SMI block.
+ - power-domains : a phandle to the power domain of this local arbiter.
+ - clocks : Must contain an entry for each entry in clock-names.
+@@ -29,6 +31,9 @@ Required properties:
+ 	    They may be the same if both source clocks are the same.
+   - "async" : asynchronous clock, it help transform the smi clock into the emi
+ 	      clock domain, this clock is only needed by generation 1 smi HW.
++  and these 2 option clocks for generation 2 smi HW:
++  - "gals0": the path0 clock of GALS(Global Async Local Sync).
++  - "gals1": the path1 clock of GALS(Global Async Local Sync).
+ 
+ Example:
+ 	smi_common: smi@14022000 {
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+index 083155c..e46bf5e 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 		"mediatek,mt2701-smi-larb"
+ 		"mediatek,mt2712-smi-larb"
+ 		"mediatek,mt8173-smi-larb"
++		"mediatek,mt8183-smi-larb"
+ - reg : the register and size of this local arbiter.
+ - mediatek,smi : a phandle to the smi_common node.
+ - power-domains : a phandle to the power domain of this local arbiter.
+@@ -15,6 +16,8 @@ Required properties:
+   - "apb" : Advanced Peripheral Bus clock, It's the clock for setting
+ 	    the register.
+   - "smi" : It's the clock for transfer data and command.
++  and this optional clock name:
++  - "gals": the clock for gals(Global Async Local Sync).
+ 
+ Required property for mt2701 and mt2712:
+ - mediatek,larb-id :the hardware id of this larb.
+diff --git a/include/dt-bindings/memory/mt8183-larb-port.h b/include/dt-bindings/memory/mt8183-larb-port.h
+new file mode 100644
+index 0000000..2c579f3
+--- /dev/null
++++ b/include/dt-bindings/memory/mt8183-larb-port.h
+@@ -0,0 +1,130 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Yong Wu <yong.wu@mediatek.com>
++ */
++#ifndef __DTS_IOMMU_PORT_MT8183_H
++#define __DTS_IOMMU_PORT_MT8183_H
++
++#define MTK_M4U_ID(larb, port)		(((larb) << 5) | (port))
++
++#define M4U_LARB0_ID			0
++#define M4U_LARB1_ID			1
++#define M4U_LARB2_ID			2
++#define M4U_LARB3_ID			3
++#define M4U_LARB4_ID			4
++#define M4U_LARB5_ID			5
++#define M4U_LARB6_ID			6
++#define M4U_LARB7_ID			7
++
++/* larb0 */
++#define	M4U_PORT_DISP_OVL0		MTK_M4U_ID(M4U_LARB0_ID, 0)
++#define	M4U_PORT_DISP_2L_OVL0_LARB0     MTK_M4U_ID(M4U_LARB0_ID, 1)
++#define	M4U_PORT_DISP_2L_OVL1_LARB0     MTK_M4U_ID(M4U_LARB0_ID, 2)
++#define	M4U_PORT_DISP_RDMA0		MTK_M4U_ID(M4U_LARB0_ID, 3)
++#define	M4U_PORT_DISP_RDMA1		MTK_M4U_ID(M4U_LARB0_ID, 4)
++#define	M4U_PORT_DISP_WDMA0		MTK_M4U_ID(M4U_LARB0_ID, 5)
++#define	M4U_PORT_MDP_RDMA0		MTK_M4U_ID(M4U_LARB0_ID, 6)
++#define	M4U_PORT_MDP_WROT0		MTK_M4U_ID(M4U_LARB0_ID, 7)
++#define	M4U_PORT_MDP_WDMA0		MTK_M4U_ID(M4U_LARB0_ID, 8)
++#define	M4U_PORT_DISP_FAKE0		MTK_M4U_ID(M4U_LARB0_ID, 9)
++
++/* larb1 */
++#define	M4U_PORT_HW_VDEC_MC_EXT		MTK_M4U_ID(M4U_LARB1_ID, 0)
++#define	M4U_PORT_HW_VDEC_PP_EXT         MTK_M4U_ID(M4U_LARB1_ID, 1)
++#define	M4U_PORT_HW_VDEC_VLD_EXT	MTK_M4U_ID(M4U_LARB1_ID, 2)
++#define	M4U_PORT_HW_VDEC_AVC_MV_EXT     MTK_M4U_ID(M4U_LARB1_ID, 3)
++#define	M4U_PORT_HW_VDEC_PRED_RD_EXT	MTK_M4U_ID(M4U_LARB1_ID, 4)
++#define	M4U_PORT_HW_VDEC_PRED_WR_EXT	MTK_M4U_ID(M4U_LARB1_ID, 5)
++#define	M4U_PORT_HW_VDEC_PPWRAP_EXT	MTK_M4U_ID(M4U_LARB1_ID, 6)
++
++/* larb2 VPU0 */
++#define	M4U_PORT_IMG_IPUO		MTK_M4U_ID(M4U_LARB2_ID, 0)
++#define	M4U_PORT_IMG_IPU3O		MTK_M4U_ID(M4U_LARB2_ID, 1)
++#define	M4U_PORT_IMG_IPUI		MTK_M4U_ID(M4U_LARB2_ID, 2)
++
++/* larb3 VPU1 */
++#define	M4U_PORT_CAM_IPUO		MTK_M4U_ID(M4U_LARB3_ID, 0)
++#define	M4U_PORT_CAM_IPU2O		MTK_M4U_ID(M4U_LARB3_ID, 1)
++#define	M4U_PORT_CAM_IPU3O		MTK_M4U_ID(M4U_LARB3_ID, 2)
++#define	M4U_PORT_CAM_IPUI		MTK_M4U_ID(M4U_LARB3_ID, 3)
++#define	M4U_PORT_CAM_IPU2I		MTK_M4U_ID(M4U_LARB3_ID, 4)
++
++/* larb4 */
++#define	M4U_PORT_VENC_RCPU		MTK_M4U_ID(M4U_LARB4_ID, 0)
++#define	M4U_PORT_VENC_REC		MTK_M4U_ID(M4U_LARB4_ID, 1)
++#define	M4U_PORT_VENC_BSDMA		MTK_M4U_ID(M4U_LARB4_ID, 2)
++#define	M4U_PORT_VENC_SV_COMV		MTK_M4U_ID(M4U_LARB4_ID, 3)
++#define	M4U_PORT_VENC_RD_COMV		MTK_M4U_ID(M4U_LARB4_ID, 4)
++#define	M4U_PORT_JPGENC_RDMA		MTK_M4U_ID(M4U_LARB4_ID, 5)
++#define	M4U_PORT_JPGENC_BSDMA		MTK_M4U_ID(M4U_LARB4_ID, 6)
++#define	M4U_PORT_VENC_CUR_LUMA		MTK_M4U_ID(M4U_LARB4_ID, 7)
++#define	M4U_PORT_VENC_CUR_CHROMA	MTK_M4U_ID(M4U_LARB4_ID, 8)
++#define	M4U_PORT_VENC_REF_LUMA		MTK_M4U_ID(M4U_LARB4_ID, 9)
++#define	M4U_PORT_VENC_REF_CHROMA	MTK_M4U_ID(M4U_LARB4_ID, 10)
++
++/* larb5 */
++#define	M4U_PORT_CAM_IMGI		MTK_M4U_ID(M4U_LARB5_ID, 0)
++#define	M4U_PORT_CAM_IMG2O		MTK_M4U_ID(M4U_LARB5_ID, 1)
++#define	M4U_PORT_CAM_IMG3O		MTK_M4U_ID(M4U_LARB5_ID, 2)
++#define	M4U_PORT_CAM_VIPI		MTK_M4U_ID(M4U_LARB5_ID, 3)
++#define	M4U_PORT_CAM_LCEI		MTK_M4U_ID(M4U_LARB5_ID, 4)
++#define	M4U_PORT_CAM_SMXI		MTK_M4U_ID(M4U_LARB5_ID, 5)
++#define	M4U_PORT_CAM_SMXO		MTK_M4U_ID(M4U_LARB5_ID, 6)
++#define	M4U_PORT_CAM_WPE0_RDMA1		MTK_M4U_ID(M4U_LARB5_ID, 7)
++#define	M4U_PORT_CAM_WPE0_RDMA0		MTK_M4U_ID(M4U_LARB5_ID, 8)
++#define	M4U_PORT_CAM_WPE0_WDMA		MTK_M4U_ID(M4U_LARB5_ID, 9)
++#define	M4U_PORT_CAM_FDVT_RP		MTK_M4U_ID(M4U_LARB5_ID, 10)
++#define	M4U_PORT_CAM_FDVT_WR		MTK_M4U_ID(M4U_LARB5_ID, 11)
++#define	M4U_PORT_CAM_FDVT_RB		MTK_M4U_ID(M4U_LARB5_ID, 12)
++#define	M4U_PORT_CAM_WPE1_RDMA0		MTK_M4U_ID(M4U_LARB5_ID, 13)
++#define	M4U_PORT_CAM_WPE1_RDMA1		MTK_M4U_ID(M4U_LARB5_ID, 14)
++#define	M4U_PORT_CAM_WPE1_WDMA		MTK_M4U_ID(M4U_LARB5_ID, 15)
++#define	M4U_PORT_CAM_DPE_RDMA		MTK_M4U_ID(M4U_LARB5_ID, 16)
++#define	M4U_PORT_CAM_DPE_WDMA		MTK_M4U_ID(M4U_LARB5_ID, 17)
++#define	M4U_PORT_CAM_MFB_RDMA0		MTK_M4U_ID(M4U_LARB5_ID, 18)
++#define	M4U_PORT_CAM_MFB_RDMA1		MTK_M4U_ID(M4U_LARB5_ID, 19)
++#define	M4U_PORT_CAM_MFB_WDMA		MTK_M4U_ID(M4U_LARB5_ID, 20)
++#define	M4U_PORT_CAM_RSC_RDMA0		MTK_M4U_ID(M4U_LARB5_ID, 21)
++#define	M4U_PORT_CAM_RSC_WDMA		MTK_M4U_ID(M4U_LARB5_ID, 22)
++#define	M4U_PORT_CAM_OWE_RDMA		MTK_M4U_ID(M4U_LARB5_ID, 23)
++#define	M4U_PORT_CAM_OWE_WDMA		MTK_M4U_ID(M4U_LARB5_ID, 24)
++
++/* larb6 */
++#define	M4U_PORT_CAM_IMGO		MTK_M4U_ID(M4U_LARB6_ID, 0)
++#define	M4U_PORT_CAM_RRZO		MTK_M4U_ID(M4U_LARB6_ID, 1)
++#define	M4U_PORT_CAM_AAO		MTK_M4U_ID(M4U_LARB6_ID, 2)
++#define	M4U_PORT_CAM_AFO		MTK_M4U_ID(M4U_LARB6_ID, 3)
++#define	M4U_PORT_CAM_LSCI0		MTK_M4U_ID(M4U_LARB6_ID, 4)
++#define	M4U_PORT_CAM_LSCI1		MTK_M4U_ID(M4U_LARB6_ID, 5)
++#define	M4U_PORT_CAM_PDO		MTK_M4U_ID(M4U_LARB6_ID, 6)
++#define	M4U_PORT_CAM_BPCI		MTK_M4U_ID(M4U_LARB6_ID, 7)
++#define	M4U_PORT_CAM_LCSO		MTK_M4U_ID(M4U_LARB6_ID, 8)
++#define	M4U_PORT_CAM_CAM_RSSO_A		MTK_M4U_ID(M4U_LARB6_ID, 9)
++#define	M4U_PORT_CAM_UFEO		MTK_M4U_ID(M4U_LARB6_ID, 10)
++#define	M4U_PORT_CAM_SOCO		MTK_M4U_ID(M4U_LARB6_ID, 11)
++#define	M4U_PORT_CAM_SOC1		MTK_M4U_ID(M4U_LARB6_ID, 12)
++#define	M4U_PORT_CAM_SOC2		MTK_M4U_ID(M4U_LARB6_ID, 13)
++#define	M4U_PORT_CAM_CCUI		MTK_M4U_ID(M4U_LARB6_ID, 14)
++#define	M4U_PORT_CAM_CCUO		MTK_M4U_ID(M4U_LARB6_ID, 15)
++#define	M4U_PORT_CAM_RAWI_A		MTK_M4U_ID(M4U_LARB6_ID, 16)
++#define	M4U_PORT_CAM_CCUG		MTK_M4U_ID(M4U_LARB6_ID, 17)
++#define	M4U_PORT_CAM_PSO		MTK_M4U_ID(M4U_LARB6_ID, 18)
++#define	M4U_PORT_CAM_AFO_1		MTK_M4U_ID(M4U_LARB6_ID, 19)
++#define	M4U_PORT_CAM_LSCI_2		MTK_M4U_ID(M4U_LARB6_ID, 20)
++#define	M4U_PORT_CAM_PDI		MTK_M4U_ID(M4U_LARB6_ID, 21)
++#define	M4U_PORT_CAM_FLKO		MTK_M4U_ID(M4U_LARB6_ID, 22)
++#define	M4U_PORT_CAM_LMVO		MTK_M4U_ID(M4U_LARB6_ID, 23)
++#define	M4U_PORT_CAM_UFGO		MTK_M4U_ID(M4U_LARB6_ID, 24)
++#define	M4U_PORT_CAM_SPARE		MTK_M4U_ID(M4U_LARB6_ID, 25)
++#define	M4U_PORT_CAM_SPARE_2		MTK_M4U_ID(M4U_LARB6_ID, 26)
++#define	M4U_PORT_CAM_SPARE_3		MTK_M4U_ID(M4U_LARB6_ID, 27)
++#define	M4U_PORT_CAM_SPARE_4		MTK_M4U_ID(M4U_LARB6_ID, 28)
++#define	M4U_PORT_CAM_SPARE_5		MTK_M4U_ID(M4U_LARB6_ID, 29)
++#define	M4U_PORT_CAM_SPARE_6		MTK_M4U_ID(M4U_LARB6_ID, 30)
++
++/* CCU */
++#define	M4U_PORT_CCU0			MTK_M4U_ID(M4U_LARB7_ID, 0)
++#define	M4U_PORT_CCU1			MTK_M4U_ID(M4U_LARB7_ID, 1)
++
++#endif
 -- 
 1.9.1
-
 
