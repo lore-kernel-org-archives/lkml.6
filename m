@@ -2,207 +2,343 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87598C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F52ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 321C92087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PgAUrlkv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321C92087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id CFBF120C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFBF120C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbeIXVCN (ORCPT
+        id S1730377AbeIXVCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:02:13 -0400
-Received: from mail-by2nam01on0130.outbound.protection.outlook.com ([104.47.34.130]:30464
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387777AbeIXUwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:52:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LSSvR6NzT1sGIZ7CB7XYnJFv7pAgeK2BVyIrZr9p1v0=;
- b=PgAUrlkvGok6EbdfnN5obW+W7s8y7b9YAAU/93sCMJITXTL55szxH9PYXGJXn/aWocLM0z6BvJ0a+TOeBQzf+YIbHTyh+UeIDGx3JS56gRRdVUuPOaiCCnxnudESGKnSO+KMnJ+AVuL6H0atwW0pbKNVE4dNtv3VJP8erVBWUyM=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0181.namprd21.prod.outlook.com (10.173.193.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Mon, 24 Sep 2018 14:49:42 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:49:42 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sara Sharon <sara.sharon@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 10/36] mac80211: avoid kernel panic when building
- AMSDU from non-linear SKB
-Thread-Topic: [PATCH AUTOSEL 4.14 10/36] mac80211: avoid kernel panic when
- building AMSDU from non-linear SKB
-Thread-Index: AQHUVBW5d23qZjYdFUeY/AR9NO0u2Q==
-Date:   Mon, 24 Sep 2018 14:48:59 +0000
-Message-ID: <20180924144851.164533-10-alexander.levin@microsoft.com>
-References: <20180924144851.164533-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144851.164533-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0181;6:/qS37a6liLjnN+xvlcwv7U46Esoknf3spo0q76YPFFQwQ17hB6kJktZLO0aYQRLr/5D3wFA+g3yx1WSijsztCW0RXqvjA5joOTMLHGq9iHYXGrjvJ/bnZvR/lF/iK7Tsqxa2br4p1nBXuAcl+2ZoB9Z4iyQsuGY4gJ0icCr7PWMNRiQqTjYGf/AK27voQM7cIj/nkdz883J3+ja3vJ9yHugUcDZqSQGr81K70Yd+j/Qh/YEleA61LSimIkEw0oB0NTlzWBCFprGMdUa771Ganv9JTwmLmD6RT9QtgktmDHjKu3Hdma/3d3hkT5WRIsHGBpn0zBFD5zDSZsZ5vSgE2lAPnyc1jYcCWpMWOKH3hBRheRM2sNlPV1mkBvVSDeG6qyVaWGAysShYDKSAkzb+mtBmWgmfF/9kVpA4FM9/RDPtv11HcBSakbreICI9jRBt3anqAjiaTjuSszFOCRkDYg==;5:VaUpE5jPsKaCy2lwjrogUxgm4kGT+Hy9rrFVtkLfIaV70Q2Wd87ItRCpRDV+rYYgA2cectap34VHq1GX9kGULNWMD2P8Nu7fofK2ZWa+NuzNVPYTDv0F7dAixKMqEhsXJFUB9yfrBi2eRg7HXi3KEajYy8l/MZ2Fl1J5vuSMyuU=;7:7i9dzwQyveAHRUOQ2P6/uM7IHu7ABewDNmZWFXltXXui2jgyQpN59uq/kAHHJb77dRV0x6OJEiY+bWBLUnSbUtV1XfmFGQdQuLi4547fv6GpPs4WtXLhCkpf5IVEHMSNuM/lajqCvH1yY7hwEcufhbYa12D09TnDX0y2L0cVft9BYNBK0hk/Bydl35ACyBjF9vvxL62CqIu8XyxTIWUhXo47IaHbAX8glB4yJRcbl0TK98CKf2kH774yROrTli+B
-x-ms-office365-filtering-correlation-id: eaa6958b-cd43-4be3-d26e-08d6222cf653
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR21MB0181;
-x-ms-traffictypediagnostic: CY4PR21MB0181:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0181565E4C3AFCF493230761FB170@CY4PR21MB0181.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0181;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0181;
-x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(136003)(346002)(396003)(189003)(199004)(575784001)(10290500003)(6116002)(26005)(102836004)(3846002)(5660300001)(22452003)(110136005)(10090500001)(8676002)(1076002)(54906003)(105586002)(186003)(316002)(106356001)(2501003)(6436002)(97736004)(6486002)(107886003)(7736002)(36756003)(478600001)(72206003)(14454004)(71200400001)(71190400001)(305945005)(256004)(14444005)(5250100002)(217873002)(6666003)(2616005)(68736007)(53936002)(81166006)(81156014)(2900100001)(476003)(86612001)(4326008)(8936002)(486006)(99286004)(6512007)(86362001)(2906002)(25786009)(66066001)(6506007)(11346002)(446003)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0181;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: GnZAo8zPE2WfnYPtIFgbHdc5GKNt2dSICrdutboJ4kkgTyuCVWPKxV3sX+l3C9NTeQhuT1I0A5NmKrObXpTfpluogSUGVI9VBDiat5kFYq/VSJhHmMcTcXvIxRdavSg/AISLInufeJ3pMAeiuxDJ2jiMbqN58PjZYbOZCejVfVqbsrmi5TKXXBh2sxAsHOVs/h9HdN9hcjrDTZUzF2+TcowPiOKj6NniFGQEp4gK6UKxYzBEV92jMg1GzcZUBNcn5VEoh/sl76U8qDFuDUE49hOIAUXXZHUUJTxuJMDeBfz7L2orxqI3E7sjdPZE10reAhbljYZP5LB29waLdcg2DTY3x9f6JjIwXMMteqMyoCs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 24 Sep 2018 17:02:18 -0400
+Received: from uhil19pa12.eemsg.mail.mil ([214.24.21.85]:27763 "EHLO
+        uhil19pa12.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728936AbeIXVCS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:02:18 -0400
+X-EEMSG-check-008: 339281658|UHIL19PA12_EEMSG_MP10.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by uhil19pa12.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 24 Sep 2018 14:59:39 +0000
+X-IronPort-AV: E=Sophos;i="5.54,298,1534809600"; 
+   d="scan'208";a="18588532"
+IronPort-PHdr: =?us-ascii?q?9a23=3AfawAthLzMePFp8KUXdmcpTZWNBhigK39O0sv0r?=
+ =?us-ascii?q?FitYgXL/X8rarrMEGX3/hxlliBBdydt6obzbKO+4nbGkU4qa6bt34DdJEeHz?=
+ =?us-ascii?q?Qksu4x2zIaPcieFEfgJ+TrZSFpVO5LVVti4m3peRMNQJW2aFLduGC94iAPER?=
+ =?us-ascii?q?vjKwV1Ov71GonPhMiryuy+4ZLebxlKiTanfb9+MAi9oBnMuMURnYZsMLs6xA?=
+ =?us-ascii?q?HTontPdeRWxGdoKkyWkh3h+Mq+/4Nt/jpJtf45+MFOTav1f6IjTbxFFzsmKH?=
+ =?us-ascii?q?w65NfqtRbYUwSC4GYXX3gMnRpJBwjF6wz6Xov0vyDnuOdxxDWWMMvrRr0vRz?=
+ =?us-ascii?q?+s87lkRwPpiCcfNj427mfXitBrjKlGpB6tvgFzz5LIbI2QMvdxcLndfdcHTm?=
+ =?us-ascii?q?RfWMhfWTFKDoelY4cRE+YNOOBVpJT/qVQTtxuzHRSiCv3hyjFIhXH406M13O?=
+ =?us-ascii?q?sjHg7a0wItBM4OvXbOodnpKKsfX+K4wa/VxjvDdfNW3jL95ZDVfBA9v/6MRb?=
+ =?us-ascii?q?JwftTXyUIyCg3Fi0+fqYjhPzyL1uUGrm+W7/F9WuK0kGMntwFwrSSvxscrkI?=
+ =?us-ascii?q?XJgJkVxUre+SV2x4Y1O8S1RUhmatCnCJtdrzyWOoR5T884Q2xkpTw2xqMJtJ?=
+ =?us-ascii?q?KlZiQG1ZIqzAPFZfOdaYiH+BfjWf6UITd/mX1qZqqyhw238Ui80u38UdS00E?=
+ =?us-ascii?q?pSoipFjNbMsncN2gTP6sedUPt9/1qh2S2V2wDP6uBLPUA0la3BJ54n3rEwjY?=
+ =?us-ascii?q?YcvV7GHi/3nEX6lK6WdkM69ei08+nrf7rrq5CGO4J0lw3yKLoil8OhDegiLw?=
+ =?us-ascii?q?QCR22b9v691L3n8035WrJKjvgun6nCrZ/aPt8WprK5AgBJ0oYj7AyzDzG90N?=
+ =?us-ascii?q?sCh3UHI1VFeAyfg4jzJ17OOOz4Deu4g1m0jDhk3evGMaPhA5jWNXjMjLfhcq?=
+ =?us-ascii?q?xg605SzAo808pf64tIBb4bOv78RkjxtNnABB8jLwO02/rnCMl61o4GQWKAHK?=
+ =?us-ascii?q?mZMKzPsV+J4OIjOuqMa5EPuDb7Nfcl4+XjjX4glV8Zeqmpw4UYZGqjHvt8IE?=
+ =?us-ascii?q?WZfGDsjc0bHWcMoAUyVu7qiEWaWz5Je3myR7485i08CI++DofMWJ6igKed0y?=
+ =?us-ascii?q?e8GZ1WZXtLBUyMEXfycIWEXvYMaD+XIsN7lTwET7ehQZc71R6yrA/616ZnLu?=
+ =?us-ascii?q?3M9y0ctJLj0sV15uLKmREp6zN7E9md03uMT2FonmIEXjo23KdirkxgzleMz7?=
+ =?us-ascii?q?N1g+JXFdNN/fNFSAQ6OoDGz+x8Fd/yXhjNftCTSFapWt+mGy0+Tsotw98SZE?=
+ =?us-ascii?q?ZwA9eijhXE3yqwGb8VlqeLCYcy8q3G2nj+Ocd9x2zB1Kk7gFksWtFPOnG+hq?=
+ =?us-ascii?q?5j6wjTAJbEk0GYl6asaKQd0zfB9GSdwmqUukFXTgpwXL7bXXAQeETWt8715k?=
+ =?us-ascii?q?DcQL+0D7QoLA9BxdSFKqtQZd3jlU9GS+v7ONTCf2KxnH+9BRSPxrOMaormYW?=
+ =?us-ascii?q?cd3CLdCEcelQAT5miJNQ4lCyi9uW3eCjtuFVTuY0zw6+Z+rGm3QVMzzwGPd0?=
+ =?us-ascii?q?dhzaa6+gYJhfyATPMexqoEtz08qzVwB1u9x8jZC8eEpwZ4eaVcZtQ94E1Z2m?=
+ =?us-ascii?q?7DqwN9OZmgJbh4hlECawR3o1/u1xJvB4VEkMgqqm4qzQVrJaKWy1NOai2X3Y?=
+ =?us-ascii?q?7uNb3TMWTy4h+vZLDM2l3E09aZ5L0P6PImpFXnpg2pEVAi83p/2dlPz3Sc/o?=
+ =?us-ascii?q?nKDBYVUZ/pSEk46h96qKrAYik854Lbz3tsPLK7sj/Hwd0pBe8lxgy8cNdYNa?=
+ =?us-ascii?q?OODBXyHNECB8iyNOwqnECkbhcFPO9O76M7IsKmd/SH2K6oO+ZvgSiqjWJZ74?=
+ =?us-ascii?q?BhykiM7TZzSvbU35YZxPGVxhCHWy35jFi/qcD3nppEaisOEWWl1CTpBZVcZq?=
+ =?us-ascii?q?J3fYkRCGeuJ9e7ycl5h57oCDZk8wuIDkgLyYeSchqbclL50BcYgU8eunG2sT?=
+ =?us-ascii?q?CzzzVpnTUktO+U1WrFxOG0MFI7N3JQWW4qrV7qLYH828gXWke1bg5slxa/40?=
+ =?us-ascii?q?v+76keoKNhIi/ISERVZSGwKWwkULPm8vKhbsNUoLgvtiYfBOexbEuRTbn+ix?=
+ =?us-ascii?q?AaySTmHnZbgjcheGf5lI/+mklBlG+FLHt15EHccMV0yAaXsMfQXtZNzzEGQ2?=
+ =?us-ascii?q?9+kjCRCV+iaYr6te6InovO57jtH1mqUYdeJGyyl9uN?=
+X-IPAS-Result: =?us-ascii?q?A2BmAACt+qhb/wHyM5BaGgEBAQEBAgEBAQEHAgEBAQGDN?=
+ =?us-ascii?q?SqBMjKEHJQ+TwMGgRAleIdxj2A2AYRAAoNZITgUAQMBAQEBAQECAWwogjUkA?=
+ =?us-ascii?q?YJeAQEBAQIBIwQRQRALGAICJgICVwYBDAgBAYJeP4F1BQiiPnszhHeFEoELi?=
+ =?us-ascii?q?W0XeYEHgRInDIIqBy6Hf4JXAog+BgSFNUF3jUoJkCMGF48slmIhgVUrCAIYC?=
+ =?us-ascii?q?CEPO4JtgiQXjjQjgSsBAYw7AQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 24 Sep 2018 14:59:38 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id w8OExPrq020053;
+        Mon, 24 Sep 2018 10:59:26 -0400
+Subject: Re: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+ <CAGXu5jK=+FuL+JiSxcHy0i9Ppha=BQYdJW5zvbm1Redbo12wmw@mail.gmail.com>
+ <680e6e16-0890-8304-0e8e-6c58966813b5@schaufler-ca.com>
+ <CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
+ <39457e79-3816-824b-6b4d-89d21b03f9ce@i-love.sakura.ne.jp>
+ <b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <a2858469-cf38-7706-52b5-1d5fd5ed43ad@tycho.nsa.gov>
+Date:   Mon, 24 Sep 2018 11:01:30 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaa6958b-cd43-4be3-d26e-08d6222cf653
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:59.1950
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0181
+In-Reply-To: <b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sara Sharon <sara.sharon@intel.com>
+On 09/23/2018 01:09 PM, Casey Schaufler wrote:
+> On 9/23/2018 8:59 AM, Tetsuo Handa wrote:
+>> On 2018/09/23 11:43, Kees Cook wrote:
+>>>>> I'm excited about getting this landed!
+>>>> Soon. Real soon. I hope. I would very much like for
+>>>> someone from the SELinux camp to chime in, especially on
+>>>> the selinux_is_enabled() removal.
+>>> Agreed.
+>>>
+>> This patchset from Casey lands before the patchset from Kees, doesn't it?
+> 
+> That is up for negotiation. We may end up combining them.
+> 
+>> OK, a few comments (if I didn't overlook something).
+>>
+>>    lsm_early_cred()/lsm_early_task() are called from only __init functions.
+> 
+> True.
+> 
+>>    lsm_cred_alloc()/lsm_file_alloc() are called from only security/security.c .
+> 
+> Also true.
+> 
+>>    lsm_early_inode() should be avoided because it is not appropriate to
+>>    call panic() when lsm_early_inode() is called after __init phase.
+> 
+> You're correct. In fact, lsm_early_inode() isn't needed at all
+> until multiple inode using modules are supported.
+> 
+>>    Since all free hooks are called when one of init hooks failed, each
+>>    free hook needs to check whether init hook was called. An example is
+>>    inode_free_security() in security/selinux/hooks.c (but not addressed in
+>>    this patch).
+> 
+> I *think* that selinux_inode_free_security() is safe in this
+> case because the blob will be zeroed, hence isec->list will
+> be NULL.
 
-[ Upstream commit 166ac9d55b0ab70b644e429be1f217fe8393cbd7 ]
+That's not safe - look more closely at what list_empty_careful() tests, 
+and then think about what happens when list_del_init() gets called on 
+that isec->list.  selinux_inode_free_security() presumes that 
+selinux_inode_alloc_security() has been called already.  If you are 
+breaking that assumption, you have to fix it.
 
-When building building AMSDU from non-linear SKB, we hit a
-kernel panic when trying to push the padding to the tail.
-Instead, put the padding at the head of the next subframe.
-This also fixes the A-MSDU subframes to not have the padding
-accounted in the length field and not have pad at all for
-the last subframe, both required by the spec.
+Is there a reason you can't make inode_alloc_security() return void 
+since you moved the allocation to the framework?  Unfortunate that 
+inode_init_security name is already in use for another purpose since 
+essentially you have reduced these hooks to initialization only.
 
-Fixes: 6e0456b54545 ("mac80211: add A-MSDU tx support")
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Reviewed-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- net/mac80211/tx.c | 38 +++++++++++++++++++++-----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+> 
+>>    This patchset might fatally prevent LKM-based LSM modules, for LKM-based
+>>    LSMs cannot count on lsm_*_alloc() because size for lsm_*_alloc() cannot
+>>    be updated upon loading LKM-based LSMs.
+> 
+> LKM based security modules will require dynamically sized blobs.
+> These can be added to the scheme used here. Each blob would get a
+> header identifying the modules for which it contains data. When an
+> LKM is registered if has to declare it's blob space requirements
+> and gets back the offsets. All alloc operations have to put their
+> marks in the header. All LKM blob users have to check that the blob
+> they are looking at has the required data.
+> 
+> module_cred(struct cred *cred) {
+> 	return cred->security + module_blob_sizes.lbs_cred;
+> }
+> 
+> becomes
+> 
+> module_cred(struct cred *cred) {
+> 	if (blob_includes(module_id))
+> 		return cred->security + module_blob_sizes.lbs_cred;
+> 	return NULL;
+> }
+> 
+> and the calling code needs to accept a NULL return.
+> Blobs can never get smaller because readjusting the offsets
+> isn't going to work, so unloading an LKM security module isn't
+> going to be as complete as you might like. There may be a way
+> around this if you unload all the LKM modules, but that's a
+> special case and there may be dragon lurking in the mist.
+> 
+>>   If security_file_free() is called
+>>    regardless of whether lsm_file_cache is defined, LKM-based LSMs can be
+>>    loaded using current behavior (apart from the fact that legitimate
+>>    interface for appending to security_hook_heads is currently missing).
+>>    How do you plan to handle LKM-based LSMs?
+> 
+> My position all along has been that I don't plan to handle LKM
+> based LSMs, but that I won't do anything to prevent someone else
+> from adding them later. I believe that I've done that. Several
+> designs, including a separate list for dynamically loaded modules
+> have been proposed. I think some of those would work.
+> 
+>>   include/linux/lsm_hooks.h  |    6 ++----
+>>   security/security.c        |   31 ++++++-------------------------
+>>   security/smack/smack_lsm.c |    8 +++++++-
+>>   3 files changed, 15 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>> index 7e8b32f..8014614 100644
+>> --- a/include/linux/lsm_hooks.h
+>> +++ b/include/linux/lsm_hooks.h
+>> @@ -2095,13 +2095,11 @@ static inline void __init yama_add_hooks(void) { }
+>>   static inline void loadpin_add_hooks(void) { };
+>>   #endif
+>>   
+>> -extern int lsm_cred_alloc(struct cred *cred, gfp_t gfp);
+>>   extern int lsm_inode_alloc(struct inode *inode);
+>>   
+>>   #ifdef CONFIG_SECURITY
+>> -void lsm_early_cred(struct cred *cred);
+>> -void lsm_early_inode(struct inode *inode);
+>> -void lsm_early_task(struct task_struct *task);
+>> +void __init lsm_early_cred(struct cred *cred);
+>> +void __init lsm_early_task(struct task_struct *task);
+>>   #endif
+>>   
+>>   #endif /* ! __LINUX_LSM_HOOKS_H */
+>> diff --git a/security/security.c b/security/security.c
+>> index e7c85060..341e8df 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -267,7 +267,7 @@ int unregister_lsm_notifier(struct notifier_block *nb)
+>>    *
+>>    * Returns 0, or -ENOMEM if memory can't be allocated.
+>>    */
+>> -int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+>> +static int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+>>   {
+>>   	if (blob_sizes.lbs_cred == 0) {
+>>   		cred->security = NULL;
+>> @@ -286,7 +286,7 @@ int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+>>    *
+>>    * Allocate the cred blob for all the modules if it's not already there
+>>    */
+>> -void lsm_early_cred(struct cred *cred)
+>> +void __init lsm_early_cred(struct cred *cred)
+>>   {
+>>   	int rc;
+>>   
+>> @@ -344,7 +344,7 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
+>>    *
+>>    * Returns 0, or -ENOMEM if memory can't be allocated.
+>>    */
+>> -int lsm_file_alloc(struct file *file)
+>> +static int lsm_file_alloc(struct file *file)
+>>   {
+>>   	if (!lsm_file_cache) {
+>>   		file->f_security = NULL;
+>> @@ -379,25 +379,6 @@ int lsm_inode_alloc(struct inode *inode)
+>>   }
+>>   
+>>   /**
+>> - * lsm_early_inode - during initialization allocate a composite inode blob
+>> - * @inode: the inode that needs a blob
+>> - *
+>> - * Allocate the inode blob for all the modules if it's not already there
+>> - */
+>> -void lsm_early_inode(struct inode *inode)
+>> -{
+>> -	int rc;
+>> -
+>> -	if (inode == NULL)
+>> -		panic("%s: NULL inode.\n", __func__);
+>> -	if (inode->i_security != NULL)
+>> -		return;
+>> -	rc = lsm_inode_alloc(inode);
+>> -	if (rc)
+>> -		panic("%s: Early inode alloc failed.\n", __func__);
+>> -}
+>> -
+>> -/**
+>>    * lsm_task_alloc - allocate a composite task blob
+>>    * @task: the task that needs a blob
+>>    *
+>> @@ -466,7 +447,7 @@ int lsm_msg_msg_alloc(struct msg_msg *mp)
+>>    *
+>>    * Allocate the task blob for all the modules if it's not already there
+>>    */
+>> -void lsm_early_task(struct task_struct *task)
+>> +void __init lsm_early_task(struct task_struct *task)
+>>   {
+>>   	int rc;
+>>   
+>> @@ -1202,11 +1183,11 @@ void security_file_free(struct file *file)
+>>   {
+>>   	void *blob;
+>>   
+>> +	call_void_hook(file_free_security, file);
+>> +
+>>   	if (!lsm_file_cache)
+>>   		return;
+>>   
+>> -	call_void_hook(file_free_security, file);
+>> -
+> 
+> Why does this make sense? If the lsm_file_cache isn't
+> initialized you can't have allocated any file blobs,
+> no module can have initialized a file blob, hence there
+> can be nothing for the module to do.
+> 
+>>   	blob = file->f_security;
+>>   	file->f_security = NULL;
+>>   	kmem_cache_free(lsm_file_cache, blob);
+>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>> index 7843004..b0b4045 100644
+>> --- a/security/smack/smack_lsm.c
+>> +++ b/security/smack/smack_lsm.c
+>> @@ -750,6 +750,13 @@ static int smack_set_mnt_opts(struct super_block *sb,
+>>   	if (sp->smk_flags & SMK_SB_INITIALIZED)
+>>   		return 0;
+>>   
+>> +	if (inode->i_security == NULL) {
+>> +		int rc = lsm_inode_alloc(inode);
+>> +
+>> +		if (rc)
+>> +			return rc;
+>> +	}
+>> +
+>>   	if (!smack_privileged(CAP_MAC_ADMIN)) {
+>>   		/*
+>>   		 * Unprivileged mounts don't get to specify Smack values.
+>> @@ -818,7 +825,6 @@ static int smack_set_mnt_opts(struct super_block *sb,
+>>   	/*
+>>   	 * Initialize the root inode.
+>>   	 */
+>> -	lsm_early_inode(inode);
+>>   	init_inode_smack(inode, sp->smk_root);
+>>   
+>>   	if (transmute) {
+> 
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index ccb65f18df5d..2064234500cf 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -3022,27 +3022,18 @@ void ieee80211_clear_fast_xmit(struct sta_info *sta=
-)
- }
-=20
- static bool ieee80211_amsdu_realloc_pad(struct ieee80211_local *local,
--					struct sk_buff *skb, int headroom,
--					int *subframe_len)
-+					struct sk_buff *skb, int headroom)
- {
--	int amsdu_len =3D *subframe_len + sizeof(struct ethhdr);
--	int padding =3D (4 - amsdu_len) & 3;
--
--	if (skb_headroom(skb) < headroom || skb_tailroom(skb) < padding) {
-+	if (skb_headroom(skb) < headroom) {
- 		I802_DEBUG_INC(local->tx_expand_skb_head);
-=20
--		if (pskb_expand_head(skb, headroom, padding, GFP_ATOMIC)) {
-+		if (pskb_expand_head(skb, headroom, 0, GFP_ATOMIC)) {
- 			wiphy_debug(local->hw.wiphy,
- 				    "failed to reallocate TX buffer\n");
- 			return false;
- 		}
- 	}
-=20
--	if (padding) {
--		*subframe_len +=3D padding;
--		skb_put_zero(skb, padding);
--	}
--
- 	return true;
- }
-=20
-@@ -3066,8 +3057,7 @@ static bool ieee80211_amsdu_prepare_head(struct ieee8=
-0211_sub_if_data *sdata,
- 	if (info->control.flags & IEEE80211_TX_CTRL_AMSDU)
- 		return true;
-=20
--	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr),
--					 &subframe_len))
-+	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr)))
- 		return false;
-=20
- 	data =3D skb_push(skb, sizeof(*amsdu_hdr));
-@@ -3133,7 +3123,8 @@ static bool ieee80211_amsdu_aggregate(struct ieee8021=
-1_sub_if_data *sdata,
- 	void *data;
- 	bool ret =3D false;
- 	unsigned int orig_len;
--	int n =3D 1, nfrags;
-+	int n =3D 1, nfrags, pad =3D 0;
-+	u16 hdrlen;
-=20
- 	if (!ieee80211_hw_check(&local->hw, TX_AMSDU))
- 		return false;
-@@ -3184,8 +3175,19 @@ static bool ieee80211_amsdu_aggregate(struct ieee802=
-11_sub_if_data *sdata,
- 	if (max_frags && nfrags > max_frags)
- 		goto out;
-=20
--	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) + 2,
--					 &subframe_len))
-+	/*
-+	 * Pad out the previous subframe to a multiple of 4 by adding the
-+	 * padding to the next one, that's being added. Note that head->len
-+	 * is the length of the full A-MSDU, but that works since each time
-+	 * we add a new subframe we pad out the previous one to a multiple
-+	 * of 4 and thus it no longer matters in the next round.
-+	 */
-+	hdrlen =3D fast_tx->hdr_len - sizeof(rfc1042_header);
-+	if ((head->len - hdrlen) & 3)
-+		pad =3D 4 - ((head->len - hdrlen) & 3);
-+
-+	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) +
-+						     2 + pad))
- 		goto out;
-=20
- 	ret =3D true;
-@@ -3197,6 +3199,8 @@ static bool ieee80211_amsdu_aggregate(struct ieee8021=
-1_sub_if_data *sdata,
- 	memcpy(data, &len, 2);
- 	memcpy(data + 2, rfc1042_header, sizeof(rfc1042_header));
-=20
-+	memset(skb_push(skb, pad), 0, pad);
-+
- 	head->len +=3D skb->len;
- 	head->data_len +=3D skb->len;
- 	*frag_tail =3D skb;
---=20
-2.17.1
