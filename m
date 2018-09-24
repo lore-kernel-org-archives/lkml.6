@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803B4C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F643ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4603D2064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4603D2064D
+	by mail.kernel.org (Postfix) with ESMTP id 645C72064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645C72064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389332AbeIXSrU (ORCPT
+        id S2389341AbeIXSrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59766 "EHLO
+        Mon, 24 Sep 2018 14:47:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59778 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730081AbeIXSrT (ORCPT
+        with ESMTP id S1730081AbeIXSrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:19 -0400
+        Mon, 24 Sep 2018 14:47:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 921B3109A;
-        Mon, 24 Sep 2018 12:45:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9B95109A;
+        Mon, 24 Sep 2018 12:45:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 230/235] gpiolib: Respect error code of ->get_direction()
-Date:   Mon, 24 Sep 2018 13:53:36 +0200
-Message-Id: <20180924113125.894589782@linuxfoundation.org>
+Subject: [PATCH 4.18 231/235] pinctrl: msm: Fix msm_config_group_get() to be compliant
+Date:   Mon, 24 Sep 2018 13:53:37 +0200
+Message-Id: <20180924113125.942993670@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,39 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 36b312792b97933dc07abe074f50941199bd357c ]
+[ Upstream commit 05e0c828955c1cab58dd71a04539442e5375d917 ]
 
-In case we try to lock GPIO pin as IRQ when something going wrong
-we print a misleading message.
+If you do this on an sdm845 board:
+  cat /sys/kernel/debug/pinctrl/3400000.pinctrl/pinconf-groups
 
-Correct this by checking an error code from ->get_direction() in
-gpiochip_lock_as_irq() and printing a corresponding message.
+...it looks like nonsense.  For every pin you see listed:
+  input bias bus hold, input bias disabled, input bias pull down, input bias pull up
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+That's because msm_config_group_get() isn't complying with the rules
+that pinconf_generic_dump_one() expects.  Specifically for boolean
+parameters (anything with a "struct pin_config_item" where has_arg is
+false) the function expects that the function should return its value
+not through the "config" parameter but should return "0" if the value
+is set and "-EINVAL" if the value isn't set.
+
+Let's fix this.
+
+>From a quick sample of other pinctrl drivers, it appears to be
+tradition to also return 1 through the config parameter for these
+boolean parameters when they exist.  I'm not one to knock tradition,
+so I'll follow tradition and return 1 in these cases.  While I'm at
+it, I'll also continue searching for four leaf clovers, kocking on
+wood three times, and trying not to break mirrors.
+
+Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpiolib.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-msm.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3257,6 +3257,12 @@ int gpiochip_lock_as_irq(struct gpio_chi
- 	if (!chip->can_sleep && chip->get_direction) {
- 		int dir = chip->get_direction(chip, offset);
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -250,22 +250,30 @@ static int msm_config_group_get(struct p
+ 	/* Convert register value to pinconf value */
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = arg == MSM_NO_PULL;
++		if (arg != MSM_NO_PULL)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		arg = arg == MSM_PULL_DOWN;
++		if (arg != MSM_PULL_DOWN)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_BUS_HOLD:
+ 		if (pctrl->soc->pull_no_keeper)
+ 			return -ENOTSUPP;
  
-+		if (dir < 0) {
-+			chip_err(chip, "%s: cannot get GPIO direction\n",
-+				 __func__);
-+			return dir;
-+		}
-+
- 		if (dir)
- 			clear_bit(FLAG_IS_OUT, &desc->flags);
+-		arg = arg == MSM_KEEPER;
++		if (arg != MSM_KEEPER)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+ 		if (pctrl->soc->pull_no_keeper)
+ 			arg = arg == MSM_PULL_UP_NO_KEEPER;
  		else
+ 			arg = arg == MSM_PULL_UP;
++		if (!arg)
++			return -EINVAL;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_STRENGTH:
+ 		arg = msm_regval_to_drive(arg);
 
 
