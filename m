@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7DBECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC71C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4108D21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4108D21486
+	by mail.kernel.org (Postfix) with ESMTP id B190421486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B190421486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388170AbeIXSeT (ORCPT
+        id S2388174AbeIXSeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:34:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58136 "EHLO
+        Mon, 24 Sep 2018 14:34:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58178 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387409AbeIXSeS (ORCPT
+        with ESMTP id S2387409AbeIXSeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:34:18 -0400
+        Mon, 24 Sep 2018 14:34:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81DC01018;
-        Mon, 24 Sep 2018 12:32:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CFD8C1018;
+        Mon, 24 Sep 2018 12:32:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hanna Hawa <hannah@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Michael=20M=C3=BCller?= <michael@fds-team.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 092/235] dmaengine: mv_xor_v2: kill the tasklets upon exit
-Date:   Mon, 24 Sep 2018 13:51:18 +0200
-Message-Id: <20180924113114.349238780@linuxfoundation.org>
+Subject: [PATCH 4.18 093/235] crypto: sharah - Unregister correct algorithms for SAHARA 3
+Date:   Mon, 24 Sep 2018 13:51:19 +0200
+Message-Id: <20180924113114.506576695@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,37 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hanna Hawa <hannah@marvell.com>
+From: Michael Müller <michael@fds-team.de>
 
-[ Upstream commit 8bbafed8dd5cfa81071b50ead5cb60367fdef3a9 ]
+[ Upstream commit 0e7d4d932ffc23f75efb31a8c2ac2396c1b81c55 ]
 
-The mv_xor_v2 driver uses a tasklet, initialized during the probe()
-routine. However, it forgets to cleanup the tasklet using
-tasklet_kill() function during the remove() routine, which this patch
-fixes. This prevents the tasklet from potentially running after the
-module has been removed.
+This patch fixes two typos related to unregistering algorithms supported by
+SAHARAH 3. In sahara_register_algs the wrong algorithms are unregistered
+in case of an error. In sahara_unregister_algs the wrong array is used to
+determine the iteration count.
 
-Fixes: 19a340b1a820 ("dmaengine: mv_xor_v2: new driver")
-
-Signed-off-by: Hanna Hawa <hannah@marvell.com>
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Michael Müller <michael@fds-team.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/mv_xor_v2.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/crypto/sahara.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/dma/mv_xor_v2.c
-+++ b/drivers/dma/mv_xor_v2.c
-@@ -899,6 +899,8 @@ static int mv_xor_v2_remove(struct platf
+--- a/drivers/crypto/sahara.c
++++ b/drivers/crypto/sahara.c
+@@ -1351,7 +1351,7 @@ err_sha_v4_algs:
  
- 	platform_msi_domain_free_irqs(&pdev->dev);
+ err_sha_v3_algs:
+ 	for (j = 0; j < k; j++)
+-		crypto_unregister_ahash(&sha_v4_algs[j]);
++		crypto_unregister_ahash(&sha_v3_algs[j]);
  
-+	tasklet_kill(&xor_dev->irq_tasklet);
-+
- 	clk_disable_unprepare(xor_dev->clk);
+ err_aes_algs:
+ 	for (j = 0; j < i; j++)
+@@ -1367,7 +1367,7 @@ static void sahara_unregister_algs(struc
+ 	for (i = 0; i < ARRAY_SIZE(aes_algs); i++)
+ 		crypto_unregister_alg(&aes_algs[i]);
  
- 	return 0;
+-	for (i = 0; i < ARRAY_SIZE(sha_v4_algs); i++)
++	for (i = 0; i < ARRAY_SIZE(sha_v3_algs); i++)
+ 		crypto_unregister_ahash(&sha_v3_algs[i]);
+ 
+ 	if (dev->version > SAHARA_VERSION_3)
 
 
