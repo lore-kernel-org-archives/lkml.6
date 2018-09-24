@@ -2,115 +2,141 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F48FECE561
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E388C433F4
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 05:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A5321486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 05:35:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0A+IgX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A5321486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DC7FD20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 05:35:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC7FD20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbeIXLfb (ORCPT
+        id S1727354AbeIXLf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 07:35:31 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34418 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbeIXLfb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 07:35:31 -0400
-Received: by mail-wm1-f66.google.com with SMTP id j25-v6so8940708wmc.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 22:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z9R1aXWDdyaRlMfRGrp94QSZu/fyz5EfI5I6L2UcPxw=;
-        b=F0A+IgX8KvCefyU4euLvooaN8cO+Z0pYMbkFBYMrjwVARWC0azKYZ4SdpFTUhsaGi8
-         A6VyP3FiL1qHpmaymEvzUYH5q0i9Op5xgMz9NNjpzE4EgPk3xgJVKNwepYUgAc/kjLea
-         jWMawZ9ALhUyFVxk/Osw8W0qusXqQ0HqRAh9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z9R1aXWDdyaRlMfRGrp94QSZu/fyz5EfI5I6L2UcPxw=;
-        b=QDk92sbIiqQ2pJlPXRnIAfD3dgUOlMUHs6uf3aaKxoS8mXbp9fdAc4aMxO2Cyjz7ZF
-         SC7LLbrgg8GrEDkC2Zrw06cEENItGs2zs/lFZ0RSEFRCX4fv+i6QWQH8TP0c3zFY+02T
-         IihvqtFjRvSN5QcYF90dcjs6DuqVwpdozQL+qMTQ3U8XPG+Eu2SQCYqAvZZqPWjSR+YW
-         7trc/jj+TXzMD8yLFh05S3IYq/Fd5Dz3or8PN51scQzOmbHJTgCc0GK8MWC02JnSxATf
-         rleJMFOSmdqUdgXkRpEmXqT7yMRo1olc8VxgANYZCrSd5GTqSayQY0l8QgHj/R1rRijq
-         r30g==
-X-Gm-Message-State: APzg51BEqyFR2vASdeUuhxWXdJrHs91Ffa7ysXq1TTIBOMaA6OQR9Gi/
-        T6FLo2qEcQ46+6zWZl7y3U14dg==
-X-Google-Smtp-Source: ACcGV60TeS+4vcb6rH4dZXvnDjrJlrphbSBaoBASF7zbDuvGACWs16RYgXPlwsoESjE1xZsta9UP8g==
-X-Received: by 2002:a1c:f210:: with SMTP id s16-v6mr4263888wmc.36.1537767307505;
-        Sun, 23 Sep 2018 22:35:07 -0700 (PDT)
-Received: from [192.168.0.41] (89.154.136.77.rev.sfr.net. [77.136.154.89])
-        by smtp.googlemail.com with ESMTPSA id g2-v6sm2558997wmh.16.2018.09.23.22.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 22:35:06 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        od@zcrc.me, linux-mips@linux-mips.org,
-        Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5ba8750a.1c69fb81.501e8.d0f0SMTPIN_ADDED_MISSING@mx.google.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <58645f14-aec2-4f66-3a39-34beeabdb035@linaro.org>
-Date:   Mon, 24 Sep 2018 07:35:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <5ba8750a.1c69fb81.501e8.d0f0SMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Sep 2018 07:35:28 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:9500 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726273AbeIXLf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 07:35:27 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42JXw64SFVz9ttBj;
+        Mon, 24 Sep 2018 07:35:02 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id cGCzn8P_jPLY; Mon, 24 Sep 2018 07:35:02 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42JXw63Zjfz9ttBY;
+        Mon, 24 Sep 2018 07:35:02 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B2F288B776;
+        Mon, 24 Sep 2018 07:35:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id VkTr9Yqaqrvq; Mon, 24 Sep 2018 07:35:03 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8A8BA8B74B;
+        Mon, 24 Sep 2018 07:35:03 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 55A0370A73; Mon, 24 Sep 2018 05:35:03 +0000 (UTC)
+Message-Id: <f49e2e4ff1eacbad161eb6c1645cca7a281dcf3e.1537765881.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/traps: merge unrecoverable_exception() and
+ nonrecoverable_exception()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 24 Sep 2018 05:35:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/09/2018 07:24, Paul Cercueil wrote:
-> Hi Daniel,
-> 
-> Le 24 sept. 2018 05:12, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
->>
->> On 21/08/2018 19:16, Paul Cercueil wrote: 
->>> This driver handles the TCU (Timer Counter Unit) present on the Ingenic 
->>> JZ47xx SoCs, and provides the kernel with a system timer, and optionally 
->>> with a clocksource and a sched_clock. 
->>>
->>> It also provides clocks and interrupt handling to client drivers. 
->>
->> Can you provide a much more complete description of the timer in order 
->> to make my life easier for the review of this patch? 
-> 
-> See patch [03/24], it adds a doc file that describes the hardware.
+PPC32 uses nonrecoverable_exception() while PPC64 uses
+unrecoverable_exception().
 
-Thanks, I went through but it is incomplete to understand what the timer
-do. I will reverse-engineer the code but it would help if you can give
-the gross approach. Why multiple channels ? mutexes and completion ?
+Both functions are doing almost the same thing.
 
+This patch removes nonrecoverable_exception()
 
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/asm-prototypes.h |  1 -
+ arch/powerpc/kernel/entry_32.S            |  4 ++--
+ arch/powerpc/kernel/traps.c               | 13 +++----------
+ 3 files changed, 5 insertions(+), 13 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/asm-prototypes.h b/arch/powerpc/include/asm/asm-prototypes.h
+index 78ed3c3f879a..2741831482f4 100644
+--- a/arch/powerpc/include/asm/asm-prototypes.h
++++ b/arch/powerpc/include/asm/asm-prototypes.h
+@@ -63,7 +63,6 @@ void program_check_exception(struct pt_regs *regs);
+ void alignment_exception(struct pt_regs *regs);
+ void slb_miss_bad_addr(struct pt_regs *regs);
+ void StackOverflow(struct pt_regs *regs);
+-void nonrecoverable_exception(struct pt_regs *regs);
+ void kernel_fp_unavailable_exception(struct pt_regs *regs);
+ void altivec_unavailable_exception(struct pt_regs *regs);
+ void vsx_unavailable_exception(struct pt_regs *regs);
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index e58c3f467db5..77decded1175 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -794,7 +794,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_601)
+ 	lis	r10,MSR_KERNEL@h
+ 	ori	r10,r10,MSR_KERNEL@l
+ 	bl	transfer_to_handler_full
+-	.long	nonrecoverable_exception
++	.long	unrecoverable_exception
+ 	.long	ret_from_except
+ #endif
+ 
+@@ -1297,7 +1297,7 @@ END_FTR_SECTION_IFSET(CPU_FTR_601)
+ 	rlwinm	r3,r3,0,0,30
+ 	stw	r3,_TRAP(r1)
+ 4:	addi	r3,r1,STACK_FRAME_OVERHEAD
+-	bl	nonrecoverable_exception
++	bl	unrecoverable_exception
+ 	/* shouldn't return */
+ 	b	4b
+ 
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 6ab66a88db14..4567eeb6524e 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -1547,14 +1547,6 @@ void StackOverflow(struct pt_regs *regs)
+ 	panic("kernel stack overflow");
+ }
+ 
+-void nonrecoverable_exception(struct pt_regs *regs)
+-{
+-	printk(KERN_ERR "Non-recoverable exception at PC=%lx MSR=%lx\n",
+-	       regs->nip, regs->msr);
+-	debugger(regs);
+-	die("nonrecoverable exception", regs, SIGKILL);
+-}
+-
+ void kernel_fp_unavailable_exception(struct pt_regs *regs)
+ {
+ 	enum ctx_state prev_state = exception_enter();
+@@ -2090,8 +2082,9 @@ void SPEFloatingPointRoundException(struct pt_regs *regs)
+  */
+ void unrecoverable_exception(struct pt_regs *regs)
+ {
+-	printk(KERN_EMERG "Unrecoverable exception %lx at %lx\n",
+-	       regs->trap, regs->nip);
++	pr_emerg("Unrecoverable exception %lx at %lx (msr=%lx)\n",
++		 regs->trap, regs->nip, regs->msr);
++	debugger(regs);
+ 	die("Unrecoverable exception", regs, SIGABRT);
+ }
+ NOKPROBE_SYMBOL(unrecoverable_exception);
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.13.3
 
