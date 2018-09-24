@@ -2,115 +2,181 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670E3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D2BECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2315C21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B585321480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:23:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgRvODpX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2315C21486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcRxbbsW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B585321480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730658AbeIXUZU (ORCPT
+        id S1729090AbeIXUZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:25:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727579AbeIXUZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:25:19 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9609C21480;
-        Mon, 24 Sep 2018 14:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537798976;
-        bh=FDCySySy6uws+LvKwvr0GTdUawPPyUK0nh/GKiIrsiA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tgRvODpXd0sejAbXFPi0Tp6D0cmET5j3IDwLUzdxQ4YwFyuJP98KpPckb8dQ1uT6h
-         G0NnOrWb0Kol1Q+FFpmMzD+MXdGhr2D9KOwUwguVNv1HNpw7U8pVq3KRy/YXdDoJcV
-         UvvR0ukOL4pCRTxV8OZD6D3nArehFyw3Z+bJYwTQ=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 359AD1401A1; Mon, 24 Sep 2018 11:22:54 -0300 (-03)
-Date:   Mon, 24 Sep 2018 11:22:54 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        kernel-team@lge.com
-Subject: Re: [PATCH 47/48] perf record: Spread maps for --threads option
-Message-ID: <20180924142254.GB4640@kernel.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <20180913125450.21342-48-jolsa@kernel.org>
- <20180917114048.GF18395@sejong>
- <20180923194432.GH30923@krava>
+        Mon, 24 Sep 2018 16:25:45 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37237 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbeIXUZp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:25:45 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u12-v6so19868790wrr.4;
+        Mon, 24 Sep 2018 07:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Si0/x9SME+yYiJCX7KylcChYCVre+6JeZ3GeFVRFZ08=;
+        b=KcRxbbsWO6BJTXLbBBuKVwgGIcz39DhLaTEWKE1ht0lOevmVzaUQw5Z0V6YeE7073r
+         aq7aR+pXT5OaFuxbyk07vJy+wsCZ5B9Z2WrrZuiM9AbLq0K6i/EQ5e1/wPfPnGgWOzOe
+         sn5JtDN+S3d0rGIPNc6eWtkP8xrH4Wp1LbMubK3+ysb9EmLqSf1cuvfkBtpF1CSN7wyz
+         i9PRTrm9t/uCCM3FEX/2Dw7zEoRvZHReXCn9Yl+j/XDSpK9/BxA2HGLQI0EnnuamKEx0
+         EeGIek9+IBQqdQ3vVGiP+EQPCdrwhj7Ur5dYYZKovFH23iAcJdAdJjyvUPv666Be87bV
+         RBLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Si0/x9SME+yYiJCX7KylcChYCVre+6JeZ3GeFVRFZ08=;
+        b=Keat++dh0Lj5DnUp50TnA1znq0aSKtPNpoUtGV1/m1odF2TJbc6U6Lt2evUP5KHhNV
+         YCZdjl4PtoVlrmeo2sw//jmsmeOsqGmpn6A1/ECrP7gAI8PbTB4h12Z0fHwDzAuXk3Bt
+         GTCc/xoog99HrcYY7ZpY7ciCtVouXZXMTziAf4zRWYDexb/UZWJDYnbyYdcVbWBSVy/q
+         fZGnFXi+MhKvXHAn3XesT7bAt5gsmMVL78OmFp3L5pgJVoRhjk5gaGQx64SNzc/sAxQK
+         VBSJ/67n6FE9nSXsBfVKp5klabOjeLa6jLbwzhEjB76J1c9Tc6Jhn81f60GYXeZPkdRx
+         8VLQ==
+X-Gm-Message-State: ABuFfojRBqGBez84VLSsPk+7Y8MvdX7YqDQXYbnlN0C3nG3Ahbw8FIGD
+        kwK1Xr8fpS234UuKqNWkEW0=
+X-Google-Smtp-Source: ACcGV61Ixzlqpyk1r3mhSMEyfLTqV50w8rVsSqwTg8oWU9Eu4SdTG3qif/UJ3u0bg29lXOWrHBe8QQ==
+X-Received: by 2002:adf:fe06:: with SMTP id n6-v6mr9169169wrr.171.1537799000121;
+        Mon, 24 Sep 2018 07:23:20 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id x204-v6sm13237977wmg.27.2018.09.24.07.23.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 07:23:19 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 16:23:18 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     stefan.wahren@i2se.com, gohai@sukzessiv.net,
+        hsweeten@visionengravers.com, gottfried.haider@gmail.com,
+        loic.pallardy@st.com, broonie@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Subject: Re: [RESEND PATCH] Revert "pwm: Set class for exported channels in
+ sysfs"
+Message-ID: <20180924142318.GG23547@ulmo>
+References: <1537538567-5377-1-git-send-email-fabrice.gasnier@st.com>
+ <20180924115301.GV21032@ulmo>
+ <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="B8ONY/mu/bqBak9m"
 Content-Disposition: inline
-In-Reply-To: <20180923194432.GH30923@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sun, Sep 23, 2018 at 09:44:32PM +0200, Jiri Olsa escreveu:
-> On Mon, Sep 17, 2018 at 08:40:48PM +0900, Namhyung Kim wrote:
-> > On Thu, Sep 13, 2018 at 02:54:49PM +0200, Jiri Olsa wrote:
-> > > Currently we assign all maps to main thread. Adding
-> > > code that spreads maps for --threads option.
-> > > 
-> > > For --thread option we create as many threads as there
-> > > are memory maps in evlist, which is the number of CPUs
-> > > in the system or CPUs we monitor. Each thread gets a
-> > > single data mmap to read.
-> > > 
-> > > In addition we have also same amount of tracking mmaps
-> > > for auxiliary events which we don't create special thread
-> > > for. Instead we assign the to the main thread, because
-> > > there's not much traffic expected there.
-> > > 
-> > > The assignment is visible from --thread-stats output:
-> > > 
-> > >           pid      write       poll       skip  maps (size 20K)
-> > >     1s   9770       144B          1          0   19K   19K   19K   18K   19K
-> > >          9772         0B          1          0   18K
-> > >          9773         0B          1          0   19K
-> > >          9774         0B          1          0   19K
-> > > 
-> > > There are 5 maps for thread 9770 (1 data map and 4 auxiliary)
-> > > and one data map for every other thread. Each thread writes
-> > > data to the separate data file.
-> > 
-> > Hmm.. not sure it'll work well for large machines with 1000+ cpus.
-> > What about giving each thread a data mmap and a tracking mmap?
-> 
-> well currently we store the tracking data in single file,
-> thats why we need just one thread to write them down
 
-I agree with Namhyung, with a slight difference: perhaps we should set
-perf_event_attr.mmap on one of the events of the per-cpu mmap, that way
-we don't need that dummy event, right?
- 
-> with the *_time API, we should be able to properly read the
-> tracking data separately for each cpu
+--B8ONY/mu/bqBak9m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That may end up making the *_time API not needed (assuming the kernel
-keeps the per-cpu mmap events in order, barring that, using the
-ordered_events in batches, prior to consuming the events) and would help
-with things like 'perf top' and 'perf trace', that want to consume
-events right away.
+On Mon, Sep 24, 2018 at 03:59:03PM +0200, Fabrice Gasnier wrote:
+> On 09/24/2018 01:53 PM, Thierry Reding wrote:
+> > On Fri, Sep 21, 2018 at 04:02:47PM +0200, Fabrice Gasnier wrote:
+> >> This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it cau=
+ses
+> >> regression with multiple pwm chip. It creates a new entry in
+> >> '/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export=
+':
+> >> - 1st time export will create an entry in /sys/class/pwm/pwmX
+> >> - when another export happens on another pwmchip, it can't be created
+> >> (e.g. -EEXIST)
+> >>
+> >> This also changes existing ABI (Documentation/ABI/testing/sysfs-class-=
+pwm):
+> >> - pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
+> >>
+> >> Example on stm32 (stm32429i-eval) platform:
+> >> $ ls /sys/class/pwm
+> >> pwmchip0 pwmchip4
+> >>
+> >> $ cd /sys/class/pwm/pwmchip0/
+> >> $ echo 0 > export
+> >> $ ls /sys/class/pwm
+> >> pwm0 pwmchip0 pwmchip4
+> >>
+> >> $ cd /sys/class/pwm/pwmchip4/
+> >> $ echo 0 > export
+> >> sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+> >> ...Exception stack follows...
+> >>
+> >> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> >> ---
+> >>  drivers/pwm/sysfs.c | 1 -
+> >>  1 file changed, 1 deletion(-)
+> >=20
+> > Can we come up with an alternative that allows us to have both? We want
+> > uevent and proper sysfs creation, or is that not possible?
+>=20
+> Hi Thierry, all,
+>=20
+> With current approach:
+> - "export->child.class =3D parent->class"
+> - ABI (e.g. "pwm%d") device name isn't unique with multiple pwm chip.
+> I think this is not possible.
+>=20
+> Trying to think of an alternative... I just did a quick test, by
+> changing device name, to take pwmchip into account:
+> +       export->child.class =3D parent->class;
+>         export->child.release =3D pwm_export_release;
+>         export->child.parent =3D parent;
+>         export->child.devt =3D MKDEV(0, 0);
+>         export->child.groups =3D pwm_groups;
+> -       dev_set_name(&export->child, "pwm%u", pwm->hwpwm);
+> +       dev_set_name(&export->child, "pwmchip%d-pwm%u", chip->base,
+> pwm->hwpwm);
+>=20
+> But this also impacts existing ABI :-(
+> Would you have suggestions to send an uevent, without modifying ABI ?
 
-- Arnaldo
+I don't quite understand why, in the example you show in the commit
+message, the pwmX nodes appear in the top-level /sys/class/pwm
+directory. According to Documentation/ABI/testing/sysfs-class-pwm they
+should appear as /sys/class/pwm/pwmchipN/pwmX. I can only imagine that
+setting the class may have changed that. If so, perhaps we can
+workaround that by creating a new class that is not parent->class?
+
+Thierry
+
+--B8ONY/mu/bqBak9m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluo81YACgkQ3SOs138+
+s6GxAA//WkdXn0Zu2emfyYspUknO2Yb9looGZZElPqNLt0YPaWPcryc8JSxRE5p/
+aE31wGjwOK6eHRWgqWI18XC0W/67yyzF9MgzzcM39JW+ApM1OfEOShItNj8Xs1aS
+/9GgndxL2NpaSxkIiZJd/yhJOYMIQtyvpuy+0ealFLB+XNah2jW8r9I07xD+bWwL
+UjLIA2cB/o8kdTuxF0aOW0nG4j/O74hI+ctyFqobPFEG7+ggtLgCqLhZvEydD5g1
+tItLAcR73YQ9ZLWunePCdJIAiKY6eaITCaLyYR35pFHMSC5vHp9M1maqHQpsGtjA
+602kPP3em0UOr+92421mIjYWwgR08d03TKtzOMn0g2lvKVmPIbxrv5Z6H9c+ueJl
+q4QY14ogGdUTRA/ODiBET97P9OGfWsYB91qSwfDzool+7wgG5oxdNzXIjUFsW/89
+X1ny7+ULzMe6ft3x7ePOnRW+15t7pYILWQRsgd/4IVJGfH1wfP/GrAWkJ1JZyybq
+dDogVXTU4nhIhTc1T5m9WwCp41VkXoQVPUo8P7tpWExa0oq8mH8CPZSJZLGfE+Bc
+DF6wIfUhjJuyf0xBezDTAEfmHwRwLHI5uGV2tJUbD13NrlK3TxBFlF6751M12btK
+yZvYqbbiF+QPLF1pNMHD3r1m3Hm0wuE+DwnUA+PvqkofCnCueps=
+=FmsP
+-----END PGP SIGNATURE-----
+
+--B8ONY/mu/bqBak9m--
