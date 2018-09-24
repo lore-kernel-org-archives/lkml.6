@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AC2ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE99C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCA121486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCA121486
+	by mail.kernel.org (Postfix) with ESMTP id 70E322148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E322148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387474AbeIXS37 (ORCPT
+        id S2387485AbeIXSaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:29:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57386 "EHLO
+        Mon, 24 Sep 2018 14:30:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57392 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbeIXS36 (ORCPT
+        with ESMTP id S1730233AbeIXSaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:29:58 -0400
+        Mon, 24 Sep 2018 14:30:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48D721018;
-        Mon, 24 Sep 2018 12:28:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 856FD1018;
+        Mon, 24 Sep 2018 12:28:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Golan Ben Ami <golan.ben.ami@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 026/235] iwlwifi: cancel the injective function between hw pointers to tfd entry index
-Date:   Mon, 24 Sep 2018 13:50:12 +0200
-Message-Id: <20180924113107.304828110@linuxfoundation.org>
+Subject: [PATCH 4.18 027/235] gfs2: Special-case rindex for gfs2_grow
+Date:   Mon, 24 Sep 2018 13:50:13 +0200
+Message-Id: <20180924113107.427808714@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,96 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Golan Ben Ami <golan.ben.ami@intel.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit f5955a6cc3862a02d46f50b723c3172d24d749a5 ]
+[ Upstream commit 776125785a87ff05d49938bd5b9f336f2a05bff6 ]
 
-Nowadays, the tfd queue max size is 2^8, and the reserved size in the
-command header sequence field for the tfd entry index is 8 bits,
-allowing an injective function from the hw pointers to the tfd entry index
-in the sequence field.
+To speed up the common case of appending to a file,
+gfs2_write_alloc_required presumes that writing beyond the end of a file
+will always require additional blocks to be allocated.  This assumption
+is incorrect for preallocates files, but there are no negative
+consequences as long as *some* space is still left on the filesystem.
 
-In 22560 devices the tfd queue max size is 2^16, meaning that
-the hw pointers are 16 bit long (allowing to point to each entry
-in the tfd queue). However, the reserved space in the sequence field for
-the tfd entry doesn't change, and we are limited to 8 bit.
-This requires cancelling the injective function from hw pointer to
-tfd entry in the sequence number.
+One special file that always has some space preallocated beyond the end
+of the file is the rindex: when growing a filesystem, gfs2_grow adds one
+or more new resource groups and appends records describing those
+resource groups to the rindex; the preallocated space ensures that this
+is always possible.
 
-Use iwl_pcie_get_cmd_index to wrap the hw pointer's to the n_window
-size, which is maximum 256 in tx queues, and so, keep the injective
-function between the window wrapped hw pointers to tfd entry index in
-the sequence.
+However, when a filesystem is completely full, gfs2_write_alloc_required
+will indicate that an additional allocation is required, and appending
+the next record to the rindex will fail even though space for that
+record has already been preallocated.  To fix that, skip the incorrect
+optimization in gfs2_write_alloc_required, but for the rindex only.
+Other writes to preallocated space beyond the end of the file are still
+allowed to fail on completely full filesystems.
 
-Signed-off-by: Golan Ben Ami <golan.ben.ami@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/internal.h |   12 ++++++++----
- drivers/net/wireless/intel/iwlwifi/pcie/tx.c       |   11 ++++++++---
- 2 files changed, 16 insertions(+), 7 deletions(-)
+ fs/gfs2/bmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/internal.h
-@@ -660,7 +660,7 @@ static inline void iwl_enable_fw_load_in
- 	}
- }
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -2060,7 +2060,7 @@ int gfs2_write_alloc_required(struct gfs
+ 	end_of_file = (i_size_read(&ip->i_inode) + sdp->sd_sb.sb_bsize - 1) >> shift;
+ 	lblock = offset >> shift;
+ 	lblock_stop = (offset + len + sdp->sd_sb.sb_bsize - 1) >> shift;
+-	if (lblock_stop > end_of_file)
++	if (lblock_stop > end_of_file && ip != GFS2_I(sdp->sd_rindex))
+ 		return 1;
  
--static inline u8 iwl_pcie_get_cmd_index(struct iwl_txq *q, u32 index)
-+static inline u8 iwl_pcie_get_cmd_index(const struct iwl_txq *q, u32 index)
- {
- 	return index & (q->n_window - 1);
- }
-@@ -730,9 +730,13 @@ static inline void iwl_stop_queue(struct
- 
- static inline bool iwl_queue_used(const struct iwl_txq *q, int i)
- {
--	return q->write_ptr >= q->read_ptr ?
--		(i >= q->read_ptr && i < q->write_ptr) :
--		!(i < q->read_ptr && i >= q->write_ptr);
-+	int index = iwl_pcie_get_cmd_index(q, i);
-+	int r = iwl_pcie_get_cmd_index(q, q->read_ptr);
-+	int w = iwl_pcie_get_cmd_index(q, q->write_ptr);
-+
-+	return w >= r ?
-+		(index >= r && index < w) :
-+		!(index < r && index >= w);
- }
- 
- static inline bool iwl_is_rfkill_set(struct iwl_trans *trans)
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-@@ -1225,9 +1225,13 @@ static void iwl_pcie_cmdq_reclaim(struct
- 	struct iwl_txq *txq = trans_pcie->txq[txq_id];
- 	unsigned long flags;
- 	int nfreed = 0;
-+	u16 r;
- 
- 	lockdep_assert_held(&txq->lock);
- 
-+	idx = iwl_pcie_get_cmd_index(txq, idx);
-+	r = iwl_pcie_get_cmd_index(txq, txq->read_ptr);
-+
- 	if ((idx >= TFD_QUEUE_SIZE_MAX) || (!iwl_queue_used(txq, idx))) {
- 		IWL_ERR(trans,
- 			"%s: Read index for DMA queue txq id (%d), index %d is out of range [0-%d] %d %d.\n",
-@@ -1236,12 +1240,13 @@ static void iwl_pcie_cmdq_reclaim(struct
- 		return;
- 	}
- 
--	for (idx = iwl_queue_inc_wrap(idx); txq->read_ptr != idx;
--	     txq->read_ptr = iwl_queue_inc_wrap(txq->read_ptr)) {
-+	for (idx = iwl_queue_inc_wrap(idx); r != idx;
-+	     r = iwl_queue_inc_wrap(r)) {
-+		txq->read_ptr = iwl_queue_inc_wrap(txq->read_ptr);
- 
- 		if (nfreed++ > 0) {
- 			IWL_ERR(trans, "HCMD skipped: index (%d) %d %d\n",
--				idx, txq->write_ptr, txq->read_ptr);
-+				idx, txq->write_ptr, r);
- 			iwl_force_nmi(trans);
- 		}
- 	}
+ 	size = (lblock_stop - lblock) << shift;
 
 
