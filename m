@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54389ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9D6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 197A1208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197A1208D9
+	by mail.kernel.org (Postfix) with ESMTP id C6AF9208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6AF9208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732029AbeIXSRG (ORCPT
+        id S1732042AbeIXSRJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55536 "EHLO
+        Mon, 24 Sep 2018 14:17:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55546 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSRF (ORCPT
+        with ESMTP id S1730150AbeIXSRJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:05 -0400
+        Mon, 24 Sep 2018 14:17:09 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C7E810A4;
-        Mon, 24 Sep 2018 12:15:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB20E10A5;
+        Mon, 24 Sep 2018 12:15:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 055/173] wan/fsl_ucc_hdlc: use IS_ERR_VALUE() to check return value of qe_muram_alloc
-Date:   Mon, 24 Sep 2018 13:51:29 +0200
-Message-Id: <20180924113120.050079768@linuxfoundation.org>
+Subject: [PATCH 4.14 020/173] gfs2: Special-case rindex for gfs2_grow
+Date:   Mon, 24 Sep 2018 13:50:54 +0200
+Message-Id: <20180924113116.920174769@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,49 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit fd800f646402c0f85547166b59ca065175928b7b ]
+[ Upstream commit 776125785a87ff05d49938bd5b9f336f2a05bff6 ]
 
-qe_muram_alloc return a unsigned long integer,which should not
-compared with zero. check it using IS_ERR_VALUE() to fix this.
+To speed up the common case of appending to a file,
+gfs2_write_alloc_required presumes that writing beyond the end of a file
+will always require additional blocks to be allocated.  This assumption
+is incorrect for preallocates files, but there are no negative
+consequences as long as *some* space is still left on the filesystem.
 
-Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+One special file that always has some space preallocated beyond the end
+of the file is the rindex: when growing a filesystem, gfs2_grow adds one
+or more new resource groups and appends records describing those
+resource groups to the rindex; the preallocated space ensures that this
+is always possible.
+
+However, when a filesystem is completely full, gfs2_write_alloc_required
+will indicate that an additional allocation is required, and appending
+the next record to the rindex will fail even though space for that
+record has already been preallocated.  To fix that, skip the incorrect
+optimization in gfs2_write_alloc_required, but for the rindex only.
+Other writes to preallocated space beyond the end of the file are still
+allowed to fail on completely full filesystems.
+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/gfs2/bmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -192,7 +192,7 @@ static int uhdlc_init(struct ucc_hdlc_pr
- 	priv->ucc_pram_offset = qe_muram_alloc(sizeof(struct ucc_hdlc_param),
- 				ALIGNMENT_OF_UCC_HDLC_PRAM);
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -1680,7 +1680,7 @@ int gfs2_write_alloc_required(struct gfs
+ 	end_of_file = (i_size_read(&ip->i_inode) + sdp->sd_sb.sb_bsize - 1) >> shift;
+ 	lblock = offset >> shift;
+ 	lblock_stop = (offset + len + sdp->sd_sb.sb_bsize - 1) >> shift;
+-	if (lblock_stop > end_of_file)
++	if (lblock_stop > end_of_file && ip != GFS2_I(sdp->sd_rindex))
+ 		return 1;
  
--	if (priv->ucc_pram_offset < 0) {
-+	if (IS_ERR_VALUE(priv->ucc_pram_offset)) {
- 		dev_err(priv->dev, "Can not allocate MURAM for hdlc parameter.\n");
- 		ret = -ENOMEM;
- 		goto free_tx_bd;
-@@ -228,14 +228,14 @@ static int uhdlc_init(struct ucc_hdlc_pr
- 
- 	/* Alloc riptr, tiptr */
- 	riptr = qe_muram_alloc(32, 32);
--	if (riptr < 0) {
-+	if (IS_ERR_VALUE(riptr)) {
- 		dev_err(priv->dev, "Cannot allocate MURAM mem for Receive internal temp data pointer\n");
- 		ret = -ENOMEM;
- 		goto free_tx_skbuff;
- 	}
- 
- 	tiptr = qe_muram_alloc(32, 32);
--	if (tiptr < 0) {
-+	if (IS_ERR_VALUE(tiptr)) {
- 		dev_err(priv->dev, "Cannot allocate MURAM mem for Transmit internal temp data pointer\n");
- 		ret = -ENOMEM;
- 		goto free_riptr;
+ 	size = (lblock_stop - lblock) << shift;
 
 
