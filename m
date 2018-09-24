@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5157ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB273C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB6B20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB6B20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 81E7F208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81E7F208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbeIXSUP (ORCPT
+        id S1732590AbeIXSUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:20:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56102 "EHLO
+        Mon, 24 Sep 2018 14:20:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56112 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730063AbeIXSUP (ORCPT
+        with ESMTP id S1730063AbeIXSUT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:20:15 -0400
+        Mon, 24 Sep 2018 14:20:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BBE011087;
-        Mon, 24 Sep 2018 12:18:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11E791087;
+        Mon, 24 Sep 2018 12:18:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/173] KVM: arm/arm64: Fix vgic init race
-Date:   Mon, 24 Sep 2018 13:51:40 +0200
-Message-Id: <20180924113120.872436151@linuxfoundation.org>
+Subject: [PATCH 4.14 067/173] drivers/base: stop new probing during shutdown
+Date:   Mon, 24 Sep 2018 13:51:41 +0200
+Message-Id: <20180924113120.955885442@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,39 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christoffer Dall <christoffer.dall@arm.com>
+From: Pingfan Liu <kernelfans@gmail.com>
 
-[ Upstream commit 1d47191de7e15900f8fbfe7cccd7c6e1c2d7c31a ]
+[ Upstream commit 3297c8fc65af5d40501ea7cddff1b195cae57e4e ]
 
-The vgic_init function can race with kvm_arch_vcpu_create() which does
-not hold kvm_lock() and we therefore have no synchronization primitives
-to ensure we're doing the right thing.
+There is a race window in device_shutdown(), which may cause
+-1. parent device shut down before child or
+-2. no shutdown on a new probing device.
 
-As the user is trying to initialize or run the VM while at the same time
-creating more VCPUs, we just have to refuse to initialize the VGIC in
-this case rather than silently failing with a broken VCPU.
+For 1st, taking the following scenario:
+         device_shutdown                        new plugin device
+  list_del_init(parent_dev);
+  spin_unlock(list_lock);
+                                                  device_add(child)
+                                                  probe child
+  shutdown parent_dev
+       --> now child is on the tail of devices_kset
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+For 2nd, taking the following scenario:
+         device_shutdown                        new plugin device
+                                                  device_add(dev)
+  device_lock(dev);
+  ...
+  device_unlock(dev);
+                                                  probe dev
+       --> now, the new occurred dev has no opportunity to shutdown
+
+To fix this race issue, just prevent the new probing request. With this
+logic, device_shutdown() is more similar to dpm_prepare().
+
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- virt/kvm/arm/vgic/vgic-init.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/base/core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -277,6 +277,10 @@ int vgic_init(struct kvm *kvm)
- 	if (vgic_initialized(kvm))
- 		return 0;
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2783,6 +2783,9 @@ void device_shutdown(void)
+ {
+ 	struct device *dev, *parent;
  
-+	/* Are we also in the middle of creating a VCPU? */
-+	if (kvm->created_vcpus != atomic_read(&kvm->online_vcpus))
-+		return -EBUSY;
++	wait_for_device_probe();
++	device_block_probing();
 +
- 	/* freeze the number of spis */
- 	if (!dist->nr_spis)
- 		dist->nr_spis = VGIC_NR_IRQS_LEGACY - VGIC_NR_PRIVATE_IRQS;
+ 	spin_lock(&devices_kset->list_lock);
+ 	/*
+ 	 * Walk the devices list backward, shutting down each in turn.
 
 
