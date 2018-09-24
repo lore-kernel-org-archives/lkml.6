@@ -2,139 +2,260 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B371ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2469DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA43F208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC335208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:57:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MzWbz4wj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA43F208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="auo7EVn+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BrL2cdGF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC335208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeIXN4Q (ORCPT
+        id S1727445AbeIXN6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 09:56:16 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:39875 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbeIXN4Q (ORCPT
+        Mon, 24 Sep 2018 09:58:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59094 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeIXN6P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 09:56:16 -0400
-Received: by mail-yw1-f68.google.com with SMTP id v1-v6so725725ywv.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 00:55:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lJNCjcNCTvO8CzlPUlOSta4dgsJzCl/QecgNUyV3yqc=;
-        b=MzWbz4wjyIUbV3xxYgycVR0Gg9elsDmNiZmMOWrX2YquFw0/X0xfy0AAO9NQaw6Wzn
-         7bGZiW9nylxm3lBHQZSl/m4y4XfAAT8ERwb61YmY6c1NZaxK+MlhCO5+MZVuDhjdLFwH
-         wfzFsKodjgoA6DvHM5IVMIoIcIJSuUgKi0X9Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lJNCjcNCTvO8CzlPUlOSta4dgsJzCl/QecgNUyV3yqc=;
-        b=pYX4h0LFloVQavwS8riATsDTJwNVKteP0bu6dcHP8k4rVgnBs+mDzJGDoxxyu7DeMk
-         AO5ejFXrt+ECuvIWVAZLOMxZViSR69wn20ine9gyBx4Barz5UYpSYEh8bpgUMgv/Rslp
-         eprcd9OU2Te8HMo49T7H0k5NT1cD1z2+xQmz12VsyI5+g0lkC5BaAAstPnj2utHuu+8W
-         1Sc67sALPSxc97kTRIDA4WSv++lyeu06etJPOXycULsnm3Zql6Lzl6EKgaZwKNQXAE4F
-         9xP7swjWZdL74v74rQdFH7/U+N0IbtpnHuUsRGv1PqJx3MxOAaGpkddOhf5DT2uMLEjE
-         DFMA==
-X-Gm-Message-State: APzg51ClX6q3cOfBWZqHuiTmhXG1q+IXqoAHyxhS+DqZxh4MnAs3O/dv
-        oiabWOsrJx/kZFLy9sXUcBDYDnMVr+SZqqCYHhWHqw==
-X-Google-Smtp-Source: ACcGV63iEwLFYhaDr8y6iWzFGIYdZs0FOuFUXEVdEsaZa8YVQViyfvbzb4/ZghvhoZ/0HOnZKdf1JTXiFFx9u6CVrro=
-X-Received: by 2002:a0d:d801:: with SMTP id a1-v6mr505328ywe.399.1537775726878;
- Mon, 24 Sep 2018 00:55:26 -0700 (PDT)
+        Mon, 24 Sep 2018 09:58:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C2F8C607A2; Mon, 24 Sep 2018 07:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537775844;
+        bh=W9uCtxfETysNPsJGzibn/plvQLjbdGd1bgpM5yrXy/M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=auo7EVn+9Zp3Ym36Jj58HfKz1juf6fLc/r867muU8b+u0GFNNN66HvDgQ747ZN/kV
+         Tlir+EHw9TbheIOYg8JlbvYzOOiwYbPiJwtENFL+iZnbrBKTq+EVxPwN5nwFfJO7j8
+         Icu3VKRpTWX6cORkWaAX83PWBDzmSSdRjmvWxgl4=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 8D777601A8;
+        Mon, 24 Sep 2018 07:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537775842;
+        bh=W9uCtxfETysNPsJGzibn/plvQLjbdGd1bgpM5yrXy/M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=BrL2cdGF1UQpBmeatupkJCtlfdSDl+ksc84myY7pMXW5S3aUpxhqmPk4dWvmw2LLH
+         T7Hn4N0zB0VDwVbmZ++n5UTOJ/QJyXny/JQ/T3DEnfvzTQERRMYjHiellFfIC4sDa0
+         fpD8S1fuic63/zhtWG6Yu/bCuU6+rGhWIvigmQEM=
 MIME-Version: 1.0
-References: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org>
- <1537455973-12468-5-git-send-email-firoz.khan@linaro.org> <CAMuHMdWZv7eKt+2CSXQ3kgPXc-Vvm7o7zED9afXxnG8dh6+nFA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWZv7eKt+2CSXQ3kgPXc-Vvm7o7zED9afXxnG8dh6+nFA@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Mon, 24 Sep 2018 13:25:15 +0530
-Message-ID: <CALxhOng7vodqyOAceTbv_LxLhe2KfuEgHSx+=8Dj57McQX1qCQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] m68k: uapi header and system call table file generation
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 24 Sep 2018 13:27:22 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, osalvador@suse.de,
+        malat@debian.org, Yasuaki Ishimatsu <yasu.isimatu@gmail.com>,
+        devel@linuxdriverproject.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux MM <linux-mm@kvack.org>,
+        xen-devel <xen-devel@lists.xenproject.org>, vatsa@codeaurora.org,
+        vinmenon@codeaurora.org, getarunks@gmail.com
+Subject: Re: [PATCH] memory_hotplug: Free pages as higher order
+In-Reply-To: <CAPcyv4ijAitQwK1JBpxQ_wBS9afUKFzMdpq1se7aAw+cJk-24Q@mail.gmail.com>
+References: <1537522709-7519-1-git-send-email-arunks@codeaurora.org>
+ <CAPcyv4ijAitQwK1JBpxQ_wBS9afUKFzMdpq1se7aAw+cJk-24Q@mail.gmail.com>
+Message-ID: <31ab7e1063599700710c86b2ab4bc515@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 at 12:35, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Firoz,
->
-> On Thu, Sep 20, 2018 at 5:07 PM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > System call table generation script must be run to generate
-> > unistd_32.h and syscall_table.h files. This patch will have
-> > changes which will invokes the script.
-> >
-> > This patch will generate unistd_32.h and syscall_table.h
-> > files by the syscall table generation script invoked by
-> > arch/m68k/Makefile and the generated files against the
-> > removed files will be identical.
-> >
-> > The generated uapi header file will be included in
-> > uapi/asm/unistd.h and generated system call table support
-> > file will be included by arch/m68k/kernel/syscall_table.S
-> > file.
-> >
-> > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
->
-> Thanks for your patch!
->
-> > --- a/arch/m68k/include/asm/Kbuild
-> > +++ b/arch/m68k/include/asm/Kbuild
-> > @@ -24,3 +24,4 @@ generic-y += topology.h
-> >  generic-y += trace_clock.h
-> >  generic-y += word-at-a-time.h
-> >  generic-y += xor.h
-> > +generic-y += syscall_table.h
-> > \ No newline at end of file
->
-> Please add the missing newline.
+On 2018-09-21 21:12, Dan Williams wrote:
+> On Fri, Sep 21, 2018 at 2:40 AM Arun KS <arunks@codeaurora.org> wrote:
+>> 
+>> When free pages are done with higher order, time spend on
+>> coalescing pages by buddy allocator can be reduced. With
+>> section size of 256MB, hot add latency of a single section
+>> shows improvement from 50-60 ms to less than 1 ms, hence
+>> improving the hot add latency by 60%.
+>> 
+>> Modify external providers of online callback to align with
+>> the change.
+>> 
+>> Signed-off-by: Arun KS <arunks@codeaurora.org>
+>> 
+>> ---
+>> 
+>> Changes since RFC:
+>> - Rebase.
+>> - As suggested by Michal Hocko remove pages_per_block.
+>> - Modifed external providers of online_page_callback.
+>> 
+>> RFC:
+>> https://lore.kernel.org/patchwork/patch/984754/
+>> ---
+>>  drivers/hv/hv_balloon.c        |  6 +++--
+>>  drivers/xen/balloon.c          | 18 +++++++++++---
+>>  include/linux/memory_hotplug.h |  2 +-
+>>  mm/memory_hotplug.c            | 55 
+>> +++++++++++++++++++++++++++++++++---------
+>>  4 files changed, 63 insertions(+), 18 deletions(-)
+>> 
+>> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+>> index b1b7880..c5bc0b5 100644
+>> --- a/drivers/hv/hv_balloon.c
+>> +++ b/drivers/hv/hv_balloon.c
+>> @@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, 
+>> unsigned long size,
+>>         }
+>>  }
+>> 
+>> -static void hv_online_page(struct page *pg)
+>> +static int hv_online_page(struct page *pg, unsigned int order)
+>>  {
+>>         struct hv_hotadd_state *has;
+>>         unsigned long flags;
+>> @@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+>>                 if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+>>                         continue;
+>> 
+>> -               hv_page_online_one(has, pg);
+>> +               hv_bring_pgs_online(has, pfn, (1UL << order));
+>>                 break;
+>>         }
+>>         spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+>> +
+>> +       return 0;
+>>  }
+>> 
+>>  static int pfn_covered(unsigned long start_pfn, unsigned long 
+>> pfn_cnt)
+>> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+>> index e12bb25..010cf4d 100644
+>> --- a/drivers/xen/balloon.c
+>> +++ b/drivers/xen/balloon.c
+>> @@ -390,8 +390,8 @@ static enum bp_state 
+>> reserve_additional_memory(void)
+>> 
+>>         /*
+>>          * add_memory_resource() will call online_pages() which in its 
+>> turn
+>> -        * will call xen_online_page() callback causing deadlock if we 
+>> don't
+>> -        * release balloon_mutex here. Unlocking here is safe because 
+>> the
+>> +        * will call xen_bring_pgs_online() callback causing deadlock 
+>> if we
+>> +        * don't release balloon_mutex here. Unlocking here is safe 
+>> because the
+>>          * callers drop the mutex before trying again.
+>>          */
+>>         mutex_unlock(&balloon_mutex);
+>> @@ -422,6 +422,18 @@ static void xen_online_page(struct page *page)
+>>         mutex_unlock(&balloon_mutex);
+>>  }
+>> 
+>> +static int xen_bring_pgs_online(struct page *pg, unsigned int order)
+>> +{
+>> +       unsigned long i, size = (1 << order);
+>> +       unsigned long start_pfn = page_to_pfn(pg);
+>> +
+>> +       pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, 
+>> start_pfn);
+>> +       for (i = 0; i < size; i++)
+>> +               xen_online_page(pfn_to_page(start_pfn + i));
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>  static int xen_memory_notifier(struct notifier_block *nb, unsigned 
+>> long val, void *v)
+>>  {
+>>         if (val == MEM_ONLINE)
+>> @@ -744,7 +756,7 @@ static int __init balloon_init(void)
+>>         balloon_stats.max_retry_count = RETRY_UNLIMITED;
+>> 
+>>  #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+>> -       set_online_page_callback(&xen_online_page);
+>> +       set_online_page_callback(&xen_bring_pgs_online);
+>>         register_memory_notifier(&xen_memory_nb);
+>>         register_sysctl_table(xen_root);
+>> 
+>> diff --git a/include/linux/memory_hotplug.h 
+>> b/include/linux/memory_hotplug.h
+>> index 34a2822..7b04c1d 100644
+>> --- a/include/linux/memory_hotplug.h
+>> +++ b/include/linux/memory_hotplug.h
+>> @@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long 
+>> start_pfn, unsigned long end_pfn,
+>>         unsigned long *valid_start, unsigned long *valid_end);
+>>  extern void __offline_isolated_pages(unsigned long, unsigned long);
+>> 
+>> -typedef void (*online_page_callback_t)(struct page *page);
+>> +typedef int (*online_page_callback_t)(struct page *page, unsigned int 
+>> order);
+>> 
+>>  extern int set_online_page_callback(online_page_callback_t callback);
+>>  extern int restore_online_page_callback(online_page_callback_t 
+>> callback);
+>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>> index 38d94b7..24c2b8e 100644
+>> --- a/mm/memory_hotplug.c
+>> +++ b/mm/memory_hotplug.c
+>> @@ -47,7 +47,7 @@
+>>   * and restore_online_page_callback() for generic callback restore.
+>>   */
+>> 
+>> -static void generic_online_page(struct page *page);
+>> +static int generic_online_page(struct page *page, unsigned int 
+>> order);
+>> 
+>>  static online_page_callback_t online_page_callback = 
+>> generic_online_page;
+>>  static DEFINE_MUTEX(online_page_callback_lock);
+>> @@ -655,26 +655,57 @@ void __online_page_free(struct page *page)
+>>  }
+>>  EXPORT_SYMBOL_GPL(__online_page_free);
+>> 
+>> -static void generic_online_page(struct page *page)
+>> +static int generic_online_page(struct page *page, unsigned int order)
+>>  {
+>> -       __online_page_set_limits(page);
+>> -       __online_page_increment_counters(page);
+>> -       __online_page_free(page);
+>> +       unsigned long nr_pages = 1 << order;
+>> +       struct page *p = page;
+>> +       unsigned int loop;
+>> +
+>> +       prefetchw(p);
+>> +       for (loop = 0 ; loop < (nr_pages - 1) ; loop++, p++) {
+>> +               prefetch(p + 1);
+> 
+> Given commits like:
+> 
+> e66eed651fd1 list: remove prefetching from regular list iterators
+> 75d65a425c01 hlist: remove software prefetching in hlist iterators
+> 
+> ...are you sure these explicit prefetch() calls are improving
+> performance? My understanding is that hardware prefetchers don't need
+> much help these days.
+Hello Dan,
 
-Sure. Will do. Thanks!
+Thanks for your comment. I tested on arm64 with and without prefetch and 
+as you guessed, the one without prefetch is slightly better.
 
->
-> > diff --git a/arch/m68k/include/uapi/asm/Kbuild b/arch/m68k/include/uapi/asm/Kbuild
-> > index c2e26a4..6d600e9 100644
-> > --- a/arch/m68k/include/uapi/asm/Kbuild
-> > +++ b/arch/m68k/include/uapi/asm/Kbuild
-> > @@ -21,3 +21,4 @@ generic-y += statfs.h
-> >  generic-y += termbits.h
-> >  generic-y += termios.h
-> >  generic-y += types.h
-> > +generic-y += unistd_32.h
-> > \ No newline at end of file
->
-> Likewise.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Will remove prefetch before sending next version.
+
+Regards,
+Arun
