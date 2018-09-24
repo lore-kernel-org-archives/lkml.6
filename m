@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8A5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A1DC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B182145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B182145D
+	by mail.kernel.org (Postfix) with ESMTP id 9DB4A21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB4A21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbeIXR6S (ORCPT
+        id S1730071AbeIXR6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:58:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52026 "EHLO
+        Mon, 24 Sep 2018 13:58:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728790AbeIXR6R (ORCPT
+        with ESMTP id S1728790AbeIXR6V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:58:17 -0400
+        Mon, 24 Sep 2018 13:58:21 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36DCC1072;
-        Mon, 24 Sep 2018 11:56:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8BD21073;
+        Mon, 24 Sep 2018 11:56:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.4 46/70] CIFS: fix wrapping bugs in num_entries()
-Date:   Mon, 24 Sep 2018 13:52:45 +0200
-Message-Id: <20180924113105.147026210@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-fsdevel@vger.kernel.org, linux-mips@linux-mips.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 47/70] binfmt_elf: Respect error return from `regset->active
+Date:   Mon, 24 Sep 2018 13:52:46 +0200
+Message-Id: <20180924113105.276328364@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -53,75 +56,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: "Maciej W. Rozycki" <macro@mips.com>
 
-commit 56446f218af1133c802dad8e9e116f07f381846c upstream.
+[ Upstream commit 2f819db565e82e5f73cd42b39925098986693378 ]
 
-The problem is that "entryptr + next_offset" and "entryptr + len + size"
-can wrap.  I ended up changing the type of "entryptr" because it makes
-the math easier when we don't have to do so much casting.
+The regset API documented in <linux/regset.h> defines -ENODEV as the
+result of the `->active' handler to be used where the feature requested
+is not available on the hardware found.  However code handling core file
+note generation in `fill_thread_core_info' interpretes any non-zero
+result from the `->active' handler as the regset requested being active.
+Consequently processing continues (and hopefully gracefully fails later
+on) rather than being abandoned right away for the regset requested.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Fix the problem then by making the code proceed only if a positive
+result is returned from the `->active' handler.
+
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 4206d3aa1978 ("elf core dump: notes user_regset")
+Patchwork: https://patchwork.linux-mips.org/patch/19332/
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2pdu.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ fs/binfmt_elf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2402,33 +2402,38 @@ num_entries(char *bufstart, char *end_of
- 	int len;
- 	unsigned int entrycount = 0;
- 	unsigned int next_offset = 0;
--	FILE_DIRECTORY_INFO *entryptr;
-+	char *entryptr;
-+	FILE_DIRECTORY_INFO *dir_info;
- 
- 	if (bufstart == NULL)
- 		return 0;
- 
--	entryptr = (FILE_DIRECTORY_INFO *)bufstart;
-+	entryptr = bufstart;
- 
- 	while (1) {
--		entryptr = (FILE_DIRECTORY_INFO *)
--					((char *)entryptr + next_offset);
--
--		if ((char *)entryptr + size > end_of_buf) {
-+		if (entryptr + next_offset < entryptr ||
-+		    entryptr + next_offset > end_of_buf ||
-+		    entryptr + next_offset + size > end_of_buf) {
- 			cifs_dbg(VFS, "malformed search entry would overflow\n");
- 			break;
- 		}
- 
--		len = le32_to_cpu(entryptr->FileNameLength);
--		if ((char *)entryptr + len + size > end_of_buf) {
-+		entryptr = entryptr + next_offset;
-+		dir_info = (FILE_DIRECTORY_INFO *)entryptr;
-+
-+		len = le32_to_cpu(dir_info->FileNameLength);
-+		if (entryptr + len < entryptr ||
-+		    entryptr + len > end_of_buf ||
-+		    entryptr + len + size > end_of_buf) {
- 			cifs_dbg(VFS, "directory entry name would overflow frame end of buf %p\n",
- 				 end_of_buf);
- 			break;
- 		}
- 
--		*lastentry = (char *)entryptr;
-+		*lastentry = entryptr;
- 		entrycount++;
- 
--		next_offset = le32_to_cpu(entryptr->NextEntryOffset);
-+		next_offset = le32_to_cpu(dir_info->NextEntryOffset);
- 		if (!next_offset)
- 			break;
- 	}
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1707,7 +1707,7 @@ static int fill_thread_core_info(struct
+ 		const struct user_regset *regset = &view->regsets[i];
+ 		do_thread_regset_writeback(t->task, regset);
+ 		if (regset->core_note_type && regset->get &&
+-		    (!regset->active || regset->active(t->task, regset))) {
++		    (!regset->active || regset->active(t->task, regset) > 0)) {
+ 			int ret;
+ 			size_t size = regset->n * regset->size;
+ 			void *data = kmalloc(size, GFP_KERNEL);
 
 
