@@ -2,114 +2,130 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693F0C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF01C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE262145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE262145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 687332145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:19:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687332145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbeIYCT0 (ORCPT
+        id S1727457AbeIYCXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:19:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:26545 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727281AbeIYCT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:19:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 13:15:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,299,1534834800"; 
-   d="scan'208";a="265335190"
-Received: from gnu-4.sc.intel.com ([172.25.70.231])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Sep 2018 13:14:59 -0700
-From:   "H.J. Lu" <hjl.tools@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH] x86: Discard .note.gnu.property sections
-Date:   Mon, 24 Sep 2018 13:14:59 -0700
-Message-Id: <20180924201459.35923-1-hjl.tools@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 24 Sep 2018 22:23:08 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37611 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeIYCXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 22:23:07 -0400
+Received: by mail-qt1-f196.google.com with SMTP id n6-v6so10943050qtl.4;
+        Mon, 24 Sep 2018 13:19:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OsYidU1hlYJ+klx90AxIRQwB+6wMrrJr/JJ5pU6q0MY=;
+        b=Bq/5Ah6K21QrKgRd+sjq/p5dJ91R2dGXcpqxjIP6Bg+7vpN08kjY+Dt47M4ZWLQpy7
+         jWD2Xl247Vp9nhJwHCKu4MLoc/EaiAJKxWCbQTyBPprQ3k0pW3+ANb0vjgsMD/Z997c3
+         TTQErOEhXe37g034dqRyqZnxjDcbV1O5xAvhemXC0trlHhq8VTSBTaXu/lCeZNMzLdwF
+         f7arq0xyFJiacUrcyltM3Jq9mrkP0ImHO0BXL5vt10A1ggljVrqJJhAOH/MD2YwFTJg3
+         /+K/bIdKv6ZCGQxQGe3C/o10WAVA0/aUOVl11Oud2OwxwgE+VuN73daPLfyknval13lO
+         Gsfw==
+X-Gm-Message-State: ABuFfohThuABX9vh8S5yordOs4kPicfzJH7PP/gcS6K9DccXXnG2e6nk
+        a05V5KLBS8tfiTJs1N6C94upuBmoFFwCm9LwbLQ=
+X-Google-Smtp-Source: ACcGV60Ps3U5LLCo0RjeCpaPr9VTAwVS7tqdLJYGXjikqVVB7pTkjFqFcc8hPBx92H8kqqx7rZwu+cIOb887IRHt2U8=
+X-Received: by 2002:a0c:a8cc:: with SMTP id h12-v6mr393998qvc.161.1537820349291;
+ Mon, 24 Sep 2018 13:19:09 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180912150142.157913-1-arnd@arndb.de> <20180912151134.436719-1-arnd@arndb.de>
+ <20180914203506.GE35251@wrath> <20180914205748.GC19965@ZenIV.linux.org.uk>
+ <20180918175108.GF35251@wrath> <20180918175952.GJ11367@ziepe.ca>
+In-Reply-To: <20180918175952.GJ11367@ziepe.ca>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 24 Sep 2018 22:18:52 +0200
+Message-ID: <CAK8P3a17GY89in7PeLk1F2T-0Xq=sCrwwntM+Y4BCpXheUC+qQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to generic_compat_ioctl_ptrarg
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        David Miller <davem@davemloft.net>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        qat-linux@intel.com,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        linux-iio@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-fbdev@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the command-line option, -mx86-used-note=yes, the x86 assembler
-in binutils 2.32 and above generates a program property note in a note
-section, .note.gnu.property, to encode used x86 ISAs and features.
-To exclude .note.gnu.property sections from NOTE segment in x86 kernel
-linker script:
+On Tue, Sep 18, 2018 at 7:59 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Tue, Sep 18, 2018 at 10:51:08AM -0700, Darren Hart wrote:
+> > On Fri, Sep 14, 2018 at 09:57:48PM +0100, Al Viro wrote:
+> > > On Fri, Sep 14, 2018 at 01:35:06PM -0700, Darren Hart wrote:
+> > >
+> > > > Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
+> > > >
+> > > > As for a longer term solution, would it be possible to init fops in such
+> > > > a way that the compat_ioctl call defaults to generic_compat_ioctl_ptrarg
+> > > > so we don't have to duplicate this boilerplate for every ioctl fops
+> > > > structure?
+> > >
+> > >     Bad idea, that...  Because several years down the road somebody will add
+> > > an ioctl that takes an unsigned int for argument.  Without so much as looking
+> > > at your magical mystery macro being used to initialize file_operations.
+> >
+> > Fair, being explicit in the declaration as it is currently may be
+> > preferable then.
+>
+> It would be much cleaner and safer if you could arrange things to add
+> something like this to struct file_operations:
+>
+>   long (*ptr_ioctl) (struct file *, unsigned int, void __user *);
+>
+> Where the core code automatically converts the unsigned long to the
+> void __user * as appropriate.
+>
+> Then it just works right always and the compiler will help address
+> Al's concern down the road.
 
-PHDRS {
- text PT_LOAD FLAGS(5);
- data PT_LOAD FLAGS(6);
- percpu PT_LOAD FLAGS(6);
- init PT_LOAD FLAGS(7);
- note PT_NOTE FLAGS(0);
-}
-SECTIONS
-{
-...
- .notes : AT(ADDR(.notes) - 0xffffffff80000000) { __start_notes = .; KEEP(*(.not
-e.*)) __stop_notes = .; } :text :note
-...
-}
+I think if we wanted to do this with a new file operation, the best
+way would be to do the copy_from_user()/copy_to_user() in the caller
+as well.
 
-this patch discards .note.gnu.property sections in kernel linker script
-by adding
+We already do this inside of some subsystems, notably drivers/media/,
+and it simplifies the implementation of the ioctl handler function
+significantly. We obviously cannot do this in general, both because of
+traditional drivers that have 16-bit command codes (drivers/tty and others)
+and also because of drivers that by accident defined the commands
+incorrectly and use the wrong type or the wrong direction in the
+definition.
 
- /DISCARD/ : {
-  *(.note.gnu.property)
- }
-
-before .notes sections.  Since .exit.text and .exit.data sections are
-discarded at runtime, it undefines EXIT_TEXT and EXIT_DATA to exclude
-.exit.text and .exit.data sections from default discarded sections.
-
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
----
- arch/x86/kernel/vmlinux.lds.S | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 8bde0a419f86..7e1e0ef1578a 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -138,6 +138,10 @@ SECTIONS
- 		_etext = .;
- 	} :text = 0x9090
- 
-+	/* .note.gnu.property sections should be discarded */
-+	/DISCARD/ : {
-+		*(.note.gnu.property)
-+	}
- 	NOTES :text :note
- 
- 	EXCEPTION_TABLE(16) :text = 0x9090
-@@ -373,7 +377,12 @@ SECTIONS
- 	STABS_DEBUG
- 	DWARF_DEBUG
- 
--	/* Sections to be discarded */
-+	/* Sections to be discarded.  EXIT_TEXT and EXIT_DATA discard at runtime.
-+	 * not link time.  */
-+#undef EXIT_TEXT
-+#define EXIT_TEXT
-+#undef EXIT_DATA
-+#define EXIT_DATA
- 	DISCARDS
- 	/DISCARD/ : {
- 		*(.eh_frame)
--- 
-2.17.1
-
+       Arnd
