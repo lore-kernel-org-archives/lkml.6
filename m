@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1457C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D43ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984BB21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 984BB21486
+	by mail.kernel.org (Postfix) with ESMTP id A72DA21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72DA21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388843AbeIXSnt (ORCPT
+        id S2388854AbeIXSnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:43:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59198 "EHLO
+        Mon, 24 Sep 2018 14:43:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59212 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbeIXSns (ORCPT
+        with ESMTP id S1729543AbeIXSnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:43:48 -0400
+        Mon, 24 Sep 2018 14:43:51 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64727109E;
-        Mon, 24 Sep 2018 12:41:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3C7C109E;
+        Mon, 24 Sep 2018 12:41:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 182/235] mmc: tegra: prevent HS200 on Tegra 3
-Date:   Mon, 24 Sep 2018 13:52:48 +0200
-Message-Id: <20180924113122.803178562@linuxfoundation.org>
+Subject: [PATCH 4.18 183/235] mmc: sdhci: do not try to use 3.3V signaling if not supported
+Date:   Mon, 24 Sep 2018 13:52:49 +0200
+Message-Id: <20180924113122.880446864@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -55,43 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit 127407e36f4fe3a1d5e8b9998b479956ce83a7dc ]
+[ Upstream commit 1b5190c2e74c47ebe4bcecf7a072358ad9f1feaa ]
 
-The stack assumes that SDHC controller which support SD3.0 (SDR104) do
-support HS200. This is not the case for Tegra 3, which does support SD
-3.0
-but only supports eMMC spec 4.41.
+For eMMC devices it is valid to only support 1.8V signaling. When
+vqmmc is set to a fixed 1.8V regulator the stack tries to set 3.3V
+initially and prints the following warning:
+   mmc1: Switching to 3.3V signalling voltage failed
 
-Use SDHCI_QUIRK2_BROKEN_HS200 to indicate that the controller does not
-support HS200.
+Clear the MMC_SIGNAL_VOLTAGE_330 flag in case 3.3V is signaling is
+not available. This prevents the stack from even trying to use
+3.3V signaling and avoids the above warning.
 
-Note that commit 156e14b126ff ("mmc: sdhci: fix caps2 for HS200") added
-the tie between SD3.0 (SDR104) and HS200. I don't think that this is
-necessarly true. It is fully legitimate to support SD3.0 and not support
-HS200. The quirk naming suggests something is broken in the controller,
-but this is not the case: The controller simply does not support HS200.
-
-Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
 Signed-off-by: Stefan Agner <stefan@agner.ch>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-tegra.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -334,7 +334,8 @@ static const struct sdhci_pltfm_data sdh
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_BROKEN_HS200,
- 	.ops  = &tegra_sdhci_ops,
- };
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3734,14 +3734,21 @@ int sdhci_setup_host(struct sdhci_host *
+ 	    mmc_gpio_get_cd(host->mmc) < 0)
+ 		mmc->caps |= MMC_CAP_NEEDS_POLL;
  
+-	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
+ 	if (!IS_ERR(mmc->supply.vqmmc)) {
+ 		ret = regulator_enable(mmc->supply.vqmmc);
++
++		/* If vqmmc provides no 1.8V signalling, then there's no UHS */
+ 		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
+ 						    1950000))
+ 			host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
+ 					 SDHCI_SUPPORT_SDR50 |
+ 					 SDHCI_SUPPORT_DDR50);
++
++		/* In eMMC case vqmmc might be a fixed 1.8V regulator */
++		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 2700000,
++						    3600000))
++			host->flags &= ~SDHCI_SIGNALING_330;
++
+ 		if (ret) {
+ 			pr_warn("%s: Failed to enable vqmmc regulator: %d\n",
+ 				mmc_hostname(mmc), ret);
 
 
