@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8422EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF86ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2BB21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2BB21486
+	by mail.kernel.org (Postfix) with ESMTP id 11C4D21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11C4D21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388531AbeIXSlu (ORCPT
+        id S2388508AbeIXSlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:41:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58894 "EHLO
+        Mon, 24 Sep 2018 14:41:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58884 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731070AbeIXSlt (ORCPT
+        with ESMTP id S1731437AbeIXSlp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:41:49 -0400
+        Mon, 24 Sep 2018 14:41:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE8471099;
-        Mon, 24 Sep 2018 12:39:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B05491099;
+        Mon, 24 Sep 2018 12:39:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 151/235] vfs: fix freeze protection in mnt_want_write_file() for overlayfs
-Date:   Mon, 24 Sep 2018 13:52:17 +0200
-Message-Id: <20180924113120.475279668@linuxfoundation.org>
+Subject: [PATCH 4.18 150/235] mtdchar: fix overflows in adjustment of `count`
+Date:   Mon, 24 Sep 2018 13:52:16 +0200
+Message-Id: <20180924113120.400607752@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,50 +52,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit a6795a585929d94ca3e931bc8518f8deb8bbe627 ]
+[ Upstream commit 6c6bc9ea84d0008024606bf5ba10519e20d851bf ]
 
-The underlying real file used by overlayfs still contains the overlay path.
-This results in mnt_want_write_file() calls by the filesystem getting
-freeze protection on the wrong inode (the overlayfs one instead of the real
-one).
+The first checks in mtdchar_read() and mtdchar_write() attempt to limit
+`count` such that `*ppos + count <= mtd->size`. However, they ignore the
+possibility of `*ppos > mtd->size`, allowing the calculation of `count` to
+wrap around. `mtdchar_lseek()` prevents seeking beyond mtd->size, but the
+pread/pwrite syscalls bypass this.
 
-Fix by using file_inode(file)->i_sb instead of file->f_path.mnt->mnt_sb.
+I haven't found any codepath on which this actually causes dangerous
+behavior, but it seems like a sensible change anyway.
 
-Reported-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/namespace.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/mtd/mtdchar.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -446,10 +446,10 @@ int mnt_want_write_file_path(struct file
- {
- 	int ret;
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -160,8 +160,12 @@ static ssize_t mtdchar_read(struct file
  
--	sb_start_write(file->f_path.mnt->mnt_sb);
-+	sb_start_write(file_inode(file)->i_sb);
- 	ret = __mnt_want_write_file(file);
- 	if (ret)
--		sb_end_write(file->f_path.mnt->mnt_sb);
-+		sb_end_write(file_inode(file)->i_sb);
- 	return ret;
- }
+ 	pr_debug("MTD_read\n");
  
-@@ -540,7 +540,8 @@ void __mnt_drop_write_file(struct file *
+-	if (*ppos + count > mtd->size)
+-		count = mtd->size - *ppos;
++	if (*ppos + count > mtd->size) {
++		if (*ppos < mtd->size)
++			count = mtd->size - *ppos;
++		else
++			count = 0;
++	}
  
- void mnt_drop_write_file_path(struct file *file)
- {
--	mnt_drop_write(file->f_path.mnt);
-+	__mnt_drop_write_file(file);
-+	sb_end_write(file_inode(file)->i_sb);
- }
+ 	if (!count)
+ 		return 0;
+@@ -246,7 +250,7 @@ static ssize_t mtdchar_write(struct file
  
- void mnt_drop_write_file(struct file *file)
+ 	pr_debug("MTD_write\n");
+ 
+-	if (*ppos == mtd->size)
++	if (*ppos >= mtd->size)
+ 		return -ENOSPC;
+ 
+ 	if (*ppos + count > mtd->size)
 
 
