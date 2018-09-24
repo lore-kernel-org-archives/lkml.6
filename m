@@ -2,97 +2,122 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C6AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B03C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE8FD208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE8FD208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A2DEA20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DEA20C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732630AbeIXSU1 (ORCPT
+        id S1732652AbeIXSUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:20:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56132 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730063AbeIXSU0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:20:26 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D39A107E;
-        Mon, 24 Sep 2018 12:18:34 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.14 101/173] cifs: prevent integer overflow in nxt_dir_entry()
-Date:   Mon, 24 Sep 2018 13:52:15 +0200
-Message-Id: <20180924113123.493910670@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
-References: <20180924113114.334025954@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 14:20:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55408 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730495AbeIXSU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:20:29 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2FF73C058CB6;
+        Mon, 24 Sep 2018 12:18:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A7B24891EB;
+        Mon, 24 Sep 2018 12:18:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/2] Revert "uapi/linux/keyctl.h: don't use C++ reserved
+ keyword as a struct member name"
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+Cc:     Lubomir Rintel <lkundrak@v3.sk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        lkundrak@v3.sk, rdunlap@infradead.org, linux-kernel@vger.kernel.org
+Date:   Mon, 24 Sep 2018 13:18:34 +0100
+Message-ID: <153779151491.28003.1935104275920340501.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
+References: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 24 Sep 2018 12:18:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-------------------
+This changes UAPI, breaking iwd and libell:
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+  ell/key.c: In function 'kernel_dh_compute':
+  ell/key.c:205:38: error: 'struct keyctl_dh_params' has no member named 'private'; did you mean 'dh_private'?
+    struct keyctl_dh_params params = { .private = private,
+                                        ^~~~~~~
+                                        dh_private
 
-commit 8ad8aa353524d89fa2e09522f3078166ff78ec42 upstream.
+This reverts commit 8a2336e549d385bb0b46880435b411df8d8200e8.
 
-The "old_entry + le32_to_cpu(pDirInfo->NextEntryOffset)" can wrap
-around so I have added a check for integer overflow.
-
-Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Randy Dunlap <rdunlap@infradead.org>
+cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+cc: Stephan Mueller <smueller@chronox.de>
+cc: James Morris <jmorris@namei.org>
+cc: "Serge E. Hallyn" <serge@hallyn.com>
+cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+cc: Andrew Morton <akpm@linux-foundation.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: <stable@vger.kernel.org>
 ---
- fs/cifs/readdir.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -376,8 +376,15 @@ static char *nxt_dir_entry(char *old_ent
+ include/uapi/linux/keyctl.h |    2 +-
+ security/keys/dh.c          |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+index 910cc4334b21..7b8c9e19bad1 100644
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,7 @@
  
- 		new_entry = old_entry + sizeof(FIND_FILE_STANDARD_INFO) +
- 				pfData->FileNameLength;
--	} else
--		new_entry = old_entry + le32_to_cpu(pDirInfo->NextEntryOffset);
-+	} else {
-+		u32 next_offset = le32_to_cpu(pDirInfo->NextEntryOffset);
-+
-+		if (old_entry + next_offset < old_entry) {
-+			cifs_dbg(VFS, "invalid offset %u\n", next_offset);
-+			return NULL;
-+		}
-+		new_entry = old_entry + next_offset;
-+	}
- 	cifs_dbg(FYI, "new entry %p old entry %p\n", new_entry, old_entry);
- 	/* validate that new_entry is not past end of SMB */
- 	if (new_entry >= end_of_smb) {
-
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 dh_private;
++	__s32 private;
+ 	__s32 prime;
+ 	__s32 base;
+ };
+diff --git a/security/keys/dh.c b/security/keys/dh.c
+index 3b602a1e27fa..711e89d8c415 100644
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -300,7 +300,7 @@ long __keyctl_dh_compute(struct keyctl_dh_params __user *params,
+ 	}
+ 	dh_inputs.g_size = dlen;
+ 
+-	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
++	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret = dlen;
+ 		goto out2;
 
