@@ -2,41 +2,45 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D0FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73A6ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D63921486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D63921486
+	by mail.kernel.org (Postfix) with ESMTP id 6B66421486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B66421486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732716AbeIXSZv (ORCPT
+        id S1732733AbeIXSZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:25:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56714 "EHLO
+        Mon, 24 Sep 2018 14:25:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56728 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729272AbeIXSZv (ORCPT
+        with ESMTP id S1729093AbeIXSZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:25:51 -0400
+        Mon, 24 Sep 2018 14:25:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7390107E;
-        Mon, 24 Sep 2018 12:23:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 401DA107E;
+        Mon, 24 Sep 2018 12:24:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 139/173] coresight: tpiu: Fix disabling timeouts
-Date:   Mon, 24 Sep 2018 13:52:53 +0200
-Message-Id: <20180924113125.836328252@linuxfoundation.org>
+        stable@vger.kernel.org, Yabin Cui <yabinc@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 104/173] perf/core: Force USER_DS when recording user stack data
+Date:   Mon, 24 Sep 2018 13:52:18 +0200
+Message-Id: <20180924113123.739155054@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,65 +58,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Yabin Cui <yabinc@google.com>
 
-[ Upstream commit ccff2dfaceaca4517432f5c149594215fe9098cc ]
+commit 02e184476eff848273826c1d6617bb37e5bcc7ad upstream.
 
-Probing the TPIU driver under UBSan triggers an out-of-bounds shift
-warning in coresight_timeout():
+Perf can record user stack data in response to a synchronous request, such
+as a tracepoint firing. If this happens under set_fs(KERNEL_DS), then we
+end up reading user stack data using __copy_from_user_inatomic() under
+set_fs(KERNEL_DS). I think this conflicts with the intention of using
+set_fs(KERNEL_DS). And it is explicitly forbidden by hardware on ARM64
+when both CONFIG_ARM64_UAO and CONFIG_ARM64_PAN are used.
 
-...
-[    5.677530] UBSAN: Undefined behaviour in drivers/hwtracing/coresight/coresight.c:929:16
-[    5.685542] shift exponent 64 is too large for 64-bit type 'long unsigned int'
-...
+So fix this by forcing USER_DS when recording user stack data.
 
-On closer inspection things are exponentially out of whack because we're
-passing a bitmask where a bit number should be. Amusingly, it seems that
-both calls will find their expected values by sheer luck and appear to
-succeed: 1 << FFCR_FON_MAN ends up at bit 64 which whilst undefined
-evaluates as zero in practice, while 1 << FFSR_FT_STOPPED finds bit 2
-(TCPresent) which apparently is usually tied high.
-
-Following the examples of other drivers, define separate FOO and FOO_BIT
-macros for masks vs. indices, and put things right.
-
-CC: Robert Walker <robert.walker@arm.com>
-CC: Mike Leach <mike.leach@linaro.org>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>
-Fixes: 11595db8e17f ("coresight: Fix disabling of CoreSight TPIU")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Yabin Cui <yabinc@google.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 88b0193d9418 ("perf/callchain: Force USER_DS when invoking perf_callchain_user()")
+Link: http://lkml.kernel.org/r/20180823225935.27035-1-yabinc@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hwtracing/coresight/coresight-tpiu.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ kernel/events/core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -47,8 +47,9 @@
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5700,6 +5700,7 @@ perf_output_sample_ustack(struct perf_ou
+ 		unsigned long sp;
+ 		unsigned int rem;
+ 		u64 dyn_size;
++		mm_segment_t fs;
  
- /** register definition **/
- /* FFSR - 0x300 */
--#define FFSR_FT_STOPPED		BIT(1)
-+#define FFSR_FT_STOPPED_BIT	1
- /* FFCR - 0x304 */
-+#define FFCR_FON_MAN_BIT	6
- #define FFCR_FON_MAN		BIT(6)
- #define FFCR_STOP_FI		BIT(12)
+ 		/*
+ 		 * We dump:
+@@ -5717,7 +5718,10 @@ perf_output_sample_ustack(struct perf_ou
  
-@@ -93,9 +94,9 @@ static void tpiu_disable_hw(struct tpiu_
- 	/* Generate manual flush */
- 	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
- 	/* Wait for flush to complete */
--	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
-+	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN_BIT, 0);
- 	/* Wait for formatter to stop */
--	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
-+	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED_BIT, 1);
+ 		/* Data. */
+ 		sp = perf_user_stack_pointer(regs);
++		fs = get_fs();
++		set_fs(USER_DS);
+ 		rem = __output_copy_user(handle, (void *) sp, dump_size);
++		set_fs(fs);
+ 		dyn_size = dump_size - rem;
  
- 	CS_LOCK(drvdata->base);
- }
+ 		perf_output_skip(handle, rem);
 
 
