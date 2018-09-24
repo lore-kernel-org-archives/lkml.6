@@ -2,83 +2,140 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B42C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268BCC43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6580A206B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:21:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6580A206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BF985206B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:22:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF985206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeIYE0H (ORCPT
+        id S1727817AbeIYE0c convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:26:07 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:35070 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbeIYE0H (ORCPT
+        Tue, 25 Sep 2018 00:26:32 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58027 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbeIYE0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:26:07 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id B7E7521F1D;
-        Mon, 24 Sep 2018 22:21:42 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id OjbCEj0RUhln; Mon, 24 Sep 2018 22:21:42 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 030CC21EA8;
-        Mon, 24 Sep 2018 22:21:28 +0000 (UTC)
-Subject: Re: [PATCH 4.9 000/111] 4.9.129-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180924113103.337261320@linuxfoundation.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <3525a326-7ccb-0efa-de3f-981aeb335f23@kernel.org>
-Date:   Mon, 24 Sep 2018 16:21:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
+        Tue, 25 Sep 2018 00:26:32 -0400
+X-Originating-IP: 99.0.85.34
+Received: from jarnos-mbp.lan (unknown [99.0.85.34])
+        (Authenticated sender: jarno@ovn.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 649D11C0007;
+        Mon, 24 Sep 2018 22:22:03 +0000 (UTC)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [Regression] openvswitch: Add eventmask support to CT action.
+From:   Jarno Rajahalme <jarno@ovn.org>
+In-Reply-To: <0d69e5b1-ac17-52c4-04f9-34ad1eb9f2eb@canonical.com>
+Date:   Mon, 24 Sep 2018 15:21:59 -0700
+Cc:     gvrose8192@gmail.com, joe@ovn.org, davem@davemloft.net,
+        pshelar@ovn.org, netdev@vger.kernel.org,
+        ovs dev <dev@openvswitch.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        james.page@canonical.com, christian.ehrhardt@canonical.com,
+        1736390@bugs.launchpad.net
+Content-Transfer-Encoding: 8BIT
+Message-Id: <E891AED6-8406-4914-BDC3-92248F77C63B@ovn.org>
+References: <0d69e5b1-ac17-52c4-04f9-34ad1eb9f2eb@canonical.com>
+To:     Joseph Salisbury <joseph.salisbury@canonical.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 05:51 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.129 release.
-> There are 111 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+> On Sep 21, 2018, at 2:37 AM, Joseph Salisbury <joseph.salisbury@canonical.com> wrote:
 > 
-> Responses should be made by Wed Sep 26 11:30:16 UTC 2018.
-> Anything received after that time might be too late.
+> Hi Jarno,
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.129-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
+> A kernel bug report was opened against Ubuntu [0].  This bug is a
+> regression introduced in v4.12-rc1.  The latest mainline kernel was
+> tested and still exhibits the bug.  The following commit was identified
+> as the cause of the regression:
 > 
-> thanks,
+>     120645513f55 ("openvswitch: Add eventmask support to CT action.")
 > 
-> greg k-h
+> I was hoping to get your feedback, since you are the patch author.  Do
+> you think gathering any additional data will help diagnose this issue?
+> 
+> 
+> Thanks,
+> 
+> Joe
+> 
+> http://pad.lv/1736390
 > 
 
-Compiled and booted on my test system. No dmesg regressions since the last
-release I tested.
+I spent a while looking what could cause an i386-only issue like reported due to this commit, but could not come up with anything solid. Essentially the commit is setting the ‘ctmask’ field of a CT eceche extension. The purpose of the ‘ctmask’ is to limit the type of conntrack events for which a report Is delivered to any monitors in userspace. With a non-default (default is all-ones) ‘ctmask’ the code paths taken in nf_conntrack_eventmask_report() and nf_ct_deliver_cached_events() are changed to skip the generation of event reports for some event types. While it is hard to see how this could manifest as a bug in i386, this should be the only effect of the commit referred to above.
 
-thanks,
--- Shuah
+OVS probes for the kernel support of this feature and only uses the OVS_CT_ATTR_EVENTMASK attribute if support for it in the kernel is detected. The option of reverting the commit will cause additional CPU use and potential buffering issues for CT event monitors in userspace. If you need to revert the commit please try to do so only for the affected architecture (i386).
+
+However, while reviewing all the uses of ‘ctmask’ and the associated nf_ct_ecache_ext_add() calls in the kernel with Joe we figured it would be worth trying a change where ‘ctmask’ is set in the CT template instead on the actual CT entry directly. This is a long shot in the sense of changing the behavior, but the only thing we could come up now. I have attached the patch below, please try it in your test rig.
+
+commit a717743bd355b3a25a83b196403db9d010b311b2 (HEAD -> ovs-set-ctmask-in-template)
+Author: Jarno Rajahalme <jarno@covalent.io>
+Date:   Mon Sep 24 14:34:26 2018 -0700
+
+    openvswitch: Set CT mask in template
+    
+    Set the conntrack event mask in the template rather than on the conntrack
+    entry itself. init_conntrack() (called via nf_conntrack_in()) will pick
+    the event mask from the template.
+    
+    Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
+
+diff --git a/net/openvswitch/conntrack.c b/net/openvswitch/conntrack.c
+index 86a75105af1a..ae1fb06828da 100644
+--- a/net/openvswitch/conntrack.c
++++ b/net/openvswitch/conntrack.c
+@@ -1169,21 +1169,6 @@ static int ovs_ct_commit(struct net *net, struct sw_flow_key *key,
+                }
+        }
+ #endif
+-
+-       /* Set the conntrack event mask if given.  NEW and DELETE events have
+-        * their own groups, but the NFNLGRP_CONNTRACK_UPDATE group listener
+-        * typically would receive many kinds of updates.  Setting the event
+-        * mask allows those events to be filtered.  The set event mask will
+-        * remain in effect for the lifetime of the connection unless changed
+-        * by a further CT action with both the commit flag and the eventmask
+-        * option. */
+-       if (info->have_eventmask) {
+-               struct nf_conntrack_ecache *cache = nf_ct_ecache_find(ct);
+-
+-               if (cache)
+-                       cache->ctmask = info->eventmask;
+-       }
+-
+        /* Apply changes before confirming the connection so that the initial
+         * conntrack NEW netlink event carries the values given in the CT
+         * action.
+@@ -1625,6 +1610,20 @@ int ovs_ct_copy_action(struct net *net, const struct nlattr *attr,
+                return -ENOMEM;
+        }
+ 
++       /* Set the conntrack event mask if given.  NEW and DELETE events have
++        * their own groups, but the NFNLGRP_CONNTRACK_UPDATE group listener
++        * typically would receive many kinds of updates.  Setting the event
++        * mask allows those events to be filtered.  The set event mask will
++        * remain in effect for the lifetime of the connection unless changed
++        * by a further CT action with both the commit flag and the eventmask
++        * option. */
++       if (ct_info.have_eventmask) {
++               if (!nf_ct_ecache_ext_add(ct_info.ct, ct_info.eventmask, 0, GFP_KERNEL)) {
++                       OVS_NLERR(log, "Failed to allocate ecache for conntrack template");
++                       return -ENOMEM;
++               }
++       }
++
+        __set_bit(IPS_CONFIRMED_BIT, &ct_info.ct->status);
+        nf_conntrack_get(&ct_info.ct->ct_general);
+ 
 
