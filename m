@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E79BECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0896DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3112214C1
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3112214C1
+	by mail.kernel.org (Postfix) with ESMTP id C035520877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C035520877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730979AbeIXSGy (ORCPT
+        id S1730985AbeIXSG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:06:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53878 "EHLO
+        Mon, 24 Sep 2018 14:06:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53894 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729780AbeIXSGy (ORCPT
+        with ESMTP id S1728563AbeIXSG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:06:54 -0400
+        Mon, 24 Sep 2018 14:06:59 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 329B31084;
-        Mon, 24 Sep 2018 12:05:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A88D91084;
+        Mon, 24 Sep 2018 12:05:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.9 069/111] cifs: prevent integer overflow in nxt_dir_entry()
-Date:   Mon, 24 Sep 2018 13:52:36 +0200
-Message-Id: <20180924113111.863360141@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 033/111] wan/fsl_ucc_hdlc: use IS_ERR_VALUE() to check return value of qe_muram_alloc
+Date:   Mon, 24 Sep 2018 13:52:00 +0200
+Message-Id: <20180924113107.910062697@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -55,44 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit 8ad8aa353524d89fa2e09522f3078166ff78ec42 upstream.
+[ Upstream commit fd800f646402c0f85547166b59ca065175928b7b ]
 
-The "old_entry + le32_to_cpu(pDirInfo->NextEntryOffset)" can wrap
-around so I have added a check for integer overflow.
+qe_muram_alloc return a unsigned long integer,which should not
+compared with zero. check it using IS_ERR_VALUE() to fix this.
 
-Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/readdir.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/wan/fsl_ucc_hdlc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -376,8 +376,15 @@ static char *nxt_dir_entry(char *old_ent
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -161,7 +161,7 @@ static int uhdlc_init(struct ucc_hdlc_pr
+ 	priv->ucc_pram_offset = qe_muram_alloc(sizeof(struct ucc_hdlc_param),
+ 				ALIGNMENT_OF_UCC_HDLC_PRAM);
  
- 		new_entry = old_entry + sizeof(FIND_FILE_STANDARD_INFO) +
- 				pfData->FileNameLength;
--	} else
--		new_entry = old_entry + le32_to_cpu(pDirInfo->NextEntryOffset);
-+	} else {
-+		u32 next_offset = le32_to_cpu(pDirInfo->NextEntryOffset);
-+
-+		if (old_entry + next_offset < old_entry) {
-+			cifs_dbg(VFS, "invalid offset %u\n", next_offset);
-+			return NULL;
-+		}
-+		new_entry = old_entry + next_offset;
-+	}
- 	cifs_dbg(FYI, "new entry %p old entry %p\n", new_entry, old_entry);
- 	/* validate that new_entry is not past end of SMB */
- 	if (new_entry >= end_of_smb) {
+-	if (priv->ucc_pram_offset < 0) {
++	if (IS_ERR_VALUE(priv->ucc_pram_offset)) {
+ 		dev_err(priv->dev, "Can not allocate MURAM for hdlc parameter.\n");
+ 		ret = -ENOMEM;
+ 		goto free_tx_bd;
+@@ -197,14 +197,14 @@ static int uhdlc_init(struct ucc_hdlc_pr
+ 
+ 	/* Alloc riptr, tiptr */
+ 	riptr = qe_muram_alloc(32, 32);
+-	if (riptr < 0) {
++	if (IS_ERR_VALUE(riptr)) {
+ 		dev_err(priv->dev, "Cannot allocate MURAM mem for Receive internal temp data pointer\n");
+ 		ret = -ENOMEM;
+ 		goto free_tx_skbuff;
+ 	}
+ 
+ 	tiptr = qe_muram_alloc(32, 32);
+-	if (tiptr < 0) {
++	if (IS_ERR_VALUE(tiptr)) {
+ 		dev_err(priv->dev, "Cannot allocate MURAM mem for Transmit internal temp data pointer\n");
+ 		ret = -ENOMEM;
+ 		goto free_riptr;
 
 
