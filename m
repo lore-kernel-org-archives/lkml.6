@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECEDC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2FBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02E3721486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:42:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E3721486
+	by mail.kernel.org (Postfix) with ESMTP id 6C11321486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:42:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C11321486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbeIXRnj (ORCPT
+        id S1729669AbeIXRno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:43:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51080 "EHLO
+        Mon, 24 Sep 2018 13:43:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728332AbeIXRnj (ORCPT
+        with ESMTP id S1728332AbeIXRnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:43:39 -0400
+        Mon, 24 Sep 2018 13:43:43 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 292D61072;
-        Mon, 24 Sep 2018 11:41:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD5C41072;
+        Mon, 24 Sep 2018 11:42:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 3.18 087/105] usb: host: u132-hcd: Fix a sleep-in-atomic-context bug in u132_get_frame()
-Date:   Mon, 24 Sep 2018 13:34:13 +0200
-Message-Id: <20180924113121.653001666@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 3.18 088/105] USB: serial: io_ti: fix array underflow in completion handler
+Date:   Mon, 24 Sep 2018 13:34:14 +0200
+Message-Id: <20180924113121.732653434@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -50,50 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 6d4f268fa132742fe96dad22307c68d237356d88 upstream.
+commit 691a03cfe8ca483f9c48153b869d354e4ae3abef upstream.
 
-i_usX2Y_subs_startup in usbusx2yaudio.c is a completion handler function
-for the USB driver. So it should not sleep, but it is can sleep
-according to the function call paths (from bottom to top) in Linux-4.16.
+As reported by Dan Carpenter, a malicious USB device could set
+port_number to a negative value and we would underflow the port array in
+the interrupt completion handler.
 
-[FUNC] msleep
-drivers/usb/host/u132-hcd.c, 2558:
-	msleep in u132_get_frame
-drivers/usb/core/hcd.c, 2231:
-	[FUNC_PTR]u132_get_frame in usb_hcd_get_frame_number
-drivers/usb/core/usb.c, 822:
-	usb_hcd_get_frame_number in usb_get_current_frame_number
-sound/usb/usx2y/usbusx2yaudio.c, 303:
-	usb_get_current_frame_number in i_usX2Y_urb_complete
-sound/usb/usx2y/usbusx2yaudio.c, 366:
-	i_usX2Y_urb_complete in i_usX2Y_subs_startup
+As these devices only have one or two ports, fix this by making sure we
+only consider the seventh bit when determining the port number (and
+ignore bits 0xb0 which are typically set to 0x30).
 
-Note that [FUNC_PTR] means a function pointer call is used.
-
-To fix this bug, msleep() is replaced with mdelay().
-
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Cc: stable <stable@vger.kernel.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/u132-hcd.c |    2 +-
+ drivers/usb/serial/io_ti.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -2569,7 +2569,7 @@ static int u132_get_frame(struct usb_hcd
- 	} else {
- 		int frame = 0;
- 		dev_err(&u132->platform_dev->dev, "TODO: u132_get_frame\n");
--		msleep(100);
-+		mdelay(100);
- 		return frame;
- 	}
- }
+--- a/drivers/usb/serial/io_ti.h
++++ b/drivers/usb/serial/io_ti.h
+@@ -178,7 +178,7 @@ struct ump_interrupt {
+ }  __attribute__((packed));
+ 
+ 
+-#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 4) - 3)
++#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 6) & 0x01)
+ #define TIUMP_GET_FUNC_FROM_CODE(c)	((c) & 0x0f)
+ #define TIUMP_INTERRUPT_CODE_LSR	0x03
+ #define TIUMP_INTERRUPT_CODE_MSR	0x04
 
 
