@@ -2,170 +2,136 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC93C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E728ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BF67214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:50:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF67214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E9B72098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:50:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="efuX//pJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9B72098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388232AbeIXUwe (ORCPT
+        id S2388257AbeIXUwh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:52:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33724 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388193AbeIXUw2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:52:28 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OEnXoS016016
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:49:57 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mq1ckhr74-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:49:57 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 24 Sep 2018 08:49:56 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 08:49:53 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OEnoaM25559256
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 07:49:50 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CFD49BE051;
-        Mon, 24 Sep 2018 08:49:50 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 33838BE04F;
-        Mon, 24 Sep 2018 08:49:47 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 08:49:46 -0600 (MDT)
-Subject: Re: [PATCH v10 10/26] KVM: s390: interfaces to clear CRYCB masks
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-11-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180924130153.766eaec7.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 24 Sep 2018 10:49:46 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180924130153.766eaec7.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 24 Sep 2018 16:52:37 -0400
+Received: from mail-bl2nam02on0139.outbound.protection.outlook.com ([104.47.38.139]:31232
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387658AbeIXUwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:52:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z8ls06rj1mc0sDDQ6HxAKog1NOVsAzHmSYc5NkIFkPs=;
+ b=efuX//pJuMcA9j6PvTsf0RND9YzoAbt0B4boui7JlBxGolBvBAj0unNwYL1UWjrX0ev5Yio5hJERFThfle9Wtuz+aQw1YmY+5nyhiwZXF1T1jnYvb0K9XU6gwiGlJCtaCbq44536MdQeRmKByd052K5v+zlpzyzki1WxigF/nrA=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0470.namprd21.prod.outlook.com (10.172.121.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.3; Mon, 24 Sep 2018 14:49:40 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
+ 14:49:40 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Paul Mackerras <paulus@ozlabs.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 03/36] KVM: PPC: Book3S HV: Don't truncate HPTE
+ index in xlate function
+Thread-Topic: [PATCH AUTOSEL 4.14 03/36] KVM: PPC: Book3S HV: Don't truncate
+ HPTE index in xlate function
+Thread-Index: AQHUVBW3oEYhE7CYI0uN//sBVjP9Cg==
+Date:   Mon, 24 Sep 2018 14:48:55 +0000
+Message-ID: <20180924144851.164533-3-alexander.levin@microsoft.com>
+References: <20180924144851.164533-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180924144851.164533-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092414-0016-0000-0000-00000933CF56
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01092993; UDB=6.00564877; IPR=6.00873030;
- MB=3.00023482; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 14:49:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092414-0017-0000-0000-0000407768EE
-Message-Id: <5b825cbc-1d5c-42cf-9cd8-6615938163de@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240146
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0470;6:EhG4SuOn4+UQcHO1096yFYcWqZYWM1W5pJK+pcCtfsZKVocjrzWoiTdmJxcXx0arLuY8xeZXXPIGKD4umdaiNAchiqLyWIQeqvtA09oblQ37VYLKUksAtzvkZOCLPX2f5jfhqhyW4m5fgY4OirlmnO4dzJbFabOtlXjQI+2kniYG5zwNwtnK9TgIQCQJi/tR2EsPeOlq/+9J1/YgyOq7wCRCC7qzoaKU5Fb9ZShNfE77nwuUlP+diJad4VVCHtm4oLiee6PqXTaHeL22yfZrNnF8iH4Ah4oRuyHDqQJf9ydjbJxG9DQfmZ+RxGgvU1ep0UxyURU7/OuhHZmMOgq02Fd0IQ8vjks59bg+xQ2qPOVozzNzH4UyyrVx/KgMXt6Dy1W10Bibd4F8EHA/miWHgtP21P1/5oLShP8l1Bszo3cVwC0o4mZNzqP3TOwNvyk9gROZbkyiFLrlN/4otjzhLg==;5:tjTFMfO2X+N0yGWDZ9T08s1QNR0gRNF3V/xRNtkgYbyyq2E4UcKg5YMC+qWimjtqBM6vhCOZkdYjOiAHAchRbazkRc4x22nTcaoyxJf2K4+jV2uOvtWBjgcofPtUJ21oSwR9iSOn3wWF2ZOvpWg8NF6XRw1YNJgNE3OkkZKgwvk=;7:24HyCY54hXTIEF138MxtCXhMTe/wF+DlKbQNiSUn+S29LGtpVlTUWuzXn0XaNEFdVlxgFKZikfBLN8NAE+Szc7tfdtuHUITUyL87kURe94yslxP2Yp2C/YPegAhBkJMyq2xTtOxDtbr4bHCpph514eHlxLr9ECp5UDqJ2dv136bw9V9CKHdOfOH5/9YL/He581N6W9/n5lk4WNG84rdPNhTe/Gx7hvRFpJHLsz1MwbIx9vAcFLdkUBVG2vAhsArn
+x-ms-office365-filtering-correlation-id: 1f24e405-9615-4f87-e787-08d6222cf4c8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0470;
+x-ms-traffictypediagnostic: CY4PR21MB0470:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-prvs: <CY4PR21MB0470A3851D341ECA7730CB5EFB170@CY4PR21MB0470.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0470;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0470;
+x-forefront-prvs: 0805EC9467
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(346002)(366004)(136003)(189003)(199004)(26005)(97736004)(53936002)(14444005)(25786009)(1076002)(76176011)(99286004)(102836004)(186003)(6666003)(4326008)(3846002)(110136005)(107886003)(86362001)(5660300001)(6116002)(72206003)(54906003)(478600001)(8676002)(217873002)(86612001)(256004)(14454004)(10290500003)(316002)(6486002)(6436002)(106356001)(486006)(105586002)(446003)(6506007)(11346002)(476003)(10090500001)(2616005)(2501003)(5250100002)(71190400001)(68736007)(66066001)(81156014)(71200400001)(22452003)(7736002)(305945005)(2900100001)(8936002)(6512007)(81166006)(36756003)(2906002)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0470;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: GNQbL/smXe2fuulVDrHCQ4bUWePFPWaF8i0AMlEPrfqWfCZIaiOlPw0DSCeTAW1jQds0sJDB9XctqFYHyWyiRSBuwt8j6ddU/tVj5ql2mfhZ/Vn6fN6g9smNfVGDCNz3itEANpNDz/ZmOr6wT2lHjTqaslYK7spYMMEjG/+tWQxd6vfOyFTmoKlyvj243GfQi2EGeRlSsM5MFd3V2iwOp8cc7F+fgt2tmwcMAfAFShJ7daklrYk2i8acVJXq6KUpuTtD8Lz8bGZ77HbLkrwhNkgX4NIvh2yLOm5ZYUO5LLVY/5v27X5TUpYZpVOR8aKNB3k6qahSrjtc/0O+sJWVbwS5xky94TGezTCQigaXH2Y=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f24e405-9615-4f87-e787-08d6222cf4c8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:55.5159
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0470
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 07:01 AM, Cornelia Huck wrote:
-> On Wed, 12 Sep 2018 15:43:00 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> 
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
->> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
->> not get out of sync.
-> 
-> Hm, that patch description does not quite match what the patch actually
-> does...
+From: Paul Mackerras <paulus@ozlabs.org>
 
-No, it doesn't, does it? I'll fix it.
+[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
 
-> 
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Acked-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/include/asm/kvm_host.h |    2 ++
->>   arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
->>   2 files changed, 17 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
->> index 423cce7..1e758fe 100644
->> --- a/arch/s390/include/asm/kvm_host.h
->> +++ b/arch/s390/include/asm/kvm_host.h
->> @@ -858,6 +858,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
->>   void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
->>   				 struct kvm_async_pf *work);
->>   
->> +void kvm_arch_crypto_clear_masks(struct kvm *kvm);
->> +
->>   extern int sie64a(struct kvm_s390_sie_block *, u64 *);
->>   extern char sie_exit;
->>   
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index d717041..ac4c93f 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -2033,6 +2033,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
->>   		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->>   }
->>   
->> +void kvm_arch_crypto_clear_masks(struct kvm *kvm)
->> +{
->> +	mutex_lock(&kvm->lock);
->> +	kvm_s390_vcpu_block_all(kvm);
->> +
->> +	memset(&kvm->arch.crypto.crycb->apcb0, 0,
->> +	       sizeof(kvm->arch.crypto.crycb->apcb0));
->> +	memset(&kvm->arch.crypto.crycb->apcb1, 0,
->> +	       sizeof(kvm->arch.crypto.crycb->apcb1));
->> +
->> +	kvm_s390_vcpu_unblock_all(kvm);
->> +	mutex_unlock(&kvm->lock);
->> +}
->> +EXPORT_SYMBOL_GPL(kvm_arch_crypto_clear_masks);
-> 
-> ...although this function looks fine.
-> 
->> +
->>   static u64 kvm_s390_get_initial_cpuid(void)
->>   {
->>   	struct cpuid cpuid;
-> 
+This fixes a bug which causes guest virtual addresses to get translated
+to guest real addresses incorrectly when the guest is using the HPT MMU
+and has more than 256GB of RAM, or more specifically has a HPT larger
+than 2GB.  This has showed up in testing as a failure of the host to
+emulate doorbell instructions correctly on POWER9 for HPT guests with
+more than 256GB of RAM.
 
+The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
+is stored as an int, and in forming the HPTE address, the index gets
+shifted left 4 bits as an int before being signed-extended to 64 bits.
+The simple fix is to make the variable a long int, matching the
+return type of kvmppc_hv_find_lock_hpte(), which is what calculates
+the index.
+
+Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S=
+ HV guests")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ arch/powerpc/kvm/book3s_64_mmu_hv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_=
+64_mmu_hv.c
+index df9b53f40b1e..7ac7e21b137e 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -355,7 +355,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate(struct kvm_vcp=
+u *vcpu, gva_t eaddr,
+ 	unsigned long pp, key;
+ 	unsigned long v, orig_v, gr;
+ 	__be64 *hptep;
+-	int index;
++	long int index;
+ 	int virtmode =3D vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
+=20
+ 	/* Get SLB entry */
+--=20
+2.17.1
