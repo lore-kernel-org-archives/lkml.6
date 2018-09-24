@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8794C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4459DC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7118321486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7118321486
+	by mail.kernel.org (Postfix) with ESMTP id 0ADCC21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADCC21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388395AbeIXSg5 (ORCPT
+        id S2388405AbeIXShB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:36:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58484 "EHLO
+        Mon, 24 Sep 2018 14:37:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58494 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387602AbeIXSg4 (ORCPT
+        with ESMTP id S2387602AbeIXShA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:36:56 -0400
+        Mon, 24 Sep 2018 14:37:00 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A97451018;
-        Mon, 24 Sep 2018 12:34:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1844D1092;
+        Mon, 24 Sep 2018 12:35:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Georg=20M=C3=BCller?= <georgmueller@gmx.net>,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.18 117/235] mei: ignore not found client in the enumeration
-Date:   Mon, 24 Sep 2018 13:51:43 +0200
-Message-Id: <20180924113117.754393920@linuxfoundation.org>
+Subject: [PATCH 4.18 118/235] mei: bus: fix hw module get/put balance
+Date:   Mon, 24 Sep 2018 13:51:44 +0200
+Message-Id: <20180924113117.889694029@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,58 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit 8d2d8935d30cc2acc57a3196dc10dfa8d5cbcdab upstream.
+commit 69bf5313035926b0b6a6578de4f3168a8f5c19b8 upstream.
 
-Some of the ME clients are available only for BIOS operation and are
-removed during hand off to an OS. However the removal is not instant.
-A client may be visible on the client list when the mei driver requests
-for enumeration, while the subsequent request for properties will be
-answered with client not found error value. The default behavior
-for an error is to perform client reset while this error is harmless and
-the link reset should be prevented. This issue started to be visible due to
-suspend/resume timing changes. Currently reported only on the Haswell
-based system.
+In case the device is not connected it doesn't 'get'
+hw module and hence should not 'put' it on disable.
 
-Fixes:
-[33.564957] mei_me 0000:00:16.0: hbm: properties response: wrong status = 1 CLIENT_NOT_FOUND
-[33.564978] mei_me 0000:00:16.0: mei_irq_read_handler ret = -71.
-[33.565270] mei_me 0000:00:16.0: unexpected reset: dev_state = INIT_CLIENTS fw status = 1E000255 60002306 00000200 00004401 00000000 00000010
-
-Cc: <stable@vger.kernel.org>
-Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: <stable@vger.kernel.org> 4.16+
+Fixes:'commit 257355a44b99 ("mei: make module referencing local to the bus.c")'
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200455
+Tested-by: Georg Müller <georgmueller@gmx.net>
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/hbm.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/misc/mei/bus.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/misc/mei/hbm.c
-+++ b/drivers/misc/mei/hbm.c
-@@ -1140,15 +1140,18 @@ int mei_hbm_dispatch(struct mei_device *
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -600,9 +600,8 @@ int mei_cldev_disable(struct mei_cl_devi
+ 	if (err < 0)
+ 		dev_err(bus->dev, "Could not disconnect from the ME client\n");
  
- 		props_res = (struct hbm_props_response *)mei_msg;
- 
--		if (props_res->status) {
-+		if (props_res->status == MEI_HBMS_CLIENT_NOT_FOUND) {
-+			dev_dbg(dev->dev, "hbm: properties response: %d CLIENT_NOT_FOUND\n",
-+				props_res->me_addr);
-+		} else if (props_res->status) {
- 			dev_err(dev->dev, "hbm: properties response: wrong status = %d %s\n",
- 				props_res->status,
- 				mei_hbm_status_str(props_res->status));
- 			return -EPROTO;
-+		} else {
-+			mei_hbm_me_cl_add(dev, props_res);
- 		}
- 
--		mei_hbm_me_cl_add(dev, props_res);
+-out:
+ 	mei_cl_bus_module_put(cldev);
 -
- 		/* request property for the next client */
- 		if (mei_hbm_prop_req(dev, props_res->me_addr + 1))
- 			return -EIO;
++out:
+ 	/* Flush queues and remove any pending read */
+ 	mei_cl_flush_queues(cl, NULL);
+ 	mei_cl_unlink(cl);
 
 
