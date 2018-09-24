@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44E2C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE18DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787E2208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787E2208D9
+	by mail.kernel.org (Postfix) with ESMTP id 79055208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79055208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732473AbeIXSTp (ORCPT
+        id S1732482AbeIXSTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:19:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56024 "EHLO
+        Mon, 24 Sep 2018 14:19:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56030 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbeIXSTo (ORCPT
+        with ESMTP id S1729919AbeIXSTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:19:44 -0400
+        Mon, 24 Sep 2018 14:19:48 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 025E4108A;
-        Mon, 24 Sep 2018 12:17:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 24B59108A;
+        Mon, 24 Sep 2018 12:17:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 095/173] USB: serial: io_ti: fix array underflow in completion handler
-Date:   Mon, 24 Sep 2018 13:52:09 +0200
-Message-Id: <20180924113123.047475030@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 4.14 096/173] usb: misc: uss720: Fix two sleep-in-atomic-context bugs
+Date:   Mon, 24 Sep 2018 13:52:10 +0200
+Message-Id: <20180924113123.136815402@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -51,38 +50,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit 691a03cfe8ca483f9c48153b869d354e4ae3abef upstream.
+commit bc8acc214d3f1cafebcbcd101a695bbac716595d upstream.
 
-As reported by Dan Carpenter, a malicious USB device could set
-port_number to a negative value and we would underflow the port array in
-the interrupt completion handler.
+async_complete() in uss720.c is a completion handler function for the
+USB driver. So it should not sleep, but it is can sleep according to the
+function call paths (from bottom to top) in Linux-4.16.
 
-As these devices only have one or two ports, fix this by making sure we
-only consider the seventh bit when determining the port number (and
-ignore bits 0xb0 which are typically set to 0x30).
+[FUNC] set_1284_register(GFP_KERNEL)
+drivers/usb/misc/uss720.c, 372:
+  set_1284_register in parport_uss720_frob_control
+drivers/parport/ieee1284.c, 560:
+  [FUNC_PTR]parport_uss720_frob_control in parport_ieee1284_ack_data_avail
+drivers/parport/ieee1284.c, 577:
+  parport_ieee1284_ack_data_avail in parport_ieee1284_interrupt
+./include/linux/parport.h, 474:
+  parport_ieee1284_interrupt in parport_generic_irq
+drivers/usb/misc/uss720.c, 116:
+  parport_generic_irq in async_complete
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+[FUNC] get_1284_register(GFP_KERNEL)
+drivers/usb/misc/uss720.c, 382:
+  get_1284_register in parport_uss720_read_status
+drivers/parport/ieee1284.c, 555:
+  [FUNC_PTR]parport_uss720_read_status in parport_ieee1284_ack_data_avail
+drivers/parport/ieee1284.c, 577:
+  parport_ieee1284_ack_data_avail in parport_ieee1284_interrupt
+./include/linux/parport.h, 474:
+  parport_ieee1284_interrupt in parport_generic_irq
+drivers/usb/misc/uss720.c, 116:
+  parport_generic_irq in async_complete
+
+Note that [FUNC_PTR] means a function pointer call is used.
+
+To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
+
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Cc: stable <stable@vger.kernel.org>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/io_ti.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/misc/uss720.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/io_ti.h
-+++ b/drivers/usb/serial/io_ti.h
-@@ -178,7 +178,7 @@ struct ump_interrupt {
- }  __attribute__((packed));
+--- a/drivers/usb/misc/uss720.c
++++ b/drivers/usb/misc/uss720.c
+@@ -382,7 +382,7 @@ static unsigned char parport_uss720_frob
+ 	mask &= 0x0f;
+ 	val &= 0x0f;
+ 	d = (priv->reg[1] & (~mask)) ^ val;
+-	if (set_1284_register(pp, 2, d, GFP_KERNEL))
++	if (set_1284_register(pp, 2, d, GFP_ATOMIC))
+ 		return 0;
+ 	priv->reg[1] = d;
+ 	return d & 0xf;
+@@ -392,7 +392,7 @@ static unsigned char parport_uss720_read
+ {
+ 	unsigned char ret;
  
- 
--#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 4) - 3)
-+#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 6) & 0x01)
- #define TIUMP_GET_FUNC_FROM_CODE(c)	((c) & 0x0f)
- #define TIUMP_INTERRUPT_CODE_LSR	0x03
- #define TIUMP_INTERRUPT_CODE_MSR	0x04
+-	if (get_1284_register(pp, 1, &ret, GFP_KERNEL))
++	if (get_1284_register(pp, 1, &ret, GFP_ATOMIC))
+ 		return 0;
+ 	return ret & 0xf8;
+ }
 
 
