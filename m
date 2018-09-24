@@ -2,93 +2,169 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A339C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8A6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68C22098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA356208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="yDu37N0b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68C22098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NenG7WWw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA356208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732558AbeIXX2f (ORCPT
+        id S1732846AbeIXX3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 19:28:35 -0400
-Received: from cock.li ([185.100.85.212]:48536 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728115AbeIXX2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 19:28:34 -0400
+        Mon, 24 Sep 2018 19:29:46 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40376 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728916AbeIXX3p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 19:29:45 -0400
+Received: by mail-wm1-f67.google.com with SMTP id o2-v6so4288476wmh.5;
+        Mon, 24 Sep 2018 10:26:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=63LIMb6KbDrx/QBE3cb2KhMnQMLOmx1TirKP2yjUk+I=;
+        b=NenG7WWw0PAIlu5x+XyNteeSQtkM929W+LOtG3LBwA6/AUneVG0gP1wPzYg32J99gz
+         NMFimf82E/4pUdVbPIYrxYFwDfbKNZPLWTJ4LKk8A2Vl8OM3gCA+mYIVjyLGTBtEISof
+         XiSe2/8y592ARimbmCC7FWI47vov39W3LukoPswilw7HToW1vD/eOEcSumcmgum8Jv36
+         nV72ry+q2WZq39D4610YRT3uJDoT05iM3AKv4OtuU6nPip02+pa0Tof7PfYjJN3zZv4/
+         ixJ3hDHaOVEXwF6rfu21LzpUvq0dayAKskKblSUAw2v2LHbX5r7mrC4z9PWNMEP+Stuj
+         H4tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=63LIMb6KbDrx/QBE3cb2KhMnQMLOmx1TirKP2yjUk+I=;
+        b=gFGX4QA4PaUIzFasQfOih7JuS7FSVAVR9DU7gMTZc3DPuWXIKihD1BiJtaqTpZJnev
+         n+116CXwpsTEFQSgDNeKZBobLu8N2yVKennwRrM7sjatpsTx8ESKJzgraF6BVbKpaSev
+         5lxq3WKZuVaDjdQ7lWm8MLksySfWhUGMkorQbdU1h7QxEogQjkbRqBcORKMG52aHFvcE
+         q9f0xAlNGEzW2KmuKQnivQhAIF96K0OT3n2/HFHPOWTeZTAsow+z+Ms4+UBa0GF/NN45
+         RcXvKMNuYlvZatkLDfy74std5AJVO0+oqNwRuz9Yp/tDALOV+bR425ZmmQj7PSYosUMh
+         YBYA==
+X-Gm-Message-State: ABuFfogH0lAMAXbNjNxX1mMeQHifNPmAwhkUqGqTj2YrXtWVJb8N4iY/
+        8warNJNHE4ekzRjGdtASsnw=
+X-Google-Smtp-Source: ANB0VdbY9tLqWOSCRCSSNuxPE+m7ZVS/D3E3GlA7aiwgogrX/gug6TxHr9vFb/bmjPTEAURlUe29uw==
+X-Received: by 2002:a1c:1584:: with SMTP id 126-v6mr8416852wmv.24.1537809992104;
+        Mon, 24 Sep 2018 10:26:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id z10-v6sm36480032wrv.22.2018.09.24.10.26.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 10:26:31 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] crypto: ccp: Remove forward declaration
+Date:   Mon, 24 Sep 2018 10:26:15 -0700
+Message-Id: <20180924172615.25591-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537809921; bh=xuKtaRgWs2ZF9yQmHIsTOZAC1JWwBXH0QBTNlYLC70Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=yDu37N0bYD0MaqywriF3PpL1D8CZZhYT+y1Y8r+ODlzfUEgUfgvzlN4t0O7gt6L7k
-         BQwbKTsv3+VJeDsbuXnfXPhchtei3NsuRiQvSR7td3cbHT/DKjGirWum2IMVn6efKQ
-         Ryb4MX3FHBUywG5CWswm2Zzha0Q/X1S/GJvrzBgMFsw9Q5Z0xlZ1Gg1BRPr1K+RRTP
-         gS4gFkEaYf1BQXRCALFKCgTauGH9mqnJJBZWJXZELSRHf/9pGIMUpcFIHnu44xpeJf
-         ldGVwME80bD3J4DRTfDOtLShfpr26hkTuzZNcPRtL7HvZuAQIrlKNUZfGWs98pKcGM
-         GhzK8ERKhip7w==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Sep 2018 17:25:20 +0000
-From:   unconditionedwitness@redchan.it
-To:     fche@redhat.com, dng@lists.dyne.org
-Cc:     Rik van Riel <riel@surriel.com>, Edward Cree <ec429@cantab.net>,
-        Olof Johansson <olof@lixom.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: Code of Conduct: Let's revamp it.
-In-Reply-To: <87zhwbj8xe.fsf@redhat.com>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
- <20180919081812.020f19e3@lwn.net>
- <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
- <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
- <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
- <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
- <87zhwbj8xe.fsf@redhat.com>
-Message-ID: <a71b227edeb0704991c33485eda3a580@redchan.it>
-X-Sender: unconditionedwitness@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The goal is obviously to shatter the gentleman's agreement that upholds 
-the opensource community and end opensource as a force within the US and 
-commonwealth countries.
+Clang emits a warning about this construct:
 
-And it will likely succeed.
+drivers/crypto/ccp/sp-platform.c:36:36: warning: tentative array
+definition assumed to have one element
+static const struct acpi_device_id sp_acpi_match[];
+                                   ^
+1 warning generated.
 
-No gratis contributor wants to be told what he can say or what he can do 
-"or else we won't let you give us this gift!".
+Just remove the forward declarations and move the initializations up
+so that they can be used in sp_get_of_version and sp_get_acpi_version.
 
-FreeBSD has lost 1/2 its contributors after their woman-worshiping 
-service known as the investiture of the CoC.
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/crypto/ccp/sp-platform.c | 53 +++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 28 deletions(-)
 
-This will continue until all of OSS is a rotting corpse.
-And then maybe some of the disaffected will revoke their license grants 
-and bury the effluence.
+diff --git a/drivers/crypto/ccp/sp-platform.c b/drivers/crypto/ccp/sp-platform.c
+index 71734f254fd1..b75dc7db2d4a 100644
+--- a/drivers/crypto/ccp/sp-platform.c
++++ b/drivers/crypto/ccp/sp-platform.c
+@@ -33,8 +33,31 @@ struct sp_platform {
+ 	unsigned int irq_count;
+ };
+ 
+-static const struct acpi_device_id sp_acpi_match[];
+-static const struct of_device_id sp_of_match[];
++static const struct sp_dev_vdata dev_vdata[] = {
++	{
++		.bar = 0,
++#ifdef CONFIG_CRYPTO_DEV_SP_CCP
++		.ccp_vdata = &ccpv3_platform,
++#endif
++	},
++};
++
++#ifdef CONFIG_ACPI
++static const struct acpi_device_id sp_acpi_match[] = {
++	{ "AMDI0C00", (kernel_ulong_t)&dev_vdata[0] },
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, sp_acpi_match);
++#endif
++
++#ifdef CONFIG_OF
++static const struct of_device_id sp_of_match[] = {
++	{ .compatible = "amd,ccp-seattle-v1a",
++	  .data = (const void *)&dev_vdata[0] },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, sp_of_match);
++#endif
+ 
+ static struct sp_dev_vdata *sp_get_of_version(struct platform_device *pdev)
+ {
+@@ -201,32 +224,6 @@ static int sp_platform_resume(struct platform_device *pdev)
+ }
+ #endif
+ 
+-static const struct sp_dev_vdata dev_vdata[] = {
+-	{
+-		.bar = 0,
+-#ifdef CONFIG_CRYPTO_DEV_SP_CCP
+-		.ccp_vdata = &ccpv3_platform,
+-#endif
+-	},
+-};
+-
+-#ifdef CONFIG_ACPI
+-static const struct acpi_device_id sp_acpi_match[] = {
+-	{ "AMDI0C00", (kernel_ulong_t)&dev_vdata[0] },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(acpi, sp_acpi_match);
+-#endif
+-
+-#ifdef CONFIG_OF
+-static const struct of_device_id sp_of_match[] = {
+-	{ .compatible = "amd,ccp-seattle-v1a",
+-	  .data = (const void *)&dev_vdata[0] },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(of, sp_of_match);
+-#endif
+-
+ static struct platform_driver sp_platform_driver = {
+ 	.driver = {
+ 		.name = "ccp",
+-- 
+2.19.0
 
-On 2018-09-21 13:07, fche@redhat.com wrote:
-> Rik van Riel <riel@surriel.com> writes:
-> 
->> [...]  The goal of the code of conduct is to make the community
->> welcoming, and to help people with being a part of the Linux
->> community.  [...]
-> 
-> That may well be the goal.  But the proper way to evaluate policy is 
-> not
-> the laudability of its goals but its forseeable and/or actual effects.
-> Is there any plan to evaluate the CoC empirically somehow to see if it
-> accomplishes what its proponents hope?
-> 
-> - FChE
