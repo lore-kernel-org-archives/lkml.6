@@ -2,39 +2,42 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33B5ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E577EECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3E720877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3E720877
+	by mail.kernel.org (Postfix) with ESMTP id AA69720C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA69720C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbeIXSHw (ORCPT
+        id S1731098AbeIXSH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:07:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54032 "EHLO
+        Mon, 24 Sep 2018 14:07:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730330AbeIXSHw (ORCPT
+        with ESMTP id S1730438AbeIXSHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:07:52 -0400
+        Mon, 24 Sep 2018 14:07:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00C7A1080;
-        Mon, 24 Sep 2018 12:06:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E60A1080;
+        Mon, 24 Sep 2018 12:06:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 085/111] mmc: sdhci: do not try to use 3.3V signaling if not supported
-Date:   Mon, 24 Sep 2018 13:52:52 +0200
-Message-Id: <20180924113113.266353323@linuxfoundation.org>
+Subject: [PATCH 4.9 086/111] drm/nouveau: tegra: Detach from ARM DMA/IOMMU mapping
+Date:   Mon, 24 Sep 2018 13:52:53 +0200
+Message-Id: <20180924113113.344200433@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -52,51 +55,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 1b5190c2e74c47ebe4bcecf7a072358ad9f1feaa ]
+[ Upstream commit b59fb482b52269977ee5de205308e5b236a03917 ]
 
-For eMMC devices it is valid to only support 1.8V signaling. When
-vqmmc is set to a fixed 1.8V regulator the stack tries to set 3.3V
-initially and prints the following warning:
-   mmc1: Switching to 3.3V signalling voltage failed
+Depending on the kernel configuration, early ARM architecture setup code
+may have attached the GPU to a DMA/IOMMU mapping that transparently uses
+the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
+backed buffers (a special bit in the GPU's MMU page tables indicates the
+memory path to take: via the SMMU or directly to the memory controller).
+Transparently backing DMA memory with an IOMMU prevents Nouveau from
+properly handling such memory accesses and causes memory access faults.
 
-Clear the MMC_SIGNAL_VOLTAGE_330 flag in case 3.3V is signaling is
-not available. This prevents the stack from even trying to use
-3.3V signaling and avoids the above warning.
+As a side-note: buffers other than those allocated in instance memory
+don't need to be physically contiguous from the GPU's perspective since
+the GPU can map them into contiguous buffers using its own MMU. Mapping
+these buffers through the IOMMU is unnecessary and will even lead to
+performance degradation because of the additional translation. One
+exception to this are compressible buffers which need large pages. In
+order to enable these large pages, multiple small pages will have to be
+combined into one large (I/O virtually contiguous) mapping via the
+IOMMU. However, that is a topic outside the scope of this fix and isn't
+currently supported. An implementation will want to explicitly create
+these large pages in the Nouveau driver, so detaching from a DMA/IOMMU
+mapping would still be required.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3328,14 +3328,21 @@ int sdhci_setup_host(struct sdhci_host *
- 	    mmc_gpio_get_cd(host->mmc) < 0)
- 		mmc->caps |= MMC_CAP_NEEDS_POLL;
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -23,6 +23,10 @@
+ #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
+ #include "priv.h"
  
--	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
- 	if (!IS_ERR(mmc->supply.vqmmc)) {
- 		ret = regulator_enable(mmc->supply.vqmmc);
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++#include <asm/dma-iommu.h>
++#endif
 +
-+		/* If vqmmc provides no 1.8V signalling, then there's no UHS */
- 		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
- 						    1950000))
- 			host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
- 					 SDHCI_SUPPORT_SDR50 |
- 					 SDHCI_SUPPORT_DDR50);
+ static int
+ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
+ {
+@@ -95,6 +99,15 @@ nvkm_device_tegra_probe_iommu(struct nvk
+ 	unsigned long pgsize_bitmap;
+ 	int ret;
+ 
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++	if (dev->archdata.mapping) {
++		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
 +
-+		/* In eMMC case vqmmc might be a fixed 1.8V regulator */
-+		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 2700000,
-+						    3600000))
-+			host->flags &= ~SDHCI_SIGNALING_330;
++		arm_iommu_detach_device(dev);
++		arm_iommu_release_mapping(mapping);
++	}
++#endif
 +
- 		if (ret) {
- 			pr_warn("%s: Failed to enable vqmmc regulator: %d\n",
- 				mmc_hostname(mmc), ret);
+ 	if (!tdev->func->iommu_bit)
+ 		return;
+ 
 
 
