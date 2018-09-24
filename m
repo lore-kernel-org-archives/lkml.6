@@ -2,78 +2,166 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B492ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22074ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF1422098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:40:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF1422098A
+	by mail.kernel.org (Postfix) with ESMTP id D25A82098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:42:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D25A82098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731746AbeIXWnf (ORCPT
+        id S1731745AbeIXWpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:43:35 -0400
-Received: from foss.arm.com ([217.140.101.70]:38542 "EHLO foss.arm.com"
+        Mon, 24 Sep 2018 18:45:22 -0400
+Received: from foss.arm.com ([217.140.101.70]:38560 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730699AbeIXWnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:43:35 -0400
+        id S1726400AbeIXWpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 18:45:22 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26D1180D;
-        Mon, 24 Sep 2018 09:40:35 -0700 (PDT)
-Received: from [10.163.1.125] (unknown [10.163.1.125])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E9393F5BD;
-        Mon, 24 Sep 2018 09:40:33 -0700 (PDT)
-Subject: Re: [PATCH] mm/migrate: Split only transparent huge pages when
- allocation fails
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-References: <1537798495-4996-1-git-send-email-anshuman.khandual@arm.com>
- <20180924143027.GE18685@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <421f9b78-cb0f-01ce-dca0-93ff6eae0816@arm.com>
-Date:   Mon, 24 Sep 2018 22:10:30 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 440C780D;
+        Mon, 24 Sep 2018 09:42:21 -0700 (PDT)
+Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BB9F3F5BD;
+        Mon, 24 Sep 2018 09:42:19 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 17:42:58 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
+ "PCI: mvebu: Only remap I/O space if configured"
+Message-ID: <20180924164258.GA19513@red-moon>
+References: <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
+ <20180913104241.65db8243@windsurf>
+ <20180924101213.GO30658@n2100.armlinux.org.uk>
+ <20180924122614.70738b5c@windsurf>
+ <20180924111341.GP30658@n2100.armlinux.org.uk>
+ <20180924141203.3df9707a@windsurf>
+ <20180924124620.GA10322@e107981-ln.cambridge.arm.com>
+ <20180924151040.5e57462b@windsurf>
+ <20180924141512.GA11875@e107981-ln.cambridge.arm.com>
+ <20180924165218.26c7c418@windsurf>
 MIME-Version: 1.0
-In-Reply-To: <20180924143027.GE18685@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924165218.26c7c418@windsurf>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/24/2018 08:00 PM, Michal Hocko wrote:
-> On Mon 24-09-18 19:44:55, Anshuman Khandual wrote:
->> When unmap_and_move[_huge_page] function fails due to lack of memory, the
->> splitting should happen only for transparent huge pages not for HugeTLB
->> pages. PageTransHuge() returns true for both THP and HugeTLB pages. Hence
->> the conditonal check should test PagesHuge() flag to make sure that given
->> pages is not a HugeTLB one.
+On Mon, Sep 24, 2018 at 04:52:18PM +0200, Thomas Petazzoni wrote:
+> Hello,
 > 
-> Well spotted! Have you actually seen this happening or this is review
-> driven? I am wondering what would be the real effect of this mismatch?
-> I have tried to follow to code path but I suspect
-> split_huge_page_to_list would fail for hugetlbfs pages. If there is a
-> more serious effect then we should mark the patch for stable as well.
+> On Mon, 24 Sep 2018 15:15:12 +0100, Lorenzo Pieralisi wrote:
+> 
+> > I understand that, I wanted to make sure we come up with a fix asap
+> > and what I put forward would cover everything discussed in this thread,
+> > at least temporarily, giving us time to check ISA related issues while
+> > unmapping IO space.
+> 
+> Something like this should implemented what you suggest I guess:
+> 
+> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+> index 50eb0729385b..a41d79b8d46a 100644
+> --- a/drivers/pci/controller/pci-mvebu.c
+> +++ b/drivers/pci/controller/pci-mvebu.c
+> @@ -1145,7 +1145,6 @@ static int mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
+>  {
+>         struct device *dev = &pcie->pdev->dev;
+>         struct device_node *np = dev->of_node;
+> -       unsigned int i;
+>         int ret;
+>  
+>         INIT_LIST_HEAD(&pcie->resources);
+> @@ -1179,13 +1178,58 @@ static int mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
+>                                          resource_size(&pcie->io) - 1);
+>                 pcie->realio.name = "PCI I/O";
+>  
+> +               pci_add_resource(&pcie->resources, &pcie->realio);
+> +       }
+> +
+> +       return devm_request_pci_bus_resources(dev, &pcie->resources);
+> +}
+> +
+> +/*
+> + * This is a copy of pci_host_probe(), except that it does the I/O
+> + * remap as the last step, once we are sure we won't fail.
+> + *
+> + * It should be removed once the I/O remap error handling issue has
+> + * been sorted out.
+> + */
+> +static int mvebu_pci_host_probe(struct pci_host_bridge *bridge)
+> +{
+> +       struct mvebu_pcie *pcie;
+> +       struct pci_bus *bus, *child;
+> +       int ret;
+> +
+> +       ret = pci_scan_root_bus_bridge(bridge);
+> +       if (ret < 0) {
+> +               dev_err(bridge->dev.parent, "Scanning root bridge failed");
+> +               return ret;
+> +       }
+> +
+> +       pcie = pci_host_bridge_priv(bridge);
+> +       if (resource_size(&pcie->io) != 0) {
+> +               unsigned int i;
+> +
+>                 for (i = 0; i < resource_size(&pcie->realio); i += SZ_64K)
+>                         pci_ioremap_io(i, pcie->io.start + i);
+> +       }
+>  
+> -               pci_add_resource(&pcie->resources, &pcie->realio);
+> +       bus = bridge->bus;
+> +
+> +       /*
+> +        * We insert PCI resources into the iomem_resource and
+> +        * ioport_resource trees in either pci_bus_claim_resources()
+> +        * or pci_bus_assign_resources().
+> +        */
+> +       if (pci_has_flag(PCI_PROBE_ONLY)) {
+> +               pci_bus_claim_resources(bus);
+> +       } else {
+> +               pci_bus_size_bridges(bus);
+> +               pci_bus_assign_resources(bus);
+> +
+> +               list_for_each_entry(child, &bus->children, node)
+> +                       pcie_bus_configure_settings(child);
+>         }
+>  
+> -       return devm_request_pci_bus_resources(dev, &pcie->resources);
+> +       pci_bus_add_devices(bus);
+> +       return 0;
+>  }
+>  
+>  static int mvebu_pcie_probe(struct platform_device *pdev)
+> @@ -1268,7 +1312,7 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
+>         bridge->align_resource = mvebu_pcie_align_resource;
+>         bridge->msi = pcie->msi;
+>  
+> -       return pci_host_probe(bridge);
+> +       return mvebu_pci_host_probe(bridge);
+>  }
+>  
+>  static const struct of_device_id mvebu_pcie_of_match_table[] = {
+> 
+> If that's what you meant, I'll go ahead and test on actual hardware and
+> submit as a proper patch.
 
-split_huge_page_to_list() fails on HugeTLB pages. I was experimenting around
-moving 32MB contig HugeTLB pages on arm64 (with a debug patch applied) hit
-the following stack trace when the kernel crashed.
+Yes, that's what I meant, I hope that you will have some bandwidth to
+discuss a way forward for v4.21, when this fix is merged (I think that
+v4.20 is a tall order but we can try if you will have time to post the
+patches - I suspect your fix will go in -rc6 if Bjorn can pull it this
+week).
 
-[ 3732.462797] Call trace:
-[ 3732.462835]  split_huge_page_to_list+0x3b0/0x858
-[ 3732.462913]  migrate_pages+0x728/0xc20
-[ 3732.462999]  soft_offline_page+0x448/0x8b0
-[ 3732.463097]  __arm64_sys_madvise+0x724/0x850
-[ 3732.463197]  el0_svc_handler+0x74/0x110
-[ 3732.463297]  el0_svc+0x8/0xc
-[ 3732.463347] Code: d1000400 f90b0e60 f2fbd5a2 a94982a1 (f9000420)
+Lorenzo
