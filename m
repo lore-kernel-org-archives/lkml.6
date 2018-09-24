@@ -2,187 +2,92 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0A5ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97EBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2B6220883
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B6220883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 83EC020C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:16:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v3CCIgEn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83EC020C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbeIXURk (ORCPT
+        id S1728620AbeIXUS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:17:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36286 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725982AbeIXURk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:17:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4940080D;
-        Mon, 24 Sep 2018 07:15:19 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.Emea.Arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1E5A3F5B7;
-        Mon, 24 Sep 2018 07:15:17 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 15:15:12 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Jan Kundr??t <jan.kundrat@cesnet.cz>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
- "PCI: mvebu: Only remap I/O space if configured"
-Message-ID: <20180924141512.GA11875@e107981-ln.cambridge.arm.com>
-References: <20180912231050.GX30658@n2100.armlinux.org.uk>
- <20180913094515.351967bb@windsurf>
- <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
- <20180913104241.65db8243@windsurf>
- <20180924101213.GO30658@n2100.armlinux.org.uk>
- <20180924122614.70738b5c@windsurf>
- <20180924111341.GP30658@n2100.armlinux.org.uk>
- <20180924141203.3df9707a@windsurf>
- <20180924124620.GA10322@e107981-ln.cambridge.arm.com>
- <20180924151040.5e57462b@windsurf>
+        Mon, 24 Sep 2018 16:18:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728122AbeIXUS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:18:58 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F38FE20C0A;
+        Mon, 24 Sep 2018 14:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537798597;
+        bh=ycBzMbuOAyqFSW10X7x0Z0ouceRsg7EcA6/fcdZS8j8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=v3CCIgEnTC6AbHuWmyj6srwYKkSdg/CRYxWFl+N5rMVipJOYidw/LOqzN73mn0P8y
+         kIoyaxL0ZGI4dkK/PdvjXjPmgdXppHnw74AqvbK4i4MxRsLGrWhJV/2lTVsK37ACGc
+         ykbW5RSHPI0WP2Sb2xpNAboHypB0q9056wC2ZZNg=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id CCFE71401A1; Mon, 24 Sep 2018 11:16:32 -0300 (-03)
+Date:   Mon, 24 Sep 2018 11:16:32 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-trace-devel@vger.kernel.org,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+Subject: Re: [PATCH 00/15] tools/lib/traceevent: Namespace updates to make
+ traceevent into a library
+Message-ID: <20180924141632.GA4640@kernel.org>
+References: <20180919185643.358126338@goodmis.org>
+ <20180923185626.GC30923@krava>
+ <20180924045523.2c15be13@vmware.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924151040.5e57462b@windsurf>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180924045523.2c15be13@vmware.local.home>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 03:10:40PM +0200, Thomas Petazzoni wrote:
-> Hello,
+Em Mon, Sep 24, 2018 at 04:55:23AM -0400, Steven Rostedt escreveu:
+> On Sun, 23 Sep 2018 20:56:26 +0200
+> Jiri Olsa <jolsa@redhat.com> wrote:
 > 
-> On Mon, 24 Sep 2018 13:46:29 +0100, Lorenzo Pieralisi wrote:
-> 
-> > What I think you can do short term, given that AFAICS MVEBU is not
-> > removable, instead of using pci_host_probe() you move part of its code
-> > into the driver and make sure that you remap IO as last operation before
-> > probe completion (ie after scanning the host bridge) so that you do not
-> > need to unmap it on failure; write a commit log summarising/linking this
-> > thread please and when v4.20 lands we will give this a more thorough
-> > look as Russell requested.
 > > 
-> > How does that sound ?
+> > Steven,
+> > is there still something left to rename, or we can start moving it into public rpm?
+> > 
 > 
-> The only thing that can fail in pci_host_probe() is:
+> We're testing it as a external library, and we did find something. Did
+> you get this patch?
 > 
-> 	ret = pci_scan_root_bus_bridge(bridge);
-> 	if (ret < 0) {
-> 		dev_err(bridge->dev.parent, "Scanning root bridge
-> 	failed"); return ret;
-> 	}
-> 
-> In the pci-mvebu driver prior to the conversion to pci_host_probe(),
-> the code flow at the end of ->probe() was:
-> 
->   mvebu_pcie_enable()
->     pci_common_init_dev()
->       pcibios_init_hw()
-> 
-> and pcibios_init_hw() calls pci_scan_root_bus_bridge(), without doing
-> much about the return value other than issuing a warning:
-> 
->                                 ret = pci_scan_root_bus_bridge(bridge);
->                         }
-> 
->                         if (WARN(ret < 0, "PCI: unable to scan bus!")) {
->                                 pci_free_host_bridge(bridge);
->                                 break;
->                         }
-> 
-> I.e, even before the conversion to pci_host_probe(), in case of
-> failure in pci_scan_root_bus_bridge(), we would have the I/O mapping in
-> place, but the PCI controller not registered.
-> 
-> We could keep the same (not great) behavior by doing:
-> 
-> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
-> index 50eb0729385b..487492f0c5f7 100644
-> --- a/drivers/pci/controller/pci-mvebu.c
-> +++ b/drivers/pci/controller/pci-mvebu.c
-> @@ -1179,9 +1179,6 @@ static int mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
->                                          resource_size(&pcie->io) - 1);
->                 pcie->realio.name = "PCI I/O";
->  
-> -               for (i = 0; i < resource_size(&pcie->realio); i += SZ_64K)
-> -                       pci_ioremap_io(i, pcie->io.start + i);
-> -
->                 pci_add_resource(&pcie->resources, &pcie->realio);
->         }
->  
-> @@ -1197,7 +1194,7 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
->         struct device_node *child;
->         int num, i, ret;
->  
-> -       bridge = devm_pci_alloc_host_bridge(dev, sizeof(struct mvebu_pcie));
-> +       bridge = pci_alloc_host_bridge(sizeof(struct mvebu_pcie));
->         if (!bridge)
->                 return -ENOMEM;
->  
-> @@ -1212,8 +1209,10 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
->         num = of_get_available_child_count(np);
->  
->         pcie->ports = devm_kcalloc(dev, num, sizeof(*pcie->ports), GFP_KERNEL);
-> -       if (!pcie->ports)
-> -               return -ENOMEM;
-> +       if (!pcie->ports) {
-> +               ret = -ENOMEM;
-> +               goto free_host_bridge;
-> +       }
->  
->         i = 0;
->         for_each_available_child_of_node(np, child) {
-> @@ -1222,7 +1221,7 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
->                 ret = mvebu_pcie_parse_port(pcie, port, child);
->                 if (ret < 0) {
->                         of_node_put(child);
-> -                       return ret;
-> +                       goto free_host_bridge;
->                 } else if (ret == 0) {
->                         continue;
->                 }
-> @@ -1268,7 +1267,21 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
->         bridge->align_resource = mvebu_pcie_align_resource;
->         bridge->msi = pcie->msi;
->  
-> -       return pci_host_probe(bridge);
-> +       if (resource_size(&pcie->io) != 0) {
-> +               for (i = 0; i < resource_size(&pcie->realio); i += SZ_64K)
-> +                       pci_ioremap_io(i, pcie->io.start + i);
-> +       }
-> +
-> +       ret = pci_host_probe(bridge);
-> +       if (ret)
-> +               pci_free_host_bridge(bridge);
-> +
-> +       /* Yes, when pci_host_probe() returns a failure, we don't care */
-> +       return 0;
-> +
-> +free_host_bridge:
-> +       pci_free_host_bridge(bridge);
-> +       return ret;
->  }
->  
->  static const struct of_device_id mvebu_pcie_of_match_table[] = {
-> 
-> I.e, we simply ignore the failure of pci_host_probe().
-> 
-> To be honest, I really prefer the option of introducing pci_unmap_io().
+>  https://lore.kernel.org/lkml/20180921152037.1e23c7f4@gandalf.local.home
 
-I understand that, I wanted to make sure we come up with a fix asap
-and what I put forward would cover everything discussed in this thread,
-at least temporarily, giving us time to check ISA related issues while
-unmapping IO space.
+I'm finishing tests with the patchset before this last patch, will push
+to Ingo soon, then will check if the patch with the private copy of the
+strerror_r() wrapper passes on the systems that made that wrapper came
+to be, i.e. systems using the musl libc (https://www.musl-libc.org/).
+ 
+> We're testing it against powertop and mceutils, when we get it working
+> well with them, then I think it's time to start going ahead and making
+> it into an rpm.
 
-Lorenzo
+At some point would be nice if you guys provided patches to make
+tools/perf/ link dynamicly to libtraceevent as well.
+
+- Arnaldo
