@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78589C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82808C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D27D2148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D27D2148C
+	by mail.kernel.org (Postfix) with ESMTP id 4848021486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4848021486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732609AbeIXS0i (ORCPT
+        id S1732847AbeIXS0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:26:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56844 "EHLO
+        Mon, 24 Sep 2018 14:26:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56854 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731861AbeIXS0h (ORCPT
+        with ESMTP id S1728587AbeIXS0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:26:37 -0400
+        Mon, 24 Sep 2018 14:26:41 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E2101098;
-        Mon, 24 Sep 2018 12:24:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BFDD108B;
+        Mon, 24 Sep 2018 12:24:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 152/173] drm/panel: type promotion bug in s6e8aa0_read_mtp_id()
-Date:   Mon, 24 Sep 2018 13:53:06 +0200
-Message-Id: <20180924113126.518967139@linuxfoundation.org>
+Subject: [PATCH 4.14 153/173] IB/nes: Fix a compiler warning
+Date:   Mon, 24 Sep 2018 13:53:07 +0200
+Message-Id: <20180924113126.576350560@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,35 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-[ Upstream commit cd0e0ca69109d025b1a1b6609f70682db62138b0 ]
+[ Upstream commit 4c5743bc4fe3233cecc1c184a773c79c8ee45bbe ]
 
-The ARRAY_SIZE() macro is type size_t.  If s6e8aa0_dcs_read() returns a
-negative error code, then "ret < ARRAY_SIZE(id)" is false because the
-negative error code is type promoted to a high positive value.
+Avoid that the following compiler warning is reported when building with
+W=1:
 
-Fixes: 02051ca06371 ("drm/panel: add S6E8AA0 driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180704093807.s3lqsb2v6dg2k43d@kili.mountain
+drivers/infiniband/hw/nes/nes_hw.c:646:51: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]
+
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c |    2 +-
+ drivers/infiniband/hw/nes/nes.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
-+++ b/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
-@@ -823,7 +823,7 @@ static void s6e8aa0_read_mtp_id(struct s
- 	int ret, i;
+--- a/drivers/infiniband/hw/nes/nes.h
++++ b/drivers/infiniband/hw/nes/nes.h
+@@ -159,7 +159,7 @@ do { \
  
- 	ret = s6e8aa0_dcs_read(ctx, 0xd1, id, ARRAY_SIZE(id));
--	if (ret < ARRAY_SIZE(id) || id[0] == 0x00) {
-+	if (ret < 0 || ret < ARRAY_SIZE(id) || id[0] == 0x00) {
- 		dev_err(ctx->dev, "read id failed\n");
- 		ctx->error = -EIO;
- 		return;
+ #define NES_EVENT_TIMEOUT   1200000
+ #else
+-#define nes_debug(level, fmt, args...)
++#define nes_debug(level, fmt, args...) do {} while (0)
+ #define assert(expr)          do {} while (0)
+ 
+ #define NES_EVENT_TIMEOUT   100000
 
 
