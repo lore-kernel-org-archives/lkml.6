@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6343FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CF8C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28E812148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E812148C
+	by mail.kernel.org (Postfix) with ESMTP id 81C442148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81C442148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbeIXRnX (ORCPT
+        id S1729624AbeIXRn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:43:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51044 "EHLO
+        Mon, 24 Sep 2018 13:43:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728503AbeIXRnW (ORCPT
+        with ESMTP id S1728503AbeIXRn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:43:22 -0400
+        Mon, 24 Sep 2018 13:43:28 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2891E1070;
-        Mon, 24 Sep 2018 11:41:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9290D1070;
+        Mon, 24 Sep 2018 11:41:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        David Binderman <dcb314@hotmail.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 3.18 083/105] Tools: hv: Fix a bug in the key delete code
-Date:   Mon, 24 Sep 2018 13:34:09 +0200
-Message-Id: <20180924113121.355450986@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 3.18 084/105] usb: Dont die twice if PCI xhci host is not responding in resume
+Date:   Mon, 24 Sep 2018 13:34:10 +0200
+Message-Id: <20180924113121.425137174@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -52,33 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: K. Y. Srinivasan <kys@microsoft.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 86503bd35dec0ce363e9fdbf5299927422ed3899 upstream.
+commit f3dc41c5d22b2ca14a0802a65d8cdc33a3882d4e upstream.
 
-Fix a bug in the key delete code - the num_records range
-from 0 to num_records-1.
+usb_hc_died() should only be called once, and with the primary HCD
+as parameter. It will mark both primary and secondary hcd's dead.
 
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Reported-by: David Binderman <dcb314@hotmail.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Remove the extra call to usb_cd_died with the shared hcd as parameter.
+
+Fixes: ff9d78b36f76 ("USB: Set usb_hcd->state and flags for shared roothubs")
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/hv/hv_kvp_daemon.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/hcd-pci.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -289,7 +289,7 @@ static int kvp_key_delete(int pool, cons
- 		 * Found a match; just move the remaining
- 		 * entries up.
- 		 */
--		if (i == num_records) {
-+		if (i == (num_records - 1)) {
- 			kvp_file_info[pool].num_records--;
- 			kvp_update_file(pool);
- 			return 0;
+--- a/drivers/usb/core/hcd-pci.c
++++ b/drivers/usb/core/hcd-pci.c
+@@ -530,8 +530,6 @@ static int resume_common(struct device *
+ 				event == PM_EVENT_RESTORE);
+ 		if (retval) {
+ 			dev_err(dev, "PCI post-resume error %d!\n", retval);
+-			if (hcd->shared_hcd)
+-				usb_hc_died(hcd->shared_hcd);
+ 			usb_hc_died(hcd);
+ 		}
+ 	}
 
 
