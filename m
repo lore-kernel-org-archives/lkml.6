@@ -2,123 +2,152 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1181BC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91007C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6AC92087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F2292087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:03:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEfocBIG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6AC92087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="TLTYclMW";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="dXit5OYf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F2292087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbeIXQEJ (ORCPT
+        id S1728356AbeIXQEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:04:09 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39587 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbeIXQEI (ORCPT
+        Mon, 24 Sep 2018 12:04:50 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:4948 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbeIXQEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:04:08 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q8-v6so9373109wmq.4;
-        Mon, 24 Sep 2018 03:02:51 -0700 (PDT)
+        Mon, 24 Sep 2018 12:04:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1537783414; x=1569319414;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=NSXiJhLsC4jWikA0EA8OI5CC54em1/HB9H8YxeSgcwg=;
+  b=TLTYclMWl8LKOeQmcOc0PsCa8QQSnJb/AXGhNO0knXGv12Cv/v/GHXGD
+   tXIPn0Wt/0cLCFcxheteamooB2XggnCRtB0KXPnaTB6QmZ+X9MrQ3MXPh
+   XlMHL7zbmzCgZvHxCmvR2ab2PvYpuQ4lXeqxfqmE7FZMTCIOPs6V+/C0R
+   KrqFyGgPQ9rn3yLSw1pWp6e2ZCWDB3D5ibwH4EwKpZM6UFI5mb3ewDSHS
+   vw2xMT3x/zPH356EKkZh2N/x3V1i2HaSiMroqJVmPYBs4av+o/Yc4+5B+
+   4ljsETCIMWBVw76YlNoImga+Ewbvi/Evh+2qwXsz8B8izah8m9wCZpJhl
+   A==;
+X-IronPort-AV: E=Sophos;i="5.54,297,1534780800"; 
+   d="scan'208";a="90408560"
+Received: from mail-sn1nam01lp0119.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([207.46.163.119])
+  by ob1.hgst.iphmx.com with ESMTP; 24 Sep 2018 18:03:33 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bcErAxWh9lP1ki+2174vw2wIRaLHj7qqDWT1MDv3NSo=;
-        b=hEfocBIGksL3x9DAyxWFus89GNQcgSOxAIm3SDCeGfop+gjcj3RhUZ0Lv8PXDVCxTF
-         muC7mQp56V5pQR9XZ+Vzc8ZLn8SNboq+sy81RLqN2vMjPUTiYg4dDANl//gZIMWmtV1w
-         dZyK78/fWfIlg+0rj4P9djkt9oTkPpH5Oi+f85S4D5JKHlxmTXPQ7z0Oa62Ikm/hiPwz
-         cmZtnjXJAoi8Qs7GK4cIdsiE8DT72kRFZJRE8+wBNC0iExwRVcfL3fSG/qZzmIkBaaus
-         WmFMC5S5ztaFfdct+tL2RfccY88APqD4rcSFnQN5976SSuO2bh2QtNuNyFUBRyrCLnQ1
-         wzVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bcErAxWh9lP1ki+2174vw2wIRaLHj7qqDWT1MDv3NSo=;
-        b=HVvIxtL73IAAdE6+6j5/LLp0bcTS9gj/c5L8vX4OalJ8ujrfjaCR/UkuMakDPMAfvQ
-         kShAZOn3q/g35ZJbmsGTuJGAj9KUxb7fIo7ga4rBkxipN/CsiFbo/KauX9/bQokHvOLs
-         U3FaeyIIFl+PUiVaVChj0EoCSNGiLg5KzO9HqoeedIImZq+XsEGUYTj162cUGVRf2weI
-         MOeWOfNAIjYpXWfjnqZefYmS60gwY/IzU6xzss+6c6Rb7QOe9CRtSgAjKz3zF7r582Ju
-         Rz6u4fQMZbqnKnLnW580JOdZOpMIFiZuZxMKxm6FeGYrusKLMiNUuHNWHqdlGEJwoyGp
-         Q8PQ==
-X-Gm-Message-State: APzg51AIRYj03GoqNM5anUbu5qNXahPU0ZNQ6d4I3sz5126XyqUK0Lvm
-        5PanO1bitXotScjn7YYqhVs=
-X-Google-Smtp-Source: ACcGV62a+WznLUJVFYJZwxARIB85sL77+J++7gGjREHfypuRUxO/lG9C6OP9WMC/3BusmkewCSnJ9A==
-X-Received: by 2002:a1c:1bc9:: with SMTP id b192-v6mr5827480wmb.160.1537783370184;
-        Mon, 24 Sep 2018 03:02:50 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm27253825wmb.10.2018.09.24.03.02.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 03:02:49 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 12:02:48 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/20] iommu/tegra: gart: Clean up driver probe errors
- handling
-Message-ID: <20180924100248.GD21032@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-3-digetx@gmail.com>
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8gYBSqI3RCvZo29AjhHxlH0q+KyKnRyOtSj1Q5fhj1g=;
+ b=dXit5OYf3VaSDqkKC+nKeh9Z6jhWFLNu2WORkv3f+m4QfckiLxt+irnnua2l313HzrB+G+wcfrKAnI82txGFWmixA2bzmu3jZzmHbbxO03/J+g9ACzhWZjDgE+ipHGaJI2lT7NzTbtwFe75RoL+LuZftqUBi1LC1Vpi+aVhS5s8=
+Received: from SN6PR04MB4925.namprd04.prod.outlook.com (52.135.114.82) by
+ SN6PR04MB4477.namprd04.prod.outlook.com (52.135.119.78) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.17; Mon, 24 Sep 2018 10:03:29 +0000
+Received: from SN6PR04MB4925.namprd04.prod.outlook.com
+ ([fe80::acfd:8e39:37f4:1151]) by SN6PR04MB4925.namprd04.prod.outlook.com
+ ([fe80::acfd:8e39:37f4:1151%4]) with mapi id 15.20.1143.019; Mon, 24 Sep 2018
+ 10:03:29 +0000
+From:   Avri Altman <Avri.Altman@wdc.com>
+To:     Sayali Lokhande <sayalil@codeaurora.org>,
+        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "evgreen@chromium.org" <evgreen@chromium.org>,
+        "riteshh@codeaurora.org" <riteshh@codeaurora.org>
+CC:     "stummala@codeaurora.org" <stummala@codeaurora.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V14 2/2] scsi: ufs: Add configfs support for UFS
+ provisioning
+Thread-Topic: [PATCH V14 2/2] scsi: ufs: Add configfs support for UFS
+ provisioning
+Thread-Index: AQHUU8/5+XuuyPYED0KkdM/m7LJ4iaT/L9sy
+Date:   Mon, 24 Sep 2018 10:03:29 +0000
+Message-ID: <SN6PR04MB4925D198F7AE8961254F43C9FC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+References: <1537770516-28410-1-git-send-email-sayalil@codeaurora.org>,<1537770516-28410-3-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1537770516-28410-3-git-send-email-sayalil@codeaurora.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com; 
+x-originating-ip: [213.57.170.193]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR04MB4477;6:jKCaA682XVTqAiTXU5TSFcZYH2h26ipTS18FGEC4ZBQAhJ07sPMqi0Glu0+dL8+H6aBJFiLiwBx+je6YIsbrw7eZqxviUEOO9fdG23qWXo0QZ+J66a4iGKCEcR+ELJ7MBfQHQlytqPcfnrkVT/EynZGfRKrjgeUMLGIEq2LrNSZYPLxzhWm//+jvXf0oMOP1H4lAHSaJp7LNBLqD7ai8+yymKRoSQ1slwnrm3a4Dg+lvI9QMjka8dE1YmeYGo1XvbUb+RevC9mjf5Kp5auQLvDivWVZ0m7NH5rTMNGXy2MnD9ruGJIyKH0GLh+7BN4kTuwcTHZn/QrWioMOYYiGtiCaV91aU9qJPGkYkIbKGlBSrTr1J1PWw7V/bUE81UpwOpdEshYVcHM6hTPBkkclhuCuJZW7+sY26gQaH4fUW0VfJSAtKPC+mnptQFsft0HmMHoc9Q6tzjYjQbCpCv9kaRQ==;5:Le1EyfKyYw8IWfx1VKXqEHW8UTRVCrab0yt6vQ50pj1qWMgOaXzyqA0zl/d3FW9eGArv1sElkHBeYpIwFQg0nEO5uLAMrQ1C5ZzCFsZp27XTomW1TLV158xkaXIt94PQB14hOenv4jwaKKLh7oWgtXGcss21omUwbJk8HfKuRbE=;7:nIUMMS/OZsaeFDIDj3hK6y4o9/h555eiG1PMG9+8mvR1p8Nqo4GTz2//XhfnEplbTQT9wKNbr+guxkV6k3H9N+5REmkDuiM8n9INqCleFv6kXOx4EOra1950Bc4qhHyg5bJKgQQ0p08Mm62pQxzJ6YqM7VR+TC6VIrBfLGIQtdbkg9FdEi8Q9sbxv0jOu/kaNE+xsv1ad40eGIBGCTytWAewOu4RmPxGkIa/YWMeLYOqcF8EP5q2SbjVXdWPiERp
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 186f1ec5-9de0-45b2-d2e9-08d62204fa2a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR04MB4477;
+x-ms-traffictypediagnostic: SN6PR04MB4477:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <SN6PR04MB44779F57F1452F84F3C613BDFC170@SN6PR04MB4477.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(149066)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:SN6PR04MB4477;BCL:0;PCL:0;RULEID:;SRVR:SN6PR04MB4477;
+x-forefront-prvs: 0805EC9467
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(366004)(376002)(136003)(199004)(189003)(102836004)(74316002)(7416002)(4326008)(8676002)(86362001)(39060400002)(14444005)(256004)(106356001)(99286004)(5660300001)(68736007)(305945005)(316002)(2201001)(110136005)(54906003)(6246003)(11346002)(6436002)(53936002)(9686003)(55016002)(25786009)(486006)(105586002)(476003)(66066001)(72206003)(478600001)(229853002)(2906002)(446003)(76176011)(71190400001)(7736002)(71200400001)(8936002)(33656002)(6116002)(3846002)(7696005)(81166006)(81156014)(97736004)(2900100001)(14454004)(5250100002)(186003)(2501003)(6506007)(26005)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4477;H:SN6PR04MB4925.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 8fXvTzS4FnrhvK9fsBd1tXUCpvnZ0QtW1uWyqgbMnlARJ1FZV62uCOZ4YpYBrdmEj2lpulDsPPhmZtWSYD51DF5p8cl5z75QeTtRq3ZSpHQxB/xtMFXSVi/jREMLZHNwqd7u9YNS/CN6G5/1UkVasOuzeYOmZn610cyosheY9XX+TQpYuddD4NymkeLSZKhKvNLvSoYlTj+GZJAee2yhnt49TomRht9D2I2jwqfXDb+9LG0NSh4tohn1/8SDNkxyNRwiKhyIfRL9jDUuYwXdsh4y0BNG9tkyENuAlNAv1Sl6iRB30m8bo2EPLfL7ivHjR44+XyyK7cyqKULTw9k/bXMUx7psdbOnAAM69cbyJD4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+B+y8wtTXqdUj1xM"
-Content-Disposition: inline
-In-Reply-To: <20180924004153.8232-3-digetx@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 186f1ec5-9de0-45b2-d2e9-08d62204fa2a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 10:03:29.0837
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4477
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> obj-$(CONFIG_SCSI_UFS_QCOM) +=3D ufs-qcom.o
+>obj-$(CONFIG_SCSI_UFSHCD) +=3D ufshcd-core.o
+>ufshcd-core-objs :=3D ufshcd.o ufs-sysfs.o
+>+obj-$(CONFIG_SCSI_UFS_PROVISION) +=3D ufs-configfs.o
+Isn't ufs-configfs should be part of ufshcd-core? like ufs-sysfs ?
 
---+B+y8wtTXqdUj1xM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 24, 2018 at 03:41:35AM +0300, Dmitry Osipenko wrote:
-> Properly clean up allocated resources on the drivers probe failure and
-> remove unneeded checks.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/iommu/tegra-gart.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+>+static ssize_t ufs_config_desc_show(struct config_item *item, char *buf,
+>+                                   u8 index)
+>+{
+The read part already exist in ufs-sysfs.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
 
---+B+y8wtTXqdUj1xM
-Content-Type: application/pgp-signature; name="signature.asc"
+>+ssize_t ufshcd_desc_configfs_store(struct config_item *item, const char *=
+buf,
+>+                                  size_t count, u8 index)
+>+{
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluotkgACgkQ3SOs138+
-s6H+Ig/6AsRUs4KWmrmToJo+c1f02b2It0bq/cQpS4YE4Fb/cuifGolvSB3Afecy
-UPZufETrXZWicqUZRaC7CEwqaHq82IRHi3a8KcbTHGz20fg5TTQN+5eD2RDFTUOX
-jxbYiwUkAI2gjZM/7FnGBKPxf4FWWNcbLozxedgEU+MzISVmqk6nRxB1oMDI6GEA
-vMYnyOTte2LKdZ9AMvzWOSlShZXR1zqtym/F6fs/klhn+bp/E+SQ/09Yq2TDtMNS
-jwdU2dKylUyD56+QpJCZkDQCfe3U7FpSIaPWszpKjDy/pVaV9ww+eIzN+02+wgig
-GMmBDn8BIiZvDwrDxjuuCx6ZdRTAoz0Umx1elhssVozBVO+EloK5wVfFLpprVmSv
-GB/r+pztQzhS2TNnVsFjOKwd0OqTdaHVt5FIFClcZgfKz7m9aeTyaijQeWl9AsRO
-bgl5e5/0WFBNIEB01QaZU0ADhB8C9DI5z70Fxo7tPKst1n9UAliomV+nAdIpZOq6
-qVJjvBHQivUyDIggDkQ7HbT2SBxViCUDfka3GyRXMb/m8zC+9acz0AUl+tHd68eO
-tI+VAI5z0w0O5qYXN2lunhXloiQYGDlLOlTfI1oNXGAi1YRFgImbPMkvy4+mcryx
-WUl03xjUHhV2cHMuvT0l8HC7KRxhQCSF8UjFueKo/pe3Dyeb0jI=
-=wGqS
------END PGP SIGNATURE-----
+>+
+>+       /*
+>+        * First read the current configuration descriptor
+>+        * and then update with user provided parameters
+>+        */
+if originally only lun0 was configured, and you want to configure a new set=
+ of luns -=20
+luns 8 to 15 (config index 0x1) - won't the read fail in that case?
 
---+B+y8wtTXqdUj1xM--
+Thanks,
+Avri=
