@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F594C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E8FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504982148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504982148C
+	by mail.kernel.org (Postfix) with ESMTP id 3F59821486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F59821486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388092AbeIXSd4 (ORCPT
+        id S2388100AbeIXSd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:33:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58050 "EHLO
+        Mon, 24 Sep 2018 14:33:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58062 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730184AbeIXSdz (ORCPT
+        with ESMTP id S1730184AbeIXSd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:33:55 -0400
+        Mon, 24 Sep 2018 14:33:59 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1ED11099;
-        Mon, 24 Sep 2018 12:31:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ACCBD1099;
+        Mon, 24 Sep 2018 12:32:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
+        stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        David Carrillo-Cisneros <davidcc@google.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 046/235] gfs2: Dont reject a supposedly full bitmap if we have blocks reserved
-Date:   Mon, 24 Sep 2018 13:50:32 +0200
-Message-Id: <20180924113109.854450823@linuxfoundation.org>
+Subject: [PATCH 4.18 047/235] perf tools: Synthesize GROUP_DESC feature in pipe mode
+Date:   Mon, 24 Sep 2018 13:50:33 +0200
+Message-Id: <20180924113109.928889874@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,42 +58,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit e79e0e1428188b24c3b57309ffa54a33c4ae40c4 ]
+[ Upstream commit e8fedff1cc729fd227924305152ccc6f580e8c83 ]
 
-Before this patch, you could get into situations like this:
+Stephan reported, that pipe mode does not carry the group information
+and thus the piped report won't display the grouped output for following
+command:
 
-1. Process 1 searches for X free blocks, finds them, makes a reservation
-2. Process 2 searches for free blocks in the same rgrp, but now the
-   bitmap is full because process 1's reservation is skipped over.
-   So it marks the bitmap as GBF_FULL.
-3. Process 1 tries to allocate blocks from its own reservation, but
-   since the GBF_FULL bit is set, it skips over the rgrp and searches
-   elsewhere, thus not using its own reservation.
+  # perf record -e '{cycles,instructions,branches}' -a sleep 4 | perf report
 
-This patch adds an additional check to allow processes to use their
-own reservations.
+It has no idea about the group setup, so it will display events
+separately:
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+  # Overhead  Command          Shared Object             ...
+  # ........  ...............  .......................
+  #
+       6.71%  swapper          [kernel.kallsyms]
+       2.28%  offlineimap      libpython2.7.so.1.0
+       0.78%  perf             [kernel.kallsyms]
+  ...
+
+Fix GROUP_DESC feature record to be synthesized in pipe mode, so the
+report output is grouped if there are groups defined in record:
+
+  #                 Overhead  Command          Shared    ...
+  # ........................  ...............  .......
+  #
+       7.57%   0.16%   0.30%  swapper          [kernel
+       1.87%   3.15%   2.46%  offlineimap      libpyth
+       1.33%   0.00%   0.00%  perf             [kernel
+  ...
+
+Reported-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Stephane Eranian <eranian@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180712135202.14774-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/gfs2/rgrp.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/header.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1686,7 +1686,8 @@ static int gfs2_rbm_find(struct gfs2_rbm
- 
- 	while(1) {
- 		bi = rbm_bi(rbm);
--		if (test_bit(GBF_FULL, &bi->bi_flags) &&
-+		if ((ip == NULL || !gfs2_rs_active(&ip->i_res)) &&
-+		    test_bit(GBF_FULL, &bi->bi_flags) &&
- 		    (state == GFS2_BLKST_FREE))
- 			goto next_bitmap;
- 
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2587,7 +2587,7 @@ static const struct feature_ops feat_ops
+ 	FEAT_OPR(NUMA_TOPOLOGY,	numa_topology,	true),
+ 	FEAT_OPN(BRANCH_STACK,	branch_stack,	false),
+ 	FEAT_OPR(PMU_MAPPINGS,	pmu_mappings,	false),
+-	FEAT_OPN(GROUP_DESC,	group_desc,	false),
++	FEAT_OPR(GROUP_DESC,	group_desc,	false),
+ 	FEAT_OPN(AUXTRACE,	auxtrace,	false),
+ 	FEAT_OPN(STAT,		stat,		false),
+ 	FEAT_OPN(CACHE,		cache,		true),
 
 
