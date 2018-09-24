@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B28CECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB89C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3EAE21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3EAE21486
+	by mail.kernel.org (Postfix) with ESMTP id 5E0A62148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0A62148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388409AbeIXShF (ORCPT
+        id S2388423AbeIXShJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:37:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58504 "EHLO
+        Mon, 24 Sep 2018 14:37:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387468AbeIXShF (ORCPT
+        with ESMTP id S2387468AbeIXShI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:37:05 -0400
+        Mon, 24 Sep 2018 14:37:08 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23B161092;
-        Mon, 24 Sep 2018 12:35:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D71831092;
+        Mon, 24 Sep 2018 12:35:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Georg=20M=C3=BCller?= <georgmueller@gmx.net>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.18 119/235] mei: bus: need to unlink client before freeing
-Date:   Mon, 24 Sep 2018 13:51:45 +0200
-Message-Id: <20180924113118.046897929@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Azael Avalos <coproscefalo@gmail.com>,
+        platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy@infradead.org>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 084/235] platform/x86: toshiba_acpi: Fix defined but not used build warnings
+Date:   Mon, 24 Sep 2018 13:51:10 +0200
+Message-Id: <20180924113113.427659361@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,76 +55,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 34f1166afd67f9f48a08c52f36180048908506a4 upstream.
+[ Upstream commit c2e2a618eb7104e18fdcf739d4d911563812a81c ]
 
-In case a client fails to connect in mei_cldev_enable(), the
-caller won't call the mei_cldev_disable leaving the client
-in a linked stated. Upon driver unload the client structure
-will be freed in  mei_cl_bus_dev_release(), leaving a stale pointer
-on a fail_list.  This will eventually end up in crash
-during power down flow in mei_cl_set_disonnected().
+Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
+by marking the unused function as __maybe_unused.
 
-RIP:  mei_cl_set_disconnected+0x5/0x260[mei]
-Call trace:
-mei_cl_all_disconnect+0x22/0x30
-mei_reset+0x194/0x250
-__synchronize_hardirq+0x43/0x50
-_cond_resched+0x15/0x30
-mei_me_intr_clear+0x20/0x100
-mei_stop+0x76/0xb0
-mei_me_shutdown+0x3f/0x80
-pci_device_shutdown+0x34/0x60
-kernel_restart+0x0e/0x30
+../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show' defined but not used [-Wunused-function]
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200455
-Fixes: 'c110cdb17148 ("mei: bus: make a client pointer always available")'
-Cc: <stable@vger.kernel.org> 4.10+
-Tested-by: Georg Müller <georgmueller@gmx.net>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Azael Avalos <coproscefalo@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andy@infradead.org>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/misc/mei/bus.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/platform/x86/toshiba_acpi.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/mei/bus.c
-+++ b/drivers/misc/mei/bus.c
-@@ -505,17 +505,15 @@ int mei_cldev_enable(struct mei_cl_devic
+--- a/drivers/platform/x86/toshiba_acpi.c
++++ b/drivers/platform/x86/toshiba_acpi.c
+@@ -34,6 +34,7 @@
+ #define TOSHIBA_ACPI_VERSION	"0.24"
+ #define PROC_INTERFACE_VERSION	1
  
- 	cl = cldev->cl;
- 
-+	mutex_lock(&bus->device_lock);
- 	if (cl->state == MEI_FILE_UNINITIALIZED) {
--		mutex_lock(&bus->device_lock);
- 		ret = mei_cl_link(cl);
--		mutex_unlock(&bus->device_lock);
- 		if (ret)
--			return ret;
-+			goto out;
- 		/* update pointers */
- 		cl->cldev = cldev;
- 	}
- 
--	mutex_lock(&bus->device_lock);
- 	if (mei_cl_is_connected(cl)) {
- 		ret = 0;
- 		goto out;
-@@ -859,12 +857,13 @@ static void mei_cl_bus_dev_release(struc
- 
- 	mei_me_cl_put(cldev->me_cl);
- 	mei_dev_bus_put(cldev->bus);
-+	mei_cl_unlink(cldev->cl);
- 	kfree(cldev->cl);
- 	kfree(cldev);
- }
- 
- static const struct device_type mei_cl_device_type = {
--	.release	= mei_cl_bus_dev_release,
-+	.release = mei_cl_bus_dev_release,
++#include <linux/compiler.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+@@ -1682,7 +1683,7 @@ static const struct file_operations keys
+ 	.write		= keys_proc_write,
  };
  
- /**
+-static int version_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
+ 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
 
 
