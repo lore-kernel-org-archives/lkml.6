@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FB1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6736ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1992148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1992148C
+	by mail.kernel.org (Postfix) with ESMTP id 89DA421486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DA421486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732479AbeIXSYF (ORCPT
+        id S1732514AbeIXSYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:24:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56344 "EHLO
+        Mon, 24 Sep 2018 14:24:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56354 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732170AbeIXSYE (ORCPT
+        with ESMTP id S1732170AbeIXSYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:24:04 -0400
+        Mon, 24 Sep 2018 14:24:06 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3FF510AE;
-        Mon, 24 Sep 2018 12:22:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2699C10AC;
+        Mon, 24 Sep 2018 12:22:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
         Wei Xu <xuwei5@hisilicon.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 124/173] ARM: hisi: fix error handling and missing of_node_put
-Date:   Mon, 24 Sep 2018 13:52:38 +0200
-Message-Id: <20180924113125.039625081@linuxfoundation.org>
+Subject: [PATCH 4.14 125/173] ARM: hisi: check of_iomap and fix missing of_node_put
+Date:   Mon, 24 Sep 2018 13:52:39 +0200
+Message-Id: <20180924113125.088489200@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,38 +54,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 9f30b5ae0585ca5234fe979294b8f897299dec99 ]
+[ Upstream commit 81646a3d39ef14749301374a3a0b8311384cd412 ]
 
-of_iomap() can return NULL which seems critical here and thus should be
-explicitly flagged so that the cause of system halting can be understood.
-As of_find_compatible_node() is returning a device node with refcount
-incremented it must be explicitly decremented here.
+of_find_compatible_node() returns a device node with refcount incremented
+and thus needs an explicit of_node_put(). Further relying on an unchecked
+of_iomap() which can return NULL is problematic here, after all ctrl_base
+is critical enough for hix5hd2_set_cpu() to call BUG() if not available
+so a check seems mandated here.
 
 Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit 7fda91e73155 ("ARM: hisi: enable smp for HiP01")
+0002 Fixes: commit 06cc5c1d4d73 ("ARM: hisi: enable hix5hd2 SoC")
 Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-hisi/hotplug.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/mach-hisi/hotplug.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 --- a/arch/arm/mach-hisi/hotplug.c
 +++ b/arch/arm/mach-hisi/hotplug.c
-@@ -226,10 +226,10 @@ void hip01_set_cpu(int cpu, bool enable)
+@@ -180,11 +180,15 @@ static bool hix5hd2_hotplug_init(void)
+ 	struct device_node *np;
  
- 	if (!ctrl_base) {
- 		np = of_find_compatible_node(NULL, NULL, "hisilicon,hip01-sysctrl");
--		if (np)
--			ctrl_base = of_iomap(np, 0);
--		else
--			BUG();
-+		BUG_ON(!np);
-+		ctrl_base = of_iomap(np, 0);
-+		of_node_put(np);
-+		BUG_ON(!ctrl_base);
- 	}
+ 	np = of_find_compatible_node(NULL, NULL, "hisilicon,cpuctrl");
+-	if (np) {
+-		ctrl_base = of_iomap(np, 0);
+-		return true;
+-	}
+-	return false;
++	if (!np)
++		return false;
++
++	ctrl_base = of_iomap(np, 0);
++	of_node_put(np);
++	if (!ctrl_base)
++		return false;
++
++	return true;
+ }
  
- 	if (enable) {
+ void hix5hd2_set_cpu(int cpu, bool enable)
 
 
