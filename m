@@ -3,93 +3,182 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 061E0C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB47C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B656020880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:51:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B656020880
+	by mail.kernel.org (Postfix) with ESMTP id CAB9220877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:51:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB9220877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbeIYW7l (ORCPT
+        id S1728779AbeIYW7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:59:41 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:60984 "EHLO pegase1.c-s.fr"
+        Tue, 25 Sep 2018 18:59:44 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:48379 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbeIYW7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:59:40 -0400
+        id S1726959AbeIYW7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:59:42 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42KRsx3hKrz9ttCY;
-        Tue, 25 Sep 2018 18:51:17 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 42KRsz3mZzz9ttFs;
+        Tue, 25 Sep 2018 18:51:19 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ciV3Ozk9Dcic; Tue, 25 Sep 2018 18:51:17 +0200 (CEST)
+        with ESMTP id GMj75OI5YNMA; Tue, 25 Sep 2018 18:51:19 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42KRsx3CB2z9ttCN;
-        Tue, 25 Sep 2018 18:51:17 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42KRsz3FGjz9ttCN;
+        Tue, 25 Sep 2018 18:51:19 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6D3AA8B7E5;
-        Tue, 25 Sep 2018 18:51:17 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C63B8B7E5;
+        Tue, 25 Sep 2018 18:51:19 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id S7xV4_ZauGh9; Tue, 25 Sep 2018 18:51:17 +0200 (CEST)
+        with ESMTP id rcRrXO3BKFhf; Tue, 25 Sep 2018 18:51:19 +0200 (CEST)
 Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 473DD8B7C8;
-        Tue, 25 Sep 2018 18:51:17 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 427C68B7C8;
+        Tue, 25 Sep 2018 18:51:19 +0200 (CEST)
 Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id D61BB70AFE; Tue, 25 Sep 2018 16:51:16 +0000 (UTC)
-Message-Id: <ccdd79b5992be6821134d9455b438e91f7272ff2.1537892499.git.christophe.leroy@c-s.fr>
+        id DA49E70AFE; Tue, 25 Sep 2018 16:51:18 +0000 (UTC)
+Message-Id: <237a8eb7d90988d27508f75cb385418acd81df0d.1537892499.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1537892498.git.christophe.leroy@c-s.fr>
 References: <cover.1537892498.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 19/22] powerpc/8xx: Remove PTE_ATOMIC_UPDATES
+Subject: [PATCH v5 20/22] powerpc/mm: reintroduce 16K pages with HW assistance
+ on 8xx
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         aneesh.kumar@linux.vnet.ibm.com
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 25 Sep 2018 16:51:16 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 16:51:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 1bc54c03117b9 ("powerpc: rework 4xx PTE access and TLB miss")
-introduced non atomic PTE updates and started the work of removing
-PTE updates in TLB miss handlers, but kept PTE_ATOMIC_UPDATES for the
-8xx with the following comment:
-/* Until my rework is finished, 8xx still needs atomic PTE updates */
+Using this HW assistance implies some constraints on the
+page table structure:
+- Regardless of the main page size used (4k or 16k), the
+level 1 table (PGD) contains 1024 entries and each PGD entry covers
+a 4Mbytes area which is managed by a level 2 table (PTE) containing
+also 1024 entries each describing a 4k page.
+- 16k pages require 4 identifical entries in the L2 table
+- 512k pages PTE have to be spread every 128 bytes in the L2 table
+- 8M pages PTE are at the address pointed by the L1 entry and each
+8M page require 2 identical entries in the PGD.
 
-commit fe11dc3f9628e ("powerpc/8xx: Update TLB asm so it behaves as
-linux mm expects") removed all PTE updates done in TLB miss handlers
-
-Therefore, atomic PTE updates are not needed anymore for the 8xx
+In order to use hardware assistance with 16K pages, this patch does
+the following modifications:
+- Make PGD size independent of the main page size
+- In 16k pages mode, redefine pte_t as a struct with 4 elements,
+and populate those 4 elements in __set_pte_at() and pte_update()
+- Adapt the size of the hugepage tables.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/nohash/32/pte-8xx.h | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/powerpc/Kconfig                         |  2 +-
+ arch/powerpc/include/asm/nohash/32/pgtable.h | 18 +++++++++++++++++-
+ arch/powerpc/include/asm/nohash/pgtable.h    |  4 ++++
+ arch/powerpc/include/asm/pgtable-types.h     |  4 ++++
+ 4 files changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pte-8xx.h b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
-index 1c57efac089d..8c9872d93257 100644
---- a/arch/powerpc/include/asm/nohash/32/pte-8xx.h
-+++ b/arch/powerpc/include/asm/nohash/32/pte-8xx.h
-@@ -70,9 +70,6 @@
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 33931804c46f..a80669209155 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -698,7 +698,7 @@ config PPC_4K_PAGES
  
- #define _PTE_NONE_MASK	0
+ config PPC_16K_PAGES
+ 	bool "16k page size"
+-	depends on 44x
++	depends on 44x || PPC_8xx
  
--/* Until my rework is finished, 8xx still needs atomic PTE updates */
--#define PTE_ATOMIC_UPDATES	1
--
- #ifdef CONFIG_PPC_16K_PAGES
- #define _PAGE_PSIZE	_PAGE_SPS
- #else
+ config PPC_64K_PAGES
+ 	bool "64k page size"
+diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
+index 97fdc9b05a14..dc82c10383d5 100644
+--- a/arch/powerpc/include/asm/nohash/32/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
+@@ -19,9 +19,15 @@ extern int icache_44x_need_flush;
+ 
+ #endif /* __ASSEMBLY__ */
+ 
++#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
++#define PTE_INDEX_SIZE  (PTE_SHIFT - 2)
++#define PTE_FRAG_NR		4
++#define PTE_FRAG_SIZE_SHIFT	12
++#else
+ #define PTE_INDEX_SIZE	PTE_SHIFT
+ #define PTE_FRAG_NR		1
+ #define PTE_FRAG_SIZE_SHIFT	PAGE_SHIFT
++#endif
+ #define PTE_FRAG_SIZE (1UL << PTE_FRAG_SIZE_SHIFT)
+ 
+ #define PMD_INDEX_SIZE	0
+@@ -52,7 +58,11 @@ extern int icache_44x_need_flush;
+  * -Matt
+  */
+ /* PGDIR_SHIFT determines what a top-level page table entry can map */
++#ifdef CONFIG_PPC_8xx
++#define PGDIR_SHIFT	22
++#else
+ #define PGDIR_SHIFT	(PAGE_SHIFT + PTE_INDEX_SIZE)
++#endif
+ #define PGDIR_SIZE	(1UL << PGDIR_SHIFT)
+ #define PGDIR_MASK	(~(PGDIR_SIZE-1))
+ 
+@@ -233,7 +243,13 @@ static inline unsigned long pte_update(pte_t *p,
+ 	: "cc" );
+ #else /* PTE_ATOMIC_UPDATES */
+ 	unsigned long old = pte_val(*p);
+-	*p = __pte((old & ~clr) | set);
++	unsigned long new = (old & ~clr) | set;
++
++#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
++	p->pte = p->pte1 = p->pte2 = p->pte3 = new;
++#else
++	*p = __pte(new);
++#endif
+ #endif /* !PTE_ATOMIC_UPDATES */
+ 
+ #ifdef CONFIG_44x
+diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
+index aa968d87337b..883f69e6cdf7 100644
+--- a/arch/powerpc/include/asm/nohash/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/pgtable.h
+@@ -204,7 +204,11 @@ static inline void __set_pte_at(struct mm_struct *mm, unsigned long addr,
+ 	/* Anything else just stores the PTE normally. That covers all 64-bit
+ 	 * cases, and 32-bit non-hash with 32-bit PTEs.
+ 	 */
++#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
++	ptep->pte = ptep->pte1 = ptep->pte2 = ptep->pte3 = pte_val(pte);
++#else
+ 	*ptep = pte;
++#endif
+ 
+ 	/*
+ 	 * With hardware tablewalk, a sync is needed to ensure that
+diff --git a/arch/powerpc/include/asm/pgtable-types.h b/arch/powerpc/include/asm/pgtable-types.h
+index eccb30b38b47..3b0edf041b2e 100644
+--- a/arch/powerpc/include/asm/pgtable-types.h
++++ b/arch/powerpc/include/asm/pgtable-types.h
+@@ -3,7 +3,11 @@
+ #define _ASM_POWERPC_PGTABLE_TYPES_H
+ 
+ /* PTE level */
++#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
++typedef struct { pte_basic_t pte, pte1, pte2, pte3; } pte_t;
++#else
+ typedef struct { pte_basic_t pte; } pte_t;
++#endif
+ #define __pte(x)	((pte_t) { (x) })
+ static inline pte_basic_t pte_val(pte_t x)
+ {
 -- 
 2.13.3
 
