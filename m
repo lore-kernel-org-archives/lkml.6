@@ -2,165 +2,136 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D3FC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9FDC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD55206B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YE2UwKk+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD55206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E4B42145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:01:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4B42145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbeIYQHh (ORCPT
+        id S1728874AbeIYQHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:07:37 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35109 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728397AbeIYQHh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:07:37 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o18-v6so12975670wmc.0;
-        Tue, 25 Sep 2018 03:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zx3gUT9zqf5BPudUt/zg+sujy0Aro/CPMgj6k26BfmE=;
-        b=YE2UwKk+xSxjxdvF4jt2vr6AN8sbRSP6DCc3cBnO1Lqkzcqw5lizzBDNakshpkX/zU
-         n2vkcvxFp48+QM+lNi1aG4oPkppnl5sZAre6meSRogVWZR0IovFurElOHKhnfq0Zlwd6
-         WziUCArPxPFZg37PHP1eWmrclGUQtXq7IKbsvMf/14P0Qvb02d9l+ImBYLpHzIMXgwk/
-         pwgzsy+RMaxA1xyWmFi/hhPnJSKO3lkdlH2Ocx3Nmr9Ed0OZneISsbYAEOuacYcbpTxh
-         ZZnosUv8REpRPbdakDavMmlpsrCuoY4ikG9qckAB5WhY7Mhg0Hh5pSVog8VjudwGTjAk
-         VTAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zx3gUT9zqf5BPudUt/zg+sujy0Aro/CPMgj6k26BfmE=;
-        b=swFBo7N98H+ZOGcQ6GoIVFyisOoMk8a08rJ1otDM+CPMWUY4FTlyMeGxDs5kgcjefa
-         Mt663yoa5Ps3sMmw6pZDFWa7Ku6xbOdW+4tGmohiPC5cIn0s0Q9DM8CF18msaHeB2ASo
-         Dl6f9wZOuaRWgdAQZJzrpdIXY1YUZrcGyoM7zza/HhypCRZ2PL9VNHdS/3y4yj7Vp/ju
-         ox9oVfzneOO/53Mamr6Ae7PL1xA1f5Iq70SCYqSsfWr3rgKq8syQlEpTWYUbva2WAx/W
-         +yTmrNFoh1it4R+MPR7cg4z+u6MTsvWfymmge34EoaVllYR7w155qODqKE4z+URNuESu
-         ovYA==
-X-Gm-Message-State: ABuFfoiZLTTOw1JHSekgqELV3cNxNq3i1vrej9fBpeZcuO55bFK8L6KE
-        CcEQDL1QEAvJjAzZOKZek+mxoYYA
-X-Google-Smtp-Source: ACcGV62yqKtHHFga04btFc7vvLkfz1+bfWQEd2W/Xt7D9AWLQhnqPuFBp0jmdCyazkplN8Yto9YIjQ==
-X-Received: by 2002:a1c:c44a:: with SMTP id u71-v6mr5809wmf.43.1537869648158;
-        Tue, 25 Sep 2018 03:00:48 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id k34-v6sm2567741wre.18.2018.09.25.03.00.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 03:00:47 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 12:00:46 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/20] memory: tegra: Use of_device_get_match_data()
-Message-ID: <20180925100046.GD7097@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-12-digetx@gmail.com>
- <20180924101354.GH21032@ulmo>
- <dcf439a0-249c-ff9f-292d-c807a736672a@gmail.com>
+        Tue, 25 Sep 2018 12:07:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36960 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728397AbeIYQHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:07:45 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1237836A5DA;
+        Tue, 25 Sep 2018 10:00:58 +0000 (UTC)
+Received: from [10.36.117.173] (ovpn-117-173.ams2.redhat.com [10.36.117.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B4BB4308BE75;
+        Tue, 25 Sep 2018 10:00:50 +0000 (UTC)
+Subject: Re: [PATCH v5 17/18] kvm: arm64: Limit the minimum number of page
+ table levels
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-18-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <59231541-311f-e04b-3e6b-e073a8392316@redhat.com>
+Date:   Tue, 25 Sep 2018 12:00:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="BI5RvnYi6R4T2M87"
-Content-Disposition: inline
-In-Reply-To: <dcf439a0-249c-ff9f-292d-c807a736672a@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180917104144.19188-18-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 25 Sep 2018 10:00:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Suzuki,
 
---BI5RvnYi6R4T2M87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
+> Since we are about to remove the lower limit on the IPA size,
+> make sure that we do not go to 1 level page table (e.g, with
+> 32bit IPA on 64K host with concatenation) to avoid splitting
+> the host PMD huge pages at stage2.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  arch/arm64/include/asm/stage2_pgtable.h |  8 +++++++-
+>  arch/arm64/kvm/reset.c                  | 12 +++++++++++-
+>  2 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
+> index 352ec4158fdf..6a56fdff0823 100644
+> --- a/arch/arm64/include/asm/stage2_pgtable.h
+> +++ b/arch/arm64/include/asm/stage2_pgtable.h
+> @@ -72,8 +72,14 @@
+>  /*
+>   * The number of PTRS across all concatenated stage2 tables given by the
+>   * number of bits resolved at the initial level.
+> + * If we force more number of levels than necessary, we may have
+more levels?
+> + * stage2_pgdir_shift > IPA, in which case, stage2_pgd_ptrs will have
+> + * one entry.
+>   */
+> -#define __s2_pgd_ptrs(ipa, lvls)	(1 << ((ipa) - pt_levels_pgdir_shift((lvls))))
+> +#define pgd_ptrs_shift(ipa, pgdir_shift)	\
+> +	((ipa) > (pgdir_shift) ? ((ipa) - (pgdir_shift)) : 0)
+> +#define __s2_pgd_ptrs(ipa, lvls)		\
+> +	(1 << (pgd_ptrs_shift((ipa), pt_levels_pgdir_shift(lvls))))
+>  #define __s2_pgd_size(ipa, lvls)	(__s2_pgd_ptrs((ipa), (lvls)) * sizeof(pgd_t))
+>  
+>  #define stage2_pgd_ptrs(kvm)		__s2_pgd_ptrs(kvm_phys_shift(kvm), kvm_stage2_levels(kvm))
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index 76972b19bdd7..0393bb974b23 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -190,10 +190,19 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+>  {
+>  	u64 vtcr = VTCR_EL2_FLAGS;
+>  	u64 parange;
+> +	u8 lvls;
+>  
+>  	if (type)
+>  		return -EINVAL;
+>  
+> +	/*
+> +	 * Use a minimum 2 level page table to prevent splitting
+> +	 * host PMD huge pages at stage2.
+> +	 */
+> +	lvls = stage2_pgtable_levels(KVM_PHYS_SHIFT);
+> +	if (lvls < 2)
+> +		lvls = 2;
+> +
+>  	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
+>  	if (parange > ID_AA64MMFR0_PARANGE_MAX)
+>  		parange = ID_AA64MMFR0_PARANGE_MAX;
+> @@ -210,7 +219,8 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+>  	vtcr |= (kvm_get_vmid_bits() == 16) ?
+>  		VTCR_EL2_VS_16BIT :
+>  		VTCR_EL2_VS_8BIT;
+> -	vtcr |= VTCR_EL2_LVLS_TO_SL0(stage2_pgtable_levels(KVM_PHYS_SHIFT));
+> +
+nit: new line not requested
 
-On Mon, Sep 24, 2018 at 09:39:43PM +0300, Dmitry Osipenko wrote:
-> On 9/24/18 1:13 PM, Thierry Reding wrote:
-> > On Mon, Sep 24, 2018 at 03:41:44AM +0300, Dmitry Osipenko wrote:
-> >> There is no need to match device with the DT node since it was already
-> >> matched, use of_device_get_match_data() helper to get the match-data.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/memory/tegra/mc.c | 10 ++--------
-> >>  1 file changed, 2 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-> >> index 5454ffe5b2e0..cdc33f93cf7c 100644
-> >> --- a/drivers/memory/tegra/mc.c
-> >> +++ b/drivers/memory/tegra/mc.c
-> >> @@ -11,8 +11,7 @@
-> >>  #include <linux/interrupt.h>
-> >>  #include <linux/kernel.h>
-> >>  #include <linux/module.h>
-> >> -#include <linux/of.h>
-> >> -#include <linux/platform_device.h>
-> >=20
-> > It's better not to remove these two because the code still uses
-> > functions declared in them. If ever we were going to remove code using
-> > linux/of_device.h and then remove the linux/of_device.h include, we'd
-> > break the build and have to reintroduce the includes.
->=20
-> That doesn't sound like a good argument. You're way too picky here ;)
->=20
-> > The same would happen if linux/of_device.h were ever to stop including
-> > linux/platform_device.h or linux/of.h. That may sound unlikely, but it
-> > has happened in the past with other includes. It can also happen that
-> > some restructuring takes place in some headers that is not so obvious
-> > and then things can still start falling apart miles away.
->=20
-> Restructuring will be somebody else problem. Not sure that we really
-> should care about it, I think it is unnecessary. But since you're
-> insisting..
+Thanks
 
-It's actually a very common argument and I've seen patches in the past
-that add includes just for the purpose of making sure the right
-definitions get pulled in. This happens quite frequently as a preamble
-to some major rework of some header files that would otherwise cause a
-lot of breakage.
-
-So I think it's best to be proactive about this and make sure we
-explicitly pull in all the necessary headers in the first place,
-irrespective of whether or not they may already get pulled in indirectly
-by some other headers.
-
-Thierry
-
---BI5RvnYi6R4T2M87
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqB04ACgkQ3SOs138+
-s6Hyvg/9EeBObbdVirXsYp8DQaJ68XjG9k0VkZdp036X0ww9pWj9Kr+9A/6dVfBI
-SlK/+mFR5/RAHF/b/STNONtdu1TJV+TeeAuaZLfvIsS/KRoTXLpT4eC1kaFAGoun
-AH6rC68fNOSZoEmJbfSuAAbEhDLtNV4ITsW7ySwNB2Jn+TFAh3r/yd8WST769wY1
-ZULruEX1spgzlK8+ksF0lW4YDIRsb/MdlXgFC02nU4BpnlgaaUDXM16SsTnmVRQs
-jYC0WhFIXW+d9rebYDVdky/qQ7Eg5FtGDYXj6KBTGYVYenbB1HmXDm87rFUylIse
-mHZkZ3IzIVIOCcERDIc22gL6V78BViU0wfhtmGzpL+YK3BqWJ4TuDYuVuBz5AdGm
-NC7p4B+vNu7xULJpKrNgI1oGFmqE+NfyThmNMCoEEAbJ2ZRDrlTiPn6dQrM09irj
-NhY7/aCX8XSF8L25GCmZ3KOOlq+/kJdol6or76ON1hKdplvUxWsh2v6XwBOelM7C
-UhjbSvBZyTtUoWlly0dEB91Xrqbr4w4WH+Nu/Z2AQU/ue6itkTrwZK2RHF7uiBUI
-9X8hu8hO7ZCHgY9k1k/3Wl3S9eJ6lyJ5NI7JpqQ+dVX94H90cO+/+/bRczTLPQNI
-MBPx6I/hweSJ99xPdwgwIW1Uy2ce6VVFBclZI3LCpicXcgYKmyM=
-=YEyv
------END PGP SIGNATURE-----
-
---BI5RvnYi6R4T2M87--
+Eric
+> +	vtcr |= VTCR_EL2_LVLS_TO_SL0(lvls);
+>  	vtcr |= VTCR_EL2_T0SZ(KVM_PHYS_SHIFT);
+>  
+>  	kvm->arch.vtcr = vtcr;
+> 
