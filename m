@@ -2,130 +2,317 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 805EAC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F96C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371CD21508
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:23:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DhrZzyOg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371CD21508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C7BF721508
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:23:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7BF721508
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeIYWbg (ORCPT
+        id S1729850AbeIYWbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:31:36 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33183 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729795AbeIYWbf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:31:35 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y18-v6so8628749pge.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 09:23:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=owewT7VudoFRLY73ChYZfXnybFnLgs14gmnz+V8QJ58=;
-        b=DhrZzyOgxsMaFAk0XVbvy1hZYkdQb1Q7wnyOL8M3OQMGmfzsKfrw5qWCPyJSzBcKVk
-         mtHXPBjpb0XzIaps7TTsUfqYejeVm6rmF4qAXHX/9L4/hvnfuCy6rHjD1ZGTuaHC+3Rs
-         RwmpsW5xLMiEcwZ0yVOHpT5AtGB415YeKmS0+XTNuNoJHD+SWRQTxPn82Q+7Gvnq/fZV
-         Zy8pza4vGcG19gd+TZBy/i1Ts9/6uaMseFLbGZ2ChmVYcNaxzcFUnbI0w7YgW71M5mfL
-         MZKtn2GPC55pn+a29rd/qu8MeQ2fmA3ga2RvgcRUMjC5Y+ma4IG5LoE96A4rftqlg0/F
-         NcpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=owewT7VudoFRLY73ChYZfXnybFnLgs14gmnz+V8QJ58=;
-        b=t1Ch2hkdo0bnx3jdY7cEyoCumdK7drw8MiJnCtLy26swVbV1fesGi2g/Og1EbF1F0v
-         +Pt3eUxBOsLLXvM4P2gJZneTsXj6bHblhvvVlrHNvjwTu8AIGJF8CTSgeM4IChXiV1tM
-         iXGev9f185coXE6fs947YSkXP6IXcX2Pd82w6IxFGQ8BFoRkqRuq+u2xOMDbC2BRMcvH
-         XDzZ3aDT7kdA0oRKr9updr0YonGJrgJaDG9JqijPdDaZeRdpxU9QjbauVLVufk99YSxt
-         POQc3S/Wr/JPXmiu9kYOVIzyrcg9IUlpf7+pt0VpC6n9ti5TuXIfUnvi1d3DelhhxQLm
-         ourg==
-X-Gm-Message-State: ABuFfojcHJYc/4uz8uVYGbgblV8NQ3mS9Ku0HrhTN9TS+YZCKVhhQmZ5
-        mHnFiKVA02hE/9rTwe1gF7wTkytCIOBYBllMaxUU2Q==
-X-Google-Smtp-Source: ACcGV635GrgkSAMBtiboPb3TSUuaN+tpB4qEmS46FfPGdypchu5h8QDwCvrO66/PrBv8gFPe8r6ONjWGNG2JqVT4Zno=
-X-Received: by 2002:a62:1895:: with SMTP id 143-v6mr1859453pfy.227.1537892600436;
- Tue, 25 Sep 2018 09:23:20 -0700 (PDT)
+        Tue, 25 Sep 2018 18:31:10 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:42728 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729673AbeIYWbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:31:09 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1g4q6p-0002fD-OL; Tue, 25 Sep 2018 10:22:53 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1g4q6c-000199-3H; Tue, 25 Sep 2018 10:22:34 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Tue, 25 Sep 2018 10:22:18 -0600
+Message-Id: <20180925162231.4354-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-References: <20180925061855.19557-1-natechancellor@gmail.com>
- <CACRpkdadODxsuae7uhwcfBBMQ-eZ8bvnV71fhDCuudbJEbhhYA@mail.gmail.com> <20180925161459.GA15840@flashbox>
-In-Reply-To: <20180925161459.GA15840@flashbox>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 25 Sep 2018 09:23:09 -0700
-Message-ID: <CAKwvOdkh0rqWcw4r7Y=Ki_MNJPoJNnvm3uGp4Q726PaESxZAnQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: generic: Avoid several implicit enum conversions
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v7 00/13] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 9:15 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Tue, Sep 25, 2018 at 12:58:16PM +0200, Linus Walleij wrote:
-> > On Tue, Sep 25, 2018 at 8:19 AM Nathan Chancellor
-> > <natechancellor@gmail.com> wrote:
-> >
-> > > Clang warns when one enumerated type is implicitly converted to another,
-> > > which happens several times in the pinctrl drivers for a few reasons:
-> > >
-> > > * The PCONFDUMP macro, which sets the param member in pin_config_item.
-> > > * The pinconf_generic_params structure, which is used by drivers to
-> > >   configure their bindings, which has a param member like pin_config_item.
-> > > * The pinconf_to_config_packed, which takes either the generic enum
-> > >   pin_config_param or a specialized one.
-> > >
-> > > Drivers are allowed to extend this enumerated type because of the gap
-> > > betweem PIN_CONFIG_END and PIN_CONFIG_MAX. Make it clear to Clang that
-> > > this is allowed by changing param's type in all of these instances to
-> > > int so no conversion needs to happen.
-> > >
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/138
-> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> >
-> > I'm not superhappy about this because that enum is great for readability,
-> > even if the static syntax checker is unhappy.
-> >
-> > If we can't have an enum here I would argue that we can just as well
-> > remove the enum altogether and just use #define for the config
-> > parameters, would you agree?
-> >
-> > Yours,
-> > Linus Walleij
->
-> Hi Linus,
->
-> I see no reason to get rid of the enums. All this patch should do is
-> silence Clang's warnings because there is no other way to tell it that
-> this construct is okay except for changing the parameter/member type to
-> int (so no conversion needs to happen) or an explicit cast, which will
-> result in more noise in my opinion since this warning happens at least
-> 10-15 times in the pinctrl drivers. There's no fundamental change to
-> how the enums are used.
->
-> See these other commits for similar fixes:
->
-> 3eb95feac113 ("mm/zsmalloc.c: change stat type parameter to int")
-> 04fecbf51b3c ("mm: memcontrol: use int for event/state parameter in several functions")
->
-> Cheers!
-> Nathan
+Hi Everyone,
 
-That or all of the call sites should have explicit casts to the base enum.
+Here is version 6 of the PCI P2PDMA patch set. This version makes
+a few minor changes from v6 and is based on v4.19-rc5. A git repo is here:
 
--- 
+https://github.com/sbates130272/linux-p2pmem pci-p2p-v7
+
+Now that we have Bjorn's Acks, I'd preferably like to get Jens's Ack for
+Patch 7 and then I'd like to propose merging this series through the NVME
+tree.
+
 Thanks,
-~Nick Desaulniers
+
+Logan
+
+--
+
+Changes in v7:
+
+* Rebased on v4.19-rc5
+
+* Fixed up commit message of patch 7 that was no longer accurate. (as
+  pointed out by Jens)
+* Change the configfs to not use "auto" or "none" and instead just
+  use a 0/1/<pci_dev> (or boolean). This matches the existing
+  nvme-target configfs booleans. (Per Bjorn)
+* A handful of other minor changes and edits that were noticed by Bjorn
+* Collected Acks from Bjorn
+
+Changes in v6:
+
+* Rebased on v4.19-rc3
+
+* Remove the changes to the common submit_bio() path and instead
+  set REQ_NOMERGE in the NVME target driver, when appropriate.
+  Per discussions with Jens and Christoph.
+
+* Some minor grammar changes in the documentation as spotted by Randy.
+
+Changes in v5:
+
+* Rebased on v4.19-rc1
+
+* Drop changing ACS settings in this patchset. Now, the code
+  will only allow P2P transactions between devices whos
+  downstream ports do not restrict P2P TLPs.
+
+* Drop the REQ_PCI_P2PDMA block flag and instead use
+  is_pci_p2pdma_page() to tell if a request is P2P or not. In that
+  case we check for queue support and enforce using REQ_NOMERGE.
+  Per feedback from Christoph.
+
+* Drop the pci_p2pdma_unmap_sg() function as it was empty and only
+  there for symmetry and compatibility with dma_unmap_sg. Per feedback
+  from Christoph.
+
+* Split off the logic to handle enabling P2P in NVMe fabrics' configfs
+  into specific helpers in the p2pdma code. Per feedback from Christoph.
+
+* A number of other minor cleanups and fixes as pointed out by
+  Christoph and others.
+
+Changes in v4:
+
+* Change the original upstream_bridges_match() function to
+  upstream_bridge_distance() which calculates the distance between two
+  devices as long as they are behind the same root port. This should
+  address Bjorn's concerns that the code was to focused on
+  being behind a single switch.
+
+* The disable ACS function now disables ACS for all bridge ports instead
+  of switch ports (ie. those that had two upstream_bridge ports).
+
+* Change the pci_p2pmem_alloc_sgl() and pci_p2pmem_free_sgl()
+  API to be more like sgl_alloc() in that the alloc function returns
+  the allocated scatterlist and nents is not required bythe free
+  function.
+
+* Moved the new documentation into the driver-api tree as requested
+  by Jonathan
+
+* Add SGL alloc and free helpers in the nvmet code so that the
+  individual drivers can share the code that allocates P2P memory.
+  As requested by Christoph.
+
+* Cleanup the nvmet_p2pmem_store() function as Christoph
+  thought my first attempt was ugly.
+
+* Numerous commit message and comment fix-ups
+
+Changes in v3:
+
+* Many more fixes and minor cleanups that were spotted by Bjorn
+
+* Additional explanation of the ACS change in both the commit message
+  and Kconfig doc. Also, the code that disables the ACS bits is surrounded
+  explicitly by an #ifdef
+
+* Removed the flag we added to rdma_rw_ctx() in favour of using
+  is_pci_p2pdma_page(), as suggested by Sagi.
+
+* Adjust pci_p2pmem_find() so that it prefers P2P providers that
+  are closest to (or the same as) the clients using them. In cases
+  of ties, the provider is randomly chosen.
+
+* Modify the NVMe Target code so that the PCI device name of the provider
+  may be explicitly specified, bypassing the logic in pci_p2pmem_find().
+  (Note: it's still enforced that the provider must be behind the
+   same switch as the clients).
+
+* As requested by Bjorn, added documentation for driver writers.
+
+
+Changes in v2:
+
+* Renamed everything to 'p2pdma' per the suggestion from Bjorn as well
+  as a bunch of cleanup and spelling fixes he pointed out in the last
+  series.
+
+* To address Alex's ACS concerns, we change to a simpler method of
+  just disabling ACS behind switches for any kernel that has
+  CONFIG_PCI_P2PDMA.
+
+* We also reject using devices that employ 'dma_virt_ops' which should
+  fairly simply handle Jason's concerns that this work might break with
+  the HFI, QIB and rxe drivers that use the virtual ops to implement
+  their own special DMA operations.
+
+--
+
+This is a continuation of our work to enable using Peer-to-Peer PCI
+memory in the kernel with initial support for the NVMe fabrics target
+subsystem. Many thanks go to Christoph Hellwig who provided valuable
+feedback to get these patches to where they are today.
+
+The concept here is to use memory that's exposed on a PCI BAR as
+data buffers in the NVMe target code such that data can be transferred
+from an RDMA NIC to the special memory and then directly to an NVMe
+device avoiding system memory entirely. The upside of this is better
+QoS for applications running on the CPU utilizing memory and lower
+PCI bandwidth required to the CPU (such that systems could be designed
+with fewer lanes connected to the CPU).
+
+Due to these trade-offs we've designed the system to only enable using
+the PCI memory in cases where the NIC, NVMe devices and memory are all
+behind the same PCI switch hierarchy. This will mean many setups that
+could likely work well will not be supported so that we can be more
+confident it will work and not place any responsibility on the user to
+understand their topology. (We chose to go this route based on feedback
+we received at the last LSF). Future work may enable these transfers
+using a white list of known good root complexes. However, at this time,
+there is no reliable way to ensure that Peer-to-Peer transactions are
+permitted between PCI Root Ports.
+
+For PCI P2P DMA transfers to work in this situation the ACS bits
+must be disabled on the downstream ports (DSPs) for all devices
+involved in the transfer. This can be done using the "disable_acs_redir"
+PCI kernel command line option which was introduced in v4.19.
+
+In order to enable PCI P2P functionality, we introduce a few new PCI
+functions such that a driver can register P2P memory with the system.
+Struct pages are created for this memory using devm_memremap_pages()
+and the PCI bus offset is stored in the corresponding pagemap structure.
+
+Another set of functions allow a client driver to create a list of
+client devices that will be used in a given P2P transactions and then
+use that list to find any P2P memory that is supported by all the
+client devices.
+
+In the block layer, we also introduce a flag for a request queue
+to indicate a given queue supports targeting P2P memory. The driver
+submitting bios must ensure that the queue supports P2P before
+attempting to submit BIOs backed by P2P memory. Also, P2P requests
+are marked to not be merged seeing a non-homogenous request would
+complicate the DMA mapping requirements.
+
+In the PCI NVMe driver, we modify the existing CMB support to utilize
+the new PCI P2P memory infrastructure and also add support for P2P
+memory in its request queue. When a P2P request is received it uses the
+pci_p2pmem_map_sg() function which applies the necessary transformation
+to get the corrent pci_bus_addr_t for the DMA transactions.
+
+In the RDMA core, we also adjust rdma_rw_ctx_init() and
+rdma_rw_ctx_destroy() to take a flags argument which indicates whether
+to use the PCI P2P mapping functions or not. To avoid odd RDMA devices
+that don't use the proper DMA infrastructure this code rejects using
+any device that employs the virt_dma_ops implementation.
+
+Finally, in the NVMe fabrics target port we introduce a new
+configuration attribute: 'p2pmem'. When set to a true boolean, the port
+will attempt to find P2P memory supported by the RDMA NIC and all namespaces.
+It may also be set to a PCI device name to select a specific P2P
+memory to use. If supported memory is found, it will be used in all IO
+transfers. And if a port is using P2P memory, adding new namespaces that
+are not supported by that memory will fail.
+
+These patches have been tested on a number of Intel based systems and
+for a variety of RDMA NICs (Mellanox, Broadcomm, Chelsio) and NVMe
+SSDs (Intel, Seagate, Samsung) and p2pdma devices (Eideticom,
+Microsemi, Chelsio and Everspin) using switches from both Microsemi
+and Broadcomm.
+
+--
+
+Logan Gunthorpe (13):
+  PCI/P2PDMA: Support peer-to-peer memory
+  PCI/P2PDMA: Add sysfs group to display p2pmem stats
+  PCI/P2PDMA: Add PCI p2pmem DMA mappings to adjust the bus offset
+  PCI/P2PDMA: Introduce configfs/sysfs enable attribute helpers
+  docs-rst: Add a new directory for PCI documentation
+  PCI/P2PDMA: Add P2P DMA driver writer's documentation
+  block: Add PCI P2P flag for request queue and check support for
+    requests
+  IB/core: Ensure we map P2P memory correctly in
+    rdma_rw_ctx_[init|destroy]()
+  nvme-pci: Use PCI p2pmem subsystem to manage the CMB
+  nvme-pci: Add support for P2P memory in requests
+  nvme-pci: Add a quirk for a pseudo CMB
+  nvmet: Introduce helper functions to allocate and free request SGLs
+  nvmet: Optionally use PCI P2P memory
+
+ Documentation/ABI/testing/sysfs-bus-pci    |  24 +
+ Documentation/driver-api/index.rst         |   2 +-
+ Documentation/driver-api/pci/index.rst     |  21 +
+ Documentation/driver-api/pci/p2pdma.rst    | 170 ++++
+ Documentation/driver-api/{ => pci}/pci.rst |   0
+ drivers/infiniband/core/rw.c               |  11 +-
+ drivers/nvme/host/core.c                   |   4 +
+ drivers/nvme/host/nvme.h                   |   8 +
+ drivers/nvme/host/pci.c                    | 121 ++-
+ drivers/nvme/target/configfs.c             |  36 +
+ drivers/nvme/target/core.c                 | 154 ++++
+ drivers/nvme/target/io-cmd-bdev.c          |   3 +
+ drivers/nvme/target/nvmet.h                |  15 +
+ drivers/nvme/target/rdma.c                 |  22 +-
+ drivers/pci/Kconfig                        |  17 +
+ drivers/pci/Makefile                       |   1 +
+ drivers/pci/p2pdma.c                       | 943 +++++++++++++++++++++
+ include/linux/blkdev.h                     |   3 +
+ include/linux/memremap.h                   |   6 +
+ include/linux/mm.h                         |  18 +
+ include/linux/pci-p2pdma.h                 | 123 +++
+ include/linux/pci.h                        |   4 +
+ 22 files changed, 1652 insertions(+), 54 deletions(-)
+ create mode 100644 Documentation/driver-api/pci/index.rst
+ create mode 100644 Documentation/driver-api/pci/p2pdma.rst
+ rename Documentation/driver-api/{ => pci}/pci.rst (100%)
+ create mode 100644 drivers/pci/p2pdma.c
+ create mode 100644 include/linux/pci-p2pdma.h
+
+--
+2.19.0
