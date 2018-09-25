@@ -2,91 +2,128 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA512C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66ABFC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7069120C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:49:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077462089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MHBGeXiq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7069120C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HpOBYIz0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077462089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeIZB6u (ORCPT
+        id S1727443AbeIZCBa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 21:58:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35382 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbeIZB6u (ORCPT
+        Tue, 25 Sep 2018 22:01:30 -0400
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:43990 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbeIZCB3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 21:58:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Y3cXsm6ge4DgnlLVcFBKCV7lMeEUCxj/e8Nk5TcjgQU=; b=MHBGeXiqeWxQ6zxekv0sLQtB4
-        /gnR7HidWx9YcEjcn6DpojJWBBgyoSFeXsB8rAuMFFYC2bp6y/ivfdMHcl0wv9/k99F/xel2R5jAC
-        7QvgfgXOcImD5vl6OmR2mCtKAZ+TUgMCKdSTjxsgSCu7CyDT9lju8QHdcdEhkS1oOBq6ju9kfQWGE
-        CHXmD8rI9RhSluvC8zsQB/31cs0upx5/oe3PsBIbawgMnB8A2mLXnz7Wrhn9GlGpgs0vLA4YY+afu
-        5VZoL2m4oj3l+FtX0b+DJLVIzgjVy8H0M/qNLSFhA+bqsjl5gqcfYu9uim4SiIw4GEbo7L2ZS5Csn
-        WJR2FcX/Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g4tKi-0004ap-9t; Tue, 25 Sep 2018 19:49:40 +0000
-Subject: Re: [PATCH] staging: dgnc: Fix Kconfig help header and text
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        sehro rautenkranz <sehro@sehro.org>
-Cc:     Lidza Louina <lidza.louina@gmail.com>,
-        Mark Hounschell <markh@compro.net>,
-        driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <a62c2d41-5ae6-26a1-3c0e-01893a8ca8a0@infradead.org>
- <20180925162225.19227-1-sehro@sehro.org> <20180925184623.GA16455@kroah.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <59f16a7e-4221-73e0-cf6e-3461717be318@infradead.org>
-Date:   Tue, 25 Sep 2018 12:49:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 22:01:29 -0400
+Received: by mail-pf1-f169.google.com with SMTP id j26-v6so11934853pfi.10
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 12:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=msPZT6yhuttYFJUAHbqdJPwbKh5JV89OKwVLkUu20YA=;
+        b=HpOBYIz0LNJFjXQy0PSg6znffqYUCaqf2K/CzG37eVqY5+gZjFRLcyI9G+KMD5LaTJ
+         dxW7OS1IFR97ek8qBhanYX/abX2HV5ixhIh7DtizkV0rmnpm0wxAMKXkmLtmlhEGt9Bn
+         2iXWuujhay8vHWGkY0wUizj0jsLnhAE4EnFQmxg8XQMo7N7pHw+SXJF0ATIaYePBu/NE
+         xtYSBoPdERXNOlTEY8QDfu1OnyIrLyNnjTnnle8z7PF5QBndbeyGwgWJJZctWqz19DU1
+         L3h3bdL5tJcfa1Kwbu8r6QX7j4grh4zEmvGion5EA1YEqfi31mjf6Qbm9A+xDs/fs6cG
+         37Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=msPZT6yhuttYFJUAHbqdJPwbKh5JV89OKwVLkUu20YA=;
+        b=rdXYMWSZt/IZZ49DdWKBAD2b0HEm/hERW9gIi9gOyHLQZ1El71HA1qVVsdAvq0AsYS
+         G9ZsbF4TCLmnVIHwjsTSQpU3HhHGhh6nyXbDipbokAzuSaiRLTrK3pGA50tCUGq2WCNQ
+         TRcyYb84RrtQgQ/bFsGTeFkDG4DBpWh6/xDN4cDc9X8x1mfXuy9j3hd3wGgLwHpDXJ9j
+         FEsWi4o90K9Mo5bXnvfXk4xFw2BiNcg8rkT2qbeTQ2I5MJZfgaBjuGxeBtc2RUBDmk/8
+         0TVhnVNyovQgZVnt3FTr3fzNYmQxOlI0ipJdzy15aWnBpb5v+8XWLdJp8+sEXVy9w2O/
+         e7mg==
+X-Gm-Message-State: ABuFfohPZk7rzE/FkRmHwQXjXR+aomNJ+/Rn7TXlgskoP57sWlEe/FQD
+        38gdTX+cI4g17ic9EsU44v9l3g==
+X-Google-Smtp-Source: ACcGV61egPjly1h0+T8H0gh4hubItQfQX4BZ0z1127JNbGnNCwCG1YKCGhyKvaOnRysB6/6g/gFOeA==
+X-Received: by 2002:a17:902:7689:: with SMTP id m9-v6mr2485637pll.295.1537905139678;
+        Tue, 25 Sep 2018 12:52:19 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm3879470pff.8.2018.09.25.12.52.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 12:52:18 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 12:52:09 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Vlastimil Babka <vbabka@suse.cz>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [patch v2] mm, thp: always specify ineligible vmas as nh in
+ smaps
+In-Reply-To: <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+Message-ID: <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com> <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz> <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com> <alpine.DEB.2.21.1809241227370.241621@chino.kir.corp.google.com>
+ <20180924195603.GJ18685@dhcp22.suse.cz> <20180924200258.GK18685@dhcp22.suse.cz> <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180925184623.GA16455@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/18 11:46 AM, Greg Kroah-Hartman wrote:
-> On Tue, Sep 25, 2018 at 10:22:24AM -0600, sehro rautenkranz wrote:
->> Replace Kconfig help header and text to match other modules. Issue found
->> my checkpatch.
->>
->> Spacing adjusted to match Documentation/process/coding-style.rst. Issue
->> reported by rdunlap@infradead.org. (try 2)
-> 
-> The "try 2" needs go to below the --- line.
-> 
-> Also, you need to properly version your patches so that I have a clue
-> as to which is the "latest" one.
-> 
->> Signed-off-by: sehro rautenkranz <sehro@sehro.org>
-> 
-> You forgot Randy's Reported-by.
-> 
-> Also, properly Capitalize your name.
-> 
-> v3?
+On Mon, 24 Sep 2018, Vlastimil Babka wrote:
 
-and the help text is still not indented correctly:
-use one tab + 2 spaces for help text.
+> On 9/24/18 10:02 PM, Michal Hocko wrote:
+> > On Mon 24-09-18 21:56:03, Michal Hocko wrote:
+> >> On Mon 24-09-18 12:30:07, David Rientjes wrote:
+> >>> Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> >>> introduced a regression in that userspace cannot always determine the set
+> >>> of vmas where thp is ineligible.
+> >>>
+> >>> Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+> >>> to determine if a vma is eligible to be backed by hugepages.
+> >>
+> >> I was under impression that nh resp hg flags only tell about the madvise
+> >> status. How do you exactly use these flags in an application?
+> >>
 
--- 
-~Randy
+This is used to identify heap mappings that should be able to fault thp 
+but do not, and they normally point to a low-on-memory or fragmentation 
+issue.  After commit 1860033237d4, our users of PR_SET_THP_DISABLE no 
+longer show "nh" for their heap mappings so they get reported as having a 
+low thp ratio when in reality it is disabled.  It is also used in 
+automated testing to ensure that vmas get disabled for thp appropriately 
+and we used "nh" since that is how PR_SET_THP_DISABLE previously enforced 
+this, and those tests now break.
+
+> >> Your eligible rules as defined here:
+> >>
+> >>> + [*] A process mapping is eligible to be backed by transparent hugepages (thp)
+> >>> +     depending on system-wide settings and the mapping itself.  See
+> >>> +     Documentation/admin-guide/mm/transhuge.rst for default behavior.  If a
+> >>> +     mapping has a flag of "nh", it is not eligible to be backed by hugepages
+> >>> +     in any condition, either because of prctl(PR_SET_THP_DISABLE) or
+> >>> +     madvise(MADV_NOHUGEPAGE).  PR_SET_THP_DISABLE takes precedence over any
+> >>> +     MADV_HUGEPAGE.
+> >>
+> >> doesn't seem to match the reality. I do not see all the file backed
+> >> mappings to be nh marked. So is this really about eligibility rather
+> >> than the madvise status? Maybe it is just the above documentation that
+> >> needs to be updated.
+> 
+> Yeah the change from madvise to eligibility in the doc seems to go too far.
+> 
+
+I'll reword this to explicitly state that "hg" and "nh" mappings either 
+allow or disallow thp backing.
