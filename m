@@ -2,148 +2,315 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A221AC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A307C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DAA920842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B01B20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:14:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="HVOU096Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAA920842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I5zBZ3YA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AsU5XJxY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B01B20842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbeIYQRu (ORCPT
+        id S1727526AbeIYQVT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:17:50 -0400
-Received: from mail-db5eur03hn0213.outbound.protection.outlook.com ([104.47.10.213]:12217
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726125AbeIYQRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:17:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/MCVtRLdWwgWbSNc77beLVK5jkFCQaeWcnzsRsh/ya4=;
- b=HVOU096ZYI3QSqMSKDrklwmNrnkMmw2yboqAJGLR8gL/FO1MLyZdZHU2Ggo5dpwseLZJSIJn9Tsbi/mRGAiCRoGOk7ib6dcFv0hMTJUyNQR3CwhLmhBgRNBJGgCAWZGwiDu470g5VRRPQiQQkdLn/42vzN89ueXTI/0soGVb2kc=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-Received: from rkaganb.sw.ru (185.231.240.5) by
- VI1PR08MB3599.eurprd08.prod.outlook.com (2603:10a6:803:85::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.22; Tue, 25 Sep 2018 10:10:45 +0000
-Date:   Tue, 25 Sep 2018 13:10:41 +0300
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 RESEND 3/5] KVM: x86: hyperv: use get_vcpu_by_vpidx()
- in kvm_hv_flush_tlb()
-Message-ID: <20180925101040.GA2336@rkaganb.sw.ru>
-Mail-Followup-To: Roman Kagan <rkagan@virtuozzo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>, linux-kernel@vger.kernel.org
-References: <20180822101832.31763-1-vkuznets@redhat.com>
- <20180822101832.31763-4-vkuznets@redhat.com>
- <8da03d2a-5405-f363-f081-e4bc46b106e3@redhat.com>
- <87r2hs7cco.fsf@vitty.brq.redhat.com>
- <87zhw62797.fsf@vitty.brq.redhat.com>
- <74055c3b-be66-4ce6-e727-a155f18a0ba1@redhat.com>
- <20180925085752.GA5391@rkaganb.sw.ru>
- <f8cd3988-ea7e-0e4a-ee95-927534276f84@redhat.com>
+        Tue, 25 Sep 2018 12:21:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33536 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeIYQVT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:21:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6E19A607BD; Tue, 25 Sep 2018 10:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537870468;
+        bh=vHcgghEP8hNk3O4PXF5rr6o55onnqyPXxBowJD/eDms=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=I5zBZ3YAk0N332goZrcmeB5zsMgJwSPYfeOi11/siQCiIsinvCno7GarIbTHt5Tyb
+         iuhV6dFFMecQ5A4zrE5ZFqayt1EarUs8EyJ4CEt511VOboF4xuVdbLNfBwjdbe6qLU
+         E+ph4+uTnZdEXiHnxH0ybYIqAcTF/gwLEXJsfmug=
+Received: from [10.79.40.70] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C3E4B6020A;
+        Tue, 25 Sep 2018 10:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537870461;
+        bh=vHcgghEP8hNk3O4PXF5rr6o55onnqyPXxBowJD/eDms=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AsU5XJxY37IRefLZeezU07MYCm68LezsWOMQYrtPDA9jm5Je57VxXhU7iSSaasXSs
+         IzLTd8II3DtlwrqdCQxrOhBkFag32Rl8bffp8lmrO1tLh8WsmAfJWYaQ965WT4Uyqt
+         Kz3JrnxUs4QWzOn6oo/0v9hoPnnd80VMs6heYHLs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3E4B6020A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH 1/2] phy: zynqmp: Add phy driver for xilinx zynqmp phy
+ core
+To:     Anurag Kumar Vulisha <anuragku@xilinx.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Michal Simek <michals@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc:     "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>
+References: <1535551648-29534-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <1535551648-29534-2-git-send-email-anurag.kumar.vulisha@xilinx.com>
+ <9bd46b50-03a9-8a47-7751-dad19bac3643@ti.com>
+ <DM2PR0201MB1008E9A7C9A952C8F0461E4FA7160@DM2PR0201MB1008.namprd02.prod.outlook.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <9ef79e7a-b8fd-3497-95d4-8af5a0c68426@codeaurora.org>
+Date:   Tue, 25 Sep 2018 15:44:15 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8cd3988-ea7e-0e4a-ee95-927534276f84@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: HE1PR02CA0090.eurprd02.prod.outlook.com
- (2603:10a6:7:29::19) To VI1PR08MB3599.eurprd08.prod.outlook.com
- (2603:10a6:803:85::10)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2446d02f-9183-482f-3777-08d622cf2989
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3599;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;3:JJlVmzSRIOLw0g3LrUUcJ+BIQrlYbLrfPAgTWEtHcBjS0mAnyQNcnwSHcgpBu1uVSKVEUb/AdxON78YUvjK6RvtxeTY2dRu8rdTeot1v8IaXGrOM25RNBIbqMBKwbQq5Y5Ki9wunpVROJ2B/2vxGWP61q3g0zMKJnR94bvyCZpCqdDDz6i7g4YvRVwl/0pnYeahShd54h8zVQAkpbJ+E2V9G9WgpU+SqC4mlRCKozYpE62hszlWu5nQnuBsMXOLM;25:YPwv/5gdaLsmW4nv3eOFXJsD/1KE979cP740uDGn4x79QdmD/4KCpOWKpRQOyxcRmqudOnwHTBDHc5qcTYSowzFjgJMDLxJjYNWl+MassgYf4le8e+Qc3fJ49Q585CGI/7DfVzFpwXRXcJ+BREqlf5UBl7yjJKc0wQpVRlfmRBqvimBPRGwiljHYv4KmMW2YymXJC1uh1PjnGwmZ9G1fgJGsDO8vO0NozGaqxPj+koK8tX6Xued8vhSKPW+7rSVo3cN7FmyhH0+TXeoGXgkvsG7iUkE184OLv0T3fUo8JMIT8J8/JIueAbF+LSs+/+diZOktMY3aq30ozkZi17/Kyw==;31:HlBWVSvroK7kXzhTlOsgur3maF4c5Ng4iK8dnHtKn4MahvDl32TMLc89sP+ryjhW2OPR74q69/59/RmJ1bzwHmsGCQwXIBgyEmCCVAGqNphDi7H0hJnuLg74iBsJh3uYGPG42EKS4VF+3DgMO2UacE5FCE5+Uwf4jiB8E7coWtGmgQaUM3EbMF2vzxUgI/AXzPSLCeZZQz8hM34giMkfFhM6sL+gv/K99OlbIKzREuI=
-X-MS-TrafficTypeDiagnostic: VI1PR08MB3599:|VI1PR08MB3599:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;20:NXIWW6WuXeUALIklqNk9Mk63ZKUu8hhAH6Gh++/ZuOxqdjDf4N6f90NYJCvFIQSeEgAPfgRk2ClYb8VUw6O48Oe1vhKDrOTPlSHt+AhTKOHFWPDCHWZID4l9oupsYRckuJWFMekGqIb3srH+5B9MMnNREwVez6DPtLUPbw1Il6ghTc0xAyhHmY+iCm2TgIP2yLAP8B7qJIFEXVz0lLYxt30T4u0tAX/PBG0WN36qfwVXEq487BNqUDMp3sA9c/PWGGGsW4MN9enHpZanBO0kqbS6/tABWwBBLR0eZRxXKBSTw7iYHrkJyZLRFdX5mnhZfmEjL26iZjnOYKp31jIkbbEx68fI8Woht7YOtWbK0UlSJ9PTJYB8qrwC0/3Q8dayJ0aQxAXVa/r7HwHMALJKl4MutXIO5okYLOMjeNEsiOX1IJ6y4B7ROj8Nb1K+4EXYcPvvOfkHMHgSq1U0e0wRuSXtuXIfyHfQJ2jRkXsyRvSke8Mkoc5p9qrwOCit1e88;4:2jRgrau+l5KlChMnVDEoYD4kfiy74/FfmdMC3ceE2ZpzTtAL6kf+ANDKUvIXbGBYikjIODraiONWoRCfN+evj8YZC4H7DRtPT5m0keUQIMnySuf0CcR23WkzmfeYBbysp3BcVdIjpTUa2xN5xCXwOQMsN3iykZV5xwqf8/vhJ2UKdGLApZ0Wefu/wQzU6vga7ZZsK3zpLTkeW8XoeV7F2Z79Y0j+RJ+Dapr8qCGb2vfAawGmVCwaGwiINbaFHEIzEKGA4XIhFzr2txp9SDCwaQ==
-X-Microsoft-Antispam-PRVS: <VI1PR08MB35991BEE734CB18D984F7FAAC9160@VI1PR08MB3599.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149066)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:VI1PR08MB3599;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3599;
-X-Forefront-PRVS: 08062C429B
-X-Forefront-Antispam-Report: SFV:SPM;SFS:(10019020)(346002)(366004)(136003)(376002)(39850400004)(396003)(189003)(199004)(386003)(54906003)(16586007)(7416002)(305945005)(7736002)(26005)(6246003)(53936002)(4326008)(25786009)(39060400002)(106356001)(16526019)(105586002)(33656002)(186003)(68736007)(229853002)(50466002)(55016002)(66066001)(23726003)(9686003)(58126008)(36756003)(3846002)(6116002)(1076002)(53416004)(446003)(11346002)(81156014)(476003)(956004)(47776003)(478600001)(486006)(8936002)(7696005)(86362001)(52116002)(97736004)(69596002)(8676002)(6666003)(6916009)(81166006)(316002)(76176011)(2906002)(5660300001)(53546011)(93886005)(6506007)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:VI1PR08MB3599;H:rkaganb.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3599;23:I1a16eASdsG5wF+pqUmtHHrIedAyHXVX7p7pFa/3O?=
- =?us-ascii?Q?4cJNkkOwiyewQ7UVUNeCowVmPO5bM4M6q4hpr4okOV3Yqcznrpb8CwmDytH2?=
- =?us-ascii?Q?2eA17mWRq9ye9uIhM95GfHTg33KshaUaIhyNREhVE40lHFctfqX2NMmbRIqY?=
- =?us-ascii?Q?Wu5zQ70FyWQfkFoS42A2jfXB3SSLYid9wOgRanqmpvUDfHa5w3j0XKSkvyp4?=
- =?us-ascii?Q?w2Zz9SdEvX81lnTPH25yRwlPRk5zfBk2KpLE2X0oasI/DRfdTodLeci+FoV2?=
- =?us-ascii?Q?KtFoQXgVDfD7SkDGQ/ccFiTgN6oMvw6fNRAuzcdzw6RB7AFDe5YEL19sMNbX?=
- =?us-ascii?Q?6ohqYwPc37AGdA307u9QEOu4rx8u8jXLSDyb++plZAu4D7/FQBABI9ydOszw?=
- =?us-ascii?Q?QIgY19yB+g5UKhWPKHTIes+Q5kK8np5S7xvZfUVYipDdGBIkwldG1KmzQ6HT?=
- =?us-ascii?Q?Klb44FkR1qfcth6Ez20TF8bUWZwGeJjgkeGsihNeqJ7FLKSf/Lr8vuF3xmCW?=
- =?us-ascii?Q?Yu6b0Bu6EZ4V5W5tYcByqNuOKlGqA9RdA+UhCqneEHR+Aoiz3tXaJMD8xgH/?=
- =?us-ascii?Q?lL+e8BD9lDFYH+zut+jWQpuulc/XJCGKmLvq07vp5vIQYa4EmxQN9d7W4NMg?=
- =?us-ascii?Q?4XHyQjgoZKMALwuW+v+thMUlr/wUsbWaNLSXbAZGzxNzTO+2N6apyEJyGblv?=
- =?us-ascii?Q?xXJBRfhbdnoo3yY5MU1N+kN5THkrbDWQaqzT4bT+MBw/bNeGyiFrV6sCuM4s?=
- =?us-ascii?Q?gEBR0SJ0TZlmWX64SzXhHQ+sL3vPPoHQ3u5PTxNcuN1dtgnJE6IGoQ4AR73a?=
- =?us-ascii?Q?DaSeGBLZhNbvOCUctZmLNu3Z9VNgo7g6w9fZKdBWtpUbm0EpzuOT5KKh4Ry6?=
- =?us-ascii?Q?vQb+VDmq9gSBvcLmgAwEtkFpNviW+eCrfiA9nV2EY/Is687Kg2BTQLhJSufE?=
- =?us-ascii?Q?eO1oofGLt46DCkTOCDv1HGnghb7wC1Xgmjm2eCHB6lxxWCRQDLAssLHZ7OZB?=
- =?us-ascii?Q?WabseP6eLn05FE7z/A14+DArP4OL2EN6COokzIUYDmBqTYxnp/69vF4cVwRe?=
- =?us-ascii?Q?pIt8ufPwBjaSEUf+1UOaScTWlzgRNJ8H2cWkcXXf0/32LqGgUb+wfc3Q/GcJ?=
- =?us-ascii?Q?cnfVl72MjNSKecQmW8F75NTv0fxhAAELMD2JCoUkYRRQ3D9pOxYoZONEWg4E?=
- =?us-ascii?Q?wiI+M8teN8NqHoHHlRHBuLw4bv3UqF5XD5RpZSO7LizZ1WwhMZ0Jy+xc+Jej?=
- =?us-ascii?Q?CU57SvOxLQvKDemPNG11C1ySXo1UXHlPxwhFxWSEMomYPpZus0BesNgwppEL?=
- =?us-ascii?Q?OI6qMB6PgEa/0MNoD8IZvtCBKls92tJsdThT305hAsYw2LtQQvfmvud8o8E2?=
- =?us-ascii?Q?pRfq4tqTmHzh7P6NI888cFAGA3jP3V8XPIDNfEq9yzlnMOdMlRRRnIR22idQ?=
- =?us-ascii?Q?xYbuXj4mYLiIYJUd50SwNThB1hu0V0=3D?=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;23:2cl4dpTs88kfjNuvH7HvrP3tNq+iVTG+mDFtlJ0mzcr92efjbeMLArxbVLDuZqMeSPxvCwIlraY8bTrVCT6il8zX6G25A0wzfW/pFyKcpAO/5cExbyRL4f2RIA+Sye1Heto0huE15XKB0vcfo2Cbig==;6:w6BNvYxn3RaQaEk9yLXSLvimXYPYcEWSNk8Tqe4u4UI5bShpM8oYd4d98f/brYs7eDZwS/0B/KJrENTL0oqYaWp1mV6eaoAaxATiugp7zZ9EKO8yPLuaS3UnUW19NXM+TMgtpBgfX6AwdpYTJhI4oDOAXGs060cIfLu0Lz8Q5pEWhfTGntnEl/4Cg0LCk0XsbddMem6cBGTxOkwrq5t319sNYkOhVNAT3keFaJS19lPsyeh3d7u+h5L9CkLbZFIwaB63x9F6OYlwKQuF9TsdFmbnuxlossr73Xh31f0+dIg+7Rp5G+DD24zv07ME40PYPvJzJdbz6DxznedI7n+yH55/7RErdRd1eAvGhJFoUBrhlRZqcftRo0vCueTiwfdHlhjU6johDQRu2Sr6VkJNYwHuwd6LO5zHZ2R1IxPMjTG8raUjFz3y1Tb/uUDD+UDW4g6A54ro3h6emkxDJ4iL7Q==;5:SKWaWaQLJ64tGZf85CO3YC0Jc9ceUuPKdD6+HskS8nSixRJb84b+8c8ukDjeyLT1MAgpbhozOO/2dfo5eD0dFyd8yCBLLXz2/t1bYYiT6VpvgE5e/Wx7KTxJPHHGqxCG8QrYRMnJ6bKAPdP+25etNhGLk2z54W70sbhddgalcwc=
-X-Microsoft-Antispam-Message-Info: Rt3Eg3k/3teaIWyM3TrYP8Fe+kTnoDJdiRMIJ4PtNrn98+8R4aEQi5dz1eSsnltIhnFT1+2r0bQ7Qsuk+DJUjZaNRGEzxGF1MyXvVfYHVUl6Jb7i+TDmAyFBt+mEfaDSPZr0lLgOC/sjPtCtVJqYqc1+nCclqnppMKGWzDzclVk9paqlM84WqzCXIF9jOoXrYEHmQzrRMy4ZblmL1yzy0jy5jxb4dB48G2F81OGi2HNQNoQmcoKachEvizcbvFxcYfeMnfwUwDrEn6mfrgDmaJ0RPkmFOaeNXyii4kGPrilCeLQSyaOPYiUjvvn94ebZnzWEGH9WbzXBs0VsHaicDL0LANrKQSqgczQGTuK6HmoKOCnyA7xWSKySlBMt7ub7DLKJ0p5xsUwbvk2wiSRKUB1gsQPhCX8y26tTvoA3s/YDktCFqjr2hbwNXituSmBoT7ToiJQxmzPYehrgjuSsJvfuD7rm4mTHYKkz+SHMspYrlXXzEUvFvugVJBtmB6YIgWN2EqH7N2O7N/noSSNl9cfqGmitW9ivAX1hrWRdcaCCA+O3Ugw/WFJXgAkgaOwkepB20GkAjC0PT6BP7qPZpQ==
-SpamDiagnosticOutput: 1:22
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;7:nA5ElZWbKqo3hN0UkfY3c/5mXALoNV6x0CHB/I1wEcFMldHNNhM7wQCYug5ERpBZAj0fbXcloKDxnKhcHV2rAXQmbeXpL7H7VpgYIzQ6qX6j2wfzC8GLlA78xoZnmn+d/gqQqstpUqaFo8z78XTyntog3X5v+6aMrFnoVN/h52o/Q79rbjIEERhG/AzInlFzuErTPc9wFw+m0nxemibgObMSvEZHLBgU6l0fhyOVVpPR5CLpG9pL+TQHzzGDinJn;20:sLiQayD0j0aBdpffTcd6YSzV4phqyQlA+F4f/P5tyCilrmAcChwhVdLyQato0Ea8fm3L2om0l6xRIvNeW9nzJuTdm0wrLLKUBjQdMnrMiw1bApyMP9w9p9jx0lyK12bEDChpNGDg/VhqW3iaJyiVWwx1VEU7EEBerrTUo02Jlis=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 10:10:45.8999
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2446d02f-9183-482f-3777-08d622cf2989
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3599
+In-Reply-To: <DM2PR0201MB1008E9A7C9A952C8F0461E4FA7160@DM2PR0201MB1008.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:29:57AM +0200, Paolo Bonzini wrote:
-> On 25/09/2018 10:57, Roman Kagan wrote:
-> > If we can assume that in all relevant cases vp_index coincides with the
-> > cpu index (which I think we can) then Vitaly's approach is the most
-> > efficient.
-> > 
-> > If, on the opposite, we want to optimize for random mapping between
-> > vp_index and cpu index, then it's probably better instead to iterate
-> > over vcpus and test if their vp_index belongs to the requested mask.
-> 
-> Yes, that would work too.  Perhaps we can do both?  You can have a
-> kvm->num_mismatched_vp_indexes count to choose between the two.
 
-Makes sense to me.
 
-Roman.
+On 9/25/2018 12:57 PM, Anurag Kumar Vulisha wrote:
+> HI Kishon,
+>
+> Thanks a lot for spending your time in reviewing this patch. Please
+> find my comments inline
+>
+>> -----Original Message-----
+>> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
+>> Sent: Tuesday, September 25, 2018 10:59 AM
+>> To: Anurag Kumar Vulisha <anuragku@xilinx.com>; Michal Simek
+>> <michals@xilinx.com>; robh+dt@kernel.org; mark.rutland@arm.com;
+>> vivek.gautam@codeaurora.org
+>> Cc: v.anuragkumar@gmail.com; linux-kernel@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org; devicetree@vger.kernel.org
+>> Subject: Re: [PATCH 1/2] phy: zynqmp: Add phy driver for xilinx zynqmp phy core
+>>
+>> Hi,
+>>
+>> On Wednesday 29 August 2018 07:37 PM, Anurag Kumar Vulisha wrote:
+>>> ZynqMP SoC has a Gigabit Transceiver with four lanes. All the high
+>>> speed peripherals such as USB, SATA, PCIE, Display Port and Ethernet
+>>> SGMII can rely on any of the four GT lanes for PHY layer. This patch
+>>> adds driver for that ZynqMP GT core.
+>>>
+>>> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+>>> ---
+>>>   drivers/phy/Kconfig            |    8 +
+>>>   drivers/phy/Makefile           |    1 +
+>>>   drivers/phy/phy-zynqmp.c       | 1579
+>> ++++++++++++++++++++++++++++++++++++++++
+>>>   include/dt-bindings/phy/phy.h  |    2 +
+>>>   include/linux/phy/phy-zynqmp.h |   52 ++
+>>>   5 files changed, 1642 insertions(+)
+>>>   create mode 100644 drivers/phy/phy-zynqmp.c  create mode 100644
+>>> include/linux/phy/phy-zynqmp.h
+>>>
+>>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig index
+>>> 5c8d452..14cf3330 100644
+>>> --- a/drivers/phy/Kconfig
+>>> +++ b/drivers/phy/Kconfig
+>>> @@ -40,6 +40,14 @@ config PHY_XGENE
+>>>   	help
+>>>   	  This option enables support for APM X-Gene SoC multi-purpose PHY.
+>>>
+>>> +config PHY_XILINX_ZYNQMP
+>>> +	tristate "Xilinx ZynqMP PHY driver"
+>>> +	depends on ARCH_ZYNQMP
+>>> +	select GENERIC_PHY
+>>> +	help
+>>> +	  Enable this to support ZynqMP High Speed Gigabit Transceiver
+>>> +	  that is part of ZynqMP SoC.
+>>> +
+>>>   source "drivers/phy/allwinner/Kconfig"
+>>>   source "drivers/phy/amlogic/Kconfig"
+>>>   source "drivers/phy/broadcom/Kconfig"
+>>> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile index
+>>> 84e3bd9..f2a8d27 100644
+>>> --- a/drivers/phy/Makefile
+>>> +++ b/drivers/phy/Makefile
+>>> @@ -7,6 +7,7 @@ obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
+>>>   obj-$(CONFIG_PHY_LPC18XX_USB_OTG)	+= phy-lpc18xx-usb-otg.o
+>>>   obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
+>>>   obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
+>>> +obj-$(CONFIG_PHY_XILINX_ZYNQMP)		+= phy-zynqmp.o
+>>>   obj-$(CONFIG_ARCH_SUNXI)		+= allwinner/
+>>>   obj-$(CONFIG_ARCH_MESON)		+= amlogic/
+>>>   obj-$(CONFIG_LANTIQ)			+= lantiq/
+>>> diff --git a/drivers/phy/phy-zynqmp.c b/drivers/phy/phy-zynqmp.c new
+>>> file mode 100644 index 0000000..306cedd
+>>> --- /dev/null
+>>> +++ b/drivers/phy/phy-zynqmp.c
+>>> @@ -0,0 +1,1579 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * phy-zynqmp.c - PHY driver for Xilinx ZynqMP GT.
+>>> + *
+>>> + * Copyright (C) 2018 Xilinx Inc.
+>>> + *
+>>> + * Author: Anurag Kumar Vulisha <anuragku@xilinx.com>
+>>> + *
+>>> + * This driver is tested for USB, SATA and Display Port currently.
+>>> + * Other controllers PCIe and SGMII should also work but that is
+>>> + * experimental as of now.
+>>> + */
+>>> +
+>>> +#include <linux/clk.h>
+>>> +#include <linux/delay.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/of_platform.h>
+>>> +#include <linux/of_address.h>
+>>> +#include <linux/phy/phy.h>
+>>> +#include <linux/phy/phy-zynqmp.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/delay.h>
+>>> +#include <dt-bindings/phy/phy.h>
+>>> +#include <linux/reset.h>
+>>> +#include <linux/list.h>
+>>> +#include <linux/slab.h>
+>>> +/* Total number of controllers */
+>>> +#define CONTROLLERS_PER_LANE		5
+>>> +
+>>> +/* USB pipe control parameters */
+>>> +#define PIPE_CLK_OFFSET			0x7c
+>>> +#define PIPE_POWER_OFFSET		0x80
+>>> +#define PIPE_CLK_ON			1
+>>> +#define PIPE_CLK_OFF			0
+>>> +#define PIPE_POWER_ON			1
+>>> +#define PIPE_POWER_OFF			0
+>>> +
+>>> +
+>>> +/**
+>>> + * struct xpsgtr_ssc - structure to hold SSC settings for a lane
+>>> + * @refclk_rate: PLL reference clock frequency
+>>> + * @pll_ref_clk: value to be written to register for corresponding
+>>> +ref clk rate
+>>> + * @steps: number of steps of SSC (Spread Spectrum Clock)
+>>> + * @step_size: step size of each step  */ struct xpsgtr_ssc {
+>>> +	u32 refclk_rate;
+>>> +	u8  pll_ref_clk;
+>>> +	u32 steps;
+>>> +	u32 step_size;
+>>> +};
+>>> +
+>>> +/* lookup table to hold all settings needed for a ref clock frequency
+>>> +*/ static struct xpsgtr_ssc ssc_lookup[MAX_REFCLK] = {
+>>> +	{19200000, 0x05, 608, 264020},
+>>> +	{20000000, 0x06, 634, 243454},
+>>> +	{24000000, 0x07, 760, 168973},
+>>> +	{26000000, 0x08, 824, 143860},
+>>> +	{27000000, 0x09, 856, 86551},
+>>> +	{38400000, 0x0A, 1218, 65896},
+>>> +	{40000000, 0x0B, 634, 243454},
+>>> +	{52000000, 0x0C, 824, 143860},
+>>> +	{100000000, 0x0D, 1058, 87533},
+>>> +	{108000000, 0x0E, 856, 86551},
+>>> +	{125000000, 0x0F, 992, 119497},
+>>> +	{135000000, 0x10, 1070, 55393},
+>>> +	{150000000, 0x11, 792, 187091}
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct xpsgtr_dev - representation of a ZynMP GT device
+>>> + * @dev: pointer to device
+>>> + * @serdes: serdes base address
+>>> + * @siou: siou base address
+>>> + * @gtr_mutex: mutex for locking
+>>> + * @phys: pointer to all the lanes
+>>> + * @tx_term_fix: fix for GT issue
+>>> + * @saved_icm_cfg0: stored value of ICM CFG0 register
+>>> + * @saved_icm_cfg1: stored value of ICM CFG1 register
+>>> + * @sata_rst: a reset control for SATA
+>>> + * @dp_rst: a reset control for DP
+>>> + * @usb0_crst: a reset control for usb0 core
+>>> + * @usb1_crst: a reset control for usb1 core
+>>> + * @usb0_hibrst: a reset control for usb0 hibernation module
+>>> + * @usb1_hibrst: a reset control for usb1 hibernation module
+>>> + * @usb0_apbrst: a reset control for usb0 apb bus
+>>> + * @usb1_apbrst: a reset control for usb1 apb bus
+>>> + * @gem0_rst: a reset control for gem0
+>>> + * @gem1_rst: a reset control for gem1
+>>> + * @gem2_rst: a reset control for gem2
+>>> + * @gem3_rst: a reset control for gem3  */ struct xpsgtr_dev {
+>>> +	struct device *dev;
+>>> +	void __iomem *serdes;
+>>> +	void __iomem *siou;
+>>> +	struct mutex gtr_mutex; /* mutex for locking */
+>>> +	struct xpsgtr_phy **phys;
+>>> +	bool tx_term_fix;
+>>> +	unsigned int saved_icm_cfg0;
+>>> +	unsigned int saved_icm_cfg1;
+>>> +	struct reset_control *sata_rst;
+>>> +	struct reset_control *dp_rst;
+>>> +	struct reset_control *usb0_crst;
+>>> +	struct reset_control *usb1_crst;
+>>> +	struct reset_control *usb0_hibrst;
+>>> +	struct reset_control *usb1_hibrst;
+>>> +	struct reset_control *usb0_apbrst;
+>>> +	struct reset_control *usb1_apbrst;
+>>> +	struct reset_control *gem0_rst;
+>>> +	struct reset_control *gem1_rst;
+>>> +	struct reset_control *gem2_rst;
+>>> +	struct reset_control *gem3_rst;
+>>> +};
+>>> +
+>>> +/**
+>>> + * xpsgtr_override_deemph - override PIPE TX de-emphasis
+>>> + * @phy: pointer to phy
+>>> + * @plvl: pre-emphasis level
+>>> + * @vlvl: voltage swing level
+>>> + *
+>>> + * Return: None
+>>> + */
+>>> +void xpsgtr_override_deemph(struct phy *phy, u8 plvl, u8 vlvl) {
+>>> +	struct xpsgtr_phy *gtr_phy = phy_get_drvdata(phy);
+>>> +	struct xpsgtr_dev *gtr_dev = gtr_phy->data;
+>>> +	static u8 pe[4][4] = { { 0x2, 0x2, 0x2, 0x2 },
+>>> +			       { 0x1, 0x1, 0x1, 0xFF },
+>>> +			       { 0x0, 0x0, 0xFF, 0xFF },
+>>> +			       { 0xFF, 0xFF, 0xFF, 0xFF } };
+>>> +
+>>> +	writel(pe[plvl][vlvl],
+>>> +	       gtr_dev->serdes + gtr_phy->lane * L0_TX_ANA_TM_18_OFFSET +
+>>> +	       L0_TX_ANA_TM_18);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(xpsgtr_override_deemph);
+>> Why can't these be included in one of the phy_ops? Why do you need export symbols
+>> here and below?
+>>
+> Display Port has a HPD (Hot Plug Detect) feature where any DP Sink Device can be connected
+> at runtime and DPCD (Display Port Control Data) would be read by the DP driver to determine
+> whether the link training happened properly or not. If link training fails, the DP driver needs
+> to update the Voltage Swing & De-emphasis values at runtime in the phy  based on the values
+> read in DPCD and restart the link training sequence. Because of this reason we are exporting these
+> functions so that the DP driver can use them when required.
+
+Can't this be added to phy_calibrate() so that you can call calibrate 
+everytime you want to
+change the phy configuration based on DPCD config?
+
+regards
+Vivek
+>
+> Thanks,
+> Anurag Kumar Vulisha
+
