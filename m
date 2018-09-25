@@ -2,226 +2,233 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D579C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA834C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 243F020867
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:33:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6NxeHj2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 243F020867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7016D20867
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:33:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7016D20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729002AbeIYPkA (ORCPT
+        id S1729029AbeIYPkD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:40:00 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33652 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeIYPj7 (ORCPT
+        Tue, 25 Sep 2018 11:40:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42865 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeIYPkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:39:59 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f10-v6so1548525wrs.0;
-        Tue, 25 Sep 2018 02:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H0Wb0j6WarwEMAYgUXKPTL0QaODPmEkqOoQ2Crmi6MM=;
-        b=b6NxeHj27QUppcutJoA5tKSjvFESVc+IJuHvfi0Bg6/hnEMKhDqrFg/KvQmBONxldW
-         4ScrRzG42Xc1HQqNC5fNXIru4jcYrjepVWOmV4Gkqxpk6Ndns+H/y4T1JC9rkfnLP0Kg
-         a95+oasXCALcXe3gquDB16Uq0bKCyubLWwc/wSKOVEcqqacQjJu2I3AIehPIax+JDKhW
-         YQJpQy83BdD2Iv83N7r/ZTpj+EfZYsl6/x6lhDrDgJAVsWyYrdjyaKidgvzPwgyng97Y
-         WjOC44kod8T8lcNuze694czphPSS4PGlFQ/T7BqrORgFmFJ/2LACrf2YUBvDOcQ+H/SU
-         zl2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H0Wb0j6WarwEMAYgUXKPTL0QaODPmEkqOoQ2Crmi6MM=;
-        b=GxtKjpfEjXvbQ7hD+dSEJeFLmJElODyl69W6p8Xz9bwG+65FCxcQhT0r3bhrLOfga4
-         QNRqp6vAXccy1waRAsUwBhGjrBzNF/kUFd91RlOe8M4M1jjDJgsV18Wv0qK0k6qAdk6M
-         vKa5HwsAhShFQshO62zGXS1Y0iMrmfXdljaHoJX5Ulq0i5bDFQ530HqP2d53O4+bzIQT
-         Mkrgl9/MC8xMBhLVoniuzJQPA4NUyWkb1iYPxv0CvnRAUkbb2HpUZsxWw7+tIz847Xo2
-         qW8tBkU0jg7/OZGKZCUzmkocp5dEB8ys9tzV5sL1uHfvg223bnY7zmE4vaysv707c3fG
-         dMXw==
-X-Gm-Message-State: ABuFfogCCqaTkH+UaqgwkvdQjffhzGMNgwJKd+79FMmwbBrkq1OyDtsr
-        6muXyRVaS6tDK9qO/XFKLLPjBg7D
-X-Google-Smtp-Source: ACcGV62/3MLdJrF53nDGReGNxPbfNu02yKcPU77mxf3V1C955xiLBBruhEiU4oYO1irLdbTCL7YunA==
-X-Received: by 2002:adf:f291:: with SMTP id k17-v6mr103005wro.263.1537867997172;
-        Tue, 25 Sep 2018 02:33:17 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm1635671wrs.3.2018.09.25.02.33.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 02:33:16 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 11:33:15 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
-Message-ID: <20180925093315.GB7097@ulmo>
-References: <20180921102546.12745-1-thierry.reding@gmail.com>
- <20180921102546.12745-7-thierry.reding@gmail.com>
- <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
+        Tue, 25 Sep 2018 11:40:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8P9WlNv3386201
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 25 Sep 2018 02:32:47 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8P9WleF3386198;
+        Tue, 25 Sep 2018 02:32:47 -0700
+Date:   Tue, 25 Sep 2018 02:32:47 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-ded2b8fe2e431d8029ab50238744fcce06a2f0c6@git.kernel.org>
+Cc:     andi@firstfloor.org, hpa@zytor.com, jolsa@kernel.org,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        tglx@linutronix.de, alexey.budankov@linux.intel.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+        namhyung@kernel.org
+Reply-To: alexander.shishkin@linux.intel.com, peterz@infradead.org,
+          jolsa@kernel.org, namhyung@kernel.org, acme@redhat.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          alexey.budankov@linux.intel.com, tglx@linutronix.de,
+          andi@firstfloor.org, hpa@zytor.com
+In-Reply-To: <20180913125450.21342-5-jolsa@kernel.org>
+References: <20180913125450.21342-5-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tools: Add 'struct perf_mmap' arg to
+ record__write()
+Git-Commit-ID: ded2b8fe2e431d8029ab50238744fcce06a2f0c6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CACRpkdYnrf7FknvnZyFSgfT5aCrcWT4hxSnQo0UqxYfR6Fkqwg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  ded2b8fe2e431d8029ab50238744fcce06a2f0c6
+Gitweb:     https://git.kernel.org/tip/ded2b8fe2e431d8029ab50238744fcce06a2f0c6
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 13 Sep 2018 14:54:06 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 19 Sep 2018 10:25:11 -0300
 
---qlTNgmc+xy1dBmNv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+perf tools: Add 'struct perf_mmap' arg to record__write()
 
-On Tue, Sep 25, 2018 at 10:11:06AM +0200, Linus Walleij wrote:
-> Hi Thierry!
->=20
-> Thanks for the patch!
->=20
-> I am a bit ignorant about irqdomains so I will probably need an ACK
-> from some irq maintainer before I can apply this.
->=20
-> On Fri, Sep 21, 2018 at 12:25 PM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
->=20
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Hierarchical IRQ domains can be used to stack different IRQ controllers
-> > on top of each other. One specific use-case where this can be useful is
-> > if a power management controller has top-level controls for wakeup
-> > interrupts. In such cases, the power management controller can be a
-> > parent to other interrupt controllers and program additional registers
-> > when an IRQ has its wake capability enabled or disabled.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> While I think it is really important that we start supporting hierarchical
-> irqdomains in the gpiolib core, I want a more complete approach,
-> so that drivers that need hierarchical handling of irqdomains
-> can get the same support from gpiolib as they get for simple
-> domains.
->=20
-> > @@ -1918,7 +1918,9 @@ static int gpiochip_add_irqchip(struct gpio_chip =
-*gpiochip,
-> >                 type =3D IRQ_TYPE_NONE;
-> >         }
-> >
-> > -       gpiochip->to_irq =3D gpiochip_to_irq;
-> > +       if (!gpiochip->to_irq)
-> > +               gpiochip->to_irq =3D gpiochip_to_irq;
->=20
-> So here you let the drivers override the .to_irq() function and that
-> I think gets confusing as we are asking gpiolib to handle our
-> irqchip.
->=20
->=20
-> > -       gpiochip->irq.domain =3D irq_domain_add_simple(np, gpiochip->ng=
-pio,
-> > -                                                    gpiochip->irq.firs=
-t,
-> > -                                                    ops, gpiochip);
-> > +       if (gpiochip->irq.parent_domain)
-> > +               gpiochip->irq.domain =3D irq_domain_add_hierarchy(gpioc=
-hip->irq.parent_domain,
-> > +                                                               0, gpio=
-chip->ngpio,
-> > +                                                               np, ops=
-, gpiochip);
-> > +       else
-> > +               gpiochip->irq.domain =3D irq_domain_add_simple(np, gpio=
-chip->ngpio,
-> > +                                                            gpiochip->=
-irq.first,
-> > +                                                            ops, gpioc=
-hip);
->=20
-> So this part is great: if we pass in a parent domain the core helps us
-> create the hierarchy.
->=20
-> But the stuff in .to_irq() should also be handled in the gpiolib core:
-> the irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec) for
-> example. That way you should not need any external .to_irq() function.
->=20
-> I can't see if you need to pull more stuff into the core to accomplish
-> that, but I think in essence the core gpiolib needs to be more helpful
-> with hierarchies.
+The struct perf_mmap map argument will hold the file pointer to write
+the data to.
 
-This is not as trivial as it sounds. I think we could probably provide a
-simple helper in the core that may work for the majority of GPIO
-controllers, and would be similar to irq_domain_xlate_twocell(). The
-problem is that ->gpio_to_irq() effectively needs to convert the offset
-of the pin in the GPIO controller to an IRQ specifier. If the IRQ domain
-can use irq_domain_xlate_twocell(), that should be easy, but if it does
-not, then we likely need a custom implementation as well.
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180913125450.21342-5-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-record.c | 24 ++++++++++++++----------
+ tools/perf/util/auxtrace.c  |  2 +-
+ tools/perf/util/auxtrace.h  |  1 +
+ tools/perf/util/mmap.c      |  6 +++---
+ tools/perf/util/mmap.h      |  2 +-
+ 5 files changed, 20 insertions(+), 15 deletions(-)
 
-For example, as you may remember, the Tegra186 GPIO controller is
-somewhat quirky in that it has a number of banks, each of which can have
-any number of pins up to 8. However, in order to prevent users from
-attempting to use one of the non-existent GPIOs, we resorted to
-compacting the GPIO number space so that the GPIO specifier uses
-basically a (bank, pin) pair that is converted into a GPIO offset. The
-same is done for interrupt specifiers.
-
-Since there is no 1:1 relationship between the value in the specifier
-and the GPIO offset, we can't use irq_domain_xlate_twocell(). Similarly
-we won't be able to use the standard gpiochip_to_irq() counterpart for
-two cell specifiers to construct the IRQ specifier, but instead we'll
-have to convert it based on the offset and the number of pins per bank
-(that is, the inverse of what we do in tegra186_gpio_of_xlate()).
-
-I think we can probably just implement the simple two-cell version in
-gpiochip_to_irq() directly and leave it up to drivers that require
-something more to override ->to_irq().
-
-Another alternative that I had pondered about was to add another level
-of indirection and have a generic implementation in gpiochip_to_irq()
-that calls back into a new ->to_irq_fwspec() function that drivers can
-implement to fill in the struct irq_fwspec as required by the
-irq_domain_alloc_irqs() function. We could still provide a default
-implementation for the common two-cell case, so most drivers wouldn't
-have to know about it.
-
-I don't think any of the above has massive advantages over the other.
-The latter will be slightly more compact, I would assume, but the former
-gives us more flexibility if we need it.
-
-Thierry
-
---qlTNgmc+xy1dBmNv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqANcACgkQ3SOs138+
-s6FOohAAnjOywHub21XI16qhVfLaOGOM3VRJ9YjtLXEdYKmfIciVQMeVN9M72j/K
-hZ+0WRz1OFtvvTIayJlGebviYwBBh2fPqSExJl018eVoOCr11usgl1EHkPITswxd
-zmEuC3E0hx19wR0iBjm8O5cD02M5tJwGZrihUaWCtR2BIly98zI2YA1cDTM5aveZ
-heZoW4r4NebMj+FHJZmHGx6II+JIkTkIaVd/QhGbBOmldxuMwllfTXumVE0dDtSd
-bPhnqZSdWNKznn5yxxhE9jXtpN2Rnc1gCejdUDfu8iDpKhYHTvJp8tLFkm4q4cGx
-rdfW1BUY45zfPTKZl7B6FSg0L/DoAw+i3TlSVj3cniqGDgp1av5P5lpjoBe2BfLK
-xhRS49jjIk0FVuBClLp/dGucdHQDOYHY5iNqdizdQ+pn57B/xYtq8KGdpSZBntLX
-uXUDPJfb6HGI7K+SoSyn9pZEwTZZE0R9gu5IkrR5vQ7cIaZL8lzD0l8nTeRyoUMo
-hU8CINGMY5TJwWDjai20AawNQv818rFoXKmZuChowkAQOdXf9vnEWSVI8co52M5T
-3qUi7I6EtjJjmxs8wlm59PCxgkGsj3hcnlHCtqi/wKmQ2OJp0pHUNLRdz+4/kWq5
-8DX+oCTXpSjDOKLiCg3JJdf7vgAbx41XTfLmWNWB0b1DndOFtzE=
-=eTIG
------END PGP SIGNATURE-----
-
---qlTNgmc+xy1dBmNv--
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index fd8b12c5f4ae..0980dfe3396b 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -106,9 +106,12 @@ static bool switch_output_time(struct record *rec)
+ 	       trigger_is_ready(&switch_output_trigger);
+ }
+ 
+-static int record__write(struct record *rec, void *bf, size_t size)
++static int record__write(struct record *rec, struct perf_mmap *map __maybe_unused,
++			 void *bf, size_t size)
+ {
+-	if (perf_data__write(rec->session->data, bf, size) < 0) {
++	struct perf_data_file *file = &rec->session->data->file;
++
++	if (perf_data_file__write(file, bf, size) < 0) {
+ 		pr_err("failed to write perf data, error: %m\n");
+ 		return -1;
+ 	}
+@@ -127,15 +130,15 @@ static int process_synthesized_event(struct perf_tool *tool,
+ 				     struct machine *machine __maybe_unused)
+ {
+ 	struct record *rec = container_of(tool, struct record, tool);
+-	return record__write(rec, event, event->header.size);
++	return record__write(rec, NULL, event, event->header.size);
+ }
+ 
+-static int record__pushfn(void *to, void *bf, size_t size)
++static int record__pushfn(struct perf_mmap *map, void *to, void *bf, size_t size)
+ {
+ 	struct record *rec = to;
+ 
+ 	rec->samples++;
+-	return record__write(rec, bf, size);
++	return record__write(rec, map, bf, size);
+ }
+ 
+ static volatile int done;
+@@ -170,6 +173,7 @@ static void record__sig_exit(void)
+ #ifdef HAVE_AUXTRACE_SUPPORT
+ 
+ static int record__process_auxtrace(struct perf_tool *tool,
++				    struct perf_mmap *map,
+ 				    union perf_event *event, void *data1,
+ 				    size_t len1, void *data2, size_t len2)
+ {
+@@ -197,11 +201,11 @@ static int record__process_auxtrace(struct perf_tool *tool,
+ 	if (padding)
+ 		padding = 8 - padding;
+ 
+-	record__write(rec, event, event->header.size);
+-	record__write(rec, data1, len1);
++	record__write(rec, map, event, event->header.size);
++	record__write(rec, map, data1, len1);
+ 	if (len2)
+-		record__write(rec, data2, len2);
+-	record__write(rec, &pad, padding);
++		record__write(rec, map, data2, len2);
++	record__write(rec, map, &pad, padding);
+ 
+ 	return 0;
+ }
+@@ -549,7 +553,7 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 	 * at least one event.
+ 	 */
+ 	if (bytes_written != rec->bytes_written)
+-		rc = record__write(rec, &finished_round_event, sizeof(finished_round_event));
++		rc = record__write(rec, NULL, &finished_round_event, sizeof(finished_round_event));
+ 
+ 	if (overwrite)
+ 		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_EMPTY);
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index 2fecee57f555..c4617bcfd521 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -1285,7 +1285,7 @@ static int __auxtrace_mmap__read(struct perf_mmap *map,
+ 	ev.auxtrace.tid = mm->tid;
+ 	ev.auxtrace.cpu = mm->cpu;
+ 
+-	if (fn(tool, &ev, data1, len1, data2, len2))
++	if (fn(tool, map, &ev, data1, len1, data2, len2))
+ 		return -1;
+ 
+ 	mm->prev = head;
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index 7eeb141361b9..a86b7eab6673 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -435,6 +435,7 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
+ 				   bool per_cpu);
+ 
+ typedef int (*process_auxtrace_t)(struct perf_tool *tool,
++				  struct perf_mmap *map,
+ 				  union perf_event *event, void *data1,
+ 				  size_t len1, void *data2, size_t len2);
+ 
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 215f69f41672..cdb95b3a1213 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -281,7 +281,7 @@ int perf_mmap__read_init(struct perf_mmap *map)
+ }
+ 
+ int perf_mmap__push(struct perf_mmap *md, void *to,
+-		    int push(void *to, void *buf, size_t size))
++		    int push(struct perf_mmap *map, void *to, void *buf, size_t size))
+ {
+ 	u64 head = perf_mmap__read_head(md);
+ 	unsigned char *data = md->base + page_size;
+@@ -300,7 +300,7 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
+ 		size = md->mask + 1 - (md->start & md->mask);
+ 		md->start += size;
+ 
+-		if (push(to, buf, size) < 0) {
++		if (push(md, to, buf, size) < 0) {
+ 			rc = -1;
+ 			goto out;
+ 		}
+@@ -310,7 +310,7 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
+ 	size = md->end - md->start;
+ 	md->start += size;
+ 
+-	if (push(to, buf, size) < 0) {
++	if (push(md, to, buf, size) < 0) {
+ 		rc = -1;
+ 		goto out;
+ 	}
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index 05a6d47c7956..e603314dc792 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -93,7 +93,7 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
+ union perf_event *perf_mmap__read_event(struct perf_mmap *map);
+ 
+ int perf_mmap__push(struct perf_mmap *md, void *to,
+-		    int push(void *to, void *buf, size_t size));
++		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
+ 
+ size_t perf_mmap__mmap_len(struct perf_mmap *map);
+ 
