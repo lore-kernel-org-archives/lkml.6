@@ -2,96 +2,127 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB2BC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDB6C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B86C206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B86C206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7B56F2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:21:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B56F2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbeIZCaG (ORCPT
+        id S1726957AbeIZCa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:30:06 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41287 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbeIZCaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:30:06 -0400
-Received: by mail-ot1-f68.google.com with SMTP id e18-v6so25801854oti.8;
-        Tue, 25 Sep 2018 13:20:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EHIu6h9W6NFX+pw3BZtVkHMy+A2VO6Sii4fJuyQ8j98=;
-        b=uesGERqycsI6E4niD9UbGbSEwIQMEaKiovaQ4FSYYSj9vRAlI3R5VMwzfbHhrJF5XD
-         BoYidldPYeoSDIaAGphzYP+9daml+KGOmyDEX9kEyG+slLWv5zpq7ySZapNNzcmIfRkh
-         IK8OWYta60PBqH6mFT2VPjq5oVaeXykL36nThz/n/EHpzwVN4oflZA0XWiUEGcvWaa2c
-         t2L7XMsHakzl6N5PZslH4Iy1ZvxvxY5tsCyEV0RTOYu3KfsKU5zQR7fYhdHXuIfBhaFt
-         icuGH8X405Rl1HqES8vEy3es+2yBS6tvh2FaDDQchGHst1cGU9tbbLT/rmidsnM1Kucu
-         AN9g==
-X-Gm-Message-State: ABuFfoiDkNs10NhYrNZYX/Nvs8mpAzytLoWNQifa8d3ToWgDXsbJh7nA
-        K3zsHxjgDzm+ih1nCGpLMA==
-X-Google-Smtp-Source: ACcGV62dmnk+Myt//gsfYTIqWTEWcd90Omdg06+8IOZQZUgV6Ls4T0qAsFbT1MwZag1sMKaLQp45IQ==
-X-Received: by 2002:a9d:520b:: with SMTP id e11-v6mr1897745oth.396.1537906849574;
-        Tue, 25 Sep 2018 13:20:49 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s145-v6sm1122443oih.16.2018.09.25.13.20.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 13:20:49 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 15:20:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        broonie@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 4/5] pinctrl: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20180925202048.GA6227@bogus>
-References: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
- <20180905104120.17252-4-ckeepax@opensource.cirrus.com>
+        Tue, 25 Sep 2018 22:30:29 -0400
+Received: from mga07.intel.com ([134.134.136.100]:6365 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726086AbeIZCa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 22:30:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 13:21:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
+   d="scan'208";a="77230394"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
+  by orsmga006.jf.intel.com with ESMTP; 25 Sep 2018 13:20:47 -0700
+Subject: [PATCH v5 3/4] mm: Create non-atomic version of SetPageReserved for
+ init use
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, dave.hansen@intel.com, jglisse@redhat.com,
+        rppt@linux.vnet.ibm.com, dan.j.williams@intel.com,
+        logang@deltatee.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Date:   Tue, 25 Sep 2018 13:20:47 -0700
+Message-ID: <20180925202018.3576.11607.stgit@localhost.localdomain>
+In-Reply-To: <20180925200551.3576.18755.stgit@localhost.localdomain>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180905104120.17252-4-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 05, 2018 at 11:41:19AM +0100, Charles Keepax wrote:
-> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> 
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform.
-> 
-> Lochnagar provides many pins which can generally be used for an
-> audio function such as an AIF or a PDM interface, but also as
-> GPIOs.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
->  drivers/pinctrl/cirrus/Kconfig             |   10 +
->  drivers/pinctrl/cirrus/Makefile            |    2 +
->  drivers/pinctrl/cirrus/pinctrl-lochnagar.c | 1161 ++++++++++++++++++++++++++++
->  drivers/pinctrl/cirrus/pinctrl-lochnagar.h |  115 +++
+It doesn't make much sense to use the atomic SetPageReserved at init time
+when we are using memset to clear the memory and manipulating the page
+flags via simple "&=" and "|=" operations in __init_single_page.
 
->  include/dt-bindings/pinctrl/lochnagar.h    |  135 ++++
+This patch adds a non-atomic version __SetPageReserved that can be used
+during page init and shows about a 10% improvement in initialization times
+on the systems I have available for testing. On those systems I saw
+initialization times drop from around 35 seconds to around 32 seconds to
+initialize a 3TB block of persistent memory. I believe the main advantage
+of this is that it allows for more compiler optimization as the __set_bit
+operation can be reordered whereas the atomic version cannot.
 
-This belongs with the binding patch.
+I tried adding a bit of documentation based on commit <f1dd2cd13c4> ("mm,
+memory_hotplug: do not associate hotadded memory to zones until online").
 
->  5 files changed, 1423 insertions(+)
->  create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.c
->  create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.h
->  create mode 100644 include/dt-bindings/pinctrl/lochnagar.h
+Ideally the reserved flag should be set earlier since there is a brief
+window where the page is initialization via __init_single_page and we have
+not set the PG_Reserved flag. I'm leaving that for a future patch set as
+that will require a more significant refactor.
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+
+v4: Added comment about __set_bit vs set_bit to the patch description
+v5: No change
+
+ include/linux/page-flags.h |    1 +
+ mm/page_alloc.c            |    9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 934f91ef3f54..50ce1bddaf56 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -303,6 +303,7 @@ static inline void page_init_poison(struct page *page, size_t size)
+ 
+ PAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ 	__CLEARPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
++	__SETPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ PAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+ 	__CLEARPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+ 	__SETPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 511447ac02cf..926ad3083b28 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1238,7 +1238,12 @@ void __meminit reserve_bootmem_region(phys_addr_t start, phys_addr_t end)
+ 			/* Avoid false-positive PageTail() */
+ 			INIT_LIST_HEAD(&page->lru);
+ 
+-			SetPageReserved(page);
++			/*
++			 * no need for atomic set_bit because the struct
++			 * page is not visible yet so nobody should
++			 * access it yet.
++			 */
++			__SetPageReserved(page);
+ 		}
+ 	}
+ }
+@@ -5512,7 +5517,7 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		page = pfn_to_page(pfn);
+ 		__init_single_page(page, pfn, zone, nid);
+ 		if (context == MEMMAP_HOTPLUG)
+-			SetPageReserved(page);
++			__SetPageReserved(page);
+ 
+ 		/*
+ 		 * Mark the block movable so that blocks are reserved for
+
