@@ -2,82 +2,103 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD45FC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A25C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1F420645
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:36:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8b7og9e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1F420645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D2CBE2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CBE2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electromag.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbeIYUoo (ORCPT
+        id S1729418AbeIYUov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 16:44:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45280 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729320AbeIYUoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:44:44 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA63D20645;
-        Tue, 25 Sep 2018 14:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537886216;
-        bh=tny+gSzjmdwE72pJ3yle5vpd2KVUl8AtCIeIbpoElWc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q8b7og9eR87FX2PEIRErExXeRGN0y5PRh1y0W1TIX8zoZObirYeb9pSGt90h5Mogi
-         03kSDRDdO49HlRX8KzKX2YJyMmLxoNRk3Wh5rd2Ur/pcDvC4U/jTBRS6mPbRAyycFg
-         yddeFWyUAJ0uxnv55K6u5x1JDgT/zaW3QXydKpvY=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 8C3E11401A1; Tue, 25 Sep 2018 11:36:53 -0300 (-03)
-Date:   Tue, 25 Sep 2018 11:36:53 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] perf script python: Database export fixes
-Message-ID: <20180925143653.GA3541@kernel.org>
-References: <20180911114504.28516-1-adrian.hunter@intel.com>
- <b7a7a61a-9b2b-5f93-9d12-01b52d6034e4@intel.com>
+        Tue, 25 Sep 2018 16:44:51 -0400
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:53139 "EHLO
+        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729320AbeIYUou (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 16:44:50 -0400
+Received: (qmail 6821 invoked by uid 5089); 25 Sep 2018 14:37:01 -0000
+Received: by simscan 1.2.0 ppid: 6739, pid: 6741, t: 0.3026s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950 spam: 3.1.4
+X-RBL:  $rbltext
+Received: from unknown (HELO ?10.1.1.211?) (preid@electromag.com.au@124.148.255.50)
+  by anchovy3.45ru.net.au with ESMTPA; 25 Sep 2018 14:37:00 -0000
+Subject: Re: [PATCH 2/2] iio: magnetometer: Add driver support for PNI RM3100
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Song Qiang <songqiang1304521@gmail.com>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        rtresidd@electromag.com.au, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180925031724.21399-1-songqiang1304521@gmail.com>
+ <20180925031724.21399-2-songqiang1304521@gmail.com>
+ <20180925143054.00007fcb@huawei.com>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <57d8a9d6-c402-068e-0a21-bbd6c20a7816@electromag.com.au>
+Date:   Tue, 25 Sep 2018 22:36:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7a7a61a-9b2b-5f93-9d12-01b52d6034e4@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180925143054.00007fcb@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Sep 25, 2018 at 02:08:06PM +0300, Adrian Hunter escreveu:
-> On 11/09/18 14:45, Adrian Hunter wrote:
-> > Hi
-> > 
-> > Here are a couple of database export fixes.
-> > 
-> > 
-> > Adrian Hunter (2):
-> >       perf script python: Fix export-to-postgresql.py occasional failure
-> >       perf script python: Fix export-to-sqlite.py sample columns
-> > 
-> >  tools/perf/scripts/python/export-to-postgresql.py | 9 +++++++++
-> >  tools/perf/scripts/python/export-to-sqlite.py     | 6 +++++-
-> >  2 files changed, 14 insertions(+), 1 deletion(-)
+On 25/09/2018 9:30 PM, Jonathan Cameron wrote:
+>> +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
+>> +{
+>> +	struct iio_poll_func *pf = p;
+>> +	struct iio_dev *indio_dev = pf->indio_dev;
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +	struct regmap *regmap = data->regmap;
+>> +	u8 buffer[9];
+>> +	int ret;
+>> +	int i;
+>> +
+>> +	mutex_lock(&data->lock);
+>> +	ret = rm3100_wait_measurement(data);
+>> +	if (ret < 0) {
+>> +		mutex_unlock(&data->lock);
+>> +		goto done;
+>> +	}
+>> +
+>> +	ret = regmap_bulk_read(regmap, RM3100_REG_MX2, buffer, sizeof(buffer));
+>> +	mutex_unlock(&data->lock);
+>> +	if (ret < 0)
+>> +		goto done;
+>> +
+>> +	/* Convert XXXYYYZZZxxx to XXXxYYYxZZZx. x for padding. */
+>> +	for (i = 0; i < 3; i++)
+>> +		memcpy(data->buffer + i * 4, buffer + i * 3, 3);
+> Firstly X doesn't need copying.
+> Secondly the copy of Y actually overwrites the value of Z
+> XXXYYYZZZxxx
+> XXXxYYYZZxxx
+> XXXxYYYxYZZx
 > 
-> Please consider these
+> I think...
+> 
+>> +
+>> +	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
+>> +			iio_get_time_ns(indio_dev));
 
-Applied to perf/urgent, please consider using the Fixes: tag, so that
-the stable guys have a easier time (automatically even) figuring out how
-far back the patch should be applied.
+memcpy target is a different buffer so should be ok.
 
-Thanks!
+But that raises the question of does it need to be?
+'buffer' could be 12 bytes long and just shuffle Z then Y.
+Do the unused bytes need to be zeroed? or does libiio mask them anyway?
 
-- Arnaldo
+
+
+-- 
+Regards
+Phil Reid
