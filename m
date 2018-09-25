@@ -2,210 +2,195 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8413C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43977C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FFB72086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:56:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="kp+PSyHk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FFB72086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tu-dortmund.de
+	by mail.kernel.org (Postfix) with ESMTP id DA0482086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0482086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbeIYSD5 (ORCPT
+        id S1728890AbeIYSEF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:03:57 -0400
-Received: from mx1.hrz.uni-dortmund.de ([129.217.128.51]:54204 "EHLO
-        unimail.uni-dortmund.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbeIYSD4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:03:56 -0400
-X-Greylist: delayed 1276 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Sep 2018 14:03:54 EDT
-Received: from [129.217.43.49] (limnos.cs.uni-dortmund.de [129.217.43.49])
-        (authenticated bits=0)
-        by unimail.uni-dortmund.de (8.16.0.29/8.16.0.29) with ESMTPSA id w8PBZTCW014506
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 25 Sep 2018 13:35:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-        s=unimail; t=1537875330;
-        bh=5gckrvGmOSp1fmzymczdnp/pKK8sewgPd7jlDPowcUw=;
-        h=To:Cc:From:Subject:Date;
-        b=kp+PSyHk5So8QKP+RJgLvt4Vj1da+xaZMEwCVgnWe1uUUnf37j5/Wm2pu3RCscIAr
-         HsmzyjV6Nl1p7fKTADOmRK0G18xB2eP0jvTufL4hMTUB12QiG45goVgYpCJo7OOm88
-         +KfS6Tz2lWB5QtEe4TShyt5AYfhI4CtfNVx6lGHk=
-To:     arnd@arndb.de
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=alexander.lochmann@tu-dortmund.de; prefer-encrypt=mutual;
- keydata=
- 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
- 6NxCpAsFDwJbauda2prWMzruCg==
-Subject: [x86] BUG()/BUG_ON() macros cannot be disabled
-Message-ID: <9516e4b3-f9f2-b150-f019-8b1ef465efb3@tu-dortmund.de>
-Date:   Tue, 25 Sep 2018 13:35:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 14:04:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48322 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727159AbeIYSEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:04:05 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8451330001D5;
+        Tue, 25 Sep 2018 11:56:53 +0000 (UTC)
+Received: from [10.36.117.210] (ovpn-117-210.ams2.redhat.com [10.36.117.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C1B8C2010D95;
+        Tue, 25 Sep 2018 11:56:45 +0000 (UTC)
+Subject: Re: [PATCH v5 11/18] kvm: arm64: Dynamic configuration of VTTBR mask
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-12-suzuki.poulose@arm.com>
+ <15830d79-cfc3-964a-c232-a508758ba1b9@redhat.com>
+ <77c89ec4-9e27-92b8-1d7c-91fb98496808@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <6ef42458-f1f2-9b2d-9cb9-4f0d1d0586b8@redhat.com>
+Date:   Tue, 25 Sep 2018 13:56:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="beyh2CM9IKZjJUog9ZIi56j5rFrMc4SBz"
+In-Reply-To: <77c89ec4-9e27-92b8-1d7c-91fb98496808@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 25 Sep 2018 11:56:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---beyh2CM9IKZjJUog9ZIi56j5rFrMc4SBz
-Content-Type: multipart/mixed; boundary="ykzM58qJSbQVMj6jyweAtzezWrFi9csp4";
- protected-headers="v1"
-From: Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
-To: arnd@arndb.de
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <9516e4b3-f9f2-b150-f019-8b1ef465efb3@tu-dortmund.de>
-Subject: [x86] BUG()/BUG_ON() macros cannot be disabled
+Hi Suzuki,
 
---ykzM58qJSbQVMj6jyweAtzezWrFi9csp4
-Content-Type: multipart/mixed;
- boundary="------------5E0CA33CC47A8D6B0687C66A"
-Content-Language: en-US
+On 9/20/18 5:22 PM, Suzuki K Poulose wrote:
+> 
+> 
+> On 20/09/18 15:07, Auger Eric wrote:
+>> Hi Suzuki,
+>> On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
+>>> On arm64 VTTBR_EL2:BADDR holds the base address for the stage2
+>>> translation table. The Arm ARM mandates that the bits BADDR[x-1:0]
+>>> should be 0, where 'x' is defined for a given IPA Size and the
+>>> number of levels for a translation granule size. It is defined
+>>> using some magical constants. This patch is a reverse engineered
+>>> implementation to calculate the 'x' at runtime for a given ipa and
+>>> number of page table levels. See patch for more details.
+>>>
+>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>>> Cc: Christoffer Dall <cdall@kernel.org>
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>>> ---
+>>> Changes since V3:
+>>>   - Update reference to latest ARM ARM and improve commentary
+>>> ---
+>>>   arch/arm64/include/asm/kvm_arm.h | 63 +++++++++++++++++++++++++++++---
+>>>   arch/arm64/include/asm/kvm_mmu.h | 25 ++++++++++++-
+>>>   2 files changed, 81 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/include/asm/kvm_arm.h
+>>> b/arch/arm64/include/asm/kvm_arm.h
+>>> index 14317b3a1820..3fb1d440be6e 100644
+>>> --- a/arch/arm64/include/asm/kvm_arm.h
+>>> +++ b/arch/arm64/include/asm/kvm_arm.h
+>>> @@ -123,7 +123,6 @@
+>>>   #define VTCR_EL2_SL0_MASK  (3 << VTCR_EL2_SL0_SHIFT)
+>>>   #define VTCR_EL2_SL0_LVL1  (1 << VTCR_EL2_SL0_SHIFT)
+>>>   #define VTCR_EL2_T0SZ_MASK 0x3f
+>>> -#define VTCR_EL2_T0SZ_40B   24
+>>>   #define VTCR_EL2_VS_SHIFT  19
+>>>   #define VTCR_EL2_VS_8BIT   (0 << VTCR_EL2_VS_SHIFT)
+>>>   #define VTCR_EL2_VS_16BIT  (1 << VTCR_EL2_VS_SHIFT)
+>>> @@ -140,11 +139,8 @@
+>>>    * Note that when using 4K pages, we concatenate two first level
+>>> page tables
+>>>    * together. With 16K pages, we concatenate 16 first level page
+>>> tables.
+>>>    *
+>>> - * The magic numbers used for VTTBR_X in this patch can be found in
+>>> Tables
+>>> - * D4-23 and D4-25 in ARM DDI 0487A.b.
+>>>    */
+>>>
+>>> -#define VTCR_EL2_T0SZ_IPA   VTCR_EL2_T0SZ_40B
+>>>   #define VTCR_EL2_COMMON_BITS       (VTCR_EL2_SH0_INNER |
+>>> VTCR_EL2_ORGN0_WBWA | \
+>>>                               VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
+>>>
+>>> @@ -175,9 +171,64 @@
+>>>   #endif
+>>>
+>>>   #define VTCR_EL2_FLAGS                     (VTCR_EL2_COMMON_BITS |
+>>> VTCR_EL2_TGRAN_FLAGS)
+>>> -#define VTTBR_X                             (VTTBR_X_TGRAN_MAGIC -
+>>> VTCR_EL2_T0SZ_IPA)
+>>> +/*
+>>> + * ARM VMSAv8-64 defines an algorithm for finding the translation table
+>>> + * descriptors in section D4.2.8 in ARM DDI 0487C.a.
+>>> + *
+>>> + * The algorithm defines the expectations on the BaseAddress (for
+>>> the page
+>>> + * table) bits resolved at each level based on the page size, entry
+>>> level
+>>> + * and T0SZ. The variable "x" in the algorithm also affects the
+>>> VTTBR:BADDR
+>>> + * for stage2 page table.
+>>> + *
+>>> + * The value of "x" is calculated as :
+>>> + *  x = Magic_N - T0SZ
+>>
+>> What is not crystal clear to me is the "if SL0b,c = n" case where x get
+>> a value not based on Magic_N. Please could you explain why it is not
+>> relevant?
+> 
+> We only care about the "x" for the "entry" level of the table look up
+> to make sure that the VTTBR is physical address meets the required
+> alignment. In both cases, if SL0 b,c == n, x is (PAGE_SHIFT) iff the
+> level you are looking at is not the "entry level". So this should always
+> be page aligned, like any intermediate level table.
 
-This is a multi-part message in MIME format.
---------------5E0CA33CC47A8D6B0687C66A
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Oh OK I get it now.
+> 
+> The Magic value is needed only needed for the "entry" level due to the
+> fact that we may have lesser bits to resolve (i.e, depending on your
+> PAMax or in other words T0SZ) than the intermediate levels (where we
+> always resolve {PAGE_SHIFT - 3} bits. This is further complicated by the
+> fact that Stage2 could use different number of levels for a given T0SZ
+> than the stage1.
+> I acknowledge that the algorithm is a bit too cryptic and I spent quite
+> sometime decode it to the formula we use below ;-).
+> 
+> I could update the comment to :
+> 
+> /*
+>  * ARM VMSAv8-64 defines an algorithm for finding the translation table
+>  * descriptors in section D4.2.8 in ARM DDI 0487C.a.
+>  *
+>  * The algorithm defines the expectations on the translation table
+>  * addresses for each level, based on PAGE_SIZE, entry level
+>  * and the translation table size (T0SZ). The variable "x" in the
+>  * algorithm determines the alignment of a table base address at a given
+>  * level and thus determines the alignment of VTTBR:BADDR for stage2
+>  * page table entry level.
+>  * Since the number of bits resolved at the entry level could vary
+>  * depending on the T0SZ, the value of "x" is defined based on a
+>  * Magic constant for a given PAGE_SIZE and Entry Level. The
+>  * intermediate levels must be always aligned to the PAGE_SIZE (i.e,
+>  * x = PAGE_SHIFT).
+>  *
+>  * The value of "x" for entry level is calculated as :
+>  *     x = Magic_N - T0SZ
+>  *
+Looks OK.
 
-Hi Arnd,
+Thank you for the explanation.
 
-I recently tried to disable the BUG macros on x86-32. I disabled the
-config item in 'General Setup -> Configure standard kernel features
-(expert users) -> BUG() support'.
-However, BUG/BUG_ON is still defined. In the !CONFIG_BUG branch in
-include/asm-generic/bug.h (line 181) the code checks for the existence
-of architecture-specific variants of those macros.
-Since x86 defines its own version of BUG(), line 182 is *not* used.
-In the following, the x86 variant of BUG() is then used to define the
-BUG_ON() macro.
-
-I propose a patch that really disables both macros if the developer
-wants it.
-It undefines the respective x86 variants, and defines both macros as
-'empty' macros.
-
-Regards,
-Alex
-
---=20
-Technische Universit=C3=A4t Dortmund
-Alexander Lochmann                PGP key: 0xBC3EF6FD
-Otto-Hahn-Str. 16                 phone:  +49.231.7556141
-D-44227 Dortmund                  fax:    +49.231.7556116
-http://ess.cs.tu-dortmund.de/Staff/al
-
---------------5E0CA33CC47A8D6B0687C66A
-Content-Type: text/x-patch;
- name="disable-bug-macro.patch"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="disable-bug-macro.patch"
-
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index 20561a60db9c..1e7977582277 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -178,14 +178,17 @@ void __warn(const char *file, int line, void *calle=
-r, unsigned taint,
- })
-=20
- #else /* !CONFIG_BUG */
--#ifndef HAVE_ARCH_BUG
--#define BUG() do {} while (1)
-+#ifdef HAVE_ARCH_BUG
-+#undef BUG
- #endif
-=20
--#ifndef HAVE_ARCH_BUG_ON
--#define BUG_ON(condition) do { if (condition) BUG(); } while (0)
-+#ifdef HAVE_ARCH_BUG_ON
-+#undef BUG_ON
- #endif
-=20
-+#define BUG_ON(condition) do { if (condition) BUG(); } while (0)
-+#define BUG() do {} while (1)
-+
- #ifndef HAVE_ARCH_WARN_ON
- #define WARN_ON(condition) ({						\
- 	int __ret_warn_on =3D !!(condition);				\
-
---------------5E0CA33CC47A8D6B0687C66A--
-
---ykzM58qJSbQVMj6jyweAtzezWrFi9csp4--
-
---beyh2CM9IKZjJUog9ZIi56j5rFrMc4SBz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElhZsUHzVP0dbkjCRWT7tBbw+9v0FAluqHYEACgkQWT7tBbw+
-9v0zChAAliYhce/UyYMlH6hVIcK8eoehFisYKEz8wK5Rd8VGWxsXMTvVVeWaj/j2
-q+Gu+ixJvdZHqlgOYDvce6arXBDKQXS4Yzf975gXAlk170+UVREBrREpihaKOsFk
-1bvAZ9cUTLI1Btc/VyNS98Pd83XOBzyas7PNDsppKlPG/Z4fJAWRWHr9C8nJm+Vt
-lSBL6I7E2ytbBHNQLLMSeo/W5z3VMfvAHEMdaGp9PG0A90UQEAu1OyR8OgwzjJYd
-XRxuYSXUk/C5oT8syuIEOoUdpW7HPoTNeRQBzwcThgsj39N+f1hgPrw2SB3iqdr+
-iy9vMAJfsQvImk1OQ7vYk7+HO0sDhjccF71M/G8tSN6m0kzWm7bsya+xk5dA659C
-Mldev/vYT84tLR1GMjaMbNb1YubNIDPXHhUgVfojT589e0FswuEvBpdt+mUCrJ1i
-68dnpEm2NStc94oq/jya8pw3MNQofJc9MkDoiDMZZW1jcKx1R4XPZDrj/IKTsTiw
-Z+lXNkrk/w97beu7h8vBB9VcGSxZQaNaWoDMvg92m5R9Ad/GeVBGnwHTQ5YoDQUQ
-l3SpJUFXsJ1Ii6nhAxRW1OCoHNEXzuh9fBJZ2vd0vBOGAD/3Cs3kQDOf7SctF28/
-VdcjlS9v6vs0i5PpF1DAtAdqX2YRRrLGvI4tF2vT8u7RxcF0U9A=
-=2Kut
------END PGP SIGNATURE-----
-
---beyh2CM9IKZjJUog9ZIi56j5rFrMc4SBz--
+Eric
+> 
+> ...
+> 
+> Suzuki
+> IMPORTANT NOTICE: The contents of this email and any attachments are
+> confidential and may also be privileged. If you are not the intended
+> recipient, please notify the sender immediately and do not disclose the
+> contents to any other person, use it for any purpose, or store or copy
+> the information in any medium. Thank you.
