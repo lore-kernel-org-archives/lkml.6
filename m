@@ -3,147 +3,166 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55290C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675FAC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDBF72087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:08:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBF72087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 264742087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:09:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264742087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeIYNOa (ORCPT
+        id S1728367AbeIYNPG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:14:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726030AbeIYNOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:14:30 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2AB0F83F40;
-        Tue, 25 Sep 2018 07:08:22 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-101.pek2.redhat.com [10.72.12.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9E1B45C226;
-        Tue, 25 Sep 2018 07:08:07 +0000 (UTC)
-Subject: Re: [PATCH 1/3 v3] resource: fix an error which walks through iomem
- resources
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        bp@suse.de, brijesh.singh@amd.com, dyoung@redhat.com,
-        bhe@redhat.com
-References: <20180921073211.20097-1-lijiang@redhat.com>
- <20180921073211.20097-2-lijiang@redhat.com>
- <20180924175241.GO224714@bhelgaas-glaptop.roam.corp.google.com>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <01551d06-c421-5df3-b19f-fc66f3639e4f@redhat.com>
-Date:   Tue, 25 Sep 2018 15:08:01 +0800
+        Tue, 25 Sep 2018 09:15:06 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39099 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726030AbeIYNPG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:15:06 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8P74UZQ023558;
+        Tue, 25 Sep 2018 09:08:15 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mqd478xnw-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 25 Sep 2018 09:08:15 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F4863F;
+        Tue, 25 Sep 2018 07:08:13 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 639D024C3;
+        Tue, 25 Sep 2018 07:08:13 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.50) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 25 Sep
+ 2018 09:08:13 +0200
+Subject: Re: [PATCH V2 05/27] mmc: mmci: move mmci next cookie to mci host
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
+ <1537523181-14578-6-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFqhyVrRGRraGQzx9kwRxLtr56Gwc_NKqNqwLvZuM=jM1A@mail.gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <87fd1322-a8bc-15cc-8f91-3cf19043a2ca@st.com>
+Date:   Tue, 25 Sep 2018 09:08:11 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180924175241.GO224714@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAPDyKFqhyVrRGRraGQzx9kwRxLtr56Gwc_NKqNqwLvZuM=jM1A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 25 Sep 2018 07:08:22 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年09月25日 01:52, Bjorn Helgaas 写道:
-> On Fri, Sep 21, 2018 at 03:32:09PM +0800, Lianbo Jiang wrote:
->> When we walk through iomem resources by calling walk_iomem_res_desc(),
->> the values of the function parameter may be modified in the while loop
->> of __walk_iomem_res_desc(), which will cause us to not get the desired
->> result in some cases.
-> 
-> If I understand correctly, the issue is caused by the interaction
-> between __walk_iomem_res_desc() and find_next_iomem_res() in this
-> path:
-> 
->   __walk_iomem_res_desc
->     find_next_iomem_res
->       res->flags = p->flags;            # <-- problem
-> 
-> This path is used by the following interfaces, and I think your patch
-> would fix the issue for them:
-> 
->   walk_iomem_res_desc()
->   walk_system_ram_res()
->   walk_mem_res()
-> 
-> However, find_next_iomem_res() is also used directly by
-> walk_system_ram_range().  I think that path has the same problem, and
-> your patch does not fix that path.
-> 
-Thanks for your comment. 
-Originally, my patch 1 only fixed this issue in kdump path, of course, i can
-also improve this patch and fix the same issue in walk_system_ram_range().
-If you have fixed this issue, it's good to me.
 
-> I have a few more comments related to the existing code that I'll post
-> soon.
+
+On 09/24/2018 08:46 PM, Ulf Hansson wrote:
+> On 21 September 2018 at 11:45, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>> From: Ludovic Barre <ludovic.barre@st.com>
+>>
+>> This patch moves next cookie to mmci host structure to
+>> share same cookie management between all variants.
 > 
->> At present, it only restores the original value of res->end, but it
->> doesn't restore the original value of res->flags in the while loop of
->> __walk_iomem _res_desc(). Whenever the find_next_iomem_res() finds a
->> resource and returns the result, the original values of this resource
->> will be modified, which might lead to an error in the next loop. For
->> example:
+> I would suggest you to squash this with patch4, as I think it makes
+> more sense to keep these changes together.
+
+ok
+
+> 
 >>
->> The original value of resource flags is:
->>  res->flags=0x80000200(initial value)
->>
->> p->flags   _ 0x81000200 _                _ 0x80000200 _
->>           /              \              /              \
->> |________|_______A________|____|_....._|______B_________|..........___|
->> 0                                                            0xffffffff
->>                 (memory address ranges)
->>
->> Note: if ((p->flags & res->flags) != res->flags) continue;
->>
->> When the resource A is found, the original value of this resource flags
->> will be changed to 0x81000200(res->flags=0x81000200), and continue to
->> look for the next resource, when the loop reaches resource B, it can not
->> get the resource B any more(you can refer to the for loop of find_next
->> _iomem_res()), because the value of conditional expression will become
->> true and will also jump the resource B.
->>
->> In fact, we should get the resource A and B when we walk through the
->> whole tree, but it only gets the resource A, the resource B is missed.
->>
->> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 >> ---
->>  kernel/resource.c | 2 ++
->>  1 file changed, 2 insertions(+)
+>>   drivers/mmc/host/mmci.c | 10 ++++------
+>>   drivers/mmc/host/mmci.h |  2 ++
+>>   2 files changed, 6 insertions(+), 6 deletions(-)
 >>
->> diff --git a/kernel/resource.c b/kernel/resource.c
->> index 30e1bc68503b..f5d9fc70a04c 100644
->> --- a/kernel/resource.c
->> +++ b/kernel/resource.c
->> @@ -375,6 +375,7 @@ static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
->>  				 int (*func)(struct resource *, void *))
->>  {
->>  	u64 orig_end = res->end;
->> +	u64 orig_flags = res->flags;
->>  	int ret = -1;
->>  
->>  	while ((res->start < res->end) &&
->> @@ -385,6 +386,7 @@ static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
->>  
->>  		res->start = res->end + 1;
->>  		res->end = orig_end;
->> +		res->flags = orig_flags;
->>  	}
->>  
->>  	return ret;
+>> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+>> index 6de7c8d..43f2a1a 100644
+>> --- a/drivers/mmc/host/mmci.c
+>> +++ b/drivers/mmc/host/mmci.c
+>> @@ -418,7 +418,6 @@ static void mmci_init_sg(struct mmci_host *host, struct mmc_data *data)
+>>   struct mmci_dmae_next {
+>>          struct dma_async_tx_descriptor *desc;
+>>          struct dma_chan *chan;
+>> -       s32 cookie;
+>>   };
+>>
+>>   struct mmci_dmae_priv {
+>> @@ -449,7 +448,7 @@ static int mmci_dma_setup(struct mmci_host *host)
+>>                                                       "tx");
+>>
+>>          /* initialize pre request cookie */
+>> -       dmae->next_data.cookie = 1;
+>> +       host->next_cookie = 1;
+>>
+>>          /*
+>>           * If only an RX channel is specified, the driver will
+>> @@ -716,7 +715,7 @@ static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
+>>          struct mmci_dmae_priv *dmae = host->dma_priv;
+>>          struct mmci_dmae_next *next = &dmae->next_data;
+>>
+>> -       WARN_ON(data->host_cookie && data->host_cookie != next->cookie);
+>> +       WARN_ON(data->host_cookie && data->host_cookie != host->next_cookie);
+>>          WARN_ON(!data->host_cookie && (next->desc || next->chan));
+>>
+>>          dmae->desc_current = next->desc;
+>> @@ -728,9 +727,7 @@ static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
+>>   static void mmci_pre_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>   {
+>>          struct mmci_host *host = mmc_priv(mmc);
+>> -       struct mmci_dmae_priv *dmae = host->dma_priv;
+>>          struct mmc_data *data = mrq->data;
+>> -       struct mmci_dmae_next *nd = &dmae->next_data;
+>>
+>>          if (!data)
+>>                  return;
+>> @@ -741,7 +738,8 @@ static void mmci_pre_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>                  return;
+>>
+>>          if (!mmci_dma_prep_next(host, data))
+>> -               data->host_cookie = ++nd->cookie < 0 ? 1 : nd->cookie;
+>> +               data->host_cookie = ++host->next_cookie < 0 ?
+>> +                       1 : host->next_cookie;
+>>   }
+>>
+>>   static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
+>> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+>> index 1e9a45b..5bb1ce2 100644
+>> --- a/drivers/mmc/host/mmci.h
+>> +++ b/drivers/mmc/host/mmci.h
+>> @@ -318,5 +318,7 @@ struct mmci_host {
+>>          int (*get_rx_fifocnt)(struct mmci_host *h, u32 status, int remain);
+>>
+>>          void                    *dma_priv;
+>> +
+>> +       s32                     next_cookie;
+>>   };
+>>
+>> --
+>> 2.7.4
+>>
+> 
+> Kind regards
+> Uffe
+> 
