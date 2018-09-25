@@ -2,117 +2,104 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC25C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CB7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8C502145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:13:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C502145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D42921480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:14:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D42921480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbeIYOT0 (ORCPT
+        id S1727870AbeIYOVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 10:19:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:46526 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbeIYOT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 10:19:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87EC580D;
-        Tue, 25 Sep 2018 01:13:04 -0700 (PDT)
-Received: from [10.4.13.85] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85F5E3F5B7;
-        Tue, 25 Sep 2018 01:13:02 -0700 (PDT)
-Subject: Re: [PATCH v5 01/27] arm64: cpufeature: Set SYSREG_GIC_CPUIF as a
- boot system feature
-To:     Yao Lihua <ylhuajnu@outlook.com>,
-        Julien Thierry <julien.thierry@arm.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "christoffer.dall@arm.com" <christoffer.dall@arm.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
- <1535471497-38854-2-git-send-email-julien.thierry@arm.com>
- <86h8iix2rk.wl-marc.zyngier@arm.com>
- <MWHPR0601MB3707D7CF3B55BF40EEEA0D52C4160@MWHPR0601MB3707.namprd06.prod.outlook.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <33e98d70-a689-e1d9-ab73-a6650a34213f@arm.com>
-Date:   Tue, 25 Sep 2018 09:13:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 10:21:17 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42111 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbeIYOVR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 10:21:17 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b11-v6so6095796wru.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 01:14:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=djxjBtF3FCzObcWTV9HQ3t5DQ9/cCwG6riLdpT6mn9o=;
+        b=gcoX5y/1G2jcSwzLIpoLxGDAOFvIZrLyyf1kG0apyqXdUAhpXni6EfyeurRy8RwEmx
+         4kvw8RT2C0WeIj+SMIaoLQOMZstmlsUWl3vbWNwxZu/aKgaXLUj1SiXGR2URESz/H1my
+         TomqQD6tc0T0pz7EhLzTqlXnM85TnSHVDNAXSCu/l/9cgkyUUIxjDZsAgqV+rRTPYrx5
+         s81rDsIzU3Iu8audWEh/V0mvKWGwqzc5ZfMubvz/Tlr1gXdRsGpJzeBwoZKVS8TPWlhZ
+         y65sPlhmVJNh/b23UxelmzJ3SKMn1Kol5fc4DTg4ysL0YpNw1cxWwp2Bk/o1mxIlDSHN
+         aK7g==
+X-Gm-Message-State: ABuFfojJeHbCTitJEVaAMru4drgHUe9eCWsX7knOyUrFoEDKz8k0bs+z
+        PvOQgozJQogrCwUE3laCVerJ2A==
+X-Google-Smtp-Source: ACcGV61+q4fn7xngou/Kq0Bwj79Wijkt0ySSukSdidLUQ7cSJU2I6mNrt9gPLHzfr7cn6t5bfJrvkQ==
+X-Received: by 2002:adf:e910:: with SMTP id f16-v6mr1873521wrm.126.1537863293798;
+        Tue, 25 Sep 2018 01:14:53 -0700 (PDT)
+Received: from localhost.localdomain (p54B1D21E.dip0.t-ipconnect.de. [84.177.210.30])
+        by smtp.gmail.com with ESMTPSA id a203-v6sm1536878wmh.31.2018.09.25.01.14.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 01:14:52 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 10:14:48 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org
+Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v5 0/5] sched/deadline: fix cpusets bandwidth accounting
+Message-ID: <20180925081448.GA4287@localhost.localdomain>
+References: <20180903142801.20046-1-juri.lelli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <MWHPR0601MB3707D7CF3B55BF40EEEA0D52C4160@MWHPR0601MB3707.namprd06.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180903142801.20046-1-juri.lelli@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/09/18 04:10, Yao Lihua wrote:
-> Hi Marc, Julien，
+Hi,
+
+On 03/09/18 16:27, Juri Lelli wrote:
+> Hi,
 > 
+> v5 of a series of patches, originally authored by Mathieu, with the intent
+> of fixing a long standing issue of SCHED_DEADLINE bandwidth accounting.
+> As originally reported by Steve [1], when hotplug and/or (certain)
+> cpuset reconfiguration operations take place, DEADLINE bandwidth
+> accounting information is lost since root domains are destroyed and
+> recreated.
 > 
-> On 09/21/2018 11:56 PM, Marc Zyngier wrote:
->> On Tue, 28 Aug 2018 16:51:11 +0100,
->> Julien Thierry <julien.thierry@arm.com> wrote:
->>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will.deacon@arm.com>
->>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>> ---
->>>   arch/arm64/kernel/cpufeature.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>> index e238b79..1e433ac 100644
->>> --- a/arch/arm64/kernel/cpufeature.c
->>> +++ b/arch/arm64/kernel/cpufeature.c
->>> @@ -1039,7 +1039,7 @@ static void cpu_has_fwb(const struct arm64_cpu_capabilities *__unused)
->>>   	{
->>>   		.desc = "GIC system register CPU interface",
->>>   		.capability = ARM64_HAS_SYSREG_GIC_CPUIF,
->>> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->>> +		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
->>>   		.matches = has_useable_gicv3_cpuif,
->>>   		.sys_reg = SYS_ID_AA64PFR0_EL1,
->>>   		.field_pos = ID_AA64PFR0_GIC_SHIFT,
->>> -- 
->>> 1.9.1
->>>
->> This definitely deserves a commit message, such as:
->>
->> "We do not support systems where some CPUs have an operational GICv3
->>   CPU interface, and some don't. Let's make this requirement obvious by
->>   flagging the GICv3 capability as being strict."
-> May I ask if it is possible to implement psedue-NMI on a arm64 SoC with GIC-400?
+> Mathieu's approach is based on restoring bandwidth accounting info on
+> the newly created root domains by iterating through the (DEADLINE) tasks
+> belonging to the configured cpuset(s).
+> 
+> Main problem of v4 was caused by the trylocking of cpuset_mutex. As
+> noticed by Steve [2], if multiple tasks are created at they same time
+> only the first gets to grab the mutex, the other get -EBUSY and need to
+> retry. Not really nice. So, in v5 I'm proposing to use callback_lock
+> instead of cpuset_mutex, which AFAIU should be enough to grant read-only
+> safe access to cpusets.
+> 
+> 01/05 has been dropped because it wasn't really adding much and was
+> only causing false positives.
+> 
+> 05/05 is still too much DEADLINE specific I guess, but let's first agree
+> on foundations patches.
+> 
+> Set also available at
+> 
+>  https://github.com/jlelli/linux.git fixes/deadline/root-domain-accounting-v5
 
-In theory, yes. In practice, this is likely to be both hard to implement 
-(you need to discover the GIC CPU interface address very early so that 
-you can patch the the PMR flipping code at the right time), and pretty 
-bad from a performance point of view (MMIO accesses are likely to be slow).
+Gentle ping about this.
 
-Given the above, the incentive to support such a configuration is close 
-to zero.
+Best,
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+- Juri
