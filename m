@@ -2,224 +2,119 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E08FEC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7880C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C56A2089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C56A2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BB90206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ETPxjMnc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB90206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbeIZAIF (ORCPT
+        id S1727467AbeIZAIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:08:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48800 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbeIZAIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:08:05 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A3663307D927;
-        Tue, 25 Sep 2018 17:59:25 +0000 (UTC)
-Received: from vitty.brq.redhat.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 09B2860BE1;
-        Tue, 25 Sep 2018 17:59:22 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/9] x86/kvm/mmu: introduce guest_mmu
-Date:   Tue, 25 Sep 2018 19:58:39 +0200
-Message-Id: <20180925175844.20277-5-vkuznets@redhat.com>
-In-Reply-To: <20180925175844.20277-1-vkuznets@redhat.com>
-References: <20180925175844.20277-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 25 Sep 2018 17:59:25 +0000 (UTC)
+        Tue, 25 Sep 2018 20:08:01 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40000 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeIZAIA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 20:08:00 -0400
+Received: by mail-it1-f196.google.com with SMTP id h23-v6so16467109ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=e3kzuJw+DaUuPA7/H/kwVFLyLsceEE4NIXFOIJ6ODAA=;
+        b=ETPxjMncpjSfAD9W8zCXvy3wpGSyU45jZ4kLGaNAU7Z3OjUnV7bRmu9cMlMPx6KH0T
+         oLo1y5FW45/WKhDWjANNiVF2rNj4zH7dPqBP7iuINdr4Q8OWjR1tYKCHp6Yo5wRc/U0+
+         s7f82UZCqbChF8bvO3DS9aIgIt7yZgxHiKSyzQdElC+WKyPm6GxOh6g61Vh17Z0py+d+
+         VvEI3gcF7dOULN1jlSoattpA6Nnezt/RxfekQuweQprs2Cgov552eHiaV6XgIwcziWvV
+         gmIMNpNMQ48OhuD5SNUXcjFn1K0eVNrVce63+fkswwBWPpbfxqNbQiDtSUfYqnLibph8
+         ynvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=e3kzuJw+DaUuPA7/H/kwVFLyLsceEE4NIXFOIJ6ODAA=;
+        b=cMrg91kEiZNIILvJbsxmCkXuiq1IFQb8lprRTzGOtB4FKta/H6GILgilQn2lf39D53
+         gXWed+tJsXe7mPds0ccZJs8zocLuzkiOFe+FE+DlXyfsl8yyVMJRyiFfHtEoMvg03cmR
+         gmvSe/iTvD+0Y4QlL8ZsBu8RSQEmQAjMIT6MKPbsBBfpp2GwzomC264NeGh9rN7N53A8
+         6C6GwI3eVvjm7wpOhioS9YaHh5ikYlTTTw4LGhN+IOQtkVVfGLd1KUARCrCi7KP0hPzk
+         75tpZx48/Eu1yTLSZGjTJLZRRDO62PhIPgriml1FXzxMytuMqZqo8ZEAvNodYM/BU2zm
+         u+Uw==
+X-Gm-Message-State: ABuFfoj9uFxGEM9grVMJdUivLzwRB5uuT9UFVgAg7XdHCrn2KhDSQ2/K
+        YDfrZg0mo09HKcN2g8JGRJqafrfDgEJ7ay+oJHmNYg==
+X-Google-Smtp-Source: ACcGV624Fp2pnFyQF/8BIdNUeIEs6fJgQe2aIAapqZh1flwGIGMLQZ7h1AKsiYkja7sVK888HeL/BwJtODS0tC8OwdE=
+X-Received: by 2002:a24:c0c5:: with SMTP id u188-v6mr1906289itf.57.1537898360673;
+ Tue, 25 Sep 2018 10:59:20 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Tue, 25 Sep 2018 10:59:00
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+bdzDe_LhQQh-eLapOg0ZsfXFRm2tjUbiAsgS-ObMvwBg@mail.gmail.com>
+References: <CACT4Y+YS55tk5xoPmscBXcgSbLrgWFSLAz1MUEjby0XT8eanmQ@mail.gmail.com>
+ <20180919071847.GE3876@unicorn.suse.cz> <CACT4Y+bdzDe_LhQQh-eLapOg0ZsfXFRm2tjUbiAsgS-ObMvwBg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 25 Sep 2018 19:59:00 +0200
+Message-ID: <CACT4Y+aGYtWnGcVPhriLZB8z-hMdZ+2u=na5GN4GvByL6w49Wg@mail.gmail.com>
+Subject: Re: bpfilter breaks IPT_SO_GET_INFO
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Fabian Vogt <fvogt@suse.com>, Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When EPT is used for nested guest we need to re-init MMU as shadow
-EPT MMU (nested_ept_init_mmu_context() does that). When we return back
-from L2 to L1 kvm_mmu_reset_context() in nested_vmx_load_cr3() resets
-MMU back to normal TDP mode. Add a special 'guest_mmu' so we can use
-separate root caches; the improved hit rate is not very important for
-single vCPU performance, but it avoids contention on the mmu_lock for
-many vCPUs.
+On Wed, Sep 19, 2018 at 10:29 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, Sep 19, 2018 at 9:18 AM, Michal Kubecek <mkubecek@suse.cz> wrote:
+>> On Mon, Sep 17, 2018 at 03:36:21PM +0200, Dmitry Vyukov wrote:
+>>> Hi,
+>>>
+>>> I am having some problem with upstream kernel and bpfilter. The
+>>> manifestation is that IPT_SO_GET_INFO on an ipv4 socket works, then
+>>> something (that I can't fully localize but can reproduce) happens and
+>>> then IPT_SO_GET_INFO starts permanently returning 256.
+>> ...
+>>> Now the litmus program always fails with:
+>>>
+>>> getsockopt(3, SOL_IP, 0x40 /* IP_??? */,
+>>> "filter\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., [84])
+>>> = 256
+>>>
+>>> I am currently on upstream commit
+>>> 28619527b8a712590c93d0a9e24b4425b9376a8c, my .config is attached. I
+>>> don't know what is bpfilter, I see it mentions some umh, if it
+>>> requires some additional setup I don't it, i.e. I don't install any
+>>> userspace modules/helpers.
+>>
+>> This looks similar to the fallback issue described here:
+>>
+>>   https://bugzilla.suse.com/show_bug.cgi?id=1106751#c1
+>>
+>> Unfortunately I didn't have time to look into it more closely yet.
+>
+> +Takashi
+>
+> But I already have CONFIG_BPFILTER_UMH=y in my config, so it does not
+> help completely.
+> Also in my case it is working initially, but breaks after I run the
+> second program.
 
-On the nested CPUID benchmark, with 16 vCPUs, an L2->L1->L2 vmexit
-goes from 42k to 26k cycles.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
-Changes since v1:
-- drop now unneded local vmx variable in vmx_free_vcpu_nested
-  [Sean Christopherson]
----
- arch/x86/include/asm/kvm_host.h |  3 +++
- arch/x86/kvm/mmu.c              | 15 +++++++++++----
- arch/x86/kvm/vmx.c              | 27 ++++++++++++++++++---------
- 3 files changed, 32 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 404c3438827b..a3829869353b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -539,6 +539,9 @@ struct kvm_vcpu_arch {
- 	/* Non-nested MMU for L1 */
- 	struct kvm_mmu root_mmu;
- 
-+	/* L1 MMU when running nested */
-+	struct kvm_mmu guest_mmu;
-+
- 	/*
- 	 * Paging state of an L2 guest (used for nested npt)
- 	 *
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 4491b8894337..96c2a0b3eb53 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4967,8 +4967,10 @@ EXPORT_SYMBOL_GPL(kvm_mmu_load);
- 
- void kvm_mmu_unload(struct kvm_vcpu *vcpu)
- {
--	kvm_mmu_free_roots(vcpu, vcpu->arch.mmu, KVM_MMU_ROOTS_ALL);
--	WARN_ON(VALID_PAGE(vcpu->arch.mmu->root_hpa));
-+	kvm_mmu_free_roots(vcpu, &vcpu->arch.root_mmu, KVM_MMU_ROOTS_ALL);
-+	WARN_ON(VALID_PAGE(vcpu->arch.root_mmu.root_hpa));
-+	kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu, KVM_MMU_ROOTS_ALL);
-+	WARN_ON(VALID_PAGE(vcpu->arch.guest_mmu.root_hpa));
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_unload);
- 
-@@ -5407,13 +5409,18 @@ int kvm_mmu_create(struct kvm_vcpu *vcpu)
- 
- 	vcpu->arch.mmu = &vcpu->arch.root_mmu;
- 	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
-+
- 	vcpu->arch.root_mmu.root_hpa = INVALID_PAGE;
- 	vcpu->arch.root_mmu.translate_gpa = translate_gpa;
--	vcpu->arch.nested_mmu.translate_gpa = translate_nested_gpa;
--
- 	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
- 		vcpu->arch.root_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
- 
-+	vcpu->arch.guest_mmu.root_hpa = INVALID_PAGE;
-+	vcpu->arch.guest_mmu.translate_gpa = translate_gpa;
-+	for (i = 0; i < KVM_MMU_NUM_PREV_ROOTS; i++)
-+		vcpu->arch.guest_mmu.prev_roots[i] = KVM_MMU_ROOT_INFO_INVALID;
-+
-+	vcpu->arch.nested_mmu.translate_gpa = translate_nested_gpa;
- 	return alloc_mmu_pages(vcpu);
- }
- 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 2d55adab52de..93ff08136fc1 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8468,8 +8468,10 @@ static inline void nested_release_vmcs12(struct vcpu_vmx *vmx)
-  * Free whatever needs to be freed from vmx->nested when L1 goes down, or
-  * just stops using VMX.
-  */
--static void free_nested(struct vcpu_vmx *vmx)
-+static void free_nested(struct kvm_vcpu *vcpu)
- {
-+	struct vcpu_vmx *vmx = to_vmx(vcpu);
-+
- 	if (!vmx->nested.vmxon && !vmx->nested.smm.vmxon)
- 		return;
- 
-@@ -8502,6 +8504,8 @@ static void free_nested(struct vcpu_vmx *vmx)
- 		vmx->nested.pi_desc = NULL;
- 	}
- 
-+	kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu, KVM_MMU_ROOTS_ALL);
-+
- 	free_loaded_vmcs(&vmx->nested.vmcs02);
- }
- 
-@@ -8510,7 +8514,7 @@ static int handle_vmoff(struct kvm_vcpu *vcpu)
- {
- 	if (!nested_vmx_check_permission(vcpu))
- 		return 1;
--	free_nested(to_vmx(vcpu));
-+	free_nested(vcpu);
- 	nested_vmx_succeed(vcpu);
- 	return kvm_skip_emulated_instruction(vcpu);
- }
-@@ -8541,6 +8545,8 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
- 	if (vmptr == vmx->nested.current_vmptr)
- 		nested_release_vmcs12(vmx);
- 
-+	kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu, KVM_MMU_ROOTS_ALL);
-+
- 	kvm_vcpu_write_guest(vcpu,
- 			vmptr + offsetof(struct vmcs12, launch_state),
- 			&zero, sizeof(zero));
-@@ -8924,6 +8930,9 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
- 		}
- 
- 		nested_release_vmcs12(vmx);
-+
-+		kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu,
-+				   KVM_MMU_ROOTS_ALL);
- 		/*
- 		 * Load VMCS12 from guest memory since it is not already
- 		 * cached.
-@@ -10976,12 +10985,10 @@ static void vmx_switch_vmcs(struct kvm_vcpu *vcpu, struct loaded_vmcs *vmcs)
-  */
- static void vmx_free_vcpu_nested(struct kvm_vcpu *vcpu)
- {
--       struct vcpu_vmx *vmx = to_vmx(vcpu);
--
--       vcpu_load(vcpu);
--       vmx_switch_vmcs(vcpu, &vmx->vmcs01);
--       free_nested(vmx);
--       vcpu_put(vcpu);
-+	vcpu_load(vcpu);
-+	vmx_switch_vmcs(vcpu, &to_vmx(vcpu)->vmcs01);
-+	free_nested(vcpu);
-+	vcpu_put(vcpu);
- }
- 
- static void vmx_free_vcpu(struct kvm_vcpu *vcpu)
-@@ -11331,6 +11338,7 @@ static int nested_ept_init_mmu_context(struct kvm_vcpu *vcpu)
- 	if (!valid_ept_address(vcpu, nested_ept_get_cr3(vcpu)))
- 		return 1;
- 
-+	vcpu->arch.mmu = &vcpu->arch.guest_mmu;
- 	kvm_init_shadow_ept_mmu(vcpu,
- 			to_vmx(vcpu)->nested.msrs.ept_caps &
- 			VMX_EPT_EXECUTE_ONLY_BIT,
-@@ -11346,6 +11354,7 @@ static int nested_ept_init_mmu_context(struct kvm_vcpu *vcpu)
- 
- static void nested_ept_uninit_mmu_context(struct kvm_vcpu *vcpu)
- {
-+	vcpu->arch.mmu = &vcpu->arch.root_mmu;
- 	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
- }
- 
-@@ -13421,7 +13430,7 @@ static void vmx_leave_nested(struct kvm_vcpu *vcpu)
- 		to_vmx(vcpu)->nested.nested_run_pending = 0;
- 		nested_vmx_vmexit(vcpu, -1, 0, 0);
- 	}
--	free_nested(to_vmx(vcpu));
-+	free_nested(vcpu);
- }
- 
- /*
--- 
-2.17.1
-
+I've disabled CONFIG_BPFILTER for now, it causes too many failures.
+https://github.com/google/syzkaller/commit/19a403430d8d5ae2472e16dab2f26ddd899cf552
