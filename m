@@ -2,125 +2,108 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C6DECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04FFC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B347206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:10:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aWIHpjva"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B347206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B1EA820867
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:10:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EA820867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbeIZBTj (ORCPT
+        id S1728144AbeIZBTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 21:19:39 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33214 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbeIZBT1 (ORCPT
+        Tue, 25 Sep 2018 21:19:48 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34457 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727604AbeIZBTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 21:19:27 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y18-v6so8947548pge.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 12:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=R6+1q7wcqXruOMuQ5i8D8phZzRIqjo3PhmPKpv0q26k=;
-        b=aWIHpjvaLB8GmKCtqWWsG2rWvD2y1WqrrIq1OdP/65GNreOU+D46LAtVyunz5Qf6BH
-         NmFr9xnqLOjyuYXZqG9/FmwtZNlzY8B6FtNyV6jDxRgUCbFX4wPJXxJzgVK5SOQ8Gy7u
-         jP+1YjPUff1AsZptPeN6AJEQiCjTcZFUZDwGU=
+        Tue, 25 Sep 2018 21:19:48 -0400
+Received: by mail-ot1-f67.google.com with SMTP id i12-v6so25653668otl.1;
+        Tue, 25 Sep 2018 12:10:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=R6+1q7wcqXruOMuQ5i8D8phZzRIqjo3PhmPKpv0q26k=;
-        b=SAz/AdwJ3WnDMWnIXyBiozgkjBrgj8yote8awZ+i+WWyadSDojaNtw0/H/vXWo7rVI
-         9TeV5BeLkU4Wbn3OLN22F9R3so6BpPlQkF1mXorgOZGm/VHJZUEIItaueiSfMpOkyzlJ
-         EqJWLDntPA8s4cyibEsQ9l1aWR8BoYxlUz3HXBOOvWLxSInE+9RLOtal9u49BODGi4R9
-         7jUkQEAO+9i9/BvGXWY8DYVPa2K6UhEry3R+fiZ9Os1CigxjtQswwcNs809m4eykNreY
-         PZx9V+u2g33/luDVkDTcy3YP2zlnoxenzl2fyZUy49t6dJuzcGJh0tYa0oSx7MdZ6TfM
-         nUrQ==
-X-Gm-Message-State: ABuFfohUXZxUCeAlxL6bk/NWQiiP6WLTAfDwJui7muAECB1g3V3iHAbe
-        FWlsdHV4RHhYPIhW2A3qMtPlkQ==
-X-Google-Smtp-Source: ACcGV61xpWecUDtCTLlYv1v63LnhyNhWWG4911tnzT65aufU16mTZPXGUBrslMsMTADevO6k1zl6Ag==
-X-Received: by 2002:a17:902:694a:: with SMTP id k10-v6mr2464437plt.166.1537902628276;
-        Tue, 25 Sep 2018 12:10:28 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm5082718pgs.75.2018.09.25.12.10.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 12:10:27 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3.1 2/2] Bluetooth: btqcomsmd: Get the BD address with device_get_bd_address()
-Date:   Tue, 25 Sep 2018 12:10:14 -0700
-Message-Id: <20180925191014.85573-3-mka@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-In-Reply-To: <20180925191014.85573-1-mka@chromium.org>
-References: <20180925191014.85573-1-mka@chromium.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sIsZiHs617Wh+D1iJdGQQbf9qhZk1690B91FcRWvdTc=;
+        b=GSqFhzXb7McYFtdHEAvsxRKNlPrSoC7jXgwV0OtZN9uGoHkIsqSDINOTztnlNRkOlu
+         7uI/cblGyiylpoxAGlrhmdq21qIK4rO63f/RZAfEISKeQ3cSPdNqw75D5YyadCfdSvbL
+         jiaPqlcI1yIEDZwH89IViVzQBrEajsqcehj8Qlu38NNaUG6E0H6RuGH/eSf+vpXKiai7
+         h7q+44SGTzqlCEtgo4bSLbzDFXP8HUWcTJ5EpJRBT4zxUKrpDFzjj18YlqIuEbekwHzr
+         dK2fJjbgrUacbNtXwour4cvv+PgdGQyP/nYYE1iuDSfHIAJ/lu5MYGknI8aW1+snlnLA
+         gqLg==
+X-Gm-Message-State: ABuFfojrgU7Zoz/J6OLsIaD1T+nIusJUnOsfYCzToiKj9ygK1px7q5Sk
+        yajjoRZMC3kdDcnwFBOmGQ==
+X-Google-Smtp-Source: ACcGV60RwH5yrKNhXI45WBlcG/fKusEDz6KlbtmTd9AXhNfnFl/iwaSma8HOICRs8O0MYoVXgyywxA==
+X-Received: by 2002:a9d:2dc8:: with SMTP id g66-v6mr1637450otb.311.1537902649222;
+        Tue, 25 Sep 2018 12:10:49 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u17-v6sm1282723oia.43.2018.09.25.12.10.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 12:10:48 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 14:10:47 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux@armlinux.org.uk,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Guilherme =?iso-8859-1?B?Ry4gU2lt9WVz?= 
+        <guilherme.simoes@lsitec.org.br>,
+        Jon maddog Hall <jon.maddog.hall@gmail.com>,
+        mkzuffo@lsi.usp.br,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
+        support@cubietech.com, catalin.marinas@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        will.deacon@arm.com, thomas liau <thomas.liau@actions-semi.com>,
+        darren@cubietech.com, jeff.chen@actions-semi.com, pn@denx.de,
+        mp-cs@actions-semi.com,
+        Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+Subject: Re: [PATCH v2 01/03] dt-bindings: clock: Add Clock Management Unit
+ for Actions Semi S500 SoC
+Message-ID: <20180925191047.GA14410@bogus>
+References: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new API to get the BD address instead of reading it directly
-from the device tree.
+On Tue, Sep 04, 2018 at 12:36:36PM -0300, Edgar Bernardi Righi wrote:
+> Add Clock Management Unit for Actions Semi S500 SoC. Dt-Bindings
+> constants added.
+> Tested on a Lemaker Guitar board.
+> 
+> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+> 
+> diff --git a/include/dt-bindings/clock/actions,s500-cmu.h
+> b/include/dt-bindings/clock/actions,s500-cmu.h
+> new file mode 100644
+> index 000000000000..34e5849ffcf1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/actions,s500-cmu.h
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0+
 
-Also remove an unncessary pair of braces in the same area of code.
+Headers should be /* */ style comments.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
-Changes in v3:
-- added 'Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>' tag
+Otherwise,
 
-Changes in v2:
-- pass bdaddr_t instead of byte pointer + len
----
- drivers/bluetooth/btqcomsmd.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/bluetooth/btqcomsmd.c b/drivers/bluetooth/btqcomsmd.c
-index 7df3eed1ef5e..ff74d2c46991 100644
---- a/drivers/bluetooth/btqcomsmd.c
-+++ b/drivers/bluetooth/btqcomsmd.c
-@@ -172,11 +172,9 @@ static int btqcomsmd_probe(struct platform_device *pdev)
- 	/* The local-bd-address property is usually injected by the
- 	 * bootloader which has access to the allocated BD address.
- 	 */
--	if (!of_property_read_u8_array(pdev->dev.of_node, "local-bd-address",
--				       (u8 *)&btq->bdaddr, sizeof(bdaddr_t))) {
-+	if (!device_get_bd_address(&pdev->dev, &btq->bdaddr))
- 		dev_info(&pdev->dev, "BD address %pMR retrieved from device-tree",
- 			 &btq->bdaddr);
--	}
- 
- 	hdev = hci_alloc_dev();
- 	if (!hdev)
--- 
-2.19.0.605.g01d371f741-goog
-
+> +//
+> +// Device Tree binding constants for Actions Semi S500 Clock Management Unit
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Copyright (c) 2018 LSI-TEC - Caninos Loucos
