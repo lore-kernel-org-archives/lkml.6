@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07291C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7253C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ECD12098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 810A72098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJlxS+Id"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECD12098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ex6zlpfA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 810A72098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729857AbeIYVzV (ORCPT
+        id S1729911AbeIYVza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:55:21 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43694 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729438AbeIYVzV (ORCPT
+        Tue, 25 Sep 2018 17:55:30 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46820 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729438AbeIYVza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:55:21 -0400
-Received: by mail-pg1-f195.google.com with SMTP id q19-v6so10986892pgn.10;
-        Tue, 25 Sep 2018 08:47:14 -0700 (PDT)
+        Tue, 25 Sep 2018 17:55:30 -0400
+Received: by mail-pg1-f194.google.com with SMTP id b129-v6so11835946pga.13;
+        Tue, 25 Sep 2018 08:47:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DazXR1Y+IANIXdg1k4I6OUDyeRgvWTafVUJGpdKnTdM=;
-        b=EJlxS+IdNdFSyISBPCyxnHHxJh1E++W+NARnk61kKWoeLkc1CXT4CJrupYQr6Mttok
-         jnxdgL7Bb2CF6XT+sftEXeGBNudSGYdUFodxzQhWmLHrdD/xFAPuSUm9fBTzEg89hWBl
-         OIqcm31CmU3K4icWuwwpk0GBbHUOdOjlp5s1m4Xv/nV3fQ/AjI4qZ8my/gze/B7n50ED
-         1pGJoyRg9vdQBaRX9SNzvV0vf2S0OH4O+e4PSydWgLkjOVGlSg9jFJw01oBfd02QsRc0
-         KX8uVBczVExa99U5HWXf1dQo14B66IyJ5O6FY2te7ZPYfjYXqUq7YcD+LbMEY9kJ0+LL
-         NBJw==
+        bh=pLdaFfkFIeacw0a3NFJWq44+8xF8z/AGWyJ5Gsywc54=;
+        b=Ex6zlpfAY/mTAk3AOd4OtcF20LK08txwbIPnKYn0QMj1M969lrCv3tgDNgrRPyc8uU
+         J5kXCTfCgAIGoA6pY6uDwq0ZYQ6mD05rvAq6S0tbnEMSlON4psChZyT3CgyDPI8Tn+7L
+         1pA4zgwmRWlwMu6InfEzz/Xi+VguhJ+UjnGzN8nLQI59RImdXkmxKrLQqL7MmAZBh+hd
+         wFZiFhEpoOuWAVjHuE1CkWr1EeYGwPmT3OUIjuwP+QrWHbzmXTNNKUrv3a5V0bZYigV8
+         03jqYhSsJW6TG1WVSDDTcr2dB8RW7QkEyRx6zrxfqagc6boW2+t0WhqhAK2KiO8vO5a5
+         eROA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=DazXR1Y+IANIXdg1k4I6OUDyeRgvWTafVUJGpdKnTdM=;
-        b=CHltVZXNvAPMxT9FJ8jH63NadgkCmvYUyS8fY7btoNn/CkAaK5XA8iORV4rKGVhxGT
-         B+tf6VuGVx/3fdI+xOO2DhV3UJ28GBMCwlupXWGR2h9W/2NZCMi3LQgLIbm4QGERklTh
-         U9MK6oHPFD0CQHSw4HmKdmAlMNyc67q0bGzXF79LgdtznyTW2KkLZDB03TZOleAuskhJ
-         fdHNNRNlc9cI3TzBeoPcvcqNgeSjkYorxf5OuxxWoFTwqTNQGOAQhZr6EMzv6D2n42Yi
-         16wwKuyoOfr+nWZJG9Eg5d5XRZdzyUiKBcDx+imtAsRGTmUQtYkIe7E5lDGIYWRSqjhi
-         L7UA==
-X-Gm-Message-State: ABuFfoj7HREEMGgzkF3Avs9eWMe1d8Q8Nsqe4SmP9N5SMxZwtPd86xno
-        TX1mGOxAkeugWUqJJm2GPUvbXok4
-X-Google-Smtp-Source: ACcGV62q+hIi3MswNjMOwO6mAiOGQCoPwbuf8qi2daELu0kjrS1tQFCFWZbQZB4GaZmJca0QYc30BA==
-X-Received: by 2002:a17:902:7b96:: with SMTP id w22-v6mr1841479pll.24.1537890434177;
-        Tue, 25 Sep 2018 08:47:14 -0700 (PDT)
+        bh=pLdaFfkFIeacw0a3NFJWq44+8xF8z/AGWyJ5Gsywc54=;
+        b=i+v/BoPSoETrd42pmk6n3bhJp5WwjeJru8AGh6fr1nabxxfcLe2Bm0NRTLpaYVxdrT
+         OS7hmzxq2JltqqlsHpUG9gB3kE5u/8T5GbYWMYF8tKwjU/pK4IBQTsuMU6Pt2gQdnCrf
+         tL6fTfOjcQbZ+9p3sUewh1eUCWmNefMfHGK8OsmvFDW7zd1heliLH+2TbNmbakIYm2cz
+         WCR1JhIgl/BvqxhY/gczOBHwIZyp5HoViAztBM6Z7k1vtouuWsTNfgjN0pdpY2zoL6/i
+         sS6c66f268vCKjyPrE0F87ZE5/RV0MpIgCtyhXXg766a5IN67whv3mwKyyooS4LohWGd
+         Qj2A==
+X-Gm-Message-State: ABuFfoihr6CbuRBPHgbWhjkR8G1qGqsZ7scns9goOcRG8FdREYSitYaK
+        QlY7RTWKdSZWQPbVHEtMULc=
+X-Google-Smtp-Source: ACcGV60l4ktnBNtk13L1uRBHGbnl/BFzTzUf0eEbTxhFun0JGGsory2OKx52OJtFkVGu1m4A9P/k6w==
+X-Received: by 2002:a17:902:16a4:: with SMTP id h33-v6mr1866369plh.36.1537890443579;
+        Tue, 25 Sep 2018 08:47:23 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.146.97])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm3208097pgb.61.2018.09.25.08.47.11
+        by smtp.gmail.com with ESMTPSA id p19-v6sm3571443pgk.28.2018.09.25.08.47.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 08:47:13 -0700 (PDT)
-Subject: Re: [PATCH 3/5] arm: dts: mt7623: add iommu/smi device nodes
+        Tue, 25 Sep 2018 08:47:22 -0700 (PDT)
+Subject: Re: [PATCH 4/5] arm: dts: mt7623: add jpeg decoder device node
 To:     Ryder Lee <ryder.lee@mediatek.com>
 Cc:     Sean Wang <sean.wang@mediatek.com>,
         Roy Luo <cheng-hao.luo@mediatek.com>,
@@ -70,7 +70,7 @@ Cc:     Sean Wang <sean.wang@mediatek.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536141302.git.ryder.lee@mediatek.com>
- <2d9d216adb779bac6f5515b39cfeaed8b4b61878.1536141302.git.ryder.lee@mediatek.com>
+ <2f810e9fc20d64d1e673b9ab9abd912d440d071a.1536141302.git.ryder.lee@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -116,12 +116,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <de407ddd-d423-288b-02d1-5b75381b6417@gmail.com>
-Date:   Tue, 25 Sep 2018 17:47:10 +0200
+Message-ID: <08785833-b701-d885-0bf5-6e1bea1d1de1@gmail.com>
+Date:   Tue, 25 Sep 2018 17:47:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <2d9d216adb779bac6f5515b39cfeaed8b4b61878.1536141302.git.ryder.lee@mediatek.com>
+In-Reply-To: <2f810e9fc20d64d1e673b9ab9abd912d440d071a.1536141302.git.ryder.lee@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -133,119 +133,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 05/09/2018 12:22, Ryder Lee wrote:
-> Add iommu/smi device nodes for MT7623.
+> Add a jpeg decoder device node for MT7623.
 > 
 > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
 Applied to v4.19-next/dts32
 
 > ---
->  arch/arm/boot/dts/mt7623.dtsi | 59 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
+>  arch/arm/boot/dts/mt7623.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 > 
 > diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-> index b7ccf8b..a46987b 100644
+> index a46987b..d01bdee 100644
 > --- a/arch/arm/boot/dts/mt7623.dtsi
 > +++ b/arch/arm/boot/dts/mt7623.dtsi
-> @@ -13,6 +13,7 @@
->  #include <dt-bindings/power/mt2701-power.h>
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/phy/phy.h>
-> +#include <dt-bindings/memory/mt2701-larb-port.h>
->  #include <dt-bindings/reset/mt2701-resets.h>
->  #include <dt-bindings/thermal/thermal.h>
->  
-> @@ -286,6 +287,17 @@
->  		clock-names = "system-clk", "rtc-clk";
+> @@ -764,6 +764,21 @@
+>  		power-domains = <&scpsys MT2701_POWER_DOMAIN_ISP>;
 >  	};
 >  
-> +	smi_common: smi@1000c000 {
-> +		compatible = "mediatek,mt7623-smi-common",
-> +			     "mediatek,mt2701-smi-common";
-> +		reg = <0 0x1000c000 0 0x1000>;
-> +		clocks = <&infracfg CLK_INFRA_SMI>,
-> +			 <&mmsys CLK_MM_SMI_COMMON>,
-> +			 <&infracfg CLK_INFRA_SMI>;
-> +		clock-names = "apb", "smi", "async";
-> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
-> +	};
-> +
->  	pwrap: pwrap@1000d000 {
->  		compatible = "mediatek,mt7623-pwrap",
->  			     "mediatek,mt2701-pwrap";
-> @@ -317,6 +329,17 @@
->  		reg = <0 0x10200100 0 0x1c>;
->  	};
->  
-> +	iommu: mmsys_iommu@10205000 {
-> +		compatible = "mediatek,mt7623-m4u",
-> +			     "mediatek,mt2701-m4u";
-> +		reg = <0 0x10205000 0 0x1000>;
-> +		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&infracfg CLK_INFRA_M4U>;
-> +		clock-names = "bclk";
-> +		mediatek,larbs = <&larb0 &larb1 &larb2>;
-> +		#iommu-cells = <1>;
-> +	};
-> +
->  	efuse: efuse@10206000 {
->  		compatible = "mediatek,mt7623-efuse",
->  			     "mediatek,mt8173-efuse";
-> @@ -709,6 +732,18 @@
->  		#clock-cells = <1>;
->  	};
->  
-> +	larb0: larb@14010000 {
-> +		compatible = "mediatek,mt7623-smi-larb",
-> +			     "mediatek,mt2701-smi-larb";
-> +		reg = <0 0x14010000 0 0x1000>;
-> +		mediatek,smi = <&smi_common>;
-> +		mediatek,larb-id = <0>;
-> +		clocks = <&mmsys CLK_MM_SMI_LARB0>,
-> +			 <&mmsys CLK_MM_SMI_LARB0>;
-> +		clock-names = "apb", "smi";
-> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
-> +	};
-> +
->  	imgsys: syscon@15000000 {
->  		compatible = "mediatek,mt7623-imgsys",
->  			     "mediatek,mt2701-imgsys",
-> @@ -717,6 +752,18 @@
->  		#clock-cells = <1>;
->  	};
->  
-> +	larb2: larb@15001000 {
-> +		compatible = "mediatek,mt7623-smi-larb",
-> +			     "mediatek,mt2701-smi-larb";
-> +		reg = <0 0x15001000 0 0x1000>;
-> +		mediatek,smi = <&smi_common>;
-> +		mediatek,larb-id = <2>;
-> +		clocks = <&imgsys CLK_IMG_SMI_COMM>,
-> +			 <&imgsys CLK_IMG_SMI_COMM>;
-> +		clock-names = "apb", "smi";
+> +	jpegdec: jpegdec@15004000 {
+> +		compatible = "mediatek,mt7623-jpgdec",
+> +			     "mediatek,mt2701-jpgdec";
+> +		reg = <0 0x15004000 0 0x1000>;
+> +		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks =  <&imgsys CLK_IMG_JPGDEC_SMI>,
+> +			  <&imgsys CLK_IMG_JPGDEC>;
+> +		clock-names = "jpgdec-smi",
+> +			      "jpgdec";
 > +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ISP>;
+> +		mediatek,larb = <&larb2>;
+> +		iommus = <&iommu MT2701_M4U_PORT_JPGDEC_WDMA>,
+> +			 <&iommu MT2701_M4U_PORT_JPGDEC_BSDMA>;
 > +	};
 > +
 >  	vdecsys: syscon@16000000 {
 >  		compatible = "mediatek,mt7623-vdecsys",
 >  			     "mediatek,mt2701-vdecsys",
-> @@ -725,6 +772,18 @@
->  		#clock-cells = <1>;
->  	};
->  
-> +	larb1: larb@16010000 {
-> +		compatible = "mediatek,mt7623-smi-larb",
-> +			     "mediatek,mt2701-smi-larb";
-> +		reg = <0 0x16010000 0 0x1000>;
-> +		mediatek,smi = <&smi_common>;
-> +		mediatek,larb-id = <1>;
-> +		clocks = <&vdecsys CLK_VDEC_CKGEN>,
-> +			 <&vdecsys CLK_VDEC_LARB>;
-> +		clock-names = "apb", "smi";
-> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_VDEC>;
-> +	};
-> +
->  	hifsys: syscon@1a000000 {
->  		compatible = "mediatek,mt7623-hifsys",
->  			     "mediatek,mt2701-hifsys",
 > 
