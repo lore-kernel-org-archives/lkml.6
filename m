@@ -2,73 +2,116 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3A6ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90CFECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E4582087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:48:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="VgTxbchJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4582087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id ABF322087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:49:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF322087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728830AbeIYNzD (ORCPT
+        id S1728871AbeIYNzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:55:03 -0400
-Received: from 8bytes.org ([81.169.241.247]:60606 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727588AbeIYNzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:55:03 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id A12816FB; Tue, 25 Sep 2018 09:48:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1537861724; bh=LVYbrjqMy2WgBfYXlTwm/fehw+I4n+2yeSu8Pa/BQXM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VgTxbchJK1EpFW4ereN4XQe8LN8oW5yj2eGhSh1OL5khC4A0etr2zxSZ+Mpqr4+Qc
-         kZE9/nsYq9BNqI6CsRozINDxi82rjcOb4IWMmt/AI0tqlbqgl4VUZscyNJD861fAIl
-         17+OSegMqd1I96COriXHg/z6zPWmtALP3Qq1qJguHT/mmlG5L1byaDQ84fietJvgnM
-         NfN5cwCeNJ1RZQZWEUTRO/mJ9k9NEn4S993rfHldUsIn0M78qDj0zRJGY430Sbi3Oe
-         LWgVbjhxg0cCeEDtcGlwX0ZKINSq6/87tO5itB8saHBWsHLcCt/201HdUqyPHm+fo0
-         IW4v22xOC3a0Q==
-Date:   Tue, 25 Sep 2018 09:48:41 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Nipun Gupta <nipun.gupta@nxp.com>
-Cc:     robin.murphy@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
-        robh@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        gregkh@linuxfoundation.org, laurentiu.tudor@nxp.com,
-        bhelgaas@google.com, hch@lst.de, m.szyprowski@samsung.com,
-        shawnguo@kernel.org, frowand.list@gmail.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
-Subject: Re: [PATCH 0/7 v7] Support for fsl-mc bus and its devices in SMMU
-Message-ID: <20180925074841.oukeyvrmub45kzis@8bytes.org>
-References: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
+        Tue, 25 Sep 2018 09:55:31 -0400
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:53458 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727588AbeIYNzb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:55:31 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl2.internode.on.net with ESMTP; 25 Sep 2018 17:19:12 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1g4i5m-0005Tv-91; Tue, 25 Sep 2018 17:49:10 +1000
+Date:   Tue, 25 Sep 2018 17:49:10 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christopher Lameter <cl@linux.com>, Christoph Hellwig <hch@lst.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+Message-ID: <20180925074910.GB31060@dastard>
+References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
+ <20180920063129.GB12913@lst.de>
+ <87h8ij0zot.fsf@vitty.brq.redhat.com>
+ <20180921130504.GA22551@lst.de>
+ <010001660c54fb65-b9d3a770-6678-40d0-8088-4db20af32280-000000@email.amazonses.com>
+ <1f88f59a-2cac-e899-4c2e-402e919b1034@kernel.dk>
+ <010001660cbd51ea-56e96208-564d-4f5d-a5fb-119a938762a9-000000@email.amazonses.com>
+ <1a5b255f-682e-783a-7f99-9d02e39c4af2@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1a5b255f-682e-783a-7f99-9d02e39c4af2@kernel.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 07:19:14PM +0530, Nipun Gupta wrote:
-> Nipun Gupta (7):
->   Documentation: fsl-mc: add iommu-map device-tree binding for fsl-mc
->     bus
->   iommu/of: make of_pci_map_rid() available for other devices too
->   iommu/of: support iommu configuration for fsl-mc devices
->   iommu/arm-smmu: Add support for the fsl-mc bus
->   bus: fsl-mc: support dma configure for devices on fsl-mc bus
->   bus: fsl-mc: set coherent dma mask for devices on fsl-mc bus
->   arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
+On Mon, Sep 24, 2018 at 12:09:37PM -0600, Jens Axboe wrote:
+> On 9/24/18 12:00 PM, Christopher Lameter wrote:
+> > On Mon, 24 Sep 2018, Jens Axboe wrote:
+> > 
+> >> The situation is making me a little uncomfortable, though. If we export
+> >> such a setting, we really should be honoring it...
 
-Applied, thanks Nipun.
+That's what I said up front, but you replied to this with:
+
+| I think this is all crazy talk. We've never done this, [...]
+
+Now I'm not sure what you are saying we should do....
+
+> > Various subsystems create custom slab arrays with their particular
+> > alignment requirement for these allocations.
+> 
+> Oh yeah, I think the solution is basic enough for XFS, for instance.
+> They just have to error on the side of being cautious, by going full
+> sector alignment for memory...
+
+How does the filesystem find out about hardware alignment
+requirements? Isn't probing through the block device to find out
+about the request queue configurations considered a layering
+violation?
+
+What if sector alignment is not sufficient?  And how would this work
+if we start supporting sector sizes larger than page size? (which the
+XFS buffer cache supports just fine, even if nothing else in
+Linux does).
+
+But even ignoring sector size > page size, implementing this
+requires a bunch of new slab caches, especially for 64k page
+machines because XFS supports sector sizes up to 32k.  And every
+other filesystem that uses sector sized buffers (e.g. HFS) would
+have to do the same thing. Seems somewhat wasteful to require
+everyone to implement their own aligned sector slab cache...
+
+Perhaps we should take the filesystem out of this completely - maybe
+the block layer could provide a generic "sector heap" and have all
+filesystems that use sector sized buffers allocate from it. e.g.
+something like
+
+	mem = bdev_alloc_sector_buffer(bdev, sector_size)
+
+That way we don't have to rely on filesystems knowing anything about
+the alignment limitations of the devices or assumptions about DMA
+to work correctly...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
