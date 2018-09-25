@@ -2,106 +2,107 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5997C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCCEC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C030214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:36:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C030214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=christoph-conrads.name
+	by mail.kernel.org (Postfix) with ESMTP id 030E32086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:37:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cD5inT/T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030E32086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbeIYSoB (ORCPT
+        id S1729143AbeIYSop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:44:01 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:41931 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728588AbeIYSoB (ORCPT
+        Tue, 25 Sep 2018 14:44:45 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39930 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728588AbeIYSop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:44:01 -0400
-Received: from theta ([88.75.240.18]) by mrelayeu.kundenserver.de (mreue009
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1N5G1V-1ffvwI1XQT-011Egm; Tue, 25
- Sep 2018 14:36:31 +0200
-Date:   Tue, 25 Sep 2018 14:36:45 +0200
-From:   Christoph Conrads <contact@christoph-conrads.name>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Edward Cree <ec429@cantab.net>, Olof Johansson <olof@lixom.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Code of Conduct: Let's revamp it.
-Message-Id: <20180925143645.af1457944142ecfec7199d80@christoph-conrads.name>
-In-Reply-To: <20180925112832.GA10951@amd>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
-        <20180919081812.020f19e3@lwn.net>
-        <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
-        <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
-        <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
-        <20180925112832.GA10951@amd>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:e+EdQ+Rjk77KlqOIKUUEtakkjGkSCwlbI67upYejP0tzsRvJMm6
- fEI3fDDFiR9kmLOC1rdXRSMCGrj4xRlgc9myzCvKf2hZs9dGUtxExJj+6UzKOXebO/nrki9
- nZm89NmDrS3FEa7QtJoVAJn4PTdMsARR/58eT2lIJdSNLyIkJcI+8YrQ/8qr7HzQGi2Wgas
- gMEmhUbjgCAKKa03mQ1EA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:DsouYEG30rA=:gegpkz6N4DPMzQ1no8Sjrw
- KTiXkfDqd3K2J1R/Ns/6q/4hUWXuvbpaWrUAArdHPn0BWBG7XqVWIJcuLZ7RryWzbj9vtdxg4
- o8ssMweUSRA0mdbvCVh0GHLe2MO/+6I2NPBNKOywg1ITNvGIJRxhulgQz0WVtwIzryOg2EtCN
- FDlEml8lHgfkKxQsH96IjdUb6N1kqxpgo0my9VY9hJZ6DWy1qCqQ4VQp+Jo+JCNU/evugrUye
- hrUp/N/I89dj1SpNSAhIuUAol+f2sBEtNszcRe8piVXXF4uFK+kjlaiZ3cIWHmQBNobrJkkvD
- RGWbbpJ4RuBVDEhpZ/nHy8YgE3LuiwMk5x1oYqs6x8hj1PXE4CGbxNL0Zi6PMArDSWkuLobl8
- eEO8oMu5/VuSIys3EjTfBuBRL62itgBWNpnZDQFpkAYkYk6m06wZJDhqIqxKDv/pt2zlvAMdm
- VcxEOoQvN5kFHgahjPPMYPc+YxjP7X5X/P6Vv0roNg8Rr11mgwfA/YpbXUR0fuZ8TOg+mC/Qp
- zoYzgDy0MPyufcuHx7taDrRuhzrzhzwQ5ahKNgHLQX8h817+xJzKnYVCb5khgT1Ia/zzP5iEF
- Lr/x+2hvrf6uZDMfFygIBXsdNb7ok4uClCyDuRpFeVghh5iJ2VhnSptiLOGIW7bQjV7CK0ZOO
- R0gzwVuuK0Bu9QSnFSdVrAd9zLnGaGrRRtakEU11Gsxd5o/btUe9oQOCsZ5fxYFnyiOCyYfIG
- dsyA9wK9YMgrl60v
+        Tue, 25 Sep 2018 14:44:45 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s14-v6so23180050wrw.6
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 05:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gH0wuWmPFxuEhPvVxwSajJ2CD6lAeNUE+aZZCwyIDxU=;
+        b=cD5inT/TKcPNrwUGb0SvA0bi8en5Z4t60qK5hDyfgPMlBDd9npgfytM2jJPr869rE5
+         c6jFvwH5vnfMQmk+2jPnER5/vX40K8Mpyur3jEIL7XSvUopEUC7mxo5tcyCJkua7a+Oo
+         g7HnQS/HX3+oC3d3HmpmOYpg9FU1J5rgFFvuvAh3zNQfdUucVCFeX1hjg8o6xoqCOFg4
+         KEbzTaDfd1DTB3at76C1SAtGwA0Js7dCAhIuzt6ugKB1T18KvaY2l0zvmFOthFeosrcu
+         d7CxvQs+w0rSJr10a9OLnCUfA77HvU9AKbWfEB4jgWifnGIQHu9y7brxwhC7dTmsU+l9
+         t09A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gH0wuWmPFxuEhPvVxwSajJ2CD6lAeNUE+aZZCwyIDxU=;
+        b=Ul/DUrFK5YGpAuRTU33zp02qPjbaOgx5VrN3jc6ilVj6ambItGVHymw1q3Cq1JwsNQ
+         CgMInN4AGHTkTid0EUMMmgbBN9j3U1p5owng711qbn3IjjcIDKGoVDZg5kOElsba7Wr5
+         0sinDBEsxecz+UsMA4UcPY1uLUhqlIxD9IleKkR3mTKth1nypacXbWKeYf6FlaIcuLEa
+         1yYnvsOFOD5ptpBS6Qy992iGqTwEn2SiyhXGDfFcbwELewiL0MIWlNrVd+F4wQT+mVva
+         ATj2zEbQYBktaBKkBhlBUZlI4HeGDE8N6AFVY8HDtwBrvJ/YHl1uHqW7tTXHPTFS+rPZ
+         Xkfg==
+X-Gm-Message-State: ABuFfoitBvIuxjXlGMXUKaDiG+QQWZSbnA7W6GgPXPONaYl+Hka8ctst
+        8MM2/oPQgN4NL0FvWxW7wC8=
+X-Google-Smtp-Source: ACcGV63SSndQmoAdA2ouUm840KN1v/Z8QvFRHgoDFXTsL019FuJMEa7q4Vor1rX3NegAvZlB1nhIxA==
+X-Received: by 2002:a5d:5450:: with SMTP id w16-v6mr910888wrv.4.1537879042002;
+        Tue, 25 Sep 2018 05:37:22 -0700 (PDT)
+Received: from localhost ([178.121.95.75])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm2904846wrd.74.2018.09.25.05.37.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 05:37:21 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Tue, 25 Sep 2018 21:37:16 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len
+ to command line
+Message-ID: <20180925123716.GD523@tigerII.localdomain>
+References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+ <20180919015030.GA423@jagdpanzerIV>
+ <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
+ <20180919023932.GA14090@jagdpanzerIV>
+ <20180918224312.6e9aef50@vmware.local.home>
+ <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
+ <20180920123056.27b2cf18@gandalf.local.home>
+ <20180921073753.mqayzofcofpmhiyu@pathway.suse.cz>
+ <20180925120135.GB523@tigerII.localdomain>
+ <20180925122300.qq5w4skwmxbzi6sy@pathway.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925122300.qq5w4skwmxbzi6sy@pathway.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Pavel,
-
-> > > Your above argument that the Code of Conduct is problematic because of
-> > > who wrote it seems to contradict your statement that we shall judge by
-> > > code (or text) alone.
-> > I think there are important differences between code to be run by CPUs
-> >  and a Code to be run by humans.  And when the author goes on a victory
-> >  lap on Twitter and declares the Code to be "a political document", is
-> >  it any surprise I'm worried?
+On (09/25/18 14:23), Petr Mladek wrote:
 > 
-> Would you have link on that?
+> Thanks for pointing this out. Well, it seems that the change would
+> require a new syscall to pass the buffer size as long. We need to
+> be sure that people would use this in the real life.
 
-The CoC is a political document:
-https://web.archive.org/web/20180924234027/https://twitter.com/coralineada/status/1041465346656530432
+Agreed.
 
-Possible victory lap 1:
-https://web.archive.org/web/20180921104730/https://twitter.com/coralineada/status/1041441155874009093
+> This thread suggested this change to avoid a checkpatch warning.
 
-Possible victory lap 2:
-https://web.archive.org/web/20180920211406/https://twitter.com/coralineada/status/1042249983590838272
+Not exactly. I suggested u64 change not because of a checkpatch
+warning. But because of u64 memparse() return and because of potential
+log_buf_len=4G+
 
-Note the statement in the second victory lap is wrong, it is 40,000 developers and not 40,000 projects as you can see in this commit:
-https://github.com/ContributorCovenant/contributor_covenant/commit/c5ac3dfc0274b8e58e04f112aae38caaa1f2e338
-
-> I'd really want to know who authored the
-> document, because it is making statements that are untrue.
-
-Here is the author's post-meritocracy manifesto:
-https://postmeritocracy.org/
-
-Here is the author's patreon:
-https://www.patreon.com/coraline
-
-Sincerely
-Christoph Conrads
-
-PS: Get back to work!
-
-https://web.archive.org/web/20180925122931/https://twitter.com/CoralineAda/status/1043338366002114561
+	-ss
