@@ -2,124 +2,103 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AF3C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0A7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC92720880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 523502083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:38:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e4nDvzcS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC92720880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZcyvE16"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 523502083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeIZCrC (ORCPT
+        id S1726421AbeIZCsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:47:02 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43865 "EHLO
+        Tue, 25 Sep 2018 22:48:07 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37120 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeIZCrB (ORCPT
+        with ESMTP id S1725918AbeIZCsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:47:01 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j26-v6so12007670pfi.10;
-        Tue, 25 Sep 2018 13:37:41 -0700 (PDT)
+        Tue, 25 Sep 2018 22:48:06 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x26-v6so1966739pfn.4;
+        Tue, 25 Sep 2018 13:38:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8cIOTAx+7VXlfn2x3x167xXUWgOaxDYMOONYDEeIta8=;
-        b=e4nDvzcSi/gud+1QWXzhlPJlrkHRsOyqMEcvA0i4CkEpdme7f4tDEgechBXdCSIMFs
-         bLRNMw7zmOLLrRVXaeQeNbck89EXG3gJAXfgLevVbtwKl0U6/jpoW08dp2bo3CqYid0K
-         njkYrXi2T9PpKrlR86CSXKRV8EYhyT7SbvE+Z4KgmOMcW7NkLzaKRmyQ9Ed1RTOU20UV
-         WwvdLTqyGwxPjs95yjNJP2eyuzak65As3zoUW2uoPrHktdd81N0Cc5oQScFvjqJ4GxUI
-         xUYjxVxN5lnLWP/REWfBxhlptKMoLkdye6Sp7cffkwQAy6pAcy/JW1jYvVUPHCcRiUsJ
-         NUbQ==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iajKhxiheWWe69QVXlbAVTNe08xFYbsD7WZO3oYurcA=;
+        b=eZcyvE16UEljGt2HGeGUO36HBYm8bf0LA/KcpxfVpOMB5d08pOAy9OIh4kWvzXSzBU
+         +Zhuw53dQbOQQiDaLDMLUF9kPPzTK+tmLCwBwjvRuN/33WcUylGIc1X9GL/Fqf+JEbti
+         11nhzStDuGAoGQYTy0dVJZ+X/u6CRSnQQkOfIyKBOW6qqo7ncI6u+WdEriXuLUmxz6jk
+         sXTkQXNQWXgXaMkagx00p+oooEBGvleJqC6rnXpiygcHYjVrwaB+FJViamqprrDqFEGI
+         6UtVA1wraYnkh87aZ7kYL8hwUxz5/qPWPcDoLKEWehwSWXDEQH9/v9iF0PHVQIRQu9uo
+         BvIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8cIOTAx+7VXlfn2x3x167xXUWgOaxDYMOONYDEeIta8=;
-        b=dJpEdvAb/zyInoza2mK9iKSJsUGH3jFfgCzZm/T67hru19nud+I0xUjOP4xoQy3SYD
-         su0MnZrFVzb2c4ZIWj8SJubZLxkjCYHFOssZbcHEo+FehBe/HmMkSdX6EXDTWOHF+E98
-         QmK9IxZVZd1boMWz/9t8ZewfBh0Qmc0949SawtGZ2ZsB3mWPsR1CTH4qWB3t0aKqerGJ
-         zDY3C6NSSFO1+ECnxn8hy0F9KOhq6tQOYQPpoRW79UbDQRraHkCozNEyqgEfky6bdu4C
-         AT5G5h7JSnjjI/JCRYO879dPg9UkymNgTTG7FOrklkSRXl7v+CpQXLdAWoIeviNd/RSk
-         XqXw==
-X-Gm-Message-State: ABuFfohKPtzvDA7yxml/588PlWSzyzkxd9zFcwReYS7tEdtjhcFJvLAk
-        KAVBPQXBskqx+EcJsU4o+10=
-X-Google-Smtp-Source: ACcGV62JyWII1J8LZ9acsSxdyPnOmjxah0DehZk2r6A9kNvfvC4riDvQ9bxcAHBDlsRhnsQomDnARA==
-X-Received: by 2002:a63:1021:: with SMTP id f33-v6mr2571845pgl.72.1537907861429;
-        Tue, 25 Sep 2018 13:37:41 -0700 (PDT)
-Received: from hieu-Inspiron-7577.net.fpt ([1.54.224.16])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm4042129pfi.9.2018.09.25.13.37.39
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iajKhxiheWWe69QVXlbAVTNe08xFYbsD7WZO3oYurcA=;
+        b=jD379/R77Cl9QfMRQxoDBZAmVPMs+9L0yzOCdZVdMVu9pKW0vaFqo2r34ZOR9oZwa9
+         tG2VyBXG8Jv1Dlk6rcUAlptU4SHYv9g1cJuqN3Sqtl2myfWdLbBca6CkJwCRQzEMw6Jx
+         pvE9yewz/KCWAILA1GbUnRejrP4OVEe8iA/Sj8yKkBvAtRGXqbBtdYlSrklUlTMUsVef
+         VFI+NVELw1+bL2bCE7ZAjoU1yO4U/vHYeupr8WS3cINgsuObXTTJvhp7rVwTYLFfT/pY
+         a7cHkJFx1pzscvPs5KsJz7aVYPSMtK+K2a8JHDrU/4B2DUnqEyLRN0jcUlAZNozFIIkc
+         lCgQ==
+X-Gm-Message-State: ABuFfogwX8p4V9OzOCWceXJUpDJke4HGeMXGqkmol8HGLX2nctnBO9BR
+        7ft5ZijIy8xNZFFsiE/nHpg=
+X-Google-Smtp-Source: ACcGV63dV3hd2OiDqCuqw/j7PX+LMZn4a3kW3rFGTx/OjGjhbEdc2zGrDNucw+dxX7VDaJNCqZEytQ==
+X-Received: by 2002:a17:902:bf0c:: with SMTP id bi12-v6mr2708984plb.219.1537907926048;
+        Tue, 25 Sep 2018 13:38:46 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id e24-v6sm2092532pff.128.2018.09.25.13.38.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 13:37:40 -0700 (PDT)
-From:   Hieu Tran Dang <dangtranhieu2012@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, Gao Pan <pandy.gao@nxp.com>
-Cc:     Hieu Tran Dang <dangtranhieu2012@gmail.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] spi: fsl-lpspi: Option to prevent FIFO under/overrun
-Date:   Wed, 26 Sep 2018 03:37:01 +0700
-Message-Id: <20180925203701.13605-3-dangtranhieu2012@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180925203701.13605-1-dangtranhieu2012@gmail.com>
-References: <20180925203701.13605-1-dangtranhieu2012@gmail.com>
+        Tue, 25 Sep 2018 13:38:45 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 13:38:43 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 000/105] 3.18.123-stable review
+Message-ID: <20180925203843.GA12876@roeck-us.net>
+References: <20180924113113.268650190@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain devices don't work well when a transmit FIFO underrun or
-receive FIFO overrun occurs. Example is the SAF400x radio chip when
-running at high speed which leads to garbage being sent to/received from
-the chip. In which case, it should stall waiting for further data to be
-available before proceeding. This patch add option to configure the SPI
-controller to allow stalling (unset NOSTALL bit in CFGR1).
+On Mon, Sep 24, 2018 at 01:32:46PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.123 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Sep 26 11:30:30 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
----
- drivers/spi/spi-fsl-lpspi.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Build results:
+	total: 151 pass: 151 fail: 0
+Qemu test results:
+	total: 285 pass: 284 fail: 1
+Failed tests: 
+	powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
 
-diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
-index e6d5cc6ab108..7588b62ef08b 100644
---- a/drivers/spi/spi-fsl-lpspi.c
-+++ b/drivers/spi/spi-fsl-lpspi.c
-@@ -73,6 +73,7 @@ struct lpspi_config {
- 	u8 prescale;
- 	u16 mode;
- 	u32 speed_hz;
-+	bool nostall;
- };
- 
- struct fsl_lpspi_data {
-@@ -276,7 +277,11 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
- 
- 	fsl_lpspi_set_watermark(fsl_lpspi);
- 
--	temp = CFGR1_PCSCFG | CFGR1_MASTER | CFGR1_NOSTALL;
-+	temp = CFGR1_PCSCFG | CFGR1_MASTER;
-+
-+	if (fsl_lpspi->config.nostall)
-+		temp |= CFGR1_NOSTALL;
-+
- 	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
- 		temp |= CFGR1_PCSPOL;
- 	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
-@@ -475,6 +480,9 @@ static int fsl_lpspi_probe(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(fsl_lpspi->clk);
- 
-+	fsl_lpspi->config.nostall =
-+		!of_get_property(pdev->dev.of_node, "fsl,allow-stall", NULL);
-+
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "spi_register_master error.\n");
--- 
-2.17.1
+The failed test is the result of a crash in devicetree unittest code.
+It affects all branches. Nothing to worry about; fix is being worked on.
 
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
