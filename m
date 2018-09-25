@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6560EC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920F7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8EE20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8EE20684
+	by mail.kernel.org (Postfix) with ESMTP id 517E520867
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517E520867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbeIYPhA (ORCPT
+        id S1728993AbeIYPhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:37:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48301 "EHLO
+        Tue, 25 Sep 2018 11:37:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53401 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeIYPg7 (ORCPT
+        with ESMTP id S1726201AbeIYPhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:36:59 -0400
+        Tue, 25 Sep 2018 11:37:25 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8P9TYYK3385786
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8P9U6T53386007
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 25 Sep 2018 02:29:34 -0700
+        Tue, 25 Sep 2018 02:30:06 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8P9TYRN3385783;
-        Tue, 25 Sep 2018 02:29:34 -0700
-Date:   Tue, 25 Sep 2018 02:29:34 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8P9U6ZU3386004;
+        Tue, 25 Sep 2018 02:30:06 -0700
+Date:   Tue, 25 Sep 2018 02:30:06 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-53da12e013498c4eca592939bb18a5dbd1d228c9@git.kernel.org>
-Cc:     tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-        dsahern@gmail.com, eranian@google.com, acme@redhat.com,
-        mingo@kernel.org, andi@firstfloor.org, namhyung@kernel.org,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, hpa@zytor.com
-Reply-To: tglx@linutronix.de, acme@redhat.com, eranian@google.com,
-          dsahern@gmail.com, alexander.shishkin@linux.intel.com,
-          andi@firstfloor.org, mingo@kernel.org, hpa@zytor.com,
-          peterz@infradead.org, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, namhyung@kernel.org
-In-Reply-To: <20180907102455.7030-2-jolsa@kernel.org>
-References: <20180907102455.7030-2-jolsa@kernel.org>
+From:   tip-bot for Ding Xiang <tipbot@zytor.com>
+Message-ID: <tip-01ab2e91103b8c23dfedfeb799bc8b810d585bd0@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        dingxiang@cmss.chinamobile.com, hpa@zytor.com, namhyung@kernel.org,
+        mingo@kernel.org, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, acme@redhat.com
+Reply-To: hpa@zytor.com, namhyung@kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+          dingxiang@cmss.chinamobile.com, peterz@infradead.org,
+          acme@redhat.com, jolsa@redhat.com, linux-kernel@vger.kernel.org
+In-Reply-To: <1536284082-23466-1-git-send-email-dingxiang@cmss.chinamobile.com>
+References: <1536284082-23466-1-git-send-email-dingxiang@cmss.chinamobile.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf ordered_events: Prevent crossing
- max_alloc_size
-Git-Commit-ID: 53da12e013498c4eca592939bb18a5dbd1d228c9
+Subject: [tip:perf/core] tools include: Adopt PTR_ERR_OR_ZERO from the
+ kernel err.h header
+Git-Commit-ID: 01ab2e91103b8c23dfedfeb799bc8b810d585bd0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,65 +61,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  53da12e013498c4eca592939bb18a5dbd1d228c9
-Gitweb:     https://git.kernel.org/tip/53da12e013498c4eca592939bb18a5dbd1d228c9
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 7 Sep 2018 12:24:55 +0200
+Commit-ID:  01ab2e91103b8c23dfedfeb799bc8b810d585bd0
+Gitweb:     https://git.kernel.org/tip/01ab2e91103b8c23dfedfeb799bc8b810d585bd0
+Author:     Ding Xiang <dingxiang@cmss.chinamobile.com>
+AuthorDate: Fri, 7 Sep 2018 09:34:41 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 19 Sep 2018 10:25:08 -0300
 
-perf ordered_events: Prevent crossing max_alloc_size
+tools include: Adopt PTR_ERR_OR_ZERO from the kernel err.h header
 
-Stephane reported a possible issue in the ordered events code, which
-could lead to allocating more memory than guarded by max_alloc_size.
+Add PTR_ERR_OR_ZERO, so that tools can use it, just like the kernel.
 
-He also suggested the fix to properly check that the new size is below
-the max_alloc_size limit.
-
-Reported-by: Stephane Eranian <eranian@google.com>
-Suggested-by: Stephane Eranian <eranian@google.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180907102455.7030-2-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/1536284082-23466-1-git-send-email-dingxiang@cmss.chinamobile.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/ordered-events.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/include/linux/err.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index 84ce25272c13..1904e7f6ec84 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -101,6 +101,7 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 	struct list_head *cache = &oe->cache;
- 	struct ordered_event *new = NULL;
- 	union perf_event *new_event;
-+	size_t size;
+diff --git a/tools/include/linux/err.h b/tools/include/linux/err.h
+index 7a8b61ad44cb..094649667bae 100644
+--- a/tools/include/linux/err.h
++++ b/tools/include/linux/err.h
+@@ -52,4 +52,11 @@ static inline bool __must_check IS_ERR_OR_NULL(__force const void *ptr)
+ 	return unlikely(!ptr) || IS_ERR_VALUE((unsigned long)ptr);
+ }
  
- 	new_event = dup_event(oe, event);
- 	if (!new_event)
-@@ -133,6 +134,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 	 * Removal of ordered event object moves it from events to
- 	 * the cache list.
- 	 */
-+	size = sizeof(*oe->buffer) + MAX_SAMPLE_BUFFER * sizeof(*new);
-+
- 	if (!list_empty(cache)) {
- 		new = list_entry(cache->next, struct ordered_event, list);
- 		list_del(&new->list);
-@@ -140,10 +143,7 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 		new = &oe->buffer->event[oe->buffer_idx];
- 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
- 			oe->buffer = NULL;
--	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
--		size_t size = sizeof(*oe->buffer) +
--			      MAX_SAMPLE_BUFFER * sizeof(*new);
--
-+	} else if ((oe->cur_alloc_size + size) < oe->max_alloc_size) {
- 		oe->buffer = malloc(size);
- 		if (!oe->buffer) {
- 			free_dup_event(oe, new_event);
++static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
++{
++	if (IS_ERR(ptr))
++		return PTR_ERR(ptr);
++	else
++		return 0;
++}
+ #endif /* _LINUX_ERR_H */
