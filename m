@@ -2,130 +2,156 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F185AC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA467C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA6EC208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 596CA214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:25:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="jTLEtd7b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6EC208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zXsdwN5Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596CA214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeIYNad (ORCPT
+        id S1728698AbeIYNbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:30:33 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:35648 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727610AbeIYNac (ORCPT
+        Tue, 25 Sep 2018 09:31:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54710 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbeIYNbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:30:32 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 9C77C25B749;
-        Tue, 25 Sep 2018 17:24:18 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1537860258; bh=Qwfk0O42Hv/8wqMdAJmsVrNdneVZ4hyq1in7PUrtZlM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jTLEtd7bVyqFPpfodtwZwLugfPkJC7RBwU16DuFFXyAT84f2z8jQr/x4VEUL3A5Yx
-         ypjLJyNhKMm4mTEbdNdJOo02p9WCPe7DN6JktRuNVsX8gM+j6Zjq+LpToG+6XnhZZ4
-         dtxkT3um7OqTLiYe9KawGy4Tm5swLXRKhyQulif4=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 8F396940453; Tue, 25 Sep 2018 09:24:16 +0200 (CEST)
-Date:   Tue, 25 Sep 2018 09:24:16 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 5/8] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
-Message-ID: <20180925072415.apfl6s5e7l5rwmxa@verge.net.au>
-References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 25 Sep 2018 09:31:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xqthDeiSyOLcjqwUUqONFwF/RWTTYVn1S3WPQuE/9A4=; b=zXsdwN5QFPMAclseOLezHk66o
+        mza2SvFiuwGTBfLMoCwolugNge9AOt/TgDhooFpg3OTyHkItSRUOrf5zMj7GmTniAg6eMaiRJ8KXZ
+        dLxIfTwFo9CbEU6WaPVYRFWRjA7qtJ1D8k/VuX5MURvxL81Oq86/GAZjAgWLmhDnRUfX1KTpqYyQ5
+        36ZyIuApsKHUEBZZ8T/LChVW4RxaS11bnZp0ELMODXm70wmROjUq85EM7B1xBn+IFk5CG/0DWeME0
+        93lwMdd1ltzguo+e9gzzDRs3lW7U7odf/PS/spyAItfDucz46vfWS5fOYly5qDGJBC+EVEdowAGlK
+        v47EDPhTQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4hha-0007kn-Ga; Tue, 25 Sep 2018 07:24:30 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9A83620289CF9; Tue, 25 Sep 2018 09:24:07 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 09:24:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        green.hu@gmail.com, palmer@sifive.com
+Subject: Re: [PATCH V5 06/30] csky: Cache and TLB routines
+Message-ID: <20180925072407.GA6999@hirez.programming.kicks-ass.net>
+References: <cover.1537789736.git.ren_guo@c-sky.com>
+ <7cd7abcd2acf5c61435589338ff80a75a13173ca.1537789737.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <7cd7abcd2acf5c61435589338ff80a75a13173ca.1537789737.git.ren_guo@c-sky.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 08:53:21PM +0900, Yoshihiro Shimoda wrote:
-> This patch unifies the OBINTEN handling to clean-up the code.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-The nit below notwithstanding.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-> ---
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 23 +++++++++++++++--------
->  1 file changed, 15 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> index 856056e..e7eaed9 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -142,6 +142,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
->  	writel(val, usb2_base + USB2_ADPCTRL);
->  }
->  
-> +static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
-> +{
-
-nit: Perhaps bool would be a better type for the enable parameter.
-
-> +	void __iomem *usb2_base = ch->base;
-> +	u32 val = readl(usb2_base + USB2_OBINTEN);
+On Mon, Sep 24, 2018 at 10:36:22PM +0800, Guo Ren wrote:
+> diff --git a/arch/csky/abiv1/inc/abi/cacheflush.h b/arch/csky/abiv1/inc/abi/cacheflush.h
+> new file mode 100644
+> index 0000000..f0de49c
+> --- /dev/null
+> +++ b/arch/csky/abiv1/inc/abi/cacheflush.h
+> @@ -0,0 +1,43 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
 > +
-> +	if (enable)
-> +		val |= USB2_OBINT_BITS;
-> +	else
-> +		val &= ~USB2_OBINT_BITS;
-> +	writel(val, usb2_base + USB2_OBINTEN);
-> +}
+> +#ifndef __ABI_CSKY_CACHEFLUSH_H
+> +#define __ABI_CSKY_CACHEFLUSH_H
 > +
->  static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
->  {
->  	rcar_gen3_set_linectrl(ch, 1, 1);
-> @@ -187,16 +199,12 @@ static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
->  
->  static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
->  {
-> -	void __iomem *usb2_base = ch->base;
-> -	u32 val;
-> -
-> -	val = readl(usb2_base + USB2_OBINTEN);
-> -	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-> +	rcar_gen3_control_otg_irq(ch, 0);
->  
->  	rcar_gen3_enable_vbus_ctrl(ch, 1);
->  	rcar_gen3_init_for_host(ch);
->  
-> -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-> +	rcar_gen3_control_otg_irq(ch, 1);
->  }
->  
->  static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
-> @@ -286,8 +294,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
->  	val = readl(usb2_base + USB2_VBCTRL);
->  	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
->  	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
-> -	val = readl(usb2_base + USB2_OBINTEN);
-> -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
-> +	rcar_gen3_control_otg_irq(ch, 1);
->  	val = readl(usb2_base + USB2_ADPCTRL);
->  	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
->  	val = readl(usb2_base + USB2_LINECTRL1);
-> -- 
-> 1.9.1
-> 
+> +#include <linux/compiler.h>
+> +#include <asm/string.h>
+> +#include <asm/cache.h>
+> +
+> +#define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
+> +extern void flush_dcache_page(struct page *);
+> +
+> +#define flush_cache_mm(mm)		cache_wbinv_all()
+> +#define flush_cache_page(vma,page,pfn)	cache_wbinv_all()
+> +#define flush_cache_dup_mm(mm)		cache_wbinv_all()
+> +
+> +#define flush_cache_range(mm,start,end)	cache_wbinv_range(start, end)
+                             ^^^ should be vma
+
+> +#endif /* __ABI_CSKY_CACHEFLUSH_H */
+
+
+> diff --git a/arch/csky/abiv1/inc/abi/tlb.h b/arch/csky/abiv1/inc/abi/tlb.h
+> new file mode 100644
+> index 0000000..6d461f3
+> --- /dev/null
+> +++ b/arch/csky/abiv1/inc/abi/tlb.h
+> @@ -0,0 +1,12 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> +
+> +#ifndef __ABI_CSKY_TLB_H
+> +#define __ABI_CSKY_TLB_H
+> +
+> +#define tlb_start_vma(tlb, vma) \
+> +	do { \
+> +		if (!tlb->fullmm) \
+> +			cache_wbinv_all(); \
+> +	}  while (0)
+> +#endif /* __ABI_CSKY_TLB_H */
+
+That should be:
+
+	if (!tlb->fullmm)
+		flush_cache_range(vma, vma->vm_start, vma->vm_end);
+
+Because as per the whole abiv1 vs abiv2, you don't need write back
+invalidation for v2 at all, also, you only need to invalidate the vma
+range, no reason to shoot everything down.
+
+Also, I'll be shortly removing this:
+
+  https://lkml.kernel.org/r/20180913092812.071989585@infradead.org
+
+> diff --git a/arch/csky/abiv2/inc/abi/cacheflush.h b/arch/csky/abiv2/inc/abi/cacheflush.h
+> new file mode 100644
+> index 0000000..756beb7
+> --- /dev/null
+> +++ b/arch/csky/abiv2/inc/abi/cacheflush.h
+> @@ -0,0 +1,40 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#ifndef __ABI_CSKY_CACHEFLUSH_H
+> +#define __ABI_CSKY_CACHEFLUSH_H
+> +
+> +/* Keep includes the same across arches.  */
+> +#include <linux/mm.h>
+> +
+> +/*
+> + * The cache doesn't need to be flushed when TLB entries change when
+> + * the cache is mapped to physical memory, not virtual memory
+> + */
+> +#define flush_cache_all()			do { } while (0)
+> +#define flush_cache_mm(mm)			do { } while (0)
+> +#define flush_cache_dup_mm(mm)			do { } while (0)
+> +#define flush_cache_range(vma, start, end)	do { } while (0)
+                             ^^^ like here..
+
+> +#endif /* __ABI_CSKY_TLB_H */
