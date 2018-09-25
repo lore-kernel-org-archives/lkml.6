@@ -2,104 +2,99 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BA5C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C84AC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5088F2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:18:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5088F2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id B9DD42086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:18:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TURFSwQq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9DD42086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbeIYTZ7 (ORCPT
+        id S1729221AbeIYT0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 15:25:59 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:32649 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728272AbeIYTZ7 (ORCPT
+        Tue, 25 Sep 2018 15:26:16 -0400
+Received: from mail-yw1-f46.google.com ([209.85.161.46]:37759 "EHLO
+        mail-yw1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728272AbeIYT0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 15:25:59 -0400
-X-IronPort-AV: E=Sophos;i="5.54,302,1534834800"; 
-   d="scan'208";a="18387827"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Sep 2018 06:18:25 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch04.mchp-main.com
- (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Tue, 25 Sep 2018
- 06:17:58 -0700
-Date:   Tue, 25 Sep 2018 15:17:57 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Eugen Hristev <eugen.hristev@microchip.com>
-CC:     <jic23@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: at91: fix wrong channel number in
- triggered buffer mode
-Message-ID: <20180925131757.gjk2t277twhji5ns@M43218.corp.atmel.com>
-Mail-Followup-To: Eugen Hristev <eugen.hristev@microchip.com>,
-        jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        nicolas.ferre@microchip.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-References: <1537775504-7981-1-git-send-email-eugen.hristev@microchip.com>
- <1537775504-7981-2-git-send-email-eugen.hristev@microchip.com>
+        Tue, 25 Sep 2018 15:26:15 -0400
+Received: by mail-yw1-f46.google.com with SMTP id y14-v6so2033139ywa.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 06:18:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=lQmHbvvvQmbq8VE45ooOeGjmscSjfLtfq65PuUJ4Xqw=;
+        b=TURFSwQq36UwqwjNz8lvkoECJUcMxJrZOqJUZK3rkiocYv00p+IWUpwSinaaoO0FI2
+         6APqNo22jX0dYItPBzIVXVmv5ncQ3L4WDKk5e1nNY1zMZSh7TUTftnVwl2RpaSwC/ra1
+         k3B9JqVWOOiQrCmujJp6+DvkN2TNodt6RiBaPH6I6L4UdNNSnMjG6Qc+fC9ednNss5db
+         mdEaxCzZJBzvdZ3ochUpLdX0w87gR46xZeuXdU4gLi+N3ubsDeG6GqP4rQ9yrvOCG5C+
+         Fa5FkAfUdugieFk32fcNACmiMlJsl3fE7iKOUiWmqyS0H12h7H7CWtujq+osHYjpDrkd
+         PoMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=lQmHbvvvQmbq8VE45ooOeGjmscSjfLtfq65PuUJ4Xqw=;
+        b=eCCCTrQfnfBOYdNinCkPxapeMuYdG8EksY/rG3lzPn6T5r3kFO6UaelT+jAuMLs74d
+         BZzKsjjfv4p5r6I78WmqkSuspoq0rrKWC7v/KlqftAMMgqmv2dtA+34O0wrr6VKS6eoY
+         vFL0NvNIlCq0Bi8sqibeA4gAoknHaBRef3uGuMJj/JMATpNtSX/wcScvZk3m44CSFdwE
+         YPhzKmRAXWVkHikdlegrS2M3eaqaVeIQxrAWrEgjN2XFCNuCqPvppnNeeV1xPIMiZaqt
+         XebhNfe3nNQNGlfiXVa8GMCX3suqyL1WwrW394RD/7pnZVSkGCft7xERBh3erg+UFd/s
+         1APg==
+X-Gm-Message-State: ABuFfojoQDZdUuagLWPv7f2g1Ayi9/DOT6057BBTl62p8LJaf+1Px3z8
+        4z1WLp0957NzaiFStIJzWJoyzarf48+qO87PDx7jhw==
+X-Google-Smtp-Source: ACcGV62pF6nsOdN+uIAlnaMR7Wz0wNkws6nPS2DpdFuSOrNyLdNEQKfcs3ollB2cXTDG14s1DHg6fe4v8NPZ/ikSMx0=
+X-Received: by 2002:a81:9e44:: with SMTP id v65-v6mr480383ywg.481.1537881522962;
+ Tue, 25 Sep 2018 06:18:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1537775504-7981-2-git-send-email-eugen.hristev@microchip.com>
-User-Agent: NeoMutt/20180716
+References: <CAJUuSvGOMjjua_nNDp_cYXKLf3_7-U=3nvpuqT9bTMjKe8uM=g@mail.gmail.com>
+In-Reply-To: <CAJUuSvGOMjjua_nNDp_cYXKLf3_7-U=3nvpuqT9bTMjKe8uM=g@mail.gmail.com>
+From:   Ilan Schwarts <ilan84@gmail.com>
+Date:   Tue, 25 Sep 2018 16:18:31 +0300
+Message-ID: <CAJUuSvFurAMf29uACB3OeF6mY+VhWU1bQy_WgNLgZO8mHz4XjQ@mail.gmail.com>
+Subject: Fwd: Where MAX_NR_ZONES defined in Suse 12.3 4.4.131-94.
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 10:51:44AM +0300, Eugen Hristev wrote:
-> When channels are registered, the hardware channel number is not the
-> actual iio channel number.
-> This is because the driver is probed with a certain number of accessible
-> channels. Some pins are routed and some not, depending on the description of
-> the board in the DT.
-> Because of that, channels 0,1,2,3 can correspond to hardware channels
-> 2,3,4,5 for example.
-> In the buffered triggered case, we need to do the translation accordingly.
-> Fixed the channel number to stop reading the wrong channel.
-> 
-> Fixes 0e589d5fb "ARM: AT91: IIO: Add AT91 ADC driver."
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Hi,
+I maintain kernel module, till today, when compiling the kernel
+module, I use to download kernel sources (headers are not enough since
+i had to include btrfs code), and compile it.
 
-> ---
-> Changes in v2:
-> - Added 'const' spec to the declaration to avoid build warning
-> 
->  drivers/iio/adc/at91_adc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-> index e3be88e..75d2f73 100644
-> --- a/drivers/iio/adc/at91_adc.c
-> +++ b/drivers/iio/adc/at91_adc.c
-> @@ -248,12 +248,14 @@ static irqreturn_t at91_adc_trigger_handler(int irq, void *p)
->  	struct iio_poll_func *pf = p;
->  	struct iio_dev *idev = pf->indio_dev;
->  	struct at91_adc_state *st = iio_priv(idev);
-> +	struct iio_chan_spec const *chan;
->  	int i, j = 0;
->  
->  	for (i = 0; i < idev->masklength; i++) {
->  		if (!test_bit(i, idev->active_scan_mask))
->  			continue;
-> -		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
-> +		chan = idev->channels + i;
-> +		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
->  		j++;
->  	}
->  
-> -- 
-> 2.7.4
-> 
+In suse 12.3 (4.4.131-94.29-default), I downloaded the source package
+(kernel-source-4.4.131-94.29.1.src.rpm), extract linux-4.4.tar.xz out
+of it, copy to /usr/src/4.4.131-94.29 and update symbolic link from
+/lib/modules/4.4.131-94.29-default/source to source ->
+/usr/src/linux-4.4.131-94.29
+
+When compiling I get the following exception:
+/usr/src/linux-4.4.131-94.29/include/linux/page-flags-layout.h:21:2:
+error: #error ZONES_SHIFT -- too many zones configured adjust
+calculation
+ #error ZONES_SHIFT -- too many zones configured adjust calculation
+
+I assume MAX_NR_ZONES is not defined.
+How could that be ?
+
+The code for page-flags-layout.h line 21 is:
+#if MAX_NR_ZONES < 2
+#define ZONES_SHIFT 0
+#elif MAX_NR_ZONES <= 2
+#define ZONES_SHIFT 1
+#elif MAX_NR_ZONES <= 4
+#define ZONES_SHIFT 2
+#else
+#error ZONES_SHIFT -- too many zones configured adjust calculation
+#endif
