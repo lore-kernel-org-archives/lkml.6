@@ -2,208 +2,142 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5616BC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290EBC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 053A620880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 053A620880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id D67A420842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:05:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67A420842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbeIZDNz (ORCPT
+        id S1726487AbeIZDOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 23:13:55 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:33063 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeIZDNy (ORCPT
+        Tue, 25 Sep 2018 23:14:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726213AbeIZDOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 23:13:54 -0400
-Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1g4uVN-0006y6-49 from Steve_Longerbeam@mentor.com ; Tue, 25 Sep 2018 14:04:25 -0700
-Received: from [172.30.1.115] (147.34.91.1) by svr-orw-mbx-02.mgc.mentorg.com
- (147.34.90.202) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 25 Sep
- 2018 14:04:22 -0700
-Subject: Re: [PATCH v6 02/17] media: v4l2: async: Allow searching for asd of
- any type
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>
-CC:     <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
- <1531175957-1973-3-git-send-email-steve_longerbeam@mentor.com>
- <20180924140604.23e2b56f@coco.lan>
-From:   Steve Longerbeam <steve_longerbeam@mentor.com>
-Message-ID: <a8ea673c-a519-81e8-35b1-9d4a224dcbf5@mentor.com>
-Date:   Tue, 25 Sep 2018 14:04:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 23:14:47 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8PKxLC3026473
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 17:05:19 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mqtj4d4fd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 17:05:19 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Tue, 25 Sep 2018 22:05:17 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 25 Sep 2018 22:05:13 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8PL5C6361997124
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Sep 2018 21:05:12 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32CC611C054;
+        Wed, 26 Sep 2018 00:04:54 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DA1EA11C058;
+        Wed, 26 Sep 2018 00:04:52 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.204.176])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 26 Sep 2018 00:04:52 +0100 (BST)
+Date:   Wed, 26 Sep 2018 00:05:09 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, dave.hansen@intel.com, jglisse@redhat.com,
+        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v5 1/4] mm: Remove now defunct NO_BOOTMEM from depends
+ list for deferred init
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925201814.3576.15105.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180924140604.23e2b56f@coco.lan>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) To
- svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925201814.3576.15105.stgit@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18092521-0012-0000-0000-000002AE85EC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092521-0013-0000-0000-000020E29B4E
+Message-Id: <20180925210509.GA13839@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809250206
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
+On Tue, Sep 25, 2018 at 01:19:15PM -0700, Alexander Duyck wrote:
+> The CONFIG_NO_BOOTMEM config option was recently removed by the patch "mm:
+> remove CONFIG_NO_BOOTMEM" (https://patchwork.kernel.org/patch/10600647/).
+> However it looks like it missed a few spots. The biggest one being the
+> dependency for deferred init. This patch goes through and removes the
+> remaining spots that appear to have been missed in the patch so that I am
+> able to build again with deferred memory initialization.
+
+Thanks for fixing it!
+ 
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+
+Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+
+> ---
+> 
+> v5: New patch, added to fix regression found in latest linux-next
+> 
+>  arch/csky/Kconfig |    1 -
+>  mm/Kconfig        |    1 -
+>  2 files changed, 2 deletions(-)
+> 
+> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
+> index fe2c94b94fe3..fb2a0ae84dd5 100644
+> --- a/arch/csky/Kconfig
+> +++ b/arch/csky/Kconfig
+> @@ -38,7 +38,6 @@ config CSKY
+>  	select HAVE_MEMBLOCK
+>  	select MAY_HAVE_SPARSE_IRQ
+>  	select MODULES_USE_ELF_RELA if MODULES
+> -	select NO_BOOTMEM
 
 
-On 09/24/2018 10:06 AM, Mauro Carvalho Chehab wrote:
-> Em Mon,  9 Jul 2018 15:39:02 -0700
-> Steve Longerbeam <slongerbeam@gmail.com> escreveu:
->
->> Generalize v4l2_async_notifier_fwnode_has_async_subdev() to allow
->> searching for any type of async subdev, not just fwnodes. Rename to
->> v4l2_async_notifier_has_async_subdev() and pass it an asd pointer.
->>
->> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
->> ---
->> Changes since v5:
->> - none
->> Changes since v4:
->> - none
->> Changes since v3:
->> - removed TODO to support asd compare with CUSTOM match type in
->>    asd_equal().
->> Changes since v2:
->> - code optimization in asd_equal(), and remove unneeded braces,
->>    suggested by Sakari Ailus.
->> Changes since v1:
->> - none
->> ---
->>   drivers/media/v4l2-core/v4l2-async.c | 73 +++++++++++++++++++++---------------
->>   1 file changed, 43 insertions(+), 30 deletions(-)
->>
->> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
->> index 2b08d03..0e7e529 100644
->> --- a/drivers/media/v4l2-core/v4l2-async.c
->> +++ b/drivers/media/v4l2-core/v4l2-async.c
->> @@ -124,6 +124,31 @@ static struct v4l2_async_subdev *v4l2_async_find_match(
->>   	return NULL;
->>   }
->>   
->> +/* Compare two asd's for equivalence */
-> Please, on comments, instead of "asd" prefer to use what this 3 random
-> letters mean, e. g.:
-> 	asd -> asynchronous subdevice
 
-Ok, I will change the comment to read:
+>  	select OF
+>  	select OF_EARLY_FLATTREE
+>  	select OF_RESERVED_MEM
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index c6a0d82af45f..b4421aa608c4 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -631,7 +631,6 @@ config MAX_STACK_SIZE_MB
+>  config DEFERRED_STRUCT_PAGE_INIT
+>  	bool "Defer initialisation of struct pages to kthreads"
+>  	default n
+> -	depends on NO_BOOTMEM
+>  	depends on SPARSEMEM
+>  	depends on !NEED_PER_CPU_KM
+>  	depends on 64BIT
+> 
 
-/* Compare two async subdevice descriptors for equivalence */
-
->
->> +static bool asd_equal(struct v4l2_async_subdev *asd_x,
->> +		      struct v4l2_async_subdev *asd_y)
->> +{
->> +	if (asd_x->match_type != asd_y->match_type)
->> +		return false;
->> +
->> +	switch (asd_x->match_type) {
->> +	case V4L2_ASYNC_MATCH_DEVNAME:
->> +		return strcmp(asd_x->match.device_name,
->> +			      asd_y->match.device_name) == 0;
->> +	case V4L2_ASYNC_MATCH_I2C:
->> +		return asd_x->match.i2c.adapter_id ==
->> +			asd_y->match.i2c.adapter_id &&
->> +			asd_x->match.i2c.address ==
->> +			asd_y->match.i2c.address;
->> +	case V4L2_ASYNC_MATCH_FWNODE:
->> +		return asd_x->match.fwnode == asd_y->match.fwnode;
->> +	default:
->> +		break;
->> +	}
->> +
->> +	return false;
->> +}
->> +
->>   /* Find the sub-device notifier registered by a sub-device driver. */
->>   static struct v4l2_async_notifier *v4l2_async_find_subdev_notifier(
->>   	struct v4l2_subdev *sd)
->> @@ -308,29 +333,22 @@ static void v4l2_async_notifier_unbind_all_subdevs(
->>   	notifier->parent = NULL;
->>   }
->>   
->> -/* See if an fwnode can be found in a notifier's lists. */
->> -static bool __v4l2_async_notifier_fwnode_has_async_subdev(
->> -	struct v4l2_async_notifier *notifier, struct fwnode_handle *fwnode)
->> +/* See if an async sub-device can be found in a notifier's lists. */
->> +static bool __v4l2_async_notifier_has_async_subdev(
->> +	struct v4l2_async_notifier *notifier, struct v4l2_async_subdev *asd)
-> This is a minor issue, but checkpatch complains (with reason)
-> (with --strict) about the above:
->
-> 	CHECK: Lines should not end with a '('
-> 	#63: FILE: drivers/media/v4l2-core/v4l2-async.c:337:
-> 	+static bool __v4l2_async_notifier_has_async_subdev(
->
-> Better to declare it, instead, as:
->
-> static bool
-> __v4l2_async_notifier_has_async_subdev(struct v4l2_async_notifier *notifier,
-> 				       struct v4l2_async_subdev *asd)
->
-> Similar warnings appear on other places:
-> CHECK: Lines should not end with a '('
-> #102: FILE: drivers/media/v4l2-core/v4l2-async.c:362:
-> +static bool v4l2_async_notifier_has_async_subdev(
->
-> CHECK: Lines should not end with a '('
-> #141: FILE: drivers/media/v4l2-core/v4l2-async.c:410:
-> +			if (v4l2_async_notifier_has_async_subdev(
-
-Will fix.
-
->
-> Btw, Checkpatch also complains that the author's email is different
-> than the SOB's one:
->
-> WARNING: Missing Signed-off-by: line by nominal patch author 'Steve Longerbeam <slongerbeam@gmail.com>'
->
-> (the some comes with Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>)
->
-> I suspect that other patches on this series will suffer from the same issue.
-
-Will fix when submitting v7.
-
-> <snip>
->
->> @@ -392,12 +406,11 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
->>   		case V4L2_ASYNC_MATCH_CUSTOM:
->>   		case V4L2_ASYNC_MATCH_DEVNAME:
->>   		case V4L2_ASYNC_MATCH_I2C:
->> -			break;
->>   		case V4L2_ASYNC_MATCH_FWNODE:
->> -			if (v4l2_async_notifier_fwnode_has_async_subdev(
->> -				    notifier, asd->match.fwnode, i)) {
->> +			if (v4l2_async_notifier_has_async_subdev(
->> +				    notifier, asd, i)) {
->>   				dev_err(dev,
->> -					"fwnode has already been registered or in notifier's subdev list\n");
->> +					"asd has already been registered or in notifier's subdev list\n");
-> Please, never use "asd" on messages printed to the user. While someone
-> may understand it while reading the source code, for a poor use,
-> "asd" is just a random sequence of 3 characters.
-
-I will change the message to read:
-
-"subdev descriptor already listed in this or other notifiers".
-
-
-Steve
+-- 
+Sincerely yours,
+Mike.
 
