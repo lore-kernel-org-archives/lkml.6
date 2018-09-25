@@ -2,110 +2,330 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D45C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B06C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94B682098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:49:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94B682098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 431142098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431142098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbeIYV5G (ORCPT
+        id S1729768AbeIYV6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:57:06 -0400
-Received: from smtprelay0146.hostedemail.com ([216.40.44.146]:39249 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729306AbeIYV5G (ORCPT
+        Tue, 25 Sep 2018 17:58:35 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:57537 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729544AbeIYV6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:57:06 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 9ADA618224D78;
-        Tue, 25 Sep 2018 15:48:58 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hose92_4dc532eec9b2a
-X-Filterd-Recvd-Size: 2724
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 25 Sep 2018 15:48:54 +0000 (UTC)
-Message-ID: <a729cfd1102ef280650074dd8bec32c6b12636db.camel@perches.com>
-Subject: Re: [PATCH v4 0/4] devres: provide and use devm_kstrdup_const()
-From:   Joe Perches <joe@perches.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org
-Date:   Tue, 25 Sep 2018 08:48:52 -0700
-In-Reply-To: <c25df148-718a-d29d-9c1d-20701a0e4534@arm.com>
-References: <20180925124629.20710-1-brgl@bgdev.pl>
-         <c25df148-718a-d29d-9c1d-20701a0e4534@arm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        Tue, 25 Sep 2018 17:58:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 57A7441579;
+        Tue, 25 Sep 2018 15:50:26 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 9PfqhvOFxRhr; Tue, 25 Sep 2018 15:50:26 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id B211240DBD;
+        Tue, 25 Sep 2018 15:50:19 +0000 (UTC)
+Subject: Re: [PATCH] selftests: watchdog: Add gettimeout and get|set
+ pretimeout
+To:     Jerry.Hoemann@hpe.com
+Cc:     erosca@de.adit-jv.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <1537570526-65241-1-git-send-email-jerry.hoemann@hpe.com>
+ <0c6376ec-a3f4-7798-8f30-829480c41f79@kernel.org>
+ <20180924014750.GA22296@anatevka.americas.hpqcorp.net>
+ <1c4e6b40-dc4e-5706-0a31-1741ba19ca09@kernel.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <f8616e56-004a-e296-0f84-8ebd019ad027@kernel.org>
+Date:   Tue, 25 Sep 2018 09:50:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1c4e6b40-dc4e-5706-0a31-1741ba19ca09@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-25 at 13:51 +0100, Robin Murphy wrote:
-> On 25/09/18 13:46, Bartosz Golaszewski wrote:
-> > This series implements devm_kstrdup_const() together with some
-> > prerequisite changes and uses it in pmc-atom driver.
+On 09/24/2018 02:42 PM, Shuah Khan wrote:
+> On 09/23/2018 07:47 PM, Jerry Hoemann wrote:
+>> On Fri, Sep 21, 2018 at 05:42:00PM -0600, Shuah Khan wrote:
+>>> Hi Jerry,
+>>>
+>>> Thanks for the patch. A few comments below:
+>>
+>>   Replies inline.
+>>
+>>>
+>>> On 09/21/2018 04:55 PM, Jerry Hoemann wrote:
+>>>> Add command line arguments to call ioctl WDIOC_GETTIMEOUT,
+>>>> WDIOC_GETPRETIMEOUT and WDIOC_SETPRETIMEOUT.
+>>>>
+>>>> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+>>>> ---
+>>>>  tools/testing/selftests/watchdog/watchdog-test.c | 30 +++++++++++++++++++++++-
+>>>>  1 file changed, 29 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+>>>> index 6e29087..4861e2c 100644
+>>>> --- a/tools/testing/selftests/watchdog/watchdog-test.c
+>>>> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
+>>>> @@ -19,7 +19,7 @@
+>>>>  
+>>>>  int fd;
+>>>>  const char v = 'V';
+>>>> -static const char sopts[] = "bdehp:t:";
+>>>> +static const char sopts[] = "bdehp:t:Tn:N";
+>>>>  static const struct option lopts[] = {
+>>>>  	{"bootstatus",          no_argument, NULL, 'b'},
+>>>>  	{"disable",             no_argument, NULL, 'd'},
+>>>> @@ -27,6 +27,9 @@
+>>>>  	{"help",                no_argument, NULL, 'h'},
+>>>>  	{"pingrate",      required_argument, NULL, 'p'},
+>>>>  	{"timeout",       required_argument, NULL, 't'},
+>>>> +	{"gettimeout",          no_argument, NULL, 'T'},
+>>>> +	{"pretimeout",    required_argument, NULL, 'n'},
+>>>> +	{"getpretimeout",       no_argument, NULL, 'N'},
+>>>>  	{NULL,                  no_argument, NULL, 0x0}
+>>>>  };
+>>>>  
+>>>> @@ -71,6 +74,9 @@ static void usage(char *progname)
+>>>>  	printf(" -h, --help          Print the help message\n");
+>>>>  	printf(" -p, --pingrate=P    Set ping rate to P seconds (default %d)\n", DEFAULT_PING_RATE);
+>>>>  	printf(" -t, --timeout=T     Set timeout to T seconds\n");
+>>>> +	printf(" -T, --gettimeout    Get the timeout\n");
+>>>> +	printf(" -n, --pretimeout    Set the pretimeout to T seconds\n");
+>>>> +	printf(" -N, --getpretimeout Get the pretimeout\n");
+>>>
+>>> How are the new arguments used?
+>>
+>> I forgot the param.  Should be:
+>>
+>>     +	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
+>>
+>>
+>> I'll update in v2.
 > 
-> Is anyone expecting me to review this series,
+> Okay.
+> 
+>>
+>> Is this what you mean?  Or did I misunderstand?
+>>>
+>>>
+>>>>  	printf("\n");
+>>>>  	printf("Parameters are parsed left-to-right in real-time.\n");
+>>>>  	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
+>>>
+>>> Please add an example usage for each of these new arguments.
+>>
+>> Will do.
+> 
+> okay.
+> 
+>>
+>>>
+>>>> @@ -135,6 +141,28 @@ int main(int argc, char *argv[])
+>>>>  			else
+>>>>  				printf("WDIOC_SETTIMEOUT errno '%s'\n", strerror(errno));
+>>>>  			break;
+>>>> +		case 'T':
+>>>> +			ret = ioctl(fd, WDIOC_GETTIMEOUT, &flags);
+>>>> +			if (!ret)
+>>>> +				printf("Watchdog timeout set to %u seconds.\n", flags);
+>>>
+>>> It would good to make this message different from the WDIOC_SETTIMEOUT message.
+>>> Please update it to reflect that this is the result of a WDIOC_GETTIMEOUT.
+>>
+>> Will update message to make distinct.
+>>
+>>>
+>>> What would user intend to do with this GETTIMEOUT? Shouldn't this be the case that it
+>>> prints the current value and exits instead of the same logic as SETTIMEOUT option?
+>>
+>> Are you suggesting setting the "oneshot" flag so the test app doesn't actually
+>> go into the while(1) keep_alive loop?
+>>
+>> Watchdog drivers may adjust the requested value to match hardware constraints.
+>> Callers of set timeout (and set pretimeout) should call get timeout to see what
+>> value was actually set.
+>>
+>> B/c of above, I just got into the habit of specifying both flags: first set,
+>> then get to make sure value set was what I intended.
+>>
+>> But I can make the "Get" a one shot.  Just let me know if this is your preference.
+> 
+> I prefer that both GETs be oneshot. GETs should just print the current value and go
+> follow oneshot path. It doesn't make sense for them to do more.
+>>
+>>
+>>>
+>>>> +			else
+>>>> +				printf("WDIOC_GETTIMEOUT errno '%s'\n", strerror(errno))
+>>>
+>>> Shouldn't this error be an exit condition?
+>>
+>> Hmmm, I don't see this error path much different than the error path for the
+>> other failing ioctl.  Am I missing something?
+> 
+> Yeah that is what I don't understand with the new code as well as the existing.
+> Shouldn't error path be handled differently. What is the point in doing more
+> other than gracefully exit closing the file? I don't think existing error paths
+> are doing this, probably they should.
+>>
+>>
+>> But, If we make the "GET" a one shot, then we wouldn't really need to
+>> special case the failure case as we wouldn't go into the keep_alive
+>> loop in either case.
+>>
+>>
+> 
+> Right.
+> 
+>>
+>>>
+>>>> +			break;
+>>>> +		case 'n':
+>>>> +			flags = strtoul(optarg, NULL, 0);
+>>>> +			ret = ioctl(fd, WDIOC_SETPRETIMEOUT, &flags);
+>>>> +			if (!ret)
+>>>> +				printf("Watchdog pretimeout set to %u seconds.\n", flags);
+>>>> +			else
+>>>> +				printf("WDIOC_SETPRETIMEOUT errno '%s'\n", strerror(errno));
+>>>> +			break;
+>>>> +		case 'N':
+>>>> +			ret = ioctl(fd, WDIOC_GETPRETIMEOUT, &flags);
+>>>> +			if (!ret)
+>>>> +				printf("Watchdog pretimeout set to %u seconds.\n", flags);
+>>>
+>>> It would good to make this message different from the WDIOC_GETPRETIMEOUT message.
+>>> Please update it to reflect that this is the result of a WDIOC_GETPRETIMEOUT
+>>
+>> will do.
+>>
+> 
+> Okay.
+> 
+>>>
+>>> What would user intend to do with this GETTIMEOUT? Shouldn't this be the case that it
+>>> prints the current value and exits instead of the same logic as WDIOC_SETPRETIMEOUT?
+>>
+>> I think you're just asking me to set the "oneshot" flag on this,
+>> which I can certainly do.
+> 
+> Correct. For couple of reasons. GET/SET_PRETIMEOUG might not be supported on all
+> platforms/drivers. It would make sense to handle error paths correctly.
+> 
+>>
+>> But, some background on pretimeout that (I think) is interesting:
+>>
+>> The underling HW for the watchdog on proliants allows for the pre-timeout to
+>> be enabled or disabled.  But if the pretimeout is enabled, the value of
+>> the pretimeout is hard coded by HW (9 seconds.)
+>>
+>> The hpwdt driver allows for setting pretimeout by passing in a value
+>> 	0 < pretimeout < timeout
+>> to enable a pretimeout.  The user then needs to call get pretimeout to
+>> determine the actual value.
+>>
+>> Failure to take into account the pretimeout when pinging the WD can lead to
+>> unexpected system crashes.
+>>
+>> I've handled the following issue multiple times:
+>>
+>> A user wants to set the timeout to value T and ping the WD every T/2 seconds.
+>> He fails to take into account the pretimeout value of P.  The system crashes
+>> with the pretimeout NMI when (T/2) < P.
+>>
+>> The basic misunderstanding is that to prevent the WD from acting, the WD
+>> only needs to be pinged at least once every T seconds, when in actuality the
+>> WD needs to be pinged at least once every (T-P) seconds.
+>>
+>> Specifically for Proliants, I've seen people set the timeout to 10 seconds
+>> thinking they had plenty of time to ping the WD only to be surprised when
+>> the pretimeout NMI takes the system down 1 second later.
+> 
+> In this case, this patch really doesn't solve the problem. You will still run
+> into this problem if user does a set. You are providing a way to check pretimeout,
+> however that is a separate operation. So I am not clear on how this patch solves
+> the issue of pretimeout NMI takes the system down.
+> 
+>>
+>> Note: a WD doesn't need to support the pretimeout feature.
+> 
+> It isn't clear what this means?
+> 
+>>
+>>>
+>>>> +			else
+>>>> +				printf("WDIOC_GETPRETIMEOUT errno '%s'\n", strerror(errno));
+>>>
+>>> Shouldn't this error be an exit condition?
+>>
+>> Similar to above.  I can make GETPRETIMEOUT a "oneshot" to handle both the
+>> success/failing case of the ioctl call.
+>>
+>>>
+>>>> +			break;
+>>>>  		default:
+>>>>  			usage(argv[0]);
+>>>>  			goto end;
+>>>>
+>>>
+>>> Also can you run this test as normal user?
+>>
+>> No.  Must be run as root to open /dev/watchdog.  When /dev/watchdog is opened, the
+>> WD is started and if not updated properly, the system will crash.
+> 
+> Hmm. I don't understand why the system would panic if non-root user can't open the
+> device, at least in the context of this test. 
+> 
+>         fd = open("/dev/watchdog", O_WRONLY);
+> 
+>         if (fd == -1) {
+>                 printf("Watchdog device not enabled.\n");
+>                 exit(-1);
+>         }
+> 
+> 
+> Shouldn't it just exit based on the code above?
+> 
+>>
+> 
+>> "cat /dev/watchdog" is one of my favorite ways to crash a system.  :)  :)
+> 
+> That doesn't sound great, if a non-root user can bring the system down!!
+>  
 
-Probably not.
+This got me concerned enough that I tried this with softdog. It behaved just
+the way I expected it.
 
-> or am I just here because 
-> I once made a couple of entirely unrelated changes to device.h?
+cat /dev/watchdog
+cat: /dev/watchdog: Permission denied
 
-Most likely yes.
+Running the test as non-root does the following as per the current logic.
 
-It is likely that Bartosz should update his use of the
-get_maintainer.pl script to add "--nogit --nogit-fallback"
-so drive-by patch submitters are not also cc'd on these
-sorts of series.
+watchdog-test -b
+Watchdog device not enabled.
 
-$ ./scripts/get_maintainer.pl -f \
-	drivers/base/devres.c \
-	drivers/mailbox/tegra-hsp.c \
-	include/asm-generic/sections.h \
-	include/linux/device.h \
-	mm/util.c | \
-  wc -l
-26
+I think this logic could be improved to detect that a non-root user is running
+the test and print appropriate message.
 
-$ ./scripts/get_maintainer.pl -f --nogit --nogit-fallback \
-	drivers/base/devres.c \
-	drivers/mailbox/tegra-hsp.c \
-	include/asm-generic/sections.h \
-	include/linux/device.h \
-	mm/util.c | \
-  wc -l
-10
+However, I am not seeing the behavior you are describing that "cat /dev/watchdog"
+panics the syste. Did you mean running a root which is expected unless you terminate
+before the timeout? If you are seeing this as non-root user on you system, the
+watchdog driver could be suspect.
 
+thanks,
+-- Shuah
 
