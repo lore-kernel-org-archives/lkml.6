@@ -2,181 +2,147 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D88C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280CAC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F12E20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6DCE214DC
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:21:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KMvNWM2U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F12E20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SuAgZKhy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6DCE214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeIZBZs (ORCPT
+        id S1728213AbeIZBaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 21:25:48 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43254 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbeIZBZs (ORCPT
+        Tue, 25 Sep 2018 21:30:15 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50646 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727604AbeIZBaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 21:25:48 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z14-v6so7003110wrs.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 12:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=3GHDbgTe9TRc7fBRyhh4rsmV5dkMzK8mTT+8wkI8zjs=;
-        b=KMvNWM2Uhqpk1m6WDXSv6ZT7XHeQWfT0zTMgzM9wwk0VYyg+81NfJdRmPPzVepUBML
-         SD5hXglpnha1LPG7NgXz2KwN7nMTD2j7zL8Az3Z5Pwx1UXo4LdrNGU4Md7h2YRlBjgr3
-         Axan66GAkvfWUSC09Tb/DqJ5su5QW54LrIf/K90xSwvFjGgFYLis9ZSWjz/4Cpv7ClJl
-         Rlt844zn1HgvSS4dU4BMdQNedUk7hU8hVwKQJWOW9YU6JIGIZ73Ls5+q3qzovsCiSyQO
-         vsmR7dn17Ug19T+kSL/WLWLOZXCQ9K5eZjI2aV05xEPw97EKetxSTInT5KgsPmDCTuqW
-         6zLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=3GHDbgTe9TRc7fBRyhh4rsmV5dkMzK8mTT+8wkI8zjs=;
-        b=ZLWd+dIARq8s6+kafQ8z1NdxPK4xFLf5fMJu+AaL6LzhuhiEreO9l6NmsXFBxuJGiU
-         JAv7wB0VRhE+/swqT3X84hR6TuSBdngmt/1ON2wR/oVZe3Fp8VuhRjET8xztwuylduZM
-         w/RFD8SXHE+ElWaZs19ceiAXpS3yCPdeGOSV0HWQoTvvySrY5GN/m7zwBrMvopU9B1TK
-         vcEb8NfXvvaj6o2NPzviPdTjDBM5Hs3n/DW/YuvOMMMhq561T18HJijo5+zPEc9sQgRU
-         +pBdkPIKACj6TLEbRiHtqqoPk0w2yTTpB2/eNH+N1huWura6qIEnw7k6k6QcobgLai80
-         E0dg==
-X-Gm-Message-State: ABuFfohNkMgoVwrOTTToXxi9FIpym/iHoElLN0S7uy8IlOENtrhP6xND
-        t56ENXScEzL/30Awv5sI0E1JtQ==
-X-Google-Smtp-Source: ACcGV60l/Bq1qf0Fv2PcJUBRglPGvuvjlX2z5RkOFTjNqQLn2iew21Avap2IBBJMkpFRLHSmp5dLXg==
-X-Received: by 2002:adf:b2d7:: with SMTP id g81-v6mr2278868wrd.48.1537903006271;
-        Tue, 25 Sep 2018 12:16:46 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id c19-v6sm3469361wre.86.2018.09.25.12.16.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Sep 2018 12:16:45 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     airlied@linux.ie, tomi.valkeinen@ti.com, andy.gross@ti.com,
-        clabbe@baylibre.com
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: omap: remove unused header tcm-sita.h
-Date:   Tue, 25 Sep 2018 19:16:37 +0000
-Message-Id: <1537902997-19949-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 25 Sep 2018 21:30:15 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8PJJaw5178949;
+        Tue, 25 Sep 2018 19:19:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=UxeIa//Ou3UL5jmr23lEWhIIgb6QhdPU7XLgkk0//F0=;
+ b=SuAgZKhyUwbJ/jEXFj97GBvjlCRja/El0+HeD0iPJiaJBzXTUvOIFJhWy6LhSNz4b8AY
+ 4ksu5SfIfN9tbRwfWe25bRJhyqCs9200kXCtiUJTzOhhFvlrXpuO3NsQeksi3GgSsILM
+ NbAGslKHsp/U+iIRp1lPPu7Pli2UamVWqi+xDaQnw/UUIlhDkFL3DEAzbLj+YVZcs/MA
+ DJYbzccgpqAUq39CY1zonfisrVNGiHp4biw/6U9xfozpdKCHKR5Z8y+rYzyWWJWCVO/x
+ SUKuDo9vCf/irf72y/p0cHEwjnXSsElcQK1Wm9UnW/YTA71meALAO+hFF2Da3xQnTLLz yw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mnd5teaj1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Sep 2018 19:19:58 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8PJJuAc006930
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Sep 2018 19:19:57 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8PJJp2h005278;
+        Tue, 25 Sep 2018 19:19:51 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Sep 2018 12:19:51 -0700
+Date:   Tue, 25 Sep 2018 12:19:53 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Huang Ying <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -V5 RESEND 03/21] swap: Support PMD swap mapping in
+ swap_duplicate()
+Message-ID: <20180925191953.4ped5ki7u3ymafmd@ca-dmjordan1.us.oracle.com>
+References: <20180925071348.31458-1-ying.huang@intel.com>
+ <20180925071348.31458-4-ying.huang@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925071348.31458-4-ying.huang@intel.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9027 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809250190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcm-sita.h is unused since commit 0d6fa53fd805 ("drm/omap: Use bitmaps for TILER placement")
-Let's remove it.
+On Tue, Sep 25, 2018 at 03:13:30PM +0800, Huang Ying wrote:
+> @@ -3487,35 +3521,66 @@ static int __swap_duplicate_locked(struct swap_info_struct *p,
+>  }
+>  
+>  /*
+> - * Verify that a swap entry is valid and increment its swap map count.
+> + * Verify that the swap entries from *entry is valid and increment their
+> + * PMD/PTE swap mapping count.
+>   *
+>   * Returns error code in following case.
+>   * - success -> 0
+>   * - swp_entry is invalid -> EINVAL
+> - * - swp_entry is migration entry -> EINVAL
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/gpu/drm/omapdrm/tcm-sita.h | 93 --------------------------------------
- 1 file changed, 93 deletions(-)
- delete mode 100644 drivers/gpu/drm/omapdrm/tcm-sita.h
+I'm assuming it wasn't possible to hit this error before this patch, and you're
+just removing it now since you're in the area?
 
-diff --git a/drivers/gpu/drm/omapdrm/tcm-sita.h b/drivers/gpu/drm/omapdrm/tcm-sita.h
-deleted file mode 100644
-index 460e63dbf825..000000000000
---- a/drivers/gpu/drm/omapdrm/tcm-sita.h
-+++ /dev/null
-@@ -1,93 +0,0 @@
--/*
-- * SImple Tiler Allocator (SiTA) private structures.
-- *
-- * Copyright (C) 2009-2011 Texas Instruments Incorporated - http://www.ti.com/
-- * Author: Ravi Ramachandra <r.ramachandra@ti.com>
-- *
-- * All rights reserved.
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- * * Redistributions of source code must retain the above copyright
-- *   notice, this list of conditions and the following disclaimer.
-- *
-- * * Redistributions in binary form must reproduce the above copyright
-- *   notice, this list of conditions and the following disclaimer in the
-- *   documentation and/or other materials provided with the distribution.
-- *
-- * * Neither the name of Texas Instruments Incorporated nor the names of
-- *   its contributors may be used to endorse or promote products derived
-- *   from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- */
--
--#ifndef _TCM_SITA_H
--#define _TCM_SITA_H
--
--#include "tcm.h"
--
--/* length between two coordinates */
--#define LEN(a, b) ((a) > (b) ? (a) - (b) + 1 : (b) - (a) + 1)
--
--enum criteria {
--	CR_MAX_NEIGHS		= 0x01,
--	CR_FIRST_FOUND		= 0x10,
--	CR_BIAS_HORIZONTAL	= 0x20,
--	CR_BIAS_VERTICAL	= 0x40,
--	CR_DIAGONAL_BALANCE	= 0x80
--};
--
--/* nearness to the beginning of the search field from 0 to 1000 */
--struct nearness_factor {
--	s32 x;
--	s32 y;
--};
--
--/*
-- * Statistics on immediately neighboring slots.  Edge is the number of
-- * border segments that are also border segments of the scan field.  Busy
-- * refers to the number of neighbors that are occupied.
-- */
--struct neighbor_stats {
--	u16 edge;
--	u16 busy;
--};
--
--/* structure to keep the score of a potential allocation */
--struct score {
--	struct nearness_factor	f;
--	struct neighbor_stats	n;
--	struct tcm_area		a;
--	u16    neighs;		/* number of busy neighbors */
--};
--
--struct sita_pvt {
--	spinlock_t lock;	/* spinlock to protect access */
--	struct tcm_pt div_pt;	/* divider point splitting container */
--	struct tcm_area ***map;	/* pointers to the parent area for each slot */
--};
--
--/* assign coordinates to area */
--static inline
--void assign(struct tcm_area *a, u16 x0, u16 y0, u16 x1, u16 y1)
--{
--	a->p0.x = x0;
--	a->p0.y = y0;
--	a->p1.x = x1;
--	a->p1.y = y1;
--}
--
--#endif
--- 
-2.16.4
+>   * - swap-cache reference is requested but there is already one. -> EEXIST
+>   * - swap-cache reference is requested but the entry is not used. -> ENOENT
+>   * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
+> + * - the huge swap cluster has been split. -> ENOTDIR
 
+Strangely intuitive choice of error code :)
+
+>  /*
+>   * Increase reference count of swap entry by 1.
+> - * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
+> - * but could not be atomically allocated.  Returns 0, just as if it succeeded,
+> - * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
+> - * might occur if a page table entry has got corrupted.
+> + *
+> + * Return error code in following case.
+> + * - success -> 0
+> + * - swap_count_continuation is required but could not be atomically allocated.
+> + *   *entry is used to return swap entry to call add_swap_count_continuation().
+> + *								      -> ENOMEM
+> + * - otherwise same as __swap_duplicate()
+>   */
+> -int swap_duplicate(swp_entry_t entry)
+> +int swap_duplicate(swp_entry_t *entry, int entry_size)
+>  {
+>  	int err = 0;
+>  
+> -	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
+> -		err = add_swap_count_continuation(entry, GFP_ATOMIC);
+> +	while (!err &&
+> +	       (err = __swap_duplicate(entry, entry_size, 1)) == -ENOMEM)
+> +		err = add_swap_count_continuation(*entry, GFP_ATOMIC);
+>  	return err;
+
+Now we're returning any error we get from __swap_duplicate, apparently to
+accommodate ENOTDIR later in the series, which is a change from the behavior
+introduced in 570a335b8e22 ("swap_info: swap count continuations").  This might
+belong in a separate patch given its potential for side effects.
+
+Although, I don't understand why 570a335b8e22 ignored errors other than -ENOMEM
+when both swap_duplicate callers _seem_ from a quick read to be able to respond
+gracefully to any error.
