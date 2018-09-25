@@ -2,137 +2,335 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5EFC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFF7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8789420842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8789420842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BC12920842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:11:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC12920842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729181AbeIYSSa (ORCPT
+        id S1729042AbeIYSR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:18:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:49890 "EHLO foss.arm.com"
+        Tue, 25 Sep 2018 14:17:59 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:38764 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729162AbeIYSS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:18:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18B8880D;
-        Tue, 25 Sep 2018 05:11:14 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D768E3F5B7;
-        Tue, 25 Sep 2018 05:11:11 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 13:11:04 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Christophe LEROY <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        id S1729000AbeIYSR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:17:59 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42KKfC1vQQz9ttS8;
+        Tue, 25 Sep 2018 14:10:43 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id cxNwAZCok8cf; Tue, 25 Sep 2018 14:10:43 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42KKfC06w9z9ttS2;
+        Tue, 25 Sep 2018 14:10:43 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 89FE78B7DB;
+        Tue, 25 Sep 2018 14:10:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id uckaFI0TSKXP; Tue, 25 Sep 2018 14:10:42 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CC0AA8B7D7;
+        Tue, 25 Sep 2018 14:10:41 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 9AA0B70AF2; Tue, 25 Sep 2018 12:10:41 +0000 (UTC)
+Message-Id: <7e4ec9da90f1a2939fc3be71e86e5910133dd9f6.1537877134.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1537877134.git.christophe.leroy@c-s.fr>
+References: <cover.1537877134.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v2 3/9] powerpc: clear redundancies in asm-offset.c
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com, npiggin@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 1/9] timer: fix circular header dependency
-Message-ID: <20180925121104.zrz4m45sbnt5h2ht@lakrids.cambridge.arm.com>
-References: <cover.1537802981.git.christophe.leroy@c-s.fr>
- <72d3e8c38f729dc22cb3235319b72f96190e01ee.1537802981.git.christophe.leroy@c-s.fr>
- <5c9530da-f5c8-e0b2-61ab-294a0da7f3fc@c-s.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5c9530da-f5c8-e0b2-61ab-294a0da7f3fc@c-s.fr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        aneesh.kumar@linux.vnet.ibm.com, npiggin@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 25 Sep 2018 12:10:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 07:34:15AM +0200, Christophe LEROY wrote:
-> 
-> 
-> Le 24/09/2018 à 17:52, Christophe Leroy a écrit :
-> > When switching powerpc to CONFIG_THREAD_INFO_IN_TASK, include/sched.h
-> > has to be included in asm/smp.h for the following change, in order
-> > to avoid uncomplete definition of task_struct:
-> > 
-> > -#define raw_smp_processor_id() (current_thread_info()->cpu)
-> > +#define raw_smp_processor_id() (current->cpu)
-> > 
-> > But this generates the following compilation error, due to circular
-> > header dependency.
-> > 
-> >    CC      kernel/time/alarmtimer.o
-> > In file included from ./arch/powerpc/include/asm/smp.h:31,
-> >                   from ./include/linux/smp.h:64,
-> >                   from ./include/linux/percpu.h:7,
-> >                   from ./include/linux/hrtimer.h:22,
-> >                   from kernel/time/alarmtimer.c:19:
-> > ./include/linux/sched.h:558:19: error: field 'dl_timer' has incomplete type
-> >    struct hrtimer   dl_timer;
-> >                     ^~~~~~~~
-> > ./include/linux/sched.h:567:17: error: field 'inactive_timer' has incomplete type
-> >    struct hrtimer inactive_timer;
-> >                   ^~~~~~~~~~~~~~
-> > make[1]: *** [kernel/time/alarmtimer.o] Error 1
-> > make: *** [kernel/time/alarmtimer.o] Error 2
-> > 
-> >    CC      fs/timerfd.o
-> > In file included from ./arch/powerpc/include/asm/smp.h:31,
-> >                   from ./include/linux/smp.h:64,
-> >                   from ./include/linux/percpu.h:7,
-> >                   from ./include/linux/hrtimer.h:22,
-> >                   from ./include/linux/alarmtimer.h:6,
-> >                   from fs/timerfd.c:12:
-> > ./include/linux/sched.h:558:19: error: field 'dl_timer' has incomplete type
-> >    struct hrtimer   dl_timer;
-> >                     ^~~~~~~~
-> > ./include/linux/sched.h:567:17: error: field 'inactive_timer' has incomplete type
-> >    struct hrtimer inactive_timer;
-> >                   ^~~~~~~~~~~~~~
-> > make[1]: *** [fs/timerfd.o] Error 1
-> > make: *** [fs/timerfd.o] Error 2
-> > 
-> > This patch fixes it by including linux/hrtimer.h after linux/sched.h
-> > 
-> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> > ---
-> >   Should it be fixed in powerpc instead ? In that case, how ? Any idea ?
-> 
-> 
-> Looks like there are several other places where the problem occurs, so it
-> has to be fixed in the powerpc headers instead.
-> 
-> Seems like RISC arch faced the same issue, and fixed it the following way:
-> 
-> /*
->  * This is particularly ugly: it appears we can't actually get the
-> definition
->  * of task_struct here, but we need access to the CPU this task is running
-> on.
->  * Instead of using C we're using asm-offsets.h to get the current processor
->  * ID.
->  */
-> #define raw_smp_processor_id() (*((int*)((char*)get_current() +
-> TASK_TI_CPU)))
-> 
-> 
-> Unless someone has a better idea, I'll fixed it that way.
+In order to be able to include asm-offset.h in smp.h for PPC32,
+all definitions which are conflicting with C need new names.
 
-To solve this on arm64 we made the cpu number a percpu variable; see
-commit:
+TASK_SIZE is nowhere used in asm.
 
-  57c82954e77fa12c ("arm64: make cpu number a percpu variable")
+PPC_DBELL_SERVER_SERVER and PPC_DBELL_SERVER_MSGTYPE are only
+needed on PPC64 in asm.
 
-IIUC, you could do that by placing it in paca_struct.
+MAS0 ... MAS7 conflict with 'struct tlbcam' fields.
 
-Thanks,
-Mark.
+NSEC_PER_SEC, PGD_TABLE_SIZE, PGD_T_LOG2 and PTE_T_LOG2
+conflict with themselves.
+
+This patch:
+- Removes TASK_SIZE
+- Encloses PPC_DBELL_SERVER_... in #ifdef CONFIG_PPC64
+- Adds ASM_PTE_SHIFT as its definition uses PTE_T_LOG2
+- Adds ASM_PGDIR_SHIFT as its definition uses PGD_T_LOG2
+- Prefixes all other with ASM_
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/mmu-44x.h        |  8 ++++----
+ arch/powerpc/kernel/asm-offsets.c         | 27 +++++++++++++++------------
+ arch/powerpc/kernel/entry_32.S            | 22 +++++++++++-----------
+ arch/powerpc/kernel/head_32.S             |  2 +-
+ arch/powerpc/kernel/head_40x.S            |  2 +-
+ arch/powerpc/kernel/head_44x.S            |  2 +-
+ arch/powerpc/kernel/head_64.S             |  2 +-
+ arch/powerpc/kernel/head_8xx.S            |  2 +-
+ arch/powerpc/kernel/head_fsl_booke.S      |  2 +-
+ arch/powerpc/kernel/vdso32/gettimeofday.S |  4 ++--
+ 10 files changed, 38 insertions(+), 35 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/mmu-44x.h b/arch/powerpc/include/asm/mmu-44x.h
+index 295b3dbb2698..c9a355944f9e 100644
+--- a/arch/powerpc/include/asm/mmu-44x.h
++++ b/arch/powerpc/include/asm/mmu-44x.h
+@@ -145,9 +145,9 @@ typedef struct {
+ 
+ #define mmu_linear_psize	MMU_PAGE_256M
+ 
+-#define PPC44x_PGD_OFF_SHIFT	(32 - PGDIR_SHIFT + PGD_T_LOG2)
+-#define PPC44x_PGD_OFF_MASK_BIT	(PGDIR_SHIFT - PGD_T_LOG2)
+-#define PPC44x_PTE_ADD_SHIFT	(32 - PGDIR_SHIFT + PTE_SHIFT + PTE_T_LOG2)
+-#define PPC44x_PTE_ADD_MASK_BIT	(32 - PTE_T_LOG2 - PTE_SHIFT)
++#define PPC44x_PGD_OFF_SHIFT	(32 - ASM_PGDIR_SHIFT + ASM_PGD_T_LOG2)
++#define PPC44x_PGD_OFF_MASK_BIT	(ASM_PGDIR_SHIFT - ASM_PGD_T_LOG2)
++#define PPC44x_PTE_ADD_SHIFT	(32 - ASM_PGDIR_SHIFT + ASM_PTE_SHIFT + ASM_PTE_T_LOG2)
++#define PPC44x_PTE_ADD_MASK_BIT	(32 - ASM_PTE_T_LOG2 - ASM_PTE_SHIFT)
+ 
+ #endif /* _ASM_POWERPC_MMU_44X_H_ */
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+index d1f161e48945..3c649a6529eb 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -322,14 +322,14 @@ int main(void)
+ #if defined(CONFIG_PPC32)
+ #if defined(CONFIG_BOOKE) || defined(CONFIG_40x)
+ 	DEFINE(EXC_LVL_SIZE, STACK_EXC_LVL_FRAME_SIZE);
+-	DEFINE(MAS0, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas0));
++	DEFINE(ASM_MAS0, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas0));
+ 	/* we overload MMUCR for 44x on MAS0 since they are mutually exclusive */
+ 	DEFINE(MMUCR, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas0));
+-	DEFINE(MAS1, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas1));
+-	DEFINE(MAS2, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas2));
+-	DEFINE(MAS3, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas3));
+-	DEFINE(MAS6, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas6));
+-	DEFINE(MAS7, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas7));
++	DEFINE(ASM_MAS1, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas1));
++	DEFINE(ASM_MAS2, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas2));
++	DEFINE(ASM_MAS3, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas3));
++	DEFINE(ASM_MAS6, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas6));
++	DEFINE(ASM_MAS7, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, mas7));
+ 	DEFINE(_SRR0, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, srr0));
+ 	DEFINE(_SRR1, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, srr1));
+ 	DEFINE(_CSRR0, STACK_INT_FRAME_SIZE+offsetof(struct exception_regs, csrr0));
+@@ -354,7 +354,6 @@ int main(void)
+ 	OFFSET(pbe_next, pbe, next);
+ 
+ #ifndef CONFIG_PPC64
+-	DEFINE(TASK_SIZE, TASK_SIZE);
+ 	DEFINE(NUM_USER_SEGMENTS, TASK_SIZE>>28);
+ #endif /* ! CONFIG_PPC64 */
+ 
+@@ -399,7 +398,7 @@ int main(void)
+ 	DEFINE(CLOCK_MONOTONIC, CLOCK_MONOTONIC);
+ 	DEFINE(CLOCK_REALTIME_COARSE, CLOCK_REALTIME_COARSE);
+ 	DEFINE(CLOCK_MONOTONIC_COARSE, CLOCK_MONOTONIC_COARSE);
+-	DEFINE(NSEC_PER_SEC, NSEC_PER_SEC);
++	DEFINE(ASM_NSEC_PER_SEC, NSEC_PER_SEC);
+ 	DEFINE(CLOCK_REALTIME_RES, MONOTONIC_RES_NSEC);
+ 
+ #ifdef CONFIG_BUG
+@@ -407,9 +406,9 @@ int main(void)
+ #endif
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+-	DEFINE(PGD_TABLE_SIZE, (sizeof(pgd_t) << max(RADIX_PGD_INDEX_SIZE, H_PGD_INDEX_SIZE)));
++	DEFINE(ASM_PGD_TABLE_SIZE, (sizeof(pgd_t) << max(RADIX_PGD_INDEX_SIZE, H_PGD_INDEX_SIZE)));
+ #else
+-	DEFINE(PGD_TABLE_SIZE, PGD_TABLE_SIZE);
++	DEFINE(ASM_PGD_TABLE_SIZE, PGD_TABLE_SIZE);
+ #endif
+ 	DEFINE(PTE_SIZE, sizeof(pte_t));
+ 
+@@ -710,8 +709,10 @@ int main(void)
+ #endif
+ 
+ #ifdef CONFIG_44x
+-	DEFINE(PGD_T_LOG2, PGD_T_LOG2);
+-	DEFINE(PTE_T_LOG2, PTE_T_LOG2);
++	DEFINE(ASM_PGD_T_LOG2, PGD_T_LOG2);
++	DEFINE(ASM_PTE_T_LOG2, PTE_T_LOG2);
++	DEFINE(ASM_PTE_SHIFT, PTE_SHIFT);
++	DEFINE(ASM_PGDIR_SHIFT, PGDIR_SHIFT);
+ #endif
+ #ifdef CONFIG_PPC_FSL_BOOK3E
+ 	DEFINE(TLBCAM_SIZE, sizeof(struct tlbcam));
+@@ -769,8 +770,10 @@ int main(void)
+ 	STOP_SPR(STOP_MMCRA, mmcra);
+ #endif
+ 
++#ifdef CONFIG_PPC64
+ 	DEFINE(PPC_DBELL_SERVER, PPC_DBELL_SERVER);
+ 	DEFINE(PPC_DBELL_MSGTYPE, PPC_DBELL_MSGTYPE);
++#endif
+ 
+ #ifdef CONFIG_PPC_8xx
+ 	DEFINE(VIRT_IMMR_BASE, (u64)__fix_to_virt(FIX_IMMR_BASE));
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index 12c0721f65ea..83f3d3e977a9 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -74,18 +74,18 @@ debug_transfer_to_handler:
+ crit_transfer_to_handler:
+ #ifdef CONFIG_PPC_BOOK3E_MMU
+ 	mfspr	r0,SPRN_MAS0
+-	stw	r0,MAS0(r11)
++	stw	r0,ASM_MAS0(r11)
+ 	mfspr	r0,SPRN_MAS1
+-	stw	r0,MAS1(r11)
++	stw	r0,ASM_MAS1(r11)
+ 	mfspr	r0,SPRN_MAS2
+-	stw	r0,MAS2(r11)
++	stw	r0,ASM_MAS2(r11)
+ 	mfspr	r0,SPRN_MAS3
+-	stw	r0,MAS3(r11)
++	stw	r0,ASM_MAS3(r11)
+ 	mfspr	r0,SPRN_MAS6
+-	stw	r0,MAS6(r11)
++	stw	r0,ASM_MAS6(r11)
+ #ifdef CONFIG_PHYS_64BIT
+ 	mfspr	r0,SPRN_MAS7
+-	stw	r0,MAS7(r11)
++	stw	r0,ASM_MAS7(r11)
+ #endif /* CONFIG_PHYS_64BIT */
+ #endif /* CONFIG_PPC_BOOK3E_MMU */
+ #ifdef CONFIG_44x
+@@ -1115,13 +1115,13 @@ exc_exit_restart_end:
+ #define	RESTORE_MAS7
+ #endif /* CONFIG_PHYS_64BIT */
+ #define RESTORE_MMU_REGS						\
+-	lwz	r9,MAS0(r1);						\
+-	lwz	r10,MAS1(r1);						\
+-	lwz	r11,MAS2(r1);						\
++	lwz	r9,ASM_MAS0(r1);						\
++	lwz	r10,ASM_MAS1(r1);						\
++	lwz	r11,ASM_MAS2(r1);						\
+ 	mtspr	SPRN_MAS0,r9;						\
+-	lwz	r9,MAS3(r1);						\
++	lwz	r9,ASM_MAS3(r1);						\
+ 	mtspr	SPRN_MAS1,r10;						\
+-	lwz	r10,MAS6(r1);						\
++	lwz	r10,ASM_MAS6(r1);						\
+ 	mtspr	SPRN_MAS2,r11;						\
+ 	mtspr	SPRN_MAS3,r9;						\
+ 	mtspr	SPRN_MAS6,r10;						\
+diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+index dbb096c32332..0c380c7ab82c 100644
+--- a/arch/powerpc/kernel/head_32.S
++++ b/arch/powerpc/kernel/head_32.S
+@@ -1273,7 +1273,7 @@ EXPORT_SYMBOL(empty_zero_page)
+ 
+ 	.globl	swapper_pg_dir
+ swapper_pg_dir:
+-	.space	PGD_TABLE_SIZE
++	.space	ASM_PGD_TABLE_SIZE
+ 
+ /* Room for two PTE pointers, usually the kernel and current user pointers
+  * to their respective root page table.
+diff --git a/arch/powerpc/kernel/head_40x.S b/arch/powerpc/kernel/head_40x.S
+index 3088c9f29f5e..bc44775c442c 100644
+--- a/arch/powerpc/kernel/head_40x.S
++++ b/arch/powerpc/kernel/head_40x.S
+@@ -976,7 +976,7 @@ empty_zero_page:
+ EXPORT_SYMBOL(empty_zero_page)
+ 	.globl	swapper_pg_dir
+ swapper_pg_dir:
+-	.space	PGD_TABLE_SIZE
++	.space	ASM_PGD_TABLE_SIZE
+ 
+ /* Room for two PTE pointers, usually the kernel and current user pointers
+  * to their respective root page table.
+diff --git a/arch/powerpc/kernel/head_44x.S b/arch/powerpc/kernel/head_44x.S
+index 37e4a7cf0065..612c0d42ce1c 100644
+--- a/arch/powerpc/kernel/head_44x.S
++++ b/arch/powerpc/kernel/head_44x.S
+@@ -1262,7 +1262,7 @@ EXPORT_SYMBOL(empty_zero_page)
+  */
+ 	.globl	swapper_pg_dir
+ swapper_pg_dir:
+-	.space	PGD_TABLE_SIZE
++	.space	ASM_PGD_TABLE_SIZE
+ 
+ /*
+  * Room for two PTE pointers, usually the kernel and current user pointers
+diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
+index 4898e9491a1c..cf9437aafe58 100644
+--- a/arch/powerpc/kernel/head_64.S
++++ b/arch/powerpc/kernel/head_64.S
+@@ -1015,7 +1015,7 @@ start_here_common:
+ 
+ 	.globl	swapper_pg_dir
+ swapper_pg_dir:
+-	.space	PGD_TABLE_SIZE
++	.space	ASM_PGD_TABLE_SIZE
+ 
+ 	.globl	empty_zero_page
+ empty_zero_page:
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index e56e36aa2b3d..561e441c883d 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -1041,7 +1041,7 @@ EXPORT_SYMBOL(empty_zero_page)
+ 
+ 	.globl	swapper_pg_dir
+ swapper_pg_dir:
+-	.space	PGD_TABLE_SIZE
++	.space	ASM_PGD_TABLE_SIZE
+ 
+ /* Room for two PTE table poiners, usually the kernel and current user
+  * pointer to their respective root page table (pgdir).
+diff --git a/arch/powerpc/kernel/head_fsl_booke.S b/arch/powerpc/kernel/head_fsl_booke.S
+index 35d35067acf7..611426977693 100644
+--- a/arch/powerpc/kernel/head_fsl_booke.S
++++ b/arch/powerpc/kernel/head_fsl_booke.S
+@@ -1228,7 +1228,7 @@ empty_zero_page:
+ EXPORT_SYMBOL(empty_zero_page)
+ 	.globl	swapper_pg_dir
+ swapper_pg_dir:
+-	.space	PGD_TABLE_SIZE
++	.space	ASM_PGD_TABLE_SIZE
+ 
+ /*
+  * Room for two PTE pointers, usually the kernel and current user pointers
+diff --git a/arch/powerpc/kernel/vdso32/gettimeofday.S b/arch/powerpc/kernel/vdso32/gettimeofday.S
+index 1e0bc5955a40..cd77c6f22f8f 100644
+--- a/arch/powerpc/kernel/vdso32/gettimeofday.S
++++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
+@@ -82,8 +82,8 @@ V_FUNCTION_BEGIN(__kernel_clock_gettime)
+ 	mr	r11,r4			/* r11 saves tp */
+ 	bl	__get_datapage@local	/* get data page */
+ 	mr	r9,r3			/* datapage ptr in r9 */
+-	lis	r7,NSEC_PER_SEC@h	/* want nanoseconds */
+-	ori	r7,r7,NSEC_PER_SEC@l
++	lis	r7,ASM_NSEC_PER_SEC@h	/* want nanoseconds */
++	ori	r7,r7,ASM_NSEC_PER_SEC@l
+ 50:	bl	__do_get_tspec@local	/* get sec/nsec from tb & kernel */
+ 	bne	cr1,80f			/* not monotonic -> all done */
+ 
+-- 
+2.13.3
+
