@@ -2,67 +2,66 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F40E2C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 844FBC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8092098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BD4E2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:52:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vfu16rw+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8092098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1PW4HMZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD4E2098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbeIYT7z (ORCPT
+        id S1729247AbeIYUAJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 15:59:55 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35501 "EHLO
+        Tue, 25 Sep 2018 16:00:09 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:32775 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbeIYT7z (ORCPT
+        with ESMTP id S1727165AbeIYUAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 15:59:55 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y21-v6so7144923edr.2;
-        Tue, 25 Sep 2018 06:52:15 -0700 (PDT)
+        Tue, 25 Sep 2018 16:00:09 -0400
+Received: by mail-ed1-f68.google.com with SMTP id g26-v6so6268452edp.0;
+        Tue, 25 Sep 2018 06:52:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=+3kaufFxNCLWvZ9pjuwBRqfEAmHl8XQye5/chb9p0NY=;
-        b=vfu16rw+Ani0/JmD35meuowOfBdtG+fxcnL5ttGH6xBeoeMTTr89C1iavwaLVL4pZz
-         iPqA+Zk65PXaXduZA9RH7xom9nnYzIE1Z22fhhLhFUUFaU8JZzRt7kAilhOd6MrxKcyf
-         /qgZCm8bhIegNaC+qN8PZjYlA9W9iVqKqqOvcHxAUcpo5JIh+uJ7mTQId73KfuCcPGdw
-         c72/lrxt5NLe9D3XTL18tOMa+YedmkICXPW6FeR03hN6wTMmlICoEsIbPoDEV+35X2gU
-         oBlSS2I4VZfxdr2ey6zzg22GkdLortCd6kCFkbGNi2vFcdgpFg0cnrTtoVGnB9Rd96YH
-         1tpQ==
+        bh=Miv4H0D/5iaNIZG2tN8k+epWsqaNye0zy5Y8m76/nDY=;
+        b=e1PW4HMZapss5H8HUEu2AcEZ4EE9WEyEY15Jhynha/oT4WE2+lbEMUxgmpDW+GWZRI
+         lBXGkvtMRNTOBYJF29mMWotsaE+CO21skM7mfiZvz5SfkruxmVqBTxORIanK5ic/ZOvq
+         0RBGWUB152SQtgw56gGT4e+L4PRjVWyfAH5gGZJ8gWNqaahGjq1CyBqTzhA59Elz8ciG
+         4xghY2XDgXHgzGrj1zMI0XuqLZC3t305Pnsb4Jwo3QNLRBXsHQb6v/FOu7/t4nWSg2Nh
+         qfSIDt8goyTIi3N32VW/71FwcvLK2xhdvteSOdlBl6BgkfzLUNRfXN19NlSkGim1VO2A
+         tt3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=+3kaufFxNCLWvZ9pjuwBRqfEAmHl8XQye5/chb9p0NY=;
-        b=SYP/4LRP8082rFuHursiNBQm15SF1N2ijf3xJol8IJO/UlUIVIr+nS2P+QHPIKtwsF
-         V6yq6n1GXG5kVpbYohdHHocpIvPufn+sGe9UxgwrhkXun01D9H+hV1zxoIRhi6fWm7c2
-         rLzOqWalIi0gfw+S2g2DRNBvxJ52Gm4LkDaKAtecyNQIk+tkMvLqD56at6ro0cJqkJeE
-         tZFf/MxHRRoB5IHaxWo4BRlQy3z9ckOxU6VgW98XZ0+W+9gaaRnub76Fb93Y0a3prY/D
-         4o648l12lPs40hCF7n13rMBieSBRZTdVHKxA8GGJY3hA5bfXNpAd6cCP8Dh/bfYh4/JW
-         UsWQ==
-X-Gm-Message-State: ABuFfog1yzL//AZBM1iCTHjvlExRIxLmlqMHmU2/uhHEXlqXlaE0dfTL
-        +VBj8S95NcaFZ6QYj03uS5o=
-X-Google-Smtp-Source: ACcGV63Do3T/ejhX8uNRw9K8Ir8sdN6ngNDVflRnMnJi6X4JXXROh1R277esRL6PBiLxwG50RHZBiA==
-X-Received: by 2002:aa7:dc49:: with SMTP id g9-v6mr1373195edu.115.1537883534903;
-        Tue, 25 Sep 2018 06:52:14 -0700 (PDT)
+        bh=Miv4H0D/5iaNIZG2tN8k+epWsqaNye0zy5Y8m76/nDY=;
+        b=hI9cvJOAwC8t31tJ595TTjW7lnPZs+eweJQXD1n/7RnWK2zYD4b5Rrsh5iPbBXCpYr
+         YtgpC2oY6rpI/p5ikfZt8T6pdyglPSom9Uvn4QaaJnc/nCpEByPbCK1nPaCs8i2nNMOI
+         cH/U8DYSll6zsQhMhZjer1TJ+tbTC5qu57IJOykVUSgcMQJahqB6DwFIn1vxfVQTYNnt
+         uANa7nOz55IVSSx0JolARWCD9e6QEPu+0CZ2whsjKaBYB5zm2t3/2I0vd3TjOfDDecQy
+         lW03+EghXc7i50Z8TwvLNj60nZLZtn346suoL8XhvVcKTCifPgsvu2SVOoegVvcxmduL
+         xgZg==
+X-Gm-Message-State: ABuFfoh36P9EstFdglcpnHiD2d7Or7RXsseSUUSKnmPlQ2yAep8AgH/S
+        LGetg0Fjwdl9bfB6m5JaN+I=
+X-Google-Smtp-Source: ACcGV63ZfynUBezg5HRJfY3E5T9Jq0V/Z58y15e5nTryQeqoeoitp5p6NMNvqM3DBHAPuJX1ts6QoA==
+X-Received: by 2002:a50:8612:: with SMTP id o18-v6mr1403910edo.111.1537883548788;
+        Tue, 25 Sep 2018 06:52:28 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.146.97])
-        by smtp.gmail.com with ESMTPSA id r23-v6sm7732551edi.17.2018.09.25.06.52.13
+        by smtp.gmail.com with ESMTPSA id h19-v6sm312802edq.23.2018.09.25.06.52.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 06:52:13 -0700 (PDT)
-Subject: Re: [PATCH 1/4] dt-bindings: mediatek: add compatible for mt8183
- pwrap
+        Tue, 25 Sep 2018 06:52:27 -0700 (PDT)
+Subject: Re: [PATCH 3/4] soc: mediatek: add mt8183 pwrap support
 To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     argus.lin@mediatek.com, sean.wang@mediatek.com,
@@ -70,7 +69,7 @@ Cc:     argus.lin@mediatek.com, sean.wang@mediatek.com,
         linux-mediatek@lists.infradead.org, chenglin.xu@mediatek.com,
         chen.zhong@mediatek.com, srv_heupstream@mediatek.com
 References: <1537341961-20736-1-git-send-email-hsin-hsiung.wang@mediatek.com>
- <1537341961-20736-2-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <1537341961-20736-4-git-send-email-hsin-hsiung.wang@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -116,12 +115,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <5f707e40-54fe-b1a9-92e4-f009aa3968ba@gmail.com>
-Date:   Tue, 25 Sep 2018 15:52:12 +0200
+Message-ID: <bb3ac4fb-a67e-93b0-c409-ead9504de896@gmail.com>
+Date:   Tue, 25 Sep 2018 15:52:26 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1537341961-20736-2-git-send-email-hsin-hsiung.wang@mediatek.com>
+In-Reply-To: <1537341961-20736-4-git-send-email-hsin-hsiung.wang@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -132,28 +131,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 19/09/2018 09:25, Hsin-Hsiung Wang wrote:
-> This adds dt-binding documentation of pwrap for Mediatek MT8183 SoC
-> Platform.
+On 19/09/2018 09:26, Hsin-Hsiung Wang wrote:
+> MT6358 is a new power management IC and it is used for
+> mt8183 SoCs. To define mt6358_regs for pmic register
+> mapping and pmic_mt6358 for accessing register.
+> Adding one more interrupt and wdt source.
 > 
 > Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
 > ---
->  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/soc/mediatek/mtk-pmic-wrap.c | 195 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 191 insertions(+), 4 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> index f9987c3..012fe3f 100644
-> --- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> +++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> @@ -23,6 +23,7 @@ Required properties in pwrap device node.
->  	"mediatek,mt7622-pwrap" for MT7622 SoCs
->  	"mediatek,mt8135-pwrap" for MT8135 SoCs
->  	"mediatek,mt8173-pwrap" for MT8173 SoCs
-> +	"mediatek,mt8183-pwrap" for MT8183 SoCs
->  - interrupts: IRQ for pwrap in SOC
->  - reg-names: Must include the following entries:
->    "pwrap": Main registers base
-> 
+
 
 Applied to v4.19-next/soc
 
