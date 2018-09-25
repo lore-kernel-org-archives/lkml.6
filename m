@@ -2,114 +2,152 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD966C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2D3C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771B82086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771B82086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 0432E20833
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0432E20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbeIZAkL (ORCPT
+        id S1727574AbeIZAka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:40:11 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38973 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbeIZAkL (ORCPT
+        Tue, 25 Sep 2018 20:40:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54080 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbeIZAk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:40:11 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 85-v6so9103436pge.6;
-        Tue, 25 Sep 2018 11:31:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JJNp99YKvB4C1KvbWuHkn+/C4r9dypVuTN/kyAdvvVU=;
-        b=MZjZJna+t5PHM7n9XPreAR/9yQbvTqlZZCC0Uf93hiWcN21+YFBDXp5wyxdiWRumXb
-         k1GjQ53W/FjC/wJb3ve+YcsVYSho1dyWBBLRhmzYJ/l1uJ3dXqex69hBc7BfCN0hMnBW
-         5VxuOK/+bocTXPcIAeFr0EavnPUk70YB+BQcLEZyY+EitIird4xQXzzs8HsFBrKTPcLt
-         /mz3gCXSpbAeb0knkxSruSxTQ3nbUmIIOMsF6U6rBD5eKATetKejmimSZRVFzZKzZGa/
-         h+Z1DryTOGPpHG86+s3tSyKlVRDanfxh9/B26AjeEsX1NGVg8qG2fYkQhijtY7HJUzR9
-         FUyQ==
-X-Gm-Message-State: ABuFfojNgRjR/JfyY2XlJqXSboKYStgzrdzkHazCDFX2L9X1A2NYKl98
-        wwFIRF/8E03MM3NJgvMmOxI=
-X-Google-Smtp-Source: ACcGV63FxpJ9I32EYCG1/ICI3bFd39LI/kp479zxlc8dD83GubQXYbghf9DD9qzDlxYVcSnQGDZ5sA==
-X-Received: by 2002:a65:58c3:: with SMTP id e3-v6mr2172967pgu.117.1537900282182;
-        Tue, 25 Sep 2018 11:31:22 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm10320054pgz.62.2018.09.25.11.31.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 11:31:21 -0700 (PDT)
-Message-ID: <1537900280.11137.30.camel@acm.org>
-Subject: Re: [PATCH v7 02/13] PCI/P2PDMA: Add sysfs group to display p2pmem
- stats
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-Date:   Tue, 25 Sep 2018 11:31:20 -0700
-In-Reply-To: <9241a6af-9826-d1ff-c13b-882cb3b6a34a@deltatee.com>
-References: <20180925162231.4354-1-logang@deltatee.com>
-         <20180925162231.4354-3-logang@deltatee.com>
-         <1537896555.11137.22.camel@acm.org>
-         <9241a6af-9826-d1ff-c13b-882cb3b6a34a@deltatee.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 25 Sep 2018 20:40:29 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED3B31077;
+        Tue, 25 Sep 2018 18:31:40 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 20:31:38 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     rkir@google.com
+Cc:     tkjos@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/21] platform: goldfish: pipe: Add DMA support to
+ goldfish pipe
+Message-ID: <20180925183138.GB21572@kroah.com>
+References: <20180914175122.21036-1-rkir@google.com>
+ <20180914175122.21036-6-rkir@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180914175122.21036-6-rkir@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-25 at 12:15 -0600, Logan Gunthorpe wrote:
-+AD4 On 2018-09-25 11:29 a.m., Bart Van Assche wrote:
-+AD4 +AD4 On Tue, 2018-09-25 at 10:22 -0600, Logan Gunthorpe wrote:
-+AD4 +AD4 +AD4 +AEAAQA -83,9 +-132,14 +AEAAQA static int pci+AF8-p2pdma+AF8-setup(struct pci+AF8-dev +ACo-pdev)
-+AD4 +AD4 +AD4  
-+AD4 +AD4 +AD4  	pdev-+AD4-p2pdma +AD0 p2p+ADs
-+AD4 +AD4 +AD4  
-+AD4 +AD4 +AD4 +-	error +AD0 sysfs+AF8-create+AF8-group(+ACY-pdev-+AD4-dev.kobj, +ACY-p2pmem+AF8-group)+ADs
-+AD4 +AD4 +AD4 +-	if (error)
-+AD4 +AD4 +AD4 +-		goto out+AF8-pool+AF8-destroy+ADs
-+AD4 +AD4 +AD4 +-
-+AD4 +AD4 +AD4  	return 0+ADs
-+AD4 +AD4 +AD4  
-+AD4 +AD4 +AD4  out+AF8-pool+AF8-destroy:
-+AD4 +AD4 +AD4 +-	pdev-+AD4-p2pdma +AD0 NULL+ADs
-+AD4 +AD4 +AD4  	gen+AF8-pool+AF8-destroy(p2p-+AD4-pool)+ADs
-+AD4 +AD4 +AD4  out:
-+AD4 +AD4 +AD4  	devm+AF8-kfree(+ACY-pdev-+AD4-dev, p2p)+ADs
-+AD4 +AD4 
-+AD4 +AD4 This doesn't look right to me. Shouldn't devm+AF8-remove+AF8-action() be called instead
-+AD4 +AD4 of devm+AF8-kfree() if sysfs+AF8-create+AF8-group() fails?
-+AD4 
-+AD4 That makes no sense to me. We are reversing a devm+AF8-kzalloc() not a
-+AD4 custom action....
+On Fri, Sep 14, 2018 at 10:51:07AM -0700, rkir@google.com wrote:
+> From: Roman Kiryanov <rkir@google.com>
+> 
+> Goldfish DMA is an extension to the pipe device and is designed
+> to facilitate high-speed RAM->RAM transfers from guest to host.
+> 
+> See uapi/linux/goldfish/goldfish_dma.h for more details.
+> 
+> Signed-off-by: Roman Kiryanov <rkir@google.com>
+> ---
+>  drivers/platform/goldfish/goldfish_pipe.c     | 312 +++++++++++++++++-
+>  .../platform/goldfish/goldfish_pipe_qemu.h    |   2 +
+>  include/uapi/linux/goldfish/goldfish_dma.h    |  84 +++++
+>  3 files changed, 396 insertions(+), 2 deletions(-)
+>  create mode 100644 include/uapi/linux/goldfish/goldfish_dma.h
 
-In case what I wrote was not clear: both devm+AF8-kzalloc() and
-devm+AF8-add+AF8-action+AF8-or+AF8-reset() have to be reversed if sysfs+AF8-create+AF8-group() fails.
-devm+AF8-add+AF8-action+AF8-or+AF8-reset() calls devres+AF8-add(). The latter function adds an
-element to the dev-+AD4-devres+AF8-head list. So I think that only calling devm+AF8-kfree()
-if sysfs+AF8-create+AF8-group() fails will lead to corruption of the dev-+AD4-devres+AF8-head
-list.
+A whole new api needs some others to review it becides just me.  Please
+get some more signed off by on this.
 
-Bart.
+Also, some minor comments:
+
+> --- /dev/null
+> +++ b/include/uapi/linux/goldfish/goldfish_dma.h
+> @@ -0,0 +1,84 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2018 Google, Inc.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+
+If you have a spdx line, you don't need the gpl boiler-plate text
+either.
+
+But, this is a uapi file, so gpl2 is not probably the license you want
+here, right?  That should be fixed before you end up doing something
+foolish with a userspace program that includes this :)
+
+> +/* GOLDFISH DMA
+> + *
+> + * Goldfish DMA is an extension to the pipe device
+> + * and is designed to facilitate high-speed RAM->RAM
+> + * transfers from guest to host.
+> + *
+> + * Interface (guest side):
+> + *
+> + * The guest user calls goldfish_dma_alloc (ioctls)
+> + * and then mmap() on a goldfish pipe fd,
+> + * which means that it wants high-speed access to
+> + * host-visible memory.
+> + *
+> + * The guest can then write into the pointer
+> + * returned by mmap(), and these writes
+> + * become immediately visible on the host without BQL
+> + * or otherweise context switching.
+> + *
+> + * dma_alloc_coherent() is used to obtain contiguous
+> + * physical memory regions, and we allocate and interact
+> + * with this region on both guest and host through
+> + * the following ioctls:
+> + *
+> + * - LOCK: lock the region for data access.
+> + * - UNLOCK: unlock the region. This may also be done from the host
+> + *   through the WAKE_ON_UNLOCK_DMA procedure.
+> + * - CREATE_REGION: initialize size info for a dma region.
+> + * - GETOFF: send physical address to guest drivers.
+> + * - (UN)MAPHOST: uses goldfish_pipe_cmd to tell the host to
+> + * (un)map to the guest physical address associated
+> + * with the current dma context. This makes the physically
+> + * contiguous memory (in)visible to the host.
+> + *
+> + * Guest userspace obtains a pointer to the DMA memory
+> + * through mmap(), which also lazily allocates the memory
+> + * with dma_alloc_coherent. (On last pipe close(), the region is freed).
+> + * The mmaped() region can handle very high bandwidth
+> + * transfers, and pipe operations can be used at the same
+> + * time to handle synchronization and command communication.
+> + */
+> +
+> +#define GOLDFISH_DMA_BUFFER_SIZE (32 * 1024 * 1024)
+> +
+> +struct goldfish_dma_ioctl_info {
+> +	__u64 phys_begin;
+> +	__u64 size;
+> +};
+
+Don't we have a dma userspace api?  What does virtio use?  What about
+uio?  Why can't one of the existing interfaces work for you?
+
+> +/* There is an ioctl associated with goldfish dma driver.
+> + * Make it conflict with ioctls that are not likely to be used
+> + * in the emulator.
+> + * 'G'	00-3F	drivers/misc/sgi-gru/grulib.h	conflict!
+> + * 'G'	00-0F	linux/gigaset_dev.h	conflict!
+
+Causing known conflicts is not wise.
+
+thanks,
+
+greg k-h
