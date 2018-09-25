@@ -2,149 +2,85 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622E6C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0A0C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19D242086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:09:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eLhkz4u5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19D242086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 06AAD2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AAD2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbeIYTRH (ORCPT
+        id S1729075AbeIYTTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 15:17:07 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43947 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728997AbeIYTRG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 15:17:06 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j26-v6so11214817pfi.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 06:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zq6WEouDGxqLcE3AJhxV/NV7ZQe5FJLxrBspYt/Llyw=;
-        b=eLhkz4u5Tp53yks9cEyseasJ6+z2aLU6YtgQ7NvkxoZo+nJe0yJG7ZfcdUmUGdWhoz
-         9CEg5sU+QQR+jm4jSInh0mzrCGphajLJUDNCKpT4Gfp6cr4Fajq39IHuBmBUWmoYQtuS
-         8JIts5rPv1T++1T/d9fGGWhxQf0N9Y5KQ/KPs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zq6WEouDGxqLcE3AJhxV/NV7ZQe5FJLxrBspYt/Llyw=;
-        b=LXZhraodB2qm94aIK9ykKhVXBQ4zNpYrTrW7GZbl/wGEmlpXfOJc9+5f9VSA+FMoyi
-         jyJxRF63H8IKTGkucglGzilgWelLxF80Xnn0i6H/GjM00CC78IjPfYYVYZ/y9i3LEJfy
-         EWjEiORRPjiFFP9nU4I5mXHvm7xc9il2MxaovHQJzmrZ+HNZAz8/Z3nsZUfGCvCNhMzV
-         k/sGGMbym9VbXQ4dEHiYnh2Za4uzpzcrni00qfN/6n6TbqgvX69R3mpuZrn56q6tl3L9
-         4/D3xeSK8PPLi7Jjx+vGxZocSGFV+eflCUUBRtRST5HDCiIiITy8KbUXmvFkhCc+31TI
-         plsg==
-X-Gm-Message-State: ABuFfohh5BeV8NZGT6AlhJpHfsLBESdOCCHeXgr72MLs2i6dE+hAQ36B
-        w9EHnIsejfGQlm8p+zg1ZlC1
-X-Google-Smtp-Source: ACcGV61pNvt+pKK1LVAUGulg/wRtERA48TVBnya8ztxw/mI65nUCzJ91pU4Bokmy8156ipPDCeBPOw==
-X-Received: by 2002:a65:5304:: with SMTP id m4-v6mr1075495pgq.250.1537880977215;
-        Tue, 25 Sep 2018 06:09:37 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:902:6e37:d199:be26:17df:65f4])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm615685pfi.15.2018.09.25.06.09.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 06:09:36 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 06:09:29 -0700
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Sean Wang <sean.wang@mediatek.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Saber Rezvani <irsaber@gmail.com>
-Subject: Re: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for
- MT8183 and MT6765
-Message-ID: <20180925130929.GA5189@Mani-XPS-13-9360>
-References: <cover.1536404280.git.sean.wang@mediatek.com>
- <CACRpkdZtVBjYGs5C7-HWEyX7f7pnCqvnRYBH=fFmLKhN4FGymA@mail.gmail.com>
- <1537325650.572.9.camel@mtkswgap22>
- <20180919043722.GA14181@Mani-XPS-13-9360>
- <1537503761.9654.17.camel@mtkswgap22>
- <9f0a8868-a06e-d378-1008-df758b898fbe@gmail.com>
- <20180925130700.GA4945@Mani-XPS-13-9360>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925130700.GA4945@Mani-XPS-13-9360>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 25 Sep 2018 15:19:45 -0400
+Received: from mga14.intel.com ([192.55.52.115]:53057 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbeIYTTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 15:19:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 06:12:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,302,1534834800"; 
+   d="scan'208";a="93546597"
+Received: from thomasvo-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.53.212])
+  by orsmga001.jf.intel.com with ESMTP; 25 Sep 2018 06:09:18 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v14 01/19] x86/sgx: Update MAINTAINERS
+Date:   Tue, 25 Sep 2018 16:06:38 +0300
+Message-Id: <20180925130845.9962-2-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 06:07:00AM -0700, Manivannan Sadhasivam wrote:
-> On Tue, Sep 25, 2018 at 12:48:09PM +0200, Matthias Brugger wrote:
-> > 
-> > 
-> > On 21/09/2018 06:22, Sean Wang wrote:
-> > > On Tue, 2018-09-18 at 21:37 -0700, Manivannan Sadhasivam wrote:
-> > >> On Wed, Sep 19, 2018 at 10:54:10AM +0800, Sean Wang wrote:
-> > >>> On Tue, 2018-09-18 at 15:07 -0700, Linus Walleij wrote:
-> > >>>> On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
-> > >>>>
-> > >>>>> v2 and changes since v1:
-> > >>>>
-> > >>>> I had trouble applying the last patches in the series so I applied
-> > >>>> all on an immutable branch (ib-mtk) then merged that into devel
-> > >>>> and added a patch on top to fix up some GPIO includes (just sent).
-> > >>>>
-> > >>>> Please check the result!
-> > >>>>
-> > >>>
-> > >>> Sure, I'll take a look and and test on the devel branch.
-> > >>>
-> > >>> On the top, I'll add a fix for the issue recently reported by kbuild
-> > >>> test robot about implicit declaration and a new MT6765 driver based
-> > >>> on the series.
-> > >>>
-> > >>
-> > >> Hi Sean,
-> > >>
-> > >> Do you have any plans to add support for MT6797?
-> > >>
-> > > 
-> > > I personally have no the plan to add support to MT6797 because I have no
-> > > the device, but as I knew some of people in mediatek have interest to
-> > > add them by volunteers and thus there is no clear schedule. Eventually,
-> > > if they're really done, they would be still based on vendor binding not
-> > > by generic binding.
-> > > 
-> > 
-> > CCing Saber as he is working on the pinctrl for this device. Actually he as some
-> > questions regarding the register layout.
-> > 
-> > Sean maybe you can bring him in contact with someone inside Mediatek who could
-> > help him :)
-> >
-> 
-> FYI. I started working on MT6797 pinctrl support but never got time to
-> finish it. You can find my initial work below. Eventhough it is based on
-> the Mediatek SDK it should be fine IMO.
-> 
-> It would be great if someone (Saber) can took and finish it. The hard
-> bit for me was lack of proper documentation :(
->
+Add the maintainer information for the SGX subsystem.
 
-s/documentation/datasheet
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> https://git.linaro.org/people/manivannan.sadhasivam/96b-common.git/log/?h=mt6797
-> 
-> Thanks,
-> Mani
-> 
-> > Regards.
-> > Matthias
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 02a39617ec82..a5597a89c7a9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7595,6 +7595,13 @@ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-intel-mid.c
+ 
++INTEL SGX
++M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
++L:	linux-sgx@vger.kernel.org
++Q:	https://patchwork.kernel.org/project/intel-sgx/list/
++F:	drivers/platform/x86/intel_sgx/
++K:	\bSGX_
++
+ INVENSENSE MPU-3050 GYROSCOPE DRIVER
+ M:	Linus Walleij <linus.walleij@linaro.org>
+ L:	linux-iio@vger.kernel.org
+-- 
+2.17.1
+
