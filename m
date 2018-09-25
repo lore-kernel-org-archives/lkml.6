@@ -2,109 +2,181 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E601C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D063C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3063E208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:14:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3063E208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B45821480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:15:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B45821480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbeIYNUb (ORCPT
+        id S1728392AbeIYNVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:20:31 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38320 "EHLO mga01.intel.com"
+        Tue, 25 Sep 2018 09:21:16 -0400
+Received: from mga03.intel.com ([134.134.136.65]:44545 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728893AbeIYNUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:20:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1728734AbeIYNUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:20:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 00:14:21 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 00:14:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,301,1534834800"; 
-   d="scan'208";a="265474645"
-Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Sep 2018 00:14:18 -0700
-Date:   Tue, 25 Sep 2018 15:11:43 +0800
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
-        "chao.gao@intel.com" <chao.gao@intel.com>,
-        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: Re: [PATCH v2 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
- Hyper-V
-Message-ID: <20180925071143.GF11769@yi.y.sun>
-References: <1537514712-62434-1-git-send-email-yi.y.sun@linux.intel.com>
- <1537514712-62434-3-git-send-email-yi.y.sun@linux.intel.com>
- <CY4PR21MB0773F63A6367C5C1CE26F5ADDC120@CY4PR21MB0773.namprd21.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CY4PR21MB0773F63A6367C5C1CE26F5ADDC120@CY4PR21MB0773.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+   d="scan'208";a="89093629"
+Received: from yhuang-mobile.sh.intel.com ([10.239.198.87])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Sep 2018 00:14:07 -0700
+From:   Huang Ying <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH -V5 RESEND 13/21] swap: Support PMD swap mapping in madvise_free()
+Date:   Tue, 25 Sep 2018 15:13:40 +0800
+Message-Id: <20180925071348.31458-14-ying.huang@intel.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180925071348.31458-1-ying.huang@intel.com>
+References: <20180925071348.31458-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-09-21 17:02:54, Michael Kelley (EOSG) wrote:
-> From: Yi Sun <yi.y.sun@linux.intel.com> Sent: Friday, September 21, 2018 12:25 AM
-> > +
-> > +#define pr_fmt(fmt) "hv: " fmt
-> 
-> Other Hyper-V messages use "Hyper-V: " as the prefix, not "hv: ".  Take
-> a quick look at 'dmesg' output for reference.
-> 
-Will modify this. Thanks!
+When madvise_free() found a PMD swap mapping, if only part of the huge
+swap cluster is operated on, the PMD swap mapping will be split and
+fallback to PTE swap mapping processing.  Otherwise, if all huge swap
+cluster is operated on, free_swap_and_cache() will be called to
+decrease the PMD swap mapping count and probably free the swap space
+and the THP in swap cache too.
 
-> > +
-> > +#include <linux/kernel_stat.h>
-> > +#include <linux/spinlock.h>
-> > +#include <linux/debugfs.h>
-> > +#include <linux/log2.h>
-> > +#include <linux/gfp.h>
-> 
-> Some of these #includes look like they might be leftovers from
-> some other code.  Please check and see whether kernel_stat.h,
-> debugsfs.h, log2.h, and gfp.h are actually needed.
-> 
-Sure, I will check them.
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+---
+ mm/huge_memory.c | 54 +++++++++++++++++++++++++++++++++++++++---------------
+ mm/madvise.c     |  2 +-
+ 2 files changed, 40 insertions(+), 16 deletions(-)
 
-> > +static void hv_qlock_wait(u8 *byte, u8 val)
-> > +{
-> > +	unsigned long msr_val;
-> > +
-> > +	if (READ_ONCE(*byte) != val)
-> > +		return;
-> > +
-> > +	/*
-> > +	 * Read HV_X64_MSR_GUEST_IDLE MSR can trigger the guest's
-> > +	 * transition to the idle power state which can be exited
-> > +	 * by an IPI even if IF flag is disabled.
-> > +	 */
-> > +	if (ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)
-> 
-> I can't see a case where this test is actually needed.  hv_qlock_wait()
-> can only get called if the flag is set when hv_init_spinlocks() is run, and
-> the flag value doesn't change after it is set.
-> 
-Yes, it is redundant. Will remove it.
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 18da840bd049..aee8614e99f7 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1844,6 +1844,15 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ }
+ #endif
+ 
++static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
++{
++	pgtable_t pgtable;
++
++	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
++	pte_free(mm, pgtable);
++	mm_dec_nr_ptes(mm);
++}
++
+ /*
+  * Return true if we do MADV_FREE successfully on entire pmd page.
+  * Otherwise, return false.
+@@ -1864,15 +1873,39 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		goto out_unlocked;
+ 
+ 	orig_pmd = *pmd;
+-	if (is_huge_zero_pmd(orig_pmd))
+-		goto out;
+-
+ 	if (unlikely(!pmd_present(orig_pmd))) {
+-		VM_BUG_ON(thp_migration_supported() &&
+-				  !is_pmd_migration_entry(orig_pmd));
+-		goto out;
++		swp_entry_t entry = pmd_to_swp_entry(orig_pmd);
++
++		if (is_migration_entry(entry)) {
++			VM_BUG_ON(!thp_migration_supported());
++			goto out;
++		} else if (IS_ENABLED(CONFIG_THP_SWAP) &&
++			   !non_swap_entry(entry)) {
++			/*
++			 * If part of THP is discarded, split the PMD
++			 * swap mapping and operate on the PTEs
++			 */
++			if (next - addr != HPAGE_PMD_SIZE) {
++				unsigned long haddr = addr & HPAGE_PMD_MASK;
++
++				__split_huge_swap_pmd(vma, haddr, pmd);
++				goto out;
++			}
++			free_swap_and_cache(entry, HPAGE_PMD_NR);
++			pmd_clear(pmd);
++			zap_deposited_table(mm, pmd);
++			if (current->mm == mm)
++				sync_mm_rss(mm);
++			add_mm_counter(mm, MM_SWAPENTS, -HPAGE_PMD_NR);
++			ret = true;
++			goto out;
++		} else
++			VM_BUG_ON(1);
+ 	}
+ 
++	if (is_huge_zero_pmd(orig_pmd))
++		goto out;
++
+ 	page = pmd_page(orig_pmd);
+ 	/*
+ 	 * If other processes are mapping this page, we couldn't discard
+@@ -1918,15 +1951,6 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 	return ret;
+ }
+ 
+-static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
+-{
+-	pgtable_t pgtable;
+-
+-	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
+-	pte_free(mm, pgtable);
+-	mm_dec_nr_ptes(mm);
+-}
+-
+ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		 pmd_t *pmd, unsigned long addr)
+ {
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 6fff1c1d2009..07ef599d4255 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -321,7 +321,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
+ 	unsigned long next;
+ 
+ 	next = pmd_addr_end(addr, end);
+-	if (pmd_trans_huge(*pmd))
++	if (pmd_trans_huge(*pmd) || is_swap_pmd(*pmd))
+ 		if (madvise_free_huge_pmd(tlb, vma, pmd, addr, next))
+ 			goto next;
+ 
+-- 
+2.16.4
 
-> > +		rdmsrl(HV_X64_MSR_GUEST_IDLE, msr_val);
-> > +}
-> 
-> Michael
