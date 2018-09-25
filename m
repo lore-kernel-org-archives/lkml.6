@@ -2,246 +2,279 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92708C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C56BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40EF620877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:00:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EF620877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id C272220877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:00:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C272220877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbeIYUHz (ORCPT
+        id S1729278AbeIYUIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 16:07:55 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35461 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727165AbeIYUHy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:07:54 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8PDwwqD018241;
-        Tue, 25 Sep 2018 15:59:29 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mncme9bbh-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 25 Sep 2018 15:59:29 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D0B973A;
-        Tue, 25 Sep 2018 13:59:28 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 98EC251A5;
-        Tue, 25 Sep 2018 13:59:28 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.44) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 25 Sep
- 2018 15:59:27 +0200
-Subject: Re: [RESEND PATCH] Revert "pwm: Set class for exported channels in
- sysfs"
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <stefan.wahren@i2se.com>, <gohai@sukzessiv.net>,
-        <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
-        <loic.pallardy@st.com>, <broonie@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <michal.vokac@ysoft.com>
-References: <1537538567-5377-1-git-send-email-fabrice.gasnier@st.com>
- <20180924115301.GV21032@ulmo> <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
- <20180924142318.GG23547@ulmo> <c4866533-1c7e-2675-5d80-3b824e32ae9b@st.com>
-Message-ID: <4278fef9-ec60-239a-dd0a-29a89d742fa4@st.com>
-Date:   Tue, 25 Sep 2018 15:59:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <c4866533-1c7e-2675-5d80-3b824e32ae9b@st.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Tue, 25 Sep 2018 16:08:25 -0400
+Received: from mga02.intel.com ([134.134.136.20]:56253 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728997AbeIYUIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 16:08:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 07:00:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,302,1534834800"; 
+   d="scan'208";a="73569647"
+Received: from thomasvo-mobl2.ger.corp.intel.com ([10.252.53.212])
+  by fmsmga008.fm.intel.com with ESMTP; 25 Sep 2018 07:00:35 -0700
+Message-ID: <5c2d41fc0434db4af4ebf66151ee022fba629ec8.camel@linux.intel.com>
+Subject: Re: [PATCH v2, RESEND 3/3] tpm: retrieve digest size of unknown
+ algorithms with PCR read
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 25 Sep 2018 17:00:32 +0300
+In-Reply-To: <20180917093820.20500-4-roberto.sassu@huawei.com>
+References: <20180917093820.20500-1-roberto.sassu@huawei.com>
+         <20180917093820.20500-4-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_08:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 05:50 PM, Fabrice Gasnier wrote:
-> On 09/24/2018 04:23 PM, Thierry Reding wrote:
->> On Mon, Sep 24, 2018 at 03:59:03PM +0200, Fabrice Gasnier wrote:
->>> On 09/24/2018 01:53 PM, Thierry Reding wrote:
->>>> On Fri, Sep 21, 2018 at 04:02:47PM +0200, Fabrice Gasnier wrote:
->>>>> This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
->>>>> regression with multiple pwm chip. It creates a new entry in
->>>>> '/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
->>>>> - 1st time export will create an entry in /sys/class/pwm/pwmX
->>>>> - when another export happens on another pwmchip, it can't be created
->>>>> (e.g. -EEXIST)
->>>>>
->>>>> This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
->>>>> - pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
->>>>>
->>>>> Example on stm32 (stm32429i-eval) platform:
->>>>> $ ls /sys/class/pwm
->>>>> pwmchip0 pwmchip4
->>>>>
->>>>> $ cd /sys/class/pwm/pwmchip0/
->>>>> $ echo 0 > export
->>>>> $ ls /sys/class/pwm
->>>>> pwm0 pwmchip0 pwmchip4
->>>>>
->>>>> $ cd /sys/class/pwm/pwmchip4/
->>>>> $ echo 0 > export
->>>>> sysfs: cannot create duplicate filename '/class/pwm/pwm0'
->>>>> ...Exception stack follows...
->>>>>
->>>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->>>>> ---
->>>>>  drivers/pwm/sysfs.c | 1 -
->>>>>  1 file changed, 1 deletion(-)
->>>>
->>>> Can we come up with an alternative that allows us to have both? We want
->>>> uevent and proper sysfs creation, or is that not possible?
->>>
->>> Hi Thierry, all,
->>>
->>> With current approach:
->>> - "export->child.class = parent->class"
->>> - ABI (e.g. "pwm%d") device name isn't unique with multiple pwm chip.
->>> I think this is not possible.
->>>
->>> Trying to think of an alternative... I just did a quick test, by
->>> changing device name, to take pwmchip into account:
->>> +       export->child.class = parent->class;
->>>         export->child.release = pwm_export_release;
->>>         export->child.parent = parent;
->>>         export->child.devt = MKDEV(0, 0);
->>>         export->child.groups = pwm_groups;
->>> -       dev_set_name(&export->child, "pwm%u", pwm->hwpwm);
->>> +       dev_set_name(&export->child, "pwmchip%d-pwm%u", chip->base,
->>> pwm->hwpwm);
->>>
->>> But this also impacts existing ABI :-(
->>> Would you have suggestions to send an uevent, without modifying ABI ?
->>
->> I don't quite understand why, in the example you show in the commit
->> message, the pwmX nodes appear in the top-level /sys/class/pwm
->> directory. According to Documentation/ABI/testing/sysfs-class-pwm they
->> should appear as /sys/class/pwm/pwmchipN/pwmX. I can only imagine that
->> setting the class may have changed that.
+On Mon, 2018-09-17 at 11:38 +0200, Roberto Sassu wrote:
+> Currently, the TPM driver retrieves the digest size from a table mapping
+> TPM algorithms identifiers to identifiers defined by the crypto subsystem.
+> If the algorithm is not defined by the latter, the digest size can be
+> retrieved from the output of the PCR read command.
 > 
-> Yes, adding the class makes the link to be created under /sys/class/pwm:
-> device_register() -> device_add() -> device_add_class_symlinks()
-> In device_add_class_symlinks():
-> ...
-> 	if (!dev->class)
-> 		return 0;
-> ...
-> 	/* link in the class directory pointing to the device */
-> 	error = sysfs_create_link(&dev->class->p->subsys.kobj,
-> 				  &dev->kobj, dev_name(dev));
-> ...
+> The patch retrieves at TPM startup the digest sizes for each PCR bank and
+> stores them in the new structure tpm_active_bank_info, member of tpm_chip,
+> so that the information can be passed to other kernel subsystems.
 > 
->> If so, perhaps we can
->> workaround that by creating a new class that is not parent->class?
-
-Hi Thierry,
-
-Maybe there's a way around, keeping the revert patch, without impacting
-the ABI:
-- pwmX cannot be added to pwm/another class without issue as discussed
-(numbering isn't unique).
-- pwmchipN already belongs to pwm class.
-
-I did some testing, trying to send uevent on the pwmX directly, without
-success: uevents are filtered as pwmX doesn't belong to a class.
-
-Still, it is possible to send uevent (KOBJ_CHANGE) on pwmchipN device,
-to notify of a change, e.g. pwmX channel being exported/unexported.
-
-I run following prototype (with revert patch).
-
-static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
- {
-+       char *pwm_prop[2];
-        struct pwm_export *export;
-        int ret;
- ...
-                kfree(export);
-                return ret;
-        }
-+       pwm_prop[0] = kasprintf(GFP_KERNEL, "EXPORT=pwm%u", pwm->hwpwm);
-+       pwm_prop[1] = NULL;
-+       kobject_uevent_env(&parent->kobj, KOBJ_CHANGE, pwm_prop);
-+       kfree(pwm_prop[0]);
-
-        return 0;
- }
-
- static int pwm_unexport_child(struct device *parent, struct pwm_device
-*pwm)
- {
-        struct device *child;
-+       char *pwm_prop[2];
-
-        if (!test_and_clear_bit(PWMF_EXPORTED, &pwm->flags))
-                return -ENODEV;
-...
-        if (!child)
-                return -ENODEV;
-
-+       pwm_prop[0] = kasprintf(GFP_KERNEL, "UNEXPORT=pwm%u", pwm->hwpwm);
-+       pwm_prop[1] = NULL;
-+       kobject_uevent_env(&parent->kobj, KOBJ_CHANGE, pwm_prop);
-+       kfree(pwm_prop[0]);
-+
-        /* for device_find_child() */
-
-Then, I run a quick test:
-
-# udevadm monitor --environment &
-# echo 0 > /sys/class/pwm/pwmchip0/export
-KERNEL[197.321736] change   /devices/.../pwm/pwmchip0 (pwm)
-ACTION=change
-DEVPATH=/devices/.../pwm/pwmchip0
-EXPORT=pwm0
-SEQNUM=2045
-SUBSYSTEM=pwm
-
-# echo 0 > /sys/class/pwm/pwmchip4/export
-KERNEL[202.089676] change   /devices/.../pwm/pwmchip4 (pwm)
-ACTION=change
-DEVPATH=/devices/.../pwm/pwmchip4
-EXPORT=pwm0
-SEQNUM=2046
-SUBSYSTEM=pwm
-
-
-Also unexport will report change events to userland:
-
-# echo 0 > /sys/class/pwm/pwmchip0/unexport
-KERNEL[1691.112765] change   /devices/.../pwm/pwmchip0 (pwm)
-ACTION=change
-DEVPATH=/devices/.../pwm/pwmchip0
-SEQNUM=2047
-SUBSYSTEM=pwm
-UNEXPORT=pwm0
-
-Do you think this may be a way around?
-Please let me know if this may satisfy need for uevents.
-
-Best regards,
-Fabrice
+> tpm_active_bank_info contains: the TPM algorithm identifier, necessary to
+> generate the event log as defined by Trusted Computing Group (TCG); the
+> digest size, to pad/truncate a digest calculated with a different
+> algorithm; the crypto subsystem identifier, to calculate the digest of
+> event data.
 > 
-> And this link is added using dev_name(). So I doubt adding a new class
-> will change the current behavior.
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 11 +++++++---
+>  drivers/char/tpm/tpm.h           |  4 ++--
+>  drivers/char/tpm/tpm2-cmd.c      | 47 ++++++++++++++++++++++++++++++---------
+> -
+>  include/linux/tpm.h              |  6 +++++
+>  4 files changed, 51 insertions(+), 17 deletions(-)
 > 
->>
->> Thierry
->>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> interface.c
+> index 81872880b5f1..02dcdcda5a3c 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -993,7 +993,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u32
+> count,
+>  	if (!chip)
+>  		return -ENODEV;
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> -		rc = tpm2_pcr_read(chip, pcr_idx, count, digests);
+> +		rc = tpm2_pcr_read(chip, pcr_idx, count, digests, NULL);
+>  	else
+>  		rc = tpm_pcr_read_dev(chip, pcr_idx, digests[0].digest);
+>  	tpm_put_ops(chip);
+> @@ -1056,8 +1056,8 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx,
+> const u8 *hash)
+>  		memset(digest_list, 0, sizeof(digest_list));
+>  
+>  		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+> -			    chip->active_banks[i] != TPM_ALG_ERROR; i++) {
+> -			digest_list[i].alg_id = chip->active_banks[i];
+> +		     chip->active_banks[i].alg_id != TPM_ALG_ERROR; i++) {
+> +			digest_list[i].alg_id = chip->active_banks[i].alg_id;
+>  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+>  			count++;
+>  		}
+> @@ -1158,6 +1158,11 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+>  		goto out;
+>  	}
+>  
+> +	chip->active_banks[0].alg_id = TPM_ALG_SHA1;
+> +	chip->active_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
+> +	chip->active_banks[0].crypto_id = HASH_ALGO_SHA1;
+> +	chip->active_banks[1].alg_id = TPM_ALG_ERROR;
+> +
+>  	return rc;
+>  out:
+>  	if (rc > 0)
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 9479e1ae1b4c..385843b49c17 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -237,7 +237,7 @@ struct tpm_chip {
+>  	const struct attribute_group *groups[3];
+>  	unsigned int groups_cnt;
+>  
+> -	u16 active_banks[7];
+> +	struct tpm_active_bank_info active_banks[7];
+>  #ifdef CONFIG_ACPI
+>  	acpi_handle acpi_dev_handle;
+>  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+> @@ -565,7 +565,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+>  }
+>  
+>  int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
+> -		  struct tpm_digest *digests);
+> +		  struct tpm_digest *digests, u16 *sizes);
+>  int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+>  		    struct tpm_digest *digests);
+>  int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 601d67c76c1e..51d2454c5329 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -181,11 +181,12 @@ struct tpm2_pcr_read_out {
+>   * @pcr_idx:	index of the PCR to read.
+>   * @count:	number of digests passed.
+>   * @digests:	list of pcr banks and buffers current PCR values are
+> written to.
+> + * @sizes:	list of digest sizes.
+>   *
+>   * Return: Same as with tpm_transmit_cmd.
+>   */
+>  int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
+> -		  struct tpm_digest *digests)
+> +		  struct tpm_digest *digests, u16 *sizes)
+>  {
+>  	int rc;
+>  	struct tpm_buf buf;
+> @@ -215,6 +216,9 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32
+> count,
+>  		out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
+>  		memcpy(digests[0].digest, out->digest,
+>  		       be16_to_cpu(out->digest_size));
+> +
+> +		if (sizes)
+> +			sizes[0] = be16_to_cpu(out->digest_size);
+>  	}
+>  
+>  	tpm_buf_destroy(&buf);
+> @@ -245,7 +249,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx,
+> u32 count,
+>  	struct tpm2_null_auth_area auth_area;
+>  	int rc;
+>  	int i;
+> -	int j;
+>  
+>  	if (count > ARRAY_SIZE(chip->active_banks))
+>  		return -EINVAL;
+> @@ -267,14 +270,9 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx,
+> u32 count,
+>  	tpm_buf_append_u32(&buf, count);
+>  
+>  	for (i = 0; i < count; i++) {
+> -		for (j = 0; j < ARRAY_SIZE(tpm2_hash_map); j++) {
+> -			if (digests[i].alg_id != tpm2_hash_map[j].tpm_id)
+> -				continue;
+> -			tpm_buf_append_u16(&buf, digests[i].alg_id);
+> -			tpm_buf_append(&buf, (const unsigned char
+> -					      *)&digests[i].digest,
+> -			       hash_digest_size[tpm2_hash_map[j].crypto_id]);
+> -		}
+> +		tpm_buf_append_u16(&buf, digests[i].alg_id);
+> +		tpm_buf_append(&buf, (const unsigned char
+> *)&digests[i].digest,
+> +			       chip->active_banks[i].digest_size);
+>  	}
+>  
+>  	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
+> @@ -851,6 +849,26 @@ int tpm2_probe(struct tpm_chip *chip)
+>  }
+>  EXPORT_SYMBOL_GPL(tpm2_probe);
+>  
+> +static int tpm2_init_active_bank_info(struct tpm_chip *chip,
+> +				      struct tpm_active_bank_info
+> *active_bank)
+> +{
+> +	struct tpm_digest digest = {.alg_id = active_bank->alg_id};
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+> +		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
+> +
+> +		if (active_bank->alg_id != tpm2_hash_map[i].tpm_id)
+> +			continue;
+> +
+> +		active_bank->digest_size = hash_digest_size[crypto_algo];
+> +		active_bank->crypto_id = crypto_algo;
+> +		return 0;
+> +	}
+> +
+> +	return tpm2_pcr_read(chip, 0, 1, &digest, &active_bank->digest_size);
+> +}
+> +
+>  struct tpm2_pcr_selection {
+>  	__be16  hash_alg;
+>  	u8  size_of_select;
+> @@ -905,7 +923,12 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip
+> *chip)
+>  		}
+>  
+>  		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
+> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
+> +		chip->active_banks[i].alg_id =
+> +			be16_to_cpu(pcr_selection.hash_alg);
+> +		rc =  tpm2_init_active_bank_info(chip, &chip-
+> >active_banks[i]);
+> +		if (rc)
+> +			break;
+> +
+>  		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
+>  			sizeof(pcr_selection.size_of_select) +
+>  			pcr_selection.size_of_select;
+> @@ -914,7 +937,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip
+> *chip)
+>  
+>  out:
+>  	if (i < ARRAY_SIZE(chip->active_banks))
+> -		chip->active_banks[i] = TPM_ALG_ERROR;
+> +		chip->active_banks[i].alg_id = TPM_ALG_ERROR;
+>  
+>  	tpm_buf_destroy(&buf);
+>  
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index ac9fc47f4494..c8372ff582c3 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -46,6 +46,12 @@ struct tpm_digest {
+>  	u8 digest[SHA512_DIGEST_SIZE];
+>  } __packed;
+>  
+> +struct tpm_active_bank_info {
+> +	u16 alg_id;
+> +	u16 digest_size;
+> +	u16 crypto_id;
+> +};
+> +
+>  enum TPM_OPS_FLAGS {
+>  	TPM_OPS_AUTO_STARTUP = BIT(0),
+>  };
+
+Still think that we should use zero as marker for the end and not use
+TPM_ALG_ERROR as zero is the defacto way to terminate an array. It
+should be a separate commit. I can accept this and send such a patch
+after this has been merged or alternatively you can include such patch
+to a new version of the series.
+
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
