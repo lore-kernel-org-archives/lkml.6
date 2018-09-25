@@ -2,164 +2,155 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE20C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F6BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39AB2089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A22B20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:58:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gSUR43+h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39AB2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f20Wwbjr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A22B20842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbeIZEAa (ORCPT
+        id S1726265AbeIZEHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 00:00:30 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46110 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbeIZEAa (ORCPT
+        Wed, 26 Sep 2018 00:07:41 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44006 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725732AbeIZEHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 00:00:30 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d8-v6so5169780pfo.13
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 14:50:54 -0700 (PDT)
+        Wed, 26 Sep 2018 00:07:40 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m84-v6so23191547lje.10;
+        Tue, 25 Sep 2018 14:58:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=0Ce3odqB1qLWdsb9KwAtrrneVWS1aumo0hFHF3fNi7g=;
-        b=gSUR43+h76jAdTnpQeXIJ2ffj5rNknYEG5mO5zgIaKOziDQVZdZWYnb7t5XN+s0mAZ
-         700yPJYax2GX5nQvqnfN2J0mEfQ9dPgV496JpmNSvu4n7CqiKSFeTxuWG1byOEeqCeO1
-         0hqx9Rxnw8FtdgMIX9Z58V6Eu9Kut/C3W0rWCvMXdfVqn9j0ttdueE7M0OhpbDrvieet
-         BT2ch5WqEmAF7PYLH0jfNjpsisz3fjqSwgFCbASAcX2WlqktDPl4GnreT6SjmD0BdiRw
-         dV/H3eDs4f4GWZZ/78pv0uQ70Qxoy53AgEeKPqx6MyANOEwEr3wvf/1nJ3m82IJcjI1T
-         B6XA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zqzwUdXpqSlExtslIYE46de93AAScJzatAnRWsqBz3c=;
+        b=f20Wwbjr5O2MnPE6KUtYuYScH4VqfEdeTW69TMgoXu3onxdItE35nqyR3Pm4oaJTFt
+         ZzhxAOv4agBvZTgOk6ZjUBUKK13Fsyzhh0p7igz4gF/5ii2Xj5wePlPbpx+qe+fT79g2
+         WvM9UI0ofLIS3SM0JUZmlRdsfVHo2Q59FUBfSQImBVYIH1HD9aZJLuJlEWOcjh4JqZu1
+         Fg8byn+I4pCvkfEIw8BNDNolrL53b94ROwyQ8a8M4OqXAXetgIwkNbaHX20Z1rivycxD
+         LL25jsbfC3FwlZSPL9Zyzr2d8XU5uk2pT9uF2HnfrEEmLSAHnfiwdOjkj/l9MA+5um2S
+         T3ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=0Ce3odqB1qLWdsb9KwAtrrneVWS1aumo0hFHF3fNi7g=;
-        b=asbs8K6Kiv2lJrO6NJ1P3JND12cmAHvqXF49MDUAgP398DTsT2kwLrrwgjD1DXQDQq
-         gBxLRMS3qzO7l3JS1kweXy4OLo6pppZEu0wSredmHOjMAmZhnd6k8mRotO4m0drk8qq/
-         b6WCd/QpwUTCODvwIafpPstLBkL7jxRaBjF0zMe1tv4zHkRp4XxNBpEJhNHdbi91qB6N
-         EpqcWJ1vrX7uh/vyNKN7QDkVQPA0wZa+eBE6qcq+Hf4mlFMBHiZ3/ZkTE0lSnPisOf3K
-         7Lb+1MtuB0T2+GE39s/G7FQn76stBXV9agtxSxkpw6ropC1Nzrr0cD/2uRb9kMHrGBVt
-         8Gkw==
-X-Gm-Message-State: ABuFfohMe3ZUdrp5953MHCxeaWXreAWk9z6/HLlxZIHmkgf28DYNnKAb
-        bgqw9S27OLTZqZceBCalXORSLw==
-X-Google-Smtp-Source: ACcGV63yYeJuidmH63czgnB0+bv01MSVrw030BquVl8L3phrN2qG9KZSQ2OuuJxigfIdtd7R6R2s9Q==
-X-Received: by 2002:a17:902:784a:: with SMTP id e10-v6mr2955073pln.197.1537912253865;
-        Tue, 25 Sep 2018 14:50:53 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id v83-v6sm8986667pfa.103.2018.09.25.14.50.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 14:50:53 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 14:50:52 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org
-Subject: [patch v3] mm, thp: always specify disabled vmas as nh in smaps
-In-Reply-To: <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1809251449060.96762@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com> <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz> <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com> <alpine.DEB.2.21.1809241227370.241621@chino.kir.corp.google.com>
- <20180924195603.GJ18685@dhcp22.suse.cz> <20180924200258.GK18685@dhcp22.suse.cz> <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz> <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zqzwUdXpqSlExtslIYE46de93AAScJzatAnRWsqBz3c=;
+        b=bm6qUBIOrgsrW4q59LlQdGYXWOXN5VAgh4PbXKAtk+yfzTIw5teElEk+KwJYo93zxe
+         pQcl7JxFQuL/vzYYg1voIA+YYMGWk/onbAXoL+jacXi6ZQTcckdOaHj+rqx7FOnm++5S
+         t96gJ7amhA9T2f+pEa2wQyCBB/fofKh6akAyZJV0tokTYxvNhem8XRcVtOv324yBabi+
+         wNHoXgj2OQddORVkGOi4NXmxhZSLNCHc4jDBNMlEmeXaQ9wN0WxvNzmop7dKOhlBhDWP
+         MDlJdKoCkxD6yMkDgiJfHoLsH9rkA2OooWVCsrHAVM0lFqtxSwyc9v530wd2R+/riiIT
+         qsdg==
+X-Gm-Message-State: ABuFfoirfQ0MwRMhRDBradGVBpn2GPZt1LQfVFIBmMx8msKu2W/OEsT9
+        lLrzhIBn/wHRU8wpAnvYD2TYy+9k
+X-Google-Smtp-Source: ACcGV60r7FUQOAGGmT6Bj0JXl7HzEMXYGYdsS3qOehqNLEzFHplKgYUUNXEJWwpII0ktmso1726hhw==
+X-Received: by 2002:a2e:544f:: with SMTP id y15-v6mr526214ljd.51.1537912680594;
+        Tue, 25 Sep 2018 14:58:00 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id u6-v6sm624102lfu.42.2018.09.25.14.57.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 14:57:59 -0700 (PDT)
+Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+To:     Rob Herring <robh@kernel.org>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <20180830194356.14059-2-digetx@gmail.com> <20180925165810.GA32430@bogus>
+ <074a169d-294b-ad4b-ddbd-6db742278f2a@gmail.com>
+ <CAL_JsqLf+_Q8ZQAo=k8yQ4XKMccUHpm8WsQ3z_Q-PMY6gbQbbA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2f060ecc-44a2-9a8f-459e-5ae21990b65e@gmail.com>
+Date:   Wed, 26 Sep 2018 00:57:57 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAL_JsqLf+_Q8ZQAo=k8yQ4XKMccUHpm8WsQ3z_Q-PMY6gbQbbA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-introduced a regression in that userspace cannot always determine the set
-of vmas where thp is disabled.
+On 9/25/18 10:36 PM, Rob Herring wrote:
+> On Tue, Sep 25, 2018 at 12:29 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> On 9/25/18 7:58 PM, Rob Herring wrote:
+>>> On Thu, Aug 30, 2018 at 10:43:52PM +0300, Dmitry Osipenko wrote:
+>>>> Add device-tree binding that describes CPU frequency-scaling hardware
+>>>> found on NVIDIA Tegra20/30 SoC's.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
+>>>>  1 file changed, 38 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>> new file mode 100644
+>>>> index 000000000000..2c51f676e958
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>>> @@ -0,0 +1,38 @@
+>>>> +Binding for NVIDIA Tegra20 CPUFreq
+>>>> +==================================
+>>>> +
+>>>> +Required properties:
+>>>> +- clocks: Must contain an entry for each entry in clock-names.
+>>>> +  See ../clocks/clock-bindings.txt for details.
+>>>> +- clock-names: Must include the following entries:
+>>>> +  - pll_x: main-parent for CPU clock, must be the first entry
+>>>> +  - backup: intermediate-parent for CPU clock
+>>>> +  - cpu: the CPU clock
+>>>
+>>> The Cortex A9 has CLK, PERIPHCLK, and PERIPHCLKEN clocks and only CLK
+>>> is used for the cpu core. You can't just define your own clocks that
+>>> you happen to want access to.
+>>>
+>>> Otherwise, you're not defining anything new here, so a binding document
+>>> isn't required.
+>>
+>> PERIPHCLK is a different thing.
+> 
+> Right, that's what I meant. Only CLK is used.
+> 
+>> Here we are defining the CPU clock and
+>> its *parent* sources, the PLLX (main) and backup (intermediate clock
+>> that is used while PLLX changes its rate). These are not some random
+>> clocks "that you happen to want access to", they are essential for the
+>> Tegra CPUFreq driver, CPU is running off them.
+> 
+> assigned-clocks is generally how we get parent clocks in this
+> situation. "clocks" is for what physical clocks are attached to a
+> given block. ARM very clearly documents the clocks for their IP
+> blocks.
 
-Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-to determine if a vma has been disabled from being backed by hugepages.
+Okay, seems I see now what you're meaning. The PLLX is specifically
+dedicated to CPU HW on Tegra, so it shouldn't be questioning to put it
+within the CPU node, unlike the backup.
 
-Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-be disabled and emit "nh" as a flag for the corresponding vmas as part of
-/proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-flag and "nh" is not emitted.
+The assigned-clocks are about static clocks configuration, that is
+exactly opposite to what is needed. I'm not sure what you are trying to
+convey.. we don't need to get the parent clock, but set it.
 
-This causes smaps parsing libraries to assume a vma is enabled for thp
-and ends up puzzling the user on why its memory is not backed by thp.
-
-This also clears the "hg" flag to make the behavior of MADV_HUGEPAGE and
-PR_SET_THP_DISABLE definitive.
-
-Fixes: 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-Signed-off-by: David Rientjes <rientjes@google.com>
----
- v3:
-  - reword Documentation/filesystems/proc.txt for eligibility
-
- v2:
-  - clear VM_HUGEPAGE per Vlastimil
-  - update Documentation/filesystems/proc.txt to be explicit
-
- Documentation/filesystems/proc.txt |  7 ++++++-
- fs/proc/task_mmu.c                 | 14 +++++++++++++-
- 2 files changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -491,9 +491,14 @@ manner. The codes are the following:
-     sd  - soft-dirty flag
-     mm  - mixed map area
-     hg  - huge page advise flag
--    nh  - no-huge page advise flag
-+    nh  - no-huge page advise flag [*]
-     mg  - mergable advise flag
- 
-+ [*] A process mapping may be advised to not be backed by transparent hugepages
-+     by either madvise(MADV_NOHUGEPAGE) or prctl(PR_SET_THP_DISABLE).  See
-+     Documentation/admin-guide/mm/transhuge.rst for system-wide and process
-+     mapping policies.
-+
- Note that there is no guarantee that every flag and associated mnemonic will
- be present in all further kernel releases. Things get changed, the flags may
- be vanished or the reverse -- new added.
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -653,13 +653,25 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- #endif
- #endif /* CONFIG_ARCH_HAS_PKEYS */
- 	};
-+	unsigned long flags = vma->vm_flags;
- 	size_t i;
- 
-+	/*
-+	 * Disabling thp is possible through both MADV_NOHUGEPAGE and
-+	 * PR_SET_THP_DISABLE.  Both historically used VM_NOHUGEPAGE.  Since
-+	 * the introduction of MMF_DISABLE_THP, however, userspace needs the
-+	 * ability to detect vmas where thp is not eligible in the same manner.
-+	 */
-+	if (vma->vm_mm && test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags)) {
-+		flags &= ~VM_HUGEPAGE;
-+		flags |= VM_NOHUGEPAGE;
-+	}
-+
- 	seq_puts(m, "VmFlags: ");
- 	for (i = 0; i < BITS_PER_LONG; i++) {
- 		if (!mnemonics[i][0])
- 			continue;
--		if (vma->vm_flags & (1UL << i)) {
-+		if (flags & (1UL << i)) {
- 			seq_putc(m, mnemonics[i][0]);
- 			seq_putc(m, mnemonics[i][1]);
- 			seq_putc(m, ' ');
+How the backup/intermediate clock should be represented then? It is a
+part of HW description which potentially may vary depending on the board
+configuration.
