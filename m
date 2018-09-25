@@ -2,228 +2,96 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BA4C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB2BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E0A8206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E0A8206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B86C206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B86C206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbeIZC3o (ORCPT
+        id S1726931AbeIZCaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:29:44 -0400
-Received: from mga03.intel.com ([134.134.136.65]:22184 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbeIZC3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:29:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 13:20:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
-   d="scan'208";a="77230187"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
-  by orsmga006.jf.intel.com with ESMTP; 25 Sep 2018 13:20:12 -0700
-Subject: [PATCH v5 2/4] mm: Provide kernel parameter to allow disabling page
- init poisoning
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, dave.hansen@intel.com, jglisse@redhat.com,
-        rppt@linux.vnet.ibm.com, dan.j.williams@intel.com,
-        logang@deltatee.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Date:   Tue, 25 Sep 2018 13:20:12 -0700
-Message-ID: <20180925201921.3576.84239.stgit@localhost.localdomain>
-In-Reply-To: <20180925200551.3576.18755.stgit@localhost.localdomain>
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 25 Sep 2018 22:30:06 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41287 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbeIZCaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 22:30:06 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e18-v6so25801854oti.8;
+        Tue, 25 Sep 2018 13:20:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EHIu6h9W6NFX+pw3BZtVkHMy+A2VO6Sii4fJuyQ8j98=;
+        b=uesGERqycsI6E4niD9UbGbSEwIQMEaKiovaQ4FSYYSj9vRAlI3R5VMwzfbHhrJF5XD
+         BoYidldPYeoSDIaAGphzYP+9daml+KGOmyDEX9kEyG+slLWv5zpq7ySZapNNzcmIfRkh
+         IK8OWYta60PBqH6mFT2VPjq5oVaeXykL36nThz/n/EHpzwVN4oflZA0XWiUEGcvWaa2c
+         t2L7XMsHakzl6N5PZslH4Iy1ZvxvxY5tsCyEV0RTOYu3KfsKU5zQR7fYhdHXuIfBhaFt
+         icuGH8X405Rl1HqES8vEy3es+2yBS6tvh2FaDDQchGHst1cGU9tbbLT/rmidsnM1Kucu
+         AN9g==
+X-Gm-Message-State: ABuFfoiDkNs10NhYrNZYX/Nvs8mpAzytLoWNQifa8d3ToWgDXsbJh7nA
+        K3zsHxjgDzm+ih1nCGpLMA==
+X-Google-Smtp-Source: ACcGV62dmnk+Myt//gsfYTIqWTEWcd90Omdg06+8IOZQZUgV6Ls4T0qAsFbT1MwZag1sMKaLQp45IQ==
+X-Received: by 2002:a9d:520b:: with SMTP id e11-v6mr1897745oth.396.1537906849574;
+        Tue, 25 Sep 2018 13:20:49 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s145-v6sm1122443oih.16.2018.09.25.13.20.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 13:20:49 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 15:20:48 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+        broonie@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 4/5] pinctrl: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20180925202048.GA6227@bogus>
+References: <20180905104120.17252-1-ckeepax@opensource.cirrus.com>
+ <20180905104120.17252-4-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905104120.17252-4-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems with a large amount of memory it can take a significant amount
-of time to initialize all of the page structs with the PAGE_POISON_PATTERN
-value. I have seen it take over 2 minutes to initialize a system with
-over 12TB of RAM.
+On Wed, Sep 05, 2018 at 11:41:19AM +0100, Charles Keepax wrote:
+> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> 
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform.
+> 
+> Lochnagar provides many pins which can generally be used for an
+> audio function such as an AIF or a PDM interface, but also as
+> GPIOs.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+>  drivers/pinctrl/cirrus/Kconfig             |   10 +
+>  drivers/pinctrl/cirrus/Makefile            |    2 +
+>  drivers/pinctrl/cirrus/pinctrl-lochnagar.c | 1161 ++++++++++++++++++++++++++++
+>  drivers/pinctrl/cirrus/pinctrl-lochnagar.h |  115 +++
 
-In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
-the boot time returned to something much more reasonable as the
-arch_add_memory call completed in milliseconds versus seconds. However in
-doing that I had to disable all of the other VM debugging on the system.
+>  include/dt-bindings/pinctrl/lochnagar.h    |  135 ++++
 
-In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
-a system that has a large amount of memory I have added a new kernel
-parameter named "vm_debug" that can be set to "-" in order to disable it.
+This belongs with the binding patch.
 
-Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
-
-v3: Switched from kernel config option to parameter
-v4: Added comment to parameter handler to record when option is disabled
-    Updated parameter description based on feedback from Michal Hocko
-    Fixed GB vs TB typo in patch description.
-    Switch to vm_debug option similar to slub_debug
-v5: Rebased on latest linux-next
-
- Documentation/admin-guide/kernel-parameters.txt |   12 ++++++
- include/linux/page-flags.h                      |    8 ++++
- mm/debug.c                                      |   46 +++++++++++++++++++++++
- mm/memblock.c                                   |    5 +--
- mm/sparse.c                                     |    4 +-
- 5 files changed, 69 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 42d9150047f2..d9ad70ccbdc2 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4811,6 +4811,18 @@
- 			This is actually a boot loader parameter; the value is
- 			passed to the kernel using a special protocol.
- 
-+	vm_debug[=options]	[KNL] Available with CONFIG_DEBUG_VM=y.
-+			May slow down system boot speed, especially when
-+			enabled on systems with a large amount of memory.
-+			All options are enabled by default, and this
-+			interface is meant to allow for selectively
-+			enabling or disabling specific virtual memory
-+			debugging features.
-+
-+			Available options are:
-+			  P	Enable page structure init time poisoning
-+			  -	Disable all of the above options
-+
- 	vmalloc=nn[KMG]	[KNL,BOOT] Forces the vmalloc area to have an exact
- 			size of <nn>. This can be used to increase the
- 			minimum size (128MB on x86). It can also be used to
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 4d99504f6496..934f91ef3f54 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -163,6 +163,14 @@ static inline int PagePoisoned(const struct page *page)
- 	return page->flags == PAGE_POISON_PATTERN;
- }
- 
-+#ifdef CONFIG_DEBUG_VM
-+void page_init_poison(struct page *page, size_t size);
-+#else
-+static inline void page_init_poison(struct page *page, size_t size)
-+{
-+}
-+#endif
-+
- /*
-  * Page flags policies wrt compound pages
-  *
-diff --git a/mm/debug.c b/mm/debug.c
-index bd10aad8539a..cdacba12e09a 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -13,6 +13,7 @@
- #include <trace/events/mmflags.h>
- #include <linux/migrate.h>
- #include <linux/page_owner.h>
-+#include <linux/ctype.h>
- 
- #include "internal.h"
- 
-@@ -175,4 +176,49 @@ void dump_mm(const struct mm_struct *mm)
- 	);
- }
- 
-+static bool page_init_poisoning __read_mostly = true;
-+
-+static int __init setup_vm_debug(char *str)
-+{
-+	bool __page_init_poisoning = true;
-+
-+	/*
-+	 * Calling vm_debug with no arguments is equivalent to requesting
-+	 * to enable all debugging options we can control.
-+	 */
-+	if (*str++ != '=' || !*str)
-+		goto out;
-+
-+	__page_init_poisoning = false;
-+	if (*str == '-')
-+		goto out;
-+
-+	while (*str) {
-+		switch (tolower(*str)) {
-+		case'p':
-+			__page_init_poisoning = true;
-+			break;
-+		default:
-+			pr_err("vm_debug option '%c' unknown. skipped\n",
-+			       *str);
-+		}
-+
-+		str++;
-+	}
-+out:
-+	if (page_init_poisoning && !__page_init_poisoning)
-+		pr_warn("Page struct poisoning disabled by kernel command line option 'vm_debug'\n");
-+
-+	page_init_poisoning = __page_init_poisoning;
-+
-+	return 1;
-+}
-+__setup("vm_debug", setup_vm_debug);
-+
-+void page_init_poison(struct page *page, size_t size)
-+{
-+	if (page_init_poisoning)
-+		memset(page, PAGE_POISON_PATTERN, size);
-+}
-+EXPORT_SYMBOL_GPL(page_init_poison);
- #endif		/* CONFIG_DEBUG_VM */
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 32e5c62ee142..b0ebca546ba1 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1503,10 +1503,9 @@ void * __init memblock_alloc_try_nid_raw(
- 
- 	ptr = memblock_alloc_internal(size, align,
- 					   min_addr, max_addr, nid);
--#ifdef CONFIG_DEBUG_VM
- 	if (ptr && size > 0)
--		memset(ptr, PAGE_POISON_PATTERN, size);
--#endif
-+		page_init_poison(ptr, size);
-+
- 	return ptr;
- }
- 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index c0788e3d8513..ab2ac45e0440 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -696,13 +696,11 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
- 		goto out;
- 	}
- 
--#ifdef CONFIG_DEBUG_VM
- 	/*
- 	 * Poison uninitialized struct pages in order to catch invalid flags
- 	 * combinations.
- 	 */
--	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
--#endif
-+	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
- 
- 	section_mark_present(ms);
- 	sparse_init_one_section(ms, section_nr, memmap, usemap);
-
+>  5 files changed, 1423 insertions(+)
+>  create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.c
+>  create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.h
+>  create mode 100644 include/dt-bindings/pinctrl/lochnagar.h
