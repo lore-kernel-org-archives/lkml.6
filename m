@@ -2,118 +2,101 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1016C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A37EC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 821B320842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:59:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821B320842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A6EDD208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:00:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EDD208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbeIYMFE (ORCPT
+        id S1727434AbeIYMGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 08:05:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58148 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726033AbeIYMFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 08:05:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DC1CFAC52;
-        Tue, 25 Sep 2018 05:59:07 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 07:59:04 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     zhe.he@windriver.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
-        mgorman@techsingularity.net, aaron.lu@intel.com, osalvador@suse.de,
-        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm/page_alloc: Fix panic caused by passing
- debug_guardpage_minorder or kernelcore to command line
-Message-ID: <20180925055904.GM18685@dhcp22.suse.cz>
-References: <1537628013-243902-1-git-send-email-zhe.he@windriver.com>
- <20180924142408.GC18685@dhcp22.suse.cz>
- <20180924144217.6cabee9f41d0d0ad1757866a@linux-foundation.org>
+        Tue, 25 Sep 2018 08:06:39 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36730 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeIYMGj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 08:06:39 -0400
+Received: by mail-qk1-f193.google.com with SMTP id a85-v6so898869qkg.3;
+        Mon, 24 Sep 2018 23:00:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9QdH8jLYEpenqSyesUgI+vFc1hrjooKs4UPjXvQb/Rs=;
+        b=uPP4gK0aXQBCmW0PKtHJXZD+0e7U19J7aKexXZ7T/n7snnDZ2PNwYCwt898u/lYweM
+         69TePN7z80jUDOuME88zE56NhjCRKUnJQmdhZKhqPvQlaAQAj/Qv4AgC8bEZkiu6LH2K
+         ljrWpJ6HL2mqnbLvByWRhRa1Jw+VFt5tFkQzlDvI7Rg2IbJfoKTlQiK58cb4aCuS0IQE
+         Deumzx2LbOrO/g75e8/Nz4RqlEPBYK8E55iWk9gL+vPFLQZT0vpRLs1cvDXjwrixUqvs
+         JQVhAD60SHlQVXNw8gb8eqM4S5LBnOp3V34azLqfqYffG5AJliMnU6JLRQ4bJtxaDH+D
+         ui6g==
+X-Gm-Message-State: ABuFfogmSPI5b2MGq1NScoQKjrjZPkSN+l9dIiFdbUEzQFDk2sTKa8ln
+        lkd7kIgUA/IZDnbrEdRP+6EAUmFPzakT0fiewBQ=
+X-Google-Smtp-Source: ACcGV60ocXbeZUJBviKcEm6tRvPMvk8YfGmcqF0qfT5T/IvbcgpUuRG7rZYZ5GZ2YRw5vgAd7so/AHYgSc0QTuKjqcE=
+X-Received: by 2002:a37:7347:: with SMTP id o68-v6mr1481384qkc.291.1537855244889;
+ Mon, 24 Sep 2018 23:00:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924144217.6cabee9f41d0d0ad1757866a@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1536913980-4811-1-git-send-email-firoz.khan@linaro.org>
+ <1536913980-4811-3-git-send-email-firoz.khan@linaro.org> <CAK8P3a1PCnHy1JX4T21LjOr3ZGAVLdqxQaPYfLHAgM-9Y5yxVg@mail.gmail.com>
+ <CALxhOngVYQRwbcUg6c_3LcKAEoBwyN1B478LqRGmWEGL004--w@mail.gmail.com>
+ <CAK8P3a2hi-Ndh7X-9r3NhBUJXQBTBFsTU==GbHesy6YD9idCJA@mail.gmail.com> <87efdi5rm6.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87efdi5rm6.fsf@concordia.ellerman.id.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 25 Sep 2018 08:00:28 +0200
+Message-ID: <CAK8P3a2=kxoum6hcPR2UN_St2PaFtZud_NNVkK9rHaf=N7ym-g@mail.gmail.com>
+Subject: Re: [PATCH 2/3] powerpc: Add system call table generation support
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Firoz Khan <firoz.khan@linaro.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxram@us.ibm.com,
+        leitao@debian.org, Boqun Feng <boqun.feng@gmail.com>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 24-09-18 14:42:17, Andrew Morton wrote:
-> On Mon, 24 Sep 2018 16:24:08 +0200 Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > On Sat 22-09-18 22:53:32, zhe.he@windriver.com wrote:
-> > > From: He Zhe <zhe.he@windriver.com>
-> > > 
-> > > debug_guardpage_minorder_setup and cmdline_parse_kernelcore do not check
-> > > input argument before using it. The argument would be a NULL pointer if
-> > > "debug_guardpage_minorder" or "kernelcore", without its value, is set in
-> > > command line and thus causes the following panic.
-> > > 
-> > > PANIC: early exception 0xe3 IP 10:ffffffffa08146f1 error 0 cr2 0x0
-> > > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #11
-> > > [    0.000000] RIP: 0010:parse_option_str+0x11/0x90
-> > > ...
-> > > [    0.000000] Call Trace:
-> > > [    0.000000]  cmdline_parse_kernelcore+0x19/0x41
-> > > [    0.000000]  do_early_param+0x57/0x8e
-> > > [    0.000000]  parse_args+0x208/0x320
-> > > [    0.000000]  ? rdinit_setup+0x30/0x30
-> > > [    0.000000]  parse_early_options+0x29/0x2d
-> > > [    0.000000]  ? rdinit_setup+0x30/0x30
-> > > [    0.000000]  parse_early_param+0x36/0x4d
-> > > [    0.000000]  setup_arch+0x336/0x99e
-> > > [    0.000000]  start_kernel+0x6f/0x4ee
-> > > [    0.000000]  x86_64_start_reservations+0x24/0x26
-> > > [    0.000000]  x86_64_start_kernel+0x6f/0x72
-> > > [    0.000000]  secondary_startup_64+0xa4/0xb0
-> > > 
-> > > This patch adds a check to prevent the panic
-> > 
-> > Is this something we deeply care about? The kernel command line
-> > interface is to be used by admins who know what they are doing.  Using
-> > random or wrong values for these parameters can have detrimental effects
-> > on the system. This particular case would blow up early, good. At least
-> > it is visible immediately. This and many other parameters could have a
-> > seemingly valid input (e.g. not a missing value) and subtle runtime
-> > effect. You won't blow up immediately but the system is hardly usable
-> > and the early checking cannot possible catch all those cases. Take a
-> > mem=$N copied from one machine to another with a different memory
-> > layout. While 2G can be perfectly fine on one a different machine might
-> > result on a completely unusable system because the available RAM is
-> > place higher.
-> > 
-> > So I am really wondering. Do we really want a lot of code to catch
-> > kernel command line incorrect inputs? Does it really lead to better
-> > quality overall? IMHO, we do have a proper documentation and we should
-> > trust those starting the kernel.
-> 
-> No, it's not very important.  It might help some people understand why
-> their kernel went splat in rare circumstances.  And it's __init code so
-> the runtime impact is nil.
-> 
-> It bothers me that there are many other kernel parameters which have
-> the same undesirable behaviour.  I'd much prefer a general fixup which
-> gave all of them this treatment, but it's unclear how to do this.
+On Tue, Sep 25, 2018 at 2:48 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+> > On Tue, Sep 18, 2018 at 2:15 PM Firoz Khan <firoz.khan@linaro.org> wrote:
+> >> On 14 September 2018 at 15:31, Arnd Bergmann <arnd@arndb.de> wrote:
+> >> > On Fri, Sep 14, 2018 at 10:33 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+> >
+> > But all three existing architectures (x86, s390 and arm) already
+> > have the capability to parse the table and generate different output
+> > from that.
+>
+> Yeah, we want that on powerpc too.
+>
+> If the script needs to be more complex that's fine, if it can't be
+> shared across arches that's fine, the main thing for me is that wiring
+> up a syscall can be done by adding a single line in a single file.
 
-If early_param took an additional argument to tell "this really requires
-a parameter" then we could do it in the common code.
+Yes, that's definitely the idea, we want to make it easier for everyone.
+We need at least a special case for mips, which needs three separate
+input files (the tables are completely different) to generate four versions
+of the output, plus a future extension to use the generic table for their
+new one.
 
-$ git grep "early_param(\"" | wc -l
-251
+For powerpc, I'm hoping that both the table format and script can be
+completely generic and not need a special case that is different
+from the others, but if we need some extra magic to handle the SPU
+syscalls, we can still do that with a private script.
 
-quite a lot of work for something that hasn't been a problem for years I
-guess. But maybe this would allow to remove ad-hoc checks in handlers
-and reduce the overal code size (in LOC) in the end.
--- 
-Michal Hocko
-SUSE Labs
+      Arnd
