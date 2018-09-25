@@ -2,213 +2,91 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9C1C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63812C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D8F20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E47D7214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:33:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="s5svEOxy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D8F20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jUIWeC5c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47D7214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeIZDfT (ORCPT
+        id S1726968AbeIZDmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 23:35:19 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40868 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbeIZDfT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 23:35:19 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r83-v6so5156300ljr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 14:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=usAb0Pr5cOvxjZD5I4ROOdKHwnxzSMvMNSAoSMDaiNc=;
-        b=s5svEOxyuLoFfjF+ONjX8mabCgMceFkB/hyCPfOEg9AL3afEwnMkshnMOho6F6RAeH
-         WZllOdZA6h+jVvmFobDEW/GRQMrWuZm8tjsXkIS5XklfNMapNprRTdgeGmiHXjnu09dE
-         y4ghRopyLgphT93ekmmViUpzqJ1clBAHFXNUc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=usAb0Pr5cOvxjZD5I4ROOdKHwnxzSMvMNSAoSMDaiNc=;
-        b=JEV/Fj7ug97rHyyiGxsp9kC5qbgETS/t+PLjicTbc3ZJBNySzhkm8hYhX7qXIxKjkD
-         SuAgmNZ44RCFw+zmyCqtRiPr7ACItwGw4HhhbBDxjNdFCwZUrhBs6IGXrerNObgQdx45
-         JFyJ1sVHAoFEa09oxh2aeNmOoiOOtfAXtlcZhRcl4JwKux0QLoT+wS4e8X+g1CgplUbU
-         SUGdDliAYV3b3Iz3RjzRZVV7Wg1yB4gNhaKOtdV+lOM25MZh+By1o+ILvFY4uqY6JrOA
-         e6hQseMlcPKny7Ls5qFpNQYtPMvrI23Ah1MZkt1QiCxU9gh1mMvIx7EaVDZKgakeBkK2
-         w6UQ==
-X-Gm-Message-State: ABuFfoiw4hBhbRf4nBvUo4LEcxkxsSFmXoesYXR212OFNaj02Y45CvuY
-        4xyb75EKb/SnbySuYMJ0SxgwhNK+NKNMyXANEzy9ZQ==
-X-Google-Smtp-Source: ACcGV62oon9gk3yk0obmdPeACNDfxKIG5kYEDZH0WhtdVzdSkg9BRN1Lv0UiSn6NDpFKYKP9tkD9qmN+rKecrwSpYWs=
-X-Received: by 2002:a2e:9948:: with SMTP id r8-v6mr2345993ljj.135.1537910745727;
- Tue, 25 Sep 2018 14:25:45 -0700 (PDT)
+        Tue, 25 Sep 2018 23:42:38 -0400
+Received: from ozlabs.org ([203.11.71.1]:60385 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726328AbeIZDmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 23:42:38 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42KZ7355Q2z9s55;
+        Wed, 26 Sep 2018 07:33:03 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537911183;
+        bh=Sc5a/qGb4alZEWzFYtZTSPT1WOlcsFgRvmvhV4RkMSg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jUIWeC5cWFWGQAmU6uaZLD5Q+DRvVHGlfu/oQS5lmBIuXO2Uq2+NQv1uSB2uvuxHZ
+         aszTBZK1/85swqDs4h+Xvoom/bDtE5L2IRmPe9hJCpZArmDXVXxP0lxkdyqnZEMqVh
+         l8NrNS8wTK3CwwmuUKk/p+gQ6Dzo2xSerKLJZa2NtuxqRBY/IdqqSBUAgxW7CJikNM
+         nPCNvOAEdD84GG16bvoObi6OgljFqy86ZuJ057lNGjTuhQePce9KReXSlcXrRu5Iq4
+         vD2dyBaOBckX3qdtbQ/zq5BtONOf3iFR7678fC6Xeu59B0Q1aNAQWE9cs2t3MQEPlj
+         5rYV16Bm2VXNg==
+Date:   Wed, 26 Sep 2018 07:32:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the dma-mapping
+ tree
+Message-ID: <20180926073246.429ff97e@canb.auug.org.au>
 MIME-Version: 1.0
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org> <f65e9fa6e047b9b14d4f64362f9fe1f89b306050.1536430404.git.saiprakash.ranjan@codeaurora.org>
-In-Reply-To: <f65e9fa6e047b9b14d4f64362f9fe1f89b306050.1536430404.git.saiprakash.ranjan@codeaurora.org>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Tue, 25 Sep 2018 14:25:34 -0700
-Message-ID: <CAEXW_YRQtJb=3V0RKHSAejfQXKssh5qBp7nmD1OUC-wTyqGDEQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] tracing: Add tp_pstore cmdline to have tracepoints go
- to pstore
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.WOad2merToPLt39eu4F6k4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 8, 2018 at 1:28 PM Sai Prakash Ranjan
-<saiprakash.ranjan@codeaurora.org> wrote:
->
-> Add the kernel command line tp_pstore option that will have
-> tracepoints go to persistent ram buffer as well as to the
-> trace buffer for further debugging. This is similar to tp_printk
-> cmdline option of ftrace.
->
-> Pstore support for event tracing is already added and we enable
-> logging to pstore only if cmdline is specified.
->
-> Passing "tp_pstore" will activate logging to pstore. To turn it
-> off, the sysctl /proc/sys/kernel/tracepoint_pstore can have '0'
-> echoed into it. Note, this only works if the cmdline option is
-> used. Echoing 1 into the sysctl file without the cmdline option
-> will have no affect.
->
-> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> ---
->  .../admin-guide/kernel-parameters.txt         | 21 ++++++++
->  include/linux/ftrace.h                        |  6 ++-
->  kernel/sysctl.c                               |  7 +++
->  kernel/trace/Kconfig                          | 22 +++++++-
->  kernel/trace/trace.c                          | 51 +++++++++++++++++++
->  kernel/trace/trace.h                          |  7 +++
->  6 files changed, 112 insertions(+), 2 deletions(-)
->
-[...]
->  config GCOV_PROFILE_FTRACE
->         bool "Enable GCOV profiling on ftrace subsystem"
->         depends on GCOV_KERNEL
-> @@ -789,4 +810,3 @@ config GCOV_PROFILE_FTRACE
->  endif # FTRACE
->
->  endif # TRACING_SUPPORT
-> -
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index bf6f1d70484d..018cbbefb769 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -73,6 +73,11 @@ struct trace_iterator *tracepoint_print_iter;
->  int tracepoint_printk;
->  static DEFINE_STATIC_KEY_FALSE(tracepoint_printk_key);
->
-> +/* Pipe tracepoints to pstore */
-> +struct trace_iterator *tracepoint_pstore_iter;
-> +int tracepoint_pstore;
-> +static DEFINE_STATIC_KEY_FALSE(tracepoint_pstore_key);
-> +
->  /* For tracers that don't implement custom flags */
->  static struct tracer_opt dummy_tracer_opt[] = {
->         { }
-> @@ -238,6 +243,14 @@ static int __init set_tracepoint_printk(char *str)
->  }
->  __setup("tp_printk", set_tracepoint_printk);
->
-> +static int __init set_tracepoint_pstore(char *str)
-> +{
-> +       if ((strcmp(str, "=0") != 0 && strcmp(str, "=off") != 0))
-> +               tracepoint_pstore = 1;
-> +       return 1;
-> +}
-> +__setup("tp_pstore", set_tracepoint_pstore);
-> +
->  unsigned long long ns2usecs(u64 nsec)
->  {
->         nsec += 500;
-> @@ -2376,11 +2389,45 @@ int tracepoint_printk_sysctl(struct ctl_table *table, int write,
->         return ret;
->  }
->
-> +static DEFINE_MUTEX(tracepoint_pstore_mutex);
-> +
-> +int tracepoint_pstore_sysctl(struct ctl_table *table, int write,
-> +                            void __user *buffer, size_t *lenp,
-> +                            loff_t *ppos)
-> +{
-> +       int save_tracepoint_pstore;
-> +       int ret;
-> +
-> +       mutex_lock(&tracepoint_pstore_mutex);
-> +       save_tracepoint_pstore = tracepoint_pstore;
-> +
-> +       ret = proc_dointvec(table, write, buffer, lenp, ppos);
-> +
-> +       if (!tracepoint_pstore_iter)
-> +               tracepoint_pstore = 0;
-> +
-> +       if (save_tracepoint_pstore == tracepoint_pstore)
-> +               goto out;
-> +
-> +       if (tracepoint_pstore)
-> +               static_key_enable(&tracepoint_pstore_key.key);
-> +       else
-> +               static_key_disable(&tracepoint_pstore_key.key);
-> +
-> + out:
-> +       mutex_unlock(&tracepoint_pstore_mutex);
-> +
-> +       return ret;
-> +}
-> +
->  void trace_event_buffer_commit(struct trace_event_buffer *fbuffer)
->  {
->         if (static_key_false(&tracepoint_printk_key.key))
->                 output_printk(fbuffer);
->
-> +       if (static_key_false(&tracepoint_pstore_key.key))
-> +               pstore_event_call(fbuffer);
+--Sig_/.WOad2merToPLt39eu4F6k4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Can you not find a way to pass the size of the even record here, to
-pstore? Then you can directly allocate and store the binary record in
-pstore itself instead of rendering and storing the text in pstore
-which will be more space (and I think time) efficient. I also think if
-you do this, then you will not need to use the spinlock in the pstore
-(which AIUI is preventing the warning you're seeing in the
-event_call->event.funcs->trace() call).
+Hi Christoph,
 
-- Joel
+Commit
+
+  e3b8f15ec90d ("Revert "dma-mapping: clear dev->dma_ops in arch_teardown_d=
+ma_ops"")
+
+is missing Signed-off-bys from its author and committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/.WOad2merToPLt39eu4F6k4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluqqX4ACgkQAVBC80lX
+0GyGwgf7BeLXYooVDqAkNVoQ0Jd3MMe5ybQ9ZdeAknFYNR7RT+0uTaoAXLhQwISJ
+qEFVx36Jg0+Cv78oAyGOeCnEo2LivMQV5kKpZE6+ZZLZf0Eh/ME6qXFlDR4hqUGL
+OQ7N4oBdoxF8O5zV7E3GO6zzx1vvhhSidwwoJacAUy6zgI1kAevv6XDrRgQ5KOc5
+X5lJ5ynjJRkVAFU0Fa5UeiZDFBeOABcUTdW5zutjqiO6X+BDZu3prs35N4iRS9B5
+5fw4Ih3DE2YOAwd5IlFLGICg0Y/V5fEpOxJd1tpJykjWxPvh6gni9oLM1A0s0w9m
+GSdxB/PjZxgr+otzJSfy7bDXD6Lw2g==
+=h9ZJ
+-----END PGP SIGNATURE-----
+
+--Sig_/.WOad2merToPLt39eu4F6k4--
