@@ -2,98 +2,127 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED76C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18605C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6297120676
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:38:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6297120676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BEB4720685
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:39:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SHmCu/jr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEB4720685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbeIYXr1 (ORCPT
+        id S1727340AbeIYXrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:47:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:55990 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbeIYXr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:47:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3168A18A;
-        Tue, 25 Sep 2018 10:38:54 -0700 (PDT)
-Received: from e113632-lin.Cambridge.Arm.com (e113632-lin.Emea.Arm.com [10.4.12.39])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F061F3F5BD;
-        Tue, 25 Sep 2018 10:38:52 -0700 (PDT)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@redhat.com, peterz@infradead.org, vincent.guittot@linaro.org,
-        Dietmar.Eggemann@arm.com
-Subject: [PATCH] sched/fair: Don't increase sd->balance_interval on newidle balance
-Date:   Tue, 25 Sep 2018 18:35:22 +0100
-Message-Id: <1537896922-8508-1-git-send-email-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 25 Sep 2018 19:47:39 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38503 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbeIYXrj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:47:39 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so22579096ljc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ouH4n09/ojxjMH+cdgh6kJGsc2Zq9OTlO+9jcYp+R7U=;
+        b=SHmCu/jrF32wvQNqDOGKXIU/g2vEPCL6ePpzFL17CxtG6/BpcqJNsf6jlDSCRBZsLE
+         uVtCxcX6Vo8inDIwmcOGRi3Uwuplu/88XYXnCXmvJ6nmGeHbBWca3hg67CSdQixPA13Q
+         b05oyoxnLSDIQ+SdPOlKt9fWagNxesPAinBjc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ouH4n09/ojxjMH+cdgh6kJGsc2Zq9OTlO+9jcYp+R7U=;
+        b=P7wKWRmYEQsuYVoIk+/GPLqy+YCfuhmS4CZT4QA2P/RE1FL0E4dkFkr8E/JcbI204s
+         +/EoNyGnsEYR870bSFyYYVftDNZs6FKFodke04j+d+nNpb/fA3XHgDeIdwKVd4un2JTI
+         8xtYbn6UleJD0bTqADclLv6k1aak1L0nARX/6pStDtlcHCfTgODPFM3+s6PHXr2O8BZZ
+         zKygBGy0AeBnbvTpjjdGQtkZoppjqRBD74a+U1ZVFb7Qp/icW3V5Ta4fsYof53N4EVX+
+         DA4Oenx3L8G16AsSWb8jt3apmzavFzyEO3VwVjize7anVTBtxn9alK+1rNbX0YVEpSpw
+         dRFw==
+X-Gm-Message-State: ABuFfohUrTrhJUAIO969gxaa5pk1hX9stkAQo90diqvNZG4HAxIEtk/u
+        9XJLZ7A5m13A4tbhSxw4dhQRl78OCUo=
+X-Google-Smtp-Source: ACcGV636v9R79PyVWMgIehBw0FeXr4wiLPibmRg5JrGvR67Wo/eEOV5SURLDXP+QXcrumiN6qtTuAA==
+X-Received: by 2002:a2e:2942:: with SMTP id u63-v6mr1660774lje.28.1537897143642;
+        Tue, 25 Sep 2018 10:39:03 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id x5-v6sm534265lfi.45.2018.09.25.10.39.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 10:39:03 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id j25-v6so2563572ljg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:39:02 -0700 (PDT)
+X-Received: by 2002:a2e:5554:: with SMTP id j81-v6mr1645611ljb.53.1537897141912;
+ Tue, 25 Sep 2018 10:39:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <1537887875-29494-1-git-send-email-vbadigan@codeaurora.org> <1537887875-29494-2-git-send-email-vbadigan@codeaurora.org>
+In-Reply-To: <1537887875-29494-2-git-send-email-vbadigan@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 25 Sep 2018 10:38:23 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6Bxtdev+1Zo58LHNaYkB5MTfUZx8eFayvuixVJFWMw_Q@mail.gmail.com>
+Message-ID: <CAE=gft6Bxtdev+1Zo58LHNaYkB5MTfUZx8eFayvuixVJFWMw_Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mmc: sdhci-msm: Add flag for restoring dll
+To:     vbadigan@codeaurora.org
+Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
+        robh+dt@kernel.org, asutoshd@codeaurora.org,
+        riteshh@codeaurora.org, stummala@codeaurora.org,
+        sayali <sayalil@codeaurora.org>,
+        Doug Anderson <dianders@google.com>, mark.rutland@arm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When load_balance() fails to move some load because of task affinity,
-we end up increasing sd->balance_interval to delay the next periodic
-balance in the hopes that next time we look, that annoying pinned
-task(s) will be gone.
+On Tue, Sep 25, 2018 at 8:05 AM Veerabhadrarao Badiganti
+<vbadigan@codeaurora.org> wrote:
+>
+> The dll settings of SDHC controller needs to be restored whenever
+> controller clocks are gated. This restoration is needed only on
+> few SDHCI-MSM controllers. This dt flag indicates whether dll
+> restoration is needed or not.
+>
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> index 3720385..207ce36 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+> @@ -31,6 +31,8 @@ Optional properties:
+>                                         BUS_OFF states in power irq. Should be specified in
+>                                         pairs (lpm, hpm), for BUS_OFF and BUS_ON respectively.
+>                                         Units uA.
+> +- qcom,restore-dll-config - Flag indicates that restoration of dll config after clock gating
+> +                           is needed on given platform. This wouldn't be needed for every MSM.
+>  Example:
+>
+>         sdhc_1: sdhci@f9824900 {
+> @@ -49,6 +51,8 @@ Example:
+>
+>                 clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
+>                 clock-names = "core", "iface";
+> +
+> +               qcom,restore-dll-config;
 
-However, idle_balance() pays no attention to sd->balance_interval, yet
-it will still lead to an increase in balance_interval in case of
-pinned tasks.
+Hi Veera,
+I'm not sure this is the best approach. It might be better to key this
+behavior off of the compatible string. Actually I'm noticing now that
+the binding for this device doesn't include an SoC-specific compatible
+string, which I think is now the preferred way (eg
+"qcom,sdm845-sdhci", "qcom,sdhci-msm-v5"). I think we should add that
+to sdhci-msm.txt, then use the compatible string to enable this
+behavior you're adding now.
 
-If we're going through several newidle balances (e.g. we have a
-periodic task), this can lead to a huge increase of the
-balance_interval in a very small amount of time.
-
-To prevent that, don't increase the balance interval when going
-through a newidle balance.
-
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/fair.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6bd142d..620910d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8782,13 +8782,22 @@ static int load_balance(int this_cpu, struct rq *this_rq,
- 	sd->nr_balance_failed = 0;
- 
- out_one_pinned:
-+	ld_moved = 0;
-+
-+	/*
-+	 * idle_balance() disregards balance intervals, so we could repeatedly
-+	 * reach this code, which would lead to balance_interval skyrocketting
-+	 * in a short amount of time. Skip the balance_interval increase logic
-+	 * to avoid that.
-+	 */
-+	if (env.idle == CPU_NEWLY_IDLE)
-+		goto out;
-+
- 	/* tune up the balancing interval */
--	if (((env.flags & LBF_ALL_PINNED) &&
--			sd->balance_interval < MAX_PINNED_INTERVAL) ||
--			(sd->balance_interval < sd->max_interval))
-+	if ((env.flags & LBF_ALL_PINNED &&
-+	     sd->balance_interval < MAX_PINNED_INTERVAL) ||
-+	    (sd->balance_interval < sd->max_interval))
- 		sd->balance_interval *= 2;
--
--	ld_moved = 0;
- out:
- 	return ld_moved;
- }
---
-2.7.4
-
+-Evan
