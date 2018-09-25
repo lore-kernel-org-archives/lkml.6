@@ -2,81 +2,128 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1F1C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7FCC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CCF214AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:43:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CCF214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 316F52087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316F52087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbeIYNt5 (ORCPT
+        id S1728742AbeIYNxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:49:57 -0400
-Received: from mga06.intel.com ([134.134.136.31]:37885 "EHLO mga06.intel.com"
+        Tue, 25 Sep 2018 09:53:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60609 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727265AbeIYNt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:49:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 00:43:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,301,1534834800"; 
-   d="scan'208";a="94575360"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.4]) ([10.239.13.4])
-  by orsmga002.jf.intel.com with ESMTP; 25 Sep 2018 00:43:01 -0700
-Subject: Re: [LKP] [mm, oom] 6209f6fc62: general_protection_fault:#[##]
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     lkp@01.org, 0day robot <lkp@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180925054820.GC27173@shao2-debian>
- <20180925060653.GN18685@dhcp22.suse.cz>
- <084cf8cd-f384-8694-16c0-d1e2abfb9099@intel.com>
- <20180925073145.GO18685@dhcp22.suse.cz>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <917270d5-8755-b0d6-60c4-871f8c7ff982@intel.com>
-Date:   Tue, 25 Sep 2018 15:43:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S1727588AbeIYNxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:53:44 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7D78520731; Tue, 25 Sep 2018 09:47:24 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4A0FD203DA;
+        Tue, 25 Sep 2018 09:47:14 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 09:47:14 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Denis OSTERLAND <denis.osterland@diehl.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "khoroshilov@ispras.ru" <khoroshilov@ispras.ru>
+Subject: Re: rtc: isl1208: avoid possible sysfs race
+Message-ID: <20180925074714.GG13455@piout.net>
+References: <20180915114343.31935-1-alexandre.belloni@bootlin.com>
+ <1537857983.4657.5.camel@diehl.com>
 MIME-Version: 1.0
-In-Reply-To: <20180925073145.GO18685@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <1537857983.4657.5.camel@diehl.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 25/09/2018 06:46:24+0000, Denis OSTERLAND wrote:
+> Hi,
+> 
+> just for clarification:
+> This changes user-space representation from
+> /sys/class/rtc/rtcN/device/{atrim,dtrim,usr}
+> to
+> /sys/class/rtc/rtcN/{atrim,dtrim,usr}
+> and fixes the "mistake made back in 2006" you mention in
+> https://patchwork.ozlabs.org/patch/881397/
+> correct?
+> 
 
+This is correct. At some point, it would also be great to move from
+atrim/dtrim to offset
 
-On 09/25/2018 03:31 PM, Michal Hocko wrote:
-> On Tue 25-09-18 15:00:15, Rong Chen wrote:
->>
->> On 09/25/2018 02:06 PM, Michal Hocko wrote:
->>> On Tue 25-09-18 13:48:20, kernel test robot wrote:
->>>> FYI, we noticed the following commit (built with gcc-7):
->>>>
->>>> commit: 6209f6fc62835d84c2a92d237588a114e39436ce ("mm, oom: rework mmap_exit vs. oom_reaper synchronization")
->>>> https://github.com/0day-ci/linux UPDATE-20180911-024633/Tetsuo-Handa/mm-oom-Fix-unnecessary-killing-of-additional-processes/20180910-163452
->>> Do you have a msg-id to the patch that has been tested?
->> message_id: 20180910125513.311-2-mhocko@kernel.org
-> Thanks! It woudl be really great if this was a part of the report when
-> testing patches which are not mainline yet.
->
-> This patch resulting in a crash is quite surprising. The patch is RFC
-> and not tested yet but I will definitely have a look. Could you help me
-> some more and give faddr2line __oom_reap_task_mm+0x40 please?
-$ faddr2line ./vmlinux __oom_reap_task_mm+0x40
-__oom_reap_task_mm+0x40/0x175:
-can_madv_dontneed_vma at mm/internal.h:48
- Â (inlined by) __oom_reap_task_mm at mm/oom_kill.c:505
+> Regards Denis
+> 
+> Am Samstag, den 15.09.2018, 13:43 +0200 schrieb Alexandre Belloni:
+> > Use rtc_add_group to add the common sysfs group to avoid a possible race
+> > condition.
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > ---
+> >  drivers/rtc/rtc-isl1208.c | 11 +----------
+> >  1 file changed, 1 insertion(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
+> > index ea18a8f4bce0..e1e9434c9972 100644
+> > --- a/drivers/rtc/rtc-isl1208.c
+> > +++ b/drivers/rtc/rtc-isl1208.c
+> > @@ -804,7 +804,7 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+> >  		evdet_irq = of_irq_get_byname(np, "evdet");
+> >  	}
+> >  
+> > -	rc = sysfs_create_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
+> > +	rc = rtc_add_group(rtc, &isl1208_rtc_sysfs_files);
+> >  	if (rc)
+> >  		return rc;
+> >  
+> > @@ -821,14 +821,6 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+> >  	return rtc_register_device(rtc);
+> >  }
+> >  
+> > -static int
+> > -isl1208_remove(struct i2c_client *client)
+> > -{
+> > -	sysfs_remove_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
+> > -
+> > -	return 0;
+> > -}
+> > -
+> >  static const struct i2c_device_id isl1208_id[] = {
+> >  	{ "isl1208", TYPE_ISL1208 },
+> >  	{ "isl1218", TYPE_ISL1218 },
+> > @@ -851,7 +843,6 @@ static struct i2c_driver isl1208_driver = {
+> >  		.of_match_table = of_match_ptr(isl1208_of_match),
+> >  	},
+> >  	.probe = isl1208_probe,
+> > -	.remove = isl1208_remove,
+> >  	.id_table = isl1208_id,
+> >  };
+> >  
+> 
+> Diehl Connectivity Solutions GmbH
+> Geschäftsführung: Horst Leonberger
+> Sitz der Gesellschaft: Nürnberg - Registergericht: Amtsgericht
+> Nürnberg: HRB 32315
+> ___________________________________________________________________________________________________
+> 
+> Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
+> Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht.
+> Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
+> The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by
+> mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited. 
 
-Best Regards,
-Rong Chen
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
