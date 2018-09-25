@@ -2,134 +2,158 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BBFC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D83C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31FD206B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1A0621480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:04:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1Ekh2Hv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31FD206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="JizVTj1k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A0621480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728465AbeIYQKW (ORCPT
+        id S1728382AbeIYQK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:10:22 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54441 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbeIYQKW (ORCPT
+        Tue, 25 Sep 2018 12:10:59 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:41994 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeIYQK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:10:22 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c14-v6so12695014wmb.4;
-        Tue, 25 Sep 2018 03:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bZ4S3YnwjKcnQYUyH4MRhINubrDTlbVMfmN5/hecrtA=;
-        b=I1Ekh2Hvs5r9CKLYOcncAMAW2rLKmaINmTmwbNXwfo/RzdHKDLkNMQw70EvmloTsyK
-         PFt3ggs643w0g5inp3CiTjy07fN1Vzqb+Ip2pYp20BQeqJdgobiJUydslA0mO6MG1JGf
-         Cip1xu04lE2dbP+Srhm58uVl32W5vNGNuQYbUwZwlYQIABIvcr6vw5tgd6skJh3iZP5u
-         dadGiaUSGj2dVbtOiJbufpUBwaqYa4B712OnA0PA+n4ck+4JrFeZ6aWkCMaQ4JVyVaaa
-         G7GUQYss1LAtKgaAGKW0MRS/9tD1TL7yMRN9PJg+3NdvoKPjUektuUPlaLWcXV3/VMSs
-         HGRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bZ4S3YnwjKcnQYUyH4MRhINubrDTlbVMfmN5/hecrtA=;
-        b=FitgPSZBRrc35J8h3FnY/uf5kxsaDqp8Z/Rd4clTMQNIDUoOLyQtNMqz2HqVVFkjLv
-         9pITf0zQRzoLvCx/dUX5c94BBPr0TZ9RzpQstXB4C6wMC3zsfVFVTQXxHHcopKy54zME
-         vDtBXT0N4j8MicpvT364wmYBEB+0bcZ5OSxUUfQVNDG6jiaCUYT7azYQR6clotgdjkZk
-         vuQUMswL09I2jtwiudwF9KEOwb4yIHk9q+3/cjTtLBuBXf0pK9q4zieployb4+/ap976
-         P7xyVg6I/jIb2kM0cLBoHG6GynDL1NTjEx/kTIaxdQeCIi/jsl+05OWBY7DPS9/853Me
-         YXxQ==
-X-Gm-Message-State: ABuFfoim1icV9vhjyM/9fz48h/BbgToqFuNLQSOCgOzRLcE8ixT7ZoMh
-        eZotuySO0yLvqsH9xX7L8DE=
-X-Google-Smtp-Source: ACcGV61rfLJKahucQzgOIp7Ipidx+fP0OJK7rMM9BHUt62q2m8XXqDwyDBNK9CA5m2/lNh5JoBEgmw==
-X-Received: by 2002:a1c:be14:: with SMTP id o20-v6mr16001wmf.73.1537869812381;
-        Tue, 25 Sep 2018 03:03:32 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm1471700wrt.89.2018.09.25.03.03.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 03:03:31 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 12:03:30 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 16/20] iommu/tegra: gart: Don't use managed resources
-Message-ID: <20180925100330.GF7097@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-17-digetx@gmail.com>
- <20180924105246.GM21032@ulmo>
- <a9e2943b-1139-8838-5440-bd6cf55e9a55@gmail.com>
+        Tue, 25 Sep 2018 12:10:59 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 4A9FB24E01D9;
+        Tue, 25 Sep 2018 03:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1537869851; bh=9JB8j4TY7S8HvAOSB1Ms0lI+jf2wTh9A7606N7tHaGA=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=JizVTj1k7fzwHCjV1G5Al8/cUf/ByeH0JRKRt8NAOa5pdwnwLYWGasxo0/UOkFeXX
+         S4iev0E433tbkxifhaeLHOJHHPCq1oKy5gqKRjoNNGysz7drQduwDk9DFonzZPoJdo
+         hcZtaKfeL0b7/xwQ8wazo0UK4d8Fq70HN/s7luOI5VEXkE8ekGwfP/r715vbyysyYB
+         MhfuZofuBYsDdifcv1f3ueDXFJ+RhSfVonwOUeHjnjavgT8k2O9iQs/SpcsQfB/GP2
+         GLHGfMYfG8a3GCChgh+dxU9rAgsVPnEK0J2CzL89R62WQAlpp9pgDp69e1oscY5Gvt
+         5T9JgyAdoCILw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CDAD848CA;
+        Tue, 25 Sep 2018 03:04:10 -0700 (PDT)
+Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 25 Sep 2018 03:04:10 -0700
+Received: from AM04WEMBXB.internal.synopsys.com ([fe80::1006:bcdd:1b7:579b])
+ by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
+ 25 Sep 2018 14:04:07 +0400
+From:   Artur Petrosyan <arthur.petrosyan@synopsys.com>
+To:     John Stultz <john.stultz@linaro.org>,
+        Artur Petrosyan <arthur.petrosyan@synopsys.com>
+CC:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        John Youn <John.Youn@synopsys.com>,
+        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Topic: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Index: AQHT7ws4O+8B/axYs0CeMD+6l4m0jQ==
+Date:   Tue, 25 Sep 2018 10:04:07 +0000
+Message-ID: <3AD91E696667BF4BA728303C178E8A63532AB5E5@am04wembxb.internal.synopsys.com>
+References: <1526690943-8211-1-git-send-email-john.stultz@linaro.org>
+ <410670D7E743164D87FA6160E7907A5601313531E1@am04wembxa.internal.synopsys.com>
+ <CALAqxLVZXs97sryfPaGY5Gq50-FZROgaBADNXXadcyiNhP3EPQ@mail.gmail.com>
+ <410670D7E743164D87FA6160E7907A560131356C4E@am04wembxa.internal.synopsys.com>
+ <CALAqxLU3sWrgPjFqZ2vK0m8wVThtE1hDsbNq9zRC7ritzyNHmQ@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AAF6D@am04wembxb.internal.synopsys.com>
+ <CALAqxLXKOG8fxtrDaRLDGhJUfD1-4qc5QU60+ZmB3+9LsW69Lg@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AB36A@am04wembxb.internal.synopsys.com>
+ <CALAqxLXy0YXNLwFQEUZxSsjFKC9boVcGkt+50XwmVfwKCcqsEw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.104.24]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0rSojgWGcpz+ezC3"
-Content-Disposition: inline
-In-Reply-To: <a9e2943b-1139-8838-5440-bd6cf55e9a55@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---0rSojgWGcpz+ezC3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 24, 2018 at 09:57:10PM +0300, Dmitry Osipenko wrote:
-> On 9/24/18 1:52 PM, Thierry Reding wrote:
-> > On Mon, Sep 24, 2018 at 03:41:49AM +0300, Dmitry Osipenko wrote:
-> >> GART is a part of the Memory Controller driver that is always built-in,
-> >> hence there is no benefit from the use of managed resources.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/iommu/tegra-gart.c | 12 +++++++-----
-> >>  1 file changed, 7 insertions(+), 5 deletions(-)
-> >=20
-> > One benefit would be cleanup on probe error. Also, we may eventually
-> > want to make even the memory controller driver buildable as a module.
->=20
-> Please, let's keep that patch as is and re-introduce devm once it will
-> become really relevant.
-
-Alright, fine with me.
-
-Thierry
-
---0rSojgWGcpz+ezC3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqB/IACgkQ3SOs138+
-s6HNoA/8CFbeEPyFp1VE67Jzl/fEMLQ6zRfF+06HOGCAeFnQ0qqvVGle6Il1QH1i
-N9HYw6xE11x2NZHngX+kYMw+b7B0cF4nT3CXLDa0GXTf4ZzqWkmDOwGPKaPMUl8e
-MCC2TEf6TIJl0SJy6X66Zoxc4wFof3WIUT2XzxlRR7vPwiRJj4NLyVqH2PEkxyQz
-eLhRE9ZNTQeA5GGUtizPZ2mePDMmK9r6wFRwfitoz1no0JuRVJtsVfdCcCa6zbhR
-dni5cyjGWiUDCxTS4OaUesNkTN8uYlVVZYGiglVDrgiz7ztA26Wp6JSZp9oaPDz2
-9LmA30NgzE3ja6tjd+vlBFc+k0LBwWpmphjG8kQWMaos+PoJypoaFu560aS7oF+r
-kTcBh7RLJo1JRu+jLx8P/iYEWth4/ZLkCTPqi7foJPwJb+qu7J0gUuFW+29UnX/U
-bDE2z/pRwggUCGpfKlqXz+EdqZ2+tgYwRaeLgrPmKs7HSHsqnzlV0jlkfaKABoP+
-Od2ftt1kkAobq0vUTwGLKKpWVJcQSxCX6HMkFvC7TTL1ntMZVSK1SqomA9geFo2k
-0YbywVOL6LBlyElwpWZ+oyemLb9IH5POnHnl+gCxYAqy3oIJg87+UTuMjnbHI3a9
-xRxdJhFy0jOLmtSlQTq9Q0HmKC+VfD+4kDOOPUFwV8lFDFCr3a4=
-=fmqX
------END PGP SIGNATURE-----
-
---0rSojgWGcpz+ezC3--
+Hi John,=0A=
+=0A=
+On 9/24/2018 22:52, John Stultz wrote:=0A=
+> On Sun, Sep 23, 2018 at 10:57 PM, Artur Petrosyan=0A=
+> <arthur.petrosyan@synopsys.com> wrote:=0A=
+>> Hi John,=0A=
+>>=0A=
+>> On 9/21/2018 05:05, John Stultz wrote:=0A=
+>>> On Thu, Sep 20, 2018 at 7:17 AM, Artur Petrosyan=0A=
+>>> <Arthur.Petrosyan@synopsys.com> wrote:=0A=
+>>>> On 5/23/2018 01:57, John Stultz wrote:=0A=
+>>>>> Its done automatically, when the OTG cable is detected it the host=0A=
+>>>>> ports are disabled and when the OTG port is empty the host ports are=
+=0A=
+>>>>> enabled.=0A=
+>>>>>=0A=
+>>>>> Let me know if you need anything else!=0A=
+>>>>>=0A=
+>>>>=0A=
+>>>> Please apply the patch set with this cover letter "[PATCH 0/3] usb:=0A=
+>>>> dwc2: Fix hibernation for switching between host and device modes."=0A=
+>>>=0A=
+>>> Sorry, can you send the patches to me, or point me to a git tree? I'm=
+=0A=
+>>> not seeing that thread in my mailbox or on google.=0A=
+>>>=0A=
+>>>> Enable the power down on his devices. Let me know if you still see any=
+=0A=
+>>>> issue. If there is no issue, please provide Tested-by tag.=0A=
+>>>=0A=
+>>> Would be happy to test it, thought I'm traveling tomorrow, so I may=0A=
+>>> not be able to validate till monday.=0A=
+>>>=0A=
+>>> thanks=0A=
+>>> -john=0A=
+>>>=0A=
+>>=0A=
+>> You can find the patch set following to this link.=0A=
+>>=0A=
+>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__marc.info_-3Fl-3D=
+linux-2Dusb-26m-3D153745139408236-26w-3D2&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWq=
+B0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqrC_D7niMJI&m=3Ddfaz_WctFBdFgywM2g=
+9w0XVhgOdAS4gIsj9o23RnyvY&s=3D_Nz3ephAop_nqrfcICii4OgMkV14Mi4yaKk8-qPqdis&e=
+=3D=0A=
+> =0A=
+> I applied those three patches, and it seems to work ok.=0A=
+> =0A=
+> Just to be clear, was there anything else I was needing to do while testi=
+ng it?=0A=
+> =0A=
+> Otherwise,=0A=
+> Tested-by: John Stultz <john.stultz@linaro.org>   #On HiKey=0A=
+> =0A=
+> thanks=0A=
+> -john=0A=
+> =0A=
+=0A=
+Just a clarification by this commit "[PATCH] usb: dwc2: Fix HiKey =0A=
+regression caused by power_down feature"=0A=
+https://marc.info/?l=3Dlinux-usb&m=3D152669095513248&w=3D2=0A=
+=0A=
+the power_down is disabled setting "p->power_down =3D false;" in =0A=
+"dwc2_set_his_params" function.=0A=
+=0A=
+Could you please clarify that the testes done for those 3 patches were =0A=
+done enabling "p->power_down =3D true;" in "dwc2_set_his_params" function.=
+=0A=
+=0A=
+Regards,=0A=
+Artur=0A=
+=0A=
+=0A=
+=0A=
