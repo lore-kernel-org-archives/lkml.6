@@ -2,86 +2,95 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB3CC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF5BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3BF721480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:27:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3BF721480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 41ED0214C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41ED0214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeIYXft convert rfc822-to-8bit (ORCPT
+        id S1727477AbeIYXhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:35:49 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:41922 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727677AbeIYXfs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:35:48 -0400
-Received: from mr1.cc.vt.edu (smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w8PHRIQW026135
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:27:18 -0400
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w8PHRChE008621
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:27:18 -0400
-Received: by mail-qt1-f199.google.com with SMTP id c14-v6so9145929qtc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:27:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=OIxYIjFmc4J+Sm2awJQcYqlr0Mhe7FwuigLWNOINNuE=;
-        b=RJnMAS2ulmlLyu1IbbPXQbc4XAnb5RGofHt7I9/RuGlYKQ4CD4pitdtmJoHeTlcXSA
-         jCLDXbMCPvAmhH2J/0mbi9R5u6WajGnwlRG+j0ICK5xeIwV8V6GaEC24F7kImpGUpWNZ
-         aIkd00Ikl+owHhzEFmsGP3tnXYKPTXWLsF9uzF9JNlgfEukmp/lRgCsAbiUXGEvg7Rbx
-         dGb0DbcthElYkHwI7quHCHBvWh4BS8X7XvC/CUQbvYd9kVshplXCEfkP0wlmjqTPSG8a
-         tNAF3xLaI10gqkZ87noHsKiFtNkyNKSeMR1i6nyzNmaBuGQA/XvQCnbJDMGctQGhpDQV
-         4wAg==
-X-Gm-Message-State: ABuFfojymarcyieT0YxU4AGHQbf2SXfvum0Huv+q8T7z3C4bCCoN21kN
-        15WozzUiRBIDuNYE3yC4k0s+ZwKNhnP/XmW0nTUJ2HXjD54JJ3HkYexyEIyxHmn8FitSGNEuuzh
-        zccDck9QrijZhJHopw2cIvc3OLvqCNlJ3qxo=
-X-Received: by 2002:a37:2a14:: with SMTP id q20-v6mr1488613qkh.248.1537896432580;
-        Tue, 25 Sep 2018 10:27:12 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV61sgwYQO5fOYOdOBySU/KV1RjK8VXMupFIatp/+MuZBp9MY+h9M1LqAI+DY1lHjvV46KbXJeQ==
-X-Received: by 2002:a37:2a14:: with SMTP id q20-v6mr1488602qkh.248.1537896432430;
-        Tue, 25 Sep 2018 10:27:12 -0700 (PDT)
-Received: from [192.168.15.200] (linker.cs.vt.edu. [128.173.236.60])
-        by smtp.gmail.com with ESMTPSA id k71-v6sm2140801qkh.30.2018.09.25.10.27.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 10:27:11 -0700 (PDT)
-From:   Tong Zhang <ztong@vt.edu>
-Content-Type: text/plain;
-        charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: leaking path in android binder: set_nice
-Message-Id: <56B089F7-3656-4335-BBD2-D8B3CFD70996@vt.edu>
-Date:   Tue, 25 Sep 2018 13:27:11 -0400
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Wenbo Shen <shenwenbosmile@gmail.com>
-To:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com
-X-Mailer: Apple Mail (2.3445.100.39)
+        Tue, 25 Sep 2018 19:37:02 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25265 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726350AbeIYXhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:37:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 10:28:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
+   d="scan'208";a="83179144"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by FMSMGA003.fm.intel.com with ESMTP; 25 Sep 2018 10:28:31 -0700
+Message-ID: <57ab71005afeaeb195a49c72ae8c76481023130f.camel@intel.com>
+Subject: Re: [RFC PATCH v4 03/27] x86/fpu/xstate: Enable XSAVES system states
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Tue, 25 Sep 2018 10:23:57 -0700
+In-Reply-To: <20180925170355.GD30146@hirez.programming.kicks-ass.net>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+         <20180921150351.20898-4-yu-cheng.yu@intel.com>
+         <20180925170355.GD30146@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel Version: 4.18.5
+On Tue, 2018-09-25 at 19:03 +0200, Peter Zijlstra wrote:
+> On Fri, Sep 21, 2018 at 08:03:27AM -0700, Yu-cheng Yu wrote:
+> > diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+> > index 4bd56079048f..9f51b0e1da25 100644
+> > --- a/arch/x86/kernel/fpu/core.c
+> > +++ b/arch/x86/kernel/fpu/core.c
+> > @@ -365,8 +365,13 @@ void fpu__drop(struct fpu *fpu)
+> >   */
+> >  static inline void copy_init_user_fpstate_to_fpregs(void)
+> >  {
+> > +	/*
+> > +	 * Only XSAVES user states are copied.
+> > +	 * System states are preserved.
+> > +	 */
+> >  	if (use_xsave())
+> > -		copy_kernel_to_xregs(&init_fpstate.xsave, -1);
+> > +		copy_kernel_to_xregs(&init_fpstate.xsave,
+> > +				     xfeatures_mask_user);
+> 
+> By my counting, that doesn't qualify for a line-break, it hits 80.
+> 
+> If you were to do this line-break, coding style would have you liberally
+> sprinkle {} around.
 
-Problem Description:
-
-When setting nice value, it is checked by LSM function security_task_setnice().
-see kernel/sched/core.c:3972 SYSCALL_DEFINE1(nice, int, increment)
-
-We discovered a leaking path in android binder which allows using binder’s interface to change 
-a process’s nice value. This path is leaked from being monitored by LSM.
-see drivers/android/binder.c:1107 binder_set_nice.
-
-- Tong
-
+Ok, will fix it.
