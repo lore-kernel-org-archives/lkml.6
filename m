@@ -2,166 +2,97 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D8BC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7A7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF12F2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:55:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF12F2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 11B1A2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:58:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B1A2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbeIZBEr (ORCPT
+        id S1727443AbeIZBHo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 21:04:47 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57252 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727053AbeIZBEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 21:04:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCE4CED1;
-        Tue, 25 Sep 2018 11:55:51 -0700 (PDT)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE7163F5D3;
-        Tue, 25 Sep 2018 11:55:47 -0700 (PDT)
-Subject: Re: [PATCH v16 2/5] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, robh+dt <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-3-vivek.gautam@codeaurora.org>
- <CAAFQd5B7YR03Jm1upOg2nsaKOb1iDD7-WGo-qx7S8m-nounCvA@mail.gmail.com>
- <3ccc3690-dc9d-56e7-e2d1-62e73a189bff@codeaurora.org>
- <CAAFQd5DMDWEeBU=fg6arye3pXnrCqOA4tDtMSGutXk7vSz-EtQ@mail.gmail.com>
- <CAFp+6iE3+qn6-gpXEzxfoP5yPMARmUcJNn0AZk-kA2AreTLnng@mail.gmail.com>
- <CAFp+6iHnHj_PkPFBUSTdJTW57K51wLqSEw6VOMKxAVo7O+ms9g@mail.gmail.com>
- <CAFp+6iFvhdSq7upbvsEWgMewhAaaRM91iw9p7qOFPYrUxis0Hg@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <aedf3f32-68ae-566a-3735-ca4ec5c7559a@arm.com>
-Date:   Tue, 25 Sep 2018 19:55:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 21:07:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44042 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726864AbeIZBHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 21:07:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5AC7DAA7C;
+        Tue, 25 Sep 2018 18:58:47 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 20:58:45 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH RESEND] mm: don't raise MEMCG_OOM event due to failed
+ high-order allocation
+Message-ID: <20180925185845.GX18685@dhcp22.suse.cz>
+References: <20180917230846.31027-1-guro@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFp+6iFvhdSq7upbvsEWgMewhAaaRM91iw9p7qOFPYrUxis0Hg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917230846.31027-1-guro@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
-
-On 2018-09-25 6:56 AM, Vivek Gautam wrote:
-> Hi Robin, Will,
+On Mon 17-09-18 23:10:59, Roman Gushchin wrote:
+> The memcg OOM killer is never invoked due to a failed high-order
+> allocation, however the MEMCG_OOM event can be raised.
 > 
-> On Tue, Sep 18, 2018 at 8:41 AM Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
->>
->> Hi Robin,
->>
->> On Fri, Sep 7, 2018 at 3:52 PM Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->>>
->>> On Fri, Sep 7, 2018 at 3:22 PM Tomasz Figa <tfiga@chromium.org> wrote:
->>>>
->>>> On Fri, Sep 7, 2018 at 6:38 PM Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->>>>>
->>>>> Hi Tomasz,
->>>>>
->>>>>
->>>>> On 9/7/2018 2:46 PM, Tomasz Figa wrote:
->>>>>> Hi Vivek,
->>>>>>
->>>>>> On Thu, Aug 30, 2018 at 11:46 PM Vivek Gautam
->>>>>> <vivek.gautam@codeaurora.org> wrote:
->>>>>>> From: Sricharan R <sricharan@codeaurora.org>
->>>>>>>
->>>>>>> The smmu device probe/remove and add/remove master device callbacks
->>>>>>> gets called when the smmu is not linked to its master, that is without
->>>>>>> the context of the master device. So calling runtime apis in those places
->>>>>>> separately.
->>>>>>> Global locks are also initialized before enabling runtime pm as the
->>>>>>> runtime_resume() calls device_reset() which does tlb_sync_global()
->>>>>>> that ultimately requires locks to be initialized.
->>>>>>>
->>>>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>>>>> [vivek: Cleanup pm runtime calls]
->>>>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>>>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->>>>>>> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>>>>> ---
->>>>>>>    drivers/iommu/arm-smmu.c | 89 +++++++++++++++++++++++++++++++++++++++++++-----
->>>>>>>    1 file changed, 81 insertions(+), 8 deletions(-)
->>>>>> [snip]
->>>>>>> @@ -2215,10 +2281,17 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
->>>>>>>           if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
->>>>>>>                   dev_err(&pdev->dev, "removing device with active domains!\n");
->>>>>>>
->>>>>>> +       arm_smmu_rpm_get(smmu);
->>>>>>>           /* Turn the thing off */
->>>>>>>           writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
->>>>>>> +       arm_smmu_rpm_put(smmu);
->>>>>>> +
->>>>>>> +       if (pm_runtime_enabled(smmu->dev))
->>>>>>> +               pm_runtime_force_suspend(smmu->dev);
->>>>>>> +       else
->>>>>>> +               clk_bulk_disable(smmu->num_clks, smmu->clks);
->>>>>>>
->>>>>>> -       clk_bulk_disable_unprepare(smmu->num_clks, smmu->clks);
->>>>>>> +       clk_bulk_unprepare(smmu->num_clks, smmu->clks);
->>>>>> Aren't we missing pm_runtime_disable() here? We'll have the enable
->>>>>> count unbalanced if the driver is removed and probed again.
->>>>>
->>>>> pm_runtime_force_suspend() does a pm_runtime_disable() also if i am not
->>>>> wrong.
->>>>> And, as mentioned in a previous thread [1], we were seeing a warning
->>>>> which we avoided
->>>>> by keeping force_suspend().
->>>>>
->>>>> [1] https://lkml.org/lkml/2018/7/8/124
->>>>
->>>> I see, thanks. I didn't realize that pm_runtime_force_suspend()
->>>> already disables runtime PM indeed. Sorry for the noise.
->>>
->>> Hi Tomasz,
->>> No problem. Thanks for looking back at it.
->>>
->>> Hi Robin,
->>> If you are fine with this series, then can you please consider giving
->>> Reviewed-by, so that we are certain that this series will go in the next merge
->>> window.
->>> Thanks
->>
->> Gentle ping.
->> You ack will be very helpful in letting Will pull this series for 4.20.
->> Thanks.
+> As shown below, it can happen under conditions, which are very
+> far from a real OOM: e.g. there is plenty of clean pagecache
+> and low memory pressure.
 > 
-> I would really appreciate if you could provide your ack for this series.
-> Or if there are any concerns, I am willing to address them.
+> There is no sense in raising an OOM event in such a case,
+> as it might confuse a user and lead to wrong and excessive actions.
+> 
+> Let's look at the charging path in try_caharge(). If the memory usage
+> is about memory.max, which is absolutely natural for most memory cgroups,
+> we try to reclaim some pages. Even if we were able to reclaim
+> enough memory for the allocation, the following check can fail due to
+> a race with another concurrent allocation:
+> 
+>     if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
+>         goto retry;
+> 
+> For regular pages the following condition will save us from triggering
+> the OOM:
+> 
+>    if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
+>        goto retry;
+> 
+> But for high-order allocation this condition will intentionally fail.
+> The reason behind is that we'll likely fall to regular pages anyway,
+> so it's ok and even preferred to return ENOMEM.
+> 
+> In this case the idea of raising MEMCG_OOM looks dubious.
 
-Apologies, I thought I'd replied to say I'd be getting to this shortly, 
-but apparently not :(
+I would really appreciate an example of application that would get
+confused by consuming this event and an explanation why. I do agree that
+the event itself is kinda weird because it doesn't give you any context
+for what kind of requests the memcg is OOM. Costly orders are a little
+different story than others and users shouldn't care about this because
+this is a mere implementation detail.
 
-FWIW, "shortly" is now tomorrow - I don't *think* there's anything 
-outstanding, but given the number of subtleties we've turned up so far I 
-do just want one last thorough double-check to make sure.
+In other words, do we have any users to actually care about this half
+baked event at all? Shouldn't we simply stop emiting it (or make it an
+alias of OOM_KILL) rather than making it slightly better but yet kinda
+incomplete?
 
-Thanks,
-Robin.
+Jeez, we really suck at defining proper interfaces. Things seem so cool
+when they are proposed, then those users come and ruin our lives...
+-- 
+Michal Hocko
+SUSE Labs
