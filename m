@@ -2,172 +2,113 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB12DECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B28FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7833A20676
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A896D20676
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:33:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEbwsGGz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7833A20676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="AYy8gsPx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A896D20676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbeIYXlT (ORCPT
+        id S1726669AbeIYXle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:41:19 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40147 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeIYXlT (ORCPT
+        Tue, 25 Sep 2018 19:41:34 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:24315 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbeIYXle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:41:19 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n31-v6so5180624pgm.7;
-        Tue, 25 Sep 2018 10:32:47 -0700 (PDT)
+        Tue, 25 Sep 2018 19:41:34 -0400
+X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
+   d="scan'208";a="20487903"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 25 Sep 2018 10:33:01 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 25 Sep 2018 10:33:01 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=SpeWzCzX8uiYqMFXazB52jv+zlxghiVCwGCJxl0mY5g=;
-        b=dEbwsGGzakrH3A17Kl6IB6gfUbuR+CifqjMmW7+XXrMpEry9Bq1gUJ54d+YDmf8TA/
-         3MdctxLqZ59ceIl5+WD3xWMqzwZ3HJ5JN4M8bSFWCCRdesW/li+tIcuc8KjsRatsQut4
-         tJw6m3+7CxXp466iBAeY8YGN4485ycv0mwbPqxiTtPMzjghqf4+mY5K8iXIcjosmNCtP
-         9IKBJxm+GRJFTEOHdg7va4/ojBK16kfDlv10QGrVh2DKIxgYVSsOg2kUgNohENzdILPU
-         z40KRhCiLEWP85EFafhAnrYjFKMRtqGKn7+OTeqd72gzFpdODT4INS5AKhMfAs87KDx2
-         3NHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=SpeWzCzX8uiYqMFXazB52jv+zlxghiVCwGCJxl0mY5g=;
-        b=BQHZyo3kiZHB8ayltJhZgjKqKSsbtM/+iLmqpIw1w39Gk/Alkx4HY5Bi/k1x33D0lv
-         nAvwtWZSyxJtYXzSn7Py6f18H7AhbsQzwNwxKCCGqrJBYXt0N4KesH9ez28uc1uYvc+s
-         roDez2EaKV3Yxuzg2X2Jlij5ZYUaaYC7CBt4KTZTLiIgOaXCEdQ6yqn2L2YSAlp0GGe5
-         Xh0DJ6WyUMBzXFKvZ35ibohApiiZys/sKEXRHoNlpks7ET1lEwcsIKo4D/4JcncVPrvh
-         vsQhCNRycgR8bzmUldoc61DagtW4Fhv2l+XwpSbF7jfry12zXURAfWCkUW4mhhJMaTuR
-         2hFQ==
-X-Gm-Message-State: ABuFfohW229nIiwzyYPO08D4AOKZVl1xDj4+UqmdMjyXbsE+ULen/mFJ
-        EnBC0iDDeCseEZaFbMIUMIW7Nvom
-X-Google-Smtp-Source: ACcGV62kP357eDGpcVpaH+JUN6wlW2KzUA839qrryr6NOQPdbSxoUEklaQr4Q2LMd7nJaqyxBmttgQ==
-X-Received: by 2002:a63:d0e:: with SMTP id c14-v6mr1948214pgl.281.1537896766867;
-        Tue, 25 Sep 2018 10:32:46 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id w23-v6sm4369988pgi.18.2018.09.25.10.32.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 10:32:45 -0700 (PDT)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] of: unittest: Disable interrupt node tests for old world MAC systems
-Date:   Tue, 25 Sep 2018 10:32:43 -0700
-Message-Id: <1537896763-6160-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YfzxTSPpoGzskmu6J0cSdpN6pTalZncw2w+NGnyOxuA=;
+ b=AYy8gsPxs8QNzJhsPEeTCJEVQdi/QX3ZZdNbWi7seYac6AKzqHz3s49bLAQKQ1ohJlL0bksSXQVhGxoqwOzm/aQpTaRJWe219c9VewzbNjyU3d+I3ZW9Ww1andh0/5T1bTEA+emT7PMg13A7EfbyZ8NQYxqeAnIwukBvuaqo9Is=
+Received: from BN6PR1101MB2130.namprd11.prod.outlook.com (10.174.112.135) by
+ BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Tue, 25 Sep 2018 17:32:56 +0000
+Received: from BN6PR1101MB2130.namprd11.prod.outlook.com
+ ([fe80::389e:3b37:851c:1235]) by BN6PR1101MB2130.namprd11.prod.outlook.com
+ ([fe80::389e:3b37:851c:1235%11]) with mapi id 15.20.1143.019; Tue, 25 Sep
+ 2018 17:32:56 +0000
+From:   <Woojung.Huh@microchip.com>
+To:     <f.fainelli@gmail.com>, <netdev@vger.kernel.org>
+CC:     <davem@davemloft.net>, <UNGLinuxDriver@microchip.com>,
+        <steve.glendinning@shawell.net>, <keescook@chromium.org>,
+        <akurz@blala.de>, <hayeswang@realtek.com>,
+        <kai.heng.feng@canonical.com>, <grundler@chromium.org>,
+        <zhongjiang@huawei.com>, <bigeasy@linutronix.de>,
+        <ran.wang_1@nxp.com>, <edumazet@google.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net 3/7] lan78xx: Check for supported Wake-on-LAN modes
+Thread-Topic: [PATCH net 3/7] lan78xx: Check for supported Wake-on-LAN modes
+Thread-Index: AQHUVElSRngOMbMRpUm9i69iXavPIaUBPgVggAADLYCAAADmgA==
+Date:   Tue, 25 Sep 2018 17:32:56 +0000
+Message-ID: <BN6PR1101MB2130D18F03C79BC1E54C9FBAE7160@BN6PR1101MB2130.namprd11.prod.outlook.com>
+References: <20180924205420.31309-1-f.fainelli@gmail.com>
+ <20180924205420.31309-4-f.fainelli@gmail.com>
+ <BN6PR1101MB2130115311A87CCF7D712B0FE7160@BN6PR1101MB2130.namprd11.prod.outlook.com>
+ <f791e4b6-7493-b54b-a88f-47d0ef4a3409@gmail.com>
+In-Reply-To: <f791e4b6-7493-b54b-a88f-47d0ef4a3409@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Woojung.Huh@microchip.com; 
+x-originating-ip: [47.19.18.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2243;6:g6v61/tKn2FpsiRUGLphzb7LE7yXVWlajH4B4wAtPUR9ZeIZ7bEEsY8anVd+g9bVE/6X47Kgcx7+5jNx7NNLRDNhqmNgMDRYGmMI1DZxOaCP0+HVDszjzOKMbMHM1B9HW0gD/9bNzsvq3LSlv3dgphScX0kl81IRtAu61LS3Wc9HBQvvkUW0fmmIW+/9y1QdUG3s0PUwDAljoUFWSwae4cTiUB1+X9HwfqClwJYt1htioRhqtxSk9sRqarQJ+g3zGEyfXT55EUJkgmWW7j3/fgxc0q04UIko+RnkQxKHw5ptH+GWPqVDIZKPlFR2LKWUWxMsvBzRyhE7Ot+hdwKXoq3GoV7dhLkU4KBAsU2CBeL2ZSlpbzggzuRHxYDFVrUk2GejjZfX1IG2Tz1BYSImkGG3fDytIUMso4B+ZjdpjSUe95nZcHbLh4CMwQ1tl3PBxoufTRG/xlp/p6e0nlNqbQ==;5:7E+NA85ARUOS8m964MqkpJNzVzFTS5g4M1m7XnLmLsUZfxc59A+V5sHT3Xo8jraLBwUtH46orEeyPr+iMpXlxV05gIVL/syCcMW9m3W8VRJT8MqHiPeXyokLKDWc81D0WiWKahPTJ3Q/y8cPoDnFEAxSn0I8eLE2QzKhmMiZVDM=;7:EU3hgWppLW7ZXQ4wNr4+tBDWfi26ploNy0bmDxKbxdiWTUaC4Aix3lBl/PEjn0bF6MvKZIAPGrkreiA5WZG8N8W5BY8D0T/SqR3FOnhouxQmp//jkIBQB1UOHvjh/i+6OwUNXHdblr5ZkgwlwudbIH6sR2yZVKETXqjG56KhFYfyo9Zw108JOWzl8XSLYo1+16yRHqcpvmes+j6tuKlFusXZI87QnYMfwyK9ZcwrZAD3XO9iSH+F+pLQcscC8XmG
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 61dcaf75-00f5-47dc-697f-08d6230cee94
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2243;
+x-ms-traffictypediagnostic: BN6PR1101MB2243:
+x-ld-processed: 3f4057f3-b418-4d4e-ba84-d55b4e897d88,ExtAddr
+x-microsoft-antispam-prvs: <BN6PR1101MB2243C2E2693D830CCB806121E7160@BN6PR1101MB2243.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(823301075)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(149066)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051);SRVR:BN6PR1101MB2243;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2243;
+x-forefront-prvs: 08062C429B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39860400002)(366004)(396003)(189003)(199004)(76176011)(14454004)(476003)(4326008)(39060400002)(6116002)(3846002)(25786009)(2501003)(2900100001)(93886005)(486006)(478600001)(34290500001)(33656002)(6436002)(5250100002)(9686003)(72206003)(446003)(11346002)(186003)(26005)(55016002)(229853002)(6246003)(256004)(7736002)(305945005)(106356001)(74316002)(8936002)(66066001)(97736004)(8676002)(53936002)(5660300001)(2906002)(105586002)(54906003)(71190400001)(71200400001)(316002)(102836004)(81166006)(81156014)(7416002)(99286004)(86362001)(68736007)(6506007)(7696005)(110136005)(21314002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2243;H:BN6PR1101MB2130.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: PKcI6+N2aZfa1lukK/+Mg965kzsZMZb/CiQE15Ihe19ruZcpAAI4HdpUI6fbz3aAzRIfH+h+a7WYkE8iQKIt+JOWNUZmPbgoe1GgKl76IecYhKy0LdekBYoVw88mntj72I3DWuWAauFmK3xYqeKv3GxrZ/bvP6XKcz/S76X4BDR+l4o2GIS0qe7OpirPLcHIHin7xcveeJuDF/nItTyHYDhnRtW3R9VGv4V5L7LJo/W2PXGhdRX1fulHmHAZHrvXJ426Z8YvCYQq17qr74zCE7KQrhji87JwsMYUpzmLvXSskLx+Zfj/wI/KddRtKAj/29b4N1s0bDj01ip4DQ7TY8TvFYR+menoFx8DY5b8Uas=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61dcaf75-00f5-47dc-697f-08d6230cee94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2018 17:32:56.7216
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2243
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems with OF_IMAP_OLDWORLD_MAC set in of_irq_workarounds, the
-devicetree interrupt parsing code is different, causing unit tests of
-devicetree interrupt nodes to fail. Due to a bug in unittest code, which
-tries to dereference an uninitialized pointer, this results in a crash.
-
-OF: /testcase-data/phandle-tests/consumer-a: arguments longer than property
-Unable to handle kernel paging request for data at address 0x00bc616e
-Faulting instruction address: 0xc08e9468
-Oops: Kernel access of bad area, sig: 11 [#1]
-BE PREEMPT PowerMac
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Not tainted 4.14.72-rc1-yocto-standard+ #1
-task: cf8e0000 task.stack: cf8da000
-NIP:  c08e9468 LR: c08ea5bc CTR: c08ea5ac
-REGS: cf8dbb50 TRAP: 0300   Not tainted  (4.14.72-rc1-yocto-standard+)
-MSR:  00001032 <ME,IR,DR,RI>  CR: 82004044  XER: 00000000
-DAR: 00bc616e DSISR: 40000000
-GPR00: c08ea5bc cf8dbc00 cf8e0000 c13ca517 c13ca517 c13ca8a0 00000066 00000002
-GPR08: 00000063 00bc614e c0b05865 000affff 82004048 00000000 c00047f0 00000000
-GPR16: c0a80000 c0a9cc34 c13ca517 c0ad1134 05ffffff 000affff c0b05860 c0abeef8
-GPR24: cecec278 cecec278 c0a8c4d0 c0a885e0 c13ca8a0 05ffffff c13ca8a0 c13ca517
-
-NIP [c08e9468] device_node_gen_full_name+0x30/0x15c
-LR [c08ea5bc] device_node_string+0x190/0x3c8
-Call Trace:
-[cf8dbc00] [c007f670] trace_hardirqs_on_caller+0x118/0x1fc (unreliable)
-[cf8dbc40] [c08ea5bc] device_node_string+0x190/0x3c8
-[cf8dbcb0] [c08eb794] pointer+0x25c/0x4d0
-[cf8dbd00] [c08ebcbc] vsnprintf+0x2b4/0x5ec
-[cf8dbd60] [c08ec00c] vscnprintf+0x18/0x48
-[cf8dbd70] [c008e268] vprintk_store+0x4c/0x22c
-[cf8dbda0] [c008ecac] vprintk_emit+0x94/0x130
-[cf8dbdd0] [c008ff54] printk+0x5c/0x6c
-[cf8dbe10] [c0b8ddd4] of_unittest+0x2220/0x26f8
-[cf8dbea0] [c0004434] do_one_initcall+0x4c/0x184
-[cf8dbf00] [c0b4534c] kernel_init_freeable+0x13c/0x1d8
-[cf8dbf30] [c0004814] kernel_init+0x24/0x118
-[cf8dbf40] [c0013398] ret_from_kernel_thread+0x5c/0x64
-
-The problem was observed when running a qemu test for the g3beige machine
-with devicetree unittests enabled.
-
-Disable interrupt node tests on affected systems to avoid both false
-unittest failures and the crash.
-
-Fixes: 53a42093d96ef ("of: Add device tree selftests")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-The changes in of_unittest_platform_populate() are kept at the minimum;
-I wanted to avoid changing the intendation.
-An alternative fix might be to move the interrupt tests to a separate
-function.
-
- drivers/of/unittest.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index 722537e14848..bd1d56cf1962 100644
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -771,6 +771,9 @@ static void __init of_unittest_parse_interrupts(void)
- 	struct of_phandle_args args;
- 	int i, rc;
- 
-+	if (of_irq_workarounds & OF_IMAP_OLDWORLD_MAC)
-+		return;
-+
- 	np = of_find_node_by_path("/testcase-data/interrupts/interrupts0");
- 	if (!np) {
- 		pr_err("missing testcase data\n");
-@@ -845,6 +848,9 @@ static void __init of_unittest_parse_interrupts_extended(void)
- 	struct of_phandle_args args;
- 	int i, rc;
- 
-+	if (of_irq_workarounds & OF_IMAP_OLDWORLD_MAC)
-+		return;
-+
- 	np = of_find_node_by_path("/testcase-data/interrupts/interrupts-extended0");
- 	if (!np) {
- 		pr_err("missing testcase data\n");
-@@ -1001,6 +1007,9 @@ static void __init of_unittest_platform_populate(void)
- 	pdev = of_find_device_by_node(np);
- 	unittest(pdev, "device 1 creation failed\n");
- 
-+	if (of_irq_workarounds & OF_IMAP_OLDWORLD_MAC)
-+		goto skip_irqtests;
-+
- 	irq = platform_get_irq(pdev, 0);
- 	unittest(irq == -EPROBE_DEFER, "device deferred probe failed - %d\n", irq);
- 
-@@ -1011,6 +1020,7 @@ static void __init of_unittest_platform_populate(void)
- 	irq = platform_get_irq(pdev, 0);
- 	unittest(irq < 0 && irq != -EPROBE_DEFER, "device parsing error failed - %d\n", irq);
- 
-+skip_irqtests:
- 	np = of_find_node_by_path("/testcase-data/platform-tests");
- 	unittest(np, "No testcase data in device tree\n");
- 	if (!np)
--- 
-2.7.4
-
+SGkgRmxvcmlhbiwNCg0KPiA+PiArCWlmIChwZGF0YS0+d29sID09IDApDQo+ID4+ICsJCXJldHVy
+biAtRUlOVkFMOw0KPiA+PiArDQo+ID4gSXQgd2lsbCBtYWtlIGZ1bmN0aW9uIHJldHVybiB3aGVu
+IGRpc2FibGluZyBXT0wuDQo+IA0KPiBIdWgsIHllcywgZ29vZCBwb2ludC4NCj4gDQo+ID4gSXMg
+dGhlcmUgb3RoZXIgcGxhY2UgaGFuZGxpbmcgdGhpcyBzY2VuYXJpbz8NCj4gDQo+IEhvdyBkbyB5
+b3UgbWVhbj8NCj4gDQpJIG1lYW50IHRoZXJlIGlzIGFub3RoZXIgcGF0aCBJIG1pZ2h0IG1pc3Mg
+d2hlbiBkaXNhYmxpbmcgV09MIA0KdGhhbiB0aGlzIHh4eF9zZXRfd29sKCkuDQoNClRoYW5rcw0K
+V29vanVuZw0KDQo=
