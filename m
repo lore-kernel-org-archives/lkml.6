@@ -2,357 +2,93 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CFEC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C53C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CBB2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:51:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CBB2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id C9F0120877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:57:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="c4lLUlUC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FcksX0L/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F0120877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeIYW7b (ORCPT
+        id S1727321AbeIYXFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:59:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:23361 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728432AbeIYW7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:59:30 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42KRsm0zWkz9ttCY;
-        Tue, 25 Sep 2018 18:51:08 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id GyC03EMb4wtc; Tue, 25 Sep 2018 18:51:08 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42KRsm0P3fz9ttCN;
-        Tue, 25 Sep 2018 18:51:08 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C3BFF8B7E5;
-        Tue, 25 Sep 2018 18:51:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id WDX4PIQc7JEC; Tue, 25 Sep 2018 18:51:07 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 103498B7C8;
-        Tue, 25 Sep 2018 18:51:07 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B6BBE70AFE; Tue, 25 Sep 2018 16:51:06 +0000 (UTC)
-Message-Id: <de995657691084fe1b8a5c31393a82e52604def8.1537892499.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1537892498.git.christophe.leroy@c-s.fr>
-References: <cover.1537892498.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v5 14/22] powerpc/mm: Move pte_fragment_alloc() to a common
- location
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 25 Sep 2018 16:51:06 +0000 (UTC)
+        Tue, 25 Sep 2018 19:05:55 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51803 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726470AbeIYXFz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:05:55 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id C203321F86;
+        Tue, 25 Sep 2018 12:57:31 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 25 Sep 2018 12:57:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=8rZvYDqjX7ZuJ8AqIiMqBxG8N4s/Z6KgMCuI7P6V6Tk=; b=c4lLUlUC
+        2p5Dtv+9faewEzVVXgAfJbVGx/I1dq/ffGLp/fyRHCiNqsq1ZqhP7FnPbRIrUsJU
+        xJtIxIzYAHhgnCuM2+aSwA2Ysf5qFAwimxuH7U6S23aPqhK2KJgIMcicBUf+kw60
+        ijhSVLwT8JN8TY9E7SXmJk+dgCQWVg12toup9Qsf1Y/0MHdQF4fiPmRUcYohw8Nw
+        w3AGl6Mp4rmkyNtm/uNlXh4lPA8qYoGCo64FlpUfBCODgTAABOzBoiXBxxBjpZHi
+        rD0JfUF1tf2/aL3CFUa5mS1FyFUR+8yCyn5Rn1+eawZrI2NzRDGvSpB9cVSu3HrI
+        oO+dHtDhdbWpJA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=8rZvYDqjX7ZuJ8AqIiMqBxG8N4s/Z
+        6KgMCuI7P6V6Tk=; b=FcksX0L/vOvbw42VNW0Fc8+TWHQteqkydD9MlUEOJSOU3
+        oKZ3KK/QHXogTo9EA1weY+VzzrvkzboJCTK4MzJz1WO4bSqr8MjTMp8i6rodJwcQ
+        3MoG/q7E9h2glGB4QsmCHA3zrdHJqUX+Cen7uQ/ilV3zespwRzUlFoxAOYC93n0R
+        Cm6tkn5PqNZPkn0SKyi7XTt/oLWwrCPKPuuAZjYcpgWtA2bI4ZXtGzd147C0Xw5G
+        mXYgZjLpizj8LZ3ISm+9RFwQBNBCaliNfxRNpWys7gIaTiJa9cb1BCUy/9dGOlXL
+        iVMQzLeqUHNSdqJqlD7S4vBKSuCOm2HeWjDcVw2EQ==
+X-ME-Proxy: <xmx:-2iqW1jCYE058GiYbljd0cMUidJ_86RNx-3iFCDG68wH8Lre8bBUFA>
+    <xmx:-2iqWyRDaJdhfRTclIFZ3yqHcQNOqrkPVl4rlhwHf-g7gLlGxJoxCg>
+    <xmx:-2iqW5Bzh_alD9pNlxLM_s7xGxqh72OezjuH7tamHNasVBdxvuRUgg>
+    <xmx:-2iqWxk5Cblhpbbk8j0nygF6RUWG_DWkjYmIz-A-YAn2F-_HFISbkQ>
+    <xmx:-2iqW3cew7NtCw9wTGvp9pUCoPeWe0oG_qV-0D5sENMLvOeJL1qfdg>
+    <xmx:-2iqW47yqvXRNXMbtGpT0KOCN0RilFyfMCJcnO6g7i64IKGZg0KBhg>
+X-ME-Sender: <xms:-2iqW7eBF7PpNytWPanqT6RWoBdpYuJ0JSJYvSaTfZCYl7qH_tw-zQ>
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 06218E467D;
+        Tue, 25 Sep 2018 12:57:30 -0400 (EDT)
+Date:   Tue, 25 Sep 2018 18:57:29 +0200
+From:   Greg Kroah-Hartman <greg@kroah.com>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] SCSI fixes for 4.19-rc5
+Message-ID: <20180925165729.GA16781@kroah.com>
+References: <1537889692.5951.2.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537889692.5951.2.camel@HansenPartnership.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of next patch which generalises the use of
-pte_fragment_alloc() for all, this patch moves the related functions
-in a place that is common to all subarches.
+On Tue, Sep 25, 2018 at 08:34:52AM -0700, James Bottomley wrote:
+> Nine obvious bug fixes mostly in individual drivers.  The target fix is
+> of particular importance because it's CVE related.
+> 
+> The patch is available here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-The 8xx will need that for supporting 16k pages, as in that mode
-page tables still have a size of 4k.
+Now pulled, thanks.
 
-Since pte_fragment with only once fragment is not different
-from what is done in the general case, we can easily migrate all
-subarchs to pte fragments.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/book3s/64/pgalloc.h |   1 +
- arch/powerpc/mm/Makefile                     |   4 +-
- arch/powerpc/mm/mmu_context_book3s64.c       |  15 ----
- arch/powerpc/mm/pgtable-book3s64.c           |  85 --------------------
- arch/powerpc/mm/pgtable-frag.c               | 116 +++++++++++++++++++++++++++
- 5 files changed, 120 insertions(+), 101 deletions(-)
- create mode 100644 arch/powerpc/mm/pgtable-frag.c
-
-diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-index bfed4cf3b2f3..6c2808c0f052 100644
---- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-@@ -39,6 +39,7 @@ extern struct vmemmap_backing *vmemmap_list;
- extern struct kmem_cache *pgtable_cache[];
- #define PGT_CACHE(shift) pgtable_cache[shift]
- 
-+void pte_frag_destroy(void *pte_frag);
- extern pte_t *pte_fragment_alloc(struct mm_struct *, unsigned long, int);
- extern pmd_t *pmd_fragment_alloc(struct mm_struct *, unsigned long);
- extern void pte_fragment_free(unsigned long *, int);
-diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
-index d0c1ce1297e3..db2f001183d1 100644
---- a/arch/powerpc/mm/Makefile
-+++ b/arch/powerpc/mm/Makefile
-@@ -15,7 +15,9 @@ obj-$(CONFIG_PPC_MMU_NOHASH)	+= mmu_context_nohash.o tlb_nohash.o \
- obj-$(CONFIG_PPC_BOOK3E)	+= tlb_low_$(BITS)e.o
- hash64-$(CONFIG_PPC_NATIVE)	:= hash_native_64.o
- obj-$(CONFIG_PPC_BOOK3E_64)   += pgtable-book3e.o
--obj-$(CONFIG_PPC_BOOK3S_64)	+= pgtable-hash64.o hash_utils_64.o slb.o $(hash64-y) mmu_context_book3s64.o pgtable-book3s64.o
-+obj-$(CONFIG_PPC_BOOK3S_64)	+= pgtable-hash64.o hash_utils_64.o slb.o \
-+				   $(hash64-y) mmu_context_book3s64.o \
-+				   pgtable-book3s64.o pgtable-frag.o
- obj-$(CONFIG_PPC_RADIX_MMU)	+= pgtable-radix.o tlb-radix.o
- obj-$(CONFIG_PPC_STD_MMU_32)	+= ppc_mmu_32.o hash_low_32.o mmu_context_hash32.o
- obj-$(CONFIG_PPC_STD_MMU)	+= tlb_hash$(BITS).o
-diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
-index 510f103d7813..f720c5cc0b5e 100644
---- a/arch/powerpc/mm/mmu_context_book3s64.c
-+++ b/arch/powerpc/mm/mmu_context_book3s64.c
-@@ -164,21 +164,6 @@ static void destroy_contexts(mm_context_t *ctx)
- 	}
- }
- 
--static void pte_frag_destroy(void *pte_frag)
--{
--	int count;
--	struct page *page;
--
--	page = virt_to_page(pte_frag);
--	/* drop all the pending references */
--	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
--	/* We allow PTE_FRAG_NR fragments from a PTE page */
--	if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
--		pgtable_page_dtor(page);
--		__free_page(page);
--	}
--}
--
- static void pmd_frag_destroy(void *pmd_frag)
- {
- 	int count;
-diff --git a/arch/powerpc/mm/pgtable-book3s64.c b/arch/powerpc/mm/pgtable-book3s64.c
-index 01d7c0f7c4f0..723cd324fa34 100644
---- a/arch/powerpc/mm/pgtable-book3s64.c
-+++ b/arch/powerpc/mm/pgtable-book3s64.c
-@@ -317,91 +317,6 @@ void pmd_fragment_free(unsigned long *pmd)
- 	}
- }
- 
--static pte_t *get_pte_from_cache(struct mm_struct *mm)
--{
--	void *pte_frag, *ret;
--
--	spin_lock(&mm->page_table_lock);
--	ret = mm->context.pte_frag;
--	if (ret) {
--		pte_frag = ret + PTE_FRAG_SIZE;
--		/*
--		 * If we have taken up all the fragments mark PTE page NULL
--		 */
--		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
--			pte_frag = NULL;
--		mm->context.pte_frag = pte_frag;
--	}
--	spin_unlock(&mm->page_table_lock);
--	return (pte_t *)ret;
--}
--
--static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
--{
--	void *ret = NULL;
--	struct page *page;
--
--	if (!kernel) {
--		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
--		if (!page)
--			return NULL;
--		if (!pgtable_page_ctor(page)) {
--			__free_page(page);
--			return NULL;
--		}
--	} else {
--		page = alloc_page(PGALLOC_GFP);
--		if (!page)
--			return NULL;
--	}
--
--	atomic_set(&page->pt_frag_refcount, 1);
--
--	ret = page_address(page);
--	/*
--	 * if we support only one fragment just return the
--	 * allocated page.
--	 */
--	if (PTE_FRAG_NR == 1)
--		return ret;
--	spin_lock(&mm->page_table_lock);
--	/*
--	 * If we find pgtable_page set, we return
--	 * the allocated page with single fragement
--	 * count.
--	 */
--	if (likely(!mm->context.pte_frag)) {
--		atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
--		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
--	}
--	spin_unlock(&mm->page_table_lock);
--
--	return (pte_t *)ret;
--}
--
--pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
--{
--	pte_t *pte;
--
--	pte = get_pte_from_cache(mm);
--	if (pte)
--		return pte;
--
--	return __alloc_for_ptecache(mm, kernel);
--}
--
--void pte_fragment_free(unsigned long *table, int kernel)
--{
--	struct page *page = virt_to_page(table);
--
--	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
--	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
--		if (!kernel)
--			pgtable_page_dtor(page);
--		__free_page(page);
--	}
--}
--
- static inline void pgtable_free(void *table, int index)
- {
- 	switch (index) {
-diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
-new file mode 100644
-index 000000000000..d61e7c2a9a79
---- /dev/null
-+++ b/arch/powerpc/mm/pgtable-frag.c
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ *  Handling Page Tables through page fragments
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/gfp.h>
-+#include <linux/mm.h>
-+#include <linux/percpu.h>
-+#include <linux/hardirq.h>
-+#include <linux/hugetlb.h>
-+#include <asm/pgalloc.h>
-+#include <asm/tlbflush.h>
-+#include <asm/tlb.h>
-+
-+void pte_frag_destroy(void *pte_frag)
-+{
-+	int count;
-+	struct page *page;
-+
-+	page = virt_to_page(pte_frag);
-+	/* drop all the pending references */
-+	count = ((unsigned long)pte_frag & ~PAGE_MASK) >> PTE_FRAG_SIZE_SHIFT;
-+	/* We allow PTE_FRAG_NR fragments from a PTE page */
-+	if (atomic_sub_and_test(PTE_FRAG_NR - count, &page->pt_frag_refcount)) {
-+		pgtable_page_dtor(page);
-+		__free_page(page);
-+	}
-+}
-+
-+static pte_t *get_pte_from_cache(struct mm_struct *mm)
-+{
-+	void *pte_frag, *ret;
-+
-+	spin_lock(&mm->page_table_lock);
-+	ret = mm->context.pte_frag;
-+	if (ret) {
-+		pte_frag = ret + PTE_FRAG_SIZE;
-+		/*
-+		 * If we have taken up all the fragments mark PTE page NULL
-+		 */
-+		if (((unsigned long)pte_frag & ~PAGE_MASK) == 0)
-+			pte_frag = NULL;
-+		mm->context.pte_frag = pte_frag;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+	return (pte_t *)ret;
-+}
-+
-+static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
-+{
-+	void *ret = NULL;
-+	struct page *page;
-+
-+	if (!kernel) {
-+		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
-+		if (!page)
-+			return NULL;
-+		if (!pgtable_page_ctor(page)) {
-+			__free_page(page);
-+			return NULL;
-+		}
-+	} else {
-+		page = alloc_page(PGALLOC_GFP);
-+		if (!page)
-+			return NULL;
-+	}
-+
-+	atomic_set(&page->pt_frag_refcount, 1);
-+
-+	ret = page_address(page);
-+	/*
-+	 * if we support only one fragment just return the
-+	 * allocated page.
-+	 */
-+	if (PTE_FRAG_NR == 1)
-+		return ret;
-+	spin_lock(&mm->page_table_lock);
-+	/*
-+	 * If we find pgtable_page set, we return
-+	 * the allocated page with single fragement
-+	 * count.
-+	 */
-+	if (likely(!mm->context.pte_frag)) {
-+		atomic_set(&page->pt_frag_refcount, PTE_FRAG_NR);
-+		mm->context.pte_frag = ret + PTE_FRAG_SIZE;
-+	}
-+	spin_unlock(&mm->page_table_lock);
-+
-+	return (pte_t *)ret;
-+}
-+
-+pte_t *pte_fragment_alloc(struct mm_struct *mm, unsigned long vmaddr, int kernel)
-+{
-+	pte_t *pte;
-+
-+	pte = get_pte_from_cache(mm);
-+	if (pte)
-+		return pte;
-+
-+	return __alloc_for_ptecache(mm, kernel);
-+}
-+
-+void pte_fragment_free(unsigned long *table, int kernel)
-+{
-+	struct page *page = virt_to_page(table);
-+
-+	BUG_ON(atomic_read(&page->pt_frag_refcount) <= 0);
-+	if (atomic_dec_and_test(&page->pt_frag_refcount)) {
-+		if (!kernel)
-+			pgtable_page_dtor(page);
-+		__free_page(page);
-+	}
-+}
--- 
-2.13.3
-
+greg k-h
