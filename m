@@ -2,159 +2,82 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6994AC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD45FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BB912082C
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C1F420645
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:36:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBf9ENG4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB912082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8b7og9e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1F420645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729328AbeIYUoD (ORCPT
+        id S1729375AbeIYUoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 16:44:03 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38468 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729170AbeIYUoD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:44:03 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x8-v6so5690088eds.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 07:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GVi8QPTkmPw5oIfh8xGkNpHofrhEeVOLSKPtu5/625g=;
-        b=SBf9ENG4yd63YZN6Bq3jIGoruBU0HwBMWqhA2rZzktWvBsBoS1DSYWXvNNfdpaUZu9
-         sdRTqHNSfnnX+aKCh1RhdalgerfNPz4biDQKEKfYrUWM93ZUsLSBNfwGj9cX5ZiYvaJB
-         pDwKkVF0wD8DmTkjT2Sl73ZZfemmoK9yJBvEWQF8CeOzCn8OSc2aGVW8/2hDtbUrboYG
-         iVg6tn9H+chLiLuaBmh4r1zq+si8s46gSWDXQhwwLYpNUUBAaha+qm7kJlJMqGUX6DAQ
-         IGDfxoXxlKelBReZRPJizgmPBiMB71c7jG8mZM/KvczjDIwFaXUO3M9rCww1IuQRM1Ax
-         Smxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GVi8QPTkmPw5oIfh8xGkNpHofrhEeVOLSKPtu5/625g=;
-        b=CQm7OXwtzAxMt9cwy8KYzjFpIG8f08uMJFEzgsVtxwAj0ljCCBFYHf1ScMKassvAoX
-         ny526RvH+gSx+MH4qM36ZGGxbxhSEqFEzNRPw3XlV+uu/UOwsgXpl6gBB/et3vEYFak0
-         4S038/w+oGkPIEfmq0CA34HLeUfxy7i+OjM27vtOnFKo5d/eUAPmlzsOfJzkqtxcJyC1
-         06B4neCjpSfdQjvzND7XTRFjey/tsRucVbmrLu+nKlsFNlUxByRNvfLRCIaJVXCZZSti
-         kYyTjoTkGHz/PNEFO7T0SdW9NMgOGt5nkNxIOhw4MMOBALxurvfi/aj6oixzY0uJ3sgf
-         /C4A==
-X-Gm-Message-State: ABuFfog+zyYPCgi+wtTPeBLtDiYfs8iGM8mcalhhh469F32+siPqKET2
-        kSOFseJ486QrY0ezhmPT1SJdIyDw
-X-Google-Smtp-Source: ACcGV632a4sDBjFqHhp2L1cMMtgkHn6ue0fmnjp1C+UEOyOR2RoBVk0WgO8H5QZTk4HX3DWrbPmsyA==
-X-Received: by 2002:a50:cd07:: with SMTP id z7-v6mr1810066edi.60.1537886173638;
-        Tue, 25 Sep 2018 07:36:13 -0700 (PDT)
-Received: from ziggy.stardust ([37.223.146.97])
-        by smtp.gmail.com with ESMTPSA id b20-v6sm9374001edc.30.2018.09.25.07.36.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 07:36:12 -0700 (PDT)
-Subject: Re: [PATCH] soc: mediatek: pwrap: use true and false for boolean
- values
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180805010201.GA7320@embeddedor.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <a28e3cce-99e7-fb6d-e57b-9c41f1296f29@gmail.com>
-Date:   Tue, 25 Sep 2018 16:36:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 16:44:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729320AbeIYUoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 16:44:44 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA63D20645;
+        Tue, 25 Sep 2018 14:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537886216;
+        bh=tny+gSzjmdwE72pJ3yle5vpd2KVUl8AtCIeIbpoElWc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q8b7og9eR87FX2PEIRErExXeRGN0y5PRh1y0W1TIX8zoZObirYeb9pSGt90h5Mogi
+         03kSDRDdO49HlRX8KzKX2YJyMmLxoNRk3Wh5rd2Ur/pcDvC4U/jTBRS6mPbRAyycFg
+         yddeFWyUAJ0uxnv55K6u5x1JDgT/zaW3QXydKpvY=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 8C3E11401A1; Tue, 25 Sep 2018 11:36:53 -0300 (-03)
+Date:   Tue, 25 Sep 2018 11:36:53 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] perf script python: Database export fixes
+Message-ID: <20180925143653.GA3541@kernel.org>
+References: <20180911114504.28516-1-adrian.hunter@intel.com>
+ <b7a7a61a-9b2b-5f93-9d12-01b52d6034e4@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180805010201.GA7320@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7a7a61a-9b2b-5f93-9d12-01b52d6034e4@intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/08/2018 03:02, Gustavo A. R. Silva wrote:
-> Return statements in functions returning bool should use true or false
-> instead of an integer value.
+Em Tue, Sep 25, 2018 at 02:08:06PM +0300, Adrian Hunter escreveu:
+> On 11/09/18 14:45, Adrian Hunter wrote:
+> > Hi
+> > 
+> > Here are a couple of database export fixes.
+> > 
+> > 
+> > Adrian Hunter (2):
+> >       perf script python: Fix export-to-postgresql.py occasional failure
+> >       perf script python: Fix export-to-sqlite.py sample columns
+> > 
+> >  tools/perf/scripts/python/export-to-postgresql.py | 9 +++++++++
+> >  tools/perf/scripts/python/export-to-sqlite.py     | 6 +++++-
+> >  2 files changed, 14 insertions(+), 1 deletion(-)
 > 
-> This issue was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
+> Please consider these
 
-Applied, thanks!
+Applied to perf/urgent, please consider using the Fixes: tag, so that
+the stable guys have a easier time (automatically even) figuring out how
+far back the patch should be applied.
 
-Matthias
+Thanks!
 
->  drivers/soc/mediatek/mtk-pmic-wrap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> index 4e931fd..932470a 100644
-> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> @@ -1096,7 +1096,7 @@ static bool pwrap_is_pmic_cipher_ready(struct pmic_wrapper *wrp)
->  	ret = pwrap_read(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_RDY],
->  			 &rdata);
->  	if (ret)
-> -		return 0;
-> +		return false;
->  
->  	return rdata == 1;
->  }
-> 
+- Arnaldo
