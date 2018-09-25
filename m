@@ -2,107 +2,184 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6729FC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97D6C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 237B720843
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 237B720843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B8A120843
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:12:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8A120843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbeIYRSo (ORCPT
+        id S1728929AbeIYRTm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 13:18:44 -0400
-Received: from smtprelay0078.hostedemail.com ([216.40.44.78]:52195 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727114AbeIYRSn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 13:18:43 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 18E7B181D337B;
-        Tue, 25 Sep 2018 11:11:41 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: paint45_82f30a4c65031
-X-Filterd-Recvd-Size: 3365
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 25 Sep 2018 11:11:39 +0000 (UTC)
-Message-ID: <086cc82aed26b082fbe5eefc0eeae2ec634e4a1a.camel@perches.com>
-Subject: Re: [PATCH 3.18 104/105] IB/nes: Fix a compiler warning
-From:   Joe Perches <joe@perches.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Date:   Tue, 25 Sep 2018 04:11:38 -0700
-In-Reply-To: <20180925085558.GA22609@kroah.com>
-References: <20180924113113.268650190@linuxfoundation.org>
-         <20180924113123.002918395@linuxfoundation.org>
-         <6f7ca3c205bada768c3918b1feacbbd5ce23a64d.camel@perches.com>
-         <20180924175902.GB19402@kroah.com>
-         <6d6f31c87b0c9b1a551d352439183c8c9c4df04c.camel@perches.com>
-         <20180924223952.GA9157@sasha-vm> <20180925085558.GA22609@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 25 Sep 2018 13:19:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39816 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727570AbeIYRTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 13:19:42 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D474462EAB;
+        Tue, 25 Sep 2018 11:12:39 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E2811081316;
+        Tue, 25 Sep 2018 11:12:33 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, brijesh.singh@amd.com,
+        bp@suse.de, kasong@redhat.com, kexec@lists.infradead.org,
+        dyoung@redhat.com
+Subject: [PATCH] x86/boot: Fix kexec booting failure after SEV early boot support
+Date:   Tue, 25 Sep 2018 19:10:20 +0800
+Message-Id: <20180925111020.23834-1-kasong@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 25 Sep 2018 11:12:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-25 at 10:55 +0200, Greg Kroah-Hartman wrote:
-> On Mon, Sep 24, 2018 at 10:39:53PM +0000, Sasha Levin wrote:
-> > On Mon, Sep 24, 2018 at 11:03:25AM -0700, Joe Perches wrote:
-> > > On Mon, 2018-09-24 at 19:59 +0200, Greg Kroah-Hartman wrote:
-> > > > On Mon, Sep 24, 2018 at 09:38:26AM -0700, Joe Perches wrote:
-> > > > > On Mon, 2018-09-24 at 13:34 +0200, Greg Kroah-Hartman wrote:
-> > > > > > 3.18-stable review patch.  If anyone has any objections, please let me know.
-> > > > > 
-> > > > > Why should this sort of change be applied to a stable release?
-> > > > 
-> > > > Originally I was just going to drop this as it's not fixing something.
-> > > > 
-> > > > But it might be, if that macro is used in a if() statement, or something
-> > > > like that, it could be doing something unintended.
-> > > 
-> > > No it couldn't.
-> > > An empty macro is equivalent to a single statement.
-> > > 
-> > > > So I don't feel like auditing all 500+ instances where this is used,
-> > > > it's easier to just accept the patch.
-> > > 
-> > > It's not a bug fix.
-> > 
-> > This question came up a few months ago. Greg suggested that we should be
-> > pulling in warning fixes to get the stable kernels warning-free similar
-> > to upstream.
-> > 
-> > The reasoning behind it was similar to the "no warnings" reasoning of
-> > upstream: there might be real issues hiding in the sea of "harmless"
-> > warnings, so we want to get rid of all of them to catch real issues.
-> 
-> No warnings is great,
+Commit 1958b5fc4010 ("x86/boot: Add early boot support when running
+with SEV active") is causing kexec becomes sometimes unstable, kexec
+reboot won't start a second kernel bypassing BIOS boot process, instead,
+the system got reset.
 
-I believe that is not necessarily true.
+That's because, in get_sev_encryption_bit function, we are using
+32-bit RIP-relative addressing to read the value of enc_bit, but
+kexec may alloc the early boot up code to a higher location, which
+is beyond 32-bit addressing limit. Some garbage will be read and
+get_sev_encryption_bit will return the wrong value, which lead to
+wrong memory page flag.
 
-Change to a new compiler version and new warnings could be
-added somewhat arbitrarily.
+This patch adds a get_sev_encryption_bit_64 function to avoid this
+problem. 64-bit early boot code will use this function instead, it
+uses native RIP addressing to read the enc_bit which have no problem
+with any location.
 
--stable changes should be limited to things that actually
-fix somewhat important code defects, and should not accept
-the equivalent of whitespace changes unless those changes
-also make backporting actual defect changes easier.
+Fixes: 1958b5fc4010 ("x86/boot: Add early boot support when running with SEV active")
+Signed-off-by: Kairui Song <kasong@redhat.com>
+---
+ arch/x86/boot/compressed/mem_encrypt.S | 64 ++++++++++++++++++--------
+ 1 file changed, 45 insertions(+), 19 deletions(-)
 
-> > but not when you add the "W=1" option.  That way
-> lies madness and is not something anyone does on stable kernels.  They
-> do it on mainline when they want to try to find something to clean up
-> and get a coding style fix merged :)
+diff --git a/arch/x86/boot/compressed/mem_encrypt.S b/arch/x86/boot/compressed/mem_encrypt.S
+index eaa843a52907..41933550449a 100644
+--- a/arch/x86/boot/compressed/mem_encrypt.S
++++ b/arch/x86/boot/compressed/mem_encrypt.S
+@@ -18,27 +18,13 @@
+ 
+ 	.text
+ 	.code32
+-ENTRY(get_sev_encryption_bit)
++do_get_sev_encryption_bit:
+ 	xor	%eax, %eax
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+ 	push	%ebx
+ 	push	%ecx
+ 	push	%edx
+-	push	%edi
+-
+-	/*
+-	 * RIP-relative addressing is needed to access the encryption bit
+-	 * variable. Since we are running in 32-bit mode we need this call/pop
+-	 * sequence to get the proper relative addressing.
+-	 */
+-	call	1f
+-1:	popl	%edi
+-	subl	$1b, %edi
+-
+-	movl	enc_bit(%edi), %eax
+-	cmpl	$0, %eax
+-	jge	.Lsev_exit
+ 
+ 	/* Check if running under a hypervisor */
+ 	movl	$1, %eax
+@@ -69,25 +55,65 @@ ENTRY(get_sev_encryption_bit)
+ 
+ 	movl	%ebx, %eax
+ 	andl	$0x3f, %eax		/* Return the encryption bit location */
+-	movl	%eax, enc_bit(%edi)
+ 	jmp	.Lsev_exit
+ 
+ .Lno_sev:
+ 	xor	%eax, %eax
+-	movl	%eax, enc_bit(%edi)
+ 
+ .Lsev_exit:
+-	pop	%edi
+ 	pop	%edx
+ 	pop	%ecx
+ 	pop	%ebx
+ 
++#endif	/* CONFIG_AMD_MEM_ENCRYPT */
++
++	ret
++
++ENTRY(get_sev_encryption_bit)
++	xor	%eax, %eax
++
++#ifdef CONFIG_AMD_MEM_ENCRYPT
++	push	%edi
++
++	/*
++	 * RIP-relative addressing is needed to access the encryption bit
++	 * variable. Since we are running in 32-bit mode we need this call/pop
++	 * sequence to get the proper relative addressing.
++	 */
++	call	1f
++1:	popl	%edi
++	subl	$1b, %edi
++
++	movl	enc_bit(%edi), %eax
++	cmpl	$0, %eax
++	jge 2f
++
++	call    do_get_sev_encryption_bit
++	movl	%eax, enc_bit(%edi)
++2:
++	pop	%edi
+ #endif	/* CONFIG_AMD_MEM_ENCRYPT */
+ 
+ 	ret
+ ENDPROC(get_sev_encryption_bit)
+ 
+ 	.code64
++ENTRY(get_sev_encryption_bit_64)
++	xor	%rax, %rax
++
++#ifdef CONFIG_AMD_MEM_ENCRYPT
++	movl	enc_bit(%rip), %eax
++	cmpl	$0, %eax
++	jge 1f
++
++	call    do_get_sev_encryption_bit
++	movl	%eax, enc_bit(%rip)
++1:
++#endif	/* CONFIG_AMD_MEM_ENCRYPT */
++
++	ret
++ENDPROC(get_sev_encryption_bit_64)
++
+ ENTRY(set_sev_encryption_mask)
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+ 	push	%rbp
+@@ -95,7 +121,7 @@ ENTRY(set_sev_encryption_mask)
+ 
+ 	movq	%rsp, %rbp		/* Save current stack pointer */
+ 
+-	call	get_sev_encryption_bit	/* Get the encryption bit position */
++	call	get_sev_encryption_bit_64	/* Get the encryption bit position */
+ 	testl	%eax, %eax
+ 	jz	.Lno_sev_mask
+ 
+-- 
+2.17.1
 
