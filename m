@@ -2,137 +2,222 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2634C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0496C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 943E020C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:59:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943E020C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 7ACDC2087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:59:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ACDC2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbeIYQF7 (ORCPT
+        id S1728645AbeIYQG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:05:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36844 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726356AbeIYQF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:05:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9CBBDADE2;
-        Tue, 25 Sep 2018 09:59:11 +0000 (UTC)
-Subject: Re: [PATCH v2] memory_hotplug: Free pages as higher order
-To:     Arun KS <arunks@codeaurora.org>, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        akpm@linux-foundation.org, dan.j.williams@intel.com,
-        mhocko@suse.com, iamjoonsoo.kim@lge.com, osalvador@suse.de,
-        malat@debian.org, yasu.isimatu@gmail.com,
-        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, xen-devel@lists.xenproject.org
-Cc:     vatsa@codeaurora.org, vinmenon@codeaurora.org, getarunks@gmail.com
-References: <1537854158-9766-1-git-send-email-arunks@codeaurora.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <ccdbaf76-cbdd-759e-c6de-c5b738f156e9@suse.cz>
-Date:   Tue, 25 Sep 2018 11:59:09 +0200
+        Tue, 25 Sep 2018 12:06:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726541AbeIYQG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:06:28 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9099CC05D3E4;
+        Tue, 25 Sep 2018 09:59:41 +0000 (UTC)
+Received: from [10.36.117.173] (ovpn-117-173.ams2.redhat.com [10.36.117.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CAFAC5C3FA;
+        Tue, 25 Sep 2018 09:59:36 +0000 (UTC)
+Subject: Re: [PATCH v5 16/18] kvm: arm64: Set a limit on the IPA size
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-17-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <d915accb-966f-5c3d-f969-45512ebd8ca5@redhat.com>
+Date:   Tue, 25 Sep 2018 11:59:31 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1537854158-9766-1-git-send-email-arunks@codeaurora.org>
+In-Reply-To: <20180917104144.19188-17-suzuki.poulose@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 25 Sep 2018 09:59:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/18 7:42 AM, Arun KS wrote:
-> When free pages are done with higher order, time spend on
-> coalescing pages by buddy allocator can be reduced. With
-> section size of 256MB, hot add latency of a single section
-> shows improvement from 50-60 ms to less than 1 ms, hence
-> improving the hot add latency by 60%.
-> 
-> Modify external providers of online callback to align with
-> the change.
-> 
-> Signed-off-by: Arun KS <arunks@codeaurora.org>
+Hi Suzuki,
 
-Hi,
-
-> @@ -655,26 +655,53 @@ void __online_page_free(struct page *page)
->  }
->  EXPORT_SYMBOL_GPL(__online_page_free);
+On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
+> So far we have restricted the IPA size of the VM to the default
+> value (40bits). Now that we can manage the IPA size per VM and
+> support dynamic stage2 page tables, we can allow VMs to have
+> larger IPA. This patch introduces a the maximum IPA size
+> supported on the host.
+to be reworded
+ This is decided by the following factors :
+> 
+>  1) Maximum PARange supported by the CPUs - This can be inferred
+>     from the system wide safe value.
+>  2) Maximum PA size supported by the host kernel (48 vs 52)
+>  3) Number of levels in the host page table (as we base our
+>     stage2 tables on the host table helpers).
+> 
+> Since the stage2 page table code is dependent on the stage1
+> page table, we always ensure that :
+> 
+>   Number of Levels at Stage1 >= Number of Levels at Stage2
+> 
+> So we limit the IPA to make sure that the above condition
+> is satisfied. This will affect the following combinations
+> of VA_BITS and IPA for different page sizes.
+> 
+>   Host configuration | Unsupported IPA ranges
+>   39bit VA, 4K       | [44, 48]
+>   36bit VA, 16K      | [41, 48]
+>   42bit VA, 64K      | [47, 52]
+> 
+> Supporting the above combinations need independent stage2
+> page table manipulation code, which would need substantial
+> changes. We could purse the solution independently and
+> switch the page table code once we have it ready.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since V2:
+>  - Restrict the IPA size to limit the number of page table
+>    levels in stage2 to that of stage1 or less.
+> ---
+>  arch/arm/include/asm/kvm_mmu.h    |  2 ++
+>  arch/arm64/include/asm/kvm_host.h |  2 ++
+>  arch/arm64/kvm/reset.c            | 43 +++++++++++++++++++++++++++++++
+>  virt/kvm/arm/arm.c                |  2 ++
+>  4 files changed, 49 insertions(+)
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index 12ae5fbbcf01..5ad1a54f98dc 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -358,6 +358,8 @@ static inline int hyp_map_aux_data(void)
 >  
-> -static void generic_online_page(struct page *page)
-> +static int generic_online_page(struct page *page, unsigned int order)
->  {
-> -	__online_page_set_limits(page);
-> -	__online_page_increment_counters(page);
-> -	__online_page_free(page);
-> +	unsigned long nr_pages = 1 << order;
-> +	struct page *p = page;
-> +	unsigned int loop;
+>  #define kvm_phys_to_vttbr(addr)		(addr)
+>  
+> +static inline void kvm_set_ipa_limit(void) {}
 > +
-> +	for (loop = 0 ; loop < nr_pages ; loop++, p++) {
-> +		__ClearPageReserved(p);
-> +		set_page_count(p, 0);
+>  #endif	/* !__ASSEMBLY__ */
+>  
+>  #endif /* __ARM_KVM_MMU_H__ */
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 5ecd457bce7d..f0474061851d 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -513,6 +513,8 @@ static inline int kvm_arm_have_ssbd(void)
+>  void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu);
+>  void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu);
+>  
+> +void kvm_set_ipa_limit(void);
+> +
+>  #define __KVM_HAVE_ARCH_VM_ALLOC
+>  struct kvm *kvm_arch_alloc_vm(void);
+>  void kvm_arch_free_vm(struct kvm *kvm);
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index 51ecf0f7c912..76972b19bdd7 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -34,6 +34,9 @@
+>  #include <asm/kvm_coproc.h>
+>  #include <asm/kvm_mmu.h>
+>  
+> +/* Maximum phys_shift supported for any VM on this host */
+> +static u32 kvm_ipa_limit;
+> +
+>  /*
+>   * ARMv8 Reset Values
+>   */
+> @@ -135,6 +138,46 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
+>  	return kvm_timer_vcpu_reset(vcpu);
+>  }
+>  
+> +void kvm_set_ipa_limit(void)
+> +{
+> +	unsigned int ipa_max, va_max, parange;
+> +
+> +	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 0x7;
+> +	ipa_max = id_aa64mmfr0_parange_to_phys_shift(parange);
+> +
+> +	/* Raise the limit to the default size for backward compatibility */
+> +	if (ipa_max < KVM_PHYS_SHIFT) {
+> +		WARN_ONCE(1,
+> +			  "PARange is %d bits, unsupported configuration!",
+> +			  ipa_max);
+> +		ipa_max = KVM_PHYS_SHIFT;
+I don't really get what does happen in this case. The CPU cannot handle
+PA up to ipa_max so can the VM run properly? In case it is a
+showstopper, kvm_set_ipa_limit should return an error, cascaded by
+init_common_resources. Otherwise the warning message may be reworded.
 > +	}
 > +
-> +	adjust_managed_page_count(page, nr_pages);
-> +	set_page_refcounted(page);
-> +	__free_pages(page, order);
+> +	/* Clamp it to the PA size supported by the kernel */
+> +	ipa_max = (ipa_max > PHYS_MASK_SHIFT) ? PHYS_MASK_SHIFT : ipa_max;
+> +	/*
+> +	 * Since our stage2 table is dependent on the stage1 page table code,
+> +	 * we must always honor the following condition:
+> +	 *
+> +	 *  Number of levels in Stage1 >= Number of levels in Stage2.
+> +	 *
+> +	 * So clamp the ipa limit further down to limit the number of levels.
+> +	 * Since we can concatenate upto 16 tables at entry level, we could
+> +	 * go upto 4bits above the maximum VA addressible with the current
+addressable?
+> +	 * number of levels.
+> +	 */
+> +	va_max = PGDIR_SHIFT + PAGE_SHIFT - 3;
+> +	va_max += 4;
 > +
-> +	return 0;
+> +	if (va_max < ipa_max) {
+> +		kvm_info("Limiting IPA limit to %dbytes due to host VA bits limitation\n",> +			 va_max);
+> +		ipa_max = va_max;
+you have a trace for this limitation but none for the comparison against
+PHYS_MASK_SHIFT.
+> +	}
+> +
+> +	kvm_ipa_limit = ipa_max;
+> +}
+> +
+>  /*
+>   * Configure the VTCR_EL2 for this VM. The VTCR value is common
+>   * across all the physical CPUs on the system. We use system wide
+> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+> index 43e716bc3f08..631f9a3ad99a 100644
+> --- a/virt/kvm/arm/arm.c
+> +++ b/virt/kvm/arm/arm.c
+> @@ -1413,6 +1413,8 @@ static int init_common_resources(void)
+>  	kvm_vmid_bits = kvm_get_vmid_bits();
+>  	kvm_info("%d-bit VMID\n", kvm_vmid_bits);
+>  
+> +	kvm_set_ipa_limit();
+As we have a kvm_info for the supported vmid_bits, may be good to output
+the max IPA size supported by the host whatever the applied clamps?
 
-This seems like almost complete copy of __free_pages_boot_core(), could
-you do some code reuse instead? I think Michal Hocko also suggested that.
+Thanks
 
-Thanks,
-Vlastimil
+Eric
+> +
+>  	return 0;
+>  }
+>  
+> 
