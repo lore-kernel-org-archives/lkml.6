@@ -2,64 +2,145 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17BAC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2E6C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953722145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:17:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953722145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 136C720877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:18:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LjweQ3N+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AfkKY1uu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 136C720877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbeIYQXx (ORCPT
+        id S1727767AbeIYQZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:23:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:21933 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeIYQXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:23:52 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C3CC3097084;
-        Tue, 25 Sep 2018 10:17:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E9A925C57A;
-        Tue, 25 Sep 2018 10:17:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180925094147.GC21972@kroah.com>
-References: <20180925094147.GC21972@kroah.com> <alpine.LRH.2.21.1809250738020.27047@namei.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     dhowells@redhat.com, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [GIT PULL] Keys: fix C++ reserved word issue
+        Tue, 25 Sep 2018 12:25:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36398 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeIYQZj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:25:39 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 98D3E6020A; Tue, 25 Sep 2018 10:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537870727;
+        bh=6cWhn3yoZG/6JP205FDz7qbu6mkGK1aIJEaah/Qc+VU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LjweQ3N+p3Leqveip1DENFpkGHRYRxLtBGoqMkYlVSkiMTyOpA9lvvdBXIZZUTroP
+         wL5e7QU0uB3Ei42gMpMfO1fgtQHZm9z5Av0uIDH41en1fTSlz4s8UOUhl4mVqNEP2G
+         +NFQvMgPVkPA60YkQ5smYozMXOrgSKDN4RHmfpTo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C19B26020A;
+        Tue, 25 Sep 2018 10:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537870726;
+        bh=6cWhn3yoZG/6JP205FDz7qbu6mkGK1aIJEaah/Qc+VU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AfkKY1uuNekwQPiuZuC4sD7sG/2oqVNfG9Klc0DeZYlCGR3N7s9wvlLfSoaxRx8ZM
+         qKjCC0S9nJ1xLC7sa0Aq48IG+ElJJ81KWcV0e3GJ+ZQUguxHfFneDFKj2dEjkMiXWY
+         jW8CvMQG3ra1Vg0hWuw6mDthvcq6bjigv0Ymhw+M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <31928.1537870620.1@warthog.procyon.org.uk>
-Date:   Tue, 25 Sep 2018 11:17:00 +0100
-Message-ID: <31929.1537870620@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 25 Sep 2018 10:17:02 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 25 Sep 2018 15:48:46 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: pas: Add QCS404 remoteprocs
+In-Reply-To: <20180920172237.30965-1-bjorn.andersson@linaro.org>
+References: <20180920172237.30965-1-bjorn.andersson@linaro.org>
+Message-ID: <f0887494a9957496399046bac9b1fa32@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg KH <gregkh@linuxfoundation.org> wrote:
+Hi Bjorn,
 
-> I'll wait a few days on this one...
+On 2018-09-20 22:52, Bjorn Andersson wrote:
+> From: Govind Singh <govinds@codeaurora.org>
+> 
+> Add compatibles for the three PAS based remote processors found in
+> QCS404.
+> 
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> [bjorn: Added adsp and cdsp to the patch]
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,adsp.txt     |  3 +++
+>  drivers/remoteproc/qcom_adsp_pil.c                   | 12 ++++++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> index b7d058228185..9c0cff3a5ed8 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> @@ -10,6 +10,9 @@ on the Qualcomm ADSP Hexagon core.
+>  		    "qcom,msm8974-adsp-pil"
+>  		    "qcom,msm8996-adsp-pil"
+>  		    "qcom,msm8996-slpi-pil"
+> +		    "qcom,qcs404-adsp-pas"
+> +		    "qcom,qcs404-cdsp-pas"
+> +		    "qcom,qcs404-wcss-pas"
+>  		    "qcom,sdm845-adsp-pas"
+>  		    "qcom,sdm845-cdsp-pas"
+> 
+> diff --git a/drivers/remoteproc/qcom_adsp_pil.c
+> b/drivers/remoteproc/qcom_adsp_pil.c
+> index da2254ea1135..fcbb816a9698 100644
+> --- a/drivers/remoteproc/qcom_adsp_pil.c
+> +++ b/drivers/remoteproc/qcom_adsp_pil.c
+> @@ -362,10 +362,22 @@ static const struct adsp_data slpi_resource_init 
+> = {
+>  		.ssctl_id = 0x16,
+>  };
+> 
+> +static const struct adsp_data wcss_resource_init = {
+> +	.crash_reason_smem = 421,
+> +	.firmware_name = "wcnss.mdt",
+> +	.pas_id = 6,
+> +	.ssr_name = "mpss",
+> +	.sysmon_name = "wlan",
 
-Can you at least apply the reversion patch?  UAPI is currently broken by the
-change that needs reverting.
+Shouldn't the sysmon name be "wcnss" instead of "wlan"?
 
-David
+> +	.ssctl_id = 0x12,
+> +};
+> +
+>  static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,msm8974-adsp-pil", .data = 
+> &adsp_resource_init},
+>  	{ .compatible = "qcom,msm8996-adsp-pil", .data = 
+> &adsp_resource_init},
+>  	{ .compatible = "qcom,msm8996-slpi-pil", .data = 
+> &slpi_resource_init},
+> +	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init 
+> },
+> +	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init 
+> },
+> +	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init 
+> },
+>  	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
+>  	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
+>  	{ },
+
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
