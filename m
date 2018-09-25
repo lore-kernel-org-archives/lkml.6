@@ -2,158 +2,127 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E79C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695C3C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0582083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14DC62083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:13:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X9az/ZJO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0582083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuOmBHib"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14DC62083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbeIZCVq (ORCPT
+        id S1726463AbeIZCWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:21:46 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44653 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbeIZCVq (ORCPT
+        Tue, 25 Sep 2018 22:22:11 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55241 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbeIZCWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:21:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v16-v6so24640076wro.11
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:12:31 -0700 (PDT)
+        Tue, 25 Sep 2018 22:22:11 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c14-v6so14744617wmb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:12:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KD68OO+Zb8yNT0w8I5hNpU0qCH3+ExU40WmiuRcgeRo=;
-        b=X9az/ZJOX1sLQP8M2TIj2losjHqznGeV/ki94HxOy/5ekO4rfs/cA/CVt/ULTPD9kB
-         5ckH+v5AKBxhoTE1MFxU+6pG2ZU3DhR4NTDWBYD4ACon93jbORPlqKfqZl/YeKYhL8Is
-         kJc90YmrwEttTsKpqdSdJUT3AjeEr4MNCSoW8=
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=LiZhOqz7StL5Ja1ofBA4O+CSFGJDKQQ5BcXyQrpm6lg=;
+        b=XuOmBHibBTCoPO3JBlnCGuET8ceYE2Qe8kriKUPWGsQx2CD8IKGFdu128pzlltfSVy
+         3qDVrNXjDIqEA7NKHTVJzsyVOM1gsjTRuQ2CPe+NhMvYD32KJyL6tSQhCzcG78as97JQ
+         J82sxYDF29ugqSuFFNraczy7sNPAVQtQbD4faNsontp/Q/CymfALM1MgvFIQtsOxUjBs
+         dkFqoaDMimV/oMnM9ckUdqKr3KktSONM/gF7+mJqeT1Wi6s8ClX0lUgn7/5B/wOoT21I
+         jJBqUVrE72C4Wpvf6ERL/ofupV1RKUp5qAjjtJzdlp2NPAPCUhcTQHr4dhwk2Yodd6iR
+         1NpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KD68OO+Zb8yNT0w8I5hNpU0qCH3+ExU40WmiuRcgeRo=;
-        b=ptaYIJNPhi1oxYuARkYBQfg3eHyM07Ws4K8sExuCsNQHAD+m/VelDhvSYiqjnekD3/
-         R7VbxeccEJZ32ofKeFu4vkIss5qFnlpgQAtlb/ao3S78y9w8MIZKDqXDH8eTsRAgVVGQ
-         f7RH5PXDY2Wt8NVNtl40lN5hFjgxv++K0RRE9d+ZDO9jPz7cXovJgDUnarsxd1uKeHxk
-         vtwJVPlNfwblYZEek0nbrFsmPCA6uylopDLUwjpBGWSJsph1BkK5AJPUj6RcwzI4sWs/
-         cOIOUwmjKcffivEAukXey0E2j+ApHV9kqHj61625zIu8NvXHU1ZCrcWeesyTGWZb3XW7
-         gSfA==
-X-Gm-Message-State: ABuFfojau9FlQP1VQwhbL/W8tMEz7G8hC0hO/kU/tm2eGg7stocBC3dS
-        PKxakAjZyo/Xdxcf/c2M7fuuqA==
-X-Google-Smtp-Source: ACcGV60OqFoavW+v4tDJ6TV48WmE7122ILnvjvGMFWlfHWEreh8Pj+XUlHZXxF0/nzPQGvLLcvplHA==
-X-Received: by 2002:adf:ff08:: with SMTP id k8-v6mr2604535wrr.15.1537906351050;
-        Tue, 25 Sep 2018 13:12:31 -0700 (PDT)
-Received: from [192.168.0.41] (251.150.136.77.rev.sfr.net. [77.136.150.251])
-        by smtp.googlemail.com with ESMTPSA id u12-v6sm2840653wrs.48.2018.09.25.13.12.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 13:12:30 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-watchdog@vger.kernel.org, od@zcrc.me,
-        linux-mips@linux-mips.org, Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5baa3fa9.1c69fb81.4c7b7.19fdSMTPIN_ADDED_MISSING@mx.google.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <346cb95c-f9ce-f19b-30f3-75e9fb379290@linaro.org>
-Date:   Tue, 25 Sep 2018 22:12:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <5baa3fa9.1c69fb81.4c7b7.19fdSMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=LiZhOqz7StL5Ja1ofBA4O+CSFGJDKQQ5BcXyQrpm6lg=;
+        b=F+fjvybGJZB/ljdUJ988auOHcTVdm0a9P+CPr2f30jtr5uAOxk1ft+GsFGqdWq/FrA
+         rPJATkrY5O2CQngoTHCSRMZ1Iuy5NjXddFlYb3b47S2BBY0EAVvhdQrmZ1OxoiE7oMk7
+         keoByvgkDxwHQWPmz/x6yTp7X9bVQMD8x3ERONDWmCiBnnQMNntz/dGiPkhtW+NKMoDE
+         JWCdP00tWU66nC0MUFZycl4lRj9bnzvcLoqZx/hoWK8bl6NHp6rJps0uNP8LRAnOHLNj
+         hGXlDJkdvIFpEJJcFuQYw7VK8rc/oD+Z4w2FcaKOH8sy1L2RgqloZG4FzM2GKU8Pm5Kc
+         HFJw==
+X-Gm-Message-State: ABuFfojJiJPm4cVCZG5gQqKw4GbmPsWeqVCDsIDDVR4eM3iazV3iDuYB
+        G6X42N8zsByxlI+Ioo+cl68=
+X-Google-Smtp-Source: ACcGV63Ctn6BGoaJ78s+rSLB/mCL+yQuT0HJqqcLO0HybgvTAGLpRnvcqlFtKuxuh3fBt8cZ6AIjeQ==
+X-Received: by 2002:a1c:f210:: with SMTP id s16-v6mr2142887wmc.36.1537906376290;
+        Tue, 25 Sep 2018 13:12:56 -0700 (PDT)
+Received: from laptop ([37.122.159.87])
+        by smtp.gmail.com with ESMTPSA id x16-v6sm1982387wro.84.2018.09.25.13.12.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 13:12:55 -0700 (PDT)
+Message-ID: <a75bc7c92bd9806a56ec2736218dec15b5cf7eba.camel@gmail.com>
+Subject: Re: [PATCH 1/1] MIPS: Add new Kconfig variable to avoid unaligned
+ access instructions
+From:   Yasha Cherikovsky <yasha.che3@gmail.com>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 25 Sep 2018 23:12:53 +0300
+In-Reply-To: <20180925195757.glglc6q3ghn3dhs5@pburton-laptop>
+References: <20180920170306.9157-1-yasha.che3@gmail.com>
+         <20180920170306.9157-2-yasha.che3@gmail.com>
+         <20180925174510.rg3j4lfmwvlecnqt@pburton-laptop>
+         <fc0016b8c3d08fc139356c39668c6ab5d8c297fd.camel@gmail.com>
+         <20180925195757.glglc6q3ghn3dhs5@pburton-laptop>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/09/2018 15:38, Paul Cercueil wrote:
+On Tue, 2018-09-25 at 19:57 +0000, Paul Burton wrote:
+> Hi Yasha,
 > 
-> Le 24 sept. 2018 9:14 AM, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
->>
->> On 24/09/2018 08:53, Paul Cercueil wrote: 
->>>
->>> Le 24 sept. 2018 07:58, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit : 
->>>>
->>>> On 24/09/2018 07:49, Paul Cercueil wrote: 
->>>>>
->>>>> Le 24 sept. 2018 07:35, Daniel Lezcano <daniel.lezcano@linaro.org> a 
->>>>> écrit : 
->>>>>>
->>>>>> On 24/09/2018 07:24, Paul Cercueil wrote: 
->>>>>>> Hi Daniel, 
->>>>>>>
->>>>>>> Le 24 sept. 2018 05:12, Daniel Lezcano 
->>>>>>> <daniel.lezcano@linaro.org> a écrit : 
->>>>>>>>
->>>>>>>> On 21/08/2018 19:16, Paul Cercueil wrote: 
->>>>>>>>> This driver handles the TCU (Timer Counter Unit) present on 
->>>>>>>>> the Ingenic JZ47xx SoCs, and provides the kernel with a 
->>>>>>>>> system timer, and optionally with a clocksource and a 
->>>>>>>>> sched_clock. 
->>>>>>>>>
->>>>>>>>> It also provides clocks and interrupt handling to client 
->>>>>>>>> drivers. 
->>>>>>>>
->>>>>>>> Can you provide a much more complete description of the timer 
->>>>>>>> in order to make my life easier for the review of this patch? 
->>>>>>>
->>>>>>> See patch [03/24], it adds a doc file that describes the 
->>>>>>> hardware. 
->>>>>>
->>>>>> Thanks, I went through but it is incomplete to understand what the 
->>>>>> timer do. I will reverse-engineer the code but it would help if you 
->>>>>> can give the gross approach. Why multiple channels ? mutexes and 
->>>>>> completion ? 
->>>>>
->>>>> Much of the complexity is because of the multi-purpose nature of the 
->>>>> TCU channels. Each one can be used as timer/clocksource, or PWM. 
->>>>>
->>>>> The driver starts by using channels 0 and 1 as system timer and 
->>>>> clocksource, respectively, the other ones being unused for now. Then, 
->>>>> *if* the PWM driver requests one of the channels in use by the 
->>>>> timer/clocksource driver, say channel 0, the timer/clocksource driver 
->>>>> will dynamically reassign the system timer to a free channel, from 
->>>>> channel 0 to e.g. channel 2. Only in that case the completion/mutex 
->>>>> are actually used. 
->>>>
->>>> Why do you need to do this? Can't be the channels dedicated and reserved 
->>>> for clocksource and clockevent? 
->>>
->>> That's what I had in place (ingenic,timer-channel and ingenic,clocksource-channel DT properties), but Rob didn't want any linux-specific properties in the devicetree binding :( 
->>
->> Isn't possible to specify the channel to use in the DT? like renesas16 ? 
+> On Tue, Sep 25, 2018 at 10:30:52PM +0300, Yasha Cherikovsky wrote:
+> > On Tue, 2018-09-25 at 17:45 +0000, Paul Burton wrote:
+> > > How about we:
+> > > 
+> > >   - Add a Kconfig option CONFIG_CPU_SUPPORTS_LOAD_STORE_LR, and
+> > > select
+> > >     it for all existing pre-r6 targets (probably from CONFIG_CPU_*).
+> > > 
+> > >   - Change CONFIG_GENERIC_CSUM to default y if
+> > >     !CONFIG_CPU_SUPPORTS_LOAD_STORE_LR, and drop the selects of it.
+> > > 
+> > > That would avoid the double-negative ("if we don't not support this")
+> > > that the #ifndef's currently represent. It would also mean any future
+> > > architecture/ISA targets beyond MIPSr6 automatically avoid the
+> > > instructions.
+> > 
+> > Thanks for your feedback, I'll start preparing v2.
+> > 
+> > Looking in arch/mips/Kconfig, some CPU options start
+> > with CPU_SUPPORTS_ and some with CPU_HAS_.
+> > Which perfix should we use here?
 > 
-> That's what I did in V6 (and before), but Rob did not want me to add properties for Linux-specific concepts such as clocksource.
+> That's a good question :)
+> 
+> To be honest I don't think either of them is perfect, since what we're
+> really describing is what's supported by the ISA that the kernel build
+> is targeting - and in theory the CPU we actually run on could support
+> extra things.
+> 
+> But considering it I think CPU_HAS_ is probably the best choice for
+> this, since it's already used similarly to indicate support for pref &
+> sync instructions.
+> 
+> Thanks,
+>     Paul
 
-Hmm, I remember something like that, yes but I did a delete of the
-previous version when you posted the v7. Can you give a pointer to its
-answer ?
+OK, Thanks.
 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
