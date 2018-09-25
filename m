@@ -6,125 +6,212 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F633C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A442C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C885C2098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:53:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C885C2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D2752098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:56:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2752098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbeIYWCE (ORCPT
+        id S1729551AbeIYWEW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:02:04 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60848 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728598AbeIYWCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:02:04 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 78DC81109240A;
-        Tue, 25 Sep 2018 23:53:53 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Tue, 25 Sep 2018
- 23:53:46 +0800
-CC:     Linuxarm <linuxarm@huawei.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Subject: perf segmentation fault from NULL dereference
-To:     Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Message-ID: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
-Date:   Tue, 25 Sep 2018 16:53:40 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 25 Sep 2018 18:04:22 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:36142 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728598AbeIYWEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:04:22 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42KQfP36m4z9ttCN;
+        Tue, 25 Sep 2018 17:56:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id VWKtvftEA17n; Tue, 25 Sep 2018 17:56:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42KQfP2JxNz9ttCH;
+        Tue, 25 Sep 2018 17:56:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F0288B7E2;
+        Tue, 25 Sep 2018 17:56:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id X-QZQqJaEXGv; Tue, 25 Sep 2018 17:56:12 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E646E8B7C8;
+        Tue, 25 Sep 2018 17:56:09 +0200 (CEST)
+Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
+ <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
+Message-ID: <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr>
+Date:   Tue, 25 Sep 2018 17:56:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+In-Reply-To: <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Snowpatch reports failure on pmac32_defconfig, as follows:
 
-I am seeing this perf crash on my arm64-based system:
+arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_printf':
+/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88: 
+undefined reference to `__stack_chk_fail_local'
+arch/powerpc/platforms/powermac/bootx_init.o: In function 
+`bootx_add_display_props':
+/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:211: 
+undefined reference to `__stack_chk_fail_local'
+arch/powerpc/platforms/powermac/bootx_init.o: In function 
+`bootx_scan_dt_build_struct':
+/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:350: 
+undefined reference to `__stack_chk_fail_local'
+arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_init':
+/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:598: 
+undefined reference to `__stack_chk_fail_local'
+ld: .tmp_vmlinux1: hidden symbol `__stack_chk_fail_local' isn't defined
+ld: final link failed: Bad value
+Makefile:1040: recipe for target 'vmlinux' failed
+make: *** [vmlinux] Error 1
 
-root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
-perf: Segmentation fault
-Obtained 9 stack frames.
-./perf_debug_() [0x4c5ef8]
-[0xffff82ba267c]
-./perf_debug_() [0x4bc5a8]
-./perf_debug_() [0x419550]
-./perf_debug_() [0x41a928]
-./perf_debug_() [0x472f58]
-./perf_debug_() [0x473210]
-./perf_debug_() [0x4070f4]
-/lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe0) [0xffff8294c8a0]
-Segmentation fault (core dumped)
+I don't have this issue with GCC 8.1, bootx_init.o has references to 
+__stack_chk_fail, not to __stack_chk_fail_local
 
-I find 'cycles' event is fine.
+Looking online, it may be due to an old build and a lack of 'make 
+clean', could it be the case here ?
 
-I bisected the issue to here:
-commit bfd8f72c2778f5bd63dc9eb6d23bd7a0d99cff6d (HEAD, refs/bisect/bad)
-Author: Andi Kleen <ak@linux.intel.com>
-Date:   Fri Nov 17 13:42:58 2017 -0800
+Otherwise, can you retry the build to see if it's happen again ?
 
-     perf record: Synthesize unit/scale/... in event update
+Christophe
 
-     Move the code to synthesize event updates for scale/unit/cpus to a
-     common utility file, and use it both from stat and record.
-
-     This allows to access scale and other extra qualifiers from perf 
-script.
-
-     Signed-off-by: Andi Kleen <ak@linux.intel.com>
-     Acked-by: Jiri Olsa <jolsa@kernel.org>
-     Link: 
-http://lkml.kernel.org/r/20171117214300.32746-2-andi@firstfloor.org
-     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-I am suspicious that this is a real issue, as this patch has been in 
-mainline for some time...
-
-This simple change fixes the issue me:
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 91e6d9c..f4fd826 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3576,7 +3576,7 @@ int perf_event__process_feature(struct perf_tool 
-*tool,
-      int max, err;
-      u16 type;
-
--    if (!evsel->own_cpus)
-+    if (!evsel->own_cpus || !(evsel->attr.read_format & 
-PERF_FORMAT_ID)) // roundabout check for !evsel->id
-          return 0;
-
-      ev = cpu_map_data__alloc(evsel->own_cpus, &size, &type, &max);
-
-It turns out that evsel->id is NULL on a call to 
-perf_event__process_feature(), which upsets this code:
-
-     ev->header.type = PERF_RECORD_EVENT_UPDATE;
-     ev->header.size = (u16)size;
-     ev->type = PERF_EVENT_UPDATE__CPUS;
-     ev->id   = evsel->id[0];
-
-Please me let me know if a valid issue so we can get a fix in.
-
-Apologies for crying wolf if I'm off the mark.
-
-Cheers,
-John
-
+Le 24/09/2018 à 17:15, Christophe Leroy a écrit :
+> On PPC64, as register r13 points to the paca_struct at all time,
+> this patch adds a copy of the canary there, which is copied at
+> task_switch.
+> That new canary is then used by using the following GCC options:
+> -mstack-protector-guard=tls
+> -mstack-protector-guard-reg=r13
+> -mstack-protector-guard-offset=offsetof(struct paca_struct, canary))
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>   arch/powerpc/Kconfig                      | 2 +-
+>   arch/powerpc/Makefile                     | 8 ++++++++
+>   arch/powerpc/include/asm/paca.h           | 3 +++
+>   arch/powerpc/include/asm/stackprotector.h | 3 +++
+>   arch/powerpc/kernel/asm-offsets.c         | 3 +++
+>   arch/powerpc/kernel/entry_64.S            | 4 ++++
+>   6 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 3bcb05929931..602eea723624 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -180,7 +180,7 @@ config PPC
+>   	select HAVE_ARCH_SECCOMP_FILTER
+>   	select HAVE_ARCH_TRACEHOOK
+>   	select HAVE_CBPF_JIT			if !PPC64
+> -	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-guard=tls) && PPC32
+> +	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-guard=tls)
+>   	select HAVE_CONTEXT_TRACKING		if PPC64
+>   	select HAVE_DEBUG_KMEMLEAK
+>   	select HAVE_DEBUG_STACKOVERFLOW
+> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+> index 45b8eb4d8fe7..81552c7b46eb 100644
+> --- a/arch/powerpc/Makefile
+> +++ b/arch/powerpc/Makefile
+> @@ -113,7 +113,11 @@ KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
+>   endif
+>   
+>   cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
+> +ifdef CONFIG_PPC64
+> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r13
+> +else
+>   cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r2
+> +endif
+>   
+>   LDFLAGS_vmlinux-y := -Bstatic
+>   LDFLAGS_vmlinux-$(CONFIG_RELOCATABLE) := -pie
+> @@ -411,8 +415,12 @@ ifdef CONFIG_STACKPROTECTOR
+>   prepare: stack_protector_prepare
+>   
+>   stack_protector_prepare: prepare0
+> +ifdef CONFIG_PPC64
+> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "PACA_CANARY") print $$3;}' include/generated/asm-offsets.h))
+> +else
+>   	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TASK_CANARY") print $$3;}' include/generated/asm-offsets.h))
+>   endif
+> +endif
+>   
+>   # Use the file '.tmp_gas_check' for binutils tests, as gas won't output
+>   # to stdout and these checks are run even on install targets.
+> diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
+> index 6d6b3706232c..98d883e58945 100644
+> --- a/arch/powerpc/include/asm/paca.h
+> +++ b/arch/powerpc/include/asm/paca.h
+> @@ -246,6 +246,9 @@ struct paca_struct {
+>   	struct slb_entry *mce_faulty_slbs;
+>   	u16 slb_save_cache_ptr;
+>   #endif /* CONFIG_PPC_BOOK3S_64 */
+> +#ifdef CONFIG_STACKPROTECTOR
+> +	unsigned long canary;
+> +#endif
+>   } ____cacheline_aligned;
+>   
+>   extern struct paca_struct **paca_ptrs;
+> diff --git a/arch/powerpc/include/asm/stackprotector.h b/arch/powerpc/include/asm/stackprotector.h
+> index 263e2aab1862..e81991955c0d 100644
+> --- a/arch/powerpc/include/asm/stackprotector.h
+> +++ b/arch/powerpc/include/asm/stackprotector.h
+> @@ -29,6 +29,9 @@ static __always_inline void boot_init_stack_canary(void)
+>   	canary ^= LINUX_VERSION_CODE;
+>   
+>   	current->stack_canary = canary;
+> +#ifdef CONFIG_PPC64
+> +	get_paca()->canary = canary;
+> +#endif
+>   }
+>   
+>   #endif	/* _ASM_STACKPROTECTOR_H */
+> diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+> index a992f7a53cf3..773dee55b3f6 100644
+> --- a/arch/powerpc/kernel/asm-offsets.c
+> +++ b/arch/powerpc/kernel/asm-offsets.c
+> @@ -81,6 +81,9 @@ int main(void)
+>   	OFFSET(MM, task_struct, mm);
+>   #ifdef CONFIG_STACKPROTECTOR
+>   	OFFSET(TASK_CANARY, task_struct, stack_canary);
+> +#ifdef CONFIG_PPC64
+> +	OFFSET(PACA_CANARY, paca_struct, canary);
+> +#endif
+>   #endif
+>   	OFFSET(MMCONTEXTID, mm_struct, context.id);
+>   #ifdef CONFIG_PPC64
+> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+> index 77a888bfcb53..573fa879d785 100644
+> --- a/arch/powerpc/kernel/entry_64.S
+> +++ b/arch/powerpc/kernel/entry_64.S
+> @@ -624,6 +624,10 @@ _GLOBAL(_switch)
+>   
+>   	addi	r6,r4,-THREAD	/* Convert THREAD to 'current' */
+>   	std	r6,PACACURRENT(r13)	/* Set new 'current' */
+> +#if defined(CONFIG_STACKPROTECTOR)
+> +	ld	r6, TASK_CANARY(r6)
+> +	std	r6, PACA_CANARY(r13)
+> +#endif
+>   
+>   	ld	r8,KSP(r4)	/* new stack pointer */
+>   #ifdef CONFIG_PPC_BOOK3S_64
+> 
