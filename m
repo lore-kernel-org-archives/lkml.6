@@ -2,142 +2,96 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45A4C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396B8ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C46214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06D8A21480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:43:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O3Fm6WXR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O3Fm6WXR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C46214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EXESQGXP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D8A21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbeIYM4F (ORCPT
+        id S1728237AbeIYMtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 08:56:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34952 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbeIYM4F (ORCPT
+        Tue, 25 Sep 2018 08:49:18 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33590 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbeIYMtS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 08:56:05 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 805D06074D; Tue, 25 Sep 2018 06:50:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537858200;
-        bh=D+nhW8KTMJQyNB8JiMapSrZ6VRFivBuAQQ5Sc0iYAVc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=O3Fm6WXR29aN9l/4ahf0p4JauJ04A1H2UkPnwURezLMyTJPZzBr8wxYBELZmqGp3k
-         ARLbgtx2BHtBhEH2XyWXOn9Rc32DB2gY+U8f3AyPaFrVO+24M/tyUACnd0gbyYNdsk
-         YMI7Bj/rlpyhippcsHb7IZJLP1yY1T9GkDScAJaI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 1F57660116;
-        Tue, 25 Sep 2018 06:50:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537858200;
-        bh=D+nhW8KTMJQyNB8JiMapSrZ6VRFivBuAQQ5Sc0iYAVc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=O3Fm6WXR29aN9l/4ahf0p4JauJ04A1H2UkPnwURezLMyTJPZzBr8wxYBELZmqGp3k
-         ARLbgtx2BHtBhEH2XyWXOn9Rc32DB2gY+U8f3AyPaFrVO+24M/tyUACnd0gbyYNdsk
-         YMI7Bj/rlpyhippcsHb7IZJLP1yY1T9GkDScAJaI=
+        Tue, 25 Sep 2018 08:49:18 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8P6h5aF070985;
+        Tue, 25 Sep 2018 01:43:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537857785;
+        bh=zPQ8IGZqUdsRUMH/XUBuraPPRWqifK06qT+lKuuV+4M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=EXESQGXP24jOnmUTg4lAK/wPBFVXIzSViqHNtF10YAscmqv18xElWWC5vR7r81DeR
+         dFEc81W323dNsnJhwNJiHTgr2iD29GF38zW0UGARj6h9rvixJX7HVDFkS5oCn+GNJ5
+         5BqBr3ukDUI6t+8Xr3tRASC/FmI9fe7/tNUeQdEw=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P6h5er027403;
+        Tue, 25 Sep 2018 01:43:05 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 25
+ Sep 2018 01:43:05 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 25 Sep 2018 01:43:05 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P6h1Tn013954;
+        Tue, 25 Sep 2018 01:43:02 -0500
+Subject: Re: [PATCH 0/3] scsi: ufs-qcom: Remove all direct calls to qcom-ufs
+ phy
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+CC:     <subhashj@codeaurora.org>, <bjorn.andersson@linaro.org>,
+        <evgreen@chromium.org>, <linux-arm-msm@vger.kernel.org>
+References: <20180904101719.18049-1-vivek.gautam@codeaurora.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <75d4820c-d154-cc5c-e7b6-72defdfdce5e@ti.com>
+Date:   Tue, 25 Sep 2018 12:12:49 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180904101719.18049-1-vivek.gautam@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 25 Sep 2018 12:20:00 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        stable@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: Propagate EPROBE_DEFER
-In-Reply-To: <20180920015151.15957-1-bjorn.andersson@linaro.org>
-References: <20180920015151.15957-1-bjorn.andersson@linaro.org>
-Message-ID: <a1fdf85cb2e23b173243ba3b43b818bb@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-20 07:21, Bjorn Andersson wrote:
-> In the case that the interrupts fail to result because of the
-> interrupt-controller not yet being registered the
-> platform_get_irq_byname() call will fail with -EPROBE_DEFER, but 
-> passing
-> this into devm_request_threaded_irq() will result in -EINVAL being
-> returned, the driver is therefor not reprobed later.
-> 
+Hi Vivek,
 
-The patch looks fine.
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+On Tuesday 04 September 2018 03:47 PM, Vivek Gautam wrote:
+> Cleaning up the ufs-qcom host further to remove all direct calls
+> into qcom-ufs driver.
+> Only phy-qcom-ufs-qmp-20nm phy handles these direct calls from ufs host
+> and this phy is not used in any supported qcom platform in current kernel.
+> So, while we free up the host from all the ufs_qcom_phy_*() API calls
+> we should declare 20nm phy as broken.
+> For this we fork out couple of configs from PHY_QCOM_UFS -
+> PHY_QCOM_UFS_14NM and PHY_QCOM_UFS_20NM out of which we declare
+> PHY_QCOM_UFS_20NM as 'broken'.
+> 
+> This series helps in a clean use of ufs phy support for sdm845
+> and further SoCs that will also use phy-qcom-qmp phy driver.
 
-> Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource 
-> handling")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/remoteproc/qcom_q6v5.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5.c 
-> b/drivers/remoteproc/qcom_q6v5.c
-> index 61a760ee4aac..e9ab90c19304 100644
-> --- a/drivers/remoteproc/qcom_q6v5.c
-> +++ b/drivers/remoteproc/qcom_q6v5.c
-> @@ -198,6 +198,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	}
-> 
->  	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
-> +	if (q6v5->fatal_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
->  					NULL, q6v5_fatal_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> @@ -208,6 +211,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	}
-> 
->  	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
-> +	if (q6v5->ready_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
->  					NULL, q6v5_ready_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> @@ -218,6 +224,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	}
-> 
->  	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
-> +	if (q6v5->handover_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
->  					NULL, q6v5_handover_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> @@ -229,6 +238,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	disable_irq(q6v5->handover_irq);
-> 
->  	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-> +	if (q6v5->stop_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
->  					NULL, q6v5_stop_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+I think this entire series should go via linux-phy tree. I need ACK from UFS
+MAINTAINER for the second patch.
 
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Thanks
+Kishon
