@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38226ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E8BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D773320858
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A945E20858
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:47:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="rvnrCEM/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D773320858
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="U4ysULxb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A945E20858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbeIYSyN (ORCPT
+        id S1729194AbeIYSyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:54:13 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40429 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729136AbeIYSyL (ORCPT
+        Tue, 25 Sep 2018 14:54:23 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44516 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729022AbeIYSyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:54:11 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y8-v6so19586359wrh.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 05:46:46 -0700 (PDT)
+        Tue, 25 Sep 2018 14:54:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v16-v6so23215422wro.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 05:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=O0syVcyhMbKhyp2iqYZ+ip089O6apq5xjZEumPKtFH0=;
-        b=rvnrCEM/Z/FjAF10btQEVl39K0wR7FmhNb2m1KMIHrQzomkug3Z39OQDttS5FJkCCa
-         bZRz5Vn8EnaTQjX9fsP1nnZjQhzFqI2fhkqOw1QNm1CqRnYCAc1ppVU5XBvS6vgm4V25
-         oZIYS2uJ8ZxCLdhwVgaUD/hVyNRLbbywscYPI2lrzoYiEX1FxX2etL5rxDIJUyqD25zO
-         0kG7kZST83kSG7sRsEaI9u5TRcd/7bQy7eMvhWVKts02xPspTbXjT3/2lL18bdqZ/5NG
-         7eHVutr3zo544N4s3a3yHlFjeVDD9fBbRbtN9M1JDT/eq9++U/sDDy0y6t/lLjoeUPET
-         /GJQ==
+        bh=aahfn6W3XqbfPKSIMQjYMgIUnQeoDBftDVQeJAnnkHA=;
+        b=U4ysULxbQKP2iLd6agdmTy0MZcKrK53uYOV/CWcFRJvATAOIl4McMKBxBu0vJ9ERN2
+         R07N++hpe0OTNEBXkV0NetWtAloETayE235TrPyEBLXV9eY3/Jt+DjLCbpiYIzJ6miWh
+         P3Dqdt1sguL/k6nvZU5Iq7UHmdBorzvYjOnbVjhgpXtNKG18Ok737iuJRvD6d0TjvRV6
+         /8THm4vi7+hU4UgFAvvqnpQhzSjMvdB4O6ivm+4u6guOXH5UCSWBx9rCtpAHtQzW5Jxs
+         FquGlIQcoIljnFQXopr4KSAmbN/WQBRYf9bs8Opb0egxmpJGyBsv9njxV3y/q02L+1+y
+         Y55A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=O0syVcyhMbKhyp2iqYZ+ip089O6apq5xjZEumPKtFH0=;
-        b=BxvTTzJcuwA5G4vl97Dud01XGjTUvFtMfJmZe0mRwnhvG59bqwY+wbg/P5QM+iMgqX
-         3SURh5pzO0SX9FliYND7JztiNg+kBrE+4rE2RdKN7Eya4ywAn1/WvGMmZaOZpzcKwAGR
-         V5UTfE7YdmzXjOnY7YxO2IMPC3RYAUKMzIsW9d5K0yCcQ9DnDLNFaYzy8+9VsjcbYAY5
-         +VcsJvVw4/W1oDNqf+Z7dCGv8twldbVd5u091+3HV/yTV3Z1o+VhYBR11qanW2wDTs2E
-         8+76Jgg4NjM1MXqz6ETa4WQA9HPu328HuKviya88cL/NOo1KL7TupiTZbsq1+AL+yMNv
-         uv3w==
-X-Gm-Message-State: ABuFfoiDEQjlvwNmfk6oiWC0SR8v2D4tVZY91Jxoxvu/eftC0/tySs+Q
-        jZdoygis6bL49ndt7Pq17Wr+yg==
-X-Google-Smtp-Source: ACcGV63ftiq498gnnXbNYrZBucn0eilwH2omh09NC5/WIEVbBQh3+Wixw8+7LP77wautR/nhyWX1Vg==
-X-Received: by 2002:a05:6000:10d0:: with SMTP id b16mr838873wrx.226.1537879605494;
-        Tue, 25 Sep 2018 05:46:45 -0700 (PDT)
+        bh=aahfn6W3XqbfPKSIMQjYMgIUnQeoDBftDVQeJAnnkHA=;
+        b=pGnNfZwyZYPMMFFjENdRYapylBSDstkQ13J/wLdqrvBaaM/5sL5ShHWzZ6SH9weVDa
+         L+pVGAroF8/S+3xdohyNg1Nlp8G8Uufx9ecdSDOsn2NTanU/Nrz6OGxN6FsM+J19g8nI
+         cqYshsmwWOXA5fas4xQ4i31dm8nYHCFB13KSMLF0VrngtQTxfDXbRaRnMt6RBRyBS7hY
+         igULuPUr1V8bZFFHqA8FqzmperyywDJhMxGT/4QGtfk1mOJkbcfrPH5GU2i5JBKghHeq
+         p9dSqfUg42Kqf5Q86WhLdpMDXPRB2x38a6v/NYKFuA+7CZCfWJAKH5tDJwdKiDvxTd3l
+         +Bhw==
+X-Gm-Message-State: ABuFfogAf9Iy3qBlLvX2b5/I72WdX0DzI1h15TRnxEsWzIcqp2j/jos+
+        d7CBUJnU93H2Sf7oPwWu4IG8bA==
+X-Google-Smtp-Source: ACcGV61Du3tqo+1NOpmGdGsMj6oqmDw1DPj/MK3lJ6tiZjpB48sO6GuYv8zCYx5jBgY98KZS66MymQ==
+X-Received: by 2002:adf:9dd1:: with SMTP id q17-v6mr841688wre.12.1537879602515;
+        Tue, 25 Sep 2018 05:46:42 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id z13sm2276160wrw.19.2018.09.25.05.46.44
+        by smtp.gmail.com with ESMTPSA id z13sm2276160wrw.19.2018.09.25.05.46.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 05:46:44 -0700 (PDT)
+        Tue, 25 Sep 2018 05:46:41 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
@@ -82,9 +82,9 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v4 4/4] mailbox: tegra-hsp: use devm_kstrdup_const()
-Date:   Tue, 25 Sep 2018 14:46:29 +0200
-Message-Id: <20180925124629.20710-5-brgl@bgdev.pl>
+Subject: [PATCH v4 2/4] mm: move is_kernel_rodata() to asm-generic/sections.h
+Date:   Tue, 25 Sep 2018 14:46:27 +0200
+Message-Id: <20180925124629.20710-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180925124629.20710-1-brgl@bgdev.pl>
 References: <20180925124629.20710-1-brgl@bgdev.pl>
@@ -93,126 +93,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_kstrdup_const() in the tegra-hsp driver. This mostly serves as
-an example of how to use this new routine to shrink driver code.
-
-Also use devm_kzalloc() instead of regular kzalloc() to get shrink the
-driver even more.
-
-Doorbell objects are only removed in the driver's remove callback so
-it's safe to convert all memory allocations to devres.
+Export this routine so that we can use it later in devm_kstrdup_const()
+and devm_kfree_const().
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- drivers/mailbox/tegra-hsp.c | 41 ++++++++-----------------------------
- 1 file changed, 9 insertions(+), 32 deletions(-)
+ include/asm-generic/sections.h | 14 ++++++++++++++
+ mm/util.c                      |  7 -------
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 0cde356c11ab..106c94dedbf1 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -183,14 +183,15 @@ static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
+diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
+index 849cd8eb5ca0..d79abca81a52 100644
+--- a/include/asm-generic/sections.h
++++ b/include/asm-generic/sections.h
+@@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
+ 	return memory_intersects(__init_begin, __init_end, virt, size);
  }
  
- static struct tegra_hsp_channel *
--tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
--			  unsigned int master, unsigned int index)
-+tegra_hsp_doorbell_create(struct device *dev, struct tegra_hsp *hsp,
-+			  const char *name, unsigned int master,
-+			  unsigned int index)
- {
- 	struct tegra_hsp_doorbell *db;
- 	unsigned int offset;
- 	unsigned long flags;
++/**
++ * is_kernel_rodata - checks if the pointer address is located in the
++ *                    .rodata section
++ *
++ * @addr: address to check
++ *
++ * Returns: true if the address is located in .rodata, false otherwise.
++ */
++static inline bool is_kernel_rodata(unsigned long addr)
++{
++	return addr >= (unsigned long)__start_rodata &&
++	       addr < (unsigned long)__end_rodata;
++}
++
+ #endif /* _ASM_GENERIC_SECTIONS_H_ */
+diff --git a/mm/util.c b/mm/util.c
+index 9e3ebd2ef65f..470f5cd80b64 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -15,17 +15,10 @@
+ #include <linux/vmalloc.h>
+ #include <linux/userfaultfd_k.h>
  
--	db = kzalloc(sizeof(*db), GFP_KERNEL);
-+	db = devm_kzalloc(dev, sizeof(*db), GFP_KERNEL);
- 	if (!db)
- 		return ERR_PTR(-ENOMEM);
+-#include <asm/sections.h>
+ #include <linux/uaccess.h>
  
-@@ -200,7 +201,7 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 	db->channel.regs = hsp->regs + offset;
- 	db->channel.hsp = hsp;
+ #include "internal.h"
  
--	db->name = kstrdup_const(name, GFP_KERNEL);
-+	db->name = devm_kstrdup_const(dev, name, GFP_KERNEL);
- 	db->master = master;
- 	db->index = index;
- 
-@@ -211,13 +212,6 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 	return &db->channel;
- }
- 
--static void __tegra_hsp_doorbell_destroy(struct tegra_hsp_doorbell *db)
+-static inline int is_kernel_rodata(unsigned long addr)
 -{
--	list_del(&db->list);
--	kfree_const(db->name);
--	kfree(db);
+-	return addr >= (unsigned long)__start_rodata &&
+-		addr < (unsigned long)__end_rodata;
 -}
 -
- static int tegra_hsp_doorbell_send_data(struct mbox_chan *chan, void *data)
- {
- 	struct tegra_hsp_doorbell *db = chan->con_priv;
-@@ -332,31 +326,16 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
- 	return chan ?: ERR_PTR(-EBUSY);
- }
- 
--static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
--{
--	struct tegra_hsp_doorbell *db, *tmp;
--	unsigned long flags;
--
--	spin_lock_irqsave(&hsp->lock, flags);
--
--	list_for_each_entry_safe(db, tmp, &hsp->doorbells, list)
--		__tegra_hsp_doorbell_destroy(db);
--
--	spin_unlock_irqrestore(&hsp->lock, flags);
--}
--
--static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
-+static int tegra_hsp_add_doorbells(struct device *dev, struct tegra_hsp *hsp)
- {
- 	const struct tegra_hsp_db_map *map = hsp->soc->map;
- 	struct tegra_hsp_channel *channel;
- 
- 	while (map->name) {
--		channel = tegra_hsp_doorbell_create(hsp, map->name,
-+		channel = tegra_hsp_doorbell_create(dev, hsp, map->name,
- 						    map->master, map->index);
--		if (IS_ERR(channel)) {
--			tegra_hsp_remove_doorbells(hsp);
-+		if (IS_ERR(channel))
- 			return PTR_ERR(channel);
--		}
- 
- 		map++;
- 	}
-@@ -412,7 +391,7 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	if (!hsp->mbox.chans)
- 		return -ENOMEM;
- 
--	err = tegra_hsp_add_doorbells(hsp);
-+	err = tegra_hsp_add_doorbells(&pdev->dev, hsp);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
- 		return err;
-@@ -423,7 +402,6 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	err = mbox_controller_register(&hsp->mbox);
- 	if (err) {
- 		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
--		tegra_hsp_remove_doorbells(hsp);
- 		return err;
- 	}
- 
-@@ -443,7 +421,6 @@ static int tegra_hsp_remove(struct platform_device *pdev)
- 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
- 
- 	mbox_controller_unregister(&hsp->mbox);
--	tegra_hsp_remove_doorbells(hsp);
- 
- 	return 0;
- }
+ /**
+  * kfree_const - conditionally free memory
+  * @x: pointer to the memory
 -- 
 2.18.0
 
