@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C986C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AF3C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A83192083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC92720880
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:37:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CU32zN5S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A83192083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e4nDvzcS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC92720880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeIZCq6 (ORCPT
+        id S1727049AbeIZCrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:46:58 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46238 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeIZCq5 (ORCPT
+        Tue, 25 Sep 2018 22:47:02 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43865 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeIZCrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:46:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d8-v6so5055264pfo.13;
-        Tue, 25 Sep 2018 13:37:37 -0700 (PDT)
+        Tue, 25 Sep 2018 22:47:01 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j26-v6so12007670pfi.10;
+        Tue, 25 Sep 2018 13:37:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=m4QOKNEjjVWSlgV+T97paCua5vGfTGeALBNxE08We+E=;
-        b=CU32zN5SW/IqocVxGlKto6POLV4qgrSUkzE/RUURbATcUjVeOlcaw3B3H1HjeOpCJJ
-         qkIZVZTurE+FMp//AxI7A4W+66beJHCh8pu8vmvutFIH556xddsANLOd47RyrUm/ieB5
-         5zu7T5jWBO9NzjH++Pkq39vyYFoWSewzqABD/5qmVBetqNkzFmb/SxyiiQv3TA+WVcJi
-         aLd2QlBlFVPlC3g531dSopdJM1xQDNdnxiRQ/RgxavwRvPbef9Z0L1cIKfH7zSuQSa/b
-         604P4xv3u9/82u0+Hq16VFDFYzXpAFknf574EZ1okqYmgjyoEDrvPKt0cWxffAhBa9jG
-         Zd+Q==
+        bh=8cIOTAx+7VXlfn2x3x167xXUWgOaxDYMOONYDEeIta8=;
+        b=e4nDvzcSi/gud+1QWXzhlPJlrkHRsOyqMEcvA0i4CkEpdme7f4tDEgechBXdCSIMFs
+         bLRNMw7zmOLLrRVXaeQeNbck89EXG3gJAXfgLevVbtwKl0U6/jpoW08dp2bo3CqYid0K
+         njkYrXi2T9PpKrlR86CSXKRV8EYhyT7SbvE+Z4KgmOMcW7NkLzaKRmyQ9Ed1RTOU20UV
+         WwvdLTqyGwxPjs95yjNJP2eyuzak65As3zoUW2uoPrHktdd81N0Cc5oQScFvjqJ4GxUI
+         xUYjxVxN5lnLWP/REWfBxhlptKMoLkdye6Sp7cffkwQAy6pAcy/JW1jYvVUPHCcRiUsJ
+         NUbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=m4QOKNEjjVWSlgV+T97paCua5vGfTGeALBNxE08We+E=;
-        b=OyCxp2DCU1B7rka8P8xCjZKjxpMQnVX21Lc5z5PFNruXJQEgmj3BqfhPoYU3ouQsrF
-         uK48zL4cJ51XTqfDoozQvZ9fmQ9D5tLPsh4dZ0kiFT6wfTqNtzYtIlSsPUA1IbAz+tnO
-         x66z8z2x6q9hAlnl11wVy0xtzr5u881cwyms8yh177V88lbhMgXrmor3pLvpiIddF9a7
-         pz7iTbH9GiZQCr7HgRQ6FHNIKFeIVZNXphAtqV8V/x9FsJNkbTn3JyoaK538FBNE1x1L
-         CPzkxwD70Yhhuttox4KBiG+4hbFbmBMrlZw4omZO/zM9DDBkM51jW8zgf4uc7yxypDID
-         VYcA==
-X-Gm-Message-State: ABuFfogzEBGh12T3qRr5X+suU8H8DEAoFg/8f+dsKePvxwd6OaycJGO/
-        IaW4Zt99wAcVkw3uj/7XRnk=
-X-Google-Smtp-Source: ACcGV612rgIqh39VflN926pAaM8sn9n4IIa0RfEeUPwEw+K1tjQxyildnTQ+3cW894Gy1FpHO+y9xw==
-X-Received: by 2002:a63:e855:: with SMTP id a21-v6mr2595006pgk.4.1537907857264;
-        Tue, 25 Sep 2018 13:37:37 -0700 (PDT)
+        bh=8cIOTAx+7VXlfn2x3x167xXUWgOaxDYMOONYDEeIta8=;
+        b=dJpEdvAb/zyInoza2mK9iKSJsUGH3jFfgCzZm/T67hru19nud+I0xUjOP4xoQy3SYD
+         su0MnZrFVzb2c4ZIWj8SJubZLxkjCYHFOssZbcHEo+FehBe/HmMkSdX6EXDTWOHF+E98
+         QmK9IxZVZd1boMWz/9t8ZewfBh0Qmc0949SawtGZ2ZsB3mWPsR1CTH4qWB3t0aKqerGJ
+         zDY3C6NSSFO1+ECnxn8hy0F9KOhq6tQOYQPpoRW79UbDQRraHkCozNEyqgEfky6bdu4C
+         AT5G5h7JSnjjI/JCRYO879dPg9UkymNgTTG7FOrklkSRXl7v+CpQXLdAWoIeviNd/RSk
+         XqXw==
+X-Gm-Message-State: ABuFfohKPtzvDA7yxml/588PlWSzyzkxd9zFcwReYS7tEdtjhcFJvLAk
+        KAVBPQXBskqx+EcJsU4o+10=
+X-Google-Smtp-Source: ACcGV62JyWII1J8LZ9acsSxdyPnOmjxah0DehZk2r6A9kNvfvC4riDvQ9bxcAHBDlsRhnsQomDnARA==
+X-Received: by 2002:a63:1021:: with SMTP id f33-v6mr2571845pgl.72.1537907861429;
+        Tue, 25 Sep 2018 13:37:41 -0700 (PDT)
 Received: from hieu-Inspiron-7577.net.fpt ([1.54.224.16])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm4042129pfi.9.2018.09.25.13.37.35
+        by smtp.gmail.com with ESMTPSA id g3-v6sm4042129pfi.9.2018.09.25.13.37.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 13:37:36 -0700 (PDT)
+        Tue, 25 Sep 2018 13:37:40 -0700 (PDT)
 From:   Hieu Tran Dang <dangtranhieu2012@gmail.com>
 To:     Mark Brown <broonie@kernel.org>, Gao Pan <pandy.gao@nxp.com>
 Cc:     Hieu Tran Dang <dangtranhieu2012@gmail.com>,
         linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: spi: fsl-lpspi: Option to allow stalling
-Date:   Wed, 26 Sep 2018 03:37:00 +0700
-Message-Id: <20180925203701.13605-2-dangtranhieu2012@gmail.com>
+Subject: [PATCH 2/2] spi: fsl-lpspi: Option to prevent FIFO under/overrun
+Date:   Wed, 26 Sep 2018 03:37:01 +0700
+Message-Id: <20180925203701.13605-3-dangtranhieu2012@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180925203701.13605-1-dangtranhieu2012@gmail.com>
 References: <20180925203701.13605-1-dangtranhieu2012@gmail.com>
@@ -73,26 +73,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add fsl,allow-stalling property documentation for fsl-lpspi
+Certain devices don't work well when a transmit FIFO underrun or
+receive FIFO overrun occurs. Example is the SAF400x radio chip when
+running at high speed which leads to garbage being sent to/received from
+the chip. In which case, it should stall waiting for further data to be
+available before proceeding. This patch add option to configure the SPI
+controller to allow stalling (unset NOSTALL bit in CFGR1).
 
 Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
 ---
- Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/spi/spi-fsl-lpspi.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
-index 4af132606b37..2b012b8cb05e 100644
---- a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
-@@ -6,6 +6,8 @@ Required properties:
- - reg : address and length of the lpspi master registers
- - interrupts : lpspi interrupt
- - clocks : lpspi clock specifier
-+- fsl,allow-stall : allow stalling of transfers when the transmit FIFO is empty
-+  or when the receive FIFO is full
+diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+index e6d5cc6ab108..7588b62ef08b 100644
+--- a/drivers/spi/spi-fsl-lpspi.c
++++ b/drivers/spi/spi-fsl-lpspi.c
+@@ -73,6 +73,7 @@ struct lpspi_config {
+ 	u8 prescale;
+ 	u16 mode;
+ 	u32 speed_hz;
++	bool nostall;
+ };
  
- Examples:
+ struct fsl_lpspi_data {
+@@ -276,7 +277,11 @@ static int fsl_lpspi_config(struct fsl_lpspi_data *fsl_lpspi)
  
+ 	fsl_lpspi_set_watermark(fsl_lpspi);
+ 
+-	temp = CFGR1_PCSCFG | CFGR1_MASTER | CFGR1_NOSTALL;
++	temp = CFGR1_PCSCFG | CFGR1_MASTER;
++
++	if (fsl_lpspi->config.nostall)
++		temp |= CFGR1_NOSTALL;
++
+ 	if (fsl_lpspi->config.mode & SPI_CS_HIGH)
+ 		temp |= CFGR1_PCSPOL;
+ 	writel(temp, fsl_lpspi->base + IMX7ULP_CFGR1);
+@@ -475,6 +480,9 @@ static int fsl_lpspi_probe(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(fsl_lpspi->clk);
+ 
++	fsl_lpspi->config.nostall =
++		!of_get_property(pdev->dev.of_node, "fsl,allow-stall", NULL);
++
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "spi_register_master error.\n");
 -- 
 2.17.1
 
