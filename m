@@ -2,155 +2,228 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C07A2C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BA4C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68C892086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:19:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mARsYAj6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C892086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E0A8206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:20:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E0A8206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbeIZC2u (ORCPT
+        id S1726704AbeIZC3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:28:50 -0400
-Received: from mail-eopbgr50076.outbound.protection.outlook.com ([40.107.5.76]:43136
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726086AbeIZC2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:28:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vTtKwM2oi5y81M7hNBWu092cCD/HMikYl5OBRQtBVPk=;
- b=mARsYAj6aKm0eleMQoSdEtJ6zQVC7UMLmKoegi2oI5cpnZyC3eJGZppjd+//ykUc8wf9a+PakiKqh2xNzvDEJPE1rufg23bLF7sMg88UVbgL1kFCkjXpb2rOwHqCAR26hYUPpi9uPmtrW7WCezS9+FshjFs2JgK+xWciJzomxa8=
-Received: from AMSPR04MB503.eurprd04.prod.outlook.com (10.242.107.152) by
- AMSPR04MB407.eurprd04.prod.outlook.com (10.242.106.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Tue, 25 Sep 2018 20:19:30 +0000
-Received: from AMSPR04MB503.eurprd04.prod.outlook.com
- ([fe80::d081:5636:5890:c63c]) by AMSPR04MB503.eurprd04.prod.outlook.com
- ([fe80::d081:5636:5890:c63c%6]) with mapi id 15.20.1164.024; Tue, 25 Sep 2018
- 20:19:30 +0000
-From:   Leo Li <leoyang.li@nxp.com>
-To:     Olof Johansson <olof@lixom.net>
-CC:     "arm@kernel.org" <arm@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-Subject: RE: [GIT PULL] fixes for soc/fsl drivers for v4.19
-Thread-Topic: [GIT PULL] fixes for soc/fsl drivers for v4.19
-Thread-Index: AQHUVQyZOI3dq9kqMUmLRUdfbGzBTKUBb6Zw
-Date:   Tue, 25 Sep 2018 20:19:29 +0000
-Message-ID: <AMSPR04MB503EAF5EF985E25D87190AA8F160@AMSPR04MB503.eurprd04.prod.outlook.com>
-References: <20180924221954.30473-1-leoyang.li@nxp.com>
- <20180925194757.pp3jiltu36ih2wfo@localhost>
-In-Reply-To: <20180925194757.pp3jiltu36ih2wfo@localhost>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leoyang.li@nxp.com; 
-x-originating-ip: [64.157.242.222]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AMSPR04MB407;6:ZJKGVmNg3vTaOcOxcp19ETJ3aYh3ivpa0EMcGRd7rXTpNXeaaFNIGc1+bA+Z2WC2khU3M8LNujIqdtU0WFfxdJi8gGWLfE6Ou+kc4se1CzfxvRGyuw51VzVLCj0Xd9bWBHQM2+rQ0E2su+70LqId6mWMJOasOtk+vOiLw06Ycak3VmJCQG9aHaQPMsIi1/VSOPWBwx5+VhPq3iKM8KyQDQQmUgjkzxNbFn9oWey3waYSAzY2/XjVDH+vDFhpWBOPKPe253j5Uaqk+VmOVC0LJcQzfNQ19MoeyuMVHryysMVROBSPVBguFUbOyVoAiwqzuxQp39Nvfo3VK9faaq28IsQbq2EeOrXRIOE5a0ge+Zvd0nN8O6vlUGpfe/XrQ5K+JFPSLuHyiNyV5i2p9TkmVCZXjitoxU7QWjciHrqNdJbYTIdpe1UqAId82oQ718IqwA6NBIdVW+xMx+ayjui+Ng==;5:Ra1RDzbe07jkwl1pjYisJdNKVYew0rvXvsBQOf6aNIYsS3uFw91oX1t6srgc1e/AKBiL+UeRZ+fnCog7G/HEkaI3cncTtPElQBOWOCGmOt025ciL47+MMgYEmzZbQdoHs5cSkVmRvGfTlmBQiuGte9KFRpsNUBXs49mrKgnkNgk=;7:P/CnonHB5a/i6/0AAnjI4p4D9dgiOr5yEIUVVrgRgW2hcp/xy1HjgM24SWOemSXl2hEGLRS8st+eiE+nfTVzeXN35ZWMTCV3ZL6qFdHAx7KSK7TTC0q8cz2Hjt6qwvcVlN5mtdfuE/p65HenPSvZgGq35Tizh9byPQgX0IkkBYFzrqp9LGLDaENaeQ+9MzQIO6qjMLyfm04huNZCxE5V68xQ+ZRGZTEcUnI6J7EEIsvAMpFBSV6iXB6VUlGqPjGs
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 323c3d0a-35b4-4a7f-0f48-08d623243303
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AMSPR04MB407;
-x-ms-traffictypediagnostic: AMSPR04MB407:
-x-microsoft-antispam-prvs: <AMSPR04MB40747636DEEC84C07A6FD898F160@AMSPR04MB407.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(258649278758335)(9452136761055)(84791874153150)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(149066)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051);SRVR:AMSPR04MB407;BCL:0;PCL:0;RULEID:;SRVR:AMSPR04MB407;
-x-forefront-prvs: 08062C429B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(136003)(376002)(396003)(13464003)(189003)(199004)(51914003)(11346002)(5660300001)(86362001)(53546011)(478600001)(6506007)(6246003)(7696005)(3846002)(6116002)(575784001)(97736004)(68736007)(229853002)(2906002)(71190400001)(486006)(102836004)(34290500001)(446003)(71200400001)(26005)(256004)(186003)(81166006)(6916009)(476003)(33656002)(8936002)(305945005)(7736002)(8676002)(316002)(81156014)(55016002)(14454004)(5250100002)(54906003)(6436002)(66066001)(25786009)(106356001)(105586002)(74316002)(4326008)(99286004)(9686003)(76176011)(14444005)(53936002)(2900100001);DIR:OUT;SFP:1101;SCL:1;SRVR:AMSPR04MB407;H:AMSPR04MB503.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: KL5pZ7zt/GmUp1+2DSzNRrFctvzQ0uAgsa+Bfe6iMp740QtXCKL5I6pdsPCs3Fg0MqnB8ZquVlEle0hWw9Z5oaUVITjhbCNk6tNlu1QlVBaJFsLkutItksintK4RIMCU/trC3NmpUSIN9wyYEyPIjdQeR8rUidYQa1wYbXy/pnijpAM74ulNBhnac+ya48uVu4E6kD6wMmwKpxwqfvCbzmYHkWSPGq7DcldKTYXzoQF2WXSnfQb8p+KiU4dHMJenfM2H8sln0USN5DdMmiRlf4l6M/ihUtiPNckCRpf8ok5U18QN/GaqwUefA4nVHkyCr1UFl8wOpSP/4Fui61nQwSpIsPVzCEzot3S+Xc25+SQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 25 Sep 2018 22:29:44 -0400
+Received: from mga03.intel.com ([134.134.136.65]:22184 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726086AbeIZC3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 22:29:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 13:20:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
+   d="scan'208";a="77230187"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
+  by orsmga006.jf.intel.com with ESMTP; 25 Sep 2018 13:20:12 -0700
+Subject: [PATCH v5 2/4] mm: Provide kernel parameter to allow disabling page
+ init poisoning
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, dave.hansen@intel.com, jglisse@redhat.com,
+        rppt@linux.vnet.ibm.com, dan.j.williams@intel.com,
+        logang@deltatee.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Date:   Tue, 25 Sep 2018 13:20:12 -0700
+Message-ID: <20180925201921.3576.84239.stgit@localhost.localdomain>
+In-Reply-To: <20180925200551.3576.18755.stgit@localhost.localdomain>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 323c3d0a-35b4-4a7f-0f48-08d623243303
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2018 20:19:29.9887
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMSPR04MB407
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On systems with a large amount of memory it can take a significant amount
+of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+value. I have seen it take over 2 minutes to initialize a system with
+over 12TB of RAM.
 
+In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+the boot time returned to something much more reasonable as the
+arch_add_memory call completed in milliseconds versus seconds. However in
+doing that I had to disable all of the other VM debugging on the system.
 
-> -----Original Message-----
-> From: Olof Johansson <olof@lixom.net>
-> Sent: Tuesday, September 25, 2018 2:48 PM
-> To: Leo Li <leoyang.li@nxp.com>
-> Cc: arm@kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; shawnguo@kernel.org
-> Subject: Re: [GIT PULL] fixes for soc/fsl drivers for v4.19
->=20
-> Hi,
->=20
-> On Mon, Sep 24, 2018 at 05:19:54PM -0500, Li Yang wrote:
-> > Hi arm-soc maintainers,
-> >
-> > Please pull soc/fsl drivers fixes for v4.19.
-> >
-> > Regards,
-> > Leo
-> >
-> >
-> > The following changes since commit
-> 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-> >
-> >   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> >
-> > are available in the Git repository at:
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git
-> > tags/soc-fsl-fix-v4.19
-> >
-> > for you to fetch changes up to
-> 3cb31b634052ed458922e0c8e2b4b093d7fb60b9:
-> >
-> >   soc: fsl: qe: Fix copy/paste bug in ucc_get_tdm_sync_shift()
-> > (2018-09-17 16:01:46 -0500)
-> >
-> > ----------------------------------------------------------------
-> > NXP/FSL SoC driver fixes for v4.19
-> >
-> > - Fix crash of qman_portal by deferring its probe if qman is not
-> > probed
-> > - Fix NULL pointer dereference by adding more checks in qman_portal
-> > - Fix copy/paste bug in ucc_get_tdm_sync_shift()
->=20
-> Good summary, thanks!
->=20
-> However:
->=20
-> > Alexandre Belloni (2):
-> >       soc: fsl: qbman: qman_portal: defer probing when qman is not
-> > available
->=20
-> I think this fix has issues, I replied on the patch. Let me know if you w=
-ant me to
-> cherry-pick the other two fixes for now.
+In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
+a system that has a large amount of memory I have added a new kernel
+parameter named "vm_debug" that can be set to "-" in order to disable it.
 
-Thanks for the review.  Please help to cherry-pick the other two.  I will w=
-ork with the patch author for an update for the first one.
+Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
 
-Regards,
-Leo
+v3: Switched from kernel config option to parameter
+v4: Added comment to parameter handler to record when option is disabled
+    Updated parameter description based on feedback from Michal Hocko
+    Fixed GB vs TB typo in patch description.
+    Switch to vm_debug option similar to slub_debug
+v5: Rebased on latest linux-next
+
+ Documentation/admin-guide/kernel-parameters.txt |   12 ++++++
+ include/linux/page-flags.h                      |    8 ++++
+ mm/debug.c                                      |   46 +++++++++++++++++++++++
+ mm/memblock.c                                   |    5 +--
+ mm/sparse.c                                     |    4 +-
+ 5 files changed, 69 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 42d9150047f2..d9ad70ccbdc2 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4811,6 +4811,18 @@
+ 			This is actually a boot loader parameter; the value is
+ 			passed to the kernel using a special protocol.
+ 
++	vm_debug[=options]	[KNL] Available with CONFIG_DEBUG_VM=y.
++			May slow down system boot speed, especially when
++			enabled on systems with a large amount of memory.
++			All options are enabled by default, and this
++			interface is meant to allow for selectively
++			enabling or disabling specific virtual memory
++			debugging features.
++
++			Available options are:
++			  P	Enable page structure init time poisoning
++			  -	Disable all of the above options
++
+ 	vmalloc=nn[KMG]	[KNL,BOOT] Forces the vmalloc area to have an exact
+ 			size of <nn>. This can be used to increase the
+ 			minimum size (128MB on x86). It can also be used to
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 4d99504f6496..934f91ef3f54 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -163,6 +163,14 @@ static inline int PagePoisoned(const struct page *page)
+ 	return page->flags == PAGE_POISON_PATTERN;
+ }
+ 
++#ifdef CONFIG_DEBUG_VM
++void page_init_poison(struct page *page, size_t size);
++#else
++static inline void page_init_poison(struct page *page, size_t size)
++{
++}
++#endif
++
+ /*
+  * Page flags policies wrt compound pages
+  *
+diff --git a/mm/debug.c b/mm/debug.c
+index bd10aad8539a..cdacba12e09a 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -13,6 +13,7 @@
+ #include <trace/events/mmflags.h>
+ #include <linux/migrate.h>
+ #include <linux/page_owner.h>
++#include <linux/ctype.h>
+ 
+ #include "internal.h"
+ 
+@@ -175,4 +176,49 @@ void dump_mm(const struct mm_struct *mm)
+ 	);
+ }
+ 
++static bool page_init_poisoning __read_mostly = true;
++
++static int __init setup_vm_debug(char *str)
++{
++	bool __page_init_poisoning = true;
++
++	/*
++	 * Calling vm_debug with no arguments is equivalent to requesting
++	 * to enable all debugging options we can control.
++	 */
++	if (*str++ != '=' || !*str)
++		goto out;
++
++	__page_init_poisoning = false;
++	if (*str == '-')
++		goto out;
++
++	while (*str) {
++		switch (tolower(*str)) {
++		case'p':
++			__page_init_poisoning = true;
++			break;
++		default:
++			pr_err("vm_debug option '%c' unknown. skipped\n",
++			       *str);
++		}
++
++		str++;
++	}
++out:
++	if (page_init_poisoning && !__page_init_poisoning)
++		pr_warn("Page struct poisoning disabled by kernel command line option 'vm_debug'\n");
++
++	page_init_poisoning = __page_init_poisoning;
++
++	return 1;
++}
++__setup("vm_debug", setup_vm_debug);
++
++void page_init_poison(struct page *page, size_t size)
++{
++	if (page_init_poisoning)
++		memset(page, PAGE_POISON_PATTERN, size);
++}
++EXPORT_SYMBOL_GPL(page_init_poison);
+ #endif		/* CONFIG_DEBUG_VM */
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 32e5c62ee142..b0ebca546ba1 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1503,10 +1503,9 @@ void * __init memblock_alloc_try_nid_raw(
+ 
+ 	ptr = memblock_alloc_internal(size, align,
+ 					   min_addr, max_addr, nid);
+-#ifdef CONFIG_DEBUG_VM
+ 	if (ptr && size > 0)
+-		memset(ptr, PAGE_POISON_PATTERN, size);
+-#endif
++		page_init_poison(ptr, size);
++
+ 	return ptr;
+ }
+ 
+diff --git a/mm/sparse.c b/mm/sparse.c
+index c0788e3d8513..ab2ac45e0440 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -696,13 +696,11 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
+ 		goto out;
+ 	}
+ 
+-#ifdef CONFIG_DEBUG_VM
+ 	/*
+ 	 * Poison uninitialized struct pages in order to catch invalid flags
+ 	 * combinations.
+ 	 */
+-	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
+-#endif
++	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
+ 
+ 	section_mark_present(ms);
+ 	sparse_init_one_section(ms, section_nr, memmap, usemap);
+
