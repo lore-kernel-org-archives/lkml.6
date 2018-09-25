@@ -2,146 +2,127 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931EFC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0B0C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F97206B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:02:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJuiUtPT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F97206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E887206B6
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:02:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E887206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbeIYQIw (ORCPT
+        id S1728317AbeIYQJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:08:52 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52391 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbeIYQIw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:08:52 -0400
-Received: by mail-wm1-f65.google.com with SMTP id l7-v6so7905558wme.2;
-        Tue, 25 Sep 2018 03:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2tuSnbLxdvWCwfiqOyf1kgZXtZiPdJV444WHdSKYjhI=;
-        b=tJuiUtPTDQJ9zXPBnKP5P3SwQyToSUzx15QjugQWfUiQIMfL7rUoGRDTIVM5uplRYy
-         II+86Zf16GXrysswKMXuyHBQJCY5+tv8yuC4Ac+p7MK2vkClLoiivraaZQ0EsUw3IJLF
-         rw64lgainBGiiRAkbnO+nbKwGZsINtH15PJdOvXeaG9HvfyKQQ7KsG0fRnu/ClsOJD4V
-         qCrZKPx9fvwiMCF6RiIgW2KfgwCT4SEhVLUDvjR+0rZBrOQk8m1xEcM5VeoNd1pH4xe0
-         wzhSHL42UXfWhv7nYySkuodSw3WoMySragfKv906w3lECT/tTPRzQAN30QdIEl+nThNJ
-         JTQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2tuSnbLxdvWCwfiqOyf1kgZXtZiPdJV444WHdSKYjhI=;
-        b=klL7vJeRtBfFaswoJvcDx81ypjSh7EJeOSsQMCjTEunVqAR9HNkPgChIwRp3N/NZh3
-         78yysDemtetY4uMGwHahz2sZXEoYATz2P8EzpY1xoOBZFfvrlTNbaZ95i+3mL8mXg2RM
-         xPEVMnefXPVdps0AVtdTCTDh2O1xJFc0v8qWHIcyvDkSXQeT1919xVKy8SfcqYWE8FF3
-         yIP5FG1Jst02X7y8Zw3+Yu1lPCysPkTx7q9bL93SXnyDBkgKTfAn/G4QOhO/FU4u2J8D
-         FKbpP18lmoSPJ9eZ2MQuy0mTFT3kqNbEyvGOg/Ba9KZyIQb4HnKB6xpinbmlzpPoHgtW
-         Nrmg==
-X-Gm-Message-State: ABuFfojuUJU1uXYvS7JzxBE487Axy4VAjJ1xgykRB3gsFDEB2oITI3hS
-        O0BK8S9b7LoEZJ3t67mxths=
-X-Google-Smtp-Source: ACcGV60PMYJebjDIr2Puw4buSBboeRZIkzuSVSncxTRTJ/w6yShFO7XdrV1cKvg1BkKBJ0QF6cmlKg==
-X-Received: by 2002:a1c:8085:: with SMTP id b127-v6mr21109wmd.146.1537869723690;
-        Tue, 25 Sep 2018 03:02:03 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id j27-v6sm2014208wmc.17.2018.09.25.03.02.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 03:02:03 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 12:02:02 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 12/20] iommu/tegra: gart: Integrate with Memory
- Controller driver
-Message-ID: <20180925100202.GE7097@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-13-digetx@gmail.com>
- <20180924102322.GI21032@ulmo>
- <b2d283fc-ff52-3166-cd70-42f9cba93948@gmail.com>
+        Tue, 25 Sep 2018 12:09:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48244 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726927AbeIYQJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:09:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1ADB80D;
+        Tue, 25 Sep 2018 03:02:47 -0700 (PDT)
+Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7368F3F5B3;
+        Tue, 25 Sep 2018 03:02:47 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mike.kravetz@oracle.com, mhocko@kernel.org, will.deacon@arm.com,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH V2] mm/hugetlb: Add mmap() encodings for 32MB and 512MB page sizes
+References: <1537797985-2406-1-git-send-email-anshuman.khandual@arm.com>
+        <1537841300-6979-1-git-send-email-anshuman.khandual@arm.com>
+Date:   Tue, 25 Sep 2018 11:02:45 +0100
+In-Reply-To: <1537841300-6979-1-git-send-email-anshuman.khandual@arm.com>
+        (Anshuman Khandual's message of "Tue, 25 Sep 2018 07:38:20 +0530")
+Message-ID: <871s9hsxmi.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qz2CZ664xQdCRdPu"
-Content-Disposition: inline
-In-Reply-To: <b2d283fc-ff52-3166-cd70-42f9cba93948@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Anshuman Khandual <anshuman.khandual@arm.com> writes:
 
---Qz2CZ664xQdCRdPu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> ARM64 architecture also supports 32MB and 512MB HugeTLB page sizes.
+> This just adds mmap() system call argument encoding for them.
+>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-On Mon, Sep 24, 2018 at 09:22:59PM +0300, Dmitry Osipenko wrote:
-> On 9/24/18 1:23 PM, Thierry Reding wrote:
-> > On Mon, Sep 24, 2018 at 03:41:45AM +0300, Dmitry Osipenko wrote:
-> >> The device-tree binding has been changed. There is no separate GART de=
-vice
-> >> anymore, it is squashed into the Memory Controller. Integrate GART mod=
-ule
-> >> with the MC in a way it is done for the SMMU of Tegra30+.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/iommu/Kconfig      |  1 +
-> >>  drivers/iommu/tegra-gart.c | 98 ++++++++++----------------------------
-> >>  drivers/memory/tegra/mc.c  | 41 ++++++++++++++++
-> >>  include/soc/tegra/mc.h     | 27 +++++++++++
-> >>  4 files changed, 93 insertions(+), 74 deletions(-)
-> >=20
-> > I think this could technically have been two patches, but since they'd
-> > have a compile-time dependency either way they need to be applied in the
-> > correct order, so some coordination between IOMMU and Tegra trees is
-> > going to have to happen anyway and might as well just stick this into a
-> > single patch.
->=20
-> I assume that Joerg will take the whole series once it's ready (no?),
-> hence your ACK will be needed here and in other patches.
+Thanks for adding the encodings.
 
-Yeah, either Joerg takes them all with my Acked-by's or provides his for
-the IOMMU bits and I take the batch through the Tegra tree. I don't have
-a strong preference.
+Acked-by: Punit Agrawal <punit.agrawal@arm.com>
 
-Thierry
-
---Qz2CZ664xQdCRdPu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqB5oACgkQ3SOs138+
-s6Hkvw/5AWXy5G71xh8Re4QOcew+EqSH3Hh/AZ0z0t6SS3rJX6kjk6fiy39FHeb4
-ZHMqZf2bpJLTPea6QiiWJ7VUAYVgnyb1plfuvHGttu0CGpmoSWROMclkm4KNArNW
-XV7EDxbGbXpkfqm/uYMRQVMvYXn2malwgpXXVKgH8ABOaERTchxNJMoacuB7Y++b
-E2LBcoLQbjfZZumyYjqCRQbbEa1BHhGD0sBOW4klTGJZMHRnS3VPs5rsyxN8YdJY
-4+wz+00B4+JjNI5y13TynWL4ARLtGlwgAYZ6V1U09i+qQjUWsvFImrXGnxlt7aO9
-2kxS18zkV9Ak2uD2oUFR3Tng9u+VDXOGh/1syuQ8lVoi1CT2N0/Au5AjuDvzM6gq
-PrTHdrUtNQyU3chmLYBOfdfHuiaTgoTXgiw43AncaPWQyoLcjxwAYTnh+B1yuKqX
-01JABU6g/HMQjksEDJXb/mY7zQ2IRuJn0eOL5wx5GF1p8+pEiC2i6wQKnZ16Flnd
-k2xnwANk8i8vl+R4If9rJvMrc7FYOVSJbkkAopEozhvszsdn9sVbl708IiPesIi1
-mhtCOaEwDe7fgrvhB9h74IbPiS6eg3POIZf4mL2JNbdd7+dWjOrkFGy0lx6Gc5S6
-9YEjsHgopAg3zyB0eCBqAPXJo8lPGPPbT4NVbz9/9l8I839VyhQ=
-=NkBG
------END PGP SIGNATURE-----
-
---Qz2CZ664xQdCRdPu--
+> ---
+>
+> Changes in V2:
+> - Updated SHM and MFD definitions per Mike
+>
+>  include/uapi/asm-generic/hugetlb_encode.h | 2 ++
+>  include/uapi/linux/memfd.h                | 2 ++
+>  include/uapi/linux/mman.h                 | 2 ++
+>  include/uapi/linux/shm.h                  | 2 ++
+>  4 files changed, 8 insertions(+)
+>
+> diff --git a/include/uapi/asm-generic/hugetlb_encode.h b/include/uapi/asm-generic/hugetlb_encode.h
+> index e4732d3..b0f8e87 100644
+> --- a/include/uapi/asm-generic/hugetlb_encode.h
+> +++ b/include/uapi/asm-generic/hugetlb_encode.h
+> @@ -26,7 +26,9 @@
+>  #define HUGETLB_FLAG_ENCODE_2MB		(21 << HUGETLB_FLAG_ENCODE_SHIFT)
+>  #define HUGETLB_FLAG_ENCODE_8MB		(23 << HUGETLB_FLAG_ENCODE_SHIFT)
+>  #define HUGETLB_FLAG_ENCODE_16MB	(24 << HUGETLB_FLAG_ENCODE_SHIFT)
+> +#define HUGETLB_FLAG_ENCODE_32MB	(25 << HUGETLB_FLAG_ENCODE_SHIFT)
+>  #define HUGETLB_FLAG_ENCODE_256MB	(28 << HUGETLB_FLAG_ENCODE_SHIFT)
+> +#define HUGETLB_FLAG_ENCODE_512MB	(29 << HUGETLB_FLAG_ENCODE_SHIFT)
+>  #define HUGETLB_FLAG_ENCODE_1GB		(30 << HUGETLB_FLAG_ENCODE_SHIFT)
+>  #define HUGETLB_FLAG_ENCODE_2GB		(31 << HUGETLB_FLAG_ENCODE_SHIFT)
+>  #define HUGETLB_FLAG_ENCODE_16GB	(34 << HUGETLB_FLAG_ENCODE_SHIFT)
+> diff --git a/include/uapi/linux/memfd.h b/include/uapi/linux/memfd.h
+> index 015a4c0..7a8a267 100644
+> --- a/include/uapi/linux/memfd.h
+> +++ b/include/uapi/linux/memfd.h
+> @@ -25,7 +25,9 @@
+>  #define MFD_HUGE_2MB	HUGETLB_FLAG_ENCODE_2MB
+>  #define MFD_HUGE_8MB	HUGETLB_FLAG_ENCODE_8MB
+>  #define MFD_HUGE_16MB	HUGETLB_FLAG_ENCODE_16MB
+> +#define MFD_HUGE_32MB	HUGETLB_FLAG_ENCODE_32MB
+>  #define MFD_HUGE_256MB	HUGETLB_FLAG_ENCODE_256MB
+> +#define MFD_HUGE_512MB	HUGETLB_FLAG_ENCODE_512MB
+>  #define MFD_HUGE_1GB	HUGETLB_FLAG_ENCODE_1GB
+>  #define MFD_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
+>  #define MFD_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
+> diff --git a/include/uapi/linux/mman.h b/include/uapi/linux/mman.h
+> index bfd5938..d0f515d 100644
+> --- a/include/uapi/linux/mman.h
+> +++ b/include/uapi/linux/mman.h
+> @@ -28,7 +28,9 @@
+>  #define MAP_HUGE_2MB	HUGETLB_FLAG_ENCODE_2MB
+>  #define MAP_HUGE_8MB	HUGETLB_FLAG_ENCODE_8MB
+>  #define MAP_HUGE_16MB	HUGETLB_FLAG_ENCODE_16MB
+> +#define MAP_HUGE_32MB	HUGETLB_FLAG_ENCODE_32MB
+>  #define MAP_HUGE_256MB	HUGETLB_FLAG_ENCODE_256MB
+> +#define MAP_HUGE_512MB	HUGETLB_FLAG_ENCODE_512MB
+>  #define MAP_HUGE_1GB	HUGETLB_FLAG_ENCODE_1GB
+>  #define MAP_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
+>  #define MAP_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
+> diff --git a/include/uapi/linux/shm.h b/include/uapi/linux/shm.h
+> index dde1344..6507ad0 100644
+> --- a/include/uapi/linux/shm.h
+> +++ b/include/uapi/linux/shm.h
+> @@ -65,7 +65,9 @@ struct shmid_ds {
+>  #define SHM_HUGE_2MB	HUGETLB_FLAG_ENCODE_2MB
+>  #define SHM_HUGE_8MB	HUGETLB_FLAG_ENCODE_8MB
+>  #define SHM_HUGE_16MB	HUGETLB_FLAG_ENCODE_16MB
+> +#define SHM_HUGE_32MB	HUGETLB_FLAG_ENCODE_32MB
+>  #define SHM_HUGE_256MB	HUGETLB_FLAG_ENCODE_256MB
+> +#define SHM_HUGE_512MB	HUGETLB_FLAG_ENCODE_512MB
+>  #define SHM_HUGE_1GB	HUGETLB_FLAG_ENCODE_1GB
+>  #define SHM_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
+>  #define SHM_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
