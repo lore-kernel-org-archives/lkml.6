@@ -2,116 +2,130 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6093C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F185AC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5046521480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:24:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5046521480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id AA6EC208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:24:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="jTLEtd7b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6EC208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeIYNa3 (ORCPT
+        id S1728667AbeIYNad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:30:29 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:22609 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727610AbeIYNa3 (ORCPT
+        Tue, 25 Sep 2018 09:30:33 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:35648 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbeIYNac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:30:29 -0400
-X-IronPort-AV: E=Sophos;i="5.54,301,1534834800"; 
-   d="scan'208";a="17718251"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Sep 2018 00:24:17 -0700
-Received: from localhost.localdomain (10.10.76.4) by
- chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 25 Sep 2018 00:24:17 -0700
-Subject: Re: [PATCH] mtd: spi-nor: cadence-quadspi: Use proper enum for
- dma_unmap_single
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Richard Weinberger <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20180921102944.27968-1-natechancellor@gmail.com>
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-Message-ID: <5e1d2e30-764f-f3a9-d0c1-7a6c81f296b7@microchip.com>
-Date:   Tue, 25 Sep 2018 10:24:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 25 Sep 2018 09:30:32 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 9C77C25B749;
+        Tue, 25 Sep 2018 17:24:18 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1537860258; bh=Qwfk0O42Hv/8wqMdAJmsVrNdneVZ4hyq1in7PUrtZlM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jTLEtd7bVyqFPpfodtwZwLugfPkJC7RBwU16DuFFXyAT84f2z8jQr/x4VEUL3A5Yx
+         ypjLJyNhKMm4mTEbdNdJOo02p9WCPe7DN6JktRuNVsX8gM+j6Zjq+LpToG+6XnhZZ4
+         dtxkT3um7OqTLiYe9KawGy4Tm5swLXRKhyQulif4=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 8F396940453; Tue, 25 Sep 2018 09:24:16 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 09:24:16 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/8] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
+Message-ID: <20180925072415.apfl6s5e7l5rwmxa@verge.net.au>
+References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20180921102944.27968-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Nathan,
+On Fri, Sep 21, 2018 at 08:53:21PM +0900, Yoshihiro Shimoda wrote:
+> This patch unifies the OBINTEN handling to clean-up the code.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On 09/21/2018 01:29 PM, Nathan Chancellor wrote:
-> Clang warns when one enumerated type is converted implicitly to another.
-> 
-> drivers/mtd/spi-nor/cadence-quadspi.c:962:47: warning: implicit
-> conversion from enumeration type 'enum dma_transfer_direction' to
-> different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
->         dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
->                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
-> ./include/linux/dma-mapping.h:428:66: note: expanded from macro
-> 'dma_map_single'
-> #define dma_map_single(d, a, s, r) dma_map_single_attrs(d, a, s, r, 0)
->                                    ~~~~~~~~~~~~~~~~~~~~          ^
-> drivers/mtd/spi-nor/cadence-quadspi.c:997:43: warning: implicit
-> conversion from enumeration type 'enum dma_transfer_direction' to
-> different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
->         dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
->         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
-> ./include/linux/dma-mapping.h:429:70: note: expanded from macro
-> 'dma_unmap_single'
-> #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, 0)
->                                      ~~~~~~~~~~~~~~~~~~~~~~          ^
-> 2 warnings generated.
-> 
-> Use the proper enums from dma_data_direction to satisfy Clang.
-> 
-> DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-> DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/108
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+The nit below notwithstanding.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 > ---
->  drivers/mtd/spi-nor/cadence-quadspi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-> index 8e714fbfa521..d0e57ac81098 100644
-> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
-> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-> @@ -959,7 +959,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
->  		return 0;
->  	}
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> index 856056e..e7eaed9 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -142,6 +142,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+>  	writel(val, usb2_base + USB2_ADPCTRL);
+>  }
 >  
-> -	dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
-> +	dma_dst = dma_map_single(nor->dev, buf, len, DMA_FROM_DEVICE);
->  	if (dma_mapping_error(nor->dev, dma_dst)) {
->  		dev_err(nor->dev, "dma mapping failed\n");
->  		return -ENOMEM;
-> @@ -994,7 +994,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
->  	}
+> +static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
+> +{
+
+nit: Perhaps bool would be a better type for the enable parameter.
+
+> +	void __iomem *usb2_base = ch->base;
+> +	u32 val = readl(usb2_base + USB2_OBINTEN);
+> +
+> +	if (enable)
+> +		val |= USB2_OBINT_BITS;
+> +	else
+> +		val &= ~USB2_OBINT_BITS;
+> +	writel(val, usb2_base + USB2_OBINTEN);
+> +}
+> +
+>  static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+>  {
+>  	rcar_gen3_set_linectrl(ch, 1, 1);
+> @@ -187,16 +199,12 @@ static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
 >  
->  err_unmap:
-> -	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
-> +	dma_unmap_single(nor->dev, dma_dst, len, DMA_TO_DEVICE);
-
-Should have used DMA_FROM_DEVICE, as you did above. Otherwise looks good.
-
-Cheers,
-ta
+>  static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+>  {
+> -	void __iomem *usb2_base = ch->base;
+> -	u32 val;
+> -
+> -	val = readl(usb2_base + USB2_OBINTEN);
+> -	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 0);
+>  
+>  	rcar_gen3_enable_vbus_ctrl(ch, 1);
+>  	rcar_gen3_init_for_host(ch);
+>  
+> -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 1);
+>  }
+>  
+>  static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+> @@ -286,8 +294,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+>  	val = readl(usb2_base + USB2_VBCTRL);
+>  	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
+>  	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
+> -	val = readl(usb2_base + USB2_OBINTEN);
+> -	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+> +	rcar_gen3_control_otg_irq(ch, 1);
+>  	val = readl(usb2_base + USB2_ADPCTRL);
+>  	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
+>  	val = readl(usb2_base + USB2_LINECTRL1);
+> -- 
+> 1.9.1
+> 
