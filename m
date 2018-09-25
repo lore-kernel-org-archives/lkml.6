@@ -7,70 +7,74 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7253C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD0FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 810A72098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C01352098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:48:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ex6zlpfA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 810A72098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fh5qRBO6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01352098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbeIYVza (ORCPT
+        id S1729644AbeIYV4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:55:30 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46820 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729438AbeIYVza (ORCPT
+        Tue, 25 Sep 2018 17:56:45 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37958 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729421AbeIYV4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:55:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id b129-v6so11835946pga.13;
-        Tue, 25 Sep 2018 08:47:24 -0700 (PDT)
+        Tue, 25 Sep 2018 17:56:45 -0400
+Received: by mail-ed1-f67.google.com with SMTP id x8-v6so5909216eds.5;
+        Tue, 25 Sep 2018 08:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=pLdaFfkFIeacw0a3NFJWq44+8xF8z/AGWyJ5Gsywc54=;
-        b=Ex6zlpfAY/mTAk3AOd4OtcF20LK08txwbIPnKYn0QMj1M969lrCv3tgDNgrRPyc8uU
-         J5kXCTfCgAIGoA6pY6uDwq0ZYQ6mD05rvAq6S0tbnEMSlON4psChZyT3CgyDPI8Tn+7L
-         1pA4zgwmRWlwMu6InfEzz/Xi+VguhJ+UjnGzN8nLQI59RImdXkmxKrLQqL7MmAZBh+hd
-         wFZiFhEpoOuWAVjHuE1CkWr1EeYGwPmT3OUIjuwP+QrWHbzmXTNNKUrv3a5V0bZYigV8
-         03jqYhSsJW6TG1WVSDDTcr2dB8RW7QkEyRx6zrxfqagc6boW2+t0WhqhAK2KiO8vO5a5
-         eROA==
+        bh=ehDh9e8OXCDqFF4hqUrZKMnc1RawGArR+EXDOns+SzY=;
+        b=fh5qRBO6+jHofkif34ylswAsxbj5x8IB+se1t/Z1ezFD3XU/u9AyUpj54SgLvdbtti
+         2jh1k8dTtYGQMEj9PmNtO6HyXMgoGcZgJV5c2Dy0PzPRagut/amWTq7RCgRK4znsaQpM
+         IVF2uwZP4iRQREBVUYqBfuaS63yuBeonuYFNfzgGJdwUOtl3ky1BOSukC6JY/nyeEPST
+         CNICwFhUKr9ctea+h32hMJjzcpp96CTxQpwpXfKY/ITX0/lyvHykjvapLWzeiP26nMbH
+         pZ7rncXfWMUQwlSEW1557Q1wrJyi7G5IIv/vBf2EB7IKRK5qTX0vcCdxJKq9fMTLf3tI
+         CpMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=pLdaFfkFIeacw0a3NFJWq44+8xF8z/AGWyJ5Gsywc54=;
-        b=i+v/BoPSoETrd42pmk6n3bhJp5WwjeJru8AGh6fr1nabxxfcLe2Bm0NRTLpaYVxdrT
-         OS7hmzxq2JltqqlsHpUG9gB3kE5u/8T5GbYWMYF8tKwjU/pK4IBQTsuMU6Pt2gQdnCrf
-         tL6fTfOjcQbZ+9p3sUewh1eUCWmNefMfHGK8OsmvFDW7zd1heliLH+2TbNmbakIYm2cz
-         WCR1JhIgl/BvqxhY/gczOBHwIZyp5HoViAztBM6Z7k1vtouuWsTNfgjN0pdpY2zoL6/i
-         sS6c66f268vCKjyPrE0F87ZE5/RV0MpIgCtyhXXg766a5IN67whv3mwKyyooS4LohWGd
-         Qj2A==
-X-Gm-Message-State: ABuFfoihr6CbuRBPHgbWhjkR8G1qGqsZ7scns9goOcRG8FdREYSitYaK
-        QlY7RTWKdSZWQPbVHEtMULc=
-X-Google-Smtp-Source: ACcGV60l4ktnBNtk13L1uRBHGbnl/BFzTzUf0eEbTxhFun0JGGsory2OKx52OJtFkVGu1m4A9P/k6w==
-X-Received: by 2002:a17:902:16a4:: with SMTP id h33-v6mr1866369plh.36.1537890443579;
-        Tue, 25 Sep 2018 08:47:23 -0700 (PDT)
+        bh=ehDh9e8OXCDqFF4hqUrZKMnc1RawGArR+EXDOns+SzY=;
+        b=MDCpJP88hKm1Cuzxb7eUJJ7aRJthcl6e8x2Rjcn3GXtjnCwZazBPZV3OQloz0n2PcL
+         zN2A0XqJFB/zbuYC57963CEOBmDElhfsvV2PASdBSjo5mtfSBMLMo8s7+Fjgl5snLbJl
+         /ZlpoUr43IDgK5MVI7TLCMEHBAOiY5sd5xeVRtjJiyl5k/L+4L9fyFYNZyg/JPtPPXb4
+         fxY8cXhivGx356IhjiuBVcR3JUIU/bhSbS/FIU3ktcAeQu/0GWJUlURKZazl6ZY0mbDU
+         x9tweB4dlcIc9jq7GXWGorxdTH9yZ+bix+DjG5errnt4pRohs0Pu2CU8/ltQEtiFgWFH
+         Eg4A==
+X-Gm-Message-State: ABuFfogLj7BP0sGLvYdxeMkf4YC8w0sRrubgSwzdfAGsqNepfVlIb3vm
+        AlwB/LLC7R3BfDQN3yCiWEU=
+X-Google-Smtp-Source: ACcGV61VYXLEa5lrVNn9ZSR69MHL3EEeq94XZllxqoZPAOztQtvowY5gHJoWxwP9s9k7uxVgXB75cA==
+X-Received: by 2002:a50:9feb:: with SMTP id c98-v6mr2194676edf.130.1537890515941;
+        Tue, 25 Sep 2018 08:48:35 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.146.97])
-        by smtp.gmail.com with ESMTPSA id p19-v6sm3571443pgk.28.2018.09.25.08.47.20
+        by smtp.gmail.com with ESMTPSA id u20-v6sm1893398eds.10.2018.09.25.08.48.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 08:47:22 -0700 (PDT)
-Subject: Re: [PATCH 4/5] arm: dts: mt7623: add jpeg decoder device node
-To:     Ryder Lee <ryder.lee@mediatek.com>
+        Tue, 25 Sep 2018 08:48:34 -0700 (PDT)
+Subject: Re: [Resend PATCH 5/5] arm: dts: mt7623: add display subsystem
+ related device nodes
+To:     Ryder Lee <ryder.lee@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>
 Cc:     Sean Wang <sean.wang@mediatek.com>,
         Roy Luo <cheng-hao.luo@mediatek.com>,
         Weijie Gao <weijie.gao@mediatek.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536141302.git.ryder.lee@mediatek.com>
- <2f810e9fc20d64d1e673b9ab9abd912d440d071a.1536141302.git.ryder.lee@mediatek.com>
+        linux-mediatek@lists.infradead.org, CK Hu <ck.hu@mediatek.com>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536155449.git.ryder.lee@mediatek.com>
+ <7105c341de3525761ad4067ca57c641c7097f773.1536155449.git.ryder.lee@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -116,12 +120,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <08785833-b701-d885-0bf5-6e1bea1d1de1@gmail.com>
-Date:   Tue, 25 Sep 2018 17:47:19 +0200
+Message-ID: <aef1f507-b217-5587-d058-fb0b08698cd1@gmail.com>
+Date:   Tue, 25 Sep 2018 17:48:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <2f810e9fc20d64d1e673b9ab9abd912d440d071a.1536141302.git.ryder.lee@mediatek.com>
+In-Reply-To: <7105c341de3525761ad4067ca57c641c7097f773.1536155449.git.ryder.lee@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -132,41 +136,505 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 05/09/2018 12:22, Ryder Lee wrote:
-> Add a jpeg decoder device node for MT7623.
+On 05/09/2018 16:09, Ryder Lee wrote:
+> Add display subsystem related device nodes for MT7623.
 > 
+> Cc: CK Hu <ck.hu@mediatek.com>
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+> I forgot to sort nodes in my previous mail. Sorry for the inconvenience.
+> 
+> This patch depends on the series: https://lkml.org/lkml/2018/9/5/223
 
-Applied to v4.19-next/dts32
+That's not yet merged, right?
+
+> 
+> @Matthias,
+> I know you're working on broken MMSYS - just want to ask whether it's possible
+> to let the patch to go to your tree (if others are okay with it), and send a
+> fixup one for MT7623 MMSYS later?
+
+I know I'm a big blocker here, sorry for the inconvenience.
+I'll do my best to get that in for the next release. If I make no progress on
+that then we should find a different solution.
+
+Regards,
+Matthias
 
 > ---
->  arch/arm/boot/dts/mt7623.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+>  arch/arm/boot/dts/mt7623.dtsi                 | 177 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  83 ++++++++++++
+>  arch/arm/boot/dts/mt7623n-rfb-emmc.dts        |  83 ++++++++++++
+>  3 files changed, 343 insertions(+)
 > 
 > diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-> index a46987b..d01bdee 100644
+> index d01bdee..fdf9078 100644
 > --- a/arch/arm/boot/dts/mt7623.dtsi
 > +++ b/arch/arm/boot/dts/mt7623.dtsi
-> @@ -764,6 +764,21 @@
->  		power-domains = <&scpsys MT2701_POWER_DOMAIN_ISP>;
->  	};
+> @@ -23,6 +23,11 @@
+>  	#address-cells = <2>;
+>  	#size-cells = <2>;
 >  
-> +	jpegdec: jpegdec@15004000 {
-> +		compatible = "mediatek,mt7623-jpgdec",
-> +			     "mediatek,mt2701-jpgdec";
-> +		reg = <0 0x15004000 0 0x1000>;
-> +		interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks =  <&imgsys CLK_IMG_JPGDEC_SMI>,
-> +			  <&imgsys CLK_IMG_JPGDEC>;
-> +		clock-names = "jpgdec-smi",
-> +			      "jpgdec";
-> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ISP>;
-> +		mediatek,larb = <&larb2>;
-> +		iommus = <&iommu MT2701_M4U_PORT_JPGDEC_WDMA>,
-> +			 <&iommu MT2701_M4U_PORT_JPGDEC_BSDMA>;
+> +	aliases {
+> +		rdma0 = &rdma0;
+> +		rdma1 = &rdma1;
 > +	};
 > +
->  	vdecsys: syscon@16000000 {
->  		compatible = "mediatek,mt7623-vdecsys",
->  			     "mediatek,mt2701-vdecsys",
+>  	cpu_opp_table: opp-table {
+>  		compatible = "operating-points-v2";
+>  		opp-shared;
+> @@ -311,6 +316,25 @@
+>  		clock-names = "spi", "wrap";
+>  	};
+>  
+> +	mipi_tx0: mipi-dphy@10010000 {
+> +		compatible = "mediatek,mt7623-mipi-tx",
+> +			     "mediatek,mt2701-mipi-tx";
+> +		reg = <0 0x10010000 0 0x90>;
+> +		clocks = <&clk26m>;
+> +		clock-output-names = "mipi_tx0_pll";
+> +		#clock-cells = <0>;
+> +		#phy-cells = <0>;
+> +	};
+> +
+> +	cec: cec@10012000 {
+> +		compatible = "mediatek,mt7623-cec",
+> +			     "mediatek,mt8173-cec";
+> +		reg = <0 0x10012000 0 0xbc>;
+> +		interrupts = <GIC_SPI 182 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&infracfg CLK_INFRA_CEC>;
+> +		status = "disabled";
+> +	};
+> +
+>  	cir: cir@10013000 {
+>  		compatible = "mediatek,mt7623-cir";
+>  		reg = <0 0x10013000 0 0x1000>;
+> @@ -359,6 +383,18 @@
+>  		#clock-cells = <1>;
+>  	};
+>  
+> +	hdmi_phy: phy@10209100 {
+> +		compatible = "mediatek,mt7623-hdmi-phy",
+> +			     "mediatek,mt2701-hdmi-phy";
+> +		reg = <0 0x10209100 0 0x24>;
+> +		clocks = <&apmixedsys CLK_APMIXED_HDMI_REF>;
+> +		clock-names = "pll_ref";
+> +		clock-output-names = "hdmitx_dig_cts";
+> +		#clock-cells = <0>;
+> +		#phy-cells = <0>;
+> +		status = "disabled";
+> +	};
+> +
+>  	rng: rng@1020f000 {
+>  		compatible = "mediatek,mt7623-rng";
+>  		reg = <0 0x1020f000 0 0x1000>;
+> @@ -558,6 +594,16 @@
+>  		status = "disabled";
+>  	};
+>  
+> +	hdmiddc0: i2c@11013000 {
+> +		compatible = "mediatek,mt7623-hdmi-ddc",
+> +			     "mediatek,mt8173-hdmi-ddc";
+> +		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_LOW>;
+> +		reg = <0 0x11013000 0 0x1C>;
+> +		clocks = <&pericfg CLK_PERI_I2C3>;
+> +		clock-names = "ddc-i2c";
+> +		status = "disabled";
+> +	};
+> +
+>  	nor_flash: spi@11014000 {
+>  		compatible = "mediatek,mt7623-nor",
+>  			     "mediatek,mt8173-nor";
+> @@ -732,6 +778,84 @@
+>  		#clock-cells = <1>;
+>  	};
+>  
+> +	display_components: dispsys@14000000 {
+> +		compatible = "mediatek,mt7623-mmsys",
+> +			     "mediatek,mt2701-mmsys";
+> +		reg = <0 0x14000000 0 0x1000>;
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
+> +	};
+> +
+> +	ovl@14007000 {
+> +		compatible = "mediatek,mt7623-disp-ovl",
+> +			     "mediatek,mt2701-disp-ovl";
+> +		reg = <0 0x14007000 0 0x1000>;
+> +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_OVL>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_OVL_0>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	rdma0: rdma@14008000 {
+> +		compatible = "mediatek,mt7623-disp-rdma",
+> +			     "mediatek,mt2701-disp-rdma";
+> +		reg = <0 0x14008000 0 0x1000>;
+> +		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_RDMA>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_RDMA>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	wdma@14009000 {
+> +		compatible = "mediatek,mt7623-disp-wdma",
+> +			     "mediatek,mt2701-disp-wdma";
+> +		reg = <0 0x14009000 0 0x1000>;
+> +		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_WDMA>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_WDMA>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	bls: pwm@1400a000 {
+> +		compatible = "mediatek,mt7623-disp-pwm",
+> +			     "mediatek,mt2701-disp-pwm";
+> +		reg = <0 0x1400a000 0 0x1000>;
+> +		#pwm-cells = <2>;
+> +		clocks = <&mmsys CLK_MM_MDP_BLS_26M>,
+> +			 <&mmsys CLK_MM_DISP_BLS>;
+> +		clock-names = "main", "mm";
+> +		status = "disabled";
+> +	};
+> +
+> +	color@1400b000 {
+> +		compatible = "mediatek,mt7623-disp-color",
+> +			     "mediatek,mt2701-disp-color";
+> +		reg = <0 0x1400b000 0 0x1000>;
+> +		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_COLOR>;
+> +	};
+> +
+> +	dsi: dsi@1400c000 {
+> +		compatible = "mediatek,mt7623-dsi",
+> +			     "mediatek,mt2701-dsi";
+> +		reg = <0 0x1400c000 0 0x1000>;
+> +		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DSI_ENGINE>,
+> +			 <&mmsys CLK_MM_DSI_DIG>,
+> +			 <&mipi_tx0>;
+> +		clock-names = "engine", "digital", "hs";
+> +		phys = <&mipi_tx0>;
+> +		phy-names = "dphy";
+> +		status = "disabled";
+> +	};
+> +
+> +	mutex: mutex@1400e000 {
+> +		compatible = "mediatek,mt7623-disp-mutex",
+> +			     "mediatek,mt2701-disp-mutex";
+> +		reg = <0 0x1400e000 0 0x1000>;
+> +		interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_MUTEX_32K>;
+> +	};
+> +
+>  	larb0: larb@14010000 {
+>  		compatible = "mediatek,mt7623-smi-larb",
+>  			     "mediatek,mt2701-smi-larb";
+> @@ -744,6 +868,44 @@
+>  		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
+>  	};
+>  
+> +	rdma1: rdma@14012000 {
+> +		compatible = "mediatek,mt7623-disp-rdma",
+> +			     "mediatek,mt2701-disp-rdma";
+> +		reg = <0 0x14012000 0 0x1000>;
+> +		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_RDMA1>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_RDMA1>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	dpi0: dpi@14014000 {
+> +		compatible = "mediatek,mt7623-dpi",
+> +			     "mediatek,mt2701-dpi";
+> +		reg = <0 0x14014000 0 0x1000>;
+> +		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DPI1_DIGL>,
+> +			 <&mmsys CLK_MM_DPI1_ENGINE>,
+> +			 <&topckgen CLK_TOP_TVDPLL>;
+> +		clock-names = "pixel", "engine", "pll";
+> +		status = "disabled";
+> +	};
+> +
+> +	hdmi0: hdmi@14015000 {
+> +		compatible = "mediatek,mt7623-hdmi",
+> +			     "mediatek,mt8173-hdmi";
+> +		reg = <0 0x14015000 0 0x400>;
+> +		clocks = <&mmsys CLK_MM_HDMI_PIXEL>,
+> +			 <&mmsys CLK_MM_HDMI_PLL>,
+> +			 <&mmsys CLK_MM_HDMI_AUDIO>,
+> +			 <&mmsys CLK_MM_HDMI_SPDIF>;
+> +		clock-names = "pixel", "pll", "bclk", "spdif";
+> +		phys = <&hdmi_phy>;
+> +		phy-names = "hdmi";
+> +		mediatek,syscon-hdmi = <&mmsys 0x900>;
+> +		cec = <&cec>;
+> +		status = "disabled";
+> +	};
+> +
+>  	imgsys: syscon@15000000 {
+>  		compatible = "mediatek,mt7623-imgsys",
+>  			     "mediatek,mt2701-imgsys",
+> @@ -1071,6 +1233,21 @@
+>  		};
+>  	};
+>  
+> +	hdmi_pins_a: hdmi-default {
+> +		pins-hdmi {
+> +			pinmux = <MT7623_PIN_123_HTPLG_FUNC_HTPLG>;
+> +			input-enable;
+> +			bias-pull-down;
+> +		};
+> +	};
+> +
+> +	hdmi_ddc_pins_a: hdmi_ddc-default {
+> +		pins-hdmi-ddc {
+> +			pinmux = <MT7623_PIN_124_GPIO124_FUNC_HDMISCK>,
+> +				 <MT7623_PIN_125_GPIO125_FUNC_HDMISD>;
+> +		};
+> +	};
+> +
+>  	i2c0_pins_a: i2c0-default {
+>  		pins-i2c0 {
+>  			pinmux = <MT7623_PIN_75_SDA0_FUNC_SDA0>,
+> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> index 2b760f9..dbce86b 100644
+> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> @@ -21,6 +21,19 @@
+>  		stdout-path = "serial2:115200n8";
+>  	};
+>  
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		label = "hdmi";
+> +		type = "d";
+> +		ddc-i2c-bus = <&hdmiddc0>;
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&hdmi0_out>;
+> +			};
+> +		};
+> +	};
+> +
+>  	cpus {
+>  		cpu@0 {
+>  			proc-supply = <&mt6323_vproc_reg>;
+> @@ -114,10 +127,24 @@
+>  	};
+>  };
+>  
+> +&bls {
+> +	status = "okay";
+> +
+> +	port {
+> +		bls_out: endpoint {
+> +			remote-endpoint = <&dpi0_in>;
+> +		};
+> +	};
+> +};
+> +
+>  &btif {
+>  	status = "okay";
+>  };
+>  
+> +&cec {
+> +	status = "okay";
+> +};
+> +
+>  &cir {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&cir_pins_a>;
+> @@ -128,6 +155,26 @@
+>  	status = "okay";
+>  };
+>  
+> +&dpi0 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@0 {
+> +			reg = <0>;
+> +			dpi0_out: endpoint {
+> +				remote-endpoint = <&hdmi0_in>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			dpi0_in: endpoint {
+> +				remote-endpoint = <&bls_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &eth {
+>  	status = "okay";
+>  
+> @@ -199,6 +246,42 @@
+>  	};
+>  };
+>  
+> +&hdmi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_pins_a>;
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		port@0 {
+> +			reg = <0>;
+> +			hdmi0_in: endpoint {
+> +				remote-endpoint = <&dpi0_out>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			hdmi0_out: endpoint {
+> +				remote-endpoint = <&hdmi_connector_in>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&hdmiddc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_ddc_pins_a>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_phy {
+> +	mediatek,ibias = <0xa>;
+> +	mediatek,ibias_up = <0x1c>;
+> +	status = "okay";
+> +};
+> +
+>  &i2c0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c0_pins_a>;
+> diff --git a/arch/arm/boot/dts/mt7623n-rfb-emmc.dts b/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+> index b760613..bdf9010 100644
+> --- a/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+> +++ b/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+> @@ -24,6 +24,19 @@
+>  		stdout-path = "serial2:115200n8";
+>  	};
+>  
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		label = "hdmi";
+> +		type = "d";
+> +		ddc-i2c-bus = <&hdmiddc0>;
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&hdmi0_out>;
+> +			};
+> +		};
+> +	};
+> +
+>  	cpus {
+>  		cpu@0 {
+>  			proc-supply = <&mt6323_vproc_reg>;
+> @@ -106,10 +119,24 @@
+>  	};
+>  };
+>  
+> +&bls {
+> +	status = "okay";
+> +
+> +	port {
+> +		bls_out: endpoint {
+> +			remote-endpoint = <&dpi0_in>;
+> +		};
+> +	};
+> +};
+> +
+>  &btif {
+>  	status = "okay";
+>  };
+>  
+> +&cec {
+> +	status = "okay";
+> +};
+> +
+>  &cir {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&cir_pins_a>;
+> @@ -120,6 +147,26 @@
+>  	status = "okay";
+>  };
+>  
+> +&dpi0 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@0 {
+> +			reg = <0>;
+> +			dpi0_out: endpoint {
+> +				remote-endpoint = <&hdmi0_in>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			dpi0_in: endpoint {
+> +				remote-endpoint = <&bls_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &eth {
+>  	status = "okay";
+>  
+> @@ -202,6 +249,42 @@
+>  	};
+>  };
+>  
+> +&hdmi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_pins_a>;
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		port@0 {
+> +			reg = <0>;
+> +			hdmi0_in: endpoint {
+> +				remote-endpoint = <&dpi0_out>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			hdmi0_out: endpoint {
+> +				remote-endpoint = <&hdmi_connector_in>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&hdmiddc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_ddc_pins_a>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_phy {
+> +	mediatek,ibias = <0xa>;
+> +	mediatek,ibias_up = <0x1c>;
+> +	status = "okay";
+> +};
+> +
+>  &i2c0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c0_pins_a>;
 > 
