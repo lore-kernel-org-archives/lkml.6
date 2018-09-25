@@ -2,99 +2,126 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 888EAC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B620C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BCF7208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:01:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MigxsZ8u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BCF7208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E63C62086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:06:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63C62086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbeIYTIb (ORCPT
+        id S1729055AbeIYTNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 15:08:31 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52274 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728881AbeIYTIb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 15:08:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id l7-v6so8522905wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 06:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IcaaMvsHdGR2TkmohTvF009GqYanXfu3ZOjBBsoCgL0=;
-        b=MigxsZ8uoK9j521r7fKjv86eam3idWcdLJm6fxyJDkxDUoH31vr3CiaKQgPzIHephR
-         vPeUh4TS8JVguuM7qE+lWIy6b5ilqH7RNjJW8SGDkLo9lyqpHS7p6Et/uO3KLcyC2lyV
-         8ahaQMJEyXm0HjtOynvyvVaELmXhKfp8LBvkXeFntiqpzqJlA+HNn6L/UrwNcQ9tJUmP
-         kuI91L95ZSSPjIDxtEVma7rfcb2k8LJmnCtrGuXAn7XB6wPHPK2vOs1/sTSJ0Xj+Unbp
-         wxp/URUI4JNZFBWzZbThhThkRUOfC/UP/Kb4qIx+a+UjAG58RS8ZFoxWqmZLr82CTg9l
-         bsWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IcaaMvsHdGR2TkmohTvF009GqYanXfu3ZOjBBsoCgL0=;
-        b=JlCQNGokJZO+Kpj4K3xZHBaoyM/v1c7HYoy1dBezQ0Hadobah4AJou6rcP9jN1D27B
-         biYhrAY1dtgfGvuwq4yk+cS0B03hsLgt2ayYt/FrDJIZKfpQWles5j/9UGrMYI34SUh+
-         xAJT8aEqw4/fth23eq9acguas3+GHCLSNB7BTe6TVCTEyIjeyAa0EpyDdHzZA+Rl1jjY
-         Q/G8sz2W5VdFDUgkRRbLWQRRIN41C0d3rwzuslmMBxtVrrPcOq0m3pPG3IeyOKHGo+ho
-         aqSs53zsVFhXWFRsLPnhnYyd3nju16WSnX/d7xzptxVblJg3z5tlbDspOrPhREyDIU8P
-         jrDA==
-X-Gm-Message-State: ABuFfoisJxdJN81NhbxoHioh06VG1ntzUvpBPJKoNHM5O4bVb0zbMgi4
-        b0BqS9rfsI8EHpF966785lY=
-X-Google-Smtp-Source: ACcGV62j3IQsAKGWUOddSnm9VV4/SMjmipwVOJzY8WENAQwysuHwiYxqGzY9QCAvqkz/YTTnXQBzTQ==
-X-Received: by 2002:a1c:5e08:: with SMTP id s8-v6mr637500wmb.88.1537880462293;
-        Tue, 25 Sep 2018 06:01:02 -0700 (PDT)
-Received: from localhost ([178.121.95.75])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm1996925wmh.16.2018.09.25.06.01.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 06:01:01 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Tue, 25 Sep 2018 22:00:57 +0900
-To:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: CON_PRINTBUFFER console registration is a bit
- racy
-Message-ID: <20180925130057.GA601@tigerII.localdomain>
-References: <20180914023428.814-1-sergey.senozhatsky@gmail.com>
- <20180914085934.m2bgixltdzpfh62o@pathway.suse.cz>
- <20180914111953.GA20572@tigerII.localdomain>
+        Tue, 25 Sep 2018 15:13:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12700 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727165AbeIYTNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 15:13:45 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 497DF521CB4AA;
+        Tue, 25 Sep 2018 21:05:48 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Tue, 25 Sep 2018
+ 21:05:42 +0800
+Date:   Tue, 25 Sep 2018 14:05:30 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Song Qiang <songqiang1304521@gmail.com>
+CC:     <jic23@kernel.org>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <preid@electromag.com.au>, <rtresidd@electromag.com.au>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] iio: magnetometer: Add DT support for PNI RM3100
+Message-ID: <20180925140530.00005fa3@huawei.com>
+In-Reply-To: <20180925031724.21399-1-songqiang1304521@gmail.com>
+References: <20180925031724.21399-1-songqiang1304521@gmail.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914111953.GA20572@tigerII.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/14/18 20:19), Sergey Senozhatsky wrote:
-> On (09/14/18 10:59), Petr Mladek wrote:
-> > 
-> > Well, I am not sure if it is worth the code complexity.
-> >
+On Tue, 25 Sep 2018 11:17:23 +0800
+Song Qiang <songqiang1304521@gmail.com> wrote:
+
+> PNI RM3100 is a high resolution, large signal immunity magnetometer,
+> composed of 3 single sensors and a processing chip with MagI2C Interface.
+> PNI is not in the vendors' list, so this patch is also adding it.
 > 
-> Well, I don't think we need to bother that much here. Besides,
-> exclusive_console is cleared under logbuf_lock with preemption
-> disabled now. So we set it under logbuf_lock and !irq and we
-> clear it under logbuf_lock and !irq. Looks quite OK to me.
+> Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
+Hi Song,
 
-Petr, Steven,
-any opinions? The patch is rather trivial.
+Please clearly mark the title of the patch with V2.
+[PATCH 1/2 V2] ...
 
-	-ss
+(or I'm also happy with a cover letter that does the same though other
+maintainers ask for every patch to be marked v2).
+
+This makes it easy to quickly short the versions and check we are
+looking at the latest.
+> ---
+> Changes in v2:
+>         - Remove bus specific part in compatible string.
+> 
+>  .../bindings/iio/magnetometer/pni,rm3100.txt  | 20 +++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+>  2 files changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt b/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+> new file mode 100644
+> index 000000000000..4677690fc5d0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+> @@ -0,0 +1,20 @@
+> +* PNI RM3100 3-axis magnetometer sensor
+> +
+> +Required properties:
+> +
+> +- compatible : should be "pni,rm3100"
+> +- reg : the I2C address or SPI chip select number of the sensor.
+> +
+> +Optional properties:
+> +
+> +- interrupts: data ready (DRDY) from the chip.
+> +  The interrupts can be triggered on rising edges.
+> +
+> +Example:
+> +
+> +rm3100: rm3100@20 {
+> +	compatible = "pni,rm3100";
+> +	reg = <0x20>;
+> +	interrupt-parent = <&gpio0>;
+> +	interrupts = <4 IRQ_TYPE_EDGE_RISING>;
+> +};
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 41f0b97eb933..5bf3395fe9ae 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -288,6 +288,7 @@ pine64	Pine64
+>  pixcir  PIXCIR MICROELECTRONICS Co., Ltd
+>  plathome	Plat'Home Co., Ltd.
+>  plda	PLDA
+> +pni     PNI
+
+A quick scan around their website suggests they are actually
+"PNI Sensor Corporation"
+I'm not sure how fussy we are on naming in here but probable best to be as specific
+as possible.
+
+>  portwell	Portwell Inc.
+>  poslab	Poslab Technology Co., Ltd.
+>  powervr	PowerVR (deprecated, use img)
+
+
