@@ -2,216 +2,78 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A442C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB94C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2752098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:56:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2752098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 2B5742098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:56:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5742098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbeIYWEW (ORCPT
+        id S1729650AbeIYWEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:04:22 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36142 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728598AbeIYWEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:04:22 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42KQfP36m4z9ttCN;
-        Tue, 25 Sep 2018 17:56:13 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id VWKtvftEA17n; Tue, 25 Sep 2018 17:56:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42KQfP2JxNz9ttCH;
-        Tue, 25 Sep 2018 17:56:13 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F0288B7E2;
-        Tue, 25 Sep 2018 17:56:12 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id X-QZQqJaEXGv; Tue, 25 Sep 2018 17:56:12 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E646E8B7C8;
-        Tue, 25 Sep 2018 17:56:09 +0200 (CEST)
-Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
- <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
-Message-ID: <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr>
-Date:   Tue, 25 Sep 2018 17:56:09 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 18:04:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37694 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728598AbeIYWEu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:04:50 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3CF2C37;
+        Tue, 25 Sep 2018 15:56:41 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 17:56:39 +0200
+From:   gregkh <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Char/Misc driver fixes for 4.19-rc6
+Message-ID: <20180925155639.GA8368@kroah.com>
+References: <20180925142344.GA26980@kroah.com>
+ <20180925145410.GA2747@kroah.com>
+ <CAK8P3a2uRUerniKg7cZ+OuX8QLq+9f+SQKzXO9m6-Li6AYXJMA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2uRUerniKg7cZ+OuX8QLq+9f+SQKzXO9m6-Li6AYXJMA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Snowpatch reports failure on pmac32_defconfig, as follows:
-
-arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_printf':
-/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88: 
-undefined reference to `__stack_chk_fail_local'
-arch/powerpc/platforms/powermac/bootx_init.o: In function 
-`bootx_add_display_props':
-/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:211: 
-undefined reference to `__stack_chk_fail_local'
-arch/powerpc/platforms/powermac/bootx_init.o: In function 
-`bootx_scan_dt_build_struct':
-/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:350: 
-undefined reference to `__stack_chk_fail_local'
-arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_init':
-/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:598: 
-undefined reference to `__stack_chk_fail_local'
-ld: .tmp_vmlinux1: hidden symbol `__stack_chk_fail_local' isn't defined
-ld: final link failed: Bad value
-Makefile:1040: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
-
-I don't have this issue with GCC 8.1, bootx_init.o has references to 
-__stack_chk_fail, not to __stack_chk_fail_local
-
-Looking online, it may be due to an old build and a lack of 'make 
-clean', could it be the case here ?
-
-Otherwise, can you retry the build to see if it's happen again ?
-
-Christophe
-
-Le 24/09/2018 à 17:15, Christophe Leroy a écrit :
-> On PPC64, as register r13 points to the paca_struct at all time,
-> this patch adds a copy of the canary there, which is copied at
-> task_switch.
-> That new canary is then used by using the following GCC options:
-> -mstack-protector-guard=tls
-> -mstack-protector-guard-reg=r13
-> -mstack-protector-guard-offset=offsetof(struct paca_struct, canary))
+On Tue, Sep 25, 2018 at 05:31:03PM +0200, Arnd Bergmann wrote:
+> On Tue, Sep 25, 2018 at 4:54 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Sep 25, 2018 at 04:23:44PM +0200, Greg KH wrote:
+> > > [Yes, the oddity of sending a pull request to myself is not lost on me...]
+> >
+> > And, I totally messed this up.  Ugh, what kind of idiot does something
+> > like this!  It's not like I haven't been doing this for years!  I should
+> > know better...
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->   arch/powerpc/Kconfig                      | 2 +-
->   arch/powerpc/Makefile                     | 8 ++++++++
->   arch/powerpc/include/asm/paca.h           | 3 +++
->   arch/powerpc/include/asm/stackprotector.h | 3 +++
->   arch/powerpc/kernel/asm-offsets.c         | 3 +++
->   arch/powerpc/kernel/entry_64.S            | 4 ++++
->   6 files changed, 22 insertions(+), 1 deletion(-)
+> Ah, I was wondering about that. I even found the char-misc-4.19-rc6 tag,
+> but it didn't add up. If you want the signoff chain to make more sense,
+> you can add my
 > 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 3bcb05929931..602eea723624 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -180,7 +180,7 @@ config PPC
->   	select HAVE_ARCH_SECCOMP_FILTER
->   	select HAVE_ARCH_TRACEHOOK
->   	select HAVE_CBPF_JIT			if !PPC64
-> -	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-guard=tls) && PPC32
-> +	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-guard=tls)
->   	select HAVE_CONTEXT_TRACKING		if PPC64
->   	select HAVE_DEBUG_KMEMLEAK
->   	select HAVE_DEBUG_STACKOVERFLOW
-> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-> index 45b8eb4d8fe7..81552c7b46eb 100644
-> --- a/arch/powerpc/Makefile
-> +++ b/arch/powerpc/Makefile
-> @@ -113,7 +113,11 @@ KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
->   endif
->   
->   cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
-> +ifdef CONFIG_PPC64
-> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r13
-> +else
->   cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r2
-> +endif
->   
->   LDFLAGS_vmlinux-y := -Bstatic
->   LDFLAGS_vmlinux-$(CONFIG_RELOCATABLE) := -pie
-> @@ -411,8 +415,12 @@ ifdef CONFIG_STACKPROTECTOR
->   prepare: stack_protector_prepare
->   
->   stack_protector_prepare: prepare0
-> +ifdef CONFIG_PPC64
-> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "PACA_CANARY") print $$3;}' include/generated/asm-offsets.h))
-> +else
->   	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TASK_CANARY") print $$3;}' include/generated/asm-offsets.h))
->   endif
-> +endif
->   
->   # Use the file '.tmp_gas_check' for binutils tests, as gas won't output
->   # to stdout and these checks are run even on install targets.
-> diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
-> index 6d6b3706232c..98d883e58945 100644
-> --- a/arch/powerpc/include/asm/paca.h
-> +++ b/arch/powerpc/include/asm/paca.h
-> @@ -246,6 +246,9 @@ struct paca_struct {
->   	struct slb_entry *mce_faulty_slbs;
->   	u16 slb_save_cache_ptr;
->   #endif /* CONFIG_PPC_BOOK3S_64 */
-> +#ifdef CONFIG_STACKPROTECTOR
-> +	unsigned long canary;
-> +#endif
->   } ____cacheline_aligned;
->   
->   extern struct paca_struct **paca_ptrs;
-> diff --git a/arch/powerpc/include/asm/stackprotector.h b/arch/powerpc/include/asm/stackprotector.h
-> index 263e2aab1862..e81991955c0d 100644
-> --- a/arch/powerpc/include/asm/stackprotector.h
-> +++ b/arch/powerpc/include/asm/stackprotector.h
-> @@ -29,6 +29,9 @@ static __always_inline void boot_init_stack_canary(void)
->   	canary ^= LINUX_VERSION_CODE;
->   
->   	current->stack_canary = canary;
-> +#ifdef CONFIG_PPC64
-> +	get_paca()->canary = canary;
-> +#endif
->   }
->   
->   #endif	/* _ASM_STACKPROTECTOR_H */
-> diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-> index a992f7a53cf3..773dee55b3f6 100644
-> --- a/arch/powerpc/kernel/asm-offsets.c
-> +++ b/arch/powerpc/kernel/asm-offsets.c
-> @@ -81,6 +81,9 @@ int main(void)
->   	OFFSET(MM, task_struct, mm);
->   #ifdef CONFIG_STACKPROTECTOR
->   	OFFSET(TASK_CANARY, task_struct, stack_canary);
-> +#ifdef CONFIG_PPC64
-> +	OFFSET(PACA_CANARY, paca_struct, canary);
-> +#endif
->   #endif
->   	OFFSET(MMCONTEXTID, mm_struct, context.id);
->   #ifdef CONFIG_PPC64
-> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-> index 77a888bfcb53..573fa879d785 100644
-> --- a/arch/powerpc/kernel/entry_64.S
-> +++ b/arch/powerpc/kernel/entry_64.S
-> @@ -624,6 +624,10 @@ _GLOBAL(_switch)
->   
->   	addi	r6,r4,-THREAD	/* Convert THREAD to 'current' */
->   	std	r6,PACACURRENT(r13)	/* Set new 'current' */
-> +#if defined(CONFIG_STACKPROTECTOR)
-> +	ld	r6, TASK_CANARY(r6)
-> +	std	r6, PACA_CANARY(r13)
-> +#endif
->   
->   	ld	r8,KSP(r4)	/* new stack pointer */
->   #ifdef CONFIG_PPC_BOOK3S_64
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 > 
+> when you pull in your own tag. The resource handling in
+> drivers/hwtracing/intel_th/core.c does look a bit odd, which
+> confused me for a bit, but that was already the case before
+> the patches.
+
+Thanks for the review.  Yeah, that code is "odd" but then again, all of
+the hwtracing code is strange :)
+
+I've already pulled this tag into Linus's tree, I though I would be
+passive-aggressive and not tell myself that it was done...
+
+thanks,
+
+greg "this is strange" k-h
