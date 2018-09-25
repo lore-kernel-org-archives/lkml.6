@@ -2,83 +2,97 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9881C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC38C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6A320C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:02:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6A320C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D89A20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:03:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D89A20C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeIYPJW (ORCPT
+        id S1727698AbeIYPJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:09:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53870 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbeIYPJW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:09:22 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA6641117;
-        Tue, 25 Sep 2018 09:02:49 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 11:02:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Christ van Willegen <cvwillegen@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.18 164/235] pinctrl: pinmux: Return selector to the
- pinctrl driver
-Message-ID: <20180925090247.GC22609@kroah.com>
-References: <20180924113103.999624566@linuxfoundation.org>
- <20180924113121.469295005@linuxfoundation.org>
- <20180924230710.o7bqbw353few6pjw@xps.therub.org>
+        Tue, 25 Sep 2018 11:09:57 -0400
+Received: from mga03.intel.com ([134.134.136.65]:61565 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbeIYPJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 11:09:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 02:03:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,301,1534834800"; 
+   d="scan'208";a="86335100"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga003.jf.intel.com with SMTP; 25 Sep 2018 02:03:22 -0700
+Received: by lahna (sSMTP sendmail emulation); Tue, 25 Sep 2018 12:03:21 +0300
+Date:   Tue, 25 Sep 2018 12:03:21 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
+        vincent.whitchurch@axis.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gpio: mockup: use device properties instead of
+ platform_data
+Message-ID: <20180925090321.GX2664@lahna.fi.intel.com>
+References: <20180923111727.10378-1-brgl@bgdev.pl>
+ <CAMRc=MfZ8jRZHgXBq9TeYm5VpmLzwG7gF-NMYay9Zg-iEgFQDQ@mail.gmail.com>
+ <CACRpkdb7zKfa_e6WWHncg+gxGncsC_Bx7gpkhJyutH4tqJRkew@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180924230710.o7bqbw353few6pjw@xps.therub.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdb7zKfa_e6WWHncg+gxGncsC_Bx7gpkhJyutH4tqJRkew@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 06:07:10PM -0500, Dan Rue wrote:
-> On Mon, Sep 24, 2018 at 01:52:30PM +0200, Greg Kroah-Hartman wrote:
-> > 4.18-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Sep 25, 2018 at 10:53:30AM +0200, Linus Walleij wrote:
+> On Mon, Sep 24, 2018 at 9:35 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > niedz., 23 wrz 2018 o 13:17 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
+> > >
+> > > Some users want to introduce device tree support to the mockup driver.
+> > > Let's make it easier by switching to using generic device properties.
+> > > The driver stays compatible with previous use cases and after this
+> > > conversion there'll be no need to change the way probing of mockup
+> > > GPIO chips works.
+> > >
+> > > Tested with libgpiod test suite.
+> > >
+> > > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> (...)
+> > Linus, I just noticed that we either need to drop the check for
+> > -ENOENT or add an else that returns on any other error. I'll need to
+> > send a v2
 > 
-> I bisected a boot failure on an x15 (arm) board to this commit on
-> 4.18.10-rc1. I'm also seeing issues on 4.14 and 4.18 with arm64 boards
-> hikey and dragonboard 410c, but I have not investigated them yet (they
-> could be unrelated).
+> OK business as usual.
 > 
-> I see there are fixes to this commit that have not been backported.
-> Namely:
+> > but I'll let you first tell me if you like the general idea.
 > 
-> 823dd71f58eb ("pinctrl: ingenic: Fix group & function error checking")
-> a203728ac6bb ("pinctrl: core: Return selector to the pinctrl driver")
+> I don't know, I'm a bit ignorant about the idea, scope and
+> ambition with device properties.
 > 
-> However, I tried adding those two in but I still see the boot failure on
-> x15.
+> In my book this relates to the fwnode concept, but maybe
+> I'm wrong?
 
-Thanks for letting me know.  I've dropped this patch from the 4.14.y and
-4.18.y queues.
+I think you are right.
 
-I'll push out -rc2 versions in a bit as all of these seem to have had
-problems...
+> Mika, please fill us in here. The device properties in gpiolib
+> came in the patch
+> "gpio: Rework of_gpiochip_set_names() to use device property accessors"
 
-thanks,
-
-greg k-h
+I'm not sure what to answer to be honest :) The idea behind that patch
+was that we would be able to use the same properties (DT properties,
+ACPI _DSD properties, or possibly built-in properties) to set names for
+GPIOs.
