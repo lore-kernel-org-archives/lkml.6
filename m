@@ -2,127 +2,88 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8A1C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FCAC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A666720867
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:39:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XCk9hXMm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A666720867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 954D420877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:41:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954D420877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeIYPps (ORCPT
+        id S1728692AbeIYPsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:45:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34036 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbeIYPpr (ORCPT
+        Tue, 25 Sep 2018 11:48:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55834 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbeIYPsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:45:47 -0400
-Received: by mail-wr1-f65.google.com with SMTP id t15so14677427wrx.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 02:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=qJ8VdacrR0OZB3Gp+tWRJQDJ11ucpy9Q/KD5cZtzofU=;
-        b=XCk9hXMmPCQHix5vlMEEoppjPa1d5zXoD6Eqt5Gk78tWwm85rFsIvOH64flVcbaJ6g
-         cEBjqwTePJ1GptQSDf8veAE/TVa/Xj7AQBMIIW7PKYzKZBTv4rrSD4Uls0K9ey+j7Crq
-         as73FZumZlROSXNkTOXf7Tfh80BSYYvI4K1eI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qJ8VdacrR0OZB3Gp+tWRJQDJ11ucpy9Q/KD5cZtzofU=;
-        b=R+h5VQN494XBzgfc62/+x6t7VmJK6X7RTieTxfwQwdliMtfExLActe8Yj3sIp1Wvju
-         UHFF60gtQwn9sYhJ4kN7QZb7phxT+pz3YNMgC73Gehkfbcyg8bG1VTudYQ4iBgKPF70L
-         5RJmgG5B5aHULEQ+CjotksRo9KmSEFfH7QQmZ0+/j5NPGLw2gc3GcasRm2jP9hxZFXwk
-         71wV+7gViLrLUK7kEEKmzv0aZ2TJ+0r05w9EjUSpuW4m4JHwZDb9QliRamc1PyZjUpzP
-         9zdznjfPQiv/nMkeIYPsR+wmjlQjmrwwGDLH0Yaa4UNW1jSGVuKYQJIXeV9eW06zMkxq
-         koHw==
-X-Gm-Message-State: ABuFfogMIJAmKG2I7Eb48vC+v1qEOTJ7AWXtVvQy9F/zhdHoO3GINqkh
-        6lDi78EXlVmaKjpbs4crp6my1w==
-X-Google-Smtp-Source: ACcGV63bvTub74JO4C4g0Z8OLHk9s3FemeOrmLgxoZ5fkcS20xfn2KU+AqmDG/ZAViWrrFqOH8TlgA==
-X-Received: by 2002:adf:f94e:: with SMTP id q14-v6mr144775wrr.151.1537868344865;
-        Tue, 25 Sep 2018 02:39:04 -0700 (PDT)
-Received: from localhost.localdomain (251.150.136.77.rev.sfr.net. [77.136.150.251])
-        by smtp.gmail.com with ESMTPSA id x15-v6sm1288203wrt.53.2018.09.25.02.39.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 25 Sep 2018 02:39:04 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     rafael@kernel.org
-Cc:     linux-pm@vger.kernel.org, Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Colin Cross <ccross@android.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ramesh Thomas <ramesh.thomas@intel.com>,
-        Alex Shi <alex.shi@linaro.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RFC] cpuidle/drivers/menu: Remove get_loadavg in the performance multiplier
-Date:   Tue, 25 Sep 2018 11:38:44 +0200
-Message-Id: <1537868328-13405-1-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 25 Sep 2018 11:48:32 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1091115A;
+        Tue, 25 Sep 2018 09:41:49 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 11:41:47 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL] Keys: fix C++ reserved word issue
+Message-ID: <20180925094147.GC21972@kroah.com>
+References: <alpine.LRH.2.21.1809250738020.27047@namei.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1809250738020.27047@namei.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function get_loadavg() returns almost always zero. To be more
-precise, statistically speaking for a total of 1023379 times passing
-to the function, the load is equal to zero 1020728 times, greater than
-100, 610 times, the remaining is between 0 and 5.
+On Tue, Sep 25, 2018 at 07:40:06AM +1000, James Morris wrote:
+> Please pull this revert and update, from David Howells:
+> 
+> "Here's a pair of fixes that need to go upstream asap, please:
+> 
+>  (1) Revert an incorrect fix to the keyrings UAPI for a C++ reserved word
+>      used as a struct member name.  This change being reverted breaks
+>      existing userspace code and is thus incorrect.
+> 
+>      Further, *neither* name is consistent with the one in the keyutils
+>      package public header.
+> 
+>  (2) Fix the problem by using a union to make the name from keyutils
+>      available in parallel and make the 'private' name unavailable in C++
+>      with cpp-conditionals."
+> 
+> ---
+> The following changes since commit 02214bfc89c71bcc5167f653994cfa5c57f10ff1:
+> 
+>   Merge tag 'media/v4.19-2' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media (2018-09-24 15:16:41 +0200)
 
-I'm putting in question this metric. Is it worth to keep it?
+{sigh}
 
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Colin Cross <ccross@android.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/cpuidle/governors/menu.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+$ date --date="2018-09-25 07:40:06 +1000" +%s
+1537825206
+$ date --date="2018-09-24 15:16:41 +0200" +%s
+1537795001
+$ bc <<< "1537825206-1537795001"
+30205
+$ date -ud "@30205" +'%H hours %M minutes %S seconds'
+08 hours 23 minutes 25 seconds
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index e26a409..d939b8e 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -173,18 +173,10 @@ static inline int which_bucket(unsigned int duration, unsigned long nr_iowaiters
-  * to be, the higher this multiplier, and thus the higher
-  * the barrier to go to an expensive C state.
-  */
--static inline int performance_multiplier(unsigned long nr_iowaiters, unsigned long load)
-+static inline int performance_multiplier(unsigned long nr_iowaiters)
- {
--	int mult = 1;
--
--	/* for higher loadavg, we are more reluctant */
--
--	mult += 2 * get_loadavg(load);
--
- 	/* for IO wait tasks (per cpu!) we add 5x each */
--	mult += 10 * nr_iowaiters;
--
--	return mult;
-+	return 1 + 10 * nr_iowaiters;
- }
- 
- static DEFINE_PER_CPU(struct menu_device, menu_devices);
-@@ -359,7 +351,8 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 		 * Use the performance multiplier and the user-configurable
- 		 * latency_req to determine the maximum exit latency.
- 		 */
--		interactivity_req = data->predicted_us / performance_multiplier(nr_iowaiters, cpu_load);
-+		interactivity_req = data->predicted_us /
-+			performance_multiplier(nr_iowaiters);
- 		if (latency_req > interactivity_req)
- 			latency_req = interactivity_req;
- 	}
--- 
-2.7.4
+8.5 hours seems like a short amount of time for something to sit in a
+tree before asking for it to be merged.  Wait, it's actually less than
+that, I just took into account the longest possible time it could have
+been in your tree.
 
+I'll wait a few days on this one...
+
+thanks,
+
+greg k-h
