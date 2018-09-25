@@ -2,162 +2,139 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC066C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D2EC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE1D2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:39:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jxgMxBX3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE1D2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D62120877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:41:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D62120877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbeIYWsD (ORCPT
+        id S1727295AbeIYWtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:48:03 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60256 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbeIYWsC (ORCPT
+        Tue, 25 Sep 2018 18:49:41 -0400
+Received: from mail-yb1-f177.google.com ([209.85.219.177]:36331 "EHLO
+        mail-yb1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeIYWtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:48:02 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8PGcxcN049236;
-        Tue, 25 Sep 2018 16:39:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=LsArnAG5z7+QgUDiESkVt/C2FuZW8MZfKKF+5JQX8gc=;
- b=jxgMxBX3kv0yR8S/b/GjhKuK00STujRoaNycnwDPugIfh1Ci5OC05pFqJXSB0YsJeMFC
- 4Dc0qSApOLFkB8q56xEkHPM0+0fr64RUv6SB4pGRuOogTU6cIzM6oG5cD/eqFlBG/34c
- kLUafOi++dgNLHfAVgc8/xlMi5MCAxTHJnKV0DkH2aqzLQDrbAxeWBSa/crFDWcvE10w
- 0vFGpHoQoi3VO1O33a68tHKNO+/6SBhbelgW4GWTaoT8z5RSjBJfSoCguFEQdbclJ4DK
- Adl2Skp2aQtmkCd1Ihx6z09uUN3fIGOd6GdQxOCCXX9g83qxfYSRzLE49itzPtsST8TY dw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2mndppddc5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Sep 2018 16:39:37 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8PGda9c029855
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Sep 2018 16:39:37 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8PGdZAY019906;
-        Tue, 25 Sep 2018 16:39:36 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 25 Sep 2018 09:39:35 -0700
-Subject: Re: [PATCH V2] mm/hugetlb: Add mmap() encodings for 32MB and 512MB
- page sizes
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     mhocko@kernel.org, punit.agrawal@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org
-References: <1537797985-2406-1-git-send-email-anshuman.khandual@arm.com>
- <1537841300-6979-1-git-send-email-anshuman.khandual@arm.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <f395fc79-4a64-8534-cd31-7a36bfb50cd1@oracle.com>
-Date:   Tue, 25 Sep 2018 09:39:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <1537841300-6979-1-git-send-email-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 25 Sep 2018 18:49:40 -0400
+Received: by mail-yb1-f177.google.com with SMTP id 5-v6so10045690ybf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 09:41:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cEsgGXKVNr0bWlECtfZgGytV04JVJFDOy7CtIh1ZmNc=;
+        b=i07IqnDp52RhuMFrX9GjP0b1e4SZEnXDJiWXKDiDXk9Ny7bIjzcekZWBsb3TJ15NuD
+         gj2GKSGc/5lFN+9HCrhhfu2cJyhM1hFRSySoOoVT2vyawtV6gT48RYab1hPgCJx/rGRt
+         +ZODo6532W2riGoPZv7qHm/f76nYpqjlDdfCAfYj7fFBCV0dZXJCCp6ImD4vc0+1dT3a
+         jxKuqWB+cUaTamrtLhVk+R1tYeWOOHalwmspKRkCgmtuFfUdVWWXbAeHZ/jEfF5/gJaQ
+         Hv8AFsvOC5H+9koM8eC7t3ViEJU907kk6HNuyz89ZodWMBdTJLRJ/QNgNESqV2WZjJh0
+         nyIg==
+X-Gm-Message-State: ABuFfogI/y5yN1R9jRCf7CzOvmQ7w3/x0kjX96y9O5VHpzPnAuiV57v0
+        Y3AZL+ufrEAvzmYEiohtMVxB5g==
+X-Google-Smtp-Source: ACcGV60IV+HpprAR6ghjxIqIyAMnbi+2eiCQtOaHqTj5xh8VEgUfHqDj7MRHMY5fC+5MFNLkpS+45g==
+X-Received: by 2002:a25:e548:: with SMTP id c69-v6mr1043696ybh.393.1537893680943;
+        Tue, 25 Sep 2018 09:41:20 -0700 (PDT)
+Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-DB-0-0-0-D5E.dyn6.twc.com. [2606:a000:1100:db::d5e])
+        by smtp.gmail.com with ESMTPSA id t2-v6sm1030940ywd.99.2018.09.25.09.41.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 09:41:20 -0700 (PDT)
+Message-ID: <23cd68a665d27216415dc79367ffc3bee1b60b86.camel@redhat.com>
+Subject: Re: POSIX violation by writeback error
+From:   Jeff Layton <jlayton@redhat.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        =?UTF-8?Q?=E7=84=A6=E6=99=93=E5=86=AC?= <milestonejxd@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rogier Wolff <R.E.Wolff@BitWizard.nl>
+Date:   Tue, 25 Sep 2018 12:41:18 -0400
+In-Reply-To: <20180925154627.GC2933@thunk.org>
+References: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
+         <486f6105fd4076c1af67dae7fdfe6826019f7ff4.camel@redhat.com>
+         <20180925003044.239531c7@alans-desktop>
+         <0662a4c5d2e164d651a6a116d06da380f317100f.camel@redhat.com>
+         <20180925154627.GC2933@thunk.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9026 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809250165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/18 7:08 PM, Anshuman Khandual wrote:
-> ARM64 architecture also supports 32MB and 512MB HugeTLB page sizes.
-> This just adds mmap() system call argument encoding for them.
+On Tue, 2018-09-25 at 11:46 -0400, Theodore Y. Ts'o wrote:
+> On Tue, Sep 25, 2018 at 07:15:34AM -0400, Jeff Layton wrote:
+> > Linux has dozens of filesystems and they all behave differently in this
+> > regard. A catastrophic failure (paradoxically) makes things simpler for
+> > the fs developer, but even on local filesystems isolated errors can
+> > occur. It's also not just NFS -- what mostly started me down this road
+> > was working on ENOSPC handling for CephFS.
+> > 
+> > I think it'd be good to at least establish a "gold standard" for what
+> > filesystems ought to do in this situation. We might not be able to
+> > achieve that in all cases, but we could then document the exceptions.
 > 
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
+> I'd argue the standard should be the precedent set by AFS and NFS.
+> AFS verifies space available on close(2) and returns ENOSPC from the
+> close(2) system call if space is not available.  At MIT Project
+> Athena, where we used AFS extensively in the late 80's and early 90's,
+> we made and contributed back changes to avoid data loss as a result of
+> quota errors.
 > 
-> Changes in V2:
-> - Updated SHM and MFD definitions per Mike
+> The best practice that should be documented for userspace is when
+> writing precious files[1], programs should open for writing foo.new, write
+> out the data, call fsync() and check the error return, call close()
+> and check the error return, and then call rename(foo.new, foo) and
+> check the error return.  Writing a library function which does this,
+> and which also copies the ACL's and xattr's from foo to foo.new before
+> the rename() would probably help, but not as much as we might think.
+> 
+> [1] That is, editors writing source files, but not compilers and
+> similar programs writing object files and other generated files.
+> 
+> None of this is really all that new.  We had the same discussion back
+> during the O_PONIES controversy, and we came out in the same place.
+> 
+> 						- Ted
+> 
+> P.S.  One thought: it might be cool if there was some way for
+> userspace applications to mark files with "nuke if not closed" flag,
+> such that if the system crashes, the file systems would automatically
+> unlink the file after a reboot or if the process was killed or exits
+> without an explicit close(2).  For networked/remote file systems that
+> supported this flag, after the client comes back up after a reboot, it
+> could notify the server that all files created previously from that
+> client should be unlinked.
+> 
+> Unlike O_TMPFILE, this would require file system changes to support,
+> so maybe it's not worth having something which automatically cleans up
+> files that were in the middle of being written at the time of a system
+> crash.  (Especially since you can get most of the functionality by
+> using some naming convention for files that in the process of being
+> written, and then teach some program that is regularly scanning the
+> entire file system, such as updatedb(2) to nuke the files from a cron
+> job.  It won't be as efficient, but it would be much easier to
+> implement.)
 
-Thanks Anshuman,
+That's all well and good, but still doesn't quite solve the main concern
+with all of this. It's suppose we have this series of events:
 
-Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+open file r/w
+write 1024 bytes to offset 0
+<background writeback that fails>
+read 1024 bytes from offset 0
 
+Open, write and read are successful, and there was no fsync or close in
+between them. Will that read reflect the result of the previous write or
+no?
+
+The answer today is "it depends".
 -- 
-Mike Kravetz
+Jeff Layton <jlayton@redhat.com>
 
-> 
->  include/uapi/asm-generic/hugetlb_encode.h | 2 ++
->  include/uapi/linux/memfd.h                | 2 ++
->  include/uapi/linux/mman.h                 | 2 ++
->  include/uapi/linux/shm.h                  | 2 ++
->  4 files changed, 8 insertions(+)
-> 
-> diff --git a/include/uapi/asm-generic/hugetlb_encode.h b/include/uapi/asm-generic/hugetlb_encode.h
-> index e4732d3..b0f8e87 100644
-> --- a/include/uapi/asm-generic/hugetlb_encode.h
-> +++ b/include/uapi/asm-generic/hugetlb_encode.h
-> @@ -26,7 +26,9 @@
->  #define HUGETLB_FLAG_ENCODE_2MB		(21 << HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_8MB		(23 << HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_16MB	(24 << HUGETLB_FLAG_ENCODE_SHIFT)
-> +#define HUGETLB_FLAG_ENCODE_32MB	(25 << HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_256MB	(28 << HUGETLB_FLAG_ENCODE_SHIFT)
-> +#define HUGETLB_FLAG_ENCODE_512MB	(29 << HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_1GB		(30 << HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_2GB		(31 << HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_16GB	(34 << HUGETLB_FLAG_ENCODE_SHIFT)
-> diff --git a/include/uapi/linux/memfd.h b/include/uapi/linux/memfd.h
-> index 015a4c0..7a8a267 100644
-> --- a/include/uapi/linux/memfd.h
-> +++ b/include/uapi/linux/memfd.h
-> @@ -25,7 +25,9 @@
->  #define MFD_HUGE_2MB	HUGETLB_FLAG_ENCODE_2MB
->  #define MFD_HUGE_8MB	HUGETLB_FLAG_ENCODE_8MB
->  #define MFD_HUGE_16MB	HUGETLB_FLAG_ENCODE_16MB
-> +#define MFD_HUGE_32MB	HUGETLB_FLAG_ENCODE_32MB
->  #define MFD_HUGE_256MB	HUGETLB_FLAG_ENCODE_256MB
-> +#define MFD_HUGE_512MB	HUGETLB_FLAG_ENCODE_512MB
->  #define MFD_HUGE_1GB	HUGETLB_FLAG_ENCODE_1GB
->  #define MFD_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
->  #define MFD_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
-> diff --git a/include/uapi/linux/mman.h b/include/uapi/linux/mman.h
-> index bfd5938..d0f515d 100644
-> --- a/include/uapi/linux/mman.h
-> +++ b/include/uapi/linux/mman.h
-> @@ -28,7 +28,9 @@
->  #define MAP_HUGE_2MB	HUGETLB_FLAG_ENCODE_2MB
->  #define MAP_HUGE_8MB	HUGETLB_FLAG_ENCODE_8MB
->  #define MAP_HUGE_16MB	HUGETLB_FLAG_ENCODE_16MB
-> +#define MAP_HUGE_32MB	HUGETLB_FLAG_ENCODE_32MB
->  #define MAP_HUGE_256MB	HUGETLB_FLAG_ENCODE_256MB
-> +#define MAP_HUGE_512MB	HUGETLB_FLAG_ENCODE_512MB
->  #define MAP_HUGE_1GB	HUGETLB_FLAG_ENCODE_1GB
->  #define MAP_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
->  #define MAP_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
-> diff --git a/include/uapi/linux/shm.h b/include/uapi/linux/shm.h
-> index dde1344..6507ad0 100644
-> --- a/include/uapi/linux/shm.h
-> +++ b/include/uapi/linux/shm.h
-> @@ -65,7 +65,9 @@ struct shmid_ds {
->  #define SHM_HUGE_2MB	HUGETLB_FLAG_ENCODE_2MB
->  #define SHM_HUGE_8MB	HUGETLB_FLAG_ENCODE_8MB
->  #define SHM_HUGE_16MB	HUGETLB_FLAG_ENCODE_16MB
-> +#define SHM_HUGE_32MB	HUGETLB_FLAG_ENCODE_32MB
->  #define SHM_HUGE_256MB	HUGETLB_FLAG_ENCODE_256MB
-> +#define SHM_HUGE_512MB	HUGETLB_FLAG_ENCODE_512MB
->  #define SHM_HUGE_1GB	HUGETLB_FLAG_ENCODE_1GB
->  #define SHM_HUGE_2GB	HUGETLB_FLAG_ENCODE_2GB
->  #define SHM_HUGE_16GB	HUGETLB_FLAG_ENCODE_16GB
-> 
