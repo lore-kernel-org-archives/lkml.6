@@ -2,86 +2,132 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86212C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7ACECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296B72086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:54:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Wfj2JdwF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296B72086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 250F12086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:55:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250F12086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbeIZDEJ (ORCPT
+        id S1727062AbeIZDE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 23:04:09 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:56813 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbeIZDEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 23:04:09 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 6fb0587d;
-        Tue, 25 Sep 2018 20:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=Rdzzy2thrMrDbLHNdqfzHtyYadM=; b=Wfj2Jd
-        wFkKMZHC0pPxabxp+Tb5qUmjVLp9Z7uzD1cF7164EUSux+9yeYGhuZ5SSRRD6d58
-        MwVmm7BIYLNh1jtsf0yQVdf7txdnaSybpa4Bs1h8Lw+LazyDYTgzgWF1KYQSizvi
-        9NuRbSR3U9tow/sZLri9NR5kSMWfcu1/XxXX7/T9AQLUI1NGgFLPhuZc3mSvqvMw
-        ROf2fbne1690YSJ6JwJjA4ocom7Bd+Gqw4wnhp/07FLXFAiZKOQSwlFC2AxUmypW
-        sL60uUMwOaW8GV7GtoP2GM7kZbgiKKn9ZY6WeDbO+wUGp2vMhmyLw7eI7ZyExsrC
-        OdXwy6XkyePwb6BA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b4ba2e5d (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Tue, 25 Sep 2018 20:36:14 +0000 (UTC)
-Received: by mail-ot1-f42.google.com with SMTP id e18-v6so25896971oti.8;
-        Tue, 25 Sep 2018 13:54:42 -0700 (PDT)
-X-Gm-Message-State: ABuFfohCMrGJf0QZsMvVjnGS/0IbGPJphQjzlJ/fpqBwfhMvOvqjoTVJ
-        Z4h47OFdANdpKn2M/1eagHWi2c0lQo91Oq2xPE0=
-X-Google-Smtp-Source: ACcGV619wcVdkmO2Yd5PjirOhPja+OxQ3viLaMnHF1Hcu6fIlMGeysdWDmP4jlyCjVIRQUE+fh+j31uDo3sZWg2QUPk=
-X-Received: by 2002:a9d:522d:: with SMTP id e45-v6mr1917398oth.250.1537908881103;
- Tue, 25 Sep 2018 13:54:41 -0700 (PDT)
+        Tue, 25 Sep 2018 23:04:28 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45825 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbeIZDE2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 23:04:28 -0400
+Received: by mail-oi1-f193.google.com with SMTP id d63-v6so2695489oic.12;
+        Tue, 25 Sep 2018 13:55:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4V4I9cuu0zr7k8htcOxbtJKHIx3sECSRMltRNOfzVhk=;
+        b=rUrkCPFkDws5+pBC4w6PF32B1yqpDZ/MWz+axdsMe3TZ9zd4sDcryh1c7tBBsAtymw
+         kQEsPvX0q4B8Hr9cWW4/tb6cHG+g7ZwPoBJgrHBrxpADc5nfUKc8aApdE8A+UT3KeGss
+         UtnmaRUXw4fg+N3PWyOvgCI/oU69NJ7395bDfOpMlgJ/seWjwxBi1QEXJyvNCfmdbr6/
+         kyuQq8qiDQZsTIK8z3h0BAJESjkkoHgKjsXYskAHonIIOaH9hJdu6dW5Vgpkh2b7QiXm
+         zSGzg0JbxFdt1lUtaM+1aVr0hyVtqTT9qSDCgM2Z1kte4jiwiT3ptlXf+3LTPREadGT7
+         oeXA==
+X-Gm-Message-State: ABuFfojxtNyxwmnnkRU2a3Ei/onGi8BTLubHnihhYGnXfYRRTsKdlxO6
+        waQPvVtkFsD+UmmLcHugsA==
+X-Google-Smtp-Source: ACcGV62wGEhlzsf/bzH5dK6Hf1f5OiDzxyOVqI/jSTi0T45gdU42fgvONGCQr5x4A1nwqGxkqpDZmg==
+X-Received: by 2002:aca:d4cd:: with SMTP id l196-v6mr1685209oig.15.1537908903402;
+        Tue, 25 Sep 2018 13:55:03 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j2-v6sm1188669ote.50.2018.09.25.13.55.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 13:55:02 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 15:55:02 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: add UniPhier PCIe host
+ controller description
+Message-ID: <20180925205502.GA12949@bogus>
+References: <1536226832-5089-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <1536226832-5089-2-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-3-Jason@zx2c4.com>
- <2b5f2df2f1278c118a913259a44efdf589719293.camel@perches.com>
- <CAHmME9qLzFHPm2aaEKOmjBA95-c3CZuT+kQiuksLRRWQ_ad2sw@mail.gmail.com>
- <748429eee2fc77afd01630c24bd2cf66a545aec5.camel@perches.com>
- <CAHmME9peVqXDq7hmFZ+4cus+Y97NHS-TyBKF9GkdLvixdmq6hw@mail.gmail.com> <abedae13e59e01200531931e530b46e937501c4a.camel@perches.com>
-In-Reply-To: <abedae13e59e01200531931e530b46e937501c4a.camel@perches.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 25 Sep 2018 22:54:29 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qp0_jQn5PeDHJc+Vs003vyqqMTdPmnchjBxxNMvHcJWA@mail.gmail.com>
-Message-ID: <CAHmME9qp0_jQn5PeDHJc+Vs003vyqqMTdPmnchjBxxNMvHcJWA@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 02/23] zinc: introduce minimal cryptography library
-To:     Joe Perches <joe@perches.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536226832-5089-2-git-send-email-hayashi.kunihiko@socionext.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+On Thu, Sep 06, 2018 at 06:40:31PM +0900, Kunihiko Hayashi wrote:
+> Add DT bindings for PCIe controller implemented in UniPhier SoCs when
+> configured in Root Complex (host) mode. This controller is based on
+> the DesignWare PCIe core.
+> 
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+>  .../devicetree/bindings/pci/uniphier-pcie.txt      | 78 ++++++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+> new file mode 100644
+> index 0000000..a34e167
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+> @@ -0,0 +1,78 @@
+> +Socionext UniPhier PCIe host controller bindings
+> +
+> +This describes the devicetree bindings for PCIe host controller implemented
+> +on Socionext UniPhier SoCs.
+> +
+> +UniPhier PCIe host controller is based on the Synopsys DesignWare PCI core.
+> +It shares common functions with the PCIe DesignWare core driver and inherits
+> +common properties defined in
+> +Documentation/devicetree/bindings/pci/designware-pcie.txt.
+> +
+> +Required properties:
+> +- compatible: Should be "socionext,uniphier-pcie".
+> +- reg: Specifies offset and length of the register set for the device.
+> +	According to the reg-names, appropriate register sets are required.
+> +- reg-names: Must include the following entries:
+> +    "dbi"    - controller configuration registers
+> +    "link"   - SoC-specific glue layer registers
+> +    "config" - PCIe configuration space
+> +- clocks: A phandle to the clock gate for PCIe glue layer including
+> +	the host controller.
+> +- resets: A phandle to the reset line for PCIe glue layer including
+> +	the host controller.
+> +- interrupts: A list of interrupt specifiers. According to the
+> +	interrupt-names, appropriate interrupts are required.
+> +- interrupt-names: Must include the following entries:
+> +    "dma"    - DMA interrupt
+> +    "msi"    - MSI interrupt
+> +    "intx"   - Legacy INTA/B/C/D interrupt
+> +
+> +Optional properties:
+> +- phys: A phandle to generic PCIe PHY. According to the phy-names, appropriate
+> +	phys are required.
+> +- phy-names: Must be "pcie-phy".
+> +
+> +Required sub-node:
+> +- interrupt-controller: Specifies interrupt controller for legacy PCI
+> +	interrupts. The node name isn't important.
 
-On Tue, Sep 25, 2018 at 10:21 PM Joe Perches <joe@perches.com> wrote:
-> I'd still prefer as all these are effectively
-> debugging output that you convert the pr_info
-> uses pr_debug and so avoid using pr_fmt altogether.
+No, it is important.
 
-I started to write back, "sure no problem, this will be in v7," but
-then I gave it a closer look, and I think actually I'll be changing
-these into pr_err/pr_info and not naming this "DEBUG" but rather
-"SELFTEST", since I think these are actually very good to have beyond
-mere debugging.
+With that sentence removed,
 
-Jason
+Reviewed-by: Rob Herring <robh@kernel.org>
