@@ -2,111 +2,121 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D44E9C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8821C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 710812145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86EB32145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FFPJDP+T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710812145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSkyD7Dm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EB32145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbeIYGJP (ORCPT
+        id S1727757AbeIYGOQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 02:09:15 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41220 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727503AbeIYGJO (ORCPT
+        Tue, 25 Sep 2018 02:14:16 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:40941 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbeIYGOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 02:09:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z3-v6so5120894pgv.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 17:04:31 -0700 (PDT)
+        Tue, 25 Sep 2018 02:14:16 -0400
+Received: by mail-yw1-f68.google.com with SMTP id z143-v6so8622368ywa.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 17:09:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=NkrXbnTUrMX6ge8VLAmm0aNyJUV9M1f05zfh8t/GqFs=;
-        b=FFPJDP+Tn+7QKQmJVY3j0GnK3wCymkABYbXdyUE9uoBzbQc+o5JHwWSBWH6j7q+VtL
-         bbI7t2SajhZrTO1T+otCrIviUKb387YnPPZ0rrJb+D+7G4yaREf6M7OVu9ctzNSs+8LB
-         PD3doXMvd1/oT7viQG3l1YBwq7RbvDmXwKT+w=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oLF8IV6E6+XPP1dkFE/J+bDR0a8FlenM1TQYZFAO6I4=;
+        b=oSkyD7Dmpcwk913Pk3askHT825u+TErxVWbuBSrgGVHgdII1QmyDUZzRSqpzXB610F
+         3QmD7Cxz6+Q/Bv/LFasyLD72WAsoVWNPKoXDtAwO4VHVPX8K8SQHxjehpmcFO8QdcVLn
+         RhBLb48Bf6XlAvUcmOl/1lNtp6WcGqA3MOgkJ76OdWL8mI30jCPCr6+bOzuGED/PIcRu
+         IYXK2iAv8XKRPP3P/oO1B3mhIqRSXB+PHh3gWyIj4hJHoCriD/IHcE0bdhIpcByVeELh
+         qPIplnMpv590f2inQYfOFaFv3h33/9vNWSWCh2B2ugHzDIkhzjq9zr3B544ONrsESDe8
+         dUOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NkrXbnTUrMX6ge8VLAmm0aNyJUV9M1f05zfh8t/GqFs=;
-        b=t3ajKufqKddFD98sE8LhJYVoc0LmtKTGvQ6GW83RYc3QO5rh5/+BU9a9zgWxVayQRZ
-         jcpmjp0ZjSSapIqf/u82vH5GgWqACPPl2YcNFKqUchU2v4lLiwqZD3hWUdzTWU8jC0Pq
-         t/FMCtNULlZ+wpPW5qdyPplbR8bBk4RC1udQZCAHiNJbgGKuuH0yTEVFtWzGNsRrVhjS
-         3VAr9yIy6ILRnFP0x8H/1S8KT0KGQVnBVFv4S3W0y7W0bkGC+J/RT5J27I9ZTb9GUMky
-         iZ4/kALVg/fxsTDlkMnf55Y6rNhB4onsFExoIz3XrBvEf1y0UZTemgVbjadakzrGnf3t
-         u2HQ==
-X-Gm-Message-State: ABuFfoiTqN9CNDoSqnIWm+F8Qz/n4EOEIw9FQDv69V4hXA85bDtbyPad
-        JLRgJIM8xXbcFM7qSUt87nsTxQ==
-X-Google-Smtp-Source: ACcGV63zDqNuKEgH578JDLKSDpDllNLd4PY+ffldRK28/ODz3QflNPsLvLw/mDK/Va93eSnLAv5ZcA==
-X-Received: by 2002:a63:6781:: with SMTP id b123-v6mr858939pgc.151.1537833871184;
-        Mon, 24 Sep 2018 17:04:31 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c2-v6sm500056pfo.107.2018.09.24.17.04.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 17:04:30 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v2] dt-bindings: pinctrl: qcom-pmic-gpio: Add pms405 support
-Date:   Mon, 24 Sep 2018 17:06:56 -0700
-Message-Id: <20180925000656.23869-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oLF8IV6E6+XPP1dkFE/J+bDR0a8FlenM1TQYZFAO6I4=;
+        b=fH+AVDYTvx4SXbj1JzbFySZRC8PMUrxw8Hj8XRCuaAqbqYz0aLBMTH8QnW6x5cz1XF
+         2XKUqRuBTxbauPaqZDNlqFyTMH4/p+RQE7sSEwfaAx8FyP+ah80KU1Vm8X7cVQwJE3Xt
+         /bNw0TMZymbQDgWTTV2iSkDcR4KDnYglUc6S6X6xokqM7aXEemii5Ol2E0nckCG52tfR
+         VmNU9lIUWTA1qBLwg8HwkZVvHebz/IG5G/TQBEeN2G2jWbXsVkh+HYSlJpsAfrrfteIE
+         rLVYyodUyYux1McD8tdc93qet00PiOu244nuxjneItAvaxGkfFMXvkK6RQ0r1vw5uL/S
+         mpCg==
+X-Gm-Message-State: ABuFfoj8ls8Q63cJnNmVWimkho33kAxY6bn4IkorVBxXIdtiy8hGob6o
+        x70rGi88kiv7rzxgtgCI8DVeX5GgUR3i/cVYJmE=
+X-Google-Smtp-Source: ACcGV62mFGbGFXTPWJpku3PojdoSKIG3B0wMcNXHiO8tQmNDhyUzjlAgT0kgLjlfY8pDsESylAlqWU0l4NFW4WzwZ7o=
+X-Received: by 2002:a81:3887:: with SMTP id f129-v6mr606095ywa.46.1537834172145;
+ Mon, 24 Sep 2018 17:09:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180912035352.11191-1-diego.viola@gmail.com> <CA+ToGPGSOsLpbOvjjb22B510qkNefdsUSiFTYON7c=oh0s8vcA@mail.gmail.com>
+ <CANiq72m_X1U+NVf1VQuUcCi9-dERrCG3Y3tueRGbOpPd5u+a0g@mail.gmail.com> <CAFLxGvxZmuXb6KbGggQf4y1_Tkv=Ri3PuE4Jnfwbs1VuA9z2QQ@mail.gmail.com>
+In-Reply-To: <CAFLxGvxZmuXb6KbGggQf4y1_Tkv=Ri3PuE4Jnfwbs1VuA9z2QQ@mail.gmail.com>
+From:   Diego Viola <diego.viola@gmail.com>
+Date:   Mon, 24 Sep 2018 21:09:20 -0300
+Message-ID: <CA+ToGPG-z0GOka6EMruqTto64cpCZaSaTwA3A97-vgN9OKFSJg@mail.gmail.com>
+Subject: Re: [PATCH TRIVIAL] Punctuation fixes
+To:     richard.weinberger@gmail.com
+Cc:     miguel.ojeda.sandonis@gmail.com, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, trivial@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vinod Koul <vkoul@kernel.org>
+On Sun, Sep 23, 2018 at 5:59 AM Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+>
+> On Sun, Sep 23, 2018 at 3:00 AM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >
+> > Hi Diego,
+> >
+> > A few things, since it looks like this is your first patch.
+>
+> git log...
+>
+> > On Sat, Sep 22, 2018 at 5:56 PM, Diego Viola <diego.viola@gmail.com> wrote:
+> > > On Wed, Sep 12, 2018 at 12:54 AM Diego Viola <diego.viola@gmail.com> wrote:
+> > >>
+> > >> Signed-off-by: Diego Viola <diego.viola@gmail.com>
+> > >> ---
+> > >>  CREDITS     | 2 +-
+> > >>  MAINTAINERS | 2 +-
+> > >>  Makefile    | 2 +-
+> > >>  3 files changed, 3 insertions(+), 3 deletions(-)
+> > >>
+> > >> diff --git a/CREDITS b/CREDITS
+> > >> index 5befd2d71..b82efb36d 100644
+> > >> --- a/CREDITS
+> > >> +++ b/CREDITS
+> > >> @@ -1473,7 +1473,7 @@ W: http://www.linux-ide.org/
+> > >>  W: http://www.linuxdiskcert.org/
+> > >>  D: Random SMP kernel hacker...
+> > >>  D: Uniform Multi-Platform E-IDE driver
+> > >> -D: Active-ATA-Chipset maddness..........
+> > >> +D: Active-ATA-Chipset maddness...
+> >
+> > I think the extra dots is what was intended here :)
+>
+> Diego, I know you can do better. :-)
+> How about running linux-next and hunting down regressions?
+> I think we suggested this already on IRC.
 
-Add support for the PMS405 GPIO support to the Qualcomm PMIC GPIO
-binding.
+OK. I'll do that after I'm done with the documentation.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+>
+> --
+> Thanks,
+> //richard
 
-Changes since v1:
-- Dropped unnecessary driver update
-- Updated subject
-
- Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-index ffd4345415f3..ab4000eab07d 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-@@ -19,6 +19,7 @@ PMIC's from Qualcomm.
- 		    "qcom,pm8998-gpio"
- 		    "qcom,pma8084-gpio"
- 		    "qcom,pmi8994-gpio"
-+		    "qcom,pms405-gpio"
- 
- 		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
- 		    if the device is on an spmi bus or an ssbi bus respectively
-@@ -91,6 +92,7 @@ to specify in a pin configuration subnode:
- 		    gpio1-gpio26 for pm8998
- 		    gpio1-gpio22 for pma8084
- 		    gpio1-gpio10 for pmi8994
-+		    gpio1-gpio11 for pms405
- 
- - function:
- 	Usage: required
--- 
-2.18.0
-
+Thanks,
+Diego
