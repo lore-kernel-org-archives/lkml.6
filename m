@@ -2,111 +2,107 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1621DC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31916C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BC220877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:27:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BC220877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id C1BCB2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:29:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cS7cw5Zy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1BCB2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeIYOdo (ORCPT
+        id S1728179AbeIYOgK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 10:33:44 -0400
-Received: from sauhun.de ([88.99.104.3]:41982 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeIYOdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 10:33:43 -0400
-Received: from localhost (mue-88-130-98-139.dsl.tropolys.de [88.130.98.139])
-        by pokefinder.org (Postfix) with ESMTPSA id D77292C015D;
-        Tue, 25 Sep 2018 10:27:17 +0200 (CEST)
-Date:   Tue, 25 Sep 2018 10:27:17 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-Subject: Re: [RFC PATCH i2c-next 1/2] dt-bindings: i2c: aspeed: Add
- 'idle-wait-timeout-ms' setting
-Message-ID: <20180925082717.GB2270@kunai>
-References: <20180910214519.14126-1-jae.hyun.yoo@linux.intel.com>
- <20180910214519.14126-2-jae.hyun.yoo@linux.intel.com>
- <a81a6092-a9d0-78d5-3596-cddc5d6a0713@linux.intel.com>
- <20180924215850.GD18592@kunai>
- <2c8563fd-0641-5237-0026-f559c480ad91@linux.intel.com>
+        Tue, 25 Sep 2018 10:36:10 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:37754 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeIYOgK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 10:36:10 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8P8TYsg005177;
+        Tue, 25 Sep 2018 03:29:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537864174;
+        bh=/6IyBVzlR42G0qI9cpbwD5bIPz7BxC+PDyWbKInEmXA=;
+        h=From:To:CC:Subject:Date;
+        b=cS7cw5ZycEa7YUv1pNiseO5ShDJELwsCeW9ALo1NLAEJKAysqdNlg4ZkkEHMg1JrE
+         hjccO02NugmzAInLStR4e/XhHpdWq+dgdSjv0V/Ag6hdC1hh0xqROX7twOTtdgw9FL
+         bkZNlfAgPNl5lRxPjp/hufNlu3mVdSSSnEijsZ6E=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P8TYmI007255;
+        Tue, 25 Sep 2018 03:29:34 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 25
+ Sep 2018 03:29:33 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 25 Sep 2018 03:29:33 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P8TU3k006331;
+        Tue, 25 Sep 2018 03:29:31 -0500
+From:   Vignesh R <vigneshr@ti.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
+Subject: [PATCH v5 0/2] pci-dra7xx: Enable errata i870 workaround for RC mode
+Date:   Tue, 25 Sep 2018 14:00:22 +0530
+Message-ID: <20180925083024.6960-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3lcZGd9BuhuYXNfi"
-Content-Disposition: inline
-In-Reply-To: <2c8563fd-0641-5237-0026-f559c480ad91@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Make workaround for errata i870 applicable in Host mode as
+well(previously it was enabled only for EP mode) as per errata
+documentation: http://www.ti.com/lit/er/sprz450/sprz450.pdf
+Driver will continue to work with w/o applying errata in host mode when
+using older DT, to maintain backward compatibility.
 
---3lcZGd9BuhuYXNfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested on DRA72 EVM
 
-On Mon, Sep 24, 2018 at 03:15:46PM -0700, Jae Hyun Yoo wrote:
-> Hi Wolfram,
->=20
-> On 9/24/2018 2:58 PM, Wolfram Sang wrote:
-> > On Tue, Sep 18, 2018 at 11:02:54AM -0700, Jae Hyun Yoo wrote:
-> > > On 9/10/2018 2:45 PM, Jae Hyun Yoo wrote:
-> > > > +- idle-wait-timeout-ms	: bus idle waiting timeout in milliseconds =
-when
-> > > > +			  multi-master is set, defaults to 100 ms when not
-> > > > +			  specified.
-> > >=20
-> > > Will change it to 'aspeed,idle-wait-timeout-ms' as it's a non standard
-> > > property.
-> >=20
-> > No need. This binding is not a HW description, so not a DT property in
-> > my book. I still don't understand: Your IP core in master mode does not
-> > have a BUSY bit or similar which detects when a START was detected and
-> > clears after a STOP?
-> >=20
->=20
-> Okay, I'll keep this property as it is then.
+Changes since v4:
+Fail driver probe if DT binding is absent for EP(as it is in current
+code)
 
-Sorry for the misunderstanding. I don't think this a property, at all.
-It doesn't describe the hardware, it is more of a configuration thing,
-or?
+Changes since v3:
+Rebase onto latest next
+Drop DT patches from this series. They will be sent separately once
+driver changes in this series is merged.
+
+Changes since v2:
+Reorder patch 2 to appear at the last.
+Collect all the ACKs
+
+Changes since v1:
+Drop IRQ handling rework (will be sent out separately)
 
 
---3lcZGd9BuhuYXNfi
-Content-Type: application/pgp-signature; name="signature.asc"
+Vignesh R (2):
+  dt-bindings: PCI: dra7xx: Add bindings for unaligned access in host
+    mode
+  pci: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
 
------BEGIN PGP SIGNATURE-----
+ Documentation/devicetree/bindings/pci/ti-pci.txt |  5 +++++
+ drivers/pci/controller/dwc/pci-dra7xx.c          | 11 ++++++++---
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlup8WUACgkQFA3kzBSg
-KbaCkQ//Sr79g4ksA+VQaClLdgoFcG7zOSuXCbILrhtjICbXU/WDEfPbqtL9IBVM
-cSElb3LZuKX7VtGH4RdXdLjLtoK/uCub8uIoblbz+R614BQOUnLfmeeo0yVdOJeW
-oJtPolSHTd6zrBXKv8sMCF/UBU2msJeHmEzgSEleV6ExaFCD4dI34VBKuFZFLpjz
-6GYan49CkRxLNodatCnTJ4bMYY7SxGtAQC33A6K01FLVnQdLuM+P9XFvMLYOTq96
-oNFQCYdX1c3h4aKLJGN4AInX9zlK75IVotYJwXQwBUiJ+QcajiOv8TfoWkDxibd/
-QPVVCkRqextHRajwPwIFqyKwyKNfkSAmqrwqJ41qZDV40SUVrVnQpGrkWmUEk0G2
-Zho/UfwyAkRYAaUzAjwsbzXOoCZMD10+WCBceajhgYHpUX/OVagrYCuD8BNcQMOq
-w0MUdxk9zjjANGihAIOBagcbOc/rD2lo/g7m2yaTX8sxkvlksHLdMoBBguXlL/RO
-lYOhgwTGTjXXL06bVReKLtmXaDb++QrCxrM1T+X2uL0VUas5MbvwepDq//Zo7VrV
-u18Z7Uvee+8x+O6/hpkBr6i412E/BO/gN9RTtnNEHns1E4DN7cHairHtfV3BBggp
-p0egYeeu0fkSQnigxhL49xaYTUYVPHHGTBcMP7d78LY3IpPkNiU=
-=niVH
------END PGP SIGNATURE-----
+-- 
+2.19.0
 
---3lcZGd9BuhuYXNfi--
