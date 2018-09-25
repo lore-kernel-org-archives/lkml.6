@@ -8,69 +8,67 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F83C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04D1C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D513D2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 693222089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikVarA4e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D513D2086E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyH5kQl0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693222089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeIZARi (ORCPT
+        id S1727478AbeIZARl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:17:38 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37795 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeIZARh (ORCPT
+        Tue, 25 Sep 2018 20:17:41 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34518 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbeIZARj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:17:37 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so24293333wrr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:08:54 -0700 (PDT)
+        Tue, 25 Sep 2018 20:17:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t15so16417205wrx.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:08:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=aL5T5Qh+oA9oOnuNZ5zxuTk7P9cDVFLf0HY33WTeFy0=;
-        b=ikVarA4eJIcV29KoWwcVVYKHU+saFjDeb+Jjoy17lHNYqW6OpFW4WhRK3WWnpqpWIW
-         XPvWWTDno4cDf+keHs6qhWQalwvb3UMZazRPrl88KsU0iYbONyQCYBjvFXbdwvpwFA2w
-         vwIdEPTLUIejSCuJO1P3Q0MD2ZEaVaRhy7B3ujEWAJUE+uk6RaqoLcCn1SzO9nwthVfn
-         wrfrzoPHojlraI80JkdT/56deg4YQG7VCUljuskbuInm2WxfhdEPttyEFO4DYcMPX/SX
-         mKfjC2kWkYfXfwbMQHYY3GxNbmTQDPuI0+wZjnKlL3FtPDRKiftFqVyWi2x2EpFzSp6s
-         mmbg==
+        bh=Qpq8xhJhRVyPIhybIrRVbsiL98w7WDObH988kQk9jIk=;
+        b=lyH5kQl0MtYSQ0e0ZZ+Aw+pOZoJ05xEGN105fykxTjUCsXt905xiZczKKpj0eTnj0i
+         fl8DyIDY6xwMIj7ThYO523uNwUskC4HcfyZL3Qee58dw70MEHj4p+zFM/0PmYIS29kEC
+         78/oUC948cBKaA99QqyEt3QOy7VKw6xWXE1xzeH6zMfuRaYMv5arvoYJJJmwgeloHjCl
+         a/r3Jl4itW9o3modo6t6Ca67XaP47Wzr6AptZ4eq2Vh/w80b8s+UH95r1YkQqGTihTqo
+         VFNUvPhQazUwnd/cAZfTreFSVw9KiJgiK66fdV1oQMhvjP7gyM0gdtHZUslPIFdUzNuj
+         jt2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aL5T5Qh+oA9oOnuNZ5zxuTk7P9cDVFLf0HY33WTeFy0=;
-        b=Qwaj/C4P9WqKeAp+FWEW6o937tl6t2O+NZP4ukCU2aKhFQPNZRINwH/498mrWdXcC8
-         Q3YdkdVx7jz5ug4qFv5v9j84zutQH9Ft9iaOWqTWt6ecOCu3Zs6AvOua5MaughnOj07N
-         l/po/SwFf87EpZpTWAjeuvRT3gGU1PurutFctiqZvb+4Wy4DtwHUxyr8OKMkHf4i+QQH
-         y+PyhKAxzlHNSTO+FS2yoG+NcDEs04M713mocCJhVKqVD7FhTj2b28uIZ5dGgR6q+t5G
-         a+4oi0Fzs1RXQFkBiFbyaRhm4t/Pc0VFn1Rp+wiyZpJQsirdYolFciQJfArMTh+iqbZh
-         erog==
-X-Gm-Message-State: ABuFfohYnu9QyehFffvXE/2WQrHtTBSa2eQ7Nk6Ljw7fQZpSZu9b6ESz
-        hgdIaqw8SV0ayNuytAafoR8=
-X-Google-Smtp-Source: ACcGV61O0Ko6JP0N3FE8Wa+75Rdo37r87nrfq17PpgBScoOQ0+aBhHeXjl8G19n9HOdHENsYec+ytQ==
-X-Received: by 2002:adf:ac4a:: with SMTP id v68-v6mr1915078wrc.165.1537898933774;
-        Tue, 25 Sep 2018 11:08:53 -0700 (PDT)
+        bh=Qpq8xhJhRVyPIhybIrRVbsiL98w7WDObH988kQk9jIk=;
+        b=uWSyfUDeotQTmmyZPSapfU/9UUQAPz2c2Yr/m+Y7y4P9odXvPd0mv8Xmr+TBdS/kJV
+         31IX48Oz9lz9rcMXiEhAEbXJOQGgGiX+asVkSZbUhhratmvn0jpNWAprTdLEMxS0cCbM
+         SEBsrxbqWjKv6Y5qkGl7jIWFKF5Z1lhPAnXdxL29nKjVUa2uIOURaMBXSD3zF3Zlr5mP
+         P30wsKYpYwVmhJkPKeKbJLDaDCYlQBD0SNZVRyqD9OrT1uZt5iswZ74m9TH8Ohx7c571
+         6p9RKABEpS7+El0ZLXAO3PHBKKfV11WCYxBaJaAZHMG2tXxIZjyPTLuOuLBH+qhxRqlo
+         69HQ==
+X-Gm-Message-State: ABuFfoibqFOUO0XcVNfVTxW1/AIbvg6ylVXoRhovy3/M+Tj2ISZONNbs
+        kepdcBOVqvmIJ32uzCQrsC0=
+X-Google-Smtp-Source: ACcGV60Nm85mSWG4aFlMQvgbwX8t5k+k0mnEmFmvSAP6BqtZK1gAkzpqSKHfCHw0nuP/X9CwgD9NqA==
+X-Received: by 2002:adf:ac13:: with SMTP id v19-v6mr2077035wrc.135.1537898935836;
+        Tue, 25 Sep 2018 11:08:55 -0700 (PDT)
 Received: from laptop.localdomain ([37.122.159.87])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm2755827wro.66.2018.09.25.11.08.52
+        by smtp.gmail.com with ESMTPSA id v6-v6sm2755827wro.66.2018.09.25.11.08.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 11:08:53 -0700 (PDT)
+        Tue, 25 Sep 2018 11:08:55 -0700 (PDT)
 From:   Yasha Cherikovsky <yasha.che3@gmail.com>
 To:     Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
         James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
 Cc:     Yasha Cherikovsky <yasha.che3@gmail.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] MIPS: BMIPS: Remove special handling of CONFIG_MIPS_ELF_APPENDED_DTB=y
-Date:   Tue, 25 Sep 2018 21:08:24 +0300
-Message-Id: <20180925180825.24659-4-yasha.che3@gmail.com>
+Subject: [PATCH 4/4] MIPS: Octeon: Remove special handling of CONFIG_MIPS_ELF_APPENDED_DTB=y
+Date:   Tue, 25 Sep 2018 21:08:25 +0300
+Message-Id: <20180925180825.24659-5-yasha.che3@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180925180825.24659-1-yasha.che3@gmail.com>
 References: <20180925180825.24659-1-yasha.che3@gmail.com>
@@ -83,48 +81,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The ELF appended dtb can be accessed now via 'fw_passed_dtb'.
 
+Since raw appended dtb is accessed via that variable too,
+this now effectively allows to boot with CONFIG_MIPS_RAW_APPENDED_DTB=y
+on Octeon.
+
 Signed-off-by: Yasha Cherikovsky <yasha.che3@gmail.com>
-Cc: Kevin Cernekee <cernekee@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: Paul Burton <paul.burton@mips.com>
 Cc: James Hogan <jhogan@kernel.org>
 Cc: linux-mips@linux-mips.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/mips/bmips/setup.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/mips/cavium-octeon/setup.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/arch/mips/bmips/setup.c b/arch/mips/bmips/setup.c
-index 3b6f687f177c..b71b6eaaf7ed 100644
---- a/arch/mips/bmips/setup.c
-+++ b/arch/mips/bmips/setup.c
-@@ -153,8 +153,6 @@ void __init plat_time_init(void)
- 	mips_hpt_frequency = freq;
- }
+diff --git a/arch/mips/cavium-octeon/setup.c b/arch/mips/cavium-octeon/setup.c
+index a8034d0dcade..3c26054ce72b 100644
+--- a/arch/mips/cavium-octeon/setup.c
++++ b/arch/mips/cavium-octeon/setup.c
+@@ -1156,7 +1156,6 @@ void __init prom_free_prom_memory(void)
+ void __init octeon_fill_mac_addresses(void);
+ int octeon_prune_device_tree(void);
  
 -extern const char __appended_dtb;
--
- void __init plat_mem_setup(void)
- {
- 	void *dtb;
-@@ -164,15 +162,10 @@ void __init plat_mem_setup(void)
- 	ioport_resource.start = 0;
- 	ioport_resource.end = ~0;
+ extern const char __dtb_octeon_3xxx_begin;
+ extern const char __dtb_octeon_68xx_begin;
+ void __init device_tree_init(void)
+@@ -1165,15 +1164,12 @@ void __init device_tree_init(void)
+ 	bool do_prune;
+ 	bool fill_mac;
  
 -#ifdef CONFIG_MIPS_ELF_APPENDED_DTB
--	if (!fdt_check_header(&__appended_dtb))
--		dtb = (void *)&__appended_dtb;
--	else
+-	if (!fdt_check_header(&__appended_dtb)) {
+-		fdt = &__appended_dtb;
++	if (fw_passed_dtb) {
++		fdt = (void *)fw_passed_dtb;
+ 		do_prune = false;
+ 		fill_mac = true;
+ 		pr_info("Using appended Device Tree.\n");
+-	} else
 -#endif
- 	/* intended to somewhat resemble ARM; see Documentation/arm/Booting */
- 	if (fw_arg0 == 0 && fw_arg1 == 0xffffffff)
- 		dtb = phys_to_virt(fw_arg2);
--	else if (fw_passed_dtb) /* UHI interface */
-+	else if (fw_passed_dtb) /* UHI interface or appended dtb */
- 		dtb = (void *)fw_passed_dtb;
- 	else if (__dtb_start != __dtb_end)
- 		dtb = (void *)__dtb_start;
+-	if (octeon_bootinfo->minor_version >= 3 && octeon_bootinfo->fdt_addr) {
++	} else if (octeon_bootinfo->minor_version >= 3 && octeon_bootinfo->fdt_addr) {
+ 		fdt = phys_to_virt(octeon_bootinfo->fdt_addr);
+ 		if (fdt_check_header(fdt))
+ 			panic("Corrupt Device Tree passed to kernel.");
 -- 
 2.19.0
 
