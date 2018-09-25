@@ -2,110 +2,79 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DB7C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7D1C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E426520842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6F9C20867
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:09:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qYT76LlB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E426520842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="LZh8zu9t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F9C20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbeIYSPo (ORCPT
+        id S1728945AbeIYSQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:15:44 -0400
-Received: from mail-lf1-f48.google.com ([209.85.167.48]:43776 "EHLO
-        mail-lf1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeIYSPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:15:43 -0400
-Received: by mail-lf1-f48.google.com with SMTP id x24-v6so19708628lfe.10;
-        Tue, 25 Sep 2018 05:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qHmwP76R7myhqAdEdkmS3brN1G7dccRe2uvlgFsyW3E=;
-        b=qYT76LlBZCcv1a4r88VF0s/avGS+1EI4jZrCDvsRVuqRn49j2Z2cXEUz2gP4xhr/XO
-         wYdBrjc9SMFJPLM4yyYVlreYkl/L7Ik6dpflzUFR8W1639QhDRHMj+d26Ln7zXw/peJ/
-         k5mRJqEtUHxR27DGvOwty+5LDazoF+nPNhB3+3Z/BGOx+76p30lCtmpnHQqNHDvRkBBM
-         PKtxPIcW0BT0ZSBdcsAp3MVacbDcm1Pfvk/mu7+nMjxXxuNo3a0gGDW0fO7vOHaroxaT
-         8oVmy46pmYp8FzhbE7kIMX62PLUgKVRgTFbVCkjG9/WCYu3nC3pmSmnHt/QIpD33IEID
-         XAOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qHmwP76R7myhqAdEdkmS3brN1G7dccRe2uvlgFsyW3E=;
-        b=t4YJ9BGpAE9zR/zCwWDHzuW4zqEbGWqDEakXkRBWtDjzTOMUAWonCizTCPVuX5r9GW
-         Exd3n7z1+V3YZu/fVFeUGHAiTlYs085lm/ZmSlk0r4WSQzEBp/+dTi/rgiGla9GQ6/ZP
-         W0ifTouCmfDDX+/c7DNcbzjYFy7X+CTV7VAcZyp2lBHPzCjuWMLlum1KzUTFQQ+UNVJt
-         phgBfNP2+2+bxHkgmNX+EOTuGbrFdl+m5YlRIsKkCtM83lAUEjQgQWwxZX6szeXmsbsu
-         RA+oXnNNyGdmKllvKJdRnLxslT6IpJPq8APs7LqkTMeEPHMZGi5CcXATPK7O+/6/lO8/
-         ig2g==
-X-Gm-Message-State: ABuFfognlgfE25pGA63901ggcf5PeHEaDcAmt90GJ7g7/NXPfvB1DUUK
-        88Dx0XF4umLTZIzpr+KCaCk=
-X-Google-Smtp-Source: ACcGV62fHJpdYKHG9P3vSKQFWR6NKGYx7//u17Bot0cLd1nXPjlJu9GeLu3arwzdtaE6oETmU36Gxw==
-X-Received: by 2002:a19:124b:: with SMTP id h72-v6mr597346lfi.72.1537877307408;
-        Tue, 25 Sep 2018 05:08:27 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id h27-v6sm397097lfl.31.2018.09.25.05.08.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 05:08:26 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g4m8f-0005uJ-DF; Tue, 25 Sep 2018 14:08:26 +0200
-Date:   Tue, 25 Sep 2018 14:08:25 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Karoly Pados <pados@pados.hu>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: Re: [PATCH v6] USB: serial: ftdi_sio: implement GPIO support for
- FT-X devices
-Message-ID: <20180925120825.GF3332@localhost>
-References: <20180925110021.GE3332@localhost>
- <20180925100635.GC3332@localhost>
- <20180924143151.2273-1-pados@pados.hu>
- <e4a12a0856d083eed0994ab888bc8869@pados.hu>
- <6fdea2db02ece8c7b51fb03a112fa4c0@pados.hu>
+        Tue, 25 Sep 2018 14:16:50 -0400
+Received: from 8bytes.org ([81.169.241.247]:35060 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbeIYSQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:16:50 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id C845A6FB; Tue, 25 Sep 2018 14:09:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1537877374; bh=Sj2ms+oXr8R8dkF/icXlsxjb66JPSvWIqTRGXHOjUdA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LZh8zu9tCWiyJeRlCMXMTS5WNOrPBViqV7mfk+TdYjqGjb2jlk16XKi4DFpqhcr3o
+         4T9tULFJoCrAw/CunVYsYy6Wv4SXyKzLV09A09GLju0+fbhdBRtx+HKRj6CHMC9NGI
+         Ur1Mr8uxL42Dh25ncobBm1B/9fWpRN309/5Ll5MXemb2iHIMdd8hHrxGGsAS+oK2Uw
+         DYQ06J16O+fcF/fetBeVE1LhVqU7Wk7Hagl99FGr8QDr8qeOncWjwyMoH7rS0opyBK
+         TUlhYa00JbXhkoe14i0ulBRnYrqPgUs4fKhKcm6mZoy+zblb6A8VrqMXgH1ckTH59o
+         MDfRtC6jVkYyg==
+Date:   Tue, 25 Sep 2018 14:09:34 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     andy.gross@linaro.org, will.deacon@arm.com, robin.murphy@arm.com,
+        bjorn.andersson@linaro.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, david.brown@linaro.org,
+        tfiga@chromium.org, swboyd@chromium.org,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com
+Subject: Re: [PATCH v2 0/4] Qcom smmu-500 TLB invalidation errata for sdm845
+Message-ID: <20180925120933.54xd72sv65d63tkl@8bytes.org>
+References: <20180910062551.28175-1-vivek.gautam@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6fdea2db02ece8c7b51fb03a112fa4c0@pados.hu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180910062551.28175-1-vivek.gautam@codeaurora.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:11:03AM +0000, Karoly Pados wrote:
-> >> + if (priv->gpio_output & BIT(gpio))
-> >> + return 0;
-> >> + else
-> >> + return 1;
-> >> 
-> >> This could just simplified using negation (!), but perhaps this is
-> >> easier to parse as it stands.
-> >> 
-> >> Sorry, it is not clear what your preferred action here is.
-> >> So should I leave it as is then or not?
-> > 
-> > Just do
-> > 
-> > res = !(priv->gpio_output & BIT(gpio));
-> > 
+On Mon, Sep 10, 2018 at 11:55:47AM +0530, Vivek Gautam wrote:
+> Vivek Gautam (4):
+>   firmware: qcom_scm-64: Add atomic version of qcom_scm_call
+>   firmware/qcom_scm: Add atomic version of io read/write APIs
+>   firmware/qcom_scm: Add scm call to handle smmu errata
+>   iommu/arm-smmu: Add support to handle Qcom's TLBI serialization errata
 > 
-> Locking here? priv->gpio_output is a u8, there is no way it can be partially
-> written. Or am I missing something else?
+>  drivers/firmware/qcom_scm-32.c |  17 ++++
+>  drivers/firmware/qcom_scm-64.c | 181 +++++++++++++++++++++++++++++++----------
+>  drivers/firmware/qcom_scm.c    |  18 ++++
+>  drivers/firmware/qcom_scm.h    |   9 ++
+>  drivers/iommu/arm-smmu-regs.h  |   2 +
+>  drivers/iommu/arm-smmu.c       | 133 +++++++++++++++++++++++++++++-
+>  include/linux/qcom_scm.h       |   6 ++
+>  7 files changed, 320 insertions(+), 46 deletions(-)
 
-No, you're right, no locking is needed.
+Should this go through the iommu-tree? In that case I need Acked-by's
+for the firmware code changes.
 
-Johan
+Regards,
+
+	Joerg
