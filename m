@@ -2,262 +2,75 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B26EC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792D0C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA58221508
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:24:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA58221508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B9E6214DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:17:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9E6214DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=BitWizard.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730082AbeIYWct (ORCPT
+        id S1729620AbeIYWZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:32:49 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:42704 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729653AbeIYWbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:31:08 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g4q6p-0002fN-OK; Tue, 25 Sep 2018 10:22:52 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g4q6d-00019Z-3W; Tue, 25 Sep 2018 10:22:35 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Tue, 25 Sep 2018 10:22:27 -0600
-Message-Id: <20180925162231.4354-10-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180925162231.4354-1-logang@deltatee.com>
-References: <20180925162231.4354-1-logang@deltatee.com>
+        Tue, 25 Sep 2018 18:25:45 -0400
+Received: from cust-95-128-94-82.breedbanddelft.nl ([95.128.94.82]:44170 "EHLO
+        cust-95-128-94-82.breedbanddelft.nl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728587AbeIYWZp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:25:45 -0400
+Received: by abra2.bitwizard.nl (Postfix, from userid 1000)
+        id CB05513F64C; Tue, 25 Sep 2018 18:17:30 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 18:17:30 +0200
+From:   Rogier Wolff <R.E.Wolff@BitWizard.nl>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jeff Layton <jlayton@redhat.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: POSIX violation by writeback error
+Message-ID: <20180925161730.GA32709@BitWizard.nl>
+References: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
+ <486f6105fd4076c1af67dae7fdfe6826019f7ff4.camel@redhat.com>
+ <20180925003044.239531c7@alans-desktop>
+ <0662a4c5d2e164d651a6a116d06da380f317100f.camel@redhat.com>
+ <20180925154627.GC2933@thunk.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v7 09/13] nvme-pci: Use PCI p2pmem subsystem to manage the CMB
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925154627.GC2933@thunk.org>
+Organization: BitWizard B.V.
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register the CMB buffer as p2pmem and use the appropriate allocation
-functions to create and destroy the IO submission queues.
+On Tue, Sep 25, 2018 at 11:46:27AM -0400, Theodore Y. Ts'o wrote:
+> (Especially since you can get most of the functionality by
+> using some naming convention for files that in the process of being
+> written, and then teach some program that is regularly scanning the
+> entire file system, such as updatedb(2) to nuke the files from a cron
+> job.  It won't be as efficient, but it would be much easier to
+> implement.)
 
-If the CMB supports WDS and RDS, publish it for use as P2P memory
-by other devices.
+It is MUCH easier to have a per-application cleanup job. You can run
+that at boot-time. 
 
-Kernels without CONFIG_PCI_P2PDMA will also no longer support NVMe CMB.
-However, seeing the main use-cases for the CMB is P2P operations,
-this seems like a reasonable dependency.
+  #/etc/init.d/myname startup script
+  rm /var/run/myname/unfinished.*
 
-We drop the __iomem safety on the buffer seeing that, by convention, it's
-safe to directly access memory mapped by memremap()/devm_memremap_pages().
-Architectures where this is not safe will not be supported by memremap()
-and therefore will not be support PCI P2P and have no support for CMB.
+Simple things should be kept simple.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/nvme/host/pci.c | 80 +++++++++++++++++++++++------------------
- 1 file changed, 45 insertions(+), 35 deletions(-)
+	Roger. 
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index d668682f91df..f434706a04e8 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -30,6 +30,7 @@
- #include <linux/types.h>
- #include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/sed-opal.h>
-+#include <linux/pci-p2pdma.h>
- 
- #include "nvme.h"
- 
-@@ -99,9 +100,8 @@ struct nvme_dev {
- 	struct work_struct remove_work;
- 	struct mutex shutdown_lock;
- 	bool subsystem;
--	void __iomem *cmb;
--	pci_bus_addr_t cmb_bus_addr;
- 	u64 cmb_size;
-+	bool cmb_use_sqes;
- 	u32 cmbsz;
- 	u32 cmbloc;
- 	struct nvme_ctrl ctrl;
-@@ -158,7 +158,7 @@ struct nvme_queue {
- 	struct nvme_dev *dev;
- 	spinlock_t sq_lock;
- 	struct nvme_command *sq_cmds;
--	struct nvme_command __iomem *sq_cmds_io;
-+	bool sq_cmds_is_io;
- 	spinlock_t cq_lock ____cacheline_aligned_in_smp;
- 	volatile struct nvme_completion *cqes;
- 	struct blk_mq_tags **tags;
-@@ -447,11 +447,8 @@ static int nvme_pci_map_queues(struct blk_mq_tag_set *set)
- static void nvme_submit_cmd(struct nvme_queue *nvmeq, struct nvme_command *cmd)
- {
- 	spin_lock(&nvmeq->sq_lock);
--	if (nvmeq->sq_cmds_io)
--		memcpy_toio(&nvmeq->sq_cmds_io[nvmeq->sq_tail], cmd,
--				sizeof(*cmd));
--	else
--		memcpy(&nvmeq->sq_cmds[nvmeq->sq_tail], cmd, sizeof(*cmd));
-+
-+	memcpy(&nvmeq->sq_cmds[nvmeq->sq_tail], cmd, sizeof(*cmd));
- 
- 	if (++nvmeq->sq_tail == nvmeq->q_depth)
- 		nvmeq->sq_tail = 0;
-@@ -1232,9 +1229,18 @@ static void nvme_free_queue(struct nvme_queue *nvmeq)
- {
- 	dma_free_coherent(nvmeq->q_dmadev, CQ_SIZE(nvmeq->q_depth),
- 				(void *)nvmeq->cqes, nvmeq->cq_dma_addr);
--	if (nvmeq->sq_cmds)
--		dma_free_coherent(nvmeq->q_dmadev, SQ_SIZE(nvmeq->q_depth),
--					nvmeq->sq_cmds, nvmeq->sq_dma_addr);
-+
-+	if (nvmeq->sq_cmds) {
-+		if (nvmeq->sq_cmds_is_io)
-+			pci_free_p2pmem(to_pci_dev(nvmeq->q_dmadev),
-+					nvmeq->sq_cmds,
-+					SQ_SIZE(nvmeq->q_depth));
-+		else
-+			dma_free_coherent(nvmeq->q_dmadev,
-+					  SQ_SIZE(nvmeq->q_depth),
-+					  nvmeq->sq_cmds,
-+					  nvmeq->sq_dma_addr);
-+	}
- }
- 
- static void nvme_free_queues(struct nvme_dev *dev, int lowest)
-@@ -1323,12 +1329,21 @@ static int nvme_cmb_qdepth(struct nvme_dev *dev, int nr_io_queues,
- static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
- 				int qid, int depth)
- {
--	/* CMB SQEs will be mapped before creation */
--	if (qid && dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS))
--		return 0;
-+	struct pci_dev *pdev = to_pci_dev(dev->dev);
-+
-+	if (qid && dev->cmb_use_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
-+		nvmeq->sq_cmds = pci_alloc_p2pmem(pdev, SQ_SIZE(depth));
-+		nvmeq->sq_dma_addr = pci_p2pmem_virt_to_bus(pdev,
-+						nvmeq->sq_cmds);
-+		nvmeq->sq_cmds_is_io = true;
-+	}
-+
-+	if (!nvmeq->sq_cmds) {
-+		nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
-+					&nvmeq->sq_dma_addr, GFP_KERNEL);
-+		nvmeq->sq_cmds_is_io = false;
-+	}
- 
--	nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
--					    &nvmeq->sq_dma_addr, GFP_KERNEL);
- 	if (!nvmeq->sq_cmds)
- 		return -ENOMEM;
- 	return 0;
-@@ -1405,13 +1420,6 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
- 	int result;
- 	s16 vector;
- 
--	if (dev->cmb && use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
--		unsigned offset = (qid - 1) * roundup(SQ_SIZE(nvmeq->q_depth),
--						      dev->ctrl.page_size);
--		nvmeq->sq_dma_addr = dev->cmb_bus_addr + offset;
--		nvmeq->sq_cmds_io = dev->cmb + offset;
--	}
--
- 	/*
- 	 * A queue's vector matches the queue identifier unless the controller
- 	 * has only one vector available.
-@@ -1652,9 +1660,6 @@ static void nvme_map_cmb(struct nvme_dev *dev)
- 		return;
- 	dev->cmbloc = readl(dev->bar + NVME_REG_CMBLOC);
- 
--	if (!use_cmb_sqes)
--		return;
--
- 	size = nvme_cmb_size_unit(dev) * nvme_cmb_size(dev);
- 	offset = nvme_cmb_size_unit(dev) * NVME_CMB_OFST(dev->cmbloc);
- 	bar = NVME_CMB_BIR(dev->cmbloc);
-@@ -1671,11 +1676,18 @@ static void nvme_map_cmb(struct nvme_dev *dev)
- 	if (size > bar_size - offset)
- 		size = bar_size - offset;
- 
--	dev->cmb = ioremap_wc(pci_resource_start(pdev, bar) + offset, size);
--	if (!dev->cmb)
-+	if (pci_p2pdma_add_resource(pdev, bar, size, offset)) {
-+		dev_warn(dev->ctrl.device,
-+			 "failed to register the CMB\n");
- 		return;
--	dev->cmb_bus_addr = pci_bus_address(pdev, bar) + offset;
-+	}
-+
- 	dev->cmb_size = size;
-+	dev->cmb_use_sqes = use_cmb_sqes && (dev->cmbsz & NVME_CMBSZ_SQS);
-+
-+	if ((dev->cmbsz & (NVME_CMBSZ_WDS | NVME_CMBSZ_RDS)) ==
-+			(NVME_CMBSZ_WDS | NVME_CMBSZ_RDS))
-+		pci_p2pmem_publish(pdev, true);
- 
- 	if (sysfs_add_file_to_group(&dev->ctrl.device->kobj,
- 				    &dev_attr_cmb.attr, NULL))
-@@ -1685,12 +1697,10 @@ static void nvme_map_cmb(struct nvme_dev *dev)
- 
- static inline void nvme_release_cmb(struct nvme_dev *dev)
- {
--	if (dev->cmb) {
--		iounmap(dev->cmb);
--		dev->cmb = NULL;
-+	if (dev->cmb_size) {
- 		sysfs_remove_file_from_group(&dev->ctrl.device->kobj,
- 					     &dev_attr_cmb.attr, NULL);
--		dev->cmbsz = 0;
-+		dev->cmb_size = 0;
- 	}
- }
- 
-@@ -1889,13 +1899,13 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
- 	if (nr_io_queues == 0)
- 		return 0;
- 
--	if (dev->cmb && (dev->cmbsz & NVME_CMBSZ_SQS)) {
-+	if (dev->cmb_use_sqes) {
- 		result = nvme_cmb_qdepth(dev, nr_io_queues,
- 				sizeof(struct nvme_command));
- 		if (result > 0)
- 			dev->q_depth = result;
- 		else
--			nvme_release_cmb(dev);
-+			dev->cmb_use_sqes = false;
- 	}
- 
- 	do {
 -- 
-2.19.0
-
+** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 **
+**    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    **
+*-- BitWizard writes Linux device drivers for any device you may have! --*
+The plan was simple, like my brother-in-law Phil. But unlike
+Phil, this plan just might work.
