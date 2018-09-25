@@ -2,150 +2,150 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0843FC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0FFC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55472145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:37:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A55472145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 94C862145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:37:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DkeGWQpY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94C862145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeIYImf (ORCPT
+        id S1727492AbeIYIml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 04:42:35 -0400
-Received: from mga04.intel.com ([192.55.52.120]:10762 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbeIYImf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 04:42:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 19:37:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,300,1534834800"; 
-   d="scan'208";a="82991990"
-Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Sep 2018 19:37:09 -0700
-Date:   Tue, 25 Sep 2018 10:37:09 +0800
-From:   Aaron Lu <aaron.lu@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Yosef Lev <levyossi@icloud.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>
-Subject: Re: [RFC PATCH 0/9] Improve zone lock scalability using Daniel
- Jordan's list work
-Message-ID: <20180925023709.GA28604@intel.com>
-References: <20180911053616.6894-1-aaron.lu@intel.com>
- <20180921174536.7igaoi36rg76auy4@ca-dmjordan1.us.oracle.com>
+        Tue, 25 Sep 2018 04:42:41 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54964 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727553AbeIYIml (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 04:42:41 -0400
+Received: by mail-it1-f196.google.com with SMTP id f14-v6so13488118ita.4
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 19:37:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AHhrvvNc/RfF5pSjanDkAuxnYYOE+43+QLbLkE8JM10=;
+        b=DkeGWQpYMUlglFqgv6iYokVVa3BIj1g/+louEr1YZUtD03VLUUrSoEq6ycbtsjds6s
+         RkCJr8AHjN2g+2d3GB9M7GltlnbAqLk6SoHz0qgnCFjCdOeiRTUSNc8PYe0Pg3quaJm9
+         YfouRzqcwl32zOiALUiQx+0zPXxUWvlCHZbm+zFFNYTt5FvYdYd4vqMDJr3FFqX9783o
+         1f80FvAQ2+/Z/jVmCRfueyGOZSOkaag2AgXN99ax8CoCfxSPsxjWPZOo1VvFTI7y9Jox
+         6GpkMB4JnBEjVZoH9oAllIxQyYZGkmJGCJeqALL2EPnZ5sn+iyNfFREXrb/BUMifobFI
+         dV5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AHhrvvNc/RfF5pSjanDkAuxnYYOE+43+QLbLkE8JM10=;
+        b=mL5+IkirKqu7z/3W5tctiELjk1b6YSmJ5NKkZSRWAGpCoV1b/mn6ag/E4AtxeZRH+o
+         u/RqfFRwMdex5w4SMsuwCuDLVqv+PWnkAmaciqFMQKXs1EEUwHop0+friv5DrVLGa1I0
+         tsKAuRb6XO0QVRX+EjS2CkgBwKPeWne7t2xKHTVbS/WwTZ7BfxEG+AfOTd6TTXZxJoAv
+         I+18i5JG2wZJaLwMf0cZtjXYU8uehkRwsp72FksE3ukh82WISBpkqZIQ65dRi6mQf4ga
+         wI0KeubPm/x6ldtnkX8H3cZCLEMs1GVn3hgnvMAgmd0MjXp5l61/rDnAWLESWgz3SNCA
+         y7Uw==
+X-Gm-Message-State: ABuFfoiFlWXhUWAnlzibsV1OmL4Gx6nq/3xB7XYPmw420Uy5towRwuPq
+        TN1293592iowVT3HZEPqlpE0sQ==
+X-Google-Smtp-Source: ACcGV63jfDPM+9huJwLnlWvKn4+nY9/kjtdRp4HLRHJI3l3/CVb6tvShtlk478d9YguIfm2hPzalAQ==
+X-Received: by 2002:a02:4142:: with SMTP id x63-v6mr1578680jaa.55.1537843044537;
+        Mon, 24 Sep 2018 19:37:24 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm2351868ith.4.2018.09.24.19.37.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 19:37:23 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g4dE2-0000A1-Ax; Mon, 24 Sep 2018 20:37:22 -0600
+Date:   Mon, 24 Sep 2018 20:37:22 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>, dledford@redhat.com,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+Message-ID: <20180925023722.GA32600@ziepe.ca>
+References: <20180924195716.30848-1-natechancellor@gmail.com>
+ <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
+ <20180924222737.GA26973@flashbox>
+ <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180921174536.7igaoi36rg76auy4@ca-dmjordan1.us.oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 10:45:36AM -0700, Daniel Jordan wrote:
-> On Tue, Sep 11, 2018 at 01:36:07PM +0800, Aaron Lu wrote:
-> > Daniel Jordan and others proposed an innovative technique to make
-> > multiple threads concurrently use list_del() at any position of the
-> > list and list_add() at head position of the list without taking a lock
-> > in this year's MM summit[0].
-> > 
-> > People think this technique may be useful to improve zone lock
-> > scalability so here is my try.
+On Mon, Sep 24, 2018 at 03:29:38PM -0700, Nick Desaulniers wrote:
+> On Mon, Sep 24, 2018 at 3:27 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > On Mon, Sep 24, 2018 at 03:24:36PM -0700, Nick Desaulniers wrote:
+> > > On Mon, Sep 24, 2018 at 12:57 PM Nathan Chancellor
+> > > <natechancellor@gmail.com> wrote:
+> > > >
+> > > > Clang warns when one enumerated type is implicitly converted to another.
+> > > >
+> > > > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+> > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+> > > >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
+> > > >
+> > > > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+> > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+> > > >                                                     ~ ^~~~~~~~~~~~~~~~~
+> > > >
+> > > > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+> > > > type ib_qp_create_flags. Make that clear to Clang by changing the
+> > > > create_flags type to u32.
+> > > >
+> > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > >  include/rdma/ib_verbs.h | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+> > > > index e463d3007a35..f6f4d9e3c8ed 100644
+> > > > +++ b/include/rdma/ib_verbs.h
+> > > > @@ -1149,7 +1149,7 @@ struct ib_qp_init_attr {
+> > > >         struct ib_qp_cap        cap;
+> > > >         enum ib_sig_type        sq_sig_type;
+> > > >         enum ib_qp_type         qp_type;
+> > > > -       enum ib_qp_create_flags create_flags;
+> > > > +       u32                     create_flags;
+> > >
+> > > I think it might be better to just have explicit casts at the
+> > > assignment.  What do the maintainers think?
+> > >
+> >
+> > That's fine with me, I tend to explicitly cast if it is only one
+> > location but it certainly makes sense in this case as well. I'll
+> > wait for the maintainers to weigh in before sending a v2.
 > 
-> Nice, this uses the smp_list_* functions well in spite of the limitations you
-> encountered with them here.
-> 
-> > Performance wise on 56 cores/112 threads Intel Skylake 2 sockets server
-> > using will-it-scale/page_fault1 process mode(higher is better):
-> > 
-> > kernel        performance      zone lock contention
-> > patch1         9219349         76.99%
-> > patch7         2461133 -73.3%  54.46%(another 34.66% on smp_list_add())
-> > patch8        11712766 +27.0%  68.14%
-> > patch9        11386980 +23.5%  67.18%
-> 
-> Is "zone lock contention" the percentage that readers and writers combined
-> spent waiting?  I'm curious to see read and write wait time broken out, since
-> it seems there are writers (very likely on the allocation side) spoiling the
-> parallelism we get with the read lock.
+> Yeah, I mean my opinion on this might seem arbitrary, but based on the
+> pattern and the comment in ib_qp_create_flags, those enum values are
+> reserved to be "subclassed" in a sense, so they should always be in
+> sync or this code will have bigger problems.
 
-lock contention is combined, read side consumes about 31% while write
-side consumes 35%. Write side definitely is blocking read side.
+One should not use an 'enum' type name for bitfield storage, as once
+you start or'ing things together the values no longer fall on the
+enum. Some compilers and tools even give warnings in this case, ie
 
-I also tried not taking lock in read mode on free path to avoid free
-path blocking on allocation path, but that caused other unplesant
-consequences for allocation path, namely the free_list head->next can
-be NULL when allocating pages due to free path can be adding pages to
-the list using smp_list_add/splice so I had to use free_list head->prev
-instead to fetch pages on allocation path. Also, the fetched page can be
-merged in the mean time on free path so need to confirm if it is really
-usable, etc. This complicated allocation path and didn't deliver good
-results so I gave up this idea.
+   enum x foo = X_A | X_B;
 
-> If the contention is from allocation, I wonder whether it's feasible to make
-> that path use SMP list functions.  Something like smp_list_cut_position
-> combined with using page clusters from [*] to cut off a chunk of list.  Many
-> details to keep in mind there, though, like having to unset PageBuddy in that
-> list chunk when other tasks can be concurrently merging pages that are part of
-> it.
+Is an assignment from 'int' to an 'enum x' with an implicit cast.
 
-As you put here, the PageBuddy flag is a problem. If I cut off a batch
-of pages from free_list and then dropping the lock, these pages will
-have PageBuddy flag set and free path can attempt a merge with any of
-these pages and cause problems.
+For this reason, usually bitfield enum declarations should be
+anonymous.
 
-PageBuddy flag can not be cleared with lock held since that would
-require accessing 'struct page's for these pages and it is the most time
-consuming part among all operations that happened on allocation path
-under zone lock.
-
-This is doable in your referenced no_merge+cluster_alloc approach because
-we skipped merge most of the time. And when merge really needs to
-happen like in compaction, cluser_alloc will be disabled.
-
-> Or maybe what's needed is a more scalable data structure than an array of
-> lists, since contention on the heads seems to be the limiting factor.  A simple
-> list that keeps the pages in most-recently-used order (except when adding to
-> the list tail) is good for cache warmth, but I wonder how helpful that is when
-> all CPUs can allocate from the front.  Having multiple places to put pages of a
-> given order/mt would ease the contention.
-
-Agree.
-
-> > Though lock contention reduced a lot for patch7, the performance dropped
-> > considerably due to severe cache bouncing on free list head among
-> > multiple threads doing page free at the same time, because every page free
-> > will need to add the page to the free list head.
-> 
-> Could be beneficial to take an MCS-style approach in smp_list_splice/add so
-> that multiple waiters aren't bouncing the same cacheline around.  This is
-> something I'm planning to try on lru_lock.
-
-That's a good idea.
-If that is done, we can at least parallelise free path and gain
-something by not paying the penalty of cache bouncing on list head.
-
-> 
-> Daniel
-> 
-> [*] https://lkml.kernel.org/r/20180509085450.3524-1-aaron.lu@intel.com
-
-And thanks a lot for the comments!
+Jason
