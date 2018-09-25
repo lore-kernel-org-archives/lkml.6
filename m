@@ -2,121 +2,208 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A054C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5616BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C70206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:04:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nroUKVu0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C70206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 053A620880
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 053A620880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbeIZDNu (ORCPT
+        id S1727192AbeIZDNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 23:13:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41448 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeIZDNu (ORCPT
+        Tue, 25 Sep 2018 23:13:55 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:33063 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeIZDNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 23:13:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UL6vSq6uo7Ub5HHWmuf35DIpSCMpQo4sCDmJqipXjgc=; b=nroUKVu0OHh+1/A8yuXTWEjm6
-        pYtsiivGjypw5uoAOisAOKFBzAOARsC9DijxxsumB/MDUJQJLVIr7o3pBWKMrSTvyISH9Eb9iGew3
-        Iytuyhcnbxa1Lxmt+AEstu95X/5v6HLR67mJcmjjLyC0svic2rvbQH/PD3SD0587W7beDWP4HFIye
-        0qzPwTXtwZuLL3hPCwxGoFW3X9uCdR9LhzZOHTZCQdqmOopxF3TcQM6/0B/xUZ7H+1usuq+gy2F0q
-        rA1dA3LqScKw/kSCR9mIEL8zUtrcJilzh+lCBdkyAbHp6NhW7qartee99yBGgSzw0y9FVWKNn+5gJ
-        EdaFhRd/Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g4uVH-0007rR-3d; Tue, 25 Sep 2018 21:04:19 +0000
-Date:   Tue, 25 Sep 2018 14:04:18 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christopher Lameter <cl@linux.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ming Lei <tom.leiming@gmail.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: Re: block: DMA alignment of IO buffer allocated from slab
-Message-ID: <20180925210418.GA9854@bombadil.infradead.org>
-References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
- <20180920063129.GB12913@lst.de>
- <87h8ij0zot.fsf@vitty.brq.redhat.com>
- <20180921130504.GA22551@lst.de>
- <010001660c54fb65-b9d3a770-6678-40d0-8088-4db20af32280-000000@email.amazonses.com>
- <1f88f59a-2cac-e899-4c2e-402e919b1034@kernel.dk>
- <010001660cbd51ea-56e96208-564d-4f5d-a5fb-119a938762a9-000000@email.amazonses.com>
- <1a5b255f-682e-783a-7f99-9d02e39c4af2@kernel.dk>
- <20180925074910.GB31060@dastard>
+        Tue, 25 Sep 2018 23:13:54 -0400
+Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g4uVN-0006y6-49 from Steve_Longerbeam@mentor.com ; Tue, 25 Sep 2018 14:04:25 -0700
+Received: from [172.30.1.115] (147.34.91.1) by svr-orw-mbx-02.mgc.mentorg.com
+ (147.34.90.202) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 25 Sep
+ 2018 14:04:22 -0700
+Subject: Re: [PATCH v6 02/17] media: v4l2: async: Allow searching for asd of
+ any type
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>
+CC:     <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+ <1531175957-1973-3-git-send-email-steve_longerbeam@mentor.com>
+ <20180924140604.23e2b56f@coco.lan>
+From:   Steve Longerbeam <steve_longerbeam@mentor.com>
+Message-ID: <a8ea673c-a519-81e8-35b1-9d4a224dcbf5@mentor.com>
+Date:   Tue, 25 Sep 2018 14:04:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925074910.GB31060@dastard>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180924140604.23e2b56f@coco.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) To
+ svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 05:49:10PM +1000, Dave Chinner wrote:
-> On Mon, Sep 24, 2018 at 12:09:37PM -0600, Jens Axboe wrote:
-> > On 9/24/18 12:00 PM, Christopher Lameter wrote:
-> > > On Mon, 24 Sep 2018, Jens Axboe wrote:
-> > > 
-> > >> The situation is making me a little uncomfortable, though. If we export
-> > >> such a setting, we really should be honoring it...
-> 
-> That's what I said up front, but you replied to this with:
-> 
-> | I think this is all crazy talk. We've never done this, [...]
-> 
-> Now I'm not sure what you are saying we should do....
-> 
-> > > Various subsystems create custom slab arrays with their particular
-> > > alignment requirement for these allocations.
-> > 
-> > Oh yeah, I think the solution is basic enough for XFS, for instance.
-> > They just have to error on the side of being cautious, by going full
-> > sector alignment for memory...
-> 
-> How does the filesystem find out about hardware alignment
-> requirements? Isn't probing through the block device to find out
-> about the request queue configurations considered a layering
-> violation?
-> 
-> What if sector alignment is not sufficient?  And how would this work
-> if we start supporting sector sizes larger than page size? (which the
-> XFS buffer cache supports just fine, even if nothing else in
-> Linux does).
+Hi Mauro,
 
-I've never quite understood the O_DIRECT sector size alignment
-restriction.  The sector size has literally nothing to do with the
-limitations of the controller that's doing the DMA.  OK, NVMe smooshes the
-two components into one, but back in the SCSI era, the DMA abilities were
-the HBA's responsibility and the sector size was a property of the LUN!
 
-Heck, with a sufficiently advanced HBA (eg supporting scatterlists with
-bitbuckets), you could even ask for sub-sector-*sized* IOs.  Not terribly
-useful since the bytes still had to be transferred over the SCSI cable,
-but you'd save transferring them across the PCI bus.
+On 09/24/2018 10:06 AM, Mauro Carvalho Chehab wrote:
+> Em Mon,  9 Jul 2018 15:39:02 -0700
+> Steve Longerbeam <slongerbeam@gmail.com> escreveu:
+>
+>> Generalize v4l2_async_notifier_fwnode_has_async_subdev() to allow
+>> searching for any type of async subdev, not just fwnodes. Rename to
+>> v4l2_async_notifier_has_async_subdev() and pass it an asd pointer.
+>>
+>> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+>> ---
+>> Changes since v5:
+>> - none
+>> Changes since v4:
+>> - none
+>> Changes since v3:
+>> - removed TODO to support asd compare with CUSTOM match type in
+>>    asd_equal().
+>> Changes since v2:
+>> - code optimization in asd_equal(), and remove unneeded braces,
+>>    suggested by Sakari Ailus.
+>> Changes since v1:
+>> - none
+>> ---
+>>   drivers/media/v4l2-core/v4l2-async.c | 73 +++++++++++++++++++++---------------
+>>   1 file changed, 43 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+>> index 2b08d03..0e7e529 100644
+>> --- a/drivers/media/v4l2-core/v4l2-async.c
+>> +++ b/drivers/media/v4l2-core/v4l2-async.c
+>> @@ -124,6 +124,31 @@ static struct v4l2_async_subdev *v4l2_async_find_match(
+>>   	return NULL;
+>>   }
+>>   
+>> +/* Compare two asd's for equivalence */
+> Please, on comments, instead of "asd" prefer to use what this 3 random
+> letters mean, e. g.:
+> 	asd -> asynchronous subdevice
 
-Anyway, why would we require *larger* than 512 byte alignment for
-in-kernel users?  I doubt there are any remaining HBAs that can't do
-8-byte aligned I/Os (for the record, NVMe requires controllers to be
-able to do 4-byte aligned I/Os).
+Ok, I will change the comment to read:
+
+/* Compare two async subdevice descriptors for equivalence */
+
+>
+>> +static bool asd_equal(struct v4l2_async_subdev *asd_x,
+>> +		      struct v4l2_async_subdev *asd_y)
+>> +{
+>> +	if (asd_x->match_type != asd_y->match_type)
+>> +		return false;
+>> +
+>> +	switch (asd_x->match_type) {
+>> +	case V4L2_ASYNC_MATCH_DEVNAME:
+>> +		return strcmp(asd_x->match.device_name,
+>> +			      asd_y->match.device_name) == 0;
+>> +	case V4L2_ASYNC_MATCH_I2C:
+>> +		return asd_x->match.i2c.adapter_id ==
+>> +			asd_y->match.i2c.adapter_id &&
+>> +			asd_x->match.i2c.address ==
+>> +			asd_y->match.i2c.address;
+>> +	case V4L2_ASYNC_MATCH_FWNODE:
+>> +		return asd_x->match.fwnode == asd_y->match.fwnode;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	return false;
+>> +}
+>> +
+>>   /* Find the sub-device notifier registered by a sub-device driver. */
+>>   static struct v4l2_async_notifier *v4l2_async_find_subdev_notifier(
+>>   	struct v4l2_subdev *sd)
+>> @@ -308,29 +333,22 @@ static void v4l2_async_notifier_unbind_all_subdevs(
+>>   	notifier->parent = NULL;
+>>   }
+>>   
+>> -/* See if an fwnode can be found in a notifier's lists. */
+>> -static bool __v4l2_async_notifier_fwnode_has_async_subdev(
+>> -	struct v4l2_async_notifier *notifier, struct fwnode_handle *fwnode)
+>> +/* See if an async sub-device can be found in a notifier's lists. */
+>> +static bool __v4l2_async_notifier_has_async_subdev(
+>> +	struct v4l2_async_notifier *notifier, struct v4l2_async_subdev *asd)
+> This is a minor issue, but checkpatch complains (with reason)
+> (with --strict) about the above:
+>
+> 	CHECK: Lines should not end with a '('
+> 	#63: FILE: drivers/media/v4l2-core/v4l2-async.c:337:
+> 	+static bool __v4l2_async_notifier_has_async_subdev(
+>
+> Better to declare it, instead, as:
+>
+> static bool
+> __v4l2_async_notifier_has_async_subdev(struct v4l2_async_notifier *notifier,
+> 				       struct v4l2_async_subdev *asd)
+>
+> Similar warnings appear on other places:
+> CHECK: Lines should not end with a '('
+> #102: FILE: drivers/media/v4l2-core/v4l2-async.c:362:
+> +static bool v4l2_async_notifier_has_async_subdev(
+>
+> CHECK: Lines should not end with a '('
+> #141: FILE: drivers/media/v4l2-core/v4l2-async.c:410:
+> +			if (v4l2_async_notifier_has_async_subdev(
+
+Will fix.
+
+>
+> Btw, Checkpatch also complains that the author's email is different
+> than the SOB's one:
+>
+> WARNING: Missing Signed-off-by: line by nominal patch author 'Steve Longerbeam <slongerbeam@gmail.com>'
+>
+> (the some comes with Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>)
+>
+> I suspect that other patches on this series will suffer from the same issue.
+
+Will fix when submitting v7.
+
+> <snip>
+>
+>> @@ -392,12 +406,11 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+>>   		case V4L2_ASYNC_MATCH_CUSTOM:
+>>   		case V4L2_ASYNC_MATCH_DEVNAME:
+>>   		case V4L2_ASYNC_MATCH_I2C:
+>> -			break;
+>>   		case V4L2_ASYNC_MATCH_FWNODE:
+>> -			if (v4l2_async_notifier_fwnode_has_async_subdev(
+>> -				    notifier, asd->match.fwnode, i)) {
+>> +			if (v4l2_async_notifier_has_async_subdev(
+>> +				    notifier, asd, i)) {
+>>   				dev_err(dev,
+>> -					"fwnode has already been registered or in notifier's subdev list\n");
+>> +					"asd has already been registered or in notifier's subdev list\n");
+> Please, never use "asd" on messages printed to the user. While someone
+> may understand it while reading the source code, for a poor use,
+> "asd" is just a random sequence of 3 characters.
+
+I will change the message to read:
+
+"subdev descriptor already listed in this or other notifiers".
+
+
+Steve
+
