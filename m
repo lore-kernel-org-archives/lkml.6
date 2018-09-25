@@ -2,108 +2,112 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBD7C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC0AC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3BC720880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:37:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3BC720880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id A372B20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:42:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=sehro.org header.i=@sehro.org header.b="XgsKuO4j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A372B20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sehro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbeIZFrT convert rfc822-to-8bit (ORCPT
+        id S1726342AbeIZFwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 01:47:19 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:37830 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726089AbeIZFrT (ORCPT
+        Wed, 26 Sep 2018 01:52:07 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:47064 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbeIZFwH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 01:47:19 -0400
-Received: from mr4.cc.vt.edu (mr4.cc.ipv6.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w8PNbL7K028707
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 19:37:21 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w8PNbGmV024868
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 19:37:21 -0400
-Received: by mail-qk1-f198.google.com with SMTP id c22-v6so27633916qkb.18
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 16:37:21 -0700 (PDT)
+        Wed, 26 Sep 2018 01:52:07 -0400
+Received: by mail-io1-f67.google.com with SMTP id y12-v6so21844104ioj.13
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 16:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sehro.org; s=dotorg;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dRIm7xHZutOkojX3O5uUewGtJg7PmDDNqsPJg9tEUb0=;
+        b=XgsKuO4jDOeATAmWsLivTw5bZWB83QsiFsKOnxveJYVDeKUR/KhvolAJSgx5yg5TAD
+         qHY6EXP6HSOym9MCc7yGGhTOIuEhC34nLRS0mrSNFktkTKnXSrBBHfiix0QWmq8YlB5K
+         slClXX4fEXWGohvdS7JbiT/qTlMcLr8LNgYIE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=SBJLq7GB9bKcitGhBt9cVfz4e7R5rmfHPfqunRtthLI=;
-        b=C6dY7kYWxF6XUtGFTHI8AYIOnF7BLUna1GSetRDA1cChLtx481hWQasHyr+MLneJxQ
-         2ul90fsNVOqCvMFGP52lE2YaVwlMMIskEpJFjqRvOvbEISKjbBneR4BUI6lrMzzrMhuV
-         Xxg9m1YIFXxQh7YdX5JOUjhyJn32VGy5BbDJJLjS/IHTG+Gkr4Tgh7fKsmbhjdggg4SS
-         3jVCa5/SmYZ2a6UkkYHAZ/lfxYBaXmenO7pxJkepn5SjZQY0//v5pEGbjoUGLD98sWr4
-         J2OcO4N304vfx96KTYx8EEdD79kQZpIYDLcvJ7xi1ZwlwFm07zcFquya1jYLpZ3bKlQR
-         0NCg==
-X-Gm-Message-State: ABuFfojf8GFirpJHC+frOa9720QdSFS+l/sa6GWU3BV1JBHKV8Eu9GrF
-        2dTO/ENCxtlLjvRXQAJArJUqlQx0BOo28vjzJZd4PYTNZpJC7Kv3Y+LGjJZ9XNhKhVsc3u1quCg
-        snu+VYVPzYIcJY6ce4hEKDT85da0hAElgPPA=
-X-Received: by 2002:a37:b982:: with SMTP id j124-v6mr2417314qkf.134.1537918636270;
-        Tue, 25 Sep 2018 16:37:16 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV62ReH1WsiIFmXAspRUQAuDot1O/KgRXKW77D5kdH3o7az8E94znVQCuiX6Ru3YS7fDHX8ideA==
-X-Received: by 2002:a37:b982:: with SMTP id j124-v6mr2417301qkf.134.1537918636100;
-        Tue, 25 Sep 2018 16:37:16 -0700 (PDT)
-Received: from ?IPv6:2601:5c0:c100:49da:1857:54ff:f889:7a68? ([2601:5c0:c100:49da:1857:54ff:f889:7a68])
-        by smtp.gmail.com with ESMTPSA id r20-v6sm1907806qtm.80.2018.09.25.16.37.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dRIm7xHZutOkojX3O5uUewGtJg7PmDDNqsPJg9tEUb0=;
+        b=kRiq8QDm+d7gECB807umFQLVGQXhw4yy4oeTNQ6ZyGTIIh/sIjWrsfS3VcY4efFRdS
+         fciaVIwMWegtQJ1HCnh10wr5KPZfvNd59JcwNU2q0ElO9JV/UVoEyajQ9jdsaEx8g05f
+         uxa9JnHgE2LRpfOI3fmBQtj7LYGFPsMhUIgz9OGIQ4ca0bBuNV0CSG3gncNwrsdwbVVh
+         tqZZRMj9nQ9KD/9UeIDFrXgAVDU1ViwB5MyblSvSWnsRnzb0wBYRUE7HfyGLnDkZlxPe
+         UfmxgP5Gfz7julzQbChSJ1tCm7WTuiSwvIyufQEIng19yLqXtTJihmsagewzvK6eh/cm
+         BVKg==
+X-Gm-Message-State: ABuFfoh8Ad9kMKrrrTbbmM7BJv+G5ycU3Bx16A0SgaV/m9jktTlqkSIp
+        rHszMpos9TVcZYOZ9+8WVGcVpQ==
+X-Google-Smtp-Source: ACcGV61zbNTRiVwhlS/+2ldrjJaM5yeR52SRPpM9GPhC8FST954lS6BZOiQbAheqYyngw6neMX4vhg==
+X-Received: by 2002:a6b:8f93:: with SMTP id r141-v6mr2667950iod.118.1537918928008;
+        Tue, 25 Sep 2018 16:42:08 -0700 (PDT)
+Received: from goro.horizons.sehro.org ([2601:280:4400:56c:731e:1a85:7df8:2d5b])
+        by smtp.gmail.com with ESMTPSA id n194-v6sm1832400itg.14.2018.09.25.16.42.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 16:37:15 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: different capability from different namespace required for
- prctl_set_mm_exe_file
-From:   TongZhang <ztong@vt.edu>
-In-Reply-To: <20180925183427.GH15710@uranus>
-Date:   Tue, 25 Sep 2018 19:37:14 -0400
-Cc:     Greg KH <gregkh@linuxfoundation.org>, tglx@linutronix.de,
-        akpm@linux-foundation.org, linux@dominikbrodowski.net,
-        ebiederm@xmission.com, keescook@chromium.org, Dave.Martin@arm.com,
-        wolffhardt.schwabe@fau.de, yang.shi@linux.alibaba.com,
-        LKML <linux-kernel@vger.kernel.org>, wenbo.s@samsung.com
-Content-Transfer-Encoding: 8BIT
-Message-Id: <7D0EDE0E-ADFB-4B43-90BB-1845FD0FEAE8@vt.edu>
-References: <990D0DB4-35C7-4B7B-A938-2B984CD97E78@vt.edu>
- <20180925173745.GA20508@kroah.com> <20180925183427.GH15710@uranus>
-To:     Cyrill Gorcunov <gorcunov@gmail.com>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Tue, 25 Sep 2018 16:42:06 -0700 (PDT)
+From:   Sehro Rautenkranz <sehro@sehro.org>
+To:     sehro@sehro.org
+Cc:     Lidza Louina <lidza.louina@gmail.com>,
+        Mark Hounschell <markh@compro.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] staging: dgnc: Fix Kconfig help header and text
+Date:   Tue, 25 Sep 2018 17:41:59 -0600
+Message-Id: <20180925234159.22547-1-sehro@sehro.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <59f16a7e-4221-73e0-cf6e-3461717be318@infradead.org>
+References: <59f16a7e-4221-73e0-cf6e-3461717be318@infradead.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I can see there are two problems,
+Replace Kconfig help header and text to match other modules. Issue found
+by checkpatch.
 
-First: In kernel/sys.c:2117  capable(CAP_SYS_RESOURCE), seems that ns_capable should be used to check capability against user namespace, instead of init_user_ns. Because a  process in a user namespace may call prctl system call and this should be checked against their user namespace capability instead of init_user_ns capability.
+Spacing adjusted to match Documentation/process/coding-style.rst. Issue
+reported by rdunlap@infradead.org.
 
-Second: They should both require CAP_SYS_RESOURCE or CAP_SYS_ADMIN, is there any particular reasons for requiring different privilege?
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Sehro Rautenkranz <sehro@sehro.org>
+---
+ drivers/staging/dgnc/Kconfig | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-> On Sep 25, 2018, at 2:34 PM, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
-> 
-> On Tue, Sep 25, 2018 at 07:37:45PM +0200, Greg KH wrote:
->> On Tue, Sep 25, 2018 at 01:26:55PM -0400, Tong Zhang wrote:
->>> Kernel Version: 4.18.5
->>> 
->>> Problem Description:
->>> 
->>> We discovered inconsistent check when using prctl_set_mm_exe_file(), which is used to setup exe file link.
->>> 
->>> It is required to have capable(CAP_SYS_RESOURCE) in prctl_set_mm().
->>> while ns_capable(CAP_SYS_ADMIN) in prctl_set_mm_map().
->>> 
->>> There are two differences:
->>> 1)requiring capability from: user namespace, init namespace.
->>> 2)capability bit required is different
->> 
->> Can you submit a patch showing what you think is the correct fix here?
-> 
-> It is done this way on purpose. The prctl_set_mm_map is a complex call
-> which carries a bunch of parameters and allowed if you're inside user-ns admin,
-> in turn prctl_set_mm allows to modify settings one by one. So no, it is not
-> an error but rather call specifics.
+diff --git a/drivers/staging/dgnc/Kconfig b/drivers/staging/dgnc/Kconfig
+index 032c2a795238..9f4f52c9c27d 100644
+--- a/drivers/staging/dgnc/Kconfig
++++ b/drivers/staging/dgnc/Kconfig
+@@ -1,6 +1,10 @@
+ config DGNC
+-       tristate "Digi Neo and Classic PCI Products"
+-       default n
+-       depends on TTY && PCI
+-       ---help---
+-       Driver for the Digi International Neo and Classic PCI based product line.
++	tristate "Digi Neo and Classic PCI Products"
++	default n
++	depends on TTY && PCI
++	help
++	  Say Y here to enable support for the Digi International Neo and
++	  Classic PCI based product line.
++
++	  To compile this driver as a module, say M here: the module will be
++	  called dgnc
+-- 
+2.19.0
 
