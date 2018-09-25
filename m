@@ -2,161 +2,125 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524CCC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29D9C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C16206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:29:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jgjo+irO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C16206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D57E20896
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:30:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D57E20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbeIZCim (ORCPT
+        id S1726727AbeIZCjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:38:42 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44745 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeIZCil (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:38:41 -0400
-Received: by mail-pf1-f193.google.com with SMTP id k21-v6so11990393pff.11
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rLac7W9XSIdIZvwEVVVIPybCjtF8p3/rR3qvGrXzqBU=;
-        b=Jgjo+irO4EMLQV5V0x3KsIYhUylO/Y0+Jc5BtabAveYhYkkF9fdRH3o7ZQmkiPPfCm
-         wxShG04aOvqNygcggllO9MdZwyWHus0jOT9aioPerZQ1YVqvBIkAcQXjzwKpAuc09EfM
-         uXAvXaa2oNOrCcR3V/Uo0terHlcRYsalw8iGOCPpTjx0S/9cy8rcwYuxkEw86jUf1xwu
-         lbMCoBU+L0ZbamjGvY+U0ZnLUkVl67eHy6Z1YNVaGXfM1KaYN7vkfuRrRaTHxVn5SNJ9
-         lhnq+gEBf85eIfEsHAKGrrswTcnxdN5q6/4mtohXEssGpRZ6tDyLzgG/WGT49OGqwblL
-         LF8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rLac7W9XSIdIZvwEVVVIPybCjtF8p3/rR3qvGrXzqBU=;
-        b=kn5bbu1ZVY37YTJkQZS1qXEYZrZjXhx4vKyyWuSRSQuuvDJ3AdNXun/6jUKVURSr6y
-         BwmrTfTntiVWV6aeO0Jtv7wtme9VKYeDthVXL++85e7sZvKIFUSMivZXDSEPAbQLi5i+
-         iu4rAqPrBNpKu9BJXwuJnXsoTf9vZoLQX4hoD9T0XlfGCOW3mPKf+u1ziuG4n0xVy4Qk
-         ahRmA/GNpSj3a5ocXsjh9TecOxp33PRF6ontG1Z5oRku7AnRoyIJ0Uc/MUa3PDUN3TZE
-         E+eP2I/QreU642wKGWri21MWxwL4SJD/0QsJ2Z6oArxwv1tDPYb98ni/rpJk01duo4yF
-         pvZg==
-X-Gm-Message-State: ABuFfohm2C6lTvqltPTT1m9KwHTqdpuUS6Pe4hTjJo5E2DnVDkwT20i3
-        MFRc55p/izvHttAmBuFOY3TMxf7f95PwahzvNH0dROdM4ak=
-X-Google-Smtp-Source: ACcGV61lka7hVqXrWZh940lrzeTdztba7Nnofebtil33mKNoqCPlXl4xj9Nho4AgLD8xquahPuP773a4DZtEQZoPGx0=
-X-Received: by 2002:a62:1895:: with SMTP id 143-v6mr2679648pfy.227.1537907362918;
- Tue, 25 Sep 2018 13:29:22 -0700 (PDT)
+        Tue, 25 Sep 2018 22:39:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54992 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726026AbeIZCjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 22:39:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DD959ACA7;
+        Tue, 25 Sep 2018 20:30:01 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 22:29:59 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [patch v2] mm, thp: always specify ineligible vmas as nh in smaps
+Message-ID: <20180925202959.GY18685@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com>
+ <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz>
+ <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1809241227370.241621@chino.kir.corp.google.com>
+ <20180924195603.GJ18685@dhcp22.suse.cz>
+ <20180924200258.GK18685@dhcp22.suse.cz>
+ <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+ <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
 MIME-Version: 1.0
-References: <20180925194459.13088-1-natechancellor@gmail.com> <CAKwvOdnzN0E0HD--3GmC9b=20fx3AE-8-x0iZ04-LEXnxh=YoQ@mail.gmail.com>
-In-Reply-To: <CAKwvOdnzN0E0HD--3GmC9b=20fx3AE-8-x0iZ04-LEXnxh=YoQ@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 25 Sep 2018 13:29:11 -0700
-Message-ID: <CAKwvOdnAhh-nKtbD9Fvxuf3AGcQVS0L6cGsEr3odZiDZ+eZk6w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: percpu: Initialize ret in the default case
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     dennis@kernel.org, tj@kernel.org, Christoph Lameter <cl@linux.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, psodagud@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 1:24 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Tue, Sep 25, 2018 at 12:45 PM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > Clang warns that if the default case is taken, ret will be
-> > uninitialized.
-> >
-> > ./arch/arm64/include/asm/percpu.h:196:2: warning: variable 'ret' is used
-> > uninitialized whenever switch default is taken
-> > [-Wsometimes-uninitialized]
-> >         default:
-> >         ^~~~~~~
-> > ./arch/arm64/include/asm/percpu.h:200:9: note: uninitialized use occurs
-> > here
-> >         return ret;
-> >                ^~~
-> > ./arch/arm64/include/asm/percpu.h:157:19: note: initialize the variable
-> > 'ret' to silence this warning
-> >         unsigned long ret, loop;
-> >                          ^
-> >                           = 0
-> >
-> > This warning appears several times while building the erofs filesystem.
-> > While it's not strictly wrong, the BUILD_BUG will prevent this from
-> > becoming a true problem. Initialize ret to 0 in the default case right
-> > before the BUILD_BUG to silence all of these warnings.
->
-> Clang does semantic analysis BEFORE inlining/optimizations, so I can't
+On Tue 25-09-18 12:52:09, David Rientjes wrote:
+> On Mon, 24 Sep 2018, Vlastimil Babka wrote:
+> 
+> > On 9/24/18 10:02 PM, Michal Hocko wrote:
+> > > On Mon 24-09-18 21:56:03, Michal Hocko wrote:
+> > >> On Mon 24-09-18 12:30:07, David Rientjes wrote:
+> > >>> Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> > >>> introduced a regression in that userspace cannot always determine the set
+> > >>> of vmas where thp is ineligible.
+> > >>>
+> > >>> Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+> > >>> to determine if a vma is eligible to be backed by hugepages.
+> > >>
+> > >> I was under impression that nh resp hg flags only tell about the madvise
+> > >> status. How do you exactly use these flags in an application?
+> > >>
+> 
+> This is used to identify heap mappings that should be able to fault thp 
+> but do not, and they normally point to a low-on-memory or fragmentation 
+> issue.  After commit 1860033237d4, our users of PR_SET_THP_DISABLE no 
+> longer show "nh" for their heap mappings so they get reported as having a 
+> low thp ratio when in reality it is disabled.  
 
-s/I/it/
+I am still not sure I understand the issue completely. How are PR_SET_THP_DISABLE
+users any different from the global THP disabled case? Is this only
+about the scope? E.g the one who checks for the state cannot check the
+PR_SET_THP_DISABLE state? Besides that what are consequences of the
+low ratio? Is this an example of somebody using the prctl and still
+complaining or an external observer trying to do something useful which
+ends up doing contrary?
 
-> determine that default is never reachable.  Nathan, thanks for this
-> patch.
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
->
-> >
-> > Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >  arch/arm64/include/asm/percpu.h | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/arch/arm64/include/asm/percpu.h b/arch/arm64/include/asm/percpu.h
-> > index 9234013e759e..21a81b59a0cc 100644
-> > --- a/arch/arm64/include/asm/percpu.h
-> > +++ b/arch/arm64/include/asm/percpu.h
-> > @@ -96,6 +96,7 @@ static inline unsigned long __percpu_##op(void *ptr,                  \
-> >                 : [val] "Ir" (val));                                    \
-> >                 break;                                                  \
-> >         default:                                                        \
-> > +               ret = 0;                                                \
-> >                 BUILD_BUG();                                            \
-> >         }                                                               \
-> >                                                                         \
-> > @@ -125,6 +126,7 @@ static inline unsigned long __percpu_read(void *ptr, int size)
-> >                 ret = READ_ONCE(*(u64 *)ptr);
-> >                 break;
-> >         default:
-> > +               ret = 0;
-> >                 BUILD_BUG();
-> >         }
-> >
-> > @@ -194,6 +196,7 @@ static inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
-> >                 : [val] "r" (val));
-> >                 break;
-> >         default:
-> > +               ret = 0;
-> >                 BUILD_BUG();
-> >         }
-> >
-> > --
-> > 2.19.0
-> >
->
->
-> --
-> Thanks,
-> ~Nick Desaulniers
+> It is also used in 
+> automated testing to ensure that vmas get disabled for thp appropriately 
+> and we used "nh" since that is how PR_SET_THP_DISABLE previously enforced 
+> this, and those tests now break.
 
+This sounds like a bit of an abuse to me. It shows how an internal
+implementation detail leaks out to the userspace which is something we
+should try to avoid.
 
+> > >> Your eligible rules as defined here:
+> > >>
+> > >>> + [*] A process mapping is eligible to be backed by transparent hugepages (thp)
+> > >>> +     depending on system-wide settings and the mapping itself.  See
+> > >>> +     Documentation/admin-guide/mm/transhuge.rst for default behavior.  If a
+> > >>> +     mapping has a flag of "nh", it is not eligible to be backed by hugepages
+> > >>> +     in any condition, either because of prctl(PR_SET_THP_DISABLE) or
+> > >>> +     madvise(MADV_NOHUGEPAGE).  PR_SET_THP_DISABLE takes precedence over any
+> > >>> +     MADV_HUGEPAGE.
+> > >>
+> > >> doesn't seem to match the reality. I do not see all the file backed
+> > >> mappings to be nh marked. So is this really about eligibility rather
+> > >> than the madvise status? Maybe it is just the above documentation that
+> > >> needs to be updated.
+> > 
+> > Yeah the change from madvise to eligibility in the doc seems to go too far.
+> > 
+> 
+> I'll reword this to explicitly state that "hg" and "nh" mappings either 
+> allow or disallow thp backing.
+
+How are you going to distinguish a regular THP-able mapping then? I am
+still not sure how this is supposed to work. Could you be more specific.
+Let's say I have a THP-able mapping (shmem resp. anon for the current
+implementation). What is the the matrix for hg/nh wrt. madvice/nomadvise
+PR_SET_THP_DISABLE and global THP enabled/disable.
 
 -- 
-Thanks,
-~Nick Desaulniers
+Michal Hocko
+SUSE Labs
