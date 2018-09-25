@@ -2,72 +2,100 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCCCC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 922C6C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98CBA21480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CBA21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 55370208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:22:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55370208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbeIYU3N (ORCPT
+        id S1729373AbeIYUaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 16:29:13 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13115 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729205AbeIYU3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:29:12 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 346E05C054B2B;
-        Tue, 25 Sep 2018 22:21:23 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 25 Sep 2018 22:21:16 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <arve@android.com>,
-        <tkjos@android.com>, <maco@android.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>, <devel@driverdev.osuosl.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ANDROID: binder: make symbol 'binder_free_buf' static
-Date:   Tue, 25 Sep 2018 14:30:36 +0000
-Message-ID: <1537885836-18996-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
+        Tue, 25 Sep 2018 16:30:03 -0400
+Received: from mga04.intel.com ([192.55.52.120]:37739 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729152AbeIYUaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 16:30:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 07:22:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,302,1534834800"; 
+   d="scan'208";a="72745800"
+Received: from thomasvo-mobl2.ger.corp.intel.com ([10.252.53.212])
+  by fmsmga007.fm.intel.com with ESMTP; 25 Sep 2018 07:14:58 -0700
+Message-ID: <a778571533dced1fbf2a0883848972934f145eff.camel@linux.intel.com>
+Subject: Re: [PATCH v4 02/21] tpm: sort objects in the Makefile
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 25 Sep 2018 17:14:57 +0300
+In-Reply-To: <20180921135820.20549-3-tomas.winkler@intel.com>
+References: <20180921135820.20549-1-tomas.winkler@intel.com>
+         <20180921135820.20549-3-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warning:
+On Fri, 2018-09-21 at 16:58 +0300, Tomas Winkler wrote:
+> Make the tpm Makefile a bit more in order by putting
+> objects in one column.
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> V2: 1. back to tpm-y notation
+>     2. Partially sort files alphanumerically.
+> V3: Rebase
+> V4: Remove redunant sentence in commit message.
+> 
+>  drivers/char/tpm/Makefile | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> index 4e9c33ca1f8f..efc785053627 100644
+> --- a/drivers/char/tpm/Makefile
+> +++ b/drivers/char/tpm/Makefile
+> @@ -3,9 +3,18 @@
+>  # Makefile for the kernel tpm device drivers.
+>  #
+>  obj-$(CONFIG_TCG_TPM) += tpm.o
+> -tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+> -	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
+> -	 eventlog/tpm2.o tpm2-space.o
+> +tpm-y := tpm-chip.o
+> +tpm-y += tpm-dev-common.o
+> +tpm-y += tpm-dev.o
+> +tpm-y += tpm-interface.o
+> +tpm-y += tpm2-cmd.o
+> +tpm-y += tpmrm-dev.o
+> +tpm-y += tpm2-space.o
+> +tpm-y += tpm-sysfs.o
+> +tpm-y += eventlog/common.o
+> +tpm-y += eventlog/tpm1.o
+> +tpm-y += eventlog/tpm2.o
+> +
+>  tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
+>  tpm-$(CONFIG_EFI) += eventlog/efi.o
+>  tpm-$(CONFIG_OF) += eventlog/of.o
 
-drivers/android/binder.c:3312:1: warning:
- symbol 'binder_free_buf' was not declared. Should it be static?
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/android/binder.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 1b54bb5..cb30a52 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -3308,7 +3308,7 @@ static void binder_transaction(struct binder_proc *proc,
-  *
-  * Cleanup buffer and free it.
-  */
--void
-+static void
- binder_free_buf(struct binder_proc *proc, struct binder_buffer *buffer)
- {
- 	if (buffer->transaction) {
-
+/Jarkko
