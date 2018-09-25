@@ -2,106 +2,114 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D7BC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 540C1C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 349C520842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:53:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C4Za/gGp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349C520842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A98220C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:55:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A98220C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbeIYPAN (ORCPT
+        id S1728271AbeIYPBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:00:13 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42846 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727526AbeIYPAN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:00:13 -0400
-Received: by mail-io1-f68.google.com with SMTP id n18-v6so19834797ioa.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 01:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cTGfDyko6EJa/1U8+oOmobay7ODVbC7xyYSYb1x6+io=;
-        b=C4Za/gGp2rR3YHR7hgvrRRgjD0EWOGCJTxBiSvujLYwQ7MteL4hxt467Op8uGR8EcV
-         hXr0SmDP8eB3Z9bK24SDip0L6YxXve/b0sKtFWC/khoahS3rn+pxKs5YSsz7o3Hn2ziA
-         yOw6f8GblckVv7NzUGPOkjfdL/PPLhxZPuk7k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cTGfDyko6EJa/1U8+oOmobay7ODVbC7xyYSYb1x6+io=;
-        b=mJjtLxM9T00Kn8bFEZpp1o0yIHizvhGMftfw3LoGMQa51zOfjPlbu00xeh1KscksP/
-         cc5hAYFSXu3cYHSIqdJBsMkWGhxqMwBVLSkIOThBwCLQSL9AhF4sGtXCF4s+fRTSCCNc
-         cwvKW8yKpvy5ai2Vcus+LIRwLHy9GWa2hE3nicpL1rp14usJTAm+O3Gm59CUHQCFLvf5
-         cuITfCoSA4zGN0VHi8kHi2128VaK53Lo+JE6r87losmDKfIHcAIMKhAOTjF18lTL/yjY
-         60jmSbI2t+z99zE6X09FkwDFFhCXmiuZpNV78XmNNxXRvoeVQ0eQcJqPfc3+I+i8GNAd
-         EZYw==
-X-Gm-Message-State: ABuFfohalAYxVV9o5hzXNDrv5cHUlbJuD9TTh2+7czxslg0PZ2p274LU
-        WpgKJ8RCRcTYwmbyUWTpvsBDJ4y74LsnmTTf/JMm6w==
-X-Google-Smtp-Source: ACcGV61K8LJKn7I3zeV4Dbx/saWJZLA6hGOgfiGeDfUBYnP83RcWrciWIe68h9dpjG9BaZ6wrlBStlHDiK9N44hqEnk=
-X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr2097811iog.175.1537865623372;
- Tue, 25 Sep 2018 01:53:43 -0700 (PDT)
+        Tue, 25 Sep 2018 11:01:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53222 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726392AbeIYPBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 11:01:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BA429AF66;
+        Tue, 25 Sep 2018 08:55:06 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 10:55:06 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        penguin-kernel@i-love.sakura.ne.jp,
+        syzbot+6fb572170402d311dd39@syzkaller.appspotmail.com,
+        Jan Kara <jack@suse.cz>, syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: INFO: task hung in fsnotify_connector_destroy_workfn (2)
+Message-ID: <20180925085506.ddzq42ci4ul3voxm@pathway.suse.cz>
+References: <0000000000006364200575dfc280@google.com>
+ <2f4ce251-cf84-8bd2-72fc-a3ff687d5188@I-love.SAKURA.ne.jp>
+ <CAOQ4uxhmFsvy6y6NgcFPs4NF1Lg7J0h2VoWgiL8WfXdDz+Z0FQ@mail.gmail.com>
+ <nycvar.YFH.7.76.1809241511500.15880@cbobk.fhfr.pm>
 MIME-Version: 1.0
-References: <20180923111727.10378-1-brgl@bgdev.pl> <CAMRc=MfZ8jRZHgXBq9TeYm5VpmLzwG7gF-NMYay9Zg-iEgFQDQ@mail.gmail.com>
-In-Reply-To: <CAMRc=MfZ8jRZHgXBq9TeYm5VpmLzwG7gF-NMYay9Zg-iEgFQDQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Sep 2018 10:53:30 +0200
-Message-ID: <CACRpkdb7zKfa_e6WWHncg+gxGncsC_Bx7gpkhJyutH4tqJRkew@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mockup: use device properties instead of platform_data
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        vincent.whitchurch@axis.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1809241511500.15880@cbobk.fhfr.pm>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 9:35 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> niedz., 23 wrz 2018 o 13:17 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=
-=82(a):
-> >
-> > Some users want to introduce device tree support to the mockup driver.
-> > Let's make it easier by switching to using generic device properties.
-> > The driver stays compatible with previous use cases and after this
-> > conversion there'll be no need to change the way probing of mockup
-> > GPIO chips works.
-> >
-> > Tested with libgpiod test suite.
-> >
-> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-(...)
-> Linus, I just noticed that we either need to drop the check for
-> -ENOENT or add an else that returns on any other error. I'll need to
-> send a v2
+On Mon 2018-09-24 15:19:35, Jiri Kosina wrote:
+> On Sun, 16 Sep 2018, Amir Goldstein wrote:
+> 
+> > > > syzbot found the following crash on:
+> > > >
+> > > > HEAD commit:    11da3a7f84f1 Linux 4.19-rc3
+> > > > git tree:       upstream
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=141ffbca400000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=9917ff4b798e1a1e
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=6fb572170402d311dd39
+> > > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136a60ae400000
+> > > >
+> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > Reported-by: syzbot+6fb572170402d311dd39@syzkaller.appspotmail.com
+> > > >
+> > >
+> > > Since it kept printk()ing for at least 93 seconds, it might have kept for 150 seconds.
+> > >
+> > > [  174.614333] hid-generic 0000:0000:0000.0003: unknown main item tag 0x0
+> > > [  268.196102] INFO: task kworker/u4:1:23 blocked for more than 140 seconds.
+> > >
+> > > Since the reproducer is simple, this might be lockup due to continuous printk().
+> > > If syzbot can reliably reproduce this problem using the reproducer, try
+> > > ratelimiting printk().
+> > 
+> > Right.. and I was able to reproduce after setting CONFIG_HID_GENERIC=y
+> > but unless I am missing something, the core problem doesn't seem related to
+> > fsnotify and $SUBJECT, so CCing HID maintainer.
+> 
+> Alright, so you're basically triggering a never-ending flow of kmsgs being 
+> printed out from HID parser due to doing crazy things with the parser, and 
+> that causes the issues for the kworker trying to flush them out.
 
-OK business as usual.
+My understanding is that the flow of messages is long but it ends at
+some point. For example, the many warnings for
+"hid-generic 0000:0000:0000.0003" eventually ends with
 
-> but I'll let you first tell me if you like the general idea.
+[  221.223267] hid-generic 0000:0000:0000.0003: hidraw0: <UNKNOWN> HID v0.00 Device [syz1] on syz1
 
-I don't know, I'm a bit ignorant about the idea, scope and
-ambition with device properties.
 
-In my book this relates to the fwnode concept, but maybe
-I'm wrong?
+Next, there are usually intermixed messages for two devices, e.g.
 
-Mika, please fill us in here. The device properties in gpiolib
-came in the patch
-"gpio: Rework of_gpiochip_set_names() to use device property accessors"
+[  174.776326] hid-generic 0000:0000:0000.0003: unknown main item tag 0x0
+[  174.782734] hid-generic 0000:0000:0000.0004: unknown main item tag 0x0
 
-Yours,
-Linus Walleij
+Therefore I believe that console_lock is being transfered and no
+process is stuck in printk()/console_unlock().
+
+
+> I guess the patch below fixes it, however the kworker should not really be 
+> blocked by this I think ... adding a few more printk folks to double-check 
+> why the kworker would get stuck due to massive printk() flood.
+
+It seems that the many printk() calls just delay the entire
+process and rcu gets blocked for too long. The messages are
+the same all the time. So some rate limiting looks like
+a reasonable solution.
+
+Best Regards,
+Petr
