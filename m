@@ -2,84 +2,115 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EA7ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C441C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7014220C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1549220C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="H4Ab8Ph3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7014220C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="xiIjmt/e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1549220C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbeIYViW (ORCPT
+        id S1729829AbeIYViZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:38:22 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34193 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729355AbeIYViT (ORCPT
+        Tue, 25 Sep 2018 17:38:25 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36981 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729355AbeIYViY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:38:19 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i12-v6so24910452otl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:30:18 -0700 (PDT)
+        Tue, 25 Sep 2018 17:38:24 -0400
+Received: by mail-qt1-f194.google.com with SMTP id n6-v6so13785600qtl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:30:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1vtPj2cweEHfx09draKz54f3s29z2mO8XMlA53AsfW4=;
-        b=H4Ab8Ph3fkXKdw/LfBrPlP/zIoTAiAyW9oGtlB++gR+O5+q8wAf7ggFUH71IVrireA
-         vq8Gso4R5XEzj/wRd/VdMc3tG6qwfCmNzP5CYdnvPr7mGnIEKDLgGoueAA07Ng+0hpqn
-         lhpcx8iseG88jya9gm+qFaU0UWVGhgBrF6CIiYam682jmIXQWu5CDPoMFrORTZKav9gu
-         SRVLkhEi6FGwYEYJJoOBKe0lY9UUEaE2xBPYD30veV5kteEINkvYqKJu54J1rZfWHO7i
-         UiSNPQR8NZUhvv9hZUTvlr2nox6jvJL4c/G1a27UnMa45ZwWYOPl7loq1I9SJUUCjh1e
-         IlSQ==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=L4OEsFz3WUjgEGzu73gT/wwAqaCABq/L1QMv8mr7jYM=;
+        b=xiIjmt/eWUB4u3fWLkbXc4bB7hWrJjmm0MZsa1qEd8+bOOshROHuBckxZSLE9WOkbC
+         9zKp4ykcV/4h1kwVZP20aH6CxmRLsn58jroSPwDyXAsgjo+7GsH/62PBM3emKGgMKl/0
+         qJdqIhQn2OffxV0dpEsqgw8TyQwTJyXDv7Yv3w7G70CekvgpufDW8C6byBD+fNwsYA4A
+         DRJBi5PieHXCYIfxhAvdvYbKvgIneJRXYt7vM8ZMjtC34i+Jh4XxftG9VtmFNrv4Us80
+         4uMNMv/RXjd7aBT+STiW8dQa80NdBOSb8sscF0GIcVME/BtNWK5Nhw/ScCv99l8AUu8p
+         AstA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1vtPj2cweEHfx09draKz54f3s29z2mO8XMlA53AsfW4=;
-        b=l+atskAfy5yxxxnea9SGrHBPDw6IMGwUnPzcbCY3bqhyO9+X0f/ZZ0VqMGVwLVJfdb
-         dvn3J4c+EUQewJEieAmZDEo4w2u41jHvJdRV15PCu7u3Yd/H+UICEh4Pd5U4DViytt6R
-         viS8k/E1vbeC2btNsCQQ3Pl9cj5tA7gkktq4lYA8ntu7jm+zd1Ded0RD8kDAJgez52FZ
-         U6xJOIi/pNjXSuqPRApa+6IOm2aUWR83QUV+96QotPYsJ1x01drcph6/5xs2ZvOzXhDQ
-         DSMGpfRnzkxNvOr0e01YumsRt5KFKowuXhXkwl88N8hfAyg+uOmuYAOsWeceAulJegJN
-         Cy9Q==
-X-Gm-Message-State: ABuFfohfgE8YPWQvzNOQLLW/+u/TEbA6w9qClIEp/Hjbp/dX1gnCAt8G
-        /g4BPr3lqC9953ywxoGnKO+gAAMobpXrlD4JSX/1yA==
-X-Google-Smtp-Source: ACcGV62tCWbEnSBkuPKpHF5gRin9XtSar+GaMlw3wrrJltH7gF+6TogFT1l+qbTYMgZTJSJcYcih6MZin+a2WGFEj3o=
-X-Received: by 2002:a9d:128a:: with SMTP id g10-v6mr1032239otg.119.1537889417772;
- Tue, 25 Sep 2018 08:30:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <1537832042.7585.16.camel@intel.com> <20180925091900.GB21972@kroah.com>
-In-Reply-To: <20180925091900.GB21972@kroah.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 25 Sep 2018 08:30:06 -0700
-Message-ID: <CAPcyv4jbP1yG+L9wUKTJhBgGV0_3e5pW8tB_Wfk6iT+ShB+qXQ@mail.gmail.com>
-Subject: Re: [GIT PULL] libnvdimm/dax fixes for 4.19-rc6
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=L4OEsFz3WUjgEGzu73gT/wwAqaCABq/L1QMv8mr7jYM=;
+        b=RUAIXi9Um02qCZrFvrTdqSjmryjKGVlSf6uqsB+T800/JUNt0OIYrFWJ8cOWkdJOXI
+         SnqtoBdjzMCY4NcSUuFETEh/PY0SUztehr+nduiD/vw6ih5kfVwoC06Jz0gyxGXV2CyB
+         /KY/EAAoR8AXTTXw79klFFI6SxvAgrzl+K3Ma0Cw2HBziLKO4mPUAuFiHH+q1rqjZhsd
+         jV+9X9bhYggX9AdghS6yuzrqS5VN3F+AEN3fSMSjQ54cQeYys/sSMG7cfvk9Qr2KqHcr
+         0E51XRygyCKG8EVbJ6U+p+kH5fuvSJ9FPaW+QvwnhX2eSHiDchqIMOOoR6b+5pPicNbC
+         YmXQ==
+X-Gm-Message-State: ABuFfoglEyUJ9/VsxHNBa9EueiqwSyJE0y/B83X4aW/yBs1fgveDPyQa
+        1TT/7AaurToiaeFfcS0EdNju0g==
+X-Google-Smtp-Source: ACcGV636XzSwKd2meu1Ys5O7v+jQbfQLNsgLIWLK0BCd4sgh4v5i1cNr48zBxWR5cs6Aamdx/459CA==
+X-Received: by 2002:a0c:f8ce:: with SMTP id h14-v6mr1158470qvo.201.1537889421997;
+        Tue, 25 Sep 2018 08:30:21 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id u184-v6sm1468940qkc.87.2018.09.25.08.30.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 08:30:21 -0700 (PDT)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, linux-btrfs@vger.kernel.org, riel@redhat.com,
+        hannes@cmpxchg.org, tj@kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Johannes Weiner <jweiner@fb.com>
+Subject: [PATCH 4/8] mm: drop mmap_sem for swap read IO submission
+Date:   Tue, 25 Sep 2018 11:30:07 -0400
+Message-Id: <20180925153011.15311-5-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180925153011.15311-1-josef@toxicpanda.com>
+References: <20180925153011.15311-1-josef@toxicpanda.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 2:22 AM gregkh@linuxfoundation.org
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Sep 24, 2018 at 11:34:04PM +0000, Williams, Dan J wrote:
-> > Hi Greg, please pull from...
-> >
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm libnvdimm-fixes
->
-> That isn't a signed tag.  Did you mean to not sign it?  Your previous
-> pull requests did have signed tags :(
+From: Johannes Weiner <jweiner@fb.com>
 
-Ah, I have elided signed tags on small fixes branches on kernel.org
-during -rc's. No worries, I'll resend signed.
+We don't need to hold the mmap_sem while we're doing the IO, simply drop
+it and retry appropriately.
+
+Signed-off-by: Johannes Weiner <jweiner@fb.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+---
+ mm/page_io.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/mm/page_io.c b/mm/page_io.c
+index aafd19ec1db4..bf21b56a964e 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -365,6 +365,20 @@ int swap_readpage(struct page *page, bool synchronous)
+ 		goto out;
+ 	}
+ 
++	/*
++	 * XXX:
++	 *
++	 * Propagate mm->mmap_sem into this function. Then:
++	 *
++	 * get_file(sis->swap_file)
++	 * up_read(mm->mmap_sem)
++	 * submit io request
++	 * fput
++	 *
++	 * After mmap_sem is dropped, sis is no longer valid. Go
++	 * through swap_file->blah->bdev.
++	 */
++
+ 	if (sis->flags & SWP_FILE) {
+ 		struct file *swap_file = sis->swap_file;
+ 		struct address_space *mapping = swap_file->f_mapping;
+-- 
+2.14.3
+
