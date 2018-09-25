@@ -2,396 +2,148 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF217C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A221AC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 893FF21480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DAA920842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:11:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbNLssag"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893FF21480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="HVOU096Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAA920842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbeIYQQC (ORCPT
+        id S1727588AbeIYQRu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:16:02 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44439 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeIYQQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:16:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v16-v6so22695215wro.11;
-        Tue, 25 Sep 2018 03:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KyZVbbNBwWhQAqZ0KtbHQC9RZxK3dSUHs6uk95Bl9SE=;
-        b=GbNLssagqYADxRZ85mNhklWhOvKFwSKBgeL0wd5DrhNkTv0167HU5yNSI7Itf0FWFy
-         fS33Hi2nsgELCqoq5FQH64LYCquXjSLksCVo8s5oVM89XQYRpPEA9bxF2Gy9uVpxPM1f
-         5W4Ffcylaget0TA0dX23kCB0IqUC1cAOwYk02z5e+ffba+/c9R8ZzOSp2nM6KLURtTYw
-         gIPEpwS8sTO1NGrz5iacOd3xaNSAfUYFRl7y89lyjH5k/2S/xWorqKYT+k40gr/WlqjW
-         csCwmQrVlS7IsbCspeOfjCR4AVKbcxjYirGBX/T38GBGDkUMmB39BGt8QhCviwMD7eu+
-         SJrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KyZVbbNBwWhQAqZ0KtbHQC9RZxK3dSUHs6uk95Bl9SE=;
-        b=IWsxreFuYA7euJcprgUkerjIQNAQRPNurhslmOT+ReqZXiFa47ujwUvlAy3oBAle4T
-         l0wi/Gfuss0VODxf9ME0RjTcVdrrF8L3oVj3od0BTZmLa5mYzRh1xhLyYpYE2tK3h9hh
-         NczXdHWyY5789kXczFHdIfNH7+qwcOqjCwN2Yg/DrmDvd2/tnXkF0xr/+nnr9pIUVh4I
-         0tYQznusyRRLRSvvpjOLa9mFC/q5/l7WYGoCXBKrQP8gdGEV71Gtbg4gXdzQii0Ts5EM
-         6sKgyrzBXovw7880CMT9wjNoddou1zpWZ72YCnszZvOyhMq+CVDzOFEVsWV8YLV61TEl
-         /1mw==
-X-Gm-Message-State: ABuFfojC+ZEoOtlkYnDCYC3OoCUq1CYSqx1HejMmZNoeUUyRQpACSGfP
-        HA9yyXtDNKMNhdeIKDWOLBw=
-X-Google-Smtp-Source: ACcGV61fe+I7h1p+CaZKdAU448dlO9p5KDQFWQ+jNEKvDezRuEURorunhpk5epCYkh31MqrlFWyioQ==
-X-Received: by 2002:adf:91a4:: with SMTP id 33-v6mr263570wri.37.1537870150832;
-        Tue, 25 Sep 2018 03:09:10 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm1605189wrj.58.2018.09.25.03.09.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 03:09:10 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 12:09:09 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 19/20] iommu/tegra: gart: Simplify clients-tracking
- code
-Message-ID: <20180925100909.GH7097@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-20-digetx@gmail.com>
- <20180924111047.GP21032@ulmo>
- <aefb6b78-4923-0259-0f3a-2ce3b95ca456@gmail.com>
+        Tue, 25 Sep 2018 12:17:50 -0400
+Received: from mail-db5eur03hn0213.outbound.protection.outlook.com ([104.47.10.213]:12217
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726125AbeIYQRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:17:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/MCVtRLdWwgWbSNc77beLVK5jkFCQaeWcnzsRsh/ya4=;
+ b=HVOU096ZYI3QSqMSKDrklwmNrnkMmw2yboqAJGLR8gL/FO1MLyZdZHU2Ggo5dpwseLZJSIJn9Tsbi/mRGAiCRoGOk7ib6dcFv0hMTJUyNQR3CwhLmhBgRNBJGgCAWZGwiDu470g5VRRPQiQQkdLn/42vzN89ueXTI/0soGVb2kc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=rkagan@virtuozzo.com; 
+Received: from rkaganb.sw.ru (185.231.240.5) by
+ VI1PR08MB3599.eurprd08.prod.outlook.com (2603:10a6:803:85::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.22; Tue, 25 Sep 2018 10:10:45 +0000
+Date:   Tue, 25 Sep 2018 13:10:41 +0300
+From:   Roman Kagan <rkagan@virtuozzo.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 RESEND 3/5] KVM: x86: hyperv: use get_vcpu_by_vpidx()
+ in kvm_hv_flush_tlb()
+Message-ID: <20180925101040.GA2336@rkaganb.sw.ru>
+Mail-Followup-To: Roman Kagan <rkagan@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>, linux-kernel@vger.kernel.org
+References: <20180822101832.31763-1-vkuznets@redhat.com>
+ <20180822101832.31763-4-vkuznets@redhat.com>
+ <8da03d2a-5405-f363-f081-e4bc46b106e3@redhat.com>
+ <87r2hs7cco.fsf@vitty.brq.redhat.com>
+ <87zhw62797.fsf@vitty.brq.redhat.com>
+ <74055c3b-be66-4ce6-e727-a155f18a0ba1@redhat.com>
+ <20180925085752.GA5391@rkaganb.sw.ru>
+ <f8cd3988-ea7e-0e4a-ee95-927534276f84@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2xzXx3ruJf7hsAzo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aefb6b78-4923-0259-0f3a-2ce3b95ca456@gmail.com>
+In-Reply-To: <f8cd3988-ea7e-0e4a-ee95-927534276f84@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [185.231.240.5]
+X-ClientProxiedBy: HE1PR02CA0090.eurprd02.prod.outlook.com
+ (2603:10a6:7:29::19) To VI1PR08MB3599.eurprd08.prod.outlook.com
+ (2603:10a6:803:85::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2446d02f-9183-482f-3777-08d622cf2989
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3599;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;3:JJlVmzSRIOLw0g3LrUUcJ+BIQrlYbLrfPAgTWEtHcBjS0mAnyQNcnwSHcgpBu1uVSKVEUb/AdxON78YUvjK6RvtxeTY2dRu8rdTeot1v8IaXGrOM25RNBIbqMBKwbQq5Y5Ki9wunpVROJ2B/2vxGWP61q3g0zMKJnR94bvyCZpCqdDDz6i7g4YvRVwl/0pnYeahShd54h8zVQAkpbJ+E2V9G9WgpU+SqC4mlRCKozYpE62hszlWu5nQnuBsMXOLM;25:YPwv/5gdaLsmW4nv3eOFXJsD/1KE979cP740uDGn4x79QdmD/4KCpOWKpRQOyxcRmqudOnwHTBDHc5qcTYSowzFjgJMDLxJjYNWl+MassgYf4le8e+Qc3fJ49Q585CGI/7DfVzFpwXRXcJ+BREqlf5UBl7yjJKc0wQpVRlfmRBqvimBPRGwiljHYv4KmMW2YymXJC1uh1PjnGwmZ9G1fgJGsDO8vO0NozGaqxPj+koK8tX6Xued8vhSKPW+7rSVo3cN7FmyhH0+TXeoGXgkvsG7iUkE184OLv0T3fUo8JMIT8J8/JIueAbF+LSs+/+diZOktMY3aq30ozkZi17/Kyw==;31:HlBWVSvroK7kXzhTlOsgur3maF4c5Ng4iK8dnHtKn4MahvDl32TMLc89sP+ryjhW2OPR74q69/59/RmJ1bzwHmsGCQwXIBgyEmCCVAGqNphDi7H0hJnuLg74iBsJh3uYGPG42EKS4VF+3DgMO2UacE5FCE5+Uwf4jiB8E7coWtGmgQaUM3EbMF2vzxUgI/AXzPSLCeZZQz8hM34giMkfFhM6sL+gv/K99OlbIKzREuI=
+X-MS-TrafficTypeDiagnostic: VI1PR08MB3599:|VI1PR08MB3599:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;20:NXIWW6WuXeUALIklqNk9Mk63ZKUu8hhAH6Gh++/ZuOxqdjDf4N6f90NYJCvFIQSeEgAPfgRk2ClYb8VUw6O48Oe1vhKDrOTPlSHt+AhTKOHFWPDCHWZID4l9oupsYRckuJWFMekGqIb3srH+5B9MMnNREwVez6DPtLUPbw1Il6ghTc0xAyhHmY+iCm2TgIP2yLAP8B7qJIFEXVz0lLYxt30T4u0tAX/PBG0WN36qfwVXEq487BNqUDMp3sA9c/PWGGGsW4MN9enHpZanBO0kqbS6/tABWwBBLR0eZRxXKBSTw7iYHrkJyZLRFdX5mnhZfmEjL26iZjnOYKp31jIkbbEx68fI8Woht7YOtWbK0UlSJ9PTJYB8qrwC0/3Q8dayJ0aQxAXVa/r7HwHMALJKl4MutXIO5okYLOMjeNEsiOX1IJ6y4B7ROj8Nb1K+4EXYcPvvOfkHMHgSq1U0e0wRuSXtuXIfyHfQJ2jRkXsyRvSke8Mkoc5p9qrwOCit1e88;4:2jRgrau+l5KlChMnVDEoYD4kfiy74/FfmdMC3ceE2ZpzTtAL6kf+ANDKUvIXbGBYikjIODraiONWoRCfN+evj8YZC4H7DRtPT5m0keUQIMnySuf0CcR23WkzmfeYBbysp3BcVdIjpTUa2xN5xCXwOQMsN3iykZV5xwqf8/vhJ2UKdGLApZ0Wefu/wQzU6vga7ZZsK3zpLTkeW8XoeV7F2Z79Y0j+RJ+Dapr8qCGb2vfAawGmVCwaGwiINbaFHEIzEKGA4XIhFzr2txp9SDCwaQ==
+X-Microsoft-Antispam-PRVS: <VI1PR08MB35991BEE734CB18D984F7FAAC9160@VI1PR08MB3599.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149066)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:VI1PR08MB3599;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3599;
+X-Forefront-PRVS: 08062C429B
+X-Forefront-Antispam-Report: SFV:SPM;SFS:(10019020)(346002)(366004)(136003)(376002)(39850400004)(396003)(189003)(199004)(386003)(54906003)(16586007)(7416002)(305945005)(7736002)(26005)(6246003)(53936002)(4326008)(25786009)(39060400002)(106356001)(16526019)(105586002)(33656002)(186003)(68736007)(229853002)(50466002)(55016002)(66066001)(23726003)(9686003)(58126008)(36756003)(3846002)(6116002)(1076002)(53416004)(446003)(11346002)(81156014)(476003)(956004)(47776003)(478600001)(486006)(8936002)(7696005)(86362001)(52116002)(97736004)(69596002)(8676002)(6666003)(6916009)(81166006)(316002)(76176011)(2906002)(5660300001)(53546011)(93886005)(6506007)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:VI1PR08MB3599;H:rkaganb.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB3599;23:I1a16eASdsG5wF+pqUmtHHrIedAyHXVX7p7pFa/3O?=
+ =?us-ascii?Q?4cJNkkOwiyewQ7UVUNeCowVmPO5bM4M6q4hpr4okOV3Yqcznrpb8CwmDytH2?=
+ =?us-ascii?Q?2eA17mWRq9ye9uIhM95GfHTg33KshaUaIhyNREhVE40lHFctfqX2NMmbRIqY?=
+ =?us-ascii?Q?Wu5zQ70FyWQfkFoS42A2jfXB3SSLYid9wOgRanqmpvUDfHa5w3j0XKSkvyp4?=
+ =?us-ascii?Q?w2Zz9SdEvX81lnTPH25yRwlPRk5zfBk2KpLE2X0oasI/DRfdTodLeci+FoV2?=
+ =?us-ascii?Q?KtFoQXgVDfD7SkDGQ/ccFiTgN6oMvw6fNRAuzcdzw6RB7AFDe5YEL19sMNbX?=
+ =?us-ascii?Q?6ohqYwPc37AGdA307u9QEOu4rx8u8jXLSDyb++plZAu4D7/FQBABI9ydOszw?=
+ =?us-ascii?Q?QIgY19yB+g5UKhWPKHTIes+Q5kK8np5S7xvZfUVYipDdGBIkwldG1KmzQ6HT?=
+ =?us-ascii?Q?Klb44FkR1qfcth6Ez20TF8bUWZwGeJjgkeGsihNeqJ7FLKSf/Lr8vuF3xmCW?=
+ =?us-ascii?Q?Yu6b0Bu6EZ4V5W5tYcByqNuOKlGqA9RdA+UhCqneEHR+Aoiz3tXaJMD8xgH/?=
+ =?us-ascii?Q?lL+e8BD9lDFYH+zut+jWQpuulc/XJCGKmLvq07vp5vIQYa4EmxQN9d7W4NMg?=
+ =?us-ascii?Q?4XHyQjgoZKMALwuW+v+thMUlr/wUsbWaNLSXbAZGzxNzTO+2N6apyEJyGblv?=
+ =?us-ascii?Q?xXJBRfhbdnoo3yY5MU1N+kN5THkrbDWQaqzT4bT+MBw/bNeGyiFrV6sCuM4s?=
+ =?us-ascii?Q?gEBR0SJ0TZlmWX64SzXhHQ+sL3vPPoHQ3u5PTxNcuN1dtgnJE6IGoQ4AR73a?=
+ =?us-ascii?Q?DaSeGBLZhNbvOCUctZmLNu3Z9VNgo7g6w9fZKdBWtpUbm0EpzuOT5KKh4Ry6?=
+ =?us-ascii?Q?vQb+VDmq9gSBvcLmgAwEtkFpNviW+eCrfiA9nV2EY/Is687Kg2BTQLhJSufE?=
+ =?us-ascii?Q?eO1oofGLt46DCkTOCDv1HGnghb7wC1Xgmjm2eCHB6lxxWCRQDLAssLHZ7OZB?=
+ =?us-ascii?Q?WabseP6eLn05FE7z/A14+DArP4OL2EN6COokzIUYDmBqTYxnp/69vF4cVwRe?=
+ =?us-ascii?Q?pIt8ufPwBjaSEUf+1UOaScTWlzgRNJ8H2cWkcXXf0/32LqGgUb+wfc3Q/GcJ?=
+ =?us-ascii?Q?cnfVl72MjNSKecQmW8F75NTv0fxhAAELMD2JCoUkYRRQ3D9pOxYoZONEWg4E?=
+ =?us-ascii?Q?wiI+M8teN8NqHoHHlRHBuLw4bv3UqF5XD5RpZSO7LizZ1WwhMZ0Jy+xc+Jej?=
+ =?us-ascii?Q?CU57SvOxLQvKDemPNG11C1ySXo1UXHlPxwhFxWSEMomYPpZus0BesNgwppEL?=
+ =?us-ascii?Q?OI6qMB6PgEa/0MNoD8IZvtCBKls92tJsdThT305hAsYw2LtQQvfmvud8o8E2?=
+ =?us-ascii?Q?pRfq4tqTmHzh7P6NI888cFAGA3jP3V8XPIDNfEq9yzlnMOdMlRRRnIR22idQ?=
+ =?us-ascii?Q?xYbuXj4mYLiIYJUd50SwNThB1hu0V0=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;23:2cl4dpTs88kfjNuvH7HvrP3tNq+iVTG+mDFtlJ0mzcr92efjbeMLArxbVLDuZqMeSPxvCwIlraY8bTrVCT6il8zX6G25A0wzfW/pFyKcpAO/5cExbyRL4f2RIA+Sye1Heto0huE15XKB0vcfo2Cbig==;6:w6BNvYxn3RaQaEk9yLXSLvimXYPYcEWSNk8Tqe4u4UI5bShpM8oYd4d98f/brYs7eDZwS/0B/KJrENTL0oqYaWp1mV6eaoAaxATiugp7zZ9EKO8yPLuaS3UnUW19NXM+TMgtpBgfX6AwdpYTJhI4oDOAXGs060cIfLu0Lz8Q5pEWhfTGntnEl/4Cg0LCk0XsbddMem6cBGTxOkwrq5t319sNYkOhVNAT3keFaJS19lPsyeh3d7u+h5L9CkLbZFIwaB63x9F6OYlwKQuF9TsdFmbnuxlossr73Xh31f0+dIg+7Rp5G+DD24zv07ME40PYPvJzJdbz6DxznedI7n+yH55/7RErdRd1eAvGhJFoUBrhlRZqcftRo0vCueTiwfdHlhjU6johDQRu2Sr6VkJNYwHuwd6LO5zHZ2R1IxPMjTG8raUjFz3y1Tb/uUDD+UDW4g6A54ro3h6emkxDJ4iL7Q==;5:SKWaWaQLJ64tGZf85CO3YC0Jc9ceUuPKdD6+HskS8nSixRJb84b+8c8ukDjeyLT1MAgpbhozOO/2dfo5eD0dFyd8yCBLLXz2/t1bYYiT6VpvgE5e/Wx7KTxJPHHGqxCG8QrYRMnJ6bKAPdP+25etNhGLk2z54W70sbhddgalcwc=
+X-Microsoft-Antispam-Message-Info: Rt3Eg3k/3teaIWyM3TrYP8Fe+kTnoDJdiRMIJ4PtNrn98+8R4aEQi5dz1eSsnltIhnFT1+2r0bQ7Qsuk+DJUjZaNRGEzxGF1MyXvVfYHVUl6Jb7i+TDmAyFBt+mEfaDSPZr0lLgOC/sjPtCtVJqYqc1+nCclqnppMKGWzDzclVk9paqlM84WqzCXIF9jOoXrYEHmQzrRMy4ZblmL1yzy0jy5jxb4dB48G2F81OGi2HNQNoQmcoKachEvizcbvFxcYfeMnfwUwDrEn6mfrgDmaJ0RPkmFOaeNXyii4kGPrilCeLQSyaOPYiUjvvn94ebZnzWEGH9WbzXBs0VsHaicDL0LANrKQSqgczQGTuK6HmoKOCnyA7xWSKySlBMt7ub7DLKJ0p5xsUwbvk2wiSRKUB1gsQPhCX8y26tTvoA3s/YDktCFqjr2hbwNXituSmBoT7ToiJQxmzPYehrgjuSsJvfuD7rm4mTHYKkz+SHMspYrlXXzEUvFvugVJBtmB6YIgWN2EqH7N2O7N/noSSNl9cfqGmitW9ivAX1hrWRdcaCCA+O3Ugw/WFJXgAkgaOwkepB20GkAjC0PT6BP7qPZpQ==
+SpamDiagnosticOutput: 1:22
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3599;7:nA5ElZWbKqo3hN0UkfY3c/5mXALoNV6x0CHB/I1wEcFMldHNNhM7wQCYug5ERpBZAj0fbXcloKDxnKhcHV2rAXQmbeXpL7H7VpgYIzQ6qX6j2wfzC8GLlA78xoZnmn+d/gqQqstpUqaFo8z78XTyntog3X5v+6aMrFnoVN/h52o/Q79rbjIEERhG/AzInlFzuErTPc9wFw+m0nxemibgObMSvEZHLBgU6l0fhyOVVpPR5CLpG9pL+TQHzzGDinJn;20:sLiQayD0j0aBdpffTcd6YSzV4phqyQlA+F4f/P5tyCilrmAcChwhVdLyQato0Ea8fm3L2om0l6xRIvNeW9nzJuTdm0wrLLKUBjQdMnrMiw1bApyMP9w9p9jx0lyK12bEDChpNGDg/VhqW3iaJyiVWwx1VEU7EEBerrTUo02Jlis=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 10:10:45.8999
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2446d02f-9183-482f-3777-08d622cf2989
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3599
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 25, 2018 at 11:29:57AM +0200, Paolo Bonzini wrote:
+> On 25/09/2018 10:57, Roman Kagan wrote:
+> > If we can assume that in all relevant cases vp_index coincides with the
+> > cpu index (which I think we can) then Vitaly's approach is the most
+> > efficient.
+> > 
+> > If, on the opposite, we want to optimize for random mapping between
+> > vp_index and cpu index, then it's probably better instead to iterate
+> > over vcpus and test if their vp_index belongs to the requested mask.
+> 
+> Yes, that would work too.  Perhaps we can do both?  You can have a
+> kvm->num_mismatched_vp_indexes count to choose between the two.
 
---2xzXx3ruJf7hsAzo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Makes sense to me.
 
-On Mon, Sep 24, 2018 at 08:50:35PM +0300, Dmitry Osipenko wrote:
-> On 9/24/18 2:10 PM, Thierry Reding wrote:
-> > On Mon, Sep 24, 2018 at 03:41:52AM +0300, Dmitry Osipenko wrote:
-> >> GART is a simple IOMMU provider that has single address space. There is
-> >> no need to setup global clients list and manage it for tracking of the
-> >> active domain, hence lot's of code could be safely removed and replaced
-> >> with a simpler alternative.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>  drivers/iommu/tegra-gart.c | 157 +++++++++----------------------------
-> >>  1 file changed, 39 insertions(+), 118 deletions(-)
-> >>
-> >> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-> >> index 306e9644a676..7182445c3b76 100644
-> >> --- a/drivers/iommu/tegra-gart.c
-> >> +++ b/drivers/iommu/tegra-gart.c
-> >> @@ -19,7 +19,6 @@
-> >> =20
-> >>  #include <linux/io.h>
-> >>  #include <linux/iommu.h>
-> >> -#include <linux/list.h>
-> >>  #include <linux/module.h>
-> >>  #include <linux/platform_device.h>
-> >>  #include <linux/slab.h>
-> >> @@ -42,30 +41,20 @@
-> >>  #define GART_PAGE_MASK						\
-> >>  	(~(GART_PAGE_SIZE - 1) & ~GART_ENTRY_PHYS_ADDR_VALID)
-> >> =20
-> >> -struct gart_client {
-> >> -	struct device		*dev;
-> >> -	struct list_head	list;
-> >> -};
-> >> -
-> >>  struct gart_device {
-> >>  	void __iomem		*regs;
-> >>  	u32			*savedata;
-> >>  	u32			page_count;	/* total remappable size */
-> >>  	dma_addr_t		iovmm_base;	/* offset to vmm_area */
-> >>  	spinlock_t		pte_lock;	/* for pagetable */
-> >> -	struct list_head	client;
-> >> -	spinlock_t		client_lock;	/* for client list */
-> >> +	spinlock_t		dom_lock;	/* for active domain */
-> >> +	unsigned int		active_devices;	/* number of active devices */
-> >>  	struct iommu_domain	*active_domain;	/* current active domain */
-> >>  	struct device		*dev;
-> >> =20
-> >>  	struct iommu_device	iommu;		/* IOMMU Core handle */
-> >>  };
-> >> =20
-> >> -struct gart_domain {
-> >> -	struct iommu_domain domain;		/* generic domain handle */
-> >> -	struct gart_device *gart;		/* link to gart device   */
-> >> -};
-> >> -
-> >>  static struct gart_device *gart_handle; /* unique for a system */
-> >> =20
-> >>  static bool gart_debug;
-> >> @@ -73,11 +62,6 @@ static bool gart_debug;
-> >>  #define GART_PTE(_pfn)						\
-> >>  	(GART_ENTRY_PHYS_ADDR_VALID | ((_pfn) << PAGE_SHIFT))
-> >> =20
-> >> -static struct gart_domain *to_gart_domain(struct iommu_domain *dom)
-> >> -{
-> >> -	return container_of(dom, struct gart_domain, domain);
-> >> -}
-> >> -
-> >>  /*
-> >>   * Any interaction between any block on PPSB and a block on APB or AHB
-> >>   * must have these read-back to ensure the APB/AHB bus transaction is
-> >> @@ -166,128 +150,69 @@ static inline bool gart_iova_range_valid(struct=
- gart_device *gart,
-> >>  static int gart_iommu_attach_dev(struct iommu_domain *domain,
-> >>  				 struct device *dev)
-> >>  {
-> >> -	struct gart_domain *gart_domain =3D to_gart_domain(domain);
-> >>  	struct gart_device *gart =3D gart_handle;
-> >> -	struct gart_client *client, *c;
-> >> -	int err =3D 0;
-> >> -
-> >> -	client =3D kzalloc(sizeof(*c), GFP_KERNEL);
-> >> -	if (!client)
-> >> -		return -ENOMEM;
-> >> -	client->dev =3D dev;
-> >> -
-> >> -	spin_lock(&gart->client_lock);
-> >> -	list_for_each_entry(c, &gart->client, list) {
-> >> -		if (c->dev =3D=3D dev) {
-> >> -			dev_err(gart->dev, "GART: %s is already attached\n",
-> >> -				dev_name(dev));
-> >> -			err =3D -EINVAL;
-> >> -			goto fail;
-> >> -		}
-> >> -	}
-> >> -	if (gart->active_domain && gart->active_domain !=3D domain) {
-> >> -		dev_err(gart->dev,
-> >> -			"GART: Only one domain can be active at a time\n");
-> >> -		err =3D -EINVAL;
-> >> -		goto fail;
-> >> -	}
-> >> -	gart->active_domain =3D domain;
-> >> -	gart_domain->gart =3D gart;
-> >> -	list_add(&client->list, &gart->client);
-> >> -	spin_unlock(&gart->client_lock);
-> >> -	dev_dbg(gart->dev, "GART: Attached %s\n", dev_name(dev));
-> >> -	return 0;
-> >> +	int ret =3D 0;
-> >> =20
-> >> -fail:
-> >> -	kfree(client);
-> >> -	spin_unlock(&gart->client_lock);
-> >> -	return err;
-> >> -}
-> >> +	spin_lock(&gart->dom_lock);
-> >> =20
-> >> -static void __gart_iommu_detach_dev(struct iommu_domain *domain,
-> >> -				    struct device *dev)
-> >> -{
-> >> -	struct gart_domain *gart_domain =3D to_gart_domain(domain);
-> >> -	struct gart_device *gart =3D gart_domain->gart;
-> >> -	struct gart_client *c;
-> >> -
-> >> -	list_for_each_entry(c, &gart->client, list) {
-> >> -		if (c->dev =3D=3D dev) {
-> >> -			list_del(&c->list);
-> >> -			kfree(c);
-> >> -			if (list_empty(&gart->client)) {
-> >> -				gart->active_domain =3D NULL;
-> >> -				gart_domain->gart =3D NULL;
-> >> -			}
-> >> -			dev_dbg(gart->dev, "GART: Detached %s\n",
-> >> -				dev_name(dev));
-> >> -			return;
-> >> -		}
-> >> +	if (gart->active_domain && gart->active_domain !=3D domain) {
-> >> +		ret =3D -EBUSY;
-> >=20
-> > This omits the error message and returns -EBUSY instead of -EINVAL. Was
-> > this intended? For what it's worth, I do agree with the changes, it's
-> > just that I think you could've made those in the earlier patch that
-> > introduced them.
->=20
-> The message isn't really needed and EBUSY seems fit better than EINVAL he=
-re.
->=20
-> > But this is all one series and the end result looks fine, so no need to
-> > be that picky.
->=20
-> Good, thanks.
->=20
-> >> +	} else if (dev->archdata.iommu !=3D domain) {
-> >> +		dev->archdata.iommu =3D domain;
-> >> +		gart->active_domain =3D domain;
-> >> +		gart->active_devices++;
-> >>  	}
-> >> =20
-> >> -	dev_err(gart->dev, "GART: Couldn't find %s to detach\n",
-> >> -		dev_name(dev));
-> >> +	spin_unlock(&gart->dom_lock);
-> >> +
-> >> +	return ret;
-> >>  }
-> >> =20
-> >>  static void gart_iommu_detach_dev(struct iommu_domain *domain,
-> >>  				  struct device *dev)
-> >>  {
-> >> -	struct gart_domain *gart_domain =3D to_gart_domain(domain);
-> >> -	struct gart_device *gart =3D gart_domain->gart;
-> >> +	struct gart_device *gart =3D gart_handle;
-> >> +
-> >> +	spin_lock(&gart->dom_lock);
-> >> =20
-> >> -	spin_lock(&gart->client_lock);
-> >> -	__gart_iommu_detach_dev(domain, dev);
-> >> -	spin_unlock(&gart->client_lock);
-> >> +	if (dev->archdata.iommu =3D=3D domain) {
-> >> +		dev->archdata.iommu =3D NULL;
-> >> +
-> >> +		if (--gart->active_devices =3D=3D 0)
-> >> +			gart->active_domain =3D NULL;
-> >> +	}
-> >> +
-> >> +	spin_unlock(&gart->dom_lock);
-> >>  }
-> >> =20
-> >>  static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
-> >>  {
-> >> -	struct gart_domain *gart_domain;
-> >> -	struct gart_device *gart;
-> >> +	struct gart_device *gart =3D gart_handle;
-> >> +	struct iommu_domain *domain;
-> >> =20
-> >>  	if (type !=3D IOMMU_DOMAIN_UNMANAGED)
-> >>  		return NULL;
-> >> =20
-> >> -	gart =3D gart_handle;
-> >> -	if (!gart)
-> >> -		return NULL;
-> >> -
-> >> -	gart_domain =3D kzalloc(sizeof(*gart_domain), GFP_KERNEL);
-> >> -	if (!gart_domain)
-> >> -		return NULL;
-> >> -
-> >> -	gart_domain->domain.geometry.aperture_start =3D gart->iovmm_base;
-> >> -	gart_domain->domain.geometry.aperture_end =3D gart->iovmm_base +
-> >> +	domain =3D kzalloc(sizeof(*domain), GFP_KERNEL);
-> >> +	if (domain) {
-> >> +		domain->geometry.aperture_start =3D gart->iovmm_base;
-> >> +		domain->geometry.aperture_end =3D gart->iovmm_base +
-> >>  					gart->page_count * GART_PAGE_SIZE - 1;
-> >> -	gart_domain->domain.geometry.force_aperture =3D true;
-> >> +		domain->geometry.force_aperture =3D true;
-> >> +	}
-> >> =20
-> >> -	return &gart_domain->domain;
-> >> +	return domain;
-> >>  }
-> >> =20
-> >>  static void gart_iommu_domain_free(struct iommu_domain *domain)
-> >>  {
-> >> -	struct gart_domain *gart_domain =3D to_gart_domain(domain);
-> >> -	struct gart_device *gart =3D gart_domain->gart;
-> >> -
-> >> -	if (gart) {
-> >> -		spin_lock(&gart->client_lock);
-> >> -		if (!list_empty(&gart->client)) {
-> >> -			struct gart_client *c, *tmp;
-> >> -
-> >> -			list_for_each_entry_safe(c, tmp, &gart->client, list)
-> >> -				__gart_iommu_detach_dev(domain, c->dev);
-> >> -		}
-> >> -		spin_unlock(&gart->client_lock);
-> >> -	}
-> >> -
-> >> -	kfree(gart_domain);
-> >> +	kfree(domain);
-> >>  }
-> >=20
-> > Doesn't this now make it possible to free a potentially active domain?
->=20
-> Yes, don't do it. I can add a WARN_ON() here, though I think IOMMU core
-> should be the one taking care about that.
-
-Yeah, might be good to have the WARN_ON() either here or in the IOMMU
-core. Force-detaching is probably a good idea, too, otherwise the users
-of the freed domain are just going to crash anyway, right? Maybe
-something to discuss more generally with Joerg.
-
-I think in the meantime just having the WARN_ON() here is probably good
-enough. It should point out the cases where we do free the domain with
-devices still attached, which hopefully don't exist, and we can fix
-them.
-
-> >>  static int gart_iommu_map(struct iommu_domain *domain, unsigned long =
-iova,
-> >>  			  phys_addr_t pa, size_t bytes, int prot)
-> >>  {
-> >> -	struct gart_domain *gart_domain =3D to_gart_domain(domain);
-> >> -	struct gart_device *gart =3D gart_domain->gart;
-> >> +	struct gart_device *gart =3D gart_handle;
-> >=20
-> > Hmm... this now introduces more uses of the gart_handle that I hoped we
-> > could get rid of. I think we could still keep around struct gart_domain
-> > and just make sure it is unique. The small amounts of casting here seem
-> > mostly harmless to me, especially since they will be nops, so we end up
-> > with just one dereference to get at the struct gart_device. I think the
-> > benefits of not having this global variable around are worth the one
-> > dereference here.
->=20
-> What are the benefits? I don't see anything other than the pedantic oddit=
-y.
->=20
-> I've removed gart_domain in the end because it is an extra code (and
-> consumed resources) without any benefit. Let's keep that part as it is
-> now. I'll be happy to change that code if you'll explain why it is worth
-> it.
-
-I thought I did explain. Anyway, it's always been like this, so no need
-to change it as part of this series.
-
-Thierry
-
---2xzXx3ruJf7hsAzo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqCUUACgkQ3SOs138+
-s6G/UQ/8Cq+keTTSr0rMlqLC763bG/Sn3T0KZZueywks0/aoZfeYxGRPirjdFr6S
-E9FzVgtboWpm9x4PxcOdzItx+Q6GNgWLVTLacFBAEYbOTejEyMZZDrh0J3lo6qch
-yCsNoyhoATwPoQEqZiusngtccszUGzfMwBaoax+NI9l54Cec7OXL8VDo/O01LYf+
-S9ej8RAdN29XF88RhMK8QTFU8AM0ykG5CoQw1scVBF9h3KgS5dMUttQAbznvK3xH
-TbVDSLbGhS6NNiB8YbrTkvq0fi2l1ftvJZikir46nFv6dYhKSSQ4PLAptIPASqNB
-JiojoF5p0wqOQqEHHlNvXNC/pqIn6G+5nFAS1lMg9RyBhIG15QgGPzEPccGuLwEE
-S2kk60e45V3MnkcRsdzVY2EMZ/knMXHs8Q1bcJmBDLkRhAnIFQsBiNKVOR5eeg28
-YDO5i4PGLwZQjUTB8OUhyeaXURol6QQJ152NdJUD66YiSpKfWAFLHAml/LdOHPmv
-V6qtQhECrJBRWtbJEPwnKyI77OyM80NU/z5lvrazInz0B90pSbS8FHBJYu37rC/3
-r4FaREzk6tmY4tdo3H7hj30yoM+vrKBBreNr1iaBvKN4n70kq4yUps5LUAIRmFmS
-dwLT5wkgjiUxStwzDp3IfQyIIH7hRx6NkYeEcPuHKXlMX8flqLQ=
-=1iE+
------END PGP SIGNATURE-----
-
---2xzXx3ruJf7hsAzo--
+Roman.
