@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83982C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A85C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38FA22086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:38:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38FA22086E
+	by mail.kernel.org (Postfix) with ESMTP id F125E2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:38:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F125E2086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbeIYSpp (ORCPT
+        id S1729195AbeIYSqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:45:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34586 "EHLO mx1.suse.de"
+        Tue, 25 Sep 2018 14:46:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34654 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728773AbeIYSpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:45:45 -0400
+        id S1728289AbeIYSqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:46:20 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 84DC7AEE3;
-        Tue, 25 Sep 2018 12:38:20 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 14:38:18 +0200 (CEST)
+        by mx1.suse.de (Postfix) with ESMTP id BA410AEA3;
+        Tue, 25 Sep 2018 12:38:55 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 14:38:55 +0200 (CEST)
 From:   Jiri Kosina <jikos@kernel.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -38,10 +38,10 @@ To:     Thomas Gleixner <tglx@linutronix.de>,
         Tim Chen <tim.c.chen@linux.intel.com>,
         "Schaufler, Casey" <casey.schaufler@intel.com>
 cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v7 1/3] x86/speculation: apply IBPB more strictly to avoid
- cross-process data leak
+Subject: [PATCH v7 2/3] x86/speculation: Enable cross-hyperthread spectre v2
+ STIBP mitigation
 In-Reply-To: <nycvar.YFH.7.76.1809251431260.15880@cbobk.fhfr.pm>
-Message-ID: <nycvar.YFH.7.76.1809251437340.15880@cbobk.fhfr.pm>
+Message-ID: <nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm>
 References: <nycvar.YFH.7.76.1809251431260.15880@cbobk.fhfr.pm>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
@@ -53,167 +53,171 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Kosina <jkosina@suse.cz>
 
-Currently, we are issuing IBPB only in cases when switching into a non-dumpable
-process, the rationale being to protect such 'important and security sensitive'
-processess (such as GPG) from data leak into a different userspace process via
-spectre v2.
+STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
+(once enabled) prevents cross-hyperthread control of decisions made by
+indirect branch predictors.
 
-This is however completely insufficient to provide proper userspace-to-userpace
-spectrev2 protection, as any process can poison branch buffers before being
-scheduled out, and the newly scheduled process immediately becomes spectrev2
-victim.
+Enable this feature if
 
-In order to minimize the performance impact (for usecases that do require
-spectrev2 protection), issue the barrier only in cases when switching between
-processess where the victim can't be ptraced by the potential attacker (as in
-such cases, the attacker doesn't have to bother with branch buffers at all).
+- the CPU is vulnerable to spectre v2
+- the CPU supports SMT and has SMT siblings online
+- spectre_v2 mitigation autoselection is enabled (default)
 
-[ tglx@linutronix.de: split up PTRACE_MODE_NOACCESS_CHK into PTRACE_MODE_SCHED and
-  PTRACE_MODE_IBPB to be able to do ptrace() context tracking reasonably
-  fine-grained ]
+After some previous discussion, this patch leaves STIBP on all the time,
+as wrmsr on crossing kernel boundary is a no-no. This could perhaps later
+be a bit more optimized (like disabling it in NOHZ, experiment with
+disabling it in idle, etc) if needed.
 
-Fixes: 18bf3c3ea8 ("x86/speculation: Use Indirect Branch Prediction Barrier in context switch")
-Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
+Note that the synchronization of the mask manipulation via newly added
+spec_ctrl_mutex is currently not strictly needed, as the only updater is
+already being serialized by cpu_add_remove_lock, but let's make this a
+little bit more future-proof.
+
+Cc: stable@vger.kernel.org
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 ---
- arch/x86/mm/tlb.c      | 31 ++++++++++++++++++++-----------
- include/linux/ptrace.h | 21 +++++++++++++++++++--
- kernel/ptrace.c        | 10 ++++++++++
- 3 files changed, 49 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 57 +++++++++++++++++++++++++++++++++++++++++-----
+ kernel/cpu.c               | 11 ++++++++-
+ 2 files changed, 61 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index e96b99eb800c..073b8df349a0 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -7,6 +7,7 @@
- #include <linux/export.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
-+#include <linux/ptrace.h>
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 40bdaea97fe7..53eb14a65610 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -35,12 +35,10 @@ static void __init spectre_v2_select_mitigation(void);
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
  
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-@@ -180,6 +181,19 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
- 	}
+-/*
+- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+- * writes to SPEC_CTRL contain whatever reserved bits have been set.
+- */
+-u64 __ro_after_init x86_spec_ctrl_base;
++/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
++u64 x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
++static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -325,6 +323,46 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ 	return cmd;
  }
  
-+static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
++static bool stibp_needed(void)
 +{
-+	/*
-+	 * Check if the current (previous) task has access to the memory
-+	 * of the @tsk (next) task. If access is denied, make sure to
-+	 * issue a IBPB to stop user->user Spectre-v2 attacks.
-+	 *
-+	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
-+	 */
-+	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
-+		ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB));
-+}
-+
- void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			struct task_struct *tsk)
- {
-@@ -262,18 +276,13 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		 * one process from doing Spectre-v2 attacks on another.
- 		 *
- 		 * As an optimization, flush indirect branches only when
--		 * switching into processes that disable dumping. This
--		 * protects high value processes like gpg, without having
--		 * too high performance overhead. IBPB is *expensive*!
--		 *
--		 * This will not flush branches when switching into kernel
--		 * threads. It will also not flush if we switch to idle
--		 * thread and back to the same process. It will flush if we
--		 * switch to a different non-dumpable process.
-+		 * switching into a processes that can't be ptrace by the
-+		 * current one (as in such case, attacker has much more
-+		 * convenient way how to tamper with the next process than
-+		 * branch buffer poisoning).
- 		 */
--		if (tsk && tsk->mm &&
--		    tsk->mm->context.ctx_id != last_ctx_id &&
--		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
-+		if (static_cpu_has(X86_FEATURE_USE_IBPB) &&
-+				ibpb_needed(tsk, last_ctx_id))
- 			indirect_branch_prediction_barrier();
- 
- 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
-diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
-index 4f36431c380b..e5e5ef513df3 100644
---- a/include/linux/ptrace.h
-+++ b/include/linux/ptrace.h
-@@ -62,14 +62,17 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
- #define PTRACE_MODE_READ	0x01
- #define PTRACE_MODE_ATTACH	0x02
- #define PTRACE_MODE_NOAUDIT	0x04
--#define PTRACE_MODE_FSCREDS 0x08
--#define PTRACE_MODE_REALCREDS 0x10
-+#define PTRACE_MODE_FSCREDS	0x08
-+#define PTRACE_MODE_REALCREDS	0x10
-+#define PTRACE_MODE_SCHED	0x20
-+#define PTRACE_MODE_IBPB	0x40
- 
- /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
- #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
- #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
- #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_REALCREDS)
-+#define PTRACE_MODE_SPEC_IBPB (PTRACE_MODE_ATTACH_REALCREDS | PTRACE_MODE_IBPB)
- 
- /**
-  * ptrace_may_access - check whether the caller is permitted to access
-@@ -87,6 +90,20 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
-  */
- extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
- 
-+/**
-+ * ptrace_may_access - check whether the caller is permitted to access
-+ * a target task.
-+ * @task: target task
-+ * @mode: selects type of access and caller credentials
-+ *
-+ * Returns true on success, false on denial.
-+ *
-+ * Similar to ptrace_may_access(). Only to be called from context switch
-+ * code. Does not call into audit and the regular LSM hooks due to locking
-+ * constraints.
-+ */
-+extern bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode);
-+
- static inline int ptrace_reparented(struct task_struct *child)
- {
- 	return !same_thread_group(child->real_parent, child->parent);
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 21fec73d45d4..99cfddde6a55 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -261,6 +261,9 @@ static int ptrace_check_attach(struct task_struct *child, bool ignore_state)
- 
- static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
- {
-+	if (mode & PTRACE_MODE_SCHED)
++	if (spectre_v2_enabled == SPECTRE_V2_NONE)
 +		return false;
 +
- 	if (mode & PTRACE_MODE_NOAUDIT)
- 		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
- 	else
-@@ -328,9 +331,16 @@ static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
- 	     !ptrace_has_cap(mm->user_ns, mode)))
- 	    return -EPERM;
- 
-+	if (mode & PTRACE_MODE_SCHED)
-+		return 0;
- 	return security_ptrace_access_check(task, mode);
- }
- 
-+bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode)
-+{
-+	return __ptrace_may_access(task, mode | PTRACE_MODE_SCHED);
++	if (!boot_cpu_has(X86_FEATURE_STIBP))
++		return false;
++
++	return true;
 +}
 +
- bool ptrace_may_access(struct task_struct *task, unsigned int mode)
++static void update_stibp_msr(void *info)
++{
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++}
++
++void arch_smt_update(void)
++{
++	u64 mask;
++
++	if (!stibp_needed())
++		return;
++
++	mutex_lock(&spec_ctrl_mutex);
++	mask = x86_spec_ctrl_base;
++	if (cpu_smt_control == CPU_SMT_ENABLED)
++		mask |= SPEC_CTRL_STIBP;
++	else
++		mask &= ~SPEC_CTRL_STIBP;
++
++	if (mask != x86_spec_ctrl_base) {
++		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
++				cpu_smt_control == CPU_SMT_ENABLED ?
++				"Enabling" : "Disabling");
++		x86_spec_ctrl_base = mask;
++		on_each_cpu(update_stibp_msr, NULL, 1);
++	}
++	mutex_unlock(&spec_ctrl_mutex);
++}
++
+ static void __init spectre_v2_select_mitigation(void)
  {
- 	int err;
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -424,6 +462,9 @@ static void __init spectre_v2_select_mitigation(void)
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
++
++	/* Enable STIBP if appropriate */
++	arch_smt_update();
+ }
+ 
+ #undef pr_fmt
+@@ -814,6 +855,8 @@ static ssize_t l1tf_show_state(char *buf)
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
++	int ret;
++
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+ 
+@@ -831,10 +874,12 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 
+ 	case X86_BUG_SPECTRE_V2:
+-		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
++			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       spectre_v2_module_string());
++		return ret;
+ 
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index aa7fe85ad62e..2fb49916ea56 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2025,6 +2025,12 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
++/*
++ * Architectures that need SMT-specific errata handling during SMT hotplug
++ * should override this.
++ */
++void __weak arch_smt_update(void) { };
++
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2051,8 +2057,10 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret)
++	if (!ret) {
+ 		cpu_smt_control = ctrlval;
++		arch_smt_update();
++	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2063,6 +2071,7 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
++	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+
 
 -- 
 Jiri Kosina
