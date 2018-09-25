@@ -2,239 +2,165 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DECCC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D3FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1617B206B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1617B206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id ADD55206B6
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YE2UwKk+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD55206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728757AbeIYQHS (ORCPT
+        id S1728836AbeIYQHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:07:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35748 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbeIYQHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:07:17 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD75988311;
-        Tue, 25 Sep 2018 10:00:30 +0000 (UTC)
-Received: from [10.36.117.173] (ovpn-117-173.ams2.redhat.com [10.36.117.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 580965DD79;
-        Tue, 25 Sep 2018 10:00:23 +0000 (UTC)
-Subject: Re: [PATCH v5 18/18] kvm: arm64: Allow tuning the physical address
- size for VM
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org,
-        Peter Maydel <peter.maydell@linaro.org>
-References: <20180917104144.19188-1-suzuki.poulose@arm.com>
- <20180917104144.19188-19-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <552680a6-23e6-001c-416e-214d1e8276c6@redhat.com>
-Date:   Tue, 25 Sep 2018 12:00:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 12:07:37 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35109 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728397AbeIYQHh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:07:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id o18-v6so12975670wmc.0;
+        Tue, 25 Sep 2018 03:00:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Zx3gUT9zqf5BPudUt/zg+sujy0Aro/CPMgj6k26BfmE=;
+        b=YE2UwKk+xSxjxdvF4jt2vr6AN8sbRSP6DCc3cBnO1Lqkzcqw5lizzBDNakshpkX/zU
+         n2vkcvxFp48+QM+lNi1aG4oPkppnl5sZAre6meSRogVWZR0IovFurElOHKhnfq0Zlwd6
+         WziUCArPxPFZg37PHP1eWmrclGUQtXq7IKbsvMf/14P0Qvb02d9l+ImBYLpHzIMXgwk/
+         pwgzsy+RMaxA1xyWmFi/hhPnJSKO3lkdlH2Ocx3Nmr9Ed0OZneISsbYAEOuacYcbpTxh
+         ZZnosUv8REpRPbdakDavMmlpsrCuoY4ikG9qckAB5WhY7Mhg0Hh5pSVog8VjudwGTjAk
+         VTAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Zx3gUT9zqf5BPudUt/zg+sujy0Aro/CPMgj6k26BfmE=;
+        b=swFBo7N98H+ZOGcQ6GoIVFyisOoMk8a08rJ1otDM+CPMWUY4FTlyMeGxDs5kgcjefa
+         Mt663yoa5Ps3sMmw6pZDFWa7Ku6xbOdW+4tGmohiPC5cIn0s0Q9DM8CF18msaHeB2ASo
+         Dl6f9wZOuaRWgdAQZJzrpdIXY1YUZrcGyoM7zza/HhypCRZ2PL9VNHdS/3y4yj7Vp/ju
+         ox9oVfzneOO/53Mamr6Ae7PL1xA1f5Iq70SCYqSsfWr3rgKq8syQlEpTWYUbva2WAx/W
+         +yTmrNFoh1it4R+MPR7cg4z+u6MTsvWfymmge34EoaVllYR7w155qODqKE4z+URNuESu
+         ovYA==
+X-Gm-Message-State: ABuFfoiZLTTOw1JHSekgqELV3cNxNq3i1vrej9fBpeZcuO55bFK8L6KE
+        CcEQDL1QEAvJjAzZOKZek+mxoYYA
+X-Google-Smtp-Source: ACcGV62yqKtHHFga04btFc7vvLkfz1+bfWQEd2W/Xt7D9AWLQhnqPuFBp0jmdCyazkplN8Yto9YIjQ==
+X-Received: by 2002:a1c:c44a:: with SMTP id u71-v6mr5809wmf.43.1537869648158;
+        Tue, 25 Sep 2018 03:00:48 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id k34-v6sm2567741wre.18.2018.09.25.03.00.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 03:00:47 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 12:00:46 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 11/20] memory: tegra: Use of_device_get_match_data()
+Message-ID: <20180925100046.GD7097@ulmo>
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-12-digetx@gmail.com>
+ <20180924101354.GH21032@ulmo>
+ <dcf439a0-249c-ff9f-292d-c807a736672a@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180917104144.19188-19-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 25 Sep 2018 10:00:31 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="BI5RvnYi6R4T2M87"
+Content-Disposition: inline
+In-Reply-To: <dcf439a0-249c-ff9f-292d-c807a736672a@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
-> Allow specifying the physical address size limit for a new
-> VM via the kvm_type argument for the KVM_CREATE_VM ioctl. This
-> allows us to finalise the stage2 page table as early as possible
-> and hence perform the right checks on the memory slots
-> without complication. The size is ecnoded as Log2(PA_Size) in
-encoded
-> bits[7:0] of the type field. For backward compatibility the
-> value 0 is reserved and implies 40bits. Also, lift the limit
-> of the IPA to host limit and allow lower IPA sizes (e.g, 32).
-> 
-> The userspace could check the extension KVM_CAP_ARM_VM_PHYS_SHIFT
-> for the availability of this feature. The cap check returns the
-> maximum limit for the physical address shift supported by the host.
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Cc: Peter Maydel <peter.maydell@linaro.org>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Changes since v4:
->  - Fold the introduction of the KVM_CAP_ARM_VM_PHYS_SHIFT to this
->    patch to allow detection of the availability of the feature for
->    userspace.
->  - Document the API
->  - Restrict the feature only to arm64.
-> Changes since V3:
->  - Switch to a CAP, that can be checkd via EXTENSIONS on KVM device
->    fd, rather than a dedicated ioctl.
-> ---
->  Documentation/virtual/kvm/api.txt       |  8 ++++++++
->  arch/arm64/include/asm/stage2_pgtable.h | 20 --------------------
->  arch/arm64/kvm/reset.c                  | 20 ++++++++++++++++----
->  include/uapi/linux/kvm.h                | 10 ++++++++++
->  4 files changed, 34 insertions(+), 24 deletions(-)
-> 
-> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> index c664064f76fb..f860251ff27c 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -122,6 +122,14 @@ the default trap & emulate implementation (which changes the virtual
->  memory layout to fit in user mode), check KVM_CAP_MIPS_VZ and use the
->  flag KVM_VM_MIPS_VZ.
->  
-> +To configure the physical address space size for a VM (IPA size) on arm64,
-> +check KVM_CAP_ARM_VM_PHYS_SHIFT (which returns the maximum limit for the
-> +IPA shift) and use KVM_VM_TYPE_ARM_PHYS_SHIFT(PHYS_SHIFT). Bits[7-0] of the
-> +machine type has been reserved for specifying the PHYS_SHIFT.
-are reserved to pass the PHYS_SHIFT?
-> +The supported range is [32...IPA_LIMIT], where IPA_LIMIT could be
-s/could be/is
-> +identified by checking KVM_CAP_ARM_VM_PHYS_SHIFT. For backward compatibility
-> +a value of 0 selects 40bits.
-> +
->  
->  4.3 KVM_GET_MSR_INDEX_LIST, KVM_GET_MSR_FEATURE_INDEX_LIST
->  
-> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
-> index 6a56fdff0823..0b339f5a4a7c 100644
-> --- a/arch/arm64/include/asm/stage2_pgtable.h
-> +++ b/arch/arm64/include/asm/stage2_pgtable.h
-> @@ -42,28 +42,8 @@
->   * the range (IPA_SHIFT, IPA_SHIFT - 4).
->   */
->  #define stage2_pgtable_levels(ipa)	ARM64_HW_PGTABLE_LEVELS((ipa) - 4)
-> -#define STAGE2_PGTABLE_LEVELS		stage2_pgtable_levels(KVM_PHYS_SHIFT)
->  #define kvm_stage2_levels(kvm)		VTCR_EL2_LVLS(kvm->arch.vtcr)
->  
-> -/*
-> - * With all the supported VA_BITs and 40bit guest IPA, the following condition
-> - * is always true:
-> - *
-> - *       STAGE2_PGTABLE_LEVELS <= CONFIG_PGTABLE_LEVELS
-> - *
-> - * We base our stage-2 page table walker helpers on this assumption and
-> - * fall back to using the host version of the helper wherever possible.
-> - * i.e, if a particular level is not folded (e.g, PUD) at stage2, we fall back
-> - * to using the host version, since it is guaranteed it is not folded at host.
-> - *
-> - * If the condition breaks in the future, we can rearrange the host level
-> - * definitions and reuse them for stage2. Till then...
-> - */
-> -#if STAGE2_PGTABLE_LEVELS > CONFIG_PGTABLE_LEVELS
-> -#error "Unsupported combination of guest IPA and host VA_BITS."
-> -#endif
-> -
-> -
->  /* stage2_pgdir_shift() is the size mapped by top-level stage2 entry for the VM */
->  #define stage2_pgdir_shift(kvm)		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
->  #define stage2_pgdir_size(kvm)		(1ULL << stage2_pgdir_shift(kvm))
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index 0393bb974b23..c9640159e11f 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -89,6 +89,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
->  	case KVM_CAP_VCPU_EVENTS:
->  		r = 1;
->  		break;
-> +	case KVM_CAP_ARM_VM_PHYS_SHIFT:
-> +		r = kvm_ipa_limit;
-> +		break;
->  	default:
->  		r = 0;
->  	}
-> @@ -190,16 +193,25 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
->  {
->  	u64 vtcr = VTCR_EL2_FLAGS;
->  	u64 parange;
-> -	u8 lvls;
-> +	u8 lvls, ipa_shift;
->  
-> -	if (type)
-> +	if (type & ~KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
->  		return -EINVAL;
->  
-> +	ipa_shift = KVM_VM_TYPE_ARM_PHYS_SHIFT(type);
-> +	if (ipa_shift) {
-> +		if (ipa_shift > kvm_ipa_limit ||
-> +		    ipa_shift < 32)
-> +			return -EINVAL;
-> +	} else {
-> +		ipa_shift = KVM_PHYS_SHIFT;
-> +	}
-> +
->  	/*
->  	 * Use a minimum 2 level page table to prevent splitting
->  	 * host PMD huge pages at stage2.
->  	 */
-> -	lvls = stage2_pgtable_levels(KVM_PHYS_SHIFT);
-> +	lvls = stage2_pgtable_levels(ipa_shift);
->  	if (lvls < 2)
->  		lvls = 2;
->  
-> @@ -221,7 +233,7 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
->  		VTCR_EL2_VS_8BIT;
->  
->  	vtcr |= VTCR_EL2_LVLS_TO_SL0(lvls);
-> -	vtcr |= VTCR_EL2_T0SZ(KVM_PHYS_SHIFT);
-> +	vtcr |= VTCR_EL2_T0SZ(ipa_shift);
->  
->  	kvm->arch.vtcr = vtcr;
->  	return 0;
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 07548de5c988..2a6b29c446db 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -750,6 +750,15 @@ struct kvm_ppc_resize_hpt {
->  
->  #define KVM_S390_SIE_PAGE_OFFSET 1
->  
-> +/*
-> + * On arm64, machine type can be used to request the physical
-> + * address size for the VM. Bits[7-0] has been reserved for the PA
-s/has been reserved/are?
 
-Thanks
+--BI5RvnYi6R4T2M87
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Eric
-> + * size shift (i.e, log2(PA_Size)). For backward compatibility,
-> + * value 0 implies the default IPA size, 40bits.
-> + */
-> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK	0xffULL
-> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)		\
-> +	((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
->  /*
->   * ioctls for /dev/kvm fds:
->   */
-> @@ -952,6 +961,7 @@ struct kvm_ppc_resize_hpt {
->  #define KVM_CAP_S390_HPAGE_1M 156
->  #define KVM_CAP_NESTED_STATE 157
->  #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
-> +#define KVM_CAP_ARM_VM_PHYS_SHIFT 159 /* returns maximum PA shift for a VM */
->  
->  #ifdef KVM_CAP_IRQ_ROUTING
->  
-> 
+On Mon, Sep 24, 2018 at 09:39:43PM +0300, Dmitry Osipenko wrote:
+> On 9/24/18 1:13 PM, Thierry Reding wrote:
+> > On Mon, Sep 24, 2018 at 03:41:44AM +0300, Dmitry Osipenko wrote:
+> >> There is no need to match device with the DT node since it was already
+> >> matched, use of_device_get_match_data() helper to get the match-data.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/memory/tegra/mc.c | 10 ++--------
+> >>  1 file changed, 2 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+> >> index 5454ffe5b2e0..cdc33f93cf7c 100644
+> >> --- a/drivers/memory/tegra/mc.c
+> >> +++ b/drivers/memory/tegra/mc.c
+> >> @@ -11,8 +11,7 @@
+> >>  #include <linux/interrupt.h>
+> >>  #include <linux/kernel.h>
+> >>  #include <linux/module.h>
+> >> -#include <linux/of.h>
+> >> -#include <linux/platform_device.h>
+> >=20
+> > It's better not to remove these two because the code still uses
+> > functions declared in them. If ever we were going to remove code using
+> > linux/of_device.h and then remove the linux/of_device.h include, we'd
+> > break the build and have to reintroduce the includes.
+>=20
+> That doesn't sound like a good argument. You're way too picky here ;)
+>=20
+> > The same would happen if linux/of_device.h were ever to stop including
+> > linux/platform_device.h or linux/of.h. That may sound unlikely, but it
+> > has happened in the past with other includes. It can also happen that
+> > some restructuring takes place in some headers that is not so obvious
+> > and then things can still start falling apart miles away.
+>=20
+> Restructuring will be somebody else problem. Not sure that we really
+> should care about it, I think it is unnecessary. But since you're
+> insisting..
+
+It's actually a very common argument and I've seen patches in the past
+that add includes just for the purpose of making sure the right
+definitions get pulled in. This happens quite frequently as a preamble
+to some major rework of some header files that would otherwise cause a
+lot of breakage.
+
+So I think it's best to be proactive about this and make sure we
+explicitly pull in all the necessary headers in the first place,
+irrespective of whether or not they may already get pulled in indirectly
+by some other headers.
+
+Thierry
+
+--BI5RvnYi6R4T2M87
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqB04ACgkQ3SOs138+
+s6Hyvg/9EeBObbdVirXsYp8DQaJ68XjG9k0VkZdp036X0ww9pWj9Kr+9A/6dVfBI
+SlK/+mFR5/RAHF/b/STNONtdu1TJV+TeeAuaZLfvIsS/KRoTXLpT4eC1kaFAGoun
+AH6rC68fNOSZoEmJbfSuAAbEhDLtNV4ITsW7ySwNB2Jn+TFAh3r/yd8WST769wY1
+ZULruEX1spgzlK8+ksF0lW4YDIRsb/MdlXgFC02nU4BpnlgaaUDXM16SsTnmVRQs
+jYC0WhFIXW+d9rebYDVdky/qQ7Eg5FtGDYXj6KBTGYVYenbB1HmXDm87rFUylIse
+mHZkZ3IzIVIOCcERDIc22gL6V78BViU0wfhtmGzpL+YK3BqWJ4TuDYuVuBz5AdGm
+NC7p4B+vNu7xULJpKrNgI1oGFmqE+NfyThmNMCoEEAbJ2ZRDrlTiPn6dQrM09irj
+NhY7/aCX8XSF8L25GCmZ3KOOlq+/kJdol6or76ON1hKdplvUxWsh2v6XwBOelM7C
+UhjbSvBZyTtUoWlly0dEB91Xrqbr4w4WH+Nu/Z2AQU/ue6itkTrwZK2RHF7uiBUI
+9X8hu8hO7ZCHgY9k1k/3Wl3S9eJ6lyJ5NI7JpqQ+dVX94H90cO+/+/bRczTLPQNI
+MBPx6I/hweSJ99xPdwgwIW1Uy2ce6VVFBclZI3LCpicXcgYKmyM=
+=YEyv
+-----END PGP SIGNATURE-----
+
+--BI5RvnYi6R4T2M87--
