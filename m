@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0033C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F51EC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E783208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE2CE20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oo50GXNY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E783208D9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qb0y+dTo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE2CE20C0A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729611AbeIYVpv (ORCPT
+        id S1729698AbeIYVqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:45:51 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34640 "EHLO
+        Tue, 25 Sep 2018 17:46:43 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40761 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729481AbeIYVpu (ORCPT
+        with ESMTP id S1729481AbeIYVqn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:45:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k19-v6so11508089pfi.1;
-        Tue, 25 Sep 2018 08:37:47 -0700 (PDT)
+        Tue, 25 Sep 2018 17:46:43 -0400
+Received: by mail-pf1-f195.google.com with SMTP id s5-v6so3723690pfj.7;
+        Tue, 25 Sep 2018 08:38:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6VqfORCRPMgtTqaMntPh5i5JLJrN5FHTsnQDOdEeYDQ=;
-        b=Oo50GXNYWEthxebJ7wTm9o2HauPMN4RfCVbcCDQ8MKI6s9bdtp4zps7jFJrhCKRDKh
-         /hIzN4HhdFto7+HF9VO2B6XJbQVYm5g1PVeekROab2jFRQiGX9zjumaM6xyVwXezjimK
-         BMSijldUA036PMDoCZYw19xK0CAC+TVT3GWfMJdQt4IFpzusEoIn2augWtc5Tc4Y+Ek2
-         Tvy7eFmS10AQsf7qMOu0QSCvGYmSpJ1rzvms9AjyuZn/NeGfN0Nuw7jpMNPqKcgcFPs5
-         guuE8Z6pPSQqrT4AWtQgDZI1daoZVeCLR/wyFJthoIFd1WOzXfWONFbwMboDXuBqCjPA
-         HdNQ==
+        bh=Tg784LxR7bs8FG/2jY26vCmVwzxE/NVAOY5nu7jF72U=;
+        b=Qb0y+dToWmuH5KbvexCddIzJQhgDJxuyKyidFp+jpcwSTUC4gLtOuusYCD7s2jXzu3
+         4fpFpIXrm4hUCaeZXe+74gjmG1QbG1xstEe9HokVNbz+0PJTGk9Lmb8SGnczM6S+C8qm
+         0BcR5sIxBJh+KdO8IjaBUHOufQHKvakzA6qpxyayPV3MuaGn3GPhnckoqSrXqmOC2HPd
+         UpQ4CA3UWtl6djSReVFFl6bK247WOEvey13o8bT9UCyFVhCjJmuTHvifBIZNJJmwhqQR
+         bOnNOc35RY/ZiWLwQopvNNEG0yBDSJrKZOCVNsrgVB5ZJJbFOU9qg+jiWRVW2sX7/dAD
+         9XQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=6VqfORCRPMgtTqaMntPh5i5JLJrN5FHTsnQDOdEeYDQ=;
-        b=cJt0s1IjnwfwHm5L8ffAQORbd73QqxL8nKPNG9l60s8+tB9i8K3FwcyAdtpLDFL4oe
-         3yMmq9X/S3yLYp1XL0t7ieuomwwLL6MKElWtfA9gafaAHWTwPuSjfxpe9dWaoVcp06Ht
-         DSqQI+XFQ24WACIdA7zuJI4gwRasvuQKioHKp9jN/pkcrkmE7PCg/gPLW2s6m3FQA+2W
-         nyyRBIFYi1m5pd7GMKWOIeO3//yZuk5L5casi8+FxZTCs13h5Hqh0vXg3+SCcuDFqqNA
-         aFl5XnV7ztrcYD9EtiXY4dwpJOTffF4YGro2KqC71VhVwyXu6VDU45St+JnmZuBUDrBn
-         7c+Q==
-X-Gm-Message-State: ABuFfohrIl0BUaLnK8qNz5E9RxJo3R+HShjSwLx3EajiWJ0I2a2XVOXI
-        h3zLRp2ZiHkmcJwBgTTTheg=
-X-Google-Smtp-Source: ACcGV62jghAPkL12ShByjIiP6tCYGxG4JEln9HTURrfd9hpyPzsdFnxj5kky37id2fHDxL6hzAI5cA==
-X-Received: by 2002:a63:954a:: with SMTP id t10-v6mr1589624pgn.432.1537889866848;
-        Tue, 25 Sep 2018 08:37:46 -0700 (PDT)
+        bh=Tg784LxR7bs8FG/2jY26vCmVwzxE/NVAOY5nu7jF72U=;
+        b=QcjzL3Bw4F3EY0XoL9jY45M0TaNHS1WK2ovNvmly3IyB6IWbAWLXHvY5ejNM1GCa3F
+         E+l0YT8oZHV28PiATQnAJ/yqtpoQhmUDRXroGlnZg7Gv+/CFgBxNnGCDanx61+HT1WI4
+         mJgE1Uo2HH9WvdjLQ32hyaxEPA5SuVTVJvvWrKnewm4TUgjZ7voMnv2P/TYIRA9OMlvL
+         RcCpuPMVbT8MnGEyFnLyNW/OMjFVcLIjdMbqXAAdn6/SgWcyDfWYrKxmd4NK2vlxXzoS
+         nI6IfnNS6vz8CL1Nnr44mnXS3RYqGVEdTZUdotdd6BKETfHgG+D7xtPHhCg4YEgZEh6/
+         vD4A==
+X-Gm-Message-State: ABuFfoiI/V8wfyccGLxFaohg2G2ZGlQiAjhUCgjJXXeGTPuWdKnNN7oU
+        1b9Sjk0Yet9zVR6/g74upBo=
+X-Google-Smtp-Source: ACcGV62ZiiJdDEyshT40vhUDfPm8LDGCCLGcLJjye+86zwt8Lrn15D0BBIYD8UQlZ1/4s9X2o+DLSA==
+X-Received: by 2002:a63:31c8:: with SMTP id x191-v6mr1571989pgx.229.1537889918447;
+        Tue, 25 Sep 2018 08:38:38 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.146.97])
-        by smtp.gmail.com with ESMTPSA id v190-v6sm5561983pgb.16.2018.09.25.08.37.42
+        by smtp.gmail.com with ESMTPSA id i80-v6sm1958413pfi.87.2018.09.25.08.38.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 08:37:45 -0700 (PDT)
-Subject: Re: [PATCH 1/3] dt-bindings: pwrap: mediatek: add pwrap support for
- MT6765
+        Tue, 25 Sep 2018 08:38:37 -0700 (PDT)
+Subject: Re: [PATCH 2/3] soc: mediatek: pwrap: add pwrap driver for mt6765
+ SoCs
 To:     Argus Lin <argus.lin@mediatek.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -78,7 +78,7 @@ Cc:     Chenglin Xu <chenglin.xu@mediatek.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <1536064314-31967-1-git-send-email-argus.lin@mediatek.com>
- <1536064314-31967-2-git-send-email-argus.lin@mediatek.com>
+ <1536064314-31967-3-git-send-email-argus.lin@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -124,12 +124,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <ce016218-bfa7-4599-7140-fb89e5c19faa@gmail.com>
-Date:   Tue, 25 Sep 2018 17:37:40 +0200
+Message-ID: <dc257382-f930-158e-f5b3-4375707f2a63@gmail.com>
+Date:   Tue, 25 Sep 2018 17:38:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1536064314-31967-2-git-send-email-argus.lin@mediatek.com>
+In-Reply-To: <1536064314-31967-3-git-send-email-argus.lin@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -141,28 +141,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 04/09/2018 14:31, Argus Lin wrote:
-> Add binding document of pwrap for MT6765 SoCs.
+> mt6765 is a highly integrated SoCs, it uses mt6357 for power management.
+> This patch adds pwrap driver to access mt6357. Pwrap of mt6765 support
+> dynamic priority meichanism, sequence monitor and starvation mechanism
+> to make transaction more reliable.
 > 
 > Signed-off-by: Argus Lin <argus.lin@mediatek.com>
-> ---
+
+I fixed the has_bridge variable, as this is obsolete now.
+Please check that I didn't do an error.
 
 Applied to v4.19-next/soc
 
-
-
->  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
->  1 file changed, 1 insertion(+)
+> ---
+>  drivers/soc/mediatek/mtk-pmic-wrap.c | 49 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> index f9987c3..359d64f 100644
-> --- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> +++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
-> @@ -19,6 +19,7 @@ IP Pairing
->  Required properties in pwrap device node.
->  - compatible:
->  	"mediatek,mt2701-pwrap" for MT2701/7623 SoCs
-> +	"mediatek,mt6765-pwrap" for MT6765 SoCs
->  	"mediatek,mt6797-pwrap" for MT6797 SoCs
->  	"mediatek,mt7622-pwrap" for MT7622 SoCs
->  	"mediatek,mt8135-pwrap" for MT8135 SoCs
+> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> index 4e931fd..ddaeace 100644
+> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
+> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> @@ -381,6 +381,38 @@ enum pwrap_regs {
+>  	[PWRAP_ADC_RDATA_ADDR2] =	0x154,
+>  };
+>  
+> +static int mt6765_regs[] = {
+> +	[PWRAP_MUX_SEL] =		0x0,
+> +	[PWRAP_WRAP_EN] =		0x4,
+> +	[PWRAP_DIO_EN] =		0x8,
+> +	[PWRAP_RDDMY] =			0x20,
+> +	[PWRAP_CSHEXT_WRITE] =		0x24,
+> +	[PWRAP_CSHEXT_READ] =		0x28,
+> +	[PWRAP_CSLEXT_START] =		0x2C,
+> +	[PWRAP_CSLEXT_END] =		0x30,
+> +	[PWRAP_STAUPD_PRD] =		0x3C,
+> +	[PWRAP_HARB_HPRIO] =		0x68,
+> +	[PWRAP_HIPRIO_ARB_EN] =		0x6C,
+> +	[PWRAP_MAN_EN] =		0x7C,
+> +	[PWRAP_MAN_CMD] =		0x80,
+> +	[PWRAP_WACS0_EN] =		0x8C,
+> +	[PWRAP_WACS1_EN] =		0x94,
+> +	[PWRAP_WACS2_EN] =		0x9C,
+> +	[PWRAP_INIT_DONE2] =		0xA0,
+> +	[PWRAP_WACS2_CMD] =		0xC20,
+> +	[PWRAP_WACS2_RDATA] =		0xC24,
+> +	[PWRAP_WACS2_VLDCLR] =		0xC28,
+> +	[PWRAP_INT_EN] =		0xB4,
+> +	[PWRAP_INT_FLG_RAW] =		0xB8,
+> +	[PWRAP_INT_FLG] =		0xBC,
+> +	[PWRAP_INT_CLR] =		0xC0,
+> +	[PWRAP_TIMER_EN] =		0xE8,
+> +	[PWRAP_WDT_UNIT] =		0xF0,
+> +	[PWRAP_WDT_SRC_EN] =		0xF4,
+> +	[PWRAP_DCM_EN] =		0x1DC,
+> +	[PWRAP_DCM_DBC_PRD] =		0x1E0,
+> +};
+> +
+>  static int mt6797_regs[] = {
+>  	[PWRAP_MUX_SEL] =		0x0,
+>  	[PWRAP_WRAP_EN] =		0x4,
+> @@ -690,6 +722,7 @@ enum pmic_type {
+>  
+>  enum pwrap_type {
+>  	PWRAP_MT2701,
+> +	PWRAP_MT6765,
+>  	PWRAP_MT6797,
+>  	PWRAP_MT7622,
+>  	PWRAP_MT8135,
+> @@ -1117,6 +1150,7 @@ static int pwrap_init_cipher(struct pmic_wrapper *wrp)
+>  		pwrap_writel(wrp, 1, PWRAP_CIPHER_START);
+>  		break;
+>  	case PWRAP_MT2701:
+> +	case PWRAP_MT6765:
+>  	case PWRAP_MT6797:
+>  	case PWRAP_MT8173:
+>  		pwrap_writel(wrp, 1, PWRAP_CIPHER_EN);
+> @@ -1460,6 +1494,18 @@ static irqreturn_t pwrap_interrupt(int irqno, void *dev_id)
+>  	.init_soc_specific = pwrap_mt2701_init_soc_specific,
+>  };
+>  
+> +static const struct pmic_wrapper_type pwrap_mt6765 = {
+> +	.regs = mt6765_regs,
+> +	.type = PWRAP_MT6765,
+> +	.arb_en_all = 0x3fd35,
+> +	.int_en_all = 0xffffffff,
+> +	.spi_w = PWRAP_MAN_CMD_SPI_WRITE,
+> +	.wdt_src = PWRAP_WDT_SRC_MASK_ALL,
+> +	.has_bridge = 0,
+> +	.init_reg_clock = pwrap_common_init_reg_clock,
+> +	.init_soc_specific = NULL,
+> +};
+> +
+>  static const struct pmic_wrapper_type pwrap_mt6797 = {
+>  	.regs = mt6797_regs,
+>  	.type = PWRAP_MT6797,
+> @@ -1513,6 +1559,9 @@ static irqreturn_t pwrap_interrupt(int irqno, void *dev_id)
+>  		.compatible = "mediatek,mt2701-pwrap",
+>  		.data = &pwrap_mt2701,
+>  	}, {
+> +		.compatible = "mediatek,mt6765-pwrap",
+> +		.data = &pwrap_mt6765,
+> +	}, {
+>  		.compatible = "mediatek,mt6797-pwrap",
+>  		.data = &pwrap_mt6797,
+>  	}, {
 > 
