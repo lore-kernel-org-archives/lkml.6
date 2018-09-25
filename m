@@ -2,118 +2,104 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23591C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17805C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4D32086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4D32086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id CFF5E2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:49:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF5E2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeIYW5N (ORCPT
+        id S1727434AbeIYW5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:57:13 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:39092 "EHLO mail.skyhub.de"
+        Tue, 25 Sep 2018 18:57:31 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:61683 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbeIYW5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:57:12 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Jaqwt54nZjnL; Tue, 25 Sep 2018 18:48:51 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC69500329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:9500:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D74CC1EC0311;
-        Tue, 25 Sep 2018 18:48:50 +0200 (CEST)
-Date:   Tue, 25 Sep 2018 18:48:54 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        David Wang <davidwang@zhaoxin.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 04/19] x86/cpufeatures: Add SGX feature bits
-Message-ID: <20180925164854.GF23986@zn.tnic>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-5-jarkko.sakkinen@linux.intel.com>
+        id S1726664AbeIYW5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:57:30 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42KRqT1SRSz9ttCY;
+        Tue, 25 Sep 2018 18:49:09 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id jHxxCneQgvEF; Tue, 25 Sep 2018 18:49:09 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42KRqT0qnnz9ttCN;
+        Tue, 25 Sep 2018 18:49:09 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 195DF8B7E5;
+        Tue, 25 Sep 2018 18:49:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 1wtcYGRQcqLe; Tue, 25 Sep 2018 18:49:09 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 78E868B7C8;
+        Tue, 25 Sep 2018 18:49:08 +0200 (CEST)
+Subject: Re: [PATCH v4 15/20] powerpc/mm: Avoid useless lock with single page
+ fragments
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1537288312.git.christophe.leroy@c-s.fr>
+ <7efec0c76fa692513c806871151a7ae20e99fe05.1537288312.git.christophe.leroy@c-s.fr>
+ <78cb82d6-1a13-150d-9daa-021bd2f98e7a@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <0c09b968-b3ef-ca89-9bd4-bf9df353ff50@c-s.fr>
+Date:   Tue, 25 Sep 2018 18:49:07 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180925130845.9962-5-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <78cb82d6-1a13-150d-9daa-021bd2f98e7a@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 04:06:41PM +0300, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
+
+
+Le 19/09/2018 à 04:56, Aneesh Kumar K.V a écrit :
+> On 9/18/18 10:27 PM, Christophe Leroy wrote:
+>> There is no point in taking the page table lock as
+>> pte_frag is always NULL when we have only one fragment.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/mm/pgtable-frag.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/powerpc/mm/pgtable-frag.c 
+>> b/arch/powerpc/mm/pgtable-frag.c
+>> index bc924822dcd6..ab4910e92aaf 100644
+>> --- a/arch/powerpc/mm/pgtable-frag.c
+>> +++ b/arch/powerpc/mm/pgtable-frag.c
+>> @@ -85,6 +85,9 @@ static pte_t *get_pte_from_cache(struct mm_struct *mm)
+>>   {
+>>       void *pte_frag, *ret;
+>>
+>> +    if (PTE_FRAG_NR == 1)
+>> +        return NULL;
+>> +
+>>       spin_lock(&mm->page_table_lock);
+>>       ret = mm->context.pte_frag;
+>>       if (ret) {
+>>
 > 
-> Add SGX feature bits as part of the Linux defined leaf 8, which
-> currently contains virtualization flags.  There are currently four
-> documented SGX feature bits, with more expected in the not-too-distant
-> future.
+> May be update get_pmd_from_cache too?
+> 
 
-...
+Ok, done in v5
 
-> +static void detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +#define _X86_FEATURE_SGX1		BIT(0)
-> +#define _X86_FEATURE_SGX2		BIT(1)
-> +#define _X86_FEATURE_SGX_ENCLV		BIT(5)
-> +#define _X86_FEATURE_SGX_ENCLS_C	BIT(6)
-> +
-> +	unsigned int eax;
-> +
-> +	clear_cpu_cap(c, X86_FEATURE_SGX1);
-> +	clear_cpu_cap(c, X86_FEATURE_SGX2);
-> +	clear_cpu_cap(c, X86_FEATURE_SGX_ENCLV);
-> +	clear_cpu_cap(c, X86_FEATURE_SGX_ENCLS_C);
-> +
-> +	if (c->cpuid_level < SGX_CPUID) {
-> +		pr_err_once("x86/sgx: cannot enumerate CPUID leaf (0x%x)\n",
-> +			    SGX_CPUID);
-> +		clear_cpu_cap(c, X86_FEATURE_SGX);
-> +		return;
-> +	}
-> +
-> +	eax = cpuid_eax(SGX_CPUID);
-> +
-> +	if (eax & _X86_FEATURE_SGX1)
-> +		set_cpu_cap(c, X86_FEATURE_SGX1);
-> +
-> +	if (eax & _X86_FEATURE_SGX2)
-> +		set_cpu_cap(c, X86_FEATURE_SGX2);
-> +
-> +	if (eax & _X86_FEATURE_SGX_ENCLV)
-> +		set_cpu_cap(c, X86_FEATURE_SGX_ENCLV);
-> +
-> +	if (eax & _X86_FEATURE_SGX_ENCLS_C)
-> +		set_cpu_cap(c, X86_FEATURE_SGX_ENCLS_C);
-
-
-Look at arch/x86/kernel/cpu/scattered.c for how to do this properly.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Christophe
