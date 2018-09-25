@@ -2,100 +2,71 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6996ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5E2C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D9CE206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:42:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D9CE206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 228C820685
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:43:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228C820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeIYXui (ORCPT
+        id S1727171AbeIYXwM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:50:38 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:43588 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbeIYXui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:50:38 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1g4rLI-0003cH-NV; Tue, 25 Sep 2018 11:41:50 -0600
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20180925162231.4354-1-logang@deltatee.com>
- <20180925162231.4354-11-logang@deltatee.com>
- <20180925171147.GB11822@localhost.localdomain>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <3549a9bb-3604-1739-c008-4e1a95441333@deltatee.com>
-Date:   Tue, 25 Sep 2018 11:41:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180925171147.GB11822@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 25 Sep 2018 19:52:12 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:38658 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725918AbeIYXwM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:52:12 -0400
+Received: from localhost (96-89-128-221-static.hfc.comcastbusiness.net [96.89.128.221])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 44F5014229673;
+        Tue, 25 Sep 2018 10:43:37 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 10:43:36 -0700 (PDT)
+Message-Id: <20180925.104336.2276354373880447447.davem@davemloft.net>
+To:     salil.mehta@huawei.com
+Cc:     yisen.zhuang@huawei.com, lipeng321@huawei.com,
+        mehta.salil@opnsrc.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        linyunsheng@huawei.com
+Subject: Re: [PATCH net] net: hns: fix for unmapping problem when SMMU is on
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180925092155.11024-1-salil.mehta@huawei.com>
+References: <20180925092155.11024-1-salil.mehta@huawei.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: axboe@kernel.dk, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, keith.busch@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v7 10/13] nvme-pci: Add support for P2P memory in requests
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 25 Sep 2018 10:43:37 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey,
+From: Salil Mehta <salil.mehta@huawei.com>
+Date: Tue, 25 Sep 2018 10:21:55 +0100
 
-On 2018-09-25 11:11 a.m., Keith Busch wrote:
-> Sorry if this was already discussed. Is there a reason the following
-> pattern is not pushed to the generic dma_map_sg_attrs?
+> From: Yunsheng Lin <linyunsheng@huawei.com>
 > 
-> 	if (is_pci_p2pdma_page(sg_page(sg)))
-> 		pci_p2pdma_map_sg(dev, sg, nents, dma_dir);
+> If SMMU is on, there is more likely that skb_shinfo(skb)->frags[i]
+> can not send by a single BD. when this happen, the
+> hns_nic_net_xmit_hw function map the whole data in a frags using
+> skb_frag_dma_map, but unmap each BD' data individually when tx is
+> done, which causes problem when SMMU is on.
 > 
-> Beyond that, series looks good.
+> This patch fixes this problem by ummapping the whole data in a
+> frags when tx is done.
+> 
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Signed-off-by: Peng Li <lipeng321@huawei.com>
+> Reviewed-by: Yisen Zhuang <yisen.zhuang@huawei.com>
+> Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 
-Yes, this has been discussed. It comes down to a few reasons:
-
-1) Intrusiveness on other systems: ie. not needing to pay the cost for
-every single dma_map_sg call
-
-2) Consistency: we can add the check to dma_map_sg, but adding similar
-functionality to dma_map_page, etc is difficult seeing it's hard for the
-unmap operation to detect if a dma_addr_t was P2P memory to begin with.
-
-3) Safety for developers trying to use P2P memory: Right now developers
-must be careful with P2P pages and ensure they aren't mapped using other
-means (ie dma_map_page). Having them check the drivers that are handling
-the pages to ensure the appropriate map function is always used is and
-that P2P pages aren't being mixed with regular pages is better than
-developers relying on magic in dma_map_sg() and getting things wrong.
-
-That being said, I think in the future everyone would like to move in
-that direction but it means we will have to solve some difficult
-problems with the existing infrastructure.
-
-Logan
-
+Applied, thank you.
