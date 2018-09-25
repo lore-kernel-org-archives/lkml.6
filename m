@@ -2,138 +2,173 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4350C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95F7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70D12208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57AE6208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TOdnLZlV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70D12208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeiWFdu7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AE6208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbeIYMLy (ORCPT
+        id S1728081AbeIYML6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 08:11:54 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:34262 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeIYMLy (ORCPT
+        Tue, 25 Sep 2018 08:11:58 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43609 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeIYMLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 08:11:54 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8P64Z32080492;
-        Tue, 25 Sep 2018 01:04:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537855475;
-        bh=zRaoDRJ6vx+RmcKmsgkNFV2hs1MrM1UpTi7QKAZDSF8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=TOdnLZlVNvt0LM/O2f/Hb1DMhs5AbuonAGCk9awnUBf1C+TCDSIl52yKThuKSMuIj
-         M/MwutMCULhq7Me6FJRbD+dwM6Ufwf1EPy053ejDtScdShdU80OqajkG2SMPynQ3qX
-         7GisxQQWaJ0N50qnZy9BacSwW9tfkilfm3Yln0rk=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P64ZEe026445;
-        Tue, 25 Sep 2018 01:04:35 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 25
- Sep 2018 01:04:34 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 25 Sep 2018 01:04:34 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P64WU8012457;
-        Tue, 25 Sep 2018 01:04:33 -0500
-Subject: Re: [PATCH] ARM: dts: da850-lego-ev3: slow down A/DC as much as
- possible
-To:     David Lechner <david@lechnology.com>
-CC:     Kevin Hilman <khilman@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180924013146.18121-1-david@lechnology.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a6e9c7ce-8fc8-0ee2-2d3a-24c33b67bdcc@ti.com>
-Date:   Tue, 25 Sep 2018 11:34:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 08:11:55 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l16-v6so11649585qtq.10;
+        Mon, 24 Sep 2018 23:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vGVBWiOEehjlGaUxSGMTAJgtuA8Ax/SjOyge4f6TSY4=;
+        b=SeiWFdu7zm9Cbm3yM/E9ua4vB/wi4zAdEfxzqBgtLzrPBGtfJabpAnMGTEUxoI8aSf
+         fQNrukC9l0JEmVhwBjtstD/XhY+n6EAvZsGtgcypRxJzccvatiYhGl4gEO4MGMIWeTn6
+         27AF7magY83Y0iasoUnw9rC043xnmWZkKqjd1JJIj2hXnNasiQbN0jmQnJDxCoi8a/JB
+         h/DJoLRxGq8MH7nLfnd9EEQu4DR8BonGzDxXtSwlQywDB62NZi6azzSjqVQr6LPZOp4t
+         0/IXk6j/rERSh0yJ/GJTrsIUerYY3Sqb42JR4mvNHDZDhrkrp+bYQHVCFgxT+XQGuOIk
+         A/sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vGVBWiOEehjlGaUxSGMTAJgtuA8Ax/SjOyge4f6TSY4=;
+        b=EsWNzUqV8O0KSJbW5cyG6OGGfDgEvq++cDg60g/kqoKr3UXcHqIFsoLHoTSmRZMwOm
+         YaMIXHl6FswyxOsli+H1rAkA3SzT5IE6Cv4rd8TK8X+IOZkxrB9pjs/DS9Yhgb5RlvDj
+         E0RpqVjUXATP+sdLWtz3SgexvVejuH0InwlWLI+F5zG8+LH7QWJgWO/DzSOxIXAXvCaZ
+         IKq+C9eVmuJG75fxKxV5T5H6GasYI0Czw4rPsDBDvI8eOga1XJMa3CafQgNu0f5LqGyz
+         N+QD8lpbNCUA8jWvlkT4zaKB51wvBaW9cx/B7SY4BS9uhzaUJGKkQ9rKN61D3XFu4tQ0
+         7H6Q==
+X-Gm-Message-State: ABuFfogIwx3OJeDFJN6Y18bUX4dmg1+YCdiBRrHbMVWFMndz8OtvWbq2
+        3YDqHujrpMizoUKTmkNavk2BB4+Fl91gVM/m1maFirWO
+X-Google-Smtp-Source: ACcGV6064QVhUgwkpEbS0DsUxBF0CqojewS0r0stoX0NOA83GXFFkkpGbdbRaCHhxUxO+jC0f13hDA5wzBBSu8O4fqs=
+X-Received: by 2002:ac8:2f01:: with SMTP id j1-v6mr1681222qta.87.1537855560063;
+ Mon, 24 Sep 2018 23:06:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180924013146.18121-1-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180921171353.11050-1-guro@fb.com> <20180921171353.11050-2-guro@fb.com>
+In-Reply-To: <20180921171353.11050-2-guro@fb.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Mon, 24 Sep 2018 23:05:48 -0700
+Message-ID: <CAPhsuW7dyt6x58YYyxM2qqunoHXuF1mFcUzz74M28wT7E2tqzA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/9] bpf: rework cgroup storage pointer passing
+To:     guro@fb.com
+Cc:     Networking <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, Kernel-team@fb.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+On Fri, Sep 21, 2018 at 10:16 AM Roman Gushchin <guro@fb.com> wrote:
+>
+> To simplify the following introduction of per-cpu cgroup storage,
+> let's rework a bit a mechanism of passing a pointer to a cgroup
+> storage into the bpf_get_local_storage(). Let's save a pointer
+> to the corresponding bpf_cgroup_storage structure, instead of
+> a pointer to the actual buffer.
+>
+> It will help us to handle per-cpu storage later, which has
+> a different way of accessing to the actual data.
+>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Alexei Starovoitov <ast@kernel.org>
 
-On Monday 24 September 2018 07:01 AM, David Lechner wrote:
-> Due to the electrical design of the A/DC circuits on LEGO MINDSTORMS EV3,
-> if we are reading analog values as fast as possible (i.e. using DMA to
-> service the SPI) the A/DC chip will read incorrect values - as much as
-> 0.1V off when the SPI is running at 10MHz. (This has to do with the
-> capacitor charge time when channels are muxed in the A/DC.)
+Acked-by: Song Liu <songliubraving@fb.com>
 
-So you believe this is an issue with the board design rather than the
-limitation of the ADC chip itself? Because if its the later, the fix
-should be in the driver instead.
-
-> 
-> This patch slows down the SPI as much as possible (if CPU is at 456MHz,
-> SPI runs at 1/2 of that, so 228MHz and has a max prescalar of 256, so
-> we could get ~891kHz, but we're just rounding it to 1MHz). We also use
-> the max allowable value for WDELAY to slow things down even more.
-> 
-> These changes reduce the error of the analog values to about 5mV, which
-> is tolerable.
-> 
-> Commits a3762b13a596 ("spi: spi-davinci: Add support for SPI_CS_WORD")
-> and e2540da86ef8 ("iio: adc: ti-ads7950: use SPI_CS_WORD to reduce
-> CPU usage") introduce changes that allow DMA transfers to be used, so
-> this slow down is needed now.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
-> 
-> FYI, this patch doesn't strictly depend on the other two mentioned. In fact, it
-> would better if it got merged before them, but the consequences are minimal, so
-> it doesn't seem worth it to me to try coordinating merges here.
-> 
-> Both of these patches mentioned have been picked up in the respective
-> subsystems.
-
-Is this needed for the -rc cycle or can wait for v4.20?
-
-Thanks,
-Sekhar
-
-> 
->  arch/arm/boot/dts/da850-lego-ev3.dts | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/da850-lego-ev3.dts b/arch/arm/boot/dts/da850-lego-ev3.dts
-> index c4729d0e6c19..66fcadf0ba91 100644
-> --- a/arch/arm/boot/dts/da850-lego-ev3.dts
-> +++ b/arch/arm/boot/dts/da850-lego-ev3.dts
-> @@ -352,7 +352,8 @@
->  		compatible = "ti,ads7957";
->  		reg = <3>;
->  		#io-channel-cells = <1>;
-> -		spi-max-frequency = <10000000>;
-> +		spi-max-frequency = <1000000>;
-> +		ti,spi-wdelay = <63>;
->  		vref-supply = <&adc_ref>;
->  	};
+>  include/linux/bpf-cgroup.h | 13 ++++---------
+>  kernel/bpf/helpers.c       |  8 ++++++--
+>  kernel/bpf/local_storage.c |  3 ++-
+>  3 files changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+> index e9871b012dac..7e0c9a1d48b7 100644
+> --- a/include/linux/bpf-cgroup.h
+> +++ b/include/linux/bpf-cgroup.h
+> @@ -23,7 +23,8 @@ struct bpf_cgroup_storage;
+>  extern struct static_key_false cgroup_bpf_enabled_key;
+>  #define cgroup_bpf_enabled static_branch_unlikely(&cgroup_bpf_enabled_key)
+>
+> -DECLARE_PER_CPU(void*, bpf_cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE]);
+> +DECLARE_PER_CPU(struct bpf_cgroup_storage*,
+> +               bpf_cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE]);
+>
+>  #define for_each_cgroup_storage_type(stype) \
+>         for (stype = 0; stype < MAX_BPF_CGROUP_STORAGE_TYPE; stype++)
+> @@ -115,15 +116,9 @@ static inline void bpf_cgroup_storage_set(struct bpf_cgroup_storage
+>                                           *storage[MAX_BPF_CGROUP_STORAGE_TYPE])
+>  {
+>         enum bpf_cgroup_storage_type stype;
+> -       struct bpf_storage_buffer *buf;
+> -
+> -       for_each_cgroup_storage_type(stype) {
+> -               if (!storage[stype])
+> -                       continue;
+>
+> -               buf = READ_ONCE(storage[stype]->buf);
+> -               this_cpu_write(bpf_cgroup_storage[stype], &buf->data[0]);
+> -       }
+> +       for_each_cgroup_storage_type(stype)
+> +               this_cpu_write(bpf_cgroup_storage[stype], storage[stype]);
+>  }
+>
+>  struct bpf_cgroup_storage *bpf_cgroup_storage_alloc(struct bpf_prog *prog,
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index 9070b2ace6aa..e42f8789b7ea 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -195,7 +195,8 @@ const struct bpf_func_proto bpf_get_current_cgroup_id_proto = {
 >  };
-> -- 
+>
+>  #ifdef CONFIG_CGROUP_BPF
+> -DECLARE_PER_CPU(void*, bpf_cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE]);
+> +DECLARE_PER_CPU(struct bpf_cgroup_storage*,
+> +               bpf_cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE]);
+>
+>  BPF_CALL_2(bpf_get_local_storage, struct bpf_map *, map, u64, flags)
+>  {
+> @@ -204,8 +205,11 @@ BPF_CALL_2(bpf_get_local_storage, struct bpf_map *, map, u64, flags)
+>          * verifier checks that its value is correct.
+>          */
+>         enum bpf_cgroup_storage_type stype = cgroup_storage_type(map);
+> +       struct bpf_cgroup_storage *storage;
+>
+> -       return (unsigned long) this_cpu_read(bpf_cgroup_storage[stype]);
+> +       storage = this_cpu_read(bpf_cgroup_storage[stype]);
+> +
+> +       return (unsigned long)&READ_ONCE(storage->buf)->data[0];
+>  }
+>
+>  const struct bpf_func_proto bpf_get_local_storage_proto = {
+> diff --git a/kernel/bpf/local_storage.c b/kernel/bpf/local_storage.c
+> index 0bd9f19fc557..6742292fb39e 100644
+> --- a/kernel/bpf/local_storage.c
+> +++ b/kernel/bpf/local_storage.c
+> @@ -7,7 +7,8 @@
+>  #include <linux/rbtree.h>
+>  #include <linux/slab.h>
+>
+> -DEFINE_PER_CPU(void*, bpf_cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE]);
+> +DEFINE_PER_CPU(struct bpf_cgroup_storage*,
+> +              bpf_cgroup_storage[MAX_BPF_CGROUP_STORAGE_TYPE]);
+>
+>  #ifdef CONFIG_CGROUP_BPF
+>
+> --
 > 2.17.1
-> 
-
+>
