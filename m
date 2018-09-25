@@ -2,119 +2,149 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DFAC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F2FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A09E20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F58920880
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="w5eb11kr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A09E20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X6bjq3py"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F58920880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbeIZCbt (ORCPT
+        id S1726319AbeIZCdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:31:49 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37489 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeIZCbt (ORCPT
+        Tue, 25 Sep 2018 22:33:36 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42971 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725918AbeIZCdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:31:49 -0400
-Received: by mail-oi1-f193.google.com with SMTP id n1-v6so2627821oic.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:22:32 -0700 (PDT)
+        Tue, 25 Sep 2018 22:33:36 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so12370869pgp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:24:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=U+RsP1YWy/+85yH5m6ZF3EeMOB34juFDKmKvaVyR9M0=;
-        b=w5eb11krjyvyLZxXZVsupg/enoWXMkhGPL4+N2qvmyHbmueJxVliQOk2XLkNCz8HhD
-         FtjCVZMpwLBxUSszSY8h09ejUZtA67B2pY9r9WSquA1SqXIDI9lITkNY9SCbba2jTXLO
-         zi5DKO34RzMCxbFl9qumERCH3JjP2dhiPt4QaLeBQ90Iqc8s270w4A2k/qD3wDtlSs0Y
-         5fJn9yw7htchhD8pa9EfJBf+0OKALjkXofKr2QPTpxehmbB3JmEQ8FNWyZVDSgjO8HBW
-         UH55WV28wuZRYLsa+sTJJlbmWxXKI/Ibw6TV/zJXAL/aPBx+n7oXBQ6A2He1n20G1WsM
-         HrDg==
+        bh=nu4XXgxpBGQhQONDopVbUiR6adZmnd6kts1ldMx3YsM=;
+        b=X6bjq3pyoSrJ0dAJmDOOuXsl09c+VEj9UJc4V0p8s8MUpP04xJp3/mH7wUcnW9GJQJ
+         Mk6YGWuJ9/1tqJ6PfTTwHnCNnr8dFgD1VLZtKSSIhFwqqZjidwZa2az7WwWc/MrB665M
+         TRcqZG1J5/3rkikU59xscrFUbZh53n46eFJIwaPjp1PhdeuzUyWd5chO/pMfFtk/GeG/
+         RnsJnicZ9wq67+yI3XQEhQjtV3U5W9vSgaShyp0YG/QcLk7TLQjX1yeGi9aG/vRcdHzJ
+         eUU0ZVymn0i/Qe98u5PcH8O/kg5TX+nhJZ5cfiKTElO2FOghO+fEJwlSMfK0N+Iwe8fW
+         oGRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=U+RsP1YWy/+85yH5m6ZF3EeMOB34juFDKmKvaVyR9M0=;
-        b=onXo2MS170Q5jQXJ+hgbKprFQ44bzo9OhOtgomngGFOWVdsfcX/mZz+wOPhWBQ09kv
-         RIZu/oYN7fJBE5tziz8QtfmUK5/RSEgdm+1C2cAPISHpN8VrlYo1vqi/WIYgNncCf22j
-         pq+NOOlAoUC/Kid4HAs29Ocj9Xn0Ai7SPBspNnqShYTvwjE89Nf0iLhkJnfCP2lZcJbe
-         zVfvtSwDGjcJK+qJu45YQEgXpjXG3Yx22cxOu8BYSxT/m1JI53EKpeusawFCsDtE4+ML
-         9YH+ZYkMGUU0C+VtjgYtM8b+MP//Dcke4U257q4TLTwWCbwjG/UYlya9VOuVRoWolDKI
-         vVRA==
-X-Gm-Message-State: ABuFfoh24lF0lP/cFpskt2ocXKwJWiftT3j5IE1Vx4R0Pz+2F3LpJL+v
-        MaSbwJSGGitqGlXEYgdJLVHQZKc9+KCmya1tvyUgcw==
-X-Google-Smtp-Source: ACcGV60qVuYsEUv6knl/IVV9svwlpGJlVXdXnObFVzAeSrJQ8CPSjzFdCONUHpMYDVx30a/qNY+GFm/vQZHi4fPE0Os=
-X-Received: by 2002:aca:ce4c:: with SMTP id e73-v6mr1641230oig.225.1537906952298;
- Tue, 25 Sep 2018 13:22:32 -0700 (PDT)
+        bh=nu4XXgxpBGQhQONDopVbUiR6adZmnd6kts1ldMx3YsM=;
+        b=DaU7/xr0xq2LBEwTG0HDb8JJGs7zBtt9rNn5Xs07s6qx7+mRn1SQHyAFGRFSTm2ljm
+         8yTiCKwx/tRqgQpfb1fR3Ery+2H/WxfTi+9wjkVY2gycfc/wA2WANFmS07OSqmre/AqB
+         506RN1phrfnDRRwkqr4vH3+mUa5DQyTpCO6zncPvxQKhzajhI3J1SoTBnw+xgad1292q
+         hZ00+goTjAalp+O+rSHuyBc04/nyw3AxUsFmTHtq0Gn2zq6pWxQHBzBYbyc4f3NANMWG
+         WAE2Z2C/0jwj/fdt4NE6Ijq0K/Ou+UFJyyLdou06mZqVDx6huH9a7GNldv3sD0CGlCrX
+         qXRA==
+X-Gm-Message-State: ABuFfogUsY0LNxQYufXUW2Spocsoy4i5TLhdfunoyUabPfNllGZyR0Er
+        d32NWpmDjazXu43NhQ42OKBWjqv3vQZSXJa0Em1L4Q==
+X-Google-Smtp-Source: ACcGV61ALZLfuX0BdtQoLKy+SKY5eYsL/a0+3bp7T0P0oJxD926SQs6qiu+SyoJ52mJw7PKTHhDYL7oMKvN+dNGaPpI=
+X-Received: by 2002:a62:1895:: with SMTP id 143-v6mr2661842pfy.227.1537907057991;
+ Tue, 25 Sep 2018 13:24:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <153622549721.14298.8116794954073122489.stgit@warthog.procyon.org.uk>
- <153622556444.14298.5971956747198405225.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153622556444.14298.5971956747198405225.stgit@warthog.procyon.org.uk>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 25 Sep 2018 13:22:21 -0700
-Message-ID: <CAPcyv4jjxh955mWEubnGiENVQVeCcZ9YWv8YPBKfWMw-gh1z2w@mail.gmail.com>
-Subject: Re: [PATCH 09/11] UAPI: ndctl: Fix g++-unsupported initialisation in
- headers [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linux API <linux-api@vger.kernel.org>,
-        linux-kbuild@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180925194459.13088-1-natechancellor@gmail.com>
+In-Reply-To: <20180925194459.13088-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 25 Sep 2018 13:24:06 -0700
+Message-ID: <CAKwvOdnzN0E0HD--3GmC9b=20fx3AE-8-x0iZ04-LEXnxh=YoQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: percpu: Initialize ret in the default case
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     dennis@kernel.org, tj@kernel.org, Christoph Lameter <cl@linux.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, psodagud@codeaurora.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 2:19 AM David Howells <dhowells@redhat.com> wrote:
+On Tue, Sep 25, 2018 at 12:45 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 >
-> The following code in the linux/ndctl header file:
+> Clang warns that if the default case is taken, ret will be
+> uninitialized.
 >
->         static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
->         {
->                 static const char * const names[] = {
->                         [ND_CMD_ARS_CAP] = "ars_cap",
->                         [ND_CMD_ARS_START] = "ars_start",
->                         [ND_CMD_ARS_STATUS] = "ars_status",
->                         [ND_CMD_CLEAR_ERROR] = "clear_error",
->                         [ND_CMD_CALL] = "cmd_call",
->                 };
+> ./arch/arm64/include/asm/percpu.h:196:2: warning: variable 'ret' is used
+> uninitialized whenever switch default is taken
+> [-Wsometimes-uninitialized]
+>         default:
+>         ^~~~~~~
+> ./arch/arm64/include/asm/percpu.h:200:9: note: uninitialized use occurs
+> here
+>         return ret;
+>                ^~~
+> ./arch/arm64/include/asm/percpu.h:157:19: note: initialize the variable
+> 'ret' to silence this warning
+>         unsigned long ret, loop;
+>                          ^
+>                           = 0
 >
->                 if (cmd < ARRAY_SIZE(names) && names[cmd])
->                         return names[cmd];
->                 return "unknown";
+> This warning appears several times while building the erofs filesystem.
+> While it's not strictly wrong, the BUILD_BUG will prevent this from
+> becoming a true problem. Initialize ret to 0 in the default case right
+> before the BUILD_BUG to silence all of these warnings.
+
+Clang does semantic analysis BEFORE inlining/optimizations, so I can't
+determine that default is never reachable.  Nathan, thanks for this
+patch.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+>
+> Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  arch/arm64/include/asm/percpu.h | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/arm64/include/asm/percpu.h b/arch/arm64/include/asm/percpu.h
+> index 9234013e759e..21a81b59a0cc 100644
+> --- a/arch/arm64/include/asm/percpu.h
+> +++ b/arch/arm64/include/asm/percpu.h
+> @@ -96,6 +96,7 @@ static inline unsigned long __percpu_##op(void *ptr,                  \
+>                 : [val] "Ir" (val));                                    \
+>                 break;                                                  \
+>         default:                                                        \
+> +               ret = 0;                                                \
+>                 BUILD_BUG();                                            \
+>         }                                                               \
+>                                                                         \
+> @@ -125,6 +126,7 @@ static inline unsigned long __percpu_read(void *ptr, int size)
+>                 ret = READ_ONCE(*(u64 *)ptr);
+>                 break;
+>         default:
+> +               ret = 0;
+>                 BUILD_BUG();
 >         }
 >
-> is broken in a number of ways:
+> @@ -194,6 +196,7 @@ static inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
+>                 : [val] "r" (val));
+>                 break;
+>         default:
+> +               ret = 0;
+>                 BUILD_BUG();
+>         }
 >
->  (1) ARRAY_SIZE() is not generally defined.
+> --
+> 2.19.0
 >
->  (2) g++ does not support "non-trivial" array initialisers fully yet.
->
->  (3) Every file that calls this function will acquire a copy of names[].
->
-> The same goes for nvdimm_cmd_name().
->
-> Fix all three by converting to a switch statement where each case returns a
-> string.  That way if cmd is a constant, the compiler can trivially reduce it
-> and, if not, the compiler can use a shared lookup table if it thinks that is
-> more efficient.
->
-> A better way would be to remove these functions and their arrays from the
-> header entirely.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Dan Williams <dan.j.williams@intel.com>
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
 
-...again let me know if you'll take this with g++ series or want me to
-carry it directly.
+-- 
+Thanks,
+~Nick Desaulniers
