@@ -2,175 +2,103 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF7CC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D44EC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA2D2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:15:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA2D2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 064CA2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:16:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0Atajst"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064CA2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbeIYSWy (ORCPT
+        id S1728991AbeIYSXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:22:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:49405 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727441AbeIYSWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:22:54 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42KKlr1ncqz9ttS8;
-        Tue, 25 Sep 2018 14:15:36 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id w5JBv4Oyb-V8; Tue, 25 Sep 2018 14:15:36 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42KKlr179wz9ttS2;
-        Tue, 25 Sep 2018 14:15:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4AA3E8B7DA;
-        Tue, 25 Sep 2018 14:15:35 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 6aWwXYtXgazr; Tue, 25 Sep 2018 14:15:35 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 28AF98B7C8;
-        Tue, 25 Sep 2018 14:15:34 +0200 (CEST)
-Subject: Re: [RFC PATCH v1 1/9] timer: fix circular header dependency
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        aneesh.kumar@linux.vnet.ibm.com, npiggin@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <cover.1537802981.git.christophe.leroy@c-s.fr>
- <72d3e8c38f729dc22cb3235319b72f96190e01ee.1537802981.git.christophe.leroy@c-s.fr>
- <5c9530da-f5c8-e0b2-61ab-294a0da7f3fc@c-s.fr>
- <20180925121104.zrz4m45sbnt5h2ht@lakrids.cambridge.arm.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <d22dc0e6-13ff-2abe-6536-a7b14bb285db@c-s.fr>
-Date:   Tue, 25 Sep 2018 14:15:34 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 14:23:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34812 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbeIYSXc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:23:32 -0400
+Received: by mail-wm1-f65.google.com with SMTP id j25-v6so12478396wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 05:16:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rW/kSYu8LTrr+4zLRwegRUrIu36BbxqKZbqWHu6JcrM=;
+        b=E0AtajstKCg7ek8UEOAMGVth6A0GTdaz4E4oGR8vWuEBpncTe3GF8MXJ2ZSkeCGObx
+         1gwUPoDVZcbfvfLgqTdDZCqB2pfAR+dwrsdwI/ERBzlwUvOmyMcRf2vkFW5LtWicX2or
+         vRRlCpBVik2qxppjndHWnGDaz4e8J2nhyHDA0qN3qQ8nbv2u9/qh0K5YbfPB+7fevygB
+         ty3K8zOHfIBA3cxNCjdC+emOUWhssOBoJ/b05peoHG8NdMhZ6yJIheXXYDDonmF1fnzi
+         VtJOSsP3TZg/W09iJSdE+LxylDzSCv8G8XfixoMpqeCdF3An3IjOzRYbHOaJtLbZ1zHK
+         ljOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rW/kSYu8LTrr+4zLRwegRUrIu36BbxqKZbqWHu6JcrM=;
+        b=kCTZLgZIeutNJK1P7Rpd53yqPHx40seD9lvTRrGA1X/8v+lncghGIluU1oTveZmEHg
+         fo5f0gAHzaOMkj77mgadV20kWDJ5rvPaYH52gbvLKuy9oRHATZpep0XgMY6P9fCoOAjt
+         T8F5BIntgcXi1iqmanWSeC6QgZCOsOMNmdOswMnDUNAiRoCsK9WjsaGj5kbZ7/UHJitw
+         0ahuUIw8bpL25geW/YQtsWy5y3Ypi6IdctIA19wFHEeO7tr9SUn+yqKr0B7N1G8r8NiH
+         Tqee5Ph/X1cSRdDAa0jubEOE5HznjP7on+S0ql0Pq+vT17d/kSgixD1kx+5vQ6mzrRMv
+         iDJA==
+X-Gm-Message-State: ABuFfogN0n1VwpJ2xMAH4F+pQX+Nmpp1sTGVzvNEArr5JM+LAHAQm7KJ
+        teI7DwG7qOncwHY/WmelP6M=
+X-Google-Smtp-Source: ACcGV62RvyRhqh/tjtQmFymRfgcwir9/vcWSZRQ8o1iBhCM6RsHKG53E6VzhMcdrgR2xxKTwNXUB8A==
+X-Received: by 2002:a1c:cf8a:: with SMTP id f132-v6mr518383wmg.0.1537877774210;
+        Tue, 25 Sep 2018 05:16:14 -0700 (PDT)
+Received: from localhost ([178.121.95.75])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm2837809wrd.74.2018.09.25.05.16.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 05:16:13 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Tue, 25 Sep 2018 21:16:04 +0900
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        sergey.senozhatsky@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len
+ to command line
+Message-ID: <20180925121604.GC523@tigerII.localdomain>
+References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+ <20180919015030.GA423@jagdpanzerIV>
+ <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
+ <20180919023932.GA14090@jagdpanzerIV>
+ <20180918224312.6e9aef50@vmware.local.home>
+ <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
+ <20180920123056.27b2cf18@gandalf.local.home>
+ <20180921073753.mqayzofcofpmhiyu@pathway.suse.cz>
+ <02b53bc1-3803-50b1-d07e-a7962f9e5688@windriver.com>
 MIME-Version: 1.0
-In-Reply-To: <20180925121104.zrz4m45sbnt5h2ht@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02b53bc1-3803-50b1-d07e-a7962f9e5688@windriver.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (09/22/18 23:36), He Zhe wrote:
+> I'd like to fix the above issues. But can I have your opinions about how to
+> handle the syscall?
 
+Hmm. This part is complex, I need to look at it more.
+A signed int is a good buffer size limit for 32-bit user space.
+But this also means that syslog might experience some problems
+doing SYSLOG_ACTION_READ_ALL on a 32-bit system with a 4G log_buf.
+Not to mention SYSLOG_ACTION_READ_ALL on a 64-bit system with a
+log_buf=32G. So *maybe* things are alredy a bit broken in this
+department. Dunno, need to think more.
 
-Le 25/09/2018 à 14:11, Mark Rutland a écrit :
-> On Tue, Sep 25, 2018 at 07:34:15AM +0200, Christophe LEROY wrote:
->>
->>
->> Le 24/09/2018 à 17:52, Christophe Leroy a écrit :
->>> When switching powerpc to CONFIG_THREAD_INFO_IN_TASK, include/sched.h
->>> has to be included in asm/smp.h for the following change, in order
->>> to avoid uncomplete definition of task_struct:
->>>
->>> -#define raw_smp_processor_id() (current_thread_info()->cpu)
->>> +#define raw_smp_processor_id() (current->cpu)
->>>
->>> But this generates the following compilation error, due to circular
->>> header dependency.
->>>
->>>     CC      kernel/time/alarmtimer.o
->>> In file included from ./arch/powerpc/include/asm/smp.h:31,
->>>                    from ./include/linux/smp.h:64,
->>>                    from ./include/linux/percpu.h:7,
->>>                    from ./include/linux/hrtimer.h:22,
->>>                    from kernel/time/alarmtimer.c:19:
->>> ./include/linux/sched.h:558:19: error: field 'dl_timer' has incomplete type
->>>     struct hrtimer   dl_timer;
->>>                      ^~~~~~~~
->>> ./include/linux/sched.h:567:17: error: field 'inactive_timer' has incomplete type
->>>     struct hrtimer inactive_timer;
->>>                    ^~~~~~~~~~~~~~
->>> make[1]: *** [kernel/time/alarmtimer.o] Error 1
->>> make: *** [kernel/time/alarmtimer.o] Error 2
->>>
->>>     CC      fs/timerfd.o
->>> In file included from ./arch/powerpc/include/asm/smp.h:31,
->>>                    from ./include/linux/smp.h:64,
->>>                    from ./include/linux/percpu.h:7,
->>>                    from ./include/linux/hrtimer.h:22,
->>>                    from ./include/linux/alarmtimer.h:6,
->>>                    from fs/timerfd.c:12:
->>> ./include/linux/sched.h:558:19: error: field 'dl_timer' has incomplete type
->>>     struct hrtimer   dl_timer;
->>>                      ^~~~~~~~
->>> ./include/linux/sched.h:567:17: error: field 'inactive_timer' has incomplete type
->>>     struct hrtimer inactive_timer;
->>>                    ^~~~~~~~~~~~~~
->>> make[1]: *** [fs/timerfd.o] Error 1
->>> make: *** [fs/timerfd.o] Error 2
->>>
->>> This patch fixes it by including linux/hrtimer.h after linux/sched.h
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>> ---
->>>    Should it be fixed in powerpc instead ? In that case, how ? Any idea ?
->>
->>
->> Looks like there are several other places where the problem occurs, so it
->> has to be fixed in the powerpc headers instead.
->>
->> Seems like RISC arch faced the same issue, and fixed it the following way:
->>
->> /*
->>   * This is particularly ugly: it appears we can't actually get the
->> definition
->>   * of task_struct here, but we need access to the CPU this task is running
->> on.
->>   * Instead of using C we're using asm-offsets.h to get the current processor
->>   * ID.
->>   */
->> #define raw_smp_processor_id() (*((int*)((char*)get_current() +
->> TASK_TI_CPU)))
->>
->>
->> Unless someone has a better idea, I'll fixed it that way.
-> 
-> To solve this on arm64 we made the cpu number a percpu variable; see
-> commit:
-> 
->    57c82954e77fa12c ("arm64: make cpu number a percpu variable")
-
-Thanks, I'll have a look
-
-> IIUC, you could do that by placing it in paca_struct.
-
-By the way, it is already in PACA struct for PPC64.
-The issue is with PPC32, up to now it was in current_thread_info:
-
-#ifdef CONFIG_PPC64
-#define raw_smp_processor_id()	(local_paca->paca_index)
-#define hard_smp_processor_id() (get_paca()->hw_cpu_id)
-#else
-/* 32-bit */
-extern int smp_hw_index[];
-
-#define raw_smp_processor_id()	(current_thread_info()->cpu)
-#define hard_smp_processor_id() 	(smp_hw_index[smp_processor_id()])
-
-[..]
-
-#endif
-
-
-Christophe
+	-ss
