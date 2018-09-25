@@ -2,101 +2,98 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB014C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE86C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27CC2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 770E82086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:54:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="kfQ89CHM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A27CC2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQ1GKRQV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770E82086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbeIZE4G (ORCPT
+        id S1726284AbeIZFDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 00:56:06 -0400
-Received: from imap.thunk.org ([74.207.234.97]:47276 "EHLO imap.thunk.org"
+        Wed, 26 Sep 2018 01:03:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725762AbeIZE4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 00:56:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=1AKVkItclCGHEaCR5sP1WIq8GkjW7eekSl1fEgXo504=; b=kfQ89CHMQy7PuBPUE7PDvCjqI8
-        hpNB7+SzgcYXTqP3X3wLqj5tmGhthKC5EylluDbmtbuJu5+afOc9iHfZlMqoXKlvXJMX5EDFFg+Sv
-        WTm72ecZ5E08ljJtJjXdB7HJoTyxYT82w2q2rDRjyP5BUdqR6j+fHdBQS/WYEDPtrNdg=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1g4w5u-0004B2-5F; Tue, 25 Sep 2018 22:46:14 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 67CC67A54D5; Tue, 25 Sep 2018 18:46:13 -0400 (EDT)
-Date:   Tue, 25 Sep 2018 18:46:13 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Jeff Layton <jlayton@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rogier Wolff <R.E.Wolff@BitWizard.nl>
-Subject: Re: POSIX violation by writeback error
-Message-ID: <20180925224613.GI2933@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Jeff Layton <jlayton@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rogier Wolff <R.E.Wolff@BitWizard.nl>
-References: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
- <486f6105fd4076c1af67dae7fdfe6826019f7ff4.camel@redhat.com>
- <20180925003044.239531c7@alans-desktop>
- <0662a4c5d2e164d651a6a116d06da380f317100f.camel@redhat.com>
- <20180925154627.GC2933@thunk.org>
- <20180925173510.273hshp4iapd6dcd@angband.pl>
+        id S1725999AbeIZFDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 01:03:51 -0400
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5181C2089D
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 22:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537916042;
+        bh=/n7+qciOD4NhE9DYgfSYN15DDayjfU8GY9wPFHnKQmQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GQ1GKRQVlGed7oB+LIHXYCIQ2WVSvWjF8/q8Vi/8Iwv4LELbXiqAd3SCJ8qGw9vxs
+         mqMjNmZXpNHpiNRutey9SPi6nA2ikCjOfu8uCLHxx8fLQe3QXpvKuN3HX0XzzFsP3o
+         9mwBR4hdryK/QZ97jwUm9adXRnDSNzr2icM8XKEg=
+Received: by mail-wr1-f43.google.com with SMTP id j15-v6so20890667wrt.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 15:54:02 -0700 (PDT)
+X-Gm-Message-State: ABuFfoiYOMdWbjvP+hMm41FTrcUwKn9GLQStr0bdaJY/uizCNxWMNQm6
+        FfnLVC1kBrijWAgIS1/NB//U087vkR+JJs1i6p7VPA==
+X-Google-Smtp-Source: ACcGV604eHWvIGnBLvHU308Mg84noYLW0OrnQd5QP2Fr3JQVekiava8yximWbqFpemm78psi1irVihRN7gzfhSCd5Kg=
+X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr2782183wrh.148.1537916040736;
+ Tue, 25 Sep 2018 15:54:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925173510.273hshp4iapd6dcd@angband.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com> <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 25 Sep 2018 15:53:48 -0700
+X-Gmail-Original-Message-ID: <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+Message-ID: <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 07:35:11PM +0200, Adam Borowski wrote:
-> Isn't this what the snippet for O_TMPFILE in "man 2 open" does?:
-> 
->                   char path[PATH_MAX];
->                   fd = open("/path/to/dir", O_TMPFILE | O_RDWR,
->                                           S_IRUSR | S_IWUSR);
-> 
->                   /* File I/O on 'fd'... */
-> 
->                   snprintf(path, PATH_MAX,  "/proc/self/fd/%d", fd);
->                   linkat(AT_FDCWD, path, AT_FDCWD, "/path/for/file",
->                                           AT_SYMLINK_FOLLOW);
+Minor nit:
 
-Huh.  I stand corrected.  I had assumed O_TMPFILE worked like any
-other file where the link count was zero, and linkat(2) wouldn't allow
-this.  But obviously, this does work.  In fact, from the linkat(2) man
-page, using:
+On Tue, Sep 25, 2018 at 6:12 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
 
-	linkat(fd, NULL, AT_FDCWD, "/path/for/file", AT_EMPTY_PATH);
+> by (c) as the kernel doesn't really have any other reasonable option,
+> e.g. we could kill the task or panic, but neither is warranted.
 
-is an even simpler way that doesn't /proc being mounted.
+Not killing the task is quite nice, but...
 
-TIL...
+> +       /*
+> +        * Access is blocked by the Enclave Page Cache Map (EPCM),
+> +        * i.e. the access is allowed by the PTE but not the EPCM.
+> +        * This usually happens when the EPCM is yanked out from
+> +        * under us, e.g. by hardware after a suspend/resume cycle.
+> +        * In any case, there is nothing that can be done by the
+> +        * kernel to resolve the fault (short of killing the task).
 
-					- Ted
+Maybe s/killing the task/sending a signal/?
+
+--Andy
