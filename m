@@ -2,176 +2,118 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CA5C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D66C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 648C320880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B0220877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:20:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="fQMqZscO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648C320880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mM9iXKzq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B0220877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbeIZD3z (ORCPT
+        id S1727085AbeIZD36 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 23:29:55 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:40384 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeIZD3z (ORCPT
+        Tue, 25 Sep 2018 23:29:58 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50598 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbeIZD35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 23:29:55 -0400
-Received: from trochilidae.toradex.int (unknown [37.17.239.3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 9C2505C059A;
-        Tue, 25 Sep 2018 23:20:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1537910422;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=TyjmCDwbtrtBjDf2SQev6uItKKvZJ2dXVmb1GEcvxHY=;
-        b=fQMqZscOr/sYTzqO31xby/6OErpXJom3XdEaqxA5Bl7CXUt6OIOTuGsqKyTiFSqs5p+ALD
-        OKORXa1yFCINmnwZ3UmmoJ8KXyEo3AwcZP7Zr35UFM27l7jx3lSj1/EF39EmQ8tbVQOHIR
-        DrStCl+CtJBispJiZTsl65/NXZReRMM=
-From:   Stefan Agner <stefan@agner.ch>
-To:     linux@armlinux.org.uk, arnd@arndb.de
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2] ARM: use choice for kernel unwinders
-Date:   Tue, 25 Sep 2018 23:20:18 +0200
-Message-Id: <20180925212018.27132-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.19.0
+        Tue, 25 Sep 2018 23:29:57 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8PLKD4U091818;
+        Tue, 25 Sep 2018 16:20:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537910413;
+        bh=sFeFqN0sQZ6KOPZJQezA1h9xQWS8JFPtaEjTw/+3TU8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=mM9iXKzqvnRKq/iwAokpUcgL7QREVWGUrTq1tKsBLj/LvzFwUojUdLdkb4tgtlRka
+         jCfIqQPMJjmlKHQXARgJMqMT8qZjEaWeVSDYTS6D7/5l9eoooeUNq0lKqoDa+R7dJW
+         T7eUg1ehEd5KID6kPf8Gt2jWd9xmZBX7M/kYTu/Y=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8PLKD80011506;
+        Tue, 25 Sep 2018 16:20:13 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 25
+ Sep 2018 16:20:13 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 25 Sep 2018 16:20:13 -0500
+Received: from [172.22.166.242] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8PLKD05013891;
+        Tue, 25 Sep 2018 16:20:13 -0500
+Subject: Re: [PATCH v7 3/6] dt-bindings: leds: Add bindings for lm3697 driver
+To:     Rob Herring <robh@kernel.org>, Pavel Machek <pavel@ucw.cz>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>
+References: <20180911170825.17789-1-dmurphy@ti.com>
+ <20180911170825.17789-4-dmurphy@ti.com> <20180924161844.GA29028@bogus>
+ <20180924180219.GA24418@amd>
+ <CAL_JsqLsKtzvnkfwy4H7QQyRqwEEmSp_qi_28=QoLJqs0w2NNw@mail.gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <b1990cde-9b12-58e0-7181-5085234c0a8a@ti.com>
+Date:   Tue, 25 Sep 2018 16:19:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqLsKtzvnkfwy4H7QQyRqwEEmSp_qi_28=QoLJqs0w2NNw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While in theory multiple unwinders could be compiled in, it does
-not make sense in practise. Use a choice to make the unwinder
-selection mutually exclusive and mandatory.
+Rob/Pavel/Jacek
 
-Already before this commit it has not been possible to deselect
-FRAME_POINTER. Remove the obsolete comment.
+On 09/25/2018 02:39 PM, Rob Herring wrote:
+> On Mon, Sep 24, 2018 at 1:02 PM Pavel Machek <pavel@ucw.cz> wrote:
+>>
+>> Hi!
+>>
+>>>> Add the device tree bindings for the lm3697
+>>>> LED driver for backlighting and display.
+>>>>
+>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>
+>>>>  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
+>>>>  1 file changed, 86 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+>>>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>
+>> We already have binding for lm3697 in
+>> Documentation/devicetree/bindings/mfd/ti-lmu.txt . Is it good idea to
+>> have second one?
+> 
+> Of course not. Now that you mention it, I do remember seeing some
+> discussion on this.
+> 
+> Rob
+> 
 
-Furthermore, to produce a meaningful backtrace with FRAME_POINTER
-enabled the kernel needs a specific function prologue:
-    mov    ip, sp
-    stmfd    sp!, {fp, ip, lr, pc}
-    sub    fp, ip, #4
+I will be posting a RFC tomorrow with all the changes that shows 3 devices
+attached to the common code along with extending out the features on the LED
+drivers themselves.
 
-To get to the required prologue gcc uses apcs and no-sched-prolog.
-This compiler options are not available on clang, and clang is not
-able to generate the required prologue. Make the FRAME_POINTER
-config symbol depending on !clang.
+Its not complete or tested code but it should give a basis for discussion.  This way I
+can do some other code while this is being discussed.
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/Kconfig.debug | 44 +++++++++++++++++++++++++++---------------
- lib/Kconfig.debug      |  6 +++---
- 2 files changed, 31 insertions(+), 19 deletions(-)
+Dan
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index f6fcb8a79889..3408f1ad394c 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -45,30 +45,42 @@ config DEBUG_WX
- 
- 		If in doubt, say "Y".
- 
--# RMK wants arm kernels compiled with frame pointers or stack unwinding.
--# If you know what you are doing and are willing to live without stack
--# traces, you can get a slightly smaller kernel by setting this option to
--# n, but then RMK will have to kill you ;).
--config FRAME_POINTER
--	bool
--	depends on !THUMB2_KERNEL
--	default y if !ARM_UNWIND || FUNCTION_GRAPH_TRACER
-+choice
-+	prompt "Choose kernel unwinder"
-+	default UNWINDER_ARM if AEABI && !FUNCTION_GRAPH_TRACER
-+	default UNWINDER_FRAME_POINTER if !AEABI || FUNCTION_GRAPH_TRACER
-+	help
-+	  This determines which method will be used for unwinding kernel stack
-+	  traces for panics, oopses, bugs, warnings, perf, /proc/<pid>/stack,
-+	  livepatch, lockdep, and more.
-+
-+config UNWINDER_FRAME_POINTER
-+	bool "Frame pointer unwinder"
-+	depends on !THUMB2_KERNEL && !CC_IS_CLANG
-+	select ARCH_WANT_FRAME_POINTERS
-+	select FRAME_POINTER
- 	help
--	  If you say N here, the resulting kernel will be slightly smaller and
--	  faster. However, if neither FRAME_POINTER nor ARM_UNWIND are enabled,
--	  when a problem occurs with the kernel, the information that is
--	  reported is severely limited.
-+	  This option enables the frame pointer unwinder for unwinding
-+	  kernel stack traces.
- 
--config ARM_UNWIND
--	bool "Enable stack unwinding support (EXPERIMENTAL)"
-+config UNWINDER_ARM
-+	bool "ARM EABI stack unwinder"
- 	depends on AEABI
--	default y
-+	select ARM_UNWIND
- 	help
- 	  This option enables stack unwinding support in the kernel
- 	  using the information automatically generated by the
- 	  compiler. The resulting kernel image is slightly bigger but
- 	  the performance is not affected. Currently, this feature
--	  only works with EABI compilers. If unsure say Y.
-+	  only works with EABI compilers.
-+
-+endchoice
-+
-+config ARM_UNWIND
-+	bool
-+
-+config FRAME_POINTER
-+	bool
- 
- config OLD_MCOUNT
- 	bool
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 4966c4fbe7f7..8d24f4ed66fd 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1179,7 +1179,7 @@ config LOCKDEP
- 	bool
- 	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
- 	select STACKTRACE
--	select FRAME_POINTER if !MIPS && !PPC && !ARM_UNWIND && !S390 && !MICROBLAZE && !ARC && !X86
-+	select FRAME_POINTER if !MIPS && !PPC && !ARM && !S390 && !MICROBLAZE && !ARC && !X86
- 	select KALLSYMS
- 	select KALLSYMS_ALL
- 
-@@ -1590,7 +1590,7 @@ config FAULT_INJECTION_STACKTRACE_FILTER
- 	depends on FAULT_INJECTION_DEBUG_FS && STACKTRACE_SUPPORT
- 	depends on !X86_64
- 	select STACKTRACE
--	select FRAME_POINTER if !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND && !ARC && !X86
-+	select FRAME_POINTER if !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM && !ARC && !X86
- 	help
- 	  Provide stacktrace filter for fault-injection capabilities
- 
-@@ -1599,7 +1599,7 @@ config LATENCYTOP
- 	depends on DEBUG_KERNEL
- 	depends on STACKTRACE_SUPPORT
- 	depends on PROC_FS
--	select FRAME_POINTER if !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM_UNWIND && !ARC && !X86
-+	select FRAME_POINTER if !MIPS && !PPC && !S390 && !MICROBLAZE && !ARM && !ARC && !X86
- 	select KALLSYMS
- 	select KALLSYMS_ALL
- 	select STACKTRACE
 -- 
-2.19.0
-
+------------------
+Dan Murphy
