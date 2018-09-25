@@ -2,112 +2,115 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22462C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B909CC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CDA2087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CDA2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 78FAC2087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FAC2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728713AbeIYQGa (ORCPT
+        id S1728744AbeIYQGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:06:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56326 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbeIYQG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:06:29 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 804DF3082138;
-        Tue, 25 Sep 2018 09:59:43 +0000 (UTC)
-Received: from [10.36.117.173] (ovpn-117-173.ams2.redhat.com [10.36.117.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 28C2E19487;
-        Tue, 25 Sep 2018 09:59:38 +0000 (UTC)
-Subject: Re: [PATCH v5 15/18] kvm: arm64: Add 52bit support for PAR to HPFAR
- conversoin
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20180917104144.19188-1-suzuki.poulose@arm.com>
- <20180917104144.19188-16-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <b6929b5d-e797-6922-a5d2-3a1ded517e1a@redhat.com>
-Date:   Tue, 25 Sep 2018 11:59:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 12:06:52 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44301 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbeIYQGw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:06:52 -0400
+Received: by mail-qt1-f194.google.com with SMTP id k38-v6so12642379qtk.11;
+        Tue, 25 Sep 2018 03:00:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ojpoY/RW/BGU1Dxs0TXMFSXc2L/ph/XzGeGA11gBzBw=;
+        b=raUWyuWL0fPEfNFSHodl70WMgTTIUkg3xRqf/pd9nDQjEExCGF/z13/etPj5kM454k
+         nUFWLG5C/3VtyxgHiizQIxr9DV7/awIEPvsgsVpvBPpXIRxtQbg5I6sp404IXYKgC5kK
+         rJMZeMDQnU/Ep4+t20OA/9wWU2q8QyWmRYkWM7mTn8lsUw4x7Xd8tZABw+wEEa7GStu8
+         ppTZR2V+ZuGU0RqI+WzS3QKjcxO/Wt9rQ3eH1cFUxA8m4zSM4+qzYix867iIi7AjXYet
+         qjYhEKICDJn4AvNndtU5L21LdB7I5Lfb0BE0PpCSCaZlfCE0yelHnU199vFNKmaJnXRS
+         lVSA==
+X-Gm-Message-State: ABuFfogyKylfXqpF2UlU9LrUAybIKmuKPEyjIxJvSC/FcOlOthiIbeDc
+        0F8kwNLTtMGwJCORBR7nhAhhfnLHkAHByEEf04I=
+X-Google-Smtp-Source: ACcGV60EWU5FaYEzQdAVJzkDFVnk4Ycwv0cIW4sSOpvCXtYh904ZBVdkipF6HjX7NSPyKg7CSCfqyCZjMLDkdSDpduU=
+X-Received: by 2002:aed:2bc6:: with SMTP id e64-v6mr171540qtd.132.1537869605174;
+ Tue, 25 Sep 2018 03:00:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180917104144.19188-16-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 25 Sep 2018 09:59:43 +0000 (UTC)
+References: <cover.1537276837.git.ren_guo@c-sky.com> <1ccf1bed89758a5a9b57ac2ce6d11ca898a1b9ae.1537276837.git.ren_guo@c-sky.com>
+ <CAK8P3a0RDiP_R8+Lo9-nwiRS3k1NrtcsCFLi0Ww0TJGoAdb3iQ@mail.gmail.com> <20180925094601.GA2102@guoren>
+In-Reply-To: <20180925094601.GA2102@guoren>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 25 Sep 2018 11:59:48 +0200
+Message-ID: <CAK8P3a1bv_Kx5Jo3UOyC9y0fmrH1i2+HB3_=H7pkBfBxBH-nXA@mail.gmail.com>
+Subject: Re: [PATCH V7 1/2] csky/dma: bugfix dma_sync_for_cpu/device
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On Tue, Sep 25, 2018 at 11:46 AM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> On Mon, Sep 24, 2018 at 10:38:04PM +0200, Arnd Bergmann wrote:
+> > On Tue, Sep 18, 2018 at 3:48 PM Guo Ren <ren_guo@c-sky.com> wrote:
+> > >
+> > > ref: https://lkml.org/lkml/2018/5/18/1068
+> > >
+> > >         map             for_cpu         for_device      unmap
+> > > TO_DEV  writeback       none            writeback       none
+> > > TO_CPU  invalidate      invalidate*     invalidate      invalidate*
+> > > BIDIR   writeback       invalidate      writeback       invalidate
+> > >
+> > > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> >
+> > Same comment as for the other patch: Explain why the original
+> > version is wrong first. When giving a reference to some other
+> > discussion, use the "Link" tag above your Signed-off-by line.
+> > To point to a discussion on lkml, lore.kernel.org is the
+> > recommended archive, so it would become
+> >
+> > Link: https://lore.kernel.org/lkml/20180518215548.GH17671@n2100.armlinux.org.uk/
+> Ok, I'll improve the comment:
+>
+> Fixup dma_mapping error in linux-4.19-rc3, and we must implement all
+> DMA_TO_DEVICE/FROM_DEVICE/BIDIRECTIONAL for both sync_dma_for_device/cpu.
+> The implementation of arch should follow the following rules:
+>
+> ...
 
-On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
-> Add support for handling 52bit addresses in PAR to HPFAR
-> conversion. Instead of hardcoding the address limits, we
-> now use PHYS_MASK_SHIFT.
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+That seems ok, but it's better to start with a description of the problem
+rather than the 'Fixup dma_mapping error in linux-4.19-rc3' part.
+I would write this like:
 
-Thanks
+| The arch_sync_dma_for_cpu()/arch_sync_dma_for_device()
+| implementation is broken for some combinations that end up
+| in a BUG() instead of performing the necessary flushes.
+|
+| The implementation of arch should follow the following rules:
+| ...
 
-Eric
+The imperative 'Fix up dma_mapping error ...' is what belongs
+into the subject line, and is ideally revisited at the end of the
+changelog comment if you want to add more detail about what
+you do.
 
-> ---
->  arch/arm64/include/asm/kvm_arm.h | 7 +++++++
->  arch/arm64/kvm/hyp/switch.c      | 2 +-
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index 0a37c0513ede..241d1622fa19 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -308,6 +308,13 @@
->  
->  /* Hyp Prefetch Fault Address Register (HPFAR/HDFAR) */
->  #define HPFAR_MASK	(~UL(0xf))
-> +/*
-> + * We have
-> + *	PAR	[PA_Shift - 1	: 12] = PA	[PA_Shift - 1 : 12]
-> + *	HPFAR	[PA_Shift - 9	: 4]  = FIPA	[PA_Shift - 1 : 12]
-> + */
-> +#define PAR_TO_HPFAR(par)		\
-> +	(((par) & GENMASK_ULL(PHYS_MASK_SHIFT - 1, 12)) >> 8)
->  
->  #define kvm_arm_exception_type	\
->  	{0, "IRQ" }, 		\
-> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> index 9d5ce1a3039a..7cc175c88a37 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -263,7 +263,7 @@ static bool __hyp_text __translate_far_to_hpfar(u64 far, u64 *hpfar)
->  		return false; /* Translation failed, back to guest */
->  
->  	/* Convert PAR to HPFAR format */
-> -	*hpfar = ((tmp >> 12) & ((1UL << 36) - 1)) << 4;
-> +	*hpfar = PAR_TO_HPFAR(tmp);
->  	return true;
->  }
->  
-> 
+       Arnd
