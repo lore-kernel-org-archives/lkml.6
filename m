@@ -2,154 +2,111 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ACEECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC20C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E742083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80F9C20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:40:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WFYzIfRX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E742083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CY3ILFbn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F9C20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbeIZCt1 (ORCPT
+        id S1727055AbeIZCtm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:49:27 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45686 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725918AbeIZCt0 (ORCPT
+        Tue, 25 Sep 2018 22:49:42 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32953 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725918AbeIZCtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:49:26 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l2-v6so14930242qtr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:40:04 -0700 (PDT)
+        Tue, 25 Sep 2018 22:49:42 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y18-v6so9106902pge.0;
+        Tue, 25 Sep 2018 13:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=RDQ3xx80SRyQFwywcrombnQRB2XWBbCFo3YhVjtFhAY=;
-        b=WFYzIfRXCpIjdM0nNU/APzW3QxHrvqka2SAgCRv/Fb49iaPar+TZzcp+LI2nDW/BjZ
-         mAnkW8kuacoTFaCytqjx1uSqH4b0pi2K2ecRhhxw4Uw1m1ky2DqW0xhhq7PmWvZokFgD
-         bT1cXbHHTmKAv0XpiuOZ2C45LQPrmc2Q4mNVHBoXU2OD71q7TkJGV8MSCi5D7Ss3kdq+
-         ZRrwWRdjZckbLmX008LNmi8VQi1Y+3wJDq6JHBV56zJXmNQZ/ALkxgg1Eyw89Fb2Ja0g
-         isBSQsJXBELFw6Rd0fMQm2JG2TLXu/y3N39rhywqYF2yjiQl9CrIvZ55qd3gJuRl1dSd
-         Kckg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UwBT6Ua94F51ID+K3lylh+cP3AFbjq7QM3C/BSJSjj8=;
+        b=CY3ILFbnYZu4LswVS0Tdz4O8jsqLu6PVrUtaw1AT1ZVRdS56bcER34FZfdE/hJE5pe
+         CfpYh3LpO68qVeqTyHAHMRFnvSx1Gm3itMjSe8ZGNeLdSLfOW+gZMMsxGkFtyJDvbde2
+         9gZ3LD5c0v4VjIvspJaY1soIYnel2B+GCVwDudyKXRKiDQAtJI7f77Zj6LwID1qpnyf/
+         9Ift17P1qoRbFnqAP3FISQs0gy29Dt+0dv3rOFSrBXxQB0npuyf741xCweEQJDzbMP3N
+         KNDpYWvbSf6B8OjVcLwyGSqmRYuGvkaQ6TU5THY0+1JhP9TSm+f5N4AIrYFVHWEPUgp4
+         UVDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=RDQ3xx80SRyQFwywcrombnQRB2XWBbCFo3YhVjtFhAY=;
-        b=l91xyJHJ0jsAlPTnwd2EkJo61a47TOzYkjw266wJbqUqvTDKGLzi5GfEHu+DATq9r2
-         gjDmAQlcKWeeFFGb+jn/Ogphrj+e3Vkkwc4REz1LlwqXFaOfFuW7BFDG/M4DKhsff/n9
-         QBciPR9jyg1iugzbev5+YU4/gUEmub5j3E4t5NAs9va6Z4/E8KIjEhhaOGxBgWZqgTtp
-         FFwXPOVRJ5nl/OxqJGQOGoyaBInYQ7P9++qc2pdgy+2hKq/CiLFoqUNi3p8tsqsR0hVj
-         FdjN19+pJqHrL4RZjRzDUnY75Vv5iJ8WtGnrrivzPhcIk1AGf4d8XqJDs9dPKUkcWZKx
-         jybA==
-X-Gm-Message-State: ABuFfohoXmnyYSK3eK9Qn6C8WvzzHiWn87wmfhEQRqeIIvVkYBmjknhR
-        iNXUpW1/50efckdWwwDQTTxnfSSWjp3m+u2p6vJcCg==
-X-Google-Smtp-Source: ACcGV63sYsMuZMK7nj4DGxpEXplMsv0FvvZjEDbH1vX/SDon/vRNsi5XCSselWL/nGgHLSVx5ZlEYGG/eiBfmFP9GwM=
-X-Received: by 2002:ac8:248c:: with SMTP id s12-v6mr2217259qts.116.1537908004234;
- Tue, 25 Sep 2018 13:40:04 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UwBT6Ua94F51ID+K3lylh+cP3AFbjq7QM3C/BSJSjj8=;
+        b=Zmn2A0ZMso13jWYM8JL0p3tP9LyiBvm3S14neLYpCxwYfyEWuAbJJL5tMBQnf+u6SP
+         TCV9hb/rpjIkhNV7fCtcmwxR96FhplhHY9lHvfN7o/QsmFGSOhWXaL+BGSYP40HW5Rlr
+         MXf8icfiRHaiFMAYuqbKZc6q3M9wqR781nSNz402TMWKaB12/X+ogNxdZO/3RvBxPE0Q
+         FGt3lkGbrjfZHy+xCMrTBDzwulhjs8DILqCXVOLdHvcAII+NFCKOYJ88cOe/fSsTYIIL
+         xNmFty+r6c1G5kKQQQVsWEemEVdwcLlZ11ksmttwvxzn09w/581xZysAF+J9MB9ZerVi
+         yW8Q==
+X-Gm-Message-State: ABuFfojfs7lH9l4choc89KZpPN3Oi+4w4v0GX1bdsqzQ5yUaMPzhT6Zu
+        RyOf8jjG2rD5oxo3FahB/Tc=
+X-Google-Smtp-Source: ACcGV61RMjx6gITARmerODzcN5VnGpzA+O9UzqKSSGEdT7yfNVKYkdt2lOd4ABc8oW/sqaEcOLYrXA==
+X-Received: by 2002:a63:5e46:: with SMTP id s67-v6mr2534029pgb.373.1537908021299;
+        Tue, 25 Sep 2018 13:40:21 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id a19-v6sm4831598pfj.38.2018.09.25.13.40.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 13:40:20 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 13:40:19 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 000/105] 3.18.123-stable review
+Message-ID: <20180925204019.GA13001@roeck-us.net>
+References: <20180924113113.268650190@linuxfoundation.org>
+ <20180925203843.GA12876@roeck-us.net>
 MIME-Version: 1.0
-Received: by 2002:ac8:2abb:0:0:0:0:0 with HTTP; Tue, 25 Sep 2018 13:40:03
- -0700 (PDT)
-In-Reply-To: <CAJWu+oorTRschpgLODgVv50S57U6Su9SM57WVrVKiQBSXEVC9w@mail.gmail.com>
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <CAEXW_YRXQwKvnahv5X1F_Bu_98vMg=w1xpo8PZ+aNT02vBrwwg@mail.gmail.com>
- <e8fdef37-afcd-24b3-1005-e707b73f20b1@codeaurora.org> <eb686156-95d2-2468-21be-13bfd97d5a58@codeaurora.org>
- <CAJWu+ooTi+9Hp6xWpje-zoFOdRpZPLMvTzTDEk8Vf-y4TicvUw@mail.gmail.com> <CAJWu+oorTRschpgLODgVv50S57U6Su9SM57WVrVKiQBSXEVC9w@mail.gmail.com>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Tue, 25 Sep 2018 13:40:03 -0700
-Message-ID: <CAJWu+orL63-qfDL7B_Fs_Vx_rUr4fwn+DXK1mosmyM4jhj_BSw@mail.gmail.com>
-Subject: Re: [PATCH 2/6] pstore: Add event tracing support
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>,
-        kernel-team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925203843.GA12876@roeck-us.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 1:39 PM, Joel Fernandes <joelaf@google.com> wrote:
-> On Tue, Sep 25, 2018 at 1:37 PM, Joel Fernandes <joelaf@google.com> wrote:
->> On Sun, Sep 23, 2018 at 8:33 AM, Sai Prakash Ranjan
->> <saiprakash.ranjan@codeaurora.org> wrote:
->>> On 9/22/2018 10:07 PM, Sai Prakash Ranjan wrote:
->>>>
->>>> On 9/22/2018 2:35 PM, Joel Fernandes wrote:
->>>>>
->>>>> On Sat, Sep 8, 2018 at 4:28 PM Sai Prakash Ranjan
->>>>> <saiprakash.ranjan@codeaurora.org> wrote:
->>>>>>
->>>>>>
->>>>>> +
->>>>>> +       trace_seq_init(&iter->seq);
->>>>>> +       iter->ent = fbuffer->entry;
->>>>>> +       event_call->event.funcs->trace(iter, 0, event);
->>>>>> +       trace_seq_putc(&iter->seq, 0);
->>>>>
->>>>>
->>>>> Would it be possible to store the binary trace record in the pstore
->>>>> buffer instead of outputting text? I suspect that will both be faster
->>>>> and less space.
->>>>>
->>>>
->>>> I will try this and come back.
->>>>
->>>
->>> Hi Joel,
->>>
->>> I removed trace_seq_putc and there is some improvement seen: 203 MB/s
->>>
->>> # dd if=/dev/zero of=/dev/null status=progress
->>> 12207371264 bytes (12 GB, 11 GiB) copied, 60 s, 203 MB/s^C
->>> 24171926+0 records in
->>> 24171926+0 records out
->>> 12376026112 bytes (12 GB, 12 GiB) copied, 60.8282 s, 203 MB/s
->>>
->>> This seems good when compared to 190 MB/s seen previously.
->>> If this is Ok, then I will spin v2 with changes suggested.
->>
->> Sorry for slow reply, yes that sounds good and a worthwhile perf improvement.
->>
->
-> Well so I think you should still not use spinlock to synchronize and
-> split the buffer. You could expand pstore_record to have a ts field or
-> introduce a new API like ->write_percpu instead of write, or
-> something. But I strongly feel you should lock. For ftrace function
+On Tue, Sep 25, 2018 at 01:38:43PM -0700, Guenter Roeck wrote:
+> On Mon, Sep 24, 2018 at 01:32:46PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 3.18.123 release.
+> > There are 105 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Sep 26 11:30:30 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> 
+> Build results:
+> 	total: 151 pass: 151 fail: 0
+> Qemu test results:
+> 	total: 285 pass: 284 fail: 1
+> Failed tests: 
+> 	powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
+> 
 
-Aargh, I meant you should *not* lock :-)
+Sigh. This was the result for 4.4. Here is the result for 3.18:
+Sorry for the confusion.
+
+Build results:
+	total: 139 pass: 139 fail: 0
+Qemu test results:
+	total: 221 pass: 221 fail: 0
+
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
