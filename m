@@ -2,129 +2,96 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62786C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 03:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D917C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 04:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1730F20838
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 03:47:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="KkmOWrbp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1730F20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 159362145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 04:10:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159362145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbeIYJxU (ORCPT
+        id S1727854AbeIYKQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 05:53:20 -0400
-Received: from ozlabs.org ([203.11.71.1]:33187 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727469AbeIYJxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 05:53:19 -0400
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 42K6Tx1bSkz9s9N; Tue, 25 Sep 2018 13:47:49 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1537847269;
-        bh=ROZYdAp3aOY/k8QSJaaQkfyEfaRUTUIwDlyjRjCubeM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KkmOWrbpaZeu+BrScYOZXMd9S9NdkK2y/vjqDqFjQ79jqMtmVWyzsShELL+bOuTd+
-         pKLkrMfgBUJ7uLrR/8JdtmONtFgzKVXhlvi6JoaIZL0OQ9+JujxvCScZJQJRNpsWpx
-         Ugz80YBD6kxh5GwF5Oo+XUiOWGfFdQUeQ4gFQj2s=
-Date:   Tue, 25 Sep 2018 13:47:43 +1000
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Alan Tull <atull@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Portable DT Connectors with regard to FPGAs
-Message-ID: <20180925034743.GD30868@umbus.fritz.box>
-References: <CANk1AXQY14NHHoDUKNShvDQCFP-bw7ndU=W9a5G8C1d-p4tDUQ@mail.gmail.com>
+        Tue, 25 Sep 2018 06:16:19 -0400
+Received: from mail-pg1-f170.google.com ([209.85.215.170]:35903 "EHLO
+        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbeIYKQT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 06:16:19 -0400
+Received: by mail-pg1-f170.google.com with SMTP id d1-v6so10489638pgo.3;
+        Mon, 24 Sep 2018 21:10:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CBGlSRrX+tA40jmTyBQDOftMDMzSClEQD9uteDl9b5Y=;
+        b=F2QEDEW0nR5OpKk1oWUE65gnRYOkmwmNQSj37KpsbrCRE1A9Pm14M4C0+LsVuPU2bO
+         slg62lH6mxHP6BMCKaoDeRCH+8R0oA/+6Li3IWgGJgds4igln7PQIOOyEBjQf8MJbXIx
+         xUxNnzHeRU9HezV9VJj1ITc7CEJCg16M1C1AHV9DCuuhNT/FbFoGnoJ6vvESRI5GBDDu
+         uaAp7AbU8123vZvre6H14mZ9xC40snbDN6qxH8/c8sPtgUpS2HscNU5decapyjU9bE4n
+         CEC/f4W6ZKK6VYQPMIO40nbtC5/alv4cdsGMV7Ja23l1/AtRziDXpWhsfk5qXDlM5ZGu
+         0jOw==
+X-Gm-Message-State: ABuFfohnfmUTnIFk3BoIQ8ToIKBQHN5EOEXjZsICrkdk661+ljvABMeJ
+        7sAfJIMEvWV/K+90zvLfF7E=
+X-Google-Smtp-Source: ACcGV62ueP2XpJ2SNQv9iGheAM+OWj9mk7pFJRhoa6aPiW9Nod6V2UD/MRhwOWddG54baF3WUqRk9g==
+X-Received: by 2002:a17:902:5ac9:: with SMTP id g9-v6mr1582815plm.311.1537848646312;
+        Mon, 24 Sep 2018 21:10:46 -0700 (PDT)
+Received: from asus.site ([2601:647:4601:42b4:3842:3e31:3bb6:cf62])
+        by smtp.googlemail.com with ESMTPSA id w22-v6sm1036607pgm.1.2018.09.24.21.10.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 21:10:44 -0700 (PDT)
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+To:     Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Lameter <cl@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
+ <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
+ <12eee877-affa-c822-c9d5-fda3aa0a50da@virtuozzo.com>
+ <1537801706.195115.7.camel@acm.org>
+ <c844c598-be1d-bef4-fb99-09cf99571fd7@virtuozzo.com>
+ <1537804720.195115.9.camel@acm.org>
+ <10c706fd-2252-f11b-312e-ae0d97d9a538@virtuozzo.com>
+ <1537805984.195115.14.camel@acm.org>
+ <20180924185753.GA32269@bombadil.infradead.org>
+ <20180925001615.GA14386@ming.t460p>
+ <20180925032826.GA4110@bombadil.infradead.org>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <4a19ac2f-82c1-db55-9b93-4005ace5e2fe@acm.org>
+Date:   Mon, 24 Sep 2018 21:10:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="BI7KTAps+wX7oIMI"
-Content-Disposition: inline
-In-Reply-To: <CANk1AXQY14NHHoDUKNShvDQCFP-bw7ndU=W9a5G8C1d-p4tDUQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180925032826.GA4110@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9/24/18 8:28 PM, Matthew Wilcox wrote:
+> [ ... ] Because if we have to
+> round all allocations below 64 bytes up to 64 bytes, [ ... ]
+Have you noticed that in another e-mail in this thread it has been 
+explained why it is not necessary on x86 to align buffers allocated by 
+kmalloc() on a 64-byte boundary even if these buffers are used for DMA?
 
---BI7KTAps+wX7oIMI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 24, 2018 at 03:32:44PM -0500, Alan Tull wrote:
-> My interest here was in having some discussion on whether connectors
-> are a good match for handling FPGAs.
->=20
-> The relevant use model is where a user applies a DT overlay targeting
-> an FPGA region after the kernel has booted.  That overlay initiates
-> FPGA programming and then adds nodes for the new FPGA hardware. This
-> is discussed more completely in the FPGA manager DT binding document
-> [1].  The main deal here is that I'd like to be able to add nodes
-> in/below a FPGA region node to support devices in the FPGA (and be
-> able also to remove them if we are going to reconfigure the FPGA.)
->=20
-> Previous discussions about DT connectors focused on the types of
-> things likely to be on a physical connector. GPIO and SPI got named as
-> good examples for discussion while MMIO specifically was dismissed
-> [2].  That's problematic for embedded FPGAs for example since the FPGA
-> is on a mmio bus and hardware that is programmed into the FPGA lives
-> on that mmio bus similar to any embedded peripherals.  So there's a
-> question - are mmio busses intended to be left un-connectorizable?
-
-I don't see any particular reason that a connector couldn't be used
-for mmio devices.  I think you'd want to treat the connection point as
-a bridge on the mmio bus - that can have a 'ranges' property mapping
-the connected device into the parent bus's address space (as an
-identity mapping or otherwise).
-
->=20
-> Alan
->=20
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/Documentation/devicetree/bindings/fpga/fpga-region.txt
->=20
-> [2] https://lkml.org/lkml/2016/7/20/560
->=20
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---BI7KTAps+wX7oIMI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlupr8oACgkQbDjKyiDZ
-s5K7MhAAvzTQruD8Eug/NpcLk36W4uVPasCdGxhjWNmHE0+hjEAX9OET2QK1y4OL
-NAlDCJAiOYr9L6ljqUSP64jtJ8RKab2LhiYzS/NXFiG8f8keCiitmJXRmCQ4DoqU
-7+NEKk9GpMfmtflmUcAOqAxShwiCRdfazsP3uPHGb54zMCTioci8b7vetKydmSEu
-hKh1aYjD5reKcb/JfVYUPQ4k38hHCrQtzcU0VECST2nkvJOCnfvmMQn5Qa+k2aow
-UjMPHZnkFu1WBJRrermwQs7WWpN4Lp1pVBuM/0fThUwF12AFydr2TevWHHgOgFvC
-iIMFbjHIV0bbzgV+bLQ2SPhJ8YB8p+H1uBnplBCLZUFUPE7/tbEK/91wcQr4F543
-e/LlWlblgJHmdlV6zgqp4ZOZ/g4JuYQsscvc5B4sajheQHJ5cLG0HSj+tKZEzRdY
-D7P6461froQSTBjldXGY1uP5O2GFvtebdKPYepDJN/XAHHyHpJuxlMgjZsWhEZSi
-3kNLTWpuHjUAhc2tsjmCCZObj5fp3+R1KnMdbbMzUSYiQD4atN5b1e0Sc78Lt9vB
-51mI4xpq/2Wkt7RojTIYN3Z1X5EVSDaZxcDz5NVrjQCOS1dnM1i6m3BgExL4UQGj
-idcGkHtfQH/OGrD+hk0Y3VhlzMptP5AAQrYPdRudUbnesIrjzCw=
-=MnJW
------END PGP SIGNATURE-----
-
---BI7KTAps+wX7oIMI--
+Bart.
