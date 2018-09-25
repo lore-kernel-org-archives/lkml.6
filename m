@@ -2,475 +2,66 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E8B5C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBC9C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA132208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:20:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA132208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 8423321480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:20:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8423321480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbeIYN0P (ORCPT
+        id S1728675AbeIYN0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:26:15 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36586 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727588AbeIYN0P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:26:15 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8P7JL1c001635;
-        Tue, 25 Sep 2018 09:19:24 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mqd4790r7-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 25 Sep 2018 09:19:24 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7D69531;
-        Tue, 25 Sep 2018 07:19:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 46718252B;
-        Tue, 25 Sep 2018 07:19:23 +0000 (GMT)
-Received: from [10.48.0.237] (10.75.127.51) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 25 Sep
- 2018 09:19:22 +0200
-Subject: Re: [PATCH V2 04/27] mmc: mmci: introduce dma_priv pointer to
- mmci_host
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
- <1537523181-14578-5-git-send-email-ludovic.Barre@st.com>
- <CAPDyKFqQNN9X+x=pg9TOArT4-Tx9jNkpM2T+rAxQj-rzHXC0OA@mail.gmail.com>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <42b6a3dc-df03-9ba6-7863-8791007b3432@st.com>
-Date:   Tue, 25 Sep 2018 09:19:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 09:26:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39672 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727588AbeIYN0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:26:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E59BAAF41;
+        Tue, 25 Sep 2018 07:20:25 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Zong Li <zongbox@gmail.com>
+Cc:     hch@infradead.org, palmer@sifive.com, aou@eecs.berkeley.edu,
+        vincentc@andestech.com, zong@andestech.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] lib: Add umoddi3 and udivmoddi4 of GCC library routines
+References: <cover.1537260207.git.zongbox@gmail.com>
+        <2ccc6c0758624dbb22f6fe451a3e476a000108ef.1537260207.git.zongbox@gmail.com>
+        <20180921070006.GC8401@infradead.org>
+        <CA+ZOyaiJv-NZWk3ec_3zhRTSn7G-NGgyaiPTXOmuWfTWD7KSJw@mail.gmail.com>
+X-Yow:  I think I am an overnight sensation right now!!
+Date:   Tue, 25 Sep 2018 09:20:25 +0200
+In-Reply-To: <CA+ZOyaiJv-NZWk3ec_3zhRTSn7G-NGgyaiPTXOmuWfTWD7KSJw@mail.gmail.com>
+        (Zong Li's message of "Tue, 25 Sep 2018 10:19:55 +0800")
+Message-ID: <mvmefdicabq.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqQNN9X+x=pg9TOArT4-Tx9jNkpM2T+rAxQj-rzHXC0OA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_04:,,
- signatures=0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sep 25 2018, Zong Li <zongbox@gmail.com> wrote:
 
+> The RV32 need the umoddi3 to do modulo when the operands are long long
+> type, like other libraries implementation such as ucmpdi2, lshrdi3 and
+> so on. I encounter the undefined reference 'umoddi3' when I use the in
+> house dma driver, although it is in house driver, but I think that
+> umoddi3 is a common function for RV32.
 
-On 09/24/2018 08:52 PM, Ulf Hansson wrote:
-> On 21 September 2018 at 11:45, Ludovic Barre <ludovic.Barre@st.com> wrote:
->> From: Ludovic Barre <ludovic.barre@st.com>
->>
->> This patch introduces dma_priv pointer to define specific
->> needs for each dma engine. This patch is needed to prepare
->> sdmmc variant with internal dma which not use dmaengine API.
->>
->> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
->> ---
->> change v2:
->> -rename specific dma engine structure to mmci_dmae_next/priv
->> -remove dma prefixe of mmci_dmae_priv fields, rename "current"
->> field to "cur" this avoid build issue with "current" defined
->> in include/asm-generic/current.h
->>
->>   drivers/mmc/host/mmci.c | 155 ++++++++++++++++++++++++++++++------------------
->>   drivers/mmc/host/mmci.h |  18 +-----
->>   2 files changed, 99 insertions(+), 74 deletions(-)
->>
->> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
->> index 2f845f3..6de7c8d 100644
->> --- a/drivers/mmc/host/mmci.c
->> +++ b/drivers/mmc/host/mmci.c
->> @@ -415,31 +415,57 @@ static void mmci_init_sg(struct mmci_host *host, struct mmc_data *data)
->>    * no custom DMA interfaces are supported.
->>    */
->>   #ifdef CONFIG_DMA_ENGINE
->> +struct mmci_dmae_next {
->> +       struct dma_async_tx_descriptor *desc;
->> +       struct dma_chan *chan;
->> +       s32 cookie;
->> +};
->> +
->> +struct mmci_dmae_priv {
->> +       struct dma_chan *cur;
->> +       struct dma_chan *rx_channel;
->> +       struct dma_chan *tx_channel;
->> +       struct dma_async_tx_descriptor  *desc_current;
->> +       struct mmci_dmae_next next_data;
->> +       bool in_progress;
-> 
-> I am wondering whether it would make sense to keep the "bool
-> in_progress" in the struct mmci_host. I guess it will be used for all
-> dma variants anyway!?
+You probably should use the macros from <asm/div64.h> instead.
 
-Today it's only use in dma_engine config, not used by sdmmc variant.
-But it's could moved to mmci_host structure, no problem.
+Andreas.
 
-> 
->> +};
->> +
->> +#define mmci_dmae_inprogress(dmae) ((dmae)->in_progress)
->> +
->>   static int mmci_dma_setup(struct mmci_host *host)
->>   {
->>          const char *rxname, *txname;
->> +       struct mmci_dmae_priv *dmae;
->> +
->> +       dmae = devm_kzalloc(mmc_dev(host->mmc), sizeof(*dmae), GFP_KERNEL);
->> +       if (!dmae)
->> +               return -ENOMEM;
->>
->> -       host->dma_rx_channel = dma_request_slave_channel(mmc_dev(host->mmc), "rx");
->> -       host->dma_tx_channel = dma_request_slave_channel(mmc_dev(host->mmc), "tx");
->> +       host->dma_priv = dmae;
->> +
->> +       dmae->rx_channel = dma_request_slave_channel(mmc_dev(host->mmc),
->> +                                                    "rx");
->> +       dmae->tx_channel = dma_request_slave_channel(mmc_dev(host->mmc),
->> +                                                    "tx");
->>
->>          /* initialize pre request cookie */
->> -       host->next_data.cookie = 1;
->> +       dmae->next_data.cookie = 1;
->>
->>          /*
->>           * If only an RX channel is specified, the driver will
->>           * attempt to use it bidirectionally, however if it is
->>           * is specified but cannot be located, DMA will be disabled.
->>           */
->> -       if (host->dma_rx_channel && !host->dma_tx_channel)
->> -               host->dma_tx_channel = host->dma_rx_channel;
->> +       if (dmae->rx_channel && !dmae->tx_channel)
->> +               dmae->tx_channel = dmae->rx_channel;
->>
->> -       if (host->dma_rx_channel)
->> -               rxname = dma_chan_name(host->dma_rx_channel);
->> +       if (dmae->rx_channel)
->> +               rxname = dma_chan_name(dmae->rx_channel);
->>          else
->>                  rxname = "none";
->>
->> -       if (host->dma_tx_channel)
->> -               txname = dma_chan_name(host->dma_tx_channel);
->> +       if (dmae->tx_channel)
->> +               txname = dma_chan_name(dmae->tx_channel);
->>          else
->>                  txname = "none";
->>
->> @@ -450,15 +476,15 @@ static int mmci_dma_setup(struct mmci_host *host)
->>           * Limit the maximum segment size in any SG entry according to
->>           * the parameters of the DMA engine device.
->>           */
->> -       if (host->dma_tx_channel) {
->> -               struct device *dev = host->dma_tx_channel->device->dev;
->> +       if (dmae->tx_channel) {
->> +               struct device *dev = dmae->tx_channel->device->dev;
->>                  unsigned int max_seg_size = dma_get_max_seg_size(dev);
->>
->>                  if (max_seg_size < host->mmc->max_seg_size)
->>                          host->mmc->max_seg_size = max_seg_size;
->>          }
->> -       if (host->dma_rx_channel) {
->> -               struct device *dev = host->dma_rx_channel->device->dev;
->> +       if (dmae->rx_channel) {
->> +               struct device *dev = dmae->rx_channel->device->dev;
->>                  unsigned int max_seg_size = dma_get_max_seg_size(dev);
->>
->>                  if (max_seg_size < host->mmc->max_seg_size)
->> @@ -477,21 +503,24 @@ static int mmci_dma_setup(struct mmci_host *host)
->>    */
->>   static inline void mmci_dma_release(struct mmci_host *host)
->>   {
->> -       if (host->dma_rx_channel)
->> -               dma_release_channel(host->dma_rx_channel);
->> -       if (host->dma_tx_channel)
->> -               dma_release_channel(host->dma_tx_channel);
->> -       host->dma_rx_channel = host->dma_tx_channel = NULL;
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->> +
->> +       if (dmae->rx_channel)
->> +               dma_release_channel(dmae->rx_channel);
->> +       if (dmae->tx_channel)
->> +               dma_release_channel(dmae->tx_channel);
->> +       dmae->rx_channel = dmae->tx_channel = NULL;
->>   }
->>
->>   static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
->>   {
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->>          struct dma_chan *chan;
->>
->>          if (data->flags & MMC_DATA_READ)
->> -               chan = host->dma_rx_channel;
->> +               chan = dmae->rx_channel;
->>          else
->> -               chan = host->dma_tx_channel;
->> +               chan = dmae->tx_channel;
->>
->>          dma_unmap_sg(chan->device->dev, data->sg, data->sg_len,
->>                       mmc_get_dma_dir(data));
->> @@ -499,14 +528,16 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
->>
->>   static void mmci_dma_data_error(struct mmci_host *host)
->>   {
->> -       if (!dma_inprogress(host))
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->> +
->> +       if (!mmci_dmae_inprogress(dmae))
->>                  return;
->>
->>          dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
->> -       dmaengine_terminate_all(host->dma_current);
->> -       host->dma_in_progress = false;
->> -       host->dma_current = NULL;
->> -       host->dma_desc_current = NULL;
->> +       dmaengine_terminate_all(dmae->cur);
->> +       dmae->in_progress = false;
->> +       dmae->cur = NULL;
->> +       dmae->desc_current = NULL;
->>          host->data->host_cookie = 0;
->>
->>          mmci_dma_unmap(host, host->data);
->> @@ -514,10 +545,11 @@ static void mmci_dma_data_error(struct mmci_host *host)
->>
->>   static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
->>   {
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->>          u32 status;
->>          int i;
->>
->> -       if (!dma_inprogress(host))
->> +       if (!mmci_dmae_inprogress(dmae))
->>                  return;
->>
->>          /* Wait up to 1ms for the DMA to complete */
->> @@ -551,9 +583,9 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
->>                  mmci_dma_release(host);
->>          }
->>
->> -       host->dma_in_progress = false;
->> -       host->dma_current = NULL;
->> -       host->dma_desc_current = NULL;
->> +       dmae->in_progress = false;
->> +       dmae->cur = NULL;
->> +       dmae->desc_current = NULL;
->>   }
->>
->>   /* prepares DMA channel and DMA descriptor, returns non-zero on failure */
->> @@ -561,6 +593,7 @@ static int __mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
->>                                  struct dma_chan **dma_chan,
->>                                  struct dma_async_tx_descriptor **dma_desc)
->>   {
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->>          struct variant_data *variant = host->variant;
->>          struct dma_slave_config conf = {
->>                  .src_addr = host->phybase + MMCIFIFO,
->> @@ -579,10 +612,10 @@ static int __mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
->>
->>          if (data->flags & MMC_DATA_READ) {
->>                  conf.direction = DMA_DEV_TO_MEM;
->> -               chan = host->dma_rx_channel;
->> +               chan = dmae->rx_channel;
->>          } else {
->>                  conf.direction = DMA_MEM_TO_DEV;
->> -               chan = host->dma_tx_channel;
->> +               chan = dmae->tx_channel;
->>          }
->>
->>          /* If there's no DMA channel, fall back to PIO */
->> @@ -622,26 +655,31 @@ static int __mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
->>   static inline int mmci_dma_prep_data(struct mmci_host *host,
->>                                       struct mmc_data *data)
->>   {
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->> +
->>          /* Check if next job is already prepared. */
->> -       if (host->dma_current && host->dma_desc_current)
->> +       if (dmae->cur && dmae->desc_current)
->>                  return 0;
->>
->>          /* No job were prepared thus do it now. */
->> -       return __mmci_dma_prep_data(host, data, &host->dma_current,
->> -                                   &host->dma_desc_current);
->> +       return __mmci_dma_prep_data(host, data, &dmae->cur,
->> +                                   &dmae->desc_current);
->>   }
->>
->>   static inline int mmci_dma_prep_next(struct mmci_host *host,
->>                                       struct mmc_data *data)
->>   {
->> -       struct mmci_host_next *nd = &host->next_data;
->> -       return __mmci_dma_prep_data(host, data, &nd->dma_chan, &nd->dma_desc);
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->> +       struct mmci_dmae_next *nd = &dmae->next_data;
->> +
->> +       return __mmci_dma_prep_data(host, data, &nd->chan, &nd->desc);
->>   }
->>
->>   static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
->>   {
->> -       int ret;
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->>          struct mmc_data *data = host->data;
->> +       int ret;
-> 
-> Looks like "white space". Anyway, please avoid move the declaration of
-> ret, unless needed.
-
-Ok
-
-> 
->>
->>          ret = mmci_dma_prep_data(host, host->data);
->>          if (ret)
->> @@ -651,9 +689,9 @@ static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
->>          dev_vdbg(mmc_dev(host->mmc),
->>                   "Submit MMCI DMA job, sglen %d blksz %04x blks %04x flags %08x\n",
->>                   data->sg_len, data->blksz, data->blocks, data->flags);
->> -       host->dma_in_progress = true;
->> -       dmaengine_submit(host->dma_desc_current);
->> -       dma_async_issue_pending(host->dma_current);
->> +       dmae->in_progress = true;
->> +       dmaengine_submit(dmae->desc_current);
->> +       dma_async_issue_pending(dmae->cur);
->>
->>          if (host->variant->qcom_dml)
->>                  dml_start_xfer(host, data);
->> @@ -675,22 +713,24 @@ static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
->>
->>   static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
->>   {
->> -       struct mmci_host_next *next = &host->next_data;
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->> +       struct mmci_dmae_next *next = &dmae->next_data;
->>
->>          WARN_ON(data->host_cookie && data->host_cookie != next->cookie);
->> -       WARN_ON(!data->host_cookie && (next->dma_desc || next->dma_chan));
->> +       WARN_ON(!data->host_cookie && (next->desc || next->chan));
->>
->> -       host->dma_desc_current = next->dma_desc;
->> -       host->dma_current = next->dma_chan;
->> -       next->dma_desc = NULL;
->> -       next->dma_chan = NULL;
->> +       dmae->desc_current = next->desc;
->> +       dmae->cur = next->chan;
->> +       next->desc = NULL;
->> +       next->chan = NULL;
->>   }
->>
->>   static void mmci_pre_request(struct mmc_host *mmc, struct mmc_request *mrq)
->>   {
->>          struct mmci_host *host = mmc_priv(mmc);
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->>          struct mmc_data *data = mrq->data;
->> -       struct mmci_host_next *nd = &host->next_data;
->> +       struct mmci_dmae_next *nd = &dmae->next_data;
->>
->>          if (!data)
->>                  return;
->> @@ -708,6 +748,7 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
->>                                int err)
->>   {
->>          struct mmci_host *host = mmc_priv(mmc);
->> +       struct mmci_dmae_priv *dmae = host->dma_priv;
->>          struct mmc_data *data = mrq->data;
->>
->>          if (!data || !data->host_cookie)
->> @@ -716,24 +757,24 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
->>          mmci_dma_unmap(host, data);
->>
->>          if (err) {
->> -               struct mmci_host_next *next = &host->next_data;
->> +               struct mmci_dmae_next *next = &dmae->next_data;
->>                  struct dma_chan *chan;
->>                  if (data->flags & MMC_DATA_READ)
->> -                       chan = host->dma_rx_channel;
->> +                       chan = dmae->rx_channel;
->>                  else
->> -                       chan = host->dma_tx_channel;
->> +                       chan = dmae->tx_channel;
->>                  dmaengine_terminate_all(chan);
->>
->> -               if (host->dma_desc_current == next->dma_desc)
->> -                       host->dma_desc_current = NULL;
->> +               if (dmae->desc_current == next->desc)
->> +                       dmae->desc_current = NULL;
->>
->> -               if (host->dma_current == next->dma_chan) {
->> -                       host->dma_in_progress = false;
->> -                       host->dma_current = NULL;
->> +               if (dmae->cur == next->chan) {
->> +                       dmae->in_progress = false;
->> +                       dmae->cur = NULL;
->>                  }
->>
->> -               next->dma_desc = NULL;
->> -               next->dma_chan = NULL;
->> +               next->desc = NULL;
->> +               next->chan = NULL;
->>                  data->host_cookie = 0;
->>          }
->>   }
->> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
->> index 06299ac..1e9a45b 100644
->> --- a/drivers/mmc/host/mmci.h
->> +++ b/drivers/mmc/host/mmci.h
->> @@ -276,12 +276,6 @@ struct mmci_host_ops {
->>          int (*dma_setup)(struct mmci_host *host);
->>   };
->>
->> -struct mmci_host_next {
->> -       struct dma_async_tx_descriptor  *dma_desc;
->> -       struct dma_chan                 *dma_chan;
->> -       s32                             cookie;
->> -};
->> -
->>   struct mmci_host {
->>          phys_addr_t             phybase;
->>          void __iomem            *base;
->> @@ -323,16 +317,6 @@ struct mmci_host {
->>          unsigned int            size;
->>          int (*get_rx_fifocnt)(struct mmci_host *h, u32 status, int remain);
->>
->> -#ifdef CONFIG_DMA_ENGINE
->> -       /* DMA stuff */
->> -       struct dma_chan         *dma_current;
->> -       struct dma_chan         *dma_rx_channel;
->> -       struct dma_chan         *dma_tx_channel;
->> -       struct dma_async_tx_descriptor  *dma_desc_current;
->> -       struct mmci_host_next   next_data;
->> -       bool                    dma_in_progress;
->> -
->> -#define dma_inprogress(host)   ((host)->dma_in_progress)
->> -#endif
->> +       void                    *dma_priv;
->>   };
->>
->> --
->> 2.7.4
->>
-> 
-> Kind regards
-> Uffe
-> 
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
