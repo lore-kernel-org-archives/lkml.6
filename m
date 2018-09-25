@@ -2,158 +2,140 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D83C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D7FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A0621480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2DD32145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:04:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="JizVTj1k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A0621480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nienBosL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2DD32145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbeIYQK7 (ORCPT
+        id S1728560AbeIYQLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:10:59 -0400
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:41994 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeIYQK7 (ORCPT
+        Tue, 25 Sep 2018 12:11:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33093 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeIYQLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:10:59 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 4A9FB24E01D9;
-        Tue, 25 Sep 2018 03:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1537869851; bh=9JB8j4TY7S8HvAOSB1Ms0lI+jf2wTh9A7606N7tHaGA=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=JizVTj1k7fzwHCjV1G5Al8/cUf/ByeH0JRKRt8NAOa5pdwnwLYWGasxo0/UOkFeXX
-         S4iev0E433tbkxifhaeLHOJHHPCq1oKy5gqKRjoNNGysz7drQduwDk9DFonzZPoJdo
-         hcZtaKfeL0b7/xwQ8wazo0UK4d8Fq70HN/s7luOI5VEXkE8ekGwfP/r715vbyysyYB
-         MhfuZofuBYsDdifcv1f3ueDXFJ+RhSfVonwOUeHjnjavgT8k2O9iQs/SpcsQfB/GP2
-         GLHGfMYfG8a3GCChgh+dxU9rAgsVPnEK0J2CzL89R62WQAlpp9pgDp69e1oscY5Gvt
-         5T9JgyAdoCILw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CDAD848CA;
-        Tue, 25 Sep 2018 03:04:10 -0700 (PDT)
-Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 25 Sep 2018 03:04:10 -0700
-Received: from AM04WEMBXB.internal.synopsys.com ([fe80::1006:bcdd:1b7:579b])
- by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
- 25 Sep 2018 14:04:07 +0400
-From:   Artur Petrosyan <arthur.petrosyan@synopsys.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        Artur Petrosyan <arthur.petrosyan@synopsys.com>
-CC:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        John Youn <John.Youn@synopsys.com>,
-        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
- feature
-Thread-Topic: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
- feature
-Thread-Index: AQHT7ws4O+8B/axYs0CeMD+6l4m0jQ==
-Date:   Tue, 25 Sep 2018 10:04:07 +0000
-Message-ID: <3AD91E696667BF4BA728303C178E8A63532AB5E5@am04wembxb.internal.synopsys.com>
-References: <1526690943-8211-1-git-send-email-john.stultz@linaro.org>
- <410670D7E743164D87FA6160E7907A5601313531E1@am04wembxa.internal.synopsys.com>
- <CALAqxLVZXs97sryfPaGY5Gq50-FZROgaBADNXXadcyiNhP3EPQ@mail.gmail.com>
- <410670D7E743164D87FA6160E7907A560131356C4E@am04wembxa.internal.synopsys.com>
- <CALAqxLU3sWrgPjFqZ2vK0m8wVThtE1hDsbNq9zRC7ritzyNHmQ@mail.gmail.com>
- <3AD91E696667BF4BA728303C178E8A63532AAF6D@am04wembxb.internal.synopsys.com>
- <CALAqxLXKOG8fxtrDaRLDGhJUfD1-4qc5QU60+ZmB3+9LsW69Lg@mail.gmail.com>
- <3AD91E696667BF4BA728303C178E8A63532AB36A@am04wembxb.internal.synopsys.com>
- <CALAqxLXy0YXNLwFQEUZxSsjFKC9boVcGkt+50XwmVfwKCcqsEw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.104.24]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 25 Sep 2018 12:11:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id f10-v6so1660077wrs.0;
+        Tue, 25 Sep 2018 03:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TmFwJxWPbPLEGoSqi37mzTAr6BsmiaPCdo59W52iqNc=;
+        b=nienBosLpSroDiSYMtWROA0FQJGa0y08kzwOTBflDzs12TrgBUo8+yeTu+SWCDsnRO
+         UVSyxxb7/tNJgx9Wnq8rnUyLqpLW+PNxfkNrJLv5Y6STF0MltYXxNPKxMOGCj2xb3OCR
+         Lp74CKo8u/zNJXtsNwQfoUgh/7oFYP64E3lPIk+DMVaoc6xZeFcTwFP/ouxesA9K+xXc
+         RmIkUaBoBZa1Mm9cfgkKhGAaFov6gW3T3weuWv/KAy2eWN9pVGzdQbW+6QsMl8wF5y9/
+         u7yzux4Se1+/X03KADzOJQSd6tifA+fHlST7tjaEZEG2RKddx7qRPOjBASdYlvOo2NSZ
+         otqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TmFwJxWPbPLEGoSqi37mzTAr6BsmiaPCdo59W52iqNc=;
+        b=e5EMqwKP0gbYcI/WYj5jRkctC+kLFnl8nfxM0ZaXI7Nc4JW/dx+C7Rj787QVoweK5L
+         gNL+mprTzBhD1Sfjkhairtx7L7N092lzLsveO1G5SMn+V+6NE/XM0fkmk1wUv3JlbrdE
+         6ftamh8vkaTAE4zHfnRMOVIjI8bzVj86V4pofhJ2WAN5z231G5vH1eWodLfecC0aBXog
+         IcoPh6W5EfKlAF35rXlNKdwhXwqGiDtB3UECft3NWvQrc3YhnpV67/RuWaqS2l5innTN
+         W0Lnnx46FWFhiawTm42ciXo8Ev10AuWfuJtHtBGs6qQUUp+2agOUZEIkct0oVXAe+hvG
+         KWzQ==
+X-Gm-Message-State: ABuFfogLcAlXDjiIbAhyF90voYIbHahMtLXYvJ2AUXybrN7RLRBrZM66
+        fzuqMXWLIh9CGlHDuYKwN1c=
+X-Google-Smtp-Source: ACcGV62KE14HAK2ZBRUK5ulfnNQF0mLEsJFwRKuuhJ+MoAu3iNodUy5uUZGJesHvKrTWmwFGVQR+Aw==
+X-Received: by 2002:adf:84e6:: with SMTP id 93-v6mr33891wrg.144.1537869865382;
+        Tue, 25 Sep 2018 03:04:25 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id t70-v6sm1564105wmt.30.2018.09.25.03.04.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 03:04:24 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 12:04:24 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 18/20] iommu/tegra: gart: Don't detach devices from
+ inactive domains
+Message-ID: <20180925100424.GG7097@ulmo>
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-19-digetx@gmail.com>
+ <20180924110047.GO21032@ulmo>
+ <8be80297-3b13-ece6-a5bf-873cc7877989@gmail.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UTZ8bGhNySVQ9LYl"
+Content-Disposition: inline
+In-Reply-To: <8be80297-3b13-ece6-a5bf-873cc7877989@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,=0A=
-=0A=
-On 9/24/2018 22:52, John Stultz wrote:=0A=
-> On Sun, Sep 23, 2018 at 10:57 PM, Artur Petrosyan=0A=
-> <arthur.petrosyan@synopsys.com> wrote:=0A=
->> Hi John,=0A=
->>=0A=
->> On 9/21/2018 05:05, John Stultz wrote:=0A=
->>> On Thu, Sep 20, 2018 at 7:17 AM, Artur Petrosyan=0A=
->>> <Arthur.Petrosyan@synopsys.com> wrote:=0A=
->>>> On 5/23/2018 01:57, John Stultz wrote:=0A=
->>>>> Its done automatically, when the OTG cable is detected it the host=0A=
->>>>> ports are disabled and when the OTG port is empty the host ports are=
-=0A=
->>>>> enabled.=0A=
->>>>>=0A=
->>>>> Let me know if you need anything else!=0A=
->>>>>=0A=
->>>>=0A=
->>>> Please apply the patch set with this cover letter "[PATCH 0/3] usb:=0A=
->>>> dwc2: Fix hibernation for switching between host and device modes."=0A=
->>>=0A=
->>> Sorry, can you send the patches to me, or point me to a git tree? I'm=
-=0A=
->>> not seeing that thread in my mailbox or on google.=0A=
->>>=0A=
->>>> Enable the power down on his devices. Let me know if you still see any=
-=0A=
->>>> issue. If there is no issue, please provide Tested-by tag.=0A=
->>>=0A=
->>> Would be happy to test it, thought I'm traveling tomorrow, so I may=0A=
->>> not be able to validate till monday.=0A=
->>>=0A=
->>> thanks=0A=
->>> -john=0A=
->>>=0A=
->>=0A=
->> You can find the patch set following to this link.=0A=
->>=0A=
->> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__marc.info_-3Fl-3D=
-linux-2Dusb-26m-3D153745139408236-26w-3D2&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWq=
-B0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqrC_D7niMJI&m=3Ddfaz_WctFBdFgywM2g=
-9w0XVhgOdAS4gIsj9o23RnyvY&s=3D_Nz3ephAop_nqrfcICii4OgMkV14Mi4yaKk8-qPqdis&e=
-=3D=0A=
-> =0A=
-> I applied those three patches, and it seems to work ok.=0A=
-> =0A=
-> Just to be clear, was there anything else I was needing to do while testi=
-ng it?=0A=
-> =0A=
-> Otherwise,=0A=
-> Tested-by: John Stultz <john.stultz@linaro.org>   #On HiKey=0A=
-> =0A=
-> thanks=0A=
-> -john=0A=
-> =0A=
-=0A=
-Just a clarification by this commit "[PATCH] usb: dwc2: Fix HiKey =0A=
-regression caused by power_down feature"=0A=
-https://marc.info/?l=3Dlinux-usb&m=3D152669095513248&w=3D2=0A=
-=0A=
-the power_down is disabled setting "p->power_down =3D false;" in =0A=
-"dwc2_set_his_params" function.=0A=
-=0A=
-Could you please clarify that the testes done for those 3 patches were =0A=
-done enabling "p->power_down =3D true;" in "dwc2_set_his_params" function.=
-=0A=
-=0A=
-Regards,=0A=
-Artur=0A=
-=0A=
-=0A=
-=0A=
+
+--UTZ8bGhNySVQ9LYl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 24, 2018 at 09:05:48PM +0300, Dmitry Osipenko wrote:
+> On 9/24/18 2:00 PM, Thierry Reding wrote:
+> > On Mon, Sep 24, 2018 at 03:41:51AM +0300, Dmitry Osipenko wrote:
+> >> There could be unlimited number of allocated domains, but only one dom=
+ain
+> >> can be active at a time. Hence devices must be detached only from the
+> >> active domain.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/iommu/tegra-gart.c | 8 +++++---
+> >>  1 file changed, 5 insertions(+), 3 deletions(-)
+> >=20
+> > Do we have a mechanism of switching out different domains? I don't think
+> > we do, so I'm wondering if perhaps a better solution to this would be to
+> > just refuse to create more than one domain in the first place. That
+> > would also allow us to get rid of the global variable gart_handle.
+>=20
+> That's what was done in v1, Robin Murphy suggested that it will be
+> better not to restrict allocation of unpopulated domains. It is
+> mentioned in the changelog, see comment to v2 changes.
+
+Okay, fine.
+
+Thierry
+
+--UTZ8bGhNySVQ9LYl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluqCCcACgkQ3SOs138+
+s6EcWRAAi1a6EdXZRPBtfZIPPFrJWw0mFbyhRhoBMtgV6Un7CUmgM6G8GBHgMfUk
+1ZOEZeXCAQPBL7UonpE3DgOqE27JmX8UuevI7ZiyEQH/7ZHaNN3F35GGbN5R8oSZ
+vIFFKGrdx6gWWCfGzDy9vsJ4BasUt28weT6/dHDKLiW7Og8RWICssRmo71oUMyJb
+cwA09L4Yf99YbwYcB+YhsYLmcdolfWWoeh7fZO/6xsBnZg6n1YlKsXLKPqzOCl4u
+GJ68y6RrwdqRoi7EjxQQvN7RALttAJTEQFctlWijqYlZw73lymgQeDBgWoLJmrzn
+tabDCEw5Ut7HsF33lfsPuONHYLUdHy4OnGfjvXrVfHEsRdmUxYtlx/tMAgyr+/N1
+hLTk0lVEFr70qXLLXHKy1CvzDj7SwHKnbVjFdIGtW0+2VddBfPT5KCeDyctnQoW9
+osyz22j64i+QQDfXRRLqk+ov8S1meF+cFZi6X5RUuJAsC3Ix9HVQKc2A0ep1NPlN
+8CMU5xysmcg6a0QHFDPP95G25bYOTTNOSi4bZNjLmqnt5xbtQCqfiwvocJ0f2pyV
+kiI+IPyJb3kb+fl4/7RU0MEZho/rS+uPXVkNJkWNHe+Px37dJe4PhSOG8DEZCwKO
+vq4tEQsrwuDw8BMQLjczDykDmNL/M0xbhXe7Jvn8FOpD9iZkSAo=
+=ph6I
+-----END PGP SIGNATURE-----
+
+--UTZ8bGhNySVQ9LYl--
