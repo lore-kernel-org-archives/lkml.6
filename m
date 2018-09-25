@@ -2,129 +2,223 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535DCC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BEEC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159F620877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159F620877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EE80720867
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:21:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O3s6ssVU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE80720867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbeIZE0N (ORCPT
+        id S1726229AbeIZEaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 00:26:13 -0400
-Received: from mga06.intel.com ([134.134.136.31]:22389 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725736AbeIZE0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 00:26:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 15:16:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
-   d="scan'208";a="76174603"
-Received: from vdevara1-mobl.amr.corp.intel.com (HELO [10.251.19.174]) ([10.251.19.174])
-  by orsmga008.jf.intel.com with ESMTP; 25 Sep 2018 15:16:30 -0700
-Subject: Re: [PATCH v8 0/3] powerpc: Detection and scheduler optimization for
- POWER9 bigcore
-To:     ego@linux.vnet.ibm.com
-References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
- <133c7bca-5720-81de-7956-b93870a1bab8@intel.com>
- <20180922110340.GA1402@in.ibm.com>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <f2ac8eb0-b28e-a930-0160-09720f73a297@intel.com>
-Date:   Tue, 25 Sep 2018 15:16:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 00:30:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59126 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725762AbeIZEaz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 00:30:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1SCmE9r4JoNgJwqeEfIYlkCObWfJevhAPULupx4ussI=; b=O3s6ssVUBN/1hwMYBJhEHuc7u
+        EWdnExT6ZZTTJAVyesQE+QfAkDgtepN1l+FYPT/3vc3UBZXnHYtIKPL5OXJyYoCOxb1VxYls5LWNI
+        YGbXe3wUwAZwHSD02Pp8PS+Rr/Sg21QGFue6LBoH20f7Fv3QIvO46X9Jsz1VG1KgAaNhYC4WnXhQM
+        i+ub13X6wX0Rzz7nVENQcoraDlYN7f451VgaI8hBDgXK6B8JYx0kqhvdGM69Oe1P1gDZHPeqLD6n3
+        1/6NIxcGhVwFB1khKNd/JymHxdepm3LgPHH1F60XOXcGRsV6At/4r9xiUTrbkhQHIDRfItfM43+U7
+        23QROkDEw==;
+Received: from 177.43.23.201.dynamic.adsl.gvt.net.br ([177.43.23.201] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4vhL-0003dU-Pe; Tue, 25 Sep 2018 22:21:12 +0000
+Date:   Tue, 25 Sep 2018 19:20:45 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Steve Longerbeam <steve_longerbeam@mentor.com>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 02/17] media: v4l2: async: Allow searching for asd of
+ any type
+Message-ID: <20180925192045.59c83e3d@coco.lan>
+In-Reply-To: <a8ea673c-a519-81e8-35b1-9d4a224dcbf5@mentor.com>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+        <1531175957-1973-3-git-send-email-steve_longerbeam@mentor.com>
+        <20180924140604.23e2b56f@coco.lan>
+        <a8ea673c-a519-81e8-35b1-9d4a224dcbf5@mentor.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180922110340.GA1402@in.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/22/2018 04:03 AM, Gautham R Shenoy wrote:
-> Without this patchset, the SMT domain would be defined as the group of
-> threads that share L2 cache.
+Em Tue, 25 Sep 2018 14:04:21 -0700
+Steve Longerbeam <steve_longerbeam@mentor.com> escreveu:
 
-Could you try to make a more clear, concise statement about the current
-state of the art vs. what you want it to be?  Right now, the sched
-domains do something like this in terms of ordering:
+> Hi Mauro,
+> 
+> 
+> On 09/24/2018 10:06 AM, Mauro Carvalho Chehab wrote:
+> > Em Mon,  9 Jul 2018 15:39:02 -0700
+> > Steve Longerbeam <slongerbeam@gmail.com> escreveu:
+> >  
+> >> Generalize v4l2_async_notifier_fwnode_has_async_subdev() to allow
+> >> searching for any type of async subdev, not just fwnodes. Rename to
+> >> v4l2_async_notifier_has_async_subdev() and pass it an asd pointer.
+> >>
+> >> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+> >> ---
+> >> Changes since v5:
+> >> - none
+> >> Changes since v4:
+> >> - none
+> >> Changes since v3:
+> >> - removed TODO to support asd compare with CUSTOM match type in
+> >>    asd_equal().
+> >> Changes since v2:
+> >> - code optimization in asd_equal(), and remove unneeded braces,
+> >>    suggested by Sakari Ailus.
+> >> Changes since v1:
+> >> - none
+> >> ---
+> >>   drivers/media/v4l2-core/v4l2-async.c | 73 +++++++++++++++++++++---------------
+> >>   1 file changed, 43 insertions(+), 30 deletions(-)
+> >>
+> >> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+> >> index 2b08d03..0e7e529 100644
+> >> --- a/drivers/media/v4l2-core/v4l2-async.c
+> >> +++ b/drivers/media/v4l2-core/v4l2-async.c
+> >> @@ -124,6 +124,31 @@ static struct v4l2_async_subdev *v4l2_async_find_match(
+> >>   	return NULL;
+> >>   }
+> >>   
+> >> +/* Compare two asd's for equivalence */  
+> > Please, on comments, instead of "asd" prefer to use what this 3 random
+> > letters mean, e. g.:
+> > 	asd -> asynchronous subdevice  
+> 
+> Ok, I will change the comment to read:
+> 
+> /* Compare two async subdevice descriptors for equivalence */
 
-1. SMT siblings
-2. Caches
-3. NUMA
+OK
 
-It sounds like you don't want SMT siblings to be the things that we use,
-right?  Because some siblings share caches and some do not.  Right?  You
-want something like this:
+> 
+> >  
+> >> +static bool asd_equal(struct v4l2_async_subdev *asd_x,
+> >> +		      struct v4l2_async_subdev *asd_y)
+> >> +{
+> >> +	if (asd_x->match_type != asd_y->match_type)
+> >> +		return false;
+> >> +
+> >> +	switch (asd_x->match_type) {
+> >> +	case V4L2_ASYNC_MATCH_DEVNAME:
+> >> +		return strcmp(asd_x->match.device_name,
+> >> +			      asd_y->match.device_name) == 0;
+> >> +	case V4L2_ASYNC_MATCH_I2C:
+> >> +		return asd_x->match.i2c.adapter_id ==
+> >> +			asd_y->match.i2c.adapter_id &&
+> >> +			asd_x->match.i2c.address ==
+> >> +			asd_y->match.i2c.address;
+> >> +	case V4L2_ASYNC_MATCH_FWNODE:
+> >> +		return asd_x->match.fwnode == asd_y->match.fwnode;
+> >> +	default:
+> >> +		break;
+> >> +	}
+> >> +
+> >> +	return false;
+> >> +}
+> >> +
+> >>   /* Find the sub-device notifier registered by a sub-device driver. */
+> >>   static struct v4l2_async_notifier *v4l2_async_find_subdev_notifier(
+> >>   	struct v4l2_subdev *sd)
+> >> @@ -308,29 +333,22 @@ static void v4l2_async_notifier_unbind_all_subdevs(
+> >>   	notifier->parent = NULL;
+> >>   }
+> >>   
+> >> -/* See if an fwnode can be found in a notifier's lists. */
+> >> -static bool __v4l2_async_notifier_fwnode_has_async_subdev(
+> >> -	struct v4l2_async_notifier *notifier, struct fwnode_handle *fwnode)
+> >> +/* See if an async sub-device can be found in a notifier's lists. */
+> >> +static bool __v4l2_async_notifier_has_async_subdev(
+> >> +	struct v4l2_async_notifier *notifier, struct v4l2_async_subdev *asd)  
+> > This is a minor issue, but checkpatch complains (with reason)
+> > (with --strict) about the above:
+> >
+> > 	CHECK: Lines should not end with a '('
+> > 	#63: FILE: drivers/media/v4l2-core/v4l2-async.c:337:
+> > 	+static bool __v4l2_async_notifier_has_async_subdev(
+> >
+> > Better to declare it, instead, as:
+> >
+> > static bool
+> > __v4l2_async_notifier_has_async_subdev(struct v4l2_async_notifier *notifier,
+> > 				       struct v4l2_async_subdev *asd)
+> >
+> > Similar warnings appear on other places:
+> > CHECK: Lines should not end with a '('
+> > #102: FILE: drivers/media/v4l2-core/v4l2-async.c:362:
+> > +static bool v4l2_async_notifier_has_async_subdev(
+> >
+> > CHECK: Lines should not end with a '('
+> > #141: FILE: drivers/media/v4l2-core/v4l2-async.c:410:
+> > +			if (v4l2_async_notifier_has_async_subdev(  
+> 
+> Will fix.
+> 
+> >
+> > Btw, Checkpatch also complains that the author's email is different
+> > than the SOB's one:
+> >
+> > WARNING: Missing Signed-off-by: line by nominal patch author 'Steve Longerbeam <slongerbeam@gmail.com>'
+> >
+> > (the some comes with Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>)
+> >
+> > I suspect that other patches on this series will suffer from the same issue.  
+> 
+> Will fix when submitting v7.
+> 
+> > <snip>
+> >  
+> >> @@ -392,12 +406,11 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+> >>   		case V4L2_ASYNC_MATCH_CUSTOM:
+> >>   		case V4L2_ASYNC_MATCH_DEVNAME:
+> >>   		case V4L2_ASYNC_MATCH_I2C:
+> >> -			break;
+> >>   		case V4L2_ASYNC_MATCH_FWNODE:
+> >> -			if (v4l2_async_notifier_fwnode_has_async_subdev(
+> >> -				    notifier, asd->match.fwnode, i)) {
+> >> +			if (v4l2_async_notifier_has_async_subdev(
+> >> +				    notifier, asd, i)) {
+> >>   				dev_err(dev,
+> >> -					"fwnode has already been registered or in notifier's subdev list\n");
+> >> +					"asd has already been registered or in notifier's subdev list\n");  
+> > Please, never use "asd" on messages printed to the user. While someone
+> > may understand it while reading the source code, for a poor use,
+> > "asd" is just a random sequence of 3 characters.  
+> 
+> I will change the message to read:
+> 
+> "subdev descriptor already listed in this or other notifiers".
 
-1. SMT siblings (sharing L1)
-2. SMT siblings (sharing L2)
-3. Other caches
-4. NUMA
+Perfect!
+
+Thanks!
+Mauro
