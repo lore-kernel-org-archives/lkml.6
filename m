@@ -2,244 +2,70 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C0AC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FA9C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F62D2145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:42:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F62D2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 800192087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 800192087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbeIYLsn (ORCPT
+        id S1727366AbeIYLvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 07:48:43 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:11689 "EHLO
-        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725843AbeIYLsm (ORCPT
+        Tue, 25 Sep 2018 07:51:16 -0400
+Received: from smtprelay0252.hostedemail.com ([216.40.44.252]:53850 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725959AbeIYLvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 07:48:42 -0400
-X-IronPort-AV: E=Sophos;i="5.54,300,1534789800"; 
-   d="scan'208";a="177283"
-Received: from ironmsg04-blr.qualcomm.com ([10.86.208.133])
-  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 25 Sep 2018 11:12:49 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,9026"; a="1554084"
-Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
-  by ironmsg04-blr.qualcomm.com with ESMTP; 25 Sep 2018 11:12:49 +0530
-Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
-        id 3AC832BBB; Tue, 25 Sep 2018 11:12:48 +0530 (IST)
-From:   Arun KS <arunks@codeaurora.org>
-To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        akpm@linux-foundation.org, dan.j.williams@intel.com,
-        mhocko@suse.com, vbabka@suse.cz, iamjoonsoo.kim@lge.com,
-        osalvador@suse.de, malat@debian.org, yasu.isimatu@gmail.com,
-        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, xen-devel@lists.xenproject.org
-Cc:     vatsa@codeaurora.org, vinmenon@codeaurora.org, getarunks@gmail.com,
-        Arun KS <arunks@codeaurora.org>
-Subject: [PATCH v2] memory_hotplug: Free pages as higher order
-Date:   Tue, 25 Sep 2018 11:12:38 +0530
-Message-Id: <1537854158-9766-1-git-send-email-arunks@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 25 Sep 2018 07:51:15 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 546E7100E86C1;
+        Tue, 25 Sep 2018 05:45:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: price76_2f030183bad1a
+X-Filterd-Recvd-Size: 1633
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 25 Sep 2018 05:45:22 +0000 (UTC)
+Message-ID: <ad3efc558479ccfc1f36fcd936d2e58d1c290019.camel@perches.com>
+Subject: Re: [PATCH 3.18 104/105] IB/nes: Fix a compiler warning
+From:   Joe Perches <joe@perches.com>
+To:     Sasha Levin <Alexander.Levin@microsoft.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Date:   Mon, 24 Sep 2018 22:45:21 -0700
+In-Reply-To: <20180924223952.GA9157@sasha-vm>
+References: <20180924113113.268650190@linuxfoundation.org>
+         <20180924113123.002918395@linuxfoundation.org>
+         <6f7ca3c205bada768c3918b1feacbbd5ce23a64d.camel@perches.com>
+         <20180924175902.GB19402@kroah.com>
+         <6d6f31c87b0c9b1a551d352439183c8c9c4df04c.camel@perches.com>
+         <20180924223952.GA9157@sasha-vm>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When free pages are done with higher order, time spend on
-coalescing pages by buddy allocator can be reduced. With
-section size of 256MB, hot add latency of a single section
-shows improvement from 50-60 ms to less than 1 ms, hence
-improving the hot add latency by 60%.
+On Mon, 2018-09-24 at 22:39 +0000, Sasha Levin wrote:
+> The reasoning behind it was similar to the "no warnings" reasoning of
+> upstream: there might be real issues hiding in the sea of "harmless"
+> warnings, so we want to get rid of all of them to catch real issues.
 
-Modify external providers of online callback to align with
-the change.
+I believe this to be a poor idea for -stable acceptance.
 
-Signed-off-by: Arun KS <arunks@codeaurora.org>
----
-Changes since v1:
-- Removed prefetch()
+It's impossible to know when gcc or any other compiler
+would decide to add any new warning.
 
-Changes since RFC:
-- Rebase.
-- As suggested by Michal Hocko remove pages_per_block.
-- Modifed external providers of online_page_callback.
-
-v1: https://lore.kernel.org/patchwork/patch/989445/
-RFC: https://lore.kernel.org/patchwork/patch/984754/
----
- drivers/hv/hv_balloon.c        |  6 +++--
- drivers/xen/balloon.c          | 18 ++++++++++++---
- include/linux/memory_hotplug.h |  2 +-
- mm/memory_hotplug.c            | 51 ++++++++++++++++++++++++++++++++----------
- 4 files changed, 59 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index b1b7880..c5bc0b5 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
- 	}
- }
- 
--static void hv_online_page(struct page *pg)
-+static int hv_online_page(struct page *pg, unsigned int order)
- {
- 	struct hv_hotadd_state *has;
- 	unsigned long flags;
-@@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
- 		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
- 			continue;
- 
--		hv_page_online_one(has, pg);
-+		hv_bring_pgs_online(has, pfn, (1UL << order));
- 		break;
- 	}
- 	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
-+
-+	return 0;
- }
- 
- static int pfn_covered(unsigned long start_pfn, unsigned long pfn_cnt)
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index e12bb25..010cf4d 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -390,8 +390,8 @@ static enum bp_state reserve_additional_memory(void)
- 
- 	/*
- 	 * add_memory_resource() will call online_pages() which in its turn
--	 * will call xen_online_page() callback causing deadlock if we don't
--	 * release balloon_mutex here. Unlocking here is safe because the
-+	 * will call xen_bring_pgs_online() callback causing deadlock if we
-+	 * don't release balloon_mutex here. Unlocking here is safe because the
- 	 * callers drop the mutex before trying again.
- 	 */
- 	mutex_unlock(&balloon_mutex);
-@@ -422,6 +422,18 @@ static void xen_online_page(struct page *page)
- 	mutex_unlock(&balloon_mutex);
- }
- 
-+static int xen_bring_pgs_online(struct page *pg, unsigned int order)
-+{
-+	unsigned long i, size = (1 << order);
-+	unsigned long start_pfn = page_to_pfn(pg);
-+
-+	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
-+	for (i = 0; i < size; i++)
-+		xen_online_page(pfn_to_page(start_pfn + i));
-+
-+	return 0;
-+}
-+
- static int xen_memory_notifier(struct notifier_block *nb, unsigned long val, void *v)
- {
- 	if (val == MEM_ONLINE)
-@@ -744,7 +756,7 @@ static int __init balloon_init(void)
- 	balloon_stats.max_retry_count = RETRY_UNLIMITED;
- 
- #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
--	set_online_page_callback(&xen_online_page);
-+	set_online_page_callback(&xen_bring_pgs_online);
- 	register_memory_notifier(&xen_memory_nb);
- 	register_sysctl_table(xen_root);
- 
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 34a2822..7b04c1d 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
- 	unsigned long *valid_start, unsigned long *valid_end);
- extern void __offline_isolated_pages(unsigned long, unsigned long);
- 
--typedef void (*online_page_callback_t)(struct page *page);
-+typedef int (*online_page_callback_t)(struct page *page, unsigned int order);
- 
- extern int set_online_page_callback(online_page_callback_t callback);
- extern int restore_online_page_callback(online_page_callback_t callback);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 38d94b7..9f67794 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -47,7 +47,7 @@
-  * and restore_online_page_callback() for generic callback restore.
-  */
- 
--static void generic_online_page(struct page *page);
-+static int generic_online_page(struct page *page, unsigned int order);
- 
- static online_page_callback_t online_page_callback = generic_online_page;
- static DEFINE_MUTEX(online_page_callback_lock);
-@@ -655,26 +655,53 @@ void __online_page_free(struct page *page)
- }
- EXPORT_SYMBOL_GPL(__online_page_free);
- 
--static void generic_online_page(struct page *page)
-+static int generic_online_page(struct page *page, unsigned int order)
- {
--	__online_page_set_limits(page);
--	__online_page_increment_counters(page);
--	__online_page_free(page);
-+	unsigned long nr_pages = 1 << order;
-+	struct page *p = page;
-+	unsigned int loop;
-+
-+	for (loop = 0 ; loop < nr_pages ; loop++, p++) {
-+		__ClearPageReserved(p);
-+		set_page_count(p, 0);
-+	}
-+
-+	adjust_managed_page_count(page, nr_pages);
-+	set_page_refcounted(page);
-+	__free_pages(page, order);
-+
-+	return 0;
-+}
-+
-+static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
-+{
-+	unsigned long end = start + nr_pages;
-+	int order, ret, onlined_pages = 0;
-+
-+	while (start < end) {
-+		order = min(MAX_ORDER - 1UL, __ffs(start));
-+
-+		while (start + (1UL << order) > end)
-+			order--;
-+
-+		ret = (*online_page_callback)(pfn_to_page(start), order);
-+		if (!ret)
-+			onlined_pages += (1UL << order);
-+		else if (ret > 0)
-+			onlined_pages += ret;
-+
-+		start += (1UL << order);
-+	}
-+	return onlined_pages;
- }
- 
- static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
- 			void *arg)
- {
--	unsigned long i;
- 	unsigned long onlined_pages = *(unsigned long *)arg;
--	struct page *page;
- 
- 	if (PageReserved(pfn_to_page(start_pfn)))
--		for (i = 0; i < nr_pages; i++) {
--			page = pfn_to_page(start_pfn + i);
--			(*online_page_callback)(page);
--			onlined_pages++;
--		}
-+		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
- 
- 	online_mem_sections(start_pfn, start_pfn + nr_pages);
- 
--- 
-1.9.1
 
