@@ -2,76 +2,71 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B04D1C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59F3C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 693222089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EB9820C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyH5kQl0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693222089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nER1OViF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB9820C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeIZARl (ORCPT
+        id S1727489AbeIZASM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:17:41 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34518 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbeIZARj (ORCPT
+        Tue, 25 Sep 2018 20:18:12 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45081 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbeIZASM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:17:39 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t15so16417205wrx.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:08:56 -0700 (PDT)
+        Tue, 25 Sep 2018 20:18:12 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t70-v6so7329565pgd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Qpq8xhJhRVyPIhybIrRVbsiL98w7WDObH988kQk9jIk=;
-        b=lyH5kQl0MtYSQ0e0ZZ+Aw+pOZoJ05xEGN105fykxTjUCsXt905xiZczKKpj0eTnj0i
-         fl8DyIDY6xwMIj7ThYO523uNwUskC4HcfyZL3Qee58dw70MEHj4p+zFM/0PmYIS29kEC
-         78/oUC948cBKaA99QqyEt3QOy7VKw6xWXE1xzeH6zMfuRaYMv5arvoYJJJmwgeloHjCl
-         a/r3Jl4itW9o3modo6t6Ca67XaP47Wzr6AptZ4eq2Vh/w80b8s+UH95r1YkQqGTihTqo
-         VFNUvPhQazUwnd/cAZfTreFSVw9KiJgiK66fdV1oQMhvjP7gyM0gdtHZUslPIFdUzNuj
-         jt2w==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CvRiYuhYnuR651Mppw8za9+8AfZcjBxds0GLMWI0OQ0=;
+        b=nER1OViF7ZLXcVC2oeSBoC5Ntqrb6s0HAzfPhp1Qwg0goF8tuUirwftzYnN3xD+rgA
+         JaTz1GO/RABV5k+8XlvILiQZVOiANaVkGmnq/An+p36UUvTCwi3o6rlkwpivn4KuF3XG
+         WzO1t7436PO5zR70jGEhoSX3XekFXf4e6T1v8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Qpq8xhJhRVyPIhybIrRVbsiL98w7WDObH988kQk9jIk=;
-        b=uWSyfUDeotQTmmyZPSapfU/9UUQAPz2c2Yr/m+Y7y4P9odXvPd0mv8Xmr+TBdS/kJV
-         31IX48Oz9lz9rcMXiEhAEbXJOQGgGiX+asVkSZbUhhratmvn0jpNWAprTdLEMxS0cCbM
-         SEBsrxbqWjKv6Y5qkGl7jIWFKF5Z1lhPAnXdxL29nKjVUa2uIOURaMBXSD3zF3Zlr5mP
-         P30wsKYpYwVmhJkPKeKbJLDaDCYlQBD0SNZVRyqD9OrT1uZt5iswZ74m9TH8Ohx7c571
-         6p9RKABEpS7+El0ZLXAO3PHBKKfV11WCYxBaJaAZHMG2tXxIZjyPTLuOuLBH+qhxRqlo
-         69HQ==
-X-Gm-Message-State: ABuFfoibqFOUO0XcVNfVTxW1/AIbvg6ylVXoRhovy3/M+Tj2ISZONNbs
-        kepdcBOVqvmIJ32uzCQrsC0=
-X-Google-Smtp-Source: ACcGV60Nm85mSWG4aFlMQvgbwX8t5k+k0mnEmFmvSAP6BqtZK1gAkzpqSKHfCHw0nuP/X9CwgD9NqA==
-X-Received: by 2002:adf:ac13:: with SMTP id v19-v6mr2077035wrc.135.1537898935836;
-        Tue, 25 Sep 2018 11:08:55 -0700 (PDT)
-Received: from laptop.localdomain ([37.122.159.87])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm2755827wro.66.2018.09.25.11.08.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CvRiYuhYnuR651Mppw8za9+8AfZcjBxds0GLMWI0OQ0=;
+        b=IkJGdXLhHm6XelU8x7QPl/cOn2qD3V0wLHbBy5V+kX4UfTCozHq8QKvPO9lt1mPqAX
+         Z+rSckGINF2nz/af2Zhm6m4JoVaF0SqdpooA1Em9kQNzbfxw9F0nNqXxn5Fw5cacHqFU
+         y1m1zXJZZLQFV8o55AonK+d+vFf0BuFPXKtWp5q0BIVDtaJLzKZZsY37jcXlw6uV4CPh
+         yKmfNMwXAlXVUsQpR9WxEU6Vq05Mpz9QauVbESL5ozwWSO638nNbdZU78GNzmaiVIEh8
+         EYYOWE69J5fL6S07AaywTYoIhmi2mOdL688akaeYSMMwJM1XgLNpAqac8FZQCiGRJKaO
+         e5NQ==
+X-Gm-Message-State: ABuFfoiUUi0tkiaDy1U6Im8AOH9wMTVEtXTZ71v9kn9sByAZ2g7Si8KD
+        LTeit1z0A2oY4oqiETwfMUjbysQMUkPfLw==
+X-Google-Smtp-Source: ACcGV62SyXvH/BV6YgJF22vxmUmTU6K5cl/7SX8T+EoT5tKFdR05ICg/jOLtxg/sa5rj3nIwMrdv1Q==
+X-Received: by 2002:a65:4d42:: with SMTP id j2-v6mr2105267pgt.232.1537898969395;
+        Tue, 25 Sep 2018 11:09:29 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id z20-v6sm4473443pfd.99.2018.09.25.11.09.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 11:08:55 -0700 (PDT)
-From:   Yasha Cherikovsky <yasha.che3@gmail.com>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
-Cc:     Yasha Cherikovsky <yasha.che3@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] MIPS: Octeon: Remove special handling of CONFIG_MIPS_ELF_APPENDED_DTB=y
-Date:   Tue, 25 Sep 2018 21:08:25 +0300
-Message-Id: <20180925180825.24659-5-yasha.che3@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180925180825.24659-1-yasha.che3@gmail.com>
-References: <20180925180825.24659-1-yasha.che3@gmail.com>
+        Tue, 25 Sep 2018 11:09:28 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2] ASoC: soc-utils: Rename dummy_dma_ops to snd_dummy_dma_ops
+Date:   Tue, 25 Sep 2018 11:09:14 -0700
+Message-Id: <20180925180914.193244-1-mka@chromium.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,53 +74,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ELF appended dtb can be accessed now via 'fw_passed_dtb'.
+The symbols 'dummy_dma_ops' is declared with different data types by
+sound/soc/soc-utils.c and arch/arm64/include/asm/dma-mapping.h. This
+leads to conflicts when soc-utils.c (indirectly) includes dma-mapping.h:
 
-Since raw appended dtb is accessed via that variable too,
-this now effectively allows to boot with CONFIG_MIPS_RAW_APPENDED_DTB=y
-on Octeon.
+sound/soc/soc-utils.c:282:33: error: conflicting types for 'dummy_dma_ops'
+  static const struct snd_pcm_ops dummy_dma_ops = {
+                                  ^
+...
+arch/arm64/include/asm/dma-mapping.h:27:33: note: previous declaration of 'dummy_dma_ops' was here
+  extern const struct dma_map_ops dummy_dma_ops;
+                                  ^
 
-Signed-off-by: Yasha Cherikovsky <yasha.che3@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Rename the symbol in soc-utils.c to 'snd_dummy_dma_ops' to avoid the
+conflict.
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- arch/mips/cavium-octeon/setup.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Changes in v2:
+- use 'snd_dummy_dma_ops' instead of 'snd_dummy_ops'
+---
+ sound/soc/soc-utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/cavium-octeon/setup.c b/arch/mips/cavium-octeon/setup.c
-index a8034d0dcade..3c26054ce72b 100644
---- a/arch/mips/cavium-octeon/setup.c
-+++ b/arch/mips/cavium-octeon/setup.c
-@@ -1156,7 +1156,6 @@ void __init prom_free_prom_memory(void)
- void __init octeon_fill_mac_addresses(void);
- int octeon_prune_device_tree(void);
+diff --git a/sound/soc/soc-utils.c b/sound/soc/soc-utils.c
+index e0c93496c0cd..e3b9dd634c6d 100644
+--- a/sound/soc/soc-utils.c
++++ b/sound/soc/soc-utils.c
+@@ -273,13 +273,13 @@ static int dummy_dma_open(struct snd_pcm_substream *substream)
+ 	return 0;
+ }
  
--extern const char __appended_dtb;
- extern const char __dtb_octeon_3xxx_begin;
- extern const char __dtb_octeon_68xx_begin;
- void __init device_tree_init(void)
-@@ -1165,15 +1164,12 @@ void __init device_tree_init(void)
- 	bool do_prune;
- 	bool fill_mac;
+-static const struct snd_pcm_ops dummy_dma_ops = {
++static const struct snd_pcm_ops snd_dummy_dma_ops = {
+ 	.open		= dummy_dma_open,
+ 	.ioctl		= snd_pcm_lib_ioctl,
+ };
  
--#ifdef CONFIG_MIPS_ELF_APPENDED_DTB
--	if (!fdt_check_header(&__appended_dtb)) {
--		fdt = &__appended_dtb;
-+	if (fw_passed_dtb) {
-+		fdt = (void *)fw_passed_dtb;
- 		do_prune = false;
- 		fill_mac = true;
- 		pr_info("Using appended Device Tree.\n");
--	} else
--#endif
--	if (octeon_bootinfo->minor_version >= 3 && octeon_bootinfo->fdt_addr) {
-+	} else if (octeon_bootinfo->minor_version >= 3 && octeon_bootinfo->fdt_addr) {
- 		fdt = phys_to_virt(octeon_bootinfo->fdt_addr);
- 		if (fdt_check_header(fdt))
- 			panic("Corrupt Device Tree passed to kernel.");
+ static const struct snd_soc_component_driver dummy_platform = {
+-	.ops = &dummy_dma_ops,
++	.ops = &snd_dummy_dma_ops,
+ };
+ 
+ static const struct snd_soc_component_driver dummy_codec = {
 -- 
-2.19.0
+2.19.0.605.g01d371f741-goog
 
