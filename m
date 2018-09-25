@@ -2,91 +2,86 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96321C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B539C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D63A2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:49:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Ee+vdNz0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D63A2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id C08BB2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:49:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C08BB2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeIZA6R (ORCPT
+        id S1727816AbeIZA6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:58:17 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37434 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbeIZA6R (ORCPT
+        Tue, 25 Sep 2018 20:58:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55762 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbeIZA6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:58:17 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v9-v6so22787463ljk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K+CK6/JK9NoS9LCQtCqUtUy7XYEtjbTk8RCaxRN4oyE=;
-        b=Ee+vdNz0oRrepr40QayxH2KChXVIFdcF6XiZl+e/TK7GjXt6OxWzAIyNrthXMbDaOc
-         qLELqUzObikPoB2HebvldN8vGnU5R/tnlvHetYWkB1cNET3y9S7hVxmgLpzZTP1gQd8k
-         uvhtyrp4PHXMiMbv6bp0mHCjyljA3nQ3X2mXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K+CK6/JK9NoS9LCQtCqUtUy7XYEtjbTk8RCaxRN4oyE=;
-        b=CEP55lF2DQKA1Roy7s1k/vrwX1zFmvd1RVAzJ48w3XH2Fd1xe7H82tiNdVhYCQ2uzy
-         /t4xVgmEnIO1zSng/jkFpZBQt8FGHci2ovVBNRbPshKGpueOyMHlUeKSytP6dPS2ccOM
-         pka+AiNYdA1pPzzWYMzAaU+9VuXZ6f14yoxGaJpGdEa45fwIxEQc39j4gnQMyboMosQN
-         0LDfqeYOWATxoA+3uhQorNAWH/D/QiWCJv/rXRrZZmk6d/qk9/JraoiIjBNP9hdgK5Q+
-         IKDwkjxVVrvd5u8Q22ru1yMCX0BAAjZtnUjBi2Fvm8uUWj1vJAyEqRbRApP6gSEjUpek
-         EX6Q==
-X-Gm-Message-State: ABuFfojvh9BqhqbvGYY8sZpfqJy1QWfRdEM6BItjhh30SPsOUmnnoUj7
-        g9X668qIjC8l69+PGQ5Kkj78DTkVChNBXr2pgkP+6OcM4rQ=
-X-Google-Smtp-Source: ACcGV63u/3+NqecsKqbo2XqsCwlLXzTvnL8lUC7oeiKehBIHnj7RWJWbh7/p5GpjbrgN2K1HafMo4A5xaxFtbpaXnjg=
-X-Received: by 2002:a2e:900a:: with SMTP id h10-v6mr1775226ljg.121.1537901361707;
- Tue, 25 Sep 2018 11:49:21 -0700 (PDT)
+        Tue, 25 Sep 2018 20:58:44 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63C6A107C;
+        Tue, 25 Sep 2018 18:49:50 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 20:49:47 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Nishad Kamdar <nishadkamdar@gmail.com>,
+        NeilBrown <neil@brown.name>, devel@driverdev.osuosl.org,
+        Christian =?iso-8859-1?Q?L=FCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v2] staging: mt7621-mmc: Fix single statement macros in
+ sd.c
+Message-ID: <20180925184947.GC16455@kroah.com>
+References: <20180923093805.GA20870@nishad>
+ <b0f415b5b9655571374ab30e37406b494d07bc45.camel@perches.com>
 MIME-Version: 1.0
-References: <20180925182601.37421-1-joel@joelfernandes.org>
-In-Reply-To: <20180925182601.37421-1-joel@joelfernandes.org>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Tue, 25 Sep 2018 11:49:10 -0700
-Message-ID: <CAEXW_YTjjfZhH6rpOArSVub_XhC4mvbKn6Rf0DSiy=rAHQGzPw@mail.gmail.com>
-Subject: Re: [0/5] rcu doc updates
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0f415b5b9655571374ab30e37406b494d07bc45.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:26 AM Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
->
-> Hi Paul,
-> These patches are documentation updates for the rcu_dynticks rolling into
-> rcu_data and also the updates to the fact that there's a single rcu_state now.
-> Its based on your rcu/dev branch.
->
-> Next I'm thinking of tackling 'RCU Callback Handling' and further digging into
-> the dyntick handling and then dig into other documents outside of
-> Data-Structure that need updates. But let me know any suggestions.
-> Thanks!
+On Sun, Sep 23, 2018 at 06:31:32AM -0700, Joe Perches wrote:
+> On Sun, 2018-09-23 at 15:08 +0530, Nishad Kamdar wrote:
+> > This patch fixes a few single statement macros in sd.c.
+> > It converts two macros to inline functions. It removes
+> > five other macros and replaces their usages with calls to
+> > the function being called in the macro definition.
+> > Issue found by checkpatch.
+> > 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> > Changes in v2:
+> >   - Convert msdc_gate_clk() and msdc_ungate_clk() to inline functions.
+> >   - Delete msdc_irq_restore(), msdc_vcore_on(), msdc_vcore_off(),
+> >     msdc_vdd_on() and msdc_vdd_off() and replace their usages directly
+> >     with calls to the function being called by these macros.
+> 
+> Nishad, do please look again for uses of these functions
+> you are changing.
+> 
+> Please try removing all the #if 0 blocks instead, and then
+> see if there are also now unused functions from those removed
+> blocks that could also be removed.
+> 
+> And Greg, if you look at this, look at the odd license of
+> these files.
+> 
+> It's possible the license is incompatible with the GPL.
 
-Apologies that my scripts missed the 'PATCH' prefix. Hopefully that's
-Ok for this time, but let me know if you'd like me to resend them!
-Thanks!
+It is odd, but the GPL at the bottom of the file kind of implies it is
+ok.  Given that it was published by mtk, I am assuming all is good, but
+it would be a good idea to check with the authors to fix this up
+properly.
 
- - Joel
+thanks,
+
+greg k-h
