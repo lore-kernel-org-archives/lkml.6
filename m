@@ -2,89 +2,94 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1866CC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADE9C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFCB32086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:39:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFCB32086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0508C2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:39:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0508C2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbeIYSqx (ORCPT
+        id S1729201AbeIYSrC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:46:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34740 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728781AbeIYSqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:46:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 503C5AEA3;
-        Tue, 25 Sep 2018 12:39:29 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 14:39:28 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v7 3/3] x86/speculation: Propagate information about RSB
- filling mitigation to sysfs
-In-Reply-To: <nycvar.YFH.7.76.1809251431260.15880@cbobk.fhfr.pm>
-Message-ID: <nycvar.YFH.7.76.1809251438580.15880@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1809251431260.15880@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Tue, 25 Sep 2018 14:47:02 -0400
+Received: from ozlabs.org ([203.11.71.1]:54511 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728289AbeIYSrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:47:02 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42KLHX6v4Wz9s7T;
+        Tue, 25 Sep 2018 22:39:36 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        linuxppc-dev@lists.ozlabs.org, linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: How to define some additional KBUILD_CFLAGS after building include/generated/asm-offsets.h ?
+In-Reply-To: <87bm8m5qbs.fsf@concordia.ellerman.id.au>
+References: <e1b65467-7497-5db4-aa93-1ad00d12af3f@c-s.fr> <87mus75c5m.fsf@concordia.ellerman.id.au> <56227965-464a-d972-1c25-d6a4d190e1a1@c-s.fr> <87bm8m5qbs.fsf@concordia.ellerman.id.au>
+Date:   Tue, 25 Sep 2018 22:39:36 +1000
+Message-ID: <875zyt4upj.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+Michael Ellerman <mpe@ellerman.id.au> writes:
+> Christophe LEROY <christophe.leroy@c-s.fr> writes:
+>> Le 24/09/2018 à 14:10, Michael Ellerman a écrit :
+>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>>> I'm trying to implement TLS based stack protector in the Linux Kernel.
+>>>> For that I need to give to GCC the offset at which it will find the
+>>>> canary (register r2 is pointing to the current task struct).
+>>>>
+>>>> I have been able to do it with the below patch, but it only works when
+>>>> include/generated/asm-offsets.h already exists from the start of the build.
+>>>>
+>>>> Is there a way to evaluate CANARY_OFFSET and add the stack-protector
+>>>> flags to KBUILD_FLAGS only after include/generated/asm-offsets.h is built ?
+>>>>
+>>>> Or another way of add -mstack-protector-guard-offset=offsetof(struct
+>>>> task_struct, stack_canary) ?
+>>> 
+>>> This seems to work, at least I see the value in CFLAGS:
+>>> 
+>>> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+>>> index 07d9dce..39ee113 100644
+>>> --- a/arch/powerpc/Makefile
+>>> +++ b/arch/powerpc/Makefile
+>>> @@ -404,6 +394,11 @@ archclean:
+>>>   
+>>>   archprepare: checkbin
+>>>   
+>>> +prepare: stack_protector_prepare
+>>> +
+>>> +stack_protector_prepare: prepare0
+>>> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TSK_STACK_CANARY") print $$3;}' include/generated/asm-offsets.h))
+>>> +
+>>
+>> Great, it works !
+>> Thanks, I have sent v3 of the patches.
+>
+> Cool.
+>
+> It would be good to here from someone who knows Kbuild better than me if
+                      ^
+                      hear
 
-If spectrev2 mitigation has been enabled, we're filling RSB on context 
-switch in order to protect from various classess of spectrev2 attacks.
+Still learning English.
 
-If this mitigation is enabled, say so in sysfs for spectrev2.
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
----
- arch/x86/kernel/cpu/bugs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 53eb14a65610..fe32103fcdc7 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -874,10 +874,11 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
- 		return ret;
- 
--- 
-2.12.3
-
-
--- 
-Jiri Kosina
-SUSE Labs
-
+cheers
