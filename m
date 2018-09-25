@@ -2,86 +2,129 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97132C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228E5C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 427B4208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:39:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB7E8208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:39:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0CYUqzU5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427B4208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DKRtb+17"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7E8208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729756AbeIYVrC (ORCPT
+        id S1729802AbeIYVrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:47:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33096 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729398AbeIYVrC (ORCPT
+        Tue, 25 Sep 2018 17:47:18 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41080 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729398AbeIYVrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:47:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aBgD/pcqeLOMgh+w0gxQ6TAAJ84SbJL4bg5CYXoh464=; b=0CYUqzU5HIjUokRaJblwPq30fk
-        mLkJrZKX9LG8TbI70/bzMifcMUU9vCGTBM9FekEthS953ouRC5dkDvKJevNzzJqN7k5gjhs4ugKL2
-        aD6XQoz85xCpV/ZrnnhtX0dSfqSBoWUY8eUc/iK5LgoavDfMn59T6oSuMCkhq35wOLuhw1xpMzEAi
-        22J1AmNeEhgaKPvkytZ5hJV50JMwdOa9qkPj7UVJYJwWXug+FI4JNCzjCCS5V8/P7vrRXI6sSjJ1r
-        BPifFdtFvPAydqpjGh5d10FXhYIEEX79gjjO2N6Z6y/EZYZuvN6Gz242O5TW6hyuX2BGQbFqqN0bt
-        GaNLthfQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g4pQ5-0002Lc-1Z; Tue, 25 Sep 2018 15:38:57 +0000
-Subject: Re: linux-next: Tree for Sep 25 (crypto/caam/)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-References: <20180925153937.07660ca8@canb.auug.org.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f1436714-629e-a6ee-9fbc-525914652064@infradead.org>
-Date:   Tue, 25 Sep 2018 08:38:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 17:47:17 -0400
+Received: by mail-yw1-f65.google.com with SMTP id q129-v6so9473803ywg.8
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mfwCTU3gBuwKB0JS+HTf1c/pKKqrJ0HMnISheVsQs5k=;
+        b=DKRtb+17jotvuUM9ICHQ1jMRgPUbB88Cj2LK7Ty0gWqcrFgCJ95cu+j4zjvtpumD1T
+         QqctzFbB1kVWrUyORVm93ZRwT2nnPsTqarWfjDZxq4zZxDFQtFipjEXTQQqQpkn9JZ8X
+         LZVOiffpFUuzxg5uJzsMvsCFVCv6Ofwm6pVPw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mfwCTU3gBuwKB0JS+HTf1c/pKKqrJ0HMnISheVsQs5k=;
+        b=RJeegiKd6K0A6Wc87qYoSYsWetimbvQh47+BYdHLtA9oK8Jywz8/DzHGX7jsp5SD7m
+         /UO0/8A4DenNPrKZ7EabA62prycMJ15omYhjgiyey01CGl4XkrMNHjdtDblCyKUHDd8V
+         57npdBsyUFjbLEwsiAMdAlMTv7fq/cB0LilloPNONjuAsZXDFFEtuUJAZ903MDjjLPDh
+         EAM67rLm3g3RofZUr6PqgvrH1lm9KaB8nN74hmuOXxITNOVpeZT59lLCAi12wB232/j7
+         HM+lpuqk3tERRQjhSPQ+ZzYnx5RSq5nGUq1ePvelShKP0z21g6DYJyMWlV6k85TCmfZg
+         4Uvw==
+X-Gm-Message-State: ABuFfoiR4ZgIfpHjnZHyB8sYOmYLniN5o5ICCHEQ5P2Q8UVZaziGPLQa
+        lCtGFHLfVKpjoh7vvllmBW5Shbex7a8=
+X-Google-Smtp-Source: ACcGV61jJX5YDfM4WN/u+xUu4F+jNKCngCaep4pfocppe7aweX5pdRudzgs/FOwtN3gX+9oxnzwEIQ==
+X-Received: by 2002:a81:ae5f:: with SMTP id g31-v6mr865452ywk.372.1537889952989;
+        Tue, 25 Sep 2018 08:39:12 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id j66-v6sm1880065ywc.61.2018.09.25.08.39.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 08:39:11 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id m129-v6so3702888ywc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:39:11 -0700 (PDT)
+X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr902590ywr.168.1537889951317;
+ Tue, 25 Sep 2018 08:39:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180925153937.07660ca8@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Tue, 25 Sep 2018 08:39:10
+ -0700 (PDT)
+In-Reply-To: <20180925044926.vkkj2fnfvshjqpt5@gondor.apana.org.au>
+References: <20180919021100.3380-1-keescook@chromium.org> <CAGXu5jKFdMXYGJ9AmR9=OkTqrU9_RqtMXeOmXfivv0VvwPfOmg@mail.gmail.com>
+ <20180925044926.vkkj2fnfvshjqpt5@gondor.apana.org.au>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 25 Sep 2018 08:39:10 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJGYJ_ePK+7pfWgjpLN2cQQ57fcE5P-k2p8MXX_SnmLnQ@mail.gmail.com>
+Message-ID: <CAGXu5jJGYJ_ePK+7pfWgjpLN2cQQ57fcE5P-k2p8MXX_SnmLnQ@mail.gmail.com>
+Subject: Re: [PATCH crypto-next 00/23] crypto: skcipher - Remove VLA usage
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/18 10:39 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20180924:
-> 
+On Mon, Sep 24, 2018 at 9:49 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Mon, Sep 24, 2018 at 05:49:37PM -0700, Kees Cook wrote:
+>>
+>> > Kees Cook (23):
+>> >   crypto: skcipher - Introduce crypto_sync_skcipher
+>> >   gss_krb5: Remove VLA usage of skcipher
+>> >   lib80211: Remove VLA usage of skcipher
+>> >   mac802154: Remove VLA usage of skcipher
+>> >   s390/crypto: Remove VLA usage of skcipher
+>> >   x86/fpu: Remove VLA usage of skcipher
+>> >   block: cryptoloop: Remove VLA usage of skcipher
+>> >   libceph: Remove VLA usage of skcipher
+>> >   ppp: mppe: Remove VLA usage of skcipher
+>> >   rxrpc: Remove VLA usage of skcipher
+>> >   wusb: Remove VLA usage of skcipher
+>> >   crypto: ccp - Remove VLA usage of skcipher
+>> >   crypto: vmx - Remove VLA usage of skcipher
+>> >   crypto: null - Remove VLA usage of skcipher
+>> >   crypto: cryptd - Remove VLA usage of skcipher
+>> >   crypto: sahara - Remove VLA usage of skcipher
+>> >   crypto: qce - Remove VLA usage of skcipher
+>> >   crypto: artpec6 - Remove VLA usage of skcipher
+>> >   crypto: chelsio - Remove VLA usage of skcipher
+>> >   crypto: mxs-dcp - Remove VLA usage of skcipher
+>> >   crypto: omap-aes - Remove VLA usage of skcipher
+>> >   crypto: picoxcell - Remove VLA usage of skcipher
+>> >   crypto: skcipher - Remove SKCIPHER_REQUEST_ON_STACK()
+>>
+>> How do these look to you, Herbert? I'd really like to make sure these
+>> make it for the next merge window -- they're the last VLAs left in the
+>> kernel now. :)
+>
+> I have no problems with the crypto parts.  Do we have acks for
+> all of the others?
 
-on i386:
-# CONFIG_NET is not set
+Some have trickled in (wusb, lib80211), along with some Reviewed-bys
+from Ard. I was hoping that since it was a wrapper-only change there
+wouldn't be a need to block on waiting for Acks.
 
+Thanks for looking at it; I'm excited to finally be done with VLA removals. :)
 
-drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_caam_fqdan_cb':
-caamalg_qi2.c:(.text+0x502): undefined reference to `napi_schedule_prep'
-caamalg_qi2.c:(.text+0x50d): undefined reference to `__napi_schedule_irqoff'
-drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_dpseci_poll':
-caamalg_qi2.c:(.text+0x9ee): undefined reference to `napi_complete_done'
-drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_caam_probe':
-caamalg_qi2.c:(.text+0x68f1): undefined reference to `netif_napi_add'
-drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_caam_remove':
-caamalg_qi2.c:(.text.unlikely+0x1ec): undefined reference to `napi_disable'
-caamalg_qi2.c:(.text.unlikely+0x1f3): undefined reference to `netif_napi_del'
-
+-Kees
 
 -- 
-~Randy
+Kees Cook
+Pixel Security
