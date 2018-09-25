@@ -2,59 +2,60 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11ABC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364C3C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA14206B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:26:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF799206B6
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:26:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="lfC0f2kn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA14206B6
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="bX7DIYfq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF799206B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbeIZAfM (ORCPT
+        id S1727445AbeIZAfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:35:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34154 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbeIZAfM (ORCPT
+        Tue, 25 Sep 2018 20:35:15 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37055 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbeIZAfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:35:12 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d19-v6so12178312pgv.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:26:25 -0700 (PDT)
+        Tue, 25 Sep 2018 20:35:14 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x26-v6so1751316pfn.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:26:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XVYEKlTIExHm59BmL+jH8IjUcY1uTbAH49/iOVh5nJA=;
-        b=lfC0f2knKosFw7moj42GCPTjxNrwqRvoD1wpqog58i8uDX+z2eWy3wft7uCfdx2gDF
-         lPutq220jnfImnbQfarEYFWRUbKMw6vlDj4/SEZbjRwn76dlm01sgjy0sALg9bEeY6I0
-         k8vzuMiTtjzDv/e33NnZcbr5qG6JBIukUnunM=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=IxI1FgJwMERM3UAhQcklkAKLrTq7+Ffd56oaBhs9q2Y=;
+        b=bX7DIYfq1TChJhi9OeUZVUPD/bUJU9KtYrS++kKV1v4hwpxJPazdz1oaWTt4ZY6FaH
+         3Cgzv03qQBO6VYO7Hqdg43006DEnetOYFmDSI0F/o0i5rZd2ECV183Q8wtN6ya4Bcjex
+         m/vG80PsKKOeRN04CgD0U8d/swBA8w04gYQug=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XVYEKlTIExHm59BmL+jH8IjUcY1uTbAH49/iOVh5nJA=;
-        b=YQ6Am8jqM9sFGfRrLRuTGEo5K3GhXIKn8NiEGGwyjeQ9Uj7aSXVdwMVScFUfmyNqV4
-         VyZC4KbFkHOW40laFSrbSIEFFuSuoq2iyve809dvZU7T3syTixg35MPExqxioQE+JSE/
-         2dVr0BUlMHyz2ePvMm5OvB+wIYxKREdJT45Wk5ysDYa04cxX8sadMpyWf8BErQDvxDGC
-         PSVF27TOtDtOuO3UgfZhDF0N0ofiUGwqaJ8FQP092nVpTUf/4ngsoxSPLOL+vuexeten
-         1B8kInvNt4+aNwXjjqS2vDd9pY03xzDTMCIUiUremPFaFJbnj0DfptH8G0C176E5rFl3
-         85ZQ==
-X-Gm-Message-State: ABuFfojTC2MDL7BJew1ZHGb/78P1VyBL88hzryKnT5TMHKYiwlQVvLbO
-        Q6NP6S95LU72CFmutxbtVHVWfoRM74o=
-X-Google-Smtp-Source: ACcGV61qdSQMphcIKHOK27wS2izqV4exTH78zfs6/rxLpydCWDF+okTqceetw5AGDKkgWkgk5Td8XQ==
-X-Received: by 2002:a62:b604:: with SMTP id j4-v6mr2303898pff.199.1537899984515;
-        Tue, 25 Sep 2018 11:26:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=IxI1FgJwMERM3UAhQcklkAKLrTq7+Ffd56oaBhs9q2Y=;
+        b=tUVsW8hDmVBeloUEi69fvTeLFej8cy8d5rWkjevy083iQ3gY3yembID13y9cIxR/D/
+         obODFXZbmtQUYyIAd0mPO3O8xjspkTKJPKIPkIzW6kLXzMK/tNFXPAn9bAUhXYyUKGzJ
+         f+9fRiKBVENMMG+Yza7ES/quYSUXWwzCrNxqmsBtYSU2rWuJZa5729SLWstppVsxbHc7
+         dciI+4+EmjJYKR90rMOwOBmv1UiKQrauptwYLXiBYIrHJKuxrAoHtHmgvguoWLZjPWj/
+         siTzaibYsJIQVvHF3/duV3Naajde5c/BpLzFPf0DhEugkvBhEXJ++Uxlg1eX6l77BRtA
+         svQg==
+X-Gm-Message-State: ABuFfojqD/cgBI/3kMaOe36ZVucXF6EqbvijL+qIL1MwqkxuIyEOvB1c
+        Ryqb8Uh//qe19xGVivUcKURWvD/pyCc=
+X-Google-Smtp-Source: ACcGV6004pCiQ5OGNOj/0U5kQopZ+EBGCnc/IrPqo13yWR3XCD8orlWqCksF3ExmHai8rMRiQuhG+Q==
+X-Received: by 2002:a65:53c9:: with SMTP id z9-v6mr2123970pgr.203.1537899986543;
+        Tue, 25 Sep 2018 11:26:26 -0700 (PDT)
 Received: from joelaf-glaptop0.roam.corp.google.com (c-98-210-118-128.hsd1.ca.comcast.net. [98.210.118.128])
-        by smtp.gmail.com with ESMTPSA id x70-v6sm6883626pfk.85.2018.09.25.11.26.22
+        by smtp.gmail.com with ESMTPSA id x70-v6sm6883626pfk.85.2018.09.25.11.26.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 11:26:22 -0700 (PDT)
+        Tue, 25 Sep 2018 11:26:25 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
@@ -65,10 +66,12 @@ Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [0/5] rcu doc updates
-Date:   Tue, 25 Sep 2018 11:25:56 -0700
-Message-Id: <20180925182601.37421-1-joel@joelfernandes.org>
+Subject: [1/5] doc: rcu: Update information about resched_cpu
+Date:   Tue, 25 Sep 2018 11:25:57 -0700
+Message-Id: <20180925182601.37421-2-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
+In-Reply-To: <20180925182601.37421-1-joel@joelfernandes.org>
+References: <20180925182601.37421-1-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,36 +79,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-These patches are documentation updates for the rcu_dynticks rolling into
-rcu_data and also the updates to the fact that there's a single rcu_state now.
-Its based on your rcu/dev branch.
+Since commit fced9c8cfe6b ("rcu: Avoid resched_cpu() when rescheduling
+the current CPU"), resched_cpu is not directly called from
+sync_sched_exp_handler. Update the documentation about the same.
 
-Next I'm thinking of tackling 'RCU Callback Handling' and further digging into
-the dyntick handling and then dig into other documents outside of
-Data-Structure that need updates. But let me know any suggestions.
-Thanks!
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ .../Expedited-Grace-Periods/Expedited-Grace-Periods.html    | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Joel Fernandes (Google) (5):
-  doc: rcu: Update information about resched_cpu
-  doc: rcu: Remove rcu_dynticks from Data-Structures
-  doc: rcu: Update Data-Structures for RCU flavor consolidation
-  doc: rcu: Clarify better the rcu_segcblist len field
-  doc: rcu: Update description of gp_seq fields in rcu_data
-
- .../Data-Structures/BigTreeClassicRCUBH.svg   | 499 -----------
- .../BigTreeClassicRCUBHdyntick.svg            | 695 ---------------
- .../BigTreePreemptRCUBHdyntick.svg            | 741 ----------------
- .../BigTreePreemptRCUBHdyntickCB.svg          | 834 +++++++-----------
- .../Data-Structures/Data-Structures.html      | 152 +---
- .../RCU/Design/Data-Structures/blkd_task.svg  | 676 +++++---------
- .../Expedited-Grace-Periods.html              |   6 +-
- 7 files changed, 596 insertions(+), 3007 deletions(-)
- delete mode 100644 Documentation/RCU/Design/Data-Structures/BigTreeClassicRCUBH.svg
- delete mode 100644 Documentation/RCU/Design/Data-Structures/BigTreeClassicRCUBHdyntick.svg
- delete mode 100644 Documentation/RCU/Design/Data-Structures/BigTreePreemptRCUBHdyntick.svg
-
+diff --git a/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html b/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
+index e62c7c34a369..8e4f873b979f 100644
+--- a/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
++++ b/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
+@@ -160,9 +160,9 @@ was in flight.
+ If the CPU is idle, then <tt>sync_sched_exp_handler()</tt> reports
+ the quiescent state.
+ 
+-<p>
+-Otherwise, the handler invokes <tt>resched_cpu()</tt>, which forces
+-a future context switch.
++<p> Otherwise, the handler forces a future context switch by setting the
++NEED_RESCHED flag of the current task's thread flag and the CPU preempt
++counter.
+ At the time of the context switch, the CPU reports the quiescent state.
+ Should the CPU go offline first, it will report the quiescent state
+ at that time.
 -- 
 2.19.0.444.g18242da7ef-goog
-
 
