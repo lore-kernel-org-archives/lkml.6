@@ -2,137 +2,133 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DDDC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE56C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02CC821480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2DA421480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TSvUZXNc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02CC821480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="FS+MZAZJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DA421480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbeIYUUA (ORCPT
+        id S1729358AbeIYUU6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 16:20:00 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16461 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729098AbeIYUUA (ORCPT
+        Tue, 25 Sep 2018 16:20:58 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:22967 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729098AbeIYUU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:20:00 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5baa42470000>; Tue, 25 Sep 2018 07:12:23 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 25 Sep 2018 07:12:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 25 Sep 2018 07:12:17 -0700
-Received: from [10.21.132.143] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 25 Sep
- 2018 14:12:15 +0000
-Subject: Re: [PATCH 4.14 156/173] gpiolib: Respect error code of
- ->get_direction()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <stable@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <20180924113114.334025954@linuxfoundation.org>
- <20180924113126.730832814@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <dfdf04ac-2413-ccf3-a8ea-407674cc6b08@nvidia.com>
-Date:   Tue, 25 Sep 2018 15:12:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180924113126.730832814@linuxfoundation.org>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 25 Sep 2018 16:20:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1537884794; x=1569420794;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:mime-version:
+   content-transfer-encoding;
+  bh=WBP/7vcFtZRlNpAyHTgDgoOiHjfRdMwMPsL8MEdZcs4=;
+  b=FS+MZAZJ+HHb6rMkOm8CyhmeMinkraja4FZHLHmrOubKe/pY14fyGol4
+   kk9Fnz7j9ph3+IzQ1/rd2XU2MAv6pqxXWxoD+oB3PRc2E/fol9BMoqO7q
+   /HDkGUWgDkNN2isVqOybb6dTUQNtc6ZAVES+svnVjf95rcDFnXmOyN5X/
+   E=;
+X-IronPort-AV: E=Sophos;i="5.54,302,1534809600"; 
+   d="scan'208";a="755171417"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1d-98acfc19.us-east-1.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Sep 2018 14:13:09 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-98acfc19.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w8PED1FM082016
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 25 Sep 2018 14:13:01 GMT
+Received: from EX13D08UEB003.ant.amazon.com (10.43.60.11) by
+ EX13MTAUEB001.ant.amazon.com (10.43.60.129) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 25 Sep 2018 14:12:59 +0000
+Received: from EX13D02EUB004.ant.amazon.com (10.43.166.221) by
+ EX13D08UEB003.ant.amazon.com (10.43.60.11) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 25 Sep 2018 14:12:59 +0000
+Received: from EX13D02EUB004.ant.amazon.com ([10.43.166.221]) by
+ EX13D02EUB004.ant.amazon.com ([10.43.166.221]) with mapi id 15.00.1367.000;
+ Tue, 25 Sep 2018 14:12:58 +0000
+From:   "Stecklina, Julian" <jsteckli@amazon.de>
+To:     "jwadams@google.com" <jwadams@google.com>,
+        "bsingharora@gmail.com" <bsingharora@gmail.com>
+CC:     "deepa.srinivasan@oracle.com" <deepa.srinivasan@oracle.com>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "pradeep.vincent@oracle.com" <pradeep.vincent@oracle.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>,
+        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+        "kanth.ghatraju@oracle.com" <kanth.ghatraju@oracle.com>,
+        "liran.alon@oracle.com" <liran.alon@oracle.com>,
+        "keescook@google.com" <keescook@google.com>,
+        "jsteckli@os.inf.tu-dresden.de" <jsteckli@os.inf.tu-dresden.de>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "chris.hyser@oracle.com" <chris.hyser@oracle.com>,
+        "tyhicks@canonical.com" <tyhicks@canonical.com>,
+        "john.haxby@oracle.com" <john.haxby@oracle.com>,
+        "jcm@redhat.com" <jcm@redhat.com>
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+Thread-Topic: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+Thread-Index: AQHUT7SY79KNqwwvs0u9NBSNsaJp1qT3v4KAgAVso4CAA+gpgA==
+Date:   Tue, 25 Sep 2018 14:12:57 +0000
+Message-ID: <1537884777.23693.27.camel@amazon.de>
+References: <20180820212556.GC2230@char.us.oracle.com>
+         <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
+         <1534801939.10027.24.camel@amazon.co.uk> <20180919010337.GC8537@350D>
+         <CA+VK+GM6CaPnGKcPjEn7U=4ubtC-JWZ9k98BTxzRH_TthaFXDw@mail.gmail.com>
+         <20180923023315.GF8537@350D>
+In-Reply-To: <20180923023315.GF8537@350D>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1537884743; bh=uhZo8b4NZKBIo3cHRBBL44pojBeyGLNS2uQtD7kDG9U=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=TSvUZXNcw+7dawWmhfi5CBuA7wmI6Int39N+X161tyNf/EXFZzvdVJplbVTxzGvYs
-         /p4PDC+Q4Y6YeCKt3kEefzjNzkxIw009jAbzrB02llgYhdyl+0B5umBz7FigT6v8Wr
-         dqAUK21PUZbqQmRjD59VjmCT68/fimX0grjiIRvVv6lODDxeBNhBfo8mZ0kVY8PVST
-         ouuydzeZP2+28eYx8ACddKO2TU3/WNzD8xsfTQL0QY4youjZQyDrumvZPmCHuS6sbf
-         H9kdEGRGT6othgsf0EilUIsg6AEdCa2pnrCz+BYy2uu2EalIPN91NBANJugxVzatks
-         Cw+Lx3IRYFLKg==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.165.20]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F4BF4A3594F63541B0C088C51CAE7501@amazon.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+T24gU3VuLCAyMDE4LTA5LTIzIGF0IDEyOjMzICsxMDAwLCBCYWxiaXIgU2luZ2ggd3JvdGU6DQo+
+ID4gQW5kIGluIHNvIGRvaW5nLCBzaWduaWZpY2FudGx5IHJlZHVjZXMgdGhlIGFtb3VudCBvZiBu
+b24ta2VybmVsDQo+IGRhdGENCj4gPiB2dWxuZXJhYmxlIHRvIHNwZWN1bGF0aXZlIGV4ZWN1dGlv
+biBhdHRhY2tzIGFnYWluc3QgdGhlIGtlcm5lbC4NCj4gPiAoYW5kIHJlZHVjZXMgd2hhdCBkYXRh
+IGNhbiBiZSBsb2FkZWQgaW50byB0aGUgTDEgZGF0YSBjYWNoZSB3aGlsZQ0KPiA+IGluIGtlcm5l
+bCBtb2RlLCB0byBiZSBwZWVrZWQgYXQgYnkgdGhlIHJlY2VudCBMMSBUZXJtaW5hbCBGYXVsdA0K
+PiA+IHZ1bG5lcmFiaWxpdHkpLg0KPiANCj4gSSBzZWUgYW5kIHRoZXJlIGlzIG5vIHdheSBmb3Ig
+Z2FkZ2V0cyB0byBpbnZva2UgdGhpcyBwYXRoIGZyb20NCj4gdXNlciBzcGFjZSB0byBtYWtlIHRo
+ZWlyIHNwZWN1bGF0aW9uIHN1Y2Nlc3NmdWw/IFdlIHN0aWxsIGhhdmUgdG8NCj4gZmx1c2ggTDEs
+IGluZGVwZW5lZGVudCBvZiB3aGV0aGVyIFhQRk8gaXMgZW5hYmxlZCBvciBub3QgcmlnaHQ/DQoN
+Clllcy4gQW5kIGV2ZW4gd2l0aCBYUEZPIGFuZCBMMSBjYWNoZSBmbHVzaGluZyBlbmFibGVkLCB0
+aGVyZSBhcmUgbW9yZQ0Kc3RlcHMgdGhhdCBuZWVkIHRvIGJlIHRha2VuIHRvIHJlbGlhYmx5IGd1
+YXJkIGFnYWluc3QgaW5mb3JtYXRpb24gbGVha3MNCnVzaW5nIHNwZWN1bGF0aXZlIGV4ZWN1dGlv
+bi4NCg0KU3BlY2lmaWNhbGx5LCBJJ20gbG9va2luZyBpbnRvIG1ha2luZyBjZXJ0YWluIGFsbG9j
+YXRpb25zIGluIHRoZSBMaW51eA0Ka2VybmVsIHByb2Nlc3MtbG9jYWwgdG8gaGlkZSBldmVuIG1v
+cmUgbWVtb3J5IGZyb20gcHJlZmV0Y2hpbmcuDQoNCkFub3RoZXIgcHV6emxlIHBpZWNlIGlzIGNv
+LXNjaGVkdWxpbmcgc3VwcG9ydCB0aGF0IGlzIHJlbGV2YW50IGZvcg0Kc3lzdGVtcyB3aXRoIGVu
+YWJsZWQgaHlwZXJ0aHJlYWRpbmc6wqBodHRwczovL2x3bi5uZXQvQXJ0aWNsZXMvNzY0NDYxLw0K
+DQpKdWxpYW4KQW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJtYW55IEdtYkgKQmVybGluIC0g
+RHJlc2RlbiAtIEFhY2hlbgptYWluIG9mZmljZTogS3JhdXNlbnN0ci4gMzgsIDEwMTE3IEJlcmxp
+bgpHZXNjaGFlZnRzZnVlaHJlcjogRHIuIFJhbGYgSGVyYnJpY2gsIENocmlzdGlhbiBTY2hsYWVn
+ZXIKVXN0LUlEOiBERTI4OTIzNzg3OQpFaW5nZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBDaGFybG90
+dGVuYnVyZyBIUkIgMTQ5MTczIEIK
 
-On 24/09/18 12:53, Greg Kroah-Hartman wrote:
-> 4.14-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> [ Upstream commit 36b312792b97933dc07abe074f50941199bd357c ]
-> 
-> In case we try to lock GPIO pin as IRQ when something going wrong
-> we print a misleading message.
-> 
-> Correct this by checking an error code from ->get_direction() in
-> gpiochip_lock_as_irq() and printing a corresponding message.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/gpio/gpiolib.c |    6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2811,6 +2811,12 @@ int gpiochip_lock_as_irq(struct gpio_chi
->  	if (!chip->can_sleep && chip->get_direction) {
->  		int dir = chip->get_direction(chip, offset);
->  
-> +		if (dir < 0) {
-> +			chip_err(chip, "%s: cannot get GPIO direction\n",
-> +				 __func__);
-> +			return dir;
-> +		}
-> +
->  		if (dir)
->  			clear_bit(FLAG_IS_OUT, &desc->flags);
->  		else
-
-This change is causing a boot regression on Tegra20 and Tegra30. After
-this change was merged in mainline there was a fix for Tegra [0] that
-was also needed.
-
-On Tegra the above change causes the allocation of GPIOs to fail and
-looks like this then exposes another bug somewhere else that finally
-leads to a system crash.
-
-If this is needed for stable, then we will need the fix for Tegra as well.
-
-Cheers
-Jon
-
-[0] https://lkml.org/lkml/2018/7/17/871
-
--- 
-nvpublic
