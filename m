@@ -2,284 +2,124 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B38C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEBFC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C96B20858
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C96B20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 7138A208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:49:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="U4I1qhbi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7138A208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeIYX5W (ORCPT
+        id S1727305AbeIYX5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:57:22 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:30617 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725918AbeIYX5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:57:22 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42KT8D5g13z9ttCY;
-        Tue, 25 Sep 2018 19:48:44 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id irY6Hb3lUZIm; Tue, 25 Sep 2018 19:48:44 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42KT8D4sD1z9ttCN;
-        Tue, 25 Sep 2018 19:48:44 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BB9558B7E5;
-        Tue, 25 Sep 2018 19:48:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id smCj-dtNUMhJ; Tue, 25 Sep 2018 19:48:44 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0E46A8B7C8;
-        Tue, 25 Sep 2018 19:48:44 +0200 (CEST)
-Subject: Re: [RFC PATCH v1 1/9] timer: fix circular header dependency
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com, Paul Mackerras <paulus@samba.org>,
-        aneesh.kumar@linux.vnet.ibm.com, linux-fsdevel@vger.kernel.org,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev@lists.ozlabs.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <cover.1537802981.git.christophe.leroy@c-s.fr>
- <72d3e8c38f729dc22cb3235319b72f96190e01ee.1537802981.git.christophe.leroy@c-s.fr>
- <5c9530da-f5c8-e0b2-61ab-294a0da7f3fc@c-s.fr>
- <20180925121104.zrz4m45sbnt5h2ht@lakrids.cambridge.arm.com>
- <d22dc0e6-13ff-2abe-6536-a7b14bb285db@c-s.fr>
-Message-ID: <136be8d9-54e5-d609-41ea-f27ef87c8f3b@c-s.fr>
-Date:   Tue, 25 Sep 2018 17:48:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 25 Sep 2018 19:57:53 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33016 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725918AbeIYX5w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:57:52 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g26-v6so6952045edp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dW6Z3tPoCmRuns3nBOd/KOLpwzZGNOM2TtEOQHse3bU=;
+        b=U4I1qhbiSvtgDPWBNJ9PBjj2LDqdntomnuk+txI3m9qG2iK7SX1eOGGM9Sy0Q4rHKd
+         ujoN09/jDEooXjY5P0t3Id3vUca7Llt/3KeCOZOU7ftVN4+MmUJexRprCs1cnd1DFNR3
+         PUHRqVEP8F2vMzXhr7yRvF8fb76t7VODYGgjc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dW6Z3tPoCmRuns3nBOd/KOLpwzZGNOM2TtEOQHse3bU=;
+        b=rFAqJSjNoqpDupFkSGJ9Bz2Z4W5YEPW5WVpGpr/l+rVQgsluDJP0eaAJIxjQMvbjti
+         rpsd1x2hG5DnwZlU0PvM84+Uc7GXVwa42x53MnNjWHy+U+i4Eb8j8CihkKrCFucfNe5A
+         eiFDhEACB88mnkcGAhZl/SLsQGTUhAJDw1Zv3AOGnFmr0XM+veeUlO+N5wI5BVVVkVx1
+         Qb9hAsctZ1kuxNFlq0bde00dGA/TzDSAjGbcBc8+xcKPuUr0e3KcOjCL1xOoxkqFPbDO
+         Z+5WDOgd9qLzv+MKu7ex4S/FQS5mEz1j+RrcS8Jw7NoWoCLV3jeilWceogZaWB6f2EVY
+         EPXQ==
+X-Gm-Message-State: ABuFfoi3oFBaPN51yBZTIWW4br7pUaHXHIuaeESxQRg4MGmo6KAJ0wJr
+        eI4Vir7h5JhIrFeE8cij5DarpQ==
+X-Google-Smtp-Source: ACcGV63P4f5F99lixtcxVD+4jet7Ess+0eFkKLDWcL8uJIwmM42jlRVAEhCq0aLPV4fWMW8cjHo1dg==
+X-Received: by 2002:a50:b045:: with SMTP id i63-v6mr3454270edd.18.1537897754596;
+        Tue, 25 Sep 2018 10:49:14 -0700 (PDT)
+Received: from andrea (15.152.230.94.awnet.cz. [94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id m35-v6sm6852725ede.14.2018.09.25.10.49.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 10:49:13 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 19:49:06 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/2] riscv/bitops: Remove
+ smp_mb__{before,after}_clear_bit()
+Message-ID: <20180925174906.GA4372@andrea>
+References: <20180925121225.9917-2-andrea.parri@amarulasolutions.com>
+ <mhng-2c59d90d-9cf9-4462-bfb6-5c90ffa0c6d0@palmer-si-x1c4>
 MIME-Version: 1.0
-In-Reply-To: <d22dc0e6-13ff-2abe-6536-a7b14bb285db@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-2c59d90d-9cf9-4462-bfb6-5c90ffa0c6d0@palmer-si-x1c4>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 25, 2018 at 10:19:24AM -0700, Palmer Dabbelt wrote:
+> On Tue, 25 Sep 2018 05:12:24 PDT (-0700), andrea.parri@amarulasolutions.com wrote:
+> > The barriers are unused; remove their definition.
+> > 
+> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> > Cc: Palmer Dabbelt <palmer@sifive.com>
+> > Cc: Albert Ou <aou@eecs.berkeley.edu>
+> > Cc: <linux-riscv@lists.infradead.org>
+> > ---
+> >  arch/riscv/include/asm/bitops.h | 5 -----
+> >  1 file changed, 5 deletions(-)
+> > 
+> > diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
+> > index f30daf26f08f4..01db98dfd0435 100644
+> > --- a/arch/riscv/include/asm/bitops.h
+> > +++ b/arch/riscv/include/asm/bitops.h
+> > @@ -23,11 +23,6 @@
+> >  #include <asm/barrier.h>
+> >  #include <asm/bitsperlong.h>
+> > 
+> > -#ifndef smp_mb__before_clear_bit
+> > -#define smp_mb__before_clear_bit()  smp_mb()
+> > -#define smp_mb__after_clear_bit()   smp_mb()
+> > -#endif /* smp_mb__before_clear_bit */
+> > -
+> >  #include <asm-generic/bitops/__ffs.h>
+> >  #include <asm-generic/bitops/ffz.h>
+> >  #include <asm-generic/bitops/fls.h>
+> 
+> Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+
+Thank you.
 
 
-On 09/25/2018 12:15 PM, Christophe LEROY wrote:
 > 
-> 
-> Le 25/09/2018 à 14:11, Mark Rutland a écrit :
->> On Tue, Sep 25, 2018 at 07:34:15AM +0200, Christophe LEROY wrote:
->>>
->>>
->>> Le 24/09/2018 à 17:52, Christophe Leroy a écrit :
->>>> When switching powerpc to CONFIG_THREAD_INFO_IN_TASK, include/sched.h
->>>> has to be included in asm/smp.h for the following change, in order
->>>> to avoid uncomplete definition of task_struct:
->>>>
->>>> -#define raw_smp_processor_id() (current_thread_info()->cpu)
->>>> +#define raw_smp_processor_id() (current->cpu)
->>>>
->>>> But this generates the following compilation error, due to circular
->>>> header dependency.
->>>>
->>>>     CC      kernel/time/alarmtimer.o
->>>> In file included from ./arch/powerpc/include/asm/smp.h:31,
->>>>                    from ./include/linux/smp.h:64,
->>>>                    from ./include/linux/percpu.h:7,
->>>>                    from ./include/linux/hrtimer.h:22,
->>>>                    from kernel/time/alarmtimer.c:19:
->>>> ./include/linux/sched.h:558:19: error: field 'dl_timer' has 
->>>> incomplete type
->>>>     struct hrtimer   dl_timer;
->>>>                      ^~~~~~~~
->>>> ./include/linux/sched.h:567:17: error: field 'inactive_timer' has 
->>>> incomplete type
->>>>     struct hrtimer inactive_timer;
->>>>                    ^~~~~~~~~~~~~~
->>>> make[1]: *** [kernel/time/alarmtimer.o] Error 1
->>>> make: *** [kernel/time/alarmtimer.o] Error 2
->>>>
->>>>     CC      fs/timerfd.o
->>>> In file included from ./arch/powerpc/include/asm/smp.h:31,
->>>>                    from ./include/linux/smp.h:64,
->>>>                    from ./include/linux/percpu.h:7,
->>>>                    from ./include/linux/hrtimer.h:22,
->>>>                    from ./include/linux/alarmtimer.h:6,
->>>>                    from fs/timerfd.c:12:
->>>> ./include/linux/sched.h:558:19: error: field 'dl_timer' has 
->>>> incomplete type
->>>>     struct hrtimer   dl_timer;
->>>>                      ^~~~~~~~
->>>> ./include/linux/sched.h:567:17: error: field 'inactive_timer' has 
->>>> incomplete type
->>>>     struct hrtimer inactive_timer;
->>>>                    ^~~~~~~~~~~~~~
->>>> make[1]: *** [fs/timerfd.o] Error 1
->>>> make: *** [fs/timerfd.o] Error 2
->>>>
->>>> This patch fixes it by including linux/hrtimer.h after linux/sched.h
->>>>
->>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>>> ---
->>>>    Should it be fixed in powerpc instead ? In that case, how ? Any 
->>>> idea ?
->>>
->>>
->>> Looks like there are several other places where the problem occurs, 
->>> so it
->>> has to be fixed in the powerpc headers instead.
->>>
->>> Seems like RISC arch faced the same issue, and fixed it the following 
->>> way:
->>>
->>> /*
->>>   * This is particularly ugly: it appears we can't actually get the
->>> definition
->>>   * of task_struct here, but we need access to the CPU this task is 
->>> running
->>> on.
->>>   * Instead of using C we're using asm-offsets.h to get the current 
->>> processor
->>>   * ID.
->>>   */
->>> #define raw_smp_processor_id() (*((int*)((char*)get_current() +
->>> TASK_TI_CPU)))
->>>
->>>
->>> Unless someone has a better idea, I'll fixed it that way.
->>
->> To solve this on arm64 we made the cpu number a percpu variable; see
->> commit:
->>
->>    57c82954e77fa12c ("arm64: make cpu number a percpu variable")
-> 
-> Thanks, I'll have a look
-> 
->> IIUC, you could do that by placing it in paca_struct.
-> 
-> By the way, it is already in PACA struct for PPC64.
-> The issue is with PPC32, up to now it was in current_thread_info:
-> 
-> #ifdef CONFIG_PPC64
-> #define raw_smp_processor_id()    (local_paca->paca_index)
-> #define hard_smp_processor_id() (get_paca()->hw_cpu_id)
-> #else
-> /* 32-bit */
-> extern int smp_hw_index[];
-> 
-> #define raw_smp_processor_id()    (current_thread_info()->cpu)
-> #define hard_smp_processor_id()     (smp_hw_index[smp_processor_id()])
-> 
-> [..]
-> 
-> #endif
-> 
+> Do you want me to take this via the RISC-V tree?  I only ended up with patch
+> 1/2 in my inbox, and I probably shouldn't take both.
 
-It seems not that easy. Adding the following leads to the below failure. 
-I'm having a hard time identifying and fixing the issue. Looks again 
-like a circular thing, because linux/percpu-defs.h is where 
-raw_cpu_ptr() is defined.
+I expected this to go via the RISC-V tree and 2/2 via the H8/300 tree,
+but really no preference from me as long as they get upstreamed. ;-)
 
---- a/arch/powerpc/include/asm/smp.h
-+++ b/arch/powerpc/include/asm/smp.h
-@@ -83,7 +83,14 @@ int is_cpu_dead(unsigned int cpu);
-  /* 32-bit */
-  extern int smp_hw_index[];
-
--#define raw_smp_processor_id() (current_thread_info()->cpu)
-+DECLARE_PER_CPU_READ_MOSTLY(unsigned int, cpu_number);
-+
-+/*
-+ * We don't use this_cpu_read(cpu_number) as that has implicit writes to
-+ * preempt_count, and associated (compiler) barriers, that we'd like to 
-avoid
-+ * the expense of. If we're preemptible, the value can be stale at use 
-anyway.
-+ */
-+#define raw_smp_processor_id()         (*this_cpu_ptr(&cpu_number))
-  #define hard_smp_processor_id()        (smp_hw_index[smp_processor_id()])
-
-  static inline int get_hard_smp_processor_id(int cpu)
+Thanks,
+  Andrea
 
 
-   CC      arch/powerpc/kernel/asm-offsets.s
-In file included from ././include/linux/compiler_types.h:64:0,
-                  from <command-line>:0:
-./include/linux/percpu-rwsem.h: In function 
-'percpu_down_read_preempt_disable':
-./include/linux/percpu-defs.h:254:27: error: implicit declaration of 
-function 'raw_cpu_ptr' [-Werror=implicit-function-declaration]
-  #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-                            ^
-./include/linux/compiler-gcc.h:58:26: note: in definition of macro 
-'RELOC_HIDE'
-   (typeof(ptr)) (__ptr + (off));     \
-                           ^
-./include/asm-generic/percpu.h:44:31: note: in expansion of macro 
-'SHIFT_PERCPU_PTR'
-  #define arch_raw_cpu_ptr(ptr) SHIFT_PERCPU_PTR(ptr, __my_cpu_offset)
-                                ^
-./include/asm-generic/percpu.h:31:25: note: in expansion of macro 
-'per_cpu_offset'
-  #define __my_cpu_offset per_cpu_offset(raw_smp_processor_id())
-                          ^
-./arch/powerpc/include/asm/smp.h:93:35: note: in expansion of macro 
-'this_cpu_ptr'
-  #define raw_smp_processor_id()  (*this_cpu_ptr(&cpu_number))
-                                    ^
-./include/asm-generic/percpu.h:31:40: note: in expansion of macro 
-'raw_smp_processor_id'
-  #define __my_cpu_offset per_cpu_offset(raw_smp_processor_id())
-                                         ^
-./include/asm-generic/percpu.h:44:53: note: in expansion of macro 
-'__my_cpu_offset'
-  #define arch_raw_cpu_ptr(ptr) SHIFT_PERCPU_PTR(ptr, __my_cpu_offset)
-                                                      ^
-./include/linux/percpu-defs.h:244:2: note: in expansion of macro 
-'arch_raw_cpu_ptr'
-   arch_raw_cpu_ptr(ptr);      \
-   ^
-./include/asm-generic/percpu.h:76:3: note: in expansion of macro 
-'raw_cpu_ptr'
-   *raw_cpu_ptr(&(pcp)) op val;     \
-    ^
-./include/asm-generic/percpu.h:225:34: note: in expansion of macro 
-'raw_cpu_generic_to_op'
-  #define raw_cpu_add_1(pcp, val)  raw_cpu_generic_to_op(pcp, val, +=)
-                                   ^
-./include/linux/percpu-defs.h:379:11: note: in expansion of macro 
-'raw_cpu_add_1'
-    case 1: stem##1(variable, __VA_ARGS__);break;  \
-            ^
-./include/linux/percpu-defs.h:424:32: note: in expansion of macro 
-'__pcpu_size_call'
-  #define raw_cpu_add(pcp, val)  __pcpu_size_call(raw_cpu_add_, pcp, val)
-                                 ^
-./include/linux/percpu-defs.h:460:2: note: in expansion of macro 
-'raw_cpu_add'
-   raw_cpu_add(pcp, val);      \
-   ^
-./include/linux/percpu-defs.h:499:30: note: in expansion of macro 
-'__this_cpu_add'
-  #define __this_cpu_inc(pcp)  __this_cpu_add(pcp, 1)
-                               ^
-./include/linux/percpu-rwsem.h:47:2: note: in expansion of macro 
-'__this_cpu_inc'
-   __this_cpu_inc(*sem->read_count);
-   ^
-./arch/powerpc/include/asm/smp.h:93:34: error: invalid type argument of 
-unary '*' (have 'int')
-  #define raw_smp_processor_id()  (*this_cpu_ptr(&cpu_number))
-                                   ^
-
-
-[...]
+> 
+> Thanks!
