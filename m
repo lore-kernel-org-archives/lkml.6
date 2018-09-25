@@ -6,41 +6,42 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C494DC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFE7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C2C820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2C820870
+	by mail.kernel.org (Postfix) with ESMTP id 1E0D320870
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 06:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0D320870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbeIYMcq (ORCPT
+        id S1728347AbeIYMcw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 08:32:46 -0400
-Received: from mga14.intel.com ([192.55.52.115]:61781 "EHLO mga14.intel.com"
+        Tue, 25 Sep 2018 08:32:52 -0400
+Received: from mga01.intel.com ([192.55.52.88]:30876 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeIYMcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 08:32:46 -0400
+        id S1726125AbeIYMcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 08:32:52 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 23:26:47 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 23:26:52 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,301,1534834800"; 
-   d="scan'208";a="75685191"
+   d="scan'208";a="235679576"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga007.jf.intel.com with ESMTP; 24 Sep 2018 23:26:47 -0700
-Subject: [PATCH v6 1/7] mm,
- devm_memremap_pages: Mark devm_memremap_pages() EXPORT_SYMBOL_GPL
+  by orsmga004.jf.intel.com with ESMTP; 24 Sep 2018 23:26:52 -0700
+Subject: [PATCH v6 2/7] mm,
+ devm_memremap_pages: Kill mapping "System RAM" support
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, alexander.h.duyck@intel.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Mon, 24 Sep 2018 23:15:00 -0700
-Message-ID: <153785610001.283091.17732419819752424489.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc:     =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        alexander.h.duyck@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 24 Sep 2018 23:15:05 -0700
+Message-ID: <153785610512.283091.14575479268042256056.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153785609460.283091.17422092801700439095.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153785609460.283091.17422092801700439095.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -52,58 +53,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_memremap_pages() is a facility that can create struct page entries
-for any arbitrary range and give drivers the ability to subvert core
-aspects of page management.
+Given the fact that devm_memremap_pages() requires a percpu_ref that is
+torn down by devm_memremap_pages_release() the current support for
+mapping RAM is broken.
 
-Specifically the facility is tightly integrated with the kernel's memory
-hotplug functionality. It injects an altmap argument deep into the
-architecture specific vmemmap implementation to allow allocating from
-specific reserved pages, and it has Linux specific assumptions about
-page structure reference counting relative to get_user_pages() and
-get_user_pages_fast(). It was an oversight and a mistake that this was
-not marked EXPORT_SYMBOL_GPL from the outset.
+Support for remapping "System RAM" has been broken since the beginning
+and there is no existing user of this this code path, so just kill the
+support and make it an explicit error.
 
-Again, devm_memremap_pagex() exposes and relies upon core kernel
-internal assumptions and will continue to evolve along with 'struct
-page', memory hotplug, and support for new memory types / topologies.
-Only an in-kernel GPL-only driver is expected to keep up with this
-ongoing evolution. This interface, and functionality derived from this
-interface, is not suitable for kernel-external drivers.
+This cleanup also simplifies a follow-on patch to fix the error path
+when setting a devm release action for devm_memremap_pages_release()
+fails.
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Reviewed-by: "Jérôme Glisse" <jglisse@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- kernel/memremap.c                 |    2 +-
- tools/testing/nvdimm/test/iomap.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ kernel/memremap.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/memremap.c b/kernel/memremap.c
-index 5b8600d39931..f95c7833db6d 100644
+index f95c7833db6d..92e838127767 100644
 --- a/kernel/memremap.c
 +++ b/kernel/memremap.c
-@@ -283,7 +283,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 	pgmap_radix_release(res, pgoff);
- 	return ERR_PTR(error);
- }
--EXPORT_SYMBOL(devm_memremap_pages);
-+EXPORT_SYMBOL_GPL(devm_memremap_pages);
+@@ -202,15 +202,12 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+ 	is_ram = region_intersects(align_start, align_size,
+ 		IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE);
  
- unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
- {
-diff --git a/tools/testing/nvdimm/test/iomap.c b/tools/testing/nvdimm/test/iomap.c
-index ff9d3a5825e1..ed18a0cbc0c8 100644
---- a/tools/testing/nvdimm/test/iomap.c
-+++ b/tools/testing/nvdimm/test/iomap.c
-@@ -113,7 +113,7 @@ void *__wrap_devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 		return nfit_res->buf + offset - nfit_res->res.start;
- 	return devm_memremap_pages(dev, pgmap);
- }
--EXPORT_SYMBOL(__wrap_devm_memremap_pages);
-+EXPORT_SYMBOL_GPL(__wrap_devm_memremap_pages);
+-	if (is_ram == REGION_MIXED) {
+-		WARN_ONCE(1, "%s attempted on mixed region %pr\n",
+-				__func__, res);
++	if (is_ram != REGION_DISJOINT) {
++		WARN_ONCE(1, "%s attempted on %s region %pr\n", __func__,
++				is_ram == REGION_MIXED ? "mixed" : "ram", res);
+ 		return ERR_PTR(-ENXIO);
+ 	}
  
- pfn_t __wrap_phys_to_pfn_t(phys_addr_t addr, unsigned long flags)
- {
+-	if (is_ram == REGION_INTERSECTS)
+-		return __va(res->start);
+-
+ 	if (!pgmap->ref)
+ 		return ERR_PTR(-EINVAL);
+ 
 
