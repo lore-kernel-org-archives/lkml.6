@@ -2,223 +2,171 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDDFC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC7BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C34B20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:21:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmNfAvOU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C34B20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C102820877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:21:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C102820877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbeIYP1o (ORCPT
+        id S1728810AbeIYP14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:27:44 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55581 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727830AbeIYP1o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:27:44 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 206-v6so4664683wmb.5;
-        Tue, 25 Sep 2018 02:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=s6fADGR2eKhX68CzeTWECeOcbCfDsCiLmOOA3ysOpnM=;
-        b=LmNfAvOUadAUJEIMkDnYERo7tnZES4XAX4ph+ZMc246XDELz2TCB2m+dZajL7WG5jP
-         in9MLMgfJKX0g3VNn885jFYqJSXBQXv/HMEaTc4m8h601hy8cc3uKnjy/Jb0ZIMERSJJ
-         ZDG4v3Olanx1/CwAqdpnLL5Pqsxy/zruCrDzCRkKJ1XSv7L/HOTQ/lvYzG2/nqyGO8Ky
-         SOdjm0I7T2lWNjodsNHkY+Tjh5HuYYFlTCDWYy+Uby3q76DQHMukFL1oGObxDJ/DiNkX
-         F+21SbWiK/a7Fb6fTdxRQL33a8Xo+FLJt5zsMpPgsSX+OXS12dHW/B6eYBkdI3rQaJoy
-         7cTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=s6fADGR2eKhX68CzeTWECeOcbCfDsCiLmOOA3ysOpnM=;
-        b=Q7ZDIml4GJT4F21YP9v0RlUWJoZ4RIxifwbeFlTUrx+dWPchbMD7dLUXDh/UXUFJTy
-         m15foN7peMoTNzmiVYAbZePktg/POfG5uLHEBwlHRJuAc5k7udDliajWGjcxMnDEr3YC
-         U7lkQKsPwBmceRq5vyi5dvkHSG78cBZjyokkce056H2hTf3zyqGRVNnmamZLAgWjTZle
-         CwTmHNyCXmdiVeiLeRBNYs0jbjgyTz/XGAw19NX+if72DIy8Y6bLg6/A4WIISG+bg74v
-         jUhM8CTQTWXXapzB7fXrODVXcQ5c756unHZKlJ+G+jwjtYRziOqAHdBK1XjuhgAMSBmM
-         zfSA==
-X-Gm-Message-State: ABuFfogh5yLFPpNdgn65zhCEjHGSJOrYaX03U9DQn/v00GAQ6T2x1nSK
-        yr6kyK9/hyOMayT4JfEue4g=
-X-Google-Smtp-Source: ACcGV60YDUaXeYns5X8m3mhIYYV0ECcSRFzzR9EiZy76Jy8l3hz6jSgMW9X0C6Fv0laXSkOqiWYL0g==
-X-Received: by 2002:a1c:889:: with SMTP id 131-v6mr21423wmi.142.1537867263714;
-        Tue, 25 Sep 2018 02:21:03 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j133-v6sm2629229wmd.12.2018.09.25.02.21.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 02:21:02 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 11:21:00 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        David Ahern <dsahern@gmail.com>,
-        Ding Xiang <dingxiang@cmss.chinamobile.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Jeremie Galarneau <jeremie.galarneau@efficios.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        Thiago Macieira <thiago.macieira@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 00/13] perf/core improvements and fixes
-Message-ID: <20180925092100.GA20981@gmail.com>
-References: <20180919142537.29985-1-acme@kernel.org>
+        Tue, 25 Sep 2018 11:27:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:47646 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728630AbeIYP14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 11:27:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FAA680D;
+        Tue, 25 Sep 2018 02:21:19 -0700 (PDT)
+Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCEA63F5B3;
+        Tue, 25 Sep 2018 02:21:18 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     <kvmarm@lists.cs.columbia.edu>, <marc.zyngier@arm.com>,
+        <will.deacon@arm.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH v7 9/9] KVM: arm64: Add support for creating PUD hugepages at stage 2
+References: <20180924174552.8387-1-punit.agrawal@arm.com>
+        <20180924174552.8387-10-punit.agrawal@arm.com>
+        <4df146fc-f9b0-882e-becb-056111a444d4@arm.com>
+Date:   Tue, 25 Sep 2018 10:21:17 +0100
+In-Reply-To: <4df146fc-f9b0-882e-becb-056111a444d4@arm.com> (Suzuki
+        K. Poulose's message of "Mon, 24 Sep 2018 22:21:43 +0100")
+Message-ID: <875zyurkz6.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180919142537.29985-1-acme@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Suzuki K Poulose <suzuki.poulose@arm.com> writes:
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> Hi Punit,
+>
+>
+> On 09/24/2018 06:45 PM, Punit Agrawal wrote:
+>> KVM only supports PMD hugepages at stage 2. Now that the various page
+>> handling routines are updated, extend the stage 2 fault handling to
+>> map in PUD hugepages.
+>>
+>> Addition of PUD hugepage support enables additional page sizes (e.g.,
+>> 1G with 4K granule) which can be useful on cores that support mapping
+>> larger block sizes in the TLB entries.
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>
+>
+>>
+>> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+>> index a42b9505c9a7..a8e86b926ee0 100644
+>> --- a/arch/arm/include/asm/kvm_mmu.h
+>> +++ b/arch/arm/include/asm/kvm_mmu.h
+>> @@ -84,11 +84,14 @@ void kvm_clear_hyp_idmap(void);
+>>     #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+>>   #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
+>> +#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+>>     #define kvm_pud_pfn(pud)	({ BUG(); 0; })
+>>       #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
+>> +/* No support for pud hugepages */
+>> +#define kvm_pud_mkhuge(pud)	(pud)
+>>   
+>
+> shouldn't this be BUG() like other PUD huge helpers for arm32 ?
+>
+>>   /*
+>>    * The following kvm_*pud*() functions are provided strictly to allow
+>> @@ -105,6 +108,23 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+>>   	return false;
+>>   }
+>>   +static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
+>> +{
+>> +	BUG();
+>> +}
+>> +
+>> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+>> +{
+>> +	BUG();
+>> +	return pud;
+>> +}
+>> +
+>> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+>> +{
+>> +	BUG();
+>> +	return pud;
+>> +}
+>> +
+>
+>
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index 3ff7ebb262d2..5b8163537bc2 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>
+> ...
+>
+>
+>> @@ -1669,7 +1746,28 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>   	needs_exec = exec_fault ||
+>>   		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
+>>   -	if (hugetlb && vma_pagesize == PMD_SIZE) {
+>> +	if (hugetlb && vma_pagesize == PUD_SIZE) {
+>> +		/*
+>> +		 * Assuming that PUD level always exists at Stage 2 -
+>> +		 * this is true for 4k pages with 40 bits IPA
+>> +		 * currently supported.
+>> +		 *
+>> +		 * When using 64k pages, 40bits of IPA results in
+>> +		 * using only 2-levels at Stage 2. Overlooking this
+>> +		 * problem for now as a PUD hugepage with 64k pages is
+>> +		 * too big (4TB) to be practical.
+>> +		 */
+>> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
+>
+> Is this based on the Dynamic IPA series ? The cover letter seems
+> to suggest that it is. But I don't see the check to make sure we have
+> stage2 PUD level here before we go ahead and try PUD huge page at
+> stage2. Also the comment above seems outdated in that case.
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit 7f16023bfcc4b1f2bbccf86219dc97473db6e0d6:
-> 
->   Merge remote-tracking branch 'acme/perf/urgent' into perf/core (2018-09-18 17:20:41 -0300)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.20-20180919
-> 
-> for you to fetch changes up to 24ef0fd0a1f389b156e6ef0edd71072728831bd9:
-> 
->   perf python: Use -Wno-redundant-decls to build with PYTHON=python3 (2018-09-19 10:25:13 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/core improvements and fixes:
-> 
-> perf test:
-> 
-> - Add watchpoint entry (Ravi Bangoria)
-> 
-> Build fixes:
-> 
-> - Initialize perf_data_file fd field to fix building the CTF (trace format)
->   converter with with gcc 4.8.4 on Ubuntu 14.04 (Jérémie Galarneau)
-> 
-> - Use -Wno-redundant-decls to build with PYTHON=python3 to
->   build the python binding, fixing the build in systems such
->   as Clear Linux (Arnaldo Carvalho de Melo)
-> 
-> Hardware tracing:
-> 
-> - Suppress AUX/OVERWRITE records (Alexander Shishkin)
-> 
-> Infrastructure:
-> 
-> - Adopt PTR_ERR_OR_ZERO from the kernel and use it in
->   the bpf-loader instead of open coded equivalent (Ding Xiang)
-> 
-> - Improve the event ordering code to make it clear and fix
->   a bug related to freeing of events when using pipe mode
->   from 'record' to 'inject' (Jiri Olsa)
-> 
-> - Some prep work to facilitate per-cpu threads to write
->   record data to per-cpu files (Jiri Olsa)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Alexander Shishkin (1):
->       perf: Suppress AUX/OVERWRITE records
-> 
-> Arnaldo Carvalho de Melo (1):
->       perf python: Use -Wno-redundant-decls to build with PYTHON=python3
-> 
-> Ding Xiang (2):
->       tools include: Adopt PTR_ERR_OR_ZERO from the kernel err.h header
->       perf bpf-loader: use PTR_ERR_OR_ZERO inetead of return code
-> 
-> Jiri Olsa (7):
->       perf ordered_events: Add 'struct ordered_events_buffer' layer
->       perf ordered_events: Prevent crossing max_alloc_size
->       perf tools: Remove perf_tool from event_op2
->       perf tools: Remove perf_tool from event_op3
->       perf auxtrace: Pass struct perf_mmap into mmap__read* functions
->       perf tools: Add 'struct perf_mmap' arg to record__write()
->       perf util: Make copyfile_offset() global
-> 
-> Jérémie Galarneau (1):
->       perf tools: Initialize perf_data_file fd field
-> 
-> Ravi Bangoria (1):
->       perf test: Add watchpoint test
-> 
->  kernel/events/ring_buffer.c       |  14 ++-
->  tools/include/linux/err.h         |   7 ++
->  tools/perf/builtin-annotate.c     |   7 +-
->  tools/perf/builtin-inject.c       |  37 +++---
->  tools/perf/builtin-record.c       |  51 +++++----
->  tools/perf/builtin-report.c       |   9 +-
->  tools/perf/builtin-script.c       |  38 +++----
->  tools/perf/builtin-stat.c         |  23 ++--
->  tools/perf/tests/Build            |   1 +
->  tools/perf/tests/builtin-test.c   |   9 ++
->  tools/perf/tests/tests.h          |   3 +
->  tools/perf/tests/wp.c             | 229 ++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/auxtrace.c        |  30 +++--
->  tools/perf/util/auxtrace.h        |  21 ++--
->  tools/perf/util/bpf-loader.c      |   2 +-
->  tools/perf/util/data-convert-bt.c |   2 +-
->  tools/perf/util/header.c          |  16 ++-
->  tools/perf/util/header.h          |  15 +--
->  tools/perf/util/mmap.c            |   6 +-
->  tools/perf/util/mmap.h            |   2 +-
->  tools/perf/util/ordered-events.c  |  87 ++++++++++++---
->  tools/perf/util/ordered-events.h  |  37 +++---
->  tools/perf/util/session.c         |  75 ++++++-------
->  tools/perf/util/session.h         |   5 +-
->  tools/perf/util/setup.py          |   2 +-
->  tools/perf/util/stat.c            |   5 +-
->  tools/perf/util/stat.h            |   5 +-
->  tools/perf/util/tool.h            |   7 +-
->  tools/perf/util/util.c            |   2 +-
->  tools/perf/util/util.h            |   2 +
->  30 files changed, 519 insertions(+), 230 deletions(-)
->  create mode 100644 tools/perf/tests/wp.c
+It is indeed based on the Dynamic IPA series but I seem to have lost the
+actual changes introducing the checks for PUD level. Let me fix that up
+and post an update.
 
-Pulled, thanks a lot Arnaldo!
+Sorry for the noise.
 
-	Ingo
+Punit
+
+>
+>> +
+>> +		new_pud = kvm_pud_mkhuge(new_pud);
+>> +		if (writable)
+>> +			new_pud = kvm_s2pud_mkwrite(new_pud);
+>> +
+>> +		if (needs_exec)
+>> +			new_pud = kvm_s2pud_mkexec(new_pud);
+>> +
+>> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
+>> +	} else if (hugetlb && vma_pagesize == PMD_SIZE) {
+>>   		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+>>     		new_pmd = kvm_pmd_mkhuge(new_pmd);
+>>
+>
+>
+> Suzuki
