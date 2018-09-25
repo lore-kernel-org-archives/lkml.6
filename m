@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A24C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D96C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFCA2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E67B2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:31:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="yuzwFo6t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFCA2086E
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="dcqFFAvW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E67B2086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729958AbeIYViq (ORCPT
+        id S1729784AbeIYViY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:38:46 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44917 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729858AbeIYVi3 (ORCPT
+        Tue, 25 Sep 2018 17:38:24 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44900 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729646AbeIYViW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:38:29 -0400
-Received: by mail-qt1-f193.google.com with SMTP id k38-v6so13795405qtk.11
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:30:26 -0700 (PDT)
+        Tue, 25 Sep 2018 17:38:22 -0400
+Received: by mail-qt1-f194.google.com with SMTP id k38-v6so13794978qtk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:30:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=Ed5moJJ8/PFxZOKpTdaP/2kh9jGVOkOFH2zJa9dMW80=;
-        b=yuzwFo6ttgZTspbvdXloHkNFlZNUAccgjnv3rzkcaGn1rB6JI9CufWBd3mlFyzWuov
-         Vwoen740y6MdfxaG1x2bFxWUciR558tEMIvsxuLiupmRM/zZWWH4cC+liAgnsIhqsNCd
-         tKkmBim980Ivld37Yhc5d0q6Mo/wlyEMqFl3vLnfbNHZa+e76F9opJHR/bkUvODNt5e9
-         JBZInhQUapPyGYQznk8WiJelYYSE22g0DPnocrYVkfuNA5jznXemTRXH6HoeUEiEWjRg
-         x1nC4JN9VPmvOmcZfP2+TwWxZoRRwtt0LIi3+26yedt4T6WX9QRTCdR1FpPmNvxBCfPB
-         46Xg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=CbVu8tMWjWUQaLeNEaAx14400uYFzt+wHZIzJ3Bs3Ms=;
+        b=dcqFFAvWlWUj5T9zy+uxEBmg0YxNzJrjmOC7u1YkCHd208/d0F6bwQr3RnkYBthtAJ
+         HDs2M64h06yCRsXxhwvfAIAchrJR7YeYJVEYxL4MMI4Fx01RzWqj2e7OJ7By9WxXrxth
+         T5C/8M6/xwmcEPFgLUZ39Wq/Oe4BPdWlXAXK2gDg1Peh6DzdpNho2Dzg7c676P5RxwVQ
+         WyUKr+jp7bBCuLkFwAeRvMnQtF5NbZ5/EZPRChFsu60rJ2gptQhYMlZjPff/deAlie6i
+         CkgWGQ/YUC//gP1DdQb6cEkYKjMfIxSNoMXbSYcLz/i6z1F4XJDiOwiqgSbqWNMmMT4b
+         owdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Ed5moJJ8/PFxZOKpTdaP/2kh9jGVOkOFH2zJa9dMW80=;
-        b=S26VFaIjva+JZ1pjKPPayfvOcxwDoQystgxxqSSrA3gqEKmsosAuBMU/2XwhsUp0Eh
-         fRcI/uAnBdl1dW7GWVxOw8TQQjK6emUjct6lcL2v2igxu5u4XH+ecc+VLObYfq71VZj7
-         PMLs83KoimVht8+HwZkqaTmecsGATxWqQghrsScDl59/noZMNvR9yZUjyfz9XV8EMzYc
-         br/WBLcwpuw1db93SbKEeobCH2AtAaUAyIYAdbMid+S4WgLEfrfO9UCktVC/8KjKVlIm
-         TLo3vHMDmA/qFSN8v8Qo2DMb/ws+DYXYtIQpZh/WaqmC71GOa2T1ObHD7Z+0cE/j9jB6
-         FDsw==
-X-Gm-Message-State: ABuFfoi3YtF/t4ieSTJW81bLn4WuCPxhMY8g62JpzLf3c4hCwIx7AIHl
-        getrUjMv2jHMyAxVdoGOIVG8ag==
-X-Google-Smtp-Source: ACcGV605LJc6y4PS7556go9WhOZB9GtKOrLEVkEMZKYPaLtplHEdxo58eNJudgcUEw2mZyLGP0CS/Q==
-X-Received: by 2002:a0c:891c:: with SMTP id 28-v6mr1153897qvp.225.1537889425621;
-        Tue, 25 Sep 2018 08:30:25 -0700 (PDT)
+        bh=CbVu8tMWjWUQaLeNEaAx14400uYFzt+wHZIzJ3Bs3Ms=;
+        b=DBW4wRqclj32mDymoKhHtoO7R2zwhqsXMfX6FbWgeewtHpirqZGu1F4afyehzlXwnP
+         8cEFps+MNu36CGIYhC1lE7Qjoak4krpx5fVEY9fq9tSbnrdwdYKSfI+DMQhr//eHcN9P
+         1UJFG2GH3liN5UkYwvMTft7X3Hzo3GbaZ7aaWEFOtnuH54S36m0huMuZYKXBITiqTjXZ
+         zU0FoPzFDU4uxU+Gp/LjPGdGZHRT62QAezpJoQOBbvsq58DeRWkOaadkamMAcjimX9fs
+         ITyopTk4WINjwsHdlveQIb2mAP4QieLADiJXP6snPxarkfCxj276r/ULTTw2sSJzuEAA
+         sH4w==
+X-Gm-Message-State: ABuFfoghQAbbMCXZaxkcDVVM4U/PnR4gY6U2V3T67gn4u2pZWEJbjMaD
+        TMNJjzdzN9KBEoCuf5QC5D9bSQ==
+X-Google-Smtp-Source: ACcGV60MKc9cGahvCmsKYiU3+tba0XoW1JntBlakzIAaie30ejuR2WUAz1oL+AZ7EdNUC7snQMBw0A==
+X-Received: by 2002:a0c:9691:: with SMTP id a17-v6mr1207731qvd.30.1537889420257;
+        Tue, 25 Sep 2018 08:30:20 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm268340qkg.82.2018.09.25.08.30.24
+        by smtp.gmail.com with ESMTPSA id 53-v6sm1617242qto.61.2018.09.25.08.30.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 08:30:24 -0700 (PDT)
+        Tue, 25 Sep 2018 08:30:19 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com, linux-btrfs@vger.kernel.org, riel@redhat.com,
         hannes@cmpxchg.org, tj@kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 6/8] mm: keep the page we read for the next loop
-Date:   Tue, 25 Sep 2018 11:30:09 -0400
-Message-Id: <20180925153011.15311-7-josef@toxicpanda.com>
+Cc:     Johannes Weiner <jweiner@fb.com>
+Subject: [PATCH 3/8] mm: clean up swapcache lookup and creation function names
+Date:   Tue, 25 Sep 2018 11:30:06 -0400
+Message-Id: <20180925153011.15311-4-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180925153011.15311-1-josef@toxicpanda.com>
 References: <20180925153011.15311-1-josef@toxicpanda.com>
@@ -74,845 +75,219 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we drop the mmap_sem we need to redo the vma lookup and then
-re-lookup the page.  This is kind of a waste since we've already done
-the work, and we could even possibly evict the page, causing a refault.
-Instead just hold a reference to the page and save it in our vm_fault.
-The next time we go through filemap_fault we'll grab our page, verify
-that it's the one we want and carry on.
+From: Johannes Weiner <jweiner@fb.com>
 
+__read_swap_cache_async() has a misleading name. All it does is look
+up or create a page in swapcache; it doesn't initiate any IO.
+
+The swapcache has many parallels to the page cache, and shares naming
+schemes with it elsewhere. Analogous to the cache lookup and creation
+API, rename __read_swap_cache_async() find_or_create_swap_cache() and
+lookup_swap_cache() to find_swap_cache().
+
+Signed-off-by: Johannes Weiner <jweiner@fb.com>
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- arch/alpha/mm/fault.c         |  7 +++++--
- arch/arc/mm/fault.c           |  6 +++++-
- arch/arm/mm/fault.c           |  2 ++
- arch/arm64/mm/fault.c         |  2 ++
- arch/hexagon/mm/vm_fault.c    |  6 +++++-
- arch/ia64/mm/fault.c          |  6 +++++-
- arch/m68k/mm/fault.c          |  6 +++++-
- arch/microblaze/mm/fault.c    |  6 +++++-
- arch/mips/mm/fault.c          |  6 +++++-
- arch/nds32/mm/fault.c         |  3 +++
- arch/nios2/mm/fault.c         |  6 +++++-
- arch/openrisc/mm/fault.c      |  6 +++++-
- arch/parisc/mm/fault.c        |  6 +++++-
- arch/powerpc/mm/copro_fault.c |  3 ++-
- arch/powerpc/mm/fault.c       |  3 +++
- arch/riscv/mm/fault.c         |  6 +++++-
- arch/s390/mm/fault.c          |  1 +
- arch/sh/mm/fault.c            |  8 ++++++--
- arch/sparc/mm/fault_32.c      |  8 +++++++-
- arch/sparc/mm/fault_64.c      |  6 +++++-
- arch/um/kernel/trap.c         |  6 +++++-
- arch/unicore32/mm/fault.c     |  5 ++++-
- arch/x86/mm/fault.c           |  2 ++
- arch/xtensa/mm/fault.c        |  6 +++++-
- drivers/iommu/amd_iommu_v2.c  |  1 +
- drivers/iommu/intel-svm.c     |  1 +
- include/linux/mm.h            | 14 ++++++++++++++
- mm/filemap.c                  | 31 ++++++++++++++++++++++++++++---
- mm/gup.c                      |  3 +++
- mm/hmm.c                      |  1 +
- mm/ksm.c                      |  1 +
- 31 files changed, 151 insertions(+), 23 deletions(-)
+ include/linux/swap.h | 14 ++++++++------
+ mm/memory.c          |  2 +-
+ mm/shmem.c           |  2 +-
+ mm/swap_state.c      | 43 ++++++++++++++++++++++---------------------
+ mm/zswap.c           |  8 ++++----
+ 5 files changed, 36 insertions(+), 33 deletions(-)
 
-diff --git a/arch/alpha/mm/fault.c b/arch/alpha/mm/fault.c
-index 3c98dfef03a9..ed5929787d4a 100644
---- a/arch/alpha/mm/fault.c
-+++ b/arch/alpha/mm/fault.c
-@@ -152,10 +152,13 @@ do_page_fault(unsigned long address, unsigned long mmcsr,
- 	vm_fault_init(&vmfs, vma, flags, address);
- 	fault = handle_mm_fault(&vmf);
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 8e2c11e692ba..293a84c34448 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -412,15 +412,17 @@ extern void __delete_from_swap_cache(struct page *);
+ extern void delete_from_swap_cache(struct page *);
+ extern void free_page_and_swap_cache(struct page *);
+ extern void free_pages_and_swap_cache(struct page **, int);
+-extern struct page *lookup_swap_cache(swp_entry_t entry,
+-				      struct vm_area_struct *vma,
+-				      unsigned long addr);
++extern struct page *find_swap_cache(swp_entry_t entry,
++				    struct vm_area_struct *vma,
++				    unsigned long addr);
++extern struct page *find_or_create_swap_cache(swp_entry_t entry,
++					      gfp_t gfp_mask,
++					      struct vm_area_struct *vma,
++					      unsigned long addr,
++					      bool *created);
+ extern struct page *read_swap_cache_async(swp_entry_t, gfp_t,
+ 			struct vm_area_struct *vma, unsigned long addr,
+ 			bool do_poll);
+-extern struct page *__read_swap_cache_async(swp_entry_t, gfp_t,
+-			struct vm_area_struct *vma, unsigned long addr,
+-			bool *new_page_allocated);
+ extern struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t flag,
+ 				struct vm_fault *vmf);
+ extern struct page *swapin_readahead(swp_entry_t entry, gfp_t flag,
+diff --git a/mm/memory.c b/mm/memory.c
+index 9152c2a2c9f6..f27295c1c91d 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2935,7 +2935,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
  
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
  
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -181,7 +184,7 @@ do_page_fault(unsigned long address, unsigned long mmcsr,
- 			goto retry;
- 		}
- 	}
--
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
+ 	delayacct_set_flag(DELAYACCT_PF_SWAPIN);
+-	page = lookup_swap_cache(entry, vma, vmf->address);
++	page = find_swap_cache(entry, vma, vmf->address);
+ 	swapcache = page;
  
- 	return;
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index 7aeb81ff5070..38a6c5e94fac 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -149,8 +149,10 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	if (unlikely(fatal_signal_pending(current))) {
- 		if ((fault & VM_FAULT_ERROR) && !(fault & VM_FAULT_RETRY))
- 			up_read(&mm->mmap_sem);
--		if (user_mode(regs))
-+		if (user_mode(regs)) {
-+			vm_fault_cleanup(&vmf);
- 			return;
-+		}
- 	}
+ 	if (!page) {
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 0376c124b043..9854903ae92f 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1679,7 +1679,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
  
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
-@@ -176,10 +178,12 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 		}
+ 	if (swap.val) {
+ 		/* Look it up and read it in.. */
+-		page = lookup_swap_cache(swap, NULL, 0);
++		page = find_swap_cache(swap, NULL, 0);
+ 		if (!page) {
+ 			/* Or update major stats only when swapin succeeds?? */
+ 			if (fault_type) {
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index ecee9c6c4cc1..bae758e19f7a 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -330,8 +330,8 @@ static inline bool swap_use_vma_readahead(void)
+  * lock getting page table operations atomic even if we drop the page
+  * lock before returning.
+  */
+-struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
+-			       unsigned long addr)
++struct page *find_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
++			     unsigned long addr)
+ {
+ 	struct page *page;
  
- 		/* Fault Handled Gracefully */
-+		vm_fault_cleanup(&vmf);
- 		up_read(&mm->mmap_sem);
- 		return;
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	if (fault & VM_FAULT_OOM)
- 		goto out_of_memory;
- 	else if (fault & VM_FAULT_SIGSEGV)
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index 885a24385a0a..f08946e78bd9 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -325,6 +325,7 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 	 * it would already be released in __lock_page_or_retry in
- 	 * mm/filemap.c. */
- 	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		if (!user_mode(regs))
- 			goto no_context;
- 		return 0;
-@@ -356,6 +357,7 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 
- 	/*
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 31e86a74cbe0..6f3e908a3820 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -506,6 +506,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 		 * in __lock_page_or_retry in mm/filemap.c.
- 		 */
- 		if (fatal_signal_pending(current)) {
-+			vm_fault_cleanup(&vmf);
- 			if (!user_mode(regs))
- 				goto no_context;
- 			return 0;
-@@ -521,6 +522,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 			goto retry;
- 		}
- 	}
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 
- 	/*
-diff --git a/arch/hexagon/mm/vm_fault.c b/arch/hexagon/mm/vm_fault.c
-index 1ee1042bb2b5..d68aa9691184 100644
---- a/arch/hexagon/mm/vm_fault.c
-+++ b/arch/hexagon/mm/vm_fault.c
-@@ -106,8 +106,10 @@ void do_page_fault(unsigned long address, long cause, struct pt_regs *regs)
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	/* The most common case -- we are done. */
- 	if (likely(!(fault & VM_FAULT_ERROR))) {
-@@ -123,10 +125,12 @@ void do_page_fault(unsigned long address, long cause, struct pt_regs *regs)
- 			}
- 		}
- 
-+		vm_fault_cleanup(&vmf);
- 		up_read(&mm->mmap_sem);
- 		return;
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 
- 	/* Handle copyin/out exception cases */
-diff --git a/arch/ia64/mm/fault.c b/arch/ia64/mm/fault.c
-index 827b898adb5e..68b689bb619f 100644
---- a/arch/ia64/mm/fault.c
-+++ b/arch/ia64/mm/fault.c
-@@ -165,8 +165,10 @@ ia64_do_page_fault (unsigned long address, unsigned long isr, struct pt_regs *re
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
- 		/*
-@@ -174,6 +176,7 @@ ia64_do_page_fault (unsigned long address, unsigned long isr, struct pt_regs *re
- 		 * to us that made us unable to handle the page fault
- 		 * gracefully.
- 		 */
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM) {
- 			goto out_of_memory;
- 		} else if (fault & VM_FAULT_SIGSEGV) {
-@@ -203,6 +206,7 @@ ia64_do_page_fault (unsigned long address, unsigned long isr, struct pt_regs *re
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-diff --git a/arch/m68k/mm/fault.c b/arch/m68k/mm/fault.c
-index e42eddc9c7ca..7e8be4665ef9 100644
---- a/arch/m68k/mm/fault.c
-+++ b/arch/m68k/mm/fault.c
-@@ -139,10 +139,13 @@ int do_page_fault(struct pt_regs *regs, unsigned long address,
- 	fault = handle_mm_fault(&vmf);
- 	pr_debug("handle_mm_fault returns %x\n", fault);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return 0;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -178,6 +181,7 @@ int do_page_fault(struct pt_regs *regs, unsigned long address,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return 0;
- 
-diff --git a/arch/microblaze/mm/fault.c b/arch/microblaze/mm/fault.c
-index ade980266f65..bb320be95142 100644
---- a/arch/microblaze/mm/fault.c
-+++ b/arch/microblaze/mm/fault.c
-@@ -219,10 +219,13 @@ void do_page_fault(struct pt_regs *regs, unsigned long address,
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -251,6 +254,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long address,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 
- 	/*
-diff --git a/arch/mips/mm/fault.c b/arch/mips/mm/fault.c
-index bf212bb70f24..8f1cfe564987 100644
---- a/arch/mips/mm/fault.c
-+++ b/arch/mips/mm/fault.c
-@@ -156,11 +156,14 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -193,6 +196,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-diff --git a/arch/nds32/mm/fault.c b/arch/nds32/mm/fault.c
-index 27ac4caa5102..7cb4d9f73c1a 100644
---- a/arch/nds32/mm/fault.c
-+++ b/arch/nds32/mm/fault.c
-@@ -213,12 +213,14 @@ void do_page_fault(unsigned long entry, unsigned long addr,
- 	 * would already be released in __lock_page_or_retry in mm/filemap.c.
- 	 */
- 	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		if (!user_mode(regs))
- 			goto no_context;
- 		return;
- 	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGBUS)
-@@ -249,6 +251,7 @@ void do_page_fault(unsigned long entry, unsigned long addr,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-diff --git a/arch/nios2/mm/fault.c b/arch/nios2/mm/fault.c
-index 693472f05065..774035116392 100644
---- a/arch/nios2/mm/fault.c
-+++ b/arch/nios2/mm/fault.c
-@@ -136,10 +136,13 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long cause,
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -175,6 +178,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long cause,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-diff --git a/arch/openrisc/mm/fault.c b/arch/openrisc/mm/fault.c
-index 70eef1d9f7ed..9186af1b9cdc 100644
---- a/arch/openrisc/mm/fault.c
-+++ b/arch/openrisc/mm/fault.c
-@@ -166,10 +166,13 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -198,6 +201,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
-index 83c89cada3c0..7ad74571407e 100644
---- a/arch/parisc/mm/fault.c
-+++ b/arch/parisc/mm/fault.c
-@@ -304,8 +304,10 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
- 		/*
-@@ -313,6 +315,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
- 		 * other thing happened to us that made us unable to
- 		 * handle the page fault gracefully.
- 		 */
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -339,6 +342,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
- 			goto retry;
- 		}
- 	}
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-diff --git a/arch/powerpc/mm/copro_fault.c b/arch/powerpc/mm/copro_fault.c
-index 02dd21a54479..07ec389ac6c6 100644
---- a/arch/powerpc/mm/copro_fault.c
-+++ b/arch/powerpc/mm/copro_fault.c
-@@ -81,6 +81,7 @@ int copro_handle_mm_fault(struct mm_struct *mm, unsigned long ea,
- 	vm_fault_init(&vmf, vma, ea, is_write ? FAULT_FLAG_WRITE : 0);
- 	*flt = handle_mm_fault(&vmf);
- 	if (unlikely(*flt & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (*flt & VM_FAULT_OOM) {
- 			ret = -ENOMEM;
- 			goto out_unlock;
-@@ -95,7 +96,7 @@ int copro_handle_mm_fault(struct mm_struct *mm, unsigned long ea,
- 		current->maj_flt++;
- 	else
- 		current->min_flt++;
--
-+	vm_fault_cleanup(&vmf);
- out_unlock:
- 	up_read(&mm->mmap_sem);
- 	return ret;
-diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index cc00bba104fb..1940471c6a6f 100644
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -552,6 +552,7 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
- 
- 		int pkey = vma_pkey(vma);
- 
-+		vm_fault_cleanup(&vmf);
- 		up_read(&mm->mmap_sem);
- 		return bad_key_fault_exception(regs, address, pkey);
- 	}
-@@ -580,9 +581,11 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
- 		 * User mode? Just return to handle the fatal exception otherwise
- 		 * return to bad_page_fault
- 		 */
-+		vm_fault_cleanup(&vmf);
- 		return is_user ? 0 : SIGBUS;
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&current->mm->mmap_sem);
- 
- 	if (unlikely(fault & VM_FAULT_ERROR))
-diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-index aa3db34c9eb8..64c8de82a40b 100644
---- a/arch/riscv/mm/fault.c
-+++ b/arch/riscv/mm/fault.c
-@@ -129,10 +129,13 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
- 	 * signal first. We do not need to release the mmap_sem because it
- 	 * would already be released in __lock_page_or_retry in mm/filemap.c.
- 	 */
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(tsk))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(tsk)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGBUS)
-@@ -172,6 +175,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-index 14cfd6de43ed..a91849a7e338 100644
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -561,6 +561,7 @@ static inline vm_fault_t do_exception(struct pt_regs *regs, int access)
- out_up:
- 	up_read(&mm->mmap_sem);
- out:
-+	vm_fault_cleanup(&vmf);
- 	return fault;
+@@ -374,19 +374,20 @@ struct page *lookup_swap_cache(swp_entry_t entry, struct vm_area_struct *vma,
+ 	return page;
  }
  
-diff --git a/arch/sh/mm/fault.c b/arch/sh/mm/fault.c
-index 31202706125c..ee0ad499ed53 100644
---- a/arch/sh/mm/fault.c
-+++ b/arch/sh/mm/fault.c
-@@ -485,9 +485,12 @@ asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if (unlikely(fault & (VM_FAULT_RETRY | VM_FAULT_ERROR)))
--		if (mm_fault_error(regs, error_code, address, fault))
-+	if (unlikely(fault & (VM_FAULT_RETRY | VM_FAULT_ERROR))) {
-+		if (mm_fault_error(regs, error_code, address, fault)) {
-+			vm_fault_cleanup(&vmf);
- 			return;
-+		}
-+	}
- 
- 	if (flags & FAULT_FLAG_ALLOW_RETRY) {
- 		if (fault & VM_FAULT_MAJOR) {
-@@ -512,5 +515,6 @@ asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- }
-diff --git a/arch/sparc/mm/fault_32.c b/arch/sparc/mm/fault_32.c
-index a9dd62393934..0623154163c5 100644
---- a/arch/sparc/mm/fault_32.c
-+++ b/arch/sparc/mm/fault_32.c
-@@ -239,10 +239,13 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(vma, address, flags);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -275,6 +278,7 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- 
-@@ -412,8 +416,10 @@ static void force_user_fault(unsigned long address, int write)
- 	switch (handle_mm_fault(&vmf)) {
- 	case VM_FAULT_SIGBUS:
- 	case VM_FAULT_OOM:
-+		vm_fault_cleanup(&vmf);
- 		goto do_sigbus;
- 	}
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	return;
- bad_area:
-diff --git a/arch/sparc/mm/fault_64.c b/arch/sparc/mm/fault_64.c
-index 381ab905eb2c..45107ddb8478 100644
---- a/arch/sparc/mm/fault_64.c
-+++ b/arch/sparc/mm/fault_64.c
-@@ -437,10 +437,13 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(vma, address, flags);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		goto exit_exception;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -472,6 +475,7 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
- 			goto retry;
- 		}
- 	}
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 
- 	mm_rss = get_mm_rss(mm);
-diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
-index c6d9e176c5c5..419f4d54bf10 100644
---- a/arch/um/kernel/trap.c
-+++ b/arch/um/kernel/trap.c
-@@ -78,10 +78,13 @@ int handle_page_fault(unsigned long address, unsigned long ip,
- 		vm_fault_init(&vmf, vma, address, flags);
- 		fault = handle_mm_fault(&vmf);
- 
--		if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+		if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+			vm_fault_cleanup(&vmf);
- 			goto out_nosemaphore;
-+		}
- 
- 		if (unlikely(fault & VM_FAULT_ERROR)) {
-+			vm_fault_cleanup(&vmf);
- 			if (fault & VM_FAULT_OOM) {
- 				goto out_of_memory;
- 			} else if (fault & VM_FAULT_SIGSEGV) {
-@@ -109,6 +112,7 @@ int handle_page_fault(unsigned long address, unsigned long ip,
- 		pud = pud_offset(pgd, address);
- 		pmd = pmd_offset(pud, address);
- 		pte = pte_offset_kernel(pmd, address);
-+		vm_fault_cleanup(&vmf);
- 	} while (!pte_present(*pte));
- 	err = 0;
- 	/*
-diff --git a/arch/unicore32/mm/fault.c b/arch/unicore32/mm/fault.c
-index 68c2b0a65348..0c94b8d5187d 100644
---- a/arch/unicore32/mm/fault.c
-+++ b/arch/unicore32/mm/fault.c
-@@ -262,8 +262,10 @@ static int do_pf(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 	 * signal first. We do not need to release the mmap_sem because
- 	 * it would already be released in __lock_page_or_retry in
- 	 * mm/filemap.c. */
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return 0;
-+	}
- 
- 	if (!(fault & VM_FAULT_ERROR) && (flags & FAULT_FLAG_ALLOW_RETRY)) {
- 		if (fault & VM_FAULT_MAJOR)
-@@ -278,6 +280,7 @@ static int do_pf(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 
- 	/*
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 9919a25b15e6..a8ea7b609697 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1410,6 +1410,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 			if (!fatal_signal_pending(tsk))
- 				goto retry;
- 		}
-+		vm_fault_cleanup(&vmf);
- 
- 		/* User mode? Just return to handle the fatal exception */
- 		if (flags & FAULT_FLAG_USER)
-@@ -1420,6 +1421,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 		return;
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
- 		mm_fault_error(regs, error_code, address, &pkey, fault);
-diff --git a/arch/xtensa/mm/fault.c b/arch/xtensa/mm/fault.c
-index f1b0f4f858ff..a577b73f9ca4 100644
---- a/arch/xtensa/mm/fault.c
-+++ b/arch/xtensa/mm/fault.c
-@@ -112,10 +112,13 @@ void do_page_fault(struct pt_regs *regs)
- 	vm_fault_init(&vmf, vma, address, flags);
- 	fault = handle_mm_fault(&vmf);
- 
--	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-+	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current)) {
-+		vm_fault_cleanup(&vmf);
- 		return;
-+	}
- 
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
-+		vm_fault_cleanup(&vmf);
- 		if (fault & VM_FAULT_OOM)
- 			goto out_of_memory;
- 		else if (fault & VM_FAULT_SIGSEGV)
-@@ -142,6 +145,7 @@ void do_page_fault(struct pt_regs *regs)
- 		}
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
- 	if (flags & VM_FAULT_MAJOR)
-diff --git a/drivers/iommu/amd_iommu_v2.c b/drivers/iommu/amd_iommu_v2.c
-index 129e0ef68827..fc20bbe1c0dc 100644
---- a/drivers/iommu/amd_iommu_v2.c
-+++ b/drivers/iommu/amd_iommu_v2.c
-@@ -535,6 +535,7 @@ static void do_fault(struct work_struct *work)
- 
- 	vm_fault_init(&vmf, vma, address, flags);
- 	ret = handle_mm_fault(&vmf);
-+	vm_fault_cleanup(&vmf);
- out:
- 	up_read(&mm->mmap_sem);
- 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 03aa02723242..614f6aab9615 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -640,6 +640,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
- 		vm_fault_init(&vmf, vma, address,
- 			      req->wr_req ? FAULT_FLAG_WRITE : 0);
- 		ret = handle_mm_fault(&vmf);
-+		vm_fault_cleanup(&vmf);
- 		if (ret & VM_FAULT_ERROR)
- 			goto invalid;
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index e271c60af01a..724514be03b2 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -360,6 +360,12 @@ struct vm_fault {
- 					 * is set (which is also implied by
- 					 * VM_FAULT_ERROR).
- 					 */
-+	struct page *cached_page;	/* ->fault handlers that return
-+					 * VM_FAULT_RETRY can store their
-+					 * previous page here to be reused the
-+					 * next time we loop through the fault
-+					 * handler for faster lookup.
-+					 */
- 	/* These three entries are valid only while holding ptl lock */
- 	pte_t *pte;			/* Pointer to pte entry matching
- 					 * the 'address'. NULL if the page
-@@ -953,6 +959,14 @@ static inline void put_page(struct page *page)
- 		__put_page(page);
- }
- 
-+static inline void vm_fault_cleanup(struct vm_fault *vmf)
-+{
-+	if (vmf->cached_page) {
-+		put_page(vmf->cached_page);
-+		vmf->cached_page = NULL;
-+	}
-+}
+-struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
++struct page *find_or_create_swap_cache(swp_entry_t entry, gfp_t gfp_mask,
+ 			struct vm_area_struct *vma, unsigned long addr,
+-			bool *new_page_allocated)
++			bool *created)
+ {
+ 	struct page *found_page, *new_page = NULL;
+ 	struct address_space *swapper_space = swap_address_space(entry);
+ 	int err;
+-	*new_page_allocated = false;
 +
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- #define SECTION_IN_PAGE_FLAGS
- #endif
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 65395ee132a0..49b35293fa95 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2530,13 +2530,38 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	pgoff_t offset = vmf->pgoff;
- 	int flags = vmf->flags;
- 	pgoff_t max_off;
--	struct page *page;
-+	struct page *page = NULL;
-+	struct page *cached_page = vmf->cached_page;
- 	vm_fault_t ret = 0;
++	*created = false;
  
- 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
- 	if (unlikely(offset >= max_off))
- 		return VM_FAULT_SIGBUS;
- 
-+	/*
-+	 * We may have read in the page already and have a page from an earlier
-+	 * loop.  If so we need to see if this page is still valid, and if not
-+	 * do the whole dance over again.
-+	 */
-+	if (cached_page) {
-+		if (flags & FAULT_FLAG_KILLABLE) {
-+			error = lock_page_killable(cached_page);
-+			if (error) {
-+				up_read(&mm->mmap_sem);
-+				goto out_retry;
-+			}
-+		} else
-+			lock_page(cached_page);
-+		vmf->cached_page = NULL;
-+		if (cached_page->mapping == mapping &&
-+		    cached_page->index == offset) {
-+			page = cached_page;
-+			goto have_cached_page;
-+		}
-+		unlock_page(cached_page);
-+		put_page(cached_page);
-+	}
-+
- 	/*
- 	 * Do we have something in the page cache already?
- 	 */
-@@ -2587,8 +2612,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 		put_page(page);
- 		goto retry_find;
- 	}
-+have_cached_page:
- 	VM_BUG_ON_PAGE(page->index != offset, page);
--
- 	/*
- 	 * We have a locked page in the page cache, now we need to check
- 	 * that it's up-to-date. If not, it is going to be due to an error.
-@@ -2677,7 +2702,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	if (fpin)
- 		fput(fpin);
- 	if (page)
--		put_page(page);
-+		vmf->cached_page = page;
- 	return ret | VM_FAULT_RETRY;
- }
- EXPORT_SYMBOL(filemap_fault);
-diff --git a/mm/gup.c b/mm/gup.c
-index c12d1e98614b..75f55f4f044c 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -518,6 +518,7 @@ static int faultin_page(struct task_struct *tsk, struct vm_area_struct *vma,
- 
- 	vm_fault_init(&vmf, vma, address, fault_flags);
- 	ret = handle_mm_fault(&vmf);
-+	vm_fault_cleanup(&vmf);
- 	if (ret & VM_FAULT_ERROR) {
- 		int err = vm_fault_to_errno(ret, *flags);
- 
-@@ -840,6 +841,7 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 	if (ret & VM_FAULT_ERROR) {
- 		int err = vm_fault_to_errno(ret, 0);
- 
-+		vm_fault_cleanup(&vmf);
- 		if (err)
- 			return err;
- 		BUG();
-@@ -854,6 +856,7 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 			goto retry;
+ 	do {
+ 		/*
+ 		 * First check the swap cache.  Since this is normally
+-		 * called after lookup_swap_cache() failed, re-calling
++		 * called after find_swap_cache() failed, re-calling
+ 		 * that would confuse statistics.
+ 		 */
+ 		found_page = find_get_page(swapper_space, swp_offset(entry));
+@@ -449,7 +450,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 			 * Initiate read into locked page and return.
+ 			 */
+ 			lru_cache_add_anon(new_page);
+-			*new_page_allocated = true;
++			*created = true;
+ 			return new_page;
  		}
- 	}
-+	vm_fault_cleanup(&vmf);
+ 		radix_tree_preload_end();
+@@ -475,14 +476,14 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ struct page *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+ 		struct vm_area_struct *vma, unsigned long addr, bool do_poll)
+ {
+-	bool page_was_allocated;
+-	struct page *retpage = __read_swap_cache_async(entry, gfp_mask,
+-			vma, addr, &page_was_allocated);
++	struct page *page;
++	bool created;
  
- 	if (tsk) {
- 		if (major)
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 695ef184a7d0..b803746745a5 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -309,6 +309,7 @@ static int hmm_vma_do_fault(struct mm_walk *walk, unsigned long addr,
- 	flags |= write_fault ? FAULT_FLAG_WRITE : 0;
- 	vm_fault_init(&vmf, vma, addr, flags);
- 	ret = handle_mm_fault(&vmf);
-+	vm_fault_cleanup(&vmf);
- 	if (ret & VM_FAULT_RETRY)
- 		return -EBUSY;
- 	if (ret & VM_FAULT_ERROR) {
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 4b6d90357ee2..8404e230fdab 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -483,6 +483,7 @@ static int break_ksm(struct vm_area_struct *vma, unsigned long addr)
- 			vm_fault_init(&vmf, vma, addr,
- 				      FAULT_FLAG_WRITE | FAULT_FLAG_REMOTE);
- 			ret = handle_mm_fault(&vmf);
-+			vm_fault_cleanup(&vmf);
- 		} else
- 			ret = VM_FAULT_WRITE;
- 		put_page(page);
+-	if (page_was_allocated)
+-		swap_readpage(retpage, do_poll);
++	page = find_or_create_swap_cache(entry, gfp_mask, vma, addr, &created);
++	if (created)
++		swap_readpage(page, do_poll);
+ 
+-	return retpage;
++	return page;
+ }
+ 
+ static unsigned int __swapin_nr_pages(unsigned long prev_offset,
+@@ -573,7 +574,7 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 	unsigned long mask;
+ 	struct swap_info_struct *si = swp_swap_info(entry);
+ 	struct blk_plug plug;
+-	bool do_poll = true, page_allocated;
++	bool do_poll = true, created;
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	unsigned long addr = vmf->address;
+ 
+@@ -593,12 +594,12 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+ 	blk_start_plug(&plug);
+ 	for (offset = start_offset; offset <= end_offset ; offset++) {
+ 		/* Ok, do the async read-ahead now */
+-		page = __read_swap_cache_async(
++		page = find_or_create_swap_cache(
+ 			swp_entry(swp_type(entry), offset),
+-			gfp_mask, vma, addr, &page_allocated);
++			gfp_mask, vma, addr, &created);
+ 		if (!page)
+ 			continue;
+-		if (page_allocated) {
++		if (created) {
+ 			swap_readpage(page, false);
+ 			if (offset != entry_offset) {
+ 				SetPageReadahead(page);
+@@ -738,7 +739,7 @@ static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
+ 	pte_t *pte, pentry;
+ 	swp_entry_t entry;
+ 	unsigned int i;
+-	bool page_allocated;
++	bool created;
+ 	struct vma_swap_readahead ra_info = {0,};
+ 
+ 	swap_ra_info(vmf, &ra_info);
+@@ -756,11 +757,11 @@ static struct page *swap_vma_readahead(swp_entry_t fentry, gfp_t gfp_mask,
+ 		entry = pte_to_swp_entry(pentry);
+ 		if (unlikely(non_swap_entry(entry)))
+ 			continue;
+-		page = __read_swap_cache_async(entry, gfp_mask, vma,
+-					       vmf->address, &page_allocated);
++		page = find_or_create_swap_cache(entry, gfp_mask, vma,
++					 vmf->address, &created);
+ 		if (!page)
+ 			continue;
+-		if (page_allocated) {
++		if (created) {
+ 			swap_readpage(page, false);
+ 			if (i != ra_info.offset) {
+ 				SetPageReadahead(page);
+diff --git a/mm/zswap.c b/mm/zswap.c
+index cd91fd9d96b8..6f05faa75766 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -823,11 +823,11 @@ enum zswap_get_swap_ret {
+ static int zswap_get_swap_cache_page(swp_entry_t entry,
+ 				struct page **retpage)
+ {
+-	bool page_was_allocated;
++	bool created;
+ 
+-	*retpage = __read_swap_cache_async(entry, GFP_KERNEL,
+-			NULL, 0, &page_was_allocated);
+-	if (page_was_allocated)
++	*retpage = find_or_create_swap_cache(entry, GFP_KERNEL,
++					     NULL, 0, &created);
++	if (created)
+ 		return ZSWAP_SWAPCACHE_NEW;
+ 	if (!*retpage)
+ 		return ZSWAP_SWAPCACHE_FAIL;
 -- 
 2.14.3
 
