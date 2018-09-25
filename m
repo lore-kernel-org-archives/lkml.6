@@ -2,127 +2,111 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3DFC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB85FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5CB120867
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:09:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CB120867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B0DC206B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:12:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0DC206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbeIYWRz (ORCPT
+        id S1729543AbeIYWUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:17:55 -0400
-Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:32911 "EHLO
-        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbeIYWRz (ORCPT
+        Tue, 25 Sep 2018 18:20:42 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46748 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729051AbeIYWUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:17:55 -0400
-Received: from g2t2352.austin.hpe.com (g2t2352.austin.hpe.com [15.233.44.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g9t1613g.houston.hpe.com (Postfix) with ESMTPS id EB8AA63149;
-        Tue, 25 Sep 2018 16:09:43 +0000 (UTC)
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2352.austin.hpe.com (Postfix) with ESMTP id 2BBA2B2;
-        Tue, 25 Sep 2018 16:09:43 +0000 (UTC)
-Received: from anatevka.americas.hpqcorp.net (anatevka.americas.hpqcorp.net [10.34.81.6])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 7CC9049;
-        Tue, 25 Sep 2018 16:09:42 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 10:09:42 -0600
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     erosca@de.adit-jv.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: watchdog: Add gettimeout and get|set
- pretimeout
-Message-ID: <20180925160942.GA25620@anatevka.americas.hpqcorp.net>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <1537570526-65241-1-git-send-email-jerry.hoemann@hpe.com>
- <0c6376ec-a3f4-7798-8f30-829480c41f79@kernel.org>
- <20180924014750.GA22296@anatevka.americas.hpqcorp.net>
- <1c4e6b40-dc4e-5706-0a31-1741ba19ca09@kernel.org>
- <f8616e56-004a-e296-0f84-8ebd019ad027@kernel.org>
+        Tue, 25 Sep 2018 18:20:41 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q2-v6so10547853lfc.13;
+        Tue, 25 Sep 2018 09:12:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3HrWUrQJziYKgmycYe8k7tgF3TyJyC6Crtp0yLLjPDc=;
+        b=QHrHHDa7/waPcJCAfkr5kKYCDyNv26aFyNJ5lkAuwP800mA0FXBUuJY/rzGOHtepNG
+         sSfXG9HZX8/fsYiibhbZC0AP0id7A8YMA0Hrv8H0v6+9vIKW8Mu+fN04TJXBlFKwehvS
+         ZuycLlqPPHMtTMC9W6Ldg+ncRQNT6z6UGD/R0Eu9f5eRIZ/V6YgJYfR9U66hKtHDCFvg
+         F4pT7N3FR4CrT+leXDnnVzS/jzd9efTMv9L14LWycJeDol/U/6yPt93P+MBqF80agbbG
+         AGYLZlmDTm2EcZrIvlaTkVUzpSUCceXc0XxoK174rnf2LxJygDBxm/q88AkkPKId9oAB
+         9+ag==
+X-Gm-Message-State: ABuFfogGrLQl/Dz3NRrebjMnOIxGY83ABlinqWnmtMB4XRCOIcmdoZIl
+        4sesoSCYsfIuKzGxexeIfk0bOkMkZ05E1XyCHS4=
+X-Google-Smtp-Source: ACcGV60wGR1kUPlPjCemY3/4RIq/Paopg2NS3CbtleN5PatKTGq7e7g0fMeKMdeISfSIwn6ATQ/FOQPUlPEzcO0Azmg=
+X-Received: by 2002:a19:d212:: with SMTP id j18-v6mr1342691lfg.44.1537891948028;
+ Tue, 25 Sep 2018 09:12:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8616e56-004a-e296-0f84-8ebd019ad027@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <20180807211843.47586-1-keescook@chromium.org> <20180807211843.47586-8-keescook@chromium.org>
+In-Reply-To: <20180807211843.47586-8-keescook@chromium.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 25 Sep 2018 18:12:10 +0200
+Message-ID: <CAK8P3a3kiH-a+JG8FqUw7nc_hk+9z-FdsGFT57SxR83W32zKzQ@mail.gmail.com>
+Subject: Re: [PATCH v8 7/9] crypto: qat: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, dm-devel@redhat.com,
+        qat-linux@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 09:50:18AM -0600, Shuah Khan wrote:
-> >>> Also can you run this test as normal user?
-> >>
-> >> No.  Must be run as root to open /dev/watchdog.  When /dev/watchdog is opened, the
-> >> WD is started and if not updated properly, the system will crash.
-> > 
-> > Hmm. I don't understand why the system would panic if non-root user can't open the
-> > device, at least in the context of this test. 
-> > 
-> >         fd = open("/dev/watchdog", O_WRONLY);
-> > 
-> >         if (fd == -1) {
-> >                 printf("Watchdog device not enabled.\n");
-> >                 exit(-1);
-> >         }
-> > 
-> > 
-> > Shouldn't it just exit based on the code above?
-> > 
-> >>
-> > 
-> >> "cat /dev/watchdog" is one of my favorite ways to crash a system.  :)  :)
-> > 
-> > That doesn't sound great, if a non-root user can bring the system down!!
-> >  
-> 
-> This got me concerned enough that I tried this with softdog. It behaved just
-> the way I expected it.
-> 
-> cat /dev/watchdog
-> cat: /dev/watchdog: Permission denied
-> 
-> Running the test as non-root does the following as per the current logic.
-> 
-> watchdog-test -b
-> Watchdog device not enabled.
-> 
-> I think this logic could be improved to detect that a non-root user is running
-> the test and print appropriate message.
-> 
-> However, I am not seeing the behavior you are describing that "cat /dev/watchdog"
-> panics the syste. Did you mean running a root which is expected unless you terminate
-> before the timeout? If you are seeing this as non-root user on you system, the
-> watchdog driver could be suspect.
-> 
-> thanks,
-> -- Shuah
+On Tue, Aug 7, 2018 at 11:18 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> In the quest to remove all stack VLA usage from the kernel[1], this uses
+> the new upper bound for the stack buffer. Also adds a sanity check.
+>
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Sorry, for misunderstanding.  Let me rephrase:
+After rebasing to linux-next, I now get a warning about this file:
 
-When you asked if the test can be run as a normal user::
+drivers/crypto/qat/qat_common/qat_algs.c: In function 'qat_alg_do_precomputes':
+drivers/crypto/qat/qat_common/qat_algs.c:257:1: error: the frame size
+of 1112 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
 
-No.  The test must be run as root to open /dev/watchdog as the permission
-on /dev/watchdog allow only root to open it.  The reason that we only
-allow root to open /dev/watchdog is that it is trivial to crash
-the system.  Just open /dev/watchdog and don't update the watchdog.
+I assume it was already possible to get into that state with the VLA,
+but it seems bad enough that I think we need to do something
+about it.
 
-One of my favorite ways to crash the system is to
-as root "cat /dev/watchdog."
+The large stack variables add up to 1084 bytes, which fully explains
+how we got here:
 
+        SHASH_DESC_ON_STACK(shash, ctx->hash_tfm); /* 360 */
+        struct sha1_state sha1;  /* 92 */
+        struct sha256_state sha256; /* 104 */
+        struct sha512_state sha512; /* 208 */
+        char ipad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
+        char opad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
 
+The question is what we can do about it. One simple step I've tried
+is to move the sha1/sha256/sha512 into a union, which saves around
+200 bytes and should bring us (slightly) below the warning
+limit, but I suspect we can do better than that. Any ideas?
 
-
--- 
-
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
+        Arnd
