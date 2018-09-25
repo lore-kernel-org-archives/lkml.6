@@ -2,92 +2,112 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004C5C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1ADC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A591D21508
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:22:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A591D21508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 7479921508
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:22:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=sehro.org header.i=@sehro.org header.b="MU0uR8+V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7479921508
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sehro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbeIYWab (ORCPT
+        id S1729645AbeIYWas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:30:31 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:22526 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728776AbeIYWab (ORCPT
+        Tue, 25 Sep 2018 18:30:48 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40610 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728917AbeIYWar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:30:31 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8PGE5vs021028;
-        Tue, 25 Sep 2018 18:21:28 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mnb6xejt9-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 25 Sep 2018 18:21:28 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 59CEA34;
-        Tue, 25 Sep 2018 16:21:27 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 31994558E;
-        Tue, 25 Sep 2018 16:21:27 +0000 (GMT)
-Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 25 Sep
- 2018 18:21:26 +0200
-Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
- SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
- 15.00.1347.000; Tue, 25 Sep 2018 18:21:26 +0200
-From:   Patrice CHOTARD <patrice.chotard@st.com>
-To:     "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "arm@kernel.org" <arm@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Patrice CHOTARD <patrice.chotard@st.com>
-Subject: [GIT PULL] STi DT update for v4.20 round 1
-Thread-Topic: [GIT PULL] STi DT update for v4.20 round 1
-Thread-Index: AQHUVOvOH/mJVqLlKUq+4Yh+Mjo21w==
-Date:   Tue, 25 Sep 2018 16:21:26 +0000
-Message-ID: <7250e85d-374a-76e7-fa8a-4911ef7a12ae@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6CB097D9A8875B44BC64E3D2FD3D9445@st.com>
-Content-Transfer-Encoding: base64
+        Tue, 25 Sep 2018 18:30:47 -0400
+Received: by mail-it1-f194.google.com with SMTP id h23-v6so16031325ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 09:22:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sehro.org; s=dotorg;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YUtN+OY5Ru1b60t1M0/aketqjN8jLR+urvCU2HJwlXQ=;
+        b=MU0uR8+VCXx/SqgK36aGgVCkvfXLRBdok/qJmpeB2sNkKMo1ENSdcl+KVWTAXC8g8p
+         TzDuPtANBL1WKot6fAZtdx59P0WpIEQ8lH4KMYGoeoYNI+G4euy4Q7lBiVpeDUN9Cu+A
+         Ac1PveAUkst1CCWmT4ua0BDOiDMKeIKrtI/5o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YUtN+OY5Ru1b60t1M0/aketqjN8jLR+urvCU2HJwlXQ=;
+        b=AG3yfAU4xVlCJ0ZPlK2J8vBp97OJx/6xwxlhr4v+7Pey4LJXDz37tC4MewWs9bm6KP
+         NLnlMJwvbraPT+1BbJe0XNzPMLEHXb4Pvr4xJHnGSn01pj1oXpoHHxDdYRApwzYm8Q7W
+         5qMdhu4mDTUeyYQ4QXwVqyzd3SyLXkNptftsdZ4TRN2WZBjxXwaeA7c3xNgctgUzHR8I
+         2cXtd26oTykLiiKjoOJaMJRwzu836xrzTdy1opyKL6TgTTGiRHuiW1sBDtFQdXgdrbWT
+         4btjT7V6IQAayyBlUw11QzpscOTdKv5pap0G/0CnXd+yWuRC9UO2naAASlHgZTvut1rH
+         hZJA==
+X-Gm-Message-State: ABuFfohmiC7pWNnVhIFGBAVooIDafi4PlFsXy9TrGRceTxmbIjmHxQtF
+        3nLyKAvxZmaoX6unUJ7UMWGsow==
+X-Google-Smtp-Source: ACcGV61FHlUnS39TjeSx1rhwiozKGfpcxB0h2H1cZyN0CQRUdbaND2e+cTnJ2NKJXzm3fEiD5+0gOw==
+X-Received: by 2002:a24:3b0e:: with SMTP id c14-v6mr1401181ita.42.1537892553408;
+        Tue, 25 Sep 2018 09:22:33 -0700 (PDT)
+Received: from goro.horizons.sehro.org ([2601:280:4400:56c:731e:1a85:7df8:2d5b])
+        by smtp.gmail.com with ESMTPSA id b130-v6sm1100182itc.34.2018.09.25.09.22.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 09:22:32 -0700 (PDT)
+From:   sehro rautenkranz <sehro@sehro.org>
+Cc:     sehro rautenkranz <sehro@sehro.org>,
+        Lidza Louina <lidza.louina@gmail.com>,
+        Mark Hounschell <markh@compro.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: dgnc: Fix Kconfig help header and text
+Date:   Tue, 25 Sep 2018 10:22:24 -0600
+Message-Id: <20180925162225.19227-1-sehro@sehro.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <a62c2d41-5ae6-26a1-3c0e-01893a8ca8a0@infradead.org>
+References: <a62c2d41-5ae6-26a1-3c0e-01893a8ca8a0@infradead.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_09:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQXJuZCwgS2V2aW4sIE9sb2YNCg0KUExlYXNlIGNvbnNpZGVyIHRoaXMgZmlyc3Qgcm91bmQg
-b2YgU1RpIGR0cyB1cGRhdGUgZm9yIHY0LjIwDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5j
-ZSBjb21taXQgNWIzOTRiMmRkZjAzNDdiZWY1NmU1MGM2OWE1ODc3M2M5NDM0M2ZmMzoNCg0KICBM
-aW51eCA0LjE5LXJjMSAoMjAxOC0wOC0yNiAxNDoxMTo1OSAtMDcwMCkNCg0KYXJlIGF2YWlsYWJs
-ZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6DQoNCiAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHVi
-L3NjbS9saW51eC9rZXJuZWwvZ2l0L3BjaG90YXJkL3N0aS5naXQNCnRhZ3Mvc3RpLWR0LWZvci12
-NC4yMC1yb3VuZDENCg0KZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIGI1YjRjOGRkNWM0
-NGVkYzExMmEzNjJmODdhOGQ4OTUzMzM2NTcxYmQ6DQoNCiAgQVJNOiBkdHM6IHN0aWg0MTA6IGNo
-YW5nZSBzeW50YXggb2YgbXVsdGlwbGUgREFJICgyMDE4LTA5LTI1IDE3OjQxOjUxDQorMDIwMCkN
-Cg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQ0KU1RpIERUIHVwZGF0ZToNCiBfIENoYW5nZSBzeW50YXggb2YgbXVsdGlwbGUg
-REFJIGxpbmtzDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0NCkNocmlzdG9waGUgUHJpb3V6ZWF1ICgxKToNCiAgICAgIEFS
-TTogZHRzOiBzdGloNDEwOiBjaGFuZ2Ugc3ludGF4IG9mIG11bHRpcGxlIERBSQ0KDQogYXJjaC9h
-cm0vYm9vdC9kdHMvc3RpaDQxMC1iMjI2MC5kdHMgIHwgIDUgKysrKy0NCiBhcmNoL2FybS9ib290
-L2R0cy9zdGloeHh4LWIyMTIwLmR0c2kgfCAxMSArKysrKysrKy0tLQ0KIDIgZmlsZXMgY2hhbmdl
-ZCwgMTIgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSk=
+Replace Kconfig help header and text to match other modules. Issue found
+my checkpatch.
+
+Spacing adjusted to match Documentation/process/coding-style.rst. Issue
+reported by rdunlap@infradead.org. (try 2)
+
+Signed-off-by: sehro rautenkranz <sehro@sehro.org>
+---
+ drivers/staging/dgnc/Kconfig | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/dgnc/Kconfig b/drivers/staging/dgnc/Kconfig
+index 032c2a795238..0f7537eb27d8 100644
+--- a/drivers/staging/dgnc/Kconfig
++++ b/drivers/staging/dgnc/Kconfig
+@@ -1,6 +1,10 @@
+ config DGNC
+-       tristate "Digi Neo and Classic PCI Products"
+-       default n
+-       depends on TTY && PCI
+-       ---help---
+-       Driver for the Digi International Neo and Classic PCI based product line.
++	tristate "Digi Neo and Classic PCI Products"
++	default n
++	depends on TTY && PCI
++	help
++         Say Y here to enable support for the Digi International Neo and
++         Classic PCI based product line.
++
++         To compile this driver as a module, say M here: the module will be
++         called dgnc
+-- 
+2.19.0
+
