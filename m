@@ -2,94 +2,89 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC37C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98375C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB07B214FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:46:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB07B214FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 239CA2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:47:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239CA2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbeIYPxV (ORCPT
+        id S1728695AbeIYPxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:53:21 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36555 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727114AbeIYPxV (ORCPT
+        Tue, 25 Sep 2018 11:53:44 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:57084 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeIYPxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:53:21 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07863218|-1;CH=blue;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03272;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.CvbiEzD_1537868763;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CvbiEzD_1537868763)
-          by smtp.aliyun-inc.com(10.147.40.26);
-          Tue, 25 Sep 2018 17:46:04 +0800
-Date:   Tue, 25 Sep 2018 17:46:03 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V7 1/2] csky/dma: bugfix dma_sync_for_cpu/device
-Message-ID: <20180925094601.GA2102@guoren>
-References: <cover.1537276837.git.ren_guo@c-sky.com>
- <1ccf1bed89758a5a9b57ac2ce6d11ca898a1b9ae.1537276837.git.ren_guo@c-sky.com>
- <CAK8P3a0RDiP_R8+Lo9-nwiRS3k1NrtcsCFLi0Ww0TJGoAdb3iQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0RDiP_R8+Lo9-nwiRS3k1NrtcsCFLi0Ww0TJGoAdb3iQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 25 Sep 2018 11:53:43 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id flmw1y00j3XaVaC01lmwdT; Tue, 25 Sep 2018 11:46:59 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1g4jvk-0001DV-Ot; Tue, 25 Sep 2018 11:46:56 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1g4jvk-0002zD-N8; Tue, 25 Sep 2018 11:46:56 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Mark Brown <broonie@kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-spi@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] spi: spi-mem: Fix inverted logic in op sanity check
+Date:   Tue, 25 Sep 2018 11:46:55 +0200
+Message-Id: <20180925094655.11438-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 10:38:04PM +0200, Arnd Bergmann wrote:
-> On Tue, Sep 18, 2018 at 3:48 PM Guo Ren <ren_guo@c-sky.com> wrote:
-> >
-> > ref: https://lkml.org/lkml/2018/5/18/1068
-> >
-> >         map             for_cpu         for_device      unmap
-> > TO_DEV  writeback       none            writeback       none
-> > TO_CPU  invalidate      invalidate*     invalidate      invalidate*
-> > BIDIR   writeback       invalidate      writeback       invalidate
-> >
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> 
-> Same comment as for the other patch: Explain why the original
-> version is wrong first. When giving a reference to some other
-> discussion, use the "Link" tag above your Signed-off-by line.
-> To point to a discussion on lkml, lore.kernel.org is the
-> recommended archive, so it would become
-> 
-> Link: https://lore.kernel.org/lkml/20180518215548.GH17671@n2100.armlinux.org.uk/
-Ok, I'll improve the comment:
+On r8a7791/koelsch:
 
-Fixup dma_mapping error in linux-4.19-rc3, and we must implement all
-DMA_TO_DEVICE/FROM_DEVICE/BIDIRECTIONAL for both sync_dma_for_device/cpu.
-The implementation of arch should follow the following rules:
+    m25p80 spi0.0: error -22 reading 9f
+    m25p80: probe of spi0.0 failed with error -22
 
-         map             for_cpu         for_device      unmap
- TO_DEV  writeback       none            writeback       none
- TO_CPU  invalidate      invalidate*     invalidate      invalidate*
- BIDIR   writeback       invalidate      writeback       invalidate
+Apparently the logic in spi_mem_check_op() is wrong, rejecting the
+spi-mem operation if any buswidth is valid, instead of invalid.
 
- Link: https://lore.kernel.org/lkml/20180518215548.GH17671@n2100.armlinux.org.uk/
- Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Fixes: 380583227c0c7f52 ("spi: spi-mem: Add extra sanity checks on the op param")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/spi/spi-mem.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Best Regards
- Guo Ren
+diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
+index cc3d425aae56c634..62a7b80801d22098 100644
+--- a/drivers/spi/spi-mem.c
++++ b/drivers/spi/spi-mem.c
+@@ -169,10 +169,10 @@ static int spi_mem_check_op(const struct spi_mem_op *op)
+ 	    (op->data.nbytes && !op->data.buswidth))
+ 		return -EINVAL;
+ 
+-	if (spi_mem_buswidth_is_valid(op->cmd.buswidth) ||
+-	    spi_mem_buswidth_is_valid(op->addr.buswidth) ||
+-	    spi_mem_buswidth_is_valid(op->dummy.buswidth) ||
+-	    spi_mem_buswidth_is_valid(op->data.buswidth))
++	if (!spi_mem_buswidth_is_valid(op->cmd.buswidth) ||
++	    !spi_mem_buswidth_is_valid(op->addr.buswidth) ||
++	    !spi_mem_buswidth_is_valid(op->dummy.buswidth) ||
++	    !spi_mem_buswidth_is_valid(op->data.buswidth))
+ 		return -EINVAL;
+ 
+ 	return 0;
+-- 
+2.17.1
 
