@@ -2,93 +2,106 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C53C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C1AC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9F0120877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:57:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="c4lLUlUC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FcksX0L/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F0120877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id 4883920676
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:58:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4883920676
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbeIYXFz (ORCPT
+        id S1727428AbeIYXGg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:05:55 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51803 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726470AbeIYXFz (ORCPT
+        Tue, 25 Sep 2018 19:06:36 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44944 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbeIYXGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:05:55 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id C203321F86;
-        Tue, 25 Sep 2018 12:57:31 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 25 Sep 2018 12:57:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=8rZvYDqjX7ZuJ8AqIiMqBxG8N4s/Z6KgMCuI7P6V6Tk=; b=c4lLUlUC
-        2p5Dtv+9faewEzVVXgAfJbVGx/I1dq/ffGLp/fyRHCiNqsq1ZqhP7FnPbRIrUsJU
-        xJtIxIzYAHhgnCuM2+aSwA2Ysf5qFAwimxuH7U6S23aPqhK2KJgIMcicBUf+kw60
-        ijhSVLwT8JN8TY9E7SXmJk+dgCQWVg12toup9Qsf1Y/0MHdQF4fiPmRUcYohw8Nw
-        w3AGl6Mp4rmkyNtm/uNlXh4lPA8qYoGCo64FlpUfBCODgTAABOzBoiXBxxBjpZHi
-        rD0JfUF1tf2/aL3CFUa5mS1FyFUR+8yCyn5Rn1+eawZrI2NzRDGvSpB9cVSu3HrI
-        oO+dHtDhdbWpJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=8rZvYDqjX7ZuJ8AqIiMqBxG8N4s/Z
-        6KgMCuI7P6V6Tk=; b=FcksX0L/vOvbw42VNW0Fc8+TWHQteqkydD9MlUEOJSOU3
-        oKZ3KK/QHXogTo9EA1weY+VzzrvkzboJCTK4MzJz1WO4bSqr8MjTMp8i6rodJwcQ
-        3MoG/q7E9h2glGB4QsmCHA3zrdHJqUX+Cen7uQ/ilV3zespwRzUlFoxAOYC93n0R
-        Cm6tkn5PqNZPkn0SKyi7XTt/oLWwrCPKPuuAZjYcpgWtA2bI4ZXtGzd147C0Xw5G
-        mXYgZjLpizj8LZ3ISm+9RFwQBNBCaliNfxRNpWys7gIaTiJa9cb1BCUy/9dGOlXL
-        iVMQzLeqUHNSdqJqlD7S4vBKSuCOm2HeWjDcVw2EQ==
-X-ME-Proxy: <xmx:-2iqW1jCYE058GiYbljd0cMUidJ_86RNx-3iFCDG68wH8Lre8bBUFA>
-    <xmx:-2iqWyRDaJdhfRTclIFZ3yqHcQNOqrkPVl4rlhwHf-g7gLlGxJoxCg>
-    <xmx:-2iqW5Bzh_alD9pNlxLM_s7xGxqh72OezjuH7tamHNasVBdxvuRUgg>
-    <xmx:-2iqWxk5Cblhpbbk8j0nygF6RUWG_DWkjYmIz-A-YAn2F-_HFISbkQ>
-    <xmx:-2iqW3cew7NtCw9wTGvp9pUCoPeWe0oG_qV-0D5sENMLvOeJL1qfdg>
-    <xmx:-2iqW47yqvXRNXMbtGpT0KOCN0RilFyfMCJcnO6g7i64IKGZg0KBhg>
-X-ME-Sender: <xms:-2iqW7eBF7PpNytWPanqT6RWoBdpYuJ0JSJYvSaTfZCYl7qH_tw-zQ>
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 06218E467D;
-        Tue, 25 Sep 2018 12:57:30 -0400 (EDT)
-Date:   Tue, 25 Sep 2018 18:57:29 +0200
-From:   Greg Kroah-Hartman <greg@kroah.com>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] SCSI fixes for 4.19-rc5
-Message-ID: <20180925165729.GA16781@kroah.com>
-References: <1537889692.5951.2.camel@HansenPartnership.com>
+        Tue, 25 Sep 2018 19:06:36 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 36-v6so25149634oth.11;
+        Tue, 25 Sep 2018 09:58:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JiFj+FkgYKk/vlkN10eDN/1VPnWnp2uYtFlwJlI2AgU=;
+        b=GU+Q2ywSolaLQgfwf7fJDVezPgd5x/eDYr+s1U9CO2+v39vz+leyf7NuXqLzwoF6K3
+         wgQaczqr700FwTfpf2QFUzC7icsVe5zrZ8WVJN41W/wzKroivKh3qTJVKTd9XoFkhtG7
+         lx7KJZRKcnvJEyX53HfEOM7JIl6TPfAtM43xZzLAMG0vnVNUvSHwOA/wl/iNje9DACcy
+         FSEnkD5F0uZQy7FHoyficBamIu6m6DkDpHDquzcfFv+2e45mOQ4xWndtwAg3PrYnUG3k
+         U7Da0eIAYofI0TVJQ2LaBoCHF2gXJxyUulaXfBF0TcUXXd+2I2Z3kHanYVVeL9Pse9Rf
+         20kg==
+X-Gm-Message-State: ABuFfogi79qnGr/t2VSsRD4YqBb8zkGtVJvsAwXrXAPQISobX15b8V3s
+        MMcXx2KnfoJvuzxGgcgrXMu8lFjg9A==
+X-Google-Smtp-Source: ACcGV62nyN9GORN+Bp3h44Ke7qvcydhkD6pgioYrDByJpWtrI8LkBBJjq91ltSA/Rj2jj7fLGByBtQ==
+X-Received: by 2002:a9d:4d15:: with SMTP id n21-v6mr1388024otf.121.1537894692698;
+        Tue, 25 Sep 2018 09:58:12 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h9-v6sm356266otf.78.2018.09.25.09.58.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 09:58:11 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 11:58:10 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+Message-ID: <20180925165810.GA32430@bogus>
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <20180830194356.14059-2-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537889692.5951.2.camel@HansenPartnership.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180830194356.14059-2-digetx@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 08:34:52AM -0700, James Bottomley wrote:
-> Nine obvious bug fixes mostly in individual drivers.  The target fix is
-> of particular importance because it's CVE related.
+On Thu, Aug 30, 2018 at 10:43:52PM +0300, Dmitry Osipenko wrote:
+> Add device-tree binding that describes CPU frequency-scaling hardware
+> found on NVIDIA Tegra20/30 SoC's.
 > 
-> The patch is available here:
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
 > 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> new file mode 100644
+> index 000000000000..2c51f676e958
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+> @@ -0,0 +1,38 @@
+> +Binding for NVIDIA Tegra20 CPUFreq
+> +==================================
+> +
+> +Required properties:
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - pll_x: main-parent for CPU clock, must be the first entry
+> +  - backup: intermediate-parent for CPU clock
+> +  - cpu: the CPU clock
 
-Now pulled, thanks.
+The Cortex A9 has CLK, PERIPHCLK, and PERIPHCLKEN clocks and only CLK 
+is used for the cpu core. You can't just define your own clocks that 
+you happen to want access to.
 
-greg k-h
+Otherwise, you're not defining anything new here, so a binding document 
+isn't required.
+
+Rob
