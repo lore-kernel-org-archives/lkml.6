@@ -2,147 +2,149 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 280CAC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C1FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6DCE214DC
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:21:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2682420833
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:23:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SuAgZKhy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6DCE214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOV90hfZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2682420833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbeIZBaP (ORCPT
+        id S1727800AbeIZBcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 21:30:15 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50646 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbeIZBaP (ORCPT
+        Tue, 25 Sep 2018 21:32:24 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46039 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbeIZBcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 21:30:15 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8PJJaw5178949;
-        Tue, 25 Sep 2018 19:19:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=UxeIa//Ou3UL5jmr23lEWhIIgb6QhdPU7XLgkk0//F0=;
- b=SuAgZKhyUwbJ/jEXFj97GBvjlCRja/El0+HeD0iPJiaJBzXTUvOIFJhWy6LhSNz4b8AY
- 4ksu5SfIfN9tbRwfWe25bRJhyqCs9200kXCtiUJTzOhhFvlrXpuO3NsQeksi3GgSsILM
- NbAGslKHsp/U+iIRp1lPPu7Pli2UamVWqi+xDaQnw/UUIlhDkFL3DEAzbLj+YVZcs/MA
- DJYbzccgpqAUq39CY1zonfisrVNGiHp4biw/6U9xfozpdKCHKR5Z8y+rYzyWWJWCVO/x
- SUKuDo9vCf/irf72y/p0cHEwjnXSsElcQK1Wm9UnW/YTA71meALAO+hFF2Da3xQnTLLz yw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2mnd5teaj1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Sep 2018 19:19:58 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8PJJuAc006930
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Sep 2018 19:19:57 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8PJJp2h005278;
-        Tue, 25 Sep 2018 19:19:51 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 25 Sep 2018 12:19:51 -0700
-Date:   Tue, 25 Sep 2018 12:19:53 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Huang Ying <ying.huang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Tue, 25 Sep 2018 21:32:24 -0400
+Received: by mail-lj1-f193.google.com with SMTP id x16-v6so16440670ljd.12;
+        Tue, 25 Sep 2018 12:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=d/NOn73sulnzViPWgFPRhgBzoeN51MibPB5UyJoKcPY=;
+        b=UOV90hfZLCFsTO3Up7K/UJOSyHotObGZMon2CPvbVVy52adQs+VxG/VbYjY3NDqWTo
+         7tcK/Afp0isU/nFOdgwLl+J4nxejQA2T36DFpUW7Py/EJQEoaMASGvmYyjs45P5F1lwL
+         ml+AUsFR1H7cAmEXfJesQkcA6u3cqAPDj+ys7+us6Q/Xl5JmNCGFsNaus89eqXuy+Tzn
+         wq8G1y6iI4ONxXPjipvLMPQbWxF6yarBrqYeOa8tIZGGvwYUKFsVWaiHRQiPVVw5eQej
+         NXAKcqJPWKeYQbuflLt/ERfdEABLv6PxzREFWV3Xia0Ey0OMytQMgvBrrS3hexspFFYX
+         0wqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=d/NOn73sulnzViPWgFPRhgBzoeN51MibPB5UyJoKcPY=;
+        b=jVHp+DxzTmetqvefDXj/hiuizkYAAtALsjkcUjhrBuNL2KGSxOnnnEmah4ynuEXZF1
+         asd7AxC4o/ArcGxLERKXcd3/2n9Z77a41fwtwk1s5RGSgXMqGLnU/3xPoPtnA7a3Sy/T
+         k/av8pUcOjkZiEUxn22ud+j0XITMvZA7at5uUSJZLRQrIGpObEO9F5hSyOgMHZBD0Iq1
+         1onM11cfVUaga9Q+Vo49NXdVvw9ooUoQTbFd2GhgBRRnh+vTdvnfqVnBWqsHB1OqROAp
+         S4IWaWWAbLdzrrOENsIIFhfRjaDiPUbmmf4uAkFvRHfGvayoY3v+w2OFNf0xBbTFX8//
+         /sSQ==
+X-Gm-Message-State: ABuFfog54WIlrQiKkmkJdhJHIGMBARy1yHo1FlZvP2SCNz/XuATZdF4G
+        iopOjHSM6HiIqnkDLtebc7CajISJ6NE=
+X-Google-Smtp-Source: ACcGV62yspT7xgZeOqLL6nDBJExDQ1gg6y4g/yTC1hNsgiYWAVRC256uyLQkZPEjCU7jDERwpoDyTg==
+X-Received: by 2002:a2e:9694:: with SMTP id q20-v6mr2055898lji.35.1537903400434;
+        Tue, 25 Sep 2018 12:23:20 -0700 (PDT)
+Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id n23-v6sm553160ljh.77.2018.09.25.12.23.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 12:23:19 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH -V5 RESEND 03/21] swap: Support PMD swap mapping in
- swap_duplicate()
-Message-ID: <20180925191953.4ped5ki7u3ymafmd@ca-dmjordan1.us.oracle.com>
-References: <20180925071348.31458-1-ying.huang@intel.com>
- <20180925071348.31458-4-ying.huang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925071348.31458-4-ying.huang@intel.com>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9027 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809250190
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO bitmap
+Date:   Tue, 25 Sep 2018 21:24:33 +0200
+Message-Id: <20180925192433.1377-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
+References: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 03:13:30PM +0800, Huang Ying wrote:
-> @@ -3487,35 +3521,66 @@ static int __swap_duplicate_locked(struct swap_info_struct *p,
->  }
->  
->  /*
-> - * Verify that a swap entry is valid and increment its swap map count.
-> + * Verify that the swap entries from *entry is valid and increment their
-> + * PMD/PTE swap mapping count.
->   *
->   * Returns error code in following case.
->   * - success -> 0
->   * - swp_entry is invalid -> EINVAL
-> - * - swp_entry is migration entry -> EINVAL
+Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
+get/set array") changed the way GPIO values are passed to
+gpiod_get/set_array_value() and friends.  The updated code of
+mmc_pwrseq_simple_set_gpios_value() incorrectly uses the 'value'
+argument as a bitmap of GPIO values and assigns it directly to the
+'values' bitmap variable passed to gpiod_set_array_value_cansleep()
+instead of filling that bitmap with bits equal to the 'value' argument.
+As a result, boot hanging caused by incorrectly handled MMC device
+has been observed.
 
-I'm assuming it wasn't possible to hit this error before this patch, and you're
-just removing it now since you're in the area?
+As a side effect of that incorrect interpreation of the 'value'
+argument, wrong assumption is taken about the 'values' bitmap size 
+never exceding the number of bits of the 'value' argument type.
 
->   * - swap-cache reference is requested but there is already one. -> EEXIST
->   * - swap-cache reference is requested but the entry is not used. -> ENOENT
->   * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
-> + * - the huge swap cluster has been split. -> ENOTDIR
+Fix it.
 
-Strangely intuitive choice of error code :)
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+Hi,
 
->  /*
->   * Increase reference count of swap entry by 1.
-> - * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
-> - * but could not be atomically allocated.  Returns 0, just as if it succeeded,
-> - * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
-> - * might occur if a page table entry has got corrupted.
-> + *
-> + * Return error code in following case.
-> + * - success -> 0
-> + * - swap_count_continuation is required but could not be atomically allocated.
-> + *   *entry is used to return swap entry to call add_swap_count_continuation().
-> + *								      -> ENOMEM
-> + * - otherwise same as __swap_duplicate()
->   */
-> -int swap_duplicate(swp_entry_t entry)
-> +int swap_duplicate(swp_entry_t *entry, int entry_size)
->  {
->  	int err = 0;
->  
-> -	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
-> -		err = add_swap_count_continuation(entry, GFP_ATOMIC);
-> +	while (!err &&
-> +	       (err = __swap_duplicate(entry, entry_size, 1)) == -ENOMEM)
-> +		err = add_swap_count_continuation(*entry, GFP_ATOMIC);
->  	return err;
+I hope I've finally identified the root cause of the boot hang reported
+by Marek Szyprowski.  I've reviewed the code of other divers updated for
+the modified GPIO API and found no more issues of that kind.
 
-Now we're returning any error we get from __swap_duplicate, apparently to
-accommodate ENOTDIR later in the series, which is a change from the behavior
-introduced in 570a335b8e22 ("swap_info: swap count continuations").  This might
-belong in a separate patch given its potential for side effects.
+Marek, can you please test this fix on top of next-20180920 with the fix
+"gpiolib: Fix missing updates of bitmap index" also applied?
 
-Although, I don't understand why 570a335b8e22 ignored errors other than -ENOMEM
-when both swap_duplicate callers _seem_ from a quick read to be able to respond
-gracefully to any error.
+I've assumed this fix, if tested successfully, will be merged via GPIO
+tree, hence I've selected Linus as the main recipient of this message.
+
+Thanks,
+Janusz
+
+ drivers/mmc/core/pwrseq_simple.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+index 7f882a2bb872..ece34c734693 100644
+--- a/drivers/mmc/core/pwrseq_simple.c
++++ b/drivers/mmc/core/pwrseq_simple.c
+@@ -40,13 +40,22 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
+ 	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
+ 
+ 	if (!IS_ERR(reset_gpios)) {
+-		DECLARE_BITMAP(values, BITS_PER_TYPE(value));
++		unsigned long *values;
+ 		int nvalues = reset_gpios->ndescs;
+ 
+-		values[0] = value;
++		values = bitmap_alloc(nvalues, GFP_KERNEL);
++		if (!values)
++			return;
++
++		if (value)
++			bitmap_fill(values, nvalues);
++		else
++			bitmap_zero(values, nvalues);
+ 
+ 		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
+ 					       reset_gpios->info, values);
++
++		kfree(values);
+ 	}
+ }
+ 
+-- 
+2.16.4
+
