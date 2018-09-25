@@ -2,115 +2,239 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B909CC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DECCC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FAC2087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FAC2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 1617B206B6
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:00:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1617B206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbeIYQGw (ORCPT
+        id S1728757AbeIYQHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:06:52 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44301 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbeIYQGw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:06:52 -0400
-Received: by mail-qt1-f194.google.com with SMTP id k38-v6so12642379qtk.11;
-        Tue, 25 Sep 2018 03:00:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ojpoY/RW/BGU1Dxs0TXMFSXc2L/ph/XzGeGA11gBzBw=;
-        b=raUWyuWL0fPEfNFSHodl70WMgTTIUkg3xRqf/pd9nDQjEExCGF/z13/etPj5kM454k
-         nUFWLG5C/3VtyxgHiizQIxr9DV7/awIEPvsgsVpvBPpXIRxtQbg5I6sp404IXYKgC5kK
-         rJMZeMDQnU/Ep4+t20OA/9wWU2q8QyWmRYkWM7mTn8lsUw4x7Xd8tZABw+wEEa7GStu8
-         ppTZR2V+ZuGU0RqI+WzS3QKjcxO/Wt9rQ3eH1cFUxA8m4zSM4+qzYix867iIi7AjXYet
-         qjYhEKICDJn4AvNndtU5L21LdB7I5Lfb0BE0PpCSCaZlfCE0yelHnU199vFNKmaJnXRS
-         lVSA==
-X-Gm-Message-State: ABuFfogyKylfXqpF2UlU9LrUAybIKmuKPEyjIxJvSC/FcOlOthiIbeDc
-        0F8kwNLTtMGwJCORBR7nhAhhfnLHkAHByEEf04I=
-X-Google-Smtp-Source: ACcGV60EWU5FaYEzQdAVJzkDFVnk4Ycwv0cIW4sSOpvCXtYh904ZBVdkipF6HjX7NSPyKg7CSCfqyCZjMLDkdSDpduU=
-X-Received: by 2002:aed:2bc6:: with SMTP id e64-v6mr171540qtd.132.1537869605174;
- Tue, 25 Sep 2018 03:00:05 -0700 (PDT)
+        Tue, 25 Sep 2018 12:07:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35748 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726201AbeIYQHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:07:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DD75988311;
+        Tue, 25 Sep 2018 10:00:30 +0000 (UTC)
+Received: from [10.36.117.173] (ovpn-117-173.ams2.redhat.com [10.36.117.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 580965DD79;
+        Tue, 25 Sep 2018 10:00:23 +0000 (UTC)
+Subject: Re: [PATCH v5 18/18] kvm: arm64: Allow tuning the physical address
+ size for VM
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org,
+        Peter Maydel <peter.maydell@linaro.org>
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-19-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <552680a6-23e6-001c-416e-214d1e8276c6@redhat.com>
+Date:   Tue, 25 Sep 2018 12:00:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <cover.1537276837.git.ren_guo@c-sky.com> <1ccf1bed89758a5a9b57ac2ce6d11ca898a1b9ae.1537276837.git.ren_guo@c-sky.com>
- <CAK8P3a0RDiP_R8+Lo9-nwiRS3k1NrtcsCFLi0Ww0TJGoAdb3iQ@mail.gmail.com> <20180925094601.GA2102@guoren>
-In-Reply-To: <20180925094601.GA2102@guoren>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 25 Sep 2018 11:59:48 +0200
-Message-ID: <CAK8P3a1bv_Kx5Jo3UOyC9y0fmrH1i2+HB3_=H7pkBfBxBH-nXA@mail.gmail.com>
-Subject: Re: [PATCH V7 1/2] csky/dma: bugfix dma_sync_for_cpu/device
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Greentime Hu <green.hu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180917104144.19188-19-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 25 Sep 2018 10:00:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:46 AM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> On Mon, Sep 24, 2018 at 10:38:04PM +0200, Arnd Bergmann wrote:
-> > On Tue, Sep 18, 2018 at 3:48 PM Guo Ren <ren_guo@c-sky.com> wrote:
-> > >
-> > > ref: https://lkml.org/lkml/2018/5/18/1068
-> > >
-> > >         map             for_cpu         for_device      unmap
-> > > TO_DEV  writeback       none            writeback       none
-> > > TO_CPU  invalidate      invalidate*     invalidate      invalidate*
-> > > BIDIR   writeback       invalidate      writeback       invalidate
-> > >
-> > > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> >
-> > Same comment as for the other patch: Explain why the original
-> > version is wrong first. When giving a reference to some other
-> > discussion, use the "Link" tag above your Signed-off-by line.
-> > To point to a discussion on lkml, lore.kernel.org is the
-> > recommended archive, so it would become
-> >
-> > Link: https://lore.kernel.org/lkml/20180518215548.GH17671@n2100.armlinux.org.uk/
-> Ok, I'll improve the comment:
->
-> Fixup dma_mapping error in linux-4.19-rc3, and we must implement all
-> DMA_TO_DEVICE/FROM_DEVICE/BIDIRECTIONAL for both sync_dma_for_device/cpu.
-> The implementation of arch should follow the following rules:
->
-> ...
+Hi Suzuki,
+On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
+> Allow specifying the physical address size limit for a new
+> VM via the kvm_type argument for the KVM_CREATE_VM ioctl. This
+> allows us to finalise the stage2 page table as early as possible
+> and hence perform the right checks on the memory slots
+> without complication. The size is ecnoded as Log2(PA_Size) in
+encoded
+> bits[7:0] of the type field. For backward compatibility the
+> value 0 is reserved and implies 40bits. Also, lift the limit
+> of the IPA to host limit and allow lower IPA sizes (e.g, 32).
+> 
+> The userspace could check the extension KVM_CAP_ARM_VM_PHYS_SHIFT
+> for the availability of this feature. The cap check returns the
+> maximum limit for the physical address shift supported by the host.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Cc: Peter Maydel <peter.maydell@linaro.org>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since v4:
+>  - Fold the introduction of the KVM_CAP_ARM_VM_PHYS_SHIFT to this
+>    patch to allow detection of the availability of the feature for
+>    userspace.
+>  - Document the API
+>  - Restrict the feature only to arm64.
+> Changes since V3:
+>  - Switch to a CAP, that can be checkd via EXTENSIONS on KVM device
+>    fd, rather than a dedicated ioctl.
+> ---
+>  Documentation/virtual/kvm/api.txt       |  8 ++++++++
+>  arch/arm64/include/asm/stage2_pgtable.h | 20 --------------------
+>  arch/arm64/kvm/reset.c                  | 20 ++++++++++++++++----
+>  include/uapi/linux/kvm.h                | 10 ++++++++++
+>  4 files changed, 34 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index c664064f76fb..f860251ff27c 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -122,6 +122,14 @@ the default trap & emulate implementation (which changes the virtual
+>  memory layout to fit in user mode), check KVM_CAP_MIPS_VZ and use the
+>  flag KVM_VM_MIPS_VZ.
+>  
+> +To configure the physical address space size for a VM (IPA size) on arm64,
+> +check KVM_CAP_ARM_VM_PHYS_SHIFT (which returns the maximum limit for the
+> +IPA shift) and use KVM_VM_TYPE_ARM_PHYS_SHIFT(PHYS_SHIFT). Bits[7-0] of the
+> +machine type has been reserved for specifying the PHYS_SHIFT.
+are reserved to pass the PHYS_SHIFT?
+> +The supported range is [32...IPA_LIMIT], where IPA_LIMIT could be
+s/could be/is
+> +identified by checking KVM_CAP_ARM_VM_PHYS_SHIFT. For backward compatibility
+> +a value of 0 selects 40bits.
+> +
+>  
+>  4.3 KVM_GET_MSR_INDEX_LIST, KVM_GET_MSR_FEATURE_INDEX_LIST
+>  
+> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
+> index 6a56fdff0823..0b339f5a4a7c 100644
+> --- a/arch/arm64/include/asm/stage2_pgtable.h
+> +++ b/arch/arm64/include/asm/stage2_pgtable.h
+> @@ -42,28 +42,8 @@
+>   * the range (IPA_SHIFT, IPA_SHIFT - 4).
+>   */
+>  #define stage2_pgtable_levels(ipa)	ARM64_HW_PGTABLE_LEVELS((ipa) - 4)
+> -#define STAGE2_PGTABLE_LEVELS		stage2_pgtable_levels(KVM_PHYS_SHIFT)
+>  #define kvm_stage2_levels(kvm)		VTCR_EL2_LVLS(kvm->arch.vtcr)
+>  
+> -/*
+> - * With all the supported VA_BITs and 40bit guest IPA, the following condition
+> - * is always true:
+> - *
+> - *       STAGE2_PGTABLE_LEVELS <= CONFIG_PGTABLE_LEVELS
+> - *
+> - * We base our stage-2 page table walker helpers on this assumption and
+> - * fall back to using the host version of the helper wherever possible.
+> - * i.e, if a particular level is not folded (e.g, PUD) at stage2, we fall back
+> - * to using the host version, since it is guaranteed it is not folded at host.
+> - *
+> - * If the condition breaks in the future, we can rearrange the host level
+> - * definitions and reuse them for stage2. Till then...
+> - */
+> -#if STAGE2_PGTABLE_LEVELS > CONFIG_PGTABLE_LEVELS
+> -#error "Unsupported combination of guest IPA and host VA_BITS."
+> -#endif
+> -
+> -
+>  /* stage2_pgdir_shift() is the size mapped by top-level stage2 entry for the VM */
+>  #define stage2_pgdir_shift(kvm)		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
+>  #define stage2_pgdir_size(kvm)		(1ULL << stage2_pgdir_shift(kvm))
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index 0393bb974b23..c9640159e11f 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -89,6 +89,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
+>  	case KVM_CAP_VCPU_EVENTS:
+>  		r = 1;
+>  		break;
+> +	case KVM_CAP_ARM_VM_PHYS_SHIFT:
+> +		r = kvm_ipa_limit;
+> +		break;
+>  	default:
+>  		r = 0;
+>  	}
+> @@ -190,16 +193,25 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+>  {
+>  	u64 vtcr = VTCR_EL2_FLAGS;
+>  	u64 parange;
+> -	u8 lvls;
+> +	u8 lvls, ipa_shift;
+>  
+> -	if (type)
+> +	if (type & ~KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
+>  		return -EINVAL;
+>  
+> +	ipa_shift = KVM_VM_TYPE_ARM_PHYS_SHIFT(type);
+> +	if (ipa_shift) {
+> +		if (ipa_shift > kvm_ipa_limit ||
+> +		    ipa_shift < 32)
+> +			return -EINVAL;
+> +	} else {
+> +		ipa_shift = KVM_PHYS_SHIFT;
+> +	}
+> +
+>  	/*
+>  	 * Use a minimum 2 level page table to prevent splitting
+>  	 * host PMD huge pages at stage2.
+>  	 */
+> -	lvls = stage2_pgtable_levels(KVM_PHYS_SHIFT);
+> +	lvls = stage2_pgtable_levels(ipa_shift);
+>  	if (lvls < 2)
+>  		lvls = 2;
+>  
+> @@ -221,7 +233,7 @@ int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+>  		VTCR_EL2_VS_8BIT;
+>  
+>  	vtcr |= VTCR_EL2_LVLS_TO_SL0(lvls);
+> -	vtcr |= VTCR_EL2_T0SZ(KVM_PHYS_SHIFT);
+> +	vtcr |= VTCR_EL2_T0SZ(ipa_shift);
+>  
+>  	kvm->arch.vtcr = vtcr;
+>  	return 0;
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 07548de5c988..2a6b29c446db 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -750,6 +750,15 @@ struct kvm_ppc_resize_hpt {
+>  
+>  #define KVM_S390_SIE_PAGE_OFFSET 1
+>  
+> +/*
+> + * On arm64, machine type can be used to request the physical
+> + * address size for the VM. Bits[7-0] has been reserved for the PA
+s/has been reserved/are?
 
-That seems ok, but it's better to start with a description of the problem
-rather than the 'Fixup dma_mapping error in linux-4.19-rc3' part.
-I would write this like:
+Thanks
 
-| The arch_sync_dma_for_cpu()/arch_sync_dma_for_device()
-| implementation is broken for some combinations that end up
-| in a BUG() instead of performing the necessary flushes.
-|
-| The implementation of arch should follow the following rules:
-| ...
-
-The imperative 'Fix up dma_mapping error ...' is what belongs
-into the subject line, and is ideally revisited at the end of the
-changelog comment if you want to add more detail about what
-you do.
-
-       Arnd
+Eric
+> + * size shift (i.e, log2(PA_Size)). For backward compatibility,
+> + * value 0 implies the default IPA size, 40bits.
+> + */
+> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK	0xffULL
+> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)		\
+> +	((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
+>  /*
+>   * ioctls for /dev/kvm fds:
+>   */
+> @@ -952,6 +961,7 @@ struct kvm_ppc_resize_hpt {
+>  #define KVM_CAP_S390_HPAGE_1M 156
+>  #define KVM_CAP_NESTED_STATE 157
+>  #define KVM_CAP_ARM_INJECT_SERROR_ESR 158
+> +#define KVM_CAP_ARM_VM_PHYS_SHIFT 159 /* returns maximum PA shift for a VM */
+>  
+>  #ifdef KVM_CAP_IRQ_ROUTING
+>  
+> 
