@@ -2,135 +2,64 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360F9C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4C1C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68AA21480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68AA21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 10FA120877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:18:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="QA1+CI5i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FA120877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbeIYOYx (ORCPT
+        id S1728363AbeIYOZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 10:24:53 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:16525 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728073AbeIYOYw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 10:24:52 -0400
-X-IronPort-AV: E=Sophos;i="5.54,301,1534834800"; 
-   d="scan'208";a="17720714"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 25 Sep 2018 01:18:29 -0700
-Received: from localhost.localdomain (10.10.76.4) by
- chn-sv-exch07.mchp-main.com (10.10.76.108) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 25 Sep 2018 01:18:28 -0700
-Subject: Re: [PATCH] mtd: spi-nor: cadence-quadspi: Use proper enum for
- dma_unmap_single
-To:     Nathan Chancellor <natechancellor@gmail.com>
-CC:     Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20180921102944.27968-1-natechancellor@gmail.com>
- <5e1d2e30-764f-f3a9-d0c1-7a6c81f296b7@microchip.com>
- <20180925073438.GA24068@flashbox>
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-Message-ID: <7afdc8a3-61e9-2c06-1ecf-ab62a2466f5e@microchip.com>
-Date:   Tue, 25 Sep 2018 11:18:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 25 Sep 2018 10:25:13 -0400
+Received: from 8bytes.org ([81.169.241.247]:32808 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726208AbeIYOZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 10:25:12 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 097512A9; Tue, 25 Sep 2018 10:18:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1537863529; bh=Jt3wbIDOLrQC4pXYtPwzIlFNRZWYnH1dWxw75jYJsoI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QA1+CI5i4j/n8jhnHJ93K6BHIV9GSAvuW+mPuBUnNNe1JcqnVXE6DylnpeE0DTX1v
+         vKq/Q+2213NEirJfgI184FiXVmfBu/36RG8bGKES+j0sLannOM5v319vFj44kVGuVx
+         uSUkWYWB9f9Vhh+bVDTXCqUOGkgll3jCb6x5aJ4VLiSKusxroxkpG0qYo2LsPQ9td0
+         JhednhfM90ys+aAuXnUZpGZVPVL2dZNfl2Vtw52YhBa5PNZ9NnbfRYD2DRvA54Zaz5
+         E/7J/OvWvEIaKjApOF4bBLPB8N3QPXVDp41A1Owwik02wETT6DfQqqR+Ir4ceK6wEe
+         DO+YdQTZgbeXQ==
+Date:   Tue, 25 Sep 2018 10:18:48 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        robin.murphy@arm.com, tomasz.nowicki@cavium.com,
+        jnair@caviumnetworks.com, Robert.Richter@cavium.com,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com,
+        gklkml16@gmail.com
+Subject: Re: [PATCH v4] iommu/iova: Optimise attempts to allocate iova from
+ 32bit address range
+Message-ID: <20180925081848.fh32go4nwvtmfjn2@8bytes.org>
+References: <20180905042736.11904-1-ganapatrao.kulkarni@cavium.com>
 MIME-Version: 1.0
-In-Reply-To: <20180925073438.GA24068@flashbox>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180905042736.11904-1-ganapatrao.kulkarni@cavium.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 05, 2018 at 09:57:36AM +0530, Ganapatrao Kulkarni wrote:
+>  drivers/iommu/iova.c | 22 +++++++++++++++-------
+>  include/linux/iova.h |  1 +
+>  2 files changed, 16 insertions(+), 7 deletions(-)
 
-
-On 09/25/2018 10:34 AM, Nathan Chancellor wrote:
-> On Tue, Sep 25, 2018 at 10:24:04AM +0300, Tudor Ambarus wrote:
->> Hi, Nathan,
->>
->> On 09/21/2018 01:29 PM, Nathan Chancellor wrote:
->>> Clang warns when one enumerated type is converted implicitly to another.
->>>
->>> drivers/mtd/spi-nor/cadence-quadspi.c:962:47: warning: implicit
->>> conversion from enumeration type 'enum dma_transfer_direction' to
->>> different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
->>>         dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
->>>                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
->>> ./include/linux/dma-mapping.h:428:66: note: expanded from macro
->>> 'dma_map_single'
->>> #define dma_map_single(d, a, s, r) dma_map_single_attrs(d, a, s, r, 0)
->>>                                    ~~~~~~~~~~~~~~~~~~~~          ^
->>> drivers/mtd/spi-nor/cadence-quadspi.c:997:43: warning: implicit
->>> conversion from enumeration type 'enum dma_transfer_direction' to
->>> different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
->>>         dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
->>>         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
->>> ./include/linux/dma-mapping.h:429:70: note: expanded from macro
->>> 'dma_unmap_single'
->>> #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, 0)
->>>                                      ~~~~~~~~~~~~~~~~~~~~~~          ^
->>> 2 warnings generated.
->>>
->>> Use the proper enums from dma_data_direction to satisfy Clang.
->>>
->>> DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
->>> DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
->>>
->>> Link: https://github.com/ClangBuiltLinux/linux/issues/108
->>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->>> ---
->>>  drivers/mtd/spi-nor/cadence-quadspi.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
->>> index 8e714fbfa521..d0e57ac81098 100644
->>> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
->>> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
->>> @@ -959,7 +959,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
->>>  		return 0;
->>>  	}
->>>  
->>> -	dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
->>> +	dma_dst = dma_map_single(nor->dev, buf, len, DMA_FROM_DEVICE);
->>>  	if (dma_mapping_error(nor->dev, dma_dst)) {
->>>  		dev_err(nor->dev, "dma mapping failed\n");
->>>  		return -ENOMEM;
->>> @@ -994,7 +994,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
->>>  	}
->>>  
->>>  err_unmap:
->>> -	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
->>> +	dma_unmap_single(nor->dev, dma_dst, len, DMA_TO_DEVICE);
->>
->> Should have used DMA_FROM_DEVICE, as you did above. Otherwise looks good.
->>
->> Cheers,
->> ta
-> 
-> Thank you very much for catching this, did several of these conversions
-> back to back and didn't look closely at this. I just sent a v2, I
-> appreciate the review!
-I guess I have some problems with my email server. I receive just some of the
-emails sent to linux-mtd@lists.infradead.org. I haven't received your v2 and I
-can't add my Reviewed-by tag there. But I checked v2 on
-https://patchwork.ozlabs.org/patch/974269/, looks good, so:
-
-Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com> for v2! :)
-
-Best,
-ta
+Applied, thanks.
