@@ -2,66 +2,75 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF5BC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F123CC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41ED0214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41ED0214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B0A0120842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A0120842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeIYXhC (ORCPT
+        id S1727579AbeIYXht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:37:02 -0400
-Received: from mga14.intel.com ([192.55.52.115]:25265 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726350AbeIYXhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:37:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 10:28:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
-   d="scan'208";a="83179144"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by FMSMGA003.fm.intel.com with ESMTP; 25 Sep 2018 10:28:31 -0700
-Message-ID: <57ab71005afeaeb195a49c72ae8c76481023130f.camel@intel.com>
-Subject: Re: [RFC PATCH v4 03/27] x86/fpu/xstate: Enable XSAVES system states
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Tue, 25 Sep 2018 10:23:57 -0700
-In-Reply-To: <20180925170355.GD30146@hirez.programming.kicks-ass.net>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
-         <20180921150351.20898-4-yu-cheng.yu@intel.com>
-         <20180925170355.GD30146@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
+        Tue, 25 Sep 2018 19:37:49 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42755 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbeIYXhs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:37:48 -0400
+Received: by mail-pg1-f196.google.com with SMTP id y4-v6so12051309pgp.9;
+        Tue, 25 Sep 2018 10:29:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aU8Y/8mDcaCk6uRU0aOMBAJ7SSRSxdGenG/C818kHl4=;
+        b=E/gksXwP97NzsNgMPFBdSsGJnUanVG8Izg7J0ZCOMRsGqvSjnczdNRukxmcX5wNGRu
+         AupMww9m8IjqaOKP3oNEely8uRNHD/GSvDCVuI3o6T9oevqq+7LdteyUoCBdRPeywgyM
+         f4UfL90XK8Bv0xmzGLO7SR05UZwl+z8tJFbJ/F6qjNM3r4lvK8t9YrnYrgQDKl4dX5JD
+         IqpGuJpMdbtfBeZvQjQ4Nbw5p+i3736voazpbEXTeriIb7P1GMIv6+HfyCv7/KGETYSX
+         ueq3d3/tB5A57RJDNLTND+d5It2676nR9doezMnrIlBXXnBGbMh3S/kZ09R/mIpcazTJ
+         nbDA==
+X-Gm-Message-State: ABuFfohkQZXDgkfAkc65Di/cG74F+tsTwywWsLXdGxUPKMuf5v37mGNS
+        JHaEE14qXxe9D/oJt/xTsJg=
+X-Google-Smtp-Source: ACcGV62BL4T1QFEJbGQ/tica4x+V2G6iRkFyRxPiamzoVd8rITZD4XFmVhO/3TPdYZouZbCtnfEwLQ==
+X-Received: by 2002:a62:1655:: with SMTP id 82-v6mr2152095pfw.11.1537896557509;
+        Tue, 25 Sep 2018 10:29:17 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id h124-v6sm4988061pfg.112.2018.09.25.10.29.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 10:29:16 -0700 (PDT)
+Message-ID: <1537896555.11137.22.camel@acm.org>
+Subject: Re: [PATCH v7 02/13] PCI/P2PDMA: Add sysfs group to display p2pmem
+ stats
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>
+Date:   Tue, 25 Sep 2018 10:29:15 -0700
+In-Reply-To: <20180925162231.4354-3-logang@deltatee.com>
+References: <20180925162231.4354-1-logang@deltatee.com>
+         <20180925162231.4354-3-logang@deltatee.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,28 +78,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-25 at 19:03 +0200, Peter Zijlstra wrote:
-> On Fri, Sep 21, 2018 at 08:03:27AM -0700, Yu-cheng Yu wrote:
-> > diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-> > index 4bd56079048f..9f51b0e1da25 100644
-> > --- a/arch/x86/kernel/fpu/core.c
-> > +++ b/arch/x86/kernel/fpu/core.c
-> > @@ -365,8 +365,13 @@ void fpu__drop(struct fpu *fpu)
-> >   */
-> >  static inline void copy_init_user_fpstate_to_fpregs(void)
-> >  {
-> > +	/*
-> > +	 * Only XSAVES user states are copied.
-> > +	 * System states are preserved.
-> > +	 */
-> >  	if (use_xsave())
-> > -		copy_kernel_to_xregs(&init_fpstate.xsave, -1);
-> > +		copy_kernel_to_xregs(&init_fpstate.xsave,
-> > +				     xfeatures_mask_user);
-> 
-> By my counting, that doesn't qualify for a line-break, it hits 80.
-> 
-> If you were to do this line-break, coding style would have you liberally
-> sprinkle {} around.
+On Tue, 2018-09-25 at 10:22 -0600, Logan Gunthorpe wrote:
++AD4 +AEAAQA -83,9 +-132,14 +AEAAQA static int pci+AF8-p2pdma+AF8-setup(struct pci+AF8-dev +ACo-pdev)
++AD4  
++AD4  	pdev-+AD4-p2pdma +AD0 p2p+ADs
++AD4  
++AD4 +-	error +AD0 sysfs+AF8-create+AF8-group(+ACY-pdev-+AD4-dev.kobj, +ACY-p2pmem+AF8-group)+ADs
++AD4 +-	if (error)
++AD4 +-		goto out+AF8-pool+AF8-destroy+ADs
++AD4 +-
++AD4  	return 0+ADs
++AD4  
++AD4  out+AF8-pool+AF8-destroy:
++AD4 +-	pdev-+AD4-p2pdma +AD0 NULL+ADs
++AD4  	gen+AF8-pool+AF8-destroy(p2p-+AD4-pool)+ADs
++AD4  out:
++AD4  	devm+AF8-kfree(+ACY-pdev-+AD4-dev, p2p)+ADs
 
-Ok, will fix it.
+This doesn't look right to me. Shouldn't devm+AF8-remove+AF8-action() be called instead
+of devm+AF8-kfree() if sysfs+AF8-create+AF8-group() fails?
+
+Thanks,
+
+Bart.
+
