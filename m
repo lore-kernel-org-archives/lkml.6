@@ -2,83 +2,76 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21839C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B9DC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE19120843
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:24:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE19120843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 639EF20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:25:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U9LVch04"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 639EF20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbeIYVcR (ORCPT
+        id S1729639AbeIYVdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:32:17 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40773 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729332AbeIYVcQ (ORCPT
+        Tue, 25 Sep 2018 17:33:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55478 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729484AbeIYVdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:32:16 -0400
-Received: by mail-oi1-f195.google.com with SMTP id j68-v6so1820317oib.7;
-        Tue, 25 Sep 2018 08:24:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pRJerkiXh55OKHZQeW/K57P/zQMWwWprSb0rEHrMCb8=;
-        b=OUxMteC8kY9Tqhf/ppRkxoO+X60ips3c7/MNoi4eQmMeue5KGvQjvfBAUoU4deVMLC
-         WOEKowP8wtJAYdE34KO/h0Iuqg4uWqrRAatbO9FdOmVHmS1s0IGWxfyDaYWB4gWhx22k
-         2VAkXpFYkmbourqqDw8LDP1iglfTWNy7KcGcU+3BXHOWT+JQAa4KcMd4RY+psk23zPVI
-         JJO8/oQeNWC0JdWdWnR81rSRuZCWezU9aMfmg/i592ZcBPpF7zHOJVnYg7VDaweLZTVj
-         bmMsDa/MU3F6vVenHgU2tbgNm+DMcdQ9ajUmiUFiR0Tnzsy9KGIPpA7ChuuKpbjrxrNK
-         Lmaw==
-X-Gm-Message-State: ABuFfoj3ntwkwrQoNT6s7ZiFyCgjk1pWWbqvPtNcUaxvVgHwxYtm8Lcs
-        D/v8qlojLVz+xp6DaT6hpg==
-X-Google-Smtp-Source: ACcGV63c0wRnTXZeR8eti1dfuwZsPpIA14cWvBtqs5eijlO47UBY4TUtY79Hi5UexGVmQMIIc78oLA==
-X-Received: by 2002:aca:5652:: with SMTP id k79-v6mr913294oib.296.1537889056783;
-        Tue, 25 Sep 2018 08:24:16 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a3-v6sm903578otd.17.2018.09.25.08.24.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 08:24:16 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 10:24:15 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Vikash Garodia <vgarodia@codeaurora.org>
-Cc:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
-        mchehab@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        arnd@arndb.de, bjorn.andersson@linaro.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, acourbot@chromium.org
-Subject: Re: [PATCH v9 5/5] dt-bindings: media: Document bindings for venus
- firmware device
-Message-ID: <20180925152415.GB21227@bogus>
-References: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
- <1537314192-26892-6-git-send-email-vgarodia@codeaurora.org>
+        Tue, 25 Sep 2018 17:33:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YZqbmfKjH4sK63MGj/DOrhrO67U5Wd4gJ8PCBf+FDx8=; b=U9LVch04QOLPnumbuppFb+HBj
+        ubnd+VCfei8klTrKfmmvb24ckt0fMgpHs/9MxNeAQelORWOscoCfnaqgnRn9Q0QQrFaks/BCfl9lD
+        /Jw0WBtlf7ITvA8JpSZwGuLYdPtLFylJOOqWKewFJBMNv7yGZUDJBfy750ZHKeSzO8gjjc259/MSf
+        Wuy3YabzQys7WQMsGQDBRx6IBb6Bf4kjBCSn3RiPianlvA166yi0Hdd5y1kwbM5leqbvUG8Yb2yIP
+        p4Kf4VuUYvjy1co9HVfCXaXQeXJFf5fPD//gDqquF8N4Qutv5dNtk+kQhiSw8SG6IOPI0uXszHBFP
+        +c93N3Mow==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4pD2-0006oZ-Ly; Tue, 25 Sep 2018 15:25:08 +0000
+Date:   Tue, 25 Sep 2018 08:25:08 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Zong Li <zongbox@gmail.com>
+Cc:     hch@infradead.org, palmer@sifive.com, aou@eecs.berkeley.edu,
+        vincentc@andestech.com, zong@andestech.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] lib: Add umoddi3 and udivmoddi4 of GCC library
+ routines
+Message-ID: <20180925152508.GA24002@infradead.org>
+References: <cover.1537260207.git.zongbox@gmail.com>
+ <2ccc6c0758624dbb22f6fe451a3e476a000108ef.1537260207.git.zongbox@gmail.com>
+ <20180921070006.GC8401@infradead.org>
+ <CA+ZOyaiJv-NZWk3ec_3zhRTSn7G-NGgyaiPTXOmuWfTWD7KSJw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537314192-26892-6-git-send-email-vgarodia@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CA+ZOyaiJv-NZWk3ec_3zhRTSn7G-NGgyaiPTXOmuWfTWD7KSJw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 05:13:12AM +0530, Vikash Garodia wrote:
-> Add devicetree binding documentation for firmware loader for video
-> hardware running on qualcomm chip.
-> 
-> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/media/qcom,venus.txt | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+On Tue, Sep 25, 2018 at 10:19:55AM +0800, Zong Li wrote:
+> The RV32 need the umoddi3 to do modulo when the operands are long long
+> type, like other libraries implementation such as ucmpdi2, lshrdi3 and
+> so on. I encounter the undefined reference 'umoddi3' when I use the in
+> house dma driver, although it is in house driver, but I think that
+> umoddi3 is a common function for RV32. The udivmoddi4 and umoddi3 are
+> copies from libgcc in gcc. There are other functions use the
+> udivmoddi4 in libgcc, so I separate the umoddi3 and udivmoddi4 for
+> flexible extension in the future.
 
-Something change in this? If not, then please add acks/reviewed-bys when 
-posting new versions.
-
-Rob
+I don't think libgcc is GPLv2 licensed, is it?  Also please retain
+the copyright notices from libgcc.
