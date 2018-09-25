@@ -2,103 +2,106 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FB3C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF10C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2033E206B5
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76550206B5
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:04:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="A3nIokxA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2033E206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jreFG2MW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76550206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbeIYXMJ (ORCPT
+        id S1727381AbeIYXM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:12:09 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45390 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeIYXMJ (ORCPT
+        Tue, 25 Sep 2018 19:12:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49458 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbeIYXM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:12:09 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t70-v6so7202465pgd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:03:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Nqwq16Q7LQxf+wL9ZlsvKIL3tzWSkHJMNq+NYLf1TYE=;
-        b=A3nIokxAhKkR0zCjC5M3XSlc1gUvwDSW8Eojho+EJqgVXdH/i2xNUvbTceOKJR5Ert
-         4HMWYogGRtQx85ka5dwChSB1Ji5Jmhj1tYF3FkpvzZJnHjQ7nxiyVE87Lee2qncMBtdM
-         KE5NTCt+EoKRQ6JWQkooYu2eyG2V6MQWVJfKCT6Fj+EuqiUYRUSM7GPRyDPNvOcwF6Ni
-         7wiYTesHjGyAQ2gVjj0kClVmTCEy/WtFh3USjvWItVH7gmrnJl2B7J4zNceaMk17K/aJ
-         NCDKBLW6CkD7z+RaBmaJJX6XLxyARBbkX+BKKZZYWuSJVH+fxP7GtH6e+lNmWN8o3p0b
-         x6yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=Nqwq16Q7LQxf+wL9ZlsvKIL3tzWSkHJMNq+NYLf1TYE=;
-        b=agm3iTlyp0CSXUxAJFMUyrcO0Sp0/z9QH2nsJup0VQZ15xmBrH5sM2MRY2qP7E2Md+
-         xb76oxAtC2xjV4OAz59tYFx+ohSWozqnP9GW5o4ddJ+BsusoeSy7/D+AnjlnTIlW8z2h
-         xIeqY53+sI09V1p5XqMuWnTYM2D4CFW/CFcUDwaZffJXfE0Wd8kPwODD0OGjzZjTpzu/
-         WbXQq9OSrJpdFw92vVZ2OMNpW2VXRtL0C97P91IjajHFy9GrunLVWzUw/w8F+nDJkDal
-         5Hz+PDRj2bJ/UrW/sZ4ihyG2bxOV34v8zx52DEHfjn+r0AFTCo5WNPR+cfpnfl/R4HAH
-         R3Lw==
-X-Gm-Message-State: ABuFfoiZWhzdqETt8muC9bVDAWSPNziRPy9wh4mW7MBg9Tc69GL/PpLy
-        IBJDwKLj+KrxF9YhB9bomQ9+TQ==
-X-Google-Smtp-Source: ACcGV61gQtUE1qqx24YnRTX+9OhomVq0kzD3+KISfcF5USdbis4H+MeRCw5EymGr/Hg+gNgf23r4ew==
-X-Received: by 2002:a17:902:8481:: with SMTP id c1-v6mr2133192plo.158.1537895024324;
-        Tue, 25 Sep 2018 10:03:44 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id r12-v6sm3818159pfh.79.2018.09.25.10.03.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 10:03:43 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 10:03:43 -0700 (PDT)
-X-Google-Original-Date: Tue, 25 Sep 2018 09:57:57 PDT (-0700)
-Subject:     Re: [PATCH] RISCV: Fix end PFN for low memory
-In-Reply-To: <50f35396-9e2b-c177-6a96-9c450c7abdde@wdc.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, Damien.LeMoal@wdc.com,
-        anup@brainfault.org, linux-kernel@vger.kernel.org,
-        terpstra@sifive.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     atish.patra@wdc.com
-Message-ID: <mhng-133e3d9b-f580-40d4-bb7a-9cafa72fbb93@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 25 Sep 2018 19:12:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XsmIVRHdh3Wn1iEaJpNxeLAZHl9WUmDC2Sfg61xGq3w=; b=jreFG2MWGnTgYSaN9+coo8mG9
+        ZdiZdiF9twVfcfX/8GJlt9YhLFHoXFv/raa20GuInpD75t0HhduTzJ7R+p01fGk8oae0Xs9Bst7Az
+        Yq/9vGqh4pwsmBP+W/MMbrsv5ipDgAzyz9r6qS2x18GAasDEpe7FfUiAYmqoiP8zeZA2Ir7mY6Hvk
+        HLrHcwj4B5+k6H1/8uK0MgKLrmlpuoWnjWjUlWcDO7o7SlWq6231btOYBXi0rE2mp9YbZZsPoPEwE
+        bMPE4++AcN4qgJOdj2hDZ+Rn5d6VbDgvNIWxkpu/gIFAWeWbJRd6rB8xa+z8KNPETjXPDxP1qIzmR
+        Y/1bvc7Mw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4qkh-0005oV-9w; Tue, 25 Sep 2018 17:04:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 380FC2025445D; Tue, 25 Sep 2018 19:03:55 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 19:03:55 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v4 03/27] x86/fpu/xstate: Enable XSAVES system states
+Message-ID: <20180925170355.GD30146@hirez.programming.kicks-ass.net>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+ <20180921150351.20898-4-yu-cheng.yu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921150351.20898-4-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 13:55:04 PDT (-0700), atish.patra@wdc.com wrote:
-> On 9/17/18 7:08 AM, Christoph Hellwig wrote:
->> On Tue, Sep 11, 2018 at 11:30:18AM -0700, Atish Patra wrote:
->>> Use memblock_end_of_DRAM which provides correct last low memory
->>> PFN. Without that, DMA32 region becomes empty resulting in zero
->>> pages being allocated for DMA32.
->>>
->>> This patch is based on earlier patch from palmer which never
->>> merged into 4.19. I just edited the commit text to make more
->>> sense.
->>
->> Looks good,
->>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->>
->> Palmer, can you queue this up for 4.19?
->>
-> Hi Palmer,
-> I did not see this one pulled into your rc6 PR.
-> Not sure if it was intentional or just lost in heap of emails.
+On Fri, Sep 21, 2018 at 08:03:27AM -0700, Yu-cheng Yu wrote:
+> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+> index 4bd56079048f..9f51b0e1da25 100644
+> --- a/arch/x86/kernel/fpu/core.c
+> +++ b/arch/x86/kernel/fpu/core.c
+> @@ -365,8 +365,13 @@ void fpu__drop(struct fpu *fpu)
+>   */
+>  static inline void copy_init_user_fpstate_to_fpregs(void)
+>  {
+> +	/*
+> +	 * Only XSAVES user states are copied.
+> +	 * System states are preserved.
+> +	 */
+>  	if (use_xsave())
+> -		copy_kernel_to_xregs(&init_fpstate.xsave, -1);
+> +		copy_kernel_to_xregs(&init_fpstate.xsave,
+> +				     xfeatures_mask_user);
 
-Looks like it got lost, sorry.  It's in my branch now, I might re-spin the rc6 
-PR because it looks like I may have screwed it up, if not I'll put it in rc7.
+By my counting, that doesn't qualify for a line-break, it hits 80.
 
-Thanks for the ping!
+If you were to do this line-break, coding style would have you liberally
+sprinkle {} around.
+
+>  	else if (static_cpu_has(X86_FEATURE_FXSR))
+>  		copy_kernel_to_fxregs(&init_fpstate.fxsave);
+>  	else
