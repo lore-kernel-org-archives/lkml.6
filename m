@@ -2,114 +2,90 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F939C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C04C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFBFC21480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B0B82145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:34:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="lUA8JERH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFBFC21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M6xiOw9n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B0B82145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbeIYI3x (ORCPT
+        id S1727629AbeIYIjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 04:29:53 -0400
-Received: from cock.li ([185.100.85.212]:38462 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726021AbeIYI3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 04:29:53 -0400
+        Tue, 25 Sep 2018 04:39:20 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38744 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727428AbeIYIjT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 04:39:19 -0400
+Received: by mail-it1-f195.google.com with SMTP id p129-v6so13300934ite.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 19:34:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dVmfr63hrnP4U38TbLg1c0GMQyb98je9tIJ7oyY1q+c=;
+        b=M6xiOw9nv2H1sEPveZKoB6Qob7hjg/vLl7bE62qxvked+Jm0Nt6Xpl6ftjsmwsoQsa
+         TxnjPkY5XrSoe5bYFcek+2Vu78xiUw4amETINDnHNCh4BAROAkAIhCmAziC1DXY20tps
+         ULWf1AWAuidVM3H3MAkfSly+LMC6zxbMtPioAKVbu8qqEhWRCH/odQrY0xWg8SGMQqpx
+         Pttp21R5Xi12Q5buNFEqFnVpulmwKPCgpdTStpL/eJZw49dRjxmh9SoTxUth5NN+8JAa
+         npIuY9fUfWYbXYdWkNASS3Ir0mQpNFOyfmgU5elcKws96srVDsz3zCxJRHxk+TCPQ2XF
+         l3YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dVmfr63hrnP4U38TbLg1c0GMQyb98je9tIJ7oyY1q+c=;
+        b=oRsziiUl57bdyL+NCyaV7dFG8nsS2r1uDY4kfCOMIvliHkI/QTXTjD8ma1MRWdc2M2
+         XXh6eNYd41T6fFHkQLU/ye08jwd4REqQDJUwkRXAiIdEoRH2DNi32NH1pGBzlgCDPNqa
+         5oLwi9PptCkQFM8QFtzT8JwXwymfzH7L4i1ybGMeQkb3QCFJ4lzEU9rOiGGVEf1p/bNs
+         ZKH9sM2QMnntBQAZgFxCcA51znsXUWLCfajrN33Lt45VSk8faXdsUvbdLKOPrwbmtktc
+         Xr83cy1p4KZNdCoRh3MBWnrsgM3Bf9cAkGEC+81MX+8L94IJSha6fyGHarcXHq+nFYra
+         72Ww==
+X-Gm-Message-State: ABuFfojIoR9ZE0TV5nflDYxzZP7hc/fYdqEnJWUYaPl6d3D933/EgPu8
+        gxNNCRornB3LycKIvwtB2RR/JbRjIkKHr1zTVjU=
+X-Google-Smtp-Source: ACcGV61sz7wbYZ75HAF6Jry/tPsvlQsGl7XtzT8+NVsyH9C5lpLoJTG/ko0JH/aiKdEXP3kJ/1GQSUn4jBOIGwRHwwI=
+X-Received: by 2002:a24:ee0c:: with SMTP id b12-v6mr1016681iti.33.1537842844025;
+ Mon, 24 Sep 2018 19:34:04 -0700 (PDT)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537842274; bh=pU1K+hwLIWzrA+e+QFODrMS/CcKRKkeXiaY9YqhHkJ4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lUA8JERH3U4wOW+aPTIYaf9sKdDUSuVHVZvSvO1VjwtIhTNTpm2tTWYXXJIeTqrep
-         TbxWOG008s20oTvmoutGYOq+yREb4M9XsBbOOjrrC09f4dxuoUewDpsB6e77G5OEnu
-         Sr9zqTDLU0Ks+YF33LzRNEU7IWFfGWjeDW0mDj1+tJaYW8zCXdTwEoE2wPU29GUuaQ
-         tFTC4Lp02V3GlIV0CL5WnId+jKPj/tsEA9rObAYjFPckipjCzWbgNu7CYazxod+AJg
-         oqMwZixsPs0AG5YGcbjCA6I0IkA0zw2oWhu4pAyKc3qhUX9wbWeam5pnogRK0B+Vc4
-         2SsT5GxN4250Q==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 25 Sep 2018 02:24:33 +0000
-From:   gratuitouslicensesarerevocable@redchan.it
-To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Cc:     xDynamite <dreamingforward@gmail.com>, jonsmirl@gmail.com,
-        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
-        riel@surriel.com, ec429@cantab.net,
-        Olof Johansson <olof@lixom.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: Code of Conduct: Let's revamp it.
-In-Reply-To: <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
- <20180919081812.020f19e3@lwn.net>
- <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
- <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
- <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
- <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
- <87zhwbj8xe.fsf@redhat.com>
- <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
- <20180921231545.GC2966@thunk.org>
- <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
- <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
- <CAMjeLr-a4cCrs0cF0aBRoeeXXLwiM835BXqhP9ZoeLB8=w=YKw@mail.gmail.com>
- <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
-Message-ID: <cef416a396412fa02cf9c91377ae19b9@redchan.it>
-X-Sender: gratuitouslicensesarerevocable@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+References: <cover.1537260207.git.zongbox@gmail.com> <40c77db9ee2d23479ff90f2658539d29d7a30896.1537260207.git.zongbox@gmail.com>
+ <20180921065806.GA8401@infradead.org>
+In-Reply-To: <20180921065806.GA8401@infradead.org>
+From:   Zong Li <zongbox@gmail.com>
+Date:   Tue, 25 Sep 2018 10:33:52 +0800
+Message-ID: <CA+ZOyaj2Ed3GCK0icaRNcttM7set=V1ffravCZefwmykD8=eMg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] RISC-V: Build tishift only on 64-bit
+To:     hch@infradead.org
+Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        Vincent Chen <vincentc@andestech.com>,
+        Zong Li <zong@andestech.com>, linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In your employment contract there exists a provision where you sign over 
-your rights to any and all intellectual property, patents, copyrights 
-developed during your term of employment.
+Christoph Hellwig <hch@infradead.org> =E6=96=BC 2018=E5=B9=B49=E6=9C=8821=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=882:58=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On Tue, Sep 18, 2018 at 05:19:13PM +0800, Zong Li wrote:
+> > Only RV64 supports 128 integer size.
+> >
+> > Signed-off-by: Zong Li <zong@andestech.com>
+>
+> This looks fine.  Just curious, what do we even need 128-bit integers
+> for on riscv64?  Did you see any issues if you drop it entirely?
 
-Said clause makes it clear that what you've furnished is a work-for-hire 
-and owned by the company or the entity you have contracted with.
-
-It should be clear why that is not the case with regards to kernel 
-contributions by third parties.
-Unlike the FSF etc, Linus never required nor sought copyright 
-assignments: thus you still own your code.
-
-You were not paid valuable consideration by the licensees for the code.
-There exists no interest to bind your hand.
-
-You never even suggested to said licensees that you would forfeit your 
-right to revoke.
-Furthermore, they were incapable of relying on said in-existent 
-utterances.
-
-You may revoke at your pleasure.
-And they shall be bound by the will of your countenance.
-
-On 2018-09-24 19:45, Bernd Petrovitsch wrote:
-> BTW you cannot do that at your workplace either because in all sane
-> software development companies you cease all (transferable) rights of
-> your written to the company paying you (and the rest is usually not
-> enough to get anything revoked).
-> 
-> I don't see why that should be any different with GPLv2 patches for the
-> Kernel sent to public mailinglists with the intent of inclusion.
-> 
-> Please get back to the issue and circumstances at hand and do not try 
-> to
-> divert people with "not intended for the public" or "semi-public" or 
-> any
-> other off-topic stuff which is clearly not the case here.
-> Or - even better - shut up, unsubscribe and go away, thank you.
-> 
-> MfG,
-> 	Bernd, NAL but I talked to a lot of them;-)
-> 
-> PS: Sorry for troll feeding:-(
+You can refer to this issue, but I didn't try it.
+https://github.com/riscv/riscv-linux/issues/136
