@@ -1,52 +1,148 @@
 Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PHOTO_EDITING_FREEM,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C9CC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F8EC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F8D2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:40:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F8D2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verizon.net
+	by mail.kernel.org (Postfix) with ESMTP id 8851D214C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:42:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="eyFiitA3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8851D214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729981AbeIYVsY (ORCPT
+        id S1729590AbeIYVuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:48:24 -0400
-Received: from nl103.nixwebsolutions.com ([185.216.140.103]:42034 "EHLO
-        turbosaw.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729570AbeIYVsY (ORCPT
+        Tue, 25 Sep 2018 17:50:02 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36303 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729438AbeIYVuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:48:24 -0400
-To:     linux-kernel@vger.kernel.org
-Subject: Editing for 4
-Message-ID: <8443ec4a49495e5e0d6aa92939788f05@tripsavvy.com>
-Date:   Tue, 25 Sep 2018 14:54:14 +0200
-From:   "Heather" <dteinteerrpatnloz@verizon.net>
-Reply-To: tavlanten@aliyun.com
+        Tue, 25 Sep 2018 17:50:02 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p89-v6so6054666ljb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fx8+Lev8T9+Igtmh+a7EAhssvEtlwPbv3jmGL28Jx1Y=;
+        b=eyFiitA3IBBLeTNvyoqF3djg+mPhgF0mnhPLAYeiKSjyvgb1X6pp93SrG+dzqXt29U
+         iglKX2NVmQtkyfNVCPvLfbnwcieCpfH+589QVJxUE675DcIoRIgSWibd/A/+aU4Za9Tk
+         EQezAzom9A+/CvUryUCf0hr2hw30ArCBnpR9K9wO15VUfUqXP4zE0Qs3nm7Ud/cRCf0a
+         9AaD8t5TbHvyY7gbk1ZJj8xM+q0GsOCuGyYBye+LSeA1glm+emFKuabIfqZ9229wqkr5
+         3Gg1bLAYobqICSezTjd1nPd3ElFNEMpGiDTlQ9OiWW75hZgZpixsy4OsAWstW1+CoD42
+         mRAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fx8+Lev8T9+Igtmh+a7EAhssvEtlwPbv3jmGL28Jx1Y=;
+        b=NsQroqf1GgSsBQW2VWwPYAZ39lLRY11e6DEPVqjaBqGfVT1O0vw2SvAYun2fUdCOCG
+         VyZ0skd/r2xNO9KT3xmfpzBPH/9LQougRMU8OVa1tBsjKdMrTNjRSemQgUaHlS5fmjKa
+         O3hi2ADf0u+BOfDVf9Je0Qtvct+2OQb64ax0+UxvGC51j7PkW6CqLJ/lBw4mjweKYpfS
+         DDdE8ZoAEwnIHaiiwMEHnkzL5p894/duEG8QyUejfF4ju2MlwafNQH8EKaLoPoDgId8K
+         Sr8Ib75WbsybpCqHHtqcl5LGi/6BimjDOIeoaS2s7Zvb3JmmAfbhZv450bMbYaasLk0g
+         VlZA==
+X-Gm-Message-State: ABuFfogoYOUoAXyGonmNhVaDJxUmcqBhjDv+quroo1lRPa7fB0cumWf3
+        vnCtmJMQZMnIRnXy+VsreTDw2hTmG0didrVfVpE3
+X-Google-Smtp-Source: ACcGV61ss3ae9OmtBqkbnoual1fl8UpOcFM422DgOAzszel6/cbnHS4cNfRMV9xq5mZk/BcCetX+ntNGaiIl3aDzpmA=
+X-Received: by 2002:a2e:44c6:: with SMTP id b67-v6mr1380018ljf.102.1537890115441;
+ Tue, 25 Sep 2018 08:41:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+References: <20180919165248.53090-1-takondra@cisco.com> <f283c1e7-19eb-2b99-3fef-a19e2bf99a2b@tycho.nsa.gov>
+ <153741130781.7326.1773144725860636439@takondra-t460s> <9a944aea-f35e-5a49-841d-6bfca8f17b9d@tycho.nsa.gov>
+ <153748436388.5590.1406237328277739821@takondra-t460s> <66ec16b0-a335-d9ef-deb3-ef391cdd66e0@tycho.nsa.gov>
+ <CAHC9VhRorkfqRTsssx_eGMy+fJQtoJew7f5i24UBkZ6tGJ5CUw@mail.gmail.com> <153785433233.5039.17960184426345262866@takondra-t460s>
+In-Reply-To: <153785433233.5039.17960184426345262866@takondra-t460s>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 25 Sep 2018 11:41:44 -0400
+Message-ID: <CAHC9VhQdUcxsyXRiEq2=AnZjoJEA5GxOb7vx+==oZdaKm3s7fA@mail.gmail.com>
+Subject: Re: [RFC PATCH] selinux: add a fallback to defcontext for native labeling
+To:     takondra@cisco.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        linux-kernel@vger.kernel.org, xe-linux-external@cisco.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Want editing for your photos? We can help you for this.
+On Tue, Sep 25, 2018 at 1:45 AM Taras Kondratiuk <takondra@cisco.com> wrote:
+> Quoting Paul Moore (2018-09-24 20:46:57)
+> > On Fri, Sep 21, 2018 at 10:39 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > On 09/20/2018 06:59 PM, Taras Kondratiuk wrote:
+> > > > Quoting Stephen Smalley (2018-09-20 07:49:12)
+> > > >> On 09/19/2018 10:41 PM, Taras Kondratiuk wrote:
+> > > >>> Quoting Stephen Smalley (2018-09-19 12:00:33)
+> > > >>>> On 09/19/2018 12:52 PM, Taras Kondratiuk wrote:
+> >
+> > ...
+> >
+> > > > IMO it would be more consistent if defcontext cover all "unlabeled"
+> > > > groups. It seems unlikely to me that somebody who currently uses
+> > > > defcontext can somehow rely on mapping invalid labels to unlabeled
+> > > > instead of default context.
+> > >
+> > > Yes, and that seems more consistent with the current documentation in
+> > > the mount man page for defcontext=.
+> > >
+> > > I'd be inclined to change selinux_inode_notifysecctx() to call
+> > > security_context_to_sid_default() directly instead of using
+> > > selinux_inode_setsecurity() and change security_context_to_sid_core()
+> > > and sidtab_search_core() as suggested above to save and use the def_sid
+> > > instead of SECINITSID_UNLABELED always (initializing the context def_sid
+> > > to SECINITSID_UNLABELED as the default).  selinux_inode_setsecurity() we
+> > > should leave unchanged, or if we change it at all, it should be more
+> > > like the handling in selinux_inode_setxattr().  The notifysecctx hook is
+> > > invoked by the filesystem to notify the security module of the file's
+> > > existing security context, so in that case we always want the _default
+> > > behavior, whereas the setsecurity hook is invoked by the vfs or the
+> > > filesystem to set the security context of a file to a new value, so in
+> > > that case we would only use the _force interface if the caller had
+> > > CAP_MAC_ADMIN.
+> > >
+> > > Paul, what say you?  NB This would be a user-visible behavior change for
+> > > mounts specifying defcontext= on xattr filesystems; files with invalid
+> > > contexts will then show up with the defcontext value instead of the
+> > > unlabeled context.  If that's too risky, then we'd need a flag or
+> > > something to security_context_to_sid_default() to distinguish the
+> > > behaviors and only set it when called from selinux_inode_notifysecctx().
+> >
+> > Visible changes like this are always worrisome, even though I think it
+> > is safe to assume that the defcontext option is not widely used.  I'd
+> > feel much better if this change was opt-in.
+> >
+> > Which brings about it's own problems.  We have the policy capability
+> > functionality, but that is likely a poor fit for this as the policy
+> > capabilities are usually controlled by the Linux distribution while
+> > the mount options are set by the system's administrator when the
+> > filesystem is mounted.  We could add a toggle somewhere in selinuxfs,
+> > but I really dislike that idea, and would prefer to find a different
+> > solution if possible.  I'm not sure how much flak we would get for
+> > introducing a new mount option, but perhaps that is the best way to
+> > handle this: defcontext would continue to behave as it does now, but
+> > new option X would behave as mentioned in this thread.
+> >
+> > Thoughts?
+>
+> The new option X will also mean "default context", so it will be pretty
+> hard to come up with a different but a sensible name. I'm afraid that
+> having two options with hardly distinguishable semantics will be very
+> confusing.
+>
+> What about a kernel config option that modifies the behavior of
+> defcontext?
 
-We can do cutting out and retouching for your ecommerce photos, jewelry
-photos retouching,
-portrait photos or wedding photos.
+A kernel config option would be going in the wrong direction; that
+would put it almost completely under the control of the distribution.
 
-Turnaround time is fast
-
-Send us one photo, we wil do testing for you.
-
-Thanks,
-Heather
-
+-- 
+paul moore
+www.paul-moore.com
