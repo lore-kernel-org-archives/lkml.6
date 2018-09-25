@@ -2,99 +2,123 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25643C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE748C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7C52145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:41:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="igH4TD2h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F7C52145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AAC4C2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 10:42:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC4C2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeIYQso (ORCPT
+        id S1728436AbeIYQtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 12:48:44 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53284 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726660AbeIYQsn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 12:48:43 -0400
-Received: by mail-it1-f196.google.com with SMTP id q70-v6so6140235itb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 03:41:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WAFOoiqw4OgimMrYaEbs1bv1Pp17vjcrwvuFbvmomNQ=;
-        b=igH4TD2h3NqUJn87vG46qrHa8fyYBi1u/rvuocwvBr7+G/O+PZDJMmUqkHmY9C1ZJt
-         gEJQQe8Qt0/JsxHNpcGa6/oDjdYkr0JyY+IFUtC1NxVNT8mdz4KVA+/B0XMNLbwWjjPZ
-         H4wRPxhSZQgG1mfWTsBD/E4DrYNY/FyLGRiYQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WAFOoiqw4OgimMrYaEbs1bv1Pp17vjcrwvuFbvmomNQ=;
-        b=a9ffx7izlq3okM6+kzLqf5RTzdCI85HrOlg5Cu8BZk53c3NDQZhl7D33HmJvZ7Un1u
-         sTm4ZWiv820HPJe5Q6uRGwRtk6WdQ8BwevDSmj0ghMv5nlHwzatE0Yf3JjSojdFDaSxF
-         JRBooVSp6gzAAsDWkeyZ/h1jj24YK6hw/WPzRwRxhE45dlm85XLvyLYNpesafwphMSRJ
-         vXTofzTw90WGGE2+x5kNQ1lDDIzRxNsgL6uqATOxkpe8AeeWZgagg6OAg6L+NRQcUCia
-         BKlegVztgWNgx6vw5U6qHyYss81UGpXwwMWzfgv3gsP29MJJUn/OM6dDtagFw3oFSjRO
-         8iUw==
-X-Gm-Message-State: ABuFfoiOrL19OHOQkrOvVz7r9smUeLRCzAhtx7AOK8TNmkq6Y7GpMhCl
-        E9XyBK6ckGihQ0USeBUix6UZm1IDNSVrgGRVRrJow6/+
-X-Google-Smtp-Source: ACcGV60ZZpCsrb2wLB/Tw2p9l2Tcs0czXlJt/iJKHSt/FlcuT2TVk2pmsn0lIKCf4pRTBTRttpjBsa6GlUxO3hrHj+I=
-X-Received: by 2002:a24:83c1:: with SMTP id d184-v6mr144770ite.16.1537872108039;
- Tue, 25 Sep 2018 03:41:48 -0700 (PDT)
+        Tue, 25 Sep 2018 12:49:24 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38286 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726660AbeIYQtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 12:49:23 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 91B4820731; Tue, 25 Sep 2018 12:42:25 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 65D81203DA;
+        Tue, 25 Sep 2018 12:42:25 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 12:42:26 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm@kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: at91: DT for 4.20
+Message-ID: <20180925104226.GA32034@piout.net>
 MIME-Version: 1.0
-References: <20180922195826.175628-1-djkurtz@chromium.org>
-In-Reply-To: <20180922195826.175628-1-djkurtz@chromium.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Sep 2018 12:41:34 +0200
-Message-ID: <CACRpkdZrmjjQ4CQFgV9gmCzEJVwoE1850+4iMen2-sCK3xp0Eg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl/amd: poll InterruptEnable bits in amd_gpio_irq_set_type
-To:     Daniel Kurtz <djkurtz@chromium.org>
-Cc:     Daniel Drake <drake@endlessm.com>,
-        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
-        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
-        Ken Xue <Ken.Xue@amd.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 9:58 PM Daniel Kurtz <djkurtz@chromium.org> wrote:
+Arnd, Olof,
 
-> From the AMD BKDG, if WAKE_INT_MASTER_REG.MaskStsEn is set, a software
-> write to the debounce registers of *any* gpio will block wake/interrupt
-> status generation for *all* gpios for a length of time that depends on
-> WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the Interrupt
-> Delivery bit (INTERRUPT_ENABLE) will read as 0.
->
-> In commit 4c1de0414a1340 ("pinctrl/amd: poll InterruptEnable bits in
-> enable_irq") we tried to fix this same "gpio Interrupts are blocked
-> immediately after writing debounce registers" problem, but incorrectly
-> assumed it only affected the gpio whose debounce was being configured
-> and not ALL gpios.
->
-> To solve this for all gpios, we move the polling loop from
-> amd_gpio_irq_enable() to amd_gpio_irq_set_type(), while holding the gpio
-> spinlock.  This ensures that another gpio operation (e.g.
-> amd_gpio_irq_unmask()) can read a temporarily disabled IRQ and
-> incorrectly disable it while trying to modify some other register bits.
->
-> Fixes: 4c1de0414a1340 pinctrl/amd: poll InterruptEnable bits in enable_irq
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Here are the DT changes for 4.20. Mostly cleanups and small additions.
 
-Patch applied for fixes.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-Thanks!
-Linus Walleij
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-4.20-dt
+
+for you to fetch changes up to 97181516b0785dd032700ae4899842389c6bea78:
+
+  arm: dts: sama5d2: Update coresight bindings for hardware ports (2018-09-19 19:12:25 +0200)
+
+----------------------------------------------------------------
+AT91 DT for 4.20
+
+ - warning fiwes from Rob
+ - many updates for the axentia boards
+ - ADC, I2S and touch screen support for sama5d2
+
+----------------------------------------------------------------
+Codrin Ciubotariu (1):
+      ARM: dts: at91: sama5d2: add I2S clock muxing nodes
+
+Cyrille Pitchen (2):
+      ARM: dts: at91: sama5d2: add nodes for I2S controllers
+      ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
+
+Eugen Hristev (4):
+      ARM: dts: at91: sama5d2: add channel cells for ADC device
+      ARM: dts: at91: sama5d2: Add resistive touch device
+      ARM: dts: at91: sama5d4: add labels to soc dtsi for derivative boards
+      ARM: dts: at91: sama5d27_som1_ek: add adc regulators
+
+Jay Foster (1):
+      ARM: dts: at91/trivial: Fix USART1 definition for at91sam9g45
+
+Nicolas Ferre (1):
+      ARM: dts: at91/trivial: remove old NAND bindings leftover in sama5d2
+
+Peter Rosin (7):
+      ARM: dts: at91: nattis: set the PRLUD and HIPOW signals low
+      ARM: dts: at91: nattis: make the SD-card slot work
+      ARM: dts: at91: nattis: state the actual lvds-encoder chip
+      ARM: dts: at91: nattis: move pinctrls for the lvds chip to the lvds node
+      ARM: dts: at91: nattis: describe the lvds panel
+      ARM: dts: at91: nattis: drop three indentation levels
+      ARM: dts: at91: tse850: drop three indentation levels
+
+Rob Herring (1):
+      ARM: dts: atmel: Fix I2C and SPI bus warnings
+
+Suzuki K Poulose (1):
+      arm: dts: sama5d2: Update coresight bindings for hardware ports
+
+ arch/arm/boot/dts/at91-dvk_su60_somc.dtsi     |   4 +-
+ arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi |   4 +-
+ arch/arm/boot/dts/at91-nattis-2-natte-2.dts   | 103 +++++++++++----------
+ arch/arm/boot/dts/at91-sama5d27_som1_ek.dts   |  42 +++++++++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts   |  30 +++++++
+ arch/arm/boot/dts/at91-tse850-3.dts           |  32 +++----
+ arch/arm/boot/dts/at91-vinco.dts              |   2 +-
+ arch/arm/boot/dts/at91sam9260ek.dts           |   2 +-
+ arch/arm/boot/dts/at91sam9261ek.dts           |   2 +-
+ arch/arm/boot/dts/at91sam9g20ek_common.dtsi   |   2 +-
+ arch/arm/boot/dts/at91sam9g45.dtsi            |   2 +-
+ arch/arm/boot/dts/sama5d2.dtsi                | 123 ++++++++++++++++----------
+ arch/arm/boot/dts/sama5d4.dtsi                |   8 +-
+ 13 files changed, 233 insertions(+), 123 deletions(-)
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
