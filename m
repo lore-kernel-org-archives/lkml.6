@@ -2,103 +2,69 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BB6C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52323C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C107214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:25:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C107214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 07C6620645
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 14:25:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C6620645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbeIYUcq (ORCPT
+        id S1729464AbeIYUdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 16:32:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50942 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729216AbeIYUcp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:32:45 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B9A3E23;
-        Tue, 25 Sep 2018 14:25:00 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 16:24:57 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 4.19-rc4
-Message-ID: <20180925142457.GA27274@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 25 Sep 2018 16:33:36 -0400
+Received: from mga04.intel.com ([192.55.52.120]:38154 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729216AbeIYUdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 16:33:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 07:25:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,302,1534834800"; 
+   d="scan'208";a="75791266"
+Received: from thomasvo-mobl2.ger.corp.intel.com ([10.252.53.212])
+  by orsmga007.jf.intel.com with ESMTP; 25 Sep 2018 07:25:41 -0700
+Message-ID: <ca7221f592cfcdc312fe1ec72623f118dfa21788.camel@linux.intel.com>
+Subject: Re: [PATCH v4 20/21] tpm1: reimplement tpm1_continue_selftest()
+ using tpm_buf
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 25 Sep 2018 17:25:40 +0300
+In-Reply-To: <5f142a3b-15b8-368b-19e5-5926b20addfd@linux.vnet.ibm.com>
+References: <20180921135820.20549-1-tomas.winkler@intel.com>
+         <20180921135820.20549-21-tomas.winkler@intel.com>
+         <5f142a3b-15b8-368b-19e5-5926b20addfd@linux.vnet.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 7876320f88802b22d4e2daf7eb027dd14175a0f8:
+On Tue, 2018-09-25 at 15:53 +0530, Nayna Jain wrote:
+> > +
+> > +	rc = tpm_transmit_cmd(chip, NULL, &buf.data, PAGE_SIZE,
+> 
+> I think this needs to buf.data instead of &buf.data
+> 
+> Thanks & Regards,
+>       - Nayna
 
-  Linux 4.19-rc4 (2018-09-16 11:52:37 -0700)
+You are absolutely right. Thank you.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-4.19-rc6
-
-for you to fetch changes up to 3e3b81965cbfa01fda6d77750feedc3c46fc28d0:
-
-  usb: typec: mux: Take care of driver module reference counting (2018-09-20 13:35:01 +0200)
-
-----------------------------------------------------------------
-USB fixes for 4.19-rc6
-
-Here are some small USB core and driver fixes for reported issues for
-4.19-rc6.
-
-The most visible is the oops fix for when the USB core is built into the
-kernel that is present in 4.18.  Turns out not many people actually do
-that so it went unnoticed for a while.  The rest is some tiny typec,
-musb, and other core fixes.
-
-All have been in linux-next with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Alan Stern (3):
-      USB: remove LPM management from usb_driver_claim_interface()
-      USB: fix error handling in usb_driver_claim_interface()
-      USB: handle NULL config in usb_find_alt_setting()
-
-Bin Liu (1):
-      usb: musb: dsps: do not disable CPPI41 irq in driver teardown
-
-Harry Pan (1):
-      usb: core: safely deal with the dynamic quirk lists
-
-Heikki Krogerus (2):
-      usb: roles: Take care of driver module reference counting
-      usb: typec: mux: Take care of driver module reference counting
-
-Oliver Neukum (2):
-      USB: usbdevfs: sanitize flags more
-      USB: usbdevfs: restore warning for nonsensical flags
-
-Sebastian Andrzej Siewior (1):
-      Revert "usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()"
-
- drivers/usb/class/cdc-wdm.c  |  2 +-
- drivers/usb/common/roles.c   | 15 ++++++++++++---
- drivers/usb/core/devio.c     | 24 +++++++++++++++++++++---
- drivers/usb/core/driver.c    | 28 ++++++++++++++--------------
- drivers/usb/core/quirks.c    |  3 ++-
- drivers/usb/core/usb.c       |  2 ++
- drivers/usb/musb/musb_dsps.c | 12 +-----------
- drivers/usb/typec/mux.c      | 17 +++++++++++++----
- 8 files changed, 66 insertions(+), 37 deletions(-)
+/Jarkko
