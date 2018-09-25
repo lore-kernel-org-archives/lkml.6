@@ -7,60 +7,61 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D41C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A84C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF99520880
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:41:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B82A520880
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:42:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqYbV+M5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF99520880
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K17nuKsz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B82A520880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbeIYTtH (ORCPT
+        id S1729262AbeIYTtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 15:49:07 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38794 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbeIYTtG (ORCPT
+        Tue, 25 Sep 2018 15:49:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38857 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbeIYTtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 15:49:06 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p6-v6so21777576ljc.5;
-        Tue, 25 Sep 2018 06:41:29 -0700 (PDT)
+        Tue, 25 Sep 2018 15:49:40 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so21779643ljc.5;
+        Tue, 25 Sep 2018 06:42:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=52d1pkZEyyjMGUj1pGDGzeqH/kccnRWlg0ghfV1RZ4E=;
-        b=fqYbV+M5L+JJPPksxDHImATcYppo/RDF4Mr8bx0WzLE2KdoNgpTY6bbnxcjefG7l7g
-         tj8IwtYqYEo00gyLIoxwlu6wyI9QBNn96WE4wQqbrCX2NqjvLVzkp4g0T8ydxoA+U2If
-         u/TkSCGH1Jf04Djl95nJkbSID9FSZXl0gOK/l+dKY0n/VLzesn4et+XzOqejQ5ZQfJgl
-         7qBpqpmtcbQchwIAgAaqOhDuqobF2pMmnRNHP8ThfhohkvrjyYmzFuh2FHvlKZ/vGAgb
-         0TlgM64hb0+pBePKpiz/XJh4LTs0Z9DMcsWweVkwj52dQ8FWHzbpBZ+Iwodn+f6dIoqI
-         I+Lg==
+        bh=e4EnJUZt4PcsuI0RkCxnc/T2R/e6LXuD486RYhyGkm4=;
+        b=K17nuKsz6hNqjB5QtIYkrkem+m5zaw8cRTcDu9J3HFF7Vq8+5U5Mi6yzX72F/+eWjx
+         dtpgbFm13Q0PQibN1Z2dlQxkils5orX3U5qlJJ27Dy+Mjy+nKUFs6WKRvY5YAgEscCoG
+         PZjM1NsV1eq8iFmyYHaS3UF40cV+R71LEAV2zKc14/VJkh1nntYrK2jaSOx8NfAakH/+
+         6I7wvp/FG3ulZSXcKw/Ty2DHwbMTMeB6khJaxyHpBF2ud3reodldbSEi8JclWvGn3/7E
+         YvPs6NPTd5GROMcv2fklHoluceor8maJcFyL5s3q22s5yIQL/Y9F/iTi8n0UAFRkgtbT
+         Y3IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=52d1pkZEyyjMGUj1pGDGzeqH/kccnRWlg0ghfV1RZ4E=;
-        b=M6VtHTyVKiAVMsuToXIkvcvLphYYYZ/nFHILAKuzr1aSCRzZMhwInKeW+V13pu7MoV
-         hgOpznQqyh4mbIXAr6La/VYpEtGZ/FmDGNT0CP2ZnOGpwDQ0mPtx7do05DeVkZKpfqt/
-         z2rLejoWnkjFHbPQQNepKDNAAGemBQKhSZvH21j/8ZbhVqlkrrrxi8Fa7TL1K57fDQq+
-         H2DXFQmNn7TIpWr0SrqkgpoxomjoqhuXkuc1GitWbswivuvC/1XXl0hbxQ7r9nOk0MhS
-         +DydtCYNAYWIQJ3iLsHpC5PwiCw7Vc56k7WsE/bggQuiyEKUi4ylFc7KEg6daOPIzqnR
-         qXXQ==
-X-Gm-Message-State: ABuFfoinD2xvO6Q03EStpj3Tw4tQNs/5mlwrU0R1jBs57hDnQqMjvJkW
-        MjGzD7A+WhKalRCj/M+gWXcQ57+K
-X-Google-Smtp-Source: ACcGV60Z50DNXkC6grj2/z6KsMy3qLKqFAKY37HruCJ76WE4XasSIW5SVv9Nwt4GRSnUqlLZq85gHw==
-X-Received: by 2002:a2e:59db:: with SMTP id g88-v6mr1025076ljf.79.1537882888415;
-        Tue, 25 Sep 2018 06:41:28 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.213])
-        by smtp.googlemail.com with ESMTPSA id p21-v6sm429535lfc.5.2018.09.25.06.41.26
+        bh=e4EnJUZt4PcsuI0RkCxnc/T2R/e6LXuD486RYhyGkm4=;
+        b=NvaNh7gGL46qokYwguHTxIEEm4m+F63Dt+cfJh4ymjZVTuKQ1h79e5YtmUgCRSKlCx
+         8ON+yKCjyxaGKXlKiq+IYlafWkVLO39BGAtUVXgUzNG1q9XJSd/Mb6wrhNtk4JFLWcrH
+         SXcnln1b+Ks8UdOGY7MkLMxgn1RnTCMqFxRbsNDgyHE0D+BGIhda0Q02jULfc6JtLhW5
+         zhc2pW29qxqm7jxnr8XqHZHStYDw7K/tZVrUox+D+umrvCbsn9tX3SAerjH4ey1+Sov3
+         sy/ptKCLLb6NdK3gD2ywkrf9gHwQK3/EOywGqMUZq+nGA47TEPrqihDr3El76tonftkz
+         aurg==
+X-Gm-Message-State: ABuFfojaKC3aTxLUhIfRzVi+s2+26TCU5JAWWJzGDCxfvoqRSinBtYyX
+        wN1ZVv4EgtkOtEJzUIRQCTH6uJSZ
+X-Google-Smtp-Source: ACcGV60LPTO2dpSWXNs5X2Dl08ef8qNxZ95JiDNmTYwhnoTgz0bHu1OxVvTIe0hmJJE1+oRNDNU35A==
+X-Received: by 2002:a2e:2096:: with SMTP id g22-v6mr963998lji.37.1537882922349;
+        Tue, 25 Sep 2018 06:42:02 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id z19-v6sm427749ljk.20.2018.09.25.06.42.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 06:41:27 -0700 (PDT)
-Subject: Re: [PATCH v4 16/20] iommu/tegra: gart: Don't use managed resources
+        Tue, 25 Sep 2018 06:42:01 -0700 (PDT)
+Subject: Re: [PATCH v4 18/20] iommu/tegra: gart: Don't detach devices from
+ inactive domains
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Joerg Roedel <joro@8bytes.org>,
@@ -69,15 +70,15 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-17-digetx@gmail.com> <20180924105246.GM21032@ulmo>
- <a9e2943b-1139-8838-5440-bd6cf55e9a55@gmail.com> <20180925100330.GF7097@ulmo>
+ <20180924004153.8232-19-digetx@gmail.com> <20180924110047.GO21032@ulmo>
+ <8be80297-3b13-ece6-a5bf-873cc7877989@gmail.com> <20180925100424.GG7097@ulmo>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c803c9bb-dc98-0c5b-791c-0569f1d6346f@gmail.com>
-Date:   Tue, 25 Sep 2018 16:41:21 +0300
+Message-ID: <57704439-66f3-2548-093c-b5a2fc04ee14@gmail.com>
+Date:   Tue, 25 Sep 2018 16:41:55 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180925100330.GF7097@ulmo>
+In-Reply-To: <20180925100424.GG7097@ulmo>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -86,24 +87,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/18 1:03 PM, Thierry Reding wrote:
-> On Mon, Sep 24, 2018 at 09:57:10PM +0300, Dmitry Osipenko wrote:
->> On 9/24/18 1:52 PM, Thierry Reding wrote:
->>> On Mon, Sep 24, 2018 at 03:41:49AM +0300, Dmitry Osipenko wrote:
->>>> GART is a part of the Memory Controller driver that is always built-in,
->>>> hence there is no benefit from the use of managed resources.
+On 9/25/18 1:04 PM, Thierry Reding wrote:
+> On Mon, Sep 24, 2018 at 09:05:48PM +0300, Dmitry Osipenko wrote:
+>> On 9/24/18 2:00 PM, Thierry Reding wrote:
+>>> On Mon, Sep 24, 2018 at 03:41:51AM +0300, Dmitry Osipenko wrote:
+>>>> There could be unlimited number of allocated domains, but only one domain
+>>>> can be active at a time. Hence devices must be detached only from the
+>>>> active domain.
 >>>>
 >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >>>> ---
->>>>  drivers/iommu/tegra-gart.c | 12 +++++++-----
->>>>  1 file changed, 7 insertions(+), 5 deletions(-)
+>>>>  drivers/iommu/tegra-gart.c | 8 +++++---
+>>>>  1 file changed, 5 insertions(+), 3 deletions(-)
 >>>
->>> One benefit would be cleanup on probe error. Also, we may eventually
->>> want to make even the memory controller driver buildable as a module.
+>>> Do we have a mechanism of switching out different domains? I don't think
+>>> we do, so I'm wondering if perhaps a better solution to this would be to
+>>> just refuse to create more than one domain in the first place. That
+>>> would also allow us to get rid of the global variable gart_handle.
 >>
->> Please, let's keep that patch as is and re-introduce devm once it will
->> become really relevant.
+>> That's what was done in v1, Robin Murphy suggested that it will be
+>> better not to restrict allocation of unpopulated domains. It is
+>> mentioned in the changelog, see comment to v2 changes.
 > 
-> Alright, fine with me.
+> Okay, fine.
 
-Thanks, I'm taking that as ACK.
+Thanks, taking as ACK.
