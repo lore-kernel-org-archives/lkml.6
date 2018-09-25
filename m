@@ -5,80 +5,123 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72868C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40E2C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE415214AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:47:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A8092098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ovw5NXKN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE415214AB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vfu16rw+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8092098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbeIYTz0 (ORCPT
+        id S1729173AbeIYT7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 15:55:26 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40442 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbeIYTzZ (ORCPT
+        Tue, 25 Sep 2018 15:59:55 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35501 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbeIYT7z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 15:55:25 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r83-v6so3782666ljr.7;
-        Tue, 25 Sep 2018 06:47:45 -0700 (PDT)
+        Tue, 25 Sep 2018 15:59:55 -0400
+Received: by mail-ed1-f68.google.com with SMTP id y21-v6so7144923edr.2;
+        Tue, 25 Sep 2018 06:52:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=q10IXhdd5N0851aX4xjzc1KCNBJcJ4Kw83zMfPxrO3c=;
-        b=ovw5NXKNiQzYmMpK/IDu+2mgDK1B3+kN+bFOuSgHvOD3rlniM5Fo/JibAY1hUCRP0d
-         FayfmAvK/nIZoX+T0TFu2g2VCAuXguj8VvHEsjUQ8y9v2l7CA2zVqOPQ+xbJo5eeOpQw
-         Ja41+hSB06IAU+eIfCovMUldL22PpB3EcaI9JJtZjdJLZtUmrDJ88Opx46b3quHVfBVJ
-         EsBTipVYg4IN+fqJm3HP5emraAiaW7t+w817EFYxR91CS2NBoIb7sySi67AzLO/bbsS8
-         /x4ADWrAoKryPZljk+86vzmNYLsBD2S3QAkFJhOy3nl/67SeQvTKiBODbn2+vJ/Xrjkd
-         AnZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=q10IXhdd5N0851aX4xjzc1KCNBJcJ4Kw83zMfPxrO3c=;
-        b=OZfijmI7kV++/7xhrU4rgIZen7Jx8RovcpXC0qHh2M+vPS7WaPZBey7/R0rw4rgerz
-         TwIxgQNT7K1Fev0ZM3XWkzQViaq8cfTRFxkUAWlL3C9iVA+RNCSX2DdXIZGSSJI4CApI
-         O8ORJ6ognR/7Hhg+C+v7FIOWEnqnokwspZ9F4HSmDWJ8UjalT9WCigWSPz4uQ7hp7Elp
-         GrjRvlzWPDd/l7b12lrMJMfhU9NKdjgxzCJpnPEAWTPhlaMt+PxKLpgw9CYC1qmTPDjD
-         ikGbIVNqrdsGgPC2zF0nvts7o9Eb+Q6GlI57WXs56fLlxBMS8nLxv0s0kxlidWFhdX2r
-         9rBg==
-X-Gm-Message-State: ABuFfoi+Simlespq5HDpNBI4cQU5EP5eadAQd6YBSWjLRkO86DHwCGO0
-        k/AN2WUUTGyuh6DxOJBE+fc/lR7r
-X-Google-Smtp-Source: ACcGV60aqZr8h4U+6aSSWG3OzXCIvSgFxbrcOz0xywc0U7DldJrg+45iDunR8X//AZkQ1tHtA4qHpw==
-X-Received: by 2002:a2e:5719:: with SMTP id l25-v6mr967189ljb.125.1537883264424;
-        Tue, 25 Sep 2018 06:47:44 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.213])
-        by smtp.googlemail.com with ESMTPSA id h71-v6sm110977lfi.11.2018.09.25.06.47.43
+        bh=+3kaufFxNCLWvZ9pjuwBRqfEAmHl8XQye5/chb9p0NY=;
+        b=vfu16rw+Ani0/JmD35meuowOfBdtG+fxcnL5ttGH6xBeoeMTTr89C1iavwaLVL4pZz
+         iPqA+Zk65PXaXduZA9RH7xom9nnYzIE1Z22fhhLhFUUFaU8JZzRt7kAilhOd6MrxKcyf
+         /qgZCm8bhIegNaC+qN8PZjYlA9W9iVqKqqOvcHxAUcpo5JIh+uJ7mTQId73KfuCcPGdw
+         c72/lrxt5NLe9D3XTL18tOMa+YedmkICXPW6FeR03hN6wTMmlICoEsIbPoDEV+35X2gU
+         oBlSS2I4VZfxdr2ey6zzg22GkdLortCd6kCFkbGNi2vFcdgpFg0cnrTtoVGnB9Rd96YH
+         1tpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=+3kaufFxNCLWvZ9pjuwBRqfEAmHl8XQye5/chb9p0NY=;
+        b=SYP/4LRP8082rFuHursiNBQm15SF1N2ijf3xJol8IJO/UlUIVIr+nS2P+QHPIKtwsF
+         V6yq6n1GXG5kVpbYohdHHocpIvPufn+sGe9UxgwrhkXun01D9H+hV1zxoIRhi6fWm7c2
+         rLzOqWalIi0gfw+S2g2DRNBvxJ52Gm4LkDaKAtecyNQIk+tkMvLqD56at6ro0cJqkJeE
+         tZFf/MxHRRoB5IHaxWo4BRlQy3z9ckOxU6VgW98XZ0+W+9gaaRnub76Fb93Y0a3prY/D
+         4o648l12lPs40hCF7n13rMBieSBRZTdVHKxA8GGJY3hA5bfXNpAd6cCP8Dh/bfYh4/JW
+         UsWQ==
+X-Gm-Message-State: ABuFfog1yzL//AZBM1iCTHjvlExRIxLmlqMHmU2/uhHEXlqXlaE0dfTL
+        +VBj8S95NcaFZ6QYj03uS5o=
+X-Google-Smtp-Source: ACcGV63Do3T/ejhX8uNRw9K8Ir8sdN6ngNDVflRnMnJi6X4JXXROh1R277esRL6PBiLxwG50RHZBiA==
+X-Received: by 2002:aa7:dc49:: with SMTP id g9-v6mr1373195edu.115.1537883534903;
+        Tue, 25 Sep 2018 06:52:14 -0700 (PDT)
+Received: from ziggy.stardust ([37.223.146.97])
+        by smtp.gmail.com with ESMTPSA id r23-v6sm7732551edi.17.2018.09.25.06.52.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 06:47:43 -0700 (PDT)
-Subject: Re: [PATCH v4 19/20] iommu/tegra: gart: Simplify clients-tracking
- code
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-20-digetx@gmail.com> <20180924111047.GP21032@ulmo>
- <aefb6b78-4923-0259-0f3a-2ce3b95ca456@gmail.com> <20180925100909.GH7097@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <492a147b-0f3b-31cb-056d-60ab81f054ff@gmail.com>
-Date:   Tue, 25 Sep 2018 16:47:37 +0300
+        Tue, 25 Sep 2018 06:52:13 -0700 (PDT)
+Subject: Re: [PATCH 1/4] dt-bindings: mediatek: add compatible for mt8183
+ pwrap
+To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     argus.lin@mediatek.com, sean.wang@mediatek.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, chenglin.xu@mediatek.com,
+        chen.zhong@mediatek.com, srv_heupstream@mediatek.com
+References: <1537341961-20736-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <1537341961-20736-2-git-send-email-hsin-hsiung.wang@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
+ fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
+ OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
+ gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
+ 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
+ EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
+ fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
+ ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
+ HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
+ 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABzSlNYXR0aGlhcyBC
+ cnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPsLBkgQTAQIAPAIbAwYLCQgHAwIGFQgC
+ CQoLBBYCAwECHgECF4AWIQTmuZIYwPLDJRwsOhfZFAuyVhMC8QUCWt3scQIZAQAKCRDZFAuy
+ VhMC8WzRD/4onkC+gCxG+dvui5SXCJ7bGLCu0xVtiGC673Kz5Aq3heITsERHBV0BqqctOEBy
+ ZozQQe2Hindu9lasOmwfH8+vfTK+2teCgWesoE3g3XKbrOCB4RSrQmXGC3JYx6rcvMlLV/Ch
+ YMRR3qv04BOchnjkGtvm9aZWH52/6XfChyh7XYndTe5F2bqeTjt+kF/ql+xMc4E6pniqIfkv
+ c0wsH4CkBHqoZl9w5e/b9MspTqsU9NszTEOFhy7p2CYw6JEa/vmzR6YDzGs8AihieIXDOfpT
+ DUr0YUlDrwDSrlm/2MjNIPTmSGHH94ScOqu/XmGW/0q1iar/Yr0leomUOeeEzCqQtunqShtE
+ 4Mn2uEixFL+9jiVtMjujr6mphznwpEqObPCZ3IcWqOFEz77rSL+oqFiEA03A2WBDlMm++Sve
+ 9jpkJBLosJRhAYmQ6ey6MFO6Krylw1LXcq5z1XQQavtFRgZoruHZ3XlhT5wcfLJtAqrtfCe0
+ aQ0kJW+4zj9/So0uxJDAtGuOpDYnmK26dgFN0tAhVuNInEVhtErtLJHeJzFKJzNyQ4GlCaLw
+ jKcwWcqDJcrx9R7LsCu4l2XpKiyxY6fO4O8DnSleVll9NPfAZFZvf8AIy3EQ8BokUsiuUYHz
+ wUo6pclk55PZRaAsHDX/fNr24uC6Eh5oNQ+v4Pax/gtyyc7BTQRT9gkSARAApxtQ4zUMC512
+ kZ+gCiySFcIF/mAf7+l45689Tn7LI1xmPQrAYJDoqQVXcyh3utgtvBvDLmpQ+1BfEONDWc8K
+ RP6Abo35YqBx3udAkLZgr/RmEg3+Tiof+e1PJ2zRh5zmdei5MT8biE2zVd9DYSJHZ8ltEWIA
+ LC9lAsv9oa+2L6naC+KFF3i0m5mxklgFoSthswUnonqvclsjYaiVPoSldDrreCPzmRCUd8zn
+ f//Z4BxtlTw3SulF8weKLJ+Hlpw8lwb3sUl6yPS6pL6UV45gyWMe677bVUtxLYOu+kiv2B/+
+ nrNRDs7B35y/J4t8dtK0S3M/7xtinPiYRmsnJdk+sdAe8TgGkEaooF57k1aczcJlUTBQvlYA
+ Eg2NJnqaKg3SCJ4fEuT8rLjzuZmLkoHNumhH/mEbyKca82HvANu5C9clyQusJdU+MNRQLRmO
+ Ad/wxGLJ0xmAye7Ozja86AIzbEmuNhNH9xNjwbwSJNZefV2SoZUv0+V9EfEVxTzraBNUZifq
+ v6hernMQXGxs+lBjnyl624U8nnQWnA8PwJ2hI3DeQou1HypLFPeY9DfWv4xYdkyeOtGpueeB
+ lqhtMoZ0kDw2C3vzj77nWwBgpgn1Vpf4hG/sW/CRR6tuIQWWTvUM3ACa1pgEsBvIEBiVvPxy
+ AtL+L+Lh1Sni7w3HBk1EJvUAEQEAAcLBXwQYAQIACQUCU/YJEgIbDAAKCRDZFAuyVhMC8Qnd
+ EACuN16mvivnWwLDdypvco5PF8w9yrfZDKW4ggf9TFVB9skzMNCuQc+tc+QM+ni2c4kKIdz2
+ jmcg6QytgqVum6V1OsNmpjADaQkVp5jL0tmg6/KA9Tvr07Kuv+Uo4tSrS/4djDjJnXHEp/tB
+ +Fw7CArNtUtLlc8SuADCmMD+kBOVWktZyzkBkDfBXlTWl46T/8291lEspDWe5YW1ZAH/HdCR
+ 1rQNZWjNCpB2Cic58CYMD1rSonCnbfUeyZYNNhNHZosl4dl7f+am87Q2x3pK0DLSoJRxWb7v
+ ZB0uo9CzCSm3I++aYozF25xQoT+7zCx2cQi33jwvnJAK1o4VlNx36RfrxzBqc1uZGzJBCQu4
+ 8UjmUSsTwWC3HpE/D9sM+xACs803lFUIZC5H62G059cCPAXKgsFpNMKmBAWweBkVJAisoQeX
+ 50OP+/11ArV0cv+fOTfJj0/KwFXJaaYh3LUQNILLBNxkSrhCLl8dUg53IbHx4NfIAgqxLWGf
+ XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
+ 3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <5f707e40-54fe-b1a9-92e4-f009aa3968ba@gmail.com>
+Date:   Tue, 25 Sep 2018 15:52:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180925100909.GH7097@ulmo>
+In-Reply-To: <1537341961-20736-2-git-send-email-hsin-hsiung.wang@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -87,287 +130,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/18 1:09 PM, Thierry Reding wrote:
-> On Mon, Sep 24, 2018 at 08:50:35PM +0300, Dmitry Osipenko wrote:
->> On 9/24/18 2:10 PM, Thierry Reding wrote:
->>> On Mon, Sep 24, 2018 at 03:41:52AM +0300, Dmitry Osipenko wrote:
->>>> GART is a simple IOMMU provider that has single address space. There is
->>>> no need to setup global clients list and manage it for tracking of the
->>>> active domain, hence lot's of code could be safely removed and replaced
->>>> with a simpler alternative.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/iommu/tegra-gart.c | 157 +++++++++----------------------------
->>>>  1 file changed, 39 insertions(+), 118 deletions(-)
->>>>
->>>> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
->>>> index 306e9644a676..7182445c3b76 100644
->>>> --- a/drivers/iommu/tegra-gart.c
->>>> +++ b/drivers/iommu/tegra-gart.c
->>>> @@ -19,7 +19,6 @@
->>>>  
->>>>  #include <linux/io.h>
->>>>  #include <linux/iommu.h>
->>>> -#include <linux/list.h>
->>>>  #include <linux/module.h>
->>>>  #include <linux/platform_device.h>
->>>>  #include <linux/slab.h>
->>>> @@ -42,30 +41,20 @@
->>>>  #define GART_PAGE_MASK						\
->>>>  	(~(GART_PAGE_SIZE - 1) & ~GART_ENTRY_PHYS_ADDR_VALID)
->>>>  
->>>> -struct gart_client {
->>>> -	struct device		*dev;
->>>> -	struct list_head	list;
->>>> -};
->>>> -
->>>>  struct gart_device {
->>>>  	void __iomem		*regs;
->>>>  	u32			*savedata;
->>>>  	u32			page_count;	/* total remappable size */
->>>>  	dma_addr_t		iovmm_base;	/* offset to vmm_area */
->>>>  	spinlock_t		pte_lock;	/* for pagetable */
->>>> -	struct list_head	client;
->>>> -	spinlock_t		client_lock;	/* for client list */
->>>> +	spinlock_t		dom_lock;	/* for active domain */
->>>> +	unsigned int		active_devices;	/* number of active devices */
->>>>  	struct iommu_domain	*active_domain;	/* current active domain */
->>>>  	struct device		*dev;
->>>>  
->>>>  	struct iommu_device	iommu;		/* IOMMU Core handle */
->>>>  };
->>>>  
->>>> -struct gart_domain {
->>>> -	struct iommu_domain domain;		/* generic domain handle */
->>>> -	struct gart_device *gart;		/* link to gart device   */
->>>> -};
->>>> -
->>>>  static struct gart_device *gart_handle; /* unique for a system */
->>>>  
->>>>  static bool gart_debug;
->>>> @@ -73,11 +62,6 @@ static bool gart_debug;
->>>>  #define GART_PTE(_pfn)						\
->>>>  	(GART_ENTRY_PHYS_ADDR_VALID | ((_pfn) << PAGE_SHIFT))
->>>>  
->>>> -static struct gart_domain *to_gart_domain(struct iommu_domain *dom)
->>>> -{
->>>> -	return container_of(dom, struct gart_domain, domain);
->>>> -}
->>>> -
->>>>  /*
->>>>   * Any interaction between any block on PPSB and a block on APB or AHB
->>>>   * must have these read-back to ensure the APB/AHB bus transaction is
->>>> @@ -166,128 +150,69 @@ static inline bool gart_iova_range_valid(struct gart_device *gart,
->>>>  static int gart_iommu_attach_dev(struct iommu_domain *domain,
->>>>  				 struct device *dev)
->>>>  {
->>>> -	struct gart_domain *gart_domain = to_gart_domain(domain);
->>>>  	struct gart_device *gart = gart_handle;
->>>> -	struct gart_client *client, *c;
->>>> -	int err = 0;
->>>> -
->>>> -	client = kzalloc(sizeof(*c), GFP_KERNEL);
->>>> -	if (!client)
->>>> -		return -ENOMEM;
->>>> -	client->dev = dev;
->>>> -
->>>> -	spin_lock(&gart->client_lock);
->>>> -	list_for_each_entry(c, &gart->client, list) {
->>>> -		if (c->dev == dev) {
->>>> -			dev_err(gart->dev, "GART: %s is already attached\n",
->>>> -				dev_name(dev));
->>>> -			err = -EINVAL;
->>>> -			goto fail;
->>>> -		}
->>>> -	}
->>>> -	if (gart->active_domain && gart->active_domain != domain) {
->>>> -		dev_err(gart->dev,
->>>> -			"GART: Only one domain can be active at a time\n");
->>>> -		err = -EINVAL;
->>>> -		goto fail;
->>>> -	}
->>>> -	gart->active_domain = domain;
->>>> -	gart_domain->gart = gart;
->>>> -	list_add(&client->list, &gart->client);
->>>> -	spin_unlock(&gart->client_lock);
->>>> -	dev_dbg(gart->dev, "GART: Attached %s\n", dev_name(dev));
->>>> -	return 0;
->>>> +	int ret = 0;
->>>>  
->>>> -fail:
->>>> -	kfree(client);
->>>> -	spin_unlock(&gart->client_lock);
->>>> -	return err;
->>>> -}
->>>> +	spin_lock(&gart->dom_lock);
->>>>  
->>>> -static void __gart_iommu_detach_dev(struct iommu_domain *domain,
->>>> -				    struct device *dev)
->>>> -{
->>>> -	struct gart_domain *gart_domain = to_gart_domain(domain);
->>>> -	struct gart_device *gart = gart_domain->gart;
->>>> -	struct gart_client *c;
->>>> -
->>>> -	list_for_each_entry(c, &gart->client, list) {
->>>> -		if (c->dev == dev) {
->>>> -			list_del(&c->list);
->>>> -			kfree(c);
->>>> -			if (list_empty(&gart->client)) {
->>>> -				gart->active_domain = NULL;
->>>> -				gart_domain->gart = NULL;
->>>> -			}
->>>> -			dev_dbg(gart->dev, "GART: Detached %s\n",
->>>> -				dev_name(dev));
->>>> -			return;
->>>> -		}
->>>> +	if (gart->active_domain && gart->active_domain != domain) {
->>>> +		ret = -EBUSY;
->>>
->>> This omits the error message and returns -EBUSY instead of -EINVAL. Was
->>> this intended? For what it's worth, I do agree with the changes, it's
->>> just that I think you could've made those in the earlier patch that
->>> introduced them.
->>
->> The message isn't really needed and EBUSY seems fit better than EINVAL here.
->>
->>> But this is all one series and the end result looks fine, so no need to
->>> be that picky.
->>
->> Good, thanks.
->>
->>>> +	} else if (dev->archdata.iommu != domain) {
->>>> +		dev->archdata.iommu = domain;
->>>> +		gart->active_domain = domain;
->>>> +		gart->active_devices++;
->>>>  	}
->>>>  
->>>> -	dev_err(gart->dev, "GART: Couldn't find %s to detach\n",
->>>> -		dev_name(dev));
->>>> +	spin_unlock(&gart->dom_lock);
->>>> +
->>>> +	return ret;
->>>>  }
->>>>  
->>>>  static void gart_iommu_detach_dev(struct iommu_domain *domain,
->>>>  				  struct device *dev)
->>>>  {
->>>> -	struct gart_domain *gart_domain = to_gart_domain(domain);
->>>> -	struct gart_device *gart = gart_domain->gart;
->>>> +	struct gart_device *gart = gart_handle;
->>>> +
->>>> +	spin_lock(&gart->dom_lock);
->>>>  
->>>> -	spin_lock(&gart->client_lock);
->>>> -	__gart_iommu_detach_dev(domain, dev);
->>>> -	spin_unlock(&gart->client_lock);
->>>> +	if (dev->archdata.iommu == domain) {
->>>> +		dev->archdata.iommu = NULL;
->>>> +
->>>> +		if (--gart->active_devices == 0)
->>>> +			gart->active_domain = NULL;
->>>> +	}
->>>> +
->>>> +	spin_unlock(&gart->dom_lock);
->>>>  }
->>>>  
->>>>  static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
->>>>  {
->>>> -	struct gart_domain *gart_domain;
->>>> -	struct gart_device *gart;
->>>> +	struct gart_device *gart = gart_handle;
->>>> +	struct iommu_domain *domain;
->>>>  
->>>>  	if (type != IOMMU_DOMAIN_UNMANAGED)
->>>>  		return NULL;
->>>>  
->>>> -	gart = gart_handle;
->>>> -	if (!gart)
->>>> -		return NULL;
->>>> -
->>>> -	gart_domain = kzalloc(sizeof(*gart_domain), GFP_KERNEL);
->>>> -	if (!gart_domain)
->>>> -		return NULL;
->>>> -
->>>> -	gart_domain->domain.geometry.aperture_start = gart->iovmm_base;
->>>> -	gart_domain->domain.geometry.aperture_end = gart->iovmm_base +
->>>> +	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
->>>> +	if (domain) {
->>>> +		domain->geometry.aperture_start = gart->iovmm_base;
->>>> +		domain->geometry.aperture_end = gart->iovmm_base +
->>>>  					gart->page_count * GART_PAGE_SIZE - 1;
->>>> -	gart_domain->domain.geometry.force_aperture = true;
->>>> +		domain->geometry.force_aperture = true;
->>>> +	}
->>>>  
->>>> -	return &gart_domain->domain;
->>>> +	return domain;
->>>>  }
->>>>  
->>>>  static void gart_iommu_domain_free(struct iommu_domain *domain)
->>>>  {
->>>> -	struct gart_domain *gart_domain = to_gart_domain(domain);
->>>> -	struct gart_device *gart = gart_domain->gart;
->>>> -
->>>> -	if (gart) {
->>>> -		spin_lock(&gart->client_lock);
->>>> -		if (!list_empty(&gart->client)) {
->>>> -			struct gart_client *c, *tmp;
->>>> -
->>>> -			list_for_each_entry_safe(c, tmp, &gart->client, list)
->>>> -				__gart_iommu_detach_dev(domain, c->dev);
->>>> -		}
->>>> -		spin_unlock(&gart->client_lock);
->>>> -	}
->>>> -
->>>> -	kfree(gart_domain);
->>>> +	kfree(domain);
->>>>  }
->>>
->>> Doesn't this now make it possible to free a potentially active domain?
->>
->> Yes, don't do it. I can add a WARN_ON() here, though I think IOMMU core
->> should be the one taking care about that.
+
+
+On 19/09/2018 09:25, Hsin-Hsiung Wang wrote:
+> This adds dt-binding documentation of pwrap for Mediatek MT8183 SoC
+> Platform.
 > 
-> Yeah, might be good to have the WARN_ON() either here or in the IOMMU
-> core. Force-detaching is probably a good idea, too, otherwise the users
-> of the freed domain are just going to crash anyway, right? Maybe
-> something to discuss more generally with Joerg.
+> Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/soc/mediatek/pwrap.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I think in the meantime just having the WARN_ON() here is probably good
-> enough. It should point out the cases where we do free the domain with
-> devices still attached, which hopefully don't exist, and we can fix
-> them.
-
-Ok.
-
->>>>  static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
->>>>  			  phys_addr_t pa, size_t bytes, int prot)
->>>>  {
->>>> -	struct gart_domain *gart_domain = to_gart_domain(domain);
->>>> -	struct gart_device *gart = gart_domain->gart;
->>>> +	struct gart_device *gart = gart_handle;
->>>
->>> Hmm... this now introduces more uses of the gart_handle that I hoped we
->>> could get rid of. I think we could still keep around struct gart_domain
->>> and just make sure it is unique. The small amounts of casting here seem
->>> mostly harmless to me, especially since they will be nops, so we end up
->>> with just one dereference to get at the struct gart_device. I think the
->>> benefits of not having this global variable around are worth the one
->>> dereference here.
->>
->> What are the benefits? I don't see anything other than the pedantic oddity.
->>
->> I've removed gart_domain in the end because it is an extra code (and
->> consumed resources) without any benefit. Let's keep that part as it is
->> now. I'll be happy to change that code if you'll explain why it is worth
->> it.
+> diff --git a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> index f9987c3..012fe3f 100644
+> --- a/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> +++ b/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> @@ -23,6 +23,7 @@ Required properties in pwrap device node.
+>  	"mediatek,mt7622-pwrap" for MT7622 SoCs
+>  	"mediatek,mt8135-pwrap" for MT8135 SoCs
+>  	"mediatek,mt8173-pwrap" for MT8173 SoCs
+> +	"mediatek,mt8183-pwrap" for MT8183 SoCs
+>  - interrupts: IRQ for pwrap in SOC
+>  - reg-names: Must include the following entries:
+>    "pwrap": Main registers base
 > 
-> I thought I did explain. Anyway, it's always been like this, so no need
-> to change it as part of this series.
 
-Thanks.
+Applied to v4.19-next/soc
 
-You're saying that you want to get rid of the global variable, but
-you're not saying why. Usage of global variable is more appealing with
-the current driver structure.
+Thanks!
