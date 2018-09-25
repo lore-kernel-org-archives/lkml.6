@@ -2,110 +2,311 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07880C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 355A7C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6BC72086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D94F72086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:30:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="iFRhY4jj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6BC72086B
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="r16xab4q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D94F72086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbeIYViS (ORCPT
+        id S1729702AbeIYViW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:38:18 -0400
-Received: from mail-qk1-f174.google.com ([209.85.222.174]:41219 "EHLO
-        mail-qk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729355AbeIYViQ (ORCPT
+        Tue, 25 Sep 2018 17:38:22 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36273 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729597AbeIYViU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:38:16 -0400
-Received: by mail-qk1-f174.google.com with SMTP id n3-v6so13242473qkn.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:30:15 -0700 (PDT)
+        Tue, 25 Sep 2018 17:38:20 -0400
+Received: by mail-qt1-f195.google.com with SMTP id e26-v6so1626827qtq.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:30:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id;
-        bh=fossXnE9DcMZSM5EBZ7fZb1nS+iEdBgGed53X3peolQ=;
-        b=iFRhY4jj2b1wZt64GCHFbeJWUg971Xqn0aki+cWLNVkW1FFZNvqmj6B/33ZfrH3dWV
-         jGwD9+fKnxgKS23X4dzYsqiB/e05IWt/jrtFCY+PlBPsQg6V7MQ9ihSMp7rbAuitCwbL
-         OinPFC1wCDCRjbPo8UqY1ztvSjnNiCdaVvj1I6z+1ayB3tuUO1SA8A/IZ7/Nnh+epBRd
-         Dr8Yi3hdQ2IVjoVPqh+y9wd7sHncsiosuJomQ/wcOy/+EY6J+gsR4ZWYWV5o9IX88r4X
-         ffmzhdGi8+9EZRxgrP8IU0PDo/ciuEcrqV9ief3pN1eUlfcYFJrKnuLrl4Xb4OnC2VmO
-         rdGw==
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=FY4PvfFFgkG4rCGf8NvSi/OKKAo2xpKioHzicQvhcOI=;
+        b=r16xab4qK/GzMbIKCC4aw7lZg+2OpxVn3pFK0xbG14epU4FWUX0WIYOooStDmiuVVb
+         jmhFEufRVcbUZ2OoeF40N3YypUdzdZ1ia5oDwZCXIde/v6HqBftP06QnHMNA2ZJno/+B
+         SYw/AUihAab2IaqYl/p0ewxnh0qA4X3QfakWuQeq1oTT1kfliaUBXI2ydTr/Mp/t0j6z
+         xnmcy10agWziYzmo8+goSXT2aAcs4+hIbOYUgatNHnmOQ7uRNkiWWN3dcSakM6wlwFww
+         dYSdbD5qXQm+P48pjM9uRaYlf8q0UQ7mO49yjpXx73aoepDGbMOGQFggb9W5c3HXNfck
+         Tpsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=fossXnE9DcMZSM5EBZ7fZb1nS+iEdBgGed53X3peolQ=;
-        b=kOag6HsZeu1bEGNjg9Q9MGM72137UEbqyLXXKqR+pL51vVE6ZU6REcmPgC2eYAPCKO
-         +E0lCqzUVFHRpTBCKKhNkjo2pWFNKgsw68ZpZ1VxpaygJYxl1RZgIDXFkxJzPJvQfsN/
-         gJjJrAcaA3SAgQYD3qT3iHupf8x+r6aV2tOcY5PE2ynVGnIUoDgI+KXQyhpxqshojUSS
-         R5I84uVN4VslA8iE8I4919np2sYzFcmGX7zWB5k1D0FNp6K7ZSYFN06oDmz2RFRabmYP
-         /YdftraVBk3+7GacJ8ZWm5C6wyqyrGZf3pzqWTHuHRXCmYKF2YEilZCWxEpog2RtwKit
-         8hsg==
-X-Gm-Message-State: ABuFfogo7jQUPiys9WnmfgjOsxgiZOlsj46DlujSi6XbfwTwvHS6IrOP
-        EbMe5rzAbumYW0ysbwNi2Prjaw==
-X-Google-Smtp-Source: ACcGV62kk8vRLoJr822RZ/P7cVu/XCIg4p5pl6cEfQRO9Blqa/qj+uVcejsv8CwAu7R17jp9koFUew==
-X-Received: by 2002:a37:404d:: with SMTP id n74-v6mr1145825qka.312.1537889414512;
-        Tue, 25 Sep 2018 08:30:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references;
+        bh=FY4PvfFFgkG4rCGf8NvSi/OKKAo2xpKioHzicQvhcOI=;
+        b=nwF10/0fmTnAHuG9VzAo7bv5iWqk+Gi1VCBZI4C+8WHdP3Dij/stBguUXWr+oJObJY
+         +XxmthvWRHnSYov/94yf6FYf0TFIUK1+6FfnIDkvuPgO+EbdNybXU5d+5Yao15GxAkZR
+         QNwHOi4OgTY77uvaRuZC3JRdHzwIL4ECOGByJe2H3LKFl6OIzavTZPLuB69kDO1uR+BT
+         sE3mPGP0Z2kyaBn0oT5fwD8aNMdeXUj09fG+NAN8yJsvWUGTIu+MwQ03JL88ctk9bIm/
+         OZyWdbFV+mKmeM4hAW5c6eLTwsnMiBml3ujFIEUK2MkaipDvNCxe4LE5JSPy1iqdK/px
+         qhKA==
+X-Gm-Message-State: ABuFfoieEPvBaVxVn6mIjdtlfeyptU5E3a7HlsrtRmmIpE4XgIWsvfBM
+        mLC34dx/s72OKGEbK/9XAmbkGg==
+X-Google-Smtp-Source: ACcGV61vPNw252mdhbHuhSVRmWvA1VPrladnxlDA+gQ/uZwGukOs4HjONukkbRdqx0ZKC/CD1V+FFg==
+X-Received: by 2002:ac8:39c5:: with SMTP id v63-v6mr1176759qte.273.1537889418468;
+        Tue, 25 Sep 2018 08:30:18 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id 72-v6sm1348539qkg.35.2018.09.25.08.30.13
+        by smtp.gmail.com with ESMTPSA id y205-v6sm1507950qkb.56.2018.09.25.08.30.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 08:30:13 -0700 (PDT)
+        Tue, 25 Sep 2018 08:30:17 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com, linux-btrfs@vger.kernel.org, riel@redhat.com,
         hannes@cmpxchg.org, tj@kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH 0/8] drop the mmap_sem when doing IO in the fault path
-Date:   Tue, 25 Sep 2018 11:30:03 -0400
-Message-Id: <20180925153011.15311-1-josef@toxicpanda.com>
+Subject: [PATCH 2/8] mm: drop mmap_sem for page cache read IO submission
+Date:   Tue, 25 Sep 2018 11:30:05 -0400
+Message-Id: <20180925153011.15311-3-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180925153011.15311-1-josef@toxicpanda.com>
+References: <20180925153011.15311-1-josef@toxicpanda.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have proper isolation in place with cgroups2 we have started going
-through and fixing the various priority inversions.  Most are all gone now, but
-this one is sort of weird since it's not necessarily a priority inversion that
-happens within the kernel, but rather because of something userspace does.
+From: Johannes Weiner <hannes@cmpxchg.org>
 
-We have giant applications that we want to protect, and parts of these giant
-applications do things like watch the system state to determine how healthy the
-box is for load balancing and such.  This involves running 'ps' or other such
-utilities.  These utilities will often walk /proc/<pid>/whatever, and these
-files can sometimes need to down_read(&task->mmap_sem).  Not usually a big deal,
-but we noticed when we are stress testing that sometimes our protected
-application has latency spikes trying to get the mmap_sem for tasks that are in
-lower priority cgroups.
+Reads can take a long time, and if anybody needs to take a write lock on
+the mmap_sem it'll block any subsequent readers to the mmap_sem while
+the read is outstanding, which could cause long delays.  Instead drop
+the mmap_sem if we do any reads at all.
 
-This is because any down_write() on a semaphore essentially turns it into a
-mutex, so even if we currently have it held for reading, any new readers will
-not be allowed on to keep from starving the writer.  This is fine, except a
-lower priority task could be stuck doing IO because it has been throttled to the
-point that its IO is taking much longer than normal.  But because a higher
-priority group depends on this completing it is now stuck behind lower priority
-work.
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+---
+ mm/filemap.c | 119 ++++++++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 90 insertions(+), 29 deletions(-)
 
-In order to avoid this particular priority inversion we want to use the existing
-retry mechanism to stop from holding the mmap_sem at all if we are going to do
-IO.  This already exists in the read case sort of, but needed to be extended for
-more than just grabbing the page lock.  With io.latency we throttle at
-submit_bio() time, so the readahead stuff can block and even page_cache_read can
-block, so all these paths need to have the mmap_sem dropped.
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 52517f28e6f4..1ed35cd99b2c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2366,6 +2366,18 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ EXPORT_SYMBOL(generic_file_read_iter);
+ 
+ #ifdef CONFIG_MMU
++static struct file *maybe_unlock_mmap_for_io(struct vm_area_struct *vma, int flags)
++{
++	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) == FAULT_FLAG_ALLOW_RETRY) {
++		struct file *file;
++
++		file = get_file(vma->vm_file);
++		up_read(&vma->vm_mm->mmap_sem);
++		return file;
++	}
++	return NULL;
++}
++
+ /**
+  * page_cache_read - adds requested page to the page cache if not already there
+  * @file:	file to read
+@@ -2405,23 +2417,28 @@ static int page_cache_read(struct file *file, pgoff_t offset, gfp_t gfp_mask)
+  * Synchronous readahead happens when we don't even find
+  * a page in the page cache at all.
+  */
+-static void do_sync_mmap_readahead(struct vm_area_struct *vma,
+-				   struct file_ra_state *ra,
+-				   struct file *file,
+-				   pgoff_t offset)
++static int do_sync_mmap_readahead(struct vm_area_struct *vma,
++				  struct file_ra_state *ra,
++				  struct file *file,
++				  pgoff_t offset,
++				  int flags)
+ {
+ 	struct address_space *mapping = file->f_mapping;
++	struct file *fpin;
+ 
+ 	/* If we don't want any read-ahead, don't bother */
+ 	if (vma->vm_flags & VM_RAND_READ)
+-		return;
++		return 0;
+ 	if (!ra->ra_pages)
+-		return;
++		return 0;
+ 
+ 	if (vma->vm_flags & VM_SEQ_READ) {
++		fpin = maybe_unlock_mmap_for_io(vma, flags);
+ 		page_cache_sync_readahead(mapping, ra, file, offset,
+ 					  ra->ra_pages);
+-		return;
++		if (fpin)
++			fput(fpin);
++		return fpin ? -EAGAIN : 0;
+ 	}
+ 
+ 	/* Avoid banging the cache line if not needed */
+@@ -2433,7 +2450,9 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
+ 	 * stop bothering with read-ahead. It will only hurt.
+ 	 */
+ 	if (ra->mmap_miss > MMAP_LOTSAMISS)
+-		return;
++		return 0;
++
++	fpin = maybe_unlock_mmap_for_io(vma, flags);
+ 
+ 	/*
+ 	 * mmap read-around
+@@ -2442,28 +2461,40 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
+ 	ra->size = ra->ra_pages;
+ 	ra->async_size = ra->ra_pages / 4;
+ 	ra_submit(ra, mapping, file);
++
++	if (fpin)
++		fput(fpin);
++
++	return fpin ? -EAGAIN : 0;
+ }
+ 
+ /*
+  * Asynchronous readahead happens when we find the page and PG_readahead,
+  * so we want to possibly extend the readahead further..
+  */
+-static void do_async_mmap_readahead(struct vm_area_struct *vma,
+-				    struct file_ra_state *ra,
+-				    struct file *file,
+-				    struct page *page,
+-				    pgoff_t offset)
++static int do_async_mmap_readahead(struct vm_area_struct *vma,
++				   struct file_ra_state *ra,
++				   struct file *file,
++				   struct page *page,
++				   pgoff_t offset,
++				   int flags)
+ {
+ 	struct address_space *mapping = file->f_mapping;
++	struct file *fpin;
+ 
+ 	/* If we don't want any read-ahead, don't bother */
+ 	if (vma->vm_flags & VM_RAND_READ)
+-		return;
++		return 0;
+ 	if (ra->mmap_miss > 0)
+ 		ra->mmap_miss--;
+-	if (PageReadahead(page))
+-		page_cache_async_readahead(mapping, ra, file,
+-					   page, offset, ra->ra_pages);
++	if (!PageReadahead(page))
++		return 0;
++	fpin = maybe_unlock_mmap_for_io(vma, flags);
++	page_cache_async_readahead(mapping, ra, file,
++				   page, offset, ra->ra_pages);
++	if (fpin)
++		fput(fpin);
++	return fpin ? -EAGAIN : 0;
+ }
+ 
+ /**
+@@ -2479,10 +2510,8 @@ static void do_async_mmap_readahead(struct vm_area_struct *vma,
+  *
+  * vma->vm_mm->mmap_sem must be held on entry.
+  *
+- * If our return value has VM_FAULT_RETRY set, it's because
+- * lock_page_or_retry() returned 0.
+- * The mmap_sem has usually been released in this case.
+- * See __lock_page_or_retry() for the exception.
++ * If our return value has VM_FAULT_RETRY set, the mmap_sem has
++ * usually been released.
+  *
+  * If our return value does not have VM_FAULT_RETRY set, the mmap_sem
+  * has not been released.
+@@ -2492,11 +2521,13 @@ static void do_async_mmap_readahead(struct vm_area_struct *vma,
+ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ {
+ 	int error;
++	struct mm_struct *mm = vmf->vma->vm_mm;
+ 	struct file *file = vmf->vma->vm_file;
+ 	struct address_space *mapping = file->f_mapping;
+ 	struct file_ra_state *ra = &file->f_ra;
+ 	struct inode *inode = mapping->host;
+ 	pgoff_t offset = vmf->pgoff;
++	int flags = vmf->flags;
+ 	pgoff_t max_off;
+ 	struct page *page;
+ 	vm_fault_t ret = 0;
+@@ -2509,27 +2540,44 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	 * Do we have something in the page cache already?
+ 	 */
+ 	page = find_get_page(mapping, offset);
+-	if (likely(page) && !(vmf->flags & FAULT_FLAG_TRIED)) {
++	if (likely(page) && !(flags & FAULT_FLAG_TRIED)) {
+ 		/*
+ 		 * We found the page, so try async readahead before
+ 		 * waiting for the lock.
+ 		 */
+-		do_async_mmap_readahead(vmf->vma, ra, file, page, offset);
++		error = do_async_mmap_readahead(vmf->vma, ra, file, page, offset, vmf->flags);
++		if (error == -EAGAIN)
++			goto out_retry_wait;
+ 	} else if (!page) {
+ 		/* No page in the page cache at all */
+-		do_sync_mmap_readahead(vmf->vma, ra, file, offset);
+-		count_vm_event(PGMAJFAULT);
+-		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+ 		ret = VM_FAULT_MAJOR;
++		count_vm_event(PGMAJFAULT);
++		count_memcg_event_mm(mm, PGMAJFAULT);
++		error = do_sync_mmap_readahead(vmf->vma, ra, file, offset, vmf->flags);
++		if (error == -EAGAIN)
++			goto out_retry_wait;
+ retry_find:
+ 		page = find_get_page(mapping, offset);
+ 		if (!page)
+ 			goto no_cached_page;
+ 	}
+ 
+-	if (!lock_page_or_retry(page, vmf->vma->vm_mm, vmf->flags)) {
+-		put_page(page);
+-		return ret | VM_FAULT_RETRY;
++	if (!trylock_page(page)) {
++		if (flags & FAULT_FLAG_ALLOW_RETRY) {
++			if (flags & FAULT_FLAG_RETRY_NOWAIT)
++				goto out_retry;
++			up_read(&mm->mmap_sem);
++			goto out_retry_wait;
++		}
++		if (flags & FAULT_FLAG_KILLABLE) {
++			int ret = __lock_page_killable(page);
++
++			if (ret) {
++				up_read(&mm->mmap_sem);
++				goto out_retry;
++			}
++		} else
++			__lock_page(page);
+ 	}
+ 
+ 	/* Did it get truncated? */
+@@ -2607,6 +2655,19 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	/* Things didn't work out. Return zero to tell the mm layer so. */
+ 	shrink_readahead_size_eio(file, ra);
+ 	return VM_FAULT_SIGBUS;
++
++out_retry_wait:
++	if (page) {
++		if (flags & FAULT_FLAG_KILLABLE)
++			wait_on_page_locked_killable(page);
++		else
++			wait_on_page_locked(page);
++	}
++
++out_retry:
++	if (page)
++		put_page(page);
++	return ret | VM_FAULT_RETRY;
+ }
+ EXPORT_SYMBOL(filemap_fault);
+ 
+-- 
+2.14.3
 
-The other big thing is ->page_mkwrite.  btrfs is particularly shitty here
-because we have to reserve space for the dirty page, which can be a very
-expensive operation.  We use the same retry method as the read path, and simply
-cache the page and verify the page is still setup properly the next pass through
-->page_mkwrite().
-
-I've tested these patches with xfstests and there are no regressions.  Let me
-know what you think.  Thanks,
-
-Josef
