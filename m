@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53977C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7594C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13AFC214D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AFC214D5
+	by mail.kernel.org (Postfix) with ESMTP id 965C1214D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:08:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965C1214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbeIYPO0 (ORCPT
+        id S1728677AbeIYPOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:14:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54020 "EHLO
+        Tue, 25 Sep 2018 11:14:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54036 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeIYPO0 (ORCPT
+        with ESMTP id S1726033AbeIYPOn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:14:26 -0400
+        Tue, 25 Sep 2018 11:14:43 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15A421166;
-        Tue, 25 Sep 2018 09:07:51 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 11:07:49 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F19A91117;
+        Tue, 25 Sep 2018 09:08:08 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 11:08:06 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
         linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 000/111] 4.9.129-stable review
-Message-ID: <20180925090749.GC21224@kroah.com>
-References: <20180924113103.337261320@linuxfoundation.org>
+Subject: Re: [PATCH 4.4 00/70] 4.4.158-stable review
+Message-ID: <20180925090806.GD21224@kroah.com>
+References: <20180924113058.420454070@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
+In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 01:51:27PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.129 release.
-> There are 111 patches in this series, all will be posted as a response
+On Mon, Sep 24, 2018 at 01:51:59PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.158 release.
+> There are 70 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Wed Sep 26 11:30:16 UTC 2018.
+> Responses should be made by Wed Sep 26 11:30:25 UTC 2018.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.129-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.158-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
 > and the diffstat can be found below.
 
 -rc2 is out to resolve some reported problems:
- 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.129-rc2.gz
+ 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.158-rc2.gz
 
 
