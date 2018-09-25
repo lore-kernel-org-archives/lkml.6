@@ -2,164 +2,219 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093ACC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94236C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A210D20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B54320C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="BzJijJHU";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="GgeQU0++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A210D20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="wifqlxNX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B54320C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbeIYVaM (ORCPT
+        id S1729950AbeIYVas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:30:12 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55116 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729761AbeIYVaI (ORCPT
+        Tue, 25 Sep 2018 17:30:48 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39944 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729577AbeIYVaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:30:08 -0400
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8PFJSSH031178;
-        Tue, 25 Sep 2018 08:21:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=p+dVjbAFlbbxfTqgTz9vWYZXVkx6zfSI35GpH9ssvmY=;
- b=BzJijJHUs9eljwmcfwCNr5pQHK16FxVccuY3jpj0IWUB1o25lmXv7VH5Jy8Y6r02vGZw
- 32t3S+LO+92kqeBxDmJjpSe7k9edc7/FxEmqmxwnQuQWRq0DnMEQfVO+wK/enrexu0ku
- d2tJK6N6g/aYYJPlWOnCqKVmOXUGLLBZH+k= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2mqq0g86r7-5
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 25 Sep 2018 08:21:48 -0700
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.28) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Tue, 25 Sep 2018 11:21:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p+dVjbAFlbbxfTqgTz9vWYZXVkx6zfSI35GpH9ssvmY=;
- b=GgeQU0++sYugSatbzX1SMzKNLbnLI+sSDLeByILxCfzHcDf38xfYbtww3ow06GLufNrWCrAgECP5jLTA4yuLyn7325Dq4d+xBR71o5oG40ovuqldhSE5EwR7Vr8qRboEZ6a85qitRPjteWvdkeY2F983sCjfdP+Jk3cohansFAg=
-Received: from castle.thefacebook.com (2620:10d:c092:200::1:f4c5) by
- BLUPR15MB0163.namprd15.prod.outlook.com (2a01:111:e400:5249::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1164.22; Tue, 25 Sep
- 2018 15:21:41 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-team@fb.com>, Roman Gushchin <guro@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH v2 bpf-next 06/10] bpftool: add support for PERCPU_CGROUP_STORAGE maps
-Date:   Tue, 25 Sep 2018 16:21:10 +0100
-Message-ID: <20180925152114.13537-7-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180925152114.13537-1-guro@fb.com>
-References: <20180925152114.13537-1-guro@fb.com>
+        Tue, 25 Sep 2018 17:30:07 -0400
+Received: by mail-io1-f68.google.com with SMTP id w16-v6so2651584iom.7
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 08:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9jJnzzLM/Fq9pFO1IsRitvxgtntWgwRUBuCOXTiHbeU=;
+        b=wifqlxNXyN9w1LATkccktgbazeO470NrYCpaGy1xmWVj5D0Kd78EZdTfMlUVR7gIUG
+         J75LL4pA5+aPcs7B6fhlWY6DCyxn96NzIrDFe0meuX5rRmzhEJFdY5EIEeXxDu4G/wMT
+         vSUKjlO7nJB8EYIXfNeerQZBx5PPJ9JEAQneqKfaNVUup+9fQm7OkW/LF5ZC5D0YyU9k
+         ph1OZ84VISbqqZF14IhKJmgSEPuriYBTK8eHmCG6VjlXgQBUdTZqnaLckhq4kXov0fTC
+         bjSQlDZSjm/JnMziQtnrj4bWD0qwpj0QRJQ683EH0x5I1bRkmUNnLdUBnP8xY1YBxWkR
+         NsBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9jJnzzLM/Fq9pFO1IsRitvxgtntWgwRUBuCOXTiHbeU=;
+        b=RtReSFx6woDyIg4fXKLqynpNuLt3sv1JYCIgEYcsQderV5joy8RVJXruoYuZpNogTq
+         qGkoBjHB8pa/BVNtP4pGj7RN2y/KuS5S/bGeBdzJ3CeiYTSvo0Y7FcK02Vj977JQyKdF
+         IGEdq+5Mfj0zYn9z1y5558c4zgMqyuiO0ma5LYDzUySkkpKL9pCwx8S3YPQ96urNj+0p
+         JT6EMtjQSmf83JL7ds4nvuMESIOnKzgapjtUMsbsZ1GUoAjilnv9LJCC2eR6L+lIQRyY
+         PW9L7OEL79v1UJ+pu0i0QHi0HYGpi/u33FbHn26FPcAWCJtuF/cBURXvce0feshRjCI5
+         8zcw==
+X-Gm-Message-State: ABuFfojpWGvXkyUxTeO2Msu6lJgFOP00UKSGyroAcQZOTLP7Zo6fGX10
+        tF2xTfEohlvOh2Yh1d6aEgc6WFk/GSPyD30cdiEoPA==
+X-Google-Smtp-Source: ACcGV62LZV299cEecFo/U+zjd8XvOqy7xM87G81Y4TWfLUAX8GF6KrrNoXEXVW9lVgUc+H9goFVF4bcl4CgbVxLJXbs=
+X-Received: by 2002:a5e:8c04:: with SMTP id n4-v6mr1346401ioj.258.1537888927964;
+ Tue, 25 Sep 2018 08:22:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [2620:10d:c092:200::1:f4c5]
-X-ClientProxiedBy: AM6PR06CA0025.eurprd06.prod.outlook.com
- (2603:10a6:20b:14::38) To BLUPR15MB0163.namprd15.prod.outlook.com
- (2a01:111:e400:5249::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4f86a282-98d3-4ca3-731b-08d622fa9904
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR15MB0163;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;3:r+DHLcGLmepZMFyIE/kigtl0GOOBRECIFlkFcHjlh3NbjSRryR2MFaANKG/3F73ifctCnOT8Bj+C7ADWbsVnGsOXepYAGkZdw9V8Aoh0NLKksoU5xZs1xE0r7Cg1zL7u0Tcjtf14diJVipaJCcd0N5K8eRbJs0FvPC2iVuZ5EIMxJNvQd4Sr+vrRqX7HhmMmJOSfJcveuA7/3wek7lQLQOC1Jo/TP4PMlg5BuUOpP9U/sypETcsqmAi0yaYozLYA;25:TSGg/OfQutztsM/1GuB6AwFGdJNsbukz+IUUoz39ic3aq/7eyeO8JyuFw03ebCFdJyPUAT+wVJtZQiMpVE3O+/IG+8lYx1XIRc56BOZ7ha71NBxfjWhWBu/Ql0ijh+SFBZodB8FpNsrcYEQHPPK0QEsR62x+B3yxfs9JDCMmiqubvHRF4oEC4vDiTr/X4GhTiytc6FAjZ8w8017H+xe2BfrlV8h5V01Llzf10xSB36R1R3KsxhBhQxOm5uFq2Wq6hgENJ1wqRCrsh2+jWsseyHja5HJXii5/QvJmEz46ll2j7gsKeqpcI16SFq/Y1UoAMiUUd2D87vG4tP1NM7SzJA==;31:DB4XJe0ut9kkL3EOTkgtvcQlsUP2x96sDatNUp70Kh2eb8i7+K2s2zA9TN6OJ4j1QK0mzUEzlchkgqRpC0VQsC6pUrZJEycE5hyA03obpGG58wyU5x5VGY31BSLXry6iI8TEFNZu+kjALA1syShAcP4MxrIC4Jh94Ly/84nZd7W0a2JJJ15GpxbR27N7sYaPeLlQOhTf2lUs5nJZyJgmMpwpKDO57f2CziV8x44U6a0=
-X-MS-TrafficTypeDiagnostic: BLUPR15MB0163:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;20:mawzyQAL4+HVslRcRLp/j3hVJk8tMBEZ7wSl3psFhD+ncOYDhElZgfJM7wuNZkQ5dRkKmdSZ+PXgcS7/emfi+qfUvw000GaAv8UicGIxT8U/zWPxFV6mRkeDiNz1zCcxTMTmR/HUenqZ8gVh9f4sJ1fyAOHajbIzhfiMYI2T7QCxNJ94F+U9zT8fwHMh6sFr4/0V9yzGnrFp37Wi7367/jXVIMqQkMgnBNtpVe7+UYNX3IK1gTKOv6zVc/fYjfYL5YHIA1mRF4Mn+w2aRE7Kj6WS0QrbQanYzPP2QK8+ssbQ5hjI1J+1ktvUPsmLFlGVNDGEfCfIKG9nID37U6CMIEdWBPTrweZisSvQdMQEgB3WFM8UV4KFtUkTKt107NY/nVpMvT3aU3xN4/kMEfz/oq2A0m/Dxf5KRNWn4/xhFWfdBpcocKHDYVadX3nPE18bjzv0fxHHsQdbhY3QiIJrx7zmDrcosYeIzyAkfpEc0onViXBhXiKbwBEKOscNM/OG;4:0XFMdppUffzsV5SkEwpHjpodGJDJPiXnde2vAUFWGPC00KJon/FphaxH+NrA43of0cySyQ//85763GVIWigZ2DvzVMV3aT5vAj3AN/U4r1AJqYook8xmhN0UOclO59ly2idN2TD2ppbs4csuntix5HUsQb+RCwBCyg2ZKeGT1aSBI1S+V8ePxG4mtX9/UzoLdnQSYgZaNCscIbN2Cdl3J5l7ZTsp5upgBylLkLXvMbwl0eyIJN29YI57yW6yM7jyfShelUCFei6QRO+WW4aaPabk7p7VCoiM+xu/wNGPm2XTGc+YGL7XnQtwTa+VHjqv
-X-Microsoft-Antispam-PRVS: <BLUPR15MB0163E4B70FF53CBC034C7F6FBE160@BLUPR15MB0163.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(67672495146484);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(10201501046)(93006095)(93001095)(3002001)(3231355)(11241501184)(944501410)(52105095)(149066)(150027)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:BLUPR15MB0163;BCL:0;PCL:0;RULEID:;SRVR:BLUPR15MB0163;
-X-Forefront-PRVS: 08062C429B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(346002)(39860400002)(376002)(189003)(199004)(106356001)(105586002)(16586007)(2351001)(36756003)(6116002)(53416004)(7736002)(1076002)(305945005)(2906002)(4326008)(6666003)(186003)(16526019)(54906003)(47776003)(6916009)(50466002)(53936002)(48376002)(6512007)(316002)(5660300001)(51416003)(52396003)(486006)(446003)(52116002)(476003)(2616005)(76176011)(2361001)(6506007)(46003)(386003)(68736007)(11346002)(97736004)(25786009)(6486002)(8676002)(81156014)(86362001)(478600001)(50226002)(81166006)(69596002)(14444005)(8936002)(34290500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BLUPR15MB0163;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR15MB0163;23:3/CpXSRMYhWBjFX9Us/zvG7PWmSsFAcJKynB5vW6i?=
- =?us-ascii?Q?UodFsCvWpM+H8VbN+QkbT7ABk4xlVF2au0OVZNPK3F0+95fJQyBaYOPOgMhU?=
- =?us-ascii?Q?V6gpKO2H6TGzBtQ89CzpFjJaZE1rsYvtZb0GiqybzvChdTcX5Dq14EjQjJwH?=
- =?us-ascii?Q?sUYHpAttq36WvDiYJOyNYUaNhfqdgMEH3bg59g9b5adGEP8W1IitBh5T4+5D?=
- =?us-ascii?Q?zgm6lurg2PC3Wwb7tOSbmPxzaoXm540YAqA/umGUJ4oDL/jjk+LVoEZ49kJ8?=
- =?us-ascii?Q?59RLkGqdZm0d8RPHcznyDxrupc94GtiFNXKyIFoi8njF9wAtKkRxlkNX7dsm?=
- =?us-ascii?Q?EygU9Oe4iSgR7BggBbzVuZ+WVzDr31fLcLotU5q+8VAaGjQVIdPZAEeDHLfo?=
- =?us-ascii?Q?jMDq459qQqs+96vM901kKL/exXVWhhqhu0HLaGyqLnLtFMumj9iN8p6asnsE?=
- =?us-ascii?Q?EW3lwFV4CEdmx/eKDhLAqjNQE43WXdWhiwVaVwOQkP7OTI2hAV7pl6idYsuQ?=
- =?us-ascii?Q?mC0Dnllm0HgTIOEe0uPumx60GJyKmqL/+YvENrN3c588cGnJxi2B6w1FSOe+?=
- =?us-ascii?Q?xhGUmiI7rC332M8POdJDw+PSNrv8HvAL1Rk9lCAPXsoeacDiKz8xtLLWa26d?=
- =?us-ascii?Q?MnxW2gaXfwZ2rzEFwHfqrtAfOcmKSyA8oa5kvYYF6hb99zSwHjH1HgTtOqAQ?=
- =?us-ascii?Q?edTz939nPB+XBRW++EB+78r4PcxdbWdQYeSkPqzeHdUVHdoqAwhUwxXn9EwT?=
- =?us-ascii?Q?hGpYac2XtLGGOi56TKw91rY4MWBI+F4thmH42DFhWtROX0u4Q0xfT/Jz6Zep?=
- =?us-ascii?Q?fmI1sBZrYG54WLtQhIHuBvrBH2WcGy/nOWoWsIQjS8L0Uybdo5eccX37JYpV?=
- =?us-ascii?Q?uhUsUej9Xygcy5vw0AzwJxgoDqMcaWb/koClamhf0rNeCTYpx1nv6e8sAOzk?=
- =?us-ascii?Q?qekQR1rnkSa01tMebAw+AZsJ6u+BoJgaEYaQjFChl8PKPk4lrmT1ujK09Hfk?=
- =?us-ascii?Q?fgoz3x9+d7ezXCcuo4Gu4dRqJsecG09oCr1cv0+aUcfTMPenQ/FcUZw6OVGK?=
- =?us-ascii?Q?weihRQcUAq4LMTD6fejmCtzJ01IBbqcUYfXtS0E1ZTzyuavTZkQq1ZROWrO1?=
- =?us-ascii?Q?6VWk76e9HfOMZrZsI589EhrKVWpO3FPp7wRnvvVAKWz8L57s6qZaSrIOAB6d?=
- =?us-ascii?Q?DwGP0YiUpL2UISKDse9nMrhsE7DuNeF/sX2SBs4ov1po0b3u80Pxrs5F4IiU?=
- =?us-ascii?Q?NgQUWH3zfQK3mz+xowqjbaKKzHo91bsDcpgChym1rgTrIOp6dzNQvQI6TOAH?=
- =?us-ascii?Q?FCu7Zz9fzhPLky7ET497jI=3D?=
-X-Microsoft-Antispam-Message-Info: cNg1JOMgGn97jSWcwGiIXuiw5n0796zjwee7/ygVce7ldt5JBOohmcO16s2z6OAmr/35gzdHe/sPNughZd6GckSeEfcVzu/IHlmW4JjUVOPKjUbd1WxUj3x/OuqamZY6JGdzb+3tqj/WFDh4a+/9Lg64D4yDRwCWVwKS9HXyja4AfrZdFu2lM+SDlKNw92toi4/TYITVGlSUUJgHsg3AzvZWMXQtT1Yuu7YB6DxyuJu0fYLMa+rKQZOXOOsCzJBrNm2A4obQL+HUfFX1AzWxe6Cw+p7eXXpZKUBVOKS1ANXPz8wu1CbhyawuQPUGaVV9MviwnJE/JyPyHdp7Lx+YAc2+OZGKO5XadykoZbHlDjg=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;6:4gGWHlwzDtm5OKPMb+ikghJQOr4ct10yEFu+GWyVQ65maSoZo+cMka3LcqXjRBZvUlJ+JsJ67DWHZ5SSAzPiR80yG+ZOV+Ed6HTFh4DVOwylGJ/D36vhQpHOK80Jxal/g+mbNLwuy1B1PuGODsK/7eVuXb55USLSsNaMIXllV5wknxSTfhkE7wtyKUXrqnTXKFTcH3mZyrYh7p9b/hsP68mU39Y/FPS4XP6DBYvMtldfdA0zkcOnecGwgGEKFi7ejnQyt1Aj7kD+qB55T3TIXFCbaRWr2opkFIyng0xDE3/wVG0vxC2QCn2IqI7nMfxBaS7eh/SlRr6lOO7pbjiQ5W5+P/JnuMqLYBK821Dz5MvTW49VszfTSUhEp5QUUfDzG58xN9uWZyIioPWq0aYMsj/bTGK6bWAzf50SxMTHHxofPqoJflq7MfYrFpI6aqSEgtY7z2Bu/1s/30bNdWR76Q==;5:snOg+/HS/caEtN2acDHHzV2MaNAI59CquW/1CzylEdCBBhwgkX5vC1as23tvjPGs3bBfaoOLpELg3yhrAludrfbSXov9QMlhC2fgtAcYeQ6U341WtTaDNlIEUUKgK7bB2ArYRuDKL29H05NIVCT2RMyVWZb16WPDoVk5vtCyECw=;7:qBn6upNVNgLjwFPIrz8w0hyHTIQWAgYerYM9/h8h17qIWn6rEt+uClVoYNBsQeP9HFJzUdLo5nO3jAyN/B+ZdFoZNgWVqSpr0NOreD/QqgfW6H+xUyDiK0Fdf+3a42WrB3W1Xzd+9u1FJM4EE7aQ8yRSZs2/75saa5dZERCklH8TzGnmdkxgsQBj/ZArRtGaVXWv9tnQdwMcHjEmg12NS1nulRylwX1eiX5GkzPT6xHzVDASYWwxR2vuWnXrmrSz
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;20:fxG/W8uMMUcHJeckEYw+z7bhe1qVAO5glYJ3CMcgiey1iwmM0M/c3WOrSCRAqIUYUsM1SZ7CmEbb5Zwt7WnjjChup4ubVWPK//M5TJzZ61oVOSa8jevowXYsYqhtmHYyUlbjeN1eJzAv7AyQgNunnSMjmg6WfJo2LPdfCjC3IJg=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 15:21:41.5289 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f86a282-98d3-4ca3-731b-08d622fa9904
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR15MB0163
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <1533404620-18536-1-git-send-email-mark.jonas@de.bosch.com> <1534441534-6357-1-git-send-email-mark.jonas@de.bosch.com>
+In-Reply-To: <1534441534-6357-1-git-send-email-mark.jonas@de.bosch.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 25 Sep 2018 17:21:57 +0200
+Message-ID: <CAMRc=McXDkLomqHy6_KuKDABedv34+cNdJKU_iQVBLBYKFP0Ow@mail.gmail.com>
+Subject: Re: [PATCH v2] eeprom: at24: Fix unexpected timeout under high load
+To:     "Jonas Mark (ST-FIR/ENG1)" <mark.jonas@de.bosch.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wang Xin <xin.wang7@cn.bosch.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds support for BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE
-map type.
+czw., 16 sie 2018 o 19:46 Mark Jonas <mark.jonas@de.bosch.com> napisa=C5=82=
+(a):
+>
+> From: Wang Xin <xin.wang7@cn.bosch.com>
+>
+> Within at24_loop_until_timeout the timestamp used for timeout checking
+> is recorded after the I2C transfer and sleep_range(). Under high CPU
+> load either the execution time for I2C transfer or sleep_range() could
+> actually be larger than the timeout value. Worst case the I2C transfer
+> is only tried once because the loop will exit due to the timeout
+> although the EEPROM is now ready.
+>
+> To fix this issue the timestamp is recorded at the beginning of each
+> iteration. That is, before I2C transfer and sleep. Then the timeout
+> is actually checked against the timestamp of the previous iteration.
+> This makes sure that even if the timeout is reached, there is still one
+> more chance to try the I2C transfer in case the EEPROM is ready.
+>
+> Example:
+>
+> If you have a system which combines high CPU load with repeated EEPROM
+> writes you will run into the following scenario.
+>
+>  - System makes a successful regmap_bulk_write() to EEPROM.
+>  - System wants to perform another write to EEPROM but EEPROM is still
+>    busy with the last write.
+>  - Because of high CPU load the usleep_range() will sleep more than
+>    25 ms (at24_write_timeout).
+>  - Within the over-long sleeping the EEPROM finished the previous write
+>    operation and is ready again.
+>  - at24_loop_until_timeout() will detect timeout and won't try to write.
+>
+> Signed-off-by: Wang Xin <xin.wang7@cn.bosch.com>
+> Signed-off-by: Mark Jonas <mark.jonas@de.bosch.com>
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
+Applied to at24/for-next.
+
+Thanks,
+Bartosz
+
+> ---
+> Changes in v2:
+>  - Remove loop macro
+>  - Accept superfluous sleep in case of timeout
+>  - Add concrete example to commit message
+> ---
+>  drivers/misc/eeprom/at24.c | 43 ++++++++++++++++++++++------------------=
 ---
- tools/bpf/bpftool/map.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
-index af8ad32fa6e9..cb8177593a9a 100644
---- a/tools/bpf/bpftool/map.c
-+++ b/tools/bpf/bpftool/map.c
-@@ -71,13 +71,15 @@ static const char * const map_type_name[] = {
- 	[BPF_MAP_TYPE_XSKMAP]           = "xskmap",
- 	[BPF_MAP_TYPE_SOCKHASH]		= "sockhash",
- 	[BPF_MAP_TYPE_CGROUP_STORAGE]	= "cgroup_storage",
-+	[BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE]	= "percpu_cgroup_storage",
- };
- 
- static bool map_is_per_cpu(__u32 type)
- {
- 	return type == BPF_MAP_TYPE_PERCPU_HASH ||
- 	       type == BPF_MAP_TYPE_PERCPU_ARRAY ||
--	       type == BPF_MAP_TYPE_LRU_PERCPU_HASH;
-+	       type == BPF_MAP_TYPE_LRU_PERCPU_HASH ||
-+	       type == BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE;
- }
- 
- static bool map_is_map_of_maps(__u32 type)
--- 
-2.17.1
-
+>  1 file changed, 22 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+> index f5cc517..37a5c8b 100644
+> --- a/drivers/misc/eeprom/at24.c
+> +++ b/drivers/misc/eeprom/at24.c
+> @@ -106,23 +106,6 @@ static unsigned int at24_write_timeout =3D 25;
+>  module_param_named(write_timeout, at24_write_timeout, uint, 0);
+>  MODULE_PARM_DESC(at24_write_timeout, "Time (in ms) to try writes (defaul=
+t 25)");
+>
+> -/*
+> - * Both reads and writes fail if the previous write didn't complete yet.=
+ This
+> - * macro loops a few times waiting at least long enough for one entire p=
+age
+> - * write to work while making sure that at least one iteration is run be=
+fore
+> - * checking the break condition.
+> - *
+> - * It takes two parameters: a variable in which the future timeout in ji=
+ffies
+> - * will be stored and a temporary variable holding the time of the last
+> - * iteration of processing the request. Both should be unsigned integers
+> - * holding at least 32 bits.
+> - */
+> -#define at24_loop_until_timeout(tout, op_time)                         \
+> -       for (tout =3D jiffies + msecs_to_jiffies(at24_write_timeout),    =
+ \
+> -            op_time =3D 0;                                              =
+ \
+> -            op_time ? time_before(op_time, tout) : true;               \
+> -            usleep_range(1000, 1500), op_time =3D jiffies)
+> -
+>  struct at24_chip_data {
+>         /*
+>          * these fields mirror their equivalents in
+> @@ -308,13 +291,22 @@ static ssize_t at24_regmap_read(struct at24_data *a=
+t24, char *buf,
+>         /* adjust offset for mac and serial read ops */
+>         offset +=3D at24->offset_adj;
+>
+> -       at24_loop_until_timeout(timeout, read_time) {
+> +       timeout =3D jiffies + msecs_to_jiffies(at24_write_timeout);
+> +       do {
+> +               /*
+> +                * The timestamp shall be taken before the actual operati=
+on
+> +                * to avoid a premature timeout in case of high CPU load.
+> +                */
+> +               read_time =3D jiffies;
+> +
+>                 ret =3D regmap_bulk_read(regmap, offset, buf, count);
+>                 dev_dbg(&client->dev, "read %zu@%d --> %d (%ld)\n",
+>                         count, offset, ret, jiffies);
+>                 if (!ret)
+>                         return count;
+> -       }
+> +
+> +               usleep_range(1000, 1500);
+> +       } while (time_before(read_time, timeout));
+>
+>         return -ETIMEDOUT;
+>  }
+> @@ -358,14 +350,23 @@ static ssize_t at24_regmap_write(struct at24_data *=
+at24, const char *buf,
+>         regmap =3D at24_client->regmap;
+>         client =3D at24_client->client;
+>         count =3D at24_adjust_write_count(at24, offset, count);
+> +       timeout =3D jiffies + msecs_to_jiffies(at24_write_timeout);
+> +
+> +       do {
+> +               /*
+> +                * The timestamp shall be taken before the actual operati=
+on
+> +                * to avoid a premature timeout in case of high CPU load.
+> +                */
+> +               write_time =3D jiffies;
+>
+> -       at24_loop_until_timeout(timeout, write_time) {
+>                 ret =3D regmap_bulk_write(regmap, offset, buf, count);
+>                 dev_dbg(&client->dev, "write %zu@%d --> %d (%ld)\n",
+>                         count, offset, ret, jiffies);
+>                 if (!ret)
+>                         return count;
+> -       }
+> +
+> +               usleep_range(1000, 1500);
+> +       } while (time_before(write_time, timeout));
+>
+>         return -ETIMEDOUT;
+>  }
+> --
+> 2.7.4
+>
