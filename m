@@ -2,149 +2,154 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C1FC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145BAC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2682420833
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:23:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOV90hfZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2682420833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B123220833
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:25:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B123220833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbeIZBcY (ORCPT
+        id S1728073AbeIZBeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 21:32:24 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46039 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbeIZBcY (ORCPT
+        Tue, 25 Sep 2018 21:34:13 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43734 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbeIZBeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 21:32:24 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x16-v6so16440670ljd.12;
-        Tue, 25 Sep 2018 12:23:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=d/NOn73sulnzViPWgFPRhgBzoeN51MibPB5UyJoKcPY=;
-        b=UOV90hfZLCFsTO3Up7K/UJOSyHotObGZMon2CPvbVVy52adQs+VxG/VbYjY3NDqWTo
-         7tcK/Afp0isU/nFOdgwLl+J4nxejQA2T36DFpUW7Py/EJQEoaMASGvmYyjs45P5F1lwL
-         ml+AUsFR1H7cAmEXfJesQkcA6u3cqAPDj+ys7+us6Q/Xl5JmNCGFsNaus89eqXuy+Tzn
-         wq8G1y6iI4ONxXPjipvLMPQbWxF6yarBrqYeOa8tIZGGvwYUKFsVWaiHRQiPVVw5eQej
-         NXAKcqJPWKeYQbuflLt/ERfdEABLv6PxzREFWV3Xia0Ey0OMytQMgvBrrS3hexspFFYX
-         0wqw==
+        Tue, 25 Sep 2018 21:34:13 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s69-v6so2487914oie.10;
+        Tue, 25 Sep 2018 12:25:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=d/NOn73sulnzViPWgFPRhgBzoeN51MibPB5UyJoKcPY=;
-        b=jVHp+DxzTmetqvefDXj/hiuizkYAAtALsjkcUjhrBuNL2KGSxOnnnEmah4ynuEXZF1
-         asd7AxC4o/ArcGxLERKXcd3/2n9Z77a41fwtwk1s5RGSgXMqGLnU/3xPoPtnA7a3Sy/T
-         k/av8pUcOjkZiEUxn22ud+j0XITMvZA7at5uUSJZLRQrIGpObEO9F5hSyOgMHZBD0Iq1
-         1onM11cfVUaga9Q+Vo49NXdVvw9ooUoQTbFd2GhgBRRnh+vTdvnfqVnBWqsHB1OqROAp
-         S4IWaWWAbLdzrrOENsIIFhfRjaDiPUbmmf4uAkFvRHfGvayoY3v+w2OFNf0xBbTFX8//
-         /sSQ==
-X-Gm-Message-State: ABuFfog54WIlrQiKkmkJdhJHIGMBARy1yHo1FlZvP2SCNz/XuATZdF4G
-        iopOjHSM6HiIqnkDLtebc7CajISJ6NE=
-X-Google-Smtp-Source: ACcGV62yspT7xgZeOqLL6nDBJExDQ1gg6y4g/yTC1hNsgiYWAVRC256uyLQkZPEjCU7jDERwpoDyTg==
-X-Received: by 2002:a2e:9694:: with SMTP id q20-v6mr2055898lji.35.1537903400434;
-        Tue, 25 Sep 2018 12:23:20 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id n23-v6sm553160ljh.77.2018.09.25.12.23.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 12:23:19 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH] mmc: pwrseq_simple: Fix incorrect handling of GPIO bitmap
-Date:   Tue, 25 Sep 2018 21:24:33 +0200
-Message-Id: <20180925192433.1377-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
-References: <CAGfqbt4n4g_24kWGPhXojooiQQOmVeq-TfYucFERXJGMci87Xw@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=chMaRgeZJAvMYpfbdNzGK1cPZl4EyN95AHN/BIBsqsA=;
+        b=PD5sY+nZQ1QO5Vhso+dU1g7bqy11IWiaWI7zBsPYVj8da2nCrFM9m034UaOqzkAvxv
+         Hd3OcCmgVwXsRZSV2H7naq/vpbEmr6wmzWhNfqRAgV+K2GBZMLs6Q7204F6TUvHUsi0/
+         MtPxrwzIymrX2n057eKl0u97JCdvJ9Jin99l52U6f3x0vdObXH5JprloP7d3e05P1gU2
+         zjXGdcoYA8Lt0TniAUlCA3JFMEndMVDAibDMKyKsc1szQLKOvqXKzDE2OEUl21VfIXhy
+         KEsen0BfJXIRjgvjZnx9MnBZe/85IZCPIuubup6Gun0Oe3yHZGtwOxsBOoDoRVpVhc5h
+         84Xw==
+X-Gm-Message-State: ABuFfohmXeFIBo1uCPXqdpw9vaynN8TDdIUkEZchA1vb2o3LJ352KOX3
+        wU24bhrAhKifj1s1ouAuHsL1r+iYdk2W
+X-Google-Smtp-Source: ACcGV63uaZW+FwNwbE/tBeC1Saf1jusJAveWsqWijUN+tjDvZnH2aXMrJ/hvDayLqO2Mzgwsouh8SA==
+X-Received: by 2002:aca:da54:: with SMTP id r81-v6mr1489409oig.47.1537903509798;
+        Tue, 25 Sep 2018 12:25:09 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r13-v6sm969219otk.26.2018.09.25.12.25.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 12:25:08 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 14:25:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ckadabi@codeaurora.org, tsoni@codeaurora.org,
+        rnayak@codeaurora.org, bryanh@codeaurora.org,
+        psodagud@codeaurora.org,
+        Satya Durga Srinivasu Prabhala <satyap@codeaurora.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: Documentation for qcom,eud
+Message-ID: <20180925192507.GA19360@bogus>
+References: <1536096853-30473-1-git-send-email-pheragu@codeaurora.org>
+ <1536096853-30473-2-git-send-email-pheragu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536096853-30473-2-git-send-email-pheragu@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b9762bebc633 ("gpiolib: Pass bitmaps, not integer arrays, to
-get/set array") changed the way GPIO values are passed to
-gpiod_get/set_array_value() and friends.  The updated code of
-mmc_pwrseq_simple_set_gpios_value() incorrectly uses the 'value'
-argument as a bitmap of GPIO values and assigns it directly to the
-'values' bitmap variable passed to gpiod_set_array_value_cansleep()
-instead of filling that bitmap with bits equal to the 'value' argument.
-As a result, boot hanging caused by incorrectly handled MMC device
-has been observed.
+On Tue, Sep 04, 2018 at 02:34:12PM -0700, Prakruthi Deepak Heragu wrote:
+> Documentation for Embedded USB Debugger (EUD) device tree bindings.
+> 
+> Signed-off-by: Satya Durga Srinivasu Prabhala <satyap@codeaurora.org>
+> Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+> ---
+>  .../devicetree/bindings/soc/qcom/qcom,msm-eud.txt  | 41 ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
+> new file mode 100644
+> index 0000000..a03021a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,msm-eud.txt
+> @@ -0,0 +1,41 @@
+> +* Qualcomm Technologies Inc Embedded USB Debugger (EUD)
+> +
+> +The EUD (Embedded USB Debugger) is a mini-USB hub implemented
+> +on chip to support the USB-based debug and trace capabilities.
 
-As a side effect of that incorrect interpreation of the 'value'
-argument, wrong assumption is taken about the 'values' bitmap size 
-never exceding the number of bits of the 'value' argument type.
+Is it just for debug and normally bypassed? 
 
-Fix it.
+> +
+> +Required properties:
+> +
+> + - compatible:  Should be "qcom,msm-eud"
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-Hi,
+Needs to be SoC specific (though a fallback is fine).
 
-I hope I've finally identified the root cause of the boot hang reported
-by Marek Szyprowski.  I've reviewed the code of other divers updated for
-the modified GPIO API and found no more issues of that kind.
+> + - interrupts:  Interrupt number
+> + - reg: Should be address and size of EUD register space
+> +
+> +Driver notifies clients for VBUS attach/detach and charger enable/disable
 
-Marek, can you please test this fix on top of next-20180920 with the fix
-"gpiolib: Fix missing updates of bitmap index" also applied?
+Bindings are for h/w blocks, not drivers.
 
-I've assumed this fix, if tested successfully, will be merged via GPIO
-tree, hence I've selected Linus as the main recipient of this message.
+> +events. The link between client and EUD is established via a directed
+> +graph. EUD driver has one endpoint of the graph link mentioning EUD as an
+> +output link and clients registered for these notifications from the EUD
+> +should have the other endpoint of the graph link as an input link. 
 
-Thanks,
-Janusz
+OF graph is for describing data flows (i.e. h/w connections), not 
+clients wanting some event.
 
- drivers/mmc/core/pwrseq_simple.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+> Each of
+> +these endpoints should contain a 'remote-endpoint' phandle property that
+> +points to the corresponding endpoint in the port of the remote device.
 
-diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-index 7f882a2bb872..ece34c734693 100644
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -40,13 +40,22 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
- 	struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
- 
- 	if (!IS_ERR(reset_gpios)) {
--		DECLARE_BITMAP(values, BITS_PER_TYPE(value));
-+		unsigned long *values;
- 		int nvalues = reset_gpios->ndescs;
- 
--		values[0] = value;
-+		values = bitmap_alloc(nvalues, GFP_KERNEL);
-+		if (!values)
-+			return;
-+
-+		if (value)
-+			bitmap_fill(values, nvalues);
-+		else
-+			bitmap_zero(values, nvalues);
- 
- 		gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
- 					       reset_gpios->info, values);
-+
-+		kfree(values);
- 	}
- }
- 
--- 
-2.16.4
+You don't need to describe how the graph binding works. Just what the 
+port assignments are.
 
+I worry this is going to collide with using the graph binding for USB 
+connectors.
+
+> +
+> +An example for EUD device node:
+> +
+> +	eud: qcom,msm-eud@88e0000 {
+> +		compatible = "qcom,msm-eud";
+> +		interrupts = <GIC_SPI 492 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg = <0x88e0000 0x4000>;
+> +		port {
+> +                	eud_output: endpoint {
+> +                        	remote-endpoint = <&usb3_input>;
+> +                        };
+> +        	};
+> +	};
+> +
+> +An example for EUD client:
+
+What are possible clients? Could we want to switch clients at runtime?
+
+> +
+> +	usb3 {
+> +		port {
+> +                	usb3_input: endpoint {
+> +                        	remote-endpoint = <&eud_output>;
+> +                        };
+> +        	};
+> +	};
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
