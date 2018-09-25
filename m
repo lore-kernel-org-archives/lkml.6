@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFFEC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C10BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD6720896
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:17:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD6720896
+	by mail.kernel.org (Postfix) with ESMTP id 105F92086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:17:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105F92086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeIZF1m (ORCPT
+        id S1727324AbeIZF1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 01:27:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33530 "EHLO
+        Wed, 26 Sep 2018 01:27:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35124 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727266AbeIZF1m (ORCPT
+        by vger.kernel.org with ESMTP id S1727295AbeIZF1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 01:27:42 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8PNEVWI066586
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 19:17:47 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mqtj4h7gu-1
+        Wed, 26 Sep 2018 01:27:46 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8PNEVFt040754
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 19:17:52 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mqwvv1ahd-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 19:17:47 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 19:17:52 -0400
 Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Tue, 25 Sep 2018 17:17:46 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 25 Sep 2018 17:17:51 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 25 Sep 2018 17:17:43 -0600
+        Tue, 25 Sep 2018 17:17:47 -0600
 Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8PNHekh15138900
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8PNHisV37552336
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 25 Sep 2018 16:17:40 -0700
+        Tue, 25 Sep 2018 16:17:44 -0700
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 33EBE136053;
-        Tue, 25 Sep 2018 17:17:40 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 6D85A136066;
+        Tue, 25 Sep 2018 17:17:44 -0600 (MDT)
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 362C4136055;
-        Tue, 25 Sep 2018 17:17:37 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 6CB11136065;
+        Tue, 25 Sep 2018 17:17:41 -0600 (MDT)
 Received: from oc8043147753.ibm.com (unknown [9.80.192.224])
         by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Tue, 25 Sep 2018 17:17:37 -0600 (MDT)
+        Tue, 25 Sep 2018 17:17:41 -0600 (MDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -65,22 +65,22 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, frankja@linux.ibm.com,
         Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v11 12/26] s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
-Date:   Tue, 25 Sep 2018 19:16:27 -0400
+Subject: [PATCH v11 13/26] s390: vfio-ap: zeroize the AP queues
+Date:   Tue, 25 Sep 2018 19:16:28 -0400
 X-Mailer: git-send-email 2.19.0.221.g150f307
 In-Reply-To: <20180925231641.4954-1-akrowiak@linux.vnet.ibm.com>
 References: <20180925231641.4954-1-akrowiak@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18092523-0016-0000-0000-00000934C207
+x-cbid: 18092523-0012-0000-0000-000016BBBFA7
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009771; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000267; SDB=6.01093642; UDB=6.00565266; IPR=6.00873680;
- MB=3.00023503; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-25 23:17:45
+ MB=3.00023503; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-25 23:17:49
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092523-0017-0000-0000-0000407B9601
-Message-Id: <20180925231641.4954-13-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18092523-0013-0000-0000-0000548899A6
+Message-Id: <20180925231641.4954-14-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -95,90 +95,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-Adds support for the VFIO_DEVICE_GET_INFO ioctl to the VFIO
-AP Matrix device driver. This is a minimal implementation,
-as vfio-ap does not use I/O regions.
+Let's call PAPQ(ZAPQ) to zeroize a queue for each queue configured
+for a mediated matrix device when it is released.
+
+Zeroizing a queue resets the queue, clears all pending
+messages for the queue entries and disables adapter interruptions
+associated with the queue.
 
 Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 Tested-by: Michael Mueller <mimu@linux.ibm.com>
 Tested-by: Farhan Ali <alifm@linux.ibm.com>
-Tested-by: Pierre Morel <pmorel@linux.ibm.com>
 ---
- drivers/s390/crypto/vfio_ap_ops.c | 38 +++++++++++++++++++++++++++++++
- include/uapi/linux/vfio.h         |  1 +
- 2 files changed, 39 insertions(+)
+ drivers/s390/crypto/vfio_ap_ops.c | 44 +++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
 diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 89fbcde8dc98..b4f67d547493 100644
+index b4f67d547493..1943e47d7d78 100644
 --- a/drivers/s390/crypto/vfio_ap_ops.c
 +++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -852,6 +852,43 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
- 	module_put(THIS_MODULE);
+@@ -816,6 +816,49 @@ static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+ 	return NOTIFY_OK;
  }
  
-+static int vfio_ap_mdev_get_device_info(unsigned long arg)
++static int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
++				    unsigned int retry)
 +{
-+	unsigned long minsz;
-+	struct vfio_device_info info;
++	struct ap_queue_status status;
 +
-+	minsz = offsetofend(struct vfio_device_info, num_irqs);
++	do {
++		status = ap_zapq(AP_MKQID(apid, apqi));
++		switch (status.response_code) {
++		case AP_RESPONSE_NORMAL:
++			return 0;
++		case AP_RESPONSE_RESET_IN_PROGRESS:
++		case AP_RESPONSE_BUSY:
++			msleep(20);
++			break;
++		default:
++			/* things are really broken, give up */
++			return -EIO;
++		}
++	} while (retry--);
 +
-+	if (copy_from_user(&info, (void __user *)arg, minsz))
-+		return -EFAULT;
-+
-+	if (info.argsz < minsz)
-+		return -EINVAL;
-+
-+	info.flags = VFIO_DEVICE_FLAGS_AP;
-+	info.num_regions = 0;
-+	info.num_irqs = 0;
-+
-+	return copy_to_user((void __user *)arg, &info, minsz);
++	return -EBUSY;
 +}
 +
-+static ssize_t vfio_ap_mdev_ioctl(struct mdev_device *mdev,
-+				    unsigned int cmd, unsigned long arg)
++static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
 +{
 +	int ret;
++	int rc = 0;
++	unsigned long apid, apqi;
++	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
 +
-+	switch (cmd) {
-+	case VFIO_DEVICE_GET_INFO:
-+		ret = vfio_ap_mdev_get_device_info(arg);
-+		break;
-+	default:
-+		ret = -EOPNOTSUPP;
-+		break;
++	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm,
++			     matrix_mdev->matrix.apm_max + 1) {
++		for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm,
++				     matrix_mdev->matrix.aqm_max + 1) {
++			ret = vfio_ap_mdev_reset_queue(apid, apqi, 1);
++			if (ret)
++				rc = ret;
++		}
 +	}
 +
-+	return ret;
++	return rc;
 +}
 +
- static const struct mdev_parent_ops vfio_ap_matrix_ops = {
- 	.owner			= THIS_MODULE,
- 	.supported_type_groups	= vfio_ap_mdev_type_groups,
-@@ -860,6 +897,7 @@ static const struct mdev_parent_ops vfio_ap_matrix_ops = {
- 	.remove			= vfio_ap_mdev_remove,
- 	.open			= vfio_ap_mdev_open,
- 	.release		= vfio_ap_mdev_release,
-+	.ioctl			= vfio_ap_mdev_ioctl,
- };
+ static int vfio_ap_mdev_open(struct mdev_device *mdev)
+ {
+ 	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+@@ -846,6 +889,7 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
+ 	if (matrix_mdev->kvm)
+ 		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
  
- int vfio_ap_mdev_register(void)
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index bfbe2be8f369..f378b9802d8b 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -200,6 +200,7 @@ struct vfio_device_info {
- #define VFIO_DEVICE_FLAGS_PLATFORM (1 << 2)	/* vfio-platform device */
- #define VFIO_DEVICE_FLAGS_AMBA  (1 << 3)	/* vfio-amba device */
- #define VFIO_DEVICE_FLAGS_CCW	(1 << 4)	/* vfio-ccw device */
-+#define VFIO_DEVICE_FLAGS_AP	(1 << 5)	/* vfio-ap device */
- 	__u32	num_regions;	/* Max region index + 1 */
- 	__u32	num_irqs;	/* Max IRQ index + 1 */
- };
++	vfio_ap_mdev_reset_queues(mdev);
+ 	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+ 				 &matrix_mdev->group_notifier);
+ 	matrix_mdev->kvm = NULL;
 -- 
 2.19.0.221.g150f307
 
