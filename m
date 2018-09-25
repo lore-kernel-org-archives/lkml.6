@@ -6,49 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7F2C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D309C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D582820867
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:33:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D582820867
+	by mail.kernel.org (Postfix) with ESMTP id BA97D20877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:34:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA97D20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbeIYPkd (ORCPT
+        id S1728875AbeIYPlR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:40:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36431 "EHLO
+        Tue, 25 Sep 2018 11:41:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44849 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeIYPkd (ORCPT
+        with ESMTP id S1728504AbeIYPlR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:40:33 -0400
+        Tue, 25 Sep 2018 11:41:17 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8P9XKxY3386400
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8P9YPMl3386486
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 25 Sep 2018 02:33:20 -0700
+        Tue, 25 Sep 2018 02:34:25 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8P9XKue3386397;
-        Tue, 25 Sep 2018 02:33:20 -0700
-Date:   Tue, 25 Sep 2018 02:33:20 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8P9YOWc3386483;
+        Tue, 25 Sep 2018 02:34:24 -0700
+Date:   Tue, 25 Sep 2018 02:34:24 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-ed93d0a26012a4a12231c16b18628a324079dc45@git.kernel.org>
-Cc:     jolsa@kernel.org, acme@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, alexey.budankov@linux.intel.com,
-        tglx@linutronix.de, namhyung@kernel.org,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        andi@firstfloor.org, hpa@zytor.com
-Reply-To: hpa@zytor.com, alexander.shishkin@linux.intel.com,
-          andi@firstfloor.org, mingo@kernel.org,
-          alexey.budankov@linux.intel.com, tglx@linutronix.de,
-          namhyung@kernel.org, acme@redhat.com, jolsa@kernel.org,
-          peterz@infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180913125450.21342-10-jolsa@kernel.org>
-References: <20180913125450.21342-10-jolsa@kernel.org>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-c3khb9ac86s00qxzjrueomme@git.kernel.org>
+Cc:     mingo@kernel.org, namhyung@kernel.org, dsahern@gmail.com,
+        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, thiago.macieira@intel.com,
+        jolsa@kernel.org, wangnan0@huawei.com, acme@redhat.com
+Reply-To: adrian.hunter@intel.com, thiago.macieira@intel.com,
+          jolsa@kernel.org, wangnan0@huawei.com, acme@redhat.com,
+          tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, namhyung@kernel.org, dsahern@gmail.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf util: Make copyfile_offset() global
-Git-Commit-ID: ed93d0a26012a4a12231c16b18628a324079dc45
+Subject: [tip:perf/core] perf python: Use -Wno-redundant-decls to build with
+ PYTHON=python3
+Git-Commit-ID: 24ef0fd0a1f389b156e6ef0edd71072728831bd9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,68 +59,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ed93d0a26012a4a12231c16b18628a324079dc45
-Gitweb:     https://git.kernel.org/tip/ed93d0a26012a4a12231c16b18628a324079dc45
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Thu, 13 Sep 2018 14:54:11 +0200
+Commit-ID:  24ef0fd0a1f389b156e6ef0edd71072728831bd9
+Gitweb:     https://git.kernel.org/tip/24ef0fd0a1f389b156e6ef0edd71072728831bd9
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 18 Sep 2018 16:08:02 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 19 Sep 2018 10:25:12 -0300
+CommitDate: Wed, 19 Sep 2018 10:25:13 -0300
 
-perf util: Make copyfile_offset() global
+perf python: Use -Wno-redundant-decls to build with PYTHON=python3
 
-It will be used outside of util object in following patches.
+When building in ClearLinux using 'make PYTHON=python3' with gcc 8.2.1
+it fails with:
 
-Committer note:
+    GEN      /tmp/build/perf/python/perf.so
+  In file included from /usr/include/python3.7m/Python.h:126,
+                   from /git/linux/tools/perf/util/python.c:2:
+  /usr/include/python3.7m/import.h:58:24: error: redundant redeclaration of ‘_PyImport_AddModuleObject’ [-Werror=redundant-decls]
+   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *, PyObject *);
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+  /usr/include/python3.7m/import.h:47:24: note: previous declaration of ‘_PyImport_AddModuleObject’ was here
+   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *name,
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
+  error: command 'gcc' failed with exit status 1
 
-We need to have the header with the definition for loff_t in util.h
-since we now use it in the copyfile_offset() signature.
+And indeed there is a redundant declaration in that Python.h file, one
+with parameter names and the other without, so just add
+-Wno-error=redundant-decls to the python setup instructions.
 
-Also move that prototype closer to the other copyfile_ prefixed
-functions.
+Now perf builds with gcc in ClearLinux with the following Dockerfile:
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
+  # docker.io/acmel/linux-perf-tools-build-clearlinux:latest
+  FROM docker.io/clearlinux:latest
+  MAINTAINER Arnaldo Carvalho de Melo <acme@kernel.org>
+  RUN swupd update && \
+      swupd bundle-add sysadmin-basic-dev
+  RUN mkdir -m 777 -p /git /tmp/build/perf /tmp/build/objtool /tmp/build/linux && \
+      groupadd -r perfbuilder && \
+      useradd -m -r -g perfbuilder perfbuilder && \
+      chown -R perfbuilder.perfbuilder /tmp/build/ /git/
+  USER perfbuilder
+  COPY rx_and_build.sh /
+  ENV EXTRA_MAKE_ARGS=PYTHON=python3
+  ENTRYPOINT ["/rx_and_build.sh"]
+
+Now to figure out why the build fails with clang, that is present in the
+above container as detected by the rx_and_build.sh script:
+
+  clang version 6.0.1 (tags/RELEASE_601/final)
+  Target: x86_64-unknown-linux-gnu
+  Thread model: posix
+  InstalledDir: /usr/sbin
+  make: Entering directory '/git/linux/tools/perf'
+    BUILD:   Doing 'make -j4' parallel build
+    HOSTCC   /tmp/build/perf/fixdep.o
+    HOSTLD   /tmp/build/perf/fixdep-in.o
+    LINK     /tmp/build/perf/fixdep
+
+  Auto-detecting system features:
+  ...                         dwarf: [ OFF ]
+  ...            dwarf_getlocations: [ OFF ]
+  ...                         glibc: [ OFF ]
+  ...                          gtk2: [ OFF ]
+  ...                      libaudit: [ OFF ]
+  ...                        libbfd: [ OFF ]
+  ...                        libelf: [ OFF ]
+  ...                       libnuma: [ OFF ]
+  ...        numa_num_possible_cpus: [ OFF ]
+  ...                       libperl: [ OFF ]
+  ...                     libpython: [ OFF ]
+  ...                      libslang: [ OFF ]
+  ...                     libcrypto: [ OFF ]
+  ...                     libunwind: [ OFF ]
+  ...            libdw-dwarf-unwind: [ OFF ]
+  ...                          zlib: [ OFF ]
+  ...                          lzma: [ OFF ]
+  ...                     get_cpuid: [ OFF ]
+  ...                           bpf: [ OFF ]
+
+  Makefile.config:331: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
+  make[1]: *** [Makefile.perf:206: sub-make] Error 2
+  make: *** [Makefile:70: all] Error 2
+  make: Leaving directory '/git/linux/tools/perf'
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180913125450.21342-10-jolsa@kernel.org
+Cc: Thiago Macieira <thiago.macieira@intel.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-c3khb9ac86s00qxzjrueomme@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/util.c | 2 +-
- tools/perf/util/util.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/util/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index eac5b858a371..093352e93d50 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -221,7 +221,7 @@ out:
- 	return err;
- }
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 97efbcad076e..1942f6dd24f6 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -35,7 +35,7 @@ class install_lib(_install_lib):
  
--static int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
-+int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
- {
- 	void *ptr;
- 	loff_t pgoff;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index dc58254a2b69..14508ee7707a 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -6,6 +6,7 @@
- /* glibc 2.20 deprecates _BSD_SOURCE in favour of _DEFAULT_SOURCE */
- #define _DEFAULT_SOURCE 1
+ cflags = getenv('CFLAGS', '').split()
+ # switch off several checks (need to be at the end of cflags list)
+-cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
++cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+ if cc != "clang":
+     cflags += ['-Wno-cast-function-type' ]
  
-+#include <fcntl.h>
- #include <stdbool.h>
- #include <stddef.h>
- #include <stdlib.h>
-@@ -35,6 +36,7 @@ bool lsdir_no_dot_filter(const char *name, struct dirent *d);
- int copyfile(const char *from, const char *to);
- int copyfile_mode(const char *from, const char *to, mode_t mode);
- int copyfile_ns(const char *from, const char *to, struct nsinfo *nsi);
-+int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size);
- 
- ssize_t readn(int fd, void *buf, size_t n);
- ssize_t writen(int fd, const void *buf, size_t n);
