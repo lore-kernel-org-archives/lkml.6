@@ -2,66 +2,66 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B27C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04675C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C56C20843
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928F020843
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="kyUB/WEx";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="SO4cisS1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C56C20843
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="VmO6fRnc";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="eF8aW9b1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 928F020843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729842AbeIYVaN (ORCPT
+        id S1729869AbeIYVaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 25 Sep 2018 17:30:13 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:60799 "EHLO
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:43420 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729764AbeIYVaI (ORCPT
+        by vger.kernel.org with ESMTP id S1729763AbeIYVaI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Sep 2018 17:30:08 -0400
 Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8PFI92h003006;
-        Tue, 25 Sep 2018 08:21:48 -0700
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8PFI79t002960;
+        Tue, 25 Sep 2018 08:21:50 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=OrTmFFzvvZFqSC3cgopmf+G7fiqGaqO9f4jjSM2KKLI=;
- b=kyUB/WEx88P+LwmZnecl5bREnCYXFA0wF1f+mlJHdst4tHGgSFQCM0xvdV0tsRVVXroO
- 8BY8tSoyTVuu6j/VngAXThg/n7EsmLWBtXwU9+FVHxVad4e/XkFCdUt4Jthra9SM7fJO
- CFuCXM5b3qNlJSYh//gm8Hl9kReZINojVgg= 
+ content-type; s=facebook; bh=07g5uhRWPju28W36T3gUmBYd6AqW7bvW6zaiB1iHD/U=;
+ b=VmO6fRncFumWJNlhLp8dRPywnvQWD5GM3N2f3YGmXERbG7YLMlj0GGhYuOeIV1nI9jb1
+ v0LkNyvcDkS1i8aXMNrwAi8C/QAWwgM+P6U3SizdcFKvgvgCZVSSzlInLFC7y2f5ZI97
+ WVHd7FjFcYaG4RZFs1se4end+fZ+YVz/stc= 
 Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2mqn800gqq-2
+        by mx0a-00082601.pphosted.com with ESMTP id 2mqn800gqx-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 25 Sep 2018 08:21:48 -0700
+        Tue, 25 Sep 2018 08:21:50 -0700
 Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
  by o365-in.thefacebook.com (192.168.16.15) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Tue, 25 Sep 2018 08:21:47 -0700
+ id 14.3.361.1; Tue, 25 Sep 2018 08:21:49 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector1-fb-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OrTmFFzvvZFqSC3cgopmf+G7fiqGaqO9f4jjSM2KKLI=;
- b=SO4cisS1Tu0eXb43XGpjuuylRqmZSWDPbGcewy3hGcTGOZEO5m6btttxDkwUUOKHgfDFROWPlpJrDYIFarVyUDg1mpI1ShLDN4VDBox0gGHyP+lSgnj1lgeOgypR0Ok/K7zNDWjgaA4T0NrQBIrUZy90wwtOqaswOe8LRqL7AP8=
+ bh=07g5uhRWPju28W36T3gUmBYd6AqW7bvW6zaiB1iHD/U=;
+ b=eF8aW9b1D0WrqeGGudaPfIg+fmmNxONlAxVIewo8s2+DruL3DuXsUB8QjYMQJuYAfFWsL5DPzODngQvgqd3SetEiBgYijlGm+KbrYL75ZX+whO+jpYilDk48tc1GaAxcbvAjw/H8EAQqMBObrikt6eAAIAujZMybxAsIjF+8+KA=
 Received: from castle.thefacebook.com (2620:10d:c092:200::1:f4c5) by
  BLUPR15MB0163.namprd15.prod.outlook.com (2a01:111:e400:5249::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1164.22; Tue, 25 Sep
- 2018 15:21:42 +0000
+ 2018 15:21:45 +0000
 From:   Roman Gushchin <guro@fb.com>
 To:     <netdev@vger.kernel.org>
 CC:     Song Liu <songliubraving@fb.com>, <linux-kernel@vger.kernel.org>,
         <kernel-team@fb.com>, Roman Gushchin <guro@fb.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH v2 bpf-next 07/10] selftests/bpf: add verifier per-cpu cgroup storage tests
-Date:   Tue, 25 Sep 2018 16:21:11 +0100
-Message-ID: <20180925152114.13537-8-guro@fb.com>
+Subject: [PATCH v2 bpf-next 09/10] samples/bpf: extend test_cgrp2_attach2 test to use per-cpu cgroup storage
+Date:   Tue, 25 Sep 2018 16:21:13 +0100
+Message-ID: <20180925152114.13537-10-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180925152114.13537-1-guro@fb.com>
 References: <20180925152114.13537-1-guro@fb.com>
@@ -72,49 +72,50 @@ X-ClientProxiedBy: AM6PR06CA0025.eurprd06.prod.outlook.com
  (2603:10a6:20b:14::38) To BLUPR15MB0163.namprd15.prod.outlook.com
  (2a01:111:e400:5249::13)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c02f348e-b16a-4edd-a9b9-08d622fa99d9
+X-MS-Office365-Filtering-Correlation-Id: bd6f8f92-e738-4584-b074-08d622fa9b7b
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR15MB0163;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;3:5XEg4f6sgHnl+5uGSpd4WzAxP+jOAb/mnjENe2Uf+LMmVCu7+ZJCqlb1RJiwZOOiHkcyRsMmTAFx6IlBvVzN2siHYvCrvBFJ/Jp7pp709JM3IlHvXySXVtLZcEQ7F6OXP52iqc0AQJrk5DP/jDtNsdzu7lU+uuXxSAUS06DzArIwdSiOH+gSA1K32NutJQW7wEszuWYawaJO7QR+i3OEo4L2Lac9ani4QouhhsUMyhEoCTwiqgENgBBXUv0RN0G/;25:T/2BGCGjriOaU+TORB8UC88OLQQA3cfgfIiSs494Aj9mx5YRbdbvlrsD2g08Y6XeFtE7PrGu8WRcbNkIPhuempOryBUsjNRc6eVgZfEU11ikhKl+k6M5w2ZSOfIgUe+LnBXms5yAKqPabag3YmSIweAM/iS3nfVySCNFFVPIgE0z36iphy+WKYfcpSZK4LF7AUAWh2z979zu1vwlotMgv+aP81CYI0FpatuqycK0EPY7S746SKOa7+dIggUGAm3ep1vIJq0XXOSgcGaH5iei1Gp/4dFhfoWt7X5cJSfwxnN/uUUTm9x19YHl+pgOAMLPatBmkqgdza4b9xBH3WvNHw==;31:030qJM4s4/pwTRAAmrUkVOxVLdo8qXP9FItxX9lGea9c1ovA4PhqhR91avE0ydKqdDyUqCUdXumkYqbS22TcIS1BAxolNeK6C5czkIQ3DLmuPwEFy5y8YM9ZQQnzN/E94B4pehSR3WYaF1RMRcMaYln2i9hA0bFxRpcWYZNAWubWdtJwx/X86+2ZWBz6+l+r7zBl4hgM+ukmNVoP5e0Dw/d899c9/BD9eGWTrA0GzC8=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;3:mQ/jp2ngsGxlIpMqvSpSEeGHAaQlFwfoqsKaaJfA+2AASKmfuyHt8s4Km1+Ip65/3ZYOglCGGexw0+1+VMjOe9zQUdVrdZwPuLbZ6Sk7FzcoPNfiDkw/qTmAL+Nthd463opP/ZswgvJt63TMJtxEG39iNTqXBq2QNwmQd6kbU4pz8extYsZOGRKSQcO8dxG2GVV+/Ij7LAP5msAtd/v22YoUIrbeaZTGJKCrQKePkXHHnUYA8gNpmZm0rLaH0eaK;25:IV7NGW4WFzU+vNw4JFIsAMD3bD6xHFx6/ef1hTXoG+oZm15aZnGUdVl/RXNp/USZ95xtNlnRZ/sRVpkvVRH1CV/lBJb4jnMwcZBzJMl2Nw/uBBUKqZx7QgROKZ0LFmP9XvpMX351Bq+4EVH4An4bW/+cAaiDbklrmoiD099AkdbSoxsQ43d0YdMJIxX5rhcnz+h1mx2LBhv7/dLzvPFOIzvMfREUge9piLyDmbJihY7FuWB8DEQ0/TQdpBB3NtOQP81DovCHEtwjh0G1A8W+2gwlO/XbM+gBRUNkU5Ia26xJ8ZlpxUOS3nPDteiTogEOcRbV8SNmncsqL8cGlPoDeQ==;31:TGJG4Te3aRJ/jRilDh8+Hwq+2p+uiqIaTTP9qoudSaV3I8SVmsc4auQLisCpXb9aHRUxGH5dcUmcrNbuLc7XyghxzRDXJSyK1QpG5/SPDfY6+PL0WsoCPH74isQK3s3WH6uISBlfrjmLjuMkJA1b04LUTxW+LDeeU9/DkkPXqwQSaURWoBpdHEs9JawZH9Z/VEAVqAfhrOrptWgFDwRUK+cM+ulYJpLocIqn4ESqnzM=
 X-MS-TrafficTypeDiagnostic: BLUPR15MB0163:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;20:bsTSjU6cZFGoCUqqdS8eByJ78lBs86y8F7Jvp4ufS6FbGrDoaUQYOx9yuSm8h5cDrsI3Gqh2+Awt+ZbjrdxG0xseecC45sAOyKiQOLxbpCQw6qUZdDYf2zSWzmhKL0HIdb7zjKvd/MyQOVM2lJ+7KFA3prB2nN0Kwcf2dK0t55APefBb1Y10E2P4fddnMUXtL1jzsd9pPDmKCyPKcmNvnhknRvel6v5PK1IvidJgTC6HXrp4qsZmJK24qgKIfMZSvOe2CjnSVKkQSQUBFU9i6rW9q2bxRwX8kBKZkO4pE6Ran5b8HvbhZ+xKE8b/KmWcyDf01SwHlmUit4OzgyqEbqwW4t3aSE6mSAiKNQjAUgV+krpgGpbbr1ekRgEYfSKzWd/aW1uecSHhLuRK7FzJq6Utn+F1XeFDSoV7r6R0galUKw0R1+YKoVF/jbwgkgKgACtM2x2oh94t/V9apfZNVNQI/58P4VMiBU6NU9rDP/UPYnlbJe3yv3idz4nwGSGM;4:DfK2m7IbmEAfKepFJ3k63+rc+8OUNhg6LElyexfy/D+xVKYmnJaylt/LYHWKUI/TjX60KdhA2rFG+oAwq/llr0alsdmLLVLbLQLZU+rg0IGp/qayoGXqvZG+PS+7AKxHZTlKCIlGVYcpW6ac3TK+W+lWANy9TRNRQndMYRX5+omxwtJtRW84tAXBTbapOqQRH/F/vSSIxEr8YA3DMUR0F/MHuBcXpFk3XPhoDG+naSNq6foZhMN8dC/qaU5g3WGzP0ebjArNEmg1Lx8EG/zF9gDC+mWF0yVuQasfvbs795BHpXs4A2wqBeDvDxL5LSzv
-X-Microsoft-Antispam-PRVS: <BLUPR15MB0163E5E6FF56CF64394AC2D9BE160@BLUPR15MB0163.namprd15.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;20:qqLJLAsagB/YrFL79WQH0+gG4z6jOh9rBt7kY9mFUposlivxnXTfySSlO3NarlktqKPz+YRnA1JH3gXUCWS+Ou81daMCpWP4pz2JumwJ4LQI1e7/McGgssVoTIAdvk1dKGDPrUA3cc8BgHedQ2i4f1Ru6qLFGNq17D2in8e6+5Sra7dIHK4t7X66E0Ex3S9MBQ+sVKiSaHJFmoBVkacZKSO50SoA3guHHGWqlOZd9C6f7asaHz/mxrzLNwugDr8cT5GCCffEMO8rne5NEqvoTYcu3oENN9/MAGoVvS9fxBsmlGP0WBFg10WJld2F0//Lq2GhJMf49ef+bc3uhQm2HpK57ErGFkp2uFYsOAZ4U3xFhm1XVHEnGLAoY/2As/gSYdw28X5O6uvY98H1UOgK0oox/vuPbgzK6SdosD7XZuXP/6Bwfcc8kpun124N3eE6jXAkMt/14iKlLUbs0Ne2jaVAp4dFZEViedIwUska5/eVOqd1tm1x+NnNFRvwWHSp;4:UaUSn+pde1RgMNfkM0gTCliatwAaB6FS7UABFP9J/zZLGx3DZdyDRHiX+r3EDp8a+RGtJmhJt8UL26WKV8urnJWl2kmQBkW2TE/J+h/LySYWRlStB5comu/ukmxH82pJkfAVGq1wuHo4YAfIQ9o15Qagm0MWiJESSOxyxoiHJ6CC1MH9wAy1cQk52GYGEIGqHfjAzxJ/Zq8Ss7WV0JuR703uDUFjn5GZ6eaU55w15V3B4n/qGeUZQqmfCa9t9fDwqqL7URRVgjuhxq1cXQY0LDUo3PdUko2qd4GpPeu287bvTTuoF/4Wflk+RMdvZxlp
+X-Microsoft-Antispam-PRVS: <BLUPR15MB0163D76A171AB8B468566958BE160@BLUPR15MB0163.namprd15.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(67672495146484);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(10201501046)(93006095)(93001095)(3002001)(3231355)(11241501184)(944501410)(52105095)(149066)(150027)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:BLUPR15MB0163;BCL:0;PCL:0;RULEID:;SRVR:BLUPR15MB0163;
 X-Forefront-PRVS: 08062C429B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(346002)(39860400002)(376002)(189003)(199004)(106356001)(105586002)(16586007)(2351001)(36756003)(6116002)(53416004)(7736002)(1076002)(305945005)(2906002)(4326008)(6666003)(186003)(16526019)(54906003)(47776003)(6916009)(50466002)(53936002)(48376002)(6512007)(316002)(5660300001)(51416003)(52396003)(486006)(446003)(52116002)(476003)(2616005)(76176011)(2361001)(6506007)(46003)(386003)(68736007)(11346002)(97736004)(25786009)(6486002)(8676002)(81156014)(86362001)(478600001)(50226002)(81166006)(69596002)(14444005)(8936002)(34290500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BLUPR15MB0163;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(346002)(39860400002)(376002)(189003)(199004)(106356001)(105586002)(16586007)(2351001)(36756003)(15760500003)(6116002)(53416004)(7736002)(1076002)(305945005)(2906002)(4326008)(6666003)(186003)(16526019)(54906003)(47776003)(6916009)(50466002)(53936002)(48376002)(6512007)(316002)(5660300001)(51416003)(52396003)(486006)(446003)(52116002)(476003)(2616005)(76176011)(2361001)(6506007)(46003)(386003)(68736007)(11346002)(97736004)(25786009)(6486002)(8676002)(81156014)(86362001)(478600001)(50226002)(81166006)(69596002)(14444005)(8936002)(5024004)(34290500001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BLUPR15MB0163;H:castle.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR15MB0163;23:XVoMPbQO/nsrQZMhMygmgIRt3GuwmEgT2CEDhxWM2?=
- =?us-ascii?Q?2li8sD0zl7dXPopD/KY0tNi1gCxruzLjIz2oQNvn+GA4TwBpzMag99drNIJj?=
- =?us-ascii?Q?Ur0spJGost4+A/AnSswHCjaTO85Vbe+cYoidDc45H9auB3Cg1RsdtY/bWIfv?=
- =?us-ascii?Q?GyOyyn6JqYxzq2cnNqP2eGkydcAAJVB5MyestKebrJbRvzto/0wgO4stbD9c?=
- =?us-ascii?Q?7VtJbwrp1KJJ3ZsBt0Scyp7MEA52VJEbTXg6CJG0kTl26OBy4GjKjItfEqkX?=
- =?us-ascii?Q?VjWyx/+CqagUxDWudFIxAhoCSvVERAyEihuIOiL2rlHV/b/wb+vo9hSJt9S6?=
- =?us-ascii?Q?wbkZD7COWlY7oiA4LBMxz2C7/w2qCVWjRgsalL1f6zJddIu9ZGJtxpJ1q328?=
- =?us-ascii?Q?YdXYUH0Prid4zjFoNtzsAcr2z6PLdEC7jybh0/yjTRJ+CAKWTFkylM2J4Dqj?=
- =?us-ascii?Q?IKfFT0WdEp/v+0jI2o1WzB0DnKlWwH47X1P1+EjzZNPUeV+YrY//OU59b+yE?=
- =?us-ascii?Q?8vAF1IP+lqfO1OfqKIFWbX0Q5pYjf8WFDdauOV7oWzmiOPIG5009831NFAQD?=
- =?us-ascii?Q?PU65AEgs5meIFj+wssWJZy2Rf1ifmKgyV2hyIHTfaSR6afNA8fVDLjPWDslQ?=
- =?us-ascii?Q?+5d54m+xCKMDc8P8RIvB1o8K6xsf47HtD3i9gMGLMf51opUgat4YArD+OwUp?=
- =?us-ascii?Q?SRPxB5tuPJFO8MZKl+7IlN6gy3UfqsBNuL6CyimBPfq6+NBihYDy7CdE9W1n?=
- =?us-ascii?Q?/TIdceNapB8M6mSWgrABNces/8De1CcqEHqseLMC8WV+xMFzapT2reH4k0Md?=
- =?us-ascii?Q?eS9q1tCfolwGdahVgDTBUvtUsV99PxonOaHPLZegVsoluG3Fh/Sq3BSwy09b?=
- =?us-ascii?Q?jITAH1bcUwL1k6CvfpLasv5WWGPkDu48ikwa/aQ7LDBcbapZ86w2jJbUbTYj?=
- =?us-ascii?Q?Q+Hudiktf+uk6ICMcTyoL8qnNjPxgirdD5MBonNxxlF98FU1XaU4tZsHfOdV?=
- =?us-ascii?Q?tbOD/xYXvwNi0NWFjE3wT+lMWDOvFpWrZ6pUkvsLDlXYoUL6yqUEuBzZdbrx?=
- =?us-ascii?Q?tj0pm1+pFhIcKpAfmWP5YM9pb3L99jJbX1ZzpeEAxFAjuiGBHGqL29i5LB0r?=
- =?us-ascii?Q?tY8Tcg1oIQUrVERw/Mwx9ek7KNDx5DopBdndUVdocKBekT2ou8UanNzwD+Bu?=
- =?us-ascii?Q?nlcB/JfqoxMnjDz0uvjhQ5AEIovNoFq5hr6pYGQsyVxhr5YcjAH+gFHC1EyX?=
- =?us-ascii?Q?GEHUHzAX/jC+4UNvmka2todEzEE6/JemfAyo8onxO4041yYhOMAhNtVQjZ1j?=
- =?us-ascii?Q?1NWEb66kZQkCDnr+8sh5P0=3D?=
-X-Microsoft-Antispam-Message-Info: jcZjit1YAtw/l1SCstoeowRXgXPaiVplUyVXi7buXir5Gl/p8ep3A7IExLZNiDXxKpinlFC7xuL0UHciZ23I57VZXUJofXL3J4+AyCun56/tXhwJH6p8MO6sMcfTi7jTvTA0cBGKw1fXCWi5Gws9Tz1LzIiYaLm81EnsNTOvSEZHDrHrhzNuvsREeJ/pHyYr00rY1SPDA8S42sOQHrkpi36Zznz9wFFkAP5lOz32IcTQKUr4DEl8rKfjEZ0yxr3b0CMm+FxkVPoO5NX3K0O11+K86O1c4TerduFHVj2x3PJ4NP05q9Kq1SjTcSV9tVekK4K03Emz+PvtSgdT6QWNR19P1DfIYsX9crwYF0GG4so=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;6:zxxGnXGeBnnW9r4uGb5TfDEhyBggJ5SCaES0Fza3wn8ayPssuDtUovFMZXJJUnXcIrzIn+/7jWp8avxD1F28yxdpAtXF+vN4dEM5gnTY9F/RKt1fuwvwfVS6GhhkqxX0A80LGUdPuZXSmo1ywdUfGALG5VgMctV6klEFnldxrBwJCmCz+/PgQA0I+Fu2raB5rFpZMwOXPT38HUZU+YIYdbf7jT7V4WWad+bF4FtwBIXniIjLxpoqz+GUSP0qmdnTrT5WR3TG+QGW1iEFKkNEKG4XvJNXePWFHD8oi45T+XWs95tLnDf9oIyw7myrBbnEKgybAxsPhWGOxGWxZgYNxuXedTdn7EVNvwirZU9h7dQOYWP8Xy1PsoPiXscNC/5ur5lD9dA0zfG5VI8xT4Oee5bqs3LB9gUMS0eKwWvzPjYGmd5lh2kPiZjT7yWhepUNbl3v7AVvP+x5SC4cclEyBQ==;5:vrAn3mbJowdwyrjYQ/OAVHMLKMtXRlTZr43xqzBNOw+Clw/bTGagvJPQn/MXwp3cGCo16kYkgFXaOnYUPm5C8J5mfwGdwwa1UOi0TzsKaWU7JEMq+xmtULCkMbM5aP495NXfVzfKFefj6rwbN2CHypoidWqx2zYulPVOixtKiXw=;7:J2SaUsbiCQ88o4wPUKkwv0ilRWgHP21ORO91Yb+fk58i21RTgqUiuMpdp7VTBGBeKlsclmjevGQfN3qgNbHnbz/R+98LodRPXsLFdeVNjl+lsqwnyR4k/lTPIcLL2TZUcDlJnoHwMg4faHgUHRKqnv+Qv/EIc6LQdSy8r9549Cu3BI5HmCneZIJyq3toC/WzEuvPL6q6oM6DE+0bwjc4+T55y1YrzYjtDDME8ZuxQ7jOIpJCyKcttwl1gtRg2iCL
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR15MB0163;23:xfUor+bf2/R//ES9DGMt5It3dN0XeUqcwsfNeWazq?=
+ =?us-ascii?Q?NFPbTnoNqIy+SivDXJIg4dsS05XMZNv+sqBQK5aGxbUfSVWQRtZsg8p/NeEC?=
+ =?us-ascii?Q?wkZ3k/FEmm+bzI1NTDXhx38Ejp12U6ZSo1+2iEr1w8A0qz549jpJ7l4By8Tb?=
+ =?us-ascii?Q?imcgOSkOtcWgxGr6aJ1azmIGOrlbuAEX2/U3Bqh2ooYDhOpqR9Nvmr8S2XOT?=
+ =?us-ascii?Q?3Spr6ykdGbLQ5J7j3sF5YQSmKg1c5Gv/nE/X17jazoH7Sn8UpkjU7GDkEsxg?=
+ =?us-ascii?Q?lnTmdJH9uZ93hkCi1OLp66blsph8OVxzy1msxy7Rb6D4lRaUCPv78QGbsotc?=
+ =?us-ascii?Q?Z4ZJEVkufShFsmPO7VTQEVKLSzbImwjr/IqNLYaVFPFvagFVzBqL/76AKNm2?=
+ =?us-ascii?Q?QfXXPTb2LSBbb9KtP+h3ZpesdRXvq+lS6cmJML7+y3h1eLuswznlWffHxuXG?=
+ =?us-ascii?Q?lxEkHv6HQfq4n1ncQioVK0aHafFZMz3vWxPpHAC105vNtVwBh2Yg7IUoSYGJ?=
+ =?us-ascii?Q?i6/WWPQUGLN5Nr43higbPWwoyTYGxeWEPBFF/bbEXu1G4gwVhFJZn79UjJDN?=
+ =?us-ascii?Q?F5oVNjI5LjDXV9IO2+6rultCF7RqGOk5YHiwKV5i7xrxbnhvMt+08WSJnbKY?=
+ =?us-ascii?Q?nU5c0B428fWYfB3r3hRHWXsxdw7hymb+TnrSkT7SvCYs8X8ncdHAsR9FH9Tg?=
+ =?us-ascii?Q?PDxx1LqqtjwRupDEtANZSt4JJ8jf8Qb2mpF3F3w+0ynaa2mCI+C8XJJeHSu6?=
+ =?us-ascii?Q?KBrzwsL7PFGuelOIaTDjU08M4fP5aCSiVDjDf/OnKXv7RESl6+r/TV08bWqU?=
+ =?us-ascii?Q?jKyi0nYGrBvdfkBorpX7lyXD57RKKuYrzBKUMdWgVZr0TJFiw6qJ1Z9qSGKM?=
+ =?us-ascii?Q?1zCppVE67fi7hqZRZJiN0kFJ6NmN+gitObFUPXuQ8u6N7xwmf1wH5Z4LbZ47?=
+ =?us-ascii?Q?tXUw/36Rbv0P7hG7E6oL5xxsVD01gqvkcdV+JAaIEWTEzhecfu81nYyNZcEi?=
+ =?us-ascii?Q?smn4ZxGpZnsPST0oX8UesGXCh2ZrlnMPomGmH0vQ0dFNBbCrVQOkaGLEB9I/?=
+ =?us-ascii?Q?CuC6v4l9CWmpJDA8U8CF9+zHN40aNox6SZvEXP4g1sBnNPP616FBxadTzdNz?=
+ =?us-ascii?Q?ADnFkpZiFIpxzuTlVVU9wanEBXax8WEPf+l+wB3h3S01AdJLEmMVwjehp0K7?=
+ =?us-ascii?Q?hO0d3UhU8sTUSb9+TgKHto0BNlEffX4xyxhbR0w8sToa8N4kRRn90I7ZwZyw?=
+ =?us-ascii?Q?wt4wR53s6HnFJmt40vIggOISUIXdkVlCfZqXYzQ4ArOQRQNeWr2D7ODSXocH?=
+ =?us-ascii?Q?jvcme/riRFeXSWs9WI6oDuTPKWD5reHZxTHMLsI6LvE3a+f4Iljl3BhNj4C7?=
+ =?us-ascii?Q?NawMg=3D=3D?=
+X-Microsoft-Antispam-Message-Info: b1C46Pyg0hYRMA6raeEP5oepnzgPJEjvgKu1+6FhDVOxFtv0y3q+R//zEvQM/OgthdV+U/dk8tz3Kv240uqVNGRFWp9l2NyfWK5ILLWf7imlAixDRPLFBemRLY4NX4GaTCy8eINKE9zXvMOuyLkWdjYOWl8GFs4DIrw48M9OCAZClv95H83Cciwk0odVymNfnYe6JnUCU6u0sMDQ8Fnd6GX0kHoRDVSwM7+nq8Yfd4bhq7f0G3Ni/TgiTjs8nqHs5xGCQKn3xAURRQAPwMs8yu94/X3c2UQw+zsTFzEVnW6Z9SsSrC7Zl1LVCRRGFEsSLOPdjxCTQ2mv9o9gzxIIX3218dyL/WXfuyqwdISv3qs=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;6:7I5sQqLuPHoDH2v44vhQHJl9+zwdCceGunIetUHT2uXLqbuTNlmuN3kUu0c1rGje/kWMTZ4zG5/OFOwGSWcXNwbQl9OaGBTPXwajPeDH+9uM20ChDesPUIY8rPJP4qy1qYeurpxUOfiMui2Rnona0pIKWb+NPQscHzEDWVbU9IyNmuy9WSUtZbc/I8f314RB2cWF6Wh7shBerKZQSWCPUNx3iCtCRNhtQjsyd7DqF/nbloLX+qdcBTkAEIbdZ2wU1PGFJs9VI34D63FNOJpF1+B6uBjCcgdQ3G1T/bF0QIb0P9Kv0bEO4rZbGHy+vifJLRigZY/d91bi6gVYHot8RygdJRyQALz2GfYOwVbLTi//nU6JGnVYo8oKlSkijtciZMBwVFsozuH0Q0shLVW6a5xqVRJ9h04tKPl/JSdvwrBK68Uzqp4CkpEfL3puiK43Pb3/evsiKOgzutXV7bS4yQ==;5:ZCOh9aTYBvsoTqosYylKyIi5OLTvBkoqxSHLn9FqTKLI4GQLazSnjg6roaoPdps6GRCdVKhHFtSWd+YQHuG59OCc6brR/ILk71alTFxg0eYQx2YmD+xz691aQg/kvB3qSrPaeCWsgtm6VU2pOeNeBvqESNFwbwQYHUafB7X4Nfc=;7:vXr7cW0h7cXk+ATPCZUCIPbDMNCvkk8dD6TxFQMojMQdtEn/pJ8K+M25fJ4Pxru1JAzGGtlgqrI2AxuJO3xvT9JMNlSFgG0+rKiwsl43Kd+eSv0Baou4N0BqRxRtJuLOQO7ZmIQyjH0Q6Jhecq6/ASc4gBChesbX187ESr+oOcLvZ1O0NUzhVfFGJY15sFM1at92KhYhQeoq/hiMbOuuj1D1NtMP+hLgkYQmeDHfY1vQTqtmB+E8/HYEnJoD7S3t
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;20:MGIftW/J9ZsWlUGcMTXqKgmogrUeup51JUTWqlTdo9DnzkpvPZ7i7rU/CBSeOyXYpzGE6zl2iARYsqIoDTPnDPzI/GIi438iw7ELfVeTi8EDTq8lSLVw/ii+BiZRryeRnVWLSzfp9CJfUZNt4qFhGaW/LwAq1gSW5Ks1wRn+ZoY=
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 15:21:42.8962 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c02f348e-b16a-4edd-a9b9-08d622fa99d9
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR15MB0163;20:vLJsGUl6jVwd/ehHkBwTR6F9toMUE9qMv24s0pZAekLtYAA5oEErSQ+Zgh/+dbsEpEHbt8AhdEOUzKgZo1l8N7GGnPo3UaJeW7oEShwvKPrNVsEBkDzgcsJPxnfYoP+yc6k7LL5mMcTcoTdfTvA0tJT/OYf95KvyeT+D+oqb6FQ=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 15:21:45.6608 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd6f8f92-e738-4584-b074-08d622fa9b7b
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR15MB0163
@@ -128,232 +129,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commits adds verifier tests covering per-cpu cgroup storage
-functionality. There are 6 new tests, which are exactly the same
-as for shared cgroup storage, but do use per-cpu cgroup storage
-map.
+This commit extends the test_cgrp2_attach2 test to cover per-cpu
+cgroup storage. Bpf program will use shared and per-cpu cgroup
+storages simultaneously, so a better coverage of corresponding
+core code will be achieved.
 
 Expected output:
-  $ ./test_verifier
-  #0/u add+sub+mul OK
-  #0/p add+sub+mul OK
-  ...
-  #286/p invalid cgroup storage access 6 OK
-  #287/p valid per-cpu cgroup storage access OK
-  #288/p invalid per-cpu cgroup storage access 1 OK
-  #289/p invalid per-cpu cgroup storage access 2 OK
-  #290/p invalid per-cpu cgroup storage access 3 OK
-  #291/p invalid per-cpu cgroup storage access 4 OK
-  #292/p invalid per-cpu cgroup storage access 5 OK
-  #293/p invalid per-cpu cgroup storage access 6 OK
-  #294/p multiple registers share map_lookup_elem result OK
-  ...
-  #662/p mov64 src == dst OK
-  #663/p mov64 src != dst OK
-  Summary: 914 PASSED, 0 SKIPPED, 0 FAILED
+  $ ./test_cgrp2_attach2
+  Attached DROP prog. This ping in cgroup /foo should fail...
+  ping: sendmsg: Operation not permitted
+  Attached DROP prog. This ping in cgroup /foo/bar should fail...
+  ping: sendmsg: Operation not permitted
+  Attached PASS prog. This ping in cgroup /foo/bar should pass...
+  Detached PASS from /foo/bar while DROP is attached to /foo.
+  This ping in cgroup /foo/bar should fail...
+  ping: sendmsg: Operation not permitted
+  Attached PASS from /foo/bar and detached DROP from /foo.
+  This ping in cgroup /foo/bar should pass...
+  ### override:PASS
+  ### multi:PASS
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Cc: Daniel Borkmann <daniel@iogearbox.net>
 Cc: Alexei Starovoitov <ast@kernel.org>
 ---
- tools/testing/selftests/bpf/test_verifier.c | 139 +++++++++++++++++++-
- 1 file changed, 133 insertions(+), 6 deletions(-)
+ samples/bpf/test_cgrp2_attach2.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 67c412d19c09..c7d25f23baf9 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -68,6 +68,7 @@ struct bpf_test {
- 	int fixup_prog2[MAX_FIXUPS];
- 	int fixup_map_in_map[MAX_FIXUPS];
- 	int fixup_cgroup_storage[MAX_FIXUPS];
-+	int fixup_percpu_cgroup_storage[MAX_FIXUPS];
- 	const char *errstr;
- 	const char *errstr_unpriv;
- 	uint32_t retval;
-@@ -4676,7 +4677,7 @@ static struct bpf_test tests[] = {
- 		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
- 	},
- 	{
--		"invalid per-cgroup storage access 3",
-+		"invalid cgroup storage access 3",
- 		.insns = {
- 			BPF_MOV64_IMM(BPF_REG_2, 0),
- 			BPF_LD_MAP_FD(BPF_REG_1, 0),
-@@ -4743,6 +4744,121 @@ static struct bpf_test tests[] = {
- 		.errstr = "get_local_storage() doesn't support non-zero flags",
- 		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
- 	},
-+	{
-+		"valid per-cpu cgroup storage access",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_2, 0),
-+			BPF_LD_MAP_FD(BPF_REG_1, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_get_local_storage),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_1, BPF_REG_0, 0),
-+			BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
-+			BPF_ALU64_IMM(BPF_AND, BPF_REG_0, 1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_percpu_cgroup_storage = { 1 },
-+		.result = ACCEPT,
-+		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	},
-+	{
-+		"invalid per-cpu cgroup storage access 1",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_2, 0),
-+			BPF_LD_MAP_FD(BPF_REG_1, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_get_local_storage),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_1, BPF_REG_0, 0),
-+			BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
-+			BPF_ALU64_IMM(BPF_AND, BPF_REG_0, 1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_map1 = { 1 },
-+		.result = REJECT,
-+		.errstr = "cannot pass map_type 1 into func bpf_get_local_storage",
-+		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	},
-+	{
-+		"invalid per-cpu cgroup storage access 2",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_2, 0),
-+			BPF_LD_MAP_FD(BPF_REG_1, 1),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_get_local_storage),
-+			BPF_ALU64_IMM(BPF_AND, BPF_REG_0, 1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.result = REJECT,
-+		.errstr = "fd 1 is not pointing to valid bpf_map",
-+		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	},
-+	{
-+		"invalid per-cpu cgroup storage access 3",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_2, 0),
-+			BPF_LD_MAP_FD(BPF_REG_1, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_get_local_storage),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_1, BPF_REG_0, 256),
-+			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 1),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_percpu_cgroup_storage = { 1 },
-+		.result = REJECT,
-+		.errstr = "invalid access to map value, value_size=64 off=256 size=4",
-+		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	},
-+	{
-+		"invalid per-cpu cgroup storage access 4",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_2, 0),
-+			BPF_LD_MAP_FD(BPF_REG_1, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_get_local_storage),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_1, BPF_REG_0, -2),
-+			BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
-+			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_cgroup_storage = { 1 },
-+		.result = REJECT,
-+		.errstr = "invalid access to map value, value_size=64 off=-2 size=4",
-+		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	},
-+	{
-+		"invalid per-cpu cgroup storage access 5",
-+		.insns = {
-+			BPF_MOV64_IMM(BPF_REG_2, 7),
-+			BPF_LD_MAP_FD(BPF_REG_1, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_get_local_storage),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_1, BPF_REG_0, 0),
-+			BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
-+			BPF_ALU64_IMM(BPF_AND, BPF_REG_0, 1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_percpu_cgroup_storage = { 1 },
-+		.result = REJECT,
-+		.errstr = "get_local_storage() doesn't support non-zero flags",
-+		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	},
-+	{
-+		"invalid per-cpu cgroup storage access 6",
-+		.insns = {
-+			BPF_MOV64_REG(BPF_REG_2, BPF_REG_1),
-+			BPF_LD_MAP_FD(BPF_REG_1, 0),
-+			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
-+				     BPF_FUNC_get_local_storage),
-+			BPF_LDX_MEM(BPF_W, BPF_REG_1, BPF_REG_0, 0),
-+			BPF_MOV64_REG(BPF_REG_0, BPF_REG_1),
-+			BPF_ALU64_IMM(BPF_AND, BPF_REG_0, 1),
-+			BPF_EXIT_INSN(),
-+		},
-+		.fixup_percpu_cgroup_storage = { 1 },
-+		.result = REJECT,
-+		.errstr = "get_local_storage() doesn't support non-zero flags",
-+		.prog_type = BPF_PROG_TYPE_CGROUP_SKB,
-+	},
- 	{
- 		"multiple registers share map_lookup_elem result",
- 		.insns = {
-@@ -12615,15 +12731,17 @@ static int create_map_in_map(void)
- 	return outer_map_fd;
- }
+diff --git a/samples/bpf/test_cgrp2_attach2.c b/samples/bpf/test_cgrp2_attach2.c
+index 180f9d813bca..d7b68ef5ba79 100644
+--- a/samples/bpf/test_cgrp2_attach2.c
++++ b/samples/bpf/test_cgrp2_attach2.c
+@@ -209,7 +209,7 @@ static int map_fd = -1;
  
--static int create_cgroup_storage(void)
-+static int create_cgroup_storage(bool percpu)
+ static int prog_load_cnt(int verdict, int val)
  {
-+	enum bpf_map_type type = percpu ? BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE :
-+		BPF_MAP_TYPE_CGROUP_STORAGE;
- 	int fd;
+-	int cgroup_storage_fd;
++	int cgroup_storage_fd, percpu_cgroup_storage_fd;
  
--	fd = bpf_create_map(BPF_MAP_TYPE_CGROUP_STORAGE,
--			    sizeof(struct bpf_cgroup_storage_key),
-+	fd = bpf_create_map(type, sizeof(struct bpf_cgroup_storage_key),
- 			    TEST_DATA_LEN, 0, 0);
- 	if (fd < 0)
--		printf("Failed to create array '%s'!\n", strerror(errno));
-+		printf("Failed to create cgroup storage '%s'!\n",
-+		       strerror(errno));
- 
- 	return fd;
- }
-@@ -12641,6 +12759,7 @@ static void do_test_fixup(struct bpf_test *test, struct bpf_insn *prog,
- 	int *fixup_prog2 = test->fixup_prog2;
- 	int *fixup_map_in_map = test->fixup_map_in_map;
- 	int *fixup_cgroup_storage = test->fixup_cgroup_storage;
-+	int *fixup_percpu_cgroup_storage = test->fixup_percpu_cgroup_storage;
- 
- 	if (test->fill_helper)
- 		test->fill_helper(test);
-@@ -12710,12 +12829,20 @@ static void do_test_fixup(struct bpf_test *test, struct bpf_insn *prog,
+ 	if (map_fd < 0)
+ 		map_fd = bpf_create_map(BPF_MAP_TYPE_ARRAY, 4, 8, 1, 0);
+@@ -225,6 +225,14 @@ static int prog_load_cnt(int verdict, int val)
+ 		return -1;
  	}
  
- 	if (*fixup_cgroup_storage) {
--		map_fds[7] = create_cgroup_storage();
-+		map_fds[7] = create_cgroup_storage(false);
- 		do {
- 			prog[*fixup_cgroup_storage].imm = map_fds[7];
- 			fixup_cgroup_storage++;
- 		} while (*fixup_cgroup_storage);
- 	}
-+
-+	if (*fixup_percpu_cgroup_storage) {
-+		map_fds[8] = create_cgroup_storage(true);
-+		do {
-+			prog[*fixup_percpu_cgroup_storage].imm = map_fds[8];
-+			fixup_percpu_cgroup_storage++;
-+		} while (*fixup_percpu_cgroup_storage);
++	percpu_cgroup_storage_fd = bpf_create_map(
++		BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE,
++		sizeof(struct bpf_cgroup_storage_key), 8, 0, 0);
++	if (percpu_cgroup_storage_fd < 0) {
++		printf("failed to create map '%s'\n", strerror(errno));
++		return -1;
 +	}
- }
- 
- static void do_test_single(struct bpf_test *test, bool unpriv,
++
+ 	struct bpf_insn prog[] = {
+ 		BPF_MOV32_IMM(BPF_REG_0, 0),
+ 		BPF_STX_MEM(BPF_W, BPF_REG_10, BPF_REG_0, -4), /* *(u32 *)(fp - 4) = r0 */
+@@ -235,11 +243,20 @@ static int prog_load_cnt(int verdict, int val)
+ 		BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 2),
+ 		BPF_MOV64_IMM(BPF_REG_1, val), /* r1 = 1 */
+ 		BPF_RAW_INSN(BPF_STX | BPF_XADD | BPF_DW, BPF_REG_0, BPF_REG_1, 0, 0), /* xadd r0 += r1 */
++
+ 		BPF_LD_MAP_FD(BPF_REG_1, cgroup_storage_fd),
+ 		BPF_MOV64_IMM(BPF_REG_2, 0),
+ 		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0, BPF_FUNC_get_local_storage),
+ 		BPF_MOV64_IMM(BPF_REG_1, val),
+ 		BPF_RAW_INSN(BPF_STX | BPF_XADD | BPF_W, BPF_REG_0, BPF_REG_1, 0, 0),
++
++		BPF_LD_MAP_FD(BPF_REG_1, percpu_cgroup_storage_fd),
++		BPF_MOV64_IMM(BPF_REG_2, 0),
++		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0, BPF_FUNC_get_local_storage),
++		BPF_LDX_MEM(BPF_W, BPF_REG_3, BPF_REG_0, 0),
++		BPF_ALU64_IMM(BPF_ADD, BPF_REG_3, 0x1),
++		BPF_STX_MEM(BPF_W, BPF_REG_0, BPF_REG_3, 0),
++
+ 		BPF_MOV64_IMM(BPF_REG_0, verdict), /* r0 = verdict */
+ 		BPF_EXIT_INSN(),
+ 	};
 -- 
 2.17.1
 
