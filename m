@@ -2,178 +2,118 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84CAC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1016C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841E420842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:58:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IQy+EWml";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JA9P4Idc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 841E420842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 821B320842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 05:59:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821B320842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeIYMEO (ORCPT
+        id S1727750AbeIYMFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 08:04:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58678 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbeIYMEN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 08:04:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6A44D6021C; Tue, 25 Sep 2018 05:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537855099;
-        bh=Bd7kDmEIoX5kBBeeOUg3y/HusxiNSyq9USq10RJaOgM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IQy+EWmlbRt5hDEPSxlrodwoGxBBl8sk4GzQR6ztibn1NCAqD/t5EHS0s0yY4bmwh
-         PBSBkXKy6kU+2oo0eozTO0jTb6mYQNv/I9mFupG6pWa4vdYCv/cRwBBRvn+old2HZx
-         +noJWOiCbMOsItuU8KynD+SXcnxAwNe2Z6vHpTYY=
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 57E1C607DD;
-        Tue, 25 Sep 2018 05:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537855098;
-        bh=Bd7kDmEIoX5kBBeeOUg3y/HusxiNSyq9USq10RJaOgM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JA9P4Idckg6XuPZ5g3LcSmR8bQa1PIpG3Qh9pxsYO7ihvTMyBLGzE3NRbEy9GLpVm
-         Yh3JNsx0dvnpqIV3+FP3DinVdpdq7tcbxzAsCL0m4PJg+zYmBNIeqDpIpSY2UJY52m
-         llSgo2Vc+36uUP5tZtW+wV5UG3kbELMtHd4QRTpc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 57E1C607DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt1-f170.google.com with SMTP id e9-v6so11747298qtp.7;
-        Mon, 24 Sep 2018 22:58:18 -0700 (PDT)
-X-Gm-Message-State: ABuFfogzKNikv4Glxbw2aCEhurTskNJDPZY2wKxb77ojGzmrdLzknTTM
-        ESPXcnIOWKqJAxNdKooBvh85oE35Bp3KbHvgjjk=
-X-Google-Smtp-Source: ACcGV60WLBMY7GnaCNvtJTiMde7wD0U9Ik0Lx3GoQsSQ6NNuE1ftX0dWxJY0hTc412Bm+aKY7oVd01dg0Z90WW//lOo=
-X-Received: by 2002:a0c:d0cc:: with SMTP id b12-v6mr1620141qvh.107.1537855097569;
- Mon, 24 Sep 2018 22:58:17 -0700 (PDT)
+        Tue, 25 Sep 2018 08:05:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58148 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726033AbeIYMFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 08:05:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DC1CFAC52;
+        Tue, 25 Sep 2018 05:59:07 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 07:59:04 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     zhe.he@windriver.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        mgorman@techsingularity.net, aaron.lu@intel.com, osalvador@suse.de,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm/page_alloc: Fix panic caused by passing
+ debug_guardpage_minorder or kernelcore to command line
+Message-ID: <20180925055904.GM18685@dhcp22.suse.cz>
+References: <1537628013-243902-1-git-send-email-zhe.he@windriver.com>
+ <20180924142408.GC18685@dhcp22.suse.cz>
+ <20180924144217.6cabee9f41d0d0ad1757866a@linux-foundation.org>
 MIME-Version: 1.0
-References: <20180910062551.28175-1-vivek.gautam@codeaurora.org> <4f6e48c4-6fec-b764-6083-fea4133e1fa8@codeaurora.org>
-In-Reply-To: <4f6e48c4-6fec-b764-6083-fea4133e1fa8@codeaurora.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Tue, 25 Sep 2018 11:28:05 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iGgUBPHZZ-nYv3cZ=TPP9oX9Ux6K2RmKv828AXo+HkLxQ@mail.gmail.com>
-Message-ID: <CAFp+6iGgUBPHZZ-nYv3cZ=TPP9oX9Ux6K2RmKv828AXo+HkLxQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] Qcom smmu-500 TLB invalidation errata for sdm845
-To:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, swboyd@chromium.org,
-        David Brown <david.brown@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924144217.6cabee9f41d0d0ad1757866a@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Mon 24-09-18 14:42:17, Andrew Morton wrote:
+> On Mon, 24 Sep 2018 16:24:08 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> > On Sat 22-09-18 22:53:32, zhe.he@windriver.com wrote:
+> > > From: He Zhe <zhe.he@windriver.com>
+> > > 
+> > > debug_guardpage_minorder_setup and cmdline_parse_kernelcore do not check
+> > > input argument before using it. The argument would be a NULL pointer if
+> > > "debug_guardpage_minorder" or "kernelcore", without its value, is set in
+> > > command line and thus causes the following panic.
+> > > 
+> > > PANIC: early exception 0xe3 IP 10:ffffffffa08146f1 error 0 cr2 0x0
+> > > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #11
+> > > [    0.000000] RIP: 0010:parse_option_str+0x11/0x90
+> > > ...
+> > > [    0.000000] Call Trace:
+> > > [    0.000000]  cmdline_parse_kernelcore+0x19/0x41
+> > > [    0.000000]  do_early_param+0x57/0x8e
+> > > [    0.000000]  parse_args+0x208/0x320
+> > > [    0.000000]  ? rdinit_setup+0x30/0x30
+> > > [    0.000000]  parse_early_options+0x29/0x2d
+> > > [    0.000000]  ? rdinit_setup+0x30/0x30
+> > > [    0.000000]  parse_early_param+0x36/0x4d
+> > > [    0.000000]  setup_arch+0x336/0x99e
+> > > [    0.000000]  start_kernel+0x6f/0x4ee
+> > > [    0.000000]  x86_64_start_reservations+0x24/0x26
+> > > [    0.000000]  x86_64_start_kernel+0x6f/0x72
+> > > [    0.000000]  secondary_startup_64+0xa4/0xb0
+> > > 
+> > > This patch adds a check to prevent the panic
+> > 
+> > Is this something we deeply care about? The kernel command line
+> > interface is to be used by admins who know what they are doing.  Using
+> > random or wrong values for these parameters can have detrimental effects
+> > on the system. This particular case would blow up early, good. At least
+> > it is visible immediately. This and many other parameters could have a
+> > seemingly valid input (e.g. not a missing value) and subtle runtime
+> > effect. You won't blow up immediately but the system is hardly usable
+> > and the early checking cannot possible catch all those cases. Take a
+> > mem=$N copied from one machine to another with a different memory
+> > layout. While 2G can be perfectly fine on one a different machine might
+> > result on a completely unusable system because the available RAM is
+> > place higher.
+> > 
+> > So I am really wondering. Do we really want a lot of code to catch
+> > kernel command line incorrect inputs? Does it really lead to better
+> > quality overall? IMHO, we do have a proper documentation and we should
+> > trust those starting the kernel.
+> 
+> No, it's not very important.  It might help some people understand why
+> their kernel went splat in rare circumstances.  And it's __init code so
+> the runtime impact is nil.
+> 
+> It bothers me that there are many other kernel parameters which have
+> the same undesirable behaviour.  I'd much prefer a general fixup which
+> gave all of them this treatment, but it's unclear how to do this.
 
+If early_param took an additional argument to tell "this really requires
+a parameter" then we could do it in the common code.
 
-On Mon, Sep 10, 2018 at 4:08 PM Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
->
-> +linux-arm-msm
->
->
-> On 09/10/2018 11:55 AM, Vivek Gautam wrote:
-> > Qcom's implementation of arm,mmu-500 on sdm845 has a functional/performance
-> > errata [1] because of which the TCU cache look ups are stalled during
-> > invalidation cycle. This is mitigated by serializing all the invalidation
-> > requests coming to the smmu.
-> >
-> > This patch series addresses this errata by adding new tlb_ops for
-> > qcom,sdm845-smmu-500 [2]. These ops take context bank locks for all the
-> > tlb_ops that queue and sync the TLB invalidation requests.
-> >
-> > Besides adding locks, there's a way to expadite these TLB invalidations
-> > for display and camera devices by turning off the 'wait-for-safe' logic
-> > in hardware that holds the tlb invalidations until a safe level.
-> > This 'wait-for-safe' logic is controlled by toggling a chicken bit
-> > through a secure register. This secure register is accessed by making an
-> > explicit SCM call into the EL3 firmware.
-> > There are two ways of handling this logic -
-> >   * Firmware, such as tz present on sdm845-mtp devices has a handler to do
-> >     all the register access and bit set/clear. So is the handling in
-> >     downstream arm-smmu driver [3].
-> >   * Other firmwares can have handlers to just read/write this secure
-> >     register. In such cases the kernel make io_read/writel scm calls to
-> >     modify the register.
-> > This patch series adds APIs in qcom-scm driver to handle both of these
-> > cases.
-> >
-> > Lastly, since these TLB invalidations can happen in atomic contexts
-> > there's a need to add atomic versions of qcom_scm_io_readl/writel() and
-> > qcom_scm_call() APIs. The traditional scm calls take mutex and we therefore
-> > can't use these calls in atomic contexts.
-> >
-> > This patch series is adapted version of how the errata is handled in
-> > downstream [1].
+$ git grep "early_param(\"" | wc -l
+251
 
-Gentle ping. Please let me know if you have comments on the SCM pieces
-in this series.
-
-Thanks & Regards
-Vivek
-
-> >
-> > Changes since v1:
-> >   * Addressed Will and Robin's comments:
-> >      - Dropped the patch[4] that forked out __arm_smmu_tlb_inv_range_nosync(),
-> >        and __arm_smmu_tlb_sync().
-> >      - Cleaned up the errata patch further to use downstream polling mechanism
-> >        for tlb sync.
-> >   * No change in SCM call patches - patches 1 to 3.
-> >
-> > [1] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/iommu/arm-smmu.c?h=msm-4.9#n4842
-> > [2] https://lore.kernel.org/patchwork/patch/974114/
-> > [3] https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/drivers/iommu/arm-smmu.c?h=msm-4.9#n4864
-> > [4] https://patchwork.kernel.org/patch/10565349/
-> >
-> > Vivek Gautam (4):
-> >    firmware: qcom_scm-64: Add atomic version of qcom_scm_call
-> >    firmware/qcom_scm: Add atomic version of io read/write APIs
-> >    firmware/qcom_scm: Add scm call to handle smmu errata
-> >    iommu/arm-smmu: Add support to handle Qcom's TLBI serialization errata
-> >
-> >   drivers/firmware/qcom_scm-32.c |  17 ++++
-> >   drivers/firmware/qcom_scm-64.c | 181 +++++++++++++++++++++++++++++++----------
-> >   drivers/firmware/qcom_scm.c    |  18 ++++
-> >   drivers/firmware/qcom_scm.h    |   9 ++
-> >   drivers/iommu/arm-smmu-regs.h  |   2 +
-> >   drivers/iommu/arm-smmu.c       | 133 +++++++++++++++++++++++++++++-
-> >   include/linux/qcom_scm.h       |   6 ++
-> >   7 files changed, 320 insertions(+), 46 deletions(-)
-> >
->
-> --
-> The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-
-
-
+quite a lot of work for something that hasn't been a problem for years I
+guess. But maybe this would allow to remove ad-hoc checks in handlers
+and reduce the overal code size (in LOC) in the end.
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Michal Hocko
+SUSE Labs
