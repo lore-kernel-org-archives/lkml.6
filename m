@@ -2,85 +2,68 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4663C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 075DBC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A57A204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A273620684
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:01:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tHzZgwWi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A57A204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ox0a3r7q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A273620684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeIZCJ2 (ORCPT
+        id S1727355AbeIZCKS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:09:28 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40211 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbeIZCJ1 (ORCPT
+        Tue, 25 Sep 2018 22:10:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36670 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbeIZCKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:09:27 -0400
-Received: by mail-lj1-f193.google.com with SMTP id r83-v6so4948215ljr.7;
-        Tue, 25 Sep 2018 13:00:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YWy/mYGRrt/Oy5tX2KRbDGpIj5Cy8eineKuOaUNYHz4=;
-        b=tHzZgwWi5e0TS7Hlu3SPXSKiFm2NsfbV+1bmSii9zTLNG4x21xhKLHt1DT2vEkVm1K
-         HNxOHFSyXpuaui10op110RARfqlGaH/bNzS+8yA/HftroFucwhVx1mkmxhQBJoRZP5R7
-         q5wgN0MHP1uA5v1Y7rCpQb2Z78fPtB0vl8zpRu2GVGW1kqd0owGJ8UiSSK/cCHy9AL8E
-         ChW1lu+f1lY1zED9ddZQFvUNN53myZG4xyCdCkuWc6UbAXvIXDuoCvKya+S3piDjWa+q
-         EteyoXVuPcjn1Bm13cN06nGO6xla58aao6ylYX/+oEfwDnDNcvezOWlTj2mMBsLodlS2
-         BFvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YWy/mYGRrt/Oy5tX2KRbDGpIj5Cy8eineKuOaUNYHz4=;
-        b=i9xUDLvdvB7ultQgXiKN/oL+UHTLHSDKYhtcFi/TMwA0baa45f84bAMFyfyGcJs6mc
-         b3GzISbiMjBiOIElQjJ/Wl1UXQFpYiG8gD+bgS/MOMYZQonkzZ/hdLztyZ44vfTMN9zK
-         oglDpNSO5YFD1FvubBeVnFbgAWg6tPDHCP5Wb61jg4H9fplvnZMSnRu8sjCn2cmzjJzy
-         wjg/s3LsQTQdn4wHwEvtqe0lCLu8oFeL/4LSJ+gqwdcgFfpApuxErmpQC67zA4TrifD9
-         rnQ17lLgOJcQJhpz8prKtEfSjKBBa+vap320JjC273iO+RJ6CmSExxz2oUA2tf9mpTvv
-         2LEA==
-X-Gm-Message-State: ABuFfoh2laAYv+F0FENU7ZAmY0bcNB4Rein2cCAz54Hbc/Gs3GpjjD8V
-        jyVPXp3dvsJehXcKGiPnqqIc0kd8
-X-Google-Smtp-Source: ACcGV62L1L1+/EUH8bgxUUE3KWimT43X1DX3KDKar17YJk6PslW1ffsNLBYk5TQJlgNHLXuAzy4/tw==
-X-Received: by 2002:a2e:6c07:: with SMTP id h7-v6mr279530ljc.81.1537905612850;
-        Tue, 25 Sep 2018 13:00:12 -0700 (PDT)
-Received: from [192.168.1.18] (dku194.neoplus.adsl.tpnet.pl. [83.24.24.194])
-        by smtp.gmail.com with ESMTPSA id o10-v6sm560915ljg.39.2018.09.25.13.00.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 13:00:12 -0700 (PDT)
-Subject: Re: [PATCH v12 1/2] leds: core: Introduce LED pattern trigger
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <67ebebf02edd6d8ee42a13b139733e9cc680ea86.1536631975.git.baolin.wang@linaro.org>
- <CAMz4kuJx9twJ=wM5qsucV3JH_VS-AC1aWMqpQOwAMkCuKBHLRg@mail.gmail.com>
- <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com> <20180921211758.GC18062@amd>
- <ccac8e5f-e122-9f7d-aa43-fa89c79cb1fe@gmail.com> <20180921221813.GA20355@amd>
- <20180922194451.GA27826@amd> <470f4037-b682-73f8-8063-b4d7a70e04bc@gmail.com>
- <CAMz4kuL431PPMnOAXev-4ZzYwiGwMtz90RQT0JTP2bSdZ7fHUg@mail.gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <9188b107-92da-11aa-9903-848e3f347f8c@gmail.com>
-Date:   Tue, 25 Sep 2018 22:00:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 22:10:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nT9Bbj43/rT4c8I+AWOwCTTawHvyYyP9pNBvgcPEH/0=; b=ox0a3r7qHwxDjwpspkr8tMH3P
+        ugiMMfnMHhwtaCkIUQKK52V+j89gBOH1xLkiVfUsfSXgN7Dt+hR5lYNTyin5ygB8eGejnldAMgy9z
+        KDzdfh1mD56nmamnEAJRF6ebDSRvvoiEbhx/01UTk5EMcAuLc2qnxsqFXCzh0tyh4ApnZuJfQOOIr
+        exRC/L0XvRfp5d99zNfXUl2ZNR6mpP0/a/qNOgnG24+HNCaRJmWPlDysEnJ8hyNCesm2slGC0Gx58
+        kNSBUsht0lRi2j0a+igP03DEVEqYB/OwYyep+2VhtBXqvgAlqN+D9mI4xhCOYOhJJiSnydLRt5TKJ
+        06STh2+nA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4tVm-0000eh-9c; Tue, 25 Sep 2018 20:01:06 +0000
+Subject: Re: [PATCH v14 12/19] x86/sgx: Add data structures for tracking the
+ EPC pages
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-13-jarkko.sakkinen@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9b2bf157-e162-89ff-000b-190aa8dddb53@infradead.org>
+Date:   Tue, 25 Sep 2018 13:00:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <CAMz4kuL431PPMnOAXev-4ZzYwiGwMtz90RQT0JTP2bSdZ7fHUg@mail.gmail.com>
+In-Reply-To: <20180925130845.9962-13-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,202 +72,187 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolin,
-
-On 09/25/2018 01:15 PM, Baolin Wang wrote:
-> On 23 September 2018 at 20:25, Jacek Anaszewski
-> <jacek.anaszewski@gmail.com> wrote:
->> On 09/22/2018 09:44 PM, Pavel Machek wrote:
->>> On Sat 2018-09-22 00:18:13, Pavel Machek wrote:
->>>> On Sat 2018-09-22 00:11:29, Jacek Anaszewski wrote:
->>>>> On 09/21/2018 11:17 PM, Pavel Machek wrote:
->>>>>> On Fri 2018-09-21 22:59:40, Jacek Anaszewski wrote:
->>>>>>> Hi Baolin,
->>>>>>>
->>>>>>> On 09/21/2018 05:31 AM, Baolin Wang wrote:
->>>>>>>> Hi Jacek and Pavel,
->>>>>>>>
->>>>>>>> On 11 September 2018 at 10:47, Baolin Wang <baolin.wang@linaro.org> wrote:
->>>>>>>>> This patch adds one new led trigger that LED device can configure
->>>>>>>>> the software or hardware pattern and trigger it.
->>>>>>>>>
->>>>>>>>> Consumers can write 'pattern' file to enable the software pattern
->>>>>>>>> which alters the brightness for the specified duration with one
->>>>>>>>> software timer.
->>>>>>>>>
->>>>>>>>> Moreover consumers can write 'hw_pattern' file to enable the hardware
->>>>>>>>> pattern for some LED controllers which can autonomously control
->>>>>>>>> brightness over time, according to some preprogrammed hardware
->>>>>>>>> patterns.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
->>>>>>>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->>>>>>
->>>>>>>> Do you have any comments for the v12 patch set? Thanks.
->>>>>>>
->>>>>>> We will probably have to remove hw_pattern from ledtrig-pattern
->>>>>>> since we are unable to come up with generic interface for it.
->>>>>>> Unless thread [0] will end up with some brilliant ideas. So far
->>>>>>> we're waiting for Pavel's reply.
->>>>>>>
->>>>>>> [0] https://lkml.org/lkml/2018/9/13/1216
->>>>>>
->>>>>> To paint a picture:
->>>>>>
->>>>>> brightness
->>>>>>
->>>>>>    rise hold          lower       hold down
->>>>>>   ^    XXXXXXXXXXXXXXX
->>>>>>   |   X               XX
->>>>>>   |  X                  XX
->>>>>>   | X                     XXXXXXXXXXXXXXXXXXXXXXXXXX
->>>>>>   +-------------------------------------------------------> time
->>>>>>
->>>>>> This is what Baolin's hardware can do, right?
->>>>>>
->>>>>> This is also what pattern trigger can do, right?
->>>>>>
->>>>>> So all we need to do is match the two interfaces, so that hw_pattern
->>>>>> returns -EINVAL on patterns hardware can not actually do.
->>>>>>
->>>>>> I believe I described code to do that in [0] above.
->>>>>
->>>>> You said that we should get the same effect by writing the
->>>>> same series of tuples to either pattern or hw_pattern file.
->>>>>
->>>>> Below command consists of four tuples (marked with brackets
->>>>> to highlight), and it will activate breathing mode in Baolin's
->>>>> hw_pattern:
->>>>>
->>>>> "[0 rise_duration] [brightness high_duration] [brightness fall_duration]
->>>>> [0   low_duration]"
->>>>>
->>>>> Now, I can't see how these four tuples could force the software
->>>>> fallback to produce breathing effect you depicted.
->>>>
->>>> I really should get some sleep now. But my intention was that software
->>>> fallback produces just that with those four tuples. (If it does not,
->>>> we can fix the software fallback to do just that).
->>>
->>> And you are right, v12 1/2 seems to do the wrong thing.
->>>
->>> My "brilliant idea" is to something closer to the original version I
->>> posted here. I'm attaching it for reference.
->>>
->>> I'm also attaching the original documentation. It was clearly designed
->>> to do smooth transitions, too. (But pattern is written in slightly
->>> different way there, AFAICT).
->>>
->>> Clearly, having same semantics for pattern and hw_pattern is possible.
->>
->> Thank you for the attachment. The documentation part makes everything
->> clear. Comparing the patch from the attachment and the Baolin's patch
->> there is one vital part missing, from the original
->> pattern_trig_update():
->>
->> if (data->next->brightness == data->curr->brightness) {
->> [...]
->> } else {
->>         /* Gradual dimming */
->>         led_set_brightness(data->led_cdev, compute_brightness(data));
->>         data->delta_t += UPDATE_INTERVAL;
->>         mod_timer(&data->timer, jiffies
->>                 + msecs_to_jiffies(UPDATE_INTERVAL));
->> }
+On 9/25/18 6:06 AM, Jarkko Sakkinen wrote:
+> Add data structures to track Enclave Page Cache (EPC) pages.  EPC is
+> divided into multiple banks (1-N) of which addresses and sizes can be
+> enumerated with CPUID by the OS.
 > 
-> I have some confusions about this, if data->next->brightness !=
-> data->curr->brightness, we should always do gradual dimming? But
-> suppose below pattan values:
-> echo "0 100 20 100 40 100 80 100 100 100" > patter
-ledtrig-pattern.txt attached by Pavel explains this:
-
-"To make the LED go instantly from one brightness value to another,
-use zero-time lengths."
-
-Actually you have it also:
-"Duration of 0 means brightness should immediately change to new value"
-
-According to this, to get instant changes your pattern should look
-like this:
-
-echo "0 100 0 0 20 100 20 0 40 100 40 0 80 100 80 0 100 100" > pattern
-
-> I do not want to do gradual dimming, just change the brightness with duration.
+> On NUMA systems a node can have at most bank. A bank can be at most part of
+> two nodes. SGX supports both nodes with a single memory controller and also
+> sub-cluster nodes with severals memory controllers on a single die.
 > 
->> And the compute_brightness() implementation:
->>
->> static int compute_brightness(struct pattern_trig_data *data)
->> {
->>         if (data->delta_t == 0)
->>                 return data->curr->brightness;
->>
->>         if (data->curr->delta_t == 0)
->>                 return data->next->brightness;
->>
->>         return data->curr->brightness + data->delta_t
->>                 * (data->next->brightness - data->curr->brightness)
->>                 / data->curr->delta_t;
->> }
->>
->> With the above the linear gradual dimming is indeed feasible.
->> And for non-linear dimming like breathing mode the hw_pattern will do.
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
+> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/include/asm/sgx.h      |  55 +++++++++++++++
+>  arch/x86/kernel/cpu/intel_sgx.c | 115 ++++++++++++++++++++++++++++++++
+>  2 files changed, 170 insertions(+)
+
+Hi,
+
+Several comment blocks begin with "/**" but they are either not intended
+to be kernel-doc notation or they are incomplete kernel-doc notation.
+
 > 
-> I am still not sure when we need the linear gradual dimming? When
-> failed to set hardware pattern?
+> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+> index e66e2572011e..468e609147cd 100644
+> --- a/arch/x86/include/asm/sgx.h
+> +++ b/arch/x86/include/asm/sgx.h
+> @@ -5,10 +5,65 @@
+>  #ifndef _ASM_X86_SGX_H
+>  #define _ASM_X86_SGX_H
+>  
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/rwsem.h>
+>  #include <linux/types.h>
+> +#include <asm/sgx_arch.h>
+> +#include <asm/asm.h>
+> +
+> +struct sgx_epc_page {
+> +	unsigned long desc;
+> +	struct list_head list;
+> +};
+> +
+> +/**
+> + * struct sgx_epc_section
+> + *
+> + * The firmware can define multiple chunks of EPC to the different areas of the
+> + * physical memory e.g. for memory areas of the each node. This structure is
+> + * used to store EPC pages for one EPC section and virtual memory area where
+> + * the pages have been mapped.
+> + */
 
-No. Linear gradual dimming needs to be applied only if set via pattern
-file. In this case we shouldn't attempt to call pattern_set at all,
-since we know that we are asked for enabling software engine.
+Incomplete...
 
-Similarly, in the hw_pattern handler we should call only pattern_set,
-and return error code, without falling back to the software engine
-in case of error.
+> +struct sgx_epc_section {
+> +	unsigned long pa;
+> +	void __iomem *va;
+> +	struct sgx_epc_page **pages;
+> +	unsigned long free_cnt;
+> +	spinlock_t lock;
+> +};
+>  
+>  extern bool sgx_enabled;
+>  extern bool sgx_lc_enabled;
+> +extern struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+> +
+> +/*
+> + * enum sgx_epc_page_desc - bits and masks for an EPC page's descriptor
+> + * %SGX_EPC_SECTION_MASK:	SGX allows to have multiple EPC sections in the
+> + *				physical memory. The existing and near-future
+> + *				hardware defines at most eight sections, hence
+> + *				three bits to hold a section.
+> + * %SGX_EPC_PAGE_RECLAIMABLE:	The page page is reclaimable. Used when freeing
+> + *				a page to know that we also need to remove the
+> + *				page from the list of reclaimable pages.
+> + */
 
->> There is also vital discrepancy between the documentation and the
->> proposed ledtrig-pattern implementation. The doc says:
->>
->> "Duration of 0 means brightness should immediately change to new value"
-> 
-> OK. Will add in next version.
+OTOH, this one is close to ready for kernel-doc but it does not begin with
+"/**".  But that's OK, your choice.
 
-You already have it added.
+> +enum sgx_epc_page_desc {
+> +	SGX_EPC_SECTION_MASK			= GENMASK_ULL(3, 0),
+> +	SGX_EPC_PAGE_RECLAIMABLE		= BIT(4),
+> +	/* bits 12-63 are reserved for the physical page address of the page */
+> +};
+> +
+> +static inline struct sgx_epc_section *sgx_epc_section(struct sgx_epc_page *page)
+> +{
+> +	return &sgx_epc_sections[page->desc & SGX_EPC_SECTION_MASK];
+> +}
+> +
+> +static inline void __iomem *sgx_epc_addr(struct sgx_epc_page *page)
+> +{
+> +	struct sgx_epc_section *section = sgx_epc_section(page);
+> +
+> +	return section->va + (page->desc & PAGE_MASK) - section->pa;
+> +}
+>  
+>  /**
+>   * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
+> diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
+> index 138af9b9a39a..b24d6287442d 100644
+> --- a/arch/x86/kernel/cpu/intel_sgx.c
+> +++ b/arch/x86/kernel/cpu/intel_sgx.c
+> @@ -14,10 +14,121 @@ bool sgx_enabled __ro_after_init;
+>  EXPORT_SYMBOL_GPL(sgx_enabled);
+>  bool sgx_lc_enabled __ro_after_init;
+>  EXPORT_SYMBOL_GPL(sgx_lc_enabled);
+> +struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
+> +EXPORT_SYMBOL_GPL(sgx_epc_sections);
+> +
+> +static int sgx_nr_epc_sections;
+> +
+> +static __init void sgx_free_epc_section(struct sgx_epc_section *section)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < section->free_cnt && section->pages[i]; i++)
+> +		kfree(section->pages[i]);
+> +	kfree(section->pages);
+> +	iounmap(section->va);
+> +}
+> +
+> +static __init int sgx_init_epc_section(u64 addr, u64 size, unsigned long index,
+> +				       struct sgx_epc_section *section)
+> +{
+> +	unsigned long nr_pages = size >> PAGE_SHIFT;
+> +	unsigned long i;
+> +
+> +	section->va = ioremap_cache(addr, size);
+> +	if (!section->va)
+> +		return -ENOMEM;
+> +
+> +	section->pa = addr;
+> +	section->free_cnt = nr_pages;
+> +	spin_lock_init(&section->lock);
+> +
+> +	section->pages = kcalloc(nr_pages, sizeof(struct sgx_epc_page *),
+> +				 GFP_KERNEL);
+> +	if (!section->pages)
+> +		goto out;
+> +
+> +	for (i = 0; i < nr_pages; i++) {
+> +		section->pages[i] = kzalloc(sizeof(struct sgx_epc_page),
+> +					    GFP_KERNEL);
+> +		if (!section->pages[i])
+> +			goto out;
+> +
+> +		section->pages[i]->desc = (addr + (i << PAGE_SHIFT)) | index;
+> +	}
+> +
+> +	return 0;
+> +out:
+> +	sgx_free_epc_section(section);
+> +	return -ENOMEM;
+> +}
+> +
+> +static __init void sgx_page_cache_teardown(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < sgx_nr_epc_sections; i++)
+> +		sgx_free_epc_section(&sgx_epc_sections[i]);
+> +}
+> +
+> +/**
+> + * A section metric is concatenated in a way that @low bits 12-31 define the
+> + * bits 12-31 of the metric and @high bits 0-19 define the bits 32-51 of the
+> + * metric.
+> + */
 
->> This syntax seems to be not supported in the Baolin's patch.
->>
->> With all the above covered we will be almost there.
->>
->> Now, only the issues raised by Bjorn need a clarification:
->>
->> On 09/08/2018 07:02 AM, Bjorn Andersson wrote:
->> [...]
->>> The controls for my hardware is:
->>> * a list of brightness values
->>> * the rate of the pattern
->>
->> The two can be described using [brightness delta_t] tuples.
->>
->>> * a flag to indicate that the pattern should be played from start
->>>   to end, end to start or start to end to start
->>
->> As above, but the tuples would have to be suitably arranged.
->>
->> We won't need any specific flag to indicate how the pattern
->> should be played, but instead explicitly give the tuples in the
->> required order. For the start-end-start case the sequence of tuples
->> will need to be tripled, but the middle part should be put in the
->> reverse order.
->>
->>> * a boolean indicating if the pattern should be played once or repeated
->>>   indefinitely.
->>
->> We will have "repeat" file for that.
->>
->> Baolin, would you mind adding the support for gradual dimming to your
->> ledtrig-timer.c implementation?
-> 
-> Yes, I will do. Thanks.
-> 
+not kernel-doc notation.
 
+> +static inline u64 sgx_calc_section_metric(u64 low, u64 high)
+> +{
+> +	return (low & GENMASK_ULL(31, 12)) +
+> +	       ((high & GENMASK_ULL(19, 0)) << 32);
+> +}
+
+thanks,
 -- 
-Best regards,
-Jacek Anaszewski
+~Randy
