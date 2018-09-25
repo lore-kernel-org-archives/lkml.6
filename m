@@ -2,158 +2,138 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB0DECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA04C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26868214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42A502145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:25:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ck2/wFpi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26868214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zMtXb4WF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A502145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbeIYGaT (ORCPT
+        id S1728700AbeIYGaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 02:30:19 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38578 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728343AbeIYGaM (ORCPT
+        Tue, 25 Sep 2018 02:30:24 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48460 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728343AbeIYGaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 02:30:12 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x17-v6so9926629pfh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 17:25:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=v+bgLsnYIEjOih3SRhhO7dkDnRKEzVCMNAzz+EjXpHg=;
-        b=ck2/wFpivCOb7/CK8KeVglR5VoDX76r4hYd79A+wfNOLkLEcgXUGgqVnxKYwcMc6ML
-         AkdbGwQzpJBB0VMnsxFyv5d0oAj9FQy+OjJoFd0UqtkzGX+cjXhY8HcVbQ0ZOy8EFzFj
-         bVWb4JREC6bs66N2yNnqhi/DBFx/kunb4Td3A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=v+bgLsnYIEjOih3SRhhO7dkDnRKEzVCMNAzz+EjXpHg=;
-        b=t/uKASLXzvOOSZ9ky8jhBY0ZotW2fcZlZZoqDL2tbSNsvUvN6+Nh2ZPBlXcfNe1gG/
-         xCCveHLHdpJbqrK7r3DEaWn/RhOV/DxKjhYL+BoVVWSchHHNdqyybi/SLGpl5daMQXmW
-         NVviMOVcbmF/o97SGieUBGSHbCChGS16RwncwvWfcEZXEP+pWkOqQiY+D9gS1MSmIUaV
-         UAJ8A+iJZ+nUzuO4cTe45EAzNGKLcWuAPVnkbJ0Ywc7Sf0ecp8ADWzlFysEADlwvvAyp
-         abUs1bIyam4czVbFsOcCp+oC6sS9AzkhAWkmsFJ9Ctv/Dx7F0dAO3yISOuN9ZlQb7DC7
-         m3PA==
-X-Gm-Message-State: ABuFfoi/38s8FkcOrGQS4lqiQnTHLjCvI2gIEppQ31nNpDIxmoV+JoMb
-        yG5lzs20nCL6mYQOGZbsczHcEw==
-X-Google-Smtp-Source: ACcGV61GzfRbyoeVB/zFFoHIWLaMdn1xpYcS7i99l+puB02zFzFGRU00KqLtZ5DjuLibaUXmes51yQ==
-X-Received: by 2002:a63:6f45:: with SMTP id k66-v6mr923000pgc.360.1537835124567;
-        Mon, 24 Sep 2018 17:25:24 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm497393pgv.29.2018.09.24.17.25.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 17:25:20 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     James Morris <jmorris@namei.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v3 26/29] LSM: Introduce enum lsm_order
-Date:   Mon, 24 Sep 2018 17:18:29 -0700
-Message-Id: <20180925001832.18322-27-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
-References: <20180925001832.18322-1-keescook@chromium.org>
+        Tue, 25 Sep 2018 02:30:23 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8P0PWM2029207;
+        Mon, 24 Sep 2018 19:25:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537835132;
+        bh=c7eNSBT81Do5FtjhjAP51abYHiK3AxWqxvt5RiL02HU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=zMtXb4WFMan8JLKjlkS3v4xT5TayYD6tv4+iPjITsWPWL9/G36/s4p699quBPp2Rm
+         7EO7ftUKW3TdDuo+kvuaYzwGYlNDeB7WX5nbpqMDJbtfQOxxL33N2ZAtoyvSYMOnCq
+         kU1dme8wlecJ6VZd55FrA1guLuk/o5GujAvy1qvk=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P0PW4T029844;
+        Mon, 24 Sep 2018 19:25:32 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 24
+ Sep 2018 19:25:32 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 24 Sep 2018 19:25:32 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8P0PV3w029955;
+        Mon, 24 Sep 2018 19:25:31 -0500
+Subject: Re: [PATCH] rpmsg: core: add support to power domains for devices
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <ohad@wizery.com>, <bjorn.andersson@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+References: <20180615095939.1331-1-srinivas.kandagatla@linaro.org>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <a80cce14-9e57-32a2-760f-3d29de009f99@ti.com>
+Date:   Mon, 24 Sep 2018 19:25:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180615095939.1331-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for distinguishing the "capability" LSM from other LSMs,
-it must be ordered first. This introduces LSM_ORDER_MUTABLE for the
-general LSMs, LSM_ORDER_FIRST for capabilities, and LSM_ORDER_LAST for
-anything that must run last (e.g. Landlock may use this in the future).
+Hi Srinivas,
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/lsm_hooks.h |  7 +++++++
- security/security.c       | 18 ++++++++++++++++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
+On 06/15/2018 04:59 AM, Srinivas Kandagatla wrote:
+> Some of the rpmsg devices need to switch on power domains to communicate
+> with remote processor. For example on Qualcomm DB820c platform LPASS
+> power domain needs to switched on for any kind of audio services.
+> This patch adds the missing power domain support in rpmsg core.
+> 
+> Without this patch attempting to play audio via QDSP on DB820c would
+> reboot the system.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/rpmsg/rpmsg_core.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index b714a543a91d..8122807db380 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/module.h>
+>  #include <linux/rpmsg.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pm_domain.h>
+>  #include <linux/slab.h>
+>  
+>  #include "rpmsg_internal.h"
+> @@ -449,6 +450,10 @@ static int rpmsg_dev_probe(struct device *dev)
+>  	struct rpmsg_endpoint *ept = NULL;
+>  	int err;
+>  
+> +	err = dev_pm_domain_attach(dev, true);
+> +	if (err)
+> +		goto out;
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 5be95c6155b4..b38902ea0be5 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2041,8 +2041,15 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 
- #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
- 
-+enum lsm_order {
-+	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
-+	LSM_ORDER_MUTABLE = 0,
-+	LSM_ORDER_LAST,
-+};
-+
- struct lsm_info {
- 	const char *name;	/* Populated automatically. */
-+	enum lsm_order order;	/* Optional: default is LSM_ORDER_MUTABLE */
- 	unsigned long flags;	/* Optional: flags describing LSM */
- 	int *enabled;		/* Optional: NULL checks CONFIG_LSM_ENABLE */
- 	int (*init)(void);
-diff --git a/security/security.c b/security/security.c
-index c4ba5832ef2f..8b93afa75e3c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -148,7 +148,8 @@ static void __init parse_lsm_order(const char *order, const char *origin)
- 		bool found = false;
- 
- 		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
-+			if (lsm->order == LSM_ORDER_MUTABLE &&
-+			    (lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
- 			    strcmp(lsm->name, name) == 0) {
- 				append_ordered_lsm(lsm, origin);
- 				found = true;
-@@ -166,6 +167,12 @@ static void __init prepare_lsm_order(void)
- {
- 	struct lsm_info *lsm;
- 
-+	/* LSM_ORDER_FIRST is always first. */
-+	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+		if (lsm->order == LSM_ORDER_FIRST)
-+			append_ordered_lsm(lsm, "first");
-+	}
-+
- 	/* Parse order from commandline, if present. */
- 	parse_lsm_order(chosen_lsm_order, "cmdline");
- 
-@@ -174,9 +181,16 @@ static void __init prepare_lsm_order(void)
- 
- 	/* Add any missing LSMs, in link order. */
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-+		if (lsm->order == LSM_ORDER_MUTABLE &&
-+		    (lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
- 			append_ordered_lsm(lsm, "link-time");
- 	}
-+
-+	/* LSM_ORDER_LAST is always last. */
-+	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+		if (lsm->order == LSM_ORDER_LAST)
-+			append_ordered_lsm(lsm, "last");
-+	}
- }
- 
- /* Is an LSM allowed to be initialized? */
--- 
-2.17.1
+This patch has broken the virtio-rpmsg stack based rpmsg devices. These
+devices are non-DT and the rpmsg_dev_probe() is now failing with -19
+(-ENODEV) error code.
+
+Loic, Arnaud,
+Can one of you double-confirm this behavior on ST platforms as well?
+The patch came through 4.14.71 stable release and broke our downstream
+kernels.
+
+regards
+Suman
+
+> +
+>  	if (rpdrv->callback) {
+>  		strncpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+>  		chinfo.src = rpdev->src;
+> @@ -490,6 +495,8 @@ static int rpmsg_dev_remove(struct device *dev)
+>  
+>  	rpdrv->remove(rpdev);
+>  
+> +	dev_pm_domain_detach(dev, true);
+> +
+>  	if (rpdev->ept)
+>  		rpmsg_destroy_ept(rpdev->ept);
+>  
+> 
 
