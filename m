@@ -2,197 +2,145 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAED7C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2BEC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FBBE20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:32:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FBBE20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F297C214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:33:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pOjNXX9d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F297C214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbeIYNiu (ORCPT
+        id S1728797AbeIYNjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:38:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45462 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727589AbeIYNiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:38:50 -0400
-Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 89A20308338F;
-        Tue, 25 Sep 2018 07:32:36 +0000 (UTC)
-Received: from [10.36.117.161] (ovpn-117-161.ams2.redhat.com [10.36.117.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CAEC2861E5;
-        Tue, 25 Sep 2018 07:32:27 +0000 (UTC)
-Subject: Re: [PATCH v10 24/26] KVM: s390: device attrs to enable/disable AP
- interpretation
-To:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-25-git-send-email-akrowiak@linux.vnet.ibm.com>
- <9263b698-1827-1b7f-28bf-75b44657dea2@redhat.com>
- <18a21cda-1da9-3bfb-7b34-80415b5457f9@linux.ibm.com>
- <172560fb-2c54-ea43-3401-f108cf2a0595@redhat.com>
- <bb2639ac-469a-a71f-8f0a-2df3c12c6ac5@linux.ibm.com>
- <1c0c5a2e-3ef4-e5f5-52b8-7aeddca1f472@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <62f0cacc-8338-9370-a4dc-12f793214c48@redhat.com>
-Date:   Tue, 25 Sep 2018 09:32:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 09:39:48 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44992 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728482AbeIYNjr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:39:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v16-v6so22162655wro.11
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 00:33:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=AgKsf7PyS3rN5T/qjwIHe3/kYtJ0kT0s83KYOa65QOU=;
+        b=pOjNXX9d62cL9hQi+T17VQ8dqEafsYYk2SNtH+qYvzvw3RZX9YeL5D0VpkE681QUGx
+         fh3M/U4inpKyZW5vtfXC2kvvnedWLOIeobcEKUC6PsAEyUiUa33T4JSZXYjwSqn3KJUU
+         UlF40zpshEn1Gus7k/NUpfEWPIl/TlX0IK9jqB3zstGIQtKZvvUNteyRxR/gT2NyyxlU
+         jkkaSk9KT0IpWyseqSdsf+DDpbnMJgDXwOvqcDPJR24xbUHhN0i8F+cQ6HLsFvvb1z+F
+         Fn0EHgHBC52PxDZSOKtFRB1fHaaJh9UaSHi88IMhmeCEJ2zcc8RNvUfdmrtiASs/sUVZ
+         yp5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=AgKsf7PyS3rN5T/qjwIHe3/kYtJ0kT0s83KYOa65QOU=;
+        b=GiuFPcurEPozG5poS4ziY1/H7RW9AZYU5I1yBjeL50JZBoBMh/oijC0NTRI5kp700q
+         0ylXIeveK5nFIDktzz2o9ZIUZ5R3DsIajF8zLa7jPIC/k/SPPb/fnyyyiMs2pHvnshXm
+         fiIUj/3NXzhFZp7CIk096lr7CTPPoA9fFLS3PlHF/YeDWGifsWER68us8z2mtexzZvZu
+         nxcNxnHDnDP4Lyz8LgSvgXlnO8VwuKZHkONWIu0A38MgIaQKn4LL9gVdZgxaYfPH4Am9
+         1tftDYpmYcm9enbVEho1pZdb+vyWEfno+APwTukUfkPwrT1ntBvUbYfQE6aoXq9vn4Iu
+         dYMg==
+X-Gm-Message-State: ABuFfojY0t82RD8sKRf38/nx/HE5IkUM2GHqZnLGWxj8TrJVtipd/a1J
+        27zAse1NSHkTnL3S87fORASN5yYy4n1cjg==
+X-Google-Smtp-Source: ACcGV62K3tGKEkrad34EbPC11/GIxctvZoUwea9efixJZ5bSynT4BBpp59Rqio/lGSrXPBWKj3yWIA==
+X-Received: by 2002:adf:c78e:: with SMTP id l14-v6mr1683565wrg.230.1537860812112;
+        Tue, 25 Sep 2018 00:33:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id y206-v6sm1212295wmg.14.2018.09.25.00.33.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 00:33:31 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH v2] mtd: spi-nor: cadence-quadspi: Use proper enum for dma_unmap_single
+Date:   Tue, 25 Sep 2018 00:32:03 -0700
+Message-Id: <20180925073202.23945-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180921102944.27968-1-natechancellor@gmail.com>
+References: <20180921102944.27968-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1c0c5a2e-3ef4-e5f5-52b8-7aeddca1f472@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 25 Sep 2018 07:32:36 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/09/2018 20:42, Tony Krowiak wrote:
-> On 09/24/2018 12:25 PM, Tony Krowiak wrote:
->> On 09/24/2018 07:23 AM, David Hildenbrand wrote:
-> 
-> (...)
-> 
->>> Will you also fixup this patch to expose KVM_S390_VM_CRYPTO_ENABLE_APIE
->>> only if supported by HW? (ap_instructions_available)
->>
->> Given that this patch DOES expose KVM_S390_VM_CRYPTO_ENABLE_APIE only if 
->> supported by HW, I assume you are talking about
->> KVM_S390_VM_CRYPTO_DISABLE_APIE. I didn't check 
->> ap_instructions_available() for disabling APIE because I didn't
->> think it necessary given that ECA.28 will be set to 0 (intercept) by 
->> default, whether AP instructions are installed or not; so why not allow 
->> disabling apie. I suppose from the perspective of consistency, since the 
->> kvm_s390_vm_has_attr() function checks ap_instructions_available() for 
->> both attributes, then it probably makes sense to add that check to 
->> KVM_S390_VM_CRYPTO_DISABLE_APIE here. Then again, we could make a change 
->> in ap_instructions_available() to allow KVM_S390_VM_CRYPTO_DISABLE_APIE 
->> regardless of whether AP instructions are available. It boils down to 
->> whether APIE needs to be dynamically disabled at some point when it has 
->> been enabled. The only case I can think of where that may be necessary 
->> is if a guest is migrated to a system without AP instructions. I don't 
->> think that can happen and may even be protected against precisely 
->> because the VM attributes won't be available on the target system due to 
->> no AP instructions. What say you?
->>
-> David,
-> 
-> I'm sorry, I misinterpreted what you were asking for. Check out the 
-> fixup! patch below and let me know if that is what you are looking for.
-> If so, I will integrate that change and post v11 tomorrow (Tuesday 9/24).
-> 
-> -----------------------------------8<-----------------------------------
-> 
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> Date: Mon, 24 Sep 2018 14:18:37 -0400
-> Subject: [FIXUP v10] fixup! KVM: s390: device attrs to enable/disable AP
->   interpretation
-> 
-> ---
->   arch/s390/kvm/kvm-s390.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 6654bb1fc26a..a528558baa78 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -901,6 +901,10 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, 
-> struct kvm_device_attr *attr)
->   		kvm->arch.crypto.apie = 1;
->   		break;
->   	case KVM_S390_VM_CRYPTO_DISABLE_APIE:
-> +		if (!ap_instructions_available()) {
-> +			mutex_unlock(&kvm->lock);
-> +			return -EOPNOTSUPP;
-> +		}
->   		kvm->arch.crypto.apie = 0;
->   		break;
->   	default:
-> @@ -1509,9 +1513,11 @@ static int kvm_s390_vm_has_attr(struct kvm *kvm, 
-> struct kvm_device_attr *attr)
->   		case KVM_S390_VM_CRYPTO_ENABLE_DEA_KW:
->   		case KVM_S390_VM_CRYPTO_DISABLE_AES_KW:
->   		case KVM_S390_VM_CRYPTO_DISABLE_DEA_KW:
-> +			ret = 0;
-> +			break;
->   		case KVM_S390_VM_CRYPTO_ENABLE_APIE:
->   		case KVM_S390_VM_CRYPTO_DISABLE_APIE:
-> -			ret = 0;
-> +			ret = ap_instructions_available();
+Clang warns when one enumerated type is converted implicitly to another.
 
-Just a little remark, I guess we want to report 0 if available and
--ENXIO if not.
+drivers/mtd/spi-nor/cadence-quadspi.c:962:47: warning: implicit
+conversion from enumeration type 'enum dma_transfer_direction' to
+different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
+        dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+./include/linux/dma-mapping.h:428:66: note: expanded from macro
+'dma_map_single'
+#define dma_map_single(d, a, s, r) dma_map_single_attrs(d, a, s, r, 0)
+                                   ~~~~~~~~~~~~~~~~~~~~          ^
+drivers/mtd/spi-nor/cadence-quadspi.c:997:43: warning: implicit
+conversion from enumeration type 'enum dma_transfer_direction' to
+different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
+        dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+./include/linux/dma-mapping.h:429:70: note: expanded from macro
+'dma_unmap_single'
+#define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, 0)
+                                     ~~~~~~~~~~~~~~~~~~~~~~          ^
+2 warnings generated.
 
+Use the proper enums from dma_data_direction to satisfy Clang.
+
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/108
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+v1 -> v2:
+
+* Fix second half of patch (previously incorrectly used DMA_TO_DEVICE),
+  thanks to Tudor Ambarus for catching this.
+
+ drivers/mtd/spi-nor/cadence-quadspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index 8e714fbfa521..e24db817154e 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -959,7 +959,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
+ 		return 0;
+ 	}
+ 
+-	dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
++	dma_dst = dma_map_single(nor->dev, buf, len, DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(nor->dev, dma_dst)) {
+ 		dev_err(nor->dev, "dma mapping failed\n");
+ 		return -ENOMEM;
+@@ -994,7 +994,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
+ 	}
+ 
+ err_unmap:
+-	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
++	dma_unmap_single(nor->dev, dma_dst, len, DMA_FROM_DEVICE);
+ 
+ 	return 0;
+ }
 -- 
+2.19.0
 
-Thanks,
-
-David / dhildenb
