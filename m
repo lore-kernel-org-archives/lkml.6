@@ -2,78 +2,105 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FEAC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72C8C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF56820877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A0AE208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:37:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="VaLs24Q6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF56820877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpZGCWvQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A0AE208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbeIYRm6 (ORCPT
+        id S1728354AbeIYRoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 13:42:58 -0400
-Received: from 8bytes.org ([81.169.241.247]:34832 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726660AbeIYRm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 13:42:57 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 8A7866FB; Tue, 25 Sep 2018 13:35:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1537875349; bh=MhFZM7FKpfFs2A4YRFtLdNrJoOYgnYz+qs9s8jvtE4Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VaLs24Q6XUdt1hEtE7Dn1kuav7ykSy8jXGtDgxhwHIAM/SPHtSBi09mzbRN0q0DlQ
-         5rybmDQboeAvmrxnJy6Rpsqy7Qzm9MZlHewt0vpSvupkeyn4fy6/luxylUvU5EWqEE
-         xDrRS4oXO3siUJl9aDDy40rBA1LzrHxX8iqzBs8nr4+hiE6UbXMiJpVk/+UfBzehCN
-         pK7vSgYDjSlCVwIcqNGhh9jgxPbjvh33fyI2B2ruviXK7/4CBBr0mrRkp+WBesVS7K
-         2/7F0dJSiEMgDD2td2eru1Deca0dafJsavPj5JfjYEuWkqyGAR67z9CdMDvwRLvbjn
-         2leghMv+LBJwg==
-Date:   Tue, 25 Sep 2018 13:35:49 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 1/1] iommu/vt-d: Handle memory shortage on pasid table
- allocation
-Message-ID: <20180925113549.GB18287@8bytes.org>
-References: <20180901062416.6107-1-baolu.lu@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180901062416.6107-1-baolu.lu@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 25 Sep 2018 13:44:25 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43847 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbeIYRoZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 13:44:25 -0400
+Received: by mail-qk1-f196.google.com with SMTP id v18-v6so3660865qka.10
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 04:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=31SLiP4UwANgmEvkVjx1GNSM/O3fw/xJF5X/bSbwIpY=;
+        b=BpZGCWvQ7HXfAMIItzBDOAb+SddBm9Hlfo0svYDHTTx8XfH9vxGkmTHm4xWVmJelID
+         ngZ2xMdK1XJlJhYtnTH5bmndmxHIK258x9h4COjcxPMojWohuorawdOGpzkqpT+9Wa+S
+         2Ydg8DSRUMUQKPIi4nne5IZUXM65GQNaoHANrr2Ebmy+jIIJC1v1pqVIUdRucZZ/iYRf
+         Un42CuA5o7UG+iOp+6aDi5l1X76s64pJ4gDH9mtPXDDRItzOPHRMSX23ApjgNQYg/zTQ
+         HwouMr7oMgMxZvD3ug31QofTz67qyiASXool9aDDytcqOAmkua9FDUFH2vxZknnnUasC
+         5Jyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=31SLiP4UwANgmEvkVjx1GNSM/O3fw/xJF5X/bSbwIpY=;
+        b=qVdL7LzgBMair0vOL1wkSw4lteSP+X/8uFVXqfhRPy04h4V9ObhFDnDIMmaufy0Nho
+         XqLAnHBvkv/Pj4TDLjhumAWNircv+76JzQnru8PKNmwWsMGUmBLExT5NE7qbDAhdSCyK
+         oFpoCpbfk+YIoI9IOWesuusSZWw2CUSkX9IRSniKLBpswj1lTNFju9ayPTnrvXuIXv1W
+         N/trrDX3+FH3UAr2hM38ThYW2lbYysvv0sk5ymX1+ZFTdKLxFjgxr/ty8lALn1JU/llS
+         9bdbctav7DuAEZnfamz5QMkk4cvjKmCvXIIzDG646t0+NSEdIa6KmKSwm2zsHYQFMxKd
+         dCFA==
+X-Gm-Message-State: ABuFfogGTIKPMQ8lThaO4//HbFoqrHW/5/XOTn76mB5363wpc6eDnO2s
+        STp0k6IXsKF0avF4boACklU=
+X-Google-Smtp-Source: ACcGV62Jbt9q//aoeXZLt7dFBnhzZQpmnRthXm7yKlkl13yPp0xAHrLjI56QiG+Oyo2mfs+Hprh+ZA==
+X-Received: by 2002:a37:14d4:: with SMTP id 81-v6mr355936qku.201.1537875436716;
+        Tue, 25 Sep 2018 04:37:16 -0700 (PDT)
+Received: from pm2-ws13.praxislan02.com ([2001:470:8:67e:1d94:9684:2890:372c])
+        by smtp.gmail.com with ESMTPSA id t29-v6sm1356221qkt.44.2018.09.25.04.37.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 04:37:15 -0700 (PDT)
+From:   Jason Andryuk <jandryuk@gmail.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Cc:     Jan Beulich <jbeulich@suse.com>,
+        Jason Andryuk <jandryuk@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] xen: Make XEN_BACKEND selectable by DomU
+Date:   Tue, 25 Sep 2018 07:36:55 -0400
+Message-Id: <20180925113655.4501-1-jandryuk@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 01, 2018 at 02:24:16PM +0800, Lu Baolu wrote:
-> Pasid table memory allocation could return failure due to memory
-> shortage. Limit the pasid table size to 1MiB because current 8MiB
-> contiguous physical memory allocation can be hard to come by. W/o
-> a PASID table, the device could continue to work with only shared
-> virtual memory impacted. So, let's go ahead with context mapping
-> even the memory allocation for pasid table failed.
-> 
-> Fixes: cc580e41260d ("iommu/vt-d: Per PCI device pasid table interfaces")
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reported-and-tested-by: Pelton Kyle D <kyle.d.pelton@intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/intel-iommu.c | 6 +++---
->  drivers/iommu/intel-pasid.h | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
+XEN_BACKEND doesn't actually depend on XEN_DOM0.  DomUs can serve
+backends to other DomUs.  One example is a service VM providing network
+backends.
 
-Applied, thanks.
+The original Kconfig defaulted Dom0 to y and it could be disabled.  DomU
+could not select the option.  With the new Kconfig, we default y for
+Dom0 and n for DomU.  Either can then toggle the selection.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+v2: omit superfluous "y if" per Jan Beulich
+---
+ drivers/xen/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+index b459edfacff3..692e82fcad1f 100644
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@ -101,8 +101,7 @@ config XEN_DEV_EVTCHN
+ 
+ config XEN_BACKEND
+ 	bool "Backend driver support"
+-	depends on XEN_DOM0
+-	default y
++	default XEN_DOM0
+ 	help
+ 	  Support for backend device drivers that provide I/O services
+ 	  to other virtual machines.
+-- 
+2.17.1
+
