@@ -2,99 +2,78 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E78C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6BDC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37FA9206B5
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:15:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FA9206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F7FC21480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:16:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F7FC21480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbeIZAYR (ORCPT
+        id S1727402AbeIZAZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:24:17 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:43892 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbeIZAYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:24:17 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1g4rrk-00049e-9y; Tue, 25 Sep 2018 12:15:21 -0600
-To:     Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20180925162231.4354-1-logang@deltatee.com>
- <20180925162231.4354-3-logang@deltatee.com>
- <1537896555.11137.22.camel@acm.org>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <9241a6af-9826-d1ff-c13b-882cb3b6a34a@deltatee.com>
-Date:   Tue, 25 Sep 2018 12:15:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 20:25:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51734 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbeIZAZ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 20:25:29 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5E6951028;
+        Tue, 25 Sep 2018 18:16:44 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 20:15:48 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Xavier Deguillard <xdeguillard@vmware.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-mm@kvack.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 00/20] vmw_balloon: compaction, shrinker, 64-bit, etc.
+Message-ID: <20180925181548.GB25458@kroah.com>
+References: <20180920173026.141333-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <1537896555.11137.22.camel@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: axboe@kernel.dk, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, bvanassche@acm.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v7 02/13] PCI/P2PDMA: Add sysfs group to display p2pmem
- stats
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920173026.141333-1-namit@vmware.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-09-25 11:29 a.m., Bart Van Assche wrote:
-> On Tue, 2018-09-25 at 10:22 -0600, Logan Gunthorpe wrote:
->> @@ -83,9 +132,14 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
->>  
->>  	pdev->p2pdma = p2p;
->>  
->> +	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
->> +	if (error)
->> +		goto out_pool_destroy;
->> +
->>  	return 0;
->>  
->>  out_pool_destroy:
->> +	pdev->p2pdma = NULL;
->>  	gen_pool_destroy(p2p->pool);
->>  out:
->>  	devm_kfree(&pdev->dev, p2p);
+On Thu, Sep 20, 2018 at 10:30:06AM -0700, Nadav Amit wrote:
+> This patch-set adds the following enhancements to the VMware balloon
+> driver:
 > 
-> This doesn't look right to me. Shouldn't devm_remove_action() be called instead
-> of devm_kfree() if sysfs_create_group() fails?
+> 1. Balloon compaction support.
+> 2. Report the number of inflated/deflated ballooned pages through vmstat.
+> 3. Memory shrinker to avoid balloon over-inflation (and OOM).
+> 4. Support VMs with memory limit that is greater than 16TB.
+> 5. Faster and more aggressive inflation.
+> 
+> To support compaction we wish to use the existing infrastructure.
+> However, we need to make slight adaptions for it. We add a new list
+> interface to balloon-compaction, which is more generic and efficient,
+> since it does not require as many IRQ save/restore operations. We leave
+> the old interface that is used by the virtio balloon.
+> 
+> Big parts of this patch-set are cleanup and documentation. Patches 1-13
+> simplify the balloon code, document its behavior and allow the balloon
+> code to run concurrently. The support for concurrency is required for
+> compaction and the shrinker interface.
+> 
+> For documentation we use the kernel-doc format. We are aware that the
+> balloon interface is not public, but following the kernel-doc format may
+> be useful one day.
 
-That makes no sense to me. We are reversing a devm_kzalloc() not a
-custom action....
+I applied the first 16 patches.  Please fix up 17 and resend.
 
-One could argue we should _also_ remove the pci_p2pdma_release() action,
-but seeing it has a NULL check on pdev->p2pdma it's pretty harmless to
-leave in.
+thanks,
 
-Logan
+greg k-h
