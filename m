@@ -2,146 +2,102 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C43B3C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40853C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3DD214FE
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:23:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3DD214FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EE70D20843
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:23:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Br7xbS7b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE70D20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729985AbeIYVb2 (ORCPT
+        id S1729990AbeIYVbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:31:28 -0400
-Received: from mga04.intel.com ([192.55.52.120]:46410 "EHLO mga04.intel.com"
+        Tue, 25 Sep 2018 17:31:45 -0400
+Received: from vern.gendns.com ([206.190.152.46]:56701 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729465AbeIYVb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:31:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 08:23:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,302,1534834800"; 
-   d="scan'208";a="260120271"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by orsmga005.jf.intel.com with ESMTP; 25 Sep 2018 08:23:21 -0700
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx-trybot@lists.freedesktop.org
-Cc:     Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        id S1729332AbeIYVbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 17:31:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eTmfUEFM9DLXqCHPgb3FfQfk5JbxPLJIiVCQyeNOtn0=; b=Br7xbS7bESFdLRN34dgFCErB6d
+        7fStRmDkStw4cKw4xfCI8klPenuBwZTEJdAvpVTS1os2eOlrbAhoGrC6AVyYPOU45iN9q27Bk2omn
+        JREU9vu16kj65cZQLmzg4rNu5tNRaqHWn85unH7dkhDWcqQaWBDiin7au3qAX4//o7mKsMjgCC3PT
+        jktvC+uR/IZDsGtzRWuI/ockjk/My3q2imbfW/rbrqhwSTOFCuhdJFJQ8eqHLcYdOnr28160o6TW9
+        3RQfnkfT3zP9n1EEB7xmKDQcxgW3UoSWIH0gsLbVrbmqLso+ILRPD6PmQUE4bFsMQ/8rUl6oogqfQ
+        Yt64aIzQ==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59380 helo=gerda.lechnology.com)
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1g4pBf-005Q3Q-Qu; Tue, 25 Sep 2018 11:23:43 -0400
+Subject: Re: [PATCH] ARM: dts: da850-lego-ev3: slow down A/DC as much as
+ possible
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 06/39] component: alloc component_match without any comp to match
-Date:   Tue, 25 Sep 2018 20:50:29 +0530
-Message-Id: <1537888862-31081-7-git-send-email-ramalingam.c@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537888862-31081-1-git-send-email-ramalingam.c@intel.com>
-References: <1537888862-31081-1-git-send-email-ramalingam.c@intel.com>
+References: <20180924013146.18121-1-david@lechnology.com>
+ <a6e9c7ce-8fc8-0ee2-2d3a-24c33b67bdcc@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <fda2606b-3c7b-539a-ae07-4d9b57c34335@lechnology.com>
+Date:   Tue, 25 Sep 2018 10:23:40 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <a6e9c7ce-8fc8-0ee2-2d3a-24c33b67bdcc@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
 
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
+On 9/25/18 1:04 AM, Sekhar Nori wrote:
+> Hi David,
+> 
+> On Monday 24 September 2018 07:01 AM, David Lechner wrote:
+>> Due to the electrical design of the A/DC circuits on LEGO MINDSTORMS EV3,
+>> if we are reading analog values as fast as possible (i.e. using DMA to
+>> service the SPI) the A/DC chip will read incorrect values - as much as
+>> 0.1V off when the SPI is running at 10MHz. (This has to do with the
+>> capacitor charge time when channels are muxed in the A/DC.)
+> 
+> So you believe this is an issue with the board design rather than the
+> limitation of the ADC chip itself? Because if its the later, the fix
+> should be in the driver instead.
 
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
+It is the board design. There are external 4.7k series resistors that 
+make the RC charge time so long.
 
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
+> 
+>>
+>> Both of these patches mentioned have been picked up in the respective
+>> subsystems.
+> 
+> Is this needed for the -rc cycle or can wait for v4.20?
 
-v2:
-  No Change.
-
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index 8946dfee4768..007fb738263a 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -312,6 +312,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
--- 
-2.7.4
-
+v4.20
