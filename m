@@ -2,441 +2,101 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F79C004D3
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6316C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75CB214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:14:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75CB214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A66320867
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:27:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ImCJAzEb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A66320867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729610AbeIYWWh (ORCPT
+        id S1727457AbeIYWfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:22:37 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53734 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728917AbeIYWWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:22:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84D377A9;
-        Tue, 25 Sep 2018 09:14:24 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73BDD3F5BD;
-        Tue, 25 Sep 2018 09:14:22 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 17:14:17 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: Re: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host
- controller support
-Message-ID: <20180925161417.GA30943@e107981-ln.cambridge.arm.com>
-References: <1536226832-5089-1-git-send-email-hayashi.kunihiko@socionext.com>
- <1536226832-5089-3-git-send-email-hayashi.kunihiko@socionext.com>
+        Tue, 25 Sep 2018 18:35:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50950 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbeIYWfy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:35:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KnpYBxNAh061QW52EVkyYMXjgF83hGim+6fQGH4NYlg=; b=ImCJAzEb15quG2qNOO0kH9GwG
+        Ljdbt6fNZRe/3j9pGg/bYdXiYa23+B8z73kinhIX50YyzEYii75+HpX+fJX/zyH/POxJypLuEjH5B
+        MTEUrZzg999iv/ywBnt3JRhdOxDMvZwTIazWREJ5QQSoQQctmRgdTCYCz4OIIT47Gle7REnoBljt+
+        AOvnusMmb1pZDzYYS/ukWZmP7WtF7T7PYQ+TOpF0rYnykdrRzpuQlywuNr+UPW2OYPTYc+pDK2KM3
+        n2ho0IP0f8x1mvtVSKvHhbLXZ9G46myLtfUQyVvF4tbF2w5w1rGuTjZvxZSXvZPWmA5OdKqFL7iNa
+        kkKA+y1CA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4qB0-0002S2-U1; Tue, 25 Sep 2018 16:27:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6D09E20289D14; Tue, 25 Sep 2018 18:27:05 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 18:27:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v4 01/27] x86/cpufeatures: Add CPUIDs for
+ Control-flow Enforcement Technology (CET)
+Message-ID: <20180925162705.GB30146@hirez.programming.kicks-ass.net>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+ <20180921150351.20898-2-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536226832-5089-3-git-send-email-hayashi.kunihiko@socionext.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180921150351.20898-2-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Gustavo, please have a look at INTX/MSI management]
+On Fri, Sep 21, 2018 at 08:03:25AM -0700, Yu-cheng Yu wrote:
 
-On Thu, Sep 06, 2018 at 06:40:32PM +0900, Kunihiko Hayashi wrote:
-> This introduces specific glue layer for UniPhier platform to support
-> PCIe host controller that is based on the DesignWare PCIe core, and
-> this driver supports Root Complex (host) mode.
+> diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+> index 772c219b6889..63cbb4d9938e 100644
+> --- a/arch/x86/kernel/cpu/scattered.c
+> +++ b/arch/x86/kernel/cpu/scattered.c
+> @@ -21,6 +21,7 @@ struct cpuid_bit {
+>  static const struct cpuid_bit cpuid_bits[] = {
+>  	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
+>  	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
+> +	{ X86_FEATURE_IBT,		CPUID_EDX, 20, 0x00000007, 0},
+                                                                   ^^
+missing white space at the end there.
 
-Please read this thread and apply it to next versions:
-
-https://marc.info/?l=linux-pci&m=150905742808166&w=2
-
-[...]
-
-> +static int uniphier_pcie_link_up(struct dw_pcie *pci)
-> +{
-> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> +	u32 val, mask;
-> +
-> +	val = readl(priv->base + PCL_STATUS_LINK);
-> +	mask = PCL_RDLH_LINK_UP | PCL_XMLH_LINK_UP;
-> +
-> +	return (val & mask) == mask;
-> +}
-> +
-> +static int uniphier_pcie_establish_link(struct dw_pcie *pci)
-> +{
-> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> +	int ret;
-> +
-> +	if (dw_pcie_link_up(pci))
-> +		return 0;
-> +
-> +	uniphier_pcie_ltssm_enable(priv);
-> +
-> +	ret = dw_pcie_wait_for_link(pci);
-> +	if (ret == -ETIMEDOUT) {
-> +		dev_warn(pci->dev, "Link not up\n");
-> +		ret = 0;
-
-So if the link is not up we warn, return and all is fine ?
-
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void uniphier_pcie_stop_link(struct dw_pcie *pci)
-> +{
-> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> +
-> +	uniphier_pcie_ltssm_disable(priv);
-> +}
-> +
-> +static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
-> +				  irq_hw_number_t hwirq)
-> +{
-> +	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
-> +	irq_set_chip_data(irq, domain->host_data);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct irq_domain_ops uniphier_intx_domain_ops = {
-> +	.map = uniphier_pcie_intx_map,
-> +};
-
-I looped in Gustavo since this is not how I expect INTX management
-should be done. I do not think there is a DWC INTX generic layer
-but I think drivers/pci/controller/dwc/pci-keystone-dw.c is how
-it has to be done.
-
-> +
-> +static int uniphier_pcie_init_irq_domain(struct pcie_port *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> +	struct device_node *np = pci->dev->of_node;
-> +	struct device_node *np_intc = of_get_next_child(np, NULL);
-> +
-> +	if (!np_intc) {
-> +		dev_err(pci->dev, "Failed to get child node\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	priv->irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
-> +						 &uniphier_intx_domain_ops,
-> +						 pp);
-> +	if (!priv->irq_domain) {
-> +		dev_err(pci->dev, "Failed to get INTx domain\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void uniphier_pcie_irq_enable(struct uniphier_pcie_priv *priv)
-> +{
-> +	writel(PCL_RCV_INT_ALL_ENABLE, priv->base + PCL_RCV_INT);
-> +	writel(PCL_RCV_INTX_ALL_ENABLE, priv->base + PCL_RCV_INTX);
-> +}
-> +
-> +static void uniphier_pcie_irq_disable(struct uniphier_pcie_priv *priv)
-> +{
-> +	writel(0, priv->base + PCL_RCV_INT);
-> +	writel(0, priv->base + PCL_RCV_INTX);
-> +}
-
-> +
-> +static irqreturn_t uniphier_pcie_irq_handler(int irq, void *arg)
-
-This should not be an IRQ handler (and we should not use
-devm_request_irq() for the multiplexed IRQ line), it is a chained
-interrupt controller configuration and should be managed by an IRQ
-chain, again the way keystone does it seems reasonable to me.
-
-> +{
-> +	struct uniphier_pcie_priv *priv = arg;
-> +	struct dw_pcie *pci = &priv->pci;
-> +	u32 val;
-> +
-> +	/* INT for debug */
-> +	val = readl(priv->base + PCL_RCV_INT);
-> +
-> +	if (val & PCL_CFG_BW_MGT_STATUS)
-> +		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
-> +	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
-> +		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
-> +	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
-> +		dev_dbg(pci->dev, "Root Error\n");
-> +	if (val & PCL_CFG_PME_MSI_STATUS)
-> +		dev_dbg(pci->dev, "PME Interrupt\n");
-> +
-> +	writel(val, priv->base + PCL_RCV_INT);
-> +
-> +	/* INTx */
-> +	val = readl(priv->base + PCL_RCV_INTX);
-> +
-> +	if (val & PCL_RADM_INTA_STATUS)
-> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 0));
-> +	if (val & PCL_RADM_INTB_STATUS)
-> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 1));
-> +	if (val & PCL_RADM_INTC_STATUS)
-> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 2));
-> +	if (val & PCL_RADM_INTD_STATUS)
-> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 3));
-
-Nit: Do you really need 4 if statements to handle INTX ?
-
-> +
-> +	writel(val, priv->base + PCL_RCV_INTX);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static irqreturn_t uniphier_pcie_msi_irq_handler(int irq, void *arg)
-> +{
-> +	struct pcie_port *pp = arg;
-> +
-> +	return dw_handle_msi_irq(pp);
-> +}
-
-This IRQ handler must be removed, the MSI irq is handled by dwc core.
-
-> +static int uniphier_pcie_host_init(struct pcie_port *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	int ret;
-> +
-> +	dw_pcie_setup_rc(pp);
-> +	ret = uniphier_pcie_establish_link(pci);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (IS_ENABLED(CONFIG_PCI_MSI))
-> +		dw_pcie_msi_init(pp);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dw_pcie_host_ops uniphier_pcie_host_ops = {
-> +	.host_init = uniphier_pcie_host_init,
-> +};
-> +
-> +static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
-> +				  struct platform_device *pdev)
-> +{
-> +	struct dw_pcie *pci = &priv->pci;
-> +	struct pcie_port *pp = &pci->pp;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	pp->root_bus_nr = -1;
-
-Useless initialization, remove it.
-
-(ie dw_pcie_host_init() initializes root_bus_nr for you).
-
-> +	pp->ops = &uniphier_pcie_host_ops;
-> +
-> +	pp->irq = platform_get_irq_byname(pdev, "intx");
-> +	if (pp->irq < 0) {
-> +		dev_err(dev, "Failed to get intx irq\n");
-> +		return pp->irq;
-> +	}
-> +
-> +	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
-> +			       IRQF_SHARED, "pcie", priv);
-
-This is wrong, you should set-up a chained IRQ for INTX.
-
-I *think* that
-
-ks_pcie_setup_interrupts()
-
-is a good example to start with but I wonder whether it is worth
-generalizing the INTX approach to designware as a whole as it was
-done for MSIs.
-
-Thoughts ?
-
-> +	if (ret) {
-> +		dev_err(dev, "Failed to request irq %d\n", pp->irq);
-> +		return ret;
-> +	}
-> +
-> +	ret = uniphier_pcie_init_irq_domain(pp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> +		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
-> +		if (pp->msi_irq < 0)
-> +			return pp->msi_irq;
-> +
-> +		ret = devm_request_irq(dev, pp->msi_irq,
-> +				       uniphier_pcie_msi_irq_handler,
-> +				       IRQF_SHARED, "pcie-msi", pp);
-
-No. With MSI management in DWC core all you need to do is initializing
-pp->msi_irq.
-
-Lorenzo
-
-> +		if (ret) {
-> +			dev_err(dev, "failed to request msi_irq %d\n",
-> +				pp->msi_irq);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	ret = dw_pcie_host_init(pp);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize host (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int uniphier_pcie_host_enable(struct uniphier_pcie_priv *priv)
-> +{
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(priv->clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = reset_control_deassert(priv->rst);
-> +	if (ret)
-> +		goto out_clk_disable;
-> +
-> +	uniphier_pcie_init_rc(priv);
-> +
-> +	ret = phy_init(priv->phy);
-> +	if (ret)
-> +		goto out_rst_assert;
-> +
-> +	ret = uniphier_pcie_wait_rc(priv);
-> +	if (ret)
-> +		goto out_phy_exit;
-> +
-> +	uniphier_pcie_irq_enable(priv);
-> +
-> +	return 0;
-> +
-> +out_phy_exit:
-> +	phy_exit(priv->phy);
-> +out_rst_assert:
-> +	reset_control_assert(priv->rst);
-> +out_clk_disable:
-> +	clk_disable_unprepare(priv->clk);
-> +
-> +	return ret;
-> +}
-> +
-> +static void uniphier_pcie_host_disable(struct uniphier_pcie_priv *priv)
-> +{
-> +	uniphier_pcie_irq_disable(priv);
-> +	phy_exit(priv->phy);
-> +	reset_control_assert(priv->rst);
-> +	clk_disable_unprepare(priv->clk);
-> +}
-> +
-> +static const struct dw_pcie_ops dw_pcie_ops = {
-> +	.start_link = uniphier_pcie_establish_link,
-> +	.stop_link = uniphier_pcie_stop_link,
-> +	.link_up = uniphier_pcie_link_up,
-> +};
-> +
-> +static int uniphier_pcie_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct uniphier_pcie_priv *priv;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->pci.dev = dev;
-> +	priv->pci.ops = &dw_pcie_ops;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-> +	priv->pci.dbi_base = devm_pci_remap_cfg_resource(dev, res);
-> +	if (IS_ERR(priv->pci.dbi_base))
-> +		return PTR_ERR(priv->pci.dbi_base);
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link");
-> +	priv->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	priv->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(priv->clk))
-> +		return PTR_ERR(priv->clk);
-> +
-> +	priv->rst = devm_reset_control_get_shared(dev, NULL);
-> +	if (IS_ERR(priv->rst))
-> +		return PTR_ERR(priv->rst);
-> +
-> +	priv->phy = devm_phy_optional_get(dev, "pcie-phy");
-> +	if (IS_ERR(priv->phy))
-> +		return PTR_ERR(priv->phy);
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	ret = uniphier_pcie_host_enable(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return uniphier_add_pcie_port(priv, pdev);
-> +}
-> +
-> +static int uniphier_pcie_remove(struct platform_device *pdev)
-> +{
-> +	struct uniphier_pcie_priv *priv = platform_get_drvdata(pdev);
-> +
-> +	uniphier_pcie_host_disable(priv);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id uniphier_pcie_match[] = {
-> +	{ .compatible = "socionext,uniphier-pcie", },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, uniphier_pcie_match);
-> +
-> +static struct platform_driver uniphier_pcie_driver = {
-> +	.probe  = uniphier_pcie_probe,
-> +	.remove = uniphier_pcie_remove,
-> +	.driver = {
-> +		.name = "uniphier-pcie",
-> +		.of_match_table = uniphier_pcie_match,
-> +	},
-> +};
-> +builtin_platform_driver(uniphier_pcie_driver);
-> +
-> +MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-> +MODULE_DESCRIPTION("UniPhier PCIe host controller driver");
-> +MODULE_LICENSE("GPL v2");
+>  	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
+>  	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
+>  	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
 > -- 
-> 2.7.4
+> 2.17.1
 > 
