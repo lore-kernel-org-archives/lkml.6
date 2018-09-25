@@ -2,108 +2,223 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3568EC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16F3C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E07D021480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aiMuyL9A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07D021480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 74ABC206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:59:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74ABC206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbeIZAIW (ORCPT
+        id S1727664AbeIZAI0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:08:22 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35135 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727301AbeIZAIV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:08:21 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o18-v6so14646837wmc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GunG/pt/t6QEZpuwmdlsezZ8Y/yBcR5pleFloeSDlIo=;
-        b=aiMuyL9AXbY4xY5/DX5cQIiJRSL4LbfgQm2gbGPEP+zt++aYSLThp0RDTb6B/t4So9
-         HnWz3vi3G94qjyONgmhN/baAT/BAiY4qO1C1Ma+DJcVgYudXkoYUTYLuvL8gJWzLYkhb
-         DF9/iQI+TD2+OwG1CVKQ+2yB0omYaNH3j9V6A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GunG/pt/t6QEZpuwmdlsezZ8Y/yBcR5pleFloeSDlIo=;
-        b=ZGzkJm9Si6qjv7FUbqHnf0u53wdHLva04w+myQXcUcVdQZpQleojKFqAp1daLOBReS
-         5OuHUIxoF1zdGOlApW955418kCp3TRhV0pCWSwFFmuCD/FSr5G2VcMcAmh9UhMY0Rvjm
-         4GI7GJxpiu/QskpbedP7nmt6WsV7ZJsS2TqLFZqLuyVBA8epnnD7sN+r1p3irttMYMUt
-         m99QrHshKjpE+F1xMqF6BvtG3xEtJzPkZKzINfaxFePzKH+5XEPstnkT4EP7lP7f6fCW
-         fsi+hXusTB/qyB5B1LiPopWSrifDa/Ky5lIbrfY1iYSDaA2MFvA8jU8gTN5GAKUenArh
-         l2kw==
-X-Gm-Message-State: ABuFfojfNoiUPaPWLuv9j7/KgZwT6T99nvDwBl1FG7Hag0fxC0cx16sa
-        LXd5+C+VrBKV4frIzKp7Gi/uKKBjOB2UgdN893mcAQ==
-X-Google-Smtp-Source: ACcGV63BDOhHBG71RJiibN4eC/UMWmPeoXRVopn0sr06eKKYjzfrqD4zU7b7ABxOHr2KKjKIAl+DkE4Tm6aM5lzLHzg=
-X-Received: by 2002:a1c:5e48:: with SMTP id s69-v6mr1660334wmb.19.1537898379959;
- Tue, 25 Sep 2018 10:59:39 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:b485:0:0:0:0:0 with HTTP; Tue, 25 Sep 2018 10:59:38
- -0700 (PDT)
-In-Reply-To: <3AD91E696667BF4BA728303C178E8A63532AB5E5@am04wembxb.internal.synopsys.com>
-References: <1526690943-8211-1-git-send-email-john.stultz@linaro.org>
- <410670D7E743164D87FA6160E7907A5601313531E1@am04wembxa.internal.synopsys.com>
- <CALAqxLVZXs97sryfPaGY5Gq50-FZROgaBADNXXadcyiNhP3EPQ@mail.gmail.com>
- <410670D7E743164D87FA6160E7907A560131356C4E@am04wembxa.internal.synopsys.com>
- <CALAqxLU3sWrgPjFqZ2vK0m8wVThtE1hDsbNq9zRC7ritzyNHmQ@mail.gmail.com>
- <3AD91E696667BF4BA728303C178E8A63532AAF6D@am04wembxb.internal.synopsys.com>
- <CALAqxLXKOG8fxtrDaRLDGhJUfD1-4qc5QU60+ZmB3+9LsW69Lg@mail.gmail.com>
- <3AD91E696667BF4BA728303C178E8A63532AB36A@am04wembxb.internal.synopsys.com>
- <CALAqxLXy0YXNLwFQEUZxSsjFKC9boVcGkt+50XwmVfwKCcqsEw@mail.gmail.com> <3AD91E696667BF4BA728303C178E8A63532AB5E5@am04wembxb.internal.synopsys.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 25 Sep 2018 10:59:38 -0700
-Message-ID: <CALAqxLW=jT+oUASGKxcFghfHZEU7LtFJBiBBkmMM1oarKjSBKw@mail.gmail.com>
-Subject: Re: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down feature
-To:     Artur Petrosyan <arthur.petrosyan@synopsys.com>
-Cc:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        John Youn <John.Youn@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 25 Sep 2018 20:08:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47038 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727588AbeIZAIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 20:08:25 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5303440F2F;
+        Tue, 25 Sep 2018 17:59:45 +0000 (UTC)
+Received: from vitty.brq.redhat.com (ovpn-204-21.brq.redhat.com [10.40.204.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2CA1060BE1;
+        Tue, 25 Sep 2018 17:59:36 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 6/9] x86/kvm/mmu: make space for source data caching in struct kvm_mmu
+Date:   Tue, 25 Sep 2018 19:58:41 +0200
+Message-Id: <20180925175844.20277-7-vkuznets@redhat.com>
+In-Reply-To: <20180925175844.20277-1-vkuznets@redhat.com>
+References: <20180925175844.20277-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 25 Sep 2018 17:59:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 3:04 AM, Artur Petrosyan
-<arthur.petrosyan@synopsys.com> wrote:
-> Just a clarification by this commit "[PATCH] usb: dwc2: Fix HiKey
-> regression caused by power_down feature"
-> https://marc.info/?l=linux-usb&m=152669095513248&w=2
->
-> the power_down is disabled setting "p->power_down = false;" in
-> "dwc2_set_his_params" function.
->
-> Could you please clarify that the testes done for those 3 patches were
-> done enabling "p->power_down = true;" in "dwc2_set_his_params" function.
+In preparation to MMU reconfiguration avoidance we need a space to
+cache source data. As this partially intersects with kvm_mmu_page_role,
+create 64bit sized union kvm_mmu_role holding both base and extended data.
+No functional change.
 
-So if I remove the "power_down = true" initialization, USB does not
-seem to function.
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+Changes since v1:
+- Rename:
+  kvm_mmu_scache -> kvm_mmu_extended_role
+  mmu_role.scache -> mmu_role.ext
+  mmu_role.base_role -> mmu_role.base
+  [Sean Christopherson]
+- Add BUILD_BUG_ONs checking unions sizes.
+  [Sean Christopherson]
+- Use explicit u32 for kvm_mmu_page_role/kvm_mmu_extended_role.word and
+  u64 for kvm_mmu_role.as_u64
+---
+ arch/x86/include/asm/kvm_host.h | 16 ++++++++++++++--
+ arch/x86/kvm/mmu.c              | 29 ++++++++++++++++++++++-------
+ arch/x86/kvm/vmx.c              |  2 +-
+ 3 files changed, 37 insertions(+), 10 deletions(-)
 
-If I boot w/ the gadget port removed, the USB host ports do work, but
-plugging in the gadget cable results in a bunch of:
-   dwc2 f72c0000.usb: Waiting for Host Mode, Mode=Peripheral
-messages.
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index a64da200aed1..1821b0215230 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -247,7 +247,7 @@ struct kvm_mmu_memory_cache {
+  * @nxe, @cr0_wp, @smep_andnot_wp and @smap_andnot_wp.
+  */
+ union kvm_mmu_page_role {
+-	unsigned word;
++	u32 word;
+ 	struct {
+ 		unsigned level:4;
+ 		unsigned cr4_pae:1;
+@@ -273,6 +273,18 @@ union kvm_mmu_page_role {
+ 	};
+ };
+ 
++union kvm_mmu_extended_role {
++	u32 word;
++};
++
++union kvm_mmu_role {
++	u64 as_u64;
++	struct {
++		union kvm_mmu_page_role base;
++		union kvm_mmu_extended_role ext;
++	};
++};
++
+ struct kvm_rmap_head {
+ 	unsigned long val;
+ };
+@@ -360,7 +372,7 @@ struct kvm_mmu {
+ 	void (*update_pte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+ 			   u64 *spte, const void *pte);
+ 	hpa_t root_hpa;
+-	union kvm_mmu_page_role base_role;
++	union kvm_mmu_role mmu_role;
+ 	u8 root_level;
+ 	u8 shadow_root_level;
+ 	u8 ept_ad;
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index e59e5f49c8c2..bb1ef0f68f8e 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -2359,7 +2359,7 @@ static struct kvm_mmu_page *kvm_mmu_get_page(struct kvm_vcpu *vcpu,
+ 	int collisions = 0;
+ 	LIST_HEAD(invalid_list);
+ 
+-	role = vcpu->arch.mmu->base_role;
++	role = vcpu->arch.mmu->mmu_role.base;
+ 	role.level = level;
+ 	role.direct = direct;
+ 	if (role.direct)
+@@ -4407,7 +4407,8 @@ static void reset_rsvds_bits_mask_ept(struct kvm_vcpu *vcpu,
+ void
+ reset_shadow_zero_bits_mask(struct kvm_vcpu *vcpu, struct kvm_mmu *context)
+ {
+-	bool uses_nx = context->nx || context->base_role.smep_andnot_wp;
++	bool uses_nx = context->nx ||
++		context->mmu_role.base.smep_andnot_wp;
+ 	struct rsvd_bits_validate *shadow_zero_check;
+ 	int i;
+ 
+@@ -4726,7 +4727,7 @@ static void init_kvm_tdp_mmu(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_mmu *context = vcpu->arch.mmu;
+ 
+-	context->base_role.word = mmu_base_role_mask.word &
++	context->mmu_role.base.word = mmu_base_role_mask.word &
+ 				  kvm_calc_tdp_mmu_root_page_role(vcpu).word;
+ 	context->page_fault = tdp_page_fault;
+ 	context->sync_page = nonpaging_sync_page;
+@@ -4807,7 +4808,7 @@ void kvm_init_shadow_mmu(struct kvm_vcpu *vcpu)
+ 	else
+ 		paging32_init_context(vcpu, context);
+ 
+-	context->base_role.word = mmu_base_role_mask.word &
++	context->mmu_role.base.word = mmu_base_role_mask.word &
+ 				  kvm_calc_shadow_mmu_root_page_role(vcpu).word;
+ 	reset_shadow_zero_bits_mask(vcpu, context);
+ }
+@@ -4816,7 +4817,7 @@ EXPORT_SYMBOL_GPL(kvm_init_shadow_mmu);
+ static union kvm_mmu_page_role
+ kvm_calc_shadow_ept_root_page_role(struct kvm_vcpu *vcpu, bool accessed_dirty)
+ {
+-	union kvm_mmu_page_role role = vcpu->arch.mmu->base_role;
++	union kvm_mmu_page_role role = vcpu->arch.mmu->mmu_role.base;
+ 
+ 	role.level = PT64_ROOT_4LEVEL;
+ 	role.direct = false;
+@@ -4846,7 +4847,8 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
+ 	context->update_pte = ept_update_pte;
+ 	context->root_level = PT64_ROOT_4LEVEL;
+ 	context->direct_map = false;
+-	context->base_role.word = root_page_role.word & mmu_base_role_mask.word;
++	context->mmu_role.base.word =
++		root_page_role.word & mmu_base_role_mask.word;
+ 	context->get_pdptr = kvm_pdptr_read;
+ 
+ 	update_permission_bitmask(vcpu, context, true);
+@@ -5161,10 +5163,13 @@ static void kvm_mmu_pte_write(struct kvm_vcpu *vcpu, gpa_t gpa,
+ 
+ 		local_flush = true;
+ 		while (npte--) {
++			unsigned int base_role =
++				vcpu->arch.mmu->mmu_role.base.word;
++
+ 			entry = *spte;
+ 			mmu_page_zap_pte(vcpu->kvm, sp, spte);
+ 			if (gentry &&
+-			      !((sp->role.word ^ vcpu->arch.mmu->base_role.word)
++			      !((sp->role.word ^ base_role)
+ 			      & mmu_base_role_mask.word) && rmap_can_add(vcpu))
+ 				mmu_pte_write_new_pte(vcpu, sp, spte, &gentry);
+ 			if (need_remote_flush(entry, *spte))
+@@ -5861,6 +5866,16 @@ int kvm_mmu_module_init(void)
+ {
+ 	int ret = -ENOMEM;
+ 
++	/*
++	 * MMU roles use union aliasing which is, generally speaking, an
++	 * undefined behavior. However, we supposedly know how compilers behave
++	 * and the current status quo is unlikely to change. Guardians below are
++	 * supposed to let us know if the assumption becomes false.
++	 */
++	BUILD_BUG_ON(sizeof(union kvm_mmu_page_role) != sizeof(u32));
++	BUILD_BUG_ON(sizeof(union kvm_mmu_extended_role) != sizeof(u32));
++	BUILD_BUG_ON(sizeof(union kvm_mmu_role) != sizeof(u64));
++
+ 	kvm_mmu_reset_all_pte_masks();
+ 
+ 	pte_list_desc_cache = kmem_cache_create("pte_list_desc",
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 93ff08136fc1..c56a80c15c4f 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9321,7 +9321,7 @@ static int nested_vmx_eptp_switching(struct kvm_vcpu *vcpu,
+ 
+ 		kvm_mmu_unload(vcpu);
+ 		mmu->ept_ad = accessed_dirty;
+-		mmu->base_role.ad_disabled = !accessed_dirty;
++		mmu->mmu_role.base.ad_disabled = !accessed_dirty;
+ 		vmcs12->ept_pointer = address;
+ 		/*
+ 		 * TODO: Check what's the correct approach in case
+-- 
+2.17.1
 
-If I boot w/ the gadget port plugged in, USB gadget mode doesn't seem
-to function at all, and when I remove the gadget cable nothing
-happens, it doesn't switch to host mode.
-
-thanks
--john
