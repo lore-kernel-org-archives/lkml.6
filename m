@@ -2,138 +2,148 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A39AC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553ABC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F2B214FE
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:02:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C3F820867
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:03:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PuLO6v7q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F2B214FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="UXZT+IEP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C3F820867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbeIYWKr (ORCPT
+        id S1729729AbeIYWLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:10:47 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46693 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728983AbeIYWKq (ORCPT
+        Tue, 25 Sep 2018 18:11:41 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50355 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729306AbeIYWLl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:10:46 -0400
-Received: by mail-io1-f65.google.com with SMTP id y12-v6so20845225ioj.13
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 09:02:37 -0700 (PDT)
+        Tue, 25 Sep 2018 18:11:41 -0400
+Received: by mail-it1-f194.google.com with SMTP id j81-v6so16129476ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 09:03:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Bo1PlQNeY4xVbDcXe9+HXLAWgWpmG+xFWSaFrXONM4U=;
-        b=PuLO6v7q/K6cc/o/oHRUPUghxlaR8m/YZghbHgjggvf/D8JfKA2k+EQV/2k3WihsBR
-         p/dE+uvykxnrVxjnZIwcQFM8y1T10cfv3shLKSA7g6TSdMs/5fSZf36lCvWVPbO98xev
-         EaybSMxl0O16g1U67Z0IXJTv0RoKqn2XzwfYepeNXtIJC7OO2CP0Ai2QUSnLurJQ6So1
-         g9Ruld4UQyfjNdOROm4BG3jdAnFkMjdY+zmJZQRHRCb8qr+56GsuKO70BfIiPwq1gp92
-         XMKz8lPfk9Kz0Jg71Z8B2VPrBBGeSAULZYKau48nmK1h3vkR584Ye8FKMERaQdRdGqkG
-         uV7g==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5GV4hMV5biu/RxQ0FvsNjPALRR2nr3ZmEGH7IGGYM6o=;
+        b=UXZT+IEPIXmSNjFsb/R7lQZMVBEg8fdRi1K0a85aFAIdOcDn+jvBlSFYfUX4XSx9Wo
+         ZdMcjB5qwrake++0L2VV6ZRrRbIhFzcjGWts7+TcQL040YqRPLEFqffjNbF1evnSauJZ
+         Pio2tVNNz+hl6uV9moiglB6YI32QP3uQLhP8bWPin0qFP5yu6ROUcAcGLVFCdDfYt2FM
+         RM5SbvEaYO2yDOUeRfksOYfam5lSCMry8aVf4I8DtGsb2In2DE5+9E53sO4L8Mra92go
+         aykKE9LtYfPc1BW06HB8Wuc12Gq0t2x1YnaxEK3AeBWGQgsYBEOaZieafvKK74HohSfF
+         Brtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Bo1PlQNeY4xVbDcXe9+HXLAWgWpmG+xFWSaFrXONM4U=;
-        b=aBz004p44YIyN2093QIvgZQT1vBvI3ywDDyoFgPGgOWNCxf7C+i2zUhkkFdXNPj1qb
-         VTxXxx0eg2I2MFZJPwh5ZvO2sHH04f+TU5oF34vc+MBCbCVb5vGSfxnuLCOwaR3HMBlN
-         MvC8huTSY0K1e9t1FFPyGqxGDZTQIDC0ZA349rBOmchwcE3D52CF/yh+DW9u5vBf3+av
-         cwV6PEo0qhfmrr6aTjpa2bqa9UBKwImLE1HLY5jGb1TjvKhqF/w5xjMRRYIY+LNZREi2
-         jylXINU/khv0xwJZEiDTiweIDRQkOrasjjScaPgvB1//zH0sPNTL0spjR1ACvVoQ4Rty
-         tuEg==
-X-Gm-Message-State: ABuFfogtcoa43w95U+0gP2Zmphrqe+aDM+meT0HALmf4LuXRqSZrAGWY
-        kjtBPzEI49FhiMFQ0KO4G8meDrXUXIwf99bQ3CQffg==
-X-Google-Smtp-Source: ACcGV62sBE3jgOst+MhQHNK9yulirOV7KxSFJI+JCjE9KUYFzQR6NNStBQnrRzSpFaZf9XS2/Q8AZl5BhJFsSyaL+3E=
-X-Received: by 2002:a5e:8c04:: with SMTP id n4-v6mr1505072ioj.258.1537891356738;
- Tue, 25 Sep 2018 09:02:36 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5GV4hMV5biu/RxQ0FvsNjPALRR2nr3ZmEGH7IGGYM6o=;
+        b=Orq8dyt2FtGXLmshAWPFrGomOWM1omrDFL63ejy74PpD47Nv2rrwwFjr1e3AMNjBQS
+         7WRT3yrACkl/pkkc9NIjygBg0byLSXcli87ZwzwwAYbuwbjK8NOhVCDjA00MvBDanfQj
+         ZCaJZgfsAAGcp8gkIIMPpp3j8soneJmtYg0B5d15cpVMnddxKdaumV/vJ9OwG0+2cOjW
+         w4MWuNoa+kvkpeN7J5q/lfmfaZ/bvA9nsRPeroF5b5nKYm4LEJphPpDy6NTLbO6lzO+q
+         whvvetOgr3kDA/8HJKQvaNT0gYtJAxYMNejVYpuE9iGQg8owt9AYGoTtnTQ1H9N0MudZ
+         1OIA==
+X-Gm-Message-State: ABuFfojPW7vRrq9zecK9Jkfmdoxp6fEMbT94C43Wusqr0K/YOkpe04Bu
+        4RWpRKfeC4N/NWKtinEudQtP2bPJmiE=
+X-Google-Smtp-Source: ACcGV612JaEZoiZt+JRBjh2zV7x8XdzCGLf/J/rqLIn8R7rIyHsheCJMIKYC0Q7wA3xRWhiwQ9vhVQ==
+X-Received: by 2002:a24:7941:: with SMTP id z62-v6mr1370991itc.20.1537891410274;
+        Tue, 25 Sep 2018 09:03:30 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id v13-v6sm1083897ita.38.2018.09.25.09.03.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 09:03:29 -0700 (PDT)
+Subject: Re: [PATCH crypto-next 07/23] block: cryptoloop: Remove VLA usage of
+ skcipher
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-block@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180919021100.3380-1-keescook@chromium.org>
+ <20180919021100.3380-8-keescook@chromium.org>
+ <CAKv+Gu8ynaVi1KCMNsjCU0ucAjFFku=ourh9Yc9Rizoc4ztvOQ@mail.gmail.com>
+ <CAGXu5jLw3+nvb9opPeoCyH0MhyVK5UY7H5qeQ2b8GFTUGDGrUQ@mail.gmail.com>
+ <CAKv+Gu-xKWsiegZXnsMvmMVgKTo7S2cm4wEqdaL7w9z64X7SAA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9c71afda-a668-10b3-842e-26f72e425691@kernel.dk>
+Date:   Tue, 25 Sep 2018 10:03:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180925124629.20710-1-brgl@bgdev.pl> <c25df148-718a-d29d-9c1d-20701a0e4534@arm.com>
- <a729cfd1102ef280650074dd8bec32c6b12636db.camel@perches.com>
-In-Reply-To: <a729cfd1102ef280650074dd8bec32c6b12636db.camel@perches.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 25 Sep 2018 18:02:25 +0200
-Message-ID: <CAMRc=MeSte7oQ+oLm0f-Re0LgO1c203xPZRQF9mky9oLCTkeKg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] devres: provide and use devm_kstrdup_const()
-To:     Joe Perches <joe@perches.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAKv+Gu-xKWsiegZXnsMvmMVgKTo7S2cm4wEqdaL7w9z64X7SAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 25 wrz 2018 o 17:48 Joe Perches <joe@perches.com> napisa=C5=82(a):
->
-> On Tue, 2018-09-25 at 13:51 +0100, Robin Murphy wrote:
-> > On 25/09/18 13:46, Bartosz Golaszewski wrote:
-> > > This series implements devm_kstrdup_const() together with some
-> > > prerequisite changes and uses it in pmc-atom driver.
-> >
-> > Is anyone expecting me to review this series,
->
-> Probably not.
->
-> > or am I just here because
-> > I once made a couple of entirely unrelated changes to device.h?
->
-> Most likely yes.
->
-> It is likely that Bartosz should update his use of the
-> get_maintainer.pl script to add "--nogit --nogit-fallback"
-> so drive-by patch submitters are not also cc'd on these
-> sorts of series.
->
-> $ ./scripts/get_maintainer.pl -f \
->         drivers/base/devres.c \
->         drivers/mailbox/tegra-hsp.c \
->         include/asm-generic/sections.h \
->         include/linux/device.h \
->         mm/util.c | \
->   wc -l
-> 26
->
-> $ ./scripts/get_maintainer.pl -f --nogit --nogit-fallback \
->         drivers/base/devres.c \
->         drivers/mailbox/tegra-hsp.c \
->         include/asm-generic/sections.h \
->         include/linux/device.h \
->         mm/util.c | \
->   wc -l
-> 10
->
->
+On 9/25/18 3:25 AM, Ard Biesheuvel wrote:
+> On Mon, 24 Sep 2018 at 19:53, Kees Cook <keescook@chromium.org> wrote:
+>>
+>> On Mon, Sep 24, 2018 at 4:52 AM, Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> On Wed, 19 Sep 2018 at 04:11, Kees Cook <keescook@chromium.org> wrote:
+>>>> @@ -119,7 +119,7 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
+>>>>         unsigned in_offs, out_offs;
+>>>>         int err;
+>>>>
+>>>> -       skcipher_request_set_tfm(req, tfm);
+>>>> +       skcipher_request_set_sync_tfm(req, tfm);
+>>>>         skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
+>>>>                                       NULL, NULL);
+>>>>
+>>>
+>>> Does this work?
+>>
+>> Everything is a direct wrapper for existing types and functions, so I
+>> wouldn't expect any functional change. I haven't been able to test
+>> this particular interface, though. cryptoloop is very deprecated,
+>> isn't it?
+>>
+> 
+> Ah yes, I managed to confuse myself there. This looks all fine to me.
+> 
+> In any case, this is another example where we may decide to fix the
+> code rather than retain the request allocation on the stack (but that
+> is Jens's call ultimately, I suppose)
+> 
+> diff --git a/drivers/block/cryptoloop.c b/drivers/block/cryptoloop.c
+> index 7033a4beda66..5ed2167219ba 100644
+> --- a/drivers/block/cryptoloop.c
+> +++ b/drivers/block/cryptoloop.c
+> @@ -110,7 +110,7 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
+>                     int size, sector_t IV)
+>  {
+>         struct crypto_skcipher *tfm = lo->key_data;
+> -       SKCIPHER_REQUEST_ON_STACK(req, tfm);
+> +       struct skcipher_request *req;
+>         struct scatterlist sg_out;
+>         struct scatterlist sg_in;
+> 
+> @@ -119,7 +119,10 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
+>         unsigned in_offs, out_offs;
+>         int err;
+> 
+> -       skcipher_request_set_tfm(req, tfm);
+> +       req = skcipher_request_alloc(tfm, GFP_NOIO);
+> +       if (!req)
+> +               return -ENOMEM;
 
-Hi, sorry for that. Got it and will use next time.
+Is this going to be reliable? ->transfer() is called when we're doing IO,
+and you'd normally need a mempool backed allocation to make this safe
+and guarantee forward progress.
 
-Bartosz
+-- 
+Jens Axboe
+
