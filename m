@@ -2,107 +2,91 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00691C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3638CC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89F920842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89F920842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 8FE3620676
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:35:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE3620676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeIYXmA (ORCPT
+        id S1726768AbeIYXny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:42:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33463 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeIYXmA (ORCPT
+        Tue, 25 Sep 2018 19:43:54 -0400
+Received: from tartarus.angband.pl ([54.37.238.230]:50414 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbeIYXnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:42:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y18-v6so8766137pge.0;
-        Tue, 25 Sep 2018 10:33:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=93CkPH0+9ZK84C4ZVTEiA210DqPYunLMckKev7kSXTc=;
-        b=IGoVDUllSVrd2n+sSSRVMVSmOq1RTwJYvD/Csr8AcxZP71O/6Of9AF+ylGCU8OU7in
-         DNP/tqhT1EdGf8iDlyCgbIn46rTv9p5HPQIZGVIYYvWNKhPNqNqeTWgwMeGro0P+r9iY
-         sBAyZ28NORP3+xa8st3EDagw/VrtTnJb8Np7avTmM0nX9gLJ7l+oVf/xLIaUKfe21QkY
-         pDDoVI2Nxq4k6xqgQASDw4wHUtRL5ZHKWPjJ+qf7KHXZuEVn8+UIO5H7Ev1/EYSrSyMQ
-         qQq5OVcw6MgoOx5rsXf9jr6TUpJOoyyHDbkI3JW+6G4LR7D6F6GM1GF86hu0ktKYRUOB
-         04Ww==
-X-Gm-Message-State: ABuFfog4ylxhh3NWoD7u2K5QugGskb4IuFokUjW0hstySUsONogWQceW
-        y1JSNwi6XqlX3sRXulPEnBU=
-X-Google-Smtp-Source: ACcGV62MhG7g4R/2h0B4P29/eiGKLp/nbakbpvEqmLJX5cNNYq6sJFxsAjrOSScLwf8yK/O+GEOUmg==
-X-Received: by 2002:a63:b23:: with SMTP id 35-v6mr2011075pgl.301.1537896807533;
-        Tue, 25 Sep 2018 10:33:27 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id g15-v6sm4933994pfg.98.2018.09.25.10.33.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 10:33:26 -0700 (PDT)
-Message-ID: <1537896805.11137.25.camel@acm.org>
-Subject: Re: [PATCH v7 03/13] PCI/P2PDMA: Add PCI p2pmem DMA mappings to
- adjust the bus offset
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-Date:   Tue, 25 Sep 2018 10:33:25 -0700
-In-Reply-To: <20180925162231.4354-4-logang@deltatee.com>
-References: <20180925162231.4354-1-logang@deltatee.com>
-         <20180925162231.4354-4-logang@deltatee.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 25 Sep 2018 19:43:53 -0400
+Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1g4rEt-00051V-0g; Tue, 25 Sep 2018 19:35:11 +0200
+Date:   Tue, 25 Sep 2018 19:35:11 +0200
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jeff Layton <jlayton@redhat.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rogier Wolff <R.E.Wolff@BitWizard.nl>
+Subject: Re: POSIX violation by writeback error
+Message-ID: <20180925173510.273hshp4iapd6dcd@angband.pl>
+References: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
+ <486f6105fd4076c1af67dae7fdfe6826019f7ff4.camel@redhat.com>
+ <20180925003044.239531c7@alans-desktop>
+ <0662a4c5d2e164d651a6a116d06da380f317100f.camel@redhat.com>
+ <20180925154627.GC2933@thunk.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180925154627.GC2933@thunk.org>
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-25 at 10:22 -0600, Logan Gunthorpe wrote:
-+AD4 +-int pci+AF8-p2pdma+AF8-map+AF8-sg(struct device +ACo-dev, struct scatterlist +ACo-sg, int nents,
-+AD4 +-		      enum dma+AF8-data+AF8-direction dir)
-+AD4 +-+AHs
-+AD4 +-	struct dev+AF8-pagemap +ACo-pgmap+ADs
-+AD4 +-	struct scatterlist +ACo-s+ADs
-+AD4 +-	phys+AF8-addr+AF8-t paddr+ADs
-+AD4 +-	int i+ADs
-+AD4 +-
-+AD4 +-	/+ACo
-+AD4 +-	 +ACo p2pdma mappings are not compatible with devices that use
-+AD4 +-	 +ACo dma+AF8-virt+AF8-ops. If the upper layers do the right thing
-+AD4 +-	 +ACo this should never happen because it will be prevented
-+AD4 +-	 +ACo by the check in pci+AF8-p2pdma+AF8-add+AF8-client()
-+AD4 +-	 +ACo-/
-+AD4 +-	if (WARN+AF8-ON+AF8-ONCE(IS+AF8-ENABLED(CONFIG+AF8-DMA+AF8-VIRT+AF8-OPS) +ACYAJg
-+AD4 +-			 dev-+AD4-dma+AF8-ops +AD0APQ +ACY-dma+AF8-virt+AF8-ops))
-+AD4 +-		return 0+ADs
+On Tue, Sep 25, 2018 at 11:46:27AM -0400, Theodore Y. Ts'o wrote:
+> P.S.  One thought: it might be cool if there was some way for
+> userspace applications to mark files with "nuke if not closed" flag,
+> such that if the system crashes, the file systems would automatically
+> unlink the file after a reboot or if the process was killed or exits
+> without an explicit close(2).  For networked/remote file systems that
+> supported this flag, after the client comes back up after a reboot, it
+> could notify the server that all files created previously from that
+> client should be unlinked.
+> 
+> Unlike O_TMPFILE, this would require file system changes to support,
+> so maybe it's not worth having something which automatically cleans up
+> files that were in the middle of being written at the time of a system
+> crash.
 
-Are you assuming that the compiler will optimize out the dev-+AD4-dma+AF8-ops
-+AD0APQ +ACY-dma+AF8-virt+AF8-ops test if CONFIG+AF8-DMA+AF8-VIRT+AF8-OPS+AD0-n such that no reference to the
-dma+AF8-virt+AF8-ops symbol appears in the object file? Are you sure all compilers
-and compiler versions that are used to build the Linux kernel will do that?
+Isn't this what the snippet for O_TMPFILE in "man 2 open" does?:
 
-Thanks,
+                  char path[PATH_MAX];
+                  fd = open("/path/to/dir", O_TMPFILE | O_RDWR,
+                                          S_IRUSR | S_IWUSR);
 
-Bart.
+                  /* File I/O on 'fd'... */
 
+                  snprintf(path, PATH_MAX,  "/proc/self/fd/%d", fd);
+                  linkat(AT_FDCWD, path, AT_FDCWD, "/path/for/file",
+                                          AT_SYMLINK_FOLLOW);
+
+
+Meow!
+-- 
+⢀⣴⠾⠻⢶⣦⠀ 10 people enter a bar:
+⣾⠁⢰⠒⠀⣿⡁ • 1 who understands binary,
+⢿⡄⠘⠷⠚⠋⠀ • 1 who doesn't,
+⠈⠳⣄⠀⠀⠀⠀ • and E who prefer to write it as hex.
