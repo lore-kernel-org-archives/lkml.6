@@ -2,121 +2,207 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D59F3C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A07AECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB9820C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nER1OViF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB9820C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 0286E2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:09:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0286E2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeIZASM (ORCPT
+        id S1727532AbeIZASf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:18:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45081 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbeIZASM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:18:12 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t70-v6so7329565pgd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 11:09:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CvRiYuhYnuR651Mppw8za9+8AfZcjBxds0GLMWI0OQ0=;
-        b=nER1OViF7ZLXcVC2oeSBoC5Ntqrb6s0HAzfPhp1Qwg0goF8tuUirwftzYnN3xD+rgA
-         JaTz1GO/RABV5k+8XlvILiQZVOiANaVkGmnq/An+p36UUvTCwi3o6rlkwpivn4KuF3XG
-         WzO1t7436PO5zR70jGEhoSX3XekFXf4e6T1v8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CvRiYuhYnuR651Mppw8za9+8AfZcjBxds0GLMWI0OQ0=;
-        b=IkJGdXLhHm6XelU8x7QPl/cOn2qD3V0wLHbBy5V+kX4UfTCozHq8QKvPO9lt1mPqAX
-         Z+rSckGINF2nz/af2Zhm6m4JoVaF0SqdpooA1Em9kQNzbfxw9F0nNqXxn5Fw5cacHqFU
-         y1m1zXJZZLQFV8o55AonK+d+vFf0BuFPXKtWp5q0BIVDtaJLzKZZsY37jcXlw6uV4CPh
-         yKmfNMwXAlXVUsQpR9WxEU6Vq05Mpz9QauVbESL5ozwWSO638nNbdZU78GNzmaiVIEh8
-         EYYOWE69J5fL6S07AaywTYoIhmi2mOdL688akaeYSMMwJM1XgLNpAqac8FZQCiGRJKaO
-         e5NQ==
-X-Gm-Message-State: ABuFfoiUUi0tkiaDy1U6Im8AOH9wMTVEtXTZ71v9kn9sByAZ2g7Si8KD
-        LTeit1z0A2oY4oqiETwfMUjbysQMUkPfLw==
-X-Google-Smtp-Source: ACcGV62SyXvH/BV6YgJF22vxmUmTU6K5cl/7SX8T+EoT5tKFdR05ICg/jOLtxg/sa5rj3nIwMrdv1Q==
-X-Received: by 2002:a65:4d42:: with SMTP id j2-v6mr2105267pgt.232.1537898969395;
-        Tue, 25 Sep 2018 11:09:29 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm4473443pfd.99.2018.09.25.11.09.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 11:09:28 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2] ASoC: soc-utils: Rename dummy_dma_ops to snd_dummy_dma_ops
-Date:   Tue, 25 Sep 2018 11:09:14 -0700
-Message-Id: <20180925180914.193244-1-mka@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Tue, 25 Sep 2018 20:18:35 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:43830 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726815AbeIZASf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 20:18:35 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1g4rmB-00046I-05; Tue, 25 Sep 2018 12:09:35 -0600
+To:     Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>
+References: <20180925162231.4354-1-logang@deltatee.com>
+ <20180925162231.4354-2-logang@deltatee.com>
+ <1537896340.11137.19.camel@acm.org>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <3efcee21-e439-f6ed-230b-c52c4872f0d2@deltatee.com>
+Date:   Tue, 25 Sep 2018 12:09:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1537896340.11137.19.camel@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: axboe@kernel.dk, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, bvanassche@acm.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v7 01/13] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The symbols 'dummy_dma_ops' is declared with different data types by
-sound/soc/soc-utils.c and arch/arm64/include/asm/dma-mapping.h. This
-leads to conflicts when soc-utils.c (indirectly) includes dma-mapping.h:
 
-sound/soc/soc-utils.c:282:33: error: conflicting types for 'dummy_dma_ops'
-  static const struct snd_pcm_ops dummy_dma_ops = {
-                                  ^
-...
-arch/arm64/include/asm/dma-mapping.h:27:33: note: previous declaration of 'dummy_dma_ops' was here
-  extern const struct dma_map_ops dummy_dma_ops;
-                                  ^
 
-Rename the symbol in soc-utils.c to 'snd_dummy_dma_ops' to avoid the
-conflict.
+On 2018-09-25 11:25 a.m., Bart Van Assche wrote:
+> It's great to see this patch series making progress. Unfortunately I didn't
+> have the time earlier to have a closer look at this patch series. I hope that
+> you don't mind that I ask a few questions about the implementation?
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v2:
-- use 'snd_dummy_dma_ops' instead of 'snd_dummy_ops'
----
- sound/soc/soc-utils.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for the review Bart!
 
-diff --git a/sound/soc/soc-utils.c b/sound/soc/soc-utils.c
-index e0c93496c0cd..e3b9dd634c6d 100644
---- a/sound/soc/soc-utils.c
-+++ b/sound/soc/soc-utils.c
-@@ -273,13 +273,13 @@ static int dummy_dma_open(struct snd_pcm_substream *substream)
- 	return 0;
- }
- 
--static const struct snd_pcm_ops dummy_dma_ops = {
-+static const struct snd_pcm_ops snd_dummy_dma_ops = {
- 	.open		= dummy_dma_open,
- 	.ioctl		= snd_pcm_lib_ioctl,
- };
- 
- static const struct snd_soc_component_driver dummy_platform = {
--	.ops = &dummy_dma_ops,
-+	.ops = &snd_dummy_dma_ops,
- };
- 
- static const struct snd_soc_component_driver dummy_codec = {
--- 
-2.19.0.605.g01d371f741-goog
+>> +static void pci_p2pdma_percpu_kill(void *data)
+>> +{
+>> +	struct percpu_ref *ref = data;
+>> +
+>> +	if (percpu_ref_is_dying(ref))
+>> +		return;
+>> +
+>> +	percpu_ref_kill(ref);
+>> +}
+> 
+> The percpu_ref_is_dying() test should either be removed or a comment should be
+> added above it that explains why it is necessary. Is the purpose of that call
+> perhaps to protect against multiple calls of pci_p2pdma_percpu_kill()? If so,
+> which mechanism serializes these multiple calls?
 
+Hmm, yes, this was copied from device DAX, but I see it has been removed
+from there since then. I'll remove it for v8.
+
+>> +static void pci_p2pdma_release(void *data)
+>> +{
+>> +	struct pci_dev *pdev = data;
+>> +
+>> +	if (!pdev->p2pdma)
+>> +		return;
+>> +
+>> +	wait_for_completion(&pdev->p2pdma->devmap_ref_done);
+>> +	percpu_ref_exit(&pdev->p2pdma->devmap_ref);
+>> +
+>> +	gen_pool_destroy(pdev->p2pdma->pool);
+>> +	pdev->p2pdma = NULL;
+>> +}
+> 
+> Which code frees the memory pdev->p2pdma points at? Other functions similar to
+> pci_p2pdma_release() call devm_remove_action(), e.g. hmm_devmem_ref_exit().
+
+pdev->p2pdma is allocated using devm so it will be freed when the PCI
+driver is being unwound. pci_p2pdma_release() is a devm action itself
+which is registered right after the devm_kzalloc() call. Therefore the
+memory will be freed in the next devm action. I don't exactly know what
+hmm is doing there but we don't have similar actions to remove.
+
+>> +static int pci_p2pdma_setup(struct pci_dev *pdev)
+>> +{
+>> +	int error = -ENOMEM;
+>> +	struct pci_p2pdma *p2p;
+>> +
+>> +	p2p = devm_kzalloc(&pdev->dev, sizeof(*p2p), GFP_KERNEL);
+>> +	if (!p2p)
+>> +		return -ENOMEM;
+>> +
+>> +	p2p->pool = gen_pool_create(PAGE_SHIFT, dev_to_node(&pdev->dev));
+>> +	if (!p2p->pool)
+>> +		goto out;
+>> +
+>> +	init_completion(&p2p->devmap_ref_done);
+>> +	error = percpu_ref_init(&p2p->devmap_ref,
+>> +			pci_p2pdma_percpu_release, 0, GFP_KERNEL);
+>> +	if (error)
+>> +		goto out_pool_destroy;
+>> +
+>> +	percpu_ref_switch_to_atomic_sync(&p2p->devmap_ref);
+> 
+> Why are percpu_ref_init() and percpu_ref_switch_to_atomic_sync() called
+> separately instead of passing PERCPU_REF_INIT_ATOMIC to percpu_ref_init()?
+> Would using PERCPU_REF_INIT_ATOMIC eliminate a call_rcu_sched() call and
+> hence make this function faster?
+
+I can't even remember why we are switching to atomic at all. It probably
+shouldn't be there. I'll remove it for v8.
+
+
+>> +static struct pci_dev *find_parent_pci_dev(struct device *dev)
+>
+> The above function increases the reference count of the device it returns a
+> pointer to. It is a good habit to explain such behavior above the function
+> definition.
+
+Will do.
+
+>> +static void seq_buf_print_bus_devfn(struct seq_buf *buf, struct pci_dev *pdev)
+>> +{
+>> +	if (!buf)
+>> +		return;
+>> +
+>> +	seq_buf_printf(buf, "%s;", pci_name(pdev));
+>> +}
+> 
+> NULL checks in functions that print to a seq buffer are unusual. Is it
+> possible that a NULL pointer gets passed as the first argument to
+> seq_buf_print_bus_devfn()?
+
+Yes. There are two paths here one that's verbose and one that's not. In
+the non-verbose case, we pass NULL instead of the seq_buf, so both calls
+need to ensure the seq_buf is not NULL before trying to print to it.
+
+>> +struct pci_p2pdma_client {
+>> +	struct list_head list;
+>> +	struct pci_dev *client;
+>> +	struct pci_dev *provider;
+>> +};
+> 
+> Is there a reason that the peer-to-peer client and server code exist in the
+> same source file? If not, have you considered to split the p2pdma.c file into
+> two files - one with the code for devices that provide p2p functionality and
+> another file with the code that supports p2p users? I think that would make it
+> easier to follow the code.
+
+I see what you're saying but generally I get push back against adding
+extra files. I'm going to leave it the way it is unless other people
+voice their opinions in favour of the change.
+
+>> +/**
+>> + * pci_free_p2pmem - allocate peer-to-peer DMA memory
+>> + * @pdev: the device the memory was allocated from
+>> + * @addr: address of the memory that was allocated
+>> + * @size: number of bytes that was allocated
+>> + */
+>> +void pci_free_p2pmem(struct pci_dev *pdev, void *addr, size_t size)
+>> +{
+>> +	gen_pool_free(pdev->p2pdma->pool, (uintptr_t)addr, size);
+>> +	percpu_ref_put(&pdev->p2pdma->devmap_ref);
+>> +}
+>> +EXPORT_SYMBOL_GPL(pci_free_p2pmem);
+> 
+> Please fix the header of this function - there is a copy-paste error in the
+> function header.
+
+Will do.
+
+Logan
