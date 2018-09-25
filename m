@@ -2,201 +2,104 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D54AC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7380C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA24A208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:49:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA24A208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 7A16420877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:51:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A16420877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729047AbeIYS5J (ORCPT
+        id S1729096AbeIYS7D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:57:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36596 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728289AbeIYS5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:57:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26347B090;
-        Tue, 25 Sep 2018 12:49:43 +0000 (UTC)
-Subject: Re: [PATCH 3/3] split original if condition code in function
- bch_cache_set_alloc
-To:     Dongbo Cao <cdbdyx@163.com>
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180925084142.8764-1-cdbdyx@163.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <95bcd9b4-5aa3-9bfc-0619-285cac315524@suse.de>
-Date:   Tue, 25 Sep 2018 20:49:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 14:59:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:50390 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728881AbeIYS7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:59:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB5337A9;
+        Tue, 25 Sep 2018 05:51:37 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D9063F5BD;
+        Tue, 25 Sep 2018 05:51:33 -0700 (PDT)
+Subject: Re: [PATCH v4 0/4] devres: provide and use devm_kstrdup_const()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org
+References: <20180925124629.20710-1-brgl@bgdev.pl>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <c25df148-718a-d29d-9c1d-20701a0e4534@arm.com>
+Date:   Tue, 25 Sep 2018 13:51:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180925084142.8764-1-cdbdyx@163.com>
+In-Reply-To: <20180925124629.20710-1-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 25/09/18 13:46, Bartosz Golaszewski wrote:
+> This series implements devm_kstrdup_const() together with some
+> prerequisite changes and uses it in pmc-atom driver.
 
-On 9/25/18 4:41 PM, Dongbo Cao wrote:
-> remove bch_cache_set_unregister because we have not registerd right now
->
-> Signed-off-by: Dongbo Cao <cdbdyx@163.com>
+Is anyone expecting me to review this series, or am I just here because 
+I once made a couple of entirely unrelated changes to device.h?
 
-Hi Dongbo,
+Robin.
 
-
-This patch doesn't apply to for-next branch of my tree, could you please 
-to rebase it ?
-
-(git://git.kernel.org/pub/scm/linux/kernel/git/colyli/linux-bcache.git) 
-<git://git.kernel.org/pub/scm/linux/kernel/git/colyli/linux-bcache.git>
-
-Thanks.
-
-
-Coly Li
-
-
-> ---
->   drivers/md/bcache/super.c | 102 ++++++++++++++++++++++++++++++--------
->   1 file changed, 82 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 47d122ed..13a128eb 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1658,9 +1658,13 @@ void bch_cache_set_unregister(struct cache_set *c)
->   struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->   {
->   	int iter_size;
-> +	const char *err = NULL;
-> +
->   	struct cache_set *c = kzalloc(sizeof(struct cache_set), GFP_KERNEL);
-> -	if (!c)
-> -		return NULL;
-> +	if (!c) {
-> +		err = "cache_set alloc failed";
-> +		goto err_cache_set_alloc;
-> +	}
->   
->   	__module_get(THIS_MODULE);
->   	closure_init(&c->cl, NULL);
-> @@ -1715,22 +1719,55 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->   	iter_size = (sb->bucket_size / sb->block_size + 1) *
->   		sizeof(struct btree_iter_set);
->   
-> -	if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
-> -	    mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
-> -	    mempool_init_kmalloc_pool(&c->bio_meta, 2,
-> -				      sizeof(struct bbio) + sizeof(struct bio_vec) *
-> -				      bucket_pages(c)) ||
-> -	    mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
-> -	    bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
-> -			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
-> -	    !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
-> -	    !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
-> -						WQ_MEM_RECLAIM, 0)) ||
-> -	    bch_journal_alloc(c) ||
-> -	    bch_btree_cache_alloc(c) ||
-> -	    bch_open_buckets_alloc(c) ||
-> -	    bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
-> -		goto err;
-> +	if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL))) {
-> +		err = "c->devices alloc failed";
-> +		goto err_devices_alloc;
-> +	}
-> +	if (mempool_init_slab_pool(&c->search, 32, bch_search_cache)) {
-> +		err = "c->search alloc failed";
-> +		goto err_search_alloc;
-> +	}	
-> +	if (mempool_init_kmalloc_pool(&c->bio_meta, 2,
-> +			sizeof(struct bbio) + sizeof(struct bio_vec) *
-> +						bucket_pages(c))) {
-> +		err = "c->bio_meta alloc failed";
-> +		goto err_bio_meta_alloc;
-> +	}
-> +	if (mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size)) {
-> +		err = "c->fill_iter alloc failed";
-> +		goto err_fill_iter_alloc;
-> +	}
-> +	if (bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
-> +			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER)) {
-> +		err = "c->bio_split init failed";
-> +		goto err_bio_split_init;
-> +	}
-> +	if (!(c->uuids = alloc_bucket_pages(GFP_KERNEL, c))) {
-> +		err = "c->uuids alloc failed";
-> +		goto err_uuids_alloc;
-> +	}
-> +	if (!(c->moving_gc_wq = alloc_workqueue("bcache_gc",
-> +						WQ_MEM_RECLAIM, 0))) {
-> +		err = "c->moving_gc_wq alloc failed";
-> +		goto err_moving_gc_wq_alloc;
-> +	}
-> +	if (bch_journal_alloc(c)) {
-> +		err = "bch_journal_alloc failed";
-> +		goto err_bch_journal_alloc;
-> +
-> +	}
-> +	if (bch_btree_cache_alloc(c)) {
-> +		err = "bch_btree_cache_alloc failed";
-> +		goto err_bch_btree_cache_alloc;
-> +	}
-> +	if (bch_open_buckets_alloc(c)) {
-> +		err = "bch_open_buckets_alloc failed";
-> +		goto err_bch_open_buckets_alloc;
-> +	}
-> +	if (bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages))) {
-> +		err = "bch_bset_sort_state_init failed";
-> +		goto err_bch_bset_sort_state_init;
-> +	}
->   
->   	c->congested_read_threshold_us	= 2000;
->   	c->congested_write_threshold_us	= 20000;
-> @@ -1738,8 +1775,33 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->   	WARN_ON(test_and_clear_bit(CACHE_SET_IO_DISABLE, &c->flags));
->   
->   	return c;
-> -err:
-> -	bch_cache_set_unregister(c);
-> +
-> +err_bch_bset_sort_state_init:
-> +	bch_open_buckets_free(c);
-> +err_bch_open_buckets_alloc:
-> +	bch_btree_cache_free(c);
-> +err_bch_btree_cache_alloc:
-> +	bch_journal_free(c);
-> +err_bch_journal_alloc:
-> +	destroy_workqueue(c->moving_gc_wq);
-> +err_moving_gc_wq_alloc:
-> +	free_pages((unsigned long) c->uuids, ilog2(bucket_pages(c)));
-> +err_uuids_alloc:
-> +	bioset_exit(&c->bio_split);
-> +err_bio_split_init:
-> +	mempool_exit(&c->fill_iter);
-> +err_fill_iter_alloc:
-> +	mempool_exit(&c->bio_meta);
-> +err_bio_meta_alloc:
-> +	mempool_exit(&c->search);
-> +err_search_alloc:
-> +	kfree(c->devices);
-> +err_devices_alloc:
-> +	kfree(c);
-> +	module_put(THIS_MODULE);
-> +err_cache_set_alloc:
-> +        if (err)
-> +                pr_notice("error cache set %s: %s", c->sb.set_uuid, err);	
->   	return NULL;
->   }
->   
+> v1 -> v2:
+> - fixed the changelog in the patch implementing devm_kstrdup_const()
+> - fixed the kernel doc
+> - moved is_kernel_rodata() to asm-generic/sections.h
+> - fixed constness
+> 
+> v2 -> v3:
+> - rebased on top of 4.19-rc5 as there were some conflicts in the
+>    pmc-atom driver
+> - collected Reviewed-by tags
+> 
+> v3 -> v4:
+> - Andy NAK'ed patch 4/4 so I added a different example
+> - collected more tags
+> 
+> Bartosz Golaszewski (4):
+>    devres: constify p in devm_kfree()
+>    mm: move is_kernel_rodata() to asm-generic/sections.h
+>    devres: provide devm_kstrdup_const()
+>    mailbox: tegra-hsp: use devm_kstrdup_const()
+> 
+>   drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
+>   drivers/mailbox/tegra-hsp.c    | 41 +++++++-------------------------
+>   include/asm-generic/sections.h | 14 +++++++++++
+>   include/linux/device.h         |  5 +++-
+>   mm/util.c                      |  7 ------
+>   5 files changed, 68 insertions(+), 42 deletions(-)
+> 
