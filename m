@@ -2,128 +2,73 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7FCC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3A6ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 316F52087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316F52087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E4582087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:48:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="VgTxbchJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4582087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbeIYNxo (ORCPT
+        id S1728830AbeIYNzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:53:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60609 "EHLO mail.bootlin.com"
+        Tue, 25 Sep 2018 09:55:03 -0400
+Received: from 8bytes.org ([81.169.241.247]:60606 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727588AbeIYNxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:53:44 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7D78520731; Tue, 25 Sep 2018 09:47:24 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4A0FD203DA;
-        Tue, 25 Sep 2018 09:47:14 +0200 (CEST)
-Date:   Tue, 25 Sep 2018 09:47:14 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Denis OSTERLAND <denis.osterland@diehl.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "khoroshilov@ispras.ru" <khoroshilov@ispras.ru>
-Subject: Re: rtc: isl1208: avoid possible sysfs race
-Message-ID: <20180925074714.GG13455@piout.net>
-References: <20180915114343.31935-1-alexandre.belloni@bootlin.com>
- <1537857983.4657.5.camel@diehl.com>
+        id S1727588AbeIYNzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:55:03 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id A12816FB; Tue, 25 Sep 2018 09:48:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1537861724; bh=LVYbrjqMy2WgBfYXlTwm/fehw+I4n+2yeSu8Pa/BQXM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VgTxbchJK1EpFW4ereN4XQe8LN8oW5yj2eGhSh1OL5khC4A0etr2zxSZ+Mpqr4+Qc
+         kZE9/nsYq9BNqI6CsRozINDxi82rjcOb4IWMmt/AI0tqlbqgl4VUZscyNJD861fAIl
+         17+OSegMqd1I96COriXHg/z6zPWmtALP3Qq1qJguHT/mmlG5L1byaDQ84fietJvgnM
+         NfN5cwCeNJ1RZQZWEUTRO/mJ9k9NEn4S993rfHldUsIn0M78qDj0zRJGY430Sbi3Oe
+         LWgVbjhxg0cCeEDtcGlwX0ZKINSq6/87tO5itB8saHBWsHLcCt/201HdUqyPHm+fo0
+         IW4v22xOC3a0Q==
+Date:   Tue, 25 Sep 2018 09:48:41 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Nipun Gupta <nipun.gupta@nxp.com>
+Cc:     robin.murphy@arm.com, will.deacon@arm.com, robh+dt@kernel.org,
+        robh@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        gregkh@linuxfoundation.org, laurentiu.tudor@nxp.com,
+        bhelgaas@google.com, hch@lst.de, m.szyprowski@samsung.com,
+        shawnguo@kernel.org, frowand.list@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
+Subject: Re: [PATCH 0/7 v7] Support for fsl-mc bus and its devices in SMMU
+Message-ID: <20180925074841.oukeyvrmub45kzis@8bytes.org>
+References: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1537857983.4657.5.camel@diehl.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1536587361-11047-1-git-send-email-nipun.gupta@nxp.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/09/2018 06:46:24+0000, Denis OSTERLAND wrote:
-> Hi,
-> 
-> just for clarification:
-> This changes user-space representation from
-> /sys/class/rtc/rtcN/device/{atrim,dtrim,usr}
-> to
-> /sys/class/rtc/rtcN/{atrim,dtrim,usr}
-> and fixes the "mistake made back in 2006" you mention in
-> https://patchwork.ozlabs.org/patch/881397/
-> correct?
-> 
+On Mon, Sep 10, 2018 at 07:19:14PM +0530, Nipun Gupta wrote:
+> Nipun Gupta (7):
+>   Documentation: fsl-mc: add iommu-map device-tree binding for fsl-mc
+>     bus
+>   iommu/of: make of_pci_map_rid() available for other devices too
+>   iommu/of: support iommu configuration for fsl-mc devices
+>   iommu/arm-smmu: Add support for the fsl-mc bus
+>   bus: fsl-mc: support dma configure for devices on fsl-mc bus
+>   bus: fsl-mc: set coherent dma mask for devices on fsl-mc bus
+>   arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
 
-This is correct. At some point, it would also be great to move from
-atrim/dtrim to offset
-
-> Regards Denis
-> 
-> Am Samstag, den 15.09.2018, 13:43 +0200 schrieb Alexandre Belloni:
-> > Use rtc_add_group to add the common sysfs group to avoid a possible race
-> > condition.
-> > 
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > ---
-> >  drivers/rtc/rtc-isl1208.c | 11 +----------
-> >  1 file changed, 1 insertion(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-> > index ea18a8f4bce0..e1e9434c9972 100644
-> > --- a/drivers/rtc/rtc-isl1208.c
-> > +++ b/drivers/rtc/rtc-isl1208.c
-> > @@ -804,7 +804,7 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
-> >  		evdet_irq = of_irq_get_byname(np, "evdet");
-> >  	}
-> >  
-> > -	rc = sysfs_create_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
-> > +	rc = rtc_add_group(rtc, &isl1208_rtc_sysfs_files);
-> >  	if (rc)
-> >  		return rc;
-> >  
-> > @@ -821,14 +821,6 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
-> >  	return rtc_register_device(rtc);
-> >  }
-> >  
-> > -static int
-> > -isl1208_remove(struct i2c_client *client)
-> > -{
-> > -	sysfs_remove_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
-> > -
-> > -	return 0;
-> > -}
-> > -
-> >  static const struct i2c_device_id isl1208_id[] = {
-> >  	{ "isl1208", TYPE_ISL1208 },
-> >  	{ "isl1218", TYPE_ISL1218 },
-> > @@ -851,7 +843,6 @@ static struct i2c_driver isl1208_driver = {
-> >  		.of_match_table = of_match_ptr(isl1208_of_match),
-> >  	},
-> >  	.probe = isl1208_probe,
-> > -	.remove = isl1208_remove,
-> >  	.id_table = isl1208_id,
-> >  };
-> >  
-> 
-> Diehl Connectivity Solutions GmbH
-> Geschäftsführung: Horst Leonberger
-> Sitz der Gesellschaft: Nürnberg - Registergericht: Amtsgericht
-> Nürnberg: HRB 32315
-> ___________________________________________________________________________________________________
-> 
-> Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
-> Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht.
-> Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
-> The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by
-> mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited. 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Applied, thanks Nipun.
