@@ -2,64 +2,109 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBF4C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB92BC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2E66208D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:30:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E66208D9
+	by mail.kernel.org (Postfix) with ESMTP id 59C0720858
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 11:32:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C0720858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729046AbeIYRhg (ORCPT
+        id S1729018AbeIYRjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 13:37:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33112 "EHLO
+        Tue, 25 Sep 2018 13:39:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728721AbeIYRhg (ORCPT
+        with ESMTP id S1727606AbeIYRjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 13:37:36 -0400
+        Tue, 25 Sep 2018 13:39:25 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D24BE10EC;
-        Tue, 25 Sep 2018 11:30:28 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 13:30:26 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [GIT PULL] Keys: fix C++ reserved word issue
-Message-ID: <20180925113026.GA1696@kroah.com>
-References: <20180925094147.GC21972@kroah.com>
- <alpine.LRH.2.21.1809250738020.27047@namei.org>
- <31929.1537870620@warthog.procyon.org.uk>
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 266B010EB;
+        Tue, 25 Sep 2018 11:32:16 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 13:32:14 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Sasha Levin <Alexander.Levin@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: Re: [PATCH 3.18 104/105] IB/nes: Fix a compiler warning
+Message-ID: <20180925113214.GA1783@kroah.com>
+References: <20180924113113.268650190@linuxfoundation.org>
+ <20180924113123.002918395@linuxfoundation.org>
+ <6f7ca3c205bada768c3918b1feacbbd5ce23a64d.camel@perches.com>
+ <20180924175902.GB19402@kroah.com>
+ <6d6f31c87b0c9b1a551d352439183c8c9c4df04c.camel@perches.com>
+ <20180924223952.GA9157@sasha-vm>
+ <20180925085558.GA22609@kroah.com>
+ <086cc82aed26b082fbe5eefc0eeae2ec634e4a1a.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <31929.1537870620@warthog.procyon.org.uk>
+In-Reply-To: <086cc82aed26b082fbe5eefc0eeae2ec634e4a1a.camel@perches.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:17:00AM +0100, David Howells wrote:
-> Greg KH <gregkh@linuxfoundation.org> wrote:
+On Tue, Sep 25, 2018 at 04:11:38AM -0700, Joe Perches wrote:
+> On Tue, 2018-09-25 at 10:55 +0200, Greg Kroah-Hartman wrote:
+> > On Mon, Sep 24, 2018 at 10:39:53PM +0000, Sasha Levin wrote:
+> > > On Mon, Sep 24, 2018 at 11:03:25AM -0700, Joe Perches wrote:
+> > > > On Mon, 2018-09-24 at 19:59 +0200, Greg Kroah-Hartman wrote:
+> > > > > On Mon, Sep 24, 2018 at 09:38:26AM -0700, Joe Perches wrote:
+> > > > > > On Mon, 2018-09-24 at 13:34 +0200, Greg Kroah-Hartman wrote:
+> > > > > > > 3.18-stable review patch.  If anyone has any objections, please let me know.
+> > > > > > 
+> > > > > > Why should this sort of change be applied to a stable release?
+> > > > > 
+> > > > > Originally I was just going to drop this as it's not fixing something.
+> > > > > 
+> > > > > But it might be, if that macro is used in a if() statement, or something
+> > > > > like that, it could be doing something unintended.
+> > > > 
+> > > > No it couldn't.
+> > > > An empty macro is equivalent to a single statement.
+> > > > 
+> > > > > So I don't feel like auditing all 500+ instances where this is used,
+> > > > > it's easier to just accept the patch.
+> > > > 
+> > > > It's not a bug fix.
+> > > 
+> > > This question came up a few months ago. Greg suggested that we should be
+> > > pulling in warning fixes to get the stable kernels warning-free similar
+> > > to upstream.
+> > > 
+> > > The reasoning behind it was similar to the "no warnings" reasoning of
+> > > upstream: there might be real issues hiding in the sea of "harmless"
+> > > warnings, so we want to get rid of all of them to catch real issues.
+> > 
+> > No warnings is great,
 > 
-> > I'll wait a few days on this one...
-> 
-> Can you at least apply the reversion patch?  UAPI is currently broken by the
-> change that needs reverting.
+> I believe that is not necessarily true.
 
-Yes, as that's obviously correct.  I think you should wait for your
-patch 2 here until 4.20-rc1, as this isn't a "fix" that is required at
-this point in time.
+For me, it is essencial.
 
-I'll just go cherry-pick that one patch, thanks.
+As proof of this, I found an actual bug in a patch that added a warning
+to the build.  If my scripts hadn't shown that we had gone from 0 to 1
+warnings, then I would have missed that.
+
+So I want to keep the stable trees at 0 warnings if at all possible, for
+x86-64 at the least.
+
+> Change to a new compiler version and new warnings could be
+> added somewhat arbitrarily.
+
+That's true, and is why I am stuck at gcc7 at the moment, as gcc8 does
+horrid things to older stable kernels :)
+
+thanks,
 
 greg k-h
