@@ -2,135 +2,213 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E38D9C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E20C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F09214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3304220676
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTiAfD3v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F09214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NNg30QSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3304220676
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbeIYXiF (ORCPT
+        id S1728095AbeIYXi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:38:05 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46159 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeIYXiF (ORCPT
+        Tue, 25 Sep 2018 19:38:26 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43891 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727826AbeIYXiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:38:05 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 203-v6so22523534ljj.13;
-        Tue, 25 Sep 2018 10:29:33 -0700 (PDT)
+        Tue, 25 Sep 2018 19:38:25 -0400
+Received: by mail-pg1-f193.google.com with SMTP id q19-v6so11191013pgn.10
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:29:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Hi8rboMsFW4X2aKavM9k6laW/LPgjUmhL8jmgpoVVi0=;
-        b=hTiAfD3vyVv/8OaB69EruPD48LcmHADDYYi4r/8Z8Sp9ODSjNpwjomolsq0c54i/da
-         hvcxH3+wuWLlmBCje1pInCOMiaHd/GN3y/QGMl/udtfzY+fcKnzS0C014N8iskBAWFJL
-         9mJv9eDGZw5wmjgedxo378/1tg6WYXVFkcGJ51odUf04hNLyMh81aPMPjQS/iBn+Woaa
-         kv9WIlDRCRoRYOetrjTz+c+SU7FcP1YIjByGGtgc96KW2nm7UcHZwuZvE7iOy/8MXKUQ
-         HUbNWdc++iGemEfylexo1Ncv7tsqOOR73gS+I9E1Dz7CyJ/mZScEHf0pvpNBa7Z2/dJS
-         CcIA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qRpFU03cygqLIF0fNm4mTLpJbpBZjWH/cQhabsNceos=;
+        b=NNg30QSOth9p+MgyY59APIVfAUcWQMSxnyw9/clgFFDdH6VClnxNduv4O2pQe3mdCC
+         qXdeeDXTmnFByCBJOLzQSlGComC6EIdYEQkYbeE6erOpK6XYs9pNdLJWQZ+dQZ9rvPxc
+         Y9FBl9kqgw3A0A+eT6DxtsLwxXezblmKDUtIo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Hi8rboMsFW4X2aKavM9k6laW/LPgjUmhL8jmgpoVVi0=;
-        b=MYdnikTdKE77btQLWkWcWWn4HUdRRUlnwEotVYwbw1CiEFiEpmnE9NDWN6X5OyPQoG
-         n8i+/cVRqwzmYoIWvDfHKBlvEYqJVV8x4FnUPrQ2zuNLk5sfFT06pPoaBpHO4cCWCKpI
-         xeD+Vcn0FE5lk2oKaL7D7AHkGY2p0GrM+7/E4uixX3u6COwfEOVIzFSN/aop3XCj/kra
-         LHkIu0dqbckwneNN0xhuWfRU5SNZnZd+iMxs691jQw52E7oScWhupu7Th0/ZGKH5KMEd
-         VD2RNSE4d0awoElVcNDgIHAejNppPw4dmlFOFWcpVb/swFJ8Ll8DudIqC75n5b/SVJxX
-         J5Cw==
-X-Gm-Message-State: ABuFfogLM4kOtHG3BFDP9d2TkN9PAOojaBbwhrl/eB0CnZ5cFHbs6BFF
-        wksqobK1O11wSrWObAVIK8l4BryK
-X-Google-Smtp-Source: ACcGV62eRraj7oUz5GHRx/az0CHy2Eabcvom3M7dq+MasRXKlQaalbpRvxONgLxpacVxyp6/54eWGw==
-X-Received: by 2002:a2e:9a93:: with SMTP id p19-v6mr1625163lji.87.1537896571964;
-        Tue, 25 Sep 2018 10:29:31 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.googlemail.com with ESMTPSA id x1-v6sm517639ljj.56.2018.09.25.10.29.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 10:29:31 -0700 (PDT)
-Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
- Tegra20/30
-To:     Rob Herring <robh@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180830194356.14059-1-digetx@gmail.com>
- <20180830194356.14059-2-digetx@gmail.com> <20180925165810.GA32430@bogus>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <074a169d-294b-ad4b-ddbd-6db742278f2a@gmail.com>
-Date:   Tue, 25 Sep 2018 20:29:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qRpFU03cygqLIF0fNm4mTLpJbpBZjWH/cQhabsNceos=;
+        b=qA+iRyYrRhntDjSkCNNrEtgYzRbhQVNsqYGIK7foGaod1tK0+TaUOhPQgMd8Ep8xvU
+         p7P50FkJSkxtNVWXc7h0ZRX0U5/PE2VqvdUHRCbOdWa55asJbSbv3OugUG8pDuqqdhZk
+         lwwUvbqidxhg4+ATH11o4pKuY10bKMBfOj2W+QElO69mhk6/LugsruQZO6I2ygTCJJu4
+         ILoUEvCwqleWiyi/jRB8MoJPg3Mu2TxE0Zv4CSRQJkDiJOqpo0br5jR73Zl2ynRhrcdM
+         owytQZ66Od+F/ZpgflzsDUNC74sPTBVqMnvkMMNy9yqqgswMKPdlpZXEw9XcgH2NB3ul
+         notg==
+X-Gm-Message-State: ABuFfohkadh96ZQ826/0Q7K7dZQVSTS1eoexNKBJ1m9DiSrWsqyTHpMS
+        DPJnQRCdBDefsN8ksxxBOl0XSg==
+X-Google-Smtp-Source: ACcGV62HJAv7MxVI8E7Q9y3PDTyIO/6pHPVU3G18fVmJzDL6RhJ05TEsbe3oPwAcYzMzErRSAdxZ6w==
+X-Received: by 2002:a17:902:b40c:: with SMTP id x12-v6mr2147396plr.163.1537896594056;
+        Tue, 25 Sep 2018 10:29:54 -0700 (PDT)
+Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
+        by smtp.gmail.com with ESMTPSA id b14-v6sm4949452pfc.178.2018.09.25.10.29.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 10:29:52 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 10:29:50 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [RFC PATCH] soc: qcom: rmtfs_mem: Control remoteproc from
+ rmtfs_mem
+Message-ID: <20180925172943.GA118699@ban.mtv.corp.google.com>
+References: <20180925080607.30565-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180925165810.GA32430@bogus>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925080607.30565-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/18 7:58 PM, Rob Herring wrote:
-> On Thu, Aug 30, 2018 at 10:43:52PM +0300, Dmitry Osipenko wrote:
->> Add device-tree binding that describes CPU frequency-scaling hardware
->> found on NVIDIA Tegra20/30 SoC's.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
->>  1 file changed, 38 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->>
->> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->> new file mode 100644
->> index 000000000000..2c51f676e958
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
->> @@ -0,0 +1,38 @@
->> +Binding for NVIDIA Tegra20 CPUFreq
->> +==================================
->> +
->> +Required properties:
->> +- clocks: Must contain an entry for each entry in clock-names.
->> +  See ../clocks/clock-bindings.txt for details.
->> +- clock-names: Must include the following entries:
->> +  - pll_x: main-parent for CPU clock, must be the first entry
->> +  - backup: intermediate-parent for CPU clock
->> +  - cpu: the CPU clock
+Hi Bjorn,
+
+On Tue, Sep 25, 2018 at 01:06:07AM -0700, Bjorn Andersson wrote:
+> rmtfs_mem provides access to physical storage and is crucial for the
+> operation of the Qualcomm modem subsystem.
 > 
-> The Cortex A9 has CLK, PERIPHCLK, and PERIPHCLKEN clocks and only CLK 
-> is used for the cpu core. You can't just define your own clocks that 
-> you happen to want access to.
+> The rmtfs_mem implementation must be available before the modem
+> subsystem is booted and a solution where the modem remoteproc will
+> verify that the rmtfs_mem is available has been discussed in the past.
+> But this would not handle the case where the rmtfs_mem provider is
+> restarted, which would cause fatal loss of access to the storage device
+> for the modem.
 > 
-> Otherwise, you're not defining anything new here, so a binding document 
-> isn't required.
+> The suggestion is therefor to link the rmtfs_mem to its associated
+> remote processor instance and control it based on the availability of
+> the rmtfs_mem implementation.
 
-PERIPHCLK is a different thing. Here we are defining the CPU clock and
-its *parent* sources, the PLLX (main) and backup (intermediate clock
-that is used while PLLX changes its rate). These are not some random
-clocks "that you happen to want access to", they are essential for the
-Tegra CPUFreq driver, CPU is running off them.
+But what does "availability" mean? If I'm reading your rmtfs daemon
+properly, "availability" should mean that the daemon is up and has
+registered a RMTFS_QMI_SERVICE. But in this patch, you're keying off of
+the open() call, which sounds like you're introducing a race condition
+-- we might have open()ed the RMTFS memory but we're not actually
+completely ready to service requests.
 
-I assume that PERIPHCLK and other clocks are derived from the "CPU"
-clock and their configuration is hardwired. Probably Peter knows how
-it's implemented in HW.
+So rather than looking for open(), I think somebody needs to be looking
+for the appearance and disappearance of the RMTFS_QMI_SERVICE. (Looking
+for disappearance would resolve the daemon restart issue, no?) That
+"somebody" could be the remoteproc driver I suppose (qmi_add_lookup()?),
+or...couldn't it just be the modem itself? Do you actually need to
+restart the entire modem when the RMTFS service goes away, or do you
+just need to pause storage activity?
 
-I'm now working on v2 that will include more Tegra-specific stuff in the
-binding, like custom "opp-supported-hw" property and probably some more.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> The currently implemented workaround in the Linaro QCOMLT releases is to
+> blacklist the qcom_q6v5_pil kernel module and load this explicitly after rmtfs
+> has been started.
+> 
+> With this patch the modem module can be loaded automatically by the
+> platform_bus and will only be booted as the rmtfs becomes available. Performing
+> actions such as upgrading (and restarting) the rmtfs service will cause the
+> modem to automatically restart and hence continue to function after the
+> upgrade.
+> 
+>  .../reserved-memory/qcom,rmtfs-mem.txt        |  7 ++++++
+>  drivers/remoteproc/qcom_q6v5_pil.c            |  1 +
+>  drivers/soc/qcom/Kconfig                      |  1 +
+>  drivers/soc/qcom/rmtfs_mem.c                  | 23 ++++++++++++++++++-
+>  4 files changed, 31 insertions(+), 1 deletion(-)
+> 
+...
+> diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+> index 8a3678c2e83c..8b08be310397 100644
+> --- a/drivers/soc/qcom/rmtfs_mem.c
+> +++ b/drivers/soc/qcom/rmtfs_mem.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/of.h>
+>  #include <linux/of_reserved_mem.h>
+> +#include <linux/remoteproc.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/slab.h>
+>  #include <linux/uaccess.h>
+> @@ -39,6 +40,8 @@ struct qcom_rmtfs_mem {
+>  	unsigned int client_id;
+>  
+>  	unsigned int perms;
+> +
+> +	struct rproc *rproc;
+>  };
+>  
+>  static ssize_t qcom_rmtfs_mem_show(struct device *dev,
+> @@ -80,11 +83,18 @@ static int qcom_rmtfs_mem_open(struct inode *inode, struct file *filp)
+>  	struct qcom_rmtfs_mem *rmtfs_mem = container_of(inode->i_cdev,
+>  							struct qcom_rmtfs_mem,
+>  							cdev);
+> +	int ret = 0;
+>  
+>  	get_device(&rmtfs_mem->dev);
+>  	filp->private_data = rmtfs_mem;
+>  
+> -	return 0;
+> +	if (rmtfs_mem->rproc) {
+> +		ret = rproc_boot(rmtfs_mem->rproc);
+> +		if (ret)
+> +			put_device(&rmtfs_mem->dev);
+> +	}
+> +
+> +	return ret;
+>  }
+>  static ssize_t qcom_rmtfs_mem_read(struct file *filp,
+>  			      char __user *buf, size_t count, loff_t *f_pos)
+> @@ -127,6 +137,9 @@ static int qcom_rmtfs_mem_release(struct inode *inode, struct file *filp)
+>  {
+>  	struct qcom_rmtfs_mem *rmtfs_mem = filp->private_data;
+>  
+> +	if (rmtfs_mem->rproc)
+> +		rproc_shutdown(rmtfs_mem->rproc);
+> +
+>  	put_device(&rmtfs_mem->dev);
+>  
+>  	return 0;
+> @@ -156,6 +169,7 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+>  	struct qcom_scm_vmperm perms[2];
+>  	struct reserved_mem *rmem;
+>  	struct qcom_rmtfs_mem *rmtfs_mem;
+> +	phandle rproc_phandle;
+>  	u32 client_id;
+>  	u32 vmid;
+>  	int ret;
+> @@ -181,6 +195,13 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
+>  	rmtfs_mem->client_id = client_id;
+>  	rmtfs_mem->size = rmem->size;
+>  
+> +	ret = of_property_read_u32(node, "rproc", &rproc_phandle);
+> +	if (!ret) {
+> +		rmtfs_mem->rproc = rproc_get_by_phandle(rproc_phandle);
+
+You're doing an rproc_get(), so you need to do a rproc_put() in
+remove().
+
+Brian
+
+> +		if (!rmtfs_mem->rproc)
+> +			return -EPROBE_DEFER;
+> +	}
+> +
+>  	device_initialize(&rmtfs_mem->dev);
+>  	rmtfs_mem->dev.parent = &pdev->dev;
+>  	rmtfs_mem->dev.groups = qcom_rmtfs_mem_groups;
