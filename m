@@ -2,139 +2,161 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE45C46478
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8259DC004D1
 	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FA4214DC
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 465BB214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:15:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DWqdsgMr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FA4214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPSjRWIJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465BB214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbeIYWZG (ORCPT
+        id S1729665AbeIYWXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:25:06 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38620 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728587AbeIYWZG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:25:06 -0400
-Received: by mail-it1-f193.google.com with SMTP id p129-v6so16016330ite.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 09:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TLVZeUAHGqgE6yT6A7P7eY4TA/lp0eYd+MYLzSjwcSA=;
-        b=DWqdsgMrx3XjWYhH2dg7uLYiIuzwWzQzCqesPwRKGxOu1MT4D7z5pDG7owRAirMWi/
-         cxH3Vue1CXGA/2AX6+0hvwk/TPeXyF5JjxdUukEhmiVXlXhnIv/abm8cBaBwgkfeqx58
-         DdVfX9oYQHtM6WCYhqdpkGhSORKy+1WG2jLRk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TLVZeUAHGqgE6yT6A7P7eY4TA/lp0eYd+MYLzSjwcSA=;
-        b=b5O3FREDn9471cZ9Kb1Uk4jTUF4PjVHGdb3J98syoADlku+Hi9caRthIn0/BX9lNWu
-         ciJBtMei0OgRgrSRanhBp42sc+Xjw6HlOnwjRUK+FDxw3Px7CU6psYoBS7UnJ8zWnTii
-         WAaxWLmhBAbk9UMLD1warZABIQKwAD5OK22v4Avh9TlfD5RdWMLfALugor+sHRTLFP+a
-         lZRBVejL68fTR8nDs/fuisOhD0UbN5Ags5u0hsm3+G/OJ+VrGYpKNOyVcBivOQ9+UZWF
-         68aIT7H65tCsrJMQeFgzeDhAKahdSJPoD+f6kg/rWzftszIrOtBqdcSR9aYqF43AzwnE
-         55Vg==
-X-Gm-Message-State: ABuFfoiSNXamNFH5Dzqjw+VO5XFtSMo/Sxt3cOT1+gTTYnmhZDrnQNWE
-        MZ7xR+lTZ3N0VpP7ycU5cgBasSOJG2+o5HpdLmsVtQ==
-X-Google-Smtp-Source: ACcGV60D9qFMYzjQ8EHuhmBh1eL2zGqvluaU/+WxisYAn/kYhcmk5Ho4pW/76mEMpk4gggAHoLH5lhOJknHChfSGGAw=
-X-Received: by 2002:a24:57cb:: with SMTP id u194-v6mr1417882ita.148.1537892212582;
- Tue, 25 Sep 2018 09:16:52 -0700 (PDT)
+        Tue, 25 Sep 2018 18:23:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728917AbeIYWXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 18:23:25 -0400
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA59D21502;
+        Tue, 25 Sep 2018 16:15:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537892112;
+        bh=BhgRYD1jWVXvZlcqbCfzQeSB1cmxx2WlhubA0bMflOM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JPSjRWIJn4TyBaZ29oEFZ427Bpb3DdLULbaehUHQQM8lpUlGxxSIVxpYMEQVJxnx5
+         SJXcC1dS0mGcNZdt8FmPNgHealp/Uk4aw2ruS6Hi46ifjRqTLY7je+PCiOCJ7Cbiif
+         9O7BwEeqX82NiuWQIuHZZwNS/oGJP4bgriPr/T9A=
+Received: by mail-qk1-f179.google.com with SMTP id n3-v6so13340118qkn.8;
+        Tue, 25 Sep 2018 09:15:12 -0700 (PDT)
+X-Gm-Message-State: ABuFfoi+ZX1B+3k/N10X7qqBJ1lghXDwSBftMJX7PIN1vQtnvOlIIPEU
+        Cbx+o2WGH62Ugak2vdjl9bVBfqdE9OkVANly6Q==
+X-Google-Smtp-Source: ACcGV63tdFTpWCNTeTbLP5MR7lyG9epfiDjokyrZY9IxWW6mlUAhaqy9nyQg6Qh0tvMgmOAkZwT5p+S1TLfM3ZR+Wt0=
+X-Received: by 2002:a37:56c7:: with SMTP id k190-v6mr1201181qkb.29.1537892111810;
+ Tue, 25 Sep 2018 09:15:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180919021100.3380-1-keescook@chromium.org> <20180919021100.3380-8-keescook@chromium.org>
- <CAKv+Gu8ynaVi1KCMNsjCU0ucAjFFku=ourh9Yc9Rizoc4ztvOQ@mail.gmail.com>
- <CAGXu5jLw3+nvb9opPeoCyH0MhyVK5UY7H5qeQ2b8GFTUGDGrUQ@mail.gmail.com>
- <CAKv+Gu-xKWsiegZXnsMvmMVgKTo7S2cm4wEqdaL7w9z64X7SAA@mail.gmail.com> <9c71afda-a668-10b3-842e-26f72e425691@kernel.dk>
-In-Reply-To: <9c71afda-a668-10b3-842e-26f72e425691@kernel.dk>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 25 Sep 2018 18:16:39 +0200
-Message-ID: <CAKv+Gu_p2UgYMZ5jEUudruUOPYQEF-=VMou=xXbj_rd+-Lxktg@mail.gmail.com>
-Subject: Re: [PATCH crypto-next 07/23] block: cryptoloop: Remove VLA usage of skcipher
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-block@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1534447304-12919-1-git-send-email-jollys@xilinx.com>
+ <1534447304-12919-2-git-send-email-jollys@xilinx.com> <20180820194628.GA26783@bogus>
+ <CY1PR02MB2138C05E97C1EFAEA921CB5CB81A0@CY1PR02MB2138.namprd02.prod.outlook.com>
+In-Reply-To: <CY1PR02MB2138C05E97C1EFAEA921CB5CB81A0@CY1PR02MB2138.namprd02.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 25 Sep 2018 11:15:00 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJOz_z9dHcG5dfx=UTXQMaLTQKBPu+vTrTOt=sdAabqSw@mail.gmail.com>
+Message-ID: <CAL_JsqJOz_z9dHcG5dfx=UTXQMaLTQKBPu+vTrTOt=sdAabqSw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: power: Add ZynqMP power domain bindings
+To:     Jolly Shah <JOLLYS@xilinx.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Michal Simek <michals@xilinx.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rajan Vaja <RAJANV@xilinx.com>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Sep 2018 at 18:03, Jens Axboe <axboe@kernel.dk> wrote:
+On Thu, Sep 13, 2018 at 12:51 PM Jolly Shah <JOLLYS@xilinx.com> wrote:
 >
-> On 9/25/18 3:25 AM, Ard Biesheuvel wrote:
-> > On Mon, 24 Sep 2018 at 19:53, Kees Cook <keescook@chromium.org> wrote:
-> >>
-> >> On Mon, Sep 24, 2018 at 4:52 AM, Ard Biesheuvel
-> >> <ard.biesheuvel@linaro.org> wrote:
-> >>> On Wed, 19 Sep 2018 at 04:11, Kees Cook <keescook@chromium.org> wrote:
-> >>>> @@ -119,7 +119,7 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
-> >>>>         unsigned in_offs, out_offs;
-> >>>>         int err;
-> >>>>
-> >>>> -       skcipher_request_set_tfm(req, tfm);
-> >>>> +       skcipher_request_set_sync_tfm(req, tfm);
-> >>>>         skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
-> >>>>                                       NULL, NULL);
-> >>>>
-> >>>
-> >>> Does this work?
-> >>
-> >> Everything is a direct wrapper for existing types and functions, so I
-> >> wouldn't expect any functional change. I haven't been able to test
-> >> this particular interface, though. cryptoloop is very deprecated,
-> >> isn't it?
-> >>
-> >
-> > Ah yes, I managed to confuse myself there. This looks all fine to me.
-> >
-> > In any case, this is another example where we may decide to fix the
-> > code rather than retain the request allocation on the stack (but that
-> > is Jens's call ultimately, I suppose)
-> >
-> > diff --git a/drivers/block/cryptoloop.c b/drivers/block/cryptoloop.c
-> > index 7033a4beda66..5ed2167219ba 100644
-> > --- a/drivers/block/cryptoloop.c
-> > +++ b/drivers/block/cryptoloop.c
-> > @@ -110,7 +110,7 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
-> >                     int size, sector_t IV)
-> >  {
-> >         struct crypto_skcipher *tfm = lo->key_data;
-> > -       SKCIPHER_REQUEST_ON_STACK(req, tfm);
-> > +       struct skcipher_request *req;
-> >         struct scatterlist sg_out;
-> >         struct scatterlist sg_in;
-> >
-> > @@ -119,7 +119,10 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
-> >         unsigned in_offs, out_offs;
-> >         int err;
-> >
-> > -       skcipher_request_set_tfm(req, tfm);
-> > +       req = skcipher_request_alloc(tfm, GFP_NOIO);
-> > +       if (!req)
-> > +               return -ENOMEM;
+> Hi Rob,
 >
-> Is this going to be reliable? ->transfer() is called when we're doing IO,
-> and you'd normally need a mempool backed allocation to make this safe
-> and guarantee forward progress.
->
+> > -----Original Message-----
+> > From: Rob Herring [mailto:robh@kernel.org]
+> > Sent: Monday, August 20, 2018 12:46 PM
+> > To: Jolly Shah <JOLLYS@xilinx.com>
+> > Cc: matthias.bgg@gmail.com; andy.gross@linaro.org; shawnguo@kernel.org;
+> > geert+renesas@glider.be; bjorn.andersson@linaro.org;
+> > sean.wang@mediatek.com; m.szyprowski@samsung.com; Michal Simek
+> > <michals@xilinx.com>; mark.rutland@arm.com; Rajan Vaja
+> > <RAJANV@xilinx.com>; devicetree@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Rajan Vaja
+> > <RAJANV@xilinx.com>; Jolly Shah <JOLLYS@xilinx.com>
+> > Subject: Re: [PATCH v2 1/3] dt-bindings: power: Add ZynqMP power domain
+> > bindings
+> >
+> > On Thu, Aug 16, 2018 at 12:21:42PM -0700, Jolly Shah wrote:
+> > > From: Rajan Vaja <rajan.vaja@xilinx.com>
+> > >
+> > > Add documentation to describe ZynqMP power domain bindings.
+> > >
+> > > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> > > Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> > > ---
+> > >  .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 47
+> > ++++++++++++++++++++++
+> >
+> > This should be with all the other power domain bindings.
+> >
+> > >  1 file changed, 47 insertions(+)
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > > re.txt
+> > > b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > > re.txt
+> > > index d215d15..5fa10a0 100644
+> > > ---
+> > > a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > > re.txt
+> > > +++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-fi
+> > > +++ rmware.txt
+> > > @@ -64,6 +64,29 @@ Output clocks are registered based on clock
+> > > information received  from firmware. Output clocks indexes are
+> > > mentioned in  include/dt-bindings/clock/xlnx,zynqmp-clk.h.
+> > >
+> > > +-----------------------------------------------------------
+> > > +Device Tree Bindings for the Xilinx Zynq MPSoC PM domains
+> > > +-----------------------------------------------------------
+> > > +The binding for zynqmp-power-controller follow the common generic PM
+> > > +domain binding[1].
+> > > +
+> > > +[1] Documentation/devicetree/bindings/power/power_domain.txt
+> > > +
+> > > +== Zynq MPSoC Generic PM Domain Node ==
+> > > +
+> > > +Required properties:
+> > > + - compatible:     Must be: "xlnx,zynqmp-power-controller"
+> > > +
+> > > +This node contains a number of subnodes, each representing a single
+> > > +PM domain that PM domain consumer devices reference.
+> > > +
+> > > +== PM Domain Nodes ==
+> > > +
+> > > +Required properties:
+> > > + - #power-domain-cells:    Number of cells in a PM domain specifier. Must
+> > be 0.
+> > > + - pd-id:          Domain identifier as defined by platform firmware.
+> > > +                   This identifier is passed to the PM firmware.
+> >
+> > Make this a cell for the power domain consumer.
+> [Jolly] We have more than one Ids for GPU device. Also they don't have parent child relationship and hence are defined as flat hierarchy. (shown in example below)
 
-As far as I can tell, this function is only called from
-lo_read_transfer/lo_write_transfer, both of which do an unconditional
-alloc_page(GFP_NOIO), which is why I assumed that kmalloc(GFP_NOIO)
-would be permissible in the same context. Are you saying this may not
-be the case?
+Then the gpu node should have:
+
+power-domains = <&pd 58 &pd 20 &pd 21>;
+
+Also, for this and the firmware reset binding, there is no reason that
+I see to make these all subnodes. A single firmware node can be a
+provider of multiple functions. You only need child nodes if the
+sub-functions have their own resources (clks, irqs, etc.). IOW, don't
+create nodes just because you want to instantiate drivers that way. DT
+is not the only way to instantiate devices for drivers.
+
+Rob
