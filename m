@@ -3,163 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C563DECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA48C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0C020877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0C020877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 504802087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504802087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728697AbeIYPVv (ORCPT
+        id S1728529AbeIYPVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:21:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728584AbeIYPVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:21:50 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F3C8C30832D0;
-        Tue, 25 Sep 2018 09:15:13 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-117-161.ams2.redhat.com [10.36.117.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AD1F1308BE75;
-        Tue, 25 Sep 2018 09:14:58 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
-        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Allen <jallen@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Len Brown <lenb@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
-Subject: [PATCH v2 0/6] mm: online/offline_pages called w.o. mem_hotplug_lock
-Date:   Tue, 25 Sep 2018 11:14:51 +0200
-Message-Id: <20180925091457.28651-1-david@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 25 Sep 2018 09:15:15 +0000 (UTC)
+        Tue, 25 Sep 2018 11:21:47 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46543 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727526AbeIYPVr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 11:21:47 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8P9AUpL026643;
+        Tue, 25 Sep 2018 11:14:14 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mnb6xb3eq-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 25 Sep 2018 11:14:14 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1065D59;
+        Tue, 25 Sep 2018 09:14:13 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CC8062906;
+        Tue, 25 Sep 2018 09:14:12 +0000 (GMT)
+Received: from [10.201.23.29] (10.75.127.47) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 25 Sep
+ 2018 11:14:11 +0200
+Subject: Re: [PATCH 1/3] dt-bindings: mtd: stm32_fmc2: add STM32 FMC2 NAND
+ controller documentation
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <richard@nod.at>, <linux-kernel@vger.kernel.org>,
+        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
+        <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        <computersforpeace@gmail.com>, <dwmw2@infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1537199260-7280-1-git-send-email-christophe.kerello@st.com>
+ <1537199260-7280-2-git-send-email-christophe.kerello@st.com>
+ <20180922103440.12575714@xps13> <c9925c9c-af40-8044-8dbe-866fbe3a2f99@st.com>
+ <20180924191725.2439fd10@bbrezillon>
+From:   Christophe Kerello <christophe.kerello@st.com>
+Message-ID: <88321fb8-08a4-e8a2-9ac5-2bef910cd53a@st.com>
+Date:   Tue, 25 Sep 2018 11:14:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180924191725.2439fd10@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reading through the code and studying how mem_hotplug_lock is to be used,
-I noticed that there are two places where we can end up calling
-device_online()/device_offline() - online_pages()/offline_pages() without
-the mem_hotplug_lock. And there are other places where we call
-device_online()/device_offline() without the device_hotplug_lock.
+Hi Boris,
 
-While e.g.
-	echo "online" > /sys/devices/system/memory/memory9/state
-is fine, e.g.
-	echo 1 > /sys/devices/system/memory/memory9/online
-Will not take the mem_hotplug_lock. However the device_lock() and
-device_hotplug_lock.
+On 09/24/2018 07:17 PM, Boris Brezillon wrote:
+> Hi Christophe,
+> 
+> On Mon, 24 Sep 2018 18:36:27 +0200
+> Christophe Kerello <christophe.kerello@st.com> wrote:
+> 
+>>>> +- st,fmc2_timings: array of 8 bytes for NAND timings. The meanings of
+>>>> +  these bytes are:
+>>>> +  byte 0 TCLR      : CLE to RE delay in number of AHB clock cycles, only 4 bits
+>>>> +                     are valid. Zero means one clock cycle, 15 means 16 clock
+>>>> +                     cycles.
+>>>> +  byte 1 TAR       : ALE to RE delay, 4 bits are valid. Same format as TCLR.
+>>>> +  byte 2 THIZ      : number of HCLK clock cycles during which the data bus is
+>>>> +                     kept in Hi-Z (tristate) after the start of a write access.
+>>>> +                     Only valid for write transactions. Zero means 1 cycle,
+>>>> +                     255 means 256 cycles.
+>>>> +  byte 3 TWAIT     : number of HCLK clock cycles to assert the command to the
+>>>> +                     NAND flash in response to SMWAITn. Zero means 1 cycle,
+>>>> +                     255 means 256 cycles.
+>>>> +  byte 4 THOLD_MEM : common memory space timing
+>>>> +                     number of HCLK clock cycles to hold the address (and data
+>>>> +                     when writing) after the command deassertion. Zero means
+>>>> +                     1 cycle, 255 means 256 cycles.
+>>>> +  byte 5 TSET_MEM  : common memory space timing
+>>>> +                     number of HCLK clock cycles to assert the address before
+>>>> +                     the command is asserted. Zero means 1 cycle, 255 means 256
+>>>> +                     cycles.
+>>>> +  byte 6 THOLD_ATT : attribute memory space timing
+>>>> +                     number of HCLK clock cycles to hold the address (and data
+>>>> +                     when writing) after the command deassertion. Zero means
+>>>> +                     1 cycle, 255 means 256 cycles.
+>>>> +  byte 7 TSET_ATT  : attribute memory space timing
+>>>> +                     number of HCLK clock cycles to assert the address before
+>>>> +                     the command is asserted. Zero means 1 cycle, 255 means 256
+>>>> +                     cycles.
+>>>
+>>> Let me review the driver but this array of timings is really
+>>> suspicious. I am pretty sure you don't need it in the DT.
+>>
+>> "st,fmc2-timings" is an optional property that allow the end user to
+>> overwrite the timings calculated by setup_data_interface callback. By
+>> setting this property in the NAND flash memory device tree node, the end
+>> user could have a better throughput. For NON ONFI SLC NAND, timing mode
+>> 0 is often used.
+> 
+> Exactly the kind of tweaking I'd like to avoid. If the NAND is not ONFI,
+> the vendor driver (nand_<manufacturer>.c) can overwrite
+> chip->default_onfi_timing_mode, and if the ONFI timings modes are not
+> exactly matching the NAND spec and you need the exact timings, then we
+> should consider adding a manufacturer hook to let the manufacturer
+> driver tweak the timings. In any case, I'm not willing to accept
+> timings description in the DT.
+> 
 
-E.g. via memory_probe_store(), we can end up calling
-add_memory()->online_pages() without the device_hotplug_lock. So we can
-have concurrent callers in online_pages(). We e.g. touch in online_pages()
-basically unprotected zone->present_pages then.
+Ok, I understand the way it should work. This property will be removed 
+from the device tree bindings and the timings will be only calculated by 
+calling setup_data_interface callback in the driver.
 
-Looks like there is a longer history to that (see Patch #2 for details),
-and fixing it to work the way it was intended is not really possible. We
-would e.g. have to take the mem_hotplug_lock in device/base/core.c, which
-sounds wrong.
+Regards,
+Christophe Kerello.
 
-Summary: We had a lock inversion on mem_hotplug_lock and device_lock().
-More details can be found in patch 3 and patch 6.
-
-I propose the general rules (documentation added in patch 6):
-
-1. add_memory/add_memory_resource() must only be called with
-   device_hotplug_lock.
-2. remove_memory() must only be called with device_hotplug_lock. This is
-   already documented and holds for all callers.
-3. device_online()/device_offline() must only be called with
-   device_hotplug_lock. This is already documented and true for now in core
-   code. Other callers (related to memory hotplug) have to be fixed up.
-4. mem_hotplug_lock is taken inside of add_memory/remove_memory/
-   online_pages/offline_pages.
-
-To me, this looks way cleaner than what we have right now (and easier to
-verify). And looking at the documentation of remove_memory, using
-lock_device_hotplug also for add_memory() feels natural.
-
-
-v1 -> v2:
-- Upstream changes in powerpc/powernv code required modifications to
-  patch #1, #4 and #5.
-- Minor patch description changes.
-- Added more locking details in patch #6.
-- Added rb's
-
-RFCv2 -> v1:
-- Dropped an unnecessary _ref from remove_memory() in patch #1
-- Minor patch description fixes.
-- Added rb's
-
-RFC -> RFCv2:
-- Don't export device_hotplug_lock, provide proper remove_memory/add_memory
-  wrappers.
-- Split up the patches a bit.
-- Try to improve powernv memtrace locking
-- Add some documentation for locking that matches my knowledge
-
-David Hildenbrand (6):
-  mm/memory_hotplug: make remove_memory() take the device_hotplug_lock
-  mm/memory_hotplug: make add_memory() take the device_hotplug_lock
-  mm/memory_hotplug: fix online/offline_pages called w.o.
-    mem_hotplug_lock
-  powerpc/powernv: hold device_hotplug_lock when calling device_online()
-  powerpc/powernv: hold device_hotplug_lock when calling
-    memtrace_offline_pages()
-  memory-hotplug.txt: Add some details about locking internals
-
- Documentation/memory-hotplug.txt              | 42 ++++++++++++-
- arch/powerpc/platforms/powernv/memtrace.c     |  8 ++-
- .../platforms/pseries/hotplug-memory.c        |  8 +--
- drivers/acpi/acpi_memhotplug.c                |  4 +-
- drivers/base/memory.c                         | 22 +++----
- drivers/xen/balloon.c                         |  3 +
- include/linux/memory_hotplug.h                |  4 +-
- mm/memory_hotplug.c                           | 59 +++++++++++++++----
- 8 files changed, 114 insertions(+), 36 deletions(-)
-
--- 
-2.17.1
-
+> Regards,
+> 
+> Boris
+> 
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+> 
