@@ -2,132 +2,90 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2691C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FFFC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8646320684
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFB6520684
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tyt90W4V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8646320684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="zqtpmUfI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB6520684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbeIZCLS (ORCPT
+        id S1726319AbeIZCLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:11:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36702 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbeIZCLS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:11:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:
-        Subject:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wJ3ghOv44Ze7hWxabIvIqFmvpibAuwCLhoXsjP9Zu7g=; b=Tyt90W4VNzdLqwlKFODC4Zxr8
-        MkgSAtZd6AduVB3GZ/rZNytIBk5GCfKsHBdd/rs8hq8fBOxINsToIATiwOh3mwe9FzVEzSDigvpjJ
-        kyIiqXOBYCYAe35edxb+Dzu67EYMpgsdg8KB3oPxGJuJOX5tCZdscNGi8lei1Lszkpke6MuVBpAxV
-        kzmpSQhy53m8oWQTuhRiiBD1Jh8gEyM/S0WUOFzF2RfIctPH5QWe7Fa0PAUTtJq+MCXcxM02YTiiH
-        ILVim/qCNwH74jqRGOIZW0n1VkjKwEhvCxaxZSrS4+ayL3t7UJBHFxKPBchPnpjLTL3vfVy0yB/NK
-        l088uIKHQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g4tWo-0000iv-M1; Tue, 25 Sep 2018 20:02:07 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v14 11/19] x86/sgx: Add wrappers for ENCLS leaf functions
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org
-Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-12-jarkko.sakkinen@linux.intel.com>
-Message-ID: <a2d77169-5c14-10f0-425f-41e37f791ece@infradead.org>
-Date:   Tue, 25 Sep 2018 13:01:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 22:11:41 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:35167 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbeIZCLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 22:11:41 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 1672d3b6;
+        Tue, 25 Sep 2018 19:43:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=PmEK7EcXRp29iDPblciKrkxZ3SA=; b=zqtpmU
+        fIaPYJbEFqwWgmMm5gB0/ZdaXgGBSTZQKuz7369mF3Gp2DJA4cq+yuSUw+pNVNTH
+        V8X8Czjo4zZFubo8RmRIVti5Gexe3Ty2yKW94lqyxyvemW9OZOQ5y8Dqv2tuVC1t
+        QNhpFkvlPkT4kRXMxxj3YQRDe63CpP9oM+3xI3rTF7nZ4YdMrXR0ZKJ1s1JAa+wB
+        Ti0L+kiMVaNQ9JaVgDVY4okBkNUfj7AjllDxYJ0M0dNmAKXQg32BOAqdpiGpAa9m
+        dEARBV1cjpq2dqywMznqx8gKfFvPostln1hFVOzg77thzXqyXS1fzltQebLUYCwY
+        q1L4ZO5E+TyWC4Bw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2f32156d (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Tue, 25 Sep 2018 19:43:58 +0000 (UTC)
+Received: by mail-ot1-f50.google.com with SMTP id j9-v6so25768232otl.2;
+        Tue, 25 Sep 2018 13:02:26 -0700 (PDT)
+X-Gm-Message-State: ABuFfohJT3tBPRj+v0bNbLuHj7rpIbvikYf+H7TkeA+9pz8ZYCFPXwV0
+        nR3nUTvDgvABBrDXClB3bEPaCQ/8wULvltKiWMk=
+X-Google-Smtp-Source: ACcGV60DdE3gYnAFjOt3X+7jYNxC4Cj/ZH9C2FLb0572npB2Dowt5Pf0S9CjJwvvKN2GaitTYxgejlaPpV+F5svmCAI=
+X-Received: by 2002:a9d:48a8:: with SMTP id d37-v6mr1974084otf.384.1537905745415;
+ Tue, 25 Sep 2018 13:02:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180925130845.9962-12-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-3-Jason@zx2c4.com>
+ <2b5f2df2f1278c118a913259a44efdf589719293.camel@perches.com>
+ <CAHmME9qLzFHPm2aaEKOmjBA95-c3CZuT+kQiuksLRRWQ_ad2sw@mail.gmail.com> <1BA7DB23-7BB6-46BA-A3E2-D65BC3CAF11C@amacapital.net>
+In-Reply-To: <1BA7DB23-7BB6-46BA-A3E2-D65BC3CAF11C@amacapital.net>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 25 Sep 2018 22:02:13 +0200
+X-Gmail-Original-Message-ID: <CAHmME9paEYXKS176MK4VM+wobc0KfNGz3yuQUQhaVNtFBv2oRg@mail.gmail.com>
+Message-ID: <CAHmME9paEYXKS176MK4VM+wobc0KfNGz3yuQUQhaVNtFBv2oRg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 02/23] zinc: introduce minimal cryptography library
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/18 6:06 AM, Jarkko Sakkinen wrote:
-> Add wrappers for Intel(R) SGX ENCLS opcode leaf functions except
-> ENCLS(EINIT). ENCLS invokes privileged functions for managing (creation,
-> initialization and swapping) and debugging enclaves.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/include/asm/sgx.h | 244 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 244 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index f4f82f0453a9..e66e2572011e 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -10,4 +10,248 @@
->  extern bool sgx_enabled;
->  extern bool sgx_lc_enabled;
->  
+On Tue, Sep 25, 2018 at 10:00 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> > On Sep 25, 2018, at 12:43 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> >> On Tue, Sep 25, 2018 at 8:33 PM Joe Perches <joe@perches.com> wrote:
+> >> I think the -Dpr_fmt is especially odd and not
+> >> really acceptable as it not used anywhere else
+> >> in the kernel.
+> >
+> > There are about 2000 cases in the kernel of the same '#define
+> > pr_fmt...' being pasted into the top of the file, which seems a bit
+> > cumbersome. Rather than having to paste that into each and every file
+> > that I pr_err from, why can't I just do this from the makefile, since
+> > I want that same pr_fmt to copy the whole directory?
+>
+> Because people like to be able to just read the C file to figure out what it does. Or we could adopt the Makefile approach kernel-wide, since this use of it seems reasonable.
 
-Hi,
-Please don't use "/**" to begin comment blocks that are not kernel-doc
-notation, like the 3 below.  Note: I might have seen one (or some) of
-these "fixed" in other patches in this series (not sure).
-
-
-> +/**
-> + * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
-> + *
-> + * ENCLS has its own (positive value) error codes and also generates
-> + * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
-> + * with system error codes as everything percolates back up the stack.
-> + * Unfortunately (for us), we need to precisely identify each unique
-> + * error code, e.g. the action taken if EWB fails varies based on the
-> + * type of fault and on the exact SGX error code, i.e. we can't simply
-> + * convert all faults to -EFAULT.
-> + *
-> + * To make all three error types coexist, we set bit 30 to identify an
-> + * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
-> + * between positive (faults and SGX error codes) and negative (system
-> + * error codes) values.
-> + */
-> +#define ENCLS_FAULT_FLAG 0x40000000
-> +
-> +/**
-> + * Check for a fault by looking for a postive value with the fault
-> + * flag set.  The postive value check is needed to filter out system
-> + * error codes since negative values will have all higher order bits
-> + * set, including ENCLS_FAULT_FLAG.
-> + */
-> +#define IS_ENCLS_FAULT(r) ((int)(r) > 0 && ((r) & ENCLS_FAULT_FLAG))
-> +
-> +/**
-> + * Retrieve the encoded trapnr from the specified return code.
-> + */
-> +#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
-
-thanks,
--- 
-~Randy
+It would indeed be nice to see this done tree-wide. I can recall
+various random bugs over the year where some dmesg messages are
+missing a prefix because the author forgot to copy and paste the thing
+to /yet another file/ in the same directory.
