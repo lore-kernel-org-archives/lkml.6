@@ -2,144 +2,314 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E871EC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C825C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D982206B5
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B476D214C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:42:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wq1FBMT3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D982206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=mvista-com.20150623.gappssmtp.com header.i=@mvista-com.20150623.gappssmtp.com header.b="GXfpphrl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B476D214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mvista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbeIYNq3 (ORCPT
+        id S1728795AbeIYNsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:46:29 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40045 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbeIYNq3 (ORCPT
+        Tue, 25 Sep 2018 09:48:30 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36965 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728382AbeIYNsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:46:29 -0400
-Received: by mail-it1-f194.google.com with SMTP id h23-v6so13989803ita.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 00:40:13 -0700 (PDT)
+        Tue, 25 Sep 2018 09:48:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x26-v6so582374pfn.4
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 00:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zkjPu8sqVqVlLQn3HHnoX4VB3fNmHWl+/O0NQYXKt7s=;
-        b=Wq1FBMT3PMs5fbM/J0OhPdOEHu5hLONYqafU9CU7IOD2bCDwjHFhc0U3JvNpACtlgL
-         OTopbEkiUZ3CHQ6M3pH4a9YfspKwqE+ZxlYV/ALUmeXji0Jfc3y3QQ48QCDCG+lHrSzE
-         8LTmwhQonFwnOSv4CEFyXzPoKmv2BFGGqlijW84MX3y9fBhginYPCbYjoWJPUCFoBAzz
-         XwdBf7usAJcbboLjAt9EHdfPobv98DwuU23ekKyGV3MSkRDrrv4vEZvp0sMuPxN1wZpk
-         b2TcJwhM9OpRnaD/U97G3d+d4Jr9/dT+L7d82bTsTHB6ZGUP/22Uqw1XPeEFKOBkqfhV
-         13sg==
+        d=mvista-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=+OGTAZbek8VfxbTvzVO0pcLCm8f83K5JNPnihjOjx7o=;
+        b=GXfpphrl1hqduxlcnRZpATxqHmB0zfWQFmVwIgmw4jtNg8lMYcV10DJ8eLcNhAGIRj
+         /v7eCj9w74s32//Va4ki0/plJ2oKI3xcU4hSe9q2y8/A8o0XYEaMk8wGMmK/UnskrUS9
+         XJKt19RTW4chVm9Ue0B/bNqOelEGBlyaf8L/cb0AorUgxAN2XkOBiYqTBK3RpQSobzlP
+         JnWJKnTJx5yxNOqIrCgWbnUUQwMLDcZurAcZxE2urYmWfkg+Ryg/FEEYHwYNAKw7OKIk
+         Mef0BKJca3u5RLiWUE6GvQ5KPMRoJLcwXFvMT8ebHIKVnrka+VJQNLq7qmni4B3g+b75
+         EbCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zkjPu8sqVqVlLQn3HHnoX4VB3fNmHWl+/O0NQYXKt7s=;
-        b=k/79exvfNcWyOBe4/UOlRVpr37aHn8JyPu2r/l5EB2TPT0V9iJPArd4Cl/8T87OiaC
-         zBm6bU3NfoJ05NTo8atNAWw2pSv89sIAn0m0m9lv1Mc7rZh2rJLK+iVpYBN72GWkgvTV
-         QRKAU1rwXLXYrgVEtRaXwera2plpWU3Z8vHyv19hnsZOF4fC51SZNEwryTLbmSW2Wf4q
-         GfP0jfZY+hIZGXKzilJu+Q1C5r0k5AuUZ/bSJsqIhi8189k/UbkiG+qk9ulXMvxgoox5
-         pfc2vA8d/WZ131ysNlIDJVs08mW2HE2eMdt4FBrfAP2T2GL73jAKT6sUvA//IOOA0aMm
-         8O1Q==
-X-Gm-Message-State: ABuFfogbWucC4IBSOqevZx+9eTa5vdGOhjypEBPCVfGHQBTsVWsoFf2E
-        red0PiSjtXYweD2mvEaB8dS+53JCGj5hzLlp74pC+g==
-X-Google-Smtp-Source: ACcGV60O9aQuEZTl5/5TokULzu8a8dZU/LwJOcL32n4gboyT6E7FW34x2aVDdMCpvDKCP6jOYmZlLp8eSgo/gdsHT8g=
-X-Received: by 2002:a24:c0c5:: with SMTP id u188-v6mr527094itf.57.1537861213087;
- Tue, 25 Sep 2018 00:40:13 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Tue, 25 Sep 2018 00:39:52
- -0700 (PDT)
-In-Reply-To: <20180924184158.GA156847@dtor-ws>
-References: <000000000000e5f76c057664e73d@google.com> <CAKdAkRS7PSXv65MTnvKOewqESxt0_FtKohd86ioOuYR3R0z9dw@mail.gmail.com>
- <CACT4Y+YOb6M=xuPG64PAvd=0bcteicGtwQO60CevN_V67SJ=MQ@mail.gmail.com>
- <010001660c1fafb2-6d0dc7e1-d898-4589-874c-1be1af94e22d-000000@email.amazonses.com>
- <CACT4Y+ayX8vzd2JPrLeFhf3K_Quf4x6SDtmtkNJuwNLyOh67tQ@mail.gmail.com>
- <010001660c4a8bbe-91200766-00df-48bd-bc60-a03da2ccdb7d-000000@email.amazonses.com>
- <20180924184158.GA156847@dtor-ws>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 25 Sep 2018 09:39:52 +0200
-Message-ID: <CACT4Y+ZPrngv8GTC-Cw68PBDxZ2T5x1kKMNXL3DmP24Xd0m_5g@mail.gmail.com>
-Subject: Re: WARNING: kmalloc bug in input_mt_init_slots
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Christopher Lameter <cl@linux.com>,
-        syzbot+87829a10073277282ad1@syzkaller.appspotmail.com,
-        Pekka Enberg <penberg@kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=+OGTAZbek8VfxbTvzVO0pcLCm8f83K5JNPnihjOjx7o=;
+        b=ljECOtg4jVK+hb04wLBIKCSZoqUBRK/ukVK1jTztcranJZ5cIOa/Qwe8ibCdIyoIZF
+         iC6+elymd3sGDkuZBrk1V2VKBFGRnEzKKPzsUVdGYbLi9ByQE5O/sMOnfmKrUXpknzx7
+         u+p/fVdeNG6jZ9KVbrdTIoXJBiFfjztuV/rrGnRJIam81qCDxJ7nUBJOMBi0t4rOxNde
+         wTiatFoLlzfZPNJtiGXqh8Y5YLQF21qQ3kdREFmHyfoErMXMI1a5aEwbEcFfi79dFuBP
+         n3PoXQRRbm/+vfizn4ZQYw5yz6auTUFF3ybztETND49jZ2iOQaaF++thmjHd87UUD37t
+         e0QQ==
+X-Gm-Message-State: ABuFfohL+IWFFKcyzEcTfEkxsnn+5qjQkESVRGaRB6/qgRhn9kiyap9h
+        WxOQU0CuFdO0GK1QjWsOb3N+dg==
+X-Google-Smtp-Source: ACcGV62M0JiYNPTBz8n7W0a1JkSb0+4YgO8Vq6h2Gl0yarPHBHj2hSpOIVLIIx1jyaKm/B9I1DUBPQ==
+X-Received: by 2002:a62:3ac8:: with SMTP id v69-v6mr2292469pfj.164.1537861334298;
+        Tue, 25 Sep 2018 00:42:14 -0700 (PDT)
+Received: from mercury.CELSYSJYN.IN ([182.72.92.62])
+        by smtp.gmail.com with ESMTPSA id u184-v6sm2337722pgd.27.2018.09.25.00.42.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Sep 2018 00:42:12 -0700 (PDT)
+From:   Silesh C V <svellattu@mvista.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Silesh C V <svellattu@mvista.com>
+Subject: [PATCH v2 2/2] treewide: use bus_find_device_by_fwnode
+Date:   Tue, 25 Sep 2018 13:11:28 +0530
+Message-Id: <1537861288-3293-1-git-send-email-svellattu@mvista.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <CALabi0E=hBjzxarFcvSTtod4x4=efM+HcHKR8J3-i-+K2ntH=w@mail.gmail.com>
+References: <CALabi0E=hBjzxarFcvSTtod4x4=efM+HcHKR8J3-i-+K2ntH=w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 8:41 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Mon, Sep 24, 2018 at 03:55:04PM +0000, Christopher Lameter wrote:
->> On Mon, 24 Sep 2018, Dmitry Vyukov wrote:
->>
->> > On Mon, Sep 24, 2018 at 5:08 PM, Christopher Lameter <cl@linux.com> wrote:
->> > > On Sun, 23 Sep 2018, Dmitry Vyukov wrote:
->> > >
->> > >> What was the motivation behind that WARNING about large allocations in
->> > >> kmalloc? Why do we want to know about them? Is the general policy that
->> > >> kmalloc calls with potentially large size requests need to use NOWARN?
->> > >> If this WARNING still considered useful? Or we should change it to
->> > >> pr_err?
->> > >
->> > > In general large allocs should be satisfied by the page allocator. The
->> > > slab allocators are used for allocating and managing small objects. The
->> > > page allocator has mechanisms to deal with large objects (compound pages,
->> > > multiple page sized allocs etc).
->> >
->> > I am asking more about the status of this warning. If it fires in
->> > input_mt_init_slots(), does it mean that input_mt_init_slots() needs
->> > to be fixed? If not, then we need to change this warning to something
->> > else.
->>
->> Hmmm.. kmalloc falls back to the page allocator already?
->>
->> See
->>
->> static __always_inline void *kmalloc(size_t size, gfp_t flags)
->> {
->>         if (__builtin_constant_p(size)) {
->
-> It would not be a constant here though.
->
->>                 if (size > KMALLOC_MAX_CACHE_SIZE)
->>                         return kmalloc_large(size, flags);
->>
->>
->> Note that this uses KMALLOC_MAX_CACHE_SIZE which should be smaller than
->> KMALLOC_MAX_SIZE.
->>
->>
->> How large is the allocation? AFACIT nRequests larger than KMALLOC_MAX_SIZE
->> are larger than the maximum allowed by the page allocator. Thus the warning
->> and the NULL return.
->
-> The size in this particular case is being derived from a value passed
-> from userspace. Input core does not care about any limits on size of
-> memory kmalloc() can support and is perfectly happy with getting NULL
-> and telling userspace to go away with their silly requests by returning
-> -ENOMEM.
->
-> For the record: I definitely do not want to pre-sanitize size neither in
-> uinput nor in input core.
+Use bus_find_device_by_fwnode helper to find the device having a
+specific firmware node on a bus.
 
-Christopher,
+Signed-off-by: Silesh C V <svellattu@mvista.com>
+---
+ drivers/hwtracing/coresight/of_coresight.c         | 14 ++++----------
+ drivers/i2c/i2c-core-of.c                          |  9 ++-------
+ drivers/infiniband/hw/hns/hns_roce_hw_v1.c         |  8 +-------
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c |  8 +-------
+ drivers/nvmem/core.c                               |  7 +------
+ drivers/of/of_mdio.c                               |  8 +-------
+ drivers/of/platform.c                              |  7 +------
+ drivers/spi/spi.c                                  | 10 +++-------
+ 8 files changed, 14 insertions(+), 57 deletions(-)
 
-Assuming that the size is large enough to fail in all allocators, is
-this warning still useful? How? Should we remove it?
+diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+index 6880bee..8193b50 100644
+--- a/drivers/hwtracing/coresight/of_coresight.c
++++ b/drivers/hwtracing/coresight/of_coresight.c
+@@ -17,12 +17,6 @@
+ #include <linux/cpumask.h>
+ #include <asm/smp_plat.h>
+ 
+-
+-static int of_dev_node_match(struct device *dev, void *data)
+-{
+-	return dev->of_node == data;
+-}
+-
+ static struct device *
+ of_coresight_get_endpoint_device(struct device_node *endpoint)
+ {
+@@ -32,8 +26,8 @@ static int of_dev_node_match(struct device *dev, void *data)
+ 	 * If we have a non-configurable replicator, it will be found on the
+ 	 * platform bus.
+ 	 */
+-	dev = bus_find_device(&platform_bus_type, NULL,
+-			      endpoint, of_dev_node_match);
++	dev = bus_find_device_by_fwnode(&platform_bus_type, NULL,
++					&endpoint->fwnode);
+ 	if (dev)
+ 		return dev;
+ 
+@@ -41,8 +35,8 @@ static int of_dev_node_match(struct device *dev, void *data)
+ 	 * We have a configurable component - circle through the AMBA bus
+ 	 * looking for the device that matches the endpoint node.
+ 	 */
+-	return bus_find_device(&amba_bustype, NULL,
+-			       endpoint, of_dev_node_match);
++	return bus_find_device_by_fwnode(&amba_bustype, NULL,
++					&endpoint->fwnode);
+ }
+ 
+ static void of_coresight_get_ports(const struct device_node *node,
+diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+index 6cb7ad6..2b8ef8d 100644
+--- a/drivers/i2c/i2c-core-of.c
++++ b/drivers/i2c/i2c-core-of.c
+@@ -116,18 +116,13 @@ void of_i2c_register_devices(struct i2c_adapter *adap)
+ 	of_node_put(bus);
+ }
+ 
+-static int of_dev_node_match(struct device *dev, void *data)
+-{
+-	return dev->of_node == data;
+-}
+-
+ /* must call put_device() when done with returned i2c_client device */
+ struct i2c_client *of_find_i2c_device_by_node(struct device_node *node)
+ {
+ 	struct device *dev;
+ 	struct i2c_client *client;
+ 
+-	dev = bus_find_device(&i2c_bus_type, NULL, node, of_dev_node_match);
++	dev = bus_find_device_by_fwnode(&i2c_bus_type, NULL, &node->fwnode);
+ 	if (!dev)
+ 		return NULL;
+ 
+@@ -145,7 +140,7 @@ struct i2c_adapter *of_find_i2c_adapter_by_node(struct device_node *node)
+ 	struct device *dev;
+ 	struct i2c_adapter *adapter;
+ 
+-	dev = bus_find_device(&i2c_bus_type, NULL, node, of_dev_node_match);
++	dev = bus_find_device_by_fwnode(&i2c_bus_type, NULL, &node->fwnode);
+ 	if (!dev)
+ 		return NULL;
+ 
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+index 081aa91..b0d418e 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+@@ -4832,19 +4832,13 @@ static void hns_roce_v1_cleanup_eq_table(struct hns_roce_dev *hr_dev)
+ };
+ MODULE_DEVICE_TABLE(acpi, hns_roce_acpi_match);
+ 
+-static int hns_roce_node_match(struct device *dev, void *fwnode)
+-{
+-	return dev->fwnode == fwnode;
+-}
+-
+ static struct
+ platform_device *hns_roce_find_pdev(struct fwnode_handle *fwnode)
+ {
+ 	struct device *dev;
+ 
+ 	/* get the 'device' corresponding to the matching 'fwnode' */
+-	dev = bus_find_device(&platform_bus_type, NULL,
+-			      fwnode, hns_roce_node_match);
++	dev = bus_find_device_by_fwnode(&platform_bus_type, NULL, fwnode);
+ 	/* get the platform device */
+ 	return dev ? to_platform_device(dev) : NULL;
+ }
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+index 16294cd..d5d7c88 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+@@ -758,17 +758,11 @@ struct dsaf_misc_op *hns_misc_op_get(struct dsaf_device *dsaf_dev)
+ 	return (void *)misc_op;
+ }
+ 
+-static int hns_dsaf_dev_match(struct device *dev, void *fwnode)
+-{
+-	return dev->fwnode == fwnode;
+-}
+-
+ struct
+ platform_device *hns_dsaf_find_platform_device(struct fwnode_handle *fwnode)
+ {
+ 	struct device *dev;
+ 
+-	dev = bus_find_device(&platform_bus_type, NULL,
+-			      fwnode, hns_dsaf_dev_match);
++	dev = bus_find_device_by_fwnode(&platform_bus_type, NULL, fwnode);
+ 	return dev ? to_platform_device(dev) : NULL;
+ }
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index aa16578..b62f236 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -262,11 +262,6 @@ static void nvmem_release(struct device *dev)
+ 	.name		= "nvmem",
+ };
+ 
+-static int of_nvmem_match(struct device *dev, void *nvmem_np)
+-{
+-	return dev->of_node == nvmem_np;
+-}
+-
+ static struct nvmem_device *of_nvmem_find(struct device_node *nvmem_np)
+ {
+ 	struct device *d;
+@@ -274,7 +269,7 @@ static struct nvmem_device *of_nvmem_find(struct device_node *nvmem_np)
+ 	if (!nvmem_np)
+ 		return NULL;
+ 
+-	d = bus_find_device(&nvmem_bus_type, NULL, nvmem_np, of_nvmem_match);
++	d = bus_find_device_by_fwnode(&nvmem_bus_type, NULL, &nvmem_np->fwnode);
+ 
+ 	if (!d)
+ 		return NULL;
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index e92391d..2906a6b 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -282,12 +282,6 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ }
+ EXPORT_SYMBOL(of_mdiobus_register);
+ 
+-/* Helper function for of_phy_find_device */
+-static int of_phy_match(struct device *dev, void *phy_np)
+-{
+-	return dev->of_node == phy_np;
+-}
+-
+ /**
+  * of_phy_find_device - Give a PHY node, find the phy_device
+  * @phy_np: Pointer to the phy's device tree node
+@@ -303,7 +297,7 @@ struct phy_device *of_phy_find_device(struct device_node *phy_np)
+ 	if (!phy_np)
+ 		return NULL;
+ 
+-	d = bus_find_device(&mdio_bus_type, NULL, phy_np, of_phy_match);
++	d = bus_find_device_by_fwnode(&mdio_bus_type, NULL, &phy_np->fwnode);
+ 	if (d) {
+ 		mdiodev = to_mdio_device(d);
+ 		if (mdiodev->flags & MDIO_DEVICE_FLAG_PHY)
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 6c59673..36dd58e 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -37,11 +37,6 @@
+ 	{} /* Empty terminated list */
+ };
+ 
+-static int of_dev_node_match(struct device *dev, void *data)
+-{
+-	return dev->of_node == data;
+-}
+-
+ /**
+  * of_find_device_by_node - Find the platform_device associated with a node
+  * @np: Pointer to device tree node
+@@ -55,7 +50,7 @@ struct platform_device *of_find_device_by_node(struct device_node *np)
+ {
+ 	struct device *dev;
+ 
+-	dev = bus_find_device(&platform_bus_type, NULL, np, of_dev_node_match);
++	dev = bus_find_device_by_fwnode(&platform_bus_type, NULL, &np->fwnode);
+ 	return dev ? to_platform_device(dev) : NULL;
+ }
+ EXPORT_SYMBOL(of_find_device_by_node);
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 9da0bc5..97128a5 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -3324,16 +3324,12 @@ int spi_write_then_read(struct spi_device *spi,
+ /*-------------------------------------------------------------------------*/
+ 
+ #if IS_ENABLED(CONFIG_OF_DYNAMIC)
+-static int __spi_of_device_match(struct device *dev, void *data)
+-{
+-	return dev->of_node == data;
+-}
+-
+ /* must call put_device() when done with returned spi_device device */
+ static struct spi_device *of_find_spi_device_by_node(struct device_node *node)
+ {
+-	struct device *dev = bus_find_device(&spi_bus_type, NULL, node,
+-						__spi_of_device_match);
++	struct device *dev = bus_find_device_by_fwnode(&spi_bus_type, NULL,
++							&node->fwnode);
++
+ 	return dev ? to_spi_device(dev) : NULL;
+ }
+ 
+-- 
+1.9.1
+
