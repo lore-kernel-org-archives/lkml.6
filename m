@@ -2,330 +2,229 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B06C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F322C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 431142098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:50:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431142098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D2B342098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:50:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X1lYZvg8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B342098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbeIYV6f (ORCPT
+        id S1729887AbeIYV6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:58:35 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:57537 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729544AbeIYV6e (ORCPT
+        Tue, 25 Sep 2018 17:58:39 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33258 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729798AbeIYV6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:58:34 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 57A7441579;
-        Tue, 25 Sep 2018 15:50:26 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9PfqhvOFxRhr; Tue, 25 Sep 2018 15:50:26 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id B211240DBD;
-        Tue, 25 Sep 2018 15:50:19 +0000 (UTC)
-Subject: Re: [PATCH] selftests: watchdog: Add gettimeout and get|set
- pretimeout
-To:     Jerry.Hoemann@hpe.com
-Cc:     erosca@de.adit-jv.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <1537570526-65241-1-git-send-email-jerry.hoemann@hpe.com>
- <0c6376ec-a3f4-7798-8f30-829480c41f79@kernel.org>
- <20180924014750.GA22296@anatevka.americas.hpqcorp.net>
- <1c4e6b40-dc4e-5706-0a31-1741ba19ca09@kernel.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <f8616e56-004a-e296-0f84-8ebd019ad027@kernel.org>
-Date:   Tue, 25 Sep 2018 09:50:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 25 Sep 2018 17:58:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=flqvc7IzXhz+r6tiFf3j08EwNm3GfzNc1ocWUqpnRkk=; b=X1lYZvg8u5epHhe4o76Vb0OSz
+        Det+aMKwipTe0Bzzo9L903WuT2n4TVyh759uWP+5WQK5fLFLJoKIy/24AIF4hbutpyA478FezzBUy
+        bLwaJwfP1p+3bB0/8Y8LnnqpE/39MqdazTeEp9mSn/dVUwnUDRJ8fokavtWLPa39DrLsRvVGbGwVX
+        /9PKOVpd3qqgMn3HQyaKg9jnj1zQYrjop1UFj9dxGBzMLUuP26DEtiqkcLanP8cVChYsfNze1F1eF
+        TH+y8p0mNsbOlNpju7tsA5O9q80aAXRgIn5SHopX6kFcnd5OMVKJWNc48Xf2gDXsOhsLNfp4vzAci
+        UCXOFaudg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4pb5-0002P9-VN; Tue, 25 Sep 2018 15:50:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7BDC020289D12; Tue, 25 Sep 2018 17:49:56 +0200 (CEST)
+Date:   Tue, 25 Sep 2018 17:49:56 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
+ default
+Message-ID: <20180925154956.GA30146@hirez.programming.kicks-ass.net>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-15-patrick.bellasi@arm.com>
+ <20180904134748.GA4974@localhost.localdomain>
+ <20180906144053.GD25636@e110439-lin>
+ <20180914111003.GC24082@hirez.programming.kicks-ass.net>
+ <20180914140732.GR1413@e110439-lin>
+ <20180914142813.GM24124@hirez.programming.kicks-ass.net>
+ <20180917122723.GS1413@e110439-lin>
+ <20180921091308.GD24082@hirez.programming.kicks-ass.net>
+ <20180924151400.GT1413@e110439-lin>
 MIME-Version: 1.0
-In-Reply-To: <1c4e6b40-dc4e-5706-0a31-1741ba19ca09@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924151400.GT1413@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 02:42 PM, Shuah Khan wrote:
-> On 09/23/2018 07:47 PM, Jerry Hoemann wrote:
->> On Fri, Sep 21, 2018 at 05:42:00PM -0600, Shuah Khan wrote:
->>> Hi Jerry,
->>>
->>> Thanks for the patch. A few comments below:
->>
->>   Replies inline.
->>
->>>
->>> On 09/21/2018 04:55 PM, Jerry Hoemann wrote:
->>>> Add command line arguments to call ioctl WDIOC_GETTIMEOUT,
->>>> WDIOC_GETPRETIMEOUT and WDIOC_SETPRETIMEOUT.
->>>>
->>>> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
->>>> ---
->>>>  tools/testing/selftests/watchdog/watchdog-test.c | 30 +++++++++++++++++++++++-
->>>>  1 file changed, 29 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
->>>> index 6e29087..4861e2c 100644
->>>> --- a/tools/testing/selftests/watchdog/watchdog-test.c
->>>> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
->>>> @@ -19,7 +19,7 @@
->>>>  
->>>>  int fd;
->>>>  const char v = 'V';
->>>> -static const char sopts[] = "bdehp:t:";
->>>> +static const char sopts[] = "bdehp:t:Tn:N";
->>>>  static const struct option lopts[] = {
->>>>  	{"bootstatus",          no_argument, NULL, 'b'},
->>>>  	{"disable",             no_argument, NULL, 'd'},
->>>> @@ -27,6 +27,9 @@
->>>>  	{"help",                no_argument, NULL, 'h'},
->>>>  	{"pingrate",      required_argument, NULL, 'p'},
->>>>  	{"timeout",       required_argument, NULL, 't'},
->>>> +	{"gettimeout",          no_argument, NULL, 'T'},
->>>> +	{"pretimeout",    required_argument, NULL, 'n'},
->>>> +	{"getpretimeout",       no_argument, NULL, 'N'},
->>>>  	{NULL,                  no_argument, NULL, 0x0}
->>>>  };
->>>>  
->>>> @@ -71,6 +74,9 @@ static void usage(char *progname)
->>>>  	printf(" -h, --help          Print the help message\n");
->>>>  	printf(" -p, --pingrate=P    Set ping rate to P seconds (default %d)\n", DEFAULT_PING_RATE);
->>>>  	printf(" -t, --timeout=T     Set timeout to T seconds\n");
->>>> +	printf(" -T, --gettimeout    Get the timeout\n");
->>>> +	printf(" -n, --pretimeout    Set the pretimeout to T seconds\n");
->>>> +	printf(" -N, --getpretimeout Get the pretimeout\n");
->>>
->>> How are the new arguments used?
->>
->> I forgot the param.  Should be:
->>
->>     +	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
->>
->>
->> I'll update in v2.
-> 
-> Okay.
-> 
->>
->> Is this what you mean?  Or did I misunderstand?
->>>
->>>
->>>>  	printf("\n");
->>>>  	printf("Parameters are parsed left-to-right in real-time.\n");
->>>>  	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
->>>
->>> Please add an example usage for each of these new arguments.
->>
->> Will do.
-> 
-> okay.
-> 
->>
->>>
->>>> @@ -135,6 +141,28 @@ int main(int argc, char *argv[])
->>>>  			else
->>>>  				printf("WDIOC_SETTIMEOUT errno '%s'\n", strerror(errno));
->>>>  			break;
->>>> +		case 'T':
->>>> +			ret = ioctl(fd, WDIOC_GETTIMEOUT, &flags);
->>>> +			if (!ret)
->>>> +				printf("Watchdog timeout set to %u seconds.\n", flags);
->>>
->>> It would good to make this message different from the WDIOC_SETTIMEOUT message.
->>> Please update it to reflect that this is the result of a WDIOC_GETTIMEOUT.
->>
->> Will update message to make distinct.
->>
->>>
->>> What would user intend to do with this GETTIMEOUT? Shouldn't this be the case that it
->>> prints the current value and exits instead of the same logic as SETTIMEOUT option?
->>
->> Are you suggesting setting the "oneshot" flag so the test app doesn't actually
->> go into the while(1) keep_alive loop?
->>
->> Watchdog drivers may adjust the requested value to match hardware constraints.
->> Callers of set timeout (and set pretimeout) should call get timeout to see what
->> value was actually set.
->>
->> B/c of above, I just got into the habit of specifying both flags: first set,
->> then get to make sure value set was what I intended.
->>
->> But I can make the "Get" a one shot.  Just let me know if this is your preference.
-> 
-> I prefer that both GETs be oneshot. GETs should just print the current value and go
-> follow oneshot path. It doesn't make sense for them to do more.
->>
->>
->>>
->>>> +			else
->>>> +				printf("WDIOC_GETTIMEOUT errno '%s'\n", strerror(errno))
->>>
->>> Shouldn't this error be an exit condition?
->>
->> Hmmm, I don't see this error path much different than the error path for the
->> other failing ioctl.  Am I missing something?
-> 
-> Yeah that is what I don't understand with the new code as well as the existing.
-> Shouldn't error path be handled differently. What is the point in doing more
-> other than gracefully exit closing the file? I don't think existing error paths
-> are doing this, probably they should.
->>
->>
->> But, If we make the "GET" a one shot, then we wouldn't really need to
->> special case the failure case as we wouldn't go into the keep_alive
->> loop in either case.
->>
->>
-> 
-> Right.
-> 
->>
->>>
->>>> +			break;
->>>> +		case 'n':
->>>> +			flags = strtoul(optarg, NULL, 0);
->>>> +			ret = ioctl(fd, WDIOC_SETPRETIMEOUT, &flags);
->>>> +			if (!ret)
->>>> +				printf("Watchdog pretimeout set to %u seconds.\n", flags);
->>>> +			else
->>>> +				printf("WDIOC_SETPRETIMEOUT errno '%s'\n", strerror(errno));
->>>> +			break;
->>>> +		case 'N':
->>>> +			ret = ioctl(fd, WDIOC_GETPRETIMEOUT, &flags);
->>>> +			if (!ret)
->>>> +				printf("Watchdog pretimeout set to %u seconds.\n", flags);
->>>
->>> It would good to make this message different from the WDIOC_GETPRETIMEOUT message.
->>> Please update it to reflect that this is the result of a WDIOC_GETPRETIMEOUT
->>
->> will do.
->>
-> 
-> Okay.
-> 
->>>
->>> What would user intend to do with this GETTIMEOUT? Shouldn't this be the case that it
->>> prints the current value and exits instead of the same logic as WDIOC_SETPRETIMEOUT?
->>
->> I think you're just asking me to set the "oneshot" flag on this,
->> which I can certainly do.
-> 
-> Correct. For couple of reasons. GET/SET_PRETIMEOUG might not be supported on all
-> platforms/drivers. It would make sense to handle error paths correctly.
-> 
->>
->> But, some background on pretimeout that (I think) is interesting:
->>
->> The underling HW for the watchdog on proliants allows for the pre-timeout to
->> be enabled or disabled.  But if the pretimeout is enabled, the value of
->> the pretimeout is hard coded by HW (9 seconds.)
->>
->> The hpwdt driver allows for setting pretimeout by passing in a value
->> 	0 < pretimeout < timeout
->> to enable a pretimeout.  The user then needs to call get pretimeout to
->> determine the actual value.
->>
->> Failure to take into account the pretimeout when pinging the WD can lead to
->> unexpected system crashes.
->>
->> I've handled the following issue multiple times:
->>
->> A user wants to set the timeout to value T and ping the WD every T/2 seconds.
->> He fails to take into account the pretimeout value of P.  The system crashes
->> with the pretimeout NMI when (T/2) < P.
->>
->> The basic misunderstanding is that to prevent the WD from acting, the WD
->> only needs to be pinged at least once every T seconds, when in actuality the
->> WD needs to be pinged at least once every (T-P) seconds.
->>
->> Specifically for Proliants, I've seen people set the timeout to 10 seconds
->> thinking they had plenty of time to ping the WD only to be surprised when
->> the pretimeout NMI takes the system down 1 second later.
-> 
-> In this case, this patch really doesn't solve the problem. You will still run
-> into this problem if user does a set. You are providing a way to check pretimeout,
-> however that is a separate operation. So I am not clear on how this patch solves
-> the issue of pretimeout NMI takes the system down.
-> 
->>
->> Note: a WD doesn't need to support the pretimeout feature.
-> 
-> It isn't clear what this means?
-> 
->>
->>>
->>>> +			else
->>>> +				printf("WDIOC_GETPRETIMEOUT errno '%s'\n", strerror(errno));
->>>
->>> Shouldn't this error be an exit condition?
->>
->> Similar to above.  I can make GETPRETIMEOUT a "oneshot" to handle both the
->> success/failing case of the ioctl call.
->>
->>>
->>>> +			break;
->>>>  		default:
->>>>  			usage(argv[0]);
->>>>  			goto end;
->>>>
->>>
->>> Also can you run this test as normal user?
->>
->> No.  Must be run as root to open /dev/watchdog.  When /dev/watchdog is opened, the
->> WD is started and if not updated properly, the system will crash.
-> 
-> Hmm. I don't understand why the system would panic if non-root user can't open the
-> device, at least in the context of this test. 
-> 
->         fd = open("/dev/watchdog", O_WRONLY);
-> 
->         if (fd == -1) {
->                 printf("Watchdog device not enabled.\n");
->                 exit(-1);
->         }
-> 
-> 
-> Shouldn't it just exit based on the code above?
-> 
->>
-> 
->> "cat /dev/watchdog" is one of my favorite ways to crash a system.  :)  :)
-> 
-> That doesn't sound great, if a non-root user can bring the system down!!
->  
+On Mon, Sep 24, 2018 at 04:14:00PM +0100, Patrick Bellasi wrote:
 
-This got me concerned enough that I tried this with softdog. It behaved just
-the way I expected it.
+> > So why bother changing it around?
+> 
+> For two main reasons:
+> 
+> 1) to expose userspace a more generic interface:
+>    a "performance percentage" is more generic then a "capacity value"
+>    while keep translating and using a 1024 based value in kernel space
 
-cat /dev/watchdog
-cat: /dev/watchdog: Permission denied
+The unit doesn't make it more or less generic. It's the exact same thing
+in the end.
 
-Running the test as non-root does the following as per the current logic.
+> 2) to reduce the configuration space:
+>    it quite likely doesn't make sense to use, in the same system, 100
+>    difference clamp values... it makes even more sense to use 1024
+>    different clamp values, does it ?
 
-watchdog-test -b
-Watchdog device not enabled.
+I'd tend to agree with you that 1024 is probably too big a
+configureation space, OTOH I also don't want to end up with a "640KB is
+enough for everybody" situation.
 
-I think this logic could be improved to detect that a non-root user is running
-the test and print appropriate message.
+And 100 really isn't that much better either way around.
 
-However, I am not seeing the behavior you are describing that "cat /dev/watchdog"
-panics the syste. Did you mean running a root which is expected unless you terminate
-before the timeout? If you are seeing this as non-root user on you system, the
-watchdog driver could be suspect.
+> > The thing I worry about is how do we determine the value to put in in
+> > the first place.
+> 
+> I agree that's the main problem, but I also think that's outside of
+> the kernel-space mechanism.
+> 
+> Is not all that quite similar to DEADLINE tasks configuration?
 
-thanks,
--- Shuah
+Well, with DL there are well defined rules for what to put in and what
+to then expect.
 
+For this thing, not so much I feel.
+
+> Given a DL task solving a certain issue, you can certainly define its
+> deadline (or period) on a completely platform independent way, by just
+> looking at the problem space. But when it comes to the run-time, we
+> always have to profile the task in a platform specific way.
+> 
+> In the DL case from user-space we figure out a bandwidth requirement.
+
+Most likely, although you can compute in a number of cases. But yes, it
+is always platform specific.
+
+> In the clamping case, it's still the user-space that needs to figure
+> our an optimal clamp value, while considering your performance and
+> energy efficiency goals. This can be based on an automated profiling
+> process which comes up with "optimal" clamp values.
+> 
+> In the DL case, we are perfectly fine to have a running time
+> parameter, although we don't give any precise and deterministic
+> formula to quantify it. It's up to user-space to figure out the
+> required running time for a given app and platform.
+> It's also not unrealistic the case you need to close a control loop
+> with user-space to keep updating this requirement.
+> 
+> Why the same cannot hold for clamp values ?
+
+The big difference is that if I request (and am granted) a runtime quota
+of a given amount, then that is what I'm guaranteed to get.
+
+Irrespective of the amount being sufficient for the work in question --
+which is where the platform dependency comes in.
+
+But what am I getting when I set a specific clamp value? What does it
+mean to set the value to 80%
+
+So far the only real meaning is when combined with the EAS OPP data, we
+get a direct translation to OPPs. Irrespective of how the utilization is
+measured and the capacity:OPP mapping established, once that's set, we
+can map a clamp value to an OPP and get meaning.
+
+But without that, it doesn't mean anything much at all. And that is my
+complaint. It seems to get presented as: 'random knob that might do
+something'. The range it takes as input doesn't change a thing.
+
+> > How are expecting people to determine what to put into the interface?
+> > Knee points, little capacity, those things make 'obvious' sense.
+> 
+> IMHO, they make "obvious" sense from a kernel-space perspective
+> exactly because they are implementation details and platform specific
+> concepts.
+> 
+> At the same time, I struggle to provide a definition of knee point and
+> I struggle to find a use-case where I can certainly say that a task
+> should be clamped exactly to the little capacity for example.
+> 
+> I'm more of the idea that the right clamp value is something a bit
+> fuzzy and possibly subject to change over time depending on the
+> specific application phase (e.g. cpu-vs-memory bounded) and/or
+> optimization goals (e.g. performance vs energy efficiency).
+> 
+> Here we are thus at defining and agree about a "generic and abstract"
+> interface which allows user-space to feed input to kernel-space.
+> To this purpose, I think platform specific details and/or internal
+> implementation details are not "a bonus".
+
+But unlike DL, which has well specified behaviour, and when I know my
+platform I can compute a usable value. This doesn't seem to gain meaning
+when I know the platform.
+
+Or does it? If you say yes, then we need to be able to correlate to the
+platform data that gives it meaning; which would be the OPP states. And
+those come with capacity numbers.
+
+> > > > But changing the clamp metric to something different than these values
+> > > > is going to be pain.
+> > > 
+> > > Maybe I don't completely get what you mean here... are you saying that
+> > > not using exact capacity values to defined clamps is difficult ?
+> > > If that's the case why? Can you elaborate with an example ?
+> > 
+> > I meant changing the unit around, 1/1024 is what we use throughout and
+> > is what EAS is also exposing IIRC, so why make things complicated again
+> > and use 1/100 (which is a shit fraction for computers).
+> 
+> Internally, in kernel space, we use 1024 units. It's just the
+> user-space interface that speaks percentages but, as soon as a
+> percentage value is used to configure a clamp, it's translated into a
+> [0..1024] range value.
+> 
+> Is this not an acceptable compromise? We have a generic user-space
+> interface and an effective/consistent kernel-space implementation.
+
+I really don't see how changing the unit changes anything. Either you
+want to relate to OPPs and those are exposed in 1/1024 unit capacity
+through the EAS files, or you don't and then the knob has no meaning.
+
+And how the heck are we supposed to assign a value for something that
+has no meaning.
+
+Again, with DL we ask for time, once I know the platform I can convert
+my work into instructions and time and all makes sense.
+
+With this, you seem reluctant to allow us to close that loop. Why is
+that? Why not directly relate to the EAS OPPs, because that is directly
+what they end up mapping to.
+
+When I know the platform, I can convert my work into instructions and
+obtain time, I can convert my clamp into an OPP and time*OPP gives an
+energy consumption.
+
+Why muddle things up and make it complicated?
