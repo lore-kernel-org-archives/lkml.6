@@ -2,103 +2,135 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F123CC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E38D9C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0A0120842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A0120842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 90F09214C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTiAfD3v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F09214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeIYXht (ORCPT
+        id S1727750AbeIYXiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:37:49 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42755 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbeIYXhs (ORCPT
+        Tue, 25 Sep 2018 19:38:05 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46159 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeIYXiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:37:48 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so12051309pgp.9;
-        Tue, 25 Sep 2018 10:29:18 -0700 (PDT)
+        Tue, 25 Sep 2018 19:38:05 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 203-v6so22523534ljj.13;
+        Tue, 25 Sep 2018 10:29:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Hi8rboMsFW4X2aKavM9k6laW/LPgjUmhL8jmgpoVVi0=;
+        b=hTiAfD3vyVv/8OaB69EruPD48LcmHADDYYi4r/8Z8Sp9ODSjNpwjomolsq0c54i/da
+         hvcxH3+wuWLlmBCje1pInCOMiaHd/GN3y/QGMl/udtfzY+fcKnzS0C014N8iskBAWFJL
+         9mJv9eDGZw5wmjgedxo378/1tg6WYXVFkcGJ51odUf04hNLyMh81aPMPjQS/iBn+Woaa
+         kv9WIlDRCRoRYOetrjTz+c+SU7FcP1YIjByGGtgc96KW2nm7UcHZwuZvE7iOy/8MXKUQ
+         HUbNWdc++iGemEfylexo1Ncv7tsqOOR73gS+I9E1Dz7CyJ/mZScEHf0pvpNBa7Z2/dJS
+         CcIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aU8Y/8mDcaCk6uRU0aOMBAJ7SSRSxdGenG/C818kHl4=;
-        b=E/gksXwP97NzsNgMPFBdSsGJnUanVG8Izg7J0ZCOMRsGqvSjnczdNRukxmcX5wNGRu
-         AupMww9m8IjqaOKP3oNEely8uRNHD/GSvDCVuI3o6T9oevqq+7LdteyUoCBdRPeywgyM
-         f4UfL90XK8Bv0xmzGLO7SR05UZwl+z8tJFbJ/F6qjNM3r4lvK8t9YrnYrgQDKl4dX5JD
-         IqpGuJpMdbtfBeZvQjQ4Nbw5p+i3736voazpbEXTeriIb7P1GMIv6+HfyCv7/KGETYSX
-         ueq3d3/tB5A57RJDNLTND+d5It2676nR9doezMnrIlBXXnBGbMh3S/kZ09R/mIpcazTJ
-         nbDA==
-X-Gm-Message-State: ABuFfohkQZXDgkfAkc65Di/cG74F+tsTwywWsLXdGxUPKMuf5v37mGNS
-        JHaEE14qXxe9D/oJt/xTsJg=
-X-Google-Smtp-Source: ACcGV62BL4T1QFEJbGQ/tica4x+V2G6iRkFyRxPiamzoVd8rITZD4XFmVhO/3TPdYZouZbCtnfEwLQ==
-X-Received: by 2002:a62:1655:: with SMTP id 82-v6mr2152095pfw.11.1537896557509;
-        Tue, 25 Sep 2018 10:29:17 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id h124-v6sm4988061pfg.112.2018.09.25.10.29.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 10:29:16 -0700 (PDT)
-Message-ID: <1537896555.11137.22.camel@acm.org>
-Subject: Re: [PATCH v7 02/13] PCI/P2PDMA: Add sysfs group to display p2pmem
- stats
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-Date:   Tue, 25 Sep 2018 10:29:15 -0700
-In-Reply-To: <20180925162231.4354-3-logang@deltatee.com>
-References: <20180925162231.4354-1-logang@deltatee.com>
-         <20180925162231.4354-3-logang@deltatee.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Hi8rboMsFW4X2aKavM9k6laW/LPgjUmhL8jmgpoVVi0=;
+        b=MYdnikTdKE77btQLWkWcWWn4HUdRRUlnwEotVYwbw1CiEFiEpmnE9NDWN6X5OyPQoG
+         n8i+/cVRqwzmYoIWvDfHKBlvEYqJVV8x4FnUPrQ2zuNLk5sfFT06pPoaBpHO4cCWCKpI
+         xeD+Vcn0FE5lk2oKaL7D7AHkGY2p0GrM+7/E4uixX3u6COwfEOVIzFSN/aop3XCj/kra
+         LHkIu0dqbckwneNN0xhuWfRU5SNZnZd+iMxs691jQw52E7oScWhupu7Th0/ZGKH5KMEd
+         VD2RNSE4d0awoElVcNDgIHAejNppPw4dmlFOFWcpVb/swFJ8Ll8DudIqC75n5b/SVJxX
+         J5Cw==
+X-Gm-Message-State: ABuFfogLM4kOtHG3BFDP9d2TkN9PAOojaBbwhrl/eB0CnZ5cFHbs6BFF
+        wksqobK1O11wSrWObAVIK8l4BryK
+X-Google-Smtp-Source: ACcGV62eRraj7oUz5GHRx/az0CHy2Eabcvom3M7dq+MasRXKlQaalbpRvxONgLxpacVxyp6/54eWGw==
+X-Received: by 2002:a2e:9a93:: with SMTP id p19-v6mr1625163lji.87.1537896571964;
+        Tue, 25 Sep 2018 10:29:31 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id x1-v6sm517639ljj.56.2018.09.25.10.29.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 10:29:31 -0700 (PDT)
+Subject: Re: [PATCH v1 1/5] dt-bindings: cpufreq: Add binding for NVIDIA
+ Tegra20/30
+To:     Rob Herring <robh@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830194356.14059-1-digetx@gmail.com>
+ <20180830194356.14059-2-digetx@gmail.com> <20180925165810.GA32430@bogus>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <074a169d-294b-ad4b-ddbd-6db742278f2a@gmail.com>
+Date:   Tue, 25 Sep 2018 20:29:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180925165810.GA32430@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-25 at 10:22 -0600, Logan Gunthorpe wrote:
-+AD4 +AEAAQA -83,9 +-132,14 +AEAAQA static int pci+AF8-p2pdma+AF8-setup(struct pci+AF8-dev +ACo-pdev)
-+AD4  
-+AD4  	pdev-+AD4-p2pdma +AD0 p2p+ADs
-+AD4  
-+AD4 +-	error +AD0 sysfs+AF8-create+AF8-group(+ACY-pdev-+AD4-dev.kobj, +ACY-p2pmem+AF8-group)+ADs
-+AD4 +-	if (error)
-+AD4 +-		goto out+AF8-pool+AF8-destroy+ADs
-+AD4 +-
-+AD4  	return 0+ADs
-+AD4  
-+AD4  out+AF8-pool+AF8-destroy:
-+AD4 +-	pdev-+AD4-p2pdma +AD0 NULL+ADs
-+AD4  	gen+AF8-pool+AF8-destroy(p2p-+AD4-pool)+ADs
-+AD4  out:
-+AD4  	devm+AF8-kfree(+ACY-pdev-+AD4-dev, p2p)+ADs
+On 9/25/18 7:58 PM, Rob Herring wrote:
+> On Thu, Aug 30, 2018 at 10:43:52PM +0300, Dmitry Osipenko wrote:
+>> Add device-tree binding that describes CPU frequency-scaling hardware
+>> found on NVIDIA Tegra20/30 SoC's.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 38 +++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> new file mode 100644
+>> index 000000000000..2c51f676e958
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>> @@ -0,0 +1,38 @@
+>> +Binding for NVIDIA Tegra20 CPUFreq
+>> +==================================
+>> +
+>> +Required properties:
+>> +- clocks: Must contain an entry for each entry in clock-names.
+>> +  See ../clocks/clock-bindings.txt for details.
+>> +- clock-names: Must include the following entries:
+>> +  - pll_x: main-parent for CPU clock, must be the first entry
+>> +  - backup: intermediate-parent for CPU clock
+>> +  - cpu: the CPU clock
+> 
+> The Cortex A9 has CLK, PERIPHCLK, and PERIPHCLKEN clocks and only CLK 
+> is used for the cpu core. You can't just define your own clocks that 
+> you happen to want access to.
+> 
+> Otherwise, you're not defining anything new here, so a binding document 
+> isn't required.
 
-This doesn't look right to me. Shouldn't devm+AF8-remove+AF8-action() be called instead
-of devm+AF8-kfree() if sysfs+AF8-create+AF8-group() fails?
+PERIPHCLK is a different thing. Here we are defining the CPU clock and
+its *parent* sources, the PLLX (main) and backup (intermediate clock
+that is used while PLLX changes its rate). These are not some random
+clocks "that you happen to want access to", they are essential for the
+Tegra CPUFreq driver, CPU is running off them.
 
-Thanks,
+I assume that PERIPHCLK and other clocks are derived from the "CPU"
+clock and their configuration is hardwired. Probably Peter knows how
+it's implemented in HW.
 
-Bart.
-
+I'm now working on v2 that will include more Tegra-specific stuff in the
+binding, like custom "opp-supported-hw" property and probably some more.
