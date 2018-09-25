@@ -2,110 +2,113 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E227C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F7FC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21E020833
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7D2220833
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:47:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ok9w7NUc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21E020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6ruaWAV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D2220833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbeIZC4L (ORCPT
+        id S1726578AbeIZC4s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:56:11 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43403 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeIZC4L (ORCPT
+        Tue, 25 Sep 2018 22:56:48 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38572 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbeIZC4s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:56:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id q19-v6so11548438pgn.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:46:49 -0700 (PDT)
+        Tue, 25 Sep 2018 22:56:48 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x17-v6so12025720pfh.5;
+        Tue, 25 Sep 2018 13:47:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=fVcoobDrh4j8s4N20wDROGgmsRaRFegmQx2BcHth9Sc=;
-        b=Ok9w7NUcFD26d7xuJ3Im0NK7jNmAgXK2RrvE9GYami49kHg9D1ineXQ1P6YCCo8rji
-         +AE7V8aGzXTAreu7nOWB4dK7sbcXKSDhSbpxCrLf69eiWoGqXQSvnSvg7b01p0sTSS15
-         UggcqMNYnTrlbHB1hpLxCUPJuJhImvDangsnYm/XmMyzcFtSbzy5QuUAsEyZVgk6Xjcc
-         8RLZWwitwDZMmYgnBSLCCqwi5vD1gxRe7wlkLGF4z32HgD7XefjqR4QIiD9/Zux2ZKWv
-         s5AVyz0UNsMfWzCbtsnCkAEaPeWIEGqzpvPJdSDoSLbyUuy73sXeXanqOTgu88u3Lehq
-         qmbA==
+        bh=8wZByR3KLEEIbnrxzyabBDduheQV9A/l/xl2mQAj2V8=;
+        b=a6ruaWAVdtQxrbp539Cv90YvGYyvj4ps594qYldgoEJu0R3bAX7NsurG83oNSHLjno
+         jkz+WYdsDUJew2RCEjGlEiFyXuPdtAuDIYMg8BDlM3R2wrOy3NcdYF020DE98c5jW6h3
+         9d7PJDMSNxOJv6Gc+RiElAnjhdnRezRvDu5CMPxK5x8nQKvcgoPi3sTSvWvDKBo+AmFR
+         g2lKBOf+O5God1sU98b344vy8uO2tHqm8mlPJlqm3JgCLoSuG+TTmi60wBGS+tp14YBN
+         FU/+pUeI6dgOFIJG1ZEKMd4/a9x6Jv2lalbWtQpumbILgqdJ3SEq/KiR+tW21J4AdRC/
+         1xsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fVcoobDrh4j8s4N20wDROGgmsRaRFegmQx2BcHth9Sc=;
-        b=lTC7CQXHA2s9Y6f8JMfAbK62ydKfyVIIt7nWWkWegEpf/5C1Nwx5MfhW6XwSJ+SCwH
-         dpNyFYrt2+wi7U7LTp1M8pRZvxYtuHr0QX+sGJERs9dsEkldlDY8DYi70dY9BO34d+Ht
-         t+YyZejKRGBugPl1kItnQ6KrvHxH407O0oYhFzuKXLqxW1+R5MNMJiJlaOC4Ap8V/Zfj
-         ThhPuQaVHiaiqsd7UAvmbHHKGhprAkOOXr8ny87TjBX8MdR+rFcmPDQ0JkW/H0RzKsmM
-         1KC9YHJ5qRLv7I0LKeTV9BgIUAPlA7RfiVSOh0WO38aQUY49G8e0efksuQHaHflEl4KC
-         kPAQ==
-X-Gm-Message-State: ABuFfojWieOXEo8C95WgIapo2rS9Le94CfRP/Lke+ovHZvj6m4aYdOMv
-        opgwBougF79V2Jgsl6rtqmkrsA==
-X-Google-Smtp-Source: ACcGV62gvpr/0Q0dQ36LdZKSaC1sl/juiIv5vIdy4iBY3S7P9F2CErov+9J3gXOcaDsxxTS7pvNAZg==
-X-Received: by 2002:a63:a54f:: with SMTP id r15-v6mr2583492pgu.336.1537908408726;
-        Tue, 25 Sep 2018 13:46:48 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id w13-v6sm3571761pgs.89.2018.09.25.13.46.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 13:46:48 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g4uEJ-0006KF-JN; Tue, 25 Sep 2018 14:46:47 -0600
-Date:   Tue, 25 Sep 2018 14:46:47 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] iw_cxgb4: Use proper enumerated type in c4iw_bar2_addrs
-Message-ID: <20180925204647.GB24279@ziepe.ca>
-References: <20180924192903.16796-1-natechancellor@gmail.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8wZByR3KLEEIbnrxzyabBDduheQV9A/l/xl2mQAj2V8=;
+        b=njzyjMjL6OtDSvyGUciZa8TU2FZxgeI6G8i69nRNwrcFzERDtigs+fR+QBjoxmCc8f
+         y5tSDHctYMKXT4ipGarFRvK+T7+H/FnfqV7dtuULY6Vk62En07p1aQ/cdO89kilpomMB
+         qWlfUbN0bgGBQ1iaROkKuk3U22hgNSlv4aFyxpM3rZ6aj0IlK11YajXnO4Q+GMnjf90v
+         Chjj92mZ76/Fp8EZ0640CRsfEZ2PocNWSeyb2/OSVL5ZXnr11k6K1lVqL6trs56OZaqq
+         gg8bDcnXEqFG3lLl3ruHY6ib3qSteQyOQDEPHiTinqRRP7TOilRBwsa+CBWVfnNhVp56
+         ogCg==
+X-Gm-Message-State: ABuFfohdOT+DX7+7qLcw6dVUXyQCPjVjZNHYYiEzvpUZrUYlaTr482EH
+        GXvVlWs847oAzD0hTmxXwyA=
+X-Google-Smtp-Source: ACcGV63R+I7qf+nRZ0Q7nS64E/7Q9A//dNqbRHG8vTyJ2yHX9rrMizcJGiAQecO2YrXPH2oYifTM5g==
+X-Received: by 2002:a17:902:2d24:: with SMTP id o33-v6mr2730432plb.211.1537908444944;
+        Tue, 25 Sep 2018 13:47:24 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id c2-v6sm4726671pfo.107.2018.09.25.13.47.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 13:47:24 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 13:47:23 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/173] 4.14.72-stable review
+Message-ID: <20180925204723.GC13170@roeck-us.net>
+References: <20180924113114.334025954@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924192903.16796-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 12:29:03PM -0700, Nathan Chancellor wrote:
-> Clang warns when one enumerated type is implicitly converted to another.
+On Mon, Sep 24, 2018 at 01:50:34PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.72 release.
+> There are 173 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> drivers/infiniband/hw/cxgb4/qp.c:287:8: warning: implicit conversion
-> from enumeration type 'enum t4_bar2_qtype' to different enumeration type
-> 'enum cxgb4_bar2_qtype' [-Wenum-conversion]
->                                                  T4_BAR2_QTYPE_EGRESS,
->                                                  ^~~~~~~~~~~~~~~~~~~~
+> Responses should be made by Wed Sep 26 11:30:10 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> c4iw_bar2_addrs expects a value from enum cxgb4_bar2_qtype so use the
-> corresponding values from that type so Clang is satisfied without
-> changing the meaning of the code.
-> 
-> T4_BAR2_QTYPE_EGRESS = CXGB4_BAR2_QTYPE_EGRESS = 0
-> T4_BAR2_QTYPE_INGRESS = CXGB4_BAR2_QTYPE_INGRESS = 1
-> 
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> Acked-by: Steve Wise <swise@opengridcomputing.com>
-> ---
->  drivers/infiniband/hw/cxgb4/cq.c | 2 +-
->  drivers/infiniband/hw/cxgb4/qp.c | 7 ++++---
->  2 files changed, 5 insertions(+), 4 deletions(-)
 
-Applied to for-next
+Build results:
+	total: 151 pass: 151 fail: 0
+Qemu test results:
+	total: 315 pass: 312 fail: 3
+Failed tests: 
+	powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
+	i386:pc:EPYC:defconfig:smp:efi32:scsi[MEGASAS]:rootfs 
+	i386:pc:Westmere:defconfig:pae:smp:efi32:usb:rootfs
 
-Thanks,
-Jason
+The failed powerpc test is the result of a crash in devicetree unittest code. 
+It affects all branches. Nothing to worry about; fix is being worked on.
+
+The failed i386 qemu boot tests are spurious and happen during reboot;
+the system shuts down early. This deserves some analysis, but is nothing
+to worry about at this time.
+
+Several of the qemu test results show runtime warnings not previously seen.
+This is because I enabled various debug options. I'll analyze and report
+those separately. This affects all releases.
+
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
