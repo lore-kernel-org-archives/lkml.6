@@ -2,65 +2,99 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D76EEC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E78C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70B1E20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:15:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B1E20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 37FA9206B5
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 18:15:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FA9206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbeIZAXz (ORCPT
+        id S1727309AbeIZAYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 20:23:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51666 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbeIZAXy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 20:23:54 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83A951028;
-        Tue, 25 Sep 2018 18:15:10 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 20:15:07 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Xavier Deguillard <xdeguillard@vmware.com>
-Subject: Re: [PATCH v2 17/20] vmw_balloon: compaction support
-Message-ID: <20180925181507.GA25458@kroah.com>
-References: <20180920173026.141333-1-namit@vmware.com>
- <20180920173026.141333-18-namit@vmware.com>
+        Tue, 25 Sep 2018 20:24:17 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:43892 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726335AbeIZAYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 20:24:17 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1g4rrk-00049e-9y; Tue, 25 Sep 2018 12:15:21 -0600
+To:     Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>
+References: <20180925162231.4354-1-logang@deltatee.com>
+ <20180925162231.4354-3-logang@deltatee.com>
+ <1537896555.11137.22.camel@acm.org>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <9241a6af-9826-d1ff-c13b-882cb3b6a34a@deltatee.com>
+Date:   Tue, 25 Sep 2018 12:15:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920173026.141333-18-namit@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1537896555.11137.22.camel@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: axboe@kernel.dk, christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, bvanassche@acm.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v7 02/13] PCI/P2PDMA: Add sysfs group to display p2pmem
+ stats
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 10:30:23AM -0700, Nadav Amit wrote:
-> --- a/include/uapi/linux/magic.h
-> +++ b/include/uapi/linux/magic.h
-> @@ -89,5 +89,6 @@
->  #define UDF_SUPER_MAGIC		0x15013346
->  #define BALLOON_KVM_MAGIC	0x13661366
->  #define ZSMALLOC_MAGIC		0x58295829
-> +#define BALLOON_VMW_MAGIC	0xba11007
 
-Any specific reason why you didn't put the leading 0 on your magic
-number to make everything align properly?
 
-And there is no need to put this in magic.h, nothing outside of your
-code sees this value.  It is not a user api, so please do not make it
-one.
+On 2018-09-25 11:29 a.m., Bart Van Assche wrote:
+> On Tue, 2018-09-25 at 10:22 -0600, Logan Gunthorpe wrote:
+>> @@ -83,9 +132,14 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+>>  
+>>  	pdev->p2pdma = p2p;
+>>  
+>> +	error = sysfs_create_group(&pdev->dev.kobj, &p2pmem_group);
+>> +	if (error)
+>> +		goto out_pool_destroy;
+>> +
+>>  	return 0;
+>>  
+>>  out_pool_destroy:
+>> +	pdev->p2pdma = NULL;
+>>  	gen_pool_destroy(p2p->pool);
+>>  out:
+>>  	devm_kfree(&pdev->dev, p2p);
+> 
+> This doesn't look right to me. Shouldn't devm_remove_action() be called instead
+> of devm_kfree() if sysfs_create_group() fails?
 
-thanks,
+That makes no sense to me. We are reversing a devm_kzalloc() not a
+custom action....
 
-greg k-h
+One could argue we should _also_ remove the pci_p2pdma_release() action,
+but seeing it has a NULL check on pdev->p2pdma it's pretty harmless to
+leave in.
+
+Logan
