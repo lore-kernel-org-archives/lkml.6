@@ -2,213 +2,172 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E20C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB12DECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3304220676
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7833A20676
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:32:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NNg30QSO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3304220676
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEbwsGGz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7833A20676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeIYXi0 (ORCPT
+        id S1726369AbeIYXlT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:38:26 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43891 "EHLO
+        Tue, 25 Sep 2018 19:41:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40147 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbeIYXiZ (ORCPT
+        with ESMTP id S1726173AbeIYXlT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:38:25 -0400
-Received: by mail-pg1-f193.google.com with SMTP id q19-v6so11191013pgn.10
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:29:54 -0700 (PDT)
+        Tue, 25 Sep 2018 19:41:19 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n31-v6so5180624pgm.7;
+        Tue, 25 Sep 2018 10:32:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qRpFU03cygqLIF0fNm4mTLpJbpBZjWH/cQhabsNceos=;
-        b=NNg30QSOth9p+MgyY59APIVfAUcWQMSxnyw9/clgFFDdH6VClnxNduv4O2pQe3mdCC
-         qXdeeDXTmnFByCBJOLzQSlGComC6EIdYEQkYbeE6erOpK6XYs9pNdLJWQZ+dQZ9rvPxc
-         Y9FBl9kqgw3A0A+eT6DxtsLwxXezblmKDUtIo=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=SpeWzCzX8uiYqMFXazB52jv+zlxghiVCwGCJxl0mY5g=;
+        b=dEbwsGGzakrH3A17Kl6IB6gfUbuR+CifqjMmW7+XXrMpEry9Bq1gUJ54d+YDmf8TA/
+         3MdctxLqZ59ceIl5+WD3xWMqzwZ3HJ5JN4M8bSFWCCRdesW/li+tIcuc8KjsRatsQut4
+         tJw6m3+7CxXp466iBAeY8YGN4485ycv0mwbPqxiTtPMzjghqf4+mY5K8iXIcjosmNCtP
+         9IKBJxm+GRJFTEOHdg7va4/ojBK16kfDlv10QGrVh2DKIxgYVSsOg2kUgNohENzdILPU
+         z40KRhCiLEWP85EFafhAnrYjFKMRtqGKn7+OTeqd72gzFpdODT4INS5AKhMfAs87KDx2
+         3NHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qRpFU03cygqLIF0fNm4mTLpJbpBZjWH/cQhabsNceos=;
-        b=qA+iRyYrRhntDjSkCNNrEtgYzRbhQVNsqYGIK7foGaod1tK0+TaUOhPQgMd8Ep8xvU
-         p7P50FkJSkxtNVWXc7h0ZRX0U5/PE2VqvdUHRCbOdWa55asJbSbv3OugUG8pDuqqdhZk
-         lwwUvbqidxhg4+ATH11o4pKuY10bKMBfOj2W+QElO69mhk6/LugsruQZO6I2ygTCJJu4
-         ILoUEvCwqleWiyi/jRB8MoJPg3Mu2TxE0Zv4CSRQJkDiJOqpo0br5jR73Zl2ynRhrcdM
-         owytQZ66Od+F/ZpgflzsDUNC74sPTBVqMnvkMMNy9yqqgswMKPdlpZXEw9XcgH2NB3ul
-         notg==
-X-Gm-Message-State: ABuFfohkadh96ZQ826/0Q7K7dZQVSTS1eoexNKBJ1m9DiSrWsqyTHpMS
-        DPJnQRCdBDefsN8ksxxBOl0XSg==
-X-Google-Smtp-Source: ACcGV62HJAv7MxVI8E7Q9y3PDTyIO/6pHPVU3G18fVmJzDL6RhJ05TEsbe3oPwAcYzMzErRSAdxZ6w==
-X-Received: by 2002:a17:902:b40c:: with SMTP id x12-v6mr2147396plr.163.1537896594056;
-        Tue, 25 Sep 2018 10:29:54 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm4949452pfc.178.2018.09.25.10.29.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 10:29:52 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 10:29:50 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: Re: [RFC PATCH] soc: qcom: rmtfs_mem: Control remoteproc from
- rmtfs_mem
-Message-ID: <20180925172943.GA118699@ban.mtv.corp.google.com>
-References: <20180925080607.30565-1-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925080607.30565-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=SpeWzCzX8uiYqMFXazB52jv+zlxghiVCwGCJxl0mY5g=;
+        b=BQHZyo3kiZHB8ayltJhZgjKqKSsbtM/+iLmqpIw1w39Gk/Alkx4HY5Bi/k1x33D0lv
+         nAvwtWZSyxJtYXzSn7Py6f18H7AhbsQzwNwxKCCGqrJBYXt0N4KesH9ez28uc1uYvc+s
+         roDez2EaKV3Yxuzg2X2Jlij5ZYUaaYC7CBt4KTZTLiIgOaXCEdQ6yqn2L2YSAlp0GGe5
+         Xh0DJ6WyUMBzXFKvZ35ibohApiiZys/sKEXRHoNlpks7ET1lEwcsIKo4D/4JcncVPrvh
+         vsQhCNRycgR8bzmUldoc61DagtW4Fhv2l+XwpSbF7jfry12zXURAfWCkUW4mhhJMaTuR
+         2hFQ==
+X-Gm-Message-State: ABuFfohW229nIiwzyYPO08D4AOKZVl1xDj4+UqmdMjyXbsE+ULen/mFJ
+        EnBC0iDDeCseEZaFbMIUMIW7Nvom
+X-Google-Smtp-Source: ACcGV62kP357eDGpcVpaH+JUN6wlW2KzUA839qrryr6NOQPdbSxoUEklaQr4Q2LMd7nJaqyxBmttgQ==
+X-Received: by 2002:a63:d0e:: with SMTP id c14-v6mr1948214pgl.281.1537896766867;
+        Tue, 25 Sep 2018 10:32:46 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id w23-v6sm4369988pgi.18.2018.09.25.10.32.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 10:32:45 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] of: unittest: Disable interrupt node tests for old world MAC systems
+Date:   Tue, 25 Sep 2018 10:32:43 -0700
+Message-Id: <1537896763-6160-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On systems with OF_IMAP_OLDWORLD_MAC set in of_irq_workarounds, the
+devicetree interrupt parsing code is different, causing unit tests of
+devicetree interrupt nodes to fail. Due to a bug in unittest code, which
+tries to dereference an uninitialized pointer, this results in a crash.
 
-On Tue, Sep 25, 2018 at 01:06:07AM -0700, Bjorn Andersson wrote:
-> rmtfs_mem provides access to physical storage and is crucial for the
-> operation of the Qualcomm modem subsystem.
-> 
-> The rmtfs_mem implementation must be available before the modem
-> subsystem is booted and a solution where the modem remoteproc will
-> verify that the rmtfs_mem is available has been discussed in the past.
-> But this would not handle the case where the rmtfs_mem provider is
-> restarted, which would cause fatal loss of access to the storage device
-> for the modem.
-> 
-> The suggestion is therefor to link the rmtfs_mem to its associated
-> remote processor instance and control it based on the availability of
-> the rmtfs_mem implementation.
+OF: /testcase-data/phandle-tests/consumer-a: arguments longer than property
+Unable to handle kernel paging request for data at address 0x00bc616e
+Faulting instruction address: 0xc08e9468
+Oops: Kernel access of bad area, sig: 11 [#1]
+BE PREEMPT PowerMac
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.14.72-rc1-yocto-standard+ #1
+task: cf8e0000 task.stack: cf8da000
+NIP:  c08e9468 LR: c08ea5bc CTR: c08ea5ac
+REGS: cf8dbb50 TRAP: 0300   Not tainted  (4.14.72-rc1-yocto-standard+)
+MSR:  00001032 <ME,IR,DR,RI>  CR: 82004044  XER: 00000000
+DAR: 00bc616e DSISR: 40000000
+GPR00: c08ea5bc cf8dbc00 cf8e0000 c13ca517 c13ca517 c13ca8a0 00000066 00000002
+GPR08: 00000063 00bc614e c0b05865 000affff 82004048 00000000 c00047f0 00000000
+GPR16: c0a80000 c0a9cc34 c13ca517 c0ad1134 05ffffff 000affff c0b05860 c0abeef8
+GPR24: cecec278 cecec278 c0a8c4d0 c0a885e0 c13ca8a0 05ffffff c13ca8a0 c13ca517
 
-But what does "availability" mean? If I'm reading your rmtfs daemon
-properly, "availability" should mean that the daemon is up and has
-registered a RMTFS_QMI_SERVICE. But in this patch, you're keying off of
-the open() call, which sounds like you're introducing a race condition
--- we might have open()ed the RMTFS memory but we're not actually
-completely ready to service requests.
+NIP [c08e9468] device_node_gen_full_name+0x30/0x15c
+LR [c08ea5bc] device_node_string+0x190/0x3c8
+Call Trace:
+[cf8dbc00] [c007f670] trace_hardirqs_on_caller+0x118/0x1fc (unreliable)
+[cf8dbc40] [c08ea5bc] device_node_string+0x190/0x3c8
+[cf8dbcb0] [c08eb794] pointer+0x25c/0x4d0
+[cf8dbd00] [c08ebcbc] vsnprintf+0x2b4/0x5ec
+[cf8dbd60] [c08ec00c] vscnprintf+0x18/0x48
+[cf8dbd70] [c008e268] vprintk_store+0x4c/0x22c
+[cf8dbda0] [c008ecac] vprintk_emit+0x94/0x130
+[cf8dbdd0] [c008ff54] printk+0x5c/0x6c
+[cf8dbe10] [c0b8ddd4] of_unittest+0x2220/0x26f8
+[cf8dbea0] [c0004434] do_one_initcall+0x4c/0x184
+[cf8dbf00] [c0b4534c] kernel_init_freeable+0x13c/0x1d8
+[cf8dbf30] [c0004814] kernel_init+0x24/0x118
+[cf8dbf40] [c0013398] ret_from_kernel_thread+0x5c/0x64
 
-So rather than looking for open(), I think somebody needs to be looking
-for the appearance and disappearance of the RMTFS_QMI_SERVICE. (Looking
-for disappearance would resolve the daemon restart issue, no?) That
-"somebody" could be the remoteproc driver I suppose (qmi_add_lookup()?),
-or...couldn't it just be the modem itself? Do you actually need to
-restart the entire modem when the RMTFS service goes away, or do you
-just need to pause storage activity?
+The problem was observed when running a qemu test for the g3beige machine
+with devicetree unittests enabled.
 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> The currently implemented workaround in the Linaro QCOMLT releases is to
-> blacklist the qcom_q6v5_pil kernel module and load this explicitly after rmtfs
-> has been started.
-> 
-> With this patch the modem module can be loaded automatically by the
-> platform_bus and will only be booted as the rmtfs becomes available. Performing
-> actions such as upgrading (and restarting) the rmtfs service will cause the
-> modem to automatically restart and hence continue to function after the
-> upgrade.
-> 
->  .../reserved-memory/qcom,rmtfs-mem.txt        |  7 ++++++
->  drivers/remoteproc/qcom_q6v5_pil.c            |  1 +
->  drivers/soc/qcom/Kconfig                      |  1 +
->  drivers/soc/qcom/rmtfs_mem.c                  | 23 ++++++++++++++++++-
->  4 files changed, 31 insertions(+), 1 deletion(-)
-> 
-...
-> diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
-> index 8a3678c2e83c..8b08be310397 100644
-> --- a/drivers/soc/qcom/rmtfs_mem.c
-> +++ b/drivers/soc/qcom/rmtfs_mem.c
-> @@ -18,6 +18,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
->  #include <linux/of_reserved_mem.h>
-> +#include <linux/remoteproc.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
-> @@ -39,6 +40,8 @@ struct qcom_rmtfs_mem {
->  	unsigned int client_id;
->  
->  	unsigned int perms;
-> +
-> +	struct rproc *rproc;
->  };
->  
->  static ssize_t qcom_rmtfs_mem_show(struct device *dev,
-> @@ -80,11 +83,18 @@ static int qcom_rmtfs_mem_open(struct inode *inode, struct file *filp)
->  	struct qcom_rmtfs_mem *rmtfs_mem = container_of(inode->i_cdev,
->  							struct qcom_rmtfs_mem,
->  							cdev);
-> +	int ret = 0;
->  
->  	get_device(&rmtfs_mem->dev);
->  	filp->private_data = rmtfs_mem;
->  
-> -	return 0;
-> +	if (rmtfs_mem->rproc) {
-> +		ret = rproc_boot(rmtfs_mem->rproc);
-> +		if (ret)
-> +			put_device(&rmtfs_mem->dev);
-> +	}
-> +
-> +	return ret;
->  }
->  static ssize_t qcom_rmtfs_mem_read(struct file *filp,
->  			      char __user *buf, size_t count, loff_t *f_pos)
-> @@ -127,6 +137,9 @@ static int qcom_rmtfs_mem_release(struct inode *inode, struct file *filp)
->  {
->  	struct qcom_rmtfs_mem *rmtfs_mem = filp->private_data;
->  
-> +	if (rmtfs_mem->rproc)
-> +		rproc_shutdown(rmtfs_mem->rproc);
-> +
->  	put_device(&rmtfs_mem->dev);
->  
->  	return 0;
-> @@ -156,6 +169,7 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
->  	struct qcom_scm_vmperm perms[2];
->  	struct reserved_mem *rmem;
->  	struct qcom_rmtfs_mem *rmtfs_mem;
-> +	phandle rproc_phandle;
->  	u32 client_id;
->  	u32 vmid;
->  	int ret;
-> @@ -181,6 +195,13 @@ static int qcom_rmtfs_mem_probe(struct platform_device *pdev)
->  	rmtfs_mem->client_id = client_id;
->  	rmtfs_mem->size = rmem->size;
->  
-> +	ret = of_property_read_u32(node, "rproc", &rproc_phandle);
-> +	if (!ret) {
-> +		rmtfs_mem->rproc = rproc_get_by_phandle(rproc_phandle);
+Disable interrupt node tests on affected systems to avoid both false
+unittest failures and the crash.
 
-You're doing an rproc_get(), so you need to do a rproc_put() in
-remove().
+Fixes: 53a42093d96ef ("of: Add device tree selftests")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+The changes in of_unittest_platform_populate() are kept at the minimum;
+I wanted to avoid changing the intendation.
+An alternative fix might be to move the interrupt tests to a separate
+function.
 
-Brian
+ drivers/of/unittest.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> +		if (!rmtfs_mem->rproc)
-> +			return -EPROBE_DEFER;
-> +	}
-> +
->  	device_initialize(&rmtfs_mem->dev);
->  	rmtfs_mem->dev.parent = &pdev->dev;
->  	rmtfs_mem->dev.groups = qcom_rmtfs_mem_groups;
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 722537e14848..bd1d56cf1962 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -771,6 +771,9 @@ static void __init of_unittest_parse_interrupts(void)
+ 	struct of_phandle_args args;
+ 	int i, rc;
+ 
++	if (of_irq_workarounds & OF_IMAP_OLDWORLD_MAC)
++		return;
++
+ 	np = of_find_node_by_path("/testcase-data/interrupts/interrupts0");
+ 	if (!np) {
+ 		pr_err("missing testcase data\n");
+@@ -845,6 +848,9 @@ static void __init of_unittest_parse_interrupts_extended(void)
+ 	struct of_phandle_args args;
+ 	int i, rc;
+ 
++	if (of_irq_workarounds & OF_IMAP_OLDWORLD_MAC)
++		return;
++
+ 	np = of_find_node_by_path("/testcase-data/interrupts/interrupts-extended0");
+ 	if (!np) {
+ 		pr_err("missing testcase data\n");
+@@ -1001,6 +1007,9 @@ static void __init of_unittest_platform_populate(void)
+ 	pdev = of_find_device_by_node(np);
+ 	unittest(pdev, "device 1 creation failed\n");
+ 
++	if (of_irq_workarounds & OF_IMAP_OLDWORLD_MAC)
++		goto skip_irqtests;
++
+ 	irq = platform_get_irq(pdev, 0);
+ 	unittest(irq == -EPROBE_DEFER, "device deferred probe failed - %d\n", irq);
+ 
+@@ -1011,6 +1020,7 @@ static void __init of_unittest_platform_populate(void)
+ 	irq = platform_get_irq(pdev, 0);
+ 	unittest(irq < 0 && irq != -EPROBE_DEFER, "device parsing error failed - %d\n", irq);
+ 
++skip_irqtests:
+ 	np = of_find_node_by_path("/testcase-data/platform-tests");
+ 	unittest(np, "No testcase data in device tree\n");
+ 	if (!np)
+-- 
+2.7.4
+
