@@ -2,91 +2,106 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D049FC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DA5C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FBA020867
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:56:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FBA020867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CD2992087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:56:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMWg7S+A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD2992087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbeIYPCc (ORCPT
+        id S1728492AbeIYPC5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:02:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52528 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726392AbeIYPCc (ORCPT
+        Tue, 25 Sep 2018 11:02:57 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45120 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeIYPC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:02:32 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96A1B10F7;
-        Tue, 25 Sep 2018 08:56:00 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 10:55:58 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     Joe Perches <joe@perches.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: [PATCH 3.18 104/105] IB/nes: Fix a compiler warning
-Message-ID: <20180925085558.GA22609@kroah.com>
-References: <20180924113113.268650190@linuxfoundation.org>
- <20180924113123.002918395@linuxfoundation.org>
- <6f7ca3c205bada768c3918b1feacbbd5ce23a64d.camel@perches.com>
- <20180924175902.GB19402@kroah.com>
- <6d6f31c87b0c9b1a551d352439183c8c9c4df04c.camel@perches.com>
- <20180924223952.GA9157@sasha-vm>
+        Tue, 25 Sep 2018 11:02:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t70-v6so6227554pgd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 01:56:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v3O0XEloPAczl33h3GvWMDaZAi60SKFwl/Ir7dAh7u4=;
+        b=kMWg7S+ASD6lMfiWAZlGHGBqzsOdzGWXYu2WxJKuhzcsu/Csa3bS2PbNNc5O/KqiXA
+         oaYcp+QCLGjiJI72YUlDveI3d9TvSHdZaDSIiqq0cquNXqfMki2FC6hVxxDoX/Iqbbvb
+         eA30n1YAjNUJvXtpa9zIZWl2OYHA5QwvcmfrjhTFoJp/GDSDELjTuyTSD4Fr1gECDBTv
+         /aC4GGgU0xdfXU2S5rnwAI5hPQOX/51GwAc+6wNLApDT6W5zlOYolaAOa9ARJZtBhmt3
+         qTe9zbNUa6VpguOP4Zc7zQqR5JTeai+W3eW8fHu3b7guy7MIfVB97H2r0qYsE9XNwWg4
+         CPpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=v3O0XEloPAczl33h3GvWMDaZAi60SKFwl/Ir7dAh7u4=;
+        b=n5BrzxnnBbE9hPbwDryt7LLo0OFEjbPO4+7MOSNQrddImzHHyoLW4oN27xXlIxXmdI
+         Gk3s586ckqUTXnEDoJ8I1Sx2Vwy2piG4iMmrx+Op8vbNrz8Rjwi0YKt+VMtyb/5hyXTi
+         6FzOskfbR9N9vViv0GEgVCB62DH0xgw6Z5mylpIuTqg4hxFFJMiV/YE1vVwSbLMGnjt5
+         Mu8iSDX03ExKSFM/GHZAumT+H8ERdSZt2GtpfNAz66mOPiQVpDsry+w538M7lzHAwARx
+         LEtIQfANpbdvbMdlG+6hN0/0z0j7/gfB1GrA6uNv/53h4BV5JmnRDPTFayB8lqfE2BPE
+         Z6/Q==
+X-Gm-Message-State: ABuFfoj0UiwMWirLei53XMbnIXN8oZ8vCNSAP4MtgRLSOZjnQPhWPPf+
+        7o5OFWdghj4ZwymD6HvdJHM=
+X-Google-Smtp-Source: ACcGV60otQ1mBoHCFYCvdTGz951+aChl4Jfu4zm4n0di7sBkuMHz4PTsy83hvbsvzgibwtAGx79Mlg==
+X-Received: by 2002:a17:902:3fa5:: with SMTP id a34-v6mr63181pld.244.1537865786844;
+        Tue, 25 Sep 2018 01:56:26 -0700 (PDT)
+Received: from toy ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id b126-v6sm3567297pga.49.2018.09.25.01.56.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 01:56:26 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 16:56:18 +0800
+From:   Jun Yao <yaojun8558363@gmail.com>
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] Move swapper_pg_dir to rodata section.
+Message-ID: <20180925085618.GA26696@toy>
+Mail-Followup-To: James Morse <james.morse@arm.com>,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org
+References: <20180917044333.30051-1-yaojun8558363@gmail.com>
+ <2f97b06e-ba36-4f6f-e29d-a9747ad9ec75@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924223952.GA9157@sasha-vm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2f97b06e-ba36-4f6f-e29d-a9747ad9ec75@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 10:39:53PM +0000, Sasha Levin wrote:
-> On Mon, Sep 24, 2018 at 11:03:25AM -0700, Joe Perches wrote:
-> >On Mon, 2018-09-24 at 19:59 +0200, Greg Kroah-Hartman wrote:
-> >> On Mon, Sep 24, 2018 at 09:38:26AM -0700, Joe Perches wrote:
-> >> > On Mon, 2018-09-24 at 13:34 +0200, Greg Kroah-Hartman wrote:
-> >> > > 3.18-stable review patch.  If anyone has any objections, please let me know.
-> >> >
-> >> > Why should this sort of change be applied to a stable release?
-> >>
-> >> Originally I was just going to drop this as it's not fixing something.
-> >>
-> >> But it might be, if that macro is used in a if() statement, or something
-> >> like that, it could be doing something unintended.
-> >
-> >No it couldn't.
-> >An empty macro is equivalent to a single statement.
-> >
-> >> So I don't feel like auditing all 500+ instances where this is used,
-> >> it's easier to just accept the patch.
-> >
-> >It's not a bug fix.
+Hi James,
+
+On Fri, Sep 21, 2018 at 11:26:39PM +0100, James Morse wrote:
+> Hi Jun,
 > 
-> This question came up a few months ago. Greg suggested that we should be
-> pulling in warning fixes to get the stable kernels warning-free similar
-> to upstream.
+> On 09/17/2018 05:43 AM, Jun Yao wrote:
+> > Version 5 changes:
+> > 	1. Correct spelling and indentation errors[1].
+> > 	2. Update init_mm.pgd by assembly[2].
+> > 	3. Simplify set_p?d() by introducing set_swapper_pgd()[3].
+> > 	4. Reduce unnecessary tlbi for every write to swapper_pg_dir
+> > 	   during paging_init()[3].
 > 
-> The reasoning behind it was similar to the "no warnings" reasoning of
-> upstream: there might be real issues hiding in the sea of "harmless"
-> warnings, so we want to get rid of all of them to catch real issues.
+> 
+> For the series:
+> Reviewed-by: James Morse <james.morse@arm.com>
 
-No warnings is great, but not when you add the "W=1" option.  That way
-lies madness and is not something anyone does on stable kernels.  They
-do it on mainline when they want to try to find something to clean up
-and get a coding style fix merged :)
+Thank you very much for helping me improve the patch and tolerate the
+mistakes I made.
 
-thanks,
+Thanks,
 
-greg k-h
+Jun
