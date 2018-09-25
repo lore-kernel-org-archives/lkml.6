@@ -2,74 +2,88 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E30C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A51EEC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899AC20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899AC20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 39A7F2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:25:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A7F2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbeIYSad (ORCPT
+        id S1729040AbeIYSc1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:30:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51484 "EHLO mx1.redhat.com"
+        Tue, 25 Sep 2018 14:32:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:37655 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbeIYSad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:30:33 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728582AbeIYSc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:32:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2288C81F12;
-        Tue, 25 Sep 2018 12:23:15 +0000 (UTC)
-Received: from rules.brq.redhat.com (dhcp-10-40-5-28.brq.redhat.com [10.40.5.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3117710021B2;
-        Tue, 25 Sep 2018 12:23:13 +0000 (UTC)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        syzkaller@googlegroups.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     stable <stable@vger.kernel.org>, Vladis Dronov <vdronov@redhat.com>
-Subject: [PATCH] usb: usbfs: fix crash in check_ctrlrecip()->usb_find_alt_setting()
-Date:   Tue, 25 Sep 2018 14:22:42 +0200
-Message-Id: <20180925122242.10950-1-vdronov@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 25 Sep 2018 12:23:15 +0000 (UTC)
+        by ozlabs.org (Postfix) with ESMTPSA id 42KKyn2ct5z9s7T;
+        Tue, 25 Sep 2018 22:25:05 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Firoz Khan <firoz.khan@linaro.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxram@us.ibm.com,
+        leitao@debian.org, Boqun Feng <boqun.feng@gmail.com>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Subject: Re: [PATCH 2/3] powerpc: Add system call table generation support
+In-Reply-To: <CAK8P3a2=kxoum6hcPR2UN_St2PaFtZud_NNVkK9rHaf=N7ym-g@mail.gmail.com>
+References: <1536913980-4811-1-git-send-email-firoz.khan@linaro.org> <1536913980-4811-3-git-send-email-firoz.khan@linaro.org> <CAK8P3a1PCnHy1JX4T21LjOr3ZGAVLdqxQaPYfLHAgM-9Y5yxVg@mail.gmail.com> <CALxhOngVYQRwbcUg6c_3LcKAEoBwyN1B478LqRGmWEGL004--w@mail.gmail.com> <CAK8P3a2hi-Ndh7X-9r3NhBUJXQBTBFsTU==GbHesy6YD9idCJA@mail.gmail.com> <87efdi5rm6.fsf@concordia.ellerman.id.au> <CAK8P3a2=kxoum6hcPR2UN_St2PaFtZud_NNVkK9rHaf=N7ym-g@mail.gmail.com>
+Date:   Tue, 25 Sep 2018 22:25:04 +1000
+Message-ID: <878t3p4vdr.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ps->dev->actconfig can be NULL and cause NULL-deref in usb_find_alt_setting()
-before c9a4cb204e9e. fix this anyway by checking that ps->dev->actconfig is not
-NULL, so usb_find_alt_setting() is not called with a known-bad argument.
+Arnd Bergmann <arnd@arndb.de> writes:
+> On Tue, Sep 25, 2018 at 2:48 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> Arnd Bergmann <arnd@arndb.de> writes:
+>> > On Tue, Sep 18, 2018 at 2:15 PM Firoz Khan <firoz.khan@linaro.org> wrote:
+>> >> On 14 September 2018 at 15:31, Arnd Bergmann <arnd@arndb.de> wrote:
+>> >> > On Fri, Sep 14, 2018 at 10:33 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+>> >
+>> > But all three existing architectures (x86, s390 and arm) already
+>> > have the capability to parse the table and generate different output
+>> > from that.
+>>
+>> Yeah, we want that on powerpc too.
+>>
+>> If the script needs to be more complex that's fine, if it can't be
+>> shared across arches that's fine, the main thing for me is that wiring
+>> up a syscall can be done by adding a single line in a single file.
+>
+> Yes, that's definitely the idea, we want to make it easier for everyone.
+> We need at least a special case for mips, which needs three separate
+> input files (the tables are completely different) to generate four versions
+> of the output, plus a future extension to use the generic table for their
+> new one.
+>
+> For powerpc, I'm hoping that both the table format and script can be
+> completely generic and not need a special case that is different
+> from the others, but if we need some extra magic to handle the SPU
+> syscalls, we can still do that with a private script.
 
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-Reported-by: syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
----
- drivers/usb/core/devio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sounds good.
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index 6ce77b33da61..26047620b003 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -824,7 +824,7 @@ static int check_ctrlrecip(struct usb_dev_state *ps, unsigned int requesttype,
- 	 * class specification, which we always want to allow as it is used
- 	 * to query things like ink level, etc.
- 	 */
--	if (requesttype == 0xa1 && request == 0) {
-+	if (requesttype == 0xa1 && request == 0 && ps->dev->actconfig) {
- 		alt_setting = usb_find_alt_setting(ps->dev->actconfig,
- 						   index >> 8, index & 0xff);
- 		if (alt_setting
--- 
-2.14.4
+cheers
