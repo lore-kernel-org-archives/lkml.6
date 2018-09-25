@@ -2,145 +2,226 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA48C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0BBC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504802087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504802087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id C63DE20877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 09:15:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C63DE20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbeIYPVr (ORCPT
+        id S1728739AbeIYPV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 11:21:47 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46543 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727526AbeIYPVr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 11:21:47 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8P9AUpL026643;
-        Tue, 25 Sep 2018 11:14:14 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mnb6xb3eq-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 25 Sep 2018 11:14:14 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1065D59;
-        Tue, 25 Sep 2018 09:14:13 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CC8062906;
-        Tue, 25 Sep 2018 09:14:12 +0000 (GMT)
-Received: from [10.201.23.29] (10.75.127.47) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 25 Sep
- 2018 11:14:11 +0200
-Subject: Re: [PATCH 1/3] dt-bindings: mtd: stm32_fmc2: add STM32 FMC2 NAND
- controller documentation
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <richard@nod.at>, <linux-kernel@vger.kernel.org>,
-        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
-        <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        <computersforpeace@gmail.com>, <dwmw2@infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1537199260-7280-1-git-send-email-christophe.kerello@st.com>
- <1537199260-7280-2-git-send-email-christophe.kerello@st.com>
- <20180922103440.12575714@xps13> <c9925c9c-af40-8044-8dbe-866fbe3a2f99@st.com>
- <20180924191725.2439fd10@bbrezillon>
-From:   Christophe Kerello <christophe.kerello@st.com>
-Message-ID: <88321fb8-08a4-e8a2-9ac5-2bef910cd53a@st.com>
-Date:   Tue, 25 Sep 2018 11:14:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180924191725.2439fd10@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_06:,,
- signatures=0
+        Tue, 25 Sep 2018 11:21:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38644 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727617AbeIYPV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 11:21:56 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2E786307D84A;
+        Tue, 25 Sep 2018 09:15:20 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-117-161.ams2.redhat.com [10.36.117.161])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76929308BDAA;
+        Tue, 25 Sep 2018 09:15:14 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
+        David Hildenbrand <david@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        John Allen <jallen@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>
+Subject: [PATCH v2 1/6] mm/memory_hotplug: make remove_memory() take the device_hotplug_lock
+Date:   Tue, 25 Sep 2018 11:14:52 +0200
+Message-Id: <20180925091457.28651-2-david@redhat.com>
+In-Reply-To: <20180925091457.28651-1-david@redhat.com>
+References: <20180925091457.28651-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 25 Sep 2018 09:15:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+remove_memory() is exported right now but requires the
+device_hotplug_lock, which is not exported. So let's provide a variant
+that takes the lock and only export that one.
 
-On 09/24/2018 07:17 PM, Boris Brezillon wrote:
-> Hi Christophe,
-> 
-> On Mon, 24 Sep 2018 18:36:27 +0200
-> Christophe Kerello <christophe.kerello@st.com> wrote:
-> 
->>>> +- st,fmc2_timings: array of 8 bytes for NAND timings. The meanings of
->>>> +  these bytes are:
->>>> +  byte 0 TCLR      : CLE to RE delay in number of AHB clock cycles, only 4 bits
->>>> +                     are valid. Zero means one clock cycle, 15 means 16 clock
->>>> +                     cycles.
->>>> +  byte 1 TAR       : ALE to RE delay, 4 bits are valid. Same format as TCLR.
->>>> +  byte 2 THIZ      : number of HCLK clock cycles during which the data bus is
->>>> +                     kept in Hi-Z (tristate) after the start of a write access.
->>>> +                     Only valid for write transactions. Zero means 1 cycle,
->>>> +                     255 means 256 cycles.
->>>> +  byte 3 TWAIT     : number of HCLK clock cycles to assert the command to the
->>>> +                     NAND flash in response to SMWAITn. Zero means 1 cycle,
->>>> +                     255 means 256 cycles.
->>>> +  byte 4 THOLD_MEM : common memory space timing
->>>> +                     number of HCLK clock cycles to hold the address (and data
->>>> +                     when writing) after the command deassertion. Zero means
->>>> +                     1 cycle, 255 means 256 cycles.
->>>> +  byte 5 TSET_MEM  : common memory space timing
->>>> +                     number of HCLK clock cycles to assert the address before
->>>> +                     the command is asserted. Zero means 1 cycle, 255 means 256
->>>> +                     cycles.
->>>> +  byte 6 THOLD_ATT : attribute memory space timing
->>>> +                     number of HCLK clock cycles to hold the address (and data
->>>> +                     when writing) after the command deassertion. Zero means
->>>> +                     1 cycle, 255 means 256 cycles.
->>>> +  byte 7 TSET_ATT  : attribute memory space timing
->>>> +                     number of HCLK clock cycles to assert the address before
->>>> +                     the command is asserted. Zero means 1 cycle, 255 means 256
->>>> +                     cycles.
->>>
->>> Let me review the driver but this array of timings is really
->>> suspicious. I am pretty sure you don't need it in the DT.
->>
->> "st,fmc2-timings" is an optional property that allow the end user to
->> overwrite the timings calculated by setup_data_interface callback. By
->> setting this property in the NAND flash memory device tree node, the end
->> user could have a better throughput. For NON ONFI SLC NAND, timing mode
->> 0 is often used.
-> 
-> Exactly the kind of tweaking I'd like to avoid. If the NAND is not ONFI,
-> the vendor driver (nand_<manufacturer>.c) can overwrite
-> chip->default_onfi_timing_mode, and if the ONFI timings modes are not
-> exactly matching the NAND spec and you need the exact timings, then we
-> should consider adding a manufacturer hook to let the manufacturer
-> driver tweak the timings. In any case, I'm not willing to accept
-> timings description in the DT.
-> 
+The lock is already held in
+	arch/powerpc/platforms/pseries/hotplug-memory.c
+	drivers/acpi/acpi_memhotplug.c
+	arch/powerpc/platforms/powernv/memtrace.c
 
-Ok, I understand the way it should work. This property will be removed 
-from the device tree bindings and the timings will be only calculated by 
-calling setup_data_interface callback in the driver.
+Apart from that, there are not other users in the tree.
 
-Regards,
-Christophe Kerello.
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Rashmica Gupta <rashmica.g@gmail.com>
+Cc: Michael Neuling <mikey@neuling.org>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Cc: John Allen <jallen@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+Cc: Mathieu Malaterre <malat@debian.org>
+Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ arch/powerpc/platforms/powernv/memtrace.c       | 2 +-
+ arch/powerpc/platforms/pseries/hotplug-memory.c | 6 +++---
+ drivers/acpi/acpi_memhotplug.c                  | 2 +-
+ include/linux/memory_hotplug.h                  | 3 ++-
+ mm/memory_hotplug.c                             | 9 ++++++++-
+ 5 files changed, 15 insertions(+), 7 deletions(-)
 
-> Regards,
-> 
-> Boris
-> 
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
-> 
+diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+index a29fdf8a2e56..773623f6bfb1 100644
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -121,7 +121,7 @@ static u64 memtrace_alloc_node(u32 nid, u64 size)
+ 			lock_device_hotplug();
+ 			end_pfn = base_pfn + nr_pages;
+ 			for (pfn = base_pfn; pfn < end_pfn; pfn += bytes>> PAGE_SHIFT) {
+-				remove_memory(nid, pfn << PAGE_SHIFT, bytes);
++				__remove_memory(nid, pfn << PAGE_SHIFT, bytes);
+ 			}
+ 			unlock_device_hotplug();
+ 			return base_pfn << PAGE_SHIFT;
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index 9a15d39995e5..dd0264c43f3e 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -305,7 +305,7 @@ static int pseries_remove_memblock(unsigned long base, unsigned int memblock_siz
+ 	nid = memory_add_physaddr_to_nid(base);
+ 
+ 	for (i = 0; i < sections_per_block; i++) {
+-		remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
++		__remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
+ 		base += MIN_MEMORY_BLOCK_SIZE;
+ 	}
+ 
+@@ -394,7 +394,7 @@ static int dlpar_remove_lmb(struct drmem_lmb *lmb)
+ 	block_sz = pseries_memory_block_size();
+ 	nid = memory_add_physaddr_to_nid(lmb->base_addr);
+ 
+-	remove_memory(nid, lmb->base_addr, block_sz);
++	__remove_memory(nid, lmb->base_addr, block_sz);
+ 
+ 	/* Update memory regions for memory remove */
+ 	memblock_remove(lmb->base_addr, block_sz);
+@@ -681,7 +681,7 @@ static int dlpar_add_lmb(struct drmem_lmb *lmb)
+ 
+ 	rc = dlpar_online_lmb(lmb);
+ 	if (rc) {
+-		remove_memory(nid, lmb->base_addr, block_sz);
++		__remove_memory(nid, lmb->base_addr, block_sz);
+ 		invalidate_lmb_associativity_index(lmb);
+ 	} else {
+ 		lmb->flags |= DRCONF_MEM_ASSIGNED;
+diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
+index 6b0d3ef7309c..811148415993 100644
+--- a/drivers/acpi/acpi_memhotplug.c
++++ b/drivers/acpi/acpi_memhotplug.c
+@@ -282,7 +282,7 @@ static void acpi_memory_remove_memory(struct acpi_memory_device *mem_device)
+ 			nid = memory_add_physaddr_to_nid(info->start_addr);
+ 
+ 		acpi_unbind_memory_blocks(info);
+-		remove_memory(nid, info->start_addr, info->length);
++		__remove_memory(nid, info->start_addr, info->length);
+ 		list_del(&info->list);
+ 		kfree(info);
+ 	}
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 34a28227068d..1f096852f479 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -301,6 +301,7 @@ extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
+ extern void try_offline_node(int nid);
+ extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
+ extern void remove_memory(int nid, u64 start, u64 size);
++extern void __remove_memory(int nid, u64 start, u64 size);
+ 
+ #else
+ static inline bool is_mem_section_removable(unsigned long pfn,
+@@ -317,6 +318,7 @@ static inline int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+ }
+ 
+ static inline void remove_memory(int nid, u64 start, u64 size) {}
++static inline void __remove_memory(int nid, u64 start, u64 size) {}
+ #endif /* CONFIG_MEMORY_HOTREMOVE */
+ 
+ extern void __ref free_area_init_core_hotplug(int nid);
+@@ -330,7 +332,6 @@ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+ 		unsigned long nr_pages, struct vmem_altmap *altmap);
+ extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
+ extern bool is_memblock_offlined(struct memory_block *mem);
+-extern void remove_memory(int nid, u64 start, u64 size);
+ extern int sparse_add_one_section(struct pglist_data *pgdat,
+ 		unsigned long start_pfn, struct vmem_altmap *altmap);
+ extern void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 2698664bfd54..f6dbd5d8fffd 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1839,7 +1839,7 @@ EXPORT_SYMBOL(try_offline_node);
+  * and online/offline operations before this call, as required by
+  * try_offline_node().
+  */
+-void __ref remove_memory(int nid, u64 start, u64 size)
++void __ref __remove_memory(int nid, u64 start, u64 size)
+ {
+ 	int ret;
+ 
+@@ -1868,5 +1868,12 @@ void __ref remove_memory(int nid, u64 start, u64 size)
+ 
+ 	mem_hotplug_done();
+ }
++
++void remove_memory(int nid, u64 start, u64 size)
++{
++	lock_device_hotplug();
++	__remove_memory(nid, start, size);
++	unlock_device_hotplug();
++}
+ EXPORT_SYMBOL_GPL(remove_memory);
+ #endif /* CONFIG_MEMORY_HOTREMOVE */
+-- 
+2.17.1
+
