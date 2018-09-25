@@ -2,120 +2,155 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D95C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EA1C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 865BE2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:12:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 865BE2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 0BA762086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:14:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BA762086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbeIZEVi (ORCPT
+        id S1726175AbeIZEYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 00:21:38 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40778 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725734AbeIZEVi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 00:21:38 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g14-v6so12467947otj.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 15:11:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CAiNAgN+dYL0PdpAZITu7basDKOzzCXwZer8dJER9E0=;
-        b=FjjAzPHFFvme6ASMCPFQpCAawzsdxBorwjFtYnbmTV1alPIW21Z+6yuaGk58bZvyL+
-         uyJ+YpH2ATGeO31xMt/6+wtD6CsJ2HF/SrcjYYFLOrqeTv6jsSqr5BvIqEIE80Jz6Oam
-         9GqGkamZ77/O3sTeL0zvB/0u6H+hEu5/xBXB0JabUsoMOBIL7wC0DhVU+0f2PKEHXGie
-         InewriFOGrbeXrfFJy230sqkd2INcrddyRm9YoU970EAq/b4SDau6+ShR5pq2sMWdSLi
-         dT3EDWXsABF5SDrKnBP1EVF5rcZi9LOA40FUu78yncgKFxTVKtmNh12n/mICpS8YXVH+
-         pL7g==
-X-Gm-Message-State: ABuFfoimPysXZaHbpCihQ5zhBvvhtNIQcbBGx9C1OhvZBeAQ0fpA5Xxi
-        IyW4pgVN9WlMTQybQpdy8ml9Nu0nQ8Y=
-X-Google-Smtp-Source: ACcGV62ZJ1qLlK2lXT+CkspNNJxcOR1BV3XrgtcovhGkZRQi+jo7roXyAoC5f8pKsBuP+z0N2F8jHA==
-X-Received: by 2002:a9d:a6:: with SMTP id w35-v6mr2102173oti.109.1537913517416;
-        Tue, 25 Sep 2018 15:11:57 -0700 (PDT)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
-        by smtp.gmail.com with ESMTPSA id d5-v6sm1102130oia.57.2018.09.25.15.11.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 15:11:57 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id h26-v6so26072106otl.9
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 15:11:56 -0700 (PDT)
-X-Received: by 2002:a9d:1541:: with SMTP id z1-v6mr2096345otz.186.1537913516789;
- Tue, 25 Sep 2018 15:11:56 -0700 (PDT)
+        Wed, 26 Sep 2018 00:24:02 -0400
+Received: from mga18.intel.com ([134.134.136.126]:20948 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725736AbeIZEYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 00:24:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 15:14:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
+   d="scan'208";a="76174267"
+Received: from vdevara1-mobl.amr.corp.intel.com (HELO [10.251.19.174]) ([10.251.19.174])
+  by orsmga008.jf.intel.com with ESMTP; 25 Sep 2018 15:14:21 -0700
+Subject: Re: [PATCH v5 2/4] mm: Provide kernel parameter to allow disabling
+ page init poisoning
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925201921.3576.84239.stgit@localhost.localdomain>
+ <13285e05-fb90-b948-6f96-777f94079657@intel.com>
+ <8faf3acc-e47e-8ef9-a1a0-c0d6ebfafa1e@linux.intel.com>
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, jglisse@redhat.com, rppt@linux.vnet.ibm.com,
+        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <75dde720-c997-51a4-d2e2-8b08eb201550@intel.com>
+Date:   Tue, 25 Sep 2018 15:14:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180823213600.23426-1-alexandre.belloni@bootlin.com> <CAOesGMjDKKSNVccu4D579SiwL9zEU7ha7HQCHncvh2r4kpO6fQ@mail.gmail.com>
-In-Reply-To: <CAOesGMjDKKSNVccu4D579SiwL9zEU7ha7HQCHncvh2r4kpO6fQ@mail.gmail.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 25 Sep 2018 17:11:44 -0500
-X-Gmail-Original-Message-ID: <CADRPPNSwGDsLctOe_yiFBfYVQU3Jm7Z724wyhBFuWmaTZq0T9A@mail.gmail.com>
-Message-ID: <CADRPPNSwGDsLctOe_yiFBfYVQU3Jm7Z724wyhBFuWmaTZq0T9A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] soc: fsl: qbman: qman_portal: defer probing when qman
- is not available
-To:     Olof Johansson <olof@lixom.net>
-Cc:     alexandre.belloni@bootlin.com, Roy Pledge <roy.pledge@nxp.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8faf3acc-e47e-8ef9-a1a0-c0d6ebfafa1e@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 2:47 PM Olof Johansson <olof@lixom.net> wrote:
->
-> Hi,
->
->
-> On Thu, Aug 23, 2018 at 11:36 PM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
-> >
-> > If the qman driver (qman_ccsr) doesn't probe or fail to probe before
-> > qman_portal, qm_ccsr_start will be either NULL or a stale pointer to an
-> > unmapped page.
-> >
-> > This leads to a crash when probing  qman_portal as the init_pcfg function
-> > calls qman_liodn_fixup that tries to read qman registers.
-> >
-> > Assume that qman didn't probe when the pool mask is 0.
-> >
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > ---
-> >  drivers/soc/fsl/qbman/qman_portal.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
-> > index a120002b630e..4fc80d2c8feb 100644
-> > --- a/drivers/soc/fsl/qbman/qman_portal.c
-> > +++ b/drivers/soc/fsl/qbman/qman_portal.c
-> > @@ -277,6 +277,8 @@ static int qman_portal_probe(struct platform_device *pdev)
-> >         }
-> >
-> >         pcfg->pools = qm_get_pools_sdqcr();
-> > +       if (pcfg->pools == 0)
-> > +               return -EPROBE_DEFER;
->
-> This is quite late in the probe, after a bunch of resources have been claimed.
->
-> Note that the ioremaps above this are doing unwinds, and you'll end up
-> doing duplicate ioremaps if you come in and probe again.
->
-> You should probably unwind those allocations, or move them to devm_*
-> or do this check earlier in the function.
+On 09/25/2018 01:38 PM, Alexander Duyck wrote:
+> On 9/25/2018 1:26 PM, Dave Hansen wrote:
+>> On 09/25/2018 01:20 PM, Alexander Duyck wrote:
+>>> +    vm_debug[=options]    [KNL] Available with CONFIG_DEBUG_VM=y.
+>>> +            May slow down system boot speed, especially when
+>>> +            enabled on systems with a large amount of memory.
+>>> +            All options are enabled by default, and this
+>>> +            interface is meant to allow for selectively
+>>> +            enabling or disabling specific virtual memory
+>>> +            debugging features.
+>>> +
+>>> +            Available options are:
+>>> +              P    Enable page structure init time poisoning
+>>> +              -    Disable all of the above options
+>>
+>> Can we have vm_debug=off for turning things off, please?  That seems to
+>> be pretty standard.
+> 
+> No. The simple reason for that is that you had requested this work like
+> the slub_debug. If we are going to do that then each individual letter
+> represents a feature. That is why the "-" represents off. We cannot have
+> letters represent flags, and letters put together into words. For
+> example slub_debug=OFF would turn on sanity checks and turn off
+> debugging for caches that would have causes higher minimum slab orders.
 
-Hi Roy,
+We don't have to have the same letters mean the same things for both
+options.  We also can live without 'o' and 'f' being valid.  We can
+*also* just say "don't do 'off'" if you want to enable things.
 
-Is there any more straightforward indicator on if qman has been
-probed?  So that we can check it at the begining of the probe?
+I'd much rather have vm_debug=off do the right thing than have
+per-feature enable/disable.  I know I'll *never* remember vm_debug=- and
+doing it this way will subject me to innumerable trips to Documentation/
+during my few remaining years.
 
-Regards,
-Leo
+Surely you can make vm_debug=off happen. :)
+
+>> we need to document the defaults.  I think the default is "all
+>> debug options are enabled", but it would be nice to document that.
+> 
+> In the description I call out "All options are enabled by default, an> this interface is meant to allow for selectively enabling or disabling".
+
+I found "all options are enabled by default" really confusing.  Maybe:
+
+"Control debug features which become available when CONFIG_DEBUG_VM=y.
+When this option is not specified, all debug features are enabled.  Use
+this option enable a specific subset."
+
+Then, let's actually say what the options do, and what their impact is:
+
+	P	Enable 'struct page' poisoning at initialization.
+		(Slows down boot time).
+
