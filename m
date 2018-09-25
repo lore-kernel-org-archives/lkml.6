@@ -7,122 +7,196 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18605C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 899EEC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEB4720685
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:39:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A3E2208D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:39:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SHmCu/jr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEB4720685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="msjy9pVO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A3E2208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeIYXrj (ORCPT
+        id S1727386AbeIYXsS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:47:39 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38503 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbeIYXrj (ORCPT
+        Tue, 25 Sep 2018 19:48:18 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53946 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbeIYXsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:47:39 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p6-v6so22579096ljc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ouH4n09/ojxjMH+cdgh6kJGsc2Zq9OTlO+9jcYp+R7U=;
-        b=SHmCu/jrF32wvQNqDOGKXIU/g2vEPCL6ePpzFL17CxtG6/BpcqJNsf6jlDSCRBZsLE
-         uVtCxcX6Vo8inDIwmcOGRi3Uwuplu/88XYXnCXmvJ6nmGeHbBWca3hg67CSdQixPA13Q
-         b05oyoxnLSDIQ+SdPOlKt9fWagNxesPAinBjc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ouH4n09/ojxjMH+cdgh6kJGsc2Zq9OTlO+9jcYp+R7U=;
-        b=P7wKWRmYEQsuYVoIk+/GPLqy+YCfuhmS4CZT4QA2P/RE1FL0E4dkFkr8E/JcbI204s
-         +/EoNyGnsEYR870bSFyYYVftDNZs6FKFodke04j+d+nNpb/fA3XHgDeIdwKVd4un2JTI
-         8xtYbn6UleJD0bTqADclLv6k1aak1L0nARX/6pStDtlcHCfTgODPFM3+s6PHXr2O8BZZ
-         zKygBGy0AeBnbvTpjjdGQtkZoppjqRBD74a+U1ZVFb7Qp/icW3V5Ta4fsYof53N4EVX+
-         DA4Oenx3L8G16AsSWb8jt3apmzavFzyEO3VwVjize7anVTBtxn9alK+1rNbX0YVEpSpw
-         dRFw==
-X-Gm-Message-State: ABuFfohUrTrhJUAIO969gxaa5pk1hX9stkAQo90diqvNZG4HAxIEtk/u
-        9XJLZ7A5m13A4tbhSxw4dhQRl78OCUo=
-X-Google-Smtp-Source: ACcGV636v9R79PyVWMgIehBw0FeXr4wiLPibmRg5JrGvR67Wo/eEOV5SURLDXP+QXcrumiN6qtTuAA==
-X-Received: by 2002:a2e:2942:: with SMTP id u63-v6mr1660774lje.28.1537897143642;
-        Tue, 25 Sep 2018 10:39:03 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm534265lfi.45.2018.09.25.10.39.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 10:39:03 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id j25-v6so2563572ljg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:39:02 -0700 (PDT)
-X-Received: by 2002:a2e:5554:: with SMTP id j81-v6mr1645611ljb.53.1537897141912;
- Tue, 25 Sep 2018 10:39:01 -0700 (PDT)
+        Tue, 25 Sep 2018 19:48:17 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id C1242241FD2;
+        Tue, 25 Sep 2018 13:39:40 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id d81jQZZ39T4Z; Tue, 25 Sep 2018 13:39:37 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id E2CAB241FCB;
+        Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E2CAB241FCB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1537897176;
+        bh=PPlEECebzJlVc1sGGBr4O/LggAJsKxbOSsHh5bFAhQE=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=msjy9pVO5wmjzsGWnTBxQFMI8RxhrXai/0upFFI85Pz/LSvAmZPOC0Q//BYP1mo+C
+         OOynroHogHD8W5YwDnfGoCF6UAQP7ObvFczkiffbAP5ni506OTuUB11g2X6fnaMK1H
+         5ZlOUcpp0Ivbog7qk+UH8ku5/+/XWFxNe/Hsz2rFOIvFavPs4A13qo6eXYr06GMpyi
+         bxv0JrbytdCzbcuhOUm/PQGWv2mPB6fOnaRFhGLGYMlhPojzbAhsjUVm1e0PY/BTJi
+         p9sfQSoDUW+LX3ULVfG62Ghm0q9Z+n9RLjzG9iPvS25t/tWCgiCp9XaeEPRP3PPhwW
+         ikzNEbTk/HFRg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id XALuaMRmPicw; Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id C1A17241FC4;
+        Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
+Date:   Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        stable <stable@vger.kernel.org>
+Message-ID: <1367962117.10271.1537897176578.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180918135328.32034-1-mathieu.desnoyers@efficios.com>
+References: <20180918135328.32034-1-mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] rseq/selftests: fix parametrized test with -fpie
 MIME-Version: 1.0
-References: <1537887875-29494-1-git-send-email-vbadigan@codeaurora.org> <1537887875-29494-2-git-send-email-vbadigan@codeaurora.org>
-In-Reply-To: <1537887875-29494-2-git-send-email-vbadigan@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 25 Sep 2018 10:38:23 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6Bxtdev+1Zo58LHNaYkB5MTfUZx8eFayvuixVJFWMw_Q@mail.gmail.com>
-Message-ID: <CAE=gft6Bxtdev+1Zo58LHNaYkB5MTfUZx8eFayvuixVJFWMw_Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mmc: sdhci-msm: Add flag for restoring dll
-To:     vbadigan@codeaurora.org
-Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        robh+dt@kernel.org, asutoshd@codeaurora.org,
-        riteshh@codeaurora.org, stummala@codeaurora.org,
-        sayali <sayalil@codeaurora.org>,
-        Doug Anderson <dianders@google.com>, mark.rutland@arm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.9_GA_3019 (ZimbraWebClient - FF52 (Linux)/8.8.9_GA_3019)
+Thread-Topic: rseq/selftests: fix parametrized test with -fpie
+Thread-Index: C5x8DI+4smN7GnGfzzW4HJjJpBb8Bg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 8:05 AM Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
->
-> The dll settings of SDHC controller needs to be restored whenever
-> controller clocks are gated. This restoration is needed only on
-> few SDHCI-MSM controllers. This dt flag indicates whether dll
-> restoration is needed or not.
->
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+----- On Sep 18, 2018, at 9:53 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+
+> On x86-64, the parametrized selftest code for rseq crashes with a
+> segmentation fault when compiled with -fpie. This happens when the
+> param_test binary is loaded at an address beyond 32-bit on x86-64.
+> 
+> The issue is caused by use of a 32-bit register to hold the address
+> of the loop counter variable.
+> 
+> Fix this by using a 64-bit register to calculate the address of the
+> loop counter variables as an offset from rip.
+
+Should this fix go through tip or the selftests tree ?
+
+Thanks,
+
+Mathieu
+
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: <stable@vger.kernel.org> # v4.18
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Dave Watson <davejwatson@fb.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Shuah Khan <shuahkh@osg.samsung.com>
+> Cc: Andi Kleen <andi@firstfloor.org>
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: "H . Peter Anvin" <hpa@zytor.com>
+> Cc: Chris Lameter <cl@linux.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+> Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Paul Turner <pjt@google.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ben Maurer <bmaurer@fb.com>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
 > ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> index 3720385..207ce36 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> @@ -31,6 +31,8 @@ Optional properties:
->                                         BUS_OFF states in power irq. Should be specified in
->                                         pairs (lpm, hpm), for BUS_OFF and BUS_ON respectively.
->                                         Units uA.
-> +- qcom,restore-dll-config - Flag indicates that restoration of dll config after clock gating
-> +                           is needed on given platform. This wouldn't be needed for every MSM.
->  Example:
->
->         sdhc_1: sdhci@f9824900 {
-> @@ -49,6 +51,8 @@ Example:
->
->                 clocks = <&gcc GCC_SDCC1_APPS_CLK>, <&gcc GCC_SDCC1_AHB_CLK>;
->                 clock-names = "core", "iface";
+> tools/testing/selftests/rseq/param_test.c | 19 ++++++++++---------
+> 1 file changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/rseq/param_test.c
+> b/tools/testing/selftests/rseq/param_test.c
+> index 615252331813..4bc071525bf7 100644
+> --- a/tools/testing/selftests/rseq/param_test.c
+> +++ b/tools/testing/selftests/rseq/param_test.c
+> @@ -56,15 +56,13 @@ unsigned int yield_mod_cnt, nr_abort;
+> 			printf(fmt, ## __VA_ARGS__);	\
+> 	} while (0)
+> 
+> -#if defined(__x86_64__) || defined(__i386__)
+> +#ifdef __i386__
+> 
+> #define INJECT_ASM_REG	"eax"
+> 
+> #define RSEQ_INJECT_CLOBBER \
+> 	, INJECT_ASM_REG
+> 
+> -#ifdef __i386__
+> -
+> #define RSEQ_INJECT_ASM(n) \
+> 	"mov asm_loop_cnt_" #n ", %%" INJECT_ASM_REG "\n\t" \
+> 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
+> @@ -76,9 +74,16 @@ unsigned int yield_mod_cnt, nr_abort;
+> 
+> #elif defined(__x86_64__)
+> 
+> +#define INJECT_ASM_REG_P	"rax"
+> +#define INJECT_ASM_REG		"eax"
 > +
-> +               qcom,restore-dll-config;
+> +#define RSEQ_INJECT_CLOBBER \
+> +	, INJECT_ASM_REG_P \
+> +	, INJECT_ASM_REG
+> +
+> #define RSEQ_INJECT_ASM(n) \
+> -	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG "\n\t" \
+> -	"mov (%%" INJECT_ASM_REG "), %%" INJECT_ASM_REG "\n\t" \
+> +	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG_P "\n\t" \
+> +	"mov (%%" INJECT_ASM_REG_P "), %%" INJECT_ASM_REG "\n\t" \
+> 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
+> 	"jz 333f\n\t" \
+> 	"222:\n\t" \
+> @@ -86,10 +91,6 @@ unsigned int yield_mod_cnt, nr_abort;
+> 	"jnz 222b\n\t" \
+> 	"333:\n\t"
+> 
+> -#else
+> -#error "Unsupported architecture"
+> -#endif
+> -
+> #elif defined(__ARMEL__)
+> 
+> #define RSEQ_INJECT_INPUT \
+> --
+> 2.11.0
 
-Hi Veera,
-I'm not sure this is the best approach. It might be better to key this
-behavior off of the compatible string. Actually I'm noticing now that
-the binding for this device doesn't include an SoC-specific compatible
-string, which I think is now the preferred way (eg
-"qcom,sdm845-sdhci", "qcom,sdhci-msm-v5"). I think we should add that
-to sdhci-msm.txt, then use the compatible string to enable this
-behavior you're adding now.
-
--Evan
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
