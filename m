@@ -5,60 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999F9C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979BEC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EAE52086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B16B2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 19:34:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="npvXCnsR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EAE52086B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6LWbX+b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B16B2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeIZBnm (ORCPT
+        id S1728197AbeIZBnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 21:43:42 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34356 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbeIZBnk (ORCPT
+        Tue, 25 Sep 2018 21:43:46 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35506 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeIZBnq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 21:43:40 -0400
-Received: by mail-ot1-f67.google.com with SMTP id i12-v6so25727296otl.1;
-        Tue, 25 Sep 2018 12:34:35 -0700 (PDT)
+        Tue, 25 Sep 2018 21:43:46 -0400
+Received: by mail-ot1-f66.google.com with SMTP id j9-v6so25685370otl.2;
+        Tue, 25 Sep 2018 12:34:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1VSM+YL8RaEYyPZTMSdhDEWOLDLlw1tPrWKUMYSMgQo=;
-        b=npvXCnsRUt8QtVH3N+hzfy/L20DAtXrjM9E37OluzSLcD7FN2WQ/gURZuyonMnePio
-         8p0cv+QMxIq46uRoE9hB4ldW1xK3r2mBx2bB7+Jw13T4p7Ynr9Yd7YWZ0Mj7OLtzTufs
-         RDYuDjyO2yRdPgQ0eVM9Nx77kSb8pk2cdOP31nQMalTPjnJq1+WHSwZR81leOQU2O9W3
-         Tsse1xG6JZxz1w6FXMw2z1C63TAGF7T5wCi9K6SSWZWw0F0/bDLBGVqVN8GYmVGLxzp4
-         /z1xtB6eEhcFWbyWdUqg89NI/GRbr1mCj2goU+E+EbTKticSRBx/UMxpDXLITd38uT1D
-         o2wQ==
+        bh=2AbTQUKv3pTYS7bOfJ4N+f/lUV/dJeu/kZekRIvspo0=;
+        b=R6LWbX+bMkshLIdsnKH1ADbBJPvifPxd4rQI0qzhod9bUKy6OcjyI2iwjxxcngI+ks
+         MKYcCGd8NgYkn8ifoDbDXS+QrYQr62R2jMvv85RS05y4MyQnVjvAoqOU7IC3MSWCRxA3
+         5G4iQ0sSI6SiffTmEb80eFBGjV3h4fPMtZVS9eZyp+KeY5fKom1AkRAjR1H4Z9z3OMXT
+         Um4H+EbG7YymqFxnQo2u+yHP5ol9H4k3XnqdRnwe3uuFZWsWs8F0XThQuQVN2/3ubCqH
+         PxitgS/A+yOQ2iAQhv6PYq/iXZ9lFMhczkT7IHikF7c+9/2Lt9GP1YJS3dgOVB9hvvzQ
+         8Q2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1VSM+YL8RaEYyPZTMSdhDEWOLDLlw1tPrWKUMYSMgQo=;
-        b=NmBU/Goa4dWChxqdkCtZmMb5bzSRSudmv9DiFGimD8wanbFSq1cKOkmJdzChC4Kv1p
-         lPRO73UZvFodiHKk6/yVi/UmceRIfWuq3YZ2SvjG42w1/kw022pIOYS6cna035IwW2At
-         HN9shzKOMDY+X+EWSbv/SilWv9g8pFs0LXr2zsJtRIGWRGwK+KOzgzNjoxdz7HcA5O2p
-         Oq3t70HPBZshn6TEM7bRTynUPAsfr/iZWSXlfsnG3JBrfCsWlhj0rtljzknku5fIBaQF
-         V8tAlVLTC5uhakZZzR6UOHuGI6scfzT9ylKqY2x9HbsP63H6zxNfoA0Fo0ZDppp+s2Ht
-         PdjA==
-X-Gm-Message-State: ABuFfognNLxVOlp9HB60Bp3UmJ06CWlnSdjZNg1OGqheR4ng+wJSrCm9
-        BhLDkQgFvm5zxcIepw+Lgcc=
-X-Google-Smtp-Source: ACcGV612fR+aLsHT2/+TZO2qGtzuJLpf7VPJQzijrDARHO3EpIevRMkOY4mPK+J+JRXvLVepNGVogg==
-X-Received: by 2002:a9d:29fd:: with SMTP id g58-v6mr1746320otd.390.1537904074553;
-        Tue, 25 Sep 2018 12:34:34 -0700 (PDT)
+        bh=2AbTQUKv3pTYS7bOfJ4N+f/lUV/dJeu/kZekRIvspo0=;
+        b=K6Elc8lbSCNuzZfLPZxuimGGW1xuTG4ExdU1lEm1bRVq5csChsp8a0Tw0OQYr9FWdJ
+         8/rb0/P2VNFhUWKSOsB+el7covROepeBOZ70ChBcALelw+x18U3doSzvfC47uSGACovk
+         0qFSWTzCC1DpdIRfnCeknkSYm4NIZb9oo6HK0meLIVYtUEK8Y7SrbnF0dG/GMjemI1es
+         avmdRB5lQnwUMZmedSiA1mIRettN5REZnC8HtpYPyNZX63QYPHVZG3/DDhLQjGK9eZ9u
+         uQsuE1LmzFlFnUN8fU5MksTcBlFZD5GVP0x0A7qbIbteqMsqij3E09QcLecWLNlU9bUW
+         EOZw==
+X-Gm-Message-State: ABuFfoiDlPF9KH3TFDmMp0482ySJM0dbgfErCKD7JGUhzg0r4P6EYLV5
+        NGwHb5EKendAlTs0OOFyA1c=
+X-Google-Smtp-Source: ACcGV60flRnQjGqf5RvzzJJLLZAsq8xx1ZvXXC2S1jyxMydHNL1afEyb+X9azEqN1RcDDF60KCzuAA==
+X-Received: by 2002:a9d:2de5:: with SMTP id g92-v6mr1868377otb.93.1537904077414;
+        Tue, 25 Sep 2018 12:34:37 -0700 (PDT)
 Received: from localhost.localdomain ([143.166.81.254])
-        by smtp.gmail.com with ESMTPSA id q15-v6sm1049193otl.43.2018.09.25.12.34.33
+        by smtp.gmail.com with ESMTPSA id q15-v6sm1049193otl.43.2018.09.25.12.34.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 12:34:33 -0700 (PDT)
+        Tue, 25 Sep 2018 12:34:36 -0700 (PDT)
 From:   Stuart Hayes <stuart.w.hayes@gmail.com>
 X-Google-Original-From: Stuart Hayes <stuart.hayes@dell.com>
 To:     dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
@@ -66,13 +67,14 @@ Cc:     Mario Limonciello <mario.limonciello@dell.com>,
         LKML <linux-kernel@vger.kernel.org>,
         platform-driver-x86@vger.kernel.org,
         Stuart Hayes <stuart.w.hayes@gmail.com>
-Subject: [PATCH 3/5] firmware: dell_rbu: Move dell_rbu to drivers/platform/x86
-Date:   Tue, 25 Sep 2018 14:34:16 -0500
-Message-Id: <20180925193418.28493-4-stuart.hayes@dell.com>
+Subject: [PATCH 5/5] MAINTAINERS: Update maintainer for dcdbas and dell_rbu
+Date:   Tue, 25 Sep 2018 14:34:18 -0500
+Message-Id: <20180925193418.28493-6-stuart.hayes@dell.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180925193418.28493-1-stuart.hayes@dell.com>
 References: <20180925193418.28493-1-stuart.hayes@dell.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -81,90 +83,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stuart Hayes <stuart.w.hayes@gmail.com>
 
+Assign maintainer for dell_rbu driver, and reassign maintainer of dcdbas
+from inactive maintainer (current maintainer is aware of this change--
+see https://www.spinics.net/lists/platform-driver-x86/msg16336.html).
+
 Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
 ---
- drivers/firmware/Kconfig                      | 12 ------------
- drivers/firmware/Makefile                     |  1 -
- drivers/platform/x86/Kconfig                  | 12 ++++++++++++
- drivers/platform/x86/Makefile                 |  1 +
- drivers/{firmware => platform/x86}/dell_rbu.c |  0
- 5 files changed, 13 insertions(+), 13 deletions(-)
- rename drivers/{firmware => platform/x86}/dell_rbu.c (100%)
+ MAINTAINERS | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 6e83880046d7..02f39d20efce 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -145,18 +145,6 @@ config EFI_PCDP
- 	  See DIG64_HCDPv20_042804.pdf available from
- 	  <http://www.dig64.org/specifications/> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4ece30f15777..455b3fe6954e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4188,6 +4188,12 @@ M:	Pali Rohár <pali.rohar@gmail.com>
+ S:	Maintained
+ F:	drivers/platform/x86/dell-rbtn.*
  
--config DELL_RBU
--	tristate "BIOS update support for DELL systems via sysfs"
--	depends on X86
--	select FW_LOADER
--	select FW_LOADER_USER_HELPER
--	help
--	 Say m if you want to have the option of updating the BIOS for your
--	 DELL system. Note you need a Dell OpenManage or Dell Update package (DUP)
--	 supporting application to communicate with the BIOS regarding the new
--	 image for the image update to take effect.
--	 See <file:Documentation/dell_rbu.txt> for more details on the driver.
--
- config DCDBAS
- 	tristate "Dell Systems Management Base Driver"
- 	depends on X86
-diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
-index e18a041cfc53..61887ba9df1d 100644
---- a/drivers/firmware/Makefile
-+++ b/drivers/firmware/Makefile
-@@ -11,7 +11,6 @@ obj-$(CONFIG_DMI)		+= dmi_scan.o
- obj-$(CONFIG_DMI_SYSFS)		+= dmi-sysfs.o
- obj-$(CONFIG_EDD)		+= edd.o
- obj-$(CONFIG_EFI_PCDP)		+= pcdp.o
--obj-$(CONFIG_DELL_RBU)          += dell_rbu.o
- obj-$(CONFIG_DCDBAS)		+= dcdbas.o
- obj-$(CONFIG_DMIID)		+= dmi-id.o
- obj-$(CONFIG_ISCSI_IBFT_FIND)	+= iscsi_ibft_find.o
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 0c1aa6c314f5..cb037da32107 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -227,6 +227,18 @@ config DELL_RBTN
- 	  To compile this driver as a module, choose M here: the module will
- 	  be called dell-rbtn.
- 
-+config DELL_RBU
-+	tristate "BIOS update support for DELL systems via sysfs"
-+	depends on X86
-+	select FW_LOADER
-+	select FW_LOADER_USER_HELPER
-+	help
-+	 Say m if you want to have the option of updating the BIOS for your
-+	 DELL system. Note you need a Dell OpenManage or Dell Update package (DUP)
-+	 supporting application to communicate with the BIOS regarding the new
-+	 image for the image update to take effect.
-+	 See <file:Documentation/dell_rbu.txt> for more details on the driver.
++DELL REMOTE BIOS UPDATE DRIVER
++M:	Stuart Hayes <stuart.w.hayes@gmail.com>	
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/dell_rbu.c
 +
+ DELL LAPTOP SMM DRIVER
+ M:	Pali Rohár <pali.rohar@gmail.com>
+ S:	Maintained
+@@ -4195,10 +4201,11 @@ F:	drivers/hwmon/dell-smm-hwmon.c
+ F:	include/uapi/linux/i8k.h
  
- config FUJITSU_LAPTOP
- 	tristate "Fujitsu Laptop Extras"
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index e6d1becf81ce..8843f8e22127 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -23,6 +23,7 @@ obj-$(CONFIG_DELL_WMI_AIO)	+= dell-wmi-aio.o
- obj-$(CONFIG_DELL_WMI_LED)	+= dell-wmi-led.o
- obj-$(CONFIG_DELL_SMO8800)	+= dell-smo8800.o
- obj-$(CONFIG_DELL_RBTN)		+= dell-rbtn.o
-+obj-$(CONFIG_DELL_RBU)          += dell_rbu.o
- obj-$(CONFIG_ACER_WMI)		+= acer-wmi.o
- obj-$(CONFIG_ACER_WIRELESS)	+= acer-wireless.o
- obj-$(CONFIG_ACERHDF)		+= acerhdf.o
-diff --git a/drivers/firmware/dell_rbu.c b/drivers/platform/x86/dell_rbu.c
-similarity index 100%
-rename from drivers/firmware/dell_rbu.c
-rename to drivers/platform/x86/dell_rbu.c
+ DELL SYSTEMS MANAGEMENT BASE DRIVER (dcdbas)
+-M:	Doug Warzecha <Douglas_Warzecha@dell.com>
++M:	Stuart Hayes <stuart.w.hayes@gmail.com>
++L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/dcdbas.txt
+-F:	drivers/firmware/dcdbas.*
++F:	drivers/platform/x86/dcdbas.*
+ 
+ DELL WMI NOTIFICATIONS DRIVER
+ M:	Matthew Garrett <mjg59@srcf.ucam.org>
 -- 
 2.19.0.221.g150f307af
 
