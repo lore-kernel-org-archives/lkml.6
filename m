@@ -2,100 +2,89 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23493C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7FBC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01F820867
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:28:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cJJF4ekJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01F820867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E0C1B20843
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 22:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C1B20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=thyrsus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbeIZEiM (ORCPT
+        id S1726284AbeIZEkk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 00:38:12 -0400
-Received: from mail-vs1-f41.google.com ([209.85.217.41]:38088 "EHLO
-        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725733AbeIZEiM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 00:38:12 -0400
-Received: by mail-vs1-f41.google.com with SMTP id y11-v6so11312683vso.5
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 15:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vaKpk1KBgvPkms6L0mj4us9w16TgoO45tFosF0Sy88E=;
-        b=cJJF4ekJU7abSID98n0o3gumKsk7yVIb9K54X+TT8gqD2naYD2xtNlRYOjjLlTymzG
-         dYo/9BYvLezfngZ9Xm7qqyQBn8a4fV3wq6EGvChxX8fjj3BhdBcWHB5ewFkSfBAInxmd
-         A4JxpqV3Y8fnlwtkMxgnJyNojhvrqEnc93O7YRK1aTbKQ2x6fYvjWEJvYTPcxSqZf2W2
-         7NePgTLQPn0T5k4kfqczSLhdYNGVpr2zr97cAk4ej/bhHAzHpQ8WNSQh1JirAef9ZEZm
-         WitEx+a2u1dAkKZgev3TSGepRbiZqpzDgVnFhZf6Yvqjb6FeqNn6O8usoJIOj8BB9KBQ
-         hHZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vaKpk1KBgvPkms6L0mj4us9w16TgoO45tFosF0Sy88E=;
-        b=UDEblA2kx1E2LHQIxZqCeUTPp06jgl+Sf+pVzIEYYjItaVqdjpq7m+G77VSymV2JOR
-         DKE5CNZ60R7YsgRfrcIR+xrpqRXqi69nzpSrpro7+Zsiwf+aSPAbu7WLxG2n9i3NVj8I
-         cB4t7gTdrCpkPwuVrXrW3eQFS8JIb1lzVAmno9UkKjLV/MrPqRhEK/jq9vDt7H63KyV3
-         7chvXICBqeHgKl9r8YPM3MeDooa/6Y9/OZS4xppvB7pJ9H06s9l/CU1RrCYopQiTGxhK
-         9YHIFzDhA52lYe4u4qvaZUSLvvwfd59q53dLVPxfR35+K/NRt+4jeW5KlM2vRaiVAxI9
-         nFkg==
-X-Gm-Message-State: ABuFfojvnh/c0l5PIlvVi2zsj/TXGIFeuhox9EFLJrHibPlVYqYiPiAe
-        mbCuFrSmWpLNRx3OhCDT/gtZ2r5fabuyjpFfe+9IMg==
-X-Google-Smtp-Source: ACcGV62btAPuFfCMjSPl7rhKzfuutSzX+YBllCPi+VEO51SwfAKuWP6lwghKB8nAPeGBrlI+NMx1h3mB//DJwDf2bDM=
-X-Received: by 2002:a67:3511:: with SMTP id c17-v6mr979519vsa.42.1537914507645;
- Tue, 25 Sep 2018 15:28:27 -0700 (PDT)
+        Wed, 26 Sep 2018 00:40:40 -0400
+Received: from thyrsus.com ([71.162.243.5]:37836 "EHLO snark.thyrsus.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725736AbeIZEkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 00:40:39 -0400
+Received: by snark.thyrsus.com (Postfix, from userid 1000)
+        id 3BD663A42A5; Tue, 25 Sep 2018 18:30:31 -0400 (EDT)
+Date:   Tue, 25 Sep 2018 18:30:31 -0400
+From:   "Eric S. Raymond" <esr@thyrsus.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Conrads <contact@christoph-conrads.name>,
+        Pavel Machek <pavel@ucw.cz>, Edward Cree <ec429@cantab.net>,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Code of Conduct: Let's revamp it.
+Message-ID: <20180925223031.GA20619@thyrsus.com>
+Reply-To: esr@thyrsus.com
+Mail-Followup-To: esr@thyrsus.com, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Conrads <contact@christoph-conrads.name>,
+        Pavel Machek <pavel@ucw.cz>, Edward Cree <ec429@cantab.net>,
+        Olof Johansson <olof@lixom.net>, Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net>
+ <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
+ <20180925112832.GA10951@amd>
+ <20180925143645.af1457944142ecfec7199d80@christoph-conrads.name>
+ <20180925151406.GB2933@thunk.org>
 MIME-Version: 1.0
-References: <1537887875-29494-1-git-send-email-vbadigan@codeaurora.org> <1537887875-29494-3-git-send-email-vbadigan@codeaurora.org>
-In-Reply-To: <1537887875-29494-3-git-send-email-vbadigan@codeaurora.org>
-From:   Doug Anderson <dianders@google.com>
-Date:   Tue, 25 Sep 2018 15:28:15 -0700
-Message-ID: <CAD=FV=VxLR6v3vyimjznrqa1Tj5rPziPQX7Pt+wJRR+xm1N-0A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
-To:     vbadigan@codeaurora.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        Evan Green <evgreen@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925151406.GB2933@thunk.org>
+Organization: Eric Conspiracy Secret Labs
+X-Eric-Conspiracy: There is no conspiracy
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Theodore Y. Ts'o <tytso@mit.edu>:
+> There have been those who have characterized the GPL as being more
+> than just a license, but also a political statement.  And yet, many
+> projects, include Linus, use the GPL without necessarily subscribing
+> to all of Richard Stallman's positions, political or otherwise.
 
-On Tue, Sep 25, 2018 at 8:05 AM Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
-> +       /*
-> +        * Whenever core-clock is gated dynamically, it's needed to
-> +        * re-initialize the DLL when the clock is ungated.
-> +        */
-> +       if (msm_host->restore_dll_cfg_needed && msm_host->clk_rate) {
-> +               msm_host->restore_dll_cfg = true;
-> +               mmc_retune_needed(host->mmc);
+The case isn't parallel. Every kernel dev knew they were joining a
+commons defined by GPL terms when they signed on.  Regulation of
+soi-disant "hateful" speech and "diversity" objectives, on the other
+hand, are a *new* set of claims and norms not entailed in established
+practice.
 
-Using the boolean "restore_dll_cfg" to communicate like this seems
-really fragile.  I have no basis in fact, but I worry that something
-will happen in the meantime that really ought to invalidate the
-"saved_tuning_phase" but the boolean will still be set.
+There ought to be much broader consensus before anything like that is done -
+and I would say that even about new political claims I myself supported.
+Instead, what we have is open revolt from a dissident faction that thinks
+the project would be better destroyed than under the CoC.
 
-Is there a reason you can't just call msm_config_cm_dll_phase()
-directly from sdhci_msm_runtime_resume()?  Perhaps after the
-clk_bulk_prepare_enable() call below?
+That should be a clue that imposing the CoC without a lot of public
+discussion and preparation was a mistake, and it should be revereted until
+at least rough consensus in fovor of some improvement on the old
+Code is achieved.
+-- 
+		<a href="http://www.catb.org/~esr/">Eric S. Raymond</a>
+
+My work is funded by the Internet Civil Engineering Institute: https://icei.org
+Please visit their site and donate: the civilization you save might be your own.
 
 
--Doug
