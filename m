@@ -2,84 +2,74 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42123C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E30C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB99F2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB99F2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 899AC20877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 12:23:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899AC20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbeIYSaV (ORCPT
+        id S1729080AbeIYSad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 14:30:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60182 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728468AbeIYSaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 14:30:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BF94CAEAE;
-        Tue, 25 Sep 2018 12:23:01 +0000 (UTC)
-Date:   Tue, 25 Sep 2018 14:23:00 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tue, 25 Sep 2018 14:30:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51484 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728468AbeIYSad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 14:30:33 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2288C81F12;
+        Tue, 25 Sep 2018 12:23:15 +0000 (UTC)
+Received: from rules.brq.redhat.com (dhcp-10-40-5-28.brq.redhat.com [10.40.5.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3117710021B2;
+        Tue, 25 Sep 2018 12:23:13 +0000 (UTC)
+From:   Vladis Dronov <vdronov@redhat.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Oliver Neukum <oneukum@suse.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        syzkaller@googlegroups.com, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len
- to command line
-Message-ID: <20180925122300.qq5w4skwmxbzi6sy@pathway.suse.cz>
-References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
- <20180919015030.GA423@jagdpanzerIV>
- <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
- <20180919023932.GA14090@jagdpanzerIV>
- <20180918224312.6e9aef50@vmware.local.home>
- <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
- <20180920123056.27b2cf18@gandalf.local.home>
- <20180921073753.mqayzofcofpmhiyu@pathway.suse.cz>
- <20180925120135.GB523@tigerII.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925120135.GB523@tigerII.localdomain>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Cc:     stable <stable@vger.kernel.org>, Vladis Dronov <vdronov@redhat.com>
+Subject: [PATCH] usb: usbfs: fix crash in check_ctrlrecip()->usb_find_alt_setting()
+Date:   Tue, 25 Sep 2018 14:22:42 +0200
+Message-Id: <20180925122242.10950-1-vdronov@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 25 Sep 2018 12:23:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-09-25 21:01:35, Sergey Senozhatsky wrote:
-> On (09/21/18 09:37), Petr Mladek wrote:
-> > 
-> > I would personally keep the size as unsigned int. IMHO, a support
-> > for a log buffer bigger than 4GB is not worth the complexity.
-> > 
-> 
-> ftrace dumps are bothering me.
-> 
-> Steven Rostedt wrote [0]:
-> >
-> > Especially when I have a machine with 240 CPUs. But it also has a ton of
-> > RAM, I could easily do log_buf_len=32G
-> >
-> 
-> The systems are getting bigger, so log_buf_len=UINT_MAX+ might become
-> a norm at some point.
+ps->dev->actconfig can be NULL and cause NULL-deref in usb_find_alt_setting()
+before c9a4cb204e9e. fix this anyway by checking that ps->dev->actconfig is not
+NULL, so usb_find_alt_setting() is not called with a known-bad argument.
 
-Thanks for pointing this out. Well, it seems that the change would
-require a new syscall to pass the buffer size as long. We need to
-be sure that people would use this in the real life.
+Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Reported-by: syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com
+---
+ drivers/usb/core/devio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This thread suggested this change to avoid a checkpatch warning.
-The 32GB was mentioned as an example one year ego. This is not enough
-for a new syscall from my point of view.
-
-Best Regards,
-Petr
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 6ce77b33da61..26047620b003 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -824,7 +824,7 @@ static int check_ctrlrecip(struct usb_dev_state *ps, unsigned int requesttype,
+ 	 * class specification, which we always want to allow as it is used
+ 	 * to query things like ink level, etc.
+ 	 */
+-	if (requesttype == 0xa1 && request == 0) {
++	if (requesttype == 0xa1 && request == 0 && ps->dev->actconfig) {
+ 		alt_setting = usb_find_alt_setting(ps->dev->actconfig,
+ 						   index >> 8, index & 0xff);
+ 		if (alt_setting
+-- 
+2.14.4
