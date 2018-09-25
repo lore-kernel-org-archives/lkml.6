@@ -5,64 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A26C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07291C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E7120C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ECD12098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U63S2eK2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E7120C0A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJlxS+Id"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECD12098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729823AbeIYVzG (ORCPT
+        id S1729857AbeIYVzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:55:06 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37996 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729761AbeIYVzF (ORCPT
+        Tue, 25 Sep 2018 17:55:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43694 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729438AbeIYVzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:55:05 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r77-v6so6730206pgr.5;
-        Tue, 25 Sep 2018 08:47:00 -0700 (PDT)
+        Tue, 25 Sep 2018 17:55:21 -0400
+Received: by mail-pg1-f195.google.com with SMTP id q19-v6so10986892pgn.10;
+        Tue, 25 Sep 2018 08:47:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=r1jf7I8m9XEAKsAK1/gwrUfL1vDsUdRh0ZhYbhKAyEA=;
-        b=U63S2eK2/Mu+Es1QQKtVa2ueoabCpSycT3yT6RVAGYzlNsBWHLYCetm+c+6JwauGXW
-         4xWxX53qpltw5GdXEFpWMY5REKHs0qLoVrUm4twJMD9U5YgSQkYM1h3YBHIIkUxoXrUQ
-         qRQiFIgT2EfmWy4/xWgPnYnQnO9uAfqZPO3H+k9rdCSRXYbrrk6c181CVkTVO826wucl
-         m9MEbt2weMjscvvS+mDgeE/TgQI/Bd3KsQ06K8bVZJ15aEIJybh2jkV/tOxrYyb0Oter
-         Bj9hi00NZzVkIfj5ue3vBdUP4H6bvSypPpRinGK0V0whT2M3EjeoQF9rY99w8nGl+wO1
-         /nJA==
+        bh=DazXR1Y+IANIXdg1k4I6OUDyeRgvWTafVUJGpdKnTdM=;
+        b=EJlxS+IdNdFSyISBPCyxnHHxJh1E++W+NARnk61kKWoeLkc1CXT4CJrupYQr6Mttok
+         jnxdgL7Bb2CF6XT+sftEXeGBNudSGYdUFodxzQhWmLHrdD/xFAPuSUm9fBTzEg89hWBl
+         OIqcm31CmU3K4icWuwwpk0GBbHUOdOjlp5s1m4Xv/nV3fQ/AjI4qZ8my/gze/B7n50ED
+         1pGJoyRg9vdQBaRX9SNzvV0vf2S0OH4O+e4PSydWgLkjOVGlSg9jFJw01oBfd02QsRc0
+         KX8uVBczVExa99U5HWXf1dQo14B66IyJ5O6FY2te7ZPYfjYXqUq7YcD+LbMEY9kJ0+LL
+         NBJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=r1jf7I8m9XEAKsAK1/gwrUfL1vDsUdRh0ZhYbhKAyEA=;
-        b=lKgzwaCR6hn+jIiiK4kM5ztFp7pQRC0ha3NQXLUpQkOa9PF00ZpL6BbL5q+caYzNEB
-         P71M8UtPR4LPoL5dWyrYRuUIGBJIsiouXQj1/4EU8aKlSxhgufTmsEmbtp6SZQexOjNE
-         CuwV+h2Zj7kTNWSy4S0HGmgollJfxv3YiILdKQFXJqBmxDkykvlFP1AUF8CPEueIMcj4
-         FVTrmqmpr7+snx4wAGzxJwTkLHDuMuVnXkA+Py7MlWgcKhpYrfeyV28cAaE44J/jeCsj
-         hAm0LLxalPMUzVAepZwfyIopu52mDW9MeKpciwMmORq854ccWf8DLRHpTqtCB6as6sGA
-         cZfg==
-X-Gm-Message-State: ABuFfogamVfr1eqYjpRhkw7U+BUVMul3mf3tUyXKMQQPz0RirdOXBMDq
-        tviCRxmyMqAM+yzmXmJzrdo=
-X-Google-Smtp-Source: ACcGV62gN7TuCKPMJTUtbGmCft+VCIcwKp+K57qMmG4dDdKfMNstr3b5TcAkFiNe2VgArj8uWUN3iQ==
-X-Received: by 2002:a17:902:bf43:: with SMTP id u3-v6mr1849588pls.88.1537890419472;
-        Tue, 25 Sep 2018 08:46:59 -0700 (PDT)
+        bh=DazXR1Y+IANIXdg1k4I6OUDyeRgvWTafVUJGpdKnTdM=;
+        b=CHltVZXNvAPMxT9FJ8jH63NadgkCmvYUyS8fY7btoNn/CkAaK5XA8iORV4rKGVhxGT
+         B+tf6VuGVx/3fdI+xOO2DhV3UJ28GBMCwlupXWGR2h9W/2NZCMi3LQgLIbm4QGERklTh
+         U9MK6oHPFD0CQHSw4HmKdmAlMNyc67q0bGzXF79LgdtznyTW2KkLZDB03TZOleAuskhJ
+         fdHNNRNlc9cI3TzBeoPcvcqNgeSjkYorxf5OuxxWoFTwqTNQGOAQhZr6EMzv6D2n42Yi
+         16wwKuyoOfr+nWZJG9Eg5d5XRZdzyUiKBcDx+imtAsRGTmUQtYkIe7E5lDGIYWRSqjhi
+         L7UA==
+X-Gm-Message-State: ABuFfoj7HREEMGgzkF3Avs9eWMe1d8Q8Nsqe4SmP9N5SMxZwtPd86xno
+        TX1mGOxAkeugWUqJJm2GPUvbXok4
+X-Google-Smtp-Source: ACcGV62q+hIi3MswNjMOwO6mAiOGQCoPwbuf8qi2daELu0kjrS1tQFCFWZbQZB4GaZmJca0QYc30BA==
+X-Received: by 2002:a17:902:7b96:: with SMTP id w22-v6mr1841479pll.24.1537890434177;
+        Tue, 25 Sep 2018 08:47:14 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.146.97])
-        by smtp.gmail.com with ESMTPSA id h82-v6sm7337718pfa.173.2018.09.25.08.46.50
+        by smtp.gmail.com with ESMTPSA id w2-v6sm3208097pgb.61.2018.09.25.08.47.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 08:46:58 -0700 (PDT)
-Subject: Re: [PATCH 2/5] arm: dts: mt7623: update subsystem clock controller
- device nodes
+        Tue, 25 Sep 2018 08:47:13 -0700 (PDT)
+Subject: Re: [PATCH 3/5] arm: dts: mt7623: add iommu/smi device nodes
 To:     Ryder Lee <ryder.lee@mediatek.com>
 Cc:     Sean Wang <sean.wang@mediatek.com>,
         Roy Luo <cheng-hao.luo@mediatek.com>,
@@ -71,7 +70,7 @@ Cc:     Sean Wang <sean.wang@mediatek.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536141302.git.ryder.lee@mediatek.com>
- <6cc820db27996d8fd3094df10abbba1a2008907a.1536141302.git.ryder.lee@mediatek.com>
+ <2d9d216adb779bac6f5515b39cfeaed8b4b61878.1536141302.git.ryder.lee@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -117,12 +116,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <64b5187f-8a4d-b94e-8a3b-f1e19538697a@gmail.com>
-Date:   Tue, 25 Sep 2018 17:46:49 +0200
+Message-ID: <de407ddd-d423-288b-02d1-5b75381b6417@gmail.com>
+Date:   Tue, 25 Sep 2018 17:47:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <6cc820db27996d8fd3094df10abbba1a2008907a.1536141302.git.ryder.lee@mediatek.com>
+In-Reply-To: <2d9d216adb779bac6f5515b39cfeaed8b4b61878.1536141302.git.ryder.lee@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -134,74 +133,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 05/09/2018 12:22, Ryder Lee wrote:
-> Update MT7623 subsystem clock controllers, inlcuding mmsys, imgsys,
-> vdecsys, g3dsys and bdpsys.
+> Add iommu/smi device nodes for MT7623.
 > 
 > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
 Applied to v4.19-next/dts32
 
 > ---
->  arch/arm/boot/dts/mt7623.dtsi | 41 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+>  arch/arm/boot/dts/mt7623.dtsi | 59 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
 > 
 > diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-> index 8c43bd0..b7ccf8b 100644
+> index b7ccf8b..a46987b 100644
 > --- a/arch/arm/boot/dts/mt7623.dtsi
 > +++ b/arch/arm/boot/dts/mt7623.dtsi
-> @@ -692,6 +692,39 @@
->  		status = "disabled";
+> @@ -13,6 +13,7 @@
+>  #include <dt-bindings/power/mt2701-power.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/phy/phy.h>
+> +#include <dt-bindings/memory/mt2701-larb-port.h>
+>  #include <dt-bindings/reset/mt2701-resets.h>
+>  #include <dt-bindings/thermal/thermal.h>
+>  
+> @@ -286,6 +287,17 @@
+>  		clock-names = "system-clk", "rtc-clk";
 >  	};
 >  
-> +	g3dsys: syscon@13000000 {
-> +		compatible = "mediatek,mt7623-g3dsys",
-> +			     "mediatek,mt2701-g3dsys",
-> +			     "syscon";
-> +		reg = <0 0x13000000 0 0x200>;
-> +		#clock-cells = <1>;
-> +		#reset-cells = <1>;
+> +	smi_common: smi@1000c000 {
+> +		compatible = "mediatek,mt7623-smi-common",
+> +			     "mediatek,mt2701-smi-common";
+> +		reg = <0 0x1000c000 0 0x1000>;
+> +		clocks = <&infracfg CLK_INFRA_SMI>,
+> +			 <&mmsys CLK_MM_SMI_COMMON>,
+> +			 <&infracfg CLK_INFRA_SMI>;
+> +		clock-names = "apb", "smi", "async";
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
 > +	};
 > +
-> +	mmsys: syscon@14000000 {
-> +		compatible = "mediatek,mt7623-mmsys",
-> +			     "mediatek,mt2701-mmsys",
-> +			     "syscon";
-> +		reg = <0 0x14000000 0 0x1000>;
-> +		#clock-cells = <1>;
+>  	pwrap: pwrap@1000d000 {
+>  		compatible = "mediatek,mt7623-pwrap",
+>  			     "mediatek,mt2701-pwrap";
+> @@ -317,6 +329,17 @@
+>  		reg = <0 0x10200100 0 0x1c>;
+>  	};
+>  
+> +	iommu: mmsys_iommu@10205000 {
+> +		compatible = "mediatek,mt7623-m4u",
+> +			     "mediatek,mt2701-m4u";
+> +		reg = <0 0x10205000 0 0x1000>;
+> +		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&infracfg CLK_INFRA_M4U>;
+> +		clock-names = "bclk";
+> +		mediatek,larbs = <&larb0 &larb1 &larb2>;
+> +		#iommu-cells = <1>;
 > +	};
 > +
-> +	imgsys: syscon@15000000 {
-> +		compatible = "mediatek,mt7623-imgsys",
-> +			     "mediatek,mt2701-imgsys",
-> +			     "syscon";
-> +		reg = <0 0x15000000 0 0x1000>;
-> +		#clock-cells = <1>;
+>  	efuse: efuse@10206000 {
+>  		compatible = "mediatek,mt7623-efuse",
+>  			     "mediatek,mt8173-efuse";
+> @@ -709,6 +732,18 @@
+>  		#clock-cells = <1>;
+>  	};
+>  
+> +	larb0: larb@14010000 {
+> +		compatible = "mediatek,mt7623-smi-larb",
+> +			     "mediatek,mt2701-smi-larb";
+> +		reg = <0 0x14010000 0 0x1000>;
+> +		mediatek,smi = <&smi_common>;
+> +		mediatek,larb-id = <0>;
+> +		clocks = <&mmsys CLK_MM_SMI_LARB0>,
+> +			 <&mmsys CLK_MM_SMI_LARB0>;
+> +		clock-names = "apb", "smi";
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
 > +	};
 > +
-> +	vdecsys: syscon@16000000 {
-> +		compatible = "mediatek,mt7623-vdecsys",
-> +			     "mediatek,mt2701-vdecsys",
-> +			     "syscon";
-> +		reg = <0 0x16000000 0 0x1000>;
-> +		#clock-cells = <1>;
+>  	imgsys: syscon@15000000 {
+>  		compatible = "mediatek,mt7623-imgsys",
+>  			     "mediatek,mt2701-imgsys",
+> @@ -717,6 +752,18 @@
+>  		#clock-cells = <1>;
+>  	};
+>  
+> +	larb2: larb@15001000 {
+> +		compatible = "mediatek,mt7623-smi-larb",
+> +			     "mediatek,mt2701-smi-larb";
+> +		reg = <0 0x15001000 0 0x1000>;
+> +		mediatek,smi = <&smi_common>;
+> +		mediatek,larb-id = <2>;
+> +		clocks = <&imgsys CLK_IMG_SMI_COMM>,
+> +			 <&imgsys CLK_IMG_SMI_COMM>;
+> +		clock-names = "apb", "smi";
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_ISP>;
+> +	};
+> +
+>  	vdecsys: syscon@16000000 {
+>  		compatible = "mediatek,mt7623-vdecsys",
+>  			     "mediatek,mt2701-vdecsys",
+> @@ -725,6 +772,18 @@
+>  		#clock-cells = <1>;
+>  	};
+>  
+> +	larb1: larb@16010000 {
+> +		compatible = "mediatek,mt7623-smi-larb",
+> +			     "mediatek,mt2701-smi-larb";
+> +		reg = <0 0x16010000 0 0x1000>;
+> +		mediatek,smi = <&smi_common>;
+> +		mediatek,larb-id = <1>;
+> +		clocks = <&vdecsys CLK_VDEC_CKGEN>,
+> +			 <&vdecsys CLK_VDEC_LARB>;
+> +		clock-names = "apb", "smi";
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_VDEC>;
 > +	};
 > +
 >  	hifsys: syscon@1a000000 {
 >  		compatible = "mediatek,mt7623-hifsys",
 >  			     "mediatek,mt2701-hifsys",
-> @@ -946,6 +979,14 @@
->  		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
->  		status = "disabled";
->  	};
-> +
-> +	bdpsys: syscon@1c000000 {
-> +		compatible = "mediatek,mt7623-bdpsys",
-> +			     "mediatek,mt2701-bdpsys",
-> +			     "syscon";
-> +		reg = <0 0x1c000000 0 0x1000>;
-> +		#clock-cells = <1>;
-> +	};
->  };
->  
->  &pio {
 > 
