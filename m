@@ -2,131 +2,161 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0731C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22EBC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 01:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0B720C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:49:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="avT3PFzD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A0B720C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 5DDBB2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 01:04:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDBB2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeIYGyd (ORCPT
+        id S1727338AbeIYHJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 02:54:33 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:39629 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbeIYGyd (ORCPT
+        Tue, 25 Sep 2018 03:09:43 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:10503 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725954AbeIYHJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 02:54:33 -0400
-Received: by mail-yw1-f66.google.com with SMTP id v1-v6so1853410ywv.6
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 17:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6agy5zX0q38ScVoosyED7vMXWCaRlaUyR8a3UCIRKx4=;
-        b=avT3PFzDJfSBrqY+X4pccrqHbzaPoB7gq8S2VjuWB95L5YfN3RtShGIzsS0pE9KZPk
-         98klOvsfs2+YpUhq0s5L7lr3G/3QIxTLEeXsz5uM98AmyEmzY2zzK6ovkYBEnqsSTOQ8
-         9m/HlVz4y3j1XnjkfxRcHKEkLZ+twLhJm1c/o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6agy5zX0q38ScVoosyED7vMXWCaRlaUyR8a3UCIRKx4=;
-        b=CilrStjH5Pyho4Bqd9XkkSAm6NnlBQD06bV1TRndtBemVfnJXOxS/06MahSF2HLt+o
-         RuwCdNHc629jgADy1UtTeoH7GGNtYkzCF9906fA24WiScl/Fc79iRMJ2NBKJvkTz0puy
-         pUzt7nx0YZ9JPKA1t2iomvafFJCkxetmPi5c05acQiTWEQmw9GjQ6ABPdzEE2HCpWmXl
-         Y1bPeZeDYQ8hzS8tPJ/6OnVFkoxiO4UXEa8avKsjXQRayAW3ZWxXa5nZHghVHAfsY6nt
-         Nc/MqMqok3OP4t1VySTdYgL6IR4FbtxapLwzA4dGWyEv+fEf/KhWrQhqUvNggdVt2M0P
-         GKrw==
-X-Gm-Message-State: ABuFfojLFpVK1jQA5SDUIRKvkd1Uno/2RZzDOiuwrr37af50wiIfcHZ1
-        U+F30+ReCppsTIrVZya/MtQ0MxzjfME=
-X-Google-Smtp-Source: ACcGV608PxI1ewqja6bliPOd0ksfPjfLKhoZe51eTUNhIr+queSFCp9C8nJ2sk8eqA6Nx8myCdBxAg==
-X-Received: by 2002:a81:3a48:: with SMTP id h69-v6mr618871ywa.6.1537836580176;
-        Mon, 24 Sep 2018 17:49:40 -0700 (PDT)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id f194-v6sm1611895ywb.31.2018.09.24.17.49.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 17:49:38 -0700 (PDT)
-Received: by mail-yw1-f47.google.com with SMTP id p206-v6so8644387ywg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 17:49:38 -0700 (PDT)
-X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr667488ywr.168.1537836578110;
- Mon, 24 Sep 2018 17:49:38 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 17:49:37
- -0700 (PDT)
-In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
-References: <20180919021100.3380-1-keescook@chromium.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 24 Sep 2018 17:49:37 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKFdMXYGJ9AmR9=OkTqrU9_RqtMXeOmXfivv0VvwPfOmg@mail.gmail.com>
-Message-ID: <CAGXu5jKFdMXYGJ9AmR9=OkTqrU9_RqtMXeOmXfivv0VvwPfOmg@mail.gmail.com>
-Subject: Re: [PATCH crypto-next 00/23] crypto: skcipher - Remove VLA usage
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Tue, 25 Sep 2018 03:09:43 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="45299933"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 25 Sep 2018 09:04:46 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 5D3CF4B6EC97;
+        Tue, 25 Sep 2018 09:04:46 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 25 Sep 2018 09:04:50 +0800
+Date:   Tue, 25 Sep 2018 09:04:11 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Kees Cook <keescook@chromium.org>
+CC:     linux-efi <linux-efi@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v7 3/3] x86/boot/KASLR: Limit kaslr to choosing the
+ immovable memory
+Message-ID: <20180925010411.GA12561@localhost.localdomain>
+References: <20180913104629.5179-1-fanc.fnst@cn.fujitsu.com>
+ <20180913104629.5179-4-fanc.fnst@cn.fujitsu.com>
+ <CAGXu5jK13F7EY--zAVWq-=P2-Lt7n-K05ctL-vH7S=rcWKQoOw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jK13F7EY--zAVWq-=P2-Lt7n-K05ctL-vH7S=rcWKQoOw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 5D3CF4B6EC97.AF018
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 7:10 PM, Kees Cook <keescook@chromium.org> wrote:
-> This is the full follow-up to earlier discussions[1] that suggested
-> adding a new struct crypto_sync_skcipher to handle the VLA removal from
-> SKCIPHER_REQUEST_ON_STACK.
+On Sat, Sep 22, 2018 at 08:48:53AM -0700, Kees Cook wrote:
+>On Thu, Sep 13, 2018 at 3:46 AM, Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>> +#ifdef CONFIG_MEMORY_HOTREMOVE
+>> +       /*
+>> +        * If immovable memory found, filter the intersection between
+>> +        * immovable memory and region to slots_count.
+>> +        * Otherwise, go on old code.
+>> +        */
+>> +       for (i = 0; i < num_immovable_mem; i++) {
+>> +               struct mem_vector entry;
+>> +               unsigned long long start, end, entry_end, region_end;
+>> +
+>> +               start = immovable_mem[i].start;
+>> +               end = start + immovable_mem[i].size;
+>> +               region_end = region->start + region->size;
+>> +
+>> +               entry.start = clamp(region->start, start, end);
+>> +               entry_end = clamp(region_end, start, end);
+>> +
+>> +               if (entry.start + image_size < entry_end) {
 >
-> This series is effectively a no-op change: everything is a wrapper
-> around struct crypto_skcipher, but provides compile-time enforcement
-> for not putting an ASYNC skcipher on the stack, which allows us to
-> declare the on-stack requests with a fixed stack size.
+>Can this logic be rewritten to use the existing mem_overlaps() check
+>instead? I think that would make it much more readable.
 >
-> [1] https://lkml.kernel.org/r/CAGXu5j+bpLK=EQ9LHkO8V=sdaQwt==6fbGhgn2Vi1E9_WxSGRQ@mail.gmail.com
->
-> -Kees
->
-> Kees Cook (23):
->   crypto: skcipher - Introduce crypto_sync_skcipher
->   gss_krb5: Remove VLA usage of skcipher
->   lib80211: Remove VLA usage of skcipher
->   mac802154: Remove VLA usage of skcipher
->   s390/crypto: Remove VLA usage of skcipher
->   x86/fpu: Remove VLA usage of skcipher
->   block: cryptoloop: Remove VLA usage of skcipher
->   libceph: Remove VLA usage of skcipher
->   ppp: mppe: Remove VLA usage of skcipher
->   rxrpc: Remove VLA usage of skcipher
->   wusb: Remove VLA usage of skcipher
->   crypto: ccp - Remove VLA usage of skcipher
->   crypto: vmx - Remove VLA usage of skcipher
->   crypto: null - Remove VLA usage of skcipher
->   crypto: cryptd - Remove VLA usage of skcipher
->   crypto: sahara - Remove VLA usage of skcipher
->   crypto: qce - Remove VLA usage of skcipher
->   crypto: artpec6 - Remove VLA usage of skcipher
->   crypto: chelsio - Remove VLA usage of skcipher
->   crypto: mxs-dcp - Remove VLA usage of skcipher
->   crypto: omap-aes - Remove VLA usage of skcipher
->   crypto: picoxcell - Remove VLA usage of skcipher
->   crypto: skcipher - Remove SKCIPHER_REQUEST_ON_STACK()
 
-How do these look to you, Herbert? I'd really like to make sure these
-make it for the next merge window -- they're the last VLAs left in the
-kernel now. :)
+Sure, I will reuse mem_overlaps() instead of this logical.
 
--Kees
+>Otherwise, yes, this all looks fine.
 
--- 
-Kees Cook
-Pixel Security
+Thank you for the review.
+
+Thanks,
+Chao Fan
+
+>
+>-Kees
+>
+>> +                       entry.size = entry_end - entry.start;
+>> +                       slots_count(&entry, minimum, image_size);
+>> +
+>> +                       if (slot_area_index == MAX_SLOT_AREA) {
+>> +                               debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+>> +                               return 1;
+>> +                       }
+>> +               }
+>> +       }
+>> +       return 0;
+>> +#endif
+>> +}
+>> +
+>>  #ifdef CONFIG_EFI
+>>  /*
+>>   * Returns true if mirror region found (and must have been processed
+>> @@ -720,11 +775,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+>>
+>>                 region.start = md->phys_addr;
+>>                 region.size = md->num_pages << EFI_PAGE_SHIFT;
+>> -               process_mem_region(&region, minimum, image_size);
+>> -               if (slot_area_index == MAX_SLOT_AREA) {
+>> -                       debug_putstr("Aborted EFI scan (slot_areas full)!\n");
+>> +               if (process_mem_region(&region, minimum, image_size))
+>>                         break;
+>> -               }
+>>         }
+>>         return true;
+>>  }
+>> @@ -751,11 +803,8 @@ static void process_e820_entries(unsigned long minimum,
+>>                         continue;
+>>                 region.start = entry->addr;
+>>                 region.size = entry->size;
+>> -               process_mem_region(&region, minimum, image_size);
+>> -               if (slot_area_index == MAX_SLOT_AREA) {
+>> -                       debug_putstr("Aborted e820 scan (slot_areas full)!\n");
+>> +               if (process_mem_region(&region, minimum, image_size))
+>>                         break;
+>> -               }
+>>         }
+>>  }
+>>
+>> --
+>> 2.17.1
+>>
+>>
+>>
+>
+>
+>
+>-- 
+>Kees Cook
+>Pixel Security
+>
+>
+
+
