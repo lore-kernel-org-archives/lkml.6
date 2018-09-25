@@ -2,121 +2,118 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8821C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35700C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86EB32145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:09:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSkyD7Dm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EB32145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D17EC2098A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 00:16:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17EC2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbeIYGOQ (ORCPT
+        id S1727832AbeIYGVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 02:14:16 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:40941 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbeIYGOQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 02:14:16 -0400
-Received: by mail-yw1-f68.google.com with SMTP id z143-v6so8622368ywa.7
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 17:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oLF8IV6E6+XPP1dkFE/J+bDR0a8FlenM1TQYZFAO6I4=;
-        b=oSkyD7Dmpcwk913Pk3askHT825u+TErxVWbuBSrgGVHgdII1QmyDUZzRSqpzXB610F
-         3QmD7Cxz6+Q/Bv/LFasyLD72WAsoVWNPKoXDtAwO4VHVPX8K8SQHxjehpmcFO8QdcVLn
-         RhBLb48Bf6XlAvUcmOl/1lNtp6WcGqA3MOgkJ76OdWL8mI30jCPCr6+bOzuGED/PIcRu
-         IYXK2iAv8XKRPP3P/oO1B3mhIqRSXB+PHh3gWyIj4hJHoCriD/IHcE0bdhIpcByVeELh
-         qPIplnMpv590f2inQYfOFaFv3h33/9vNWSWCh2B2ugHzDIkhzjq9zr3B544ONrsESDe8
-         dUOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oLF8IV6E6+XPP1dkFE/J+bDR0a8FlenM1TQYZFAO6I4=;
-        b=fH+AVDYTvx4SXbj1JzbFySZRC8PMUrxw8Hj8XRCuaAqbqYz0aLBMTH8QnW6x5cz1XF
-         2XKUqRuBTxbauPaqZDNlqFyTMH4/p+RQE7sSEwfaAx8FyP+ah80KU1Vm8X7cVQwJE3Xt
-         /bNw0TMZymbQDgWTTV2iSkDcR4KDnYglUc6S6X6xokqM7aXEemii5Ol2E0nckCG52tfR
-         VmNU9lIUWTA1qBLwg8HwkZVvHebz/IG5G/TQBEeN2G2jWbXsVkh+HYSlJpsAfrrfteIE
-         rLVYyodUyYux1McD8tdc93qet00PiOu244nuxjneItAvaxGkfFMXvkK6RQ0r1vw5uL/S
-         mpCg==
-X-Gm-Message-State: ABuFfoj8ls8Q63cJnNmVWimkho33kAxY6bn4IkorVBxXIdtiy8hGob6o
-        x70rGi88kiv7rzxgtgCI8DVeX5GgUR3i/cVYJmE=
-X-Google-Smtp-Source: ACcGV62mFGbGFXTPWJpku3PojdoSKIG3B0wMcNXHiO8tQmNDhyUzjlAgT0kgLjlfY8pDsESylAlqWU0l4NFW4WzwZ7o=
-X-Received: by 2002:a81:3887:: with SMTP id f129-v6mr606095ywa.46.1537834172145;
- Mon, 24 Sep 2018 17:09:32 -0700 (PDT)
+        Tue, 25 Sep 2018 02:21:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46458 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbeIYGVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 02:21:16 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C893281DF3;
+        Tue, 25 Sep 2018 00:16:30 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D8A741980D;
+        Tue, 25 Sep 2018 00:16:20 +0000 (UTC)
+Date:   Tue, 25 Sep 2018 08:16:16 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Lameter <cl@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+Message-ID: <20180925001615.GA14386@ming.t460p>
+References: <20180923224206.GA13618@ming.t460p>
+ <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
+ <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
+ <12eee877-affa-c822-c9d5-fda3aa0a50da@virtuozzo.com>
+ <1537801706.195115.7.camel@acm.org>
+ <c844c598-be1d-bef4-fb99-09cf99571fd7@virtuozzo.com>
+ <1537804720.195115.9.camel@acm.org>
+ <10c706fd-2252-f11b-312e-ae0d97d9a538@virtuozzo.com>
+ <1537805984.195115.14.camel@acm.org>
+ <20180924185753.GA32269@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <20180912035352.11191-1-diego.viola@gmail.com> <CA+ToGPGSOsLpbOvjjb22B510qkNefdsUSiFTYON7c=oh0s8vcA@mail.gmail.com>
- <CANiq72m_X1U+NVf1VQuUcCi9-dERrCG3Y3tueRGbOpPd5u+a0g@mail.gmail.com> <CAFLxGvxZmuXb6KbGggQf4y1_Tkv=Ri3PuE4Jnfwbs1VuA9z2QQ@mail.gmail.com>
-In-Reply-To: <CAFLxGvxZmuXb6KbGggQf4y1_Tkv=Ri3PuE4Jnfwbs1VuA9z2QQ@mail.gmail.com>
-From:   Diego Viola <diego.viola@gmail.com>
-Date:   Mon, 24 Sep 2018 21:09:20 -0300
-Message-ID: <CA+ToGPG-z0GOka6EMruqTto64cpCZaSaTwA3A97-vgN9OKFSJg@mail.gmail.com>
-Subject: Re: [PATCH TRIVIAL] Punctuation fixes
-To:     richard.weinberger@gmail.com
-Cc:     miguel.ojeda.sandonis@gmail.com, corbet@lwn.net,
-        linux-kernel@vger.kernel.org, trivial@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924185753.GA32269@bombadil.infradead.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 25 Sep 2018 00:16:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 23, 2018 at 5:59 AM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> On Sun, Sep 23, 2018 at 3:00 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > Hi Diego,
-> >
-> > A few things, since it looks like this is your first patch.
->
-> git log...
->
-> > On Sat, Sep 22, 2018 at 5:56 PM, Diego Viola <diego.viola@gmail.com> wrote:
-> > > On Wed, Sep 12, 2018 at 12:54 AM Diego Viola <diego.viola@gmail.com> wrote:
-> > >>
-> > >> Signed-off-by: Diego Viola <diego.viola@gmail.com>
-> > >> ---
-> > >>  CREDITS     | 2 +-
-> > >>  MAINTAINERS | 2 +-
-> > >>  Makefile    | 2 +-
-> > >>  3 files changed, 3 insertions(+), 3 deletions(-)
-> > >>
-> > >> diff --git a/CREDITS b/CREDITS
-> > >> index 5befd2d71..b82efb36d 100644
-> > >> --- a/CREDITS
-> > >> +++ b/CREDITS
-> > >> @@ -1473,7 +1473,7 @@ W: http://www.linux-ide.org/
-> > >>  W: http://www.linuxdiskcert.org/
-> > >>  D: Random SMP kernel hacker...
-> > >>  D: Uniform Multi-Platform E-IDE driver
-> > >> -D: Active-ATA-Chipset maddness..........
-> > >> +D: Active-ATA-Chipset maddness...
-> >
-> > I think the extra dots is what was intended here :)
->
-> Diego, I know you can do better. :-)
-> How about running linux-next and hunting down regressions?
-> I think we suggested this already on IRC.
+On Mon, Sep 24, 2018 at 11:57:53AM -0700, Matthew Wilcox wrote:
+> On Mon, Sep 24, 2018 at 09:19:44AM -0700, Bart Van Assche wrote:
+> > That means that two buffers allocated with kmalloc() may share a cache line on
+> > x86-64. Since it is allowed to use a buffer allocated by kmalloc() for DMA, can
+> > this lead to data corruption, e.g. if the CPU writes into one buffer allocated
+> > with kmalloc() and a device performs a DMA write to another kmalloc() buffer and
+> > both write operations affect the same cache line?
+> 
+> You're not supposed to use kmalloc memory for DMA.  This is why we have
+> dma_alloc_coherent() and friends.  Also, from DMA-API.txt:
 
-OK. I'll do that after I'm done with the documentation.
+Please take a look at USB drivers, or storage drivers or scsi layer. Lot of
+DMA buffers are allocated via kmalloc.
 
->
-> --
-> Thanks,
-> //richard
+Also see the following description in DMA-API-HOWTO.txt:
+
+	If the device supports DMA, the driver sets up a buffer using kmalloc() or
+	a similar interface, which returns a virtual address (X).  The virtual
+	memory system maps X to a physical address (Y) in system RAM.  The driver
+	can use virtual address X to access the buffer, but the device itself
+	cannot because DMA doesn't go through the CPU virtual memory system.
+
+Also still see DMA-API-HOWTO.txt:
+
+Types of DMA mappings
+=====================
+
+There are two types of DMA mappings:
+
+- Consistent DMA mappings which are usually mapped at driver
+  initialization, unmapped at the end and for which the hardware should
+  guarantee that the device and the CPU can access the data
+  in parallel and will see updates made by each other without any
+  explicit software flushing.
+
+  Think of "consistent" as "synchronous" or "coherent".
+
+
+- Streaming DMA mappings which are usually mapped for one DMA
+  transfer, unmapped right after it (unless you use dma_sync_* below)
+  and for which hardware can optimize for sequential accesses.
+
+
 
 Thanks,
-Diego
+Ming
