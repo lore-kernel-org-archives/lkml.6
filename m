@@ -2,129 +2,100 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6159FC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A569C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE93214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3D492083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 02:20:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="mwkHOhIb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE93214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5IIXnst"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D492083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeIYIOt (ORCPT
+        id S1727326AbeIYIZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 04:14:49 -0400
-Received: from cock.li ([185.100.85.212]:55990 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeIYIOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 04:14:48 -0400
+        Tue, 25 Sep 2018 04:25:17 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37608 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeIYIZR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 04:25:17 -0400
+Received: by mail-io1-f68.google.com with SMTP id v14-v6so19272483iob.4
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 19:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ats3+gpwbZ5gzRUR6x1QFognv12Bup3QDkm7l/izQDE=;
+        b=C5IIXnstkqMWL8n+UDcgE4W3LDFlLPyAk/KqIBISFWhKu21RNf4M6NvLz+WKFS/IQN
+         CPJyxh+MJb4q89RpvUzpuBrqxJAfogtnreGy4MdIOFpSKVK9ztL+ticn4ur2uLAKTS7+
+         mAusmeCupu6j1aPbYN9Jd/R0WGwlE6j0tmIjyXdEy+5awukMfYXrrBEUfYVRF9Mwi+mH
+         0OsOzooKqZtT2lVjzSEflctKifs4oSBjU2fdTWVRxPyYg5FTprhOr1PszooQyzwg8Vgu
+         vT+6i/n4GhEPk6vjILSv65ua52FDxCaKvAsy8mfdk4/MIrqB7pVOmRlD1ZT3HZNALR8P
+         HIYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ats3+gpwbZ5gzRUR6x1QFognv12Bup3QDkm7l/izQDE=;
+        b=R6QX2INItKuMTed1Jt5qFhHIceUzJbeC9pdUTJftpY33XaIkhF1fXACFx3XjupxfbX
+         BuhTX2ZUeWwbisMlSMal7WZ3dYQg5BSRkzt+p3E1U5BFodQrB2/MoGD2z7wTmkZ94/3O
+         sydYls8XNDAD7AZDJOyy8WewX8O122urlJviWvq2kB8EI3rL9I5b8L1nHa+Rbtz+QzkY
+         xXVS42E8hurPMTjnF3G1zogZYl0blWDS+UT080vsmtmNDUJgr8AnVtwypF+GWl68eal6
+         keKFMY5TEX6hgKuEgYwx6Pp1HvWxrOAtX+es1bZ7fXOzU5ufZaLs0PtkEdDAQAATXo9S
+         KlEQ==
+X-Gm-Message-State: ABuFfojMPpGR0eeEkiImQlHHgyMaFkJSfx40gd4tJlqF/T9x18zy4fnO
+        BUNWV11IlKJkkCGXDsbL6tiqA6udBoAKOmsWleA=
+X-Google-Smtp-Source: ACcGV63uiDRlTWF/ppOFgTC7sAfwDqSWYeKMvIiW+0GDiBjKQsOEK2AuI1pH9mxhLmRQSj6hueyJL8PPJqi4BUhEFLI=
+X-Received: by 2002:a6b:9ace:: with SMTP id c197-v6mr1348095ioe.63.1537842006814;
+ Mon, 24 Sep 2018 19:20:06 -0700 (PDT)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537841377; bh=VvExT0RqVB7i7foeO5xm6OMtBZUFpFNKQhE9NP5JTwk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mwkHOhIbEBFJgTNHB1sEQo+M4WLdGVcUPni9yTbDHuL3HmVMfMxKAriB8Vh5psW84
-         6aHM+BMEpoSM3oiMEHgG9UUvn46C5CzTc7flEZudllC3UF25N4PxxfgXKjkGO+N0SC
-         1BJyMpcYGJIIAEzLgtl98Ai+zIIK1yrf0ds3xDYNjuKqNFW9Ci4UP5XYPvN53tpJdx
-         lsRQ9LOc+fp8MeHrVeQ8c+ECol01eYnLfVC2cTVYgVcxDRNIdL80LUR8bOaCVC14Eg
-         smhfhMVQSQq5leTGK67xdUR6/n3QzCgNknFV/QvWc1HlUK66SQKfZBKdKtR4W3wvgY
-         XbunDai/fW/mA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 25 Sep 2018 02:09:36 +0000
-From:   gratuitouslicensesarerevocable@redchan.it
-To:     Rick Moen <rick@linuxmafia.com>
-Cc:     dng@lists.dyne.org, linux-kernel@vger.kernel.org
-Subject: Re: [DNG] Fwd: Re: Code of Conduct: Let's revamp it.
-In-Reply-To: <20180924204809.GK23968@linuxmafia.com>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
- <465e1aa6d734e66ab07bc11a9b52ae2f@redchan.it>
- <c61eb2d545150d46428f4bc25843cd58@redchan.it>
- <201809241941.44460.dr.klepp@gmx.at> <20180924204809.GK23968@linuxmafia.com>
-Message-ID: <2b4aa199d19f8ee24e375c748c2a2089@redchan.it>
-X-Sender: gratuitouslicensesarerevocable@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+References: <cover.1537260207.git.zongbox@gmail.com> <2ccc6c0758624dbb22f6fe451a3e476a000108ef.1537260207.git.zongbox@gmail.com>
+ <20180921070006.GC8401@infradead.org>
+In-Reply-To: <20180921070006.GC8401@infradead.org>
+From:   Zong Li <zongbox@gmail.com>
+Date:   Tue, 25 Sep 2018 10:19:55 +0800
+Message-ID: <CA+ZOyaiJv-NZWk3ec_3zhRTSn7G-NGgyaiPTXOmuWfTWD7KSJw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] lib: Add umoddi3 and udivmoddi4 of GCC library routines
+To:     hch@infradead.org
+Cc:     palmer@sifive.com, aou@eecs.berkeley.edu, vincentc@andestech.com,
+        zong@andestech.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-What's so terrible about some preliminary pro-bono work to help 
-exploited or soon-to-be exploited IT workers?
-It's a magnanimous act of mercy.
-Are you galled that said help doesn't run your way?
-I will admit, I don't know the local barristers' "Code of Conduct" 
-backwards nor forwards, and, like the Linux CoC, I care not for those 
-things attempting to restrict one's civil liberties (such as freedom to 
-speak, think, oppose the mastery of women over males, etc, ),
-and I'm sure being anti-feminist and pro-marry-young-girls (as permitted 
-by YHWH in Devarim chapter 22, verse 28 (na'ar)) violates that subset of 
-the anglo-american religion which I absolutely abhor and wish to see 
-rendered unto the void.
-I know we are not to mislead people, not to chase medical lorries 
-(well... there are nuances here), etc.
+Christoph Hellwig <hch@infradead.org> =E6=96=BC 2018=E5=B9=B49=E6=9C=8821=
+=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=883:00=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On Tue, Sep 18, 2018 at 05:19:15PM +0800, Zong Li wrote:
+> > Add umoddi3 and udivmoddi4 support for 32-bit.
+>
+> This probably wants a better explanation of why you need them.
+>
+> > index 0000000..69f2d36
+> > --- /dev/null
+> > +++ b/lib/udivmoddi4.c
+> > @@ -0,0 +1,291 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+>
+> Who wrote this code, where does it come from?
 
-But I will not cower in the face of your threats to a livelihood.
-I will speak the truth, as I have, regardless of your pageantry.
-
-And I will have you know, again, that licenses not supported by an 
-interest are revocable by the grantor at his leisure.
-(and, to note; if you had a legal refutation you would have made it, 
-rather than engaging in an attempted threat to what you imagine is the 
-supply of my monies)
-
-Additionally, I would encourage those sanctioned by the CoC lovers to 
-indeed, rescind the grant that has been given.
-... and then to sue under copyright for statutory damages or profits, 
-depending on the defendant (individuals should be sued for statutory 
-damages, corps for profits).
-
-I leave it up to your local barristers to sort the details, ofcourse.
-
-(and if ever it should be, that your wish my come true, regarding my 
-employ, what do I love so in life, that if I were to lose it I would 
-rue?)
-
-
-On 2018-09-24 20:48, Rick Moen wrote:
-> Quoting Dr. Nikolaus Klepp (dr.klepp@gmx.at):
-> 
->> Now isn't it a gift of god that devuan is outside good owns country, 
->> is it?
-> 
-> The worst that can be reasonably said of the USA in this regard is that
-> we give our loons like MikeeUSA[1] the freedom to post deranged 
-> offtopic
-> rants (in places where admins so permit).  But he doesn't speak for us.
-> 
-> (That having been said, I certainly agree that keeping Devuan Project
-> largely out of the reach of USA law is a good idea.)
-> 
-> As an aside, it's lucky for him that he's fibbing in his repeated claim
-> to be a lawyer, because if he _were_ a lawyer, and if he were tracked
-> down by his state bar association, he'd be in significant trouble over
-> repeated ethics violations:  Real lawyers are permitted to give legal
-> advice only in the context of competent client consultation, which is
-> why one never sees real lawyers issuing broadcast (alleged) legal
-> opinions as MikeeUSA does.
-> 
-> Also, about MikeeUSA's legal advice:  Wie der Lohn, so die Arbeit.  ;->
-> 
-> And, as long as I'm quoting proverbs, we should perhaps move on,
-> because:  Zeit ist das teuerste Kleinod.
-> 
-> 
-> [1] I'm assuming he's our fault, in a general sense, for Vereinigte
-> Staaten von Amerika values of 'our'.  Of course, for all I know, he's
-> actually a teenager in Minsk.  (No offence to Minsk.)
-> 
-> _______________________________________________
-> Dng mailing list
-> Dng@lists.dyne.org
-> https://mailinglists.dyne.org/cgi-bin/mailman/listinfo/dng
+The RV32 need the umoddi3 to do modulo when the operands are long long
+type, like other libraries implementation such as ucmpdi2, lshrdi3 and
+so on. I encounter the undefined reference 'umoddi3' when I use the in
+house dma driver, although it is in house driver, but I think that
+umoddi3 is a common function for RV32. The udivmoddi4 and umoddi3 are
+copies from libgcc in gcc. There are other functions use the
+udivmoddi4 in libgcc, so I separate the umoddi3 and udivmoddi4 for
+flexible extension in the future.
