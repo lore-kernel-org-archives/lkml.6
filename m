@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 088B4C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2C1C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B319020645
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:34:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC1F21480
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 08:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6tm8oYo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B319020645
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hleXiu0i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC1F21480
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbeIYOks (ORCPT
+        id S1728626AbeIYOkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 10:40:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33207 "EHLO
+        Tue, 25 Sep 2018 10:40:53 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42012 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728463AbeIYOkr (ORCPT
+        with ESMTP id S1728075AbeIYOkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 25 Sep 2018 10:40:47 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f10-v6so1339791wrs.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 01:34:20 -0700 (PDT)
+Received: by mail-wr1-f65.google.com with SMTP id b11-v6so6158303wru.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 01:34:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Eeliq4KMWeAJl+kxPR9XD/o5gZyt72pWxg8IcQlJEZc=;
-        b=I6tm8oYol8yAWLyjxvBzAmofymWyUf/xWf4XBFLtll3tW1sj/CPQum//gHaQ6Cj8fh
-         H65BQaCFfVuw357XYvr7hRkSMUqwEXzDjWGeuI2HxRIiqWty7xYLFGth9A1roY7bEKtp
-         +yzCICTKBnT1crfFw3L6cDMBiecKtECEJi4UoioPxSL+WGUywXGt7av/Kflya2sArTLa
-         B8TCC9cKdPDQf4QZv3LQdidCKjA4X0JrlZyOrsc528d/Xk0ig+fDtbeDCUo4bGJZJM8k
-         wJh+cXjo57jAHOMA88wqLMzjsp3h0kJKW+UbywSxU9qdzidecomhamB3o2pSxvODVen7
-         OA6w==
+        bh=+Dy1Ja4gXW5mpcYa09YV9C9RPIHm8jQC2ppDhQxUJk0=;
+        b=hleXiu0iU3Df1ekpjDXiFSFH9ganBydaxLNnrv1kh3dQAJuckKzSoq0IqwwRhdrsbg
+         Aer79ZSMz56qntDTtMzzXwp7h4OWmA0t4OWFQ0dfMRFpIG5kQYaKZO8BSeSJ9DTqTVLW
+         JypZlS7aTT0gFrjkf0NITibbW5HLxDQCbB3MWFQiaLa3dIOM4UUxEIQe+hqIfPytDZsG
+         6VmQ/NqpXVqFX4tUuV8WnAfDHF8OOs6uSc+7qMe9QhkPJa2HEEJ4KWdsjTTk0oU1Q0D9
+         sCDHs149DgFIUoAJ375A7QQEGsSUdfVDnm25YecYhMwLxs3JTIlHFxf+rcU+ieoloK/r
+         +/bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Eeliq4KMWeAJl+kxPR9XD/o5gZyt72pWxg8IcQlJEZc=;
-        b=USEG0nq63xWjPMYC/Kht83MPdon1B2GMqbU9z/sSd1KmQYzXc0toYd8JC/I7tsV297
-         5YVHFz6KzdUlvwvw3pdayqF7RHtvwKUy/bIqgRnLhRUyzMI2CYpeec7BXxhrALrCwCzP
-         Llxh/ZsyfJSyiVAG8P2U04WViFJ4AAvRFXR5ptlvcah17t7+ULhmGR08odjV5SjdW8ye
-         g3VtA19XhHCt6lLdQm2q3WhBoximgZOWNMUi5TzzDTdG8teZkrtDw8Upr1GEgoaKXTJB
-         P07hSg1xGXoR0el0TINzQk7Rt6Q+6bHRIFO93X0E5vc5hX4JlI3dLHFXZ6cUyPXreNiN
-         A8kw==
-X-Gm-Message-State: ABuFfoiAooQa11rYUrbrd1XIK8U6QfvRwY+BWsqNSDZdXQyElB9oYcwj
-        9foSMGzXyjwNbjTlrBI70ys=
-X-Google-Smtp-Source: ACcGV606c7ON5+HzyNzI+t8C8TcAcutzaYkIcvGCKyV120t7ACQ1/LZO2U5YsD3So/mFCiECgoOehA==
-X-Received: by 2002:adf:8567:: with SMTP id 94-v6mr1926992wrh.223.1537864459747;
-        Tue, 25 Sep 2018 01:34:19 -0700 (PDT)
+        bh=+Dy1Ja4gXW5mpcYa09YV9C9RPIHm8jQC2ppDhQxUJk0=;
+        b=CHg2PyEOpDTnjqD7MI9ppytVDVdVPHHhzquNTXuVWb4T2MaOTjUCjT9dhk5uni/fXY
+         DctDe9jqq9LiypU/gXunOy8EAmXam37b9TmtPfEeSVM72JEtnKuDi4lwJ90I5PgS5I5x
+         eMeTbnbRK7jn7beXTjPQsjxZ44Mw82rlbz1ypo/ZXmvk8m/wLHVBoj54IXeLTf81k8Qg
+         WKUdZfAZaqgy2LjNG4UKubglLnFedQwonH3XiFEofs8F76Gt2hQ+P7AAh+u+VRXilyDw
+         NqW1gYRssSVqD+umEP+wGoOC2DMMBsLoGiGZ5Rw55HXtjUtWjewLNGCTA2PK0BqZMVBy
+         t9ag==
+X-Gm-Message-State: ABuFfojVovbx10/JUhLnfEmwhyEufN3jHiSx7L3nUf7C8ZtZF4D2tDI3
+        5Ub3nRtL/vrcIK+10pbfwVg=
+X-Google-Smtp-Source: ACcGV62gmGcAr8dN7BBY6l1JxVq3wuJlq9SCjc9nU3oqlICQShR+e74Y1VJzkYx8zyjJex4mkSl/7A==
+X-Received: by 2002:adf:f045:: with SMTP id t5-v6mr1954193wro.92.1537864460953;
+        Tue, 25 Sep 2018 01:34:20 -0700 (PDT)
 Received: from localhost.co.uk ([2a01:388:3ce:110::1:c])
-        by smtp.gmail.com with ESMTPSA id 94-v6sm2115538wrc.10.2018.09.25.01.34.18
+        by smtp.gmail.com with ESMTPSA id 94-v6sm2115538wrc.10.2018.09.25.01.34.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 01:34:19 -0700 (PDT)
+        Tue, 25 Sep 2018 01:34:20 -0700 (PDT)
 From:   Aymen Qader <qader.aymen@gmail.com>
 To:     Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
@@ -69,9 +69,9 @@ Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] staging: bcm2835-camera: Update TODO
-Date:   Tue, 25 Sep 2018 09:33:59 +0100
-Message-Id: <20180925083401.22533-5-qader.aymen@gmail.com>
+Subject: [PATCH v3 2/2] staging: bcm2835-camera: Remove unused header
+Date:   Tue, 25 Sep 2018 09:34:00 +0100
+Message-Id: <20180925083401.22533-6-qader.aymen@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180925083401.22533-1-qader.aymen@gmail.com>
 References: <20180924233426.32609-1-qader.aymen@gmail.com>
@@ -81,31 +81,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the TODO item to remove manual cache flushing from bulk_receive.
-This was previously done in this commit:
+Remove the asm/cacheflush.h header include from mmal-vchiq.c. This
+dependency was removed in:
 
 commit 7e8dbea41032 ("staging: bcm2835-camera: Remove explicit cache
 flush operations")
 
 Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
 ---
- drivers/staging/vc04_services/bcm2835-camera/TODO | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/TODO b/drivers/staging/vc04_services/bcm2835-camera/TODO
-index cefce72d814f..6c2b4ffe4996 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/TODO
-+++ b/drivers/staging/vc04_services/bcm2835-camera/TODO
-@@ -15,9 +15,3 @@ padding in the V4L2 spec, but that padding doesn't match what the
- hardware can do.  If we exposed the native padding requirements
- through the V4L2 "multiplanar" formats, the firmware would have one
- less copy it needed to do.
--
--3) Port to ARM64
--
--The bulk_receive() does some manual cache flushing that are 32-bit ARM
--only, which we should convert to proper cross-platform APIs.
--
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+index 51e5b04ff0f5..6e5c1d4ee122 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+@@ -21,7 +21,6 @@
+ #include <linux/slab.h>
+ #include <linux/completion.h>
+ #include <linux/vmalloc.h>
+-#include <asm/cacheflush.h>
+ #include <media/videobuf2-vmalloc.h>
+ 
+ #include "mmal-common.h"
 -- 
 2.17.1
 
