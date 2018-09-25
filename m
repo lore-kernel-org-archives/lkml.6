@@ -2,112 +2,93 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 736FFC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B94C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F3D20842
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:11:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33F3D20842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ACD0E20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 21:13:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD0E20842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeIZDVE (ORCPT
+        id S1726596AbeIZDWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 23:21:04 -0400
-Received: from mga17.intel.com ([192.55.52.151]:4214 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726257AbeIZDVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 23:21:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 14:11:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,303,1534834800"; 
-   d="scan'208";a="94763021"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.152]) ([10.7.198.152])
-  by orsmga002.jf.intel.com with ESMTP; 25 Sep 2018 14:11:14 -0700
-Subject: Re: [PATCH 2/2] nvdimm: Set device node in nd_device_register
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org
-References: <20180925204801.6182.73167.stgit@localhost.localdomain>
- <20180925205307.6182.26453.stgit@localhost.localdomain>
- <CAPcyv4jpUNP4mySPr5jYogpf5ZMPgpTu9oOjC89ZYHa=vL1JwQ@mail.gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <bcd44872-1961-79ff-f1a5-8ab2c2a99c20@linux.intel.com>
-Date:   Tue, 25 Sep 2018 14:11:14 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 25 Sep 2018 23:22:40 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45451 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726257AbeIZDWk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 23:22:40 -0400
+Received: by mail-oi1-f195.google.com with SMTP id d63-v6so2732767oic.12;
+        Tue, 25 Sep 2018 14:13:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NNQkC+N5u/Vvyw4gCpFPx10zNS/j8aX83CP2yallE2o=;
+        b=mV6ZlDBeUwPBuBWrEUu9QwnNRlQuuoN4tCA6pB/mWCtySzegS19dv/pprNuUoocZHs
+         hRrFhAy565VCvCO6GGUDHSNDG8oDDYRyU1wUPdWP6WnK5kj7rgCTWPX5hAmxw2AhOMKv
+         Nb1eeNu9McbFRgo+xkWDz6NXUsiBMxRkGFVCOIhFGEvWtrnB2AU4kIXG9g85Hh3jIhdq
+         6/ZX0RxKs1kNUE3P3pQbq3bmcPq/VCgh3z2wYKQETIqhJwT34wz8efxS488mQThQEPhD
+         xfU5IUm2xrZVK5wiH/BDq0fp7iABHoJxFzKM4RYMPIWqEmM4tNDHNZ96EQf/FuCMJzRD
+         Zp6Q==
+X-Gm-Message-State: ABuFfojM4f57UhszavySRapuNULBNDWsSYiQ0UgRKwvTjR1CE8+XasBe
+        xCe44AEugWxH26OTuKY0Hg==
+X-Google-Smtp-Source: ACcGV62SidQdPcrPIRBKtrqvmKZGKQb/kaRxljLHaMlzajn0y9XXOXo6VgvG8pB2qm+T62/Fq4wzMQ==
+X-Received: by 2002:aca:a5b:: with SMTP id 88-v6mr1936oik.324.1537909991117;
+        Tue, 25 Sep 2018 14:13:11 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x23-v6sm1005079oie.0.2018.09.25.14.13.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 14:13:10 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 16:13:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Jonathan Liu <net147@gmail.com>
+Subject: Re: [PATCH v2 4/6] drm/panel: simple: Add support for Banana Pi 7"
+ S070WV20-CT16 panel
+Message-ID: <20180925211309.GA12535@bogus>
+References: <20180907041948.19913-1-wens@csie.org>
+ <20180907041948.19913-5-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jpUNP4mySPr5jYogpf5ZMPgpTu9oOjC89ZYHa=vL1JwQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180907041948.19913-5-wens@csie.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 9/25/2018 2:08 PM, Dan Williams wrote:
-> On Tue, Sep 25, 2018 at 1:56 PM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
->>
->> This change makes it so that we don't repeatedly overwrite the device node
->> for nvdimm regions. The earliest we can set the node is immediately after
->> calling device init, so I have moved the code there so we can avoid
->> rewriting the node with each uevent.
->>
->> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->> ---
->>   drivers/nvdimm/bus.c |   16 ++++++++++------
->>   1 file changed, 10 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
->> index 9148015ed803..96f4d0e1706a 100644
->> --- a/drivers/nvdimm/bus.c
->> +++ b/drivers/nvdimm/bus.c
->> @@ -54,12 +54,6 @@ static int to_nd_device_type(struct device *dev)
->>
->>   static int nvdimm_bus_uevent(struct device *dev, struct kobj_uevent_env *env)
->>   {
->> -       /*
->> -        * Ensure that region devices always have their numa node set as
->> -        * early as possible.
->> -        */
->> -       if (is_nd_region(dev))
->> -               set_dev_node(dev, to_nd_region(dev)->numa_node);
->>          return add_uevent_var(env, "MODALIAS=" ND_DEVICE_MODALIAS_FMT,
->>                          to_nd_device_type(dev));
->>   }
->> @@ -519,6 +513,16 @@ void __nd_device_register(struct device *dev)
->>   void nd_device_register(struct device *dev)
->>   {
->>          device_initialize(dev);
->> +
->> +       /*
->> +        * Ensure that region devices always have their NUMA node set as
->> +        * early as possible. This way we are able to make certain that any
->> +        * memory associated with the creation and the creation itself of
->> +        * the region is associated with the correct node.
->> +        */
->> +       if (is_nd_region(dev))
->> +               set_dev_node(dev, to_nd_region(dev)->numa_node);
->> +
->>          __nd_device_register(dev);
+On Fri,  7 Sep 2018 12:19:46 +0800, Chen-Yu Tsai wrote:
+> This panel is marketed as Banana Pi 7" LCD display. On the back is
+> a sticker denoting the model name S070WV20-CT16.
 > 
-> Any reason to not put this inside __nd_device_register()? If you're ok
-> with that I can just fix up when applying.
+> This is a 7" 800x480 panel connected through a 24-bit RGB interface.
+> However the panel only does 262k colors.
+> 
+> Depending on the variant, the PCB attached to the panel module either
+> supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
+> an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
+> itself.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  .../display/panel/bananapi,s070wv20-ct16.txt  | 12 +++++++++
+>  drivers/gpu/drm/panel/panel-simple.c          | 25 +++++++++++++++++++
+>  2 files changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+> 
 
-I put it here since regions never call __nd_device_register directly, 
-they always call nd_device_register. I figured that by placing it here 
-we reduce the impact of this on the other devices that aren't going to 
-need it.
+Reviewed-by: Rob Herring <robh@kernel.org>
