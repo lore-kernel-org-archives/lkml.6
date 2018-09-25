@@ -2,90 +2,111 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17FFFC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD84C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB6520684
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A7D120684
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:02:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="zqtpmUfI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB6520684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hPU2NQko"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A7D120684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbeIZCLl (ORCPT
+        id S1726421AbeIZCLs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:11:41 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:35167 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbeIZCLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:11:41 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 1672d3b6;
-        Tue, 25 Sep 2018 19:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=PmEK7EcXRp29iDPblciKrkxZ3SA=; b=zqtpmU
-        fIaPYJbEFqwWgmMm5gB0/ZdaXgGBSTZQKuz7369mF3Gp2DJA4cq+yuSUw+pNVNTH
-        V8X8Czjo4zZFubo8RmRIVti5Gexe3Ty2yKW94lqyxyvemW9OZOQ5y8Dqv2tuVC1t
-        QNhpFkvlPkT4kRXMxxj3YQRDe63CpP9oM+3xI3rTF7nZ4YdMrXR0ZKJ1s1JAa+wB
-        Ti0L+kiMVaNQ9JaVgDVY4okBkNUfj7AjllDxYJ0M0dNmAKXQg32BOAqdpiGpAa9m
-        dEARBV1cjpq2dqywMznqx8gKfFvPostln1hFVOzg77thzXqyXS1fzltQebLUYCwY
-        q1L4ZO5E+TyWC4Bw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2f32156d (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Tue, 25 Sep 2018 19:43:58 +0000 (UTC)
-Received: by mail-ot1-f50.google.com with SMTP id j9-v6so25768232otl.2;
-        Tue, 25 Sep 2018 13:02:26 -0700 (PDT)
-X-Gm-Message-State: ABuFfohJT3tBPRj+v0bNbLuHj7rpIbvikYf+H7TkeA+9pz8ZYCFPXwV0
-        nR3nUTvDgvABBrDXClB3bEPaCQ/8wULvltKiWMk=
-X-Google-Smtp-Source: ACcGV60DdE3gYnAFjOt3X+7jYNxC4Cj/ZH9C2FLb0572npB2Dowt5Pf0S9CjJwvvKN2GaitTYxgejlaPpV+F5svmCAI=
-X-Received: by 2002:a9d:48a8:: with SMTP id d37-v6mr1974084otf.384.1537905745415;
- Tue, 25 Sep 2018 13:02:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-3-Jason@zx2c4.com>
- <2b5f2df2f1278c118a913259a44efdf589719293.camel@perches.com>
- <CAHmME9qLzFHPm2aaEKOmjBA95-c3CZuT+kQiuksLRRWQ_ad2sw@mail.gmail.com> <1BA7DB23-7BB6-46BA-A3E2-D65BC3CAF11C@amacapital.net>
-In-Reply-To: <1BA7DB23-7BB6-46BA-A3E2-D65BC3CAF11C@amacapital.net>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 25 Sep 2018 22:02:13 +0200
-X-Gmail-Original-Message-ID: <CAHmME9paEYXKS176MK4VM+wobc0KfNGz3yuQUQhaVNtFBv2oRg@mail.gmail.com>
-Message-ID: <CAHmME9paEYXKS176MK4VM+wobc0KfNGz3yuQUQhaVNtFBv2oRg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 02/23] zinc: introduce minimal cryptography library
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
+        Tue, 25 Sep 2018 22:11:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbeIZCLs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 22:11:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:
+        Subject:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rI9L9Ysotx9sweG9M3x1y3ki+CsTgXRWHQNspMZtW1I=; b=hPU2NQko1PZ+XGann7Fafgz5h
+        ysPCgV2ZYUKskKhSyCj45OcycM0Mzx+GVk7MQt3gURfQ80x31v7Pk0KbhKLkLPPsDx/xRuXj+XM8c
+        1B3vxvfwvSUNwz6JSMQCTOUnf9kc+Htj1Z43+K4BbTpDIeysYaFTboFINoqLfWzM/Dgf3A6gKXTbU
+        biRsZvc6i1ZQZK30cD8blxVxhctVVtr/W+jlV0hzUkrteLx2i7eICf05rItJ2KzLPUiUk6ivZ1rKg
+        ZXPQ2l1P0UPf50gikO+QLfxQmmpri+Weq5BLnEQ+Q0ATlRxWKIllzZEuvaxLK1nnX9bJmYRN7kvWQ
+        GgpYBDyMw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4tXE-0000kX-BI; Tue, 25 Sep 2018 20:02:36 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v14 10/19] x86/sgx: Detect Intel SGX
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-11-jarkko.sakkinen@linux.intel.com>
+Message-ID: <7ea823ce-d6ee-1ff0-efb4-3ca93536fb7e@infradead.org>
+Date:   Tue, 25 Sep 2018 13:02:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180925130845.9962-11-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 10:00 PM Andy Lutomirski <luto@amacapital.net> wrote:
-> > On Sep 25, 2018, at 12:43 PM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >
-> >> On Tue, Sep 25, 2018 at 8:33 PM Joe Perches <joe@perches.com> wrote:
-> >> I think the -Dpr_fmt is especially odd and not
-> >> really acceptable as it not used anywhere else
-> >> in the kernel.
-> >
-> > There are about 2000 cases in the kernel of the same '#define
-> > pr_fmt...' being pasted into the top of the file, which seems a bit
-> > cumbersome. Rather than having to paste that into each and every file
-> > that I pr_err from, why can't I just do this from the makefile, since
-> > I want that same pr_fmt to copy the whole directory?
->
-> Because people like to be able to just read the C file to figure out what it does. Or we could adopt the Makefile approach kernel-wide, since this use of it seems reasonable.
+On 9/25/18 6:06 AM, Jarkko Sakkinen wrote:
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 1a0be022f91d..b47e1a144409 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1913,6 +1913,23 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
+>  
+>  	  If unsure, say y.
+>  
+> +config INTEL_SGX_CORE
+> +	bool "Intel SGX core functionality"
+> +	depends on X86_64 && CPU_SUP_INTEL
+> +	help
+> +	Intel Software Guard eXtensions (SGX) CPU feature that allows ring 3
+> +	applications to create enclaves: private regions of memory that are
+> +	architecturally protected from unauthorized access and/or modification.
+> +
+> +	This option enables kernel recognition of SGX, high-level management
+> +	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
+> +	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
+> +	itself, this option does not provide SGX support to userspace.
+> +
+> +	For details, see Documentation/x86/intel_sgx.rst
+> +
+> +	If unsure, say N.
+> +
 
-It would indeed be nice to see this done tree-wide. I can recall
-various random bugs over the year where some dmesg messages are
-missing a prefix because the author forgot to copy and paste the thing
-to /yet another file/ in the same directory.
+Hi,
+coding-style.rst says that help text should be indented with
+one tab + 2 spaces.
+
+thanks.
+
+-- 
+~Randy
