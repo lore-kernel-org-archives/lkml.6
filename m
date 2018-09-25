@@ -2,128 +2,119 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07892C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287D8C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 905C220877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC68C2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 17:15:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="JNosOGrK";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Q+Qs+A5s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 905C220877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wca55Dhn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC68C2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeIYXVz (ORCPT
+        id S1727511AbeIYXX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:21:55 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:49942 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726328AbeIYXVy (ORCPT
+        Tue, 25 Sep 2018 19:23:26 -0400
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:35052 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbeIYXX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:21:54 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8PH2dSJ024478;
-        Tue, 25 Sep 2018 10:13:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=XFi/JUnttEZJ0FpXo7SfFxWSRQftaVSxvBVgPIbt1i0=;
- b=JNosOGrKYfmpnpHDNjb19kNELvP9EtcTd0dOvZ/qgVqvlIbkZQBB3BjOAZWSrloxUpM/
- yifauftEFcIcM2L2Hrpd3jr9ApGXxdaI6OcGFH0pA9g2sslykg/1eF5XNa6vtYttJr3I
- oxoif0gWhyl8wT+uvnS7Zp4y5NCSlJqNO84= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2mqptvgttb-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 25 Sep 2018 10:13:05 -0700
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.29) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Tue, 25 Sep 2018 13:13:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XFi/JUnttEZJ0FpXo7SfFxWSRQftaVSxvBVgPIbt1i0=;
- b=Q+Qs+A5sgCwH9AQ5Hj1iiAmbmvdRKjQP64PrpD32oputJ9hmt+9rw0L0DlguKmDsXAA07xtWgM1xrudZ9lwo2ZogAv3BEpGnTc8Sx10oBrh3ULNfJHLYuZvm7KS1ISQDyX1VvgWvbqgJlyC70q/+2D7ubE3WUStHpzzT7pmheA0=
-Received: from MWHPR15MB1789.namprd15.prod.outlook.com (10.174.255.18) by
- MWHPR15MB1565.namprd15.prod.outlook.com (10.173.235.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.17; Tue, 25 Sep 2018 17:13:02 +0000
-Received: from MWHPR15MB1789.namprd15.prod.outlook.com
- ([fe80::853e:9e1f:97d1:71d6]) by MWHPR15MB1789.namprd15.prod.outlook.com
- ([fe80::853e:9e1f:97d1:71d6%7]) with mapi id 15.20.1143.019; Tue, 25 Sep 2018
- 17:13:01 +0000
-From:   Sai Dasari <sdasari@fb.com>
-To:     Joel Stanley <joel@jms.id.au>, Tao Ren <taoren@fb.com>
-CC:     Christopher Covington <cov@fb.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Linus Walleij" <linus.walleij@linaro.org>
-Subject: Re: [PATCH] clocksource/drivers/fttmr010: fix set_next_event handler
-Thread-Topic: [PATCH] clocksource/drivers/fttmr010: fix set_next_event handler
-Thread-Index: AQHUUPk9lMrOh6dmWESJime7JMZLB6T5qoUAgABrGgCAAPVpgIAFDU2AgAC2ZQA=
-Date:   Tue, 25 Sep 2018 17:13:01 +0000
-Message-ID: <571BD9E6-5A5B-4B66-AFAB-EC4E97B0A0D7@fb.com>
-References: <20180919221331.2511558-1-taoren@fb.com>
- <CACRpkdZGjvLZY7snev5W2rRGgO7bQsSqn5u2v5Nw0tH9sa4yBw@mail.gmail.com>
- <84F9ED20-0964-462E-B389-39B107A232D3@fb.com>
- <CACPK8XeEZeMskkxNChhNSO+brpoPJ5FqweWNXe22BpyytwCwFw@mail.gmail.com>
- <E3FA56EF-0B3C-4DBE-9A63-428EB342887D@fb.com>
- <CACPK8Xd03w51FM8iJsFNhWkpRFMhy97XZpxOhbRwbD3ytQcRbg@mail.gmail.com>
-In-Reply-To: <CACPK8Xd03w51FM8iJsFNhWkpRFMhy97XZpxOhbRwbD3ytQcRbg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2620:10d:c090:200::4:4c5b]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1565;20:iiSyHbuuYfWY2P7+7PUvF/oU0PCm2L73l3+V6B04UKnh49a+wF6VGUX4o0BIfXcMWvkZaL5i7WJKO9cOWJHjyWK1kFTqaXxmHs/I5iNMM1VEMp2a8W12O5K+87EMeeD7GrFqIUNflQJmNCECuzCgNHAywS77ueBECoKN0IgPOss=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(979002)(396003)(39860400002)(346002)(366004)(136003)(376002)(199004)(189003)(6512007)(81166006)(256004)(6486002)(102836004)(316002)(2616005)(86362001)(229853002)(2906002)(53936002)(6116002)(186003)(54906003)(106356001)(81156014)(8936002)(76176011)(34290500001)(7736002)(82746002)(110136005)(71190400001)(446003)(5660300001)(2900100001)(6246003)(36756003)(478600001)(33656002)(14454004)(11346002)(476003)(8676002)(97736004)(46003)(4326008)(105586002)(486006)(25786009)(6636002)(5250100002)(68736007)(99286004)(305945005)(71200400001)(6436002)(6506007)(93886005)(558084003)(83716004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1565;H:MWHPR15MB1789.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: c3f28f99-b71b-4c6f-8bcc-08d6230a2603
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1565;
-x-ms-traffictypediagnostic: MWHPR15MB1565:
-x-microsoft-antispam-prvs: <MWHPR15MB156592C17E073369F88BB107CE160@MWHPR15MB1565.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(65623756079841);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(11241501184)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149066)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:MWHPR15MB1565;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1565;
-x-forefront-prvs: 08062C429B
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: pg3ej51hjE0NeF1DrOrHJ7OnGS8h3/BeT3c0PmWPjDaCoZqc0VNvLHX6WRw6R7RCznlU5hH7RvTxq1urgKNmk4wwtXMx7EGIEmhFa1hM1Xo9RD7QuQ1ShhBu5Wm5OsBdQmx3SA2/LVmTQUgB5mEoN5fQHCX3wqlUJ6Pvd8hApK2x2FkS6x9Oh97rMhVaKrNEQSxxMzPjn7Oto7RCOUv4g+CWqYOrP2oWRgk2jM36ouJUuxMOVlxTSEAO1qJXUHMt8Sp5ySZts5seXVQI3HMDANMUcJPJ1zX7KNBOZX9vvAoJRVKc4pr+ysyxQmDTuzqD8wzrFn0ToTjPg0HYf9kGneoayLy2qTzuQqS+HVLvq4U=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FD8FC3E1EA59764BA894BDCD6440B8DA@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 25 Sep 2018 19:23:26 -0400
+Received: by mail-lf1-f46.google.com with SMTP id r191-v6so8191010lff.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 10:14:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=nX8vK+4i7Z82c28RP+tXXz9pNe4uV8599K9lZ9crGH0=;
+        b=Wca55DhnKjTpBGujvjjQsM9jqSDszec4AFtMlb4DuU6wdt7JqmkwFITLpwtZwQEZ9W
+         oZ1gfDEpFOA61zHLGU9YUf+eftIWxkLvw/PwhbDDZVDKCAmKzSl7aKbZmNjn4VA2DvYw
+         feQ2fJwoDIePqK5iQXHlxuqE6WDAETNSj6rSHAX1oJETEY5TZXnDlqbAZD9VSlr3s9OG
+         K6ng//tP4gznI0lvMbLVosx7x/InbNjI90Qjj5YK2duXzbDgyk1ZlW4xdsB780S3S7UR
+         mWxZGVoqdjPErNXBa8ftb5WKr+WGXS7BzpaR/Cj/KaYrjFDqF7OyNsbEp1Nju2lrOaIc
+         bJlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=nX8vK+4i7Z82c28RP+tXXz9pNe4uV8599K9lZ9crGH0=;
+        b=BQ/acaMGZFqijo5Q5RvlDaEm0K09hj8xa/PE1GJJffm/VuYNQmAb5kWB1RFMzz8TXx
+         aFy9W4ZhicrbCOjGO5+RhjxU9rI15kGpNQsskEgNrMt/l3eINPeV4oGim9E8EY7tz0aJ
+         w+zi9MB5xfNlBy5nCZIQPwNHzM4WD7uXIkw/mJkJI2QBK+/r8xUumJb1Fc7DkP/NkA6v
+         rpiuMdLFxve5PQenssizvndB0d90gWVR0w974afYgkUGJ7GEmeS2t/C4cVbcDcIQ8M9Y
+         GeEtMUciVDFZOu4Kb7rvZwiS3RjZYdq70w+uguaBMLtK6twHXKig9IBLjSXM/LiKmbqI
+         5OSQ==
+X-Gm-Message-State: ABuFfoiJDh2nku6oqOVn5dTB9xBLEAVywBVUNLEeBfcZB8RQEbwZ2UYj
+        E2JRisuvpgmxTueBnFzyk/MOR8ny+MP8rlBM890=
+X-Google-Smtp-Source: ACcGV61Ldbe3ye2oFq6ZsywCiBRiKtqbmGUac8gmErw0+7xUOzxLqkClGZXEx85fNH1YnGmXNthULx5++I/oHQe6DM0=
+X-Received: by 2002:a19:288c:: with SMTP id o134-v6mr1498967lfo.124.1537895697334;
+ Tue, 25 Sep 2018 10:14:57 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3f28f99-b71b-4c6f-8bcc-08d6230a2603
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2018 17:13:01.2174
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1565
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-25_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Received: by 2002:a19:278e:0:0:0:0:0 with HTTP; Tue, 25 Sep 2018 10:14:56
+ -0700 (PDT)
+In-Reply-To: <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net> <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net> <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
+ <87zhwbj8xe.fsf@redhat.com> <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+ <20180921231545.GC2966@thunk.org> <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
+ <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
+ <CAMjeLr-a4cCrs0cF0aBRoeeXXLwiM835BXqhP9ZoeLB8=w=YKw@mail.gmail.com> <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
+From:   "\\0xDynamite" <dreamingforward@gmail.com>
+Date:   Tue, 25 Sep 2018 12:14:56 -0500
+Message-ID: <CAMjeLr-j1XhZJgcvsP5z6SHCDmbUA=rMyfvQpX40qKBK+2ojbw@mail.gmail.com>
+Subject: Re: Code of Conduct: Let's revamp it.
+To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Cc:     "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
+        riel@surriel.com, ec429@cantab.net,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQrvu79PbiA5LzI0LzE4LCA0OjIxIFBNLCAib3BlbmJtYyBvbiBiZWhhbGYgb2YgSm9lbCBTdGFu
-bGV5IiA8b3BlbmJtYy1ib3VuY2VzK3NkYXNhcmk9ZmIuY29tQGxpc3RzLm96bGFicy5vcmcgb24g
-YmVoYWxmIG9mIGpvZWxAam1zLmlkLmF1PiB3cm90ZToNCg0KICAgIEkgd2lsbCB0aGVuIGFkZCBp
-dCB0byB0aGUgc2V0IG9mIHRlc3RzIEkgcnVuIHdoZW4gdGVzdGluZyBhc3BlZWQNCiAgICBrZXJu
-ZWxzLg0KICAgIA0KVGhhbmtzIEpvZWwhIEN1cmlvdXMgdG8ga25vdyB3aGF0IHdvdWxkIGJlIHRo
-ZSBiZXN0IHBsYWNlIHRvIGtlZXAgdGhlc2Uga2luZCBvZiBLZXJuZWwgdGVzdCBjYXNlcyBmb3Ig
-c2FrZSBvZiByZXZpZXcgYW5kL29yIGFkZGluZyBuZXcgdGVzdCBjYXNlcyBhcyBuZWVkZWQuICAg
-ICANCg0K
+>> The notion of being "published" means at least these two things:  1)
+>
+> Where exactly - URL? - is that notion defined?
+
+I'm giving you the most sensible definition, from the point of view of
+a Doctor of Law.  I have not seen a real definition, so I'm giving you
+one.
+
+> Especially the intention is IMHO not necessary - just the fact if it
+> happened (and I don't think we want to discuss legal stuff about "X
+> broke into my home, stole and published my work" - the patent world has
+> the same problem).
+
+No, you must have the intention.  If you have a copy of your new book
+on your computer, but someone steals it and prints it -- it is not a
+"published" work.
+
+And there is no URL.  You can take my word for it, along with my
+credentials, or you can ignore it.
+
+>> So, is code a *published* item?  Most of the public can't read it.
+>
+> I cannot read (or understand) neither Russian nor Chinese nor almost any
+> natural (let alone dead) languages of the world. I'm pretty sure that
+> I'm not the only one;-)
+> Does that make Russian literature non-public? I don't think so ...
+
+You confuse the issue.  My definition included "intended for the
+public".  But it isn't clear that open source code is intended for the
+public -- it is intended for those who code or wish to.
+
+Past your inflammatory remarks, I withdraw any further commentary.
+
+Mark Janssen, JD
