@@ -2,166 +2,117 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 855E0C46476
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B17CECE561
 	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70744206B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F12AF214FE
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 16:17:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5/Yo3oM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70744206B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpOVBuyt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F12AF214FE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbeIYWVe (ORCPT
+        id S1729691AbeIYWZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 18:21:34 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:37371 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729051AbeIYWVe (ORCPT
+        Tue, 25 Sep 2018 18:25:49 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42299 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728587AbeIYWZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 18:21:34 -0400
-Received: by mail-qk1-f195.google.com with SMTP id c13-v6so13621226qkm.4;
-        Tue, 25 Sep 2018 09:13:21 -0700 (PDT)
+        Tue, 25 Sep 2018 18:25:48 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so11908502pgp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 09:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gLUhuBppXWSIWgJUBzsjbrx2R10aAqr2hMghDO2fOG8=;
-        b=d5/Yo3oMr2C9h5FsMwVwK0f/R3nB0O9DAaegGI5MBaMPAVt98Q97LTJ4239kk7/JJO
-         vDQeaBFUMrshIorUQ9CgWS0VK8c9LlN1RqbmepTJckeGBWId/7v62edj1LrR776s0Qzl
-         K7eVheQq2ff9ilu4pfe6w7SoVgWF3R6QGrvJxhom4bAvus2ErIyKcZfwYv8whOSNyULR
-         W6tuG4M2ogbAsNpxmyvzmM1zNZudRBh4a9Y0MvW/q0WVM41eSqz8214h+a5sGq7kmkU+
-         h+N7FFF46wjwZIXw1X4dMPJgg45Ki/6ZtyLVltsWZu5Xe8oBwaUOgps2Do/g0BGzDWPB
-         rJGg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ac50KRWR4I/WgzK2QxQQiDUhLlXrxvUg/Jl7ee3s5T4=;
+        b=dpOVBuytB1mjufgFExAal1EU87NGFPg1ncJLbusLJNWuIjavVFQxtGUg558nIpYHQi
+         J/4wozF9nT67RvCkjk3s8fPd/cn/KaHwXRGzqCZ2p1Tg00lnxCrjj5XLdxg4p/OOVlc7
+         vHqYdV5Qz4DlLEue98w/tyQHqrdhyGGlx56axK8Acq3cnNmkoOJBtegYaGXBzoSMUT2T
+         T2ElQHEaAAPijTAODGUpSehO+fUmC/AUv4pNg5GngpqzqBbwkoYrRluJYeE0nt8qLR/Q
+         lAYDkGcJzIM8Psx32eNIBRNvc94c265XZktyxofJUAFj5PzMU0bC9mtWBnrwLO/sSqHM
+         Z4RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=gLUhuBppXWSIWgJUBzsjbrx2R10aAqr2hMghDO2fOG8=;
-        b=YD4G9q9cRf80oR14G0RNHv5LktEr3r6WHKZb8n40efQzg8f/Atr/QrfnefGNYP4rsi
-         DModZJ7fS8BD4VWYvNFRtq8Pf9BFQI9fvLzrljLE34qxtbKK88IRq8HTqrkuZha3i+R/
-         bYcBgjfLcNg7wrsbxZ3SeFqfcZ2IVRCKvIYUKMQPTmBA1XLp4zBGoHFQzw6SiAfuIQf9
-         uNF0+iJGom5Sz/tnJ8fv/rMjvlTAal8Z5IEeIpRcx0cKDfKmoCEm4z1tsBHSqptg3F48
-         yT/P/x5kp7Bqw0wxDCDr1UvomNQLOUPz1DpzDR+C33hawZH09YTlsgsL7jIyvzSIdnMV
-         7Y6A==
-X-Gm-Message-State: ABuFfojSRrDP9AaxJoRRZQYLtGJt9E46G74skvBj3BBt7zKUFvRjC9iF
-        XfSGsunH51zP/0F6OLbzLf4=
-X-Google-Smtp-Source: ACcGV62gGY/d/xZpy0AMP19ZpwvuF6YszptP8e37lBtcyW12XACO1YcO3zNZwUhjRjia0JzDWTzJjg==
-X-Received: by 2002:a37:1a4a:: with SMTP id a71-v6mr1291285qka.252.1537892000739;
-        Tue, 25 Sep 2018 09:13:20 -0700 (PDT)
-Received: from [10.67.50.87] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id c1-v6sm1854001qtk.87.2018.09.25.09.13.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 09:13:19 -0700 (PDT)
-Subject: Re: [PATCH 0/9] AHCI and SATA PHY support for BCM63138
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        Ray Jui <ray.jui@broadcom.com>, Tejun Heo <tj@kernel.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, bcm-kernel-feedback-list@broadcom.com
-References: <20180920191646.18198-1-f.fainelli@gmail.com>
- <7b6e1671-8efe-20d2-d3a2-51a521ce7f22@gmail.com>
- <fa91f7eb-3405-4607-9391-f043b73e7af6@ti.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <3d4b406b-4fa4-9248-a0ab-d4eeea808034@gmail.com>
-Date:   Tue, 25 Sep 2018 09:12:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ac50KRWR4I/WgzK2QxQQiDUhLlXrxvUg/Jl7ee3s5T4=;
+        b=c1wefZ+OI4GbOGZSg6E70Lj2aTxCruBQzaIhIgIEbrqoEIIqJxUcngeW/TPG4wH0lR
+         BXVo4WR8uHwUr7mNnbij5u/X0RmJSvyErr6O1hLkcPuypp5xIASoCDiZAghFC2ZxK4QX
+         MCA5A1H5iT75kYlZnerJPiW+hl4KtbWomF2NrY2/kR9NBXsNyWRA3ulJkkc4RZ36wWyo
+         zxKxt3gBuVdQ4MJo+4IPjpnTXjPPnHtW/mcA5d5FkkrbfM+r7dAy3eKHVmOoKRUKFZp1
+         5yhqqkufEvTalGU8dTK7jl+KaTmA4GqVjlgupQuAkbMRJ3lwgC/HoV3rh5nzuKwLVLzJ
+         q9ag==
+X-Gm-Message-State: ABuFfojYpEkAUqxznyjoDUZup92Zx+nmG71yxiBC4iB3RRoMKjbvat9Y
+        4dLNiME6gApuTHz09CLCD6KjSiyhl3v83g==
+X-Google-Smtp-Source: ACcGV62C3+0iRgN7CBg4Bd9ON+Ds35+7TbktZNR2t7gdUeUxxy2CuSdT+cYFHPXPOT1WAccLse2Lkg==
+X-Received: by 2002:a63:f344:: with SMTP id t4-v6mr1783914pgj.428.1537892254219;
+        Tue, 25 Sep 2018 09:17:34 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id o21-v6sm4559522pfa.54.2018.09.25.09.17.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 25 Sep 2018 09:17:33 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 21:47:25 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     NeilBrown <neil@brown.name>, devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v2] staging: mt7621-mmc: Fix single statement macros in
+ sd.c
+Message-ID: <20180925161723.GA23387@nishad>
+References: <20180923093805.GA20870@nishad>
+ <b0f415b5b9655571374ab30e37406b494d07bc45.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <fa91f7eb-3405-4607-9391-f043b73e7af6@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0f415b5b9655571374ab30e37406b494d07bc45.camel@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 11:19 PM, Kishon Vijay Abraham I wrote:
+On Sun, Sep 23, 2018 at 06:31:32AM -0700, Joe Perches wrote:
+> On Sun, 2018-09-23 at 15:08 +0530, Nishad Kamdar wrote:
+> > This patch fixes a few single statement macros in sd.c.
+> > It converts two macros to inline functions. It removes
+> > five other macros and replaces their usages with calls to
+> > the function being called in the macro definition.
+> > Issue found by checkpatch.
+> > 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> > Changes in v2:
+> >   - Convert msdc_gate_clk() and msdc_ungate_clk() to inline functions.
+> >   - Delete msdc_irq_restore(), msdc_vcore_on(), msdc_vcore_off(),
+> >     msdc_vdd_on() and msdc_vdd_off() and replace their usages directly
+> >     with calls to the function being called by these macros.
 > 
+> Nishad, do please look again for uses of these functions
+> you are changing.
 > 
-> On Friday 21 September 2018 12:49 AM, Florian Fainelli wrote:
->> On 09/20/2018 12:16 PM, Florian Fainelli wrote:
->>> Hi Kishon, Tejun,
->>>
->>> This patch series adds support for the SATA AHCI and PHY found on the
->>> ARM-basd BCM63138 DSL SoCs.
->>>
->>> It would probably make sense for patches 1-3 to go through Kishon's
->>> tree, patches 4-7 through Tejun's tree, and I would be merging the last
->>> two patches through the Broadcom ARM-SoC tree.
->>>
->>> Let me know if this is not a workable plan, thank you very much!
->>
->> Looks like I had left patches with the incorrect subject, please
->> disregard the following patches:
->>
->> [PATCH 2/9] phy: broadcom: allow PHY_BRCM_SATA driver to be built for
->> DSL SoCs
->> [PATCH 5/9] ata: sata_brcmstb: Allow optional reset controller to be used
->> [PATCH 6/9] ata: ahci_brcmstb: Match 63138 compatible strings
->>
->> since they have incorrect/inconsistent titles, the other patches are
->> fine though. Sorry about that.
+> Please try removing all the #if 0 blocks instead, and then
+> see if there are also now unused functions from those removed
+> blocks that could also be removed.
 > 
-> merged the first 3 patches to linux-phy tree.
+> And Greg, if you look at this, look at the odd license of
+> these files.
+> 
+> It's possible the license is incompatible with the GPL.
+> 
+Ok, I'll look into that.
 
-Thanks a lot Kishon!
+thanks for the review.
 
-> 
-> Thanks
-> Kishon
-> 
-
-
--- 
-Florian
+regards,
+nishad
