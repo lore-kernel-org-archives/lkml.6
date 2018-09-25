@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35041C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A26C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB1342098A
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72E7120C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 15:47:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5z5/nba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB1342098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U63S2eK2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E7120C0A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbeIYVyy (ORCPT
+        id S1729823AbeIYVzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 17:54:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44596 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729494AbeIYVyx (ORCPT
+        Tue, 25 Sep 2018 17:55:06 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37996 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729761AbeIYVzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 17:54:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k21-v6so11506080pff.11;
-        Tue, 25 Sep 2018 08:46:47 -0700 (PDT)
+        Tue, 25 Sep 2018 17:55:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r77-v6so6730206pgr.5;
+        Tue, 25 Sep 2018 08:47:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Kkx3U2d3K766hvONbbfUKONnSbMiuqijLnuILz2AWqc=;
-        b=i5z5/nbahz2P/Em2WIAlSX91jykx+3PZKNpO3/iZp0J67AySd06E1+uIcTpS4bmPTK
-         Z2VUxxUE8haDRzG5TTSB+/rinVGQY65nHP4xWFJB9aj294kv9bHMbCGtFt8MTqPWqGBu
-         Iyjmrq6RJGFeREmGaCdhm3viFQAZH7H4SQSn5P9oy6sReJd62N/MT00h7z92Vpk7qjqL
-         JqZI1bL4/oIJ8/a3P2OWxq72w6VEfR98ZbyLQkfAMVWxBgovH5c5TPwH6wCNJ2pL4JQu
-         S8/VoA+GWtCwVtnfh3JyTyKfAQKH0ta5/R+DoiN3UUbuYVLG5rMmqsvv5UeCBwJYjXa+
-         9tBA==
+        bh=r1jf7I8m9XEAKsAK1/gwrUfL1vDsUdRh0ZhYbhKAyEA=;
+        b=U63S2eK2/Mu+Es1QQKtVa2ueoabCpSycT3yT6RVAGYzlNsBWHLYCetm+c+6JwauGXW
+         4xWxX53qpltw5GdXEFpWMY5REKHs0qLoVrUm4twJMD9U5YgSQkYM1h3YBHIIkUxoXrUQ
+         qRQiFIgT2EfmWy4/xWgPnYnQnO9uAfqZPO3H+k9rdCSRXYbrrk6c181CVkTVO826wucl
+         m9MEbt2weMjscvvS+mDgeE/TgQI/Bd3KsQ06K8bVZJ15aEIJybh2jkV/tOxrYyb0Oter
+         Bj9hi00NZzVkIfj5ue3vBdUP4H6bvSypPpRinGK0V0whT2M3EjeoQF9rY99w8nGl+wO1
+         /nJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=Kkx3U2d3K766hvONbbfUKONnSbMiuqijLnuILz2AWqc=;
-        b=Rga9E+3vr7UTkavbaRzwE2E+wdM549XiZ/hmDrQotOkSKHuSH4vs6ot921pLvKvYX+
-         JErkF9iAW7N9/ivGvtR8NAoDDWzmHl7My+26hpSE4KdmX2w+DhseFvT6aj8Gbky2okUx
-         5NofELMJK7SR/W6prNQUsvytJBFbEeafPmd3TuEbZ2xklA+FJW1BptqKv+IovzgPDR3J
-         on/urgnourVw4yVQz0NEankmMOTu067EWDDclnPmoASDAtuGuo5ZX99jPxni6fd0R/KI
-         V5gDRnocDCfsK3I2yLof+Bk01hNBGcfRYdMOcRvWxkbWKF7vuk78R4/O2tjbHvZpEjRc
-         ahCA==
-X-Gm-Message-State: ABuFfohyhUoMkOVlyz9ZOFZL1JN3hCfXQOmv028dTF8R8ngKE31yNNaP
-        3BDoOR45ot38Aryb0XORDy3cLO76
-X-Google-Smtp-Source: ACcGV62ixiKYAPcQlt3BEHkRsj616tyJZz08bUwOO64KDoVC3GKzsd64couGlzN2mvKHyCxIjC2B6w==
-X-Received: by 2002:a17:902:9a47:: with SMTP id x7-v6mr1834146plv.37.1537890407201;
-        Tue, 25 Sep 2018 08:46:47 -0700 (PDT)
+        bh=r1jf7I8m9XEAKsAK1/gwrUfL1vDsUdRh0ZhYbhKAyEA=;
+        b=lKgzwaCR6hn+jIiiK4kM5ztFp7pQRC0ha3NQXLUpQkOa9PF00ZpL6BbL5q+caYzNEB
+         P71M8UtPR4LPoL5dWyrYRuUIGBJIsiouXQj1/4EU8aKlSxhgufTmsEmbtp6SZQexOjNE
+         CuwV+h2Zj7kTNWSy4S0HGmgollJfxv3YiILdKQFXJqBmxDkykvlFP1AUF8CPEueIMcj4
+         FVTrmqmpr7+snx4wAGzxJwTkLHDuMuVnXkA+Py7MlWgcKhpYrfeyV28cAaE44J/jeCsj
+         hAm0LLxalPMUzVAepZwfyIopu52mDW9MeKpciwMmORq854ccWf8DLRHpTqtCB6as6sGA
+         cZfg==
+X-Gm-Message-State: ABuFfogamVfr1eqYjpRhkw7U+BUVMul3mf3tUyXKMQQPz0RirdOXBMDq
+        tviCRxmyMqAM+yzmXmJzrdo=
+X-Google-Smtp-Source: ACcGV62gN7TuCKPMJTUtbGmCft+VCIcwKp+K57qMmG4dDdKfMNstr3b5TcAkFiNe2VgArj8uWUN3iQ==
+X-Received: by 2002:a17:902:bf43:: with SMTP id u3-v6mr1849588pls.88.1537890419472;
+        Tue, 25 Sep 2018 08:46:59 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.146.97])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm9508399pgz.62.2018.09.25.08.46.44
+        by smtp.gmail.com with ESMTPSA id h82-v6sm7337718pfa.173.2018.09.25.08.46.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 08:46:46 -0700 (PDT)
-Subject: Re: [PATCH 1/5] arm: dts: mt7623: add a performance counter unit
- device node
+        Tue, 25 Sep 2018 08:46:58 -0700 (PDT)
+Subject: Re: [PATCH 2/5] arm: dts: mt7623: update subsystem clock controller
+ device nodes
 To:     Ryder Lee <ryder.lee@mediatek.com>
 Cc:     Sean Wang <sean.wang@mediatek.com>,
         Roy Luo <cheng-hao.luo@mediatek.com>,
@@ -71,6 +71,7 @@ Cc:     Sean Wang <sean.wang@mediatek.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536141302.git.ryder.lee@mediatek.com>
+ <6cc820db27996d8fd3094df10abbba1a2008907a.1536141302.git.ryder.lee@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -116,12 +117,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <8376f683-68d2-32b8-c299-32a143dcf2de@gmail.com>
-Date:   Tue, 25 Sep 2018 17:46:42 +0200
+Message-ID: <64b5187f-8a4d-b94e-8a3b-f1e19538697a@gmail.com>
+Date:   Tue, 25 Sep 2018 17:46:49 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536141302.git.ryder.lee@mediatek.com>
+In-Reply-To: <6cc820db27996d8fd3094df10abbba1a2008907a.1536141302.git.ryder.lee@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -133,34 +134,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 05/09/2018 12:22, Ryder Lee wrote:
-> Add ARM PMU device node to enable hardware perf events.
+> Update MT7623 subsystem clock controllers, inlcuding mmsys, imgsys,
+> vdecsys, g3dsys and bdpsys.
 > 
 > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
 Applied to v4.19-next/dts32
 
 > ---
->  arch/arm/boot/dts/mt7623.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  arch/arm/boot/dts/mt7623.dtsi | 41 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 > 
 > diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-> index 1cdc346..8c43bd0 100644
+> index 8c43bd0..b7ccf8b 100644
 > --- a/arch/arm/boot/dts/mt7623.dtsi
 > +++ b/arch/arm/boot/dts/mt7623.dtsi
-> @@ -121,6 +121,15 @@
->  		};
+> @@ -692,6 +692,39 @@
+>  		status = "disabled";
 >  	};
 >  
-> +	pmu {
-> +		compatible = "arm,cortex-a7-pmu";
-> +		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_SPI 5 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_SPI 6 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_SPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
+> +	g3dsys: syscon@13000000 {
+> +		compatible = "mediatek,mt7623-g3dsys",
+> +			     "mediatek,mt2701-g3dsys",
+> +			     "syscon";
+> +		reg = <0 0x13000000 0 0x200>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
 > +	};
 > +
->  	system_clk: dummy13m {
->  		compatible = "fixed-clock";
->  		clock-frequency = <13000000>;
+> +	mmsys: syscon@14000000 {
+> +		compatible = "mediatek,mt7623-mmsys",
+> +			     "mediatek,mt2701-mmsys",
+> +			     "syscon";
+> +		reg = <0 0x14000000 0 0x1000>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +	imgsys: syscon@15000000 {
+> +		compatible = "mediatek,mt7623-imgsys",
+> +			     "mediatek,mt2701-imgsys",
+> +			     "syscon";
+> +		reg = <0 0x15000000 0 0x1000>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +	vdecsys: syscon@16000000 {
+> +		compatible = "mediatek,mt7623-vdecsys",
+> +			     "mediatek,mt2701-vdecsys",
+> +			     "syscon";
+> +		reg = <0 0x16000000 0 0x1000>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+>  	hifsys: syscon@1a000000 {
+>  		compatible = "mediatek,mt7623-hifsys",
+>  			     "mediatek,mt2701-hifsys",
+> @@ -946,6 +979,14 @@
+>  		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
+>  		status = "disabled";
+>  	};
+> +
+> +	bdpsys: syscon@1c000000 {
+> +		compatible = "mediatek,mt7623-bdpsys",
+> +			     "mediatek,mt2701-bdpsys",
+> +			     "syscon";
+> +		reg = <0 0x1c000000 0 0x1000>;
+> +		#clock-cells = <1>;
+> +	};
+>  };
+>  
+>  &pio {
 > 
