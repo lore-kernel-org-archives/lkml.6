@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B236C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C960ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2F1A214AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:12:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F1A214AB
+	by mail.kernel.org (Postfix) with ESMTP id B8361214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 13:12:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8361214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbeIYTUY (ORCPT
+        id S1729365AbeIYTUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 25 Sep 2018 15:20:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:39145 "EHLO mga02.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:39126 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729112AbeIYTUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 15:20:22 -0400
+        id S1729298AbeIYTUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 15:20:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 06:12:51 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 06:12:53 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,302,1534834800"; 
-   d="scan'208";a="93546815"
+   d="scan'208";a="93546827"
 Received: from thomasvo-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.53.212])
-  by orsmga001.jf.intel.com with ESMTP; 25 Sep 2018 06:10:41 -0700
+  by orsmga001.jf.intel.com with ESMTP; 25 Sep 2018 06:11:05 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
 Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
         nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
         shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
         andriy.shevchenko@linux.intel.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org (open list:X86 MM)
-Subject: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
-Date:   Tue, 25 Sep 2018 16:06:46 +0300
-Message-Id: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
+        64-BIT))
+Subject: [PATCH v14 11/19] x86/sgx: Add wrappers for ENCLS leaf functions
+Date:   Tue, 25 Sep 2018 16:06:48 +0300
+Message-Id: <20180925130845.9962-12-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
 References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
@@ -56,70 +55,270 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+Add wrappers for Intel(R) SGX ENCLS opcode leaf functions except
+ENCLS(EINIT). ENCLS invokes privileged functions for managing (creation,
+initialization and swapping) and debugging enclaves.
 
-Signal SIGSEGV(SEGV_SGXERR) for all faults with PF_SGX set in the
-error code.  The PF_SGX bit is set if and only if the #PF is detected
-by the Enclave Page Cache Map (EPCM), which is consulted only after
-an access walks the kernel's page tables, i.e.:
-
-  a. the access was allowed by the kernel
-  b. the kernel's tables have become less restrictive than the EPCM
-  c. the kernel cannot fixup the cause of the fault
-
-Noteably, (b) implies that either the kernel has botched the EPC
-mappings or the EPCM has been invalidated due to a power event.  In
-either case, userspace needs to be alerted so that it can take
-appropriate action, e.g. restart the enclave.  This is reinforced
-by (c) as the kernel doesn't really have any other reasonable option,
-e.g. we could kill the task or panic, but neither is warranted.
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/mm/fault.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/sgx.h | 244 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 244 insertions(+)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 85d20516b2f3..3fb2b2838d6c 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -960,10 +960,13 @@ static noinline void
- bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
- 		      unsigned long address, struct vm_area_struct *vma)
- {
-+	int si_code = SEGV_ACCERR;
-+
- 	if (bad_area_access_from_pkeys(error_code, vma))
--		__bad_area(regs, error_code, address, vma, SEGV_PKUERR);
--	else
--		__bad_area(regs, error_code, address, vma, SEGV_ACCERR);
-+		si_code = SEGV_PKUERR;
-+	else if (unlikely(error_code & X86_PF_SGX))
-+		si_code = SEGV_SGXERR;
-+	__bad_area(regs, error_code, address, vma, si_code);
- }
+diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
+index f4f82f0453a9..e66e2572011e 100644
+--- a/arch/x86/include/asm/sgx.h
++++ b/arch/x86/include/asm/sgx.h
+@@ -10,4 +10,248 @@
+ extern bool sgx_enabled;
+ extern bool sgx_lc_enabled;
  
- static void
-@@ -1153,6 +1156,17 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
- 	if (error_code & X86_PF_PK)
- 		return 1;
- 
-+	/*
-+	 * Access is blocked by the Enclave Page Cache Map (EPCM),
-+	 * i.e. the access is allowed by the PTE but not the EPCM.
-+	 * This usually happens when the EPCM is yanked out from
-+	 * under us, e.g. by hardware after a suspend/resume cycle.
-+	 * In any case, there is nothing that can be done by the
-+	 * kernel to resolve the fault (short of killing the task).
-+	 */
-+	if (unlikely(error_code & X86_PF_SGX))
-+		return 1;
++/**
++ * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
++ *
++ * ENCLS has its own (positive value) error codes and also generates
++ * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
++ * with system error codes as everything percolates back up the stack.
++ * Unfortunately (for us), we need to precisely identify each unique
++ * error code, e.g. the action taken if EWB fails varies based on the
++ * type of fault and on the exact SGX error code, i.e. we can't simply
++ * convert all faults to -EFAULT.
++ *
++ * To make all three error types coexist, we set bit 30 to identify an
++ * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
++ * between positive (faults and SGX error codes) and negative (system
++ * error codes) values.
++ */
++#define ENCLS_FAULT_FLAG 0x40000000
 +
- 	/*
- 	 * Make sure to check the VMA so that we do not perform
- 	 * faults just to hit a X86_PF_PK as soon as we fill in a
++/**
++ * Check for a fault by looking for a postive value with the fault
++ * flag set.  The postive value check is needed to filter out system
++ * error codes since negative values will have all higher order bits
++ * set, including ENCLS_FAULT_FLAG.
++ */
++#define IS_ENCLS_FAULT(r) ((int)(r) > 0 && ((r) & ENCLS_FAULT_FLAG))
++
++/**
++ * Retrieve the encoded trapnr from the specified return code.
++ */
++#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
++
++/**
++ * encls_to_err - translate an ENCLS fault or SGX code into a system error code
++ * @ret:	positive value return code
++ *
++ * Translate a postive return code, e.g. from ENCLS, into a system error
++ * code.  Primarily used by functions that cannot return a non-negative
++ * error code, e.g. kernel callbacks.
++ *
++ * Return:
++ *	0 on success,
++ *	-errno on failure
++ */
++static inline int encls_to_err(int ret)
++{
++	if (IS_ENCLS_FAULT(ret))
++		return -EFAULT;
++
++	switch (ret) {
++	case SGX_UNMASKED_EVENT:
++		return -EINTR;
++	case SGX_INVALID_SIG_STRUCT:
++	case SGX_INVALID_ATTRIBUTE:
++	case SGX_INVALID_MEASUREMENT:
++	case SGX_INVALID_EINITTOKEN:
++	case SGX_INVALID_CPUSVN:
++	case SGX_INVALID_ISVSVN:
++	case SGX_INVALID_KEYNAME:
++		return -EINVAL;
++	case SGX_ENCLAVE_ACT:
++	case SGX_CHILD_PRESENT:
++	case SGX_ENTRYEPOCH_LOCKED:
++	case SGX_PREV_TRK_INCMPL:
++	case SGX_PAGE_NOT_MODIFIABLE:
++	case SGX_PAGE_NOT_DEBUGGABLE:
++		return -EBUSY;
++	default:
++		return -EIO;
++	};
++}
++
++/**
++ * __encls_ret_N - encode an ENCLS leaf that returns an error code in EAX
++ * @rax:	leaf number
++ * @inputs:	asm inputs for the leaf
++ *
++ * Emit assembly for an ENCLS leaf that returns an error code, e.g. EREMOVE.
++ * And because SGX isn't complex enough as it is, leafs that return an error
++ * code also modify flags.
++ *
++ * Return:
++ *	0 on success,
++ *	SGX error code on failure
++ */
++#define __encls_ret_N(rax, inputs...)				\
++	({							\
++	int ret;						\
++	asm volatile(						\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
++	"2:\n"							\
++	".section .fixup,\"ax\"\n"				\
++	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
++	"   jmp 2b\n"						\
++	".previous\n"						\
++	_ASM_EXTABLE_FAULT(1b, 3b)				\
++	: "=a"(ret)						\
++	: "a"(rax), inputs					\
++	: "memory", "cc");					\
++	ret;							\
++	})
++
++#define __encls_ret_1(rax, rcx)		\
++	({				\
++	__encls_ret_N(rax, "c"(rcx));	\
++	})
++
++#define __encls_ret_2(rax, rbx, rcx)		\
++	({					\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx));	\
++	})
++
++#define __encls_ret_3(rax, rbx, rcx, rdx)			\
++	({							\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
++	})
++
++/**
++ * __encls_N - encode an ENCLS leaf that doesn't return an error code
++ * @rax:	leaf number
++ * @rbx_out:	optional output variable
++ * @inputs:	asm inputs for the leaf
++ *
++ * Emit assembly for an ENCLS leaf that does not return an error code,
++ * e.g. ECREATE.  Leaves without error codes either succeed or fault.
++ * @rbx_out is an optional parameter for use by EDGBRD, which returns
++ * the the requested value in RBX.
++ *
++ * Return:
++ *   0 on success,
++ *   trapnr with ENCLS_FAULT_FLAG set on fault
++ */
++#define __encls_N(rax, rbx_out, inputs...)			\
++	({							\
++	int ret;						\
++	asm volatile(						\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
++	"   xor %%eax,%%eax;\n"					\
++	"2:\n"							\
++	".section .fixup,\"ax\"\n"				\
++	"3: orl $"__stringify(ENCLS_FAULT_FLAG)",%%eax\n"	\
++	"   jmp 2b\n"						\
++	".previous\n"						\
++	_ASM_EXTABLE_FAULT(1b, 3b)				\
++	: "=a"(ret), "=b"(rbx_out)				\
++	: "a"(rax), inputs					\
++	: "memory");						\
++	ret;							\
++	})
++
++#define __encls_2(rax, rbx, rcx)				\
++	({							\
++	unsigned long ign_rbx_out;				\
++	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
++	})
++
++#define __encls_1_1(rax, data, rcx)			\
++	({						\
++	unsigned long rbx_out;				\
++	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
++	if (!ret)					\
++		data = rbx_out;				\
++	ret;						\
++	})
++
++static inline int __ecreate(struct sgx_pageinfo *pginfo, void __iomem *secs)
++{
++	return __encls_2(SGX_ECREATE, pginfo, secs);
++}
++
++static inline int __eextend(void __iomem *secs, void __iomem *addr)
++{
++	return __encls_2(SGX_EEXTEND, secs, addr);
++}
++
++static inline int __eadd(struct sgx_pageinfo *pginfo, void __iomem *addr)
++{
++	return __encls_2(SGX_EADD, pginfo, addr);
++}
++
++static inline int __einit(void *sigstruct, struct sgx_einittoken *einittoken,
++			  void __iomem *secs)
++{
++	return __encls_ret_3(SGX_EINIT, sigstruct, secs, einittoken);
++}
++
++static inline int __eremove(void __iomem *addr)
++{
++	return __encls_ret_1(SGX_EREMOVE, addr);
++}
++
++static inline int __edbgwr(void __iomem *addr, unsigned long *data)
++{
++	return __encls_2(SGX_EDGBWR, *data, addr);
++}
++
++static inline int __edbgrd(void __iomem *addr, unsigned long *data)
++{
++	return __encls_1_1(SGX_EDGBRD, *data, addr);
++}
++
++static inline int __etrack(void __iomem *addr)
++{
++	return __encls_ret_1(SGX_ETRACK, addr);
++}
++
++static inline int __eldu(struct sgx_pageinfo *pginfo, void __iomem *addr,
++			 void *va)
++{
++	return __encls_ret_3(SGX_ELDU, pginfo, addr, va);
++}
++
++static inline int __eblock(void __iomem *addr)
++{
++	return __encls_ret_1(SGX_EBLOCK, addr);
++}
++
++static inline int __epa(void __iomem *addr)
++{
++	unsigned long rbx = SGX_PAGE_TYPE_VA;
++
++	return __encls_2(SGX_EPA, rbx, addr);
++}
++
++static inline int __ewb(struct sgx_pageinfo *pginfo, void __iomem *addr,
++			void __iomem *va)
++{
++	return __encls_ret_3(SGX_EWB, pginfo, addr, va);
++}
++
++static inline int __eaug(struct sgx_pageinfo *pginfo, void __iomem *addr)
++{
++	return __encls_2(SGX_EAUG, pginfo, addr);
++}
++
++static inline int __emodpr(struct sgx_secinfo *secinfo, void __iomem *addr)
++{
++	return __encls_ret_2(SGX_EMODPR, secinfo, addr);
++}
++
++static inline int __emodt(struct sgx_secinfo *secinfo, void __iomem *addr)
++{
++	return __encls_ret_2(SGX_EMODT, secinfo, addr);
++}
++
+ #endif /* _ASM_X86_SGX_H */
 -- 
 2.17.1
 
