@@ -2,86 +2,90 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D850DC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFEFC43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8720121480
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB25220880
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 20:16:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Vv1GNedp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8720121480
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="W9JTj8xv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB25220880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbeIZCZS (ORCPT
+        id S1727053AbeIZCZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 22:25:18 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40410 "EHLO
+        Tue, 25 Sep 2018 22:25:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33471 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeIZCZR (ORCPT
+        with ESMTP id S1726242AbeIZCZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 22:25:17 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r83-v6so4990289ljr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:16:02 -0700 (PDT)
+        Tue, 25 Sep 2018 22:25:19 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l19-v6so8518308ljb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 13:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=pjXJgDoCeT3ar/rj6kybtCz71ML4MQSb1n7PBQozGTc=;
-        b=Vv1GNedpkc3tHQoUm0/+zdcz3V7Tax8I4WtLDPcS3fucy2OnWTO8rdmqmdv+U7lShy
-         WUSxP67I2ltRyaWRu6ZN0gzthKLTNwhYLlQWScPXqYlmQgLUt1SbegWPwiW8Z4XxoNqI
-         G6jaJ3y7xu8YMlgBx2v+oQsbaiVBjXYMhuaa6Xqf45HaamGglk+QuedHDeUcX74o1KaX
-         z/JS3PU/CdKiQkUaaG3SgtkaFqwbhTECqw3nIOplToLWJhsQPRTfFlpbqV3Yb6nZO56v
-         I3DC/eVN0uqToqevJttyqfIYgaID8jKCdyjH3bSsK2+Rdlq8rRygpp/HAJU6LxEGvlZK
-         skdA==
+        bh=xrd8PBrm0mj1gBSZSmwpuh+XvyIu416DvkmxGLGmjy4=;
+        b=W9JTj8xvrtAhCdbNykTnZAlWssutN/MqFXYo5ze+4LYIX3PIB6bWrDFRFlnJHxrG+o
+         ux0M2aJmkIYlwdJblD9iUwflyyg3uC+CZfywuTRqS5eoHS6oyFU0DcH+IsrE8TyPcA0x
+         SOvDLhrg1CjXlANKC8B3YwmE5fD/35auRSx9hrPMNIWvzg+M13Riz6T44PDsZ2lW1Io8
+         N6c19ZTWziSPDVztHl2PSWQV7J2MdMw3uv++4g3wqEJ2Ni6e0+cgqRmuU09lqIQFwELh
+         vdxwTjB3foz482BQAhnD+YjU927US5jlQQGkcMJDnVj6R63XjTbeMTfM7UHXl8B33aLP
+         RmuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pjXJgDoCeT3ar/rj6kybtCz71ML4MQSb1n7PBQozGTc=;
-        b=e1P2pb0XSHJRB50hKBM00ZhX+UXkSDMRm6q8lhjkjPqZaLnUFr4RsnJY3u3jaQW401
-         vqe4+HZwmACsJwkZKGsiLBpgnWaKo7RUNZRoFFk7UeUVbGSD1Aef0tPJcN1oJFrqO+dd
-         JQsYEL3EuBbeoJIf/+Sris+MXUixRfPSSRhYO7R4crCX7CcaXqO80YyrFdIB/T0slLp3
-         wcnp5d26PandU3FFTGP2DobBGOTAsI69rx1HZgWlESvqar0fky+TXp6cjmT90cJaX9n/
-         pj09RhigmgfHqfBZlPQ9gDX+SQaiRjHNYy73OdEiw+g6eqKQdGqgmpM5y9N1BYkwnFmj
-         Sl6w==
-X-Gm-Message-State: ABuFfohI8puQeKIvO3oh3PtHbvfjCyy0cT7Fgjsen+K40eXU6hNgra3j
-        TUx6joOYcpH9Ex6XBFj8hPty0w==
-X-Google-Smtp-Source: ACcGV61vSPK4OadGf6xvGaQPUq1MjA+MSS1S2Hj28A/BCsaPd1CJWzF1aaAZhhXR8BvwSygg3A9pRQ==
-X-Received: by 2002:a2e:44d:: with SMTP id 74-v6mr2173612lje.146.1537906561203;
-        Tue, 25 Sep 2018 13:16:01 -0700 (PDT)
+        bh=xrd8PBrm0mj1gBSZSmwpuh+XvyIu416DvkmxGLGmjy4=;
+        b=d2OJhbX5O4sslh3onJakQ3d2GV8fE2CWrWGCJVIgj+STSW9v3v2u08rZPH1ewNJ5UC
+         1ixnlI1rLp+mAgFPnS9uYU9Y7d5SHEEv//w+j35NT52T+LtxP0d2Li4TiBiZjDEOsrbe
+         YjEj5yg8EChFBeN5gK9XktUqypwPJuMfJOb0KXsIR4MebUcUtXd7gLT6TC/RT14dbE6G
+         QB1hsANGDiNyEAHoFONW+2Il0AHEmuzuwiq62V7syUcZkIQxSxun+pbFidwX+4ZD515b
+         ajGaJm3AKL2SCNLsMytsgZ2sJ58mEM7ZjQlZAzDlrBb0C4lJiRb6Jsu4T4D7MLpE+Dt3
+         Zc2w==
+X-Gm-Message-State: ABuFfoi/nvsLwHKko9jGrQ/sChCTfYRb/Eq0OnWnROMx0+aFyPRTMOB9
+        aHmH4OCEj1aB5mTSqRymGQ6zZw==
+X-Google-Smtp-Source: ACcGV63O4H86SHugVzt+c/1t5flrl/CVquzyo32ysuvAYzZ3Iv8NkG30pXLY1Yb6uidS4Uc5v5guoQ==
+X-Received: by 2002:a2e:4951:: with SMTP id b17-v6mr2188138ljd.31.1537906563385;
+        Tue, 25 Sep 2018 13:16:03 -0700 (PDT)
 Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id g14-v6sm145455lja.96.2018.09.25.13.15.57
+        by smtp.gmail.com with ESMTPSA id 136-v6sm571446ljj.35.2018.09.25.13.16.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 13:15:58 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 12:31:12 -0700
+        Tue, 25 Sep 2018 13:16:02 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 12:47:57 -0700
 From:   Olof Johansson <olof@lixom.net>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] ARM: at91: fixes for 4.19
-Message-ID: <20180925193112.uu2lncxsbmzenxl4@localhost>
-References: <20180924200941.GA11498@piout.net>
+To:     Li Yang <leoyang.li@nxp.com>
+Cc:     arm@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, shawnguo@kernel.org
+Subject: Re: [GIT PULL] fixes for soc/fsl drivers for v4.19
+Message-ID: <20180925194757.pp3jiltu36ih2wfo@localhost>
+References: <20180924221954.30473-1-leoyang.li@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924200941.GA11498@piout.net>
+In-Reply-To: <20180924221954.30473-1-leoyang.li@nxp.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 10:09:41PM +0200, Alexandre Belloni wrote:
-> Arnd, Olof,
+Hi,
+
+On Mon, Sep 24, 2018 at 05:19:54PM -0500, Li Yang wrote:
+> Hi arm-soc maintainers,
 > 
-> Here is a small fix for an issue seen on the sama5d2 PTC EK.
+> Please pull soc/fsl drivers fixes for v4.19.
+> 
+> Regards,
+> Leo
+> 
 > 
 > The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 > 
@@ -89,18 +93,29 @@ On Mon, Sep 24, 2018 at 10:09:41PM +0200, Alexandre Belloni wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-4.19-fixes
+>   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-fix-v4.19
 > 
-> for you to fetch changes up to 379e36d3f591cb62e781907edafea17d75e8c1fa:
+> for you to fetch changes up to 3cb31b634052ed458922e0c8e2b4b093d7fb60b9:
 > 
->   ARM: dts: at91: sama5d2_ptc_ek: fix nand pinctrl (2018-09-12 12:38:04 +0200)
+>   soc: fsl: qe: Fix copy/paste bug in ucc_get_tdm_sync_shift() (2018-09-17 16:01:46 -0500)
 > 
 > ----------------------------------------------------------------
-> AT91 fixes for 4.19:
+> NXP/FSL SoC driver fixes for v4.19
 > 
->  - fix a NAND issue on sama5d2_ptc_ek
+> - Fix crash of qman_portal by deferring its probe if qman is not probed
+> - Fix NULL pointer dereference by adding more checks in qman_portal
+> - Fix copy/paste bug in ucc_get_tdm_sync_shift()
 
-Merged, thanks (with slight elaboration on merge description from tag).
+Good summary, thanks!
+
+However:
+
+> Alexandre Belloni (2):
+>       soc: fsl: qbman: qman_portal: defer probing when qman is not available
+
+I think this fix has issues, I replied on the patch. Let me know if you want me
+to cherry-pick the other two fixes for now.
+
 
 
 -Olof
