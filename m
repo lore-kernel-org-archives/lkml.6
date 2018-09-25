@@ -2,94 +2,170 @@ Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA64DC43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A073C43382
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A3A20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:36:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L+3HjSln"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A3A20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CF97220877
+	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 07:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF97220877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbeIYNmm (ORCPT
+        id S1728920AbeIYNmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 09:42:42 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39693 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728674AbeIYNmm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 09:42:42 -0400
-Received: by mail-io1-f67.google.com with SMTP id l7-v6so19698678iok.6
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 00:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JCm7BeXOUDEkTOHXuzWK1bry9Ki+594JELty5nhAsys=;
-        b=L+3HjSln+0GJwWymYlInU5nsR5Mh9PhhEk6F3FjawCqrkJYDM7AE+Oavp4NPue3Ua7
-         QGwf/Kit2/IbdDDos9LiWnamHk8cNgOGJrFNowCtPLNlCRbItBUfWUOkonlqvhFEAoru
-         go28r4tlKFedp0WI39na2vOFUxD4PKP7ekFRs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JCm7BeXOUDEkTOHXuzWK1bry9Ki+594JELty5nhAsys=;
-        b=aA82XykvFT8pu+jVKJvdUeIiHAHoQf6iYupkuS/vcFx14GNa6GJEsKlgeg0MhxAHGM
-         62GTALP1tiWWwOKd498jkm9xFJM1YyCiEtlwfQn+Ye7QexTjp8nrChrtXJGO1Lx1U8xZ
-         QzL2Aq7wIB405IK/N3IrU70QFzuJOlLSCVIkbmKBl89T5BE0x3aju+9XoEML6741rf28
-         MLe1NHdvRIbCYvqrxVuGBYv6Nseno27N5WMrR55D+xJBa4l44ZdBlJFIxB3euoscVOxK
-         uPEfNZwz8hdyqjHjoo397lrTc7YF+ByYaA1pPhGBuQoxXLPk2wgPofG4f9fFtFAQOOnz
-         Dr1Q==
-X-Gm-Message-State: ABuFfogTGn45sawvUF9flzbp3dxkRDvsYovlRKUJQEIN/G6oxntQhM/A
-        SL2YXStWo/+NKvKIZDlY/bQ774TQb/yave5rJu4iEFE9
-X-Google-Smtp-Source: ACcGV60aXqXgPco0KKgu/NrjxK93WyMJNl9lqPWOMisHCUUt0Qk9cDapy7W8/408Xu1fhJYlpN9NtoJ+7EeJzpAuLd0=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr1950772iof.304.1537860987416;
- Tue, 25 Sep 2018 00:36:27 -0700 (PDT)
+        Tue, 25 Sep 2018 09:42:37 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42855 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727698AbeIYNmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 09:42:36 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5DA90F1965319;
+        Tue, 25 Sep 2018 15:36:18 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 25 Sep 2018 15:36:10 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 5/6] f2fs: fix to keep project quota consistent
+Date:   Tue, 25 Sep 2018 15:36:02 +0800
+Message-ID: <20180925073603.102125-5-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20180925073603.102125-1-yuchao0@huawei.com>
+References: <20180925073603.102125-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
-In-Reply-To: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 25 Sep 2018 09:36:14 +0200
-Message-ID: <CACRpkdbOUgvrC7GduKj2fOo6kn1HdtODvQ22NVnxw4pV6uivhA@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Fix gpio_direction_* for single direction GPIOs
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Timur Tabi <timur@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+This patch does below changes to keep consistence of project quota data
+in sudden power-cut case:
+- update inode.i_projid and project quota atomically under lock_op() in
+f2fs_ioc_setproject()
+- recover inode.i_projid and project quota in recover_inode()
 
-thanks for the patch and sorry for taking time before responding.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h     |  1 +
+ fs/f2fs/file.c     | 37 ++++++++++++++++++++++++++++---------
+ fs/f2fs/recovery.c | 12 ++++++++++--
+ 3 files changed, 39 insertions(+), 11 deletions(-)
 
-On Fri, Sep 21, 2018 at 12:36 PM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> GPIOs with no programmable direction are not required to implement
-> direction_output nor direction_input.
->
-> If we try to set an output direction on an output-only GPIO or input
-> direction on an input-only GPIO simply return 0.
->
-> This allows this single direction GPIO to be used by libgpiod.
->
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index be16a49c8b62..171917c0961c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2793,6 +2793,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count);
+ int f2fs_precache_extents(struct inode *inode);
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid);
+ int f2fs_pin_file_control(struct inode *inode, bool inc);
+ 
+ /*
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index a388866e71ee..6f02c8daff76 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2604,13 +2604,29 @@ static int f2fs_ioc_get_features(struct file *filp, unsigned long arg)
+ }
+ 
+ #ifdef CONFIG_QUOTA
++int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid)
++{
++	struct dquot *transfer_to[MAXQUOTAS] = {};
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct super_block *sb = sbi->sb;
++	int err = 0;
++
++	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
++	if (!IS_ERR(transfer_to[PRJQUOTA])) {
++		err = __dquot_transfer(inode, transfer_to);
++		if (err)
++			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++		dqput(transfer_to[PRJQUOTA]);
++	}
++	return err;
++}
++
+ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct super_block *sb = sbi->sb;
+-	struct dquot *transfer_to[MAXQUOTAS] = {};
+ 	struct page *ipage;
+ 	kprojid_t kprojid;
+ 	int err;
+@@ -2651,21 +2667,24 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
+ 	if (err)
+ 		return err;
+ 
+-	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
+-	if (!IS_ERR(transfer_to[PRJQUOTA])) {
+-		err = __dquot_transfer(inode, transfer_to);
+-		dqput(transfer_to[PRJQUOTA]);
+-		if (err)
+-			goto out_dirty;
+-	}
++	f2fs_lock_op(sbi);
++	err = f2fs_transfer_project_quota(inode, kprojid);
++	if (err)
++		goto out_unlock;
+ 
+ 	F2FS_I(inode)->i_projid = kprojid;
+ 	inode->i_ctime = current_time(inode);
+-out_dirty:
+ 	f2fs_mark_inode_dirty_sync(inode, true);
++out_unlock:
++	f2fs_unlock_op(sbi);
+ 	return err;
+ }
+ #else
++int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid)
++{
++	return 0;
++}
++
+ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
+ {
+ 	if (projid != F2FS_DEF_PROJID)
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 71577f30a889..5e68e31989c8 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -250,10 +250,18 @@ static int recover_inode(struct inode *inode, struct page *page)
+ 			F2FS_FITS_IN_INODE(raw, le16_to_cpu(raw->i_extra_isize),
+ 								i_projid)) {
+ 			projid_t i_projid;
++			kprojid_t kprojid;
+ 
+ 			i_projid = (projid_t)le32_to_cpu(raw->i_projid);
+-			F2FS_I(inode)->i_projid =
+-				make_kprojid(&init_user_ns, i_projid);
++			kprojid = make_kprojid(&init_user_ns, i_projid);
++
++			if (!projid_eq(kprojid, F2FS_I(inode)->i_projid)) {
++				err = f2fs_transfer_project_quota(inode,
++								kprojid);
++				if (err)
++					return err;
++				F2FS_I(inode)->i_projid = kprojid;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.18.0.rc1
 
-It makes perfect sense, patch applied.
-
-I'll go in and add some comments to the code so I understand it
-right as well in the future.
-
-Yours,
-Linus Walleij
