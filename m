@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE03C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECE1C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6E22089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:39:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4143A204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:40:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LO8qqY7y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6E22089D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OWs64cLZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4143A204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbeIZNvN (ORCPT
+        id S1727345AbeIZNvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:51:13 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:53068 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbeIZNvN (ORCPT
+        Wed, 26 Sep 2018 09:51:52 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36357 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeIZNvw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:51:13 -0400
-Received: by mail-it1-f195.google.com with SMTP id h3-v6so1686604ita.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:39:38 -0700 (PDT)
+        Wed, 26 Sep 2018 09:51:52 -0400
+Received: by mail-it1-f194.google.com with SMTP id c85-v6so1610222itd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:40:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tiQrTuzCEmb0NPON3n5EjfwC6c4+7nGh0BnF3E7pSrk=;
-        b=LO8qqY7y0cA0S/K7o/o5Badfi1lZLXLkMG1Uhac5kif8v5R/HqWg5VtI50Aih+oprx
-         hsZiJgsMVA4R/Ln5m9Wl/2/gVCJsUAaQZAIaVygCco520yQxuetrHDFUOiaJRTWyfxn0
-         ynBL3cvQOtFMxzS7K260uH3SsvvdNIK/RGUM8=
+        bh=UfnpbaR3SDXR/aQqeff4V3LJaqdrHDZ2daaRjH7OrfE=;
+        b=OWs64cLZi/AqDPQOpeW0Yltr4EMfbUNjhwYJvPghcdoGuWg6C0QhcjHCFSWti59KqT
+         B3FaQaBbVyr0K8dgPdv9lrcKQ3QcmkeTv+YSYGlkq6hgG/j4XHj0mUSvq7QjORevzNfY
+         s3kKtkMWcwrKcoiUf6eYe07l5m2r+z+LCH4zs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tiQrTuzCEmb0NPON3n5EjfwC6c4+7nGh0BnF3E7pSrk=;
-        b=hPHGY+mFDXoFVrJngtvzHCkbLv/TQL6fMqm1RgGREu6FLLIwsMUOtW6UTgYg/BfI+e
-         ee+OexZ/3IJA0dgZ8xFaEOysp7Yp+ehzz2fCLuvY0e8f9y8vOMmhFAM5Smoo9KVZV4el
-         1OIPGU3JJKLBXMCNjXjX2FSsIAYviW40RM8FnarZZTrVtwiOEhkiG7ePdhdmgX8lTOKD
-         PbOwojdv2u0iIhERWwq3uwvfX0Q3Q+i1pBriPItnYkECkKqjR5NbeciA+A8DZ58sDF8S
-         iWVgNf3zaQcgVZUm8Wdwy73ejqcoKHijPYuCcxBnr6zym9aV5qwQLVdkk4bnah62Ypye
-         grHw==
-X-Gm-Message-State: ABuFfoi2k/OvCHFjCwaiRAq7ecUbWMa41GTOSC+rE5T4DKl2xSebfRb7
-        8jFduxXyNhWvQyBNTq1dSpRVHdt5whDAs8KJjZSilx+w
-X-Google-Smtp-Source: ACcGV604l4u3+IPxU6G9LIei6j27WaZB5S499LWR+YOqLfQLUHVs/6hWRilhHP62JTePQF9LxoaFPUGh+s/9FRgNt3c=
-X-Received: by 2002:a24:83c1:: with SMTP id d184-v6mr4160757ite.16.1537947578164;
- Wed, 26 Sep 2018 00:39:38 -0700 (PDT)
+        bh=UfnpbaR3SDXR/aQqeff4V3LJaqdrHDZ2daaRjH7OrfE=;
+        b=LIDhptsF38bT0z2+GhLq1g7smtN73RzmHQB0s4ua1pL/XLDjkgEjKVv3VUPOYGzxjb
+         Hhw/lotH35yuxZ0tFnz8Scckfdgg0gwz+oHHRsj29tQMBa9GgY6uECpTnQ+lSbjJG83M
+         maauBsvHUIdtMmNs5tGzLxmKCZp1uS4fIzpNd9I4B0C4+Xb5uHB3aZn2OKooBMU3q69b
+         5waenGb6/h23kp8zPREtNyNXdzDSqfZrG9fDcn0V18NlFtPUIFIBWLLLo/qeB/gdtr/a
+         E4TC19dMu9TUcOYcGSc1LhS7TRYiWNkGSYx+COnPhSwa6RI3vDKqchKJtkhHXV230r4y
+         QViw==
+X-Gm-Message-State: ABuFfohTOkDJze3hRQR4fwDjhzuDpkT6WbkXkWK2eoBJdgzBtRZ5BIn6
+        mgPEhklUO9K3Wd2EvydQduTg0jmAyGTb8TFznCOuYA==
+X-Google-Smtp-Source: ACcGV62EGh8yIxCrXm4iif2xcBN+6WXRRHs1ELazf6iDQYSB/NxvAo/1+Ym8fV0NtMU0Cy8Bsenj0CgVOaH3luGKwdc=
+X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr4486100jab.87.1537947617008;
+ Wed, 26 Sep 2018 00:40:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180924144902.607-1-alexandre.belloni@bootlin.com> <20180924144902.607-2-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180924144902.607-2-alexandre.belloni@bootlin.com>
+References: <20180924144902.607-1-alexandre.belloni@bootlin.com> <20180924144902.607-3-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180924144902.607-3-alexandre.belloni@bootlin.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Sep 2018 09:39:26 +0200
-Message-ID: <CACRpkdYsuh2rXsW9KJz7Vaj_nH4ierpOE+G7tbrzkN2NDhgiuw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] rtc: ab8500: let the core handle range
+Date:   Wed, 26 Sep 2018 09:40:05 +0200
+Message-ID: <CACRpkdZ97txAe+Nm_AKTQsBEfcq8ShVZOwv_fcHBk4w4t2bgSg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rtc: ab8500: remove useless check
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     linux-rtc@vger.kernel.org,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
@@ -71,9 +71,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Mon, Sep 24, 2018 at 4:49 PM Alexandre Belloni
 <alexandre.belloni@bootlin.com> wrote:
 
-> Let the core handle offsetting and windowing the RTC range.
-> The RTC has a 24 bit counter for minutes plus a seconds counter.
-> Keep the epoch at the beginning of 2000.
+> rtc_time_to_tm always rturns a valid tm, there is no need to validate it.
 >
 > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
