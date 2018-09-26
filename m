@@ -2,128 +2,116 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD81C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 229B9C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B70712086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70712086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 9737F2089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:21:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JewELMNz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9737F2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbeIZLNm (ORCPT
+        id S1726431AbeIZLca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 07:13:42 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53574 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbeIZLNm (ORCPT
+        Wed, 26 Sep 2018 07:32:30 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55209 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeIZLc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 07:13:42 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: koike)
-        with ESMTPSA id E186E263B51
-Subject: Re: [PATCH 0/2] boot to a mapped device
-From:   Helen Koike <helen.koike@collabora.com>
-To:     dm-devel@redhat.com
-Cc:     agk@redhat.com, snitzer@redhat.com, linux-kernel@vger.kernel.org,
-        enric.balletbo@collabora.com, wad@chromium.org,
-        linux-doc@vger.kernel.org, linux-lvm@redhat.com,
-        kernel@collabora.com
-References: <cover.1537936397.git.helen.koike@collabora.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=helen.koike@collabora.com; keydata=
- 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
-Message-ID: <610d5f5e-ea07-631d-04d3-18fd3da0fe2a@collabora.com>
-Date:   Wed, 26 Sep 2018 02:02:25 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 26 Sep 2018 07:32:29 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c14-v6so771732wmb.4;
+        Tue, 25 Sep 2018 22:21:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMxy9odM3Lh06EGEquedZ58Dwp03RDMkTWHS4zeDbHA=;
+        b=JewELMNzuY/lq7tIH2G7CAy0KMLu0CnCRk5eZvym9VQanBkvdCsQUzL0B4kPCpQLXQ
+         NBSDJsxNIBJneXW7Cx1kihTvJapKGCsFwz1HtzXtSypaZQRT/ZvpJGQ+oPI5d2tf7hd9
+         ICDy4Oqvu+uJDc+WLrs10IygLVvIdlzhHGy1zSQf2L5t7Ma7VFK8tFLKU+nnqRDbpOAw
+         dFyNw6ag9lT7viXWq44ZZ0yPB4cUBIcVxck9xjP0wRnkxkXRUiS41MBdwYwtqNGQa7YC
+         CcyjzX5CpCTjhUxQ8DrGJqxUkXJNO3sP1hOu7mIiqOtLDtnOYL82X6vRNtlUHyfKWVhz
+         K0XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wMxy9odM3Lh06EGEquedZ58Dwp03RDMkTWHS4zeDbHA=;
+        b=cMlRgQVkYKXtI5IPGPw9peRGzaGdCjqtmjpvDvQw/rT+Mr4d5bCSRoGAGg/6wVWfLJ
+         rP4lhKTNcmM1omsKWBn2SD4hPZP4MP9aOFT2AaOS+0gUT1Egc14uXMohZHt7RQc7L6gr
+         rZojU9GNUSBELTUUS7kMf+e1Lq3JyYuZw3I8RZkYs8Pan9yzpBQ/TFUSUgtcW/+zF35b
+         p3egMSX0KljSIOj7u7PmEx8E5nNeTI3B4E64yoqF/hT7sBTvVJSzkTRgCjOqjNpsNqfN
+         ThdqkrhKJ4XkZLXBnAu8x8MgePEVfDVoQHfk+jKxLDLIbrsiqIwe8zg16VoZW1puHW0x
+         fxYw==
+X-Gm-Message-State: ABuFfoioSFgQF42GbtUSDWZ0OFQAJ2GySedCxjCTJDNCXfPaCUvJ2hpP
+        HtEuFKAVQrl3D4ubptRE2ho=
+X-Google-Smtp-Source: ACcGV62jbbLyNlplaalLus6oUaw5lBDFcSR31balyeBXOABCa4/sajiTw8D67fTgxsQaeB62IRn0bg==
+X-Received: by 2002:a1c:9b95:: with SMTP id d143-v6mr2974645wme.95.1537939281884;
+        Tue, 25 Sep 2018 22:21:21 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm3209512wru.79.2018.09.25.22.21.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 22:21:21 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Vadim Pasternak <vadimp@mellanox.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] platform/x86: mlx-platform: Properly use mlxplat_mlxcpld_msn201x_items
+Date:   Tue, 25 Sep 2018 22:21:15 -0700
+Message-Id: <20180926052115.21223-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1537936397.git.helen.koike@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Clang warns that mlxplat_mlxcpld_msn201x_items is not going to be
+emitted in the final assembly because it's only used in ARRAY_SIZE right
+now, which is a compile time evaluation since the array's size is known.
 
+drivers/platform/x86/mlx-platform.c:555:32: warning: variable
+'mlxplat_mlxcpld_msn201x_items' is not needed and will not be emitted
+[-Wunneeded-internal-declaration]
+static struct mlxreg_core_item mlxplat_mlxcpld_msn201x_items[] = {
+                               ^
+1 warning generated.
 
-On 9/26/18 2:00 AM, Helen Koike wrote:
-> This series is reviving an old patchwork.
-> Booting from a mapped device requires an initramfs. This series is
-> allows for device-mapper targets to be configured at boot time for
-> use early in the boot process (as the root device or otherwise).
-> 
-> Example, the following could be added in the boot parameters.
-> dm="lroot,,,rw, 0 4096 linear 98:16 0, 4096 4096 linear 98:32 0" root=/dev/dm-0
-> 
-> Enric Balletbo i Serra (1):
->   dm ioctl: add a device mapper ioctl function.
-> 
-> Will Drewry (1):
->   init: add support to directly boot to a mapped device
-> 
->  .../admin-guide/kernel-parameters.rst         |   1 +
->  .../admin-guide/kernel-parameters.txt         |   3 +
->  Documentation/device-mapper/dm-boot.txt       |  63 +++
->  drivers/md/dm-ioctl.c                         |  50 ++
->  include/linux/device-mapper.h                 |   6 +
->  init/Makefile                                 |   1 +
->  init/do_mounts.c                              |   1 +
->  init/do_mounts.h                              |  10 +
->  init/do_mounts_dm.c                           | 475 ++++++++++++++++++
->  9 files changed, 610 insertions(+)
->  create mode 100644 Documentation/device-mapper/dm-boot.txt
->  create mode 100644 init/do_mounts_dm.c
-> 
+It appears this was a copy and paste mistake from when this item was
+first added. Use the definition in mlxplat_mlxcpld_msn201x_data so that
+Clang no longer warns.
 
-Sorry about sending this email multiple times, my git send-email wans't
-properly configured.
+Link: https://github.com/ClangBuiltLinux/linux/issues/141
+Fixes: a49a41482f61 ("platform/x86: mlx-platform: Add support for new msn201x system type")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/platform/x86/mlx-platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Helen
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index d89936c93ba0..c2c3a1a19879 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -575,7 +575,7 @@ static struct mlxreg_core_item mlxplat_mlxcpld_msn201x_items[] = {
+ 
+ static
+ struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_msn201x_data = {
+-	.items = mlxplat_mlxcpld_msn21xx_items,
++	.items = mlxplat_mlxcpld_msn201x_items,
+ 	.counter = ARRAY_SIZE(mlxplat_mlxcpld_msn201x_items),
+ 	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET,
+ 	.mask = MLXPLAT_CPLD_AGGR_MASK_DEF,
+-- 
+2.19.0
+
