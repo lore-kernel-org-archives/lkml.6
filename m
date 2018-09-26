@@ -2,183 +2,144 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937B7C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7976EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3823120843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:17:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3823120843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=christoph-conrads.name
+	by mail.kernel.org (Postfix) with ESMTP id 220C920843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:19:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Aa9i87Kr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 220C920843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbeIZRaW (ORCPT
+        id S1727637AbeIZRbl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:30:22 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:39797 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbeIZRaW (ORCPT
+        Wed, 26 Sep 2018 13:31:41 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45252 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeIZRbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:30:22 -0400
-Received: from theta ([88.75.240.18]) by mrelayeu.kundenserver.de (mreue106
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1MCs9W-1fwI8W0ysS-008qZ8; Wed, 26
- Sep 2018 13:17:44 +0200
-Date:   Wed, 26 Sep 2018 13:17:59 +0200
-From:   Christoph Conrads <contact@christoph-conrads.name>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Pavel Machek <pavel@ucw.cz>, Edward Cree <ec429@cantab.net>,
-        Olof Johansson <olof@lixom.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Code of Conduct: Let's revamp it.
-Message-Id: <20180926131759.0559e68feed5d2a982990a08@christoph-conrads.name>
-In-Reply-To: <20180925151406.GB2933@thunk.org>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
-        <20180919081812.020f19e3@lwn.net>
-        <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
-        <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
-        <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
-        <20180925112832.GA10951@amd>
-        <20180925143645.af1457944142ecfec7199d80@christoph-conrads.name>
-        <20180925151406.GB2933@thunk.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:t0nxFC+mHr5ORWTHimw+eZZhJsECC0qtic6YsNZE+E34dvFhZZN
- qW3gvCUKJyKATIIVvNXEfYyYqPA26T2d0s5ar320TPCY0CeqTU6IVbBm8ylPSQKwZZION7q
- vjxITXZczGclV4+Q59Pqt9lWUUUeWRGSVaiKfW5FdclGLg4tfCsi6lGRPJDp1N1oqCiD3p1
- YnEHCrsZ53wjaflDg5X2Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:f4L5MzVzndg=:mvPM5TAnQ0ujDQUo1qy8+9
- fVVTZddxdBQ1WGoWsbRzZMa0glpjrJ8hg0faxrxXt1cULxQ+RhzJGeouow2sc4LP4SUH1CHPR
- 1rnC83z990akzlTb5esTLQxwXcyUknBB6iL2ttZz5d+tZgxcBrBv/XrKD6EuSqM4Q5x+0+b1F
- 77twYFcZOWkHjWNNgsrFJ86M6v2wHG0QOHMF/aZiqSW74bJ9opOp6gxxT+saWvzU65T/nFegy
- 0t9p+Q+rQBQy1o+vGJ0TgiumJRpdMUd5QAf6MZkvrDShNHpHl3FGMdOncjrxWPctdcgz7f+h0
- nwGDtZRQYDDEp1S6OID8fZgOpcPDJBmXZ2Ja3qtvhHa38H0K3kToYdT5k/xjmt2TBS/7rrr8z
- LfiA7wy8otvuIkdevfkk7w0SlSUwefV8+OoB83PdksXO9xFvlRjl231DoKxHDdz2Do0OqsWH4
- zBNOayBNVCfHKBOzRbuA8Elq+212VDqBwxhrn28tUBHjzqWJty+id/yTn6nMubWZ+sE9TLlks
- 8Kn+MGY1J66yFsL8wuNRz8AI4A0c+4Cv4NQ/6oIU4HbnWuxByKei7UM+hY/wEGD4BteFbxmxg
- KhPNDG67NWrf94JZVOGSqZ4YH2RMThNaznIS3sYDocPSM03kkdJCs2SU2JbMhFyNoQDxoI+5a
- ATsCWBvEecQy5khKQvW6bg1yBanY+4hS62TV1JsJZklo0V4infVmmL4CTYNcsXNam3gzKEV4M
- /AOMgvY7WN/33Pd8
+        Wed, 26 Sep 2018 13:31:41 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h6-v6so60082eds.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 04:19:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:references:in-reply-to:mime-version:thread-index:date
+         :message-id:subject:to:cc;
+        bh=jbQNypApR/BGHV6XZZxh8y80R1pViq9Tb/WOPO3JT3E=;
+        b=Aa9i87KrPo9AX6fS44hElhk7PKRrsuBSR1sT1UPGW2zninfhnecM7ADGkWA1qdZN9T
+         d0MTpeSO68OUMK41LICZ/a0b9ZcxFdP9z04hQr55mKaZ74AdYEdOYkFO55U1E5jG24o7
+         B/j2n9KCXGpXR1QXaz2mvWtlEvnTl9tyGGIDw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:references:in-reply-to:mime-version
+         :thread-index:date:message-id:subject:to:cc;
+        bh=jbQNypApR/BGHV6XZZxh8y80R1pViq9Tb/WOPO3JT3E=;
+        b=bceDFVwL0zqN7S5iJhCfZqZcKMsga0fz4z+/3ONNFNWxPqef6MNmzqJHYvhMSGrN4m
+         vFJZZguqTX+l/yRP0M846tQ9NZCnAZdskOYeydM9ZQC41XDih3U3tv5kHYl/GqqCwlVc
+         Phy1V/UDLVVBzsQICDfAsbZuZg0PGHAcad53DQgWorG597ZSNi7QrXdC4EkBeSbaNbrR
+         8OVdkFt6fHeAyLIxDWrrTF6n15Oy/jVB8l1D0JPm8Sv2FG6hM0zv/coJ0JN7+axV2ZZq
+         qmhlqDVEkjoE71vg6P7PAuDzjgMUh3rHBRxPzCZ5sAvV1FTgkdqO5yJlTiiB8Yk34cY3
+         z38Q==
+X-Gm-Message-State: ABuFfohjiKTo21eY4ubC2zjuEglqqNb/zOvFzpniDWywuMA0Kdq0w7bA
+        LsBMzZ3AyYpDyIwFiq9yOks6EOp8tm1P9jIEobQumQ==
+X-Google-Smtp-Source: ACcGV61PiERchTDY7PV9T6bjKd9auhsulJocQcVFyrKj9Zk5uhfflQqfyXYHu461xFGN2Ai4AS1Tv5+0FmT937CtRR8=
+X-Received: by 2002:a50:b4b0:: with SMTP id w45-v6mr8693200edd.254.1537960751486;
+ Wed, 26 Sep 2018 04:19:11 -0700 (PDT)
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+References: <20180923222548.7908-1-colin.king@canonical.com>
+In-Reply-To: <20180923222548.7908-1-colin.king@canonical.com>
+MIME-Version: 1.0
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQG53s5Tb7+9AMaG0ntjNxx3ahOHAKU3V2gw
+Date:   Wed, 26 Sep 2018 16:49:10 +0530
+Message-ID: <2517be92121ace5f4a42276bce2a413b@mail.gmail.com>
+Subject: RE: [PATCH] scsi: megaraid: fix spelling mistake "maibox" -> "mailbox"
+To:     Colin King <colin.king@canonical.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> -----Original Message-----
+> From: Colin King [mailto:colin.king@canonical.com]
+> Sent: Monday, September 24, 2018 3:56 AM
+> To: Kashyap Desai <kashyap.desai@broadcom.com>; Sumit Saxena
+> <sumit.saxena@broadcom.com>; Shivasharan S
+> <shivasharan.srikanteshwara@broadcom.com>; James E . J . Bottomley
+> <jejb@linux.vnet.ibm.com>; Martin K . Petersen
+> <martin.petersen@oracle.com>; megaraidlinux.pdl@broadcom.com; linux-
+> scsi@vger.kernel.org
+> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH] scsi: megaraid: fix spelling mistake "maibox" ->
+> "mailbox"
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to spelling mistake in warning message and comments
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/scsi/megaraid/megaraid_mbox.c | 4 ++--
+> drivers/scsi/megaraid/megaraid_mbox.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/scsi/megaraid/megaraid_mbox.c
+> b/drivers/scsi/megaraid/megaraid_mbox.c
+> index 530358cdcb39..2013523605c5 100644
+> --- a/drivers/scsi/megaraid/megaraid_mbox.c
+> +++ b/drivers/scsi/megaraid/megaraid_mbox.c
+> @@ -484,7 +484,7 @@ megaraid_probe_one(struct pci_dev *pdev, const
+> struct pci_device_id *id)
+>  	// Start the mailbox based controller
+>  	if (megaraid_init_mbox(adapter) != 0) {
+>  		con_log(CL_ANN, (KERN_WARNING
+> -			"megaraid: maibox adapter did not initialize\n"));
+> +			"megaraid: mailbox adapter did not initialize\n"));
+>
+>  		goto out_free_adapter;
+>  	}
+> @@ -950,7 +950,7 @@ megaraid_fini_mbox(adapter_t *adapter)
+>   * megaraid_alloc_cmd_packets - allocate shared mailbox
+>   * @adapter		: soft state of the raid controller
+>   *
+> - * Allocate and align the shared mailbox. This maibox is used to issue
+> + * Allocate and align the shared mailbox. This mailbox is used to issue
+>   * all the commands. For IO based controllers, the mailbox is also
+> registered
+>   * with the FW. Allocate memory for all commands as well.
+>   * This is our big allocator.
+> diff --git a/drivers/scsi/megaraid/megaraid_mbox.h
+> b/drivers/scsi/megaraid/megaraid_mbox.h
+> index c1d86d961a92..e075aeb4012f 100644
+> --- a/drivers/scsi/megaraid/megaraid_mbox.h
+> +++ b/drivers/scsi/megaraid/megaraid_mbox.h
+> @@ -117,7 +117,7 @@
+>   * @raw_mbox		: raw mailbox pointer
+>   * @mbox		: mailbox
+>   * @mbox64		: extended mailbox
+> - * @mbox_dma_h		: maibox dma address
+> + * @mbox_dma_h		: mailbox dma address
+>   * @sgl64		: 64-bit scatter-gather list
+>   * @sgl32		: 32-bit scatter-gather list
+>   * @sgl_dma_h		: dma handle for the scatter-gather list
 
-> > The CoC is a political document:
-> > https://web.archive.org/web/20180924234027/https://twitter.com/coralineada/status/1041465346656530432
->      ...
-> > Here is the author's post-meritocracy manifesto:
-> > https://postmeritocracy.org/
-> 
-> There have been those who have characterized the GPL as being more
-> than just a license, but also a political statement.  And yet, many
-> projects, include Linus, use the GPL without necessarily subscribing
-> to all of Richard Stallman's positions, political or otherwise.
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
 
-for clarification: My statement above that the CoC is a political
-document is not my opinion but a succinct summary of the content of the
-tweet linked below it. Here is the full tweet:
-> Some people are saying that the Contributor Covenant is a political
-> document, and they’re right.
-
-Subsuming both the GNU GPL including the views of the Free Software
-Foundation (FSF) and the Contributor Covenant CoC is grossly negligent:
-The GPL is a set of rights and obligations with respect to software but
-it is indifferent to the behavior of the developers whereas the CoC is a
-set of rights and obligations for developers but it is indifferent to
-the goods developed by them.
-
-The GNU General Public Licenses are agreements on rights and obligations
-when executing or depending on certain software. The only way to be
-influenced by the GPL is by using GPL code or by licensing one's own
-code under the GPL. If you strongly disagree with the contents of the
-GPL, you can avoid it by developing your own software and by not using
-GPL software.
-
-Most importantly, the FSF and the people supporting and promoting the
-GPL do so in part by creating high-quality software themselves, see the
-list in reference [1]. Some of the most important packages on a
-_GNU/Linux_ system were developed by or given to the FSF. I looked at
-the list mentioned above and stopped counting after I had found 19
-pieces of software that I am actively using on a regular basis
-including Bash, binutils, gcc, libc, and gtk+. Did you write your
-e-mail with GPL-licensed Mutt, Ted?
-
-
-With the Contributor Covenant CoC, you have all of this turned upside
-down:
-* It is irrelevant what is created by a group of people.
-* It applies to everyone almost always; if you never contributed to
-  Linux kernel development, you can still denounce active contributors
-  to the TAB for behavior that *might* be considered inappropriate.
-* There is no project whose quality, productivity, or success grew after
-  introduction of this CoC.
-
-Reading the CoC, it is plain obvious that the good created by a
-community is of no relevance to the CoC.
-
-At the same time, the period of validity of the CoC is almost unlimited:
-It applies whenever a person interacts with other developers, and
-whenever she represents the project, and whenever her conduct might be
-deemed inappropriate.
-
-The CoC is also almost unlimited in its scope of application: It applies
-when insults are uttered, when language is not welcoming enough, and
-when statements might be deemed inappropriate.
-
-To enforce the CoC, an organization has to introduce its own
-prosecution: There is an investigative board, the TAB, which is obliged
-to handle reports of CoC violations confidentially and the findings are
-presented to the maintainers which punish community members based on
-these findings.
-
-The CoC has never improved any piece of software and it drives away
-core contributors:
-* The fifth most active LLVM contributor Rafael Avila de Espindola left
-  over a CoC that is more tame the Contributor Covenant CoC [2].
-* Node.js developer Rodd Vagg was almost removed from Node.js based on
-  undisclosed allegations [3]. Node.js Technical Steering Committee
-  members were not at liberty to discuss the allegations with the
-  accused [4]. Later, a third of the TSC members quit simultaneously
-  [5].
-* Long-time Drupal developer Larry Garfield was removed as developer
-  because of his personal preference for BDSM [6]. His views were "in
-  opposition to the values of the Drupal project" [7]. The Drupal CoC is
-  in spirit similar to the Contributor Covenant CoC [8].
-
-
-> The use of GPLv2 does not magically brainwash all of users of that
-> document to blindly follow its author.  The same is true of the CoC.
-
-The Ruby developers refused to introduce the Contributor Covenant CoC
-[9] and this led to a thinly veiled Twitter attack of the CoC author on
-Ruby chief designer matz [10]. You will not be brainwashed by the CoC
-but a Twitter goon squad will be waiting for you.
-
-In summary, your comparison of Richard Stallman's lobbying to the tweets
-of the CoC author are inappropriate. Your comparison of the GNU General
-Public License with the Contributor Covenant CoC is an insult to the
-FSF.
-
-Sincerely
-Christoph Conrads
-
-
-[1] https://www.gnu.org/manual/blurbs.html 
-[2] https://lists.llvm.org/pipermail/llvm-dev/2018-May/122922.html
-[3] https://github.com/nodejs/TSC/issues/310
-[4] https://github.com/nodejs/CTC/issues/165#issuecomment-324798494
-[5]
-https://www.zdnet.com/article/after-governance-breakdown-node-js-leaders-fight-for-its-survival/
-[6] https://www.garfieldtech.com/blog/tmi-outing [7]
-https://dri.es/living-our-values [8] https://www.drupal.org/dcoc
-[9] https://bugs.ruby-lang.org/issues/12004
-[10]
-https://web.archive.org/web/20180917225801/https://twitter.com/CoralineAda/status/690334282607378432
+> --
+> 2.17.1
