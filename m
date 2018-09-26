@@ -6,92 +6,95 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A13C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A93EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A91BC20684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91BC20684
+	by mail.kernel.org (Postfix) with ESMTP id D49E220684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49E220684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbeIZTOJ (ORCPT
+        id S1728388AbeIZTPV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:14:09 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:51151 "EHLO
+        Wed, 26 Sep 2018 15:15:21 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:42677 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeIZTOJ (ORCPT
+        with ESMTP id S1726315AbeIZTPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:14:09 -0400
+        Wed, 26 Sep 2018 15:15:20 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N18MG-1fbySb48KI-012aR3; Wed, 26 Sep 2018 15:00:00 +0200
+ 1ML9i0-1gMGcp2KOo-00IDrL; Wed, 26 Sep 2018 15:01:41 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-        Florian Meier <florian.meier@koalo.de>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: atmel: add SND_SOC_I2C_AND_SPI dependency
-Date:   Wed, 26 Sep 2018 14:59:40 +0200
-Message-Id: <20180926125957.2256982-1-arnd@arndb.de>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: imx-pxp: include linux/interrupt.h
+Date:   Wed, 26 Sep 2018 15:01:26 +0200
+Message-Id: <20180926130139.2320343-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:H2e98QPkV/fyrevHDdROE0QZ7aPAqSjvNB6QFl1C60gyOS/Djo/
- q2D2sZlyGGl20SeeE3MUKxv3eFgeiKKIVNS7LD7gIJ6Ra/YdJDFNeH4061uFH7Cb1BrpWCr
- 0vzNbxg3Vdx/wx49I+PIV5DGHSirviV+emrUEimWClimB3/pvNc7SCGQxgETiwB7LjVIA6y
- nrZ6JOE+9uM3WloTmLHUQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:gEvw0M90P7s=:uUMQRZfBzG8FXMGzziK6ah
- wq6h6CZLpKabiOsg3jtLOZfKOYHvrmMDkRZx9YENx8UwsKB6HoNOBevOqJqVXGI2f+iMCGCZH
- XBTr/Gq4ZvGPS3o363JazVB9UUOvIeUkVa6j3wR60vPYalZRNTEtWlvj58KefhUwdQ0r0n9yw
- Hw4dPjMRmjEyZJd8V75sQXOvEaxVk79sLyvjKM6WRaws/YWYhRDEZYRqVg6y805QFkLWb57jn
- NHjd80g9QySoiW893pSvlWmYqdaGC0Ll9tXXbAgXy8dhkek+FaS+BWVthHwTa2GHRJfy2wCZG
- n0yL7JuoItb9spD/sqvKkHvqsKpju/5VGek9AlrX2BBm0XEz1ftmke5AEQnSWCZ43TbcBLZpN
- VlXVT3NdOBWQgxQBr6/8/Eo8kqbz7x8rz33wS7+rN/fuTEmP7lYIimiMP3QbYsde5zNejdC0i
- NB4BVwM02SCLCgwP2el53symfFx902+t2A0KANTBt81hNhs9NZxDcwTersP6R9Bbb6/4c88WN
- lx+KoctiWNyyuMWD8cAUbFXw4j+oaJAnrUr13YDJcc7zkUNkbHP6EWe1GI/+YEjf3dQho62st
- JT1KAlquxzhjFYtF/RacVsRxZwH1awz+aAbUs+wmp8Siu6DSCvd0z5Tr8k4a5dCJKygeqMVFa
- 6CUFkmKVG/9qCL40SJpXWtKcGtBNs5gkJDYF+D5jsCsdoBoQ0Wj7RW2lw0OMaYnvm6M8=
+X-Provags-ID: V03:K1:RXGvj4P/YjKUiKE6/HoZ4HK4U71GNkYXs0/1eESTVmldi6Wl6Bg
+ n4fjYkfwa22sI9lb+lf24QgCgbWzU2KC/3aXKXgevUjTp82ugGECDHKeu5XYxSBi1XUKiVo
+ CM3XodFjqww4xTmilnqM2vGtJqAbpA7DOv3/W1DAckB37Tv3Ez8KiL4bN5w14Atyqx41n66
+ 28szDInIOSi+iJ3kSC2kw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OgXzWp1j770=:sIkb5Kht600B0WwbcfrY0U
+ GHvKGc92dS43B+rbqTPLiQT1bXup/fFf/I81i3FXkaKkmLqDJydQvZBsARCs1Ni8o9mgN9PTU
+ ju4ecpBUFZ9jiczJde3hqriXc5KGyaTr8X1vTzxSL0YJ2ocKgvSMhSJBtwW9+Qwzhv7w/YN11
+ q/iIvaaHN/snkaZFHKg1vwuFBBpHBy5RAG9F9Z2eFVJKhxac1PvxAKD8R/Y9RgMBNCR64dlUL
+ Y9BZEuEtLp9VJq397pwXppc1ynE55eoDk7Di7nTzi2Urmwz96EJi1Ec4063ZCvciblL8+ZnbM
+ vDkQk13fUKy5fmgygkI2yILFbjWeVs+VRaC18wa31E+0vhFUss0GaxEqYS4Xp/Zn9c/Z78kM9
+ n9mj8cNvFYNVmqgnpQ4p6Dghe3q4sdZ7tOXkNliOZ3MIo2D6Vg9lJyPE66+pEMIJDDTXp5hUl
+ AJHPg6oQEn0ykpgVKhleCRhtoYh94BMBDvtMnxxEaqUzVQjE94uGivQwcQdYBxuu0W1Es/W7a
+ /KQ7xxhnN8vf3MfhHEISuIoSKChx8ojwzl2u5Hha8JPmZFnUZ51GLs3u3NGs+lD8YwI0Lcsjt
+ m6mZE8rxKcUjMTjyK89qw4vk0rFL67kxllJl7KRexCfaASIOO2n0pyU+jPJTpbew/SGGd3m7l
+ I4T/Pjn5J0hrWMjBMjjTxA28zYUtvoASlOJWflShI0xCQjEZ+/KBshxrbKIo3jxzaEdM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Selecting SND_SOC_WM8731 is only allowed when all its dependencies
-are already there:
+The newly added driver fails to build in some configurations due to a
+missing header inclusion:
 
-WARNING: unmet direct dependencies detected for SND_SOC_WM8731
-  Depends on [m]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_I2C_AND_SPI [=m]
-  Selected by [y]:
-  - SND_SOC_MIKROE_PROTO [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_ATMEL_SOC [=y] && OF [=y]
-  Selected by [m]:
-  - SND_AT91_SOC_SAM9X5_WM8731 [=m] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_ATMEL_SOC [=y] && (ARCH_AT91 [=y] || COMPILE_TEST [=y]) && ATMEL_SSC [=y] && SND_SOC_I2C_AND_SPI [=m]
-  - SND_SOC_ALL_CODECS [=m] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && COMPILE_TEST [=y] && SND_SOC_I2C_AND_SPI [=m]
+drivers/media/platform/imx-pxp.c:988:8: error: unknown type name 'irqreturn_t'
+ static irqreturn_t pxp_irq_handler(int irq, void *dev_id)
+        ^~~~~~~~~~~
+drivers/media/platform/imx-pxp.c: In function 'pxp_irq_handler':
+drivers/media/platform/imx-pxp.c:1012:9: error: 'IRQ_HANDLED' undeclared (first use in this function); did you mean 'IRQ_MODE'?
+  return IRQ_HANDLED;
+         ^~~~~~~~~~~
+         IRQ_MODE
+drivers/media/platform/imx-pxp.c:1012:9: note: each undeclared identifier is reported only once for each function it appears in
+drivers/media/platform/imx-pxp.c: In function 'pxp_probe':
+drivers/media/platform/imx-pxp.c:1660:8: error: implicit declaration of function 'devm_request_threaded_irq'; did you mean 'devm_request_region'? [-Werror=implicit-function-declaration]
+  ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, pxp_irq_handler,
+        ^~~~~~~~~~~~~~~~~~~~~~~~~
+        devm_request_region
+drivers/media/platform/imx-pxp.c:1661:4: error: 'IRQF_ONESHOT' undeclared (first use in this function); did you mean 'SA_ONESHOT'?
+    IRQF_ONESHOT, dev_name(&pdev->dev), dev);
 
-Fixes: a45f8853a5f9 ("ASoC: Add driver for PROTO Audio CODEC (with a WM8731)")
+Fixes: 51abcf7fdb70 ("media: imx-pxp: add i.MX Pixel Pipeline driver")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- sound/soc/atmel/Kconfig | 1 +
+ drivers/media/platform/imx-pxp.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
-index 81a0712d4f14..64f86f0b87e5 100644
---- a/sound/soc/atmel/Kconfig
-+++ b/sound/soc/atmel/Kconfig
-@@ -101,6 +101,7 @@ config SND_ATMEL_SOC_I2S
- config SND_SOC_MIKROE_PROTO
- 	tristate "Support for Mikroe-PROTO board"
- 	depends on OF
-+	depends on SND_SOC_I2C_AND_SPI
- 	select SND_SOC_WM8731
- 	help
- 	  Say Y or M if you want to add support for MikroElektronika PROTO Audio
+diff --git a/drivers/media/platform/imx-pxp.c b/drivers/media/platform/imx-pxp.c
+index 229c23ae4029..b76cd0e8313c 100644
+--- a/drivers/media/platform/imx-pxp.c
++++ b/drivers/media/platform/imx-pxp.c
+@@ -16,6 +16,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
++#include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/sched.h>
 -- 
 2.18.0
 
