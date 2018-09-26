@@ -2,164 +2,82 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE5BECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59944C004D1
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37951214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tEbt37Oq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37951214FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A013214FE
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A013214FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbeIZWOS (ORCPT
+        id S1728683AbeIZWOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:14:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32800 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbeIZWOR (ORCPT
+        Wed, 26 Sep 2018 18:14:20 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41739 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728262AbeIZWOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:14:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xn1FMi+rxNeYnq7jScbAisw+I6VPyHTG8ld3nCyCAaM=; b=tEbt37Oq3lU1JG0GuWvMo9iZw
-        q4ncOohPASroXse0Ca1dAVJruXS8X991aFI37u940Zil5gk90iprlvzvCpTNpAlCv+KNk46OZV0oY
-        w6FMkclNluVkZBEd6/WzbIxeDdmlw3AKkBgJOdMCr5iIxuX+7vb5qtBV5sdrMEf444tHx32zqICKb
-        LCWKFuwlS9csArLDoO0lUfW0we1b5EffU16C/v0uZSv4HLl0xLWjuJyz6hBvx1zFylOxk29+fXM8v
-        p32WhCs9V6/maryOqyTKho2tpgYDT4s5Jzm+alvOYINy+aXY/8IaGBWKxerDRhPJTcM0F6ojUkgm+
-        fVlGNdOLw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5CEt-0004EN-HS; Wed, 26 Sep 2018 16:00:35 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] drm/virtio: Replace IDRs with IDAs
-Date:   Wed, 26 Sep 2018 09:00:28 -0700
-Message-Id: <20180926160031.15721-2-willy@infradead.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180926160031.15721-1-willy@infradead.org>
-References: <20180926160031.15721-1-willy@infradead.org>
+        Wed, 26 Sep 2018 18:14:19 -0400
+Received: by mail-oi1-f195.google.com with SMTP id l197-v6so4051755oib.8;
+        Wed, 26 Sep 2018 09:00:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QTwwZYMd8pL8Sva8pFylogmXWYk1rgXnmSYIj45ZH/Y=;
+        b=BNSINlFni+fWeunB+CDXNfXoxya+xwnrTJr5+pEIuKiHGzUTKa0KQWnAYHQqlhqIds
+         Vyn4LwUtTBuGneVdJk6UKC0KNTMYnaF+nyhgEb1TAPpzTJ+hTrzjxDRi0nqjA/ZvJxUj
+         wJjc1KLIOK5TCowDtTxFFXbHAOyY8u995vtTLpCe+E9QFjZRJLcGFXXoszZclUA2yI+F
+         exfliQz96ndYgkjrzDMXwtvNXe79n++sQzrnhg8nrChzHMchoJfU+GvL63XW6M030yV4
+         9vVFxsgD6JCLU0JeFGwWfwmKHgJjd/M6IsO6jN42+5h+7AjiinkQn8NU0iYmatZIJ07d
+         vG8Q==
+X-Gm-Message-State: ABuFfogjB6V+6pMOwNYMfO8NE3s+VfhwCP2wB1uRD0fF4tvrfNsSWpyn
+        3w4rxh5+wjs0fyKIZS2UdQ4XtW8+nA==
+X-Google-Smtp-Source: ACcGV61yCg2/saKcOVXuYBXczfLumguiAh/9VztM+A4afs5hDXhIM4wjxGPRC9helwIK7a0+0xOrjQ==
+X-Received: by 2002:aca:bdc4:: with SMTP id n187-v6mr1032624oif.3.1537977642763;
+        Wed, 26 Sep 2018 09:00:42 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h9-v6sm1833675otl.59.2018.09.26.09.00.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 09:00:42 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 11:00:41 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Rohit kumar <rohitkr@codeaurora.org>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, bgoswami@codeaurora.org,
+        rohkumar@qti.qualcomm.com, Rohit kumar <rohitkr@codeaurora.org>
+Subject: Re: [PATCH v4] dt-binding: remoteproc: Add QTI ADSP PIL bindings
+Message-ID: <20180926160041.GA9880@bogus>
+References: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These IDRs were only being used to allocate unique numbers, not to look
-up pointers, so they can use the more space-efficient IDA instead.
+On Tue, 11 Sep 2018 09:24:01 +0530, Rohit kumar wrote:
+> Add devicetree bindings documentation file for Qualcomm
+> Technolgies Inc ADSP Peripheral Image Loader.
+> 
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+> Changes since v3:
+> Addressed comments given by Rob
+> 
+>  .../bindings/remoteproc/qcom,adsp-pil.txt          | 126 +++++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
+> 
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h |  6 ++----
- drivers/gpu/drm/virtio/virtgpu_kms.c | 18 ++++--------------
- drivers/gpu/drm/virtio/virtgpu_vq.c  | 12 ++----------
- 3 files changed, 8 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 65605e207bbe..c4468a4e454e 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -180,8 +180,7 @@ struct virtio_gpu_device {
- 	struct kmem_cache *vbufs;
- 	bool vqs_ready;
- 
--	struct idr	resource_idr;
--	spinlock_t resource_idr_lock;
-+	struct ida	resource_ida;
- 
- 	wait_queue_head_t resp_wq;
- 	/* current display info */
-@@ -190,8 +189,7 @@ struct virtio_gpu_device {
- 
- 	struct virtio_gpu_fence_driver fence_drv;
- 
--	struct idr	ctx_id_idr;
--	spinlock_t ctx_id_idr_lock;
-+	struct ida	ctx_id_ida;
- 
- 	bool has_virgl_3d;
- 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index 65060c08522d..e2604fe1b4ae 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -55,21 +55,13 @@ static void virtio_gpu_config_changed_work_func(struct work_struct *work)
- static void virtio_gpu_ctx_id_get(struct virtio_gpu_device *vgdev,
- 				  uint32_t *resid)
- {
--	int handle;
--
--	idr_preload(GFP_KERNEL);
--	spin_lock(&vgdev->ctx_id_idr_lock);
--	handle = idr_alloc(&vgdev->ctx_id_idr, NULL, 1, 0, 0);
--	spin_unlock(&vgdev->ctx_id_idr_lock);
--	idr_preload_end();
-+	int handle = ida_alloc_min(&vgdev->ctx_id_ida, 1, GFP_KERNEL);
- 	*resid = handle;
- }
- 
- static void virtio_gpu_ctx_id_put(struct virtio_gpu_device *vgdev, uint32_t id)
- {
--	spin_lock(&vgdev->ctx_id_idr_lock);
--	idr_remove(&vgdev->ctx_id_idr, id);
--	spin_unlock(&vgdev->ctx_id_idr_lock);
-+	ida_free(&vgdev->ctx_id_ida, id);
- }
- 
- static void virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
-@@ -151,10 +143,8 @@ int virtio_gpu_driver_load(struct drm_device *dev, unsigned long flags)
- 	vgdev->dev = dev->dev;
- 
- 	spin_lock_init(&vgdev->display_info_lock);
--	spin_lock_init(&vgdev->ctx_id_idr_lock);
--	idr_init(&vgdev->ctx_id_idr);
--	spin_lock_init(&vgdev->resource_idr_lock);
--	idr_init(&vgdev->resource_idr);
-+	ida_init(&vgdev->ctx_id_ida);
-+	ida_init(&vgdev->resource_ida);
- 	init_waitqueue_head(&vgdev->resp_wq);
- 	virtio_gpu_init_vq(&vgdev->ctrlq, virtio_gpu_dequeue_ctrl_func);
- 	virtio_gpu_init_vq(&vgdev->cursorq, virtio_gpu_dequeue_cursor_func);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 020070d483d3..58be09d2eed6 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -41,21 +41,13 @@
- void virtio_gpu_resource_id_get(struct virtio_gpu_device *vgdev,
- 				uint32_t *resid)
- {
--	int handle;
--
--	idr_preload(GFP_KERNEL);
--	spin_lock(&vgdev->resource_idr_lock);
--	handle = idr_alloc(&vgdev->resource_idr, NULL, 1, 0, GFP_NOWAIT);
--	spin_unlock(&vgdev->resource_idr_lock);
--	idr_preload_end();
-+	int handle = ida_alloc_min(&vgdev->resource_ida, 1, GFP_KERNEL);
- 	*resid = handle;
- }
- 
- void virtio_gpu_resource_id_put(struct virtio_gpu_device *vgdev, uint32_t id)
- {
--	spin_lock(&vgdev->resource_idr_lock);
--	idr_remove(&vgdev->resource_idr, id);
--	spin_unlock(&vgdev->resource_idr_lock);
-+	ida_free(&vgdev->resource_ida, id);
- }
- 
- void virtio_gpu_ctrl_ack(struct virtqueue *vq)
--- 
-2.19.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
