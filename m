@@ -2,75 +2,73 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDDFC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3234C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E8E208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CE9B208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:57:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4ufWlAd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E8E208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vfX9mYL4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE9B208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeIZUJ4 (ORCPT
+        id S1727532AbeIZUKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:09:56 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39060 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727066AbeIZUJ4 (ORCPT
+        Wed, 26 Sep 2018 16:10:40 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:38565 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbeIZUKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:09:56 -0400
-Received: by mail-qk1-f196.google.com with SMTP id b19-v6so15710016qkc.6;
-        Wed, 26 Sep 2018 06:56:50 -0700 (PDT)
+        Wed, 26 Sep 2018 16:10:40 -0400
+Received: by mail-qk1-f193.google.com with SMTP id s129-v6so12917116qke.5;
+        Wed, 26 Sep 2018 06:57:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7XiFz7wwjBZ6h4wPYBynF2BS+AWI2Y0Fn4TZoyf2mL0=;
-        b=J4ufWlAdh0G+EalcWi/FWXYWFRvprt6xQUkRIDkrkxOuJikemyPIfxeJvZ1+nxvj2C
-         2WPc6Le/G5JsdW2wDg6EMdN7v2pznlRSMkBV3TdFDSPZhdi0toWv5/Sx00Xg52A7+3nh
-         Fnbl/PrpUGBwZFh3bgTefimNhbDWzzx+XTC7jdcZ9qdzYdoKZxcp+zg4t5U9OH6VxgWk
-         me7ZwHjB3dIJV2dIV0x0wvFqWQtDA3rbt+JKBS8AT2DIQSeOO1eP5yWUv+Efw7XEI0j3
-         ub9+X1gij6NAE/4Eq31sBGTnMMTyChK+vVTAUzsXlNFO9rgfUl8ymnojb7qdy33g2XS2
-         hcAA==
+        bh=Q3VmB7Ot6GmKtuvhY4iOwR40nBrw3cZ9AokfNRmhSuA=;
+        b=vfX9mYL4yBOAvv0gyFScuiVDFzxAGwLcQFxop/kdxUDruXNRkzIQJAiGqwa8oMMjoo
+         aiBf8LfZZ2H0Dt64vygxnBUP94JdesaVkF19OgUq72/WBQTvhtJzfe61S+3Q7khHfdS1
+         fC84xZbK+4mY4vt3Kxku9EpNOMxwlcbvL2TKH51rXiJZB4QFMINb47xGX65JIGKPY/eo
+         OlrpjZfBB7HUPEeJOTrFIpdI3bg6Y5A4qCgKut2BA7STsD+FK7Wp42gIQCbi0WnmxMtp
+         PqaeFe9tmXdKHOB5YpeNSg0K8NPVSA3BHXs5fThbpcvDjijCwpToVm3tHBpILhxQPeqZ
+         zw6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7XiFz7wwjBZ6h4wPYBynF2BS+AWI2Y0Fn4TZoyf2mL0=;
-        b=NwZ8mcLo7nwnpAN4Mls0/WFQT36bNceNsPA5Q7mkyPlXRcmTYCF6oaBB3k7LxiGfhE
-         SiLZTstR2AC40S9HOdQUAU+RuGDFec3XgXGrRFfhc+FybALjrrQT+oPlgBbtRFVasvF7
-         P4rtP+0CCXqLdXfrNLfzjibFdHjv/r3qGjdKoQPFetkFj15fD8mf17uQl1BJ6LP7qAfn
-         vukj9q20TqWhIZ2lIQOvCuoSdqJOpgRvKR2F3mKuiSjw+1KR4gOgTCNrbTfFsvkt/N9z
-         GymQiG9e0ABV4dZNlJH60Q/yZ07tAmFraMMKPydD/xegItpLi1H01yZUlyOLVHR9jTrL
-         WQvQ==
-X-Gm-Message-State: ABuFfohGo8/W8VG141geL+S1/FiAz60Tm0gGToEBoaAe4PekkddSr4g/
-        UsfjjXJ5d353shHuLJsJA4bUJXMcj6dA5LZ2WBlk7bvQivw=
-X-Google-Smtp-Source: ACcGV63CI6eyMYw6nhC6Nndzp4DXy9weVt/k3X823JgCKM8bmOstnaYAqHtPAavaAvM7p1I9LyBs9skYmvWvjTwWmys=
-X-Received: by 2002:a37:6e01:: with SMTP id j1-v6mr4365100qkc.70.1537970210483;
- Wed, 26 Sep 2018 06:56:50 -0700 (PDT)
+        bh=Q3VmB7Ot6GmKtuvhY4iOwR40nBrw3cZ9AokfNRmhSuA=;
+        b=FVo0ej69FcL2vdwGQDP2UstGhmNAwXpP13Z/YN9rDi2OMH7vK2IxN0ABiaP9DVfAUP
+         tRTEwG9iEslQqDm0tUazGQ5WCaeimSfZmONJtldbr0fCRwEeom701LMjJmgYjHYyNpBg
+         P5SE4hIXf4KMplsF6mBVkg5mVtRG7n/ScJwTaW9eQPnE2FBAuZvEZUCDrD21Jtfjbfyj
+         tniRrCABkQuAd3vqoCPQjrDL4MnA3qpSE3W4B47r8C8UiQyAwgC8kpSKMm7FkOVPa4w3
+         gegnoGCW1JSce82H3QByW8pM6GAffd4XM186PWhSaa+8sC2LwsSbx0DiA+ZiFClrUe/J
+         N05g==
+X-Gm-Message-State: ABuFfoh22wLjC9M8H7irl8bYyyxi79VZPi+qXL2Il5uu7w9/SdWxFVre
+        QVOimWsRxeuBOa/vep+ajOVhpot4skawDPev3D0=
+X-Google-Smtp-Source: ACcGV63bSrqnSlzZ9XIol13kq2seqS7vaGRYI5qJUt8pN4dzpkKgcJhtU7FbRBQoXQSwSakZv7J8FClA88xsSGrb5DA=
+X-Received: by 2002:ae9:e50d:: with SMTP id w13-v6mr4357157qkf.137.1537970254832;
+ Wed, 26 Sep 2018 06:57:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com> <20180903180415.31575-4-rajneesh.bhardwaj@linux.intel.com>
-In-Reply-To: <20180903180415.31575-4-rajneesh.bhardwaj@linux.intel.com>
+References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com> <20180903180415.31575-2-rajneesh.bhardwaj@linux.intel.com>
+In-Reply-To: <20180903180415.31575-2-rajneesh.bhardwaj@linux.intel.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 16:56:39 +0300
-Message-ID: <CAHp75VcE+BY=8aKEGqzkDBVazLGtwNNCa1CYCKGirS1vBLVXPg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] platform/x86: intel_telemetry: report debugfs failure
+Date:   Wed, 26 Sep 2018 16:57:23 +0300
+Message-ID: <CAHp75Vcx-rk_dgf6fNRMa6o-zFeSXAG+HSNMAN-1XVCsXvvv1w@mail.gmail.com>
+Subject: Re: [PATCH 2/4] platform/x86: intel_pmc_core: Fix LTR IGNORE Max offset
 To:     rajneesh.bhardwaj@linux.intel.com
 Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>,
-        matt.turner@intel.com, "Brown, Len" <len.brown@intel.com>,
-        Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@intel.com>
+        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -80,43 +78,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Mon, Sep 3, 2018 at 9:05 PM Rajneesh Bhardwaj
 <rajneesh.bhardwaj@linux.intel.com> wrote:
 >
-> On some Goldmont based systems such as ASRock J3455M the BIOS may not
-> enable the IPC1 device that provides access to the PMC and PUNIT. In
-> such scenarios, the ioss and pss resources from the platform device can
-
-IOSS
-PSS
-
-> not be obtained and result in a invalid telemetry_plt_config.
-
-What is telemetry_plt_config?
-
-> This is also applicable to the platforms where the BIOS supports IPC1
-> device under debug configurations but IPC1 is disabled by user or the
-> policy.
->
-> This change allows user to know the reason for not seeing entries under
-> /sys/kernel/debug/telemetry/* when there is no apparent failure at boot.
->
-> Cc: Matt Turner <matt.turner@intel.com>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
-> Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>
+> Cannonlake PCH allows us to ignore LTR from more IPs than Sunrisepoint
+> PCH so make the LTR ignore platform specific.
 >
 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198779
->
-There should be not a blank line.
+This looks fine to me.
 
-> Acked-by: Matt Turner <matt.turner@intel.com>
 > Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel_pmc_core.c | 4 +++-
+>  drivers/platform/x86/intel_pmc_core.h | 4 +++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+> index 972735bd4c75..c1330a03523d 100644
+> --- a/drivers/platform/x86/intel_pmc_core.c
+> +++ b/drivers/platform/x86/intel_pmc_core.c
+> @@ -149,6 +149,7 @@ static const struct pmc_reg_map spt_reg_map = {
+>         .ppfear_buckets = SPT_PPFEAR_NUM_ENTRIES,
+>         .pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
+>         .pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
+> +       .ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
+>  };
+>
+>  /* Cannonlake: PGD PFET Enable Ack Status Register(s) bitmap */
+> @@ -320,6 +321,7 @@ static const struct pmc_reg_map cnp_reg_map = {
+>         .ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+>         .pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+>         .pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
+> +       .ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
+>  };
+>
+>  static inline u8 pmc_core_reg_read_byte(struct pmc_dev *pmcdev, int offset)
+> @@ -566,7 +568,7 @@ static ssize_t pmc_core_ltr_ignore_write(struct file *file, const char __user
+>                 goto out_unlock;
+>         }
+>
+> -       if (val > NUM_IP_IGN_ALLOWED) {
+> +       if (val > map->ltr_ignore_max) {
+>                 err = -EINVAL;
+>                 goto out_unlock;
+>         }
+> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
+> index b24407048fa1..12663c58f122 100644
+> --- a/drivers/platform/x86/intel_pmc_core.h
+> +++ b/drivers/platform/x86/intel_pmc_core.h
+> @@ -44,7 +44,7 @@
+>  #define SPT_PMC_READ_DISABLE_BIT               0x16
+>  #define SPT_PMC_MSG_FULL_STS_BIT               0x18
+>  #define NUM_RETRIES                            100
+> -#define NUM_IP_IGN_ALLOWED                     17
+> +#define SPT_NUM_IP_IGN_ALLOWED                 17
+>  #define SPT_PMC_LTR_CUR_PLT                    0x350
+>  #define SPT_PMC_LTR_CUR_ASLT                   0x354
+>  #define SPT_PMC_LTR_SPA                                0x360
+> @@ -153,6 +153,7 @@ enum ppfear_regs {
+>  #define CNP_PPFEAR_NUM_ENTRIES                 8
+>  #define CNP_PMC_READ_DISABLE_BIT               22
+>  #define CNP_PMC_LATCH_SLPS0_EVENTS             BIT(31)
+> +#define CNP_NUM_IP_IGN_ALLOWED                 19
+>  #define CNP_PMC_LTR_CUR_PLT                    0x1B50
+>  #define CNP_PMC_LTR_CUR_ASLT                   0x1B54
+>  #define CNP_PMC_LTR_SPA                                0x1B60
+> @@ -215,6 +216,7 @@ struct pmc_reg_map {
+>         const u32 pm_cfg_offset;
+>         const int pm_read_disable_bit;
+>         const u32 slps0_dbg_offset;
+> +       const u32 ltr_ignore_max;
+>  };
+>
+>  /**
+> --
+> 2.17.1
+>
 
-> +exit:
-> +       pr_debug(pr_fmt(DRIVER_NAME) " Failed\n");
-
-Completely useless.
-
-Device core does it in generic way.
 
 -- 
 With Best Regards,
