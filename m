@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF5DC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF06C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA55121537
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:51:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA55121537
+	by mail.kernel.org (Postfix) with ESMTP id C06F021537
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06F021537
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeI0EGo (ORCPT
+        id S1727284AbeI0EGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 00:06:44 -0400
-Received: from mga05.intel.com ([192.55.52.43]:2437 "EHLO mga05.intel.com"
+        Thu, 27 Sep 2018 00:06:52 -0400
+Received: from mga09.intel.com ([134.134.136.24]:22428 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726049AbeI0EGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 00:06:44 -0400
+        id S1726049AbeI0EGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 00:06:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 14:51:44 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 14:51:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
-   d="scan'208";a="94009102"
+   d="scan'208";a="94009130"
 Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 14:51:44 -0700
-Subject: [RFC workqueue/driver-core PATCH 2/5] async: Add support for
- queueing on specific NUMA node
+  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 14:51:49 -0700
+Subject: [RFC workqueue/driver-core PATCH 3/5] driver core: Probe devices
+ asynchronously instead of the driver
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     linux-nvdimm@lists.01.org, gregkh@linuxfoundation.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -40,8 +40,8 @@ To:     linux-nvdimm@lists.01.org, gregkh@linuxfoundation.org,
 Cc:     len.brown@intel.com, dave.jiang@intel.com, rafael@kernel.org,
         vishal.l.verma@intel.com, jiangshanlai@gmail.com, pavel@ucw.cz,
         zwisler@kernel.org, dan.j.williams@intel.com
-Date:   Wed, 26 Sep 2018 14:51:43 -0700
-Message-ID: <20180926215143.13512.56522.stgit@localhost.localdomain>
+Date:   Wed, 26 Sep 2018 14:51:49 -0700
+Message-ID: <20180926215149.13512.51991.stgit@localhost.localdomain>
 In-Reply-To: <20180926214433.13512.30289.stgit@localhost.localdomain>
 References: <20180926214433.13512.30289.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -53,181 +53,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces four new variants of the async_schedule_ functions
-that allow scheduling on a specific NUMA node.
+This change makes it so that we probe devices asynchronously instead of the
+driver. This results in us seeing the same behavior if the device is
+registered before the driver or after. This way we can avoid serializing
+the initialization should the driver not be loaded until after the devices
+have already been added.
 
-The first two functions are async_schedule_near and
-async_schedule_near_domain which end up mapping to async_schedule and
-async_schedule_domain but provide NUMA node specific functionality. They
-replace the original functions which were moved to inline function
-definitions that call the new functions while passing NUMA_NO_NODE.
+The motivation behind this is that if we have a set of devices that
+take a significant amount of time to load we can greatly reduce the time to
+load by processing them in parallel instead of one at a time. In addition,
+each device can exist on a different node so placing a single thread on one
+CPU to initialize all of the devices for a given driver can result in poor
+performance on a system with multiple nodes.
 
-The second two functions are async_schedule_dev and
-async_schedule_dev_domain which provide NUMA specific functionality when
-passing a device as the data member and that device has a NUMA node other
-than NUMA_NO_NODE.
-
-The main motivation behind this is to address the need to be able to
-schedule device specific init work on specific NUMA nodes in order to
-improve performance of memory initialization.
+One issue I can see with this patch is that I am using the
+dev_set/get_drvdata functions to store the driver in the device while I am
+waiting on the asynchronous init to complete. For now I am protecting it by
+using the lack of a dev->driver and the device lock.
 
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- include/linux/async.h |   27 +++++++++++++++++++--
- kernel/async.c        |   62 ++++++++++++++++++++++++++++++++++++-------------
- 2 files changed, 69 insertions(+), 20 deletions(-)
+ drivers/base/bus.c |   23 +++--------------------
+ drivers/base/dd.c  |   42 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/async.h b/include/linux/async.h
-index 6b0226bdaadc..abf3ee9102df 100644
---- a/include/linux/async.h
-+++ b/include/linux/async.h
-@@ -14,6 +14,9 @@
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 8bfd27ec73d6..2a17bed657ec 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -616,17 +616,6 @@ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
+ }
+ static DRIVER_ATTR_WO(uevent);
  
- #include <linux/types.h>
- #include <linux/list.h>
-+#include <linux/numa.h>
-+
-+struct device;
+-static void driver_attach_async(void *_drv, async_cookie_t cookie)
+-{
+-	struct device_driver *drv = _drv;
+-	int ret;
+-
+-	ret = driver_attach(drv);
+-
+-	pr_debug("bus: '%s': driver %s async attach completed: %d\n",
+-		 drv->bus->name, drv->name, ret);
+-}
+-
+ /**
+  * bus_add_driver - Add a driver to the bus.
+  * @drv: driver.
+@@ -659,15 +648,9 @@ int bus_add_driver(struct device_driver *drv)
  
- typedef u64 async_cookie_t;
- typedef void (*async_func_t) (void *data, async_cookie_t cookie);
-@@ -37,9 +40,27 @@ struct async_domain {
- 	struct async_domain _name = { .pending = LIST_HEAD_INIT(_name.pending), \
- 				      .registered = 0 }
+ 	klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
+ 	if (drv->bus->p->drivers_autoprobe) {
+-		if (driver_allows_async_probing(drv)) {
+-			pr_debug("bus: '%s': probing driver %s asynchronously\n",
+-				drv->bus->name, drv->name);
+-			async_schedule(driver_attach_async, drv);
+-		} else {
+-			error = driver_attach(drv);
+-			if (error)
+-				goto out_unregister;
+-		}
++		error = driver_attach(drv);
++		if (error)
++			goto out_unregister;
+ 	}
+ 	module_add_driver(drv->owner, drv);
  
--extern async_cookie_t async_schedule(async_func_t func, void *data);
--extern async_cookie_t async_schedule_domain(async_func_t func, void *data,
--					    struct async_domain *domain);
-+async_cookie_t async_schedule_near(async_func_t func, void *data,
-+				   int node);
-+async_cookie_t async_schedule_near_domain(async_func_t func, void *data,
-+					  int node,
-+					  struct async_domain *domain);
-+
-+static inline async_cookie_t async_schedule(async_func_t func, void *data)
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 169412ee4ae8..5ba366c1cb83 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -864,6 +864,29 @@ void device_initial_probe(struct device *dev)
+ 	__device_attach(dev, true);
+ }
+ 
++static void __driver_attach_async_helper(void *_dev, async_cookie_t cookie)
 +{
-+	return async_schedule_near(func, data, NUMA_NO_NODE);
++	struct device *dev = _dev;
++
++	if (dev->parent && dev->bus->need_parent_lock)
++		device_lock(dev->parent);
++	device_lock(dev);
++
++	if (!dev->driver) {
++		struct device_driver *drv = dev_get_drvdata(dev);
++
++		driver_probe_device(drv, dev);
++	}
++
++	dev_dbg(dev, "async probe completed\n");
++
++	device_unlock(dev);
++	if (dev->parent && dev->bus->need_parent_lock)
++		device_unlock(dev->parent);
++
++	put_device(dev);
 +}
 +
-+static inline async_cookie_t
-+async_schedule_domain(async_func_t func, void *data,
-+		      struct async_domain *domain)
-+{
-+	return async_schedule_near_domain(func, data, NUMA_NO_NODE, domain);
-+}
+ static int __driver_attach(struct device *dev, void *data)
+ {
+ 	struct device_driver *drv = data;
+@@ -891,6 +914,25 @@ static int __driver_attach(struct device *dev, void *data)
+ 		return ret;
+ 	} /* ret > 0 means positive match */
+ 
++	if (driver_allows_async_probing(drv)) {
++		/*
++		 * Instead of probing the device synchronously we will
++		 * probe it asynchronously to allow for more parallelism.
++		 *
++		 * We only take the device lock here in order to guarantee
++		 * that the dev->driver and driver_data fields are protected
++		 */
++		dev_dbg(dev, "scheduling asynchronous probe\n");
++		device_lock(dev);
++		if (!dev->driver) {
++			get_device(dev);
++			dev_set_drvdata(dev, drv);
++			async_schedule(__driver_attach_async_helper, dev);
++		}
++		device_unlock(dev);
++		return 0;
++	}
 +
-+async_cookie_t async_schedule_dev(async_func_t func, struct device *dev);
-+async_cookie_t async_schedule_dev_domain(async_func_t func, struct device *dev,
-+					 struct async_domain *domain);
- void async_unregister_domain(struct async_domain *domain);
- extern void async_synchronize_full(void);
- extern void async_synchronize_full_domain(struct async_domain *domain);
-diff --git a/kernel/async.c b/kernel/async.c
-index a893d6170944..13fcf222b89a 100644
---- a/kernel/async.c
-+++ b/kernel/async.c
-@@ -56,6 +56,7 @@ synchronization with the async_synchronize_full() function, before returning
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
-+#include <linux/device.h>
- 
- #include "workqueue_internal.h"
- 
-@@ -149,7 +150,21 @@ static void async_run_entry_fn(struct work_struct *work)
- 	wake_up(&async_done);
- }
- 
--static async_cookie_t __async_schedule(async_func_t func, void *data, struct async_domain *domain)
-+/**
-+ * async_schedule_near_domain - schedule a function for asynchronous execution within a certain domain
-+ * @func: function to execute asynchronously
-+ * @data: data pointer to pass to the function
-+ * @node: NUMA node that we want to schedule this on or close to
-+ * @domain: the domain
-+ *
-+ * Returns an async_cookie_t that may be used for checkpointing later.
-+ * @domain may be used in the async_synchronize_*_domain() functions to
-+ * wait within a certain synchronization domain rather than globally.  A
-+ * synchronization domain is specified via @domain.  Note: This function
-+ * may be called from atomic or non-atomic contexts.
-+ */
-+async_cookie_t async_schedule_near_domain(async_func_t func, void *data,
-+					  int node, struct async_domain *domain)
- {
- 	struct async_entry *entry;
- 	unsigned long flags;
-@@ -195,43 +210,56 @@ static async_cookie_t __async_schedule(async_func_t func, void *data, struct asy
- 	current->flags |= PF_USED_ASYNC;
- 
- 	/* schedule for execution */
--	queue_work(system_unbound_wq, &entry->work);
-+	queue_work_near(node, system_unbound_wq, &entry->work);
- 
- 	return newcookie;
- }
-+EXPORT_SYMBOL_GPL(async_schedule_near_domain);
- 
- /**
-- * async_schedule - schedule a function for asynchronous execution
-+ * async_schedule_near - schedule a function for asynchronous execution
-  * @func: function to execute asynchronously
-  * @data: data pointer to pass to the function
-+ * @node: NUMA node that we want to schedule this on or close to
-  *
-  * Returns an async_cookie_t that may be used for checkpointing later.
-  * Note: This function may be called from atomic or non-atomic contexts.
-  */
--async_cookie_t async_schedule(async_func_t func, void *data)
-+async_cookie_t async_schedule_near(async_func_t func, void *data, int node)
- {
--	return __async_schedule(func, data, &async_dfl_domain);
-+	return async_schedule_near_domain(func, data, node, &async_dfl_domain);
- }
--EXPORT_SYMBOL_GPL(async_schedule);
-+EXPORT_SYMBOL_GPL(async_schedule_near);
- 
- /**
-- * async_schedule_domain - schedule a function for asynchronous execution within a certain domain
-+ * async_schedule_dev_domain - schedule a function for asynchronous execution within a certain domain
-  * @func: function to execute asynchronously
-- * @data: data pointer to pass to the function
-+ * @dev: device that we are scheduling this work for
-  * @domain: the domain
-  *
-- * Returns an async_cookie_t that may be used for checkpointing later.
-- * @domain may be used in the async_synchronize_*_domain() functions to
-- * wait within a certain synchronization domain rather than globally.  A
-- * synchronization domain is specified via @domain.  Note: This function
-- * may be called from atomic or non-atomic contexts.
-+ * Device specific version of async_schedule_near_domain that provides some
-+ * NUMA awareness based on the device node.
-+ */
-+async_cookie_t async_schedule_dev_domain(async_func_t func, struct device *dev,
-+					 struct async_domain *domain)
-+{
-+	return async_schedule_near_domain(func, dev, dev_to_node(dev), domain);
-+}
-+EXPORT_SYMBOL_GPL(async_schedule_dev_domain);
-+
-+/**
-+ * async_schedule_dev - schedule a function for asynchronous execution
-+ * @func: function to execute asynchronously
-+ * @dev: device that we are scheduling this work for
-+ *
-+ * Device specific version of async_schedule_near that provides some NUMA
-+ * awareness based on the device node.
-  */
--async_cookie_t async_schedule_domain(async_func_t func, void *data,
--				     struct async_domain *domain)
-+async_cookie_t async_schedule_dev(async_func_t func, struct device *dev)
- {
--	return __async_schedule(func, data, domain);
-+	return async_schedule_dev_domain(func, dev, &async_dfl_domain);
- }
--EXPORT_SYMBOL_GPL(async_schedule_domain);
-+EXPORT_SYMBOL_GPL(async_schedule_dev);
- 
- /**
-  * async_synchronize_full - synchronize all asynchronous function calls
+ 	if (dev->parent && dev->bus->need_parent_lock)
+ 		device_lock(dev->parent);
+ 	device_lock(dev);
 
