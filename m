@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94426C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE03C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF6D2089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC6E22089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:39:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="My/9e8vN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF6D2089D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LO8qqY7y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6E22089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbeIZNuT (ORCPT
+        id S1727341AbeIZNvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:50:19 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35972 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeIZNuS (ORCPT
+        Wed, 26 Sep 2018 09:51:13 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53068 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727157AbeIZNvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:50:18 -0400
-Received: by mail-io1-f66.google.com with SMTP id q5-v6so22549054iop.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:38:44 -0700 (PDT)
+        Wed, 26 Sep 2018 09:51:13 -0400
+Received: by mail-it1-f195.google.com with SMTP id h3-v6so1686604ita.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:39:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bogHCDyw8lE4a1plfFrub/iZGu5wvdaYp3004Jncjb0=;
-        b=My/9e8vNEH5EShtQFWvjFZFkzCvMUteFLMI3nuL6koc7K1A23q5u7Jt/vwlcruYmoq
-         /ngmRD/WAhVkb1hLwYWz1Lc0I0GTh2PSHHrvp7GtBg1yITgCfWTAxpo1dIa9QPs+dh5R
-         izy6Tt3hFp6kKN3mWrh1pz+dvK24JuIz8wJcQ=
+        bh=tiQrTuzCEmb0NPON3n5EjfwC6c4+7nGh0BnF3E7pSrk=;
+        b=LO8qqY7y0cA0S/K7o/o5Badfi1lZLXLkMG1Uhac5kif8v5R/HqWg5VtI50Aih+oprx
+         hsZiJgsMVA4R/Ln5m9Wl/2/gVCJsUAaQZAIaVygCco520yQxuetrHDFUOiaJRTWyfxn0
+         ynBL3cvQOtFMxzS7K260uH3SsvvdNIK/RGUM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bogHCDyw8lE4a1plfFrub/iZGu5wvdaYp3004Jncjb0=;
-        b=GTX+YpRnBbV6Ob27/PkEBn6aMQAqVHE/Hhyq1FU8rtSVLS6k5AiKA5+plBppFpoUVx
-         JZoB4HqufrL4DI3WnxLbcCCgbOgrGEvJAoxNL6KF1ok2Vo4nkKTmZ45A/PQlxFFa6ueX
-         V4p3nv34Z9k9CX5auZ73mBewFpIeS152Z2PcwqWfCfb4Wsw5fhz377TfEA4jJU7FKk6e
-         0O9NofT09WDV+UA/oZHoM8xZ/lluYpFs7bkglzTG9Qx3t+NWqzJSwyAvlclW9Aas/Q1D
-         OHmwzSyOdSIw4H5eeyYmQfCmHukHDk5BOu429z5+O9Q9ODHebMMmIzgzTaRwABeM3BDf
-         fNqw==
-X-Gm-Message-State: ABuFfoieAK0dwW3MMhI2MYIoCkJVp74a2s7wN77h/Mwu+3UrH20p4wc5
-        frYgvWURwEiyBtSXm7FTZiIDynmdTfjk0uLervMy8C5G
-X-Google-Smtp-Source: ACcGV62l1N6bdGvRHT4dTbSAOU/hHhO+wdpDb3wzmyvB37cDRrdojKpQnrg/F+XZxBm4ZTsFSRB87ToOrSl3sRLLUQo=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3677550ioa.277.1537947523811;
- Wed, 26 Sep 2018 00:38:43 -0700 (PDT)
+        bh=tiQrTuzCEmb0NPON3n5EjfwC6c4+7nGh0BnF3E7pSrk=;
+        b=hPHGY+mFDXoFVrJngtvzHCkbLv/TQL6fMqm1RgGREu6FLLIwsMUOtW6UTgYg/BfI+e
+         ee+OexZ/3IJA0dgZ8xFaEOysp7Yp+ehzz2fCLuvY0e8f9y8vOMmhFAM5Smoo9KVZV4el
+         1OIPGU3JJKLBXMCNjXjX2FSsIAYviW40RM8FnarZZTrVtwiOEhkiG7ePdhdmgX8lTOKD
+         PbOwojdv2u0iIhERWwq3uwvfX0Q3Q+i1pBriPItnYkECkKqjR5NbeciA+A8DZ58sDF8S
+         iWVgNf3zaQcgVZUm8Wdwy73ejqcoKHijPYuCcxBnr6zym9aV5qwQLVdkk4bnah62Ypye
+         grHw==
+X-Gm-Message-State: ABuFfoi2k/OvCHFjCwaiRAq7ecUbWMa41GTOSC+rE5T4DKl2xSebfRb7
+        8jFduxXyNhWvQyBNTq1dSpRVHdt5whDAs8KJjZSilx+w
+X-Google-Smtp-Source: ACcGV604l4u3+IPxU6G9LIei6j27WaZB5S499LWR+YOqLfQLUHVs/6hWRilhHP62JTePQF9LxoaFPUGh+s/9FRgNt3c=
+X-Received: by 2002:a24:83c1:: with SMTP id d184-v6mr4160757ite.16.1537947578164;
+ Wed, 26 Sep 2018 00:39:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180924144902.607-1-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180924144902.607-1-alexandre.belloni@bootlin.com>
+References: <20180924144902.607-1-alexandre.belloni@bootlin.com> <20180924144902.607-2-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180924144902.607-2-alexandre.belloni@bootlin.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Sep 2018 09:38:32 +0200
-Message-ID: <CACRpkdYtU7J-0g8T9FzaGrbLkWEBPjn+xUZUq0AsJZcN=bvyXg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] rtc: ab8500: use rtc_add_group
+Date:   Wed, 26 Sep 2018 09:39:26 +0200
+Message-ID: <CACRpkdYsuh2rXsW9KJz7Vaj_nH4ierpOE+G7tbrzkN2NDhgiuw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rtc: ab8500: let the core handle range
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     linux-rtc@vger.kernel.org,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
@@ -71,11 +71,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Mon, Sep 24, 2018 at 4:49 PM Alexandre Belloni
 <alexandre.belloni@bootlin.com> wrote:
 
-> Use rtc_add_group to add the sysfs group in a race free manner.
+> Let the core handle offsetting and windowing the RTC range.
+> The RTC has a 24 bit counter for minutes plus a seconds counter.
+> Keep the epoch at the beginning of 2000.
 >
 > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
