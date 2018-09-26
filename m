@@ -2,35 +2,36 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82719C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0331C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460F220843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460F220843
+	by mail.kernel.org (Postfix) with ESMTP id 7275C206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:15:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7275C206B5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeIZN0N (ORCPT
+        id S1727296AbeIZN1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:26:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36186 "EHLO mx1.redhat.com"
+        Wed, 26 Sep 2018 09:27:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37900 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbeIZN0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:26:13 -0400
-Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        id S1726368AbeIZN1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 09:27:07 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 872B881DE5;
-        Wed, 26 Sep 2018 07:14:43 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id CA87D7D508;
+        Wed, 26 Sep 2018 07:15:37 +0000 (UTC)
 Received: from [10.36.117.98] (ovpn-117-98.ams2.redhat.com [10.36.117.98])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 41D40AFE3D;
-        Wed, 26 Sep 2018 07:14:36 +0000 (UTC)
-Subject: Re: [PATCH v11 24/26] KVM: s390: device attrs to enable/disable AP
- interpretation
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9CDC35B68C;
+        Wed, 26 Sep 2018 07:15:31 +0000 (UTC)
+Subject: Re: [PATCH v11 25/26] KVM: s390: CPU model support for AP
+ virtualization
 To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -45,7 +46,7 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
 References: <20180925231641.4954-1-akrowiak@linux.vnet.ibm.com>
- <20180925231641.4954-25-akrowiak@linux.vnet.ibm.com>
+ <20180925231641.4954-26-akrowiak@linux.vnet.ibm.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -92,48 +93,76 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <b6c9170b-af24-3f9f-54fc-0d6f591b1067@redhat.com>
-Date:   Wed, 26 Sep 2018 09:14:35 +0200
+Message-ID: <2a389a01-627f-e412-c315-879fbb45f7a1@redhat.com>
+Date:   Wed, 26 Sep 2018 09:15:31 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180925231641.4954-25-akrowiak@linux.vnet.ibm.com>
+In-Reply-To: <20180925231641.4954-26-akrowiak@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 26 Sep 2018 07:14:43 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 26 Sep 2018 07:15:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  			ret = -ENXIO;
->  			break;
-> @@ -2062,6 +2085,7 @@ static u64 kvm_s390_get_initial_cpuid(void)
->  static void kvm_s390_crypto_init(struct kvm *kvm)
->  {
-
-Only two NITs,
-
->  	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
-> +	kvm->arch.crypto.apie = 0;
-
-This is not necessary (default is 0)
-
->  	kvm_s390_set_crycb_format(kvm);
+On 26/09/2018 01:16, Tony Krowiak wrote:
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Introduces two new CPU model facilities to support
+> AP virtualization for KVM guests:
+> 
+> 1. AP Query Configuration Information (QCI) facility is installed.
+> 
+>    This is indicated by setting facilities bit 12 for
+>    the guest. The kernel will not enable this facility
+>    for the guest if it is not set on the host.
+> 
+>    If this facility is not set for the KVM guest, then only
+>    APQNs with an APQI less than 16 will be used by a Linux
+>    guest regardless of the matrix configuration for the virtual
+>    machine. This is a limitation of the Linux AP bus.
+> 
+> 2. AP Facilities Test facility (APFT) is installed.
+> 
+>    This is indicated by setting facilities bit 15 for
+>    the guest. The kernel will not enable this facility for
+>    the guest if it is not set on the host.
+> 
+>    If this facility is not set for the KVM guest, then no
+>    AP devices will be available to the guest regardless of
+>    the guest's matrix configuration for the virtual
+>    machine. This is a limitation of the Linux AP bus.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> ---
+>  arch/s390/kvm/kvm-s390.c         | 1 +
+>  arch/s390/tools/gen_facilities.c | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 81fd82f7626d..444965e78010 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -371,6 +371,7 @@ static void kvm_s390_cpu_feat_init(void)
 >  
->  	if (!test_kvm_facility(kvm, 76))
-> @@ -2601,6 +2625,7 @@ static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->  
->  	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->  	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
-> +	vcpu->arch.sie_block->eca &= ~ECA_APIE;
->  
+>  	if (MACHINE_HAS_ESOP)
+>  		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+> +
 
-This probably should have been moved to patch 3.
+This unrelated change should be dropped.
 
-Nothing to stop this from finding its way upstream.
+(can maybe be fixed when applying)
+
+Apart from that looks good!
 
 -- 
 
