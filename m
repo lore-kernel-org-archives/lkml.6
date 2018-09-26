@@ -2,84 +2,89 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82823C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31106C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37C28208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:32:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C28208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sf-tec.de
+	by mail.kernel.org (Postfix) with ESMTP id D3F1721480
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:33:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IbOfVUBo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F1721480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeIZNob (ORCPT
+        id S1727361AbeIZNoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:44:31 -0400
-Received: from mail.sf-mail.de ([78.47.74.12]:40757 "EHLO mail.sf-mail.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726951AbeIZNoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:44:30 -0400
-Received: (qmail 14520 invoked from network); 26 Sep 2018 07:26:14 -0000
-Received: from mail.sf-mail.de ([::ffff:78.47.74.12]:60248 HELO webmail.sf-mail.de) (auth=eike@sf-mail.de)
-        by mail.sf-mail.de (Qsmtpd 0.34dev) with (DHE-RSA-AES256-GCM-SHA384 encrypted) ESMTPSA
-        for <leobras.c@gmail.com>; Wed, 26 Sep 2018 09:26:14 +0200
+        Wed, 26 Sep 2018 09:44:34 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51278 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbeIZNod (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 09:44:33 -0400
+Received: by mail-it1-f194.google.com with SMTP id e14-v6so1673592itf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OgEGV+jFiTapq2ScLcZ3V7/hxM96YHaUtn3KUq1aslk=;
+        b=IbOfVUBoc+YB4euSekDnWOs4xJCuYaMnABWQ+lrk2YdFkq9RZmIBteXqhDjd7QqKC0
+         RU5laq/ltoXu7G444YwH2S53dc51tzFVsKSfEYCEcMHRAjArvLW6ayISetdbsRef7z5D
+         4SuOnX+ejZn/zfUiySYWu43wQUL7pP2x2TGbs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20130820;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OgEGV+jFiTapq2ScLcZ3V7/hxM96YHaUtn3KUq1aslk=;
+        b=YZJvlepsjLlhQW29wjjoc4aI374sGWU1jrbHTDIdcLlMpOhZ6Bl5F3ihe8S1QTA2kN
+         Ne1SEqBdvKpuUW5X9UXzrlYjWlR3e66oRFLKDZRDCIYxbPHDsSYRDshLAYDerfl246iM
+         kZ6zPHtsOPzcDLTupmkKaGmUESDhnVYGkP7BvzYAynUJMByR0cFZqHWyTQ4Q9H+uCTUa
+         soHhwCBB90VsoKHm/XQz9m9o0HqjekXRoc3SvBVr3ayURTZtoy2UIc1kYCZIWLrONrW1
+         iS9+NZ4U5qUXHJj7JWZqCEN8aiIL1OzjMBxeK0ezxEX1/d7nBdPBrJyc56JAWrSfPn6H
+         iJFQ==
+X-Gm-Message-State: ABuFfohX3ci1FI36HMws6Vb8Whgz8KpSw2gIhT1LUshWXHvH+dbSB6RI
+        OizhqRRCDpnXnzA7cUoQFSV4jTQLmIecgkUpccCvbw==
+X-Google-Smtp-Source: ANB0Vdb8MihVxVyQo6COQGBP9w76EySbsE8YizPUO6k6yEv3imOYd2J5wZL93YJ1AGPJbQOjkcYVNrs7U7gnJi3DW1o=
+X-Received: by 2002:a24:57c7:: with SMTP id u190-v6mr1993396ita.1.1537947179269;
+ Wed, 26 Sep 2018 00:32:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 26 Sep 2018 09:26:09 +0200
-From:   Rolf Eike Beer <eike-kernel@sf-tec.de>
-To:     =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>
-Cc:     lkcamp@lists.libreplanetbr.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Robert Richter <rric@kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-parisc-owner@vger.kernel.org
-Subject: Re: [PATCH 6/7] drivers: oprofile: Avoids building driver from direct
- make command
-In-Reply-To: <20180926015305.GA14994@WindFlash>
-References: <20180926015305.GA14994@WindFlash>
-Message-ID: <bf054e64b8284ce5da5f0c361fbb3ee6@sf-tec.de>
-X-Sender: eike-kernel@sf-tec.de
-User-Agent: Roundcube Webmail/1.3.6
+References: <20180924221748.21584-1-bjorn.andersson@linaro.org> <20180924221748.21584-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20180924221748.21584-4-bjorn.andersson@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 26 Sep 2018 09:32:47 +0200
+Message-ID: <CACRpkdYOqGn-z49O4nWDZgY730kePxoz4a+65uRsUjLQBJTpYQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: pinctrl: qcom: Add QCS404 pinctrl binding
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Leonardo Brás wrote:
-> Creates new Makefile to avoid building driver if
-> 'make drivers/oprofile/' is called directly.
-> 
-> This driver is usually built from arch/$ARCH and seems to have
-> no meaning building alone.
-> 
-> Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
+On Tue, Sep 25, 2018 at 12:15 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+
+> Add the binding for the TLMM pinctrl block found in the QCS404 platform.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/oprofile/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->  create mode 100644 drivers/oprofile/Makefile
-> 
-> diff --git a/drivers/oprofile/Makefile b/drivers/oprofile/Makefile
-> new file mode 100644
-> index 000000000000..6b36c93e9762
-> --- /dev/null
-> +++ b/drivers/oprofile/Makefile
-> @@ -0,0 +1 @@
-> +#Does nothing, since the source is called from arch/$ARCH/ tree.
-> \ No newline at end of file
-     ^^^^^^^^^^^^^^^^^^^^^^^^^
+>
+> Changes since v1:
+> - Dropped leading 0 in node address
 
-Is that intentional or bogus?
+Patch applied.
+Non-controversial bindings and minor issue fixed.
 
-Eike
+Yours,
+Linus Walleij
