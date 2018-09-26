@@ -2,131 +2,118 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6771CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667C8C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F0B21568
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:38:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="MY9tHArU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F0B21568
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 27BAA21568
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:38:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27BAA21568
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726576AbeI0ExI (ORCPT
+        id S1726632AbeI0Exa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 00:53:08 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41283 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbeI0ExI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 00:53:08 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j15-v6so502429wrt.8
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 15:37:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tjCid2raywD9TiP/EG3nqgGcPqMQjzebtE2YnSs0iIk=;
-        b=MY9tHArUFddizrowgA6vJAy3w3tm5x2TojafHcyCfxTRxYObxe4Qnnwfb9rLI5t+0B
-         ly/JSX+avKDjEVPoP8bFX/6fMWvxIntu5CE+o7mXV0Hdt5lOa2RNO71xvdCh8EcCoaeD
-         JKPlSZwnmMhWXtFWid5dNRVWx5po1ymQcOS3ZWzgoFok+D2Ow9xh2K6arumybw4aYDGj
-         q2C3KlL40kjL2CY9vKTrWuVkmuBNEAboQZ35A29qtpR3AlR4APJiUTz4lowX88Lt6gZx
-         e5ObnkbkKawEhxozfAQVx4PDUqasIAs5NpTDIJ86YRAdNIAya3E/S+k+o33WStzSA9yl
-         VMJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tjCid2raywD9TiP/EG3nqgGcPqMQjzebtE2YnSs0iIk=;
-        b=HdcZs6p+zlcrrUfjgfzR0PKwl6hKxhGNZ+KHTGwQgYiBc7zTrq/Xp7I0lJhwFtKeND
-         DCryMKW+akkIlnK+/MfJJt4lUM/HtgVaQnMlq3PoI2s9GDbubh9DCaWpZcXPoSCK7fak
-         muwEXbgqEZ55YT62SrBP0Ftp2sTaz2S+ZMpGfZLolxjsycEIgHEpgVLojcDzliN6Fjwy
-         HR/Y2D87OY9Esh+Dbqe42gCgDeYAmka+cLhKKEme2CeAqFQuFQsvjUbiDWQ33EwX9Hoo
-         6vabyF0ZZG9CMygWxb+hUT3csF069OhuscAJ9VbFEEgBsWJcwyjOZJvgBH/DT50FQ7SY
-         y5bQ==
-X-Gm-Message-State: ABuFfoiaqWpsMBixEh9rpBhQsQcj90quHCF8dA5Vzd+HbLodMu4BLjEM
-        6NSDdK5QifvTiWDoyiMs4HS6fLzk48H1ZSnj0jUAqw==
-X-Google-Smtp-Source: ACcGV62KdfoXCLWz4mKm4KMSAVF/KS4dcv8+OiqQ+yH16Q1rbeD7TzgUQsL9CtmXPwTpF0FHfgeVN6kd5r2UA6xyAyo=
-X-Received: by 2002:adf:dcc1:: with SMTP id x1-v6mr6644969wrm.21.1538001476929;
- Wed, 26 Sep 2018 15:37:56 -0700 (PDT)
+        Thu, 27 Sep 2018 00:53:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54946 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbeI0Exa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 00:53:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3361218A;
+        Wed, 26 Sep 2018 15:38:20 -0700 (PDT)
+Received: from [192.168.0.102] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58A2B3F5B3;
+        Wed, 26 Sep 2018 15:38:17 -0700 (PDT)
+Subject: Re: [PATCH] sched/fair: vruntime should normalize when switching from
+ fair
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, smuckle@google.com,
+        migueldedios@google.com, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Todd Kjos <tkjos@google.com>, Paul Turner <pjt@google.com>,
+        quentin.perret@arm.com, Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Chris.Redpath@arm.com, Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        joaodias@google.com, Wanpeng Li <wanpengli@tencent.com>
+References: <20180817182728.76129-1-smuckle@google.com>
+ <dcd2fa21-7fef-d648-017d-9d42d11793e0@google.com>
+ <20180824093227.GN24124@hirez.programming.kicks-ass.net>
+ <20180824094742.GJ24142@hirez.programming.kicks-ass.net>
+ <ae94fb88-646b-1d82-b61d-103792965dbf@google.com>
+ <20180827111458.GB24124@hirez.programming.kicks-ass.net>
+ <2ed346fa-dbe8-4928-928b-a34338b2d8c9@arm.com>
+ <CANRm+CwEKf9bBj3zBQAL2nYjdt-zymz1xg7=PRcFz6DUOjLVJg@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <62134bba-b6bd-ba16-a49b-e4887c326559@arm.com>
+Date:   Thu, 27 Sep 2018 00:38:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com> <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
-In-Reply-To: <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 26 Sep 2018 15:37:45 -0700
-Message-ID: <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANRm+CwEKf9bBj3zBQAL2nYjdt-zymz1xg7=PRcFz6DUOjLVJg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 2:45 PM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 09/26/2018 02:15 PM, Andy Lutomirski wrote:
-> > Could we perhaps have a little vDSO entry (or syscall, I suppose) that
-> > runs an enclave an returns an error code, and rig up the #PF handler
-> > to check if the error happened in the vDSO entry and fix it up rather
-> > than sending a signal?
->
-> Yeah, signals suck.
->
-> So, instead of doing the enclave entry instruction (EENTER is it?), the
-> app would do the vDSO call.  It would have some calling convention, like
-> "set %rax to 0 before entering".  Then, we just teach the page fault
-> handler about the %RIP in the vDSO that can fault and how to move one
-> instruction later, munge %RIP to a value that tells about the error,
-> then return from the fault.  It would basically be like the kernel
-> exception tables, but for userspace.  Right?
+Hi,
 
-Yeah.  Maybe like this:
+On 09/26/2018 11:50 AM, Wanpeng Li wrote:
+> Hi Dietmar,
+> On Tue, 28 Aug 2018 at 22:55, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 08/27/2018 12:14 PM, Peter Zijlstra wrote:
+>>> On Fri, Aug 24, 2018 at 02:24:48PM -0700, Steve Muckle wrote:
+>>>> On 08/24/2018 02:47 AM, Peter Zijlstra wrote:
+>>>>>>> On 08/17/2018 11:27 AM, Steve Muckle wrote:
 
-xorl %eax,%eax
-eenter_insn:
-ENCLU[whatever]
-eenter_landing_pad:
-ret
+[...]
 
-And the kernel would use the existing vdso2c vdso-symbol-finding
-mechanism to do the fixup.
+>>>>>>>> - later, when the prio is deboosted and the task is moved back
+>>>>>>>>       to the fair class, the fair rq's min_vruntime is added to
+>>>>>>>>       the task's vruntime, even though it wasn't subtracted earlier.
+> 
+> Could you point out when the fair rq's min_vruntime is added to the
+> task's vruntime in your *later* scenario? attach_task_cfs_rq will not
+> do that the same reason as detach_task_cfs_rq. fair task's
+> sched_remote_wakeup is false which results in vruntime will not be
+> renormalized in enqueue_entity.
 
->
-> How would a syscall work, though?  I assume we can't just enter the
-> enclave from ring0.
+The cfs_rq->min_vruntime is still added to the se->vruntime in
+enqueue_task_fair().
 
-My understanding of how AEX works is a bit vague, but maybe a syscall
-could reuse the mechanism?  The vDSO approach seems considerably
-simpler.
+It's just that without this patch, which adds the '&&
+p->sched_remote_wakeup' bit to the condition under which
+vruntime_normalized() returns true, detach_task_cfs_rq() won't go into the
+'if (!vruntime_normalized(p))' path and not subtract cfs_rq->min_vruntime
+from se->vruntime. 
 
-We do need to make sure that a fault that happens on or after return
-from an AEX event does the right thing.  But I'm still vague on how
-that works, sigh.
+Since 'task_cpu(p) equal cpu' in try_to_wake_up() for the fair task,
+WF_MIGRATED is not set and set_task_cpu() -> migrate_task_rq_fair()
+is not called which could subtract cfs_rq->min_vruntime from
+se->vruntime as well.
 
---Andy
+My former example with a different set of trace events:
+
+fair_task-3580  [004]    35.389346: sched_stat_runtime:   comm=fair_task pid=3580 runtime=45312 [ns] vruntime=46922871 [ns] <-- se->vruntime=46.922.871
+...
+  rt_task-3579  [000]    35.391573: sched_waking:         comm=fair_task pid=3580 prio=120 target_cpu=004
+...
+  rt_task-3579  [000]    35.391627: sched_pi_setprio:     comm=fair_task pid=3580 oldprio=120 newprio=19
+...
+  rt_task-3579  [000]    35.391661: bprint:               detach_task_cfs_rq: task=fair_task pid=3580 cpu=4 vruntime_normalized=1
+  rt_task-3579  [000]    35.391706: sched_switch:         rt_task:3579 [19] D ==> swapper/0:0 [120]
+   <idle>-0     [004]    35.391834: sched_wakeup:         fair_task:3580 [19] success=1 CPU:004
+   <idle>-0     [004]    35.391840: sched_switch:         swapper/4:0 [120] S ==> fair_task:3580 [19]
+fair_task-3580  [004]    35.391853: sched_pi_setprio:     comm=fair_task pid=3580 oldprio=19 newprio=120
+...
+fair_task-3580  [004]    35.391863: bprint:               enqueue_task_fair: task=fair_task pid=3580 curr=0 se->vruntime=93845742 cpu=4 cfs_rq->min_vruntime=46922871
+...
+fair_task-3580  [004]    35.391877: sched_waking:         comm=rt_task pid=3579 prio=19 target_cpu=000
+...
+fair_task-3580  [004]    35.391885: sched_stat_runtime:   comm=fair_task pid=3580 runtime=31250 [ns] vruntime=93876992 [ns] <-- se->vruntime=93.876.992
