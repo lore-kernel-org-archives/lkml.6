@@ -2,111 +2,204 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7491ECE560
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55D8C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3B3214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3B3214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F5DF214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F5DF214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbeIZThl (ORCPT
+        id S1729069AbeIZThn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:37:41 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59546 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728738AbeIZTfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:35:55 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D66EC1A025C;
-        Wed, 26 Sep 2018 15:22:57 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C81BA1A004C;
-        Wed, 26 Sep 2018 15:22:57 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2BD67203C2;
-        Wed, 26 Sep 2018 15:22:57 +0200 (CEST)
-From:   laurentiu.tudor@nxp.com
-To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
-        shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
-        bharat.bhushan@nxp.com, Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v2 12/22] dpaa_eth: base dma mappings on the fman rx port
-Date:   Wed, 26 Sep 2018 16:22:37 +0300
-Message-Id: <20180926132247.10971-13-laurentiu.tudor@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
-References: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Wed, 26 Sep 2018 15:37:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45978 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728944AbeIZThm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 15:37:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4502B7A9;
+        Wed, 26 Sep 2018 06:24:45 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55EB93F5D3;
+        Wed, 26 Sep 2018 06:24:44 -0700 (PDT)
+Subject: Re: [PATCH] dma-debug: Check for drivers mapping vmalloc addresses
+To:     Stephen Boyd <swboyd@chromium.org>, Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20180920223559.136915-1-swboyd@chromium.org>
+ <ef22f1b4-a2c5-25a4-451e-9191b3579a26@arm.com>
+ <153755159334.119890.13825040401066852769@swboyd.mtv.corp.google.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f513d72b-3eec-1ddc-a318-9f3d17efe16e@arm.com>
+Date:   Wed, 26 Sep 2018 14:24:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <153755159334.119890.13825040401066852769@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+On 21/09/18 18:39, Stephen Boyd wrote:
+> Quoting Robin Murphy (2018-09-21 04:09:50)
+>> Hi Stephen,
+>>
+>> On 20/09/18 23:35, Stephen Boyd wrote:
+>>> I recently debugged a DMA mapping oops where a driver was trying to map
+>>> a buffer returned from request_firmware() with dma_map_single(). Memory
+>>> returned from request_firmware() is mapped into the vmalloc region and
+>>> this isn't a valid region to map with dma_map_single() per the DMA
+>>> documentation's "What memory is DMA'able?" section.
+>>>
+>>> Unfortunately, we don't really check that in the DMA debugging code, so
+>>> enabling DMA debugging doesn't help catch this problem. Let's add a new
+>>> DMA debug function to check for a vmalloc address and print a warning if
+>>> this happens. This makes it a little easier to debug these sorts of
+>>> problems, instead of seeing odd behavior or crashes when drivers attempt
+>>> to map the vmalloc space for DMA.
+>>
+>> Good idea!
+>>
+>>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> Cc: Robin Murphy <robin.murphy@arm.com>
+>>> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>>> ---
+>>>    include/linux/dma-debug.h   |  8 ++++++++
+>>>    include/linux/dma-mapping.h |  1 +
+>>>    kernel/dma/debug.c          | 12 ++++++++++++
+>>>    3 files changed, 21 insertions(+)
+>>
+>> However I can't help thinking this looks a little heavyweight for a
+>> single specific check. It seems like it would be enough to simply pass
+>> the VA as an extra argument to debug_dma_map_page(), since we already
+>> have the map_single argument which would indicate when it's valid. What
+>> do you reckon?
+> 
+> I thought about augmenting debug_dma_map_page() but that has another
+> problem where those checks are done after the page has been mapped. The
+> kernel can oops when it's operating on the incorrect page so we need to
+> check things before calling the dma ops.
 
-The dma transactions initiator is the rx fman port so that's the device
-that the dma mappings should be done. Previously the mappings were done
-through the MAC device which makes no sense because it's neither dma-able
-nor connected in any way to smmu.
+Oh, right, as usual I've managed to overlook a subtlety :)
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
----
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+In fact, with memory now jogged, I think the virt_to_page() itself is 
+allowed to blow up if !virt_addr_valid(), so we probably do need 
+something like your original idea to be properly robust. I guess it 
+probably makes sense to implement that as debug_dma_map_single() then, 
+since the purpose is really to cover any VA checks specific to that case 
+which debug_dma_map_page() can't be expected to do after the fact.
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index 6ca3fdbef580..ac9e50c8a556 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2796,8 +2796,15 @@ static int dpaa_eth_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	mac_dev = dpaa_mac_dev_get(pdev);
-+	if (IS_ERR(mac_dev)) {
-+		dev_err(&pdev->dev, "dpaa_mac_dev_get() failed\n");
-+		err = PTR_ERR(mac_dev);
-+		goto probe_err;
-+	}
-+
- 	/* device used for DMA mapping */
--	dev = pdev->dev.parent;
-+	dev = fman_port_get_device(mac_dev->port[RX]);
- 	err = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(40));
- 	if (err) {
- 		dev_err(dev, "dma_coerce_mask_and_coherent() failed\n");
-@@ -2822,13 +2829,6 @@ static int dpaa_eth_probe(struct platform_device *pdev)
- 
- 	priv->msg_enable = netif_msg_init(debug, DPAA_MSG_DEFAULT);
- 
--	mac_dev = dpaa_mac_dev_get(pdev);
--	if (IS_ERR(mac_dev)) {
--		dev_err(dev, "dpaa_mac_dev_get() failed\n");
--		err = PTR_ERR(mac_dev);
--		goto free_netdev;
--	}
--
- 	/* If fsl_fm_max_frm is set to a higher value than the all-common 1500,
- 	 * we choose conservatively and let the user explicitly set a higher
- 	 * MTU via ifconfig. Otherwise, the user may end up with different MTUs
-@@ -2964,9 +2964,9 @@ static int dpaa_eth_probe(struct platform_device *pdev)
- 	qman_release_cgrid(priv->cgr_data.cgr.cgrid);
- free_dpaa_bps:
- 	dpaa_bps_free(priv);
--free_netdev:
- 	dev_set_drvdata(dev, NULL);
- 	free_netdev(net_dev);
-+probe_err:
- 
- 	return err;
- }
--- 
-2.17.1
+Thanks,
+Robin.
 
+> So I split that check up into pre_map and post_map parts but then that
+> seemed like overkill just to check for this vmalloc problem. Here's the
+> patch if you're interested. I can make it a little nicer if you think
+> it's also worthwhile.
+> 
+> ---8<----
+>   include/linux/dma-debug.h   |  8 ++++++++
+>   include/linux/dma-mapping.h |  3 +++
+>   kernel/dma/debug.c          | 24 ++++++++++++++++--------
+>   3 files changed, 27 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
+> index 5aec2ca8a426..3287240a474c 100644
+> --- a/include/linux/dma-debug.h
+> +++ b/include/linux/dma-debug.h
+> @@ -35,6 +35,9 @@ extern int dma_debug_resize_entries(u32 num_entries);
+>   extern void debug_dma_check_vmalloc(struct device *dev, const void *addr,
+>   				    unsigned long len);
+>   
+> +extern void debug_dma_pre_map_page(struct device *dev, struct page *page,
+> +				   size_t offset, size_t size);
+> +
+>   extern void debug_dma_map_page(struct device *dev, struct page *page,
+>   			       size_t offset, size_t size,
+>   			       int direction, dma_addr_t dma_addr,
+> @@ -111,6 +114,11 @@ static inline void debug_dma_check_vmalloc(struct device *dev, const void *addr,
+>   {
+>   }
+>   
+> +static inline void debug_dma_pre_map_page(struct device *dev, struct page *page,
+> +					  size_t offset, size_t size)
+> +{
+> +}
+> +
+>   static inline void debug_dma_map_page(struct device *dev, struct page *page,
+>   				      size_t offset, size_t size,
+>   				      int direction, dma_addr_t dma_addr,
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index a0e67fd5433c..4839bbb4fdc7 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -233,6 +233,8 @@ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+>   	debug_dma_check_vmalloc(dev, ptr, size);
+> +	debug_dma_pre_map_page(dev, virt_to_page(ptr),
+> +			       offset_in_page(ptr), size);
+>   	addr = ops->map_page(dev, virt_to_page(ptr),
+>   			     offset_in_page(ptr), size,
+>   			     dir, attrs);
+> @@ -296,6 +298,7 @@ static inline dma_addr_t dma_map_page_attrs(struct device *dev,
+>   	dma_addr_t addr;
+>   
+>   	BUG_ON(!valid_dma_direction(dir));
+> +	debug_dma_pre_map_page(dev, page, offset, size);
+>   	addr = ops->map_page(dev, page, offset, size, dir, attrs);
+>   	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
+>   
+> diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+> index 7ee7978868d4..dd1ff9f7d783 100644
+> --- a/kernel/dma/debug.c
+> +++ b/kernel/dma/debug.c
+> @@ -1324,6 +1324,22 @@ void debug_dma_check_vmalloc(struct device *dev, const void *addr,
+>   }
+>   EXPORT_SYMBOL(debug_dma_check_vmalloc);
+>   
+> +void debug_dma_pre_map_page(struct device *dev, struct page *page, size_t offset,
+> +			    size_t size)
+> +{
+> +	if (unlikely(dma_debug_disabled()))
+> +		return;
+> +
+> +	check_for_stack(dev, page, offset);
+> +
+> +	if (!PageHighMem(page)) {
+> +		void *addr = page_address(page) + offset;
+> +
+> +		check_for_illegal_area(dev, addr, size);
+> +	}
+> +}
+> +EXPORT_SYMBOL(debug_dma_pre_map_page);
+> +
+>   void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
+>   			size_t size, int direction, dma_addr_t dma_addr,
+>   			bool map_single)
+> @@ -1352,14 +1368,6 @@ void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
+>   	if (map_single)
+>   		entry->type = dma_debug_single;
+>   
+> -	check_for_stack(dev, page, offset);
+> -
+> -	if (!PageHighMem(page)) {
+> -		void *addr = page_address(page) + offset;
+> -
+> -		check_for_illegal_area(dev, addr, size);
+> -	}
+> -
+>   	add_dma_entry(entry);
+>   }
+>   EXPORT_SYMBOL(debug_dma_map_page);
+> 
