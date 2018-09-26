@@ -2,150 +2,92 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EBDC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190B1C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5595B2089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5595B2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C5A09214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5A09214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeIZMRi (ORCPT
+        id S1727054AbeIZMRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 08:17:38 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726355AbeIZMRi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 08:17:38 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8Q5wcT8072711
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:06:23 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mr1d0eq4d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:06:22 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Wed, 26 Sep 2018 00:06:21 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Sep 2018 00:06:17 -0600
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8Q66Gei25034780
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 25 Sep 2018 23:06:16 -0700
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B8D616A054;
-        Wed, 26 Sep 2018 00:06:16 -0600 (MDT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BDBA6A04F;
-        Wed, 26 Sep 2018 00:06:16 -0600 (MDT)
-Received: from sofia.ibm.com (unknown [9.124.35.106])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Sep 2018 00:06:16 -0600 (MDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 3B1AB2E3D69; Wed, 26 Sep 2018 11:36:13 +0530 (IST)
-Date:   Wed, 26 Sep 2018 11:36:13 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     ego@linux.vnet.ibm.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/3] powerpc: Detection and scheduler optimization for
- POWER9 bigcore
-Reply-To: ego@linux.vnet.ibm.com
-References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
- <133c7bca-5720-81de-7956-b93870a1bab8@intel.com>
- <20180922110340.GA1402@in.ibm.com>
- <f2ac8eb0-b28e-a930-0160-09720f73a297@intel.com>
+        Wed, 26 Sep 2018 08:17:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55284 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726355AbeIZMRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 08:17:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DEF98AD05;
+        Wed, 26 Sep 2018 06:06:25 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 08:06:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [patch v2] mm, thp: always specify ineligible vmas as nh in smaps
+Message-ID: <20180926060624.GA18685@dhcp22.suse.cz>
+References: <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz>
+ <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1809241227370.241621@chino.kir.corp.google.com>
+ <20180924195603.GJ18685@dhcp22.suse.cz>
+ <20180924200258.GK18685@dhcp22.suse.cz>
+ <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+ <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
+ <20180925202959.GY18685@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1809251440001.94921@chino.kir.corp.google.com>
+ <20180925150406.872aab9f4f945193e5915d69@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f2ac8eb0-b28e-a930-0160-09720f73a297@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18092606-0004-0000-0000-00001491E4CC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009773; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01093778; UDB=6.00565348; IPR=6.00873816;
- MB=3.00023509; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-26 06:06:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092606-0005-0000-0000-000088F12FD5
-Message-Id: <20180926060613.GA22139@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809260062
+In-Reply-To: <20180925150406.872aab9f4f945193e5915d69@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dave,
-
-On Tue, Sep 25, 2018 at 03:16:30PM -0700, Dave Hansen wrote:
-> On 09/22/2018 04:03 AM, Gautham R Shenoy wrote:
-> > Without this patchset, the SMT domain would be defined as the group of
-> > threads that share L2 cache.
+On Tue 25-09-18 15:04:06, Andrew Morton wrote:
+> On Tue, 25 Sep 2018 14:45:19 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
 > 
-> Could you try to make a more clear, concise statement about the current
-> state of the art vs. what you want it to be?  Right now, the sched
-> domains do something like this in terms of ordering:
+> > > > It is also used in 
+> > > > automated testing to ensure that vmas get disabled for thp appropriately 
+> > > > and we used "nh" since that is how PR_SET_THP_DISABLE previously enforced 
+> > > > this, and those tests now break.
+> > > 
+> > > This sounds like a bit of an abuse to me. It shows how an internal
+> > > implementation detail leaks out to the userspace which is something we
+> > > should try to avoid.
+> > > 
+> > 
+> > Well, it's already how this has worked for years before commit 
+> > 1860033237d4 broke it.  Changing the implementation in the kernel is fine 
+> > as long as you don't break userspace who relies on what is exported to it 
+> > and is the only way to determine if MADV_NOHUGEPAGE is preventing it from 
+> > being backed by hugepages.
 > 
-> 1. SMT siblings
-> 2. Caches
-> 3. NUMA
+> 1860033237d4 was over a year ago so perhaps we don't need to be
+> too worried about restoring the old interface.  In which case
+> we have an opportunity to make improvements such as that suggested
+> by Michal?
 
-Yes. you are right. The state of art on POWER9 machines having SMT8
-cores is as you described above with
+Yeah, can we add a way to export PR_SET_THP_DISABLE to userspace
+somehow? E.g. /proc/<pid>/status. It is a process wide thing so
+reporting it per VMA sounds strange at best.
 
-1. SMT siblings sharing L2-cache, called the SMT domain
-2. Cores on the same die, called the DIE domain
-3. NUMA
-
-> 
-> It sounds like you don't want SMT siblings to be the things that we use,
-> right?  Because some siblings share caches and some do not.  Right?  You
-> want something like this:
-> 
-> 1. SMT siblings (sharing L1)
-> 2. SMT siblings (sharing L2)
-> 3. Other caches
-> 4. NUMA
->
-
-Yes, with the patchset the sched-domain hierarchy on POWER9 machines
-having SMT8 will be:
-
-1. SMT siblings sharing L1 cache, called the SMT domain
-2. SMT siblings sharing L2 cache, called the CACHE domain (introduced in
-   commit 96d91431d691 "powerpc/smp: Add Power9 scheduler topology")
-3. Cores on the same die, called the DIE domain.
-4. NUMA
-
---
-Thanks and Regards
-gautham.
-
+This would also keep a sane (and currently documented) semantic for
+the smaps flag to be really
+    hg  - huge page advise flag
+    nh  - no-huge page advise flag
+-- 
+Michal Hocko
+SUSE Labs
