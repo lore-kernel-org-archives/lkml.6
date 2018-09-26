@@ -2,120 +2,128 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BCDC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C220C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9F92086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:23:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9F92086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D2E7C2086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:24:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZNIGG9gZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZNIGG9gZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E7C2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeIZMep (ORCPT
+        id S1727200AbeIZMfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 08:34:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbeIZMep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 08:34:45 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 26 Sep 2018 08:35:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54878 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeIZMfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 08:35:22 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C07E260B19; Wed, 26 Sep 2018 06:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537943042;
+        bh=cGizbNDmSpPBFo/90//dFYdJjrvucWkuEIzkrEEdLl8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZNIGG9gZA+3aKe/8kxpuTO5KeH5nt+UPn6m2c1OLjXktv6cv5c/23+26Mm1EB+sld
+         iwJJE9ou2m2+GqnkY1Izb5UYnwYumNlOLJcMFzj+EPw3+5HZ+pEwL6wkbbpXoQBZJ6
+         gfvYKwvGFK6a0Rfxoe+xq9r5ZurXMCdAHXsD6QN4=
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 12817308A94E;
-        Wed, 26 Sep 2018 06:23:26 +0000 (UTC)
-Received: from krava (ovpn-204-149.brq.redhat.com [10.40.204.149])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6564C308BE75;
-        Wed, 26 Sep 2018 06:23:19 +0000 (UTC)
-Date:   Wed, 26 Sep 2018 08:23:17 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        kernel-team@lge.com
-Subject: Re: [PATCH 47/48] perf record: Spread maps for --threads option
-Message-ID: <20180926062317.GA8610@krava>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <20180913125450.21342-48-jolsa@kernel.org>
- <20180917114048.GF18395@sejong>
- <20180923194432.GH30923@krava>
- <20180924142254.GB4640@kernel.org>
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 01214609A5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 06:24:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537943042;
+        bh=cGizbNDmSpPBFo/90//dFYdJjrvucWkuEIzkrEEdLl8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZNIGG9gZA+3aKe/8kxpuTO5KeH5nt+UPn6m2c1OLjXktv6cv5c/23+26Mm1EB+sld
+         iwJJE9ou2m2+GqnkY1Izb5UYnwYumNlOLJcMFzj+EPw3+5HZ+pEwL6wkbbpXoQBZJ6
+         gfvYKwvGFK6a0Rfxoe+xq9r5ZurXMCdAHXsD6QN4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01214609A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f180.google.com with SMTP id w73-v6so9246879qkb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 23:24:01 -0700 (PDT)
+X-Gm-Message-State: ABuFfogm8JbsGlUic3HWrRXRA7iBZxlmNJneacpAyMZLUoo21C1CtD+l
+        0CaflklDJcSOhb/nLv8uWfXty23e7yWYlKxfJig=
+X-Google-Smtp-Source: ACcGV63JMI3rIZn1RstxA8re46q37a/LsA2Vc//CiaMTfMf8JfV+7GnhHQPIAWjqazN4S9WP7bydv2ETVAL2LNANdUo=
+X-Received: by 2002:a37:c44c:: with SMTP id h12-v6mr3217245qkm.279.1537943041266;
+ Tue, 25 Sep 2018 23:24:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924142254.GB4640@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 26 Sep 2018 06:23:26 +0000 (UTC)
+References: <20180910062551.28175-1-vivek.gautam@codeaurora.org>
+ <20180925120933.54xd72sv65d63tkl@8bytes.org> <20180925163928.GA1839@brain-police>
+In-Reply-To: <20180925163928.GA1839@brain-police>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Wed, 26 Sep 2018 11:53:49 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iEdyBKcQ=ikOaqJGHcmsjWJdDMWGgzFdW54aSqpQ-EE3Q@mail.gmail.com>
+Message-ID: <CAFp+6iEdyBKcQ=ikOaqJGHcmsjWJdDMWGgzFdW54aSqpQ-EE3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Qcom smmu-500 TLB invalidation errata for sdm845
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, swboyd@chromium.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 11:22:54AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Sun, Sep 23, 2018 at 09:44:32PM +0200, Jiri Olsa escreveu:
-> > On Mon, Sep 17, 2018 at 08:40:48PM +0900, Namhyung Kim wrote:
-> > > On Thu, Sep 13, 2018 at 02:54:49PM +0200, Jiri Olsa wrote:
-> > > > Currently we assign all maps to main thread. Adding
-> > > > code that spreads maps for --threads option.
-> > > > 
-> > > > For --thread option we create as many threads as there
-> > > > are memory maps in evlist, which is the number of CPUs
-> > > > in the system or CPUs we monitor. Each thread gets a
-> > > > single data mmap to read.
-> > > > 
-> > > > In addition we have also same amount of tracking mmaps
-> > > > for auxiliary events which we don't create special thread
-> > > > for. Instead we assign the to the main thread, because
-> > > > there's not much traffic expected there.
-> > > > 
-> > > > The assignment is visible from --thread-stats output:
-> > > > 
-> > > >           pid      write       poll       skip  maps (size 20K)
-> > > >     1s   9770       144B          1          0   19K   19K   19K   18K   19K
-> > > >          9772         0B          1          0   18K
-> > > >          9773         0B          1          0   19K
-> > > >          9774         0B          1          0   19K
-> > > > 
-> > > > There are 5 maps for thread 9770 (1 data map and 4 auxiliary)
-> > > > and one data map for every other thread. Each thread writes
-> > > > data to the separate data file.
-> > > 
-> > > Hmm.. not sure it'll work well for large machines with 1000+ cpus.
-> > > What about giving each thread a data mmap and a tracking mmap?
-> > 
-> > well currently we store the tracking data in single file,
-> > thats why we need just one thread to write them down
-> 
-> I agree with Namhyung, with a slight difference: perhaps we should set
-> perf_event_attr.mmap on one of the events of the per-cpu mmap, that way
-> we don't need that dummy event, right?
+On Tue, Sep 25, 2018 at 10:09 PM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Tue, Sep 25, 2018 at 02:09:34PM +0200, Joerg Roedel wrote:
+> > On Mon, Sep 10, 2018 at 11:55:47AM +0530, Vivek Gautam wrote:
+> > > Vivek Gautam (4):
+> > >   firmware: qcom_scm-64: Add atomic version of qcom_scm_call
+> > >   firmware/qcom_scm: Add atomic version of io read/write APIs
+> > >   firmware/qcom_scm: Add scm call to handle smmu errata
+> > >   iommu/arm-smmu: Add support to handle Qcom's TLBI serialization errata
+> > >
+> > >  drivers/firmware/qcom_scm-32.c |  17 ++++
+> > >  drivers/firmware/qcom_scm-64.c | 181 +++++++++++++++++++++++++++++++----------
+> > >  drivers/firmware/qcom_scm.c    |  18 ++++
+> > >  drivers/firmware/qcom_scm.h    |   9 ++
+> > >  drivers/iommu/arm-smmu-regs.h  |   2 +
+> > >  drivers/iommu/arm-smmu.c       | 133 +++++++++++++++++++++++++++++-
+> > >  include/linux/qcom_scm.h       |   6 ++
+> > >  7 files changed, 320 insertions(+), 46 deletions(-)
+> >
+> > Should this go through the iommu-tree? In that case I need Acked-by's
+> > for the firmware code changes.
+>
+> Yup, and I'd also like Robin's ack on the arm-smmu*.c changes (I see he has
+> some comments on the code as it stands).
 
-currently it's all based on having tracking data separated
-in single file which is read/processed first, so when we
-read the sample data files, we can read them separately,
-because we have the tracking data ready
+Thanks Joerg, and Will for taking a look at it. I will answer and
+address Robin's comments
+for smmu part.
 
->  
-> > with the *_time API, we should be able to properly read the
-> > tracking data separately for each cpu
-> 
-> That may end up making the *_time API not needed (assuming the kernel
-> keeps the per-cpu mmap events in order, barring that, using the
-> ordered_events in batches, prior to consuming the events) and would help
-> with things like 'perf top' and 'perf trace', that want to consume
-> events right away.
+Best regards
+Vivek
 
-if we dont want to use *_by_time API, we need to find a way
-to sort evevrything out before we start processing.. and that
-seems too costly to me
+>
+> Will
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
 
-jirka
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
