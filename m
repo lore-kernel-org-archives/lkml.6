@@ -2,246 +2,329 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 233E4C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADD5C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB4320843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E06FE20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="HTwXNT2U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB4320843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjzZSa+9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06FE20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbeIZU7e (ORCPT
+        id S1727751AbeIZU7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 26 Sep 2018 16:59:34 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45857 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeIZU7d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail.kernel.org ([198.145.29.99]:58786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727157AbeIZU7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Sep 2018 16:59:33 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c13-v6so10651215otf.12
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=g.ncu.edu.tw; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1FKhB8Dkv6BRpoSLUs/1kP8ecAdQI6jhk4KYTXIB7ao=;
-        b=HTwXNT2U+X7M/vMzqu5FwxtgIKF7sHlGf7qZGLieB+HvPwj5HdagKWUnnQibfmRAh0
-         WyeNFDjjvoMm8G3YoCyHSmiSbYlEUeVmih2CzYUdlKEPVi8YboZEb3fMNQ/CuLIJVI2n
-         n4cjVlst+x8Fl0aycCWdvebleT3geUkNQB25M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1FKhB8Dkv6BRpoSLUs/1kP8ecAdQI6jhk4KYTXIB7ao=;
-        b=coF216NI2RegVkpbUm3jfJDNvnVJnw9dbwvpfxfuJrznqltAc7jL3lIEiKk3ERv4DR
-         i0oUUzALzZnAL5cqzW2gFow+d01ATx3rRaPGH3eJZet4g3Tdz13joR4JTlP8+KWYRMWR
-         5UG47r4EgrT1lfkdIVUNRMl7MQpf3NGJujPP97afBrOgEO6WVLxJaMK6+VDw4/7xSYb3
-         oX1ZswiSggZSoQK27HafJ3zBRrRbS1XNm2kNLDCOoocjDQmF1FrCyn47IdTLwMrLhWSb
-         0JaKsRyKlAr5ADzPFpCwB3ckIg8N6/gcFYfIncjZIphQZ83Q34NOR4qpdQhLpV1K94rJ
-         SJLg==
-X-Gm-Message-State: ABuFfoiMANhUtMXJrhu3Qx3Z7wNUHfbBgCTyC8VWC8CyjLgN8osXY0eg
-        37/R7Mg7td34NNb9qsWC54i5Uw==
-X-Google-Smtp-Source: ACcGV60Md7yDPl+EFRo+k3xjM7x4LeBCT3IAzRm6nH/4hl0OYZu1fLD0GA/ELKAcvWpuikn5tmk60g==
-X-Received: by 2002:a9d:48a:: with SMTP id 10-v6mr4038983otm.361.1537973174737;
-        Wed, 26 Sep 2018 07:46:14 -0700 (PDT)
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com. [209.85.167.179])
-        by smtp.gmail.com with ESMTPSA id n185-v6sm308961oig.42.2018.09.26.07.46.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 07:46:13 -0700 (PDT)
-Received: by mail-oi1-f179.google.com with SMTP id s69-v6so4604562oie.10;
-        Wed, 26 Sep 2018 07:46:13 -0700 (PDT)
-X-Received: by 2002:aca:853:: with SMTP id 80-v6mr748716oii.333.1537973173170;
- Wed, 26 Sep 2018 07:46:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1535039998.git.starnight@g.ncu.edu.tw> <f7ea222671a2bc6fe0a060c4bdb1ebae162d0d91.1535039998.git.starnight@g.ncu.edu.tw>
- <f74c033a-fadc-fb8c-9469-6e6a32339cd8@suse.de>
-In-Reply-To: <f74c033a-fadc-fb8c-9469-6e6a32339cd8@suse.de>
-From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Date:   Wed, 26 Sep 2018 22:46:08 +0800
-X-Gmail-Original-Message-ID: <CAC=mGzhOnEfx7NwURMbtc9eqOabu2_FYTz7aZKuEi6m72nUxXQ@mail.gmail.com>
-Message-ID: <CAC=mGzhOnEfx7NwURMbtc9eqOabu2_FYTz7aZKuEi6m72nUxXQ@mail.gmail.com>
-Subject: Re: [RFC 2/3 net] lorawan: Add macro and definition for LoRaWAN class modlue
-To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc:     netdev@vger.kernel.org,
-        "<linux-arm-kernel@lists.infradead.org\\" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org>," <linux-kernel@vger.kernel.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        =?UTF-8?Q?Michael_R=C3=B6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?Q?Konstantin_B=C3=B6hm?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>,
-        "linux-kernel@vger.kernel.org>," <contact@snootlab.com>,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        Alexander Graf <agraf@suse.de>,
-        =?UTF-8?Q?Michal_Kube=C4=8Dek?= <mkubecek@suse.cz>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Pieter ROBYNS <pieter.robyns@uhasselt.be>,
-        Hasnain Virk <Hasnain.Virk@arm.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Daniele Comel <dcomel@mipot.com>, shess@hessware.de,
-        Xue Liu <liuxuenetmail@gmail.com>, fomi@rakwireless.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Received: from localhost.localdomain (unknown [180.109.255.143])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69693214DC;
+        Wed, 26 Sep 2018 14:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537973175;
+        bh=Bedo+unLyYbhsHyGogmDIMRzlCovUG7Wtt5TwuCPQqA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WjzZSa+9uas4/Jb07rBJO/llCXTc8ZEdKuVRr7KjQl9Yiimtx632J8iHuQ/oZ97ER
+         316WajKUQsZa+l9X8B57m4rMq/53lFT84ud7S9zUdZviQCMtOFz+40ljPK6arDFhOY
+         fAXNUfo6lW6jybR/TavjedXPKo3z2TVleftD7ZtQ=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH RESEND v2] Revert: "f2fs: check last page index in cached bio to decide submission"
+Date:   Wed, 26 Sep 2018 22:44:56 +0800
+Message-Id: <20180926144456.3167-1-chao@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andreas F=C3=A4rber <afaerber@suse.de> =E6=96=BC 2018=E5=B9=B49=E6=9C=8824=
-=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8A=E5=8D=8812:06=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Hi Jian-Hong,
->
-> Many thanks and sorry for the delay. This patch mostly looks good and
-> should go in before its first uses, so I would like to queue it soon for
-> my hardware-MAC module drivers - but some questions below. Also a typo
-> in the subject, and we should probably prepend "net: " and I would
-> personally not mention the module here as it's a userspace API.
->
-> Am 23.08.18 um 19:15 schrieb Jian-Hong Pan:
-> > This patch add the macro and definition for the implementation of
-> > LoRaWAN protocol.
->
-> I would fix up the grammar nits in my tree then.
+From: Chao Yu <yuchao0@huawei.com>
 
-Oh!  The grammar things should be fixed.  Thanks
-And, I am preparing V2 patch, too.
+There is one case that we can leave bio in f2fs, result in hanging
+page writeback waiter.
 
-> >
-> > Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-> > ---
-> >  include/linux/socket.h              | 5 ++++-
-> >  include/uapi/linux/if_arp.h         | 1 +
-> >  include/uapi/linux/if_ether.h       | 1 +
-> >  net/core/dev.c                      | 4 ++--
-> >  security/selinux/hooks.c            | 4 +++-
-> >  security/selinux/include/classmap.h | 4 +++-
-> >  6 files changed, 14 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/linux/socket.h b/include/linux/socket.h
-> > index aa1e288b1659..e5c8381fd1aa 100644
-> > --- a/include/linux/socket.h
-> > +++ b/include/linux/socket.h
-> > @@ -209,8 +209,9 @@ struct ucred {
-> >                                */
-> >  #define AF_XDP               44      /* XDP sockets                  *=
-/
-> >  #define AF_LORA              45      /* LoRa sockets                 *=
-/
-> > +#define AF_LORAWAN   46      /* LoRaWAN sockets                      *=
-/
-> >
-> > -#define AF_MAX               46      /* For now.. */
-> > +#define AF_MAX               47      /* For now.. */
-> >
-> >  /* Protocol families, same as address families. */
-> >  #define PF_UNSPEC    AF_UNSPEC
-> > @@ -261,6 +262,7 @@ struct ucred {
-> >  #define PF_SMC               AF_SMC
-> >  #define PF_XDP               AF_XDP
-> >  #define PF_LORA              AF_LORA
-> > +#define PF_LORAWAN   AF_LORAWAN
-> >  #define PF_MAX               AF_MAX
-> >
-> >  /* Maximum queue length specifiable by listen.  */
-> > @@ -343,6 +345,7 @@ struct ucred {
-> >  #define SOL_KCM              281
-> >  #define SOL_TLS              282
-> >  #define SOL_XDP              283
-> > +#define SOL_LORAWAN  284
-> >
-> >  /* IPX options */
-> >  #define IPX_TYPE     1
-> > diff --git a/include/uapi/linux/if_arp.h b/include/uapi/linux/if_arp.h
-> > index 1ed7cb3f2129..2376f7839355 100644
-> > --- a/include/uapi/linux/if_arp.h
-> > +++ b/include/uapi/linux/if_arp.h
-> > @@ -99,6 +99,7 @@
-> >  #define ARPHRD_6LOWPAN       825             /* IPv6 over LoWPAN      =
-       */
-> >  #define ARPHRD_VSOCKMON      826             /* Vsock monitor header  =
-       */
-> >  #define ARPHRD_LORA  827             /* LoRa                         *=
-/
-> > +#define ARPHRD_LORAWAN       828             /* LoRaWAN               =
-       */
-> >
-> >  #define ARPHRD_VOID    0xFFFF        /* Void type, nothing is known */
-> >  #define ARPHRD_NONE    0xFFFE        /* zero header length */
-> > diff --git a/include/uapi/linux/if_ether.h b/include/uapi/linux/if_ethe=
-r.h
-> > index 45644dcf5b39..b1ac70d4a377 100644
-> > --- a/include/uapi/linux/if_ether.h
-> > +++ b/include/uapi/linux/if_ether.h
-> > @@ -148,6 +148,7 @@
-> >                                        * aggregation protocol
-> >                                        */
-> >  #define ETH_P_LORA   0x00FA          /* LoRa                         *=
-/
-> > +#define ETH_P_LORAWAN        0x00FB          /* LoRaWAN               =
-       */
-> >
-> >  /*
-> >   *   This is an Ethernet frame header.
-> > diff --git a/net/core/dev.c b/net/core/dev.c
-> > index f68122f0ab02..b95ce79ec5a8 100644
-> > --- a/net/core/dev.c
-> > +++ b/net/core/dev.c
-> > @@ -297,7 +297,7 @@ static const unsigned short netdev_lock_type[] =3D =
-{
-> >        ARPHRD_IRDA, ARPHRD_FCPP, ARPHRD_FCAL, ARPHRD_FCPL,
-> >        ARPHRD_FCFABRIC, ARPHRD_IEEE80211, ARPHRD_IEEE80211_PRISM,
-> >        ARPHRD_IEEE80211_RADIOTAP, ARPHRD_PHONET, ARPHRD_PHONET_PIPE,
-> > -      ARPHRD_IEEE802154, ARPHRD_VOID, ARPHRD_NONE};
-> > +      ARPHRD_IEEE802154, ARPHRD_LORAWAN, ARPHRD_VOID, ARPHRD_NONE};
-> >
-> >  static const char *const netdev_lock_name[] =3D {
-> >       "_xmit_NETROM", "_xmit_ETHER", "_xmit_EETHER", "_xmit_AX25",
-> > @@ -314,7 +314,7 @@ static const char *const netdev_lock_name[] =3D {
-> >       "_xmit_IRDA", "_xmit_FCPP", "_xmit_FCAL", "_xmit_FCPL",
-> >       "_xmit_FCFABRIC", "_xmit_IEEE80211", "_xmit_IEEE80211_PRISM",
-> >       "_xmit_IEEE80211_RADIOTAP", "_xmit_PHONET", "_xmit_PHONET_PIPE",
-> > -     "_xmit_IEEE802154", "_xmit_VOID", "_xmit_NONE"};
-> > +     "_xmit_IEEE802154", "_xmit_LORAWAN", "_xmit_VOID", "_xmit_NONE"};
-> >
-> >  static struct lock_class_key netdev_xmit_lock_key[ARRAY_SIZE(netdev_lo=
-ck_type)];
-> >  static struct lock_class_key netdev_addr_lock_key[ARRAY_SIZE(netdev_lo=
-ck_type)];
->
-> All your new constants except SOL_LORAWAN are always next to a LoRa one,
-> but not in these two arrays. I don't have such changes in my original
-> LoRa patch - am I missing such an array extension for ARPHRD_LORA then,
-> or what is the criteria for when to add this?
+Thread A				Thread B
+- f2fs_write_cache_pages
+ - f2fs_submit_page_write
+ page #0 cached in bio #0 of cold log
+ - f2fs_submit_page_write
+ page #1 cached in bio #1 of warm log
+					- f2fs_write_cache_pages
+					 - f2fs_submit_page_write
+					 bio is full, submit bio #1 contain page #1
+ - f2fs_submit_merged_write_cond(, page #1)
+ fail to submit bio #0 due to page #1 is not in any cached bios.
 
-That is for "ip" related commands or something else I did not discover.
-For example:
-$ ip link show lora0
-4: lora0: <NOARP,UP,LOWER_UP> mtu 20 qdisc noqueue state UNKNOWN mode
-DEFAULT group default qlen 1000
-    link/[828] 01:02:03:04 brd ff:ff:ff:ff
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- rebase to dev-test
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/data.c       | 38 +++++++++++++++++++-------------------
+ fs/f2fs/f2fs.h       |  4 ++--
+ fs/f2fs/node.c       | 12 ++++++------
+ fs/f2fs/segment.c    | 11 +++++------
+ 5 files changed, 33 insertions(+), 34 deletions(-)
 
-The 828 is ARPHRD_LORAWAN.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index d624d7983197..2f63b362ce63 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -280,7 +280,7 @@ static int __f2fs_write_meta_page(struct page *page,
+ 
+ 	if (wbc->for_reclaim)
+ 		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
+-						0, page->index, META);
++							page, 0, META);
+ 
+ 	unlock_page(page);
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index be69b6ac6870..b03f9d163175 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -322,8 +322,8 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	io->bio = NULL;
+ }
+ 
+-static bool __has_merged_page(struct f2fs_bio_info *io,
+-				struct inode *inode, nid_t ino, pgoff_t idx)
++static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
++						struct page *page, nid_t ino)
+ {
+ 	struct bio_vec *bvec;
+ 	struct page *target;
+@@ -332,7 +332,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
+ 	if (!io->bio)
+ 		return false;
+ 
+-	if (!inode && !ino)
++	if (!inode && !page && !ino)
+ 		return true;
+ 
+ 	bio_for_each_segment_all(bvec, io->bio, i) {
+@@ -342,11 +342,10 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
+ 		else
+ 			target = fscrypt_control_page(bvec->bv_page);
+ 
+-		if (idx != target->index)
+-			continue;
+-
+ 		if (inode && inode == target->mapping->host)
+ 			return true;
++		if (page && page == target)
++			return true;
+ 		if (ino && ino == ino_of_node(target))
+ 			return true;
+ 	}
+@@ -355,7 +354,8 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
+ }
+ 
+ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+-				nid_t ino, pgoff_t idx, enum page_type type)
++						struct page *page, nid_t ino,
++						enum page_type type)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 	enum temp_type temp;
+@@ -366,7 +366,7 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		io = sbi->write_io[btype] + temp;
+ 
+ 		down_read(&io->io_rwsem);
+-		ret = __has_merged_page(io, inode, ino, idx);
++		ret = __has_merged_page(io, inode, page, ino);
+ 		up_read(&io->io_rwsem);
+ 
+ 		/* TODO: use HOT temp only for meta pages now. */
+@@ -397,12 +397,12 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ }
+ 
+ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+-				struct inode *inode, nid_t ino, pgoff_t idx,
+-				enum page_type type, bool force)
++				struct inode *inode, struct page *page,
++				nid_t ino, enum page_type type, bool force)
+ {
+ 	enum temp_type temp;
+ 
+-	if (!force && !has_merged_page(sbi, inode, ino, idx, type))
++	if (!force && !has_merged_page(sbi, inode, page, ino, type))
+ 		return;
+ 
+ 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
+@@ -421,10 +421,10 @@ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
+ }
+ 
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+-				struct inode *inode, nid_t ino, pgoff_t idx,
+-				enum page_type type)
++				struct inode *inode, struct page *page,
++				nid_t ino, enum page_type type)
+ {
+-	__submit_merged_write_cond(sbi, inode, ino, idx, type, false);
++	__submit_merged_write_cond(sbi, inode, page, ino, type, false);
+ }
+ 
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
+@@ -1962,7 +1962,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		ClearPageUptodate(page);
+ 
+ 	if (wbc->for_reclaim) {
+-		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
++		f2fs_submit_merged_write_cond(sbi, inode, page, 0, DATA);
+ 		clear_inode_flag(inode, FI_HOT_DATA);
+ 		f2fs_remove_dirty_inode(inode);
+ 		submitted = NULL;
+@@ -2020,10 +2020,10 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	pgoff_t index;
+ 	pgoff_t end;		/* Inclusive */
+ 	pgoff_t done_index;
+-	pgoff_t last_idx = ULONG_MAX;
+ 	int cycled;
+ 	int range_whole = 0;
+ 	int tag;
++	int nwritten = 0;
+ 
+ 	pagevec_init(&pvec);
+ 
+@@ -2126,7 +2126,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 				done = 1;
+ 				break;
+ 			} else if (submitted) {
+-				last_idx = page->index;
++				nwritten++;
+ 			}
+ 
+ 			if (--wbc->nr_to_write <= 0 &&
+@@ -2148,9 +2148,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
+ 		mapping->writeback_index = done_index;
+ 
+-	if (last_idx != ULONG_MAX)
++	if (nwritten)
+ 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
+-						0, last_idx, DATA);
++								NULL, 0, DATA);
+ 
+ 	return ret;
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index dc9306e87a51..464545e40729 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3049,8 +3049,8 @@ int f2fs_init_post_read_processing(void);
+ void f2fs_destroy_post_read_processing(void);
+ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
+ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+-				struct inode *inode, nid_t ino, pgoff_t idx,
+-				enum page_type type);
++				struct inode *inode, struct page *page,
++				nid_t ino, enum page_type type);
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+ int f2fs_submit_page_bio(struct f2fs_io_info *fio);
+ void f2fs_submit_page_write(struct f2fs_io_info *fio);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index ea151e07790f..c47ca807e245 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1561,8 +1561,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	up_read(&sbi->node_write);
+ 
+ 	if (wbc->for_reclaim) {
+-		f2fs_submit_merged_write_cond(sbi, page->mapping->host, 0,
+-						page->index, NODE);
++		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
++						page, 0, NODE);
+ 		submitted = NULL;
+ 	}
+ 
+@@ -1634,13 +1634,13 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			unsigned int *seq_id)
+ {
+ 	pgoff_t index;
+-	pgoff_t last_idx = ULONG_MAX;
+ 	struct pagevec pvec;
+ 	int ret = 0;
+ 	struct page *last_page = NULL;
+ 	bool marked = false;
+ 	nid_t ino = inode->i_ino;
+ 	int nr_pages;
++	int nwritten = 0;
+ 
+ 	if (atomic) {
+ 		last_page = last_fsync_dnode(sbi, ino);
+@@ -1718,7 +1718,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 				f2fs_put_page(last_page, 0);
+ 				break;
+ 			} else if (submitted) {
+-				last_idx = page->index;
++				nwritten++;
+ 			}
+ 
+ 			if (page == last_page) {
+@@ -1744,8 +1744,8 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		goto retry;
+ 	}
+ out:
+-	if (last_idx != ULONG_MAX)
+-		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
++	if (nwritten)
++		f2fs_submit_merged_write_cond(sbi, NULL, NULL, ino, NODE);
+ 	return ret ? -EIO: 0;
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 97a4fae75651..965ef524e2a2 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -371,7 +371,7 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+ 		.io_type = FS_DATA_IO,
+ 	};
+ 	struct list_head revoke_list;
+-	pgoff_t last_idx = ULONG_MAX;
++	bool submit_bio = false;
+ 	int err = 0;
+ 
+ 	INIT_LIST_HEAD(&revoke_list);
+@@ -406,14 +406,14 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
+ 			}
+ 			/* record old blkaddr for revoking */
+ 			cur->old_addr = fio.old_blkaddr;
+-			last_idx = page->index;
++			submit_bio = true;
+ 		}
+ 		unlock_page(page);
+ 		list_move_tail(&cur->list, &revoke_list);
+ 	}
+ 
+-	if (last_idx != ULONG_MAX)
+-		f2fs_submit_merged_write_cond(sbi, inode, 0, last_idx, DATA);
++	if (submit_bio)
++		f2fs_submit_merged_write_cond(sbi, inode, NULL, 0, DATA);
+ 
+ 	if (err) {
+ 		/*
+@@ -3179,8 +3179,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
+ 	if (PageWriteback(page)) {
+ 		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+ 
+-		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
+-						0, page->index, type);
++		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
+ 		if (ordered)
+ 			wait_on_page_writeback(page);
+ 		else
+-- 
+2.18.0
 
-Regards,
-Jian-Hong Pan
