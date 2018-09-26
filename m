@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3768ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF14EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6AD20842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 865D120842
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:16:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="YV3qXhhK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6AD20842
+	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="L6UV7uhZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 865D120842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbeIZU3w (ORCPT
+        id S1728268AbeIZUaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:29:52 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53182 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727587AbeIZU3v (ORCPT
+        Wed, 26 Sep 2018 16:30:06 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53178 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbeIZU3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:29:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id l7-v6so2483040wme.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:16:40 -0700 (PDT)
+        Wed, 26 Sep 2018 16:29:49 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l7-v6so2482937wme.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:16:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ursulin-net.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=J05zKTNn2Y/+M4Dr898zqUw6g0HICBbnSSgbu+L2HHQ=;
-        b=YV3qXhhKBy4l4H8m06ErtKrlCnSUbIyTr0XuQ72d+vMzBCI5vY/uQM8N6zCjNJo2sn
-         LxMmWyZuy+cnPwvwQ7pVcEG3q2LVyvMP2eSfD9Fel4jxNUtBg9yTK2KFmZF7uU4MC8/E
-         GDGe7hhUCRKeeFmTk6Hp00MQv1LoqKMukqciOZRMlWgpekgWGpS8FFYeMei7ys1xH8r0
-         JpEIo2rHmsyOrRhnXq+bFSDWnvQjmoLZOpnLJPkCe1jHSSV4uCL0L76ZQ2H570cbifJP
-         hCWSURv6JCt/dEbnhaAIZmCd9Zg+caTAWXqhnM/ZDN071HWHYW6flSnAQg9IA5c892YE
-         f/5g==
+        bh=6GEgMJo7HbdKLlrJg81sd/Zf0U2XQ8tZJ/V/bTDDrzs=;
+        b=L6UV7uhZAvXSHMWXKay+k1KVVcRT2PwJfMvC21hxUH9GSzMOIqPGpmYelD7opV8Yd4
+         iFpy9ZQlv416kfILPV+dekfDtR9X/Hvm62tJCUWqxocVFDhi38h10jYND65t5Z0oxwkQ
+         idRh58Pi9yeNigvIH3EiDSvRTsFXkEGfNEoY6bw6Tj44tRsW0bV+YXy9DwuhtB6Xnocp
+         iaQJ/ZdDVhiroQKQGg55PX1uFLOHJdNVn/3MK8Hr3No0+LjRjWElIZ6zdcbFdkPrirPW
+         AfZo3aky+9tIoh+9IVYrJBWkLBh2Q1m+TLDvFwv7nHwh/FhAkbKST5YpzK6paGuTf2WW
+         LW9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=J05zKTNn2Y/+M4Dr898zqUw6g0HICBbnSSgbu+L2HHQ=;
-        b=IT5sH/xV1zsV4cbe7FdavrefBRhjXtp9+tI2V9jEom6tzlmKKXBCHW7TswO5NVlxky
-         RotaBLgi2A4yxCkgn8UslcwsUuzRgKXy5C3psSpD4HUlCJHpS7B//Yw7/vDIHLZyUZIx
-         N4bBTLbwPbxq8mbTHC+JW3Zeg3x3oSLDPawc9JLsfoW9GFNdP5pULR5mPMOLGp0Ws1PQ
-         hPl+trm1+SeI1Fmdu4xN0NFSG3j43X+WguvM6+tLBpauTdf7c3+xb3qe+w+xyOiJaGL/
-         6CfCkyudXM6he3GAGF7f7EtPbItNIrWBakQ/+RQYnyU1DKH/Cf0ZDeLhzV1wQW2Ei6F3
-         rwYQ==
-X-Gm-Message-State: ABuFfoghVqpo2akFZHmPOJWUzCfGvQEoVo4oGwD67oe5CJlkDXoD1qBQ
-        E5DH3ni61Q67XJxefy9JtttIN6burPI=
-X-Google-Smtp-Source: ACcGV60s9M/PNH/k2m1O0VS2vMgLeMeHk3ryFFXsaDDLWpnk3uCsLSeaYifG0lUiLZ/IIXtD99TJPg==
-X-Received: by 2002:a1c:6543:: with SMTP id z64-v6mr4758611wmb.57.1537971399868;
-        Wed, 26 Sep 2018 07:16:39 -0700 (PDT)
+        bh=6GEgMJo7HbdKLlrJg81sd/Zf0U2XQ8tZJ/V/bTDDrzs=;
+        b=Qrv+K+5KBORVI9RgpyZtnoj0zjcBMphQVsr7diGNEsRWVx6xJSFd0dmnhZhWGbY2Zo
+         2ojOdON8ZAtseOOfnUs9AuenSyQqipNkXUKT0a9FC5ypb+vM9Fq7QhlUUbBxfVjihzns
+         8u4Z1PJoHQsMP0ekVwHukwxrJ2zFDDYHhhoCpzo8jMbsEqNHpBfcRJqLXLLfhnUfV4V9
+         VfJGtYbnF0VDq8vzpG5+ruVu7z1wI/wwved8wXHAZf9k23QgbF8pTgIuQ+9nVQfaKPAb
+         tPOnEoUvA67X+imT4gcanZtSDZ51j/QBFmlbowu+BpwLSngsakYnzKCy5P04wSJ7yNF3
+         +whg==
+X-Gm-Message-State: ABuFfoi6TV8VYTSypozDIqcjuPlZuHHWhlX4eQxaxWwbdhMoxvgdsC+J
+        s90Sat2nMqYaqf6PET1sPHZl5vrORC0=
+X-Google-Smtp-Source: ACcGV62HjRXZBU6kYeR+t4zNUHWB5VCtqdFmZ9BBAD0B6y5C2eIGVk64aQcEzOdea6n4WPpCHmbxYw==
+X-Received: by 2002:a1c:88a:: with SMTP id 132-v6mr4772071wmi.9.1537971397936;
+        Wed, 26 Sep 2018 07:16:37 -0700 (PDT)
 Received: from localhost.localdomain ([95.144.165.37])
-        by smtp.gmail.com with ESMTPSA id v14-v6sm3209974wmh.41.2018.09.26.07.16.38
+        by smtp.gmail.com with ESMTPSA id v14-v6sm3209974wmh.41.2018.09.26.07.16.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 07:16:39 -0700 (PDT)
+        Wed, 26 Sep 2018 07:16:37 -0700 (PDT)
 From:   Tvrtko Ursulin <tursulin@ursulin.net>
 X-Google-Original-From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
@@ -67,9 +67,9 @@ Cc:     tursulin@ursulin.net, tvrtko.ursulin@linux.intel.com,
         Hannes Reinecke <hare@suse.com>,
         Johannes Thumshirn <jthumshirn@suse.de>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 6/6] lib/scatterlist: Fix overflow check in sgl_alloc_order
-Date:   Wed, 26 Sep 2018 15:16:25 +0100
-Message-Id: <20180926141625.17727-7-tvrtko.ursulin@linux.intel.com>
+Subject: [PATCH 4/6] lib/scatterlist: Do not leak pages when high-order allocation fails
+Date:   Wed, 26 Sep 2018 15:16:23 +0100
+Message-Id: <20180926141625.17727-5-tvrtko.ursulin@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180926141625.17727-1-tvrtko.ursulin@linux.intel.com>
 References: <20180926141625.17727-1-tvrtko.ursulin@linux.intel.com>
@@ -80,10 +80,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 
-It is necessary to ensure types on both sides of the comparison are of the
-same width. Otherwise the check overflows sooner than expect due left hand
-side being an unsigned long length, and the right hand side unsigned int
-number of elements multiplied by element size.
+If a higher-order allocation fails, the existing abort and cleanup path
+would consider all segments allocated so far as 0-order page allocations
+and would therefore leak memory.
+
+Fix this by cleaning up using sgl_free_n_order which allows the correct
+page order to be passed in.
 
 Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 Cc: Bart Van Assche <bart.vanassche@wdc.com>
@@ -91,22 +93,43 @@ Cc: Hannes Reinecke <hare@suse.com>
 Cc: Johannes Thumshirn <jthumshirn@suse.de>
 Cc: Jens Axboe <axboe@kernel.dk>
 ---
- lib/scatterlist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/scatterlist.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-index 581a2e91e515..c87243d46f10 100644
+index 3cc01cd82242..0caed79d7291 100644
 --- a/lib/scatterlist.c
 +++ b/lib/scatterlist.c
-@@ -485,7 +485,7 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
+@@ -481,7 +481,7 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
+ {
+ 	struct scatterlist *sgl, *sg;
+ 	struct page *page;
+-	unsigned int nent, nalloc;
++	unsigned int nent, nalloc, i;
+ 	u32 elem_len;
  
  	nent = round_up(length, PAGE_SIZE << order) >> (PAGE_SHIFT + order);
- 	/* Check for integer overflow */
--	if (length > (nent << (PAGE_SHIFT + order)))
-+	if (length > ((unsigned long)nent << (PAGE_SHIFT + order)))
- 		return NULL;
- 	nalloc = nent;
- 	if (chainable) {
+@@ -501,17 +501,19 @@ struct scatterlist *sgl_alloc_order(unsigned long length, unsigned int order,
+ 
+ 	sg_init_table(sgl, nalloc);
+ 	sg = sgl;
++	i = 0;
+ 	while (length) {
+ 		elem_len = min_t(u64, length, PAGE_SIZE << order);
+ 		page = alloc_pages(gfp, order);
+ 		if (!page) {
+-			sgl_free(sgl);
++			sgl_free_n_order(sgl, i, order);
+ 			return NULL;
+ 		}
+ 
+ 		sg_set_page(sg, page, elem_len, 0);
+ 		length -= elem_len;
+ 		sg = sg_next(sg);
++		i++;
+ 	}
+ 	WARN_ONCE(length, "length = %ld\n", length);
+ 	if (nent_p)
 -- 
 2.17.1
 
