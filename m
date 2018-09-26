@@ -2,67 +2,66 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9AFC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33028C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C92121564
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:03:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDB572154B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:03:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jwUDw2X+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C92121564
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jIPkxIpB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDB572154B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbeI0FSl (ORCPT
+        id S1727014AbeI0FSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 01:18:41 -0400
-Received: from mail-yb1-f202.google.com ([209.85.219.202]:46582 "EHLO
-        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbeI0FSl (ORCPT
+        Thu, 27 Sep 2018 01:18:45 -0400
+Received: from mail-it1-f202.google.com ([209.85.166.202]:41209 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbeI0FSo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 01:18:41 -0400
-Received: by mail-yb1-f202.google.com with SMTP id m16-v6so387252ybp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 16:03:25 -0700 (PDT)
+        Thu, 27 Sep 2018 01:18:44 -0400
+Received: by mail-it1-f202.google.com with SMTP id w132-v6so5516304ita.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 16:03:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=XdBK4IqMncCkLn3j7ma3uKS/dMETW5LEp//ayj5o1FY=;
-        b=jwUDw2X+j2EHCRoHNlPhKm1GBIL3/q5zE+GWxIqtOLHUQWg8EA++kpqblmiWEPxjPp
-         PbR4adQFU+tmg4w6jhEvInXISaYvYwX2MNlU+aeayM6NkmfuVVLNXiTn+ee0ndg1ZsiB
-         mXXbNx8hnI/icddzuUlsND5ypEOwG6eRJcppIYdVnqK9g+1FDHJ2xXT2WDa1U3/TE1AT
-         5dlvCw8rIFDR6i3LnSVlzpLM3CHuonSqAi2a6RHNkZpCstpw8tjaHVlHmSHtHOlBzcel
-         nUR6zgPd1V0/JxHqBFpJrtlfwq3bjgyT+khTLX3YSDeI/a/WCY+Z20b/hu+vn5X5+cPG
-         OBVQ==
+        bh=osgpXOOZdUG+8wXM0tA2qjdsNT6NL4YfIBaxp4dBLSs=;
+        b=jIPkxIpBmHIdX72e9WW90tbL0f9gIIqt975KR4Ik6JiEj/inYhBLZbgLuO9GZoRobM
+         TkGBw2a1yHKN9mJeQ55Hp6BP5bPIP25IdrGinhrjK1brD9Ma4fHs3Uj0IOv0bDANow3u
+         gHP9rS5ZvKx35gqjEXTan7veywKbMfbnoG0shrQZhoSZww0cs4xTFA2M8lLQTdHMVYFG
+         90lUlX1gsT1T6UeLGRFkz1fqbA8W4en/7kno+GM08C9qk8++QO6JA6ZpaBLiuheYYRhS
+         8+9Mjy+u6x3LIikRaw85LBeYQbOwbAE/2sr+i4yXEhFeO5FxrI46tGWEC6wVFbaRRVts
+         IY5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=XdBK4IqMncCkLn3j7ma3uKS/dMETW5LEp//ayj5o1FY=;
-        b=krkMUYySfyBDHYw8RKMkSsha1Gv09DOiEuVREKSaGOXfTnrZqEvt89L04rxOeIvNi6
-         c8+HE7UCOaWhoTfmiage49OiIveISzjDoM063YPYBWOauE8g33Nzimb+2cPhh9irWkfN
-         82K4a89ETVbmWqBmCiz958YZwINNn0vskZ0krShtbADUz0Hz7rxvHY1UNHnr9x6MqiJV
-         qm75rnGMMPUnI7/e/M4iQ/5jouM+P2c9Y7PI1GkaLW/AeRnnLldtpnKrwFi6haJNxGlJ
-         FvtJ79aaVVPj9c7JjY6vV8Do9PTWIg47qScqnFuim7Eh0TTnO2oJ7UwVkunX5FWKvB/e
-         bxTw==
-X-Gm-Message-State: ABuFfoi4isDC3CSCRKU+onyNDsvbrcvH5e4lI6vn/rytM4d44MDjXmtV
-        UK107jCcQeKB+m6o/Z5qKplr/d6L
-X-Google-Smtp-Source: ACcGV6252dBjXA0ZvpEGTj3ZwxT1DbF+UNokz6AvkHEpX2tnYjYv3+07CEy/ah8ZwK9+qhXChFvyJRsh
-X-Received: by 2002:a25:3b8c:: with SMTP id i134-v6mr1238943yba.33.1538003005169;
- Wed, 26 Sep 2018 16:03:25 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 16:02:21 -0700
+        bh=osgpXOOZdUG+8wXM0tA2qjdsNT6NL4YfIBaxp4dBLSs=;
+        b=XrHWE396vQb0addLOYgIG+nA9mBwTP4vv6SdrJgQPRr6epwsAr+HKMOlmcxTc7qZkr
+         3DFyTjhGPcHlB/X7GQYFla5DEvbalZrj6kgxPuQa2Gn0cVp2ond5EgGxX0E9qTPBuQVU
+         y6F/ffx3GCGx9Yqx+14/5zFQOiMhjtlUrKyAos06hLacuHA5vgpigqu0oq579/sK+kLn
+         un8pJXkS1VMfzTk0x5fhFuw2adqFd04GBF/l+QrWKAqjJYMvBW5T2Cq7xVFC6nXlH5Ff
+         RYyiMtvt+VDKcrZfYW9NnR0hqdZdXTvG1RSVZuEJvawW+/cJ7FIU+TunaCnwICifOy+V
+         MOIw==
+X-Gm-Message-State: ABuFfoh22j0KwKwRslCi+KFKFSjzKA7eM1t/f1GZ/QM+UCJBaut6Ohm0
+        CYWdHs1Lr8EZ9ZFj3MDl4a+Wgd/t
+X-Google-Smtp-Source: ACcGV60Dg4QaJf8PVw9FPqCspY0WvwIGrMvMCmWb9lRkzxh/R1AMdkewJzNQWIn4Y/GMp1pC2BUEVTcf
+X-Received: by 2002:a24:93c5:: with SMTP id y188-v6mr5751185itd.1.1538003008153;
+ Wed, 26 Sep 2018 16:03:28 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 16:02:22 -0700
 In-Reply-To: <20180926230222.126513-1-rkir@google.com>
-Message-Id: <20180926230222.126513-3-rkir@google.com>
+Message-Id: <20180926230222.126513-4-rkir@google.com>
 Mime-Version: 1.0
 References: <20180926230222.126513-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH v2 13/21] platform: goldfish: pipe: Split the driver to v2
- specific and the rest
+Subject: [PATCH v2 19/21] platform: goldfish: pipe: Add the goldfish_pipe_v1 driver
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
@@ -75,398 +74,740 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-Move probe/remove and other driver stuff to a separate file
-to plug v1 there later.
+This is the v1 goldfish pipe driver.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
 Changes in v2:
- - Removed breakage of allmodconfig.
+ - Rebased (Makefile).
 
- drivers/platform/goldfish/Makefile           |   3 +-
- drivers/platform/goldfish/goldfish_pipe.c    | 145 +++++++++++++++++++
- drivers/platform/goldfish/goldfish_pipe.h    |  24 +++
- drivers/platform/goldfish/goldfish_pipe_v2.c | 102 ++-----------
- drivers/platform/goldfish/goldfish_pipe_v2.h |  24 +++
- 5 files changed, 210 insertions(+), 88 deletions(-)
- create mode 100644 drivers/platform/goldfish/goldfish_pipe.c
- create mode 100644 drivers/platform/goldfish/goldfish_pipe.h
- create mode 100644 drivers/platform/goldfish/goldfish_pipe_v2.h
+ drivers/platform/goldfish/Makefile            |   2 +-
+ drivers/platform/goldfish/goldfish_pipe.c     |   9 +-
+ .../platform/goldfish/goldfish_pipe_qemu.h    |  27 +
+ drivers/platform/goldfish/goldfish_pipe_v1.c  | 632 ++++++++++++++++++
+ drivers/platform/goldfish/goldfish_pipe_v1.h  |  24 +
+ 5 files changed, 689 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/platform/goldfish/goldfish_pipe_v1.c
+ create mode 100644 drivers/platform/goldfish/goldfish_pipe_v1.h
 
 diff --git a/drivers/platform/goldfish/Makefile b/drivers/platform/goldfish/Makefile
-index 81f899a987a2..016769e003d8 100644
+index 016769e003d8..3fb7427b9dd8 100644
 --- a/drivers/platform/goldfish/Makefile
 +++ b/drivers/platform/goldfish/Makefile
-@@ -1,4 +1,5 @@
- #
+@@ -2,4 +2,4 @@
  # Makefile for Goldfish platform specific drivers
  #
--obj-$(CONFIG_GOLDFISH_PIPE)	+= goldfish_pipe_v2.o
-+obj-$(CONFIG_GOLDFISH_PIPE)    += goldfish_pipe_all.o
-+goldfish_pipe_all-objs := goldfish_pipe.o goldfish_pipe_v2.o
+ obj-$(CONFIG_GOLDFISH_PIPE)    += goldfish_pipe_all.o
+-goldfish_pipe_all-objs := goldfish_pipe.o goldfish_pipe_v2.o
++goldfish_pipe_all-objs := goldfish_pipe.o goldfish_pipe_v1.o goldfish_pipe_v2.o
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-new file mode 100644
-index 000000000000..802bbf0d6d23
---- /dev/null
+index d963b7485ce5..e45e262517a0 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2012 Intel, Inc.
-+ * Copyright (C) 2013 Intel, Inc.
-+ * Copyright (C) 2014 Linaro Limited
-+ * Copyright (C) 2011-2016 Google, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+/* This source file contains the implementation of a special device driver
-+ * that intends to provide a *very* fast communication channel between the
-+ * guest system and the QEMU emulator.
-+ *
-+ * Usage from the guest is simply the following (error handling simplified):
-+ *
-+ *    int  fd = open("/dev/qemu_pipe",O_RDWR);
-+ *    .... write() or read() through the pipe.
-+ *
-+ * This driver doesn't deal with the exact protocol used during the session.
-+ * It is intended to be as simple as something like:
-+ *
-+ *    // do this _just_ after opening the fd to connect to a specific
-+ *    // emulator service.
-+ *    const char*  msg = "<pipename>";
-+ *    if (write(fd, msg, strlen(msg)+1) < 0) {
-+ *       ... could not connect to <pipename> service
-+ *       close(fd);
-+ *    }
-+ *
-+ *    // after this, simply read() and write() to communicate with the
-+ *    // service. Exact protocol details left as an exercise to the reader.
-+ *
-+ * This driver is very fast because it doesn't copy any data through
-+ * intermediate buffers, since the emulator is capable of translating
-+ * guest user addresses into host ones.
-+ *
-+ * Note that we must however ensure that each user page involved in the
-+ * exchange is properly mapped during a transfer.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/acpi.h>
-+#include "goldfish_pipe_qemu.h"
-+#include "goldfish_pipe.h"
-+#include "goldfish_pipe_v2.h"
-+
-+/*
-+ * Update this when something changes in the driver's behavior so the host
-+ * can benefit from knowing it
-+ * Notes:
-+ *	version 2 was an intermediate release and isn't supported anymore.
-+ *	version 3 is goldfish_pipe_v2 without DMA support.
-+ *	version 4 (current) is goldfish_pipe_v2 with DMA support.
-+ */
-+enum {
-+	PIPE_DRIVER_VERSION = 4,
-+	PIPE_CURRENT_DEVICE_VERSION = 2
-+};
-+
-+static int goldfish_pipe_probe(struct platform_device *pdev)
-+{
-+	struct resource *r;
-+	char __iomem *base;
-+	int irq;
-+	int version;
-+
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!r || resource_size(r) < PAGE_SIZE) {
-+		dev_err(&pdev->dev, "can't allocate i/o page\n");
-+		return -EINVAL;
-+	}
-+	base = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
-+	if (!base) {
-+		dev_err(&pdev->dev, "ioremap failed\n");
-+		return -EINVAL;
-+	}
-+
-+	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!r)
-+		return -EINVAL;
-+
-+	irq = r->start;
-+
-+	/*
-+	 * Exchange the versions with the host device
-+	 *
-+	 * Note: v1 driver used to not report its version, so we write it before
-+	 *  reading device version back: this allows the host implementation to
-+	 *  detect the old driver (if there was no version write before read).
-+	 */
-+	writel((u32)PIPE_DRIVER_VERSION, base + PIPE_REG_VERSION);
-+	version = readl(base + PIPE_REG_VERSION);
-+
-+	if (WARN_ON(version < PIPE_CURRENT_DEVICE_VERSION))
-+		return -EINVAL;
-+
-+	return goldfish_pipe_device_init(pdev, base, irq);
-+}
-+
-+static int goldfish_pipe_remove(struct platform_device *pdev)
-+{
-+	struct goldfish_pipe_dev_base *dev = platform_get_drvdata(pdev);
-+
-+	return dev->deinit(dev, pdev);
-+}
-+
-+static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
-+	{ "GFSH0003", 0 },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, goldfish_pipe_acpi_match);
-+
-+static const struct of_device_id goldfish_pipe_of_match[] = {
-+	{ .compatible = "google,android-pipe", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, goldfish_pipe_of_match);
-+
-+static struct platform_driver goldfish_pipe_driver = {
-+	.probe = goldfish_pipe_probe,
-+	.remove = goldfish_pipe_remove,
-+	.driver = {
-+		.name = "goldfish_pipe",
-+		.of_match_table = goldfish_pipe_of_match,
-+		.acpi_match_table = ACPI_PTR(goldfish_pipe_acpi_match),
-+	}
-+};
-+
-+module_platform_driver(goldfish_pipe_driver);
-+MODULE_AUTHOR("David Turner <digit@google.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/platform/goldfish/goldfish_pipe.h b/drivers/platform/goldfish/goldfish_pipe.h
-new file mode 100644
-index 000000000000..41e831f59eff
---- /dev/null
-+++ b/drivers/platform/goldfish/goldfish_pipe.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 Google, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#ifndef GOLDFISH_PIPE_H
-+#define GOLDFISH_PIPE_H
-+
-+struct goldfish_pipe_dev_base {
-+	/* the destructor, the pointer is set in init */
-+	int (*deinit)(void *pipe_dev, struct platform_device *pdev);
-+};
-+
-+#endif /* GOLDFISH_PIPE_H */
-diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.c b/drivers/platform/goldfish/goldfish_pipe_v2.c
-index 7187b2e603d4..d653e5a2ffcc 100644
---- a/drivers/platform/goldfish/goldfish_pipe_v2.c
-+++ b/drivers/platform/goldfish/goldfish_pipe_v2.c
-@@ -47,8 +47,6 @@
-  * exchange is properly mapped during a transfer.
-  */
- 
--#include <linux/module.h>
--#include <linux/mod_devicetable.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/spinlock.h>
-@@ -61,10 +59,10 @@
- #include <linux/io.h>
- #include <linux/dma-mapping.h>
- #include <linux/mm.h>
--#include <linux/acpi.h>
- #include <linux/bug.h>
- #include <uapi/linux/goldfish/goldfish_dma.h>
+@@ -56,6 +56,7 @@
+ #include <linux/acpi.h>
  #include "goldfish_pipe_qemu.h"
-+#include "goldfish_pipe.h"
+ #include "goldfish_pipe.h"
++#include "goldfish_pipe_v1.h"
+ #include "goldfish_pipe_v2.h"
  
  /*
-  * Update this when something changes in the driver's behavior so the host
-@@ -89,6 +87,9 @@ enum {
+@@ -105,10 +106,10 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
+ 	writel((u32)PIPE_DRIVER_VERSION, base + PIPE_V2_REG_VERSION);
+ 	version = readl(base + PIPE_V2_REG_VERSION);
  
- struct goldfish_pipe_dev;
- 
-+static int goldfish_pipe_device_deinit(void *raw_dev,
-+				       struct platform_device *pdev);
-+
- /* A per-pipe command structure, shared with the host */
- struct goldfish_pipe_command {
- 	s32 cmd;	/* PipeCmdCode, guest -> host */
-@@ -202,8 +203,8 @@ struct goldfish_pipe {
-  * waiting to be awoken.
-  */
- struct goldfish_pipe_dev {
--	/* A magic number to check if this is an instance of this struct */
--	void *magic;
-+	/* Needed for 'remove' */
-+	struct goldfish_pipe_dev_base super;
- 
- 	/*
- 	 * Global device spinlock. Protects the following members:
-@@ -646,9 +647,6 @@ static void goldfish_interrupt_task(unsigned long dev_addr)
- 	}
- }
- 
--static void goldfish_pipe_device_deinit(struct platform_device *pdev,
--					struct goldfish_pipe_dev *dev);
--
- /*
-  * The general idea of the interrupt handling:
-  *
-@@ -669,7 +667,7 @@ static irqreturn_t goldfish_pipe_interrupt(int irq, void *dev_id)
- 	unsigned long flags;
- 	struct goldfish_pipe_dev *dev = dev_id;
- 
--	if (dev->magic != &goldfish_pipe_device_deinit)
-+	if (dev->super.deinit != &goldfish_pipe_device_deinit)
- 		return IRQ_NONE;
- 
- 	/* Request the signalled pipes from the device */
-@@ -1122,9 +1120,9 @@ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
- 	writel(lower_32_bits(paddr), portl);
- }
- 
--static int goldfish_pipe_device_init(struct platform_device *pdev,
--				     char __iomem *base,
--				     int irq)
-+int goldfish_pipe_device_init(struct platform_device *pdev,
-+			      char __iomem *base,
-+			      int irq)
- {
- 	struct goldfish_pipe_dev *dev;
- 	int err;
-@@ -1133,7 +1131,7 @@ static int goldfish_pipe_device_init(struct platform_device *pdev,
- 	if (!dev)
- 		return -ENOMEM;
- 
--	dev->magic = &goldfish_pipe_device_deinit;
-+	dev->super.deinit = &goldfish_pipe_device_deinit;
- 	spin_lock_init(&dev->lock);
- 
- 	tasklet_init(&dev->irq_tasklet, &goldfish_interrupt_task,
-@@ -1193,9 +1191,11 @@ static int goldfish_pipe_device_init(struct platform_device *pdev,
- 	return 0;
- }
- 
--static int goldfish_pipe_device_deinit(struct platform_device *pdev,
--				       struct goldfish_pipe_dev *dev)
-+static int goldfish_pipe_device_deinit(void *raw_dev,
-+				       struct platform_device *pdev)
- {
-+	struct goldfish_pipe_dev *dev = raw_dev;
-+
- 	misc_deregister(&dev->miscdev);
- 	tasklet_kill(&dev->irq_tasklet);
- 	kfree(dev->pipes);
-@@ -1203,75 +1203,3 @@ static int goldfish_pipe_device_deinit(struct platform_device *pdev,
- 
- 	return 0;
- }
--
--static int goldfish_pipe_probe(struct platform_device *pdev)
--{
--	struct resource *r;
--	char __iomem *base;
--	int irq;
--	int version;
--
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r || resource_size(r) < PAGE_SIZE) {
--		dev_err(&pdev->dev, "can't allocate i/o page\n");
--		return -EINVAL;
--	}
--	base = devm_ioremap(&pdev->dev, r->start, PAGE_SIZE);
--	if (!base) {
--		dev_err(&pdev->dev, "ioremap failed\n");
--		return -EINVAL;
--	}
--
--	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!r)
--		return -EINVAL;
--
--	irq = r->start;
--
--	/*
--	 * Exchange the versions with the host device
--	 *
--	 * Note: v1 driver used to not report its version, so we write it before
--	 *  reading device version back: this allows the host implementation to
--	 *  detect the old driver (if there was no version write before read).
--	 */
--	writel((u32)PIPE_DRIVER_VERSION, base + PIPE_REG_VERSION);
--	version = readl(base + PIPE_REG_VERSION);
 -	if (WARN_ON(version < PIPE_CURRENT_DEVICE_VERSION))
 -		return -EINVAL;
 -
--	return goldfish_pipe_device_init(pdev, base, irq);
--}
--
--static int goldfish_pipe_remove(struct platform_device *pdev)
--{
--	struct goldfish_pipe_dev *dev = platform_get_drvdata(pdev);
--
--	return goldfish_pipe_device_deinit(pdev, dev);
--}
--
--static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
--	{ "GFSH0003", 0 },
--	{ },
--};
--MODULE_DEVICE_TABLE(acpi, goldfish_pipe_acpi_match);
--
--static const struct of_device_id goldfish_pipe_of_match[] = {
--	{ .compatible = "google,android-pipe", },
--	{},
--};
--MODULE_DEVICE_TABLE(of, goldfish_pipe_of_match);
--
--static struct platform_driver goldfish_pipe_driver = {
--	.probe = goldfish_pipe_probe,
--	.remove = goldfish_pipe_remove,
--	.driver = {
--		.name = "goldfish_pipe",
--		.of_match_table = goldfish_pipe_of_match,
--		.acpi_match_table = ACPI_PTR(goldfish_pipe_acpi_match),
--	}
--};
--
--module_platform_driver(goldfish_pipe_driver);
--MODULE_AUTHOR("David Turner <digit@google.com>");
--MODULE_LICENSE("GPL v2");
-diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.h b/drivers/platform/goldfish/goldfish_pipe_v2.h
+-	return goldfish_pipe_device_v2_init(pdev, base, irq);
++	if (version < PIPE_CURRENT_DEVICE_VERSION)
++		return goldfish_pipe_device_v1_init(pdev, base, irq);
++	else
++		return goldfish_pipe_device_v2_init(pdev, base, irq);
+ }
+ 
+ static int goldfish_pipe_remove(struct platform_device *pdev)
+diff --git a/drivers/platform/goldfish/goldfish_pipe_qemu.h b/drivers/platform/goldfish/goldfish_pipe_qemu.h
+index 599b69f0baa1..ed2c7938fede 100644
+--- a/drivers/platform/goldfish/goldfish_pipe_qemu.h
++++ b/drivers/platform/goldfish/goldfish_pipe_qemu.h
+@@ -62,6 +62,33 @@ enum PipeFlagsBits {
+ 	BIT_WAKE_ON_READ   = 2,  /* want to be woken on reads */
+ };
+ 
++enum PipeV1Regs {
++	/* write: value = command */
++	PIPE_V1_REG_COMMAND		= 0x00,
++	/* read */
++	PIPE_V1_REG_STATUS		= 0x04,
++	/* read/write: channel id */
++	PIPE_V1_REG_CHANNEL		= 0x08,
++	/* read/write: channel id */
++	PIPE_V1_REG_CHANNEL_HIGH	= 0x30,
++	/* read/write: buffer size */
++	PIPE_V1_REG_SIZE		= 0x0C,
++	/* write: physical address */
++	PIPE_V1_REG_ADDRESS		= 0x10,
++	/* write: physical address */
++	PIPE_V1_REG_ADDRESS_HIGH	= 0x34,
++	/* read: wake flags */
++	PIPE_V1_REG_WAKES		= 0x14,
++	/* read/write: batch data address */
++	PIPE_V1_REG_PARAMS_ADDR_LOW	= 0x18,
++	/* read/write: batch data address */
++	PIPE_V1_REG_PARAMS_ADDR_HIGH	= 0x1C,
++	/* write: batch access */
++	PIPE_V1_REG_ACCESS_PARAMS	= 0x20,
++	/* read: device version */
++	PIPE_V1_REG_VERSION		= 0x24,
++};
++
+ enum PipeV2Regs {
+ 	PIPE_V2_REG_CMD = 0,
+ 
+diff --git a/drivers/platform/goldfish/goldfish_pipe_v1.c b/drivers/platform/goldfish/goldfish_pipe_v1.c
 new file mode 100644
-index 000000000000..679d863774a8
+index 000000000000..6e603204dd62
 --- /dev/null
-+++ b/drivers/platform/goldfish/goldfish_pipe_v2.h
++++ b/drivers/platform/goldfish/goldfish_pipe_v1.c
+@@ -0,0 +1,632 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2011 Google, Inc.
++ * Copyright (C) 2012 Intel, Inc.
++ * Copyright (C) 2013 Intel, Inc.
++ * Copyright (C) 2014 Linaro Limited
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++/* This source file contains the implementation of the legacy version of
++ * a goldfish pipe device driver. See goldfish_pipe_v2.c for the current
++ * version.
++ */
++
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/spinlock.h>
++#include <linux/miscdevice.h>
++#include <linux/platform_device.h>
++#include <linux/poll.h>
++#include <linux/sched.h>
++#include <linux/bitops.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/dma-mapping.h>
++#include <linux/mm.h>
++#include <linux/bug.h>
++#include <linux/goldfish.h>
++#include "goldfish_pipe_qemu.h"
++#include "goldfish_pipe.h"
++
++#define MAX_PAGES_TO_GRAB 32
++
++/* A value that will not be set by qemu emulator */
++#define INITIAL_BATCH_RESULT (0xdeadbeaf)
++
++struct goldfish_pipe_dev;
++
++/* This data type models a given pipe instance */
++struct goldfish_pipe {
++	struct goldfish_pipe_dev *dev;
++
++	/* The wake flags pipe is waiting for
++	 * Note: not protected with any lock, uses atomic operations
++	 *  and barriers to make it thread-safe.
++	 */
++	unsigned long flags;
++
++	wait_queue_head_t wake_queue;
++
++	/* protects access to the pipe */
++	struct mutex lock;
++};
++
++struct access_params {
++	unsigned long channel;
++	u32 size;
++	unsigned long address;
++	u32 cmd;
++	u32 result;
++	/* reserved for future extension */
++	u32 flags;
++};
++
++/* The driver state. Holds a reference to the i/o page used to
++ * communicate with the emulator, and a wake queue for blocked tasks
++ * waiting to be awoken.
++ */
++struct goldfish_pipe_dev {
++	/* Needed for the 'remove' call */
++	struct goldfish_pipe_dev_base super;
++
++	/* ptr to platform device's device struct */
++	struct device *pdev_dev;
++
++	/* the base address for MMIO */
++	char __iomem *base;
++
++	struct access_params *aps;
++
++	struct miscdevice miscdev;
++
++	/* Global device spinlock */
++	spinlock_t lock;
++};
++
++static int goldfish_pipe_device_deinit(void *raw_dev,
++				       struct platform_device *pdev);
++
++static u32 goldfish_cmd_status(struct goldfish_pipe *pipe, u32 cmd)
++{
++	unsigned long flags;
++	u32 status;
++	struct goldfish_pipe_dev *dev = pipe->dev;
++
++	spin_lock_irqsave(&dev->lock, flags);
++	gf_write_ptr(pipe, dev->base + PIPE_V1_REG_CHANNEL,
++		     dev->base + PIPE_V1_REG_CHANNEL_HIGH);
++	writel(cmd, dev->base + PIPE_V1_REG_COMMAND);
++	status = readl(dev->base + PIPE_V1_REG_STATUS);
++	spin_unlock_irqrestore(&dev->lock, flags);
++	return status;
++}
++
++static void goldfish_cmd(struct goldfish_pipe *pipe, u32 cmd)
++{
++	unsigned long flags;
++	struct goldfish_pipe_dev *dev = pipe->dev;
++
++	spin_lock_irqsave(&dev->lock, flags);
++	gf_write_ptr(pipe, dev->base + PIPE_V1_REG_CHANNEL,
++		     dev->base + PIPE_V1_REG_CHANNEL_HIGH);
++	writel(cmd, dev->base + PIPE_V1_REG_COMMAND);
++	spin_unlock_irqrestore(&dev->lock, flags);
++}
++
++/* This function converts an error code returned by the emulator through
++ * the PIPE_V1_REG_STATUS i/o register into a valid negative errno value.
++ */
++static int goldfish_pipe_error_convert(int status)
++{
++	switch (status) {
++	case PIPE_ERROR_AGAIN:
++		return -EAGAIN;
++	case PIPE_ERROR_NOMEM:
++		return -ENOMEM;
++	case PIPE_ERROR_IO:
++		return -EIO;
++	default:
++		return -EINVAL;
++	}
++}
++
++/*
++ * Notice: QEMU will return 0 for un-known register access, indicating
++ * access_params is supported or not
++ */
++static int valid_batchbuffer_addr(struct goldfish_pipe_dev *dev,
++				  struct access_params *aps)
++{
++	u32 aph, apl;
++	u64 paddr;
++
++	aph = readl(dev->base + PIPE_V1_REG_PARAMS_ADDR_HIGH);
++	apl = readl(dev->base + PIPE_V1_REG_PARAMS_ADDR_LOW);
++
++	paddr = ((u64)aph << 32) | apl;
++	return paddr == (__pa(aps));
++}
++
++static int setup_access_params_addr(struct platform_device *pdev,
++				    struct goldfish_pipe_dev *dev)
++{
++	u64 paddr;
++	struct access_params *aps;
++
++	aps = devm_kzalloc(&pdev->dev, sizeof(struct access_params),
++			   GFP_KERNEL);
++	if (!aps)
++		return -ENOMEM;
++
++	paddr = __pa(aps);
++	writel((u32)(paddr >> 32), dev->base + PIPE_V1_REG_PARAMS_ADDR_HIGH);
++	writel((u32)paddr, dev->base + PIPE_V1_REG_PARAMS_ADDR_LOW);
++
++	if (valid_batchbuffer_addr(dev, aps)) {
++		dev->aps = aps;
++		return 0;
++	}
++
++	devm_kfree(&pdev->dev, aps);
++	return -EFAULT;
++}
++
++static int access_with_param(struct goldfish_pipe_dev *dev, const int cmd,
++			     unsigned long address, unsigned long avail,
++			     struct goldfish_pipe *pipe, int *status)
++{
++	struct access_params *aps = dev->aps;
++
++	if (!aps)
++		return -EINVAL;
++
++	aps->result = INITIAL_BATCH_RESULT;
++	aps->channel = (unsigned long)pipe;
++	aps->size = avail;
++	aps->address = address;
++	aps->cmd = cmd;
++	writel(cmd, dev->base + PIPE_V1_REG_ACCESS_PARAMS);
++
++	/*
++	 * If the aps->result has not changed, that means
++	 * that the batch command failed
++	 */
++	if (aps->result == INITIAL_BATCH_RESULT)
++		return -EINVAL;
++
++	*status = aps->result;
++	return 0;
++}
++
++static int transfer_pages(struct goldfish_pipe_dev *dev,
++			  struct goldfish_pipe *pipe,
++			  int cmd,
++			  unsigned long xaddr,
++			  unsigned long size)
++{
++	unsigned long irq_flags;
++	int status = 0;
++
++	spin_lock_irqsave(&dev->lock, irq_flags);
++	if (access_with_param(dev, cmd, xaddr, size, pipe, &status)) {
++		gf_write_ptr(pipe, dev->base + PIPE_V1_REG_CHANNEL,
++			     dev->base + PIPE_V1_REG_CHANNEL_HIGH);
++
++		writel(size, dev->base + PIPE_V1_REG_SIZE);
++
++		gf_write_ptr((void *)xaddr,
++			     dev->base + PIPE_V1_REG_ADDRESS,
++			     dev->base + PIPE_V1_REG_ADDRESS_HIGH);
++
++		writel(cmd, dev->base + PIPE_V1_REG_COMMAND);
++
++		status = readl(dev->base + PIPE_V1_REG_STATUS);
++	}
++	spin_unlock_irqrestore(&dev->lock, irq_flags);
++
++	return status;
++}
++
++static unsigned long translate_address(const struct page *page,
++				       unsigned long addr)
++{
++	return page_to_phys(page) | (addr & ~PAGE_MASK);
++}
++
++static ssize_t goldfish_pipe_read_write(struct file *filp, char __user *buffer,
++					size_t bufflen, int is_write)
++{
++	struct goldfish_pipe *pipe = filp->private_data;
++	struct goldfish_pipe_dev *dev = pipe->dev;
++	unsigned long address;
++	unsigned long address_end;
++	const int wake_bit = is_write ? BIT_WAKE_ON_WRITE : BIT_WAKE_ON_READ;
++	const int pipe_cmd = is_write ? PIPE_CMD_WRITE : PIPE_CMD_READ;
++	int count = 0;
++	int ret = -EINVAL;
++
++	/* If the emulator already closed the pipe, no need to go further */
++	if (test_bit(BIT_CLOSED_ON_HOST, &pipe->flags))
++		return -EIO;
++
++	/* Null reads or writes succeeds */
++	if (unlikely(bufflen == 0))
++		return 0;
++
++	/* Check the buffer range for access */
++	if (!access_ok(is_write ? VERIFY_WRITE : VERIFY_READ,
++		       buffer, bufflen))
++		return -EFAULT;
++
++	address = (unsigned long)buffer;
++	address_end = address + bufflen;
++
++	/* Serialize access to the pipe */
++	if (mutex_lock_interruptible(&pipe->lock))
++		return -ERESTARTSYS;
++
++	while (address < address_end) {
++		struct page *pages[MAX_PAGES_TO_GRAB];
++		unsigned long page_end = (address & PAGE_MASK) + PAGE_SIZE;
++		unsigned long avail;
++		unsigned long xaddr;
++		unsigned long xaddr_prev;
++		long first_page;
++		long last_page;
++		long requested_pages;
++		int status;
++		int n_pages;
++		int page_i;
++		int num_contiguous_pages;
++
++		/*
++		 * Attempt to grab multiple physically contiguous pages.
++		 */
++		first_page = address & PAGE_MASK;
++		last_page = (address_end - 1) & PAGE_MASK;
++		requested_pages =
++			min(((last_page - first_page) >> PAGE_SHIFT) + 1,
++			    (long)MAX_PAGES_TO_GRAB);
++
++		ret = get_user_pages_fast(first_page, requested_pages,
++					  !is_write, pages);
++		if (ret < 0) {
++			dev_err(dev->pdev_dev,
++				"%s: get_user_pages_fast failed: %d\n",
++				__func__, ret);
++			break;
++		} else if (!ret) {
++			dev_err(dev->pdev_dev,
++				"%s: error: no pages returned, requested %ld\n",
++				__func__, requested_pages);
++			break;
++		}
++
++		n_pages = ret;
++		xaddr = translate_address(pages[0], address);
++		xaddr_prev = xaddr;
++		num_contiguous_pages = 1;
++		for (page_i = 1; page_i < n_pages; page_i++) {
++			unsigned long xaddr_i;
++
++			xaddr_i = translate_address(pages[page_i], address);
++			if (xaddr_i == xaddr_prev + PAGE_SIZE) {
++				page_end += PAGE_SIZE;
++				xaddr_prev = xaddr_i;
++				num_contiguous_pages++;
++			} else {
++				dev_err(dev->pdev_dev,
++					"%s: discontinuous page boundary: %d "
++					"pages instead\n",
++					__func__, page_i);
++				break;
++			}
++		}
++		avail = min(page_end, address_end) - address;
++
++		status = transfer_pages(dev, pipe, pipe_cmd, xaddr, avail);
++
++		for (page_i = 0; page_i < n_pages; page_i++) {
++			if (status > 0 && !is_write &&
++			    page_i < num_contiguous_pages)
++				set_page_dirty(pages[page_i]);
++
++			put_page(pages[page_i]);
++		}
++
++		if (status > 0) { /* Correct transfer */
++			count += status;
++			address += status;
++			continue;
++		} else if (status == 0) { /* EOF */
++			ret = 0;
++			break;
++		} else if (status < 0 && count > 0) {
++			/*
++			 * An error occurred and we already transferred
++			 * something on one of the previous pages.
++			 * Just return what we already copied and log this
++			 * err.
++			 *
++			 * Note: This seems like an incorrect approach but
++			 * cannot change it until we check if any user space
++			 * ABI relies on this behavior.
++			 */
++			if (status != PIPE_ERROR_AGAIN)
++				dev_err_ratelimited(dev->pdev_dev,
++					"backend returned error %d on %s\n",
++					status, is_write ? "write" : "read");
++			ret = 0;
++			break;
++		}
++
++		/*
++		 * If the error is not PIPE_ERROR_AGAIN, or if we are not in
++		 * non-blocking mode, just return the error code.
++		 */
++		if (status != PIPE_ERROR_AGAIN ||
++		    (filp->f_flags & O_NONBLOCK) != 0) {
++			ret = goldfish_pipe_error_convert(status);
++			break;
++		}
++
++		/*
++		 * The backend blocked the read/write, wait until the backend
++		 * tells us it's ready to process more data.
++		 */
++		set_bit(wake_bit, &pipe->flags);
++
++		/* Tell the emulator we're going to wait for a wake event */
++		goldfish_cmd(pipe, pipe_cmd);
++
++		/* Unlock the pipe, then wait for the wake signal */
++		mutex_unlock(&pipe->lock);
++
++		while (test_bit(wake_bit, &pipe->flags)) {
++			if (wait_event_interruptible(pipe->wake_queue,
++					!test_bit(wake_bit, &pipe->flags)))
++				return -ERESTARTSYS;
++
++			if (test_bit(BIT_CLOSED_ON_HOST, &pipe->flags))
++				return -EIO;
++		}
++
++		/* Try to re-acquire the lock */
++		if (mutex_lock_interruptible(&pipe->lock))
++			return -ERESTARTSYS;
++	}
++	mutex_unlock(&pipe->lock);
++
++	return (ret < 0) ? ret : count;
++}
++
++static ssize_t goldfish_pipe_read(struct file *filp, char __user *buffer,
++				  size_t bufflen, loff_t *ppos)
++{
++	return goldfish_pipe_read_write(filp, buffer, bufflen,
++					/* is_write */ 0);
++}
++
++static ssize_t goldfish_pipe_write(struct file *filp,
++				   const char __user *buffer, size_t bufflen,
++				   loff_t *ppos)
++{
++	return goldfish_pipe_read_write(filp, (char __user *)buffer,
++					bufflen, /* is_write */ 1);
++}
++
++static __poll_t goldfish_pipe_poll(struct file *filp, poll_table *wait)
++{
++	struct goldfish_pipe *pipe = filp->private_data;
++	__poll_t mask = 0;
++	int status;
++
++	if (mutex_lock_interruptible(&pipe->lock))
++		return -ERESTARTSYS;
++
++	poll_wait(filp, &pipe->wake_queue, wait);
++
++	status = goldfish_cmd_status(pipe, PIPE_CMD_POLL);
++
++	mutex_unlock(&pipe->lock);
++
++	if (status & PIPE_POLL_IN)
++		mask |= EPOLLIN | EPOLLRDNORM;
++
++	if (status & PIPE_POLL_OUT)
++		mask |= EPOLLOUT | EPOLLWRNORM;
++
++	if (status & PIPE_POLL_HUP)
++		mask |= EPOLLHUP;
++
++	if (test_bit(BIT_CLOSED_ON_HOST, &pipe->flags))
++		mask |= EPOLLERR;
++
++	return mask;
++}
++
++static irqreturn_t goldfish_pipe_interrupt(int irq, void *dev_id)
++{
++	struct goldfish_pipe_dev *dev = dev_id;
++	unsigned long irq_flags;
++	int count = 0;
++
++	/*
++	 * We're going to read from the emulator a list of (channel,flags)
++	 * pairs corresponding to the wake events that occurred on each
++	 * blocked pipe (i.e. channel).
++	 */
++	spin_lock_irqsave(&dev->lock, irq_flags);
++	for (;;) {
++		/* First read the channel, 0 means the end of the list */
++		struct goldfish_pipe *pipe;
++		unsigned long wakes;
++		unsigned long channel = 0;
++
++#ifdef CONFIG_64BIT
++		channel =
++			(u64)readl(dev->base + PIPE_V1_REG_CHANNEL_HIGH) << 32;
++#endif
++		channel |= readl(dev->base + PIPE_V1_REG_CHANNEL);
++		if (!channel)
++			break;
++
++		/* Convert channel to struct pipe pointer + read wake flags */
++		wakes = readl(dev->base + PIPE_V1_REG_WAKES);
++		pipe  = (struct goldfish_pipe *)(ptrdiff_t)channel;
++
++		/* Did the emulator just closed a pipe? */
++		if (wakes & PIPE_WAKE_CLOSED) {
++			set_bit(BIT_CLOSED_ON_HOST, &pipe->flags);
++			wakes |= PIPE_WAKE_READ | PIPE_WAKE_WRITE;
++		}
++		if (wakes & PIPE_WAKE_READ)
++			clear_bit(BIT_WAKE_ON_READ, &pipe->flags);
++		if (wakes & PIPE_WAKE_WRITE)
++			clear_bit(BIT_WAKE_ON_WRITE, &pipe->flags);
++
++		wake_up_interruptible(&pipe->wake_queue);
++		count++;
++	}
++	spin_unlock_irqrestore(&dev->lock, irq_flags);
++
++	return (count == 0) ? IRQ_NONE : IRQ_HANDLED;
++}
++
++/* A helper function to get the instance of goldfish_pipe_dev from file */
++static struct goldfish_pipe_dev *to_goldfish_pipe_dev(struct file *file)
++{
++	struct miscdevice *miscdev = file->private_data;
++
++	return container_of(miscdev, struct goldfish_pipe_dev, miscdev);
++}
++
++/**
++ *	goldfish_pipe_open - open a channel to the AVD
++ *	@inode: inode of device
++ *	@file: file struct of opener
++ *
++ *	Create a new pipe link between the emulator and the use application.
++ *	Each new request produces a new pipe.
++ *
++ *	Note: we use the pipe ID as a mux. All goldfish emulations are 32bit
++ *	right now so this is fine. A move to 64bit will need this addressing
++ */
++static int goldfish_pipe_open(struct inode *inode, struct file *file)
++{
++	struct goldfish_pipe_dev *dev = to_goldfish_pipe_dev(file);
++	struct goldfish_pipe *pipe;
++	int status;
++
++	/* Allocate new pipe kernel object */
++	pipe = kzalloc(sizeof(*pipe), GFP_KERNEL);
++	if (!pipe)
++		return -ENOMEM;
++
++	pipe->dev = dev;
++	init_waitqueue_head(&pipe->wake_queue);
++	mutex_init(&pipe->lock);
++
++	/*
++	 * Now, tell the emulator we're opening a new pipe. We use the
++	 * pipe object's address as the channel identifier for simplicity.
++	 */
++
++	status = goldfish_cmd_status(pipe, PIPE_CMD_OPEN);
++	if (status < 0) {
++		kfree(pipe);
++		return status;
++	}
++
++	/* All is done, save the pipe into the file's private data field */
++	file->private_data = pipe;
++	return 0;
++}
++
++static int goldfish_pipe_release(struct inode *inode, struct file *filp)
++{
++	struct goldfish_pipe *pipe = filp->private_data;
++
++	pr_debug("%s: call. pipe=%p file=%p\n", __func__, pipe, filp);
++	/* The guest is closing the channel, so tell the emulator right now */
++	goldfish_cmd(pipe, PIPE_CMD_CLOSE);
++	kfree(pipe);
++	filp->private_data = NULL;
++	return 0;
++}
++
++static const struct file_operations goldfish_pipe_fops = {
++	.owner = THIS_MODULE,
++	.read = goldfish_pipe_read,
++	.write = goldfish_pipe_write,
++	.poll = goldfish_pipe_poll,
++	.open = goldfish_pipe_open,
++	.release = goldfish_pipe_release,
++};
++
++static void init_miscdevice(struct miscdevice *miscdev)
++{
++	memset(miscdev, 0, sizeof(*miscdev));
++
++	miscdev->minor = MISC_DYNAMIC_MINOR;
++	miscdev->name = DEVICE_NAME;
++	miscdev->fops = &goldfish_pipe_fops;
++};
++
++static int goldfish_pipe_device_deinit(void *raw_dev,
++				       struct platform_device *pdev);
++
++int goldfish_pipe_device_v1_init(struct platform_device *pdev,
++				 void __iomem *base,
++				 int irq)
++{
++	struct goldfish_pipe_dev *dev;
++	int err;
++
++	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return -ENOMEM;
++
++	dev->super.deinit = &goldfish_pipe_device_deinit;
++	dev->pdev_dev = &pdev->dev;
++	spin_lock_init(&dev->lock);
++
++	err = devm_request_irq(&pdev->dev, irq,
++			       &goldfish_pipe_interrupt, IRQF_SHARED,
++			       DEVICE_NAME, dev);
++	if (err) {
++		dev_err(&pdev->dev, "unable to allocate IRQ for v1\n");
++		return err;
++	}
++
++	init_miscdevice(&dev->miscdev);
++	err = misc_register(&dev->miscdev);
++	if (err) {
++		dev_err(&pdev->dev, "unable to register v1 device\n");
++		return err;
++	}
++
++	setup_access_params_addr(pdev, dev);
++
++	platform_set_drvdata(pdev, dev);
++	return 0;
++}
++
++static int goldfish_pipe_device_deinit(void *raw_dev,
++				       struct platform_device *pdev)
++{
++	struct goldfish_pipe_dev *dev = raw_dev;
++
++	misc_deregister(&dev->miscdev);
++	return 0;
++}
+diff --git a/drivers/platform/goldfish/goldfish_pipe_v1.h b/drivers/platform/goldfish/goldfish_pipe_v1.h
+new file mode 100644
+index 000000000000..6d61441e2a7f
+--- /dev/null
++++ b/drivers/platform/goldfish/goldfish_pipe_v1.h
 @@ -0,0 +1,24 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
@@ -483,15 +824,15 @@ index 000000000000..679d863774a8
 + *
 + */
 +
-+#ifndef GOLDFISH_PIPE_V2_H
-+#define GOLDFISH_PIPE_V2_H
++#ifndef GOLDFISH_PIPE_V1_H
++#define GOLDFISH_PIPE_V1_H
 +
-+/* The entry point to the pipe v2 driver */
-+int goldfish_pipe_device_init(struct platform_device *pdev,
-+			      char __iomem *base,
-+			      int irq);
++/* The entry point to the pipe v1 driver */
++int goldfish_pipe_device_v1_init(struct platform_device *pdev,
++				 void __iomem *base,
++				 int irq);
 +
-+#endif /* #define GOLDFISH_PIPE_V2_H */
++#endif /* #define GOLDFISH_PIPE_V1_H */
 -- 
 2.19.0.605.g01d371f741-goog
 
