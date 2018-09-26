@@ -2,145 +2,147 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE15CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025ADC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA6B21537
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:26:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965A221547
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:27:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wz78VtNN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA6B21537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ovdxnkr9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965A221547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeI0Bkp (ORCPT
+        id S1727077AbeI0Blm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:40:45 -0400
-Received: from mail-yb1-f178.google.com ([209.85.219.178]:44491 "EHLO
-        mail-yb1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbeI0Bkp (ORCPT
+        Wed, 26 Sep 2018 21:41:42 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38494 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbeI0Bll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:40:45 -0400
-Received: by mail-yb1-f178.google.com with SMTP id x5-v6so36983ybl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xaf/2HkfpAd6qa80iTcK11WNMdEE5ZYuxfG27JkSB3M=;
-        b=Wz78VtNNM5IElHFno1vAF+XPYlcjdSMqgs0U3hOFP2AzEJTCAMyLLAh82Qg1cWh29r
-         UXVYdviR6fM8KBesFr2jMEa53lvIVGCmuiz4anvM1O1qQRZ5VsyXvc0AkmiCzLCjy5VV
-         KDtwi6JOXcBORMkgc2UEtLhB+wY+4mDOrxTgQFzb9uGUzZWkmd0jNO56IWrAwj0wfOCc
-         7SVSGEE5dBxydYna6jgOG0WyR9Tzm5AdyDX8OLTAOHNQbd6NKIYOQmYGqRWhwi+MbeWT
-         nf0MXjArvxdtINMzmKHJiDrR+JjT0YoSMb6n0ZYjeCOKOjqLAE4TsTSTxymKz7hI9f7n
-         a9DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xaf/2HkfpAd6qa80iTcK11WNMdEE5ZYuxfG27JkSB3M=;
-        b=cOEKqpCHJftT1KXQSi+FjEzNk7iXlvApn64yE+CG6dQkMc5gdHYsEQuqQt0eK8pF1I
-         ulaEGo0UR9okwsIxHu07AuSwiTob7PSnj+ptrMq/xCSNfrybZmoNULoBfz1/maQ5TDu5
-         +AWIIZl9AsLD+CwrtMNC0tfMwZdPhz5QMpGXC0f/w0HXrxrNpwOK0M2k1WtaI/lu5K9x
-         zP0NvhviZ/23MjWSwnjjJmKp3/X8Rq5G9Kk/3Co9uTNunDuWPDx8LV6i2WOdTGqm9++8
-         I8ZrpK+W6FRYgQpQM3EuZKegQH2uxSxNNpML2XCgq3/35UOrVbiivr7EMhKrc5Mqn/kY
-         Uzzg==
-X-Gm-Message-State: ABuFfogRN56mO/pRXatzElt31/gESKQPT3B0Gz3j9xfyXgJ39D8szjz2
-        AyNQNFU44BJ3uUGmvPNHN1F5psjc4h5f9kR6jtD/jg==
-X-Google-Smtp-Source: ACcGV6302wcx/PwAqhjLzbjrwhAfAZroi6NBRmUkrwuMjxqk27WQkn29TwlVn7HOV7NVfU1hGUZOCB4SB0MIoKeHUiA=
-X-Received: by 2002:a25:6642:: with SMTP id z2-v6mr3916895ybm.224.1537989976851;
- Wed, 26 Sep 2018 12:26:16 -0700 (PDT)
+        Wed, 26 Sep 2018 21:41:41 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8QJOZkP130339;
+        Wed, 26 Sep 2018 19:27:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=lO0nlvQQC9hZqsc82yublNS/cZOAJ57+3bvTlTYAa9Y=;
+ b=ovdxnkr9TlGnGUyXSHn4ufcU8DMEZqJAyTjK9PmtEy7UxkM1VoJz6FWaHXPYDBAhw3RX
+ BdOy/jNPvfcCUdndCkQX7Mb4PllNb1xiSVomt+iFjzqbqNycVN226SKcn3gGarg4ysGQ
+ f7FLmFbP3VfY+cUOo2l3lRpHPZ30ameeEbdIkyzuWgSl4POGl2b3HFJDezAIbrwNVEDZ
+ CLjsaUx7ZOLTXJ+ANSnG8tbV9t67G+ToP8+4TpvXWqDZ38me5jgwe6P70XqXYEWOoPX5
+ SMKFpLhbPsnqJCrSFoH5eJJrpajujfcv7eVM5f9eGaX7Ptuo9Uwiu+8UHUPFEn+Xh/gx aQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2mnvtuudfd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Sep 2018 19:27:05 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8QJQxQp031399
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Sep 2018 19:26:59 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8QJQxcq010278;
+        Wed, 26 Sep 2018 19:26:59 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Sep 2018 12:26:58 -0700
+Subject: Re: [PATCH trivial] xen/balloon: Grammar s/Is it/It is/
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Juergen Gross <jgross@suse.com>,
+        Jiri Kosina <trivial@kernel.org>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180926084313.19052-1-geert+renesas@glider.be>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <34f50624-2e1f-e323-cd0a-9b23dc00abdd@oracle.com>
+Date:   Wed, 26 Sep 2018 15:28:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
- <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
-In-Reply-To: <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Wed, 26 Sep 2018 12:25:40 -0700
-Message-ID: <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
-Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
- to _CRS?
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Hunter, Adrian" <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180926084313.19052-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9028 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809260181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Thanks Mika and Andy for your inputs.
-
-On Wed, Sep 26, 2018 at 1:42 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+On 9/26/18 4:43 AM, Geert Uytterhoeven wrote:
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/xen/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> On Wed, Sep 26, 2018 at 10:49 AM Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, Sep 25, 2018 at 01:54:57PM -0700, Rajat Jain wrote:
-> > > * Use con_id=NULL if it is dealing with a legacy BIOS (i.e. no _DSD
-> > > properties in the ACPI).
-> > > * Use con_id=<actual string> if it is dealing with a modern BIOS (i.e.
-> > > which provides _DSD for the <string> property)
-> >
-> > Or you can use con_id=<actual string> everywhere and supply
-> > acpi_dev_add_driver_gpios() where needed to cover cases where BIOS does
-> > not provide _DSD.
+> diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+> index 90d387b50ab747f5..7f42d41f66ee98e3 100644
+> --- a/drivers/xen/Kconfig
+> +++ b/drivers/xen/Kconfig
+> @@ -86,7 +86,7 @@ config XEN_SCRUB_PAGES_DEFAULT
+>  	help
+>  	  Scrub pages before returning them to the system for reuse by
+>  	  other domains.  This makes sure that any confidential data
+> -	  is not accidentally visible to other domains.  Is it more
+> +	  is not accidentally visible to other domains.  It is more
+>  	  secure, but slightly less efficient. This can be controlled with
+>  	  xen_scrub_pages=0 parameter and
+>  	  /sys/devices/system/xen_memory/xen_memory0/scrub_pages.
 
-This sounds like a good idea and I'd like to do this. I have some
-questions though:
 
-1) If the BIOS does provide a _DSD entry for "cd-gpio", and
-additionally driver also uses devm_acpi_dev_add_driver_gpios() to add
-one more entry for the same string "cd-gpio", which one will (should?)
-actually be returned by the gpiolib? The one in BIOS or the one that
-was added by the driver?
+Applied to for-linus-19b.
 
-2) Related, I'm trying to understand how can a driver use
-devm_acpi_dev_add_driver_gpios(), for *only* the case where the BIOS
-does not have a _DSD (Or should it really care)? Does the driver need
-to check for _DSD using some other ACPI call?
-
-> See also Documentation/acpi/gpio-properties.txt for
-> > more information.
->
-> Thanks, Mika. That is exactly the way how I suggested to fix and
-> actually fixed a lot of drivers already.
->
-> Run `git grep -n -w devm_acpi_dev_add_driver_gpios` to find examples.
->
-> > In case of SDHCI I think the correct way is to stick using _CRS lookup
-> > only because there typically is just one GpioInt() and I have not seen a
-> > single BIOS yet where they implement _DSD for this besides yours. If
-> > there is not way to change the BIOS implementation then I guess we just
-> > need to amend the driver to call acpi_dev_add_driver_gpios().
-
-Since we shouldn't discourage a BIOS that is trying to do the right
-thing by exposing the details in _DST, I think it would be preferable
-if we can solve this in the kernel.
-
-Thanks,
-
-Rajat
-
->
-> True.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+-boris
