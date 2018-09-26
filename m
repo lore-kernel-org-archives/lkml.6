@@ -2,227 +2,830 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D82C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C21C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659FA204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ksbpFp7K";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I2aOIIsu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659FA204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4AFA9204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:46:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFA9204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeIZP60 (ORCPT
+        id S1727664AbeIZP6t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:58:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49978 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbeIZP60 (ORCPT
+        Wed, 26 Sep 2018 11:58:49 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:49588 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbeIZP6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:58:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E51FF60B1E; Wed, 26 Sep 2018 09:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537955178;
-        bh=qhLXEaRkjzWkX3sT0x9LR8T1Cl0ozwXB6JPO97VihIk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ksbpFp7KBeCBwz0Q0jlPTKqZzvu9OQI49M+sFCpQFaH1Zx5nyN0vsdfRbXlWLDrNJ
-         YAkBrrsX2ftv7p1wlvRbPgI/cIOP3FTu0EGHlGyijq3YPb+gWxukQO96kUDfAPoyHO
-         1zl/+rgzT1/qE+Avb/0/f2S5lKzDFOkSjMIcmg60=
-Received: from [10.79.129.49] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 798466020A;
-        Wed, 26 Sep 2018 09:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537955177;
-        bh=qhLXEaRkjzWkX3sT0x9LR8T1Cl0ozwXB6JPO97VihIk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=I2aOIIsumwme0Kg0j+Dyiyns80THNNx9zpMIHNEgqm+M/cy/7WkSvtQa8QQ9p7rZg
-         tPqYkDor9xNLZMc9d6wrD+zd0ohaPpojUSdEjrXd+z7nG4Wu6lTEJW5bBDIr8Oj1rj
-         zQ3zTi4vGxS/64VKxIQNtee8yDhXL10PhhDSbi20=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 798466020A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 3/6] tracing: Add tp_pstore cmdline to have tracepoints go
- to pstore
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
+        Wed, 26 Sep 2018 11:58:49 -0400
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-02.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g56NP-00052t-VK from Deepak_Das@mentor.com ; Wed, 26 Sep 2018 02:45:00 -0700
+Received: from [192.168.239.131] (137.202.0.90) by
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 26 Sep 2018 10:44:52 +0100
+Subject: Re: [PATCH v3] arm64: dts: rockchip: add initial dts support for
+ Rockpro64
+To:     Akash Gajjar <Akash_Gajjar@mentor.com>, <heiko@sntech.de>
+References: <Akash_Gajjar@mentor.com>
+ <1537943105-21247-1-git-send-email-Akash_Gajjar@mentor.com>
+CC:     <Pragnesh_patel@mentor.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Levin Du <djw@t-chip.com.cn>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <f65e9fa6e047b9b14d4f64362f9fe1f89b306050.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <CAEXW_YRQtJb=3V0RKHSAejfQXKssh5qBp7nmD1OUC-wTyqGDEQ@mail.gmail.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <1f546234-bd7b-448a-3666-3f8baa249608@codeaurora.org>
-Date:   Wed, 26 Sep 2018 15:16:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Shohei Maruyama <cheat.sc.linux@outlook.com>,
+        Pierre-Hugues Husson <phh@phh.me>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Deepak Das <deepak_das@mentor.com>
+Message-ID: <5BAB5512.4010006@mentor.com>
+Date:   Wed, 26 Sep 2018 15:14:50 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAEXW_YRQtJb=3V0RKHSAejfQXKssh5qBp7nmD1OUC-wTyqGDEQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <1537943105-21247-1-git-send-email-Akash_Gajjar@mentor.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/2018 2:55 AM, Joel Fernandes wrote:
-> On Sat, Sep 8, 2018 at 1:28 PM Sai Prakash Ranjan
-> <saiprakash.ranjan@codeaurora.org> wrote:
->>
->> Add the kernel command line tp_pstore option that will have
->> tracepoints go to persistent ram buffer as well as to the
->> trace buffer for further debugging. This is similar to tp_printk
->> cmdline option of ftrace.
->>
->> Pstore support for event tracing is already added and we enable
->> logging to pstore only if cmdline is specified.
->>
->> Passing "tp_pstore" will activate logging to pstore. To turn it
->> off, the sysctl /proc/sys/kernel/tracepoint_pstore can have '0'
->> echoed into it. Note, this only works if the cmdline option is
->> used. Echoing 1 into the sysctl file without the cmdline option
->> will have no affect.
->>
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->> ---
->>   .../admin-guide/kernel-parameters.txt         | 21 ++++++++
->>   include/linux/ftrace.h                        |  6 ++-
->>   kernel/sysctl.c                               |  7 +++
->>   kernel/trace/Kconfig                          | 22 +++++++-
->>   kernel/trace/trace.c                          | 51 +++++++++++++++++++
->>   kernel/trace/trace.h                          |  7 +++
->>   6 files changed, 112 insertions(+), 2 deletions(-)
->>
-> [...]
->>   config GCOV_PROFILE_FTRACE
->>          bool "Enable GCOV profiling on ftrace subsystem"
->>          depends on GCOV_KERNEL
->> @@ -789,4 +810,3 @@ config GCOV_PROFILE_FTRACE
->>   endif # FTRACE
->>
->>   endif # TRACING_SUPPORT
->> -
->> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
->> index bf6f1d70484d..018cbbefb769 100644
->> --- a/kernel/trace/trace.c
->> +++ b/kernel/trace/trace.c
->> @@ -73,6 +73,11 @@ struct trace_iterator *tracepoint_print_iter;
->>   int tracepoint_printk;
->>   static DEFINE_STATIC_KEY_FALSE(tracepoint_printk_key);
->>
->> +/* Pipe tracepoints to pstore */
->> +struct trace_iterator *tracepoint_pstore_iter;
->> +int tracepoint_pstore;
->> +static DEFINE_STATIC_KEY_FALSE(tracepoint_pstore_key);
->> +
->>   /* For tracers that don't implement custom flags */
->>   static struct tracer_opt dummy_tracer_opt[] = {
->>          { }
->> @@ -238,6 +243,14 @@ static int __init set_tracepoint_printk(char *str)
->>   }
->>   __setup("tp_printk", set_tracepoint_printk);
->>
->> +static int __init set_tracepoint_pstore(char *str)
->> +{
->> +       if ((strcmp(str, "=0") != 0 && strcmp(str, "=off") != 0))
->> +               tracepoint_pstore = 1;
->> +       return 1;
->> +}
->> +__setup("tp_pstore", set_tracepoint_pstore);
->> +
->>   unsigned long long ns2usecs(u64 nsec)
->>   {
->>          nsec += 500;
->> @@ -2376,11 +2389,45 @@ int tracepoint_printk_sysctl(struct ctl_table *table, int write,
->>          return ret;
->>   }
->>
->> +static DEFINE_MUTEX(tracepoint_pstore_mutex);
->> +
->> +int tracepoint_pstore_sysctl(struct ctl_table *table, int write,
->> +                            void __user *buffer, size_t *lenp,
->> +                            loff_t *ppos)
->> +{
->> +       int save_tracepoint_pstore;
->> +       int ret;
->> +
->> +       mutex_lock(&tracepoint_pstore_mutex);
->> +       save_tracepoint_pstore = tracepoint_pstore;
->> +
->> +       ret = proc_dointvec(table, write, buffer, lenp, ppos);
->> +
->> +       if (!tracepoint_pstore_iter)
->> +               tracepoint_pstore = 0;
->> +
->> +       if (save_tracepoint_pstore == tracepoint_pstore)
->> +               goto out;
->> +
->> +       if (tracepoint_pstore)
->> +               static_key_enable(&tracepoint_pstore_key.key);
->> +       else
->> +               static_key_disable(&tracepoint_pstore_key.key);
->> +
->> + out:
->> +       mutex_unlock(&tracepoint_pstore_mutex);
->> +
->> +       return ret;
->> +}
->> +
->>   void trace_event_buffer_commit(struct trace_event_buffer *fbuffer)
->>   {
->>          if (static_key_false(&tracepoint_printk_key.key))
->>                  output_printk(fbuffer);
->>
->> +       if (static_key_false(&tracepoint_pstore_key.key))
->> +               pstore_event_call(fbuffer);
+
+
+On Wednesday 26 September 2018 11:54 AM, Akash Gajjar wrote:
+> Rockpro64 is a rockchip RK3399 based board from pine64.org.
+> This patch adds basic device node support for Rockpro64 board and make it able
+> to bring up.
 > 
-> Can you not find a way to pass the size of the even record here, to
-> pstore? Then you can directly allocate and store the binary record in
-> pstore itself instead of rendering and storing the text in pstore
-> which will be more space (and I think time) efficient. I also think if
-> you do this, then you will not need to use the spinlock in the pstore
-> (which AIUI is preventing the warning you're seeing in the
-> event_call->event.funcs->trace() call).
+> Peripheral Works
+> - Sdcard
+> - USB 2.0, 3.0
+> - Leds
+> - Ethernet
+> - Debug console
 > 
+> Not working:
+> - USB Type-C
+> 
+> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
+> ---
+> changes for v2
+> - Added support for usb 2.0, 3.0
+> - Added fusb302 node and its regulator support
+> - Cleanup pinctrl node
+> - Remove backlight, pcie, sound codec node inherited from firefly-rk3399 dts
+> changes for v3
+> - Added copyright properly
+> - Typo correction in commit message
+> 
+>  Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
+>  arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+>  arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts  | 692 +++++++++++++++++++++
+>  3 files changed, 697 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> 
+Acked-by: Deepak Das <Deepak_Das@mentor.com>
 
-Right, I can check this out.
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
+> index acfd3c7..ac95183 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.txt
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.txt
+> @@ -160,6 +160,10 @@ Rockchip platforms device tree bindings
+>      Required root node properties:
+>      - compatible = "pine64,rock64", "rockchip,rk3328";
+>  
+> +- Pine64 RockPro64 board:
+> +    Required root node properties:
+> +    - compatible = "pine64,rockpro64", "rockchip,rk3399";
+> +
+>  - Rockchip PX3 Evaluation board:
+>      Required root node properties:
+>        - compatible = "rockchip,px3-evb", "rockchip,px3", "rockchip,rk3188";
+> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+> index b0092d9..03d523a 100644
+> --- a/arch/arm64/boot/dts/rockchip/Makefile
+> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> @@ -14,5 +14,6 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-firefly.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-bob.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-kevin.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
+> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> new file mode 100644
+> index 0000000..1d35f54
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> @@ -0,0 +1,692 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd.
+> + * Copyright (c) 2018 Akash Gajjar <Akash_Gajjar@mentor.com>
+> + */
+> +
+> +/dts-v1/;
+> +#include <dt-bindings/input/linux-event-codes.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +#include "rk3399.dtsi"
+> +#include "rk3399-opp.dtsi"
+> +
+> +/ {
+> +	model = "Pine64 RockPro64";
+> +	compatible = "pine64,rockpro64", "rockchip,rk3399";
+> +
+> +	chosen {
+> +		stdout-path = "serial2:1500000n8";
+> +	};
+> +
+> +	clkin_gmac: external-gmac-clock {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <125000000>;
+> +		clock-output-names = "clkin_gmac";
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	dc_12v: dc-12v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "dc_12v";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <12000000>;
+> +		regulator-max-microvolt = <12000000>;
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		autorepeat;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pwrbtn>;
+> +
+> +		power {
+> +			debounce-interval = <100>;
+> +			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_LOW>;
+> +			label = "GPIO Key Power";
+> +			linux,code = <KEY_POWER>;
+> +			wakeup-source;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&work_led_gpio>, <&diy_led_gpio>;
+> +
+> +		work-led {
+> +			label = "work";
+> +			default-state = "on";
+> +			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		diy-led {
+> +			label = "diy";
+> +			default-state = "off";
+> +			gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+> +
+> +	sdio_pwrseq: sdio-pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		clocks = <&rk808 1>;
+> +		clock-names = "ext_clock";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wifi_enable_h>;
+> +
+> +		/*
+> +		 * On the module itself this is one of these (depending
+> +		 * on the actual card populated):
+> +		 * - SDIO_RESET_L_WL_REG_ON
+> +		 * - PDN (power down when low)
+> +		 */
+> +		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> +	/* switched by pmic_sleep */
+> +	vcc1v8_s3: vcca1v8_s3: vcc1v8-s3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc1v8_s3";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		vin-supply = <&vcc_1v8>;
+> +	};
+> +
+> +	vcc3v3_pcie: vcc3v3-pcie-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pcie_pwr_en>;
+> +		regulator-name = "vcc3v3_pcie";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		vin-supply = <&dc_12v>;
+> +	};
+> +
+> +	vcc3v3_sys: vcc3v3-sys {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc3v3_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +
+> +	/* Actually 3 regulators (host0, 1, 2) controlled by the same gpio */
+> +	vcc5v0_host: vcc5v0-host-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcc5v0_host_en>;
+> +		regulator-name = "vcc5v0_host";
+> +		regulator-always-on;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +
+> +	vcc5v0_typec: vcc5v0-typec-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcc5v0_typec_en>;
+> +		regulator-name = "vcc5v0_typec";
+> +		regulator-always-on;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +
+> +	vcc_sys: vcc-sys {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		vin-supply = <&dc_12v>;
+> +	};
+> +
+> +	vdd_log: vdd-log {
+> +		compatible = "pwm-regulator";
+> +		pwms = <&pwm2 0 25000 1>;
+> +		regulator-name = "vdd_log";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <800000>;
+> +		regulator-max-microvolt = <1400000>;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +};
+> +
+> +&cpu_l0 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_l1 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_l2 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_l3 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_b0 {
+> +	cpu-supply = <&vdd_cpu_b>;
+> +};
+> +
+> +&cpu_b1 {
+> +	cpu-supply = <&vdd_cpu_b>;
+> +};
+> +
+> +&emmc_phy {
+> +	status = "okay";
+> +};
+> +
+> +&gmac {
+> +	assigned-clocks = <&cru SCLK_RMII_SRC>;
+> +	assigned-clock-parents = <&clkin_gmac>;
+> +	clock_in_out = "input";
+> +	phy-supply = <&vcc_lan>;
+> +	phy-mode = "rgmii";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&rgmii_pins>;
+> +	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+> +	snps,reset-active-low;
+> +	snps,reset-delays-us = <0 10000 50000>;
+> +	tx_delay = <0x28>;
+> +	rx_delay = <0x11>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +	clock-frequency = <400000>;
+> +	i2c-scl-rising-time-ns = <168>;
+> +	i2c-scl-falling-time-ns = <4>;
+> +	status = "okay";
+> +
+> +	rk808: pmic@1b {
+> +		compatible = "rockchip,rk808";
+> +		reg = <0x1b>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
+> +		#clock-cells = <1>;
+> +		clock-output-names = "xin32k", "rk808-clkout2";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pmic_int_l>;
+> +		rockchip,system-power-controller;
+> +		wakeup-source;
+> +
+> +		vcc1-supply = <&vcc_sys>;
+> +		vcc2-supply = <&vcc_sys>;
+> +		vcc3-supply = <&vcc_sys>;
+> +		vcc4-supply = <&vcc_sys>;
+> +		vcc6-supply = <&vcc_sys>;
+> +		vcc7-supply = <&vcc_sys>;
+> +		vcc8-supply = <&vcc3v3_sys>;
+> +		vcc9-supply = <&vcc_sys>;
+> +		vcc10-supply = <&vcc_sys>;
+> +		vcc11-supply = <&vcc_sys>;
+> +		vcc12-supply = <&vcc3v3_sys>;
+> +		vddio-supply = <&vcc1v8_pmu>;
+> +
+> +		regulators {
+> +			vdd_center: DCDC_REG1 {
+> +				regulator-name = "vdd_center";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <750000>;
+> +				regulator-max-microvolt = <1350000>;
+> +				regulator-ramp-delay = <6001>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vdd_cpu_l: DCDC_REG2 {
+> +				regulator-name = "vdd_cpu_l";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <750000>;
+> +				regulator-max-microvolt = <1350000>;
+> +				regulator-ramp-delay = <6001>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_ddr: DCDC_REG3 {
+> +				regulator-name = "vcc_ddr";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_1v8: DCDC_REG4 {
+> +				regulator-name = "vcc_1v8";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <1800000>;
+> +				};
+> +			};
+> +
+> +			vcc1v8_dvp: LDO_REG1 {
+> +				regulator-name = "vcc1v8_dvp";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc2v8_dvp: LDO_REG2 {
+> +				regulator-name = "vcc2v8_dvp";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <2800000>;
+> +				regulator-max-microvolt = <2800000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc1v8_pmu: LDO_REG3 {
+> +				regulator-name = "vcc1v8_pmu";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <1800000>;
+> +				};
+> +			};
+> +
+> +			vcc_sdio: LDO_REG4 {
+> +				regulator-name = "vcc_sdio";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3000000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <3000000>;
+> +				};
+> +			};
+> +
+> +			vcca3v0_codec: LDO_REG5 {
+> +				regulator-name = "vcca3v0_codec";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <3000000>;
+> +				regulator-max-microvolt = <3000000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_1v5: LDO_REG6 {
+> +				regulator-name = "vcc_1v5";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1500000>;
+> +				regulator-max-microvolt = <1500000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <1500000>;
+> +				};
+> +			};
+> +
+> +			vcca1v8_codec: LDO_REG7 {
+> +				regulator-name = "vcca1v8_codec";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_3v0: LDO_REG8 {
+> +				regulator-name = "vcc_3v0";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <3000000>;
+> +				regulator-max-microvolt = <3000000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <3000000>;
+> +				};
+> +			};
+> +
+> +			vcc3v3_s3: vcc_lan: SWITCH_REG1 {
+> +				regulator-name = "vcc3v3_s3";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc3v3_s0: SWITCH_REG2 {
+> +				regulator-name = "vcc3v3_s0";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	vdd_cpu_b: regulator@40 {
+> +		compatible = "silergy,syr827";
+> +		reg = <0x40>;
+> +		fcs,suspend-voltage-selector = <0>;
+> +		regulator-name = "vdd_cpu_b";
+> +		regulator-min-microvolt = <712500>;
+> +		regulator-max-microvolt = <1500000>;
+> +		regulator-ramp-delay = <1000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		vin-supply = <&vcc_sys>;
+> +
+> +		regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +
+> +	vdd_gpu: regulator@41 {
+> +		compatible = "silergy,syr828";
+> +		reg = <0x41>;
+> +		fcs,suspend-voltage-selector = <1>;
+> +		regulator-name = "vdd_gpu";
+> +		regulator-min-microvolt = <712500>;
+> +		regulator-max-microvolt = <1500000>;
+> +		regulator-ramp-delay = <1000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		vin-supply = <&vcc_sys>;
+> +
+> +		regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +};
+> +
+> +&i2c1 {
+> +	i2c-scl-rising-time-ns = <300>;
+> +	i2c-scl-falling-time-ns = <15>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c3 {
+> +	i2c-scl-rising-time-ns = <450>;
+> +	i2c-scl-falling-time-ns = <15>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c4 {
+> +	i2c-scl-rising-time-ns = <600>;
+> +	i2c-scl-falling-time-ns = <20>;
+> +	status = "okay";
+> +
+> +	fusb0: typec-portc@22 {
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&fusb0_int>;
+> +		vbus-supply = <&vcc5v0_typec>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&i2s0 {
+> +	rockchip,playback-channels = <8>;
+> +	rockchip,capture-channels = <8>;
+> +	status = "okay";
+> +};
+> +
+> +&i2s1 {
+> +	rockchip,playback-channels = <2>;
+> +	rockchip,capture-channels = <2>;
+> +	status = "okay";
+> +};
+> +
+> +&i2s2 {
+> +	status = "okay";
+> +};
+> +
+> +&io_domains {
+> +	status = "okay";
+> +
+> +	bt656-supply = <&vcc1v8_dvp>;
+> +	audio-supply = <&vcca1v8_codec>;
+> +	sdmmc-supply = <&vcc_sdio>;
+> +	gpio1830-supply = <&vcc_3v0>;
+> +};
+> +
+> +&pmu_io_domains {
+> +	pmu1830-supply = <&vcc_3v0>;
+> +	status = "okay";
+> +};
+> +
+> +&pinctrl {
+> +	buttons {
+> +		pwrbtn: pwrbtn {
+> +			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	fusb302x {
+> +		fusb0_int: fusb0-int {
+> +			rockchip,pins = <1 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		work_led_gpio: work_led-gpio {
+> +			rockchip,pins = <0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +
+> +		diy_led_gpio: diy_led-gpio {
+> +			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	lcd-panel {
+> +		lcd_panel_reset: lcd-panel-reset {
+> +			rockchip,pins = <4 RK_PD6 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	pcie {
+> +		pcie_pwr_en: pcie-pwr-en {
+> +			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	pmic {
+> +		pmic_int_l: pmic-int-l {
+> +			rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +
+> +		vsel1_gpio: vsel1-gpio {
+> +			rockchip,pins = <1 RK_PC2 RK_FUNC_GPIO &pcfg_pull_down>;
+> +		};
+> +
+> +		vsel2_gpio: vsel2-gpio {
+> +			rockchip,pins = <1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
+> +		};
+> +	};
+> +
+> +	sdio-pwrseq {
+> +		wifi_enable_h: wifi-enable-h {
+> +			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	usb-typec {
+> +		vcc5v0_typec_en: vcc5v0_typec_en {
+> +			rockchip,pins = <1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	usb2 {
+> +		vcc5v0_host_en: vcc5v0-host-en {
+> +			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +};
+> +
+> +&pwm0 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm2 {
+> +	status = "okay";
+> +};
+> +
+> +&saradc {
+> +	vref-supply = <&vcca1v8_s3>;
+> +	status = "okay";
+> +};
+> +
+> +&sdmmc {
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+> +	cap-sd-highspeed;
+> +	cd-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	max-frequency = <150000000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
+> +	status = "okay";
+> +};
+> +
+> +&sdhci {
+> +	bus-width = <8>;
+> +	mmc-hs400-1_8v;
+> +	mmc-hs400-enhanced-strobe;
+> +	non-removable;
+> +	status = "okay";
+> +};
+> +
+> +&tcphy0 {
+> +	status = "okay";
+> +};
+> +
+> +&tcphy1 {
+> +	status = "okay";
+> +};
+> +
+> +&tsadc {
+> +	/* tshut mode 0:CRU 1:GPIO */
+> +	rockchip,hw-tshut-mode = <1>;
+> +	/* tshut polarity 0:LOW 1:HIGH */
+> +	rockchip,hw-tshut-polarity = <1>;
+> +	status = "okay";
+> +};
+> +
+> +&u2phy0 {
+> +	status = "okay";
+> +
+> +	u2phy0_otg: otg-port {
+> +		status = "okay";
+> +	};
+> +
+> +	u2phy0_host: host-port {
+> +		phy-supply = <&vcc5v0_host>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&u2phy1 {
+> +	status = "okay";
+> +
+> +	u2phy1_otg: otg-port {
+> +		status = "okay";
+> +	};
+> +
+> +	u2phy1_host: host-port {
+> +		phy-supply = <&vcc5v0_host>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart0_xfer &uart0_cts>;
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host0_ehci {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host0_ohci {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host1_ehci {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host1_ohci {
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd3_0 {
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd_dwc3_0 {
+> +	status = "okay";
+> +	dr_mode = "otg";
+> +};
+> +
+> +&usbdrd3_1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd_dwc3_1 {
+> +	status = "okay";
+> +	dr_mode = "host";
+> +};
+> +
+> +&vopb {
+> +	status = "okay";
+> +};
+> +
+> +&vopb_mmu {
+> +	status = "okay";
+> +};
+> +
+> +&vopl {
+> +	status = "okay";
+> +};
+> +
+> +&vopl_mmu {
+> +	status = "okay";
+> +};
+> 
