@@ -2,173 +2,104 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A56B5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF312C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406DC21527
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:17:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PqqjMjd5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406DC21527
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 989E521527
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:17:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 989E521527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeI0Dbz (ORCPT
+        id S1727166AbeI0DcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 23:31:55 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39095 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726914AbeI0Dby (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 23:31:54 -0400
-Received: by mail-oi1-f193.google.com with SMTP id y81-v6so375427oia.6
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:17:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wZl+lvsIFikjr8PI1B+KmM9/vCEfPpYfDZIQXKml86I=;
-        b=PqqjMjd5JMHqxbhD/rUjFmuZCCe+KtsLZFEDdeE6ifuHTcuUrXWDgHCIkV2A2+/uEI
-         ibNgRA9TbcWcRAe9QpTXSQqwT2qipk1PqiVLNfOzvCTw6Pq7IxgNGvO/4ipo85kW05gv
-         P+zFESxNbvb7geBVeeRxYP6Y5/agiLJJr6QyfjJTdOi4US/zrn0Ne2UzoHst7V76d+4y
-         O22eEDxO5JRrH9mqsR27wrkZIDg8ANGF3yHyHvbV/sdLyIq3IN9TduUJxEaS3ZezLMPQ
-         m6khgaRNjKnBJOKjaqnwWT8aP5ROAZ0s+sZ3T3FJqM5bpxMj1m/KMK4edR2UsbLtMcn/
-         ypxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wZl+lvsIFikjr8PI1B+KmM9/vCEfPpYfDZIQXKml86I=;
-        b=td5wc9cUpxVYhH3pxq/P7LCpZUBa4HkARPp8qQio5pKYbmvBaEkUPyFoBOvVR7rI+D
-         WUhadLYOLCKaG1ycj1ZG4LsIMY6inw0GqFtwpwS8kLdyRyZCAHoculYnHAE2lTMb2+n9
-         6syc0TidBMV4Tx09egkt+dj8NdtSz9ehkQMNQJeURs69IBVPGa+DyThf+wIpONMIiFO5
-         Ec08n+abS1H30MIKcZYsZQ59JkAwkXCS5B/+dvO8qHyncki69u8iGZ8+mAlVPjyge/sN
-         zb0vtG5Im+WFr217zFb/tagPoZQ8ZE7H7rdM0XcNhGzmi/aLJBXdORyzTL8QfFhZqgEh
-         UOhw==
-X-Gm-Message-State: ABuFfoiGzqI6R4Jw8+CzvIn597gMQp55S6O6GqGaGCmOgo8rnP/V65J4
-        VzdcvkpQ9FoKIEYve9mQnkZ/LOVLs+45QQ2iY9bQqA==
-X-Google-Smtp-Source: ACcGV63ZkKuotpIlo/yd2Jdq5ao7vHeM19B0fdZiuXKrmsl4aGdJ1IRKiOungcBLj8d071nCNpXXq5Xbbsaem8fzv9A=
-X-Received: by 2002:aca:d513:: with SMTP id m19-v6mr1777055oig.82.1537996621862;
- Wed, 26 Sep 2018 14:17:01 -0700 (PDT)
+        Wed, 26 Sep 2018 23:32:02 -0400
+Received: from mga07.intel.com ([134.134.136.100]:11363 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726914AbeI0DcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 23:32:02 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 14:17:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
+   d="scan'208";a="93539552"
+Received: from mhovav2-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.1.236])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Sep 2018 14:17:07 -0700
+Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
+        id 9203221E3F; Thu, 27 Sep 2018 00:17:06 +0300 (EEST)
+Date:   Thu, 27 Sep 2018 00:17:06 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: ov9650: avoid maybe-uninitialized warnings
+Message-ID: <20180926211706.eswbm2hgbmgy2oog@kekkonen.localdomain>
+References: <20180926125127.2004280-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <20180926203446.2004-1-casey.schaufler@intel.com> <20180926203446.2004-2-casey.schaufler@intel.com>
-In-Reply-To: <20180926203446.2004-2-casey.schaufler@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 26 Sep 2018 23:16:35 +0200
-Message-ID: <CAG48ez1xu_WJi5_UZvrTO_H6o=DHRvm5LMp_jg=GauLbpkYARg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] AppArmor: Prepare for PTRACE_MODE_SCHED
-To:     Casey Schaufler <casey.schaufler@intel.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
-        deneen.t.dock@intel.com, kristen@linux.intel.com,
-        Arjan van de Ven <arjan@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926125127.2004280-1-arnd@arndb.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 10:35 PM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
-> A ptrace access check with mode PTRACE_MODE_SCHED gets called
-> from process switching code. This precludes the use of audit,
-> as the locking is incompatible. Don't do audit in the PTRACE_MODE_SCHED
-> case.
+Hi Arnd,
 
-Why is this separate from PTRACE_MODE_NOAUDIT? It looks like
-apparmor_ptrace_access_check() currently ignores PTRACE_MODE_NOAUDIT.
-Could you, instead of adding a new flag, fix the handling of
-PTRACE_MODE_NOAUDIT?
+On Wed, Sep 26, 2018 at 02:51:01PM +0200, Arnd Bergmann wrote:
+> The regmap change causes multiple warnings like
+> 
+> drivers/media/i2c/ov9650.c: In function 'ov965x_g_volatile_ctrl':
+> drivers/media/i2c/ov9650.c:889:29: error: 'reg2' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>    exposure = ((reg2 & 0x3f) << 10) | (reg1 << 2) |
+>               ~~~~~~~~~~~~~~~^~~~~~
+> 
+> It is apparently hard for the compiler to see here if ov965x_read()
+> returned successfully or not. Besides, we have a v4l2_dbg() statement
+> that prints an uninitialized value if regmap_read() fails.
+> 
+> Adding an 'else' clause avoids the ambiguity.
 
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+Thanks!
+
+I'm not sure what happened here but the two lines use spaces for
+indentation. I've replaced those with tabs.
+
+> 
+> Fixes: 361f3803adfe ("media: ov9650: use SCCB regmap")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  security/apparmor/domain.c      | 2 +-
->  security/apparmor/include/ipc.h | 2 +-
->  security/apparmor/ipc.c         | 8 +++++---
->  security/apparmor/lsm.c         | 5 +++--
->  4 files changed, 10 insertions(+), 7 deletions(-)
->
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 08c88de0ffda..28300f4c3ef9 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -77,7 +77,7 @@ static int may_change_ptraced_domain(struct aa_label *to_label,
->         if (!tracer || unconfined(tracerl))
->                 goto out;
->
-> -       error = aa_may_ptrace(tracerl, to_label, PTRACE_MODE_ATTACH);
-> +       error = aa_may_ptrace(tracerl, to_label, PTRACE_MODE_ATTACH, true);
->
->  out:
->         rcu_read_unlock();
-> diff --git a/security/apparmor/include/ipc.h b/security/apparmor/include/ipc.h
-> index 5ffc218d1e74..299d1c45fef0 100644
-> --- a/security/apparmor/include/ipc.h
-> +++ b/security/apparmor/include/ipc.h
-> @@ -34,7 +34,7 @@ struct aa_profile;
->         "xcpu xfsz vtalrm prof winch io pwr sys emt lost"
->
->  int aa_may_ptrace(struct aa_label *tracer, struct aa_label *tracee,
-> -                 u32 request);
-> +                 u32 request, bool audit);
->  int aa_may_signal(struct aa_label *sender, struct aa_label *target, int sig);
->
->  #endif /* __AA_IPC_H */
-> diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
-> index 527ea1557120..9ed110afc822 100644
-> --- a/security/apparmor/ipc.c
-> +++ b/security/apparmor/ipc.c
-> @@ -121,15 +121,17 @@ static int profile_tracer_perm(struct aa_profile *tracer,
->   * Returns: %0 else error code if permission denied or error
->   */
->  int aa_may_ptrace(struct aa_label *tracer, struct aa_label *tracee,
-> -                 u32 request)
-> +                 u32 request, bool audit)
->  {
->         struct aa_profile *profile;
->         u32 xrequest = request << PTRACE_PERM_SHIFT;
->         DEFINE_AUDIT_DATA(sa, LSM_AUDIT_DATA_NONE, OP_PTRACE);
->
->         return xcheck_labels(tracer, tracee, profile,
-> -                       profile_tracer_perm(profile, tracee, request, &sa),
-> -                       profile_tracee_perm(profile, tracer, xrequest, &sa));
-> +                       profile_tracer_perm(profile, tracee, request,
-> +                                           audit ? &sa : NULL),
-> +                       profile_tracee_perm(profile, tracer, xrequest,
-> +                                           audit ? &sa : NULL));
->  }
->
->
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 8b8b70620bbe..da9d0b228857 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -118,7 +118,8 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
->         tracee = aa_get_task_label(child);
->         error = aa_may_ptrace(tracer, tracee,
->                         (mode & PTRACE_MODE_READ) ? AA_PTRACE_READ
-> -                                                 : AA_PTRACE_TRACE);
-> +                                                 : AA_PTRACE_TRACE,
-> +                       !(mode & PTRACE_MODE_SCHED));
->         aa_put_label(tracee);
->         end_current_label_crit_section(tracer);
->
-> @@ -132,7 +133,7 @@ static int apparmor_ptrace_traceme(struct task_struct *parent)
->
->         tracee = begin_current_label_crit_section();
->         tracer = aa_get_task_label(parent);
-> -       error = aa_may_ptrace(tracer, tracee, AA_PTRACE_TRACE);
-> +       error = aa_may_ptrace(tracer, tracee, AA_PTRACE_TRACE, true);
->         aa_put_label(tracer);
->         end_current_label_crit_section(tracee);
->
-> --
-> 2.17.1
->
+>  drivers/media/i2c/ov9650.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
+> index 3c9e6798d14b..77944da31de1 100644
+> --- a/drivers/media/i2c/ov9650.c
+> +++ b/drivers/media/i2c/ov9650.c
+> @@ -433,6 +433,8 @@ static int ov965x_read(struct ov965x *ov965x, u8 addr, u8 *val)
+>  	ret = regmap_read(ov965x->regmap, addr, &buf);
+>  	if (!ret)
+>  		*val = buf;
+> +        else
+> +                *val = -1;
+>  
+>  	v4l2_dbg(2, debug, &ov965x->sd, "%s: 0x%02x @ 0x%02x. (%d)\n",
+>  		 __func__, *val, addr, ret);
+
+-- 
+Kind regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
