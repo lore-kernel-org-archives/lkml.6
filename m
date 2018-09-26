@@ -8,64 +8,65 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4DEC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A466C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECDEC20842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E362083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:33:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlpQoW6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECDEC20842
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYEH3jMl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E362083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeIZOo4 (ORCPT
+        id S1727053AbeIZOot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:44:56 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45303 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727244AbeIZOoz (ORCPT
+        Wed, 26 Sep 2018 10:44:49 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38026 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbeIZOos (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:44:55 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a23-v6so5412851pfi.12
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:33:07 -0700 (PDT)
+        Wed, 26 Sep 2018 10:44:48 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b5-v6so134115plr.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:33:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UBDvynMlQ+CLa//vjhI1FniisjjUmkbIGiogOAJ0pDw=;
-        b=nlpQoW6gTNn0ZvJ6d3TtBZiUM/dTyRg/qvqxtod61+lEcMu9xu3ryWfBe0YHMB2RJa
-         3e0arhfbXSga29nBn5n4iAzoWkJiSTAI8yJGbLHp8THp0Tzs9S12z1ndhxXrGbBaRtoi
-         OTtNLwvTftEWq1SB3fM450H0BnLUw9WKbs+oit5cHFcl/UBHZBTQwWzMql6NaS/yIGDC
-         Sf7doqUJ/uR8LWqTqzBPmVdVbpVNngzn7k5Z5nWcgPxQKaunWeenhwlakMALH4E2Wrm7
-         AxebaQHcOH/NgxOGnszKorbRPJFaKe3Wb/z53p/ehs3ZbQyZvOZPhHGj4BIlP2ceTj6U
-         4Vxw==
+        bh=Ul55wigUjE4to1TohXKcjf7rrHR2DeP0tn9CFO87rmQ=;
+        b=hYEH3jMlNhLRTGwPJGo2f3wGHDL/EDCtZEHrk/jBVFFQo3S1+2PbIQvscOtoxQx5s0
+         KJtZ/i0OsXvbL00R7+7lXHY3Yw1rOfyth5dxZuTixlMqASoGO/sL7QhExPJkbPpEy6IY
+         /cC2kRZpmGusKwm61UwrVP2qCQqJZsfW7kNhSyY5gmZGZBn+EWmQcZNYXnCWyodMb5N1
+         z/AFpWwJa9OLehnAKeim0lh9acMDcVzW9JOzgdtVIetA08rUNMt+QKS4RSufpnH4+64t
+         iy0o7GkTq8PTprWJZxaIf4jsMdmSjWdqwwbXmHor/zPIYVq/bSzQSOk0LpHeb3zqZaf9
+         cUGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=UBDvynMlQ+CLa//vjhI1FniisjjUmkbIGiogOAJ0pDw=;
-        b=t3Gi1Kz5wN77iEhgEzO8nMoVEBbO91MvqFbfoaR2jsrlWiHx1LGpg0Khx8o1PwgD8A
-         2ttIo1PueuqT742/97ioH8RtZ1EjV+5JtI/8/+D60d/lrtj6qLhhnjf1MRP6AAjGtTKc
-         FnwauS+lxmzjjp4dc7U2STCARQyOogWG3uEQxfRswfkVto5OJRwt27aKdxdhIdBBV0sO
-         wmCuz45Do1VSsX/rBd+TQ1m8HLC6jgdb/0TO6IqhAx0LlTTUun3Aq0/LXSlRdpEM/xAP
-         EU84fmgLH780/KwOHrzWy1wHhcwLxodCiDAiHE/30LYfR7Rop8R9OQiqPFI9MC9pGyVe
-         dgUQ==
-X-Gm-Message-State: ABuFfohSxXqNT+1+Tk04gEvjLUn5ksb7rzrtTFhvLN87gkKpyWpbgzpW
-        HpBM65IKNkhfC2X+hTKQmXA=
-X-Google-Smtp-Source: ACcGV61DR9IMLqNAjTlLRYHT+XOmYQ0I2xkfogfqOQ6H+2d+c2ye8dLxgkfQ32da6MFrMpv+/W/6Kg==
-X-Received: by 2002:a63:1566:: with SMTP id 38-v6mr4621863pgv.383.1537950786910;
-        Wed, 26 Sep 2018 01:33:06 -0700 (PDT)
+        bh=Ul55wigUjE4to1TohXKcjf7rrHR2DeP0tn9CFO87rmQ=;
+        b=JsFpXBcw5rn7x8pcxkqwVUav69YgQ3w66Ge2tkmdBg7/MLM97dQG1igQtpzBir/vDH
+         GXuBBnAqitaEBlfE2cxJz9EfOF+qjxcItyX9xu6KPKT5OVuh0CKS0f6LBn/k5hnPNwj1
+         KMXOxk0o/MabAnPSL6KmblBHXM8PMUj6ZXmIStlfcnfdO/CGRbuyanS5Kf+NcWMNrv+L
+         5pxLKkBORExMufnJKXC1ANTysPrgBLWrCDH4jCvTxgdowKSr8nTPmyhPzRoQ4LX9osyS
+         AMMFu4V1k+UmcRTvULL9Leqa02rrSwZlkd+wY+XkkrDx6lWsRcDqvFlUFN2UtJ0RIQ36
+         vksQ==
+X-Gm-Message-State: ABuFfoiCGXTA/3czx51T7n/6U3NbxNlJIIIY1jblpVvzcEofVbN3KcBn
+        AFC+FUcEk8+o9RP2KHLYLSg=
+X-Google-Smtp-Source: ACcGV61AVIaq65L/UPMDOaBaOxZDgRx4GIKOrQ/BLBI7ZG/Dj2bebNJIkwmqbe7NiYOidRacJsZDJw==
+X-Received: by 2002:a17:902:650f:: with SMTP id b15-v6mr4948598plk.2.1537950779386;
+        Wed, 26 Sep 2018 01:32:59 -0700 (PDT)
 Received: from app09.andestech.com ([118.163.51.199])
-        by smtp.gmail.com with ESMTPSA id f15-v6sm5530764pgv.66.2018.09.26.01.33.05
+        by smtp.gmail.com with ESMTPSA id f15-v6sm5530764pgv.66.2018.09.26.01.32.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 01:33:06 -0700 (PDT)
+        Wed, 26 Sep 2018 01:32:58 -0700 (PDT)
 From:   Zong Li <zongbox@gmail.com>
 To:     palmer@sifive.com, aou@eecs.berkeley.edu
 Cc:     hch@infradead.org, zong@andestech.com, vincentc@andestech.com,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] RISC-V: Avoid corrupting the upper 32-bit of phys_addr_t in ioremap
-Date:   Wed, 26 Sep 2018 16:31:14 +0800
-Message-Id: <341d3a765c0078280eb99d49559b5f9a27b93fe4.1537949825.git.zongbox@gmail.com>
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Zong Li <zongbox@gmail.com>
+Subject: [PATCH v2 1/5] RISC-V: Build tishift only on 64-bit
+Date:   Wed, 26 Sep 2018 16:31:10 +0800
+Message-Id: <40c77db9ee2d23479ff90f2658539d29d7a30896.1537949825.git.zongbox@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1537949825.git.zongbox@gmail.com>
 References: <cover.1537949825.git.zongbox@gmail.com>
@@ -74,31 +75,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Chen <vincentc@andestech.com>
+Only RV64 supports 128 integer size.
 
-For 32bit, the upper 32-bit of phys_addr_t will be flushed to zero
-after AND with PAGE_MASK because the data type of PAGE_MASK is
-unsigned long. To fix this problem, the page alignment is done by
-subtracting the page offset instead of AND with PAGE_MASK.
-
-Signed-off-by: Vincent Chen <vincentc@andestech.com>
+Signed-off-by: Zong Li <zong@andestech.com>
 ---
- arch/riscv/mm/ioremap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/riscv/lib/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/mm/ioremap.c b/arch/riscv/mm/ioremap.c
-index 70ef272..bd2f2db 100644
---- a/arch/riscv/mm/ioremap.c
-+++ b/arch/riscv/mm/ioremap.c
-@@ -42,7 +42,7 @@ static void __iomem *__ioremap_caller(phys_addr_t addr, size_t size,
+diff --git a/arch/riscv/lib/Makefile b/arch/riscv/lib/Makefile
+index 445ec84..5739bd0 100644
+--- a/arch/riscv/lib/Makefile
++++ b/arch/riscv/lib/Makefile
+@@ -2,6 +2,7 @@ lib-y	+= delay.o
+ lib-y	+= memcpy.o
+ lib-y	+= memset.o
+ lib-y	+= uaccess.o
+-lib-y	+= tishift.o
++
++lib-(CONFIG_64BIT) += tishift.o
  
- 	/* Page-align mappings */
- 	offset = addr & (~PAGE_MASK);
--	addr &= PAGE_MASK;
-+	addr -= offset;
- 	size = PAGE_ALIGN(size + offset);
- 
- 	area = get_vm_area_caller(size, VM_IOREMAP, caller);
+ lib-$(CONFIG_32BIT) += udivdi3.o
 -- 
 2.7.4
 
