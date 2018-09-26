@@ -2,142 +2,115 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7A5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D1FC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D213521533
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:03:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D63E12156E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:03:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="a8fYBTHA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D213521533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="STzC75qG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63E12156E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbeIZXRn (ORCPT
+        id S1729008AbeIZXRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:17:43 -0400
-Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:19683 "EHLO
-        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728926AbeIZXRm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:17:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1537981413; x=1569517413;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=5madhtq3st5+ejyyYCOEXsIdMLQ9SUAE0O0VbUnLkbI=;
-  b=a8fYBTHAXL3eL1fX/wP2BTJ6Syu3ceZQy4zD1YAwJ9ClgFG7CTy3HgK+
-   TrKyo1cnbgaBILPi0+PYsBDK0IS+P5qdZJlae7YR+RscKfUosf4CYAlit
-   VdatyDxkYYw1R7mRQzhgWOH+HPwry/77H/LZaOydgaCDCqFSPRtwgd/Vr
-   4=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FwAAD+uqtbhyeV50NbHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUYJzfygKg2qIFV+LUoINgz2TEoE/OwsjC4Q+AheDZyE0GAEDAQECAQE?=
- =?us-ascii?q?CAQECEAEBAQoLCQgpIwyCNSINBEs7MAEBAQEBAQEBAQEBAQEBARoCDWMBAQE?=
- =?us-ascii?q?BAgESERFFEAIBCBgCAiYCAgJFEAIEDgUIGoJ/AYF5CA+ZAolXAQEBbYEuhCs?=
- =?us-ascii?q?BhWQFgQuJcIIXgRKCFH6DGwICGIEQgQSCNIJXAog2CIZ5jVAHAoZDiWIfjzS?=
- =?us-ascii?q?Le4hvAgQCBAUCFIFCgg5wgzyCM4NPhRSFPm8BinqBLoEeAQE?=
-X-IPAS-Result: =?us-ascii?q?A2FwAAD+uqtbhyeV50NbHAEBAQQBAQcEAQGBUYJzfygKg?=
- =?us-ascii?q?2qIFV+LUoINgz2TEoE/OwsjC4Q+AheDZyE0GAEDAQECAQECAQECEAEBAQoLC?=
- =?us-ascii?q?QgpIwyCNSINBEs7MAEBAQEBAQEBAQEBAQEBARoCDWMBAQEBAgESERFFEAIBC?=
- =?us-ascii?q?BgCAiYCAgJFEAIEDgUIGoJ/AYF5CA+ZAolXAQEBbYEuhCsBhWQFgQuJcIIXg?=
- =?us-ascii?q?RKCFH6DGwICGIEQgQSCNIJXAog2CIZ5jVAHAoZDiWIfjzSLe4hvAgQCBAUCF?=
- =?us-ascii?q?IFCgg5wgzyCM4NPhRSFPm8BinqBLoEeAQE?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Sep 2018 12:03:32 -0500
-Received: from pps.filterd (m0090351.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QH3CqK001835;
-        Wed, 26 Sep 2018 13:03:48 -0400
-Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
-        by mx0b-00154901.pphosted.com with ESMTP id 2mrbqygyqn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Sep 2018 13:03:48 -0400
-From:   <Mario.Limonciello@dell.com>
-Received: from ausxippc106.us.dell.com ([143.166.85.156])
-  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Sep 2018 23:03:39 +0600
-X-LoopCount0: from 10.166.132.169
-X-IronPort-AV: E=Sophos;i="5.54,307,1534827600"; 
-   d="scan'208";a="298046170"
-To:     <andy.shevchenko@gmail.com>
-CC:     <dvhart@infradead.org>, <linux-kernel@vger.kernel.org>,
-        <platform-driver-x86@vger.kernel.org>, <mika.westerberg@intel.com>
-Subject: RE: [PATCH] platform/x86: intel-wmi-thunderbolt: Add dynamic
- debugging
-Thread-Topic: [PATCH] platform/x86: intel-wmi-thunderbolt: Add dynamic
- debugging
-Thread-Index: AQHUVbOGMxR5CBms5k66u9Z7xuD6/6UDHdeA//+sXTA=
-Date:   Wed, 26 Sep 2018 17:03:45 +0000
-Message-ID: <72af799dd45442e6bd35082e1579013a@ausx13mpc120.AMER.DELL.COM>
-References: <1537978258-2907-1-git-send-email-mario.limonciello@dell.com>
- <CAHp75VeGQTEZOrMbNsbsxSb4RcN1y=gAZuZ5Z6FawuU-e0+qcg@mail.gmail.com>
-In-Reply-To: <CAHp75VeGQTEZOrMbNsbsxSb4RcN1y=gAZuZ5Z6FawuU-e0+qcg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 26 Sep 2018 19:17:45 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:39923 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728262AbeIZXRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:17:44 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 5fd81665;
+        Wed, 26 Sep 2018 16:45:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type:content-transfer-encoding; s=mail; bh=2c4lzHE6xMXM
+        GWOnCYyEiiWxKJ4=; b=STzC75qGc4Hy+QJzMV7nbukxMMWe0AHViatkRo9N32Md
+        xUfJgjSSqkPy+myk/yp1Bksf0dikh3oem/63nUdW/mXkP2cajs689XNPB1tI6IhO
+        3OIlLzbXDLNLtPYOTtDosQEYHi/DJ1lQ5ycS8cKnxkHw3PLDto0a4vq3m62+JloY
+        rt0Bv8gdq+OAb45tPxeXhSKrXNHJMvwHc8Ib0aY3gHlIGQA0ifrZi444ar195tuD
+        XlspMgXSdkXJPAnJ21Ouegi8cyBjuYAbk2WHdPJEbaGBB6gFBo5WgkqYI53l6f8L
+        Rhimb1Gly9dw0/PYaBMKcetOLr7N8LV2vDgTatwplQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2538e568 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Wed, 26 Sep 2018 16:45:13 +0000 (UTC)
+Received: by mail-oi1-f174.google.com with SMTP id n1-v6so5022761oic.4;
+        Wed, 26 Sep 2018 10:03:47 -0700 (PDT)
+X-Gm-Message-State: ABuFfojtiEmVtabDjPq4KdO5wZ/B92LRn1oIzPko5bwdIbnNDvhDBJnH
+        bJdaIl5nX6wvetkZmpkdNAkfprP3hyRMZCoOL0c=
+X-Google-Smtp-Source: ACcGV62ObtUsQy/TiUXeE4jVA7Bz2uUOWbJzSDLCFCuYkSvNIL1qJR8KlUyOInKTBGNCnJeKPQaOcYQRCtEvsAkxIO0=
+X-Received: by 2002:aca:d4cd:: with SMTP id l196-v6mr1133667oig.15.1537981426102;
+ Wed, 26 Sep 2018 10:03:46 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809260161
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
+ <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
+ <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com> <D93C2C15-DC70-4A95-9350-AD4036C9556A@amacapital.net>
+In-Reply-To: <D93C2C15-DC70-4A95-9350-AD4036C9556A@amacapital.net>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Wed, 26 Sep 2018 19:03:34 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pZKUMnnSZ0670rUH4H61g0x88c-B-DZYw_X-8+xgH-=g@mail.gmail.com>
+Message-ID: <CAHmME9pZKUMnnSZ0670rUH4H61g0x88c-B-DZYw_X-8+xgH-=g@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gT24gV2VkLCBTZXAgMjYsIDIwMTggYXQgNzoxMSBQTSBNYXJpbyBMaW1vbmNpZWxsbw0K
-PiA8bWFyaW8ubGltb25jaWVsbG9AZGVsbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gU29tZSB1c2Vy
-cyBoYXZlIGJlZW4gcmVwb3J0aW5nIGlzc3VlcyB3aXRoIHRodW5kZXJib2x0IGJlaW5nIHR1cm5l
-ZCBvZmYNCj4gPiBiZWZvcmUgZnVsbHkgaW5pdGlhbGl6ZWQuICBUaGlzIGlzIHN1c3BlY3RlZCB0
-byBiZSBjYXVzZWQgYnkgdXNlcnNwYWNlDQo+ID4gdHVybmluZyBvZmYgdGhlIFRodW5kZXJib2x0
-IGNvbnRyb2xsZXIgdXNpbmcgaW50ZWwtd21pLXRodW5kZXJib2x0DQo+ID4gcHJlbWF0dXJlbHku
-DQo+ID4NCj4gDQo+ID4gRGV0YWlscyBhcmUgYXZhaWxhYmxlIGhlcmU6DQo+ID4gaHR0cHM6Ly9i
-dWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMDEyMjcNCj4gPiBodHRwczovL2J1
-Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTE5OTYzMQ0KPiANCj4gQnVnTGluazog
-Li4uID8NCj4gQnVnTGluazogLi4uID8NCj4gDQo+IEkgY2FuIGRvIGl0IG15c2VsZiBpZiB5b3Ug
-YXJlIG9rYXkgd2l0aCB0aGlzIGZvcm1hdC4NCj4gDQo+IFRoZSBwYXRjaCBpdHNlbGYgTEdUTS4N
-Cg0KU3VyZSwgdGhhbmsgeW91Lg0KDQo+IA0KPiA+DQo+ID4gVXNlcnNwYWNlIGhhcyBhbHJlYWR5
-IG1hZGUgc29tZSBtaXRpZ2lhdGlvbnMgZm9yIHRoaXMgc2l0dWF0aW9uOg0KPiA+IGh0dHBzOi8v
-Z2l0aHViLmNvbS9odWdoc2llL2Z3dXBkL2NvbW1pdC9lZjZmMWQ3Njk4M2M5YjY2DQo+ID4gaHR0
-cHM6Ly9naXRodWIuY29tL2h1Z2hzaWUvZnd1cGQvY29tbWl0L2MwN2NlNWI0ODg5YTUzODQNCj4g
-Pg0KPiA+IFRvIGFsbG93IGVhc2llciBkZWJ1Z2dpbmcgb2YgdGhpcyBzaXR1YXRpb24gYWRkIG91
-dHB1dCB0aGF0IGNhbiBiZSB0dXJuZWQNCj4gPiBvbiB3aXRoIGR5bmFtaWMgZGVidWdnaW5nIHRv
-IGJldHRlciByb290IGNhdXNlIHRoaXMgcHJvYmxlbS4NCj4gPg0KPiA+IFN1Z2dlc3RlZC1ieTog
-TWlrYSBXZXN0ZXJiZXJnIDxtaWthLndlc3RlcmJlcmdAaW50ZWwuY29tPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IE1hcmlvIExpbW9uY2llbGxvIDxtYXJpby5saW1vbmNpZWxsb0BkZWxsLmNvbT4NCj4g
-PiAtLS0NCj4gPiAgZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwtd21pLXRodW5kZXJib2x0LmMg
-fCA2ICsrKysrLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0
-aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwt
-d21pLXRodW5kZXJib2x0LmMNCj4gYi9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9pbnRlbC13bWktdGh1
-bmRlcmJvbHQuYw0KPiA+IGluZGV4IGMyMjU3YmQuLmNlNWZiZjAgMTAwNjQ0DQo+ID4gLS0tIGEv
-ZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwtd21pLXRodW5kZXJib2x0LmMNCj4gPiArKysgYi9k
-cml2ZXJzL3BsYXRmb3JtL3g4Ni9pbnRlbC13bWktdGh1bmRlcmJvbHQuYw0KPiA+IEBAIC0zOCwx
-MiArMzgsMTYgQEAgc3RhdGljIHNzaXplX3QgZm9yY2VfcG93ZXJfc3RvcmUoc3RydWN0IGRldmlj
-ZSAqZGV2LA0KPiA+ICAgICAgICAgaW5wdXQubGVuZ3RoID0gc2l6ZW9mKHU4KTsNCj4gPiAgICAg
-ICAgIGlucHV0LnBvaW50ZXIgPSAmbW9kZTsNCj4gPiAgICAgICAgIG1vZGUgPSBoZXhfdG9fYmlu
-KGJ1ZlswXSk7DQo+ID4gKyAgICAgICBkZXZfZGJnKGRldiwgImZvcmNlX3Bvd2VyOiBzdG9yaW5n
-ICUjeFxuIiwgbW9kZSk7DQo+ID4gICAgICAgICBpZiAobW9kZSA9PSAwIHx8IG1vZGUgPT0gMSkg
-ew0KPiA+ICAgICAgICAgICAgICAgICBzdGF0dXMgPSB3bWlfZXZhbHVhdGVfbWV0aG9kKElOVEVM
-X1dNSV9USFVOREVSQk9MVF9HVUlELCAwLCAxLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICZpbnB1dCwgTlVMTCk7DQo+ID4gLSAgICAgICAgICAgICAg
-IGlmIChBQ1BJX0ZBSUxVUkUoc3RhdHVzKSkNCj4gPiArICAgICAgICAgICAgICAgaWYgKEFDUElf
-RkFJTFVSRShzdGF0dXMpKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgZGV2X2RiZyhk
-ZXYsICJmb3JjZV9wb3dlcjogZmFpbGVkIHRvIGV2YWx1YXRlIEFDUEkgbWV0aG9kXG4iKTsNCj4g
-PiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVOT0RFVjsNCj4gPiArICAgICAgICAg
-ICAgICAgfQ0KPiA+ICAgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgZGV2X2Ri
-ZyhkZXYsICJmb3JjZV9wb3dlcjogdW5zdXBwb3J0ZWQgbW9kZVxuIik7DQo+ID4gICAgICAgICAg
-ICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ICAgICAgICAgfQ0KPiA+ICAgICAgICAgcmV0dXJu
-IGNvdW50Ow0KPiA+IC0tDQo+ID4gMi43LjQNCj4gPg0KPiANCj4gDQo+IC0tDQo+IFdpdGggQmVz
-dCBSZWdhcmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCg==
+On Wed, Sep 26, 2018 at 6:21 PM Andy Lutomirski <luto@amacapital.net> wrote=
+:
+> Are, is what you=E2=80=99re saying that the Zinc chacha20 functions shoul=
+d call simd_relax() every n bytes automatically for some reasonable value o=
+f n?  If so, seems sensible, except that some care might be needed to make =
+sure they interact with preemption correctly.
+>
+> What I mean is: the public Zinc entry points should either be callable in=
+ an atomic context or they should not be.  I think this should be checked a=
+t runtime in an appropriate place with an __might_sleep or similar.  Or sim=
+d_relax should learn to *not* schedule if the result of preempt_enable() le=
+aves it atomic. (And the latter needs to be done in a way that works even o=
+n non-preempt kernels, and I don=E2=80=99t remember whether that=E2=80=99s =
+possible.). And this should happen regardless of how many bytes are process=
+ed. IOW, calling into Zinc should be equally not atomic-safe for 100 bytes =
+and for 10 MB.
+
+I'm not sure this is actually a problem. Namely:
+
+preempt_disable();
+kernel_fpu_begin();
+kernel_fpu_end();
+schedule(); <--- bug!
+
+Calling kernel_fpu_end() disables preemption, but AFAIK, preemption
+enabling/disabling is recursive, so kernel_fpu_end's use of
+preempt_disable won't actually do anything until the outer preempt
+enable is called:
+
+preempt_disable();
+kernel_fpu_begin();
+kernel_fpu_end();
+preempt_enable();
+schedule(); <--- works!
+
+Or am I missing some more subtle point?
+
+Jason
