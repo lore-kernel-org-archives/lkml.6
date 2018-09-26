@@ -2,182 +2,142 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20669C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6BCC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5235208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5235208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 329D7204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:55:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JNgteHuU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329D7204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeIZPGz (ORCPT
+        id S1727084AbeIZPHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:06:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59685 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbeIZPGy (ORCPT
+        Wed, 26 Sep 2018 11:07:18 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54552 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbeIZPHS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:06:54 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8Q8stpG3772848
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Sep 2018 01:54:55 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8Q8ss4c3772845;
-        Wed, 26 Sep 2018 01:54:54 -0700
-Date:   Wed, 26 Sep 2018 01:54:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-4d60e5e36aa6f11b4d9eadc5d2b94128f24870c7@git.kernel.org>
-Cc:     jolsa@redhat.com, adrian.hunter@intel.com, acme@redhat.com,
-        tglx@linutronix.de, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          ak@linux.intel.com, tglx@linutronix.de, acme@redhat.com,
-          adrian.hunter@intel.com, jolsa@redhat.com
-In-Reply-To: <20180920130048.31432-4-adrian.hunter@intel.com>
-References: <20180920130048.31432-4-adrian.hunter@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Improve thread_stack__event() for trace
- begin / end
-Git-Commit-ID: 4d60e5e36aa6f11b4d9eadc5d2b94128f24870c7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 26 Sep 2018 11:07:18 -0400
+Received: by mail-it1-f193.google.com with SMTP id f14-v6so1901550ita.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:55:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jOhRVP6KsxqBS3K3JpP/wBi2fHYX86Elzq9kElS9vUY=;
+        b=JNgteHuU/dwmfX2TjLZyhg9CSoixS3RXyUAucDRV96CFEOezU6jWmrGWwLsLRf+EeE
+         F13Ge4vlxaLTkGdgeW6vq8B3a8RwFt78a5GauEZcugtZPt//2dDqhDVzVX2DWjTJmLE1
+         HdP6KMCNM/tFibx6BcW3zxo9tKpeCDViUiLQY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jOhRVP6KsxqBS3K3JpP/wBi2fHYX86Elzq9kElS9vUY=;
+        b=EgPdzGUbUB0AynB49urenI6A3m7+zvzAviXAXG+1Jos38Qq2Yo1W1+CKcIVCMdh2Xn
+         S216i3V4LsF9wn/stFwx4hkS/thtqZU3nSx/B6xi7F/7VmeQzc1Qu5gS4b4Pla5s2lQp
+         mIM2ym/OA5u0SH4QnFvaxroa8tMomN9HqqRgl/0BoeJXzP/0hFmS4+pylVZlJLTTIQe8
+         iOXcO36C4DcyzE+UWTkju4Pg+ginCPB9XzzQACfO/lJrhqBF7rwcbCXcWaMGntbw7T1y
+         giPuVpYStAPrKMp+5N3qmE/wYrajLvyfy0WR9V0Y/bfLV9FL+Zxay6c1p1qjeWG9SrKW
+         OWnA==
+X-Gm-Message-State: ABuFfogJGPaQ27H54zjoqCvlqZ9ce5yLeKUzeUs+v3L6og3xtHGuSFGY
+        c07PVopMiRHQmEXecsUVFk3+fzEG8VigsKrNVszT2w==
+X-Google-Smtp-Source: ACcGV60INLqOGI/HmhuYePIJIrAxhvGqm2YhDVZb6BOsG04IzFROGDRUVUH0k5fetd+dqe2EqxjNqzux9llWrAwJjSA=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr4114345ite.123.1537952123775;
+ Wed, 26 Sep 2018 01:55:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180807211843.47586-1-keescook@chromium.org> <20180807211843.47586-8-keescook@chromium.org>
+ <CAK8P3a3kiH-a+JG8FqUw7nc_hk+9z-FdsGFT57SxR83W32zKzQ@mail.gmail.com>
+ <CAKv+Gu-dGbWsQu0NgOWVFy7Sca3yBD0pLzEMwmkG3mg9LFPpkA@mail.gmail.com> <CAK8P3a3=_uQihMw0GwEbvDnbvrxzq-em6rccW-so+qmkXk8btQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a3=_uQihMw0GwEbvDnbvrxzq-em6rccW-so+qmkXk8btQ@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 26 Sep 2018 10:55:10 +0200
+Message-ID: <CAKv+Gu-1nfbDU_9fHhZoafPCjOObDbYQzif0NSox_sxwGM1N5g@mail.gmail.com>
+Subject: Re: [PATCH v8 7/9] crypto: qat: Remove VLA usage
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        "Alasdair G. Kergon" <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        qat-linux@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4d60e5e36aa6f11b4d9eadc5d2b94128f24870c7
-Gitweb:     https://git.kernel.org/tip/4d60e5e36aa6f11b4d9eadc5d2b94128f24870c7
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 20 Sep 2018 16:00:45 +0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 20 Sep 2018 15:16:17 -0300
+On Wed, 26 Sep 2018 at 10:54, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Wed, Sep 26, 2018 at 10:44 AM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+> >
+> > On Tue, 25 Sep 2018 at 18:12, Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Tue, Aug 7, 2018 at 11:18 PM Kees Cook <keescook@chromium.org> wrote:
+> > > >
+> > > > In the quest to remove all stack VLA usage from the kernel[1], this uses
+> > > > the new upper bound for the stack buffer. Also adds a sanity check.
+> > > >
+> > > > [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> > > >
+> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > >
+> > > After rebasing to linux-next, I now get a warning about this file:
+> > >
+> > > drivers/crypto/qat/qat_common/qat_algs.c: In function 'qat_alg_do_precomputes':
+> > > drivers/crypto/qat/qat_common/qat_algs.c:257:1: error: the frame size
+> > > of 1112 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+> > >
+> > > I assume it was already possible to get into that state with the VLA,
+> > > but it seems bad enough that I think we need to do something
+> > > about it.
+> > >
+> > > The large stack variables add up to 1084 bytes, which fully explains
+> > > how we got here:
+> > >
+> > >         SHASH_DESC_ON_STACK(shash, ctx->hash_tfm); /* 360 */
+> > >         struct sha1_state sha1;  /* 92 */
+> > >         struct sha256_state sha256; /* 104 */
+> > >         struct sha512_state sha512; /* 208 */
+> > >         char ipad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
+> > >         char opad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
+> > >
+> > > The question is what we can do about it. One simple step I've tried
+> > > is to move the sha1/sha256/sha512 into a union, which saves around
+> > > 200 bytes and should bring us (slightly) below the warning
+> > > limit, but I suspect we can do better than that. Any ideas?
+> > >
+> >
+> > All the processing takes place in the context of a setkey() operation,
+> > which means only one such operation should be in flight per tfm at any
+> > given time. So we could move all these pieces into the tfm context
+> > struct instead. Something like the below [untested] (whitespace
+> > mangling courtesy of Gmail)
+>
+> Ah, right, this is what I was hoping for. I assume we already guarantee
+> that this context is never put on the stack somewhere else, right?
+>
 
-perf tools: Improve thread_stack__event() for trace begin / end
-
-thread_stack__event() is used to create call stacks, by keeping track of
-calls and returns. Improve the handling of trace begin / end to allow
-for a trace that ends in a call.
-
-Previously, the Intel PT decoder would indicate begin / end by a branch
-from / to zero. That hides useful information, in particular when a
-trace ends with a call. Before remedying that, enhance the thread stack
-so that it does not expect to see the 'return' for a 'call' that ends
-the trace.
-
-Committer notes:
-
-Added this:
-
-                return thread_stack__push(thread->ts, ret_addr,
--                                         flags && PERF_IP_FLAG_TRACE_END);
-+                                         flags & PERF_IP_FLAG_TRACE_END);
-
-To fix problem spotted by:
-
-debian:9:            clang version 3.8.1-24 (tags/RELEASE_381/final)
-debian:experimental: clang version 6.0.1-6 (tags/RELEASE_601/final)
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20180920130048.31432-4-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/thread-stack.c | 35 ++++++++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index dd17d6a38d3a..e3f7dfecafa9 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -36,6 +36,7 @@
-  * @branch_count: the branch count when the entry was created
-  * @cp: call path
-  * @no_call: a 'call' was not seen
-+ * @trace_end: a 'call' but trace ended
-  */
- struct thread_stack_entry {
- 	u64 ret_addr;
-@@ -44,6 +45,7 @@ struct thread_stack_entry {
- 	u64 branch_count;
- 	struct call_path *cp;
- 	bool no_call;
-+	bool trace_end;
- };
- 
- /**
-@@ -112,7 +114,8 @@ static struct thread_stack *thread_stack__new(struct thread *thread,
- 	return ts;
- }
- 
--static int thread_stack__push(struct thread_stack *ts, u64 ret_addr)
-+static int thread_stack__push(struct thread_stack *ts, u64 ret_addr,
-+			      bool trace_end)
- {
- 	int err = 0;
- 
-@@ -124,6 +127,7 @@ static int thread_stack__push(struct thread_stack *ts, u64 ret_addr)
- 		}
- 	}
- 
-+	ts->stack[ts->cnt].trace_end = trace_end;
- 	ts->stack[ts->cnt++].ret_addr = ret_addr;
- 
- 	return err;
-@@ -150,6 +154,18 @@ static void thread_stack__pop(struct thread_stack *ts, u64 ret_addr)
- 	}
- }
- 
-+static void thread_stack__pop_trace_end(struct thread_stack *ts)
-+{
-+	size_t i;
-+
-+	for (i = ts->cnt; i; ) {
-+		if (ts->stack[--i].trace_end)
-+			ts->cnt = i;
-+		else
-+			return;
-+	}
-+}
-+
- static bool thread_stack__in_kernel(struct thread_stack *ts)
- {
- 	if (!ts->cnt)
-@@ -254,10 +270,19 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
- 		ret_addr = from_ip + insn_len;
- 		if (ret_addr == to_ip)
- 			return 0; /* Zero-length calls are excluded */
--		return thread_stack__push(thread->ts, ret_addr);
--	} else if (flags & PERF_IP_FLAG_RETURN) {
--		if (!from_ip)
--			return 0;
-+		return thread_stack__push(thread->ts, ret_addr,
-+					  flags & PERF_IP_FLAG_TRACE_END);
-+	} else if (flags & PERF_IP_FLAG_TRACE_BEGIN) {
-+		/*
-+		 * If the caller did not change the trace number (which would
-+		 * have flushed the stack) then try to make sense of the stack.
-+		 * Possibly, tracing began after returning to the current
-+		 * address, so try to pop that. Also, do not expect a call made
-+		 * when the trace ended, to return, so pop that.
-+		 */
-+		thread_stack__pop(thread->ts, to_ip);
-+		thread_stack__pop_trace_end(thread->ts);
-+	} else if ((flags & PERF_IP_FLAG_RETURN) && from_ip) {
- 		thread_stack__pop(thread->ts, to_ip);
- 	}
- 
+Yes.
