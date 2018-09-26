@@ -2,123 +2,80 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC9FC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FD1C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E589A214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29F0E214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:00:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=labo.rs header.i=@labo.rs header.b="VbhQcJKA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Xw1UVnSc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E589A214FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=labo.rs
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="suLbkgCJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F0E214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbeIZWOM (ORCPT
+        id S1728593AbeIZWOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:14:12 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43305 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727280AbeIZWOL (ORCPT
+        Wed, 26 Sep 2018 18:14:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:32772 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727280AbeIZWOQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:14:11 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4234821CDD;
-        Wed, 26 Sep 2018 12:00:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 26 Sep 2018 12:00:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=labo.rs; h=
-        content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=uLc7wKq5Yp3OVG0DPz0gyBleHJHCE
-        rSatM5smeAN00Q=; b=VbhQcJKAHC2tl25Y9rWqipyEJ33vO1g9O4Pfv2HevxFoj
-        rvGGCeeLx4efe2eRTfkygaIQIjkk2cB+QnjIv7UkzwVX9EM5tyjt5XGFKFoOmhrH
-        yRe/Rr684XsfNcwh0lHs423IUBp8fs4g8BAIz9qeNP/Crp9vSukz+PFDMJ+ooF9J
-        O8Xtmhy7IF41mhDBpvwlqKPGvji0SSXAW2iD829M1+CeA0dbKm/fznCN/zdFBuul
-        qbWcAqrbaevvcnPqLkiTZocp7Qg6TXgqwckaTQt93YoJdINzspZfKOTw3kndnxrg
-        Ln3z7Xfu7hkPlXja0oUzSeXe5Z6IKg99LcNz99LZQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=uLc7wK
-        q5Yp3OVG0DPz0gyBleHJHCErSatM5smeAN00Q=; b=Xw1UVnSctD2X83rDWCos8E
-        e7WMp9gaV82ccAggk6gVfQvp352zUOrLCXzoKioNvoPh5pPNhfU4eNaahfT5v/5q
-        LfZijb9Ep01e3cYvma00BJonwsvaV1WNB/b1zX0Ys0vGK9eNtu97XCPNM/nYFLwq
-        9TFUwe7JWOo3e93RVJzA82p7b/Qg4Yk2bC04VolOdRPjdVyY1pQaGtXNykCNNleW
-        ApRswVhKLU4m/DamfotFLbmKJ5Yo3SJTDQgIVOfpXbD9cC/aZP6+aQ+KQDMc3Ug5
-        9jjIBhyqebmo3hCNNL/45Kbgov3/w9VIZHb32uj9NNd285kkbwpcIQmnzFvGFABQ
-        ==
-X-ME-Proxy: <xmx:Iq2rWxbhxY86DjJ-KDC8U_0kOYeCh-pstTI8FIViByVoLEA83l6L_g>
-    <xmx:Iq2rW4mQC8ikIsiqZH0zLdeMqIOVY314Z1BJYu09ZLQJhr_Gesr4-w>
-    <xmx:Iq2rW1zp7cRNveF85kBm7sti9URWSI-qjAeAVXQIdbHCpoP0KaGC4A>
-    <xmx:Iq2rW-OBi2vhIy21aTtMtPuFFLOSgvhqnl2rc64kzu7mmDb-YdOXSw>
-    <xmx:Iq2rWxQr9FUVbnmxHgubc2WuFPJcBHDrToyQla3NfwY82a26-fbOdw>
-    <xmx:I62rW6ggKbRJWxkElzAwcMELfqOe5gRGOGTz6wiO76L0TJDs6gKWdA>
-X-ME-Sender: <xms:Iq2rWyFKtg_pRqPrhPSCeIiV0YPxnNM8OtdKm1-DLanCpUeBK83ezw>
-Received: from [0.0.0.0] (lada.labath.rs [185.194.239.81])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 44D29E461E;
-        Wed, 26 Sep 2018 12:00:33 -0400 (EDT)
-Subject: Re: [PATCH net-next v6 23/23] net: WireGuard secure network tunnel
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org
-References: <20180925145622.29959-1-Jason@zx2c4.com>
- <20180925145622.29959-24-Jason@zx2c4.com>
-From:   =?UTF-8?Q?Ivan_Lab=c3=a1th?= <labokml@labo.rs>
-Message-ID: <7830522a-968e-0880-beb7-44904466cf14@labo.rs>
-Date:   Wed, 26 Sep 2018 18:00:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180925145622.29959-24-Jason@zx2c4.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 26 Sep 2018 18:14:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0yMlnVnYLp4myAdL1KL9g55fRweq4trZXtK5P6Zr+QM=; b=suLbkgCJgQXI0J8sy2zIh6AmH
+        m4wRJfXc4zIqAbnDGeCkn8sunihVorLINezNVN6vDI2zTyYtyg++5P50O7G1eh1Q3x0HB4e9EYZSx
+        I4w+mWutQPZddDO5IJL4UYI/SWKWiGu3606W8K5XJjR+S9J1BnCzW+4lVk8e3j/KplhLVq3RWFdA2
+        QAhSHtME8Zh7aj8uqC5utEl4bIIwCvMg51f+vwZjxc12pQ+NaIBbfwIsTEQ6Fmc6m7zFx+HhIqhYK
+        O8poKlor8ziwD+wZIRoVGmwq9O++FOuwsXqMCf+iqCeH5myxLtJzEdoGMKNJ8LMV4OtpKAEhYwQKZ
+        mn6pZL71Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5CEt-0004EB-7r; Wed, 26 Sep 2018 16:00:35 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Improve virtio ID allocation
+Date:   Wed, 26 Sep 2018 09:00:27 -0700
+Message-Id: <20180926160031.15721-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.09.2018 16:56, Jason A. Donenfeld wrote:
-> Extensive documentation and description of the protocol and
-> considerations, along with formal proofs of the cryptography, are> available at:
-> 
->   * https://www.wireguard.com/
->   * https://www.wireguard.com/papers/wireguard.pdf
-[]
-> +enum { HANDSHAKE_DSCP = 0x88 /* AF41, plus 00 ECN */ };
-[]
-> +	if (skb->protocol == htons(ETH_P_IP)) {
-> +		len = ntohs(ip_hdr(skb)->tot_len);
-> +		if (unlikely(len < sizeof(struct iphdr)))
-> +			goto dishonest_packet_size;
-> +		if (INET_ECN_is_ce(PACKET_CB(skb)->ds))
-> +			IP_ECN_set_ce(ip_hdr(skb));
-> +	} else if (skb->protocol == htons(ETH_P_IPV6)) {
-> +		len = ntohs(ipv6_hdr(skb)->payload_len) +
-> +		      sizeof(struct ipv6hdr);
-> +		if (INET_ECN_is_ce(PACKET_CB(skb)->ds))
-> +			IP6_ECN_set_ce(skb, ipv6_hdr(skb));
-> +	} else
-[]
-> +	skb_queue_walk (&packets, skb) {
-> +		/* 0 for no outer TOS: no leak. TODO: should we use flowi->tos
-> +		 * as outer? */
-> +		PACKET_CB(skb)->ds = ip_tunnel_ecn_encap(0, ip_hdr(skb), skb);
-> +		PACKET_CB(skb)->nonce =
-> +				atomic64_inc_return(&key->counter.counter) - 1;
-> +		if (unlikely(PACKET_CB(skb)->nonce >= REJECT_AFTER_MESSAGES))
-> +			goto out_invalid;
-> +	}
-Hi,
+I noticed you were using IDRs where you could be using the more efficient
+IDAs, then while fixing that I noticed the lack of error handling,
+and I decided to follow that up with an efficiency improvement.
 
-is there documentation and/or rationale for ecn handling?
-Quick search for ecn and dscp didn't reveal any.
+There's probably a v2 of this to follow because I couldn't figure
+out how to properly handle one of the error cases ... see the comment
+embedded in one of the patches.
 
-Regards,
-Ivan
+Matthew Wilcox (4):
+  drm/virtio: Replace IDRs with IDAs
+  drm/virtio: Handle context ID allocation errors
+  drm/virtio: Handle object ID allocation errors
+  drm/virtio: Use IDAs more efficiently
+
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  9 ++---
+ drivers/gpu/drm/virtio/virtgpu_fb.c    | 10 ++++--
+ drivers/gpu/drm/virtio/virtgpu_gem.c   | 10 ++++--
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 ++-
+ drivers/gpu/drm/virtio/virtgpu_kms.c   | 46 +++++++++-----------------
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 19 ++++-------
+ 6 files changed, 44 insertions(+), 55 deletions(-)
+
+-- 
+2.19.0
+
