@@ -2,130 +2,132 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 152EBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A68C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A76F821508
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="NZpwmrIx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A76F821508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 185212150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:19:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185212150C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeI0C1V (ORCPT
+        id S1727020AbeI0CeE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:27:21 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:55244 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbeI0C1V (ORCPT
+        Wed, 26 Sep 2018 22:34:04 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33518 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbeI0CeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:27:21 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id D47575C1879;
-        Wed, 26 Sep 2018 22:12:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1537992761;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yKA9BJ0wydDjo0ZDrgg5j5fUIqXyAw12tnezPK1Zu6M=;
-        b=NZpwmrIxhsVxSVRe8NdkpRhNnVzHeGRo+050OJHT4AZp7ejvuxIIK2pwTjBGOhR5wD7633
-        zIYM8jdx9EOTKzQ2v8LdMapsEJqXArmkci5EVfuV4cfTHyVHWFKYxeaFa+TZt/WVQ4Tnzt
-        ejqU/0GaCZAVl0jCY1rdDZnKnXdG3KE=
+        Wed, 26 Sep 2018 22:34:04 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f10-v6so266606wrs.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 13:19:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RvKUcGuu6B3B9tJeMQc8r/WkveTyxnEYcqLLgfwoUyA=;
+        b=bIbYiXMrQtkTfxrjMQYA7lasE/vrYIO55YTFy7D2j+Cex62bf2eCPd+vz/9RPXfzXF
+         BYlUEFm4SXYRISPOL09SY6nEdQ92rY9KZy/Nt48GAAI/Oo3NvGyQSl+GdNkvrWH98bAc
+         pMT38x7aJNvbAdjv/MOdl/gtLdobLdoxQBfPdeqlPzLZzgbWNNRe7U5RCuPWu0lTgWz3
+         9ne/H2V+BraakcqKUdzqi087+2D9UXCJftXKFbqBIlxg5JywFbrLJz4bJZGyy0hLLXMA
+         uwPicGaIFyxvzXTR61aculN+ApBA600mOJWEpheKJWisS99Skv19fpASRgwS7TWobLst
+         MQng==
+X-Gm-Message-State: ABuFfohEQmXeASfyUTkX31khe8vNnEulFcIMu8g/JxK+P//88hMI9jnn
+        BbWO5suOmGdIUEc7NP9AI6uvLg==
+X-Google-Smtp-Source: ACcGV62SUsjuAsd+WcSGiTNPI6/+ar9wo0lL0MkahPYy3PhwaaiW+OlUiSIgzR9ZA00dzTaj+B/h/w==
+X-Received: by 2002:adf:a10c:: with SMTP id o12-v6mr6343885wro.169.1537993164130;
+        Wed, 26 Sep 2018 13:19:24 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 200-v6sm738745wmv.6.2018.09.26.13.19.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 13:19:23 -0700 (PDT)
+Subject: Re: [PATCH 2/2] mmc: Add mmc_force_detect_change_begin / _end
+ functions
+To:     Frieder Schrempf <frieder.schrempf@exceet.de>,
+        ulf.hansson@linaro.org, quentin.schulz@free-electrons.com
+Cc:     gregkh@linuxfoundation.org, linus.walleij@linaro.org,
+        shawn.lin@rock-chips.com, adrian.hunter@intel.com,
+        baolin.wang@linaro.org, maxime.ripard@free-electrons.com,
+        thomas.petazzoni@free-electrons.com, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, devel@driverdev.osuosl.org,
+        icenowy@aosc.xyz, wens@csie.org
+References: <CAPDyKFqDrdD+N+foLCwsVABtboz1Vn=OtJs14gp07zJfXHVKSA@mail.gmail.com>
+ <f9028dcb-c217-4efc-60a7-d0a2c1804a08@exceet.de>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <d9795fde-6bdd-b6fa-da41-839d44df6435@redhat.com>
+Date:   Wed, 26 Sep 2018 22:19:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <f9028dcb-c217-4efc-60a7-d0a2c1804a08@exceet.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 26 Sep 2018 22:12:41 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Sean Paul <seanpaul@chromium.org>, leonard.crestez@nxp.com
-Cc:     Gustavo Padovan <gustavo@padovan.org>, Marek Vasut <marex@denx.de>,
-        sean@poorly.run,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        linux-imx@nxp.com, Linux Kernel <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>, robert.chiras@nxp.com,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        Shawn Guo <shawnguo@kernel.org>, anson.huang@nxp.com,
-        Dave Airlie <airlied@linux.ie>,
-        Sascha Hauer <kernel@pengutronix.de>
-Subject: Re: [RESEND 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif block
-In-Reply-To: <CAEqLBRkRRutC7PXSxxx9yo7kURRH6q+vRYFzoE13QLh59gnvbA@mail.gmail.com>
-References: <cover.1537191359.git.leonard.crestez@nxp.com>
- <20180917191602.GP188300@art_vandelay>
- <80da134658da77f0d3f8fda6894ab756@agner.ch>
- <74b9b382ea6f9ec47573955d5b64a597b950cb5b.camel@nxp.com>
- <CAEqLBRkRRutC7PXSxxx9yo7kURRH6q+vRYFzoE13QLh59gnvbA@mail.gmail.com>
-Message-ID: <5dc72217d8fd99c4d87c76a32c8776d9@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.09.2018 18:39, Sean Paul wrote:
-> On Thu, Sep 20, 2018 at 11:59 AM Leonard Crestez
-> <leonard.crestez@nxp.com> wrote:
+Hi,
+
+On 26-09-18 16:44, Frieder Schrempf wrote:
+> Hi,
+> 
+> On Fri, Feb 09, 2018 at 03:01:00PM +0100, Ulf Hansson wrote:
+>> [...]
 >>
->> On Mon, 2018-09-17 at 16:37 -0700, Stefan Agner wrote:
->> > On 17.09.2018 12:16, Sean Paul wrote:
->> > > On Mon, Sep 17, 2018 at 04:42:10PM +0300, Leonard Crestez wrote:
->> > > > Adding lcdif nodes to a power domain currently doesn't work, it results
->> > > > in black/corrupted screens or hangs. While the driver does enable
->> > > > runtime pm it does not deal correctly with the block being unpowered.
->> > > >
->> > > > All patches in this series have review tags from a while ago and I
->> > > > tested them again on top of next-20180913. No changes
->> > > >
->> > > > This series stalled so I reached out to Marek on IRC and he was
->> > > > surprised to be listed as maintainer
->> > >
->> > > Hopefully not too surprised since Marek added themself to MAINTAINERS when
->> > > adding the driver :-)
+>> >> > I'd like to know if any progress has been made on that problem 
+> (I may
+>> >> > have missed patches).
+>> >> > Had you had the time to look at the issue?
+>> >>
+>> >> I have looked at the issue, but not manage to cook some patches 
+> for it.
+>> >>
+>> >> However, it's on my top of my TODO list for mmc. No promises, but
+>> >> perhaps and hopefully I manage to get something posted during the
+>> >> coming release cycle.
+> 
+> I would be interested in a ESP8089 driver in mainline and that's why I want to pick up this discussion.
+> 
+> What is the current status of the "mmc_reprobe_device" implementation, that Hans was explaining and Ulf wanted to provide some months ago?
+
+Ulf did eventually write a new way to deal with this and then Quentin
+did manage to get the esp8089 driver to work with it, the new function
+to use for this is added by this commit:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/mmc/core?id=1433269c4d2461be1f36db5dbb453976b38996ff
+
+I'm not sure what the status of upstreaming the ep8089 driver is now
+that we've this in place.
+
+Quentin, do you have a version of the esp8089 driver somewhere
+which will work correctly with the new mmc_sw_reset() function?
+
+Also what is the status of adding this driver to say staging?
+
+Regards,
+
+Hans
+
+
+
+> 
+> BTW, I am not on any of the mailing lists involved, so I tried to recreate the proper mail headers manually for the reply to the correct thread.
+> 
+> Thanks,
+> Frieder
+> 
+>> >>
 >> >
->> > There have been some confusion about the DRM development processes
->> > around the mxsfb already in the past.
+>> > Cool! If you ever need some testing, I'd be glad to test your patches
+>> > (even if they are in a draft/RFC state).
 >> >
->> > > I suppose we should probably move this to drm-misc since it qualifies as a
->> > > "small driver" and needs a home. Looking through git history shows the last
->> > > mxsfb-specific change was back in 02/17. Everything else has been drm-wide
->> > > refactors. Thoughts?
->> > >
->> > > Marek/Leonard: Care to sign up to be listed as a reviewers?
->> >
->> > drm-misc seems to make sense. I volunteer to be listed as reviewer or co-maintainer.
+>> > Also, when you send patches, I'd appreciate being Cc'ed so that I can
+>> > put my Tested-by :) Thanks!
 >>
->> This gets +1 from me, you were very helpful during review.
->>
->> Next would be for one of the drm-misc maintainers to post a change for
->> the MAINTAINER file and also merge my series?
->>
-> 
-> I've posted the MAINTAINERS patch here:
-> https://lists.freedesktop.org/archives/dri-devel/2018-September/190414.html
-> 
-> Once I get some Acks, we can merge that and one of Stefan or Marek can apply the
-> patchset to drm-misc.
-
-Applied, fixed a white space issue in patch 4 and pushed to drm-misc.
-
-Thanks Sean for helping out here!
-
-And thanks Leonard for working on this and push for its inclusion!
-
---
-Stefan
-
-> 
-> Sean
-> 
->> --
->> Regards,
->> Leonard
+>> Absolutely! I appreciate it.
