@@ -2,179 +2,134 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AEBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D2CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E391214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:14:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wC31Ee5L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E391214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6782D20842
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:15:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6782D20842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbeIZU1Z (ORCPT
+        id S1727421AbeIZU2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:27:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44786 "EHLO mail.kernel.org"
+        Wed, 26 Sep 2018 16:28:44 -0400
+Received: from mga05.intel.com ([192.55.52.43]:4581 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbeIZU1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:27:24 -0400
-Received: from earth.universe (guest-nat.fw1.untrust.par1.mozilla.net [185.155.181.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7262120843;
-        Wed, 26 Sep 2018 14:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537971254;
-        bh=qmPqRFxop3+cGjGY8nfy+fCe86cVPE8SbZfWGqwk8uY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wC31Ee5LFboUFiCfg0rWzSQ13/NBxecM2tVMqhCjFctgipeawWDQ/R3xd7TJhni/f
-         7GmS4BQxOdwNxL4bMzAtMFkMIgzWcY3qjpsBnB3xuUEes7srldQgsjHIocqxXU9xjg
-         WoMJPI53rq+flxgY7bhznibN6wuOEwnRmTef445M=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 9842A3C09D6; Wed, 26 Sep 2018 16:14:08 +0200 (CEST)
-Date:   Wed, 26 Sep 2018 16:14:08 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yuanjiang.yu@unisoc.com, broonie@kernel.org, ctatlor97@gmail.com,
-        linus.walleij@linaro.org
-Subject: Re: [PATCH v2 3/4] dt-bindings: power: Add Spreadtrum SC27XX fuel
- gauge unit documentation
-Message-ID: <20180926141408.dumlwnjmbue4nkjm@earth.universe>
-References: <358665e3f4f9ec105dc2f8a2dc6dd98dbe761fae.1537930252.git.baolin.wang@linaro.org>
- <b4b36b7b54cc227e6e7f14c314b4617863a205f5.1537930252.git.baolin.wang@linaro.org>
+        id S1726994AbeIZU2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:28:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:15:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="266868113"
+Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.74.64]) ([10.252.74.64])
+  by fmsmga006.fm.intel.com with ESMTP; 26 Sep 2018 07:11:51 -0700
+Subject: Re: [PATCH 1/4] platform/x86: intel_pmc_core: Show Latency Tolerance
+ info
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
+References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com>
+ <CAHp75Vesn4TrdF8tWLkU7nCRGp_o8fEK6gxpTkwM7E7zQo0qKg@mail.gmail.com>
+From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Message-ID: <04398317-a3b8-9387-e532-fcf26da9220e@linux.intel.com>
+Date:   Wed, 26 Sep 2018 19:41:49 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="f23zl5vcp3oae2xk"
-Content-Disposition: inline
-In-Reply-To: <b4b36b7b54cc227e6e7f14c314b4617863a205f5.1537930252.git.baolin.wang@linaro.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAHp75Vesn4TrdF8tWLkU7nCRGp_o8fEK6gxpTkwM7E7zQo0qKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---f23zl5vcp3oae2xk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 26-Sep-18 7:18 PM, Andy Shevchenko wrote:
+> On Mon, Sep 3, 2018 at 9:06 PM Rajneesh Bhardwaj
+> <rajneesh.bhardwaj@linux.intel.com> wrote:
+>> This adds support to show the Latency Tolerance Reporting for the IPs on
+>> the PCH as reported by the PMC. The format shown here is raw LTR data
+>> payload that can further be decoded as per the PCI specification.
+>>
+>> This also fixes some minor alignment issues in the header file by
+>> removing spaces and converting to tabs at some places.
+> Thanks for the patch, my comments below.
 
-On Wed, Sep 26, 2018 at 10:59:13AM +0800, Baolin Wang wrote:
-> This patch adds the binding documentation for Spreadtrum SC27XX series PM=
-ICs
-> fuel gauge unit device, which is used to calculate the battery capacity.
->=20
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
+Hi Andy,
 
-Looks good to me.
+Thanks for the review, my answers below.
+>
+>> +static const struct pmc_bit_map spt_ltr_show_map[] = {
+>> +       {"IP 0  : LTR_SOUTHPORT_A",             SPT_PMC_LTR_SPA},
+>> +       {"IP 1  : LTR_SOUTHPORT_B",             SPT_PMC_LTR_SPB},
+>> +       {"IP 2  : LTR_SATA",                    SPT_PMC_LTR_SATA},
+>> +       {"IP 3  : LTR_GIGABIT_ETHERNET",        SPT_PMC_LTR_GBE},
+>> +       {"IP 4  : LTR_XHCI",                    SPT_PMC_LTR_XHCI},
+>> +       /* IP 5 is reserved */
+>> +       {"IP 6  : LTR_ME",                      SPT_PMC_LTR_ME},
+>> +       /* EVA is Enterprise Value Add, doesn't really exist on PCH */
+>> +       {"IP 7  : LTR_EVA",                     SPT_PMC_LTR_EVA},
+>> +       {"IP 8  : LTR_SOUTHPORT_C",             SPT_PMC_LTR_SPC},
+>> +       {"IP 9  : LTR_HD_AUDIO",                SPT_PMC_LTR_AZ},
+>> +       /* IP 10 is reserved */
+>> +       {"IP 11 : LTR_LPSS",                    SPT_PMC_LTR_LPSS},
+>> +       {"IP 12 : LTR_SOUTHPORT_D",             SPT_PMC_LTR_SPD},
+>> +       {"IP 13 : LTR_SOUTHPORT_E",             SPT_PMC_LTR_SPE},
+>> +       {"IP 14 : LTR_CAMERA",                  SPT_PMC_LTR_CAM},
+>> +       {"IP 15 : LTR_ESPI",                    SPT_PMC_LTR_ESPI},
+>> +       {"IP 16 : LTR_SCC",                     SPT_PMC_LTR_SCC},
+>> +       {"IP 17 : LTR_ISH",                     SPT_PMC_LTR_ISH},
+>> +       /* Below two cannot be for LTR_IGNORE */
+>> +       {"LTR_CURRENT_PLATFORM",                SPT_PMC_LTR_CUR_PLT},
+>> +       {"LTR_AGGREGATED_SYSTEM",               SPT_PMC_LTR_CUR_ASLT},
+> Before no map has this fancy "IP xx :" prefixes. Please, remove.
 
--- Sebastian
+  The users of the driver often ask for IP Numbers while performing 
+LTR_IGNORE operation so this is deliberately added. Please consider it.
 
-> Changes from v1:
->  - Renamed GPIO property.
->  - Use standand battery properties instead of 'sprd,inner-resist' and
->    'sprd,ocv-cap-table'.
->  - Remove battery node's description.
-> ---
->  .../devicetree/bindings/power/supply/sc27xx-fg.txt |   52 ++++++++++++++=
-++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/sc27xx=
--fg.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/power/supply/sc27xx-fg.txt=
- b/Documentation/devicetree/bindings/power/supply/sc27xx-fg.txt
-> new file mode 100644
-> index 0000000..b161468
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/sc27xx-fg.txt
-> @@ -0,0 +1,52 @@
-> +Spreadtrum SC27XX PMICs Fuel Gauge Unit Power Supply Bindings
-> +
-> +Required properties:
-> +- compatible: Should be one of the following:
-> +  "sprd,sc2720-fgu",
-> +  "sprd,sc2721-fgu",
-> +  "sprd,sc2723-fgu",
-> +  "sprd,sc2730-fgu",
-> +  "sprd,sc2731-fgu".
-> +- reg: The address offset of fuel gauge unit.
-> +- battery-detect-gpios: GPIO for battery detection.
-> +- io-channels: Specify the IIO ADC channel to get temperature.
-> +- io-channel-names: Should be "bat-temp".
-> +- monitored-battery: Phandle of battery characteristics devicetree node.
-> +  See Documentation/devicetree/bindings/power/supply/battery.txt
-> +
-> +Example:
-> +
-> +	bat: battery {
-> +		compatible =3D "simple-battery";
-> +		charge-full-design-microamp-hours =3D <1900000>;
-> +		constant-charge-voltage-max-microvolt =3D <4350000>;
-> +		ocv-capacity-table-temperatures =3D <20>;
-> +		ocv-capacity-table-0 =3D <4185000 100>, <4113000 95>, <4066000 90>,
-> +					<4022000 85>, <3983000 80>, <3949000 75>,
-> +					<3917000 70>, <3889000 65>, <3864000 60>,
-> +					<3835000 55>, <3805000 50>, <3787000 45>,
-> +					<3777000 40>, <3773000 35>, <3770000 30>,
-> +					<3765000 25>, <3752000 20>, <3724000 15>,
-> +					<3680000 10>, <3605000 5>, <3400000 0>;
-> +		......
-> +	};
-> +
-> +	sc2731_pmic: pmic@0 {
-> +		compatible =3D "sprd,sc2731";
-> +		reg =3D <0>;
-> +		spi-max-frequency =3D <26000000>;
-> +		interrupts =3D <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-controller;
-> +		#interrupt-cells =3D <2>;
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		fgu@a00 {
-> +			compatible =3D "sprd,sc2731-fgu";
-> +			reg =3D <0xa00>;
-> +			battery-detect-gpios =3D <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
-> +			io-channels =3D <&pmic_adc 5>;
-> +			io-channel-names =3D "bat-temp";
-> +			monitored-battery =3D <&bat>;
-> +		};
-> +	};
-> --=20
-> 1.7.9.5
->=20
+>
+>> +       {},
+> No need for comma
+Ok.
+>> +
+> Redundant.
 
---f23zl5vcp3oae2xk
-Content-Type: application/pgp-signature; name="signature.asc"
+OK
+>
+>> +};
+>> +static const struct pmc_bit_map cnp_ltr_show_map[] = {
+> Same comments as above.
+>
+>> +};
+>> +       debugfs_create_file("ltr_show", 0644, dir, pmcdev,
+>> +                           &pmc_core_ltr_fops);
+> One line?
 
------BEGIN PGP SIGNATURE-----
+IIRC, it was crossing the limit. I will check again and if possible 
+would change it.
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlurlCsACgkQ2O7X88g7
-+pq5hw/9Fppud7JlWswYwKy8iOl9ahWFL+Ox5Rb4Eld97X30hAWQxTDhmjjYOmdy
-a1758rB+wSH7iCl7j9yhWck/iJ3bFVNNRBeXtlFJ1USU5r7No23cshCgR0BKBbUa
-w8MSvR8ayP1gKiSy3CEA8wC+n6mNNeLkeXrvu4Bqhb3SIwdo1kTmIvUgsnwqRfFv
-wVcMRuPqcO47pVxlwX8xPz226GhNx+KnUvQGx+JDk2u0xke5FcvI6QA4k7V30Ryi
-vL9QVG8pGFdOxwEfYv1F5F8Ucpu3KOyslEG1ih5rXY13AYPD57gRVkLJ4aVQoagp
-oCI1Y21kSrPZxvvjAyY7DcUukL/cVUhVz/zTZc4FEmYMP3yogcc9t4jieP+As4SE
-iCcrSCBP59ejkoHfqz8eVOl4ubbfFlRcBKH8J9K8Wx78fn7l1J2B8o4wkVC25dHu
-adZtZug7UDiuJkg5ydMHy7xXySQwVmlBNeZ4x7uPO8y144M23D05l4hB9192QoeH
-ZpO58Cky2F8Hik9idIhVL4HVbdmbrDofj8BQbPV8GPeoxruit67rvr2BGF/3HJg0
-G+M3jWLVxu3RxVSkmYJ8MV21hmGJ9v57a0u9VGSwk1yYTGFkdbNJ3TVSPjC75GMz
-KVHUZVYf02uKKuX2XKjdpARhppV2TVRjYgNQC3apCHVpL1pgzqU=
-=THfg
------END PGP SIGNATURE-----
+>
+>>   #define NUM_RETRIES                            100
+>>   #define NUM_IP_IGN_ALLOWED                     17
+> + blank line here.
 
---f23zl5vcp3oae2xk--
+Sure.
+
+>
+>> +#define SPT_PMC_LTR_CUR_PLT                    0x350
+
