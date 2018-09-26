@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A94BECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A57C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32AF2150C
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:00:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32AF2150C
+	by mail.kernel.org (Postfix) with ESMTP id C55FF2150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55FF2150C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeI0BPG (ORCPT
+        id S1728693AbeI0BPG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 26 Sep 2018 21:15:06 -0400
 Received: from mga04.intel.com ([192.55.52.120]:64733 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeI0BPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725848AbeI0BPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Sep 2018 21:15:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from orsmga008.jf.intel.com ([10.7.209.65])
   by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 12:00:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
-   d="scan'208";a="76436980"
+   d="scan'208";a="76436981"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga008.jf.intel.com with ESMTP; 26 Sep 2018 12:00:39 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -37,9 +37,9 @@ Cc:     jithu.joseph@intel.com, gavin.hindman@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH 1/3] x86/intel_rdt: Introduce utility to obtain CDP peer
-Date:   Wed, 26 Sep 2018 11:59:43 -0700
-Message-Id: <6e8c2eddf0cb2521fe7018357a0fa6f8dba7a882.1537987801.git.reinette.chatre@intel.com>
+Subject: [PATCH 2/3] x86/intel_rdt: CBM overlap should also check for overlap with CDP peer
+Date:   Wed, 26 Sep 2018 11:59:44 -0700
+Message-Id: <262e12b66c238517c4766190dd493d937825f563.1537987801.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1537987801.git.reinette.chatre@intel.com>
 References: <cover.1537987801.git.reinette.chatre@intel.com>
@@ -50,116 +50,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a utility that, when provided with a RDT resource and an
-instance of this RDT resource (a RDT domain), would return pointers to
-the RDT resource and RDT domain that share the same hardware. This is
-specific to the CDP resources that share the same hardware.
+The CBM overlap test is used to manage the allocations of RDT resources
+where overlap is possible between resource groups. When a resource group
+is in exclusive mode then there should be no overlap between resource
+groups.
 
-For example, if a pointer to the RDT_RESOURCE_L2DATA resource (struct
-rdt_resource) and a pointer to an instance of this resource (struct
-rdt_domain) is provided, then it will return a pointer to the
-RDT_RESOURCE_L2CODE resource as well as the specific instance that
-shares the same hardware as the provided rdt_domain.
+The current overlap test only considers overlap between the same
+resources, for example, that usage of a RDT_RESOURCE_L2DATA resource
+in one resource group does not overlap with usage of a RDT_RESOURCE_L2DATA
+resource in another resource group. The problem with this is that it
+allows overlap between a RDT_RESOURCE_L2DATA resource in one resource
+group with a RDT_RESOURCE_L2CODE resource in another resource group -
+even if both resource groups are in exclusive mode. This is a problem
+because even though these appear to be different resources they end up
+sharing the same underlying hardware and thus does not fulfill the
+user's request for exclusive use of hardware resources.
 
-This utility is created in support of the "exclusive" resource group
-mode where overlap of resource allocation between resource groups need
-to be avoided. The overlap test need to consider not just the matching
-resources, but also the resources that share the same hardware.
-
-Temporarily mark it as unused in support of patch testing to avoid
-compile warnings until it is used.
+Fix this by including the CDP peer (if there is one) in every CBM
+overlap test. This does not impact the overlap between resources
+within the same exclusive resource group that is allowed.
 
 Fixes: 49f7b4efa110 ("x86/intel_rdt: Enable setting of exclusive mode")
+Reported-by: Jithu Joseph <jithu.joseph@intel.com>
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Tested-by: Jithu Joseph <jithu.joseph@intel.com>
 Acked-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 72 ++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 51 ++++++++++++++++++++----
+ 1 file changed, 44 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 1b8e86a5d5e1..c8c02c16d072 100644
+index c8c02c16d072..3f56b4e624ea 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -960,6 +960,78 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
- 	return 0;
+@@ -983,10 +983,9 @@ static int rdtgroup_mode_show(struct kernfs_open_file *of,
+  *         If a CDP peer was found, @r_cdp will point to the peer RDT resource
+  *         and @d_cdp will point to the peer RDT domain.
+  */
+-static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
+-						    struct rdt_domain *d,
+-						    struct rdt_resource **r_cdp,
+-						    struct rdt_domain **d_cdp)
++static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
++			    struct rdt_resource **r_cdp,
++			    struct rdt_domain **d_cdp)
+ {
+ 	struct rdt_resource *_r_cdp = NULL;
+ 	struct rdt_domain *_d_cdp = NULL;
+@@ -1033,7 +1032,7 @@ static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
+ }
+ 
+ /**
+- * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
++ * _rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
+  * @r: Resource to which domain instance @d belongs.
+  * @d: The domain instance for which @closid is being tested.
+  * @cbm: Capacity bitmask being tested.
+@@ -1049,8 +1048,8 @@ static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
+  *
+  * Return: false if CBM does not overlap, true if it does.
+  */
+-bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+-			   u32 _cbm, int closid, bool exclusive)
++static bool _rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
++				   u32 _cbm, int closid, bool exclusive)
+ {
+ 	unsigned long *cbm = (unsigned long *)&_cbm;
+ 	unsigned long *ctrl_b;
+@@ -1087,6 +1086,44 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+ 	return false;
  }
  
 +/**
-+ * rdt_cdp_peer_get - Retrieve CDP peer if it exists
-+ * @r: RDT resource to which RDT domain @d belongs
-+ * @d: Cache instance for which a CDP peer is requested
-+ * @r_cdp: RDT resource that shares hardware with @r (RDT resource peer)
-+ *         Used to return the result.
-+ * @d_cdp: RDT domain that shares hardware with @d (RDT domain peer)
-+ *         Used to return the result.
++ * rdtgroup_cbm_overlaps - Does CBM overlap with other use of hardware
++ * @r: Resource to which domain instance @d belongs.
++ * @d: The domain instance for which @closid is being tested.
++ * @cbm: Capacity bitmask being tested.
++ * @closid: Intended closid for @cbm.
++ * @exclusive: Only check if overlaps with exclusive resource groups
 + *
-+ * RDT resources are managed independently and by extension the RDT domains
-+ * (RDT resource instances) are managed independently also. The Code and
-+ * Data Prioritization (CDP) RDT resources, while managed independently,
-+ * could refer to the same underlying hardware. For example,
-+ * RDT_RESOURCE_L2CODE and RDT_RESOURCE_L2DATA both refer to the L2 cache.
++ * Resources that can be allocated using a CBM can use the CBM to control
++ * the overlap of these allocations. rdtgroup_cmb_overlaps() is the test
++ * for overlap. Overlap test is not limited to the specific resource for
++ * which the CBM is intended though - when dealing with CDP resources that
++ * share the underlying hardware the overlap check should be performed on
++ * the CDP resource sharing the hardware also.
 + *
-+ * When provided with an RDT resource @r and an instance of that RDT
-+ * resource @d rdt_cdp_peer_get() will return if there is a peer RDT
-+ * resource and the exact instance that shares the same hardware.
++ * Refer to description of _rdtgroup_cbm_overlaps() for the details of the
++ * overlap test.
 + *
-+ * Return: 0 if a CDP peer was found, <0 on error or if no CDP peer exists.
-+ *         If a CDP peer was found, @r_cdp will point to the peer RDT resource
-+ *         and @d_cdp will point to the peer RDT domain.
++ * Return: true if CBM overlap detected, false if there is no overlap
 + */
-+static int __attribute__((unused)) rdt_cdp_peer_get(struct rdt_resource *r,
-+						    struct rdt_domain *d,
-+						    struct rdt_resource **r_cdp,
-+						    struct rdt_domain **d_cdp)
++bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
++			   u32 _cbm, int closid, bool exclusive)
 +{
-+	struct rdt_resource *_r_cdp = NULL;
-+	struct rdt_domain *_d_cdp = NULL;
-+	int ret = 0;
++	struct rdt_resource *r_cdp;
++	struct rdt_domain *d_cdp;
++	bool ret;
 +
-+	switch (r->rid) {
-+	case RDT_RESOURCE_L3DATA:
-+		_r_cdp = &rdt_resources_all[RDT_RESOURCE_L3CODE];
-+		break;
-+	case RDT_RESOURCE_L3CODE:
-+		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L3DATA];
-+		break;
-+	case RDT_RESOURCE_L2DATA:
-+		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2CODE];
-+		break;
-+	case RDT_RESOURCE_L2CODE:
-+		_r_cdp =  &rdt_resources_all[RDT_RESOURCE_L2DATA];
-+		break;
-+	default:
-+		ret = -ENOENT;
-+		goto out;
-+	}
++	ret = _rdtgroup_cbm_overlaps(r, d, _cbm, closid, exclusive);
++	if (ret)
++		return ret;
 +
-+	/*
-+	 * When a new CPU comes online and CDP is enabled then the new
-+	 * RDT domains (if any) associated with both CDP RDT resources
-+	 * are added in the same CPU online routine while the
-+	 * rdtgroup_mutex is held. It should thus not happen for one
-+	 * RDT domain to exist and be associated with its RDT CDP
-+	 * resource but there is no RDT domain associated with the
-+	 * peer RDT CDP resource. Hence the WARN.
-+	 */
-+	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
-+	if (WARN_ON(!_d_cdp)) {
-+		_r_cdp = NULL;
-+		ret = -ENOENT;
-+	}
-+
-+out:
-+	*r_cdp = _r_cdp;
-+	*d_cdp = _d_cdp;
++	if (rdt_cdp_peer_get(r, d, &r_cdp, &d_cdp) == 0)
++		return _rdtgroup_cbm_overlaps(r_cdp, d_cdp, _cbm,
++					      closid, exclusive);
 +
 +	return ret;
 +}
 +
  /**
-  * rdtgroup_cbm_overlaps - Does CBM for intended closid overlap with other
-  * @r: Resource to which domain instance @d belongs.
+  * rdtgroup_mode_test_exclusive - Test if this resource group can be exclusive
+  *
 -- 
 2.17.0
 
