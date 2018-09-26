@@ -3,143 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E7BC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEC7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 108B22082C
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:42:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108B22082C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=petrovitsch.priv.at
+	by mail.kernel.org (Postfix) with ESMTP id 6740C21480
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:44:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6740C21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbeIZGwm (ORCPT
+        id S1726593AbeIZGy6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 02:52:42 -0400
-Received: from esgaroth.petrovitsch.at ([78.47.184.11]:1903 "EHLO
-        esgaroth.tuxoid.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeIZGwm (ORCPT
+        Wed, 26 Sep 2018 02:54:58 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:35920 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726265AbeIZGy6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 02:52:42 -0400
-Received: from thorin.petrovitsch.priv.at (80-110-99-3.cgn.dynamic.surfer.at [80.110.99.3])
-        (authenticated bits=0)
-        by esgaroth.tuxoid.at (8.15.2/8.15.2) with ESMTPSA id w8Q0fNwq010211
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=NO);
-        Wed, 26 Sep 2018 02:41:25 +0200
-Subject: Re: Code of Conduct: Let's revamp it.
-To:     xDynamite <dreamingforward@gmail.com>
-Cc:     "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
-        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
-        riel@surriel.com, ec429@cantab.net,
-        Olof Johansson <olof@lixom.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
- <20180919081812.020f19e3@lwn.net>
- <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
- <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
- <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
- <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
- <87zhwbj8xe.fsf@redhat.com>
- <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
- <20180921231545.GC2966@thunk.org>
- <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
- <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
- <CAMjeLr-a4cCrs0cF0aBRoeeXXLwiM835BXqhP9ZoeLB8=w=YKw@mail.gmail.com>
- <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
- <CAMjeLr-j1XhZJgcvsP5z6SHCDmbUA=rMyfvQpX40qKBK+2ojbw@mail.gmail.com>
-From:   Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Message-ID: <9be16b08-7aa9-d42e-24c0-f054af39b78a@petrovitsch.priv.at>
-Date:   Wed, 26 Sep 2018 02:41:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <CAMjeLr-j1XhZJgcvsP5z6SHCDmbUA=rMyfvQpX40qKBK+2ojbw@mail.gmail.com>
-Content-Type: multipart/mixed;
- boundary="------------7E56B4AEBBDDF217CA745EFF"
-Content-Language: en-US
-X-DCC-EATSERVER-Metrics: esgaroth.tuxoid.at 1166; Body=9 Fuz1=9 Fuz2=9
-X-Virus-Scanned: clamav-milter 0.97 at esgaroth.tuxoid.at
-X-Virus-Status: Clean
+        Wed, 26 Sep 2018 02:54:58 -0400
+Received: from mr4.cc.vt.edu (junk.cc.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w8Q0imiv008433
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 20:44:48 -0400
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w8Q0ihZW006329
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 20:44:48 -0400
+Received: by mail-qt1-f198.google.com with SMTP id d12-v6so10295433qtk.13
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 17:44:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=sIP7gHKEtexL5M9PPLcXiOIKvq5d5gduR2aNe9uHcJw=;
+        b=tVHHKXA96hFlZ3/kP3oezAyZs2nprAO2CpOJIuhpNQ/Ip8wxSSNgACTwW3q1Z22ROi
+         FLKm4ssByFeravux6aCVhz+RZxBMgRSOvJFD67Jgxhzu5ZLpPr+bsJicqLEBu2Bf7P32
+         /OA11Sa/1cyM90y8M9ljuyaarX47e7M4V+QUU2piOU4il+0+Ahox5YfwMBd7WcLCuYHJ
+         S9aVybIFMDv2IJIYnVAyaHIhng9btd8nLKI4phmHSZa981ZVyAB7HEj53c1MH0KQ9Ya4
+         V6pyo1ulSvp+Siq2uNjXYKwfyChQwkwS2PkYFORsQrzy8QstUZWhxfaHPNbKQXb6oo5N
+         ZXsA==
+X-Gm-Message-State: ABuFfohn897NNM3RksiEiXHOUidGaq6+PcXDil9CEhpFAXDkk/AMQ5u6
+        W7Kv2eG+H8CyaTawWp9Q7uWoBLFCVngKEXwsWAvjH1x6NgyMmZ8oouHRC+J6rbRuyv88+5i+YCy
+        oseB+znldCQRGnrNYdkRoQywbZZH1wNc0vRE=
+X-Received: by 2002:a37:5c81:: with SMTP id q123-v6mr2590070qkb.8.1537922682963;
+        Tue, 25 Sep 2018 17:44:42 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV61/s2L5omAYt517lcfyTR66zlfZYK6aj33DzDwyrTwYL8Hq4cEggSrydnM/8LnLhIymEXAbXg==
+X-Received: by 2002:a37:5c81:: with SMTP id q123-v6mr2590055qkb.8.1537922682768;
+        Tue, 25 Sep 2018 17:44:42 -0700 (PDT)
+Received: from ?IPv6:2601:5c0:c100:49da:1857:54ff:f889:7a68? ([2601:5c0:c100:49da:1857:54ff:f889:7a68])
+        by smtp.gmail.com with ESMTPSA id q10-v6sm2117797qtp.7.2018.09.25.17.44.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 17:44:41 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: Leaking path for set_task_comm
+From:   TongZhang <ztong@vt.edu>
+In-Reply-To: <20180925183953.GI15710@uranus>
+Date:   Tue, 25 Sep 2018 20:44:39 -0400
+Cc:     adobriyan@gmail.com, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Wenbo Shen <shenwenbosmile@gmail.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <0CD63E6E-7512-4DD6-8858-4408416DC730@vt.edu>
+References: <F7DFF547-5267-4EF3-8BF3-70DAF6C2A53A@vt.edu>
+ <20180925183953.GI15710@uranus>
+To:     Cyrill Gorcunov <gorcunov@gmail.com>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------7E56B4AEBBDDF217CA745EFF
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Yes, this is exactly what I am saying.
+A process can change its own name using prctl or /proc/self/comm.
+prctl is protected by security_task_prctl, whereas /proc/self/comm is not protected by this LSM hook.
 
-On 25/09/2018 19:14, \0xDynamite wrote:
-[...]
->>> So, is code a *published* item?  Most of the public can't read it.
->>
->> I cannot read (or understand) neither Russian nor Chinese nor almost a=
-ny
->> natural (let alone dead) languages of the world. I'm pretty sure that
->> I'm not the only one;-)
->> Does that make Russian literature non-public? I don't think so ...
->=20
-> You confuse the issue.  My definition included "intended for the
-> public".  But it isn't clear that open source code is intended for the
+A system admin may expect to use security_task_prctl to block all attempt to change process name, however, it can still change name using /proc/self/comm.
 
-Well, then I have to repeat myself: Signed-off source code (in form of
-patches) in a well-known programming language for a (nowadays)
-well-known GPLv2 licensed project mailed on "everyone can subscribe"
-mailinglists, (thus) to be found in several $SEARCH_ENGINE-indexed
-mailinglist archives, if accepted to be found in lots of publicly
-accessible git repos can be not intended to be published?
+> On Sep 25, 2018, at 2:39 PM, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
+> 
+> On Tue, Sep 25, 2018 at 01:27:08PM -0400, Tong Zhang wrote:
+>> Kernel Version: 4.18.5
+>> 
+>> Problem Description:
+>> 
+>> When using prctl(PR_SET_NAME) to set the thread name, it is checked by security_task_prctl.
+>> 
+>> We discovered a leaking path that can also use method implemented in 
+>> fs/proc/base.c:1526 comm_write(), to do similar thing without asking LSM’s decision.
+> 
+> I don't understand how it is a problem. Could you please explain?
+> procfs/comm is created with S_IRUGO|S_IWUSR permissions. So
+> prctl and procfs are simply different interfaces.
 
-I wonder what else must happen.
-
-> public -- it is intended for those who code or wish to.
-
-MfG,
-	Bernd
---=20
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
-
---------------7E56B4AEBBDDF217CA745EFF
-Content-Type: application/pgp-keys;
- name="pEpkey.asc"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="pEpkey.asc"
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-mQENBFr26nABCAC94WhTqVPMksk/AErK3NqDKXE0sqO5umWIF3f4DYRidk8SIuNq
-Fk3Sc8hqE2HlbCB9lxV9q+eqDQ8bRjMF6ud7rjXortlwmoclRRMUuSJhluKo0C7o
-y2fJIwlQAcAKWNfOKqZBTTz81Mntb4j26MsSL7t7JIibst/G7EfoqyB9CkeoI8R2
-20WVKV7Cb70G5cYZkLrSdjhSZ8FJn0QTb+r/TTYHRCFvU2sv+wvG3LAdWfHVnyaC
-l9rPkglsYXFCtsdx3jW2zvWf+mGEjpANlVc/9M621C/uS7viLzalmFENpgM1UqFx
-TEEt8mwepc7dkiiKlslmDGUWSfc/BAcln8BjABEBAAG0LUJlcm5kIFBldHJvdml0
-c2NoIDxiZXJuZEBwZXRyb3ZpdHNjaC5wcml2LmF0PokBVAQTAQgAPhYhBBp+6uAd
-nwsL14MwOAUgtH2tYL69BQJa9upyAhsDBQkB4TOABQsJCAcCBhUKCQgLAgQWAgMB
-Ah4BAheAAAoJEAUgtH2tYL69e+EH/jL5uerVy/JnSTjM4f6UeWSXCT/RoIACccws
-gvr84g5mwYy23c6TxUNNLgeCSGFWCkGxiF07kWazSvMSaQJ7Jb0cIxgqAQfR4xm3
-g/O2bu8E0ZvMu1naMVdYrA6iXX40fylrEONF85+/93ccU60sa443ZxjzmQy8Hh4/
-Siu0tOPrfvBgdovUcIhJaAAStcPLVocYgQ6zu2A9CCHcBTjaCiRiT4s2IPsooEZU
-chKObAormMXJS2mdYHcH/a/6E6+NKnrvZ4yfhAkPF3K1M0Bc1Nvc0ADj62Ffpice
-Mnrd/ki31ct5yIUeViJzNNxApXFuThxm1Nmpgmn/eRG2eHnlvu25AQ0EWvbqcQEI
-AOnQvBVfytvhpeR96YtYTG2VW85Byv92T/FqG7rPHNm7fVxuJtFXZ8L82LKDTl7r
-WtwwbnWFpha3/OAhb4Hn4fWZveDNSPNN8BUMh5BbTV/EW/053F4pBX4uq4/L1t3M
-JQZH5QJrDRNAEL56JfK0yOOGJOvXBMSNAe1gXfLWiE6gGwtHxsoDZfPbSNYl703d
-f4UaSsG0AleVWw+BGGQuYoeD9/icoy673bca22LdcxcV70SWcNaYcutduwAQYZfe
-OTsDO0x/VpapLm7KsyQuNW2EYSPM8RjwuApet1TZxfU4opInQ7HbIusz/kWAWCr3
-q47TvuD9c0jG8cKM3UP4UdcAEQEAAYkBPAQYAQgAJhYhBBp+6uAdnwsL14MwOAUg
-tH2tYL69BQJa9upxAhsMBQkB4TOAAAoJEAUgtH2tYL69YS0H/21k3QUKHj/m3juD
-X3yIbebr+/SR7Db0yrZXLh0RvS9DN2u0E+V26lb9jq+PDHDOJlqgHoiNK5MeWKBA
-2yhpFvwx65P6DS3EXUhIT+1NN0CwtXcuSCt7DKHwmuSBZq+2FKr6niNllxKGWUhz
-EOYtHE71Xm95LPjVi+ETzONF9Xt1ibjFahioSgx8ld/OrsUKv2nVmWVrHErQ+Ed0
-m2fhBB0V9hhv7oCiKv0dfDeoPmeQWmiwMEqBYMgMMaJBUBs4pVwrHYVYYvWGLTfV
-uyqqdpcKo99ns7ALSI7PGCwM4J9ra77L8PQenc329eEREzhC0Ok/Qgk+rI832lD7
-bxT8MO4=3D
-=3DpFcw
------END PGP PUBLIC KEY BLOCK-----
-
---------------7E56B4AEBBDDF217CA745EFF--
