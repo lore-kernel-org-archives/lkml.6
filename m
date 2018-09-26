@@ -5,84 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F733C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EDEC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49FD021527
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:19:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49FD021527
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 706A121527
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706A121527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbeIZWct (ORCPT
+        id S1728540AbeIZWdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:32:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26260 "EHLO mga18.intel.com"
+        Wed, 26 Sep 2018 18:33:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42692 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727285AbeIZWct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:32:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:19:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="76115327"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
-  by orsmga007.jf.intel.com with ESMTP; 26 Sep 2018 09:18:16 -0700
-Subject: Re: [PATCH v5 2/4] mm: Provide kernel parameter to allow disabling
- page init poisoning
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        jglisse@redhat.com, rppt@linux.vnet.ibm.com,
-        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925201921.3576.84239.stgit@localhost.localdomain>
- <20180926073831.GC6278@dhcp22.suse.cz>
- <c57da51a-009a-9500-4dc5-1d9912e78abd@linux.intel.com>
- <98411844-19b7-a75b-d52c-6e2c46b40d57@intel.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <0845f5c1-5737-3749-69dd-e7fb5d1b75c6@linux.intel.com>
-Date:   Wed, 26 Sep 2018 09:18:16 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1727782AbeIZWdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:33:51 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 723B332B669;
+        Wed, 26 Sep 2018 16:20:10 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F16B32010D69;
+        Wed, 26 Sep 2018 16:20:08 +0000 (UTC)
+Subject: Re: [RFC][PATCH 0/3] locking/qspinlock: Improve determinism for x86
+To:     Peter Zijlstra <peterz@infradead.org>, will.deacon@arm.com,
+        mingo@kernel.org
+Cc:     linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
+        tglx@linutronix.de
+References: <20180926110117.405325143@infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <2c284b6d-99c1-2686-b8c0-fce8987e747f@redhat.com>
+Date:   Wed, 26 Sep 2018 12:20:09 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <98411844-19b7-a75b-d52c-6e2c46b40d57@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180926110117.405325143@infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 26 Sep 2018 16:20:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 09/26/2018 07:01 AM, Peter Zijlstra wrote:
+> Back when Will did his qspinlock determinism patches, we were left with one
+> cmpxchg loop on x86 due to the use of atomic_fetch_or(). Will proposed a nifty
+> trick:
+>
+>   http://lkml.kernel.org/r/20180409145409.GA9661@arm.com
+>
+> But at the time we didn't pursue it. This series implements that and argues for
+> its correctness. In particular it places an smp_mb__after_atomic() in
+> between the two operations, which forces the load to come after the
+> store (which is free on x86 anyway).
+>
+> In particular this ordering ensures a concurrent unlock cannot trigger
+> the uncontended handoff. Also it ensures that if the xchg() happens
+> after a (successful) trylock, we must observe that LOCKED bit.
 
+When you said "concurrent unlock cannot trigger the uncontended
+handoff", are you saying the current code has this uncontended handoff
+problem or just when comparing to doing a load first followed by xchg()?
 
-On 9/26/2018 8:41 AM, Dave Hansen wrote:
-> On 09/26/2018 08:24 AM, Alexander Duyck wrote:
->> With no options it works just like slub_debug and enables all
->> available options. So in our case it is a NOP since we wanted the
->> debugging enabled by default.
-> 
-> Yeah, but slub_debug is different.
-> 
-> First, nobody uses the slub_debug=- option because *that* is only used
-> when you have SLUB_DEBUG=y *and* CONFIG_SLUB_DEBUG_ON=y, which not even
-> Fedora does.
-> 
-> slub_debug is *primarily* for *adding* debug features.  For this, we
-> need to turn them off.
-> 
-> It sounds like following slub_debug was a bad idea, especially following
-> its semantics too closely when it doesn't make sense.
+Cheers,
+Longman
 
-I actually like the idea of using slub_debug style semantics. It makes 
-sense when you start thinking about future features being added. Then we 
-might actually have scenarios where vm_debug=P will make sense, but for 
-right now it is probably not going to be used. Basically this all makes 
-room for future expansion. It is just ugly to read right now while we 
-only have one feature controlled by this bit.
