@@ -2,83 +2,171 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819FEECE560
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1E2C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A247208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:44:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A247208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 01CBB20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:46:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S2a/gSdI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01CBB20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeIZN4D (ORCPT
+        id S1727199AbeIZN6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:56:03 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46151 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeIZN4D (ORCPT
+        Wed, 26 Sep 2018 09:58:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43342 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbeIZN6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:56:03 -0400
-Received: by mail-ua1-f65.google.com with SMTP id u11-v6so10481173uan.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:44:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uw2hYzzEIqBrVeq7KyxkB9jqqPwxYAMVWW+3BIjW5u8=;
-        b=BLwoi0hXn17NlV7kheiYDz23ZhH1VIo62TZxQzjVssyhKK440qsk3OnNCpjMqU1xps
-         jTM9GwzLMeWUsuRfkAaEki7J6f4vZtXgRGsS8MFfvcbfo203CZ+BCFnhzZJPm+JPWHLZ
-         u7s+hlMAeUwv6Z4QFCUht4aE+sxaOMs1CVoUjx0ru6t3B2zo/pSLcMOPmFtfWtFQMjYb
-         NgaZvPZxmqIyBFlxmx/cmlc10XxWdnQBWPhGFjbuPQ1MSxTo3PBRXKIpeO6unEgot1z5
-         InEF5RsLQlo9qlZIqHGW8AELfidNxNURuAsGFAroZ3IXhGJtngxAVmPClaizHr6kRRJy
-         l+Og==
-X-Gm-Message-State: ABuFfogPrlD2zc6Koq5NPI2qHwvdvaVJ79RZIvrpdJYcdwxb+rs60Vgz
-        cvZLdVreiPLek51OQgzieVkeIu5i5JKNmtd9/cDj6A==
-X-Google-Smtp-Source: ACcGV60E6MzcHJAPhu/CRcr2TlGw6QmYGsy20JOoksqOG6RDhN6JIRzakDRdh2vd87NCD+l1GDeoFYYgCEyfi6A2oBE=
-X-Received: by 2002:a9f:2986:: with SMTP id s6-v6mr1504339uas.28.1537947865837;
- Wed, 26 Sep 2018 00:44:25 -0700 (PDT)
+        Wed, 26 Sep 2018 09:58:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ABdYxSK4kaXbb7a54CdIXymQvP565TfjDPjQI1IwTNQ=; b=S2a/gSdIV8pJWb/HwivngMndo
+        +T1KgoOG1he+8g7jTJMbyV2O0BaQcn1k895SGXhDRNYqO3nAGiFyAmgYQS1GyAfaT5AqcV/Sb65dZ
+        HIvIvyFan7r9wifa/0wzQoiLnT39wtDRk8zwMHwLyYic2dpmJg0H6fAFp6DSrWluqYocsIyDJXY1J
+        +oaEhKAhm2/CRWXXjO4CpcSH/Ek82f1UssrI+xoUcyNjg8rHvFcjW4KTgRjDwpJ0jOLxm0/oH8mW9
+        6pM7+j1nPNzgESRy0IXWeQ3byDbjlmLPSNCS/zg6K2MGX0q5G58M+Bq/pSzdxZ+pdMjd6QlxwJY4h
+        wZVltGfmg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g54WQ-0006IV-GI; Wed, 26 Sep 2018 07:46:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 449FD20289D15; Wed, 26 Sep 2018 09:46:09 +0200 (CEST)
+Date:   Wed, 26 Sep 2018 09:46:09 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     PierceGriffiths <pierceagriffiths@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scheduler: conditional statement cleanup
+Message-ID: <20180926074609.GA1654@hirez.programming.kicks-ass.net>
+References: <20180921202205.11769-1-pierceagriffiths@gmail.com>
 MIME-Version: 1.0
-References: <28ebe45d-3dbd-2a82-f537-b0725f7a2bcf@infradead.org>
- <878t66idai.fsf@igel.home> <94dc0357-10d4-c3dc-ef2a-9643f08d2a09@infradead.org>
- <87sh48r0zf.fsf@igel.home>
-In-Reply-To: <87sh48r0zf.fsf@igel.home>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Sep 2018 09:44:13 +0200
-Message-ID: <CAMuHMdW-ZA3bUJP3Fztm5sm7TSO345Jah471oMUr89x89d51xQ@mail.gmail.com>
-Subject: Re: m68k allmodconfig build errors
-To:     Andreas Schwab <schwab@linux-m68k.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921202205.11769-1-pierceagriffiths@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+On Fri, Sep 21, 2018 at 03:22:03PM -0500, PierceGriffiths wrote:
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 625bc9897f62..443a1f235cfd 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -617,12 +617,8 @@ bool sched_can_stop_tick(struct rq *rq)
+>  	 * If there are more than one RR tasks, we need the tick to effect the
+>  	 * actual RR behaviour.
+>  	 */
+> -	if (rq->rt.rr_nr_running) {
+> -		if (rq->rt.rr_nr_running == 1)
+> -			return true;
+> -		else
+> -			return false;
+> -	}
+> +	if (rq->rt.rr_nr_running)
+> +		return rq->rt.rr_nr_running == 1;
+>  
+>  	/*
+>  	 * If there's no RR tasks, but FIFO tasks, we can skip the tick, no
 
-On Tue, Jul 24, 2018 at 7:35 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
-> On Jul 23 2018, Randy Dunlap <rdunlap@infradead.org> wrote:
-> > I don't see that all of these string compare fields are null-terminated.
->
-> That gcc has converted the strncmp calls to strcmp is a pretty strong
-> evidence that they are.
+> diff --git a/kernel/sched/cpupri.c b/kernel/sched/cpupri.c
+> index daaadf939ccb..152c133e8247 100644
+> --- a/kernel/sched/cpupri.c
+> +++ b/kernel/sched/cpupri.c
+> @@ -29,20 +29,16 @@
+>  #include "sched.h"
+>  
+>  /* Convert between a 140 based task->prio, and our 102 based cpupri */
+> -static int convert_prio(int prio)
+> +static int convert_prio(const int prio)
+>  {
+> -	int cpupri;
+> -
+>  	if (prio == CPUPRI_INVALID)
+> -		cpupri = CPUPRI_INVALID;
+> +		return CPUPRI_INVALID;
+>  	else if (prio == MAX_PRIO)
+> -		cpupri = CPUPRI_IDLE;
+> +		return CPUPRI_IDLE;
+>  	else if (prio >= MAX_RT_PRIO)
+> -		cpupri = CPUPRI_NORMAL;
+> +		return CPUPRI_NORMAL;
+>  	else
+> -		cpupri = MAX_RT_PRIO - prio + 1;
+> -
+> -	return cpupri;
+> +		return MAX_RT_PRIO - prio + 1;
 
-Isn't gcc-8 just assuming that any char array must contain a valid
-NUL-terminated string, unless it is tagged with the nonstring attribute?
+Code improves if you leave out the last else.
 
-Gr{oetje,eeting}s,
+>  }
+>  
+>  /**
 
-                        Geert
+> @@ -222,7 +216,7 @@ int cpupri_init(struct cpupri *cp)
+>  	return 0;
+>  
+>  cleanup:
+> -	for (i--; i >= 0; i--)
+> +	while (--i >= 0)
+>  		free_cpumask_var(cp->pri_to_cpu[i].mask);
+>  	return -ENOMEM;
+>  }
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 2e2955a8cf8f..acf1b94669ad 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -142,10 +142,12 @@ void free_rt_sched_group(struct task_group *tg)
+>  		destroy_rt_bandwidth(&tg->rt_bandwidth);
+>  
+>  	for_each_possible_cpu(i) {
+> -		if (tg->rt_rq)
+> -			kfree(tg->rt_rq[i]);
+> -		if (tg->rt_se)
+> -			kfree(tg->rt_se[i]);
+> +		/* Don't need to check if tg->rt_rq[i]
+> +		 * or tg->rt_se[i] are NULL, since kfree(NULL)
+> +		 * simply performs no operation
+> +		 */
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Don't bother with the comment tho (but if you do, know this is the wrong
+comment style).
+
+> +		kfree(tg->rt_rq[i]);
+> +		kfree(tg->rt_se[i]);
+>  	}
+>  
+>  	kfree(tg->rt_rq);
+
+> @@ -1393,7 +1389,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+>  
+>  	/* For anything but wake ups, just return the task_cpu */
+>  	if (sd_flag != SD_BALANCE_WAKE && sd_flag != SD_BALANCE_FORK)
+> -		goto out;
+> +		return cpu;
+>  
+>  	rq = cpu_rq(cpu);
+>  
+> @@ -1437,7 +1433,6 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+>  	}
+>  	rcu_read_unlock();
+>  
+> -out:
+>  	return cpu;
+>  }
+>  
+
+These changes are OK with minor edits, the rest just makes the code
+harder to read.
