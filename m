@@ -2,131 +2,134 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6B5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792F7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BCC214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:14:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89BCC214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 18BDE214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:16:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9vlvx3x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18BDE214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeIZR0w (ORCPT
+        id S1727439AbeIZR3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:26:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47276 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726565AbeIZR0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:26:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CF61AAE0B;
-        Wed, 26 Sep 2018 11:14:22 +0000 (UTC)
-Subject: Re: [v11 PATCH 3/3] mm: unmap VM_PFNMAP mappings with optimized path
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org
-Cc:     dave.hansen@intel.com, oleg@redhat.com, srikar@linux.vnet.ibm.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1537376621-51150-1-git-send-email-yang.shi@linux.alibaba.com>
- <1537376621-51150-4-git-send-email-yang.shi@linux.alibaba.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSFWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmNvbT7CwZcEEwEKAEECGwMFCwkIBwMFFQoJCAsFFgIDAQAC
- HgECF4ACGQEWIQSpQNQ0mSwujpkQPVAiT6fnzIKmZAUCWi/zTwUJBbOLuQAKCRAiT6fnzIKm
- ZIpED/4jRN/6LKZZIT4R2xoou0nJkBGVA3nfb+mUMgi3uwn/zC+o6jjc3ShmP0LQ0cdeuSt/
- t2ytstnuARTFVqZT4/IYzZgBsLM8ODFY5vGfPw00tsZMIfFuVPQX3xs0XgLEHw7/1ZCVyJVr
- mTzYmV3JruwhMdUvIzwoZ/LXjPiEx1MRdUQYHAWwUfsl8lUZeu2QShL3KubR1eH6lUWN2M7t
- VcokLsnGg4LTajZzZfq2NqCKEQMY3JkAmOu/ooPTrfHCJYMF/5dpi8YF1CkQF/PVbnYbPUuh
- dRM0m3NzPtn5DdyfFltJ7fobGR039+zoCo6dFF9fPltwcyLlt1gaItfX5yNbOjX3aJSHY2Vc
- A5T+XAVC2sCwj0lHvgGDz/dTsMM9Ob/6rRJANlJPRWGYk3WVWnbgW8UejCWtn1FkiY/L/4qJ
- UsqkId8NkkVdVAenCcHQmOGjRQYTpe6Cf4aQ4HGNDeWEm3H8Uq9vmHhXXcPLkxBLRbGDSHyq
- vUBVaK+dAwAsXn/5PlGxw1cWtur1ep7RDgG3vVQDhIOpAXAg6HULjcbWpBEFaoH720oyGmO5
- kV+yHciYO3nPzz/CZJzP5Ki7Q1zqBb/U6gib2at5Ycvews+vTueYO+rOb9sfD8BFTK386LUK
- uce7E38owtgo/V2GV4LMWqVOy1xtCB6OAUfnGDU2EM7ATQRbGTU1AQgAn0H6UrFiWcovkh6E
- XVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQLa1PQDUi6j00ChlcR66g9/V0sPIcSutacPKf
- dKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMhFmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCT
- sTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sfbAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZO
- rIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq+aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahK
- tQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4njQARAQABwsF8BBgBCgAmFiEEqUDUNJksLo6Z
- ED1QIk+n58yCpmQFAlsZNTUCGwwFCQPCZwAACgkQIk+n58yCpmQ83g/9Frg1sRMdGPn98zV+
- O2eC3h0p5f/oxxQ8MhG5znwHoW4JDG2TuxfcQuz7X7Dd5JWscjlw4VFJ2DD+IrDAGLHwPhCr
- RyfKalnrbYokvbClM9EuU1oUuh7k+Sg5ECNXEsamW9AiWGCaKWNDdHre3Lf4xl+RJWxghOVW
- RiUdpLA/a3yDvJNVr6rxkDHQ1P24ZZz/VKDyP+6g8aty2aWEU0YFNjI+rqYZb2OppDx6fdma
- YnLDcIfDFnkVlDmpznnGCyEqLLyMS3GH52AH13zMT9L9QYgT303+r6QQpKBIxAwn8Jg8dAlV
- OLhgeHXKr+pOQdFf6iu2sXlUR4MkO/5KWM1K0jFR2ug8Pb3aKOhowVMBT64G0TXhQ/kX4tZ2
- ZF0QZLUCHU3Cigvbu4AWWVMNDEOGD/4sn9OoHxm6J04jLUHFUpFKDcjab4NRNWoHLsuLGjve
- Gdbr2RKO2oJ5qZj81K7os0/5vTAA4qHDP2EETAQcunTn6aPlkUnJ8aw6I1Rwyg7/XsU7gQHF
- IM/cUMuWWm7OUUPtJeR8loxZiZciU7SMvN1/B9ycPMFs/A6EEzyG+2zKryWry8k7G/pcPrFx
- O2PkDPy3YmN1RfpIX2HEmnCEFTTCsKgYORangFu/qOcXvM83N+2viXxG4mjLAMiIml1o2lKV
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <889734e0-d2a9-3191-8d48-5c95bf29fb3f@suse.cz>
-Date:   Wed, 26 Sep 2018 13:11:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 26 Sep 2018 13:29:05 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38770 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeIZR3E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:29:04 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z16-v6so1881880wmi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 04:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4uTy+mmOaZ76/eGRokeLFBv4J+yiuPWsYbtjpghyX7A=;
+        b=U9vlvx3xFnm5Dnl2bL/EMvO+Sqb9RrBBBlKjy9WtUesqDY93j7qesBt78fctkPugOF
+         kdAud/pEu0358FazKHXp53PqACJSI+VO4JPnPeqJuJDGl3N8pEXL3S2YrJnlwhVqrkFo
+         0PRG09ULDJgJEXqvtD2tLg7NDiHPESrbz/ChGwulHS1Ua6YUc7n3km7/hk7oNcdZO2rH
+         AvLiClvmZZ9cPr9BjL/Vqq+0KwjnKMHWcWTZJWcObV4XdeDfZxP3pB7DC3wtXDa4fGr4
+         ZtLZ6aP2+2BSmqdE4XT2/rzzeKf2NYKZaSaKhf9vNVFcz1VDL2+5kuv4m7FPeKKj9fUu
+         hXpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4uTy+mmOaZ76/eGRokeLFBv4J+yiuPWsYbtjpghyX7A=;
+        b=MNYW2LldB5EnHygf90yZHL9slfTYgR/LLfdvgg5hkqP3QOLyk0XuEO3qXoqaK0PhLB
+         N6/2aBsY7a7xDGGdXODna5sB5unk+veukzJLJD+66QDcqOU8kErgdBOk/MOPjzuIjMF5
+         AbSgvNlQ6qvFpsnEdBcrqpuBxFDdNJPkQgeIJWRiSmTp03UkPNXe/XZ9QDn7iYCv0gZM
+         8cNAYdQuwUqpwYfX6RAKjlS+gY3BG7WPdW8CpgWVwNS8Bbt63VwMV6kpG1n4YBiib0J+
+         EQRbzn1nMyLZaT7RJUGNJC6BgU00xc40/F05rHUMiEaWk4Aq8k7eDCchC/PlWEQZUrbb
+         Bzrg==
+X-Gm-Message-State: ABuFfojSc17VFSeqp1iDLf0dYhpVQ1eehcLDV8Vp9wpSHzesXqGSzKA7
+        SnSkLpg0tAdl+Vd9QKrAvjk=
+X-Google-Smtp-Source: ACcGV63wr7yD/mp0J65zlEV62C2QP0xzu4rPFGUWU1nuJHeBvvT2xFLYmgdbzgs86D7RRUq4YFBK2g==
+X-Received: by 2002:a1c:ef15:: with SMTP id n21-v6mr2613205wmh.151.1537960595212;
+        Wed, 26 Sep 2018 04:16:35 -0700 (PDT)
+Received: from laptop.localdomain ([37.122.159.87])
+        by smtp.gmail.com with ESMTPSA id r64-v6sm3885724wme.42.2018.09.26.04.16.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 04:16:34 -0700 (PDT)
+From:   Yasha Cherikovsky <yasha.che3@gmail.com>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
+Cc:     Yasha Cherikovsky <yasha.che3@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] MIPS: Lexra CPU support, prerequisite patch
+Date:   Wed, 26 Sep 2018 14:16:14 +0300
+Message-Id: <20180926111615.6780-1-yasha.che3@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <1537376621-51150-4-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/19/18 7:03 PM, Yang Shi wrote:
-> When unmapping VM_PFNMAP mappings, vm flags need to be updated. Since
-> the vmas have been detached, so it sounds safe to update vm flags with
-> read mmap_sem.
-> 
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  mm/mmap.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 490340e..847a17d 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2771,15 +2771,6 @@ static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->  				munlock_vma_pages_all(tmp);
->  			}
->  
-> -			/*
-> -			 * Unmapping vmas, which have VM_HUGETLB or VM_PFNMAP,
+Hi,
 
-Ah, the comment should have been already updated with the previous
-patch. But nevermind as that all goes away.
+This is the v2 of:
+https://www.linux-mips.org/archives/linux-mips/2018-09/msg00641.html
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Changelog:
 
-> -			 * need get done with write mmap_sem held since they may
-> -			 * update vm_flags.
-> -			 */
-> -			if (downgrade &&
-> -			    (tmp->vm_flags & VM_PFNMAP))
-> -				downgrade = false;
-> -
->  			tmp = tmp->vm_next;
->  		}
->  	}
-> 
+v1 -> v2:
+- Rebased on v4.19-rc5
+- Addressed Paul's comments:
+  https://www.linux-mips.org/archives/linux-mips/2018-09/msg00735.html
+
+
+The patch is also available at:
+https://github.com/yashac3/linux-rtl8186/commits/unaligned_load_store_on_4_19
+
+
+Please review.
+
+---
+
+This is a prerequisite patch required for adding Lexra CPU [1] support in
+arch/mips.
+It does not add any Lexra CPU support yet, but it is required for such future
+support.
+
+The patch is written on top of v4.19-rc5.
+
+Background:
+I'm currently working on porting Linux/MIPS to run on the Realtek RTL8186 SoC [1],
+which has Lexra LX5280 CPU [2].
+
+The complete Lexra+RTL8186 support is still WIP [3] so I'm not sending that
+for review right now.
+
+Thanks,
+Yasha
+
+[1] https://wikidevi.com/wiki/Realtek_RTL8186
+[2] https://www.linux-mips.org/wiki/Lexra
+[3] https://github.com/yashac3/linux-rtl8186/commits/rtl8186-porting-for-upstream-4.18
+
+Cc: linux-kernel@vger.kernel.org
+
+Yasha Cherikovsky (1):
+  MIPS: Add Kconfig variable for CPUs with unaligned load/store
+    instructions
+
+ arch/mips/Kconfig            | 35 +++++++++++++++++++++++++--
+ arch/mips/kernel/unaligned.c | 47 ++++++++++++++++++------------------
+ arch/mips/lib/memcpy.S       | 10 ++++----
+ arch/mips/lib/memset.S       | 12 ++++-----
+ 4 files changed, 67 insertions(+), 37 deletions(-)
+
+-- 
+2.19.0
 
