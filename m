@@ -2,116 +2,86 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E508C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 465BFC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B877121537
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:23:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phpw1qOZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B877121537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C452F21565
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:29:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C452F21565
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbeI0Fix (ORCPT
+        id S1726561AbeI0Fo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 01:38:53 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40318 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbeI0Fix (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 01:38:53 -0400
-Received: by mail-wm1-f66.google.com with SMTP id o2-v6so4019130wmh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 16:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3KaQUP07p+ekdffmHemSDqhApYEmAzBtDlYnYARB+fs=;
-        b=phpw1qOZJqkPk6gsocuFrCzVjl7Ue+ElMPiyNfDR/Ga+hrPsdu12KtH2ts9bm8l1+t
-         RtKZa83EUvNgbDiNFr8EhEO4lRwiOHb5kow2w4jtccjYIeolTYBu+EgI4qiWIRPrpPZp
-         hvzubqUzGEQ9gNlrkm+VrYZ1+RZOQ/IT44QtJM327Z0JSscr3wZKAceWM2bdAQ5bJ96M
-         i1E1pqqN1ttuOPs2BrDAevU9YfLtgwggwpFwlyl6+EuKr6mkwFFrinJPbz7Zj1ctFtoY
-         vQ5kz7tqEV9tFr3KvKFUnCRNML7Mui7FZMTbyj8LrHifkjBTXB6VQ4xzRh9trade3ErM
-         MG4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3KaQUP07p+ekdffmHemSDqhApYEmAzBtDlYnYARB+fs=;
-        b=Wk9Nguh35A+LTpylzjkQgpqMoQtG/+8677ZwTNqGIwjBcMI8a5m/KMp+9xJ9anouOX
-         5Yqt8PHpcWBQkwgU72YrFsN5elUdbk557OAYTpjzgDC9nvFQavo6xm8FznLQTYZy9XLL
-         ROX9I0SU5NXgIR66jnkBnRHhpmeQQ6fk5wKf6na0x+zBsrmh8eoRlAu9EH9ZNe+tTUej
-         aoRQxExLrcdfKv2DJ3aiprz9JdfVWsi4blfKoFZqhF1647EmgdTGO4dRdDz0lLSrvM8Z
-         hvW/gzDTFyeNxlXnEZ5jikC83PNaOEFPnBgrXoKMCCFcaQQlT141PIBgzAFTTJG861qQ
-         4Bxw==
-X-Gm-Message-State: ABuFfogb9OFub+A2G8i8X9rNDl3AR09O6kvCzqXrROPnxX1UHH8RfWIw
-        4nPa42wk0JhgrdJQRypZzJkNDAF4g7uXhw==
-X-Google-Smtp-Source: ACcGV61uHrj3GumxQJsrE8AHvwXSD1KO/s3lCECw4Btvtp9cFGngJztWoAGV4GbU+QblHNLP+LJxdw==
-X-Received: by 2002:a1c:7dce:: with SMTP id y197-v6mr6129838wmc.78.1538004212241;
-        Wed, 26 Sep 2018 16:23:32 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id r13-v6sm495350wmf.34.2018.09.26.16.23.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 16:23:31 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: Mark ACPI table declaration as used
-Date:   Wed, 26 Sep 2018 16:20:55 -0700
-Message-Id: <20180926232055.31951-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Thu, 27 Sep 2018 01:44:29 -0400
+Received: from mga04.intel.com ([192.55.52.120]:33789 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbeI0Fo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 01:44:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 16:29:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,308,1534834800"; 
+   d="scan'208";a="86873123"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
+  by orsmga003.jf.intel.com with ESMTP; 26 Sep 2018 16:28:20 -0700
+Subject: [RFC mm PATCH 0/5] mm: Deferred page init improvements
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, alexander.h.duyck@linux.intel.com,
+        dan.j.williams@intel.com, willy@infradead.org, mingo@kernel.org,
+        khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
+        akpm@linux-foundation.org, ldufour@linux.vnet.ibm.com,
+        davem@davemloft.net, kirill.shutemov@linux.intel.com
+Date:   Wed, 26 Sep 2018 16:28:20 -0700
+Message-ID: <20180926232117.17365.72207.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang emits the following warning:
+This patchset is essentially a refactor of the page initialization logic
+to provide for better code reuse while providing a significant improvement
+in deferred page initialization performance.
 
-drivers/staging/rtl8723bs/os_dep/sdio_intf.c:25:36: warning: variable
-'acpi_ids' is not needed and will not be emitted
-[-Wunneeded-internal-declaration]
-static const struct acpi_device_id acpi_ids[] = {
-                                   ^
-1 warning generated.
+In my testing I have seen a 3:1 reduction in the time needed for deferred
+memory initialization on two different x86_64 based test systems I have.
 
-Mark acpi_ids with the attribute __used, which makes it clear to Clang
-that we don't want this warning while not inhibiting Clang's dead code
-elimination from removing the unreferenced internal symbol when moving
-the data to the globally available symbol with MODULE_DEVICE_TABLE.
+In addition this provides a very slight improvement for the hotplug memory 
+initialization, although the improvement doesn't exceed 5% from what I can
+tell and that is to be expected since most of the changes related to
+hotplug initialization are just code clean-up to allow for reuse. I had
+been considering using a large memset for the entire pageblock I was
+initializing which showed a significant speedup for persistent memory init
+however that showed no improvements to a slight regression for regular
+deferred initialization of standard memory.
 
-$ nm -S drivers/staging/rtl8723bs/os_dep/sdio_intf.o | grep acpi
-0000000000000000 0000000000000040 R __mod_acpi__acpi_ids_device_table
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/169
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-index 6d02904de63f..7c03b69b8ed3 100644
---- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-+++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-@@ -22,7 +22,7 @@ static const struct sdio_device_id sdio_ids[] =
- 	{ SDIO_DEVICE(0x024c, 0xb723), },
- 	{ /* end: all zeroes */				},
- };
--static const struct acpi_device_id acpi_ids[] = {
-+static const struct acpi_device_id acpi_ids[] __used = {
- 	{"OBDA8723", 0x0000},
- 	{}
- };
--- 
-2.19.0
+Alexander Duyck (5):
+      mm: Use mm_zero_struct_page from SPARC on all 64b architectures
+      mm: Drop meminit_pfn_in_nid as it is redundant
+      mm: Use memblock/zone specific iterator for handling deferred page init
+      mm: Move hot-plug specific memory init into separate functions and optimize
+      mm: Use common iterator for deferred_init_pages and deferred_free_pages
 
+
+ arch/sparc/include/asm/pgtable_64.h |   30 --
+ include/linux/memblock.h            |   58 ++++
+ include/linux/mm.h                  |   33 ++
+ mm/memblock.c                       |   63 ++++
+ mm/page_alloc.c                     |  555 +++++++++++++++++++++--------------
+ 5 files changed, 485 insertions(+), 254 deletions(-)
+
+--
