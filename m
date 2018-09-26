@@ -2,125 +2,149 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED586C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DBBC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE8521528
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:41:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE8521528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A580521528
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:42:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dKgVTvnw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A580521528
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbeIZVzN (ORCPT
+        id S1728445AbeIZVzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:55:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:30425 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727250AbeIZVzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:55:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 08:41:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="93911291"
-Received: from ray.jf.intel.com (HELO [10.7.198.157]) ([10.7.198.157])
-  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 08:36:48 -0700
-Subject: Re: [PATCH v5 2/4] mm: Provide kernel parameter to allow disabling
- page init poisoning
-To:     Michal Hocko <mhocko@kernel.org>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925201921.3576.84239.stgit@localhost.localdomain>
- <20180926073831.GC6278@dhcp22.suse.cz>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
-        jglisse@redhat.com, rppt@linux.vnet.ibm.com,
-        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <f5648747-642f-763e-80b9-24fb203c85e9@intel.com>
-Date:   Wed, 26 Sep 2018 08:36:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 17:55:35 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52117 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728354AbeIZVzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:55:35 -0400
+Received: by mail-it1-f195.google.com with SMTP id 74-v6so1847845itw.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 08:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fCJVnPPLWEATgE21wxrgrVuRh7WoK5vHrKiJ+37zDQI=;
+        b=dKgVTvnwsOIU54webWPzIw7ix9mbqW0LGgx9gn4osbXwU1nkGWZCYqTIWHQ3jxcmfs
+         CHyze8oyoSeqit+/xvP9aQH7Z/ruDBP947+pe0kY9bf6i1QzbAWyN1eUqQakJoMancmy
+         vHS3O3ZnKUqEH32zKo4oV5RksxVxl/BMTo4Q8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fCJVnPPLWEATgE21wxrgrVuRh7WoK5vHrKiJ+37zDQI=;
+        b=PLNdEDHCAWUuVH+QPw1V+8B1on6Nheub+TVkSy0jiOwP444lMhHE08VGLy3e88aPWI
+         hvBQYuiljhJi1ET028PC1zVAKB54PT+Y3QHdL1z+UAVxPjPpN/I25ni8jvGY12GTH+Zt
+         jPHJaN7mTHZizBgWS+EBO//mBLFFREOIoKQpPq5vjryG7PATqmsUBgvXRk/zHHmJ5DHT
+         sKILbbS5xANzD+8OwUYhNzLqhuIquTcqwo5Q4JtJmOhSmg3m12bsgXyHnZM1CtqJJBUc
+         QRSiBD5WbvMjfz1CFZjeKBaJo3FPM7utLhj4fmPmVBoSEw/ozTBMqo3KrSHTtv9y1eFj
+         s+Cw==
+X-Gm-Message-State: ABuFfogV9oQboPkBJHkDnIn8qsdoT9327xWn8bPF5H4Ikw4VSYYRLFBv
+        WYof7+KOgR6CsmeD0vdHJf0dy/vQjpBN4lLW4+LTtlxY
+X-Google-Smtp-Source: ACcGV63LpKfGiYDXkA+mOaNjQaSmV7IFD/9CvED1fJFa1xBgwrLdwQI5WvyKwtnwFIJVGdaMDIZArgZT4sCCyME2NsI=
+X-Received: by 2002:a24:e48e:: with SMTP id o136-v6mr5515810ith.58.1537976523776;
+ Wed, 26 Sep 2018 08:42:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180926073831.GC6278@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
+ <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com> <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 26 Sep 2018 17:41:50 +0200
+Message-ID: <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/2018 12:38 AM, Michal Hocko wrote:
-> Why cannot you simply go with [no]vm_page_poison[=on/off]?
+On Wed, 26 Sep 2018 at 16:02, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> (+ Herbert, Thomas)
+>
+> On Wed, 26 Sep 2018 at 15:33, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > Hi Ard,
+> >
+> > On Wed, Sep 26, 2018 at 10:59 AM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> > > > +static inline bool chacha20_arch(struct chacha20_ctx *state, u8 *dst,
+> > > > +                                const u8 *src, size_t len,
+> > > > +                                simd_context_t *simd_context)
+> > > > +{
+> > > > +#if defined(CONFIG_KERNEL_MODE_NEON)
+> > > > +       if (chacha20_use_neon && len >= CHACHA20_BLOCK_SIZE * 3 &&
+> > > > +           simd_use(simd_context))
+> > > > +               chacha20_neon(dst, src, len, state->key, state->counter);
+> > > > +       else
+> > > > +#endif
+> > >
+> > > Better to use IS_ENABLED() here:
+> > >
+> > > > +       if (IS_ENABLED(CONFIG_KERNEL_MODE_NEON)) &&
+> > > > +           chacha20_use_neon && len >= CHACHA20_BLOCK_SIZE * 3 &&
+> > > > +           simd_use(simd_context))
+> >
+> > Good idea. I'll fix that up.
+> >
+> > >
+> > > Also, this still has unbounded worst case scheduling latency, given
+> > > that the outer library function passes its entire input straight into
+> > > the NEON routine.
+> >
+> > The vast majority of crypto routines in arch/*/crypto/ follow this
+> > same exact pattern, actually. I realize a few don't -- probably the
+> > ones you had a hand in :) -- but I think this is up to the caller to
+> > handle.
+>
+> Anything that uses the scatterwalk API (AEADs and skciphers) will
+> handle at most a page at a time. Hashes are different, which is why
+> some of them have to handle it explicitly.
+>
+> > I made a change so that in chacha20poly1305.c, it calls
+> > simd_relax after handling each scatter-gather element, so a
+> > "construction" will handle this gracefully. But I believe it's up to
+> > the caller to decide on what sizes of information it wants to pass to
+> > primitives. Put differently, this also hasn't ever been an issue
+> > before -- the existing state of the tree indicates this -- and so I
+> > don't anticipate this will be a real issue now.
+>
+> The state of the tree does not capture all relevant context or
+> history. The scheduling latency issue was brought up very recently by
+> the -rt folks on the mailing lists.
+>
+> > And if it becomes one,
+> > this is something we can address *later*, but certainly there's no use
+> > of adding additional complexity to the initial patchset to do this
+> > now.
+> >
+>
+> You are introducing a very useful SIMD abstraction, but it lets code
+> run with preemption disabled for unbounded amounts of time, and so now
+> is the time to ensure we get it right.
+>
 
-I was trying to look to the future a bit, if we end up with five or six
-more other options we want to allow folks to enable/disable.  I don't
-want to end up in a situation where we have a bunch of different knobs
-to turn all this stuff off at runtime.
-
-I'd really like to have one stop shopping so that folks who have a
-system that's behaving well and don't need any debugging can get some of
-their performance back.
-
-But, the *primary* thing we want here is a nice, quick way to turn as
-much debugging off as we can.  A nice-to-have is a future-proof,
-slub-style option that will centralize things.
-
-Alex's patch fails at the primary goal, IMNHO because "vm_debug=-" is so
-weird.  I'd much rather have "vm_debug=off" (the primary goal) and throw
-away the nice-to-have (future-proof fine-grained on/off).
-
-I think we can have both, but I guess the onus is on me to go and add a
-strcmp(..., "off"). :)
+Actually, looking at the code again, the abstraction does appear to be
+fine, it is just the chacha20 code that does not make use of it.
