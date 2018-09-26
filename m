@@ -2,106 +2,100 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9289C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B14C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC83320779
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:41:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC83320779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id A7FDC20779
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:42:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FDC20779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbeIZPxj (ORCPT
+        id S1727398AbeIZPyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:53:39 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:55052 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbeIZPxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:53:39 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42KtHW0gZbz9ttST;
-        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id c59T4_WQr0DD; Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42KtHW038zz9ttRc;
-        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4AD958B803;
-        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 2ttDEZ_Gdx60; Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
-Received: from PO15451 (unknown [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 217E58B7EB;
-        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
-Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Russell Currey <ruscur@russell.cc>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
+        Wed, 26 Sep 2018 11:54:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51138 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726702AbeIZPyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:54:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BF672B110;
+        Wed, 26 Sep 2018 09:41:56 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 11:41:54 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Ingo Molnar <mingo@redhat.com>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ley Foon Tan <lftan@altera.com>,
+        Mark Salter <msalter@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Matt Turner <mattst88@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
- <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
- <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr>
- <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc>
- <30fb4e6b-0981-c53c-a1db-94138eaad268@c-s.fr>
- <20180926092806.GM23155@gate.crashing.org>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <284752d1-6c32-bdca-72d3-4d8616b26fbf@c-s.fr>
-Date:   Wed, 26 Sep 2018 11:41:26 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Michal Simek <monstr@monstr.eu>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rich Felker <dalias@libc.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, nios2-dev@lists.rocketboards.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp
+Subject: Re: [PATCH 00/30] mm: remove bootmem allocator
+Message-ID: <20180926094154.GT6278@dhcp22.suse.cz>
+References: <1536927045-23536-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180926092806.GM23155@gate.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536927045-23536-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 14-09-18 15:10:15, Mike Rapoport wrote:
+[...]
+>  326 files changed, 866 insertions(+), 2539 deletions(-)
+>  delete mode 100644 include/linux/bootmem.h
+>  delete mode 100644 mm/bootmem.c
+>  delete mode 100644 mm/nobootmem.c
 
+I _really_ love this part the most! Not only we got rid of the
+translation which always has been a headache but also this nicely shows
+how having multiple allocators hurt. I believe further cleanups on top
+will make the boot allocator even a place where you look and your eyes
+do not want to jump out.
 
-Le 26/09/2018 à 11:28, Segher Boessenkool a écrit :
-> On Wed, Sep 26, 2018 at 09:58:30AM +0200, Christophe LEROY wrote:
->> Segher, any idea about this problem ?
-> 
->>>> arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_printf':
->>>> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
->>>> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88:
->>>> undefined reference to `__stack_chk_fail_local'
-> 
-> Are you building as PIC?  Are you linking libssp_nonshared.a?  Why not?
+I have only went through patches without my acks from the previous
+iteration and there are only minor comments. This looks good overall.
 
-Spotted, thanks.
-
-arch/powerpc/platforms/powermac/Makefile contains:
-
-CFLAGS_bootx_init.o  		+= -fPIC
-
-Does it mean we should add -lssp_nonshared to LDFLAGS_vmlinux ?
-
-Or maybe stack protection on bootx_init doesn't make much sense and we 
-could just do the following ?
-
-CFLAGS_bootx_init.o  		+= -fPIC $(call cc-option, -fno-stack-protector)
-
-Christophe
-
-
-> 
-> :-)
-> 
-> 
-> Segher
-> 
+Nice work Mike!
+-- 
+Michal Hocko
+SUSE Labs
