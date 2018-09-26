@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA21C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE35C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A24E208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E65208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ry/ASTip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A24E208E4
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ausKXPHX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6E65208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeIZSZB (ORCPT
+        id S1728275AbeIZSZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:25:01 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48395 "EHLO
+        Wed, 26 Sep 2018 14:25:00 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:48421 "EHLO
         mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727187AbeIZSY7 (ORCPT
+        with ESMTP id S1727196AbeIZSY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Sep 2018 14:24:59 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180926121215euoutp01150564d3f82a7f6e404d9946937762a0~X8g0SH7db3037430374euoutp01c;
-        Wed, 26 Sep 2018 12:12:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180926121215euoutp01150564d3f82a7f6e404d9946937762a0~X8g0SH7db3037430374euoutp01c
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180926121216euoutp01d46644a3a3f7a7042f42858279559def~X8g00smzK3040030400euoutp01Z;
+        Wed, 26 Sep 2018 12:12:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180926121216euoutp01d46644a3a3f7a7042f42858279559def~X8g00smzK3040030400euoutp01Z
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537963935;
-        bh=19Gado/ajBeMIphbJK43vQ5JfG1n8s+zfVYD9irz2JY=;
+        s=mail20170921; t=1537963936;
+        bh=qhILIikUNfAm/d0/L9/M13xSavtKH5j1QxdW8g4UPqM=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=ry/ASTippaKZwSLAnRRfFTW/T9bifp6tBQ+JswlC5iUITsdIXDj7biK9G6gvJzFWx
-         OB1i8R51pTCnRt+GUIwSzXeaBXB5/ZLSRRSD5QUYnqWVDb5/rV2eAii0H+dN6QEOX+
-         AAFRI5tOgsdWoBoWaXy8rUq9KzFJME7GY2k8Xp1k=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180926121214eucas1p276126f4243906d3da41d5d20ec1fc49c~X8gzir8AA2051920519eucas1p2s;
+        b=ausKXPHX1eUbocKP6yd/+BIATus0ZfwgeRnNgBh0vNhMNH9oN8L2ixqXFgpwsN+Zs
+         hItVzwzfjY9jubpVUSdteDd+RA6Oa+HgvYp+2D2uErYrpYfj9kJZa5U9gg0tWZsXuv
+         YIBay9epv8dGnZPPCIXNCUd52HjX6obDu4+Luc9A=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180926121215eucas1p184c0ef64adb612454cc82821dd7c829d~X8g0OQ3oD0489504895eucas1p1b;
+        Wed, 26 Sep 2018 12:12:15 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id AC.E1.04441.F977BAB5; Wed, 26
+        Sep 2018 13:12:15 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180926121214eucas1p1660542d20425551038da8d3feaf7e1b7~X8gzbfasr0757007570eucas1p1T;
         Wed, 26 Sep 2018 12:12:14 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id EF.21.04294.E977BAB5; Wed, 26
-        Sep 2018 13:12:14 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180926121214eucas1p2b262936ddd96980b7b4369f16b52c6ce~X8gyxToX31327013270eucas1p26;
-        Wed, 26 Sep 2018 12:12:14 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-79-5bab779e584b
+X-AuditID: cbfec7f2-5c9ff70000001159-86-5bab779f2e1d
 Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D1.7D.04284.E977BAB5; Wed, 26
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 18.0B.04128.E977BAB5; Wed, 26
         Sep 2018 13:12:14 +0100 (BST)
 Received: from AMDC3482.DIGITAL.local ([106.120.51.30]) by
         eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
@@ -64,295 +64,194 @@ Cc:     linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
         jolsa@redhat.com, namhyung@kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, k.lewandowsk@samsung.com,
         m.slodczyk2@partner.samsung.com
-Subject: [PATCH v2 1/7] arm64: move arm uprobes code to be reused by arm64
-Date:   Wed, 26 Sep 2018 14:11:59 +0200
-Message-id: <1537963925-25313-2-git-send-email-m.slodczyk2@partner.samsung.com>
+Subject: [PATCH v2 2/7] arm64: uprobes - fix checkpatch issues
+Date:   Wed, 26 Sep 2018 14:12:00 +0200
+Message-id: <1537963925-25313-3-git-send-email-m.slodczyk2@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-reply-to: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7djPc7rzyldHGzy9qWLRdW8Hm0XHppms
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfyyUcRzHfZ/nueceV6fHw+abytY1LSqx2Xq2sFqtPX9ksfVr3UYXT0c5
+        7B5OrM0p6RwhElKXDec6mhznd9JFp1mpOwlFk5rShsgfNpTz5L/XZ+/3+/P57LMPgVK/ME8i
+        Nj6JVcbL4iS4CGt+tTSw/1FKrdTffJeiteOtOK0xlQnohtJ6AT2rzwV075sVhM6Yf4jSpskh
+        AW1vf4DTluJngO7Mr8XpJz1jQtrWXYHQ1/VmjDY/vwlo6+1uhP75uw87TDJ1ujrA2Ifeo0yj
+        wZcxGbNxRvc6nGmsSmdezHQizGzXB5zJazICZsHkFSY6LwqKZuNiVazyQMgFUYxhOU+YWLn3
+        ak9zP6IGN3ZpgTMByUD4qbxSoAUigiINAE51FKJ8sQDgx4kswYar+sd31MEUqQdwVX+C578A
+        5qrDHYyTB2FLbybmYHfyOBzO0CCORihpR6C9LwdxCG5kCGz7+nLdhJHecKBnTuhgMXkStumy
+        hPwwLzjyNnt9mDMZBi0lhvWNIDmFw7l3ZqAFxFpxDA4WcbzfDU5bm/5nt0N7UQ7Gcwrs6BsR
+        8tlMAIszuhFeOASXjXdwB6OkCyxsLkH5nmKoyaJ4CwMHbtVg/CUqATRoJrECsLUCOBmBB5vM
+        KeQsFxDPpvhxMgWXHC/3i0pQmMDaC/SvWudbwaLtogWQBJBsFhPBRiklkKm4VIUFQAKVuIs3
+        qWqllDhalprGKhMilclxLGcB2whM4iF28b0kpUi5LIm9wrKJrHJDRQhnTzUo/4KqQ62hPl2f
+        LV1po6qJU+rBI/eOnm67Jp3Q7HbKLSvV7dxXEuU8MzQW0ZDfZBjW2Lv/dIr3SKsUjwVjU95n
+        khcL2tNt8D41Dq1BC7Z6ZUSgWL30VG8b9x+7/G05OMR1x3Rgy9mY4Tida43PpN+5Ua2lfWW4
+        Wu4ZLN9ii4ySYFyMLMAXVXKyf9wlJlv+AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsVy+t/xa7rzyldHG/xeq23RdW8Hm0XHppms
         FhtnrGe1eL+sh9Hi6Nm/TBaNn+YyW2x6fI3V4vKuOWwWh6buZbTY07+azWLtkbvsFpcOLGCy
         aFq2lcVi6/5WRovjvQeYLF5+PMHiIOCxZt4aRo/L1y4ye2xeoeWxaVUnm8e8k4Eem5fUexx8
-        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlTHr6lS2goWuFYcv3WVtYLxi2cXI
-        ySEhYCLxofECUxcjF4eQwApGiX/TfrNAOJ8ZJe5sesYMU/V44hNWiMQyRonmIysZQRJCAv8Z
-        JXoaAkFsNgFzie1HW1hAbBEBN4kbjR1gY5kFLjNJXD7RzQSSEBbwknh4YQqQzcHBIqAqcaZT
-        HSTMK+AvcfvQHRaIZXISN891gi3mFAiQODR9BTPIHAmB52wSZ/ufQl3kInH2zDwoW1ji1fEt
-        7BC2jERnx0EmCLtcYveJm+wQzS2MElMbD0AlrCX+rJrIBmIzC/BJTNo2nRnkIAkBXomONiGI
-        Eg+Jb/s3sEA8uZhRYsNplQmMkgsYGVYxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEJoHT
-        /45/2cG460/SIUYBDkYlHl4O21XRQqyJZcWVuYcYJTiYlUR4uctWRwvxpiRWVqUW5ccXleak
-        Fh9ilOZgURLn5dNKixYSSE8sSc1OTS1ILYLJMnFwSjUwGuawRZasKwi9cOh0gZxHXKVmKq9T
-        WPaegP03jky6cW/ugfsnOOIfOwd6T98qt25pUsu1a/oPLI6Hvm8WCJB6tli3n19Hs+gy6/LX
-        SpYuG08mf+a712/f++fjulXflNXnC/PcOBfG9exFROytjt9PnDK+BRY1n+ONeddeu41ttr6h
-        4I72K4/vKLEUZyQaajEXFScCAOXk3EX+AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t/xa7rzyldHG3x/wWzRdW8Hm0XHppms
-        FhtnrGe1eL+sh9Hi6Nm/TBaNn+YyW2x6fI3V4vKuOWwWh6buZbTY07+azWLtkbvsFpcOLGCy
-        aFq2lcVi6/5WRovjvQeYLF5+PMHiIOCxZt4aRo/L1y4ye2xeoeWxaVUnm8e8k4Eem5fUexx8
-        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlTHr6lS2goWuFYcv3WVtYLxi2cXI
-        ySEhYCLxeOITVhBbSGAJo8Tf3/ZdjFxAdiOTxPSuBrAEm4C5xPajLSwgtoiAm8SNxg4mkCJm
-        gctMEp8X7AUrEhbwknh4YQpQgoODRUBV4kynOkiYV8Bf4vahOywQy+Qkbp7rZAaxOQUCJA5N
-        X8EMsdhf4srJmSwTGHkWMDKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECAzgbcd+bt7BeGlj
-        8CFGAQ5GJR5eDttV0UKsiWXFlbmHGCU4mJVEeLnLVkcL8aYkVlalFuXHF5XmpBYfYpTmYFES
-        5z1vUBklJJCeWJKanZpakFoEk2Xi4JRqYGTIvZ5fzJvgnXaTP88oaxbnsrjjDT1/3AS8xMKc
-        d0i1VGXz7+V4uzf3UWzswU3LbvEfzHk972ZJxJ3yUz1+Z4QcHYsr33rymYQwdpWdkC64nPtl
-        Ubv0EVMN3r8HlNZrm38Trebjv3Uw8OfslE2Bhse65zg9WWm6bDbXZ9XbP3tkdrft7srPUGIp
-        zkg01GIuKk4EAHIUfiJcAgAA
-X-CMS-MailID: 20180926121214eucas1p2b262936ddd96980b7b4369f16b52c6ce
+        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlbHiTx97wWLtiiPbTjM1MDYrdzFy
+        ckgImEgsffGUuYuRi0NIYAmjxPHWA1BOI5PE9K4GVpAqNgFzie1HW1hAbBEBN4kbjR1MIEXM
+        ApeZJD4v2AtWJCxgJ7Hz0WGwIhYBVYnzRz6wg9i8Av4SO+e1sUOsk5O4ea6TGcTmFAiQODR9
+        BZgtBFRz5eRMlgmMPAsYGVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIEBvG2Yz+37GDsehd8
+        iFGAg1GJh5fDdlW0EGtiWXFl7iFGCQ5mJRFe7rLV0UK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+        zxtURgkJpCeWpGanphakFsFkmTg4pRoYdftO9Cr+1ardKPv0YYDCiUwF75w972PvasxdzjhJ
+        NfPf09WHLctnLLl6SyCss6SQ56Cdqsofr5NZ5qe2KNy4OMtY9EbxrbVxb6o5cz/+ZTXY6MT+
+        Ijxo6hH/oLk6B/25Vt6Luh25lX+tPOf5bp9MA4+MI0e2Fc64P+n/V920CS7+UTpJay7xKrEU
+        ZyQaajEXFScCADs+IVBeAgAA
+X-CMS-MailID: 20180926121214eucas1p1660542d20425551038da8d3feaf7e1b7
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180926121214eucas1p2b262936ddd96980b7b4369f16b52c6ce
+X-CMS-RootMailID: 20180926121214eucas1p1660542d20425551038da8d3feaf7e1b7
 References: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
-        <CGME20180926121214eucas1p2b262936ddd96980b7b4369f16b52c6ce@eucas1p2.samsung.com>
+        <CGME20180926121214eucas1p1660542d20425551038da8d3feaf7e1b7@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move ARM32 uprobes code from arch/arm/probes/ to a more common location -
-lib/probes/arm/. This code will be used by ARM64 code when uprobing 32-bit
-applications.
+Fix checkpatch issues in moved arm uprobes code.
 
 Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 ---
- arch/arm/probes/Makefile                                  | 8 ++++----
- arch/arm/probes/kprobes/actions-arm.c                     | 2 +-
- arch/arm/probes/kprobes/checkers-arm.c                    | 4 ++--
- arch/arm/probes/kprobes/checkers-common.c                 | 4 ++--
- arch/arm/probes/kprobes/checkers-thumb.c                  | 2 +-
- arch/arm/probes/kprobes/checkers.h                        | 2 +-
- arch/arm/probes/kprobes/core.c                            | 2 +-
- arch/arm/probes/kprobes/core.h                            | 2 +-
- arch/arm/probes/kprobes/test-core.c                       | 2 +-
- arch/arm/probes/uprobes/Makefile                          | 2 +-
- arch/arm/probes/uprobes/core.c                            | 4 ++--
- lib/Makefile                                              | 2 ++
- lib/probes/Makefile                                       | 1 +
- lib/probes/arm/Makefile                                   | 6 ++++++
- {arch/arm/probes/uprobes => lib/probes/arm}/actions-arm.c | 4 ++--
- {arch/arm/probes => lib/probes/arm}/decode-arm.c          | 0
- {arch/arm/probes => lib/probes/arm}/decode-arm.h          | 0
- {arch/arm/probes => lib/probes/arm}/decode.c              | 0
- {arch/arm/probes => lib/probes/arm}/decode.h              | 0
- 19 files changed, 28 insertions(+), 19 deletions(-)
- create mode 100644 lib/probes/Makefile
- create mode 100644 lib/probes/arm/Makefile
- rename {arch/arm/probes/uprobes => lib/probes/arm}/actions-arm.c (99%)
- rename {arch/arm/probes => lib/probes/arm}/decode-arm.c (100%)
- rename {arch/arm/probes => lib/probes/arm}/decode-arm.h (100%)
- rename {arch/arm/probes => lib/probes/arm}/decode.c (100%)
- rename {arch/arm/probes => lib/probes/arm}/decode.h (100%)
+ lib/probes/arm/actions-arm.c | 4 ++--
+ lib/probes/arm/decode-arm.c  | 1 +
+ lib/probes/arm/decode-arm.h  | 4 ++--
+ lib/probes/arm/decode.c      | 6 ++++++
+ lib/probes/arm/decode.h      | 7 +++++--
+ 5 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/probes/Makefile b/arch/arm/probes/Makefile
-index 8b0ea5a..9e22de6 100644
---- a/arch/arm/probes/Makefile
-+++ b/arch/arm/probes/Makefile
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_UPROBES)		+= decode.o decode-arm.o uprobes/
--obj-$(CONFIG_KPROBES)		+= decode.o kprobes/
-+subdir-ccflags-y := -I$(srctree)/lib/probes/arm/
-+
-+obj-$(CONFIG_UPROBES)		+= uprobes/
-+obj-$(CONFIG_KPROBES)		+= kprobes/
- ifdef CONFIG_THUMB2_KERNEL
- obj-$(CONFIG_KPROBES)		+= decode-thumb.o
--else
--obj-$(CONFIG_KPROBES)		+= decode-arm.o
- endif
-diff --git a/arch/arm/probes/kprobes/actions-arm.c b/arch/arm/probes/kprobes/actions-arm.c
-index b9056d6..fb1179e 100644
---- a/arch/arm/probes/kprobes/actions-arm.c
-+++ b/arch/arm/probes/kprobes/actions-arm.c
-@@ -62,7 +62,7 @@
- #include <linux/kprobes.h>
- #include <linux/ptrace.h>
- 
--#include "../decode-arm.h"
-+#include "decode-arm.h"
- #include "core.h"
- #include "checkers.h"
- 
-diff --git a/arch/arm/probes/kprobes/checkers-arm.c b/arch/arm/probes/kprobes/checkers-arm.c
-index 7b98173..29520a2 100644
---- a/arch/arm/probes/kprobes/checkers-arm.c
-+++ b/arch/arm/probes/kprobes/checkers-arm.c
-@@ -14,8 +14,8 @@
-  */
- 
- #include <linux/kernel.h>
--#include "../decode.h"
--#include "../decode-arm.h"
-+#include "decode.h"
-+#include "decode-arm.h"
- #include "checkers.h"
- 
- static enum probes_insn __kprobes arm_check_stack(probes_opcode_t insn,
-diff --git a/arch/arm/probes/kprobes/checkers-common.c b/arch/arm/probes/kprobes/checkers-common.c
-index 971119c..afc3a38 100644
---- a/arch/arm/probes/kprobes/checkers-common.c
-+++ b/arch/arm/probes/kprobes/checkers-common.c
-@@ -14,8 +14,8 @@
-  */
- 
- #include <linux/kernel.h>
--#include "../decode.h"
--#include "../decode-arm.h"
-+#include "decode.h"
-+#include "decode-arm.h"
- #include "checkers.h"
- 
- enum probes_insn checker_stack_use_none(probes_opcode_t insn,
-diff --git a/arch/arm/probes/kprobes/checkers-thumb.c b/arch/arm/probes/kprobes/checkers-thumb.c
-index d608e3b..847f1ee 100644
---- a/arch/arm/probes/kprobes/checkers-thumb.c
-+++ b/arch/arm/probes/kprobes/checkers-thumb.c
-@@ -14,7 +14,7 @@
-  */
- 
- #include <linux/kernel.h>
--#include "../decode.h"
-+#include "decode.h"
- #include "../decode-thumb.h"
- #include "checkers.h"
- 
-diff --git a/arch/arm/probes/kprobes/checkers.h b/arch/arm/probes/kprobes/checkers.h
-index cf6c9e7..9bbab0d 100644
---- a/arch/arm/probes/kprobes/checkers.h
-+++ b/arch/arm/probes/kprobes/checkers.h
-@@ -17,7 +17,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/types.h>
--#include "../decode.h"
-+#include "decode.h"
- 
- extern probes_check_t checker_stack_use_none;
- extern probes_check_t checker_stack_use_unknown;
-diff --git a/arch/arm/probes/kprobes/core.c b/arch/arm/probes/kprobes/core.c
-index f8bd523..de5e854 100644
---- a/arch/arm/probes/kprobes/core.c
-+++ b/arch/arm/probes/kprobes/core.c
-@@ -34,7 +34,7 @@
- #include <asm/patch.h>
- #include <asm/sections.h>
- 
--#include "../decode-arm.h"
-+#include "decode-arm.h"
- #include "../decode-thumb.h"
- #include "core.h"
- 
-diff --git a/arch/arm/probes/kprobes/core.h b/arch/arm/probes/kprobes/core.h
-index ec5d1f2..4da60f0 100644
---- a/arch/arm/probes/kprobes/core.h
-+++ b/arch/arm/probes/kprobes/core.h
-@@ -20,7 +20,7 @@
- #define _ARM_KERNEL_KPROBES_H
- 
- #include <asm/kprobes.h>
--#include "../decode.h"
-+#include "decode.h"
- 
- /*
-  * These undefined instructions must be unique and
-diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
-index cc237fa..c19df9f 100644
---- a/arch/arm/probes/kprobes/test-core.c
-+++ b/arch/arm/probes/kprobes/test-core.c
-@@ -212,7 +212,7 @@
- 
- #include "core.h"
- #include "test-core.h"
--#include "../decode-arm.h"
-+#include "decode-arm.h"
- #include "../decode-thumb.h"
- 
- 
-diff --git a/arch/arm/probes/uprobes/Makefile b/arch/arm/probes/uprobes/Makefile
-index e1dc3d0..0d05ba9 100644
---- a/arch/arm/probes/uprobes/Makefile
-+++ b/arch/arm/probes/uprobes/Makefile
-@@ -1 +1 @@
--obj-$(CONFIG_UPROBES)		+= core.o actions-arm.o
-+obj-$(CONFIG_UPROBES)		+= core.o
-diff --git a/arch/arm/probes/uprobes/core.c b/arch/arm/probes/uprobes/core.c
-index bf99226..90d0954 100644
---- a/arch/arm/probes/uprobes/core.c
-+++ b/arch/arm/probes/uprobes/core.c
-@@ -17,8 +17,8 @@
- #include <asm/opcodes.h>
- #include <asm/traps.h>
- 
--#include "../decode.h"
--#include "../decode-arm.h"
-+#include "decode.h"
-+#include "decode-arm.h"
- #include "core.h"
- 
- #define UPROBE_TRAP_NR	UINT_MAX
-diff --git a/lib/Makefile b/lib/Makefile
-index ca3f7eb..cf2c5d6 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -129,6 +129,8 @@ obj-$(CONFIG_ZSTD_COMPRESS) += zstd/
- obj-$(CONFIG_ZSTD_DECOMPRESS) += zstd/
- obj-$(CONFIG_XZ_DEC) += xz/
- obj-$(CONFIG_RAID6_PQ) += raid6/
-+obj-$(CONFIG_UPROBES) += probes/
-+obj-$(CONFIG_KPROBES) += probes/
- 
- lib-$(CONFIG_DECOMPRESS_GZIP) += decompress_inflate.o
- lib-$(CONFIG_DECOMPRESS_BZIP2) += decompress_bunzip2.o
-diff --git a/lib/probes/Makefile b/lib/probes/Makefile
-new file mode 100644
-index 0000000..534a2b7
---- /dev/null
-+++ b/lib/probes/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_ARM)		+= arm/
-diff --git a/lib/probes/arm/Makefile b/lib/probes/arm/Makefile
-new file mode 100644
-index 0000000..1c97b8f
---- /dev/null
-+++ b/lib/probes/arm/Makefile
-@@ -0,0 +1,6 @@
-+ccflags-y += -I$(srctree)/arch/arm/probes/uprobes/
-+obj-$(CONFIG_UPROBES)		+= decode.o decode-arm.o actions-arm.o
-+obj-$(CONFIG_KPROBES)		+= decode.o
-+ifndef CONFIG_THUMB2_KERNEL
-+obj-$(CONFIG_KPROBES)		+= decode-arm.o
-+endif
-diff --git a/arch/arm/probes/uprobes/actions-arm.c b/lib/probes/arm/actions-arm.c
-similarity index 99%
-rename from arch/arm/probes/uprobes/actions-arm.c
-rename to lib/probes/arm/actions-arm.c
-index 76eb449..a25795a 100644
---- a/arch/arm/probes/uprobes/actions-arm.c
+diff --git a/lib/probes/arm/actions-arm.c b/lib/probes/arm/actions-arm.c
+index a25795a..db6017d 100644
+--- a/lib/probes/arm/actions-arm.c
 +++ b/lib/probes/arm/actions-arm.c
-@@ -13,8 +13,8 @@
- #include <linux/uprobes.h>
- #include <linux/module.h>
+@@ -165,10 +165,10 @@ uprobe_decode_ldmstm(probes_opcode_t insn,
+ {
+ 	struct arch_uprobe *auprobe = container_of(asi, struct arch_uprobe,
+ 						   asi);
+-	unsigned reglist = insn & 0xffff;
++	unsigned int reglist = insn & 0xffff;
+ 	int rn = (insn >> 16) & 0xf;
+ 	int lbit = insn & (1 << 20);
+-	unsigned used = reglist | (1 << rn);
++	unsigned int used = reglist | (1 << rn);
  
--#include "../decode.h"
--#include "../decode-arm.h"
-+#include "decode.h"
-+#include "decode-arm.h"
- #include "core.h"
+ 	if (rn == 15)
+ 		return INSN_REJECTED;
+diff --git a/lib/probes/arm/decode-arm.c b/lib/probes/arm/decode-arm.c
+index f72c33a..3aa2e58 100644
+--- a/lib/probes/arm/decode-arm.c
++++ b/lib/probes/arm/decode-arm.c
+@@ -101,6 +101,7 @@ void __kprobes simulate_mrs(probes_opcode_t insn,
+ {
+ 	int rd = (insn >> 12) & 0xf;
+ 	unsigned long mask = 0xf8ff03df; /* Mask out execution state */
++
+ 	regs->uregs[rd] = regs->ARM_cpsr & mask;
+ }
  
- static int uprobes_substitute_pc(unsigned long *pinsn, u32 oregs)
-diff --git a/arch/arm/probes/decode-arm.c b/lib/probes/arm/decode-arm.c
-similarity index 100%
-rename from arch/arm/probes/decode-arm.c
-rename to lib/probes/arm/decode-arm.c
-diff --git a/arch/arm/probes/decode-arm.h b/lib/probes/arm/decode-arm.h
-similarity index 100%
-rename from arch/arm/probes/decode-arm.h
-rename to lib/probes/arm/decode-arm.h
-diff --git a/arch/arm/probes/decode.c b/lib/probes/arm/decode.c
-similarity index 100%
-rename from arch/arm/probes/decode.c
-rename to lib/probes/arm/decode.c
-diff --git a/arch/arm/probes/decode.h b/lib/probes/arm/decode.h
-similarity index 100%
-rename from arch/arm/probes/decode.h
-rename to lib/probes/arm/decode.h
+diff --git a/lib/probes/arm/decode-arm.h b/lib/probes/arm/decode-arm.h
+index b3b80f6..ed34f03 100644
+--- a/lib/probes/arm/decode-arm.h
++++ b/lib/probes/arm/decode-arm.h
+@@ -66,8 +66,8 @@ void __kprobes simulate_mov_ipsp(probes_opcode_t opcode,
+ 
+ extern const union decode_item probes_decode_arm_table[];
+ 
+-enum probes_insn arm_probes_decode_insn(probes_opcode_t,
+-		struct arch_probes_insn *, bool emulate,
++enum probes_insn arm_probes_decode_insn(probes_opcode_t opcode,
++		struct arch_probes_insn *api, bool emulate,
+ 		const union decode_action *actions,
+ 		const struct decode_checker *checkers[]);
+ 
+diff --git a/lib/probes/arm/decode.c b/lib/probes/arm/decode.c
+index 880ebe0..6840054 100644
+--- a/lib/probes/arm/decode.c
++++ b/lib/probes/arm/decode.c
+@@ -55,6 +55,7 @@ bool load_write_pc_interworks;
+ void __init test_load_write_pc_interworking(void)
+ {
+ 	int arch = cpu_architecture();
++
+ 	BUG_ON(arch == CPU_ARCH_UNKNOWN);
+ 	load_write_pc_interworks = arch >= CPU_ARCH_ARMv5T;
+ }
+@@ -69,6 +70,7 @@ bool alu_write_pc_interworks;
+ void __init test_alu_write_pc_interworking(void)
+ {
+ 	int arch = cpu_architecture();
++
+ 	BUG_ON(arch == CPU_ARCH_UNKNOWN);
+ 	alu_write_pc_interworks = arch >= CPU_ARCH_ARMv7;
+ }
+@@ -151,6 +153,7 @@ static unsigned long __kprobes __check_lt(unsigned long cpsr)
+ static unsigned long __kprobes __check_gt(unsigned long cpsr)
+ {
+ 	unsigned long temp = cpsr ^ (cpsr << 3); /* PSR_N_BIT ^= PSR_V_BIT */
++
+ 	temp |= (cpsr << 1);			 /* PSR_N_BIT |= PSR_Z_BIT */
+ 	return (~temp) & PSR_N_BIT;
+ }
+@@ -158,6 +161,7 @@ static unsigned long __kprobes __check_gt(unsigned long cpsr)
+ static unsigned long __kprobes __check_le(unsigned long cpsr)
+ {
+ 	unsigned long temp = cpsr ^ (cpsr << 3); /* PSR_N_BIT ^= PSR_V_BIT */
++
+ 	temp |= (cpsr << 1);			 /* PSR_N_BIT |= PSR_Z_BIT */
+ 	return temp & PSR_N_BIT;
+ }
+@@ -228,6 +232,7 @@ set_emulated_insn(probes_opcode_t insn, struct arch_probes_insn *asi,
+ #ifdef CONFIG_THUMB2_KERNEL
+ 	if (thumb) {
+ 		u16 *ip = (u16 *)asi->insn;
++
+ 		if (is_wide_instruction(insn))
+ 			*ip++ = __opcode_to_mem_thumb16(insn >> 16);
+ 		*ip++ = __opcode_to_mem_thumb16(insn);
+@@ -465,6 +470,7 @@ probes_decode_insn(probes_opcode_t insn, struct arch_probes_insn *asi,
+ 
+ 		case DECODE_TYPE_TABLE: {
+ 			struct decode_table *d = (struct decode_table *)h;
++
+ 			next = (struct decode_header *)d->table.table;
+ 			break;
+ 		}
+diff --git a/lib/probes/arm/decode.h b/lib/probes/arm/decode.h
+index 548d622..43b02fd 100644
+--- a/lib/probes/arm/decode.h
++++ b/lib/probes/arm/decode.h
+@@ -59,6 +59,7 @@ static inline unsigned long it_advance(unsigned long cpsr)
+ 		/* We need to shift left ITSTATE<4:0> */
+ 		const unsigned long mask = 0x06001c00;  /* Mask ITSTATE<4:0> */
+ 		unsigned long it = cpsr & mask;
++
+ 		it <<= 1;
+ 		it |= it >> (27 - 10);  /* Carry ITSTATE<2> to correct place */
+ 		it &= mask;
+@@ -71,6 +72,7 @@ static inline unsigned long it_advance(unsigned long cpsr)
+ static inline void __kprobes bx_write_pc(long pcv, struct pt_regs *regs)
+ {
+ 	long cpsr = regs->ARM_cpsr;
++
+ 	if (pcv & 0x1) {
+ 		cpsr |= PSR_T_BIT;
+ 		pcv &= ~0x1;
+@@ -253,7 +255,8 @@ static inline void __kprobes alu_write_pc(long pcv, struct pt_regs *regs)
+  * instruction will be modified to "AND R0, R2, R3, ASL R1" and then placed into
+  * the kprobes instruction slot. This can then be called later by the handler
+  * function emulate_rd12rn16rm0rs8_rwflags (a pointer to which is retrieved from
+- * the indicated slot in the action array), in order to simulate the instruction.
++ * the indicated slot in the action array), in order to simulate the
++ * instruction.
+  */
+ 
+ enum decode_type {
+@@ -282,7 +285,7 @@ enum decode_reg_type {
+ 	REG_TYPE_NOPCWB,   /* No PC if load/store write-back flag also set */
+ 
+ 	/* The following types are used when the encoding for PC indicates
+-	 * another instruction form. This distiction only matters for test
++	 * another instruction form. This distinction only matters for test
+ 	 * case coverage checks.
+ 	 */
+ 	REG_TYPE_NOPCX,	   /* Register must not be PC */
 -- 
 2.7.4
 
