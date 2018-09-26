@@ -2,133 +2,95 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D3EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61737C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50011214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:01:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mKSm/Fdw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50011214FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 24C45214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C45214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbeIZWOg (ORCPT
+        id S1728703AbeIZWOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:14:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32804 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728595AbeIZWOR (ORCPT
+        Wed, 26 Sep 2018 18:14:48 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41319 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728181AbeIZWOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:14:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=i2JAuGk8Z9F9bBTKzVDbbl3DRytNyFZ2c9zLdd3Mu4o=; b=mKSm/Fdw6UPGNj/rjNALwUh9r
-        DJ3L3WNbPGOKXSAf6d+iB3BxibmyNp7WPsWBBHL0k8BJJCstmsFAxENKXlzbzW8OBi57wkmr/oWmQ
-        3xJcFwkOHxjKoFSEuAm2OVXY+gm0zRZ//IQ+UZWjmi7V/H2ofpfmwXsGaRiQp+z9ymRojxAdcO7HZ
-        vm372jFEchV9Z+f5Ql7r6CfXOx222rPk5yd3e2vR90vmTh+oYt8jAuSIFRa4V2DdfBkVieFEB+/FC
-        VAy2p8Ws/zKyIbuhaUFILsG+mvd1mTuctJ3MVVzQm1vMBeuPg4vzQAxgStUKe2QGV21/mmd8dt5Su
-        WKNlzVSkQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5CEu-0004EW-1s; Wed, 26 Sep 2018 16:00:36 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] drm/virtio: Handle context ID allocation errors
-Date:   Wed, 26 Sep 2018 09:00:29 -0700
-Message-Id: <20180926160031.15721-3-willy@infradead.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180926160031.15721-1-willy@infradead.org>
-References: <20180926160031.15721-1-willy@infradead.org>
+        Wed, 26 Sep 2018 18:14:47 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8QFOI7D017966;
+        Wed, 26 Sep 2018 18:01:01 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mqq3n759p-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 26 Sep 2018 18:01:01 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C771331;
+        Wed, 26 Sep 2018 16:01:00 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8BC2C509E;
+        Wed, 26 Sep 2018 16:01:00 +0000 (GMT)
+Received: from SFHDAG7NODE2.st.com (10.75.127.20) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 26 Sep
+ 2018 18:01:00 +0200
+Received: from SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090]) by
+ SFHDAG7NODE2.st.com ([fe80::d548:6a8f:2ca4:2090%20]) with mapi id
+ 15.00.1347.000; Wed, 26 Sep 2018 18:01:00 +0200
+From:   Loic PALLARDY <loic.pallardy@st.com>
+To:     Anup Patel <anup@brainfault.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        "s-anna@ti.com" <s-anna@ti.com>
+Subject: RE: [PATCH v4 00/17] remoteproc: add fixed memory region support
+Thread-Topic: [PATCH v4 00/17] remoteproc: add fixed memory region support
+Thread-Index: AQHUJavafIDwx5YKDkaOdbwMbJ6kvaT6dRyAgAihvbA=
+Date:   Wed, 26 Sep 2018 16:00:59 +0000
+Message-ID: <99dd0f89ce60402fa606245b2e8dde0c@SFHDAG7NODE2.st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <CAAhSdy1SKaX+sZHGzExZVKFP9fOsYec+iiEMbxjSf_iSauasQQ@mail.gmail.com>
+In-Reply-To: <CAAhSdy1SKaX+sZHGzExZVKFP9fOsYec+iiEMbxjSf_iSauasQQ@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible to run out of memory while allocating IDs.  The current
-code would create a context with an invalid ID; change it to return
--ENOMEM to userspace.
-
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- drivers/gpu/drm/virtio/virtgpu_kms.c | 29 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index e2604fe1b4ae..bf609dcae224 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -52,31 +52,22 @@ static void virtio_gpu_config_changed_work_func(struct work_struct *work)
- 		      events_clear, &events_clear);
- }
- 
--static void virtio_gpu_ctx_id_get(struct virtio_gpu_device *vgdev,
--				  uint32_t *resid)
-+static int virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
-+				      uint32_t nlen, const char *name)
- {
- 	int handle = ida_alloc_min(&vgdev->ctx_id_ida, 1, GFP_KERNEL);
--	*resid = handle;
--}
- 
--static void virtio_gpu_ctx_id_put(struct virtio_gpu_device *vgdev, uint32_t id)
--{
--	ida_free(&vgdev->ctx_id_ida, id);
--}
--
--static void virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
--				      uint32_t nlen, const char *name,
--				      uint32_t *ctx_id)
--{
--	virtio_gpu_ctx_id_get(vgdev, ctx_id);
--	virtio_gpu_cmd_context_create(vgdev, *ctx_id, nlen, name);
-+	if (handle < 0)
-+		return handle;
-+	virtio_gpu_cmd_context_create(vgdev, handle, nlen, name);
-+	return handle;
- }
- 
- static void virtio_gpu_context_destroy(struct virtio_gpu_device *vgdev,
- 				      uint32_t ctx_id)
- {
- 	virtio_gpu_cmd_context_destroy(vgdev, ctx_id);
--	virtio_gpu_ctx_id_put(vgdev, ctx_id);
-+	ida_free(&vgdev->ctx_id_ida, ctx_id);
- }
- 
- static void virtio_gpu_init_vq(struct virtio_gpu_queue *vgvq,
-@@ -261,7 +252,7 @@ int virtio_gpu_driver_open(struct drm_device *dev, struct drm_file *file)
- {
- 	struct virtio_gpu_device *vgdev = dev->dev_private;
- 	struct virtio_gpu_fpriv *vfpriv;
--	uint32_t id;
-+	int id;
- 	char dbgname[TASK_COMM_LEN];
- 
- 	/* can't create contexts without 3d renderer */
-@@ -274,7 +265,9 @@ int virtio_gpu_driver_open(struct drm_device *dev, struct drm_file *file)
- 		return -ENOMEM;
- 
- 	get_task_comm(dbgname, current);
--	virtio_gpu_context_create(vgdev, strlen(dbgname), dbgname, &id);
-+	id = virtio_gpu_context_create(vgdev, strlen(dbgname), dbgname);
-+	if (id < 0)
-+		return id;
- 
- 	vfpriv->ctx_id = id;
- 	file->driver_priv = vfpriv;
--- 
-2.19.0
-
+SGkgQW51cCwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbnVwIFBh
+dGVsIDxhbnVwQGJyYWluZmF1bHQub3JnPg0KPiBTZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMSwg
+MjAxOCA4OjA1IEFNDQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4N
+Cj4gQ2M6IEJqb3JuIEFuZGVyc3NvbiA8Ympvcm4uYW5kZXJzc29uQGxpbmFyby5vcmc+OyBPaGFk
+IEJlbi1Db2hlbg0KPiA8b2hhZEB3aXplcnkuY29tPjsgbGludXgtcmVtb3RlcHJvY0B2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnIExpc3QgPGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBBcm5hdWQNCj4gUE9VTElRVUVOIDxhcm5hdWQucG91bGlx
+dWVuQHN0LmNvbT47IEJlbmphbWluIEdhaWduYXJkDQo+IDxiZW5qYW1pbi5nYWlnbmFyZEBsaW5h
+cm8ub3JnPjsgcy1hbm5hQHRpLmNvbQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDAwLzE3XSBy
+ZW1vdGVwcm9jOiBhZGQgZml4ZWQgbWVtb3J5IHJlZ2lvbiBzdXBwb3J0DQo+IA0KPiBIaSBMb2lj
+L0Jqb3JuLA0KPiANCj4gQ2FuIHdlIGNvbnNpZGVyIHRoaXMgc2VyaWVzIGZvciB2NC4yMD8NCg0K
+SSBkaXNjdXNzZWQgd2l0aCBCam9ybiBsYXN0IHdlZWsgYXQgTGluYXJvIGNvbm5lY3QuDQpIZSBz
+aG91bGQgcmV2aWV3IHRoZSBzZXJpZXMgaG9wZWZ1bGx5IHNvb24uDQo+IA0KPiBJIGFtIGludGVy
+ZXN0ZWQgaW4gZm9yIHBhdGNoICJycG1zZzogdmlydGlvOiBhbGxvY2F0ZSBidWZmZXINCj4gZnJv
+bSBwYXJlbnQiLiBUaGlzIHBhdGNoIGFsbG93cyBtZSB0byB1c2VkIFZpcnRJTw0KPiBSUE1TRyBk
+cml2ZXIgaW5zaWRlIEd1ZXN0L1ZNLg0KUGxlYXNlIHNlbmQgeW91ciBhY2tlZC1ieSBvciByZXZp
+ZXdlZC1ieSBvciB0ZXN0ZWQtYnkgDQpJdCB3aWxsIGhlbHAgQmpvcm4gdG8gc2VlIGludGVyZXN0
+IGZvciB0aGlzIHNlcmllcw0KDQpSZWdhcmRzLA0KTG9pYw0KDQo+IA0KPiBSZWdhcmRzLA0KPiBB
+bnVwDQo=
