@@ -6,318 +6,124 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CE7C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331FCC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A053E2083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:02:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A053E2083A
+	by mail.kernel.org (Postfix) with ESMTP id E7F7F2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:05:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F7F2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbeIZPN7 (ORCPT
+        id S1727561AbeIZPR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:13:59 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12706 "EHLO huawei.com"
+        Wed, 26 Sep 2018 11:17:26 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12707 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727263AbeIZPN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:13:59 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3BF8D4BA8350F;
-        Wed, 26 Sep 2018 17:02:00 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 26 Sep 2018 17:01:51 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] Revert: "f2fs: check last page index in cached bio to decide submission"
-Date:   Wed, 26 Sep 2018 17:01:47 +0800
-Message-ID: <20180926090147.96330-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        id S1727174AbeIZPR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:17:26 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 669AD68A081EB;
+        Wed, 26 Sep 2018 17:05:27 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 26 Sep 2018 17:05:27 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <Ariel.Elior@cavium.com>, <everest-linux-l2@cavium.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: qed: list usage cleanup
+Date:   Wed, 26 Sep 2018 16:53:00 +0800
+Message-ID: <1537951981-6464-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
+X-Originating-IP: [10.175.102.37]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one case that we can leave bio in f2fs, result in hanging
-page writeback waiter.
+Trival cleanup, list_move_tail will implement the same function that
+list_del() + list_add_tail() will do. hence just replace them.
 
-Thread A				Thread B
-- f2fs_write_cache_pages
- - f2fs_submit_page_write
- page #0 cached in bio #0 of cold log
- - f2fs_submit_page_write
- page #1 cached in bio #1 of warm log
-					- f2fs_write_cache_pages
-					 - f2fs_submit_page_write
-					 bio is full, submit bio #1 contain page #1
- - f2fs_submit_merged_write_cond(, page #1)
- fail to submit bio #0 due to page #1 is not in any cached bios.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/data.c       | 38 +++++++++++++++++++-------------------
- fs/f2fs/f2fs.h       |  4 ++--
- fs/f2fs/node.c       | 13 +++++++------
- fs/f2fs/segment.c    | 11 +++++------
- 5 files changed, 34 insertions(+), 34 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c |  9 ++++-----
+ drivers/net/ethernet/qlogic/qed/qed_ooo.c   | 10 ++++------
+ drivers/net/ethernet/qlogic/qed/qed_spq.c   |  3 +--
+ 3 files changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index a34c3f8299f3..2ae02fbbcf56 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -280,7 +280,7 @@ static int __f2fs_write_meta_page(struct page *page,
- 
- 	if (wbc->for_reclaim)
- 		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
--						0, page->index, META);
-+							page->index, 0, META);
- 
- 	unlock_page(page);
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 59825c08eba0..56ac26dd1259 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -263,8 +263,8 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- 	io->bio = NULL;
- }
- 
--static bool __has_merged_page(struct f2fs_bio_info *io,
--				struct inode *inode, nid_t ino, pgoff_t idx)
-+static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
-+						struct page *page, nid_t ino)
- {
- 	struct bio_vec *bvec;
- 	struct page *target;
-@@ -273,7 +273,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 	if (!io->bio)
- 		return false;
- 
--	if (!inode && !ino)
-+	if (!inode && !page && !ino)
- 		return true;
- 
- 	bio_for_each_segment_all(bvec, io->bio, i) {
-@@ -283,11 +283,10 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 		else
- 			target = fscrypt_control_page(bvec->bv_page);
- 
--		if (idx != target->index)
--			continue;
--
- 		if (inode && inode == target->mapping->host)
- 			return true;
-+		if (page && page == target)
-+			return true;
- 		if (ino && ino == ino_of_node(target))
- 			return true;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+index 17f3dfa..f99797a 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+@@ -935,9 +935,8 @@ int qed_iwarp_destroy_qp(struct qed_hwfn *p_hwfn, struct qed_rdma_qp *qp)
  	}
-@@ -296,7 +295,8 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
+ 	spin_lock_bh(&p_hwfn->p_rdma_info->iwarp.iw_lock);
+ 
+-	list_del(&ep->list_entry);
+-	list_add_tail(&ep->list_entry,
+-		      &p_hwfn->p_rdma_info->iwarp.ep_free_list);
++	list_move_tail(&ep->list_entry,
++		       &p_hwfn->p_rdma_info->iwarp.ep_free_list);
+ 
+ 	spin_unlock_bh(&p_hwfn->p_rdma_info->iwarp.iw_lock);
  }
+@@ -2270,8 +2269,8 @@ static void qed_iwarp_process_pending_pkts(struct qed_hwfn *p_hwfn)
+ 		if (rc == -EBUSY)
+ 			break;
  
- static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
--				nid_t ino, pgoff_t idx, enum page_type type)
-+						struct page *page, nid_t ino,
-+						enum page_type type)
- {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
- 	enum temp_type temp;
-@@ -307,7 +307,7 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
- 		io = sbi->write_io[btype] + temp;
+-		list_del(&mpa_buf->list_entry);
+-		list_add_tail(&mpa_buf->list_entry, &iwarp_info->mpa_buf_list);
++		list_move_tail(&mpa_buf->list_entry,
++			       &iwarp_info->mpa_buf_list);
  
- 		down_read(&io->io_rwsem);
--		ret = __has_merged_page(io, inode, ino, idx);
-+		ret = __has_merged_page(io, inode, page, ino);
- 		up_read(&io->io_rwsem);
- 
- 		/* TODO: use HOT temp only for meta pages now. */
-@@ -338,12 +338,12 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
- }
- 
- static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type, bool force)
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type, bool force)
- {
- 	enum temp_type temp;
- 
--	if (!force && !has_merged_page(sbi, inode, ino, idx, type))
-+	if (!force && !has_merged_page(sbi, inode, page, ino, type))
- 		return;
- 
- 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
-@@ -362,10 +362,10 @@ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
- }
- 
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type)
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type)
- {
--	__submit_merged_write_cond(sbi, inode, ino, idx, type, false);
-+	__submit_merged_write_cond(sbi, inode, page, ino, type, false);
- }
- 
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
-@@ -1885,7 +1885,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		ClearPageUptodate(page);
- 
- 	if (wbc->for_reclaim) {
--		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
-+		f2fs_submit_merged_write_cond(sbi, inode, page->index, 0, DATA);
- 		clear_inode_flag(inode, FI_HOT_DATA);
- 		f2fs_remove_dirty_inode(inode);
- 		submitted = NULL;
-@@ -1943,10 +1943,10 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	pgoff_t index;
- 	pgoff_t end;		/* Inclusive */
- 	pgoff_t done_index;
--	pgoff_t last_idx = ULONG_MAX;
- 	int cycled;
- 	int range_whole = 0;
- 	int tag;
-+	int nwritten = 0;
- 
- 	pagevec_init(&pvec, 0);
- 
-@@ -2047,7 +2047,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				done = 1;
+ 		if (rc) {	/* different error, don't continue */
+ 			DP_NOTICE(p_hwfn, "process pkts failed rc=%d\n", rc);
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ooo.c b/drivers/net/ethernet/qlogic/qed/qed_ooo.c
+index 6172354..63931df 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ooo.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ooo.c
+@@ -211,9 +211,8 @@ void qed_ooo_release_connection_isles(struct qed_hwfn *p_hwfn,
+ 			if (!p_buffer)
  				break;
- 			} else if (submitted) {
--				last_idx = page->index;
-+				nwritten++;
- 			}
  
- 			if (--wbc->nr_to_write <= 0 &&
-@@ -2069,9 +2069,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
- 		mapping->writeback_index = done_index;
- 
--	if (last_idx != ULONG_MAX)
-+	if (nwritten)
- 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
--						0, last_idx, DATA);
-+								NULL, 0, DATA);
- 
- 	return ret;
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index de1577d67dc3..04fc662bb108 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3066,8 +3066,8 @@ void f2fs_destroy_checkpoint_caches(void);
-  */
- void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type);
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type);
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
- int f2fs_submit_page_bio(struct f2fs_io_info *fio);
- void f2fs_submit_page_write(struct f2fs_io_info *fio);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 313636b894b1..dafcd96514f0 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1565,8 +1565,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 	up_read(&sbi->node_write);
- 
- 	if (wbc->for_reclaim) {
--		f2fs_submit_merged_write_cond(sbi, page->mapping->host, 0,
--						page->index, NODE);
-+		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
-+						page->index, 0, NODE);
- 		submitted = NULL;
- 	}
- 
-@@ -1638,12 +1638,13 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			unsigned int *seq_id)
- {
- 	pgoff_t index, end;
--	pgoff_t last_idx = ULONG_MAX;
- 	struct pagevec pvec;
- 	int ret = 0;
- 	struct page *last_page = NULL;
- 	bool marked = false;
- 	nid_t ino = inode->i_ino;
-+	int nr_pages;
-+	int nwritten = 0;
- 
- 	if (atomic) {
- 		last_page = last_fsync_dnode(sbi, ino);
-@@ -1726,7 +1727,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 				f2fs_put_page(last_page, 0);
- 				break;
- 			} else if (submitted) {
--				last_idx = page->index;
-+				nwritten++;
- 			}
- 
- 			if (page == last_page) {
-@@ -1752,8 +1753,8 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto retry;
- 	}
- out:
--	if (last_idx != ULONG_MAX)
--		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
-+	if (nwritten)
-+		f2fs_submit_merged_write_cond(sbi, NULL, NULL, ino, NODE);
- 	return ret ? -EIO: 0;
- }
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1bba85de54ff..3feef9965438 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -371,7 +371,7 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
- 		.io_type = FS_DATA_IO,
- 	};
- 	struct list_head revoke_list;
--	pgoff_t last_idx = ULONG_MAX;
-+	bool submit_bio = false;
- 	int err = 0;
- 
- 	INIT_LIST_HEAD(&revoke_list);
-@@ -406,14 +406,14 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
- 			}
- 			/* record old blkaddr for revoking */
- 			cur->old_addr = fio.old_blkaddr;
--			last_idx = page->index;
-+			submit_bio = true;
+-			list_del(&p_buffer->list_entry);
+-			list_add_tail(&p_buffer->list_entry,
+-				      &p_ooo_info->free_buffers_list);
++			list_move_tail(&p_buffer->list_entry,
++				       &p_ooo_info->free_buffers_list);
  		}
- 		unlock_page(page);
- 		list_move_tail(&cur->list, &revoke_list);
- 	}
+ 		list_add_tail(&p_isle->list_entry,
+ 			      &p_ooo_info->free_isles_list);
+@@ -247,9 +246,8 @@ void qed_ooo_release_all_isles(struct qed_hwfn *p_hwfn,
+ 				if (!p_buffer)
+ 					break;
  
--	if (last_idx != ULONG_MAX)
--		f2fs_submit_merged_write_cond(sbi, inode, 0, last_idx, DATA);
-+	if (submit_bio)
-+		f2fs_submit_merged_write_cond(sbi, inode, NULL, 0, DATA);
+-			list_del(&p_buffer->list_entry);
+-				list_add_tail(&p_buffer->list_entry,
+-					      &p_ooo_info->free_buffers_list);
++				list_move_tail(&p_buffer->list_entry,
++					       &p_ooo_info->free_buffers_list);
+ 			}
+ 			list_add_tail(&p_isle->list_entry,
+ 				      &p_ooo_info->free_isles_list);
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+index 1673fc9..c4a6274 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+@@ -730,8 +730,7 @@ static int qed_spq_post_list(struct qed_hwfn *p_hwfn,
+ 	       !list_empty(head)) {
+ 		struct qed_spq_entry *p_ent =
+ 			list_first_entry(head, struct qed_spq_entry, list);
+-		list_del(&p_ent->list);
+-		list_add_tail(&p_ent->list, &p_spq->completion_pending);
++		list_move_tail(&p_ent->list, &p_spq->completion_pending);
+ 		p_spq->comp_sent_count++;
  
- 	if (err) {
- 		/*
-@@ -3218,8 +3218,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
- 	if (PageWriteback(page)) {
- 		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
- 
--		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
--						0, page->index, type);
-+		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
- 		if (ordered)
- 			wait_on_page_writeback(page);
- 		else
+ 		rc = qed_spq_hw_post(p_hwfn, p_spq, p_ent);
 -- 
-2.18.0.rc1
+1.7.12.4
 
