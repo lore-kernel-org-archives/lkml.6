@@ -2,117 +2,92 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A912C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37709C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F5A8214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:42:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5A8214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id B3E8B214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:43:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3E8B214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alphalink.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeIZRzW (ORCPT
+        id S1728347AbeIZR4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:55:22 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:43636 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeIZRzW (ORCPT
+        Wed, 26 Sep 2018 13:56:09 -0400
+Received: from zimbra.alphalink.fr ([217.15.80.77]:55329 "EHLO
+        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbeIZR4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:55:22 -0400
-Received: by mail-vs1-f67.google.com with SMTP id y22-v6so2158747vsj.10;
-        Wed, 26 Sep 2018 04:42:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N8a2SWnZ9HIWRRCASC+WZvA4QSgGVs+4CVDnVzA5Asg=;
-        b=JF/C/OY0TMP6p7mTfP4mRG7fYtx5512tGPraJ37trv6kmzHnVd7LamgaYCTKcCHwOa
-         C4Q1KXzhcml7oPFB5ryo80CMZVyAZYvhuADjx+l1hjmUpsTZZTY0EwrgLy2VETsMeHRy
-         9nLjkvfATgQkQQmWesljA5NZn0ajxtJcznMsomaDx23fyHr//HxkGzU1+ZqAUdL1S13C
-         WcbxUs+Rw8bmdfbbG5jSxg0bo7nKRebL2nEmVQwmxmmVza3GLNZZHQ8mNgejjQiS9F+h
-         9At7p3+AbD/NV1xmL5MVX3YjsuVIgqphAc2SRbVgrzgLOyD9oOCtG9oGp6W6I0Vh/BmE
-         9c/w==
-X-Gm-Message-State: ABuFfojCvMDXy5IgCjq1grL4bxopNHhvZ7yFsv62o6s5eocZiaQxanoO
-        /cdkzQH8NMw3QU38SSLlQGvN10fd4rmAiigQ5EI=
-X-Google-Smtp-Source: ACcGV61UM1YEjWpxjC7BYl6XIQbGgijECvFWGR37rBBAYMRYMPitmppC7ncHBur5x65EYuEUkQC+G4ND6xwkKk7kBlE=
-X-Received: by 2002:a67:f785:: with SMTP id j5-v6mr1336663vso.96.1537962167296;
- Wed, 26 Sep 2018 04:42:47 -0700 (PDT)
+        Wed, 26 Sep 2018 13:56:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 2A83C2B52035;
+        Wed, 26 Sep 2018 13:43:32 +0200 (CEST)
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id sU3MTPeWw88H; Wed, 26 Sep 2018 13:43:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id CB6CF2B52098;
+        Wed, 26 Sep 2018 13:43:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 2-TJZTp5AAHW; Wed, 26 Sep 2018 13:43:30 +0200 (CEST)
+Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 9359A2B52035;
+        Wed, 26 Sep 2018 13:43:30 +0200 (CEST)
+Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
+        id 6D19760177; Wed, 26 Sep 2018 13:43:30 +0200 (CEST)
+Date:   Wed, 26 Sep 2018 13:43:30 +0200
+From:   Guillaume Nault <g.nault@alphalink.fr>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     davem@davemloft.net, arnd@arndb.de, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] l2tp: fix return type of ndo_start_xmit function
+Message-ID: <20180926114330.GA1487@alphalink.fr>
+References: <20180926103839.28584-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <20180926091053.21255-1-phil.edworthy@renesas.com>
-In-Reply-To: <20180926091053.21255-1-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Sep 2018 13:42:35 +0200
-Message-ID: <CAMuHMdWu-GWBompRMwbweOw-N2AOUtpGdAnO8JGbRAvy=Q9j=g@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Renesas R9A06G032 PINCTRL Driver
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926103839.28584-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
+On Wed, Sep 26, 2018 at 06:38:39PM +0800, YueHaibing wrote:
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, so make sure the implementation in
+> this driver has returns 'netdev_tx_t' value, and change the function
+> return type to netdev_tx_t.
+> 
+> Found by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  net/l2tp/l2tp_eth.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/l2tp/l2tp_eth.c b/net/l2tp/l2tp_eth.c
+> index 8aadc4f..4173cb1 100644
+> --- a/net/l2tp/l2tp_eth.c
+> +++ b/net/l2tp/l2tp_eth.c
+> @@ -77,7 +77,8 @@ static void l2tp_eth_dev_uninit(struct net_device *dev)
+>  	 */
+>  }
+>  
+> -static int l2tp_eth_dev_xmit(struct sk_buff *skb, struct net_device *dev)
+> +static netdev_tx_t
+> +l2tp_eth_dev_xmit(struct sk_buff *skb, struct net_device *dev)
 
-On Wed, Sep 26, 2018 at 11:11 AM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> This implements the pinctrl driver for the RZ/N1 family of devices, including
-> the R9A06G032 (RZ/N1D) device.
->
-> This series was originally written by Michel Pollet whilst at Renesas, and I
-> have taken over this work.
->
-> Main changes:
-> v5:
->  - Address Jacopo's further comments
->  - Address Geert's comments
->
-> v4:
->  - Address Jacopo's comments
->  - Add alternative way to use the pinmux prop.
->  - Remove mention of gpios.
->  - Implement pin_config_group_get()
->  - Fix function to get pin configs, i.e. return -EINVAL when disabled.
->
-> v3:
->  - Use standard DT props instead of proprietary ones.
->  - Replace virtual pins used for MDIO muxing with extra funcs.
->  - Use pinctrl_utils funcs to handle the maps.
->  - Remove the dbg functions to keep things simple.
->  - Change the way the functions are defined so it is easy to check
->    against the hardware numbering.
->
-> v2:
->  - Change to generic rzn1 family driver, instead of device specific.
->  - Review comments fixed.
->  - Fix error handling during probe
->
-> Phil Edworthy (3):
->   dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
->   pinctrl: renesas: Renesas RZ/N1 pinctrl driver
->   ARM: dts: r9a06g032: Add pinctrl node
+Return type and function name are generally kept on the same line:
++static netdev_tx_t l2tp_eth_dev_xmit(struct sk_buff *skb,
++				      struct net_device *dev)
 
-Thanks, will apply the first two patches to sh-pfc-for-v4.2.0.
+Anyway,
+Acked-by: Guillaume Nault <g.nault@alphalink.fr>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
