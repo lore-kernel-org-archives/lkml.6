@@ -6,100 +6,89 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90334C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84ECC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4119921536
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:49:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CBFD21536
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:50:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ishz9JFh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4119921536
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MdqY1i1M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CBFD21536
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbeI0GFD (ORCPT
+        id S1727090AbeI0GFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 02:05:03 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38811 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeI0GFD (ORCPT
+        Thu, 27 Sep 2018 02:05:24 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40550 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbeI0GFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 02:05:03 -0400
-Received: by mail-it1-f193.google.com with SMTP id p129-v6so5346111ite.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 16:49:39 -0700 (PDT)
+        Thu, 27 Sep 2018 02:05:24 -0400
+Received: by mail-it1-f196.google.com with SMTP id h23-v6so5327379ita.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 16:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=ImcPsoj/C8Cvcsp4Zjw/V/2COKZLUUm9nf7B5SRT/ZM=;
-        b=Ishz9JFh+C5Yq8y0gU/7lJche2z6w2/iX1DCY2pwGamPJ+J/HDhYZwm8NZjt/lMmvG
-         51YWS4vnG/u9TJx8t5JYDrcofuJ2fPYJjiYZjkHNdoxoAuZylm/oDP1qzy+FbObo++nC
-         fLDEAuw0P96HYEhJtjODX+xf6oSnBMFmhVGC8=
+        bh=eI4NpEJhPXXJCZL/jds2N2Ql80zzYvIwriaBpbUy+Bo=;
+        b=MdqY1i1MQqPeKPNaweWnRdafni8+L9R23hygP8D1KPJPnVm6qVRUaF8YGSmrApFgV0
+         PqfFlJkiq3FzXXYZVbNsoyXzRngjc+6qS8rYSplDUMDadyATZy6FE9pIvX4elDjtvv/z
+         dTnAix4WL8v+IQZ6hWEd6lxQGza8BtVDZjJFE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=ImcPsoj/C8Cvcsp4Zjw/V/2COKZLUUm9nf7B5SRT/ZM=;
-        b=UGontlxdmAyG0ISeFjyCK6IAn6ctGD6uWn+CvXnysf5dtwDoo3XwfYG4wTuQocxSOX
-         DFzmz6F+0VPEMV4xCwte79vv8SL0q5p/4WE7AwOKm2d1KgbC+rcX3pseehvZEl0q2jYs
-         Xmdc9ttm+zNQI3frdaHzqIEH35kBAtHLHUAzBCZmTBKttpJbhLzx4vCtyJMJ9yu5qW9I
-         ZRrwW8NG7gNV3OytrioT7nriV2AFNwGv62fciDmSfoCX63vXptIRqwsAfmP4uPfxsamp
-         CwvpuKaT8NUruSfFNnOhg3rW4WqCQRQ55XnCj4aoiSYq20o5JPBLOZc3n5yr4E87Q+B4
-         ep3A==
-X-Gm-Message-State: ABuFfoj4QOD3oI2/mDdNtYhIg9++lXws/uoV6qnySW5e/e7RxT3BFW+N
-        KnZllWXoR8s9ZaOMXB4lNnUsW9WJ9dE5Mhlj0Pe/mw==
-X-Google-Smtp-Source: ACcGV63vEBYIPQ6dmJWQbuz3ZHm6tOWJD/K2+BP2BPEGzHhWIuFA4yR3PjDGYlxp96+XoGb40K1ySCNG3Mp2kK8jEvw=
-X-Received: by 2002:a24:3fc6:: with SMTP id d189-v6mr7011410ita.64.1538005778894;
- Wed, 26 Sep 2018 16:49:38 -0700 (PDT)
+        bh=eI4NpEJhPXXJCZL/jds2N2Ql80zzYvIwriaBpbUy+Bo=;
+        b=BmF/OW9IvwVL+aSdmV3VwQCjMzghDHqVPRUwIfGS0hOTZDm1yPlVci+bPkVM4D/XX8
+         e0+fMT1Fb0/6YCPPMiYCLL6MXkTipM/wWMeaaLSh/U/UfDyPxdpqRu6zLVLU+DFXpJsH
+         H7spYWLB/Yh7k4YcOY+CfWqWl8EbOFV/AvGo1S2WYb4VJccLbhT+FhMwP0xDjmi3QlVm
+         i24PCsYQ0LBKRVwUEIhIG/dLX1P5+5SktXSsq4K0+7gaKrLys8/Kx74Ujpg03RU265Qw
+         xrY6xpDtCflff2/e2w+HZfB8d6gb9N2ZhxmNBAq3ZQXteZ/Kb9cTf5G+5xseX5cNUDfV
+         gBBA==
+X-Gm-Message-State: ABuFfoiEyPtxxMSnIC+9ivQjIwd48JPQtnjO35glu75/T5f0YE8obbC/
+        lnoFaU/4mm6YyyA2Ll6x2D008lI7KrG+koCVOicSGA==
+X-Google-Smtp-Source: ACcGV61zmHZjhCn89gSFHu0HMk1R1NAXI6BG1caM/QU++7iH7CgwN6YgyfUuDLGmuWAsA2YL95cS5nkF9ygX45yS56k=
+X-Received: by 2002:a02:6a6f:: with SMTP id m47-v6mr7998648jaf.121.1538005799701;
+ Wed, 26 Sep 2018 16:49:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 16:48:58
+Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 16:49:19
  -0700 (PDT)
-In-Reply-To: <20180923203924.68452-1-yuzhao@google.com>
-References: <20180923203924.68452-1-yuzhao@google.com>
+In-Reply-To: <1537523181-14578-2-git-send-email-ludovic.Barre@st.com>
+References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com> <1537523181-14578-2-git-send-email-ludovic.Barre@st.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 27 Sep 2018 01:48:58 +0200
-Message-ID: <CAPDyKFqiUO-7O6bgrszuR3YKMkEoPT4976gvDKvUWpYuNp03ag@mail.gmail.com>
-Subject: Re: [PATCH] mmc: add quirk for O2 Micro dev 0x8620 rev 0x01
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+Date:   Thu, 27 Sep 2018 01:49:19 +0200
+Message-ID: <CAPDyKFqGwihup0q=-mq_9-fj2YxJHWjWyP9jVSjUk6n=rdAvEg@mail.gmail.com>
+Subject: Re: [PATCH V2 01/27] mmc: mmci: internalize dma map/unmap into mmci
+ dma functions
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-stm32@st-md-mailman.stormreply.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 September 2018 at 22:39, Yu Zhao <yuzhao@google.com> wrote:
-> This device reports SDHCI_CLOCK_INT_STABLE even though it's not
-> ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
-> SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
-> bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
-> SDHCI_CLOCK_CARD_EN but only observed the first operand).
+On 21 September 2018 at 11:45, Ludovic Barre <ludovic.Barre@st.com> wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
 >
-> mmc1: Timeout waiting for hardware cmd interrupt.
-> mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-> mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
-> mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-> mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-> mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
-> mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-> mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-> mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-> mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-> mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-> mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
-> mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
-> mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-> mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-> mmc1: sdhci: Host ctl2: 0x00000008
-> mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
-> mmc1: sdhci: ============================================
+> This patch internalizes the management of dma map/unmap into
+> mmci dma interfaces. This allows to simplify and prepare the next dma
+> callbacks for mmci host ops.
+> mmci_dma_unmap was called in mmci_data_irq & mmci_cmd_irq functions
+> and can be integrated in mmci_dma_data_error.
 >
-> The problem happens during wakeup from S3. Adding a delay quirk
-> after power up reliably fixes the problem.
->
-> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 
 Applied for next, thanks!
 
@@ -107,22 +96,98 @@ Kind regards
 Uffe
 
 > ---
->  drivers/mmc/host/sdhci-pci-o2micro.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/mmc/host/mmci.c | 40 +++++++++++++++++-----------------------
+>  1 file changed, 17 insertions(+), 23 deletions(-)
 >
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index 77e9bc4aaee9..3e5ecf7ce101 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -490,6 +490,8 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
->                 pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
->                 break;
->         case PCI_DEVICE_ID_O2_SEABIRD0:
-> +               if (chip->pdev->revision == 0x01)
-> +                       chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
->         case PCI_DEVICE_ID_O2_SEABIRD1:
->                 /* UnLock WP */
->                 ret = pci_read_config_byte(chip->pdev,
+> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> index 1841d250..bf0bb07 100644
+> --- a/drivers/mmc/host/mmci.c
+> +++ b/drivers/mmc/host/mmci.c
+> @@ -482,16 +482,6 @@ static inline void mmci_dma_release(struct mmci_host *host)
+>         host->dma_rx_channel = host->dma_tx_channel = NULL;
+>  }
+>
+> -static void mmci_dma_data_error(struct mmci_host *host)
+> -{
+> -       dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
+> -       dmaengine_terminate_all(host->dma_current);
+> -       host->dma_in_progress = false;
+> -       host->dma_current = NULL;
+> -       host->dma_desc_current = NULL;
+> -       host->data->host_cookie = 0;
+> -}
+> -
+>  static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
+>  {
+>         struct dma_chan *chan;
+> @@ -505,6 +495,18 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
+>                      mmc_get_dma_dir(data));
+>  }
+>
+> +static void mmci_dma_data_error(struct mmci_host *host)
+> +{
+> +       dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
+> +       dmaengine_terminate_all(host->dma_current);
+> +       host->dma_in_progress = false;
+> +       host->dma_current = NULL;
+> +       host->dma_desc_current = NULL;
+> +       host->data->host_cookie = 0;
+> +
+> +       mmci_dma_unmap(host, host->data);
+> +}
+> +
+>  static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
+>  {
+>         u32 status;
+> @@ -528,10 +530,9 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
+>                 mmci_dma_data_error(host);
+>                 if (!data->error)
+>                         data->error = -EIO;
+> -       }
+> -
+> -       if (!data->host_cookie)
+> +       } else if (!data->host_cookie) {
+>                 mmci_dma_unmap(host, data);
+> +       }
+>
+>         /*
+>          * Use of DMA with scatter-gather is impossible.
+> @@ -742,10 +743,6 @@ static inline void mmci_dma_release(struct mmci_host *host)
+>  {
+>  }
+>
+> -static inline void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
+> -{
+> -}
+> -
+>  static inline void mmci_dma_finalize(struct mmci_host *host,
+>                                      struct mmc_data *data)
+>  {
+> @@ -906,10 +903,8 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
+>                 u32 remain, success;
+>
+>                 /* Terminate the DMA transfer */
+> -               if (dma_inprogress(host)) {
+> +               if (dma_inprogress(host))
+>                         mmci_dma_data_error(host);
+> -                       mmci_dma_unmap(host, data);
+> -               }
+>
+>                 /*
+>                  * Calculate how far we are into the transfer.  Note that
+> @@ -1055,10 +1050,9 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
+>         if ((!sbc && !cmd->data) || cmd->error) {
+>                 if (host->data) {
+>                         /* Terminate the DMA transfer */
+> -                       if (dma_inprogress(host)) {
+> +                       if (dma_inprogress(host))
+>                                 mmci_dma_data_error(host);
+> -                               mmci_dma_unmap(host, host->data);
+> -                       }
+> +
+>                         mmci_stop_data(host);
+>                 }
+>                 mmci_request_end(host, host->mrq);
 > --
-> 2.19.0.444.g18242da7ef-goog
+> 2.7.4
 >
