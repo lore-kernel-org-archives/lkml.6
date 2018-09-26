@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2165C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209DBC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4212064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD00F2064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:17:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goRBR8My"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A4212064D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qyThfYns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD00F2064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeI0BcG (ORCPT
+        id S1727604AbeI0BcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:32:06 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39990 "EHLO
+        Wed, 26 Sep 2018 21:32:10 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35951 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbeI0BcF (ORCPT
+        with ESMTP id S1727057AbeI0BcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:32:05 -0400
-Received: by mail-ed1-f68.google.com with SMTP id j62-v6so2883989edd.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:17:39 -0700 (PDT)
+        Wed, 26 Sep 2018 21:32:08 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f4-v6so2900866edq.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HeEP8lTVz0835vo+4PoDakHzCbXDT7ugsWYPaX1mdBQ=;
-        b=goRBR8Myx4Vu6NXNCJeolihuD7sli7Z27FFaRDZDtZNE7HLgHhVn06sMvV1U5v/Ijp
-         J5lbwSCR02OZLKb+zpI2PRD/OQrV4QZEbpG7ac36hgMUc7K7D4QXaJj3RLePF04KcgTz
-         WbUuhdHqXW/aAodDH1H8sd4j0TLaer69NOXuuUNkSPinaSDUs1qWOPaBeBOZ0d6MlPzM
-         Rg+XPASEV+mEfDN94cgvqlWcWXRl5V/ID/J+J2nfvnBly5AEavsv9G28c8MsQ+yxrxlz
-         8rDKHjRF4XlOgL3l7kla/XDyqXi6IlRkEMRSfDqmVN+czRBM3jv8D39V//g6GU+FmNzB
-         tTxA==
+        bh=RGHHOgsd6CUtXUBKj1DgktbgVfzqWBc1nMKYiEjJjz8=;
+        b=qyThfYnsO/Yh/ztPacA+AIvt1olJ3Et7Pji8ZrT2Ms0ONICsU8NQsZ79eWGYaICSmU
+         PdsrdWC0zcxyItN0MLtZKtpftqX2Zk7EJAWJaQabC08+f8hR76998by9aFzLfMz+ydjd
+         nnBOnsVNvC+VKoH8MAZa19SB9oAUYFamf9xD5pYC80Wum+Qg01gX7oQTvxhsgSsOVrFO
+         goPUKASeicEI8jLwH5KlflmoaWY5Hzoi01zeOcquRlC8DwR7KGVl0Q0yZyWw/p9lBcgL
+         p5WNDV/96WwlXq8sdqMQnfoOLMN9bk5/PCctU6LsXfIzqnnv3NTMdHkUh096dG8UZMqr
+         izkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=HeEP8lTVz0835vo+4PoDakHzCbXDT7ugsWYPaX1mdBQ=;
-        b=loT766o3+e4yFKioPuma6GHNKL+ExBZvmmFf24ux+taIJUzaeqFxY5OO+FJuFg5eEY
-         3ljAAK3xKvIaEI/LaozvWk2Zqy+HZ87OwysZObmAxTy2cOe2gAWPMEOpe3K6BpJliOt8
-         1p3TYHgt1eej3Q0B3so/Q39PJeLx19LSHxkSYjsHudcIh5FNKz7gjJfwz+2l4YpdMK6x
-         3inhe05z49Kv36lL8XWK5oXn7BL1zx+aTji9C8RGwSKUVkciWwE+wvhCnPT4hcQ9KEqJ
-         n+UXLcT89TGqvrDMz9Vzguqo+oCr+5KVFLlIRWYbbrvRmdSLpnoUZj/sC+L37WuNAkJt
-         6LQg==
-X-Gm-Message-State: ABuFfoj6i7nZyL/+SXTvePboeyvS8maXwQNlJDCMzH5AFEvlTbrT5h7d
-        9t2ZwrwIiTa5D/Q2UzfoIhUMiXKr
-X-Google-Smtp-Source: ACcGV63TA5bS9W5NA5YxOfDHE4CTgcKqvhiIjSRgbGFNYRkKQrKw60qowTumt76N48p9MCCNXmF+dA==
-X-Received: by 2002:a50:8f66:: with SMTP id 93-v6mr12191554edy.248.1537989458071;
-        Wed, 26 Sep 2018 12:17:38 -0700 (PDT)
+        bh=RGHHOgsd6CUtXUBKj1DgktbgVfzqWBc1nMKYiEjJjz8=;
+        b=aRGVRPwojqK6pHnnLabLcwId1zP0Wu2UtlWpL5bsbHLFOq8NBf0sY7fNFWSbySpVjE
+         lSuylpchiyDPoYEtg+y/t4LdlbFq0JyOznvWECJb9yTo2YwavYxGRYaOp9LrqAXSZ/ws
+         Ik3x9YimR2HXjVGlXpLbntMtb2ipJ0ZLmEp8nO3gQ8r4CFZ2XX2Ws0iBICuz6UmVG0LI
+         1rbY2AdLqCiLEKHAWO7361vPkKYFkS2mwjcvEu9dvh+fdwAVe4rfZ4i2jIlXmvMLXiRd
+         GVI7aYFsu4qg1zQBgqGU1c3826hHuHWT8mj2CP8vtPRQU7vge/vcRyFgLOkl4prgTgrq
+         q0QQ==
+X-Gm-Message-State: ABuFfohWpA6ANClUTgzQQ5TP6+wU2AiUoqz0aXRVt/p8WFIAO9ekDQQQ
+        fX1dixpSp1UH9C2iPANm8iCroxe9
+X-Google-Smtp-Source: ACcGV62ou+htq1nE08RDM4iBHdA9tPrz5FQFM48xy3UNK6Tl4IAImuPpc7flU11lAAD66Udcq87fRg==
+X-Received: by 2002:aa7:d698:: with SMTP id d24-v6mr12215743edr.209.1537989460947;
+        Wed, 26 Sep 2018 12:17:40 -0700 (PDT)
 Received: from localhost.localdomain ([109.78.196.57])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm91417eda.72.2018.09.26.12.17.36
+        by smtp.gmail.com with ESMTPSA id k13-v6sm91417eda.72.2018.09.26.12.17.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 12:17:37 -0700 (PDT)
+        Wed, 26 Sep 2018 12:17:40 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 11/13] staging:rtl8192u: Remove TxBFCap - Style
-Date:   Wed, 26 Sep 2018 20:17:02 +0100
-Message-Id: <20180926191704.16322-12-johnfwhitmore@gmail.com>
+Subject: [PATCH 13/13] staging:rtl8192u: Remove potential memory leak
+Date:   Wed, 26 Sep 2018 20:17:04 +0100
+Message-Id: <20180926191704.16322-14-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180926191704.16322-1-johnfwhitmore@gmail.com>
 References: <20180926191704.16322-1-johnfwhitmore@gmail.com>
@@ -73,46 +73,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The member variable TxBFCap is not used in code so has simply been
-removed from the code.
+Add call to ieee80211_networks_free() to avoid potential memory
+leak if allocation of pHTInfo fails.
 
-This is a coding style change which should have no impact on runtime
-code execution.
+If the third allocation fails only the first successful allocation
+is freed, not the second.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h     | 3 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 3 ---
- 2 files changed, 6 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/ieee80211_module.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-index f36fbf56c585..204e4a5495a1 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-@@ -54,9 +54,6 @@ struct ht_capability_ele {
- 	//Supported MCS set
- 	u8	MCS[16];
- 
--	//TXBF Capabilities
--	u8	TxBFCap[4];
--
- 	//Antenna Selection Capabilities
- 	u8	ASCap;
- 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index e20488ecbd96..9188bd925262 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -542,9 +542,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 			pCapELE->MCS[i] = 0;
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
+index 90a097f2cd4e..aada077ced0f 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
+@@ -159,6 +159,11 @@ struct net_device *alloc_ieee80211(int sizeof_priv)
+ 	ieee->pHTInfo = kzalloc(sizeof(RT_HIGH_THROUGHPUT), GFP_KERNEL);
+ 	if (ieee->pHTInfo == NULL) {
+ 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't alloc memory for HTInfo\n");
++
++		/* By this point in code ieee80211_networks_allocate() has been
++		 * successfully called so the memory allocated should be freed
++		 */
++		ieee80211_networks_free(ieee);
+ 		goto failed;
  	}
- 
--	//TXBF Capabilities
--	memset(pCapELE->TxBFCap, 0, 4);
--
- 	//Antenna Selection Capabilities
- 	pCapELE->ASCap = 0;
- //add 2 to give space for element ID and len when construct frames
+ 	HTUpdateDefaultSetting(ieee);
 -- 
 2.18.0
 
