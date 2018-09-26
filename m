@@ -2,92 +2,95 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC28C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7A8C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6824214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:28:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6824214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F2AB214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:29:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2AB214DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbeIZQlH (ORCPT
+        id S1727477AbeIZQlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:41:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42464 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbeIZQlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:41:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 497BA18A;
-        Wed, 26 Sep 2018 03:28:50 -0700 (PDT)
-Received: from [10.4.13.85] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE6023F5BD;
-        Wed, 26 Sep 2018 03:28:48 -0700 (PDT)
-Subject: Re: [PATCH 02/10] irqchip/gic-v3-its: Consolidate LPI_PENDBASE_SZ
- usage
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20180921195954.21574-1-marc.zyngier@arm.com>
- <20180921195954.21574-3-marc.zyngier@arm.com>
- <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <1fe9460d-c90a-a6ce-b0ce-754e22d834e1@arm.com>
-Date:   Wed, 26 Sep 2018 11:28:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 12:41:36 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34821 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726802AbeIZQlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:41:36 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C0231A78755B0;
+        Wed, 26 Sep 2018 18:29:14 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
+ 18:29:08 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <kys@microsoft.com>,
+        <haiyangz@microsoft.com>, <sthemmin@microsoft.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <devel@linuxdriverproject.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] hv_netvsc: fix return type of ndo_start_xmit function
+Date:   Wed, 26 Sep 2018 18:25:10 +0800
+Message-ID: <20180926102510.15696-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/09/18 11:33, Suzuki K Poulose wrote:
-> Hi Marc,
-> 
-> On 21/09/18 20:59, Marc Zyngier wrote:
->> LPI_PENDING_SZ is always used in conjunction with a max(). Let's
->> factor this in the definition of the macro, and simplify the rest
->> of the code.
->>
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>    drivers/irqchip/irq-gic-v3-its.c | 12 ++++--------
->>    1 file changed, 4 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->> index c2df341ff6fa..ed6aab11e019 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -62,7 +62,7 @@ static u32 lpi_id_bits;
->>     */
->>    #define LPI_NRBITS		lpi_id_bits
->>    #define LPI_PROPBASE_SZ		ALIGN(BIT(LPI_NRBITS), SZ_64K)
->> -#define LPI_PENDBASE_SZ		ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K)
->> +#define LPI_PENDBASE_SZ		max_t(u32, SZ_64K, ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K))
-> 
-> minor nit: The ALIGN() already aligns the given value up to the required
-> alignment. So, if the LPI_NRBITS is guaranteed to be non-zero,
-> we could simply drop the max_t().
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-Yeah, that's a brain fart on my part. I've fixed up.
+As suggestion from Haiyang Zhang <haiyangz@microsoft.com>, if netvsc_vf_xmit
+fails, We are not sure if the error can go away after retrying, returning
+NETDEV_TX_BUSY may cause infinite retry from the upper layer.
+so just return NETDEV_TX_OK at there.
 
-Thanks,
+Found by coccinelle.
 
-	M.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/hyperv/netvsc_drv.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index ec69974..a1d44b4 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -511,7 +511,8 @@ static int netvsc_vf_xmit(struct net_device *net, struct net_device *vf_netdev,
+ 	return rc;
+ }
+ 
+-static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
++static netdev_tx_t
++netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
+ {
+ 	struct net_device_context *net_device_ctx = netdev_priv(net);
+ 	struct hv_netvsc_packet *packet = NULL;
+@@ -528,8 +529,10 @@ static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
+ 	 */
+ 	vf_netdev = rcu_dereference_bh(net_device_ctx->vf_netdev);
+ 	if (vf_netdev && netif_running(vf_netdev) &&
+-	    !netpoll_tx_running(net))
+-		return netvsc_vf_xmit(net, vf_netdev, skb);
++	    !netpoll_tx_running(net)) {
++		netvsc_vf_xmit(net, vf_netdev, skb);
++		return NETDEV_TX_OK;
++	}
+ 
+ 	/* We will atmost need two pages to describe the rndis
+ 	 * header. We can only transmit MAX_PAGE_BUFFER_COUNT number
 -- 
-Jazz is not dead. It just smells funny...
+1.8.3.1
+
+
