@@ -2,90 +2,115 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B947C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688A5C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECAAC21480
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97D35208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:29:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="Nb9+utIo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECAAC21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nA4HgWPA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D35208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbeIZPkG (ORCPT
+        id S1727857AbeIZPlL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:40:06 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42398 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728337AbeIZPkG (ORCPT
+        Wed, 26 Sep 2018 11:41:11 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43361 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbeIZPlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:40:06 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b20-v6so1250418edr.9
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:28:03 -0700 (PDT)
+        Wed, 26 Sep 2018 11:41:11 -0400
+Received: by mail-qk1-f194.google.com with SMTP id v18-v6so5667979qka.10;
+        Wed, 26 Sep 2018 02:29:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZhejO/DktRJf7LBGlHCpVXGMIE5pxjaSeDyBO5GVSX0=;
-        b=Nb9+utIoJg5smgtAgf8Pgg2aoEXgvryzX6OMadvcgDAASufPmwqmNGMZyLFMrklvoX
-         DJvEDNxuTsU3kbBtCk5U+SdnGyEqBg1GGIzY6/pHlG7v01ASYSyERkJR+pG4PvLLpKVH
-         vTLU4nImhd4rGBVqpz6QizNvkzosJTAzpjA6YXzjCrj9wf+eELkXahzjRNUhDhk6BAeI
-         4RG0EjaNkReLgxdxQaQMMC1KBgKFVQqEuMp79gIfftCoU9ZE3/9IBhdhsJ0sCKuxeOO/
-         01olWEt6ftRg+8UPbCtUwtCEZNMQUGsv390ZIkk7gRNmfbvZyzpp0hXL4Zy7Fwr8j8Be
-         lTaA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VkXIFnF1AF4DxkvSF2KDNilhPlVCgDvJ3KBBKyLgIDo=;
+        b=nA4HgWPAXYH7kvvr9o6qtmJyVrVvTfPAM9AoUqUfHEZf06mzVu+M83XnwYEK2qpO16
+         xKEUzNAe92QkOEYVwDRYJQc21rvnKvy9FGEP+S3AUj9rGRQQEf+x7JXN32HfwZZOigml
+         pHF4Q283cj+BC/AXL4Be6ntQT3AUZwdeSe8jwnYyfkQvhXTkPIdWsrTkOEVYCfyPLLmW
+         jv/83K+cB8vX2qXn8oonwiI+ewYsvGDPN/FoSfPPKJukJdEaYFils7Po6QuFKGjh+UNC
+         kJJ7xB9d89/qb4/obYWMANMi5I0+Uo+q+pR1DrSzlzkPiv+/OM0Qp+rN0Q6G5MezhrnA
+         YCyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZhejO/DktRJf7LBGlHCpVXGMIE5pxjaSeDyBO5GVSX0=;
-        b=m7UEA79VD4BS0DBvCDXFVWLVDbY0627KxDH4MoEkUuld9n8HJi+oatWi2afT1meJKS
-         K8Lz3CHK44mV0CudCrelQ2chdSfG/NMI382kxnQYwgo9NqP7MsOBNtj8UuZVFOPC2eWT
-         fIol5AB//hhc9zSy4ZeWiKc7APxaGcZ/NvZlTfPr8fMTGejznV9874PcN4wL9s04kEl5
-         5IPpE7umZQrjK5FfMWsiHNofaTO5+Ohf0cnNTm3S795Im44jvOBJObTg51BXC7/SzaUy
-         t5hLnGTVqq5YemIuVJflLkn5MH13MqopUB4zyEVRTstjcdtpHueG8L0ZBEGwQt19yc8T
-         Z6Ww==
-X-Gm-Message-State: ABuFfoh8Q6JBhKYMTkwNwbMERPdHcTifn632mbjmNyzsaD+ilCe8wRqS
-        Od8Ziu5hH8kj5IbjzQ/FeywXpEddItKpgQ==
-X-Google-Smtp-Source: ACcGV62fJMsELY7O9zhZ+nR+QjnjdX1xqIRoYbJNLOmRg+wir2p0x9X7iPO4o7scnqxzGjQkLNtBNA==
-X-Received: by 2002:aa7:d616:: with SMTP id c22-v6mr8799272edr.240.1537954082492;
-        Wed, 26 Sep 2018 02:28:02 -0700 (PDT)
-Received: from shemminger-XPS-13-9360 ([213.244.170.154])
-        by smtp.gmail.com with ESMTPSA id j23-v6sm8280325edh.29.2018.09.26.02.28.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 02:28:02 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 10:27:59 +0100
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     =?UTF-8?B?SMOla29u?= Bugge <Haakon.Bugge@oracle.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 2/2] net: if_arp: use define instead of hard-coded value
-Message-ID: <20180926102759.52c06799@shemminger-XPS-13-9360>
-In-Reply-To: <20180921103930.1420679-3-Haakon.Bugge@oracle.com>
-References: <20180921103930.1420679-1-Haakon.Bugge@oracle.com>
-        <20180921103930.1420679-3-Haakon.Bugge@oracle.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VkXIFnF1AF4DxkvSF2KDNilhPlVCgDvJ3KBBKyLgIDo=;
+        b=gDFO4Qn7VU3Apu4USbWhH63SlKW5SAV4nE3poDOMqI+hAeejznJHQejhOnfL8v5ofm
+         UZRayw6zb5weo6OQFhsM85q7MWWgNm1P4OVT5XXcizf+t0Yk4Zg9Pf0HSYkj9+Flq4Ch
+         lru9gE0kvRsomWFGnpyJL2Z+XzBQVIcJ12fK+EIq9TeOh6Fwgn23qHl2AZuqUgl3tOuQ
+         L+wYZUB0yg50j8C1WyikV7l6j5vs5vA/1vL1KfWEXfBleC1wDcD1jKxDmTu1NoYxoj05
+         GL656lwMJhMZgcbPd8deQcb1JHBJdo1URnq5xjkKCRPJU0DMjupXSsdSu/GoqFpO9Jko
+         QFSA==
+X-Gm-Message-State: ABuFfohFC/xU0qUxcLI37keXkSY1siN50BKK1LTXyZgC/+rf2B6t6ikd
+        4ZEvSQnKJciJhbOXsVsuCqTsfjIB0l8JCjGEnwM=
+X-Google-Smtp-Source: ACcGV60A0lMGAk2uGFATH7/RXhZB5AO5iWvD+lIlaN8h2u/3fZ1RVlXc1UMfbb6ilUG12TNC6bTVt3thklpmWQGpHbI=
+X-Received: by 2002:a37:4712:: with SMTP id u18-v6mr3537832qka.301.1537954147740;
+ Wed, 26 Sep 2018 02:29:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <1536044899-10452-1-git-send-email-zhang.xianwei8@zte.com.cn> <9fce93c1-ad6f-8d02-0cf7-42680b78a924@canonical.com>
+In-Reply-To: <9fce93c1-ad6f-8d02-0cf7-42680b78a924@canonical.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 26 Sep 2018 12:28:56 +0300
+Message-ID: <CAHp75Vf2YE4M9gkN6TYmJa5smAVWDD35+h9PwHkv4PYTEwb=4g@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: ideapad-laptop: Use __func__ instead of
+ read_ec_cmd in pr_err
+To:     Ike Panhc <ike.pan@canonical.com>
+Cc:     zhang.xianwei8@zte.com.cn, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        zhong.weidong@zte.com.cn, jiang.biao2@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018 12:39:30 +0200
-H=C3=A5kon Bugge <Haakon.Bugge@oracle.com> wrote:
+On Thu, Sep 6, 2018 at 11:49 AM Ike Panhc <ike.pan@canonical.com> wrote:
+>
+> On 09/04/2018 03:08 PM, Zhang Xianwei wrote:
+> > Refer to the commit f1395edbcec8 ("platform/x86: ideapad-laptop: Use
+> > __func__ instead of write_ec_cmd in pr_err"), prefer using '"%s...",
+> > __func__' to using 'read_ec_cmd' in read_ec_data.
+> >
 
-> uapi/linux/if_arp.h includes linux/netdevice.h, which uses
-> IFNAMSIZ. Hence, use it instead of hard-coded value.
->=20
-> Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
+Pushed to my review and testing queue, thanks!
 
-I tested build of iproute2 with updated header and there is no issue.
+> > Signed-off-by: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
+> > ---
+> >  drivers/platform/x86/ideapad-laptop.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+> > index d4f1259..f856d59 100644
+> > --- a/drivers/platform/x86/ideapad-laptop.c
+> > +++ b/drivers/platform/x86/ideapad-laptop.c
+> > @@ -212,7 +212,7 @@ static int read_ec_data(acpi_handle handle, int cmd, unsigned long *data)
+> >                       return 0;
+> >               }
+> >       }
+> > -     pr_err("timeout in read_ec_cmd\n");
+> > +     pr_err("timeout in %s\n", __func__);
+> >       return -1;
+> >  }
+> >
+> >
+>
+> Good catch. Thanks.
+>
+> Acked-by: Ike Panhc <ike.pan@canonical.com>
+>
 
-Tested-by: Stephen Hemminger <stephen@networkplumber.org>
+
+-- 
+With Best Regards,
+Andy Shevchenko
