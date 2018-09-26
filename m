@@ -2,96 +2,83 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 734BBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EF2C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E669C2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:30:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="SGPJ2moG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E669C2150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 377F420833
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:30:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 377F420833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbeIZVoD (ORCPT
+        id S1728408AbeIZVoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:44:03 -0400
-Received: from imap.thunk.org ([74.207.234.97]:50454 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727136AbeIZVoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:44:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=L8ERYMRHfDL2MA2WvnOthnM+hwbCjbx5f4BHaGimmQw=; b=SGPJ2moGrimrgEn+RMXRLxmub6
-        ytYBpf0VCpYtQ+Zdh0zn2caKlDXXpGuQ5deNFprw+X3mpQhUK2Zd7j15zmNvThBDTT/xzyJYCwt6W
-        9EuuPNweH4P3FGle0Pln+Hw0monNiJXZ280ujGEkB7bklcMW1EKcpJnySt8xod4PnRmM=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1g5Blp-0000os-ON; Wed, 26 Sep 2018 15:30:33 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 4C4C47A54D5; Wed, 26 Sep 2018 11:30:29 -0400 (EDT)
-Date:   Wed, 26 Sep 2018 11:30:29 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     =?utf-8?B?0JTQvNC40YLRgNC40Lkg0JvQtdC+0L3RgtGM0LXQsg==?= 
-        <dm.leontiev7@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Maybe a copyright attack on linux
-Message-ID: <20180926153029.GF3321@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        =?utf-8?B?0JTQvNC40YLRgNC40Lkg0JvQtdC+0L3RgtGM0LXQsg==?= <dm.leontiev7@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CA+JonM0_4GSeQ5veX3aDjJ_RBoL065YLNFMuyVftQBn-pCcA=A@mail.gmail.com>
+        Wed, 26 Sep 2018 17:44:08 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45065 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727201AbeIZVoH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:44:07 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l2-v6so17665808qtr.12;
+        Wed, 26 Sep 2018 08:30:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IDSNVmouWnBBWONUR8ESHt5PTgh2XiK+9dNGcjg5YaU=;
+        b=rqvHI3yc7J1Is7RnTFh2WtibWPqruygrLWl8vDhywqAXUAVj4MDmoKdlOrxDDqNASe
+         MTWMlBjI1cWAt9uVZ3D84dgUacsmY2cl5Q+2g7iuRJQeKQg8LZEOhFu9tebGSO1rf8FG
+         oo72XkP+ahIKlhju5ZVfutbSal47qCgGxzo1EKL7kuoiSyiqZrw5DcEM17rUrBKEcmYt
+         SpNXgT6tAV1FvnJ+DJk+P+6eh9L11BGH8/eWcujkspjFmvhL5TyDW2NEABo5aSXS4VsA
+         J5LxVPPthbJA+9Qj6hNd6+8uaFQTy3do+ceXj1BsfO1N5c2PdJD6ZBx7q12LwkXc15Xi
+         Qd3g==
+X-Gm-Message-State: ABuFfoj/2ci88yKYNyfWVsdhPdM6Gu3kEYef7kAU47MBuEOZfgWqqg5Q
+        q5FGz4h3z5qozPaKzHntE+h0QF1hNbmR24RFsco=
+X-Google-Smtp-Source: ACcGV63BsbBcM6CrMtoMwcpKhYQYzHSefF7QS15pC3a0uK6soYxbi69p7H6TxfoFxc+wizw++alfBIBUT9RIdSqFHEg=
+X-Received: by 2002:ac8:7254:: with SMTP id l20-v6mr4883333qtp.213.1537975838128;
+ Wed, 26 Sep 2018 08:30:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+JonM0_4GSeQ5veX3aDjJ_RBoL065YLNFMuyVftQBn-pCcA=A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20180926142029.619397-1-arnd@arndb.de> <20180926165240.77a78fc4@xps13>
+In-Reply-To: <20180926165240.77a78fc4@xps13>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 26 Sep 2018 17:30:21 +0200
+Message-ID: <CAK8P3a29=N9AoBAfKzNR-8fKQgoLGyPJJrqXn0eMwas+nKWN=A@mail.gmail.com>
+Subject: Re: [PATCH] [v2] ARM: omap1: add nand_chip declaration
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Wolfram Sang <wsa@the-dreams.de>, Suman Anna <s-anna@ti.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 05:55:18PM +0300, Дмитрий Леонтьев wrote:
-> Or: "Why you should not use "kill switch" option proposed by smdy to
-> protest against CoC"
-> 
-> Hello.
-> 
-> I'm neither a great software developer nor a lawyer, but I'm not a
-> novice and I'm very annoyed whan I see this:
-> 
-> https://woww.reddit.com/r/programming/comments/9iqr3u/linux_developers_threaten_to_pull_kill_switch/
+On Wed, Sep 26, 2018 at 4:52 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> Arnd Bergmann <arnd@arndb.de> wrote on Wed, 26 Sep 2018 16:20:16 +0200:
+> > @@ -82,6 +81,7 @@ void omap1_restart(enum reboot_mode, const char *);
+> >
+> >  extern void __init omap_check_revision(void);
+> >
+> > +struct nand_chip;
+> >  extern void omap1_nand_cmd_ctl(struct nand_chip *this, int cmd,
+> >                              unsigned int ctrl);
+> >
+>
+> Boris pointed me that the commit introducing the regression is still
+> in nand/next, so do you mind if I squash both patches with it?
 
-Dmitry,
+No worries, please do that if it makes it easier for you.
 
-Before you worry overmuch, I suggest you take a look at the people who
-are the claimed "linux developers" who are so "threatening" and see
-how many commits (if any at all) they actually have contributed to he
-Linux sources.
-
-There are a lot of people who are not members of the Linux kernel
-development community that have been contributing a huge amount of
-noise on both sides of the controversy, both pro- and anti- CoC.
-
-My view is that this noise is not at all helpful, and they have their
-own agenda which they are trying to promote.  A handy-dandy command if
-you have the git tree for the kernel downloaded is:
-
-	git log --author=user@example.com
-
-Best regards,
-
-						- Ted
+      Arnd
