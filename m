@@ -2,371 +2,152 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FECBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4299DC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FCBC20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D87CB21527
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:15:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="C/WmY+fO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FCBC20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="gFUMLDxS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87CB21527
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeI0DZA (ORCPT
+        id S1727020AbeI0Daj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 23:25:00 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46781 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbeI0DXw (ORCPT
+        Wed, 26 Sep 2018 23:30:39 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51272 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726817AbeI0Dai (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 23:23:52 -0400
-Received: by mail-qt1-f195.google.com with SMTP id h22-v6so442811qtr.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:09:01 -0700 (PDT)
+        Wed, 26 Sep 2018 23:30:38 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y25-v6so3722615wmi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:15:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=epHd1o6KPupVYmL3VXxvF5Z1JP8sYlPDk5pYju44IUA=;
-        b=C/WmY+fOpp8biQhBYCH31rM3jxFDT8U3+B6k3+P9k8a8uUBjjm3DsNlaVszOpkOIQo
-         MhoaXlP5edZvLpW2AIIau1epngcB3LJW6tcdkvtv62DhvqCZYUDfiMhQ3ztyWn6xckA0
-         f3tSc1ecKkFzgWbjR2rjl/LEhRkA3YO6uO6jkD8l4Kd72aS1NsJu2cVUB854i7pFgAEQ
-         HkfYEKZvYHwb2g4McN7JDAzlCZ5Khe/LC4AKkNCgcsoVBZHN0iR13srqaEyZdObdP2W1
-         GWHBvX00aDWXr2TmSdd1W8h4iWKF8Lx93fIMGJksmT2EbeBONfqSXG8ZFqC/OZk/utfH
-         bV2A==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vB9H8DI5c82WYVgZLb6GEiLg+wrZiqn30NWEudnbjPs=;
+        b=gFUMLDxSv5gRT88t1k2giXCLrJrkciyzX0JSeL5QRR2staTRXhAp2fnX41vxXoHhIJ
+         xGhVbr14nRq7ETNuAdPZwsOupiRO2c6VP/zUSFkP61Z1A3waX0ftt3UL71pumwoWNaeT
+         Ylyi4lJcRNfIjvlDuVOACwK0bS2Pd5qjhZGT3aC70ETpZt+aweRSHEWDbn6R3soX8eQy
+         v6ZQaOWYmMzyn1xleNDd141BA4a5uY80tCkOceDeAsQXbglkl2VRD3Kzht8TJIMXu+Hi
+         r/Eoiu8B/XfhdpPKaQjwdtwQE3YDAisIn/ixCzWM4+aQVMuVhWwd+OTjM80hxDFVGvvH
+         WtTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=epHd1o6KPupVYmL3VXxvF5Z1JP8sYlPDk5pYju44IUA=;
-        b=Ygc9REqHHeB2Jo0JFw9uMRn1cH9KLVS+Un4ZfDlbxN04k81KkKIO6taGGHrmHMn0nj
-         nITyGGIMpG3ze5mtKE93RbtiRtKAO1Th1UzWaN4M2Sjg9y+9Zj0BT/InIrpGzsaa35+I
-         J82YfQFppUtqLTxuoo6DyGl6dF9N74uPoKea9flFNEOcwLtuuBMb81wt8Myg8rCe9xwJ
-         6XX2b44Lx5sV4/iE3FGPodRTi31/PD3cSLgDMyEVLjCQO9AmXkkCu5qNRqXgNajsn1B7
-         BFhubLZ0pNfZ2gC8vACL9zxCQx9XU/1FjVBLgubD/o3dSUzQmdNkc7cZNGqWcCd6idKc
-         nJfQ==
-X-Gm-Message-State: ABuFfojvjCrk+LmPlhC8xyXoiVZ8FfZfUSONhUQFFB7MKtcDhAVr0f/D
-        aGKum2i8g/m4lD2RjLATiNNQ7w==
-X-Google-Smtp-Source: ACcGV62tHwpl/Kv+7BkNDY9OcsKdDl5mge+tYuXb6oAwjAeDflgO2E9SDg1kavgFstsqbtCCXc/00w==
-X-Received: by 2002:a0c:896d:: with SMTP id 42-v6mr5725249qvq.117.1537996141228;
-        Wed, 26 Sep 2018 14:09:01 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id j5-v6sm65173qtb.34.2018.09.26.14.09.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 14:09:00 -0700 (PDT)
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        hannes@cmpxchg.org, tj@kernel.org, linux-fsdevel@vger.kernel.org,
-        akpm@linux-foundation.org, riel@redhat.com, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org
-Subject: [PATCH 1/9] mm: infrastructure for page fault page caching
-Date:   Wed, 26 Sep 2018 17:08:48 -0400
-Message-Id: <20180926210856.7895-2-josef@toxicpanda.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180926210856.7895-1-josef@toxicpanda.com>
-References: <20180926210856.7895-1-josef@toxicpanda.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vB9H8DI5c82WYVgZLb6GEiLg+wrZiqn30NWEudnbjPs=;
+        b=CqfgnRSlk8ON0WRr1f4vF2d2Kftrh+odgc6qNPiV5IPtP7F5vn+6YjOU68h0djh74+
+         UopubAxgTysUmb4u+BFJAe6Xnba/tmDv40KRgKaWcWVZNlKKWt0jb6a4LxxpXRe/Hsvf
+         WV8Dxy5WBmjt1aYEZ2ICzb8vfRbpBseQOp+iF9MDW7QULLCrwAkkMUhHJgJPw7gMtAa3
+         krXOLlbTO7ysBfz1ORpPSsBkmYBNq2nsNe/7xLopRGrTs/vQQvdOuTBNcQne9WmOFdAI
+         gQAq8i7FSVCIwLWsdla9lAY4yo1pK7QQbvN52srTLMHp+euMP4u6plrtcEpoqIUyPXKC
+         YA2Q==
+X-Gm-Message-State: ABuFfogv3kn+BGVVdIScTSrFYaNC60n8h4DobMXbzqcJqFezYCBYoYde
+        33D3Lhk7aLKmxHsDNkcaJ+T0ZETkpYcuI8PzXQIHVA==
+X-Google-Smtp-Source: ACcGV60nknvhhQqCvhrTSVRNdELIsZHKbZjTT96WWM1gR/5zZgG5chqSumUnz6HfwgXD3AV4sFvtgRw4pbno4hGW3jQ=
+X-Received: by 2002:a1c:9ad2:: with SMTP id c201-v6mr5578309wme.14.1537996545401;
+ Wed, 26 Sep 2018 14:15:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+In-Reply-To: <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Wed, 26 Sep 2018 14:15:31 -0700
+Message-ID: <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We want to be able to cache the result of a previous loop of a page
-fault in the case that we use VM_FAULT_RETRY, so introduce
-handle_mm_fault_cacheable that will take a struct vm_fault directly, add
-a ->cached_page field to vm_fault, and add helpers to init/cleanup the
-struct vm_fault.
+On Wed, Sep 26, 2018 at 1:55 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 09/26/2018 01:44 PM, Sean Christopherson wrote:
+> > On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
+> >> We also need to clarify how this can happen.  Is it through something
+> >> than an app does, or is it solely when the hardware does something under
+> >> the covers, like suspend/resume.
+> >
+> > Are you looking for something in the changelog, the comment, or just
+> > a response?  If it's the latter...
+>
+> Comments, please.
+>
+> > On bare metal with a bug-free kernel, the only scenario I'm aware of
+> > where we'll encounter these faults is when hardware pulls the rug out
+> > from under us.  In a virtualized environment all bets are off because
+> > the architecture allows VMMs to silently "destroy" the EPC at will,
+> > e.g. KVM, and I believe Hyper-V, will take advantage of this behavior
+> > to support live migration.  Post migration, the destination system
+> > will generate PF_SGX because the EPC{M} can't be migrated between
+> > system, i.e. the destination EPCM sees all EPC pages as invalid.
+>
+> OK, cool.
+>
+> That's good background fodder for the changelog.
+>
+> But, for the comment, I'm happy with something like this:
+>
+>         /*
+>          * The fault resulted from violation of SGX-specific access-
+>          * controls.  This is expected to be the result of some lower
+>          * layer action (CPU suspend/resume, VM migration) and is
+>          * not related to anything the OS did.  Treat it as an access
+>          * error to ensure it is passed up to the app via a signal where
+>          * it can be handled.
+>          */
+>
+> I really don't think we need to delve too deeply into the relationship
+> between EPCM and PTEs or anything.  Let's just say, "it's not the
+> kernel's fault, it's not the app's fault, so throw up our hands".
 
-I've converted x86, other arch's can follow suit if they so wish, it's
-relatively straightforward.
+There is a non-nitpicky consideration here.  Logically, user code is
+going to do this (totally made-up pseudocode):
 
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
----
- arch/x86/mm/fault.c |  6 +++-
- include/linux/mm.h  | 31 +++++++++++++++++++++
- mm/memory.c         | 79 ++++++++++++++++++++++++++++++++---------------------
- 3 files changed, 84 insertions(+), 32 deletions(-)
+enclave_t enclave = load_and_init_enclave(...);
+int ret = sgx_run(enclave, some pointers to non-enclave-memory buffers, ...);
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 47bebfe6efa7..ef6e538c4931 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1211,6 +1211,7 @@ static noinline void
- __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 		unsigned long address)
- {
-+	struct vm_fault vmf = {};
- 	struct vm_area_struct *vma;
- 	struct task_struct *tsk;
- 	struct mm_struct *mm;
-@@ -1392,7 +1393,8 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 	 * fault, so we read the pkey beforehand.
- 	 */
- 	pkey = vma_pkey(vma);
--	fault = handle_mm_fault(vma, address, flags);
-+	vm_fault_init(&vmf, vma, address, flags);
-+	fault = handle_mm_fault_cacheable(&vmf);
- 	major |= fault & VM_FAULT_MAJOR;
- 
- 	/*
-@@ -1408,6 +1410,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 			if (!fatal_signal_pending(tsk))
- 				goto retry;
- 		}
-+		vm_fault_cleanup(&vmf);
- 
- 		/* User mode? Just return to handle the fatal exception */
- 		if (flags & FAULT_FLAG_USER)
-@@ -1418,6 +1421,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 		return;
- 	}
- 
-+	vm_fault_cleanup(&vmf);
- 	up_read(&mm->mmap_sem);
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
- 		mm_fault_error(regs, error_code, address, &pkey, fault);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index a61ebe8ad4ca..4a84ec976dfc 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -360,6 +360,12 @@ struct vm_fault {
- 					 * is set (which is also implied by
- 					 * VM_FAULT_ERROR).
- 					 */
-+	struct page *cached_page;	/* ->fault handlers that return
-+					 * VM_FAULT_RETRY can store their
-+					 * previous page here to be reused the
-+					 * next time we loop through the fault
-+					 * handler for faster lookup.
-+					 */
- 	/* These three entries are valid only while holding ptl lock */
- 	pte_t *pte;			/* Pointer to pte entry matching
- 					 * the 'address'. NULL if the page
-@@ -378,6 +384,16 @@ struct vm_fault {
- 					 */
- };
- 
-+static inline void vm_fault_init(struct vm_fault *vmf,
-+				 struct vm_area_struct *vma,
-+				 unsigned long address,
-+				 unsigned int flags)
-+{
-+	vmf->vma = vma;
-+	vmf->address = address;
-+	vmf->flags = flags;
-+}
-+
- /* page entry size for vm->huge_fault() */
- enum page_entry_size {
- 	PE_SIZE_PTE = 0,
-@@ -943,6 +959,14 @@ static inline void put_page(struct page *page)
- 		__put_page(page);
- }
- 
-+static inline void vm_fault_cleanup(struct vm_fault *vmf)
-+{
-+	if (vmf->cached_page) {
-+		put_page(vmf->cached_page);
-+		vmf->cached_page = NULL;
-+	}
-+}
-+
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- #define SECTION_IN_PAGE_FLAGS
- #endif
-@@ -1405,6 +1429,7 @@ int invalidate_inode_page(struct page *page);
- #ifdef CONFIG_MMU
- extern vm_fault_t handle_mm_fault(struct vm_area_struct *vma,
- 			unsigned long address, unsigned int flags);
-+extern vm_fault_t handle_mm_fault_cacheable(struct vm_fault *vmf);
- extern int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 			    unsigned long address, unsigned int fault_flags,
- 			    bool *unlocked);
-@@ -1420,6 +1445,12 @@ static inline vm_fault_t handle_mm_fault(struct vm_area_struct *vma,
- 	BUG();
- 	return VM_FAULT_SIGBUS;
- }
-+static inline vm_fault_t handle_mm_fault_cacheable(struct vm_fault *vmf)
-+{
-+	/* should never happen if there's no MMU */
-+	BUG();
-+	return VM_FAULT_SIGBUS;
-+}
- static inline int fixup_user_fault(struct task_struct *tsk,
- 		struct mm_struct *mm, unsigned long address,
- 		unsigned int fault_flags, bool *unlocked)
-diff --git a/mm/memory.c b/mm/memory.c
-index c467102a5cbc..433075f722ea 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4024,36 +4024,34 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
-  * The mmap_sem may have been released depending on flags and our
-  * return value.  See filemap_fault() and __lock_page_or_retry().
-  */
--static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
--		unsigned long address, unsigned int flags)
-+static vm_fault_t __handle_mm_fault(struct vm_fault *vmf)
- {
--	struct vm_fault vmf = {
--		.vma = vma,
--		.address = address & PAGE_MASK,
--		.flags = flags,
--		.pgoff = linear_page_index(vma, address),
--		.gfp_mask = __get_fault_gfp_mask(vma),
--	};
--	unsigned int dirty = flags & FAULT_FLAG_WRITE;
-+	struct vm_area_struct *vma = vmf->vma;
-+	unsigned long address = vmf->address;
-+	unsigned int dirty = vmf->flags & FAULT_FLAG_WRITE;
- 	struct mm_struct *mm = vma->vm_mm;
- 	pgd_t *pgd;
- 	p4d_t *p4d;
- 	vm_fault_t ret;
- 
-+	vmf->address = address & PAGE_MASK;
-+	vmf->pgoff = linear_page_index(vma, address);
-+	vmf->gfp_mask = __get_fault_gfp_mask(vma);
-+
- 	pgd = pgd_offset(mm, address);
- 	p4d = p4d_alloc(mm, pgd, address);
- 	if (!p4d)
- 		return VM_FAULT_OOM;
- 
--	vmf.pud = pud_alloc(mm, p4d, address);
--	if (!vmf.pud)
-+	vmf->pud = pud_alloc(mm, p4d, address);
-+	if (!vmf->pud)
- 		return VM_FAULT_OOM;
--	if (pud_none(*vmf.pud) && transparent_hugepage_enabled(vma)) {
--		ret = create_huge_pud(&vmf);
-+	if (pud_none(*vmf->pud) && transparent_hugepage_enabled(vma)) {
-+		ret = create_huge_pud(vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
- 			return ret;
- 	} else {
--		pud_t orig_pud = *vmf.pud;
-+		pud_t orig_pud = *vmf->pud;
- 
- 		barrier();
- 		if (pud_trans_huge(orig_pud) || pud_devmap(orig_pud)) {
-@@ -4061,50 +4059,50 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 			/* NUMA case for anonymous PUDs would go here */
- 
- 			if (dirty && !pud_write(orig_pud)) {
--				ret = wp_huge_pud(&vmf, orig_pud);
-+				ret = wp_huge_pud(vmf, orig_pud);
- 				if (!(ret & VM_FAULT_FALLBACK))
- 					return ret;
- 			} else {
--				huge_pud_set_accessed(&vmf, orig_pud);
-+				huge_pud_set_accessed(vmf, orig_pud);
- 				return 0;
- 			}
- 		}
- 	}
- 
--	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
--	if (!vmf.pmd)
-+	vmf->pmd = pmd_alloc(mm, vmf->pud, address);
-+	if (!vmf->pmd)
- 		return VM_FAULT_OOM;
--	if (pmd_none(*vmf.pmd) && transparent_hugepage_enabled(vma)) {
--		ret = create_huge_pmd(&vmf);
-+	if (pmd_none(*vmf->pmd) && transparent_hugepage_enabled(vma)) {
-+		ret = create_huge_pmd(vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
- 			return ret;
- 	} else {
--		pmd_t orig_pmd = *vmf.pmd;
-+		pmd_t orig_pmd = *vmf->pmd;
- 
- 		barrier();
- 		if (unlikely(is_swap_pmd(orig_pmd))) {
- 			VM_BUG_ON(thp_migration_supported() &&
- 					  !is_pmd_migration_entry(orig_pmd));
- 			if (is_pmd_migration_entry(orig_pmd))
--				pmd_migration_entry_wait(mm, vmf.pmd);
-+				pmd_migration_entry_wait(mm, vmf->pmd);
- 			return 0;
- 		}
- 		if (pmd_trans_huge(orig_pmd) || pmd_devmap(orig_pmd)) {
- 			if (pmd_protnone(orig_pmd) && vma_is_accessible(vma))
--				return do_huge_pmd_numa_page(&vmf, orig_pmd);
-+				return do_huge_pmd_numa_page(vmf, orig_pmd);
- 
- 			if (dirty && !pmd_write(orig_pmd)) {
--				ret = wp_huge_pmd(&vmf, orig_pmd);
-+				ret = wp_huge_pmd(vmf, orig_pmd);
- 				if (!(ret & VM_FAULT_FALLBACK))
- 					return ret;
- 			} else {
--				huge_pmd_set_accessed(&vmf, orig_pmd);
-+				huge_pmd_set_accessed(vmf, orig_pmd);
- 				return 0;
- 			}
- 		}
- 	}
- 
--	return handle_pte_fault(&vmf);
-+	return handle_pte_fault(vmf);
- }
- 
- /*
-@@ -4113,9 +4111,10 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
-  * The mmap_sem may have been released depending on flags and our
-  * return value.  See filemap_fault() and __lock_page_or_retry().
-  */
--vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
--		unsigned int flags)
-+static vm_fault_t do_handle_mm_fault(struct vm_fault *vmf)
- {
-+	struct vm_area_struct *vma = vmf->vma;
-+	unsigned int flags = vmf->flags;
- 	vm_fault_t ret;
- 
- 	__set_current_state(TASK_RUNNING);
-@@ -4139,9 +4138,9 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 		mem_cgroup_enter_user_fault();
- 
- 	if (unlikely(is_vm_hugetlb_page(vma)))
--		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
-+		ret = hugetlb_fault(vma->vm_mm, vma, vmf->address, flags);
- 	else
--		ret = __handle_mm_fault(vma, address, flags);
-+		ret = __handle_mm_fault(vmf);
- 
- 	if (flags & FAULT_FLAG_USER) {
- 		mem_cgroup_exit_user_fault();
-@@ -4157,8 +4156,26 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 
- 	return ret;
- }
-+
-+vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
-+			   unsigned int flags)
-+{
-+	struct vm_fault vmf = {};
-+	vm_fault_t ret;
-+
-+	vm_fault_init(&vmf, vma, address, flags);
-+	ret = do_handle_mm_fault(&vmf);
-+	vm_fault_cleanup(&vmf);
-+	return ret;
-+}
- EXPORT_SYMBOL_GPL(handle_mm_fault);
- 
-+vm_fault_t handle_mm_fault_cacheable(struct vm_fault *vmf)
-+{
-+	return do_handle_mm_fault(vmf);
-+}
-+EXPORT_SYMBOL_GPL(handle_mm_fault_cacheable);
-+
- #ifndef __PAGETABLE_P4D_FOLDED
- /*
-  * Allocate p4d page table.
--- 
-2.14.3
+and, with the code in this patch, a correct implementation of
+sgx_run() requires installing a signal handler.  This is nasty, since
+signal handlers, expecially for something like SIGSEGV or SIGBUS, are
+not fantastic to say the least in libraries.
 
+Could we perhaps have a little vDSO entry (or syscall, I suppose) that
+runs an enclave an returns an error code, and rig up the #PF handler
+to check if the error happened in the vDSO entry and fix it up rather
+than sending a signal?
+
+On Windows, this is much less of a concern, because Windows has real
+scoped fault handling. But Linux doesn't, at least not yet.
+
+
+--
+Andy Lutomirski
+AMA Capital Management, LLC
