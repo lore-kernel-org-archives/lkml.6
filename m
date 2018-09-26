@@ -2,94 +2,135 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9864C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64721C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610202154B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 213B720833
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:55:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M5ly/YeR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610202154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z1fMxMIR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213B720833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbeI0AIu (ORCPT
+        id S1728621AbeI0AJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 20:08:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55984 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeI0AIt (ORCPT
+        Wed, 26 Sep 2018 20:09:26 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39614 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728236AbeI0AJZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 20:08:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+MIOiMP1122Npzlm1e0KQS0q7okGEzFqYL09H6bK8N0=; b=M5ly/YeRGebWmpUTay6y+NXBt
-        b3YgBZOl+g7M4eGKQ/KniSGnzFJ3VKTEgqQn4oRJZvBJRzQDxFnJt1rNtBNgPb89F8BBdgNXVQC2V
-        R2LXbteATq2jqPxMJ+P6Faj7jvlpT0EqpMDPiNZF2+1Ss8MwfsCo36Hd02e5tJZEfafZWi78XJ2Gk
-        2vf9QQNnaI2yvDttf6/jxP0v0SZNCusah1q7WYTxoIvXBFZ9jakHvzkBk38d76GQFH/fFEzyBjXYP
-        SnmA8daxu7rZE/T/idRlf0h9zSxlNqre/0wLWx9JBzAaJVJ64dXQsxWWWTUqPetA2CvJ5HgxtrX+G
-        U7lGu687g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5E0x-0001w2-GM; Wed, 26 Sep 2018 17:54:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 39894205A76D4; Wed, 26 Sep 2018 19:54:18 +0200 (CEST)
-Date:   Wed, 26 Sep 2018 19:54:18 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     will.deacon@arm.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
-        tglx@linutronix.de
-Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
-Message-ID: <20180926175418.GB5254@hirez.programming.kicks-ass.net>
-References: <20180926110117.405325143@infradead.org>
- <20180926111307.513429499@infradead.org>
- <396f7363-0f28-0fdb-7a48-ae16b0c8e82f@redhat.com>
+        Wed, 26 Sep 2018 20:09:25 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 85-v6so11256241pge.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 10:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HIjGo9D8cQQkqd2ZBabMqBzozyT8+tLjrlNyFZs/Yak=;
+        b=Z1fMxMIRZJUT0WZ7V9AVnFIYzxiDnBfcAZs6lrCkyMZ7E/ihwbF17poJhmypju2T6Y
+         i6p5asfnknCDNOZiLynEH6r51+JWZ2/6s828xTT/auOqODPA1Z15pvDPjPuu78YPZtkz
+         VmjODcM6d5HHqtnZLzuMsvbLO5OecUGHjciLSJ+Qb7l5sGqXed+vQOuDueB8YakX5lMh
+         6g5BM02bJVBAeWfdS9Vn5ZU5+0KEtwPItgtxYexgORU4jpvuwBBzwNB7XEHLm76Q0v8k
+         30Ds+t0TKjLBIPu8YSq7r4jemUrzaMvqdVObXZW6THQA7zEiiz45VkfT0sNK6EBTQLL5
+         O3sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HIjGo9D8cQQkqd2ZBabMqBzozyT8+tLjrlNyFZs/Yak=;
+        b=N9Xg12YBRxN6kfDQRn3amSvuX7OIxTEcGlzLRJYp2UosiNahKaRsVtyIUwyWYAyGDR
+         VD41XEljD12F9Vw19g4nh2oEWpAe6KtnZLuw19jWXtDrNI3qR2K0i6jSudZQEx3fYsVU
+         MzbrgmptfqCKF00XL+i8bh+kT1gnOYAhlEa+T50AAQ9PYDEyXYD0LHbVXrpGP9q6gKm3
+         033zFrS8UvbbAqSPQ6YUSGvIA3EFwAOc/CurJnDvy3B3Zq01M3Flf8s+9Zk1Fv3pMEIe
+         +ccfWmqTGI+hh2KbpmIbrF5yZF9tdntb/PCbNHQ6jkNZ7d39VKTAsWdYCGMiyBtvRQwV
+         /ldg==
+X-Gm-Message-State: ABuFfoi33vC3qWF7CQdhkzPWYyXcj+MJN0tg0ANuvf6MsJI6gNBmvXyu
+        n/ym8V6owLSH0mWJmseJJzvZRMGjertrNSzzPZY2IKfVV+c=
+X-Google-Smtp-Source: ACcGV63UqbEVYMUlWiOL3lfcrCODHaWZP53CG8Hmg04ZgZZ2OD2dyzXPmnXD120tNi9LvpEYoFx8t3S3xtCKeJesebE=
+X-Received: by 2002:a63:214f:: with SMTP id s15-v6mr6702304pgm.202.1537984519594;
+ Wed, 26 Sep 2018 10:55:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <396f7363-0f28-0fdb-7a48-ae16b0c8e82f@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180926070208.16924-1-natechancellor@gmail.com>
+ <20180926071359.GA22855@kroah.com> <20180926074114.GA4966@flashbox>
+In-Reply-To: <20180926074114.GA4966@flashbox>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 26 Sep 2018 10:55:07 -0700
+Message-ID: <CAKwvOdkkaCAmizfOr8Bj8QLTN161KqwXRCbuKbiNDoo5RonrpQ@mail.gmail.com>
+Subject: Re: [PATCH] staging: rtl8723bs: Mark ACPI table declaration as maybe unused
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 12:30:36PM -0400, Waiman Long wrote:
-> On 09/26/2018 07:01 AM, Peter Zijlstra wrote:
-> > On x86 we cannot do fetch_or with a single instruction and end up
-> > using a cmpxchg loop, this reduces determinism. Replace the fetch_or
-> > with a very tricky composite xchg8 + load.
+On Wed, Sep 26, 2018 at 12:41 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Wed, Sep 26, 2018 at 09:13:59AM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Sep 26, 2018 at 12:02:09AM -0700, Nathan Chancellor wrote:
+> > > Clang emits the following warning:
+> > >
+> > > drivers/staging/rtl8723bs/os_dep/sdio_intf.c:25:36: warning: variable
+> > > 'acpi_ids' is not needed and will not be emitted
+> > > [-Wunneeded-internal-declaration]
+> > > static const struct acpi_device_id acpi_ids[] = {
+> > >                                    ^
+> > > 1 warning generated.
+> > >
+> > > Mark the declaration as maybe unused like a few other instances of this
+> > > construct in the kernel.
+> > >
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/169
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > ---
+> > >  drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+> > > index 6d02904de63f..3285bf36291b 100644
+> > > --- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+> > > +++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+> > > @@ -22,7 +22,7 @@ static const struct sdio_device_id sdio_ids[] =
+> > >     { SDIO_DEVICE(0x024c, 0xb723), },
+> > >     { /* end: all zeroes */                         },
+> > >  };
+> > > -static const struct acpi_device_id acpi_ids[] = {
+> > > +static const struct acpi_device_id acpi_ids[] __maybe_unused = {
 > >
-> > The basic idea is that we use xchg8 to test-and-set the pending bit
-> > (when it is a byte) and then a load to fetch the whole word. Using
-> > two instructions of course opens a window we previously did not have.
-> > In particular the ordering between pending and tail is of interrest,
-> > because that is where the split happens.
-> >
-> > The claim is that if we order them, it all works out just fine. There
-> > are two specific cases where the pending,tail state changes:
-> >
-> >  - when the 3rd lock(er) comes in and finds pending set, it'll queue
-> >    and set tail; since we set tail while pending is set, the ordering
-> >    is split is not important (and not fundamentally different form
-> >    fetch_or). [*]
-> 
-> The split can cause some changes in behavior. The 3rd locker observes
-> the pending bit and set tail. The split load of the 2nd locker may make
-> it observe the tail and backout of the pending loop. As a result, the
-> 2nd locker will acquire the lock after the third locker in this case.
-> That won't happen with the original code.
-> 
-> I am not saying this is a problem. It is just something we should take
-> note on.
+> > But it is used.  No "maybe" at all here.  The MODULE_DEVICE_TABLE()
+> > macro does a functional thing.  Why is gcc not reporting an issue with
+> > this and clang is?
 
-Right, good one. Yes that can happen.
+Looks like GCC and Clang handle __attribute__((alias)) differently
+when optimizations are enabled.  Clang has
+-Wunneeded-internal-declaration (GCC doesn't have that specific flag,
+which is why GCC doesn't report, but its behavior is also different),
+as part of -Wall, which warns that it thinks the static var is dead,
+then removes it from -O1 and up.
+
+https://godbolt.org/z/Dpxnbp
+
+I consider this a bug in Clang: https://bugs.llvm.org/show_bug.cgi?id=39088
+
+As Nathan notes in this comment in V1:
+https://lore.kernel.org/lkml/20180926064437.GA29417@flashbox/ having
+additional references to the static array is enough to keep it around.
+When there are no other references, then it should not be marked
+static, in order to still be emitted.
+
+We can work around this by removing `static` from struct definitions
+that no other references than being passed to the MODULE_DEVICE_TABLE
+macro.  GCC and Clang will then both emit references to both
+identifiers.
+-- 
+Thanks,
+~Nick Desaulniers
