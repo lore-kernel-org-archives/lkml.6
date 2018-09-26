@@ -2,144 +2,101 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3150CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33539C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A21208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:44:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lb9Ok+XP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A21208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EB1AD2089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:44:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1AD2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeIZM4F (ORCPT
+        id S1727330AbeIZM4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 08:56:05 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35915 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeIZM4F (ORCPT
+        Wed, 26 Sep 2018 08:56:18 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:48472 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbeIZM4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 08:56:05 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y13-v6so956710wmi.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 23:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xzSl8jcWZXXE7IWJy19WIPqNWECta9PYHniM6A+wiK0=;
-        b=lb9Ok+XPk6YMAfh8HMBFSlrO1aPuZI2LlCOf6c9Ie/XjQKTX/oBhW99UqXTPgzSvWu
-         kbYQG45k61URnbq4UYClqxU+hUuym3RRanQgY+1sSYEfLH2cIfD+cC1jX3KHplKAUxng
-         QPNXuM1OgAbUMwyFR8N1uVT4naR2f4HXbylQWi2TO7EqlOdJOHCROZV6xHPWIclqqzwZ
-         Hn3AUELea9pYMxSSRyOqqg6kAfkhmJsA2NyjcLu5zmFoM5sJtX9kcoqvAiL7Fo6DOpLd
-         RXC4v2N35iXaF3BcDpmoe3d0stPH66EQlhoPJAC2Z9kYF6JL5Gn3kSgBehmft6z4FUxq
-         cwjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xzSl8jcWZXXE7IWJy19WIPqNWECta9PYHniM6A+wiK0=;
-        b=cLQrSXP+lQ7jY4Wj4rkGkrMjdJrVJnwqsGAonW7HcAOhtImQSOg+D9/7ddHw/aLmt3
-         8TBf7Lk4/roIrMc8BEk2Au3AXEbklUmopkcjD3fQfHvzWz/GthlTL4RI5jEZpL31kKgz
-         NTUyeCZr0SEZuwo7ZKwW638LJrwco4XHjCWZzA9eR143hVEjnEOf/JrfvNNpg4sT5pow
-         I2to+RW1EXL6624gwwIOAoaAzPjLvdO4aLvkBUaGbyXc4IsrLPhyGSL0MC2EEsvIXrd2
-         PiUAsIrgS1l4IHv2ma46pLiX9WKCoyA+u7hAILBAamQHtk4B6JoQvAji0XhZ9Jn3Au33
-         ZfJQ==
-X-Gm-Message-State: ABuFfohnpiHgBwTBSuDJizCZu7CfhjYW4cYyTEagRDlF5ZID8WC9GEie
-        E+7EWbOkDxA/pwz92ltJKI0=
-X-Google-Smtp-Source: ACcGV60NnDl76anuxbsb0nD+wxFTOmmBTJl3gxuIzUh6YQ2ld5sYESQwGxyr5bTf590ATGDHqiRlDA==
-X-Received: by 2002:a1c:dc45:: with SMTP id t66-v6mr3012340wmg.148.1537944279694;
-        Tue, 25 Sep 2018 23:44:39 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm3479818wmh.16.2018.09.25.23.44.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 23:44:39 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 23:44:37 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: Remove ACPI table declaration
-Message-ID: <20180926064437.GA29417@flashbox>
-References: <20180926053910.26833-1-natechancellor@gmail.com>
- <20180926062245.GA5937@kroah.com>
+        Wed, 26 Sep 2018 08:56:18 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 6DD35299C9;
+        Wed, 26 Sep 2018 02:44:51 -0400 (EDT)
+Date:   Wed, 26 Sep 2018 16:45:28 +1000 (AEST)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Leonardo Bras <leobras.c@gmail.com>
+cc:     lkcamp@lists.libreplanetbr.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Robert Richter <rric@kernel.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH 2/7] drivers: nubus: Avoids building driver if CONFIG_NUBUS
+ is disabled
+In-Reply-To: <20180926015218.GA14964@WindFlash>
+Message-ID: <alpine.LNX.2.21.1809261515090.639@nippy.intranet>
+References: <20180926015218.GA14964@WindFlash>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926062245.GA5937@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 08:22:45AM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Sep 25, 2018 at 10:39:10PM -0700, Nathan Chancellor wrote:
-> > Clang warns that the acpi_id declaration is not going to be emitted
-> > in the final assembly:
-> > 
-> > drivers/staging/rtl8723bs/os_dep/sdio_intf.c:25:36: warning: variable
-> > 'acpi_ids' is not needed and will not be emitted
-> > [-Wunneeded-internal-declaration]
-> > static const struct acpi_device_id acpi_ids[] = {
-> >                                    ^
-> > 1 warning generated.
-> > 
-> > This is because it's marked as static const and it is not used anywhere
-> > in this file. Doing a git grep on this driver for 'acpi' shows that this
-> > declaration has been unused since the driver's initial induction. Remove
-> > it since it's not doing anything.
-> > 
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/169
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >  drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 6 ------
-> >  1 file changed, 6 deletions(-)
-> > 
-> > diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-> > index 6d02904de63f..d473f9bd08c3 100644
-> > --- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-> > +++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-> > @@ -22,13 +22,7 @@ static const struct sdio_device_id sdio_ids[] =
-> >  	{ SDIO_DEVICE(0x024c, 0xb723), },
-> >  	{ /* end: all zeroes */				},
-> >  };
-> > -static const struct acpi_device_id acpi_ids[] = {
-> > -	{"OBDA8723", 0x0000},
-> > -	{}
-> > -};
-> > -
-> >  MODULE_DEVICE_TABLE(sdio, sdio_ids);
-> > -MODULE_DEVICE_TABLE(acpi, acpi_ids);
+On Tue, 25 Sep 2018, Leonardo Bras wrote:
+
+> Avoids building driver if 'make drivers/nubus/' is called and
+> CONFIG_NUBUS is disabled.
+> Avoids building proc.o if CONFIG_PROC_FS is enabled but
+> CONFIG_NUBUS is disabled.
 > 
-> You just removed the ability for the driver to be automatically loaded
-> if that acpi id is present.
+> Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
+> ---
+>  drivers/nubus/Makefile | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/nubus/Makefile b/drivers/nubus/Makefile
+> index 6d063cde39d1..827301c4a84f 100644
+> --- a/drivers/nubus/Makefile
+> +++ b/drivers/nubus/Makefile
+> @@ -2,6 +2,6 @@
+>  # Makefile for the nubus specific drivers.
+>  #
+>  
+> -obj-y := nubus.o bus.o
+> -
+> -obj-$(CONFIG_PROC_FS) += proc.o
+> +obj-$(CONFIG_NUBUS) := nubus.o
+> +nubus-y := bus.o
+> +nubus-$(CONFIG_PROC_FS) += proc.o
 > 
 
-I am not sure I understand. Every instance of acpi_device_id that I
-looked at in the kernel before sending this patch uses MODULE_DEVICE_TABLE
-but then that acpi_device_id declaration is always used in the driver
-definition either under the acpi_match_table member or ids member
-depending on what type of driver it is. Should this one do that as well?
-Is that even possible with an sdio driver? I apologize if I am not
-making sense, I'm not super familiar with these interfaces.
+Did you build this for m68k? It doesn't link for me.
 
-I also read 'Documentation/acpi/enumeration.txt' which makes it seem
-like the declaration needs to be added to the device definition as well.
+  MODPOST vmlinux.o
+drivers/nubus/bus.o: In function `nubus_device_release':
+bus.c:(.text+0xd0): undefined reference to `nubus_func_rsrcs'
+bus.c:(.text+0xe0): undefined reference to `nubus_func_rsrcs'
+bus.c:(.text+0x118): undefined reference to `nubus_func_rsrcs'
+bus.c:(.text+0xc2): undefined reference to `nubus_func_rsrcs'
+drivers/nubus/proc.o: In function `nubus_devices_proc_show':
+proc.c:(.text+0xa): undefined reference to `nubus_first_rsrc_or_null'
+proc.c:(.text+0x1c): undefined reference to `nubus_next_rsrc_or_null'
+drivers/nubus/proc.o: In function `nubus_proc_rsrc_show':
+proc.c:(.text+0x190): undefined reference to `nubus_seq_write_rsrc_mem'
+drivers/nubus/proc.o: In function `nubus_proc_add_rsrc_mem':
+proc.c:(.text+0x24c): undefined reference to `nubus_dirptr'
 
-> Not good :(
-> 
-> I think you need to fix up your scripts, this is valid code...
-> 
+Patch 4/7 (drivers/zorro) also causes 'undefined reference' errors. I 
+didn't test the others.
 
-No scripts here, just a human interpreting warnings manually.
-
-> greg k-h
-
-Thanks for the review,
-Nathan
+-- 
