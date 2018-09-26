@@ -2,204 +2,162 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47C1C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5985BC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A93214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:06:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9onyqCS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A93214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 07E34214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:09:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07E34214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbeIZQTF (ORCPT
+        id S1727055AbeIZQVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:19:05 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50668 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbeIZQTF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:19:05 -0400
-Received: by mail-it1-f194.google.com with SMTP id j81-v6so2167610ite.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=u3daDom8Y8kPhvLExIHly3SWrbhVHDHsJK+JGHQuzXY=;
-        b=B9onyqCSsULVoaNkAAbV0DZillPihRGHu1hRX0LTbr4ACF72+3IfQPYwKX/U54j7ZJ
-         srUrTXsH2oG3ZZkCNMPMKRS1bEn6W02XhpyWxn3z0m40Fbqri4sU3csEf9FpVauTIilF
-         WCzcKG1YYIc4qFujJ3UuXQhzYPgx2lXbHat5PpcBr127xHPx932iZp95peNtPHZeDbZ2
-         ljJMzMkk8vkv1dKCb55Lw9/yyLE2pU8CbtzLClHJfPYfwrkzw1REgx0ZwHR9X1CcwHp+
-         6IIrpZsrz7xTd38+qaA63tZmh9bWLO85ZLznmpCa1q8+jZHQTs2YSF7JO7tRl5a/mHKb
-         JS1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=u3daDom8Y8kPhvLExIHly3SWrbhVHDHsJK+JGHQuzXY=;
-        b=Z9b6qIj5sAewSshH++LK+XM11G8mg04OG66ybP2IfSueHR6pEyzHumSG//JdV9Tr3D
-         MOQ6LXB6MvKacVqXlc0QF2LM+7elffB6nDfA+geGTwX0m1iEAIRl0e3dlVmWgtq1g/01
-         /PUkvciIS6r44EJrBlLLJF3r/1AWC62LvUFX8x0wqGTv2UB2O5vs+5sCB3vlLaxmMF1H
-         mT+V4AnjtIkXKJHwk0EglCAgwUeOAGjdgv6UVojlewuzpVQUTSnaeysOUnZCS4c6Pwg4
-         iLKmRFTyNpe91RkWa6gmDsP64cBGwigt8PI+lypfmNQaPEtX18UtNDuyJ82Uu7HW9fCu
-         avDA==
-X-Gm-Message-State: ABuFfoi3wSjj4Fmj5qgB0VNCX4KwG9JAu0TFD9q7eLqwWsRJ5sOjRHbi
-        EW1K5NsOCIrI09Pgu2cx4LI8Qs0kwLoRwR4pUzRgqA==
-X-Google-Smtp-Source: ACcGV6064GvFeryvLzsFK8G9pmaxTPguycnsQvBU41PhT9aB1UycDZwgrhN67oLq1ejzzBW1qq8VEBZrBPiRi1/flmY=
-X-Received: by 2002:a24:3383:: with SMTP id k125-v6mr4140740itk.14.1537956412664;
- Wed, 26 Sep 2018 03:06:52 -0700 (PDT)
+        Wed, 26 Sep 2018 12:21:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42504 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726404AbeIZQVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:21:47 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0804FC05D41D;
+        Wed, 26 Sep 2018 10:09:34 +0000 (UTC)
+Received: from [10.36.117.98] (ovpn-117-98.ams2.redhat.com [10.36.117.98])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BDBC526346;
+        Wed, 26 Sep 2018 10:09:11 +0000 (UTC)
+Subject: Re: [PATCH v2 5/6] powerpc/powernv: hold device_hotplug_lock when
+ calling memtrace_offline_pages()
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-acpi@vger.kernel.org, xen-devel@lists.xenproject.org,
+        devel@linuxdriverproject.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Michael Neuling <mikey@neuling.org>
+References: <20180925091457.28651-1-david@redhat.com>
+ <20180925091457.28651-6-david@redhat.com> <20180925121504.GH8537@350D>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <19de0a52-2abd-6e79-1b8e-dcf17eff3fba@redhat.com>
+Date:   Wed, 26 Sep 2018 12:09:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 03:06:32
- -0700 (PDT)
-In-Reply-To: <000000000000a7487d0576c18693@google.com>
-References: <000000000000a7487d0576c18693@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 26 Sep 2018 12:06:32 +0200
-Message-ID: <CACT4Y+YAbon-m=N-UcEVfGj8DxgRAySQz7qLYQWFxQZqv+3JhA@mail.gmail.com>
-Subject: Re: KASAN: global-out-of-bounds Read in __aa_lookupn_ns
-To:     syzbot <syzbot+71b6643475f707f93fdc@syzkaller.appspotmail.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Cc:     David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180925121504.GH8537@350D>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 26 Sep 2018 10:09:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 9:54 AM, syzbot
-<syzbot+71b6643475f707f93fdc@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    02214bfc89c7 Merge tag 'media/v4.19-2' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1456f8a1400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=22a62640793a83c9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=71b6643475f707f93fdc
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
-
-Again misattributed to net. This misattribution should now be fixed by:
-https://github.com/google/syzkaller/commit/db716d6653d073b0abfb51186cd4ac2d5418c9c6
-Adding security/apparmor/policy_ns.c maintainers explicitly.
-
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+71b6643475f707f93fdc@syzkaller.appspotmail.com
->
->  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
->  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
->  __do_sys_setsockopt net/socket.c:1913 [inline]
->  __se_sys_setsockopt net/socket.c:1910 [inline]
->  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> ==================================================================
-> BUG: KASAN: global-out-of-bounds in memcmp+0xe3/0x160 lib/string.c:861
-> Read of size 1 at addr ffffffff88000008 by task syz-executor0/10914
->
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457579
-> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f4c14533c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00007f4c14533c90 RCX: 0000000000457579
-> RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000003
-> RBP: 000000000072bf00 R08: 0000000000000004 R09: 0000000000000000
-> R10: 0000000020000080 R11: 0000000000000246 R12: 00007f4c145346d4
-> R13: 00000000004c3ed9 R14: 00000000004d6260 R15: 0000000000000004
-> CPU: 0 PID: 10914 Comm: syz-executor0 Not tainted 4.19.0-rc5+ #252
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  print_address_description.cold.8+0x58/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
->  memcmp+0xe3/0x160 lib/string.c:861
->  strnstr+0x4b/0x70 lib/string.c:934
->  __aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
->  aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
->  aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
->  fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
->  aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
->  aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
->  aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
->  apparmor_setprocattr+0xa8b/0x1150 security/apparmor/lsm.c:656
->  security_setprocattr+0x66/0xc0 security/security.c:1298
->  proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
->  __vfs_write+0x119/0x9f0 fs/read_write.c:485
->  vfs_write+0x1fc/0x560 fs/read_write.c:549
->  ksys_write+0x101/0x260 fs/read_write.c:598
->  __do_sys_write fs/read_write.c:610 [inline]
->  __se_sys_write fs/read_write.c:607 [inline]
->  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457579
-> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f5a92ec2c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
-> RDX: 000000000000002c RSI: 00000000200000c0 RDI: 0000000000000004
-> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5a92ec36d4
-> R13: 00000000004c5454 R14: 00000000004d8c78 R15: 00000000ffffffff
->
-> CPU: 1 PID: 10921 Comm: syz-executor3 Not tainted 4.19.0-rc5+ #252
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> The buggy address belongs to the variable:
->  __start_rodata+0x8/0x1000
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->
-> Memory state around the buggy address:
->  ffffffff87ffff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffff87ffff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  fail_dump lib/fault-inject.c:51 [inline]
->  should_fail.cold.4+0xa/0x17 lib/fault-inject.c:149
+On 25/09/2018 14:15, Balbir Singh wrote:
+> On Tue, Sep 25, 2018 at 11:14:56AM +0200, David Hildenbrand wrote:
+>> Let's perform all checking + offlining + removing under
+>> device_hotplug_lock, so nobody can mess with these devices via
+>> sysfs concurrently.
 >>
->> ffffffff88000000: 00 fa fa fa fa fa fa fa 00 01 fa fa fa fa fa fa
->
->                       ^
->  ffffffff88000080: 00 00 00 07 fa fa fa fa 00 04 fa fa fa fa fa fa
->  ffffffff88000100: 05 fa fa fa fa fa fa fa 00 00 00 00 05 fa fa fa
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000a7487d0576c18693%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> Cc: Paul Mackerras <paulus@samba.org>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Rashmica Gupta <rashmica.g@gmail.com>
+>> Cc: Balbir Singh <bsingharora@gmail.com>
+>> Cc: Michael Neuling <mikey@neuling.org>
+>> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+>> Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> ---
+>>  arch/powerpc/platforms/powernv/memtrace.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+>> index fdd48f1a39f7..d84d09c56af9 100644
+>> --- a/arch/powerpc/platforms/powernv/memtrace.c
+>> +++ b/arch/powerpc/platforms/powernv/memtrace.c
+>> @@ -70,6 +70,7 @@ static int change_memblock_state(struct memory_block *mem, void *arg)
+>>  	return 0;
+>>  }
+>>  
+>> +/* called with device_hotplug_lock held */
+>>  static bool memtrace_offline_pages(u32 nid, u64 start_pfn, u64 nr_pages)
+>>  {
+>>  	u64 end_pfn = start_pfn + nr_pages - 1;
+>> @@ -111,6 +112,7 @@ static u64 memtrace_alloc_node(u32 nid, u64 size)
+>>  	end_pfn = round_down(end_pfn - nr_pages, nr_pages);
+>>  
+>>  	for (base_pfn = end_pfn; base_pfn > start_pfn; base_pfn -= nr_pages) {
+>> +		lock_device_hotplug();
+> 
+> Why not grab the lock before the for loop? That way we can avoid bad cases like a
+> large node being scanned for a small number of pages (nr_pages). Ideally we need
+> a cond_resched() in the loop, but I guess offline_pages() has one.
+
+Yes, it does.
+
+I can move it out of the loop, thanks!
+
+> 
+> Acked-by: Balbir Singh <bsingharora@gmail.com>
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
