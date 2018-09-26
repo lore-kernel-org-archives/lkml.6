@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E43AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02D1C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 155532064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155532064D
+	by mail.kernel.org (Postfix) with ESMTP id 875462064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 875462064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbeI0B3p (ORCPT
+        id S1727818AbeI0B3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:29:45 -0400
+        Wed, 26 Sep 2018 21:29:47 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2656 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727541AbeI0B3n (ORCPT
+        by vger.kernel.org with ESMTP id S1727760AbeI0B3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:29:43 -0400
+        Wed, 26 Sep 2018 21:29:46 -0400
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 26 Sep 2018 12:15:01 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id A84CDB0E87;
-        Wed, 26 Sep 2018 15:15:09 -0400 (EDT)
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 20388B0E7B;
+        Wed, 26 Sep 2018 15:15:10 -0400 (EDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Arnd Bergmann <arnd@arndb.de>, <gregkh@linuxfoundation.org>
 CC:     Xavier Deguillard <xdeguillard@vmware.com>,
         <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH v3 10/20] vmw_balloon: simplify vmballoon_send_get_target()
-Date:   Wed, 26 Sep 2018 12:13:26 -0700
-Message-ID: <20180926191336.101885-11-namit@vmware.com>
+Subject: [PATCH v3 18/20] vmw_balloon: support 64-bit memory limit
+Date:   Wed, 26 Sep 2018 12:13:34 -0700
+Message-ID: <20180926191336.101885-19-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180926191336.101885-1-namit@vmware.com>
 References: <20180926191336.101885-1-namit@vmware.com>
@@ -48,90 +48,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we want to leave as little as possible on the global balloon
-structure, to avoid possible future races, we want to get rid sysinfo.
-We can actually get the total_ram directly, and simplify the logic of
-vmballoon_send_get_target() a little.
+From: Xavier Deguillard <xdeguillard@vmware.com>
 
-While we are doing that, let's return int and avoid mistakes due to
-bool/int conversions.
+Currently, the balloon driver would fail to run if memory is greater
+than 16TB of vRAM. Previous patches have already converted the balloon
+target and size to 64-bit, so all that is left to do add is to avoid
+asserting memory is smaller than 16TB if the hypervisor supports 64-bits
+target.
 
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+The driver advertises a new capability VMW_BALLOON_64_BITS_TARGET.
+Hypervisors that support 16TB of memory or more will report that this
+capability is enabled.
+
+Signed-off-by: Xavier Deguillard <xdeguillard@vmware.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
+ drivers/misc/vmw_balloon.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 0d9f223d463e..3c80a21e0f91 100644
+index d3921a1334ec..4c9c171325c3 100644
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -223,8 +223,6 @@ struct vmballoon {
- 	struct dentry *dbg_entry;
- #endif
+@@ -61,15 +61,26 @@ enum vmwballoon_capabilities {
+ 	VMW_BALLOON_BATCHED_CMDS		= (1 << 2),
+ 	VMW_BALLOON_BATCHED_2M_CMDS		= (1 << 3),
+ 	VMW_BALLOON_SIGNALLED_WAKEUP_CMD	= (1 << 4),
++	VMW_BALLOON_64_BIT_TARGET		= (1 << 5)
+ };
  
--	struct sysinfo sysinfo;
--
- 	struct delayed_work dwork;
+-#define VMW_BALLOON_CAPABILITIES	(VMW_BALLOON_BASIC_CMDS \
++#define VMW_BALLOON_CAPABILITIES_COMMON	(VMW_BALLOON_BASIC_CMDS \
+ 					| VMW_BALLOON_BATCHED_CMDS \
+ 					| VMW_BALLOON_BATCHED_2M_CMDS \
+ 					| VMW_BALLOON_SIGNALLED_WAKEUP_CMD)
  
- 	struct vmci_handle vmci_doorbell;
-@@ -353,34 +351,29 @@ static u16 vmballoon_page_size(bool is_2m_page)
- 	return 1;
- }
+ #define VMW_BALLOON_2M_ORDER		(PMD_SHIFT - PAGE_SHIFT)
  
--/*
-- * Retrieve desired balloon size from the host.
-+/**
-+ * vmballoon_send_get_target() - Retrieve desired balloon size from the host.
-+ *
-+ * @b: pointer to the balloon.
-+ *
-+ * Return: zero on success, EINVAL if limit does not fit in 32-bit, as required
-+ * by the host-guest protocol and EIO if an error occurred in communicating with
-+ * the host.
-  */
--static bool vmballoon_send_get_target(struct vmballoon *b)
-+static int vmballoon_send_get_target(struct vmballoon *b)
- {
- 	unsigned long status;
- 	unsigned long limit;
--	u32 limit32;
++/*
++ * 64-bit targets are only supported in 64-bit
++ */
++#ifdef CONFIG_64BIT
++#define VMW_BALLOON_CAPABILITIES	(VMW_BALLOON_CAPABILITIES_COMMON \
++					| VMW_BALLOON_64_BIT_TARGET)
++#else
++#define VMW_BALLOON_CAPABILITIES	VMW_BALLOON_CAPABILITIES_COMMON
++#endif
++
+ enum vmballoon_page_size_type {
+ 	VMW_BALLOON_4K_PAGE,
+ 	VMW_BALLOON_2M_PAGE,
+@@ -565,8 +576,9 @@ static int vmballoon_send_get_target(struct vmballoon *b)
  
--	/*
--	 * si_meminfo() is cheap. Moreover, we want to provide dynamic
--	 * max balloon size later. So let us call si_meminfo() every
--	 * iteration.
--	 */
--	si_meminfo(&b->sysinfo);
--	limit = b->sysinfo.totalram;
-+	limit = totalram_pages;
+ 	limit = totalram_pages;
  
- 	/* Ensure limit fits in 32-bits */
--	limit32 = (u32)limit;
--	if (limit != limit32)
--		return false;
-+	if (limit != (u32)limit)
-+		return -EINVAL;
+-	/* Ensure limit fits in 32-bits */
+-	if (limit != (u32)limit)
++	/* Ensure limit fits in 32-bits if 64-bit targets are not supported */
++	if (!(b->capabilities & VMW_BALLOON_64_BIT_TARGET) &&
++	    limit != (u32)limit)
+ 		return -EINVAL;
  
  	status = vmballoon_cmd(b, VMW_BALLOON_CMD_GET_TARGET, limit, 0);
- 
--	if (status == VMW_BALLOON_SUCCESS)
--		return true;
--
--	return false;
-+	return status == VMW_BALLOON_SUCCESS ? 0 : -EIO;
- }
- 
- static struct page *vmballoon_alloc_page(bool is_2m_page)
-@@ -962,7 +955,7 @@ static void vmballoon_work(struct work_struct *work)
- 	if (b->reset_required)
- 		vmballoon_reset(b);
- 
--	if (vmballoon_send_get_target(b))
-+	if (!vmballoon_send_get_target(b))
- 		change = vmballoon_change(b);
- 
- 	if (change != 0) {
 -- 
 2.17.1
 
