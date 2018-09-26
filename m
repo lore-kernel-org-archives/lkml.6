@@ -2,133 +2,108 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4408DC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD957C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D69BF20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 646BD214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:02:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="FcVEV+v5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69BF20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8Ad3erh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 646BD214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbeIZSMn (ORCPT
+        id S1727370AbeIZSOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:12:43 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33890 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728262AbeIZSMm (ORCPT
+        Wed, 26 Sep 2018 14:14:48 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42857 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbeIZSOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:12:42 -0400
-Received: by mail-ed1-f66.google.com with SMTP id q19-v6so1664273edr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 05:00:02 -0700 (PDT)
+        Wed, 26 Sep 2018 14:14:48 -0400
+Received: by mail-ot1-f66.google.com with SMTP id h26-v6so27846918otl.9;
+        Wed, 26 Sep 2018 05:02:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jL/Try4MLTvkdLbtOmgN7bPu7Rngi+17+4CuoKugKZ4=;
-        b=FcVEV+v5/2nE185erwF7cRJfV1VRaSHtmlg+9WNxAJL2qx9RpGShX3lZ6P4hVCkk7j
-         wxPbchAANI7fU5Zxx57SGXnTAhk7w0yzRO48xv8tderhaEkNe7XOiZ5Af6eIfy/6snMH
-         Bvwu8f4P2MbGw38VXQDEKL1DXuezcCjybpy0yVC8LCpa2M65qwLygoKcMdEEUSzLitnp
-         FRfjJF/l9TGPtHQwYeuF/EmEo8fk0qDxhpSXBxJwvK+0xAKuj5DsQANNzIhuv7vNv2OU
-         qCd2bVGIGdwijfXRQlKfVDDzX+MOVUKeALBco74xtYjlzGnuIQ1E8F+VHKfFcchP/DzY
-         Lpdw==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Ktg5ovKSPSBwpjpSXwCWjbFvp8TZfoNhcKkgdpyREkw=;
+        b=f8Ad3erhHz++NboUWAoa4oE6XhpsAd4JyYBrgn9+0OVpFYlM0rP/XKNNOhcsj+G0Mj
+         q0x+DWqhqwOXP9zqLiA9uVghiQ9xKa3WdI2VpeIgzgmRuIO8Zg7oMQVAS80fRqQ1v6O9
+         djySca93NUseIPBa8Q463Tdi9cw8OXgfovKMDH6BSIBwey/mU9KTeGRWlLLR05UhiuU3
+         q5eCb62w0r+BlbwQS5HhupcPClQc0t8USvXgl+K7AcpMViAaiW09bu9cw9+1Xr5UbXh5
+         bCSWenAQxOJ3H9MT7GUYGrjv/LVgvoXBCU57noXyZMScitvx1Gh8f+5BBpbgKfsZBZEE
+         uDYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jL/Try4MLTvkdLbtOmgN7bPu7Rngi+17+4CuoKugKZ4=;
-        b=FkUtb0IEE4gJoH/UcfAhf/etAJgzkxzqD27nKOCqgK0GZCHyW0/GXDnea5za2MnmA2
-         /B5zr7QAEQMMl2VtzcMtBhHENN8iaALGitNmDOsrOHGupX8jDvYYEHYXyQNTfNxH4tqO
-         7oc2GcjMtldlXpYFWtcNZ2kriWsqM9+SxDVS1grB35ssrDyPWGOUUs/X9X3/iZR8lxCM
-         zZbTRqpYYBfs8zaeAikugIlF4R+jwHhh9A+ALtE4aeOVDwRwSPo9RSq+PT4mUk5g999+
-         I3WBjZLL6rPny7yeiuN+MSz4+k6aisib4rM4TsPnDG/M5jvCG4M0mhMetS/gimK//tFm
-         jwhQ==
-X-Gm-Message-State: ABuFfogKvHY8QK4xYR30cQfYWBEUxRHk7BLTx4Lav0/RXOWnMxTlnZuw
-        bch2br0ebAALZokCH3efo9K0eg==
-X-Google-Smtp-Source: ACcGV63vh2wXIYAoB9vCk5G4fTDoYlG8HtUO/RbqC1tYyP2Wjqbx/NTSCsmU8xBwNlptmG7yLAnowA==
-X-Received: by 2002:a50:9f67:: with SMTP id b94-v6mr9157240edf.218.1537963202094;
-        Wed, 26 Sep 2018 05:00:02 -0700 (PDT)
-Received: from shemminger-XPS-13-9360 ([213.244.170.154])
-        by smtp.gmail.com with ESMTPSA id r7-v6sm4204238eds.54.2018.09.26.05.00.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 05:00:01 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 12:59:58 +0100
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <davem@davemloft.net>, <kys@microsoft.com>,
-        <haiyangz@microsoft.com>, <sthemmin@microsoft.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org
-Subject: Re: [PATCH net-next] hv_netvsc: fix return type of ndo_start_xmit
- function
-Message-ID: <20180926125958.4c7659c6@shemminger-XPS-13-9360>
-In-Reply-To: <20180926102510.15696-1-yuehaibing@huawei.com>
-References: <20180926102510.15696-1-yuehaibing@huawei.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Ktg5ovKSPSBwpjpSXwCWjbFvp8TZfoNhcKkgdpyREkw=;
+        b=bB1xsxnEo+T+5Zxr6FhgV0Un2D2gdd1Ga6X+Hpn5QhlEd+HYfK07Dx0DkyF2LQuFNP
+         O1VbQlyU9gm+mNLP+hgACpa6eQMhFoXPCXE14nYc+zm0wCLYpvBeXjLZVGRdXb9loSSp
+         sYx4u+K2gdwxGouJ2jeWJAOKM/v6nsYk8SI6fkjlxBCkQWEo8sdRwxTZIpAV9IB9slhi
+         Hx099EnldMeDSitNYy94efoDimlImzLlDhE9wyCQNWaA0COlaBAwf+2qsJ8C2bQmJglv
+         0aN5fEcLwEjqAY5prW6ktae83PLMrgVXWqov5VySSgHY5n5abmXb6PB54fn+T4QaK1u1
+         TB/w==
+X-Gm-Message-State: ABuFfohtLyFF8EHogLazdBY8KVNa+8iWRVhj9eIaYq9coScXVJgAwFfI
+        lZsSLZqg+TyLzHx54netxvHr5ghQRzQN3pknvlM=
+X-Google-Smtp-Source: ACcGV60lzNGzfflYZdHCoqj9Dc9r5wDp5Vi/PobUYyOkpk1BZqoOdJTuS8sSl5YAqUgQRV2l5dpI2JyXS01Q232Bwcc=
+X-Received: by 2002:a9d:23a3:: with SMTP id t32-v6mr3663621otb.65.1537963327897;
+ Wed, 26 Sep 2018 05:02:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a9d:2d28:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 05:02:07
+ -0700 (PDT)
+In-Reply-To: <20180926064752.GM4097@pengutronix.de>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+ <1537785597-26499-5-git-send-email-abel.vesa@nxp.com> <CAOMZO5D7yLUzriOub4RWsq1K8_fTj6c0LFOnSZwHyjqMPYu=0A@mail.gmail.com>
+ <20180926064752.GM4097@pengutronix.de>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 26 Sep 2018 09:02:07 -0300
+Message-ID: <CAOMZO5D-40WbanPC=-O_Nj98znOk6Aa3dAqpCuwHTv+GuFR6_g@mail.gmail.com>
+Subject: Re: [PATCH v9 4/5] clk: imx: add imx composite clock
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Abel Vesa <abelvesa@linux.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Sep 2018 18:25:10 +0800
-YueHaibing <yuehaibing@huawei.com> wrote:
+Hi Sascha,
 
-> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> which is a typedef for an enum type, so make sure the implementation in
-> this driver has returns 'netdev_tx_t' value, and change the function
-> return type to netdev_tx_t.
-> 
-> As suggestion from Haiyang Zhang <haiyangz@microsoft.com>, if netvsc_vf_xmit
-> fails, We are not sure if the error can go away after retrying, returning
-> NETDEV_TX_BUSY may cause infinite retry from the upper layer.
-> so just return NETDEV_TX_OK at there.
-> 
-> Found by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/hyperv/netvsc_drv.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-> index ec69974..a1d44b4 100644
-> --- a/drivers/net/hyperv/netvsc_drv.c
-> +++ b/drivers/net/hyperv/netvsc_drv.c
-> @@ -511,7 +511,8 @@ static int netvsc_vf_xmit(struct net_device *net, struct net_device *vf_netdev,
->  	return rc;
->  }
->  
-> -static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
-> +static netdev_tx_t
-> +netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
->  {
->  	struct net_device_context *net_device_ctx = netdev_priv(net);
->  	struct hv_netvsc_packet *packet = NULL;
-> @@ -528,8 +529,10 @@ static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
->  	 */
->  	vf_netdev = rcu_dereference_bh(net_device_ctx->vf_netdev);
->  	if (vf_netdev && netif_running(vf_netdev) &&
-> -	    !netpoll_tx_running(net))
-> -		return netvsc_vf_xmit(net, vf_netdev, skb);
-> +	    !netpoll_tx_running(net)) {
-> +		netvsc_vf_xmit(net, vf_netdev, skb);
-> +		return NETDEV_TX_OK;
-> +	}
->  
->  	/* We will atmost need two pages to describe the rndis
->  	 * header. We can only transmit MAX_PAGE_BUFFER_COUNT number
+On Wed, Sep 26, 2018 at 3:47 AM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
 
-Your patch loses the possible return values of netvsc_vf_xmit.
-A suggested better fix would be to make netvsc_vf_xmit return netdev_tx_t type.
-And this means the return value of dev_queue_xmit needs to be netdev_tx_t.
+> It's:
+>         rate = *prate / prediv_value;
+>         rate = rate / div_value;
 
-Please don't merge this as is.
+Yes, this looks correct. Thanks for the feedback.
+
+> To me this looks correct. However, For an unsigned long type we have
+> DIV_ROUND_UP() with which we do not need any casting. For 64bit code
+> unsigned long is 64bit anyway which makes the cast a no-op and for 32bit
+> code there's also no point in exanding the initial 32bit value to 64bit.
+
+That's a good point too.
+
+Thanks
