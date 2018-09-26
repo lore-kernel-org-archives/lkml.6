@@ -2,86 +2,150 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E727EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EBDC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7384E2089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7384E2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kobol.io
+	by mail.kernel.org (Postfix) with ESMTP id 5595B2089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:06:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5595B2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbeIZMRT (ORCPT
+        id S1727010AbeIZMRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 08:17:19 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:53825 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbeIZMRS (ORCPT
+        Wed, 26 Sep 2018 08:17:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56702 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726355AbeIZMRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 08:17:18 -0400
-X-Originating-IP: 209.85.160.169
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (Authenticated sender: aditya@kobol.io)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 89C7E24000A;
-        Wed, 26 Sep 2018 06:06:01 +0000 (UTC)
-Received: by mail-qt1-f169.google.com with SMTP id h22-v6so8088681qtr.13;
-        Tue, 25 Sep 2018 23:06:01 -0700 (PDT)
-X-Gm-Message-State: ABuFfojKU5nmCBNbhXkFly+VUc423g30Qfh8w0s+HSypKAyv/ibb1abJ
-        TNQCfAHNZhHUhXCWc5dLn/zTOwX10bG7Qy1bdmY=
-X-Google-Smtp-Source: ACcGV62Ko02usxmXjVMeNFbpoWxqotcsHqRt2KBCQ+W2LQpp/YAVUD/GXXst2PFK9V+Cajc7pBLgFWLK9RFL12en9Jg=
-X-Received: by 2002:ac8:3679:: with SMTP id n54-v6mr3421454qtb.133.1537941960346;
- Tue, 25 Sep 2018 23:06:00 -0700 (PDT)
+        Wed, 26 Sep 2018 08:17:38 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8Q5wcT8072711
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:06:23 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mr1d0eq4d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:06:22 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Wed, 26 Sep 2018 00:06:21 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 26 Sep 2018 00:06:17 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8Q66Gei25034780
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Sep 2018 23:06:16 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B8D616A054;
+        Wed, 26 Sep 2018 00:06:16 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BDBA6A04F;
+        Wed, 26 Sep 2018 00:06:16 -0600 (MDT)
+Received: from sofia.ibm.com (unknown [9.124.35.106])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 26 Sep 2018 00:06:16 -0600 (MDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 3B1AB2E3D69; Wed, 26 Sep 2018 11:36:13 +0530 (IST)
+Date:   Wed, 26 Sep 2018 11:36:13 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     ego@linux.vnet.ibm.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 0/3] powerpc: Detection and scheduler optimization for
+ POWER9 bigcore
+Reply-To: ego@linux.vnet.ibm.com
+References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
+ <133c7bca-5720-81de-7956-b93870a1bab8@intel.com>
+ <20180922110340.GA1402@in.ibm.com>
+ <f2ac8eb0-b28e-a930-0160-09720f73a297@intel.com>
 MIME-Version: 1.0
-References: <1537328730-9156-1-git-send-email-aditya@kobol.io>
- <1537328730-9156-3-git-send-email-aditya@kobol.io> <20180920072635.GB20392@amd>
-In-Reply-To: <20180920072635.GB20392@amd>
-From:   Aditya Prayoga <aditya@kobol.io>
-Date:   Wed, 26 Sep 2018 13:05:49 +0700
-X-Gmail-Original-Message-ID: <CAFTRUBdqz8fQN--KQ36LQm_EJpOvZ2723oDRyEn+_HMM5YK5CA@mail.gmail.com>
-Message-ID: <CAFTRUBdqz8fQN--KQ36LQm_EJpOvZ2723oDRyEn+_HMM5YK5CA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: mvebu: Enable ARCH_WANT_LIBATA_LEDS in Armada 38x
-To:     pavel@ucw.cz
-Cc:     linux-ide@vger.kernel.org, linux-leds@vger.kernel.org,
-        jason@lakedaemon.net, Andrew Lunn <andrew@lunn.ch>,
-        gregory.clement@bootlin.com,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        linux@armlinux.org.uk, axboe@kernel.dk,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jacek.anaszewski@gmail.com, Daniel Golle <daniel@makrotopia.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2ac8eb0-b28e-a930-0160-09720f73a297@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18092606-0004-0000-0000-00001491E4CC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009773; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01093778; UDB=6.00565348; IPR=6.00873816;
+ MB=3.00023509; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-26 06:06:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092606-0005-0000-0000-000088F12FD5
+Message-Id: <20180926060613.GA22139@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809260062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 2:26 PM Pavel Machek <pavel@ucw.cz> wrote:
+Hello Dave,
+
+On Tue, Sep 25, 2018 at 03:16:30PM -0700, Dave Hansen wrote:
+> On 09/22/2018 04:03 AM, Gautham R Shenoy wrote:
+> > Without this patchset, the SMT domain would be defined as the group of
+> > threads that share L2 cache.
+> 
+> Could you try to make a more clear, concise statement about the current
+> state of the art vs. what you want it to be?  Right now, the sched
+> domains do something like this in terms of ordering:
+> 
+> 1. SMT siblings
+> 2. Caches
+> 3. NUMA
+
+Yes. you are right. The state of art on POWER9 machines having SMT8
+cores is as you described above with
+
+1. SMT siblings sharing L2-cache, called the SMT domain
+2. Cores on the same die, called the DIE domain
+3. NUMA
+
+> 
+> It sounds like you don't want SMT siblings to be the things that we use,
+> right?  Because some siblings share caches and some do not.  Right?  You
+> want something like this:
+> 
+> 1. SMT siblings (sharing L1)
+> 2. SMT siblings (sharing L2)
+> 3. Other caches
+> 4. NUMA
 >
-> On Wed 2018-09-19 11:45:30, Aditya Prayoga wrote:
-> > Enable hidden symbol ARCH_WANT_LIBATA_LEDS so CONFIG_ATA_LEDS can be
-> > used in kernel configuration.
->
-> Should that be hidden symbol and should that be architecture specific?
->
 
-The intention was to minimize the risk of the ledtrig code being
-included by accident. The
-code itself does not have architecture specific instruction
+Yes, with the patchset the sched-domain hierarchy on POWER9 machines
+having SMT8 will be:
 
-> For a notebook, I may want scrolllock LED to indicate ATA activity
-> (because I'm using USB keyboard and can't see the disk led).
->
-> Hmm. And while at it... it would be nice to have option to watch all
-> ATA ports combined, as well.
+1. SMT siblings sharing L1 cache, called the SMT domain
+2. SMT siblings sharing L2 cache, called the CACHE domain (introduced in
+   commit 96d91431d691 "powerpc/smp: Add Power9 scheduler topology")
+3. Cores on the same die, called the DIE domain.
+4. NUMA
 
-but there is disk-activity trigger for that purpose.
+--
+Thanks and Regards
+gautham.
 
-Aditya
-
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
