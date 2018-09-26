@@ -2,153 +2,167 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9562C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D73AC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90121206B8
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:55:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90121206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C8DBB2154D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:55:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vDB1lTD/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8DBB2154D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbeI0DJz (ORCPT
+        id S1727282AbeI0DKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 23:09:55 -0400
-Received: from mga01.intel.com ([192.55.52.88]:14684 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeI0DJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 23:09:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 13:55:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
-   d="scan'208";a="73944779"
-Received: from kushalre-mobl.amr.corp.intel.com (HELO [10.251.20.48]) ([10.251.20.48])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Sep 2018 13:49:36 -0700
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
- PF_SGX
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
- <20180926204400.GA11446@linux.intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
-Date:   Wed, 26 Sep 2018 13:49:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 23:10:12 -0400
+Received: from mail-pg1-f180.google.com ([209.85.215.180]:38451 "EHLO
+        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbeI0DKM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 23:10:12 -0400
+Received: by mail-pg1-f180.google.com with SMTP id r77-v6so220443pgr.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 13:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=piYCxbwXbH8D25Ks3+yl8pNHQrimsEJAUReoLqAobxk=;
+        b=vDB1lTD/VbNRS+sr5QfrvjKkmwdDFkLe4tjRf2X5tzy+0Qoew9VuO2dZQkypmxxi/Y
+         i4evF6AAvO9JwiGaqLkqA/qn7mP343teHdQ+kHf9DUNTjFV3ILbHR+yNlUrTEepdYyp9
+         K6hqbM1OdBX2Rln8Vpuap3eKkX4UPWrl+M8+OHzYZl9o1iKrSw1S52EkuuVTL+0QC5q2
+         bHuYZGuj0UwO3YMtJ7k2Kb/pRnbeLshSz0mCcP+kkVefRoAuq9RN1XMzQ5xJ8q95ZeIf
+         C8mDYMBU/ZnC/Z9mdArXIIyp7+DqsLQwsjcP8+zJDHfYi6TJGc9t32NZN+EwY7+jKH/j
+         sczw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=piYCxbwXbH8D25Ks3+yl8pNHQrimsEJAUReoLqAobxk=;
+        b=mD90QQ8OUkhcqyDcKf1eNOy9LJM6nTKepofGtao4blfxpK9anLkzoguAjZfOogXZUl
+         rxg/HWovBnvJlj4vXd33OGGlG/W3YH/2Qx4OOZhjWqtu1px9OXjqgaWLIl3De9xbAFzP
+         zvsjte+QTymvKWEiLgpZxFerw/qkRExXQ18itkbHK0m6Qfsw49gu3AAnaXHNOUWumKrq
+         bcoppdTpQTZyvt4F8DQWEZ+WQndSdNpe8NiUJScuwcIsIBeNsaopk5B7XbglZUQOc4OD
+         ki2nqOIEsow+5dIkMU98e8QSYcNbLIgjrVW4lUDmdd/tDN0bbdYtvRSPWZipeiScFDfh
+         0oAw==
+X-Gm-Message-State: ABuFfoix6XzD8gCsA+PFDWRnfNn7c7FMVOAmhjfvSV1P6hPMKrDFW8HO
+        0bMzy+wqDg0rR9XdGwv7nUdv7tcjFUY=
+X-Google-Smtp-Source: ACcGV62ymw7aocZ+CUgrXz0bDnpYtnrB+JegQZ/L/FT5PnrRZZHJwV59Vu2cCUP41kuIW8wywANdFQ==
+X-Received: by 2002:a62:b209:: with SMTP id x9-v6mr8060318pfe.148.1537995324396;
+        Wed, 26 Sep 2018 13:55:24 -0700 (PDT)
+Received: from gmail.com ([2605:e000:1117:c128:2e0:1bff:fe70:ea])
+        by smtp.gmail.com with ESMTPSA id m26-v6sm39828pfi.102.2018.09.26.13.55.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 13:55:23 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 10:55:05 -1000
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     "\\0xDynamite" <dreamingforward@gmail.com>
+Cc:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
+        "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
+        riel@surriel.com, ec429@cantab.net,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: Re: Code of Conduct: Let's revamp it.
+Message-ID: <20180926203355.rfmezs3lbmlcvv3x@gmail.com>
+Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        "\\0xDynamite" <dreamingforward@gmail.com>,
+        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
+        "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, fche@redhat.com, riel@surriel.com,
+        ec429@cantab.net, Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <87zhwbj8xe.fsf@redhat.com>
+ <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+ <20180921231545.GC2966@thunk.org>
+ <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
+ <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
+ <CAMjeLr-a4cCrs0cF0aBRoeeXXLwiM835BXqhP9ZoeLB8=w=YKw@mail.gmail.com>
+ <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
+ <CAMjeLr-j1XhZJgcvsP5z6SHCDmbUA=rMyfvQpX40qKBK+2ojbw@mail.gmail.com>
+ <9be16b08-7aa9-d42e-24c0-f054af39b78a@petrovitsch.priv.at>
+ <CAMjeLr_cx5+96NGedcYB-MjugA53_j+tksP0Na8W9GY-PAhoZA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180926204400.GA11446@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="prkrf3bxpnkwi76x"
+Content-Disposition: inline
+In-Reply-To: <CAMjeLr_cx5+96NGedcYB-MjugA53_j+tksP0Na8W9GY-PAhoZA@mail.gmail.com>
+User-Agent: NeoMutt/20180716-423-e60b71
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/2018 01:44 PM, Sean Christopherson wrote:
-> On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
->> We also need to clarify how this can happen.  Is it through something
->> than an app does, or is it solely when the hardware does something under
->> the covers, like suspend/resume.
-> 
-> Are you looking for something in the changelog, the comment, or just
-> a response?  If it's the latter...
 
-Comments, please.
+--prkrf3bxpnkwi76x
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On bare metal with a bug-free kernel, the only scenario I'm aware of
-> where we'll encounter these faults is when hardware pulls the rug out
-> from under us.  In a virtualized environment all bets are off because
-> the architecture allows VMMs to silently "destroy" the EPC at will,
-> e.g. KVM, and I believe Hyper-V, will take advantage of this behavior
-> to support live migration.  Post migration, the destination system
-> will generate PF_SGX because the EPC{M} can't be migrated between
-> system, i.e. the destination EPCM sees all EPC pages as invalid.
+On Wed, Sep 26, 2018 at 02:34:07PM -0500, \0xDynamite wrote:
+> >> You confuse the issue.  My definition included "intended for the
+> >> public".  But it isn't clear that open source code is intended for the
+> >> public -- it is intended for those who code or wish to.
+>=20
+> > Well, then I have to repeat myself: Signed-off source code (in form of
+> > patches) in a well-known programming language for a (nowadays)
+> > well-known GPLv2 licensed project mailed on "everyone can subscribe"
+> > mailinglists, (thus) to be found in several $SEARCH_ENGINE-indexed
+> > mailinglist archives, if accepted to be found in lots of publicly
+> > accessible git repos can be not intended to be published?
+>=20
+> You did it again.  You changed words.  I said intended for the public,
+> and you ended your sentence with "intended to be published".
+>=20
+> Like it or not, both the law and English grammar have ambiguities.
+> People put up with them because they share a common intuition (in a
+> lot of cases) of what each other means.
+>=20
+> If you share a birthday card with your personal love note inscribed
+> and the birthday girl sends it around to everyone at the party, have
+> you been violated?  She might argue:  how did you expect it to remain
+> private if you knew there were several people invited to the birthday
+> party?
 
-OK, cool.
+English does have oddities, agreed.  However, open source code is
+definitely intended for the public as well.
 
-That's good background fodder for the changelog.
+If I post an ad targeted at dog owners in my local town hall, it
+doesn't mean it's not intended for the public. Even though it is
+only for dog owners (or those who wish to be), it is still
+available freely to the general public.
 
-But, for the comment, I'm happy with something like this:
+--=20
+Cheers,
+Joey Pabalinas
 
-	/*
-	 * The fault resulted from violation of SGX-specific access-
-	 * controls.  This is expected to be the result of some lower
-	 * layer action (CPU suspend/resume, VM migration) and is
-	 * not related to anything the OS did.  Treat it as an access
-	 * error to ensure it is passed up to the app via a signal where
-	 * it can be handled.
-	 */
+--prkrf3bxpnkwi76x
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I really don't think we need to delve too deeply into the relationship
-between EPCM and PTEs or anything.  Let's just say, "it's not the
-kernel's fault, it's not the app's fault, so throw up our hands".
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlur8igACgkQruvLfWhy
+VBnSxxAAkAFBvqH8mpjjJFdGLncgGa3YAAkn7QN10pjJHsWqWUq+38g1rGZ1JzRw
+FraIKnGce447X2ew0wJEY4VriyumtJGGLMC8Q3YXL+Rva0qypB4XTVNr1Ck2zQDK
+4/F6C8A+4QwHz8byIQq6/ysTnl7NMDiBIq0l2822q6/4K+mlz0kyxsCB+tlrk/oV
+uzYexTVmF8MPWepYrqw/9Y8P9HmmWjEMMJ3q8MgB+9TwWjG5o0Ossy0elVk0nlR1
+Y+u24T1td+eNROBqt1Lcxvne7gtUx9zfBInQObO1bA3SBeI9uP4tC8fsWp4W2YkS
+LGCdBHZuF6IGLn9Vc9OHKexsG1Gd3HOb78ceAb3e/jww8p9q8+WDYP230NtFsR1Z
+lrNAZm99KkyxVKZGuJDlJwaAin/ZnlnuuBwYPF3gm5kSEtkhxMDeIT92wD6YXKti
+dBYPzHZb5f9EAalJ8ed/EoHsi0Tmwt7ud6DdPeiLtisiSz4HhBwcHPHa8C2huZJU
+Jlwp+xfbN4AA6pvQ4DM7nXdPlohSl9rzjVhwUe4wweGDmXGZLKeHTlYDLjGeuW2B
+FsQNS1cOJgf1F1Lz+4xY53AsaeXfgmyvHCAFZtqopN9giW4HcZSk0EHRNqooQ7IK
+uc0h1kVnIAV+Da5yQp+QcxomsTsUITHj3jgkIhk7UDgjbhgu+v8=
+=9Ugf
+-----END PGP SIGNATURE-----
+
+--prkrf3bxpnkwi76x--
