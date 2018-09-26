@@ -2,77 +2,103 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE79C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8DDC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3D3C214FF
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:08:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3D3C214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 658FA214FE
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:12:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2024-bit key) header.d=lukas-braun.net header.i=@lukas-braun.net header.b="YHb5ZttA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658FA214FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=moshbit.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeIZVWN (ORCPT
+        id S1727354AbeIZVZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:22:13 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49851 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727136AbeIZVWN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:22:13 -0400
-Received: from [217.9.97.180] (helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g5BQi-0001RB-23; Wed, 26 Sep 2018 17:08:44 +0200
-Date:   Wed, 26 Sep 2018 17:08:42 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc:     Peter Zijlstra <peterz@infradead.org>, will.deacon@arm.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com
-Subject: Re: [RFC][PATCH 0/3] locking/qspinlock: Improve determinism for
- x86
-In-Reply-To: <20180926150059.ua5576guhns5osgj@breakpoint.cc>
-Message-ID: <alpine.DEB.2.21.1809261707090.4072@nanos.tec.linutronix.de>
-References: <20180926110117.405325143@infradead.org> <20180926150059.ua5576guhns5osgj@breakpoint.cc>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-518413826-1537974523=:4072"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 26 Sep 2018 17:25:37 -0400
+Received: from moshbit.net ([62.210.136.156]:41344 "EHLO mail.lukas-braun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727136AbeIZVZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:25:37 -0400
+Received: from mail.lukas-braun.net (localhost [127.0.0.1])
+        by mail.lukas-braun.net (OpenSMTPD) with ESMTP id 1c2e202c;
+        Wed, 26 Sep 2018 15:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=lukas-braun.net; h=from
+        :to:cc:subject:date:message-id; s=mail; bh=eHoeeShUBVl3/CXlAqrL0
+        P4Gv/OSdUnhOLHArNrsYro=; b=YHb5ZttALM+2fVKPzxJj5eaiWQzjeEmNnmmXV
+        bXhBaA2iUZLkG0b6vo1vgogNQ17DVtuJBCQ1FJd/WloIAxcn1XRp/Ml77LtEiY4T
+        9kn0qBWEJ7qfDMlsFB1iWXxTEljLAmfuXlDzkYXJgPwhGsXPaprGAiQCBj/ELDxP
+        NKlKqCQE5HArQl9JgNdtGinX4mEFQsIbMvswt1XZUlacYx3fkPL77m5VnFVQvIs2
+        BVsmm9cuK/eGmvM07iMiye72qyDnTAxoKRZBxcc8AWnt/pLpCWVWnppzU9+9kzqT
+        POJaoM6SrI1XEh3xce09huE6BbUqNTSg3v2SAQ93BtBzg==
+Received: from localhost (hedge.moshbit.net [IPv6:2001:bc8:313e:101::1])
+        by mail.lukas-braun.net (OpenSMTPD) with ESMTPSA id 144e2e30 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Wed, 26 Sep 2018 15:12:09 +0000 (UTC)
+From:   Lukas Braun <koomi@moshbit.net>
+To:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Cc:     Ralph Palutke <ralph.palutke@fau.de>,
+        Lukas Braun <koomi@moshbit.net>
+Subject: [PATCH v2] KVM: arm/arm64: Check memslot bounds before mapping hugepages
+Date:   Wed, 26 Sep 2018 17:11:35 +0200
+Message-Id: <20180926151135.16083-1-koomi@moshbit.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Userspace can create a memslot with memory backed by (transparent)
+hugepages, but with bounds that do not align with hugepages.
+In that case, we cannot map the entire region in the guest as hugepages
+without exposing additional host memory to the guest and potentially
+interfering with other memslots.
+Consequently, this patch adds a bounds check when populating guest page
+tables and forces the creation of regular PTEs if mapping an entire
+hugepage would violate the memslots bounds.
 
---8323329-518413826-1537974523=:4072
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Signed-off-by: Lukas Braun <koomi@moshbit.net>
+---
 
-On Wed, 26 Sep 2018, Sebastian Andrzej Siewior wrote:
+Hi everyone,
 
-> On 2018-09-26 13:01:17 [+0200], Peter Zijlstra wrote:
-> > In particular this ordering ensures a concurrent unlock cannot trigger
-> > the uncontended handoff. Also it ensures that if the xchg() happens
-> > after a (successful) trylock, we must observe that LOCKED bit.
-> 
-> so I backported a bunch of atomic files and qspinlock back to v4.9-RT in
-> order to get these patches applied. The backported kernel booted and
-> showed the same symptomps within seconds (those I reported last FR).
-> With those three patches ontop I have the Core2Duo 10 minutes in
-> testing without any issues…
+for v2, in addition to writing the condition the way Marc suggested, I
+moved the whole check so it also catches the problem when the hugepage
+was allocated explicitly, not only for THPs. The second line is quite
+long, but splitting it up would make things rather ugly IMO, so I left
+it as it is.
 
-Remember that 4.14 took almost 8 hours to fail, so I'd recommend not to
-cheer too much. Let's see what it tells us in 48 hours.
+Regards,
+Lukas
 
-Thanks,
 
-	tglx
---8323329-518413826-1537974523=:4072--
+ virt/kvm/arm/mmu.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index ed162a6c57c5..ba77339e23ec 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1500,7 +1500,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		return -EFAULT;
+ 	}
+ 
+-	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
++	if ((fault_ipa & S2_PMD_MASK) < (memslot->base_gfn << PAGE_SHIFT) ||
++	    ALIGN(fault_ipa, S2_PMD_SIZE) >= ((memslot->base_gfn + memslot->npages) << PAGE_SHIFT)) {
++		/* PMD entry would map something outside of the memslot */
++		force_pte = true;
++	} else if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
+ 		hugetlb = true;
+ 		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+ 	} else {
+-- 
+2.11.0
+
