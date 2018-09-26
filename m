@@ -2,91 +2,89 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1340C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6927C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A929020838
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:55:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A929020838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 96D9C214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:55:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D9C214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbeIZTIY (ORCPT
+        id S1728264AbeIZTIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:08:24 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:16840 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeIZTIY (ORCPT
+        Wed, 26 Sep 2018 15:08:30 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:37669 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeIZTIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:08:24 -0400
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="20538995"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 26 Sep 2018 05:55:32 -0700
-Received: from localhost (10.10.76.4) by CHN-SV-EXCH01.mchp-main.com
- (10.10.76.37) with Microsoft SMTP Server id 14.3.352.0; Wed, 26 Sep 2018
- 05:55:30 -0700
-Date:   Wed, 26 Sep 2018 14:55:28 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <jslaby@suse.com>,
-        <arnd@arndb.de>, <richard.genoud@gmail.com>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] tty/serial: atmel: add ISO7816 support
-Message-ID: <20180926125528.fmfti62ymod2derb@M43218.corp.atmel.com>
-Mail-Followup-To: Greg KH <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, jslaby@suse.com,
-        arnd@arndb.de, richard.genoud@gmail.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        linux-kernel@vger.kernel.org
-References: <20180906134214.29031-1-ludovic.desroches@microchip.com>
- <20180906134214.29031-3-ludovic.desroches@microchip.com>
- <20180918132856.GA14333@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180918132856.GA14333@kroah.com>
-User-Agent: NeoMutt/20180716
+        Wed, 26 Sep 2018 15:08:30 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1N7RHv-1fhlp61MVh-017q2Q; Wed, 26 Sep 2018 14:55:37 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH] interconnect: fix build warning without DEBUGFS
+Date:   Wed, 26 Sep 2018 14:54:49 +0200
+Message-Id: <20180926125536.2125929-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:CTDgeXKpqxsHvolkz9QqH9ftySROsyuGHCVHObrgLlz+xzs8bir
+ E9L9fQ+mMlTvOTsz2OKGl5J8i+ODoviAeo3OtU29WYcxDmYVlnhazC0irNBPpNzDT/e8BF/
+ c+ew6/5nGbyA/Q15p5jtP67tkMqUL8KsP2rXxQINWcf0jOADcMtdqMQyrKWIL7wjhovQ84N
+ QELEQGCj19+0wlyG//jVw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3iufRyDZMK4=:H7qM8xBFAxJVvEONF0FCDb
+ DCvQOnWYCFgwHuiG+1YTKiW/e+Ssape8H/pnvZj+aOzbDfSxZxdWLT47NYN+vQCtoTU0Xkx3Z
+ nDqmb2qo1zpiTIq63RuY/e86L5xnZyInMZDbaNMl7uism26xyT3+AVxEYvZFnrCz+BclI/3r2
+ RdUV2l/Su46ME9DAbzlmSMWh5FdxerrqP0J2FvfzT6VqzxhRyxcRT84/qsnxuG/3F+1iC3awH
+ ZPvl2PBn1Ypc5dD/NUN+sWm8Fz27Fx1EXHE6bsrDbkjm4wIIoYCRV95/NCbyouaGjf4ODIZ5C
+ vw5fwDobk1G3u98i0SsqLKYYPb8JDyhjcwxiyNMHDeG0LnVY/FmcYK9qhHZ3VckZ6HDlYHvzW
+ /5FQ/CS40ZmwkfQyIni8Os9ihRZfGqZLrtBc4AAxK5cyHbz4omuPuA2+yPAd2ZPMY8EQF9KX4
+ qRlEwTpKs/n5oatsaGPVsOaSVN6NX2AX7jZuCjFz3IS4H0bLBy9tWRYjMHfjsomZml699iVRc
+ IVlEYLjJFOjBKKzgBnqfU4SvTSYr4Cg3T6oI74p6Gt+LOm00St6o5A7sfoya/vhQx01vhtp0+
+ lO85cPY0WvtEC955HLeE6T+scmd6xuhEqc66wGzajgLzppqVKmZi5o/z5tCpvnFNxQk3VdFBM
+ xGV5w88N11oXFGX04QAm06ya06SHgwVP9kqRY4+zudkPlGMZiM8xubY9FvbWcoEAkT3w=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 03:28:56PM +0200, Greg KH wrote:
-> On Thu, Sep 06, 2018 at 03:42:14PM +0200, Ludovic Desroches wrote:
-> > From: Nicolas Ferre <nicolas.ferre@microchip.com>
-> > 
-> > When mode is set in atmel_config_iso7816() we backup last RS232 mode
-> > for coming back to this mode if requested.
-> > Also allow setup of T=0 and T=1 parameter and basic support in set_termios
-> > function as well.
-> > 
-> > Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> > [ludovic.desroches@microchip.com: rebase, add check on fidi ratio, checkpatch fixes]
-> > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> > Acked-by: Richard Genoud <richard.genoud@gmail.com>
-> > ---
-> >  drivers/tty/serial/atmel_serial.c | 190 +++++++++++++++++++++++++++++++++++---
-> >  drivers/tty/serial/atmel_serial.h |   3 +-
-> >  2 files changed, 181 insertions(+), 12 deletions(-)
-> 
-> This doesn't apply to my tree :(
-> 
+The icc_debugfs_dir variable is only used inside of an #ifdef
+and should be moved into the same to avoid a harmless warning:
 
-I am rebasing it on tty-next.
+drivers/interconnect/core.c:26:23: error: 'icc_debugfs_dir' defined but not used [-Werror=unused-variable]
 
-> Also, shouldn't this new ioctl be documented somewhere?
-> 
+Fixes: d54599e06b06 ("interconnect: Allow endpoints translation via DT")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/interconnect/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v5 is coming.
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 2740f1a441d8..2d8709cf59a4 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -23,7 +23,6 @@
+ static DEFINE_IDR(icc_idr);
+ static LIST_HEAD(icc_provider_list);
+ static DEFINE_MUTEX(icc_lock);
+-static struct dentry *icc_debugfs_dir;
+ 
+ /**
+  * struct icc_req - constraints that are attached to each node
+@@ -54,6 +53,8 @@ struct icc_path {
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 
++static struct dentry *icc_debugfs_dir;
++
+ static void icc_summary_show_one(struct seq_file *s, struct icc_node *n)
+ {
+ 	if (!n)
+-- 
+2.18.0
 
-Regards
-
-Ludovic
