@@ -2,136 +2,140 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEF1C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE05C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 144852152A
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:47:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 144852152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DBC42152A
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:47:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DBC42152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeIZWAe (ORCPT
+        id S1728453AbeIZWAn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:00:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:48824 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727285AbeIZWAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:00:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6010B18A;
-        Wed, 26 Sep 2018 08:47:01 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D4B43F5BD;
-        Wed, 26 Sep 2018 08:46:57 -0700 (PDT)
-Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for
- qcom,smmu-v2
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
-        robh+dt@kernel.org, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
-        rjw@rjwysocki.net, robdclark@gmail.com, linux-pm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, sboyd@kernel.org,
-        tfiga@chromium.org, jcrouse@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-5-vivek.gautam@codeaurora.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <52cc5a5e-d497-ad24-8dd2-3455707a3eef@arm.com>
-Date:   Wed, 26 Sep 2018 16:46:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 18:00:43 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41535 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbeIZWAn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:00:43 -0400
+Received: by mail-ot1-f67.google.com with SMTP id e18-v6so28649748oti.8;
+        Wed, 26 Sep 2018 08:47:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=lrIGf5Mhru5OG7bLuvDETiv4i7y3b/zJP8JscbrqCEw=;
+        b=OSzUvqv0ILQtTalEowp9g7Uzw9Utv7JJySjbKnU4Diwzca4gGxOjy3q15NWgSerN2M
+         lUItjrhuUpDHeisg8zqJ+peSYRb7s5TjGG3qSJ7V+epruMowlSYcnujz3FUHqvo6ha7I
+         bg92FJvjlM+TjJCinpd43ejaCC8zXwBTaZOkp4HTtKNU6GiZBELCUJU9FHd7JlJAjyps
+         mpqqJrnWFG8ev01H0F0PcT17cjeGSBDgXNklUhl1AsDjh4uGYvN7/IcAEzPbu3FjuLlh
+         VVJOw4Ve5bUVtrO6J1qJANNsPzd3vCUVXzk+QDBoMgJ9AEHntpCZohsGuf/dqKauTyzk
+         7x9g==
+X-Gm-Message-State: ABuFfoia+YLVqavBOQCNllMHgjTFA0kS3hWhJK7bg1H/Xwx1CMu0dJpG
+        CRkcDBTgic4glEB5t0hYPA==
+X-Google-Smtp-Source: ACcGV61+GZERB6y1dUYEjTG8OvzJl23u6AIl4tBoWOiQfZ/eL56H9cc34i4y9wuNNlz3RFvAjjn0xQ==
+X-Received: by 2002:a9d:bad:: with SMTP id 42-v6mr4288230oth.189.1537976829369;
+        Wed, 26 Sep 2018 08:47:09 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i204-v6sm2016635oia.41.2018.09.26.08.47.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 08:47:08 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 10:47:08 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        =?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v1 1/5] dt-binding: rtci-pcf8523: add quartz_load property
+Message-ID: <20180926154708.GA3264@bogus>
+References: <20180822183555.GA24084@ravnborg.org>
+ <20180907193508.24974-2-sam@ravnborg.org>
+ <20180913190516.GG14988@piout.net>
 MIME-Version: 1.0
-In-Reply-To: <20180830144541.17740-5-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180913190516.GG14988@piout.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/08/18 15:45, Vivek Gautam wrote:
-> Add bindings doc for Qcom's smmu-v2 implementation.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
->   1 file changed, 39 insertions(+)
+On Thu, Sep 13, 2018 at 09:05:16PM +0200, Alexandre Belloni wrote:
+> Hi,
 > 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 8a6ffce12af5..a6504b37cc21 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -17,10 +17,16 @@ conditions.
->                           "arm,mmu-401"
->                           "arm,mmu-500"
->                           "cavium,smmu-v2"
-> +                        "qcom,smmu-v2"
->   
->                     depending on the particular implementation and/or the
->                     version of the architecture implemented.
->   
-> +                  Qcom SoCs must contain, as below, SoC-specific compatibles
-> +                  along with "qcom,smmu-v2":
-> +                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2",
-> +                  "qcom,sdm845-smmu-v2", "qcom,smmu-v2".
-> +
->   - reg           : Base address and size of the SMMU.
->   
->   - #global-interrupts : The number of global interrupts exposed by the
-> @@ -71,6 +77,22 @@ conditions.
->                     or using stream matching with #iommu-cells = <2>, and
->                     may be ignored if present in such cases.
->   
-> +- clock-names:    List of the names of clocks input to the device. The
-> +                  required list depends on particular implementation and
-> +                  is as follows:
-> +                  - for "qcom,smmu-v2":
-> +                    - "bus": clock required for downstream bus access and
-> +                             for the smmu ptw,
-> +                    - "iface": clock required to access smmu's registers
-> +                               through the TCU's programming interface.
-> +                  - unspecified for other implementations.
-> +
-> +- clocks:         Specifiers for all clocks listed in the clock-names property,
-> +                  as per generic clock bindings.
-> +
-> +- power-domains:  Specifiers for power domains required to be powered on for
-> +                  the SMMU to operate, as per generic power domain bindings.
-> +
->   ** Deprecated properties:
->   
->   - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-> @@ -137,3 +159,20 @@ conditions.
->                   iommu-map = <0 &smmu3 0 0x400>;
->                   ...
->           };
-> +
-> +	/* Qcom's arm,smmu-v2 implementation */
-> +	smmu4: iommu@d00000 {
-> +		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-> +		reg = <0xd00000 0x10000>;
-> +
-> +		#global-interrupts = <1>;
-> +		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-> +		#iommu-cells = <1>;
-> +		power-domains = <&mmcc MDSS_GDSC>;
-> +
-> +		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-> +			 <&mmcc SMMU_MDP_AHB_CLK>;
-> +		clock-names = "bus", "iface";
-> +	};
+> You can remove 'rtci-' from the subject.
 > 
+> On 07/09/2018 21:35:04+0200, Sam Ravnborg wrote:
+> > From: Søren Andersen <san@skov.dk>
+> > 
+> > The NXP pcf8523 supports two different quartz loads.
+> > - 7 pF (default)
+> > - 12.5 pF (minimum power consumption)
+> > 
+> > The pcf8523 needs to know the size of the quartz load,
+> > otherwise the the RTC will have a bad precision.
+> > 
+> > The default for the rtc (after power-on) is 7 pF.
+> > Add a property that tells if the external capacitor is 12.5 pF.
+> > 
+> > Signed-off-by: Søren Andersen <san@skov.dk>
+> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Alessandro Zummo <a.zummo@towertech.it>
+> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > ---
+> >  Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt | 19 +++++++++++++++++++
+> >  Documentation/devicetree/bindings/trivial-devices.txt |  1 -
+> >  2 files changed, 19 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt b/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+> > new file mode 100644
+> > index 000000000000..7c5e93f5077c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf8523.txt
+> > @@ -0,0 +1,19 @@
+> > +* NXP PCF8523 Real Time Clock
+> > +
+> > +NXP PCF8523 Real Time Clock
+> > +
+> > +Required properties:
+> > +- compatible: Should contain "nxp,pcf8523".
+> > +- reg: I2C address for chip.
+> > +
+> > +Optional property:
+> > +- nxp,quartz_load_12.5pF: The capacitive load on the quartz is 12.5 pF,
+> > +  which differ from the default value of 7 pF
+> > +
+> 
+> The boolean properties usually don't work well for RTCs because people
+> usually want to keep any previous configuration that may have been done
+> at the factory or in the bootloader so I would use:
+> 
+> nxp,quartz_load_fF and this would be either 7000 or 12500.
+
+Use '-' rather than '_'.
+
+There's already a defined unit suffix of '-picofarads'. If you need 
+'-femtofarads', then please add to property-units.txt. Though I'd prefer 
+not as wouldn't a value of 12 (or 13) be close enough for the needs 
+here?
+
+Rob
