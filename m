@@ -2,114 +2,116 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B777DC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E508C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6628E21537
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:21:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6628E21537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B877121537
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:23:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phpw1qOZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B877121537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbeI0FhK (ORCPT
+        id S1726598AbeI0Fix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 01:37:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41488 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbeI0FhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 01:37:10 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2AFA369CE;
-        Wed, 26 Sep 2018 23:21:50 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-120-223.rdu2.redhat.com [10.10.120.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E57A2010D16;
-        Wed, 26 Sep 2018 23:21:49 +0000 (UTC)
-Subject: Re: [RFC][PATCH 0/3] locking/qspinlock: Improve determinism for x86
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     will.deacon@arm.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
-        tglx@linutronix.de
-References: <20180926110117.405325143@infradead.org>
- <2c284b6d-99c1-2686-b8c0-fce8987e747f@redhat.com>
- <20180926175112.GA5254@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <5c492b85-365f-e64d-2230-f479903591d8@redhat.com>
-Date:   Wed, 26 Sep 2018 19:21:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 27 Sep 2018 01:38:53 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40318 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbeI0Fix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 01:38:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o2-v6so4019130wmh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 16:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3KaQUP07p+ekdffmHemSDqhApYEmAzBtDlYnYARB+fs=;
+        b=phpw1qOZJqkPk6gsocuFrCzVjl7Ue+ElMPiyNfDR/Ga+hrPsdu12KtH2ts9bm8l1+t
+         RtKZa83EUvNgbDiNFr8EhEO4lRwiOHb5kow2w4jtccjYIeolTYBu+EgI4qiWIRPrpPZp
+         hvzubqUzGEQ9gNlrkm+VrYZ1+RZOQ/IT44QtJM327Z0JSscr3wZKAceWM2bdAQ5bJ96M
+         i1E1pqqN1ttuOPs2BrDAevU9YfLtgwggwpFwlyl6+EuKr6mkwFFrinJPbz7Zj1ctFtoY
+         vQ5kz7tqEV9tFr3KvKFUnCRNML7Mui7FZMTbyj8LrHifkjBTXB6VQ4xzRh9trade3ErM
+         MG4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3KaQUP07p+ekdffmHemSDqhApYEmAzBtDlYnYARB+fs=;
+        b=Wk9Nguh35A+LTpylzjkQgpqMoQtG/+8677ZwTNqGIwjBcMI8a5m/KMp+9xJ9anouOX
+         5Yqt8PHpcWBQkwgU72YrFsN5elUdbk557OAYTpjzgDC9nvFQavo6xm8FznLQTYZy9XLL
+         ROX9I0SU5NXgIR66jnkBnRHhpmeQQ6fk5wKf6na0x+zBsrmh8eoRlAu9EH9ZNe+tTUej
+         aoRQxExLrcdfKv2DJ3aiprz9JdfVWsi4blfKoFZqhF1647EmgdTGO4dRdDz0lLSrvM8Z
+         hvW/gzDTFyeNxlXnEZ5jikC83PNaOEFPnBgrXoKMCCFcaQQlT141PIBgzAFTTJG861qQ
+         4Bxw==
+X-Gm-Message-State: ABuFfogb9OFub+A2G8i8X9rNDl3AR09O6kvCzqXrROPnxX1UHH8RfWIw
+        4nPa42wk0JhgrdJQRypZzJkNDAF4g7uXhw==
+X-Google-Smtp-Source: ACcGV61uHrj3GumxQJsrE8AHvwXSD1KO/s3lCECw4Btvtp9cFGngJztWoAGV4GbU+QblHNLP+LJxdw==
+X-Received: by 2002:a1c:7dce:: with SMTP id y197-v6mr6129838wmc.78.1538004212241;
+        Wed, 26 Sep 2018 16:23:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id r13-v6sm495350wmf.34.2018.09.26.16.23.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 16:23:31 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] staging: rtl8723bs: Mark ACPI table declaration as used
+Date:   Wed, 26 Sep 2018 16:20:55 -0700
+Message-Id: <20180926232055.31951-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180926175112.GA5254@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 26 Sep 2018 23:21:51 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/2018 01:51 PM, Peter Zijlstra wrote:
-> On Wed, Sep 26, 2018 at 12:20:09PM -0400, Waiman Long wrote:
->> On 09/26/2018 07:01 AM, Peter Zijlstra wrote:
->>> Back when Will did his qspinlock determinism patches, we were left with one
->>> cmpxchg loop on x86 due to the use of atomic_fetch_or(). Will proposed a nifty
->>> trick:
->>>
->>>   http://lkml.kernel.org/r/20180409145409.GA9661@arm.com
->>>
->>> But at the time we didn't pursue it. This series implements that and argues for
->>> its correctness. In particular it places an smp_mb__after_atomic() in
->>> between the two operations, which forces the load to come after the
->>> store (which is free on x86 anyway).
->>>
->>> In particular this ordering ensures a concurrent unlock cannot trigger
->>> the uncontended handoff. Also it ensures that if the xchg() happens
->>> after a (successful) trylock, we must observe that LOCKED bit.
->> When you said "concurrent unlock cannot trigger the uncontended
->> handoff", are you saying the current code has this uncontended handoff
->> problem or just when comparing to doing a load first followed by xchg()?
-> In particular I'm talking about this:
->
-> locked:
-> 	/*
-> 	 * claim the lock:
-> 	 *
-> 	 * n,0,0 -> 0,0,1 : lock, uncontended
-> 	 * *,0,0 -> *,0,1 : lock, contended
-> 	 *
-> 	 * If the queue head is the only one in the queue (lock value == tail)
-> 	 * and nobody is pending, clear the tail code and grab the lock.
-> 	 * Otherwise, we only need to grab the lock.
-> 	 */
-> 	/*
-> 	 * In the PV case we might already have _Q_LOCKED_VAL set, because
-> 	 * of lock stealing; therefore we must also allow:
-> 	 *
-> 	 * n,0,1 -> 0,0,1
-> 	 *
-> 	 * Note: at this point: (val & _Q_PENDING_MASK) == 0, because of the
-> 	 *       above wait condition, therefore any concurrent setting of
-> 	 *       PENDING will make the uncontended transition fail.
-> 	 */
-> 	if ((val & _Q_TAIL_MASK) == tail) {
-> 		if (atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
-> 			goto release; /* No contention */
-> 	}
->
->
-> Here queue head acquires the lock and we take the "uncontended" path. If
-> we set PENDING prior to this, the cmpxchg above will fail, and the later
-> load will observe the tail.
+Clang emits the following warning:
 
-Thanks for the clarification. I was wondering if you are talking about a
-latent bug in the code. So this is not the case here.
+drivers/staging/rtl8723bs/os_dep/sdio_intf.c:25:36: warning: variable
+'acpi_ids' is not needed and will not be emitted
+[-Wunneeded-internal-declaration]
+static const struct acpi_device_id acpi_ids[] = {
+                                   ^
+1 warning generated.
 
-Cheers,
-Longman
+Mark acpi_ids with the attribute __used, which makes it clear to Clang
+that we don't want this warning while not inhibiting Clang's dead code
+elimination from removing the unreferenced internal symbol when moving
+the data to the globally available symbol with MODULE_DEVICE_TABLE.
+
+$ nm -S drivers/staging/rtl8723bs/os_dep/sdio_intf.o | grep acpi
+0000000000000000 0000000000000040 R __mod_acpi__acpi_ids_device_table
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/169
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+index 6d02904de63f..7c03b69b8ed3 100644
+--- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
++++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+@@ -22,7 +22,7 @@ static const struct sdio_device_id sdio_ids[] =
+ 	{ SDIO_DEVICE(0x024c, 0xb723), },
+ 	{ /* end: all zeroes */				},
+ };
+-static const struct acpi_device_id acpi_ids[] = {
++static const struct acpi_device_id acpi_ids[] __used = {
+ 	{"OBDA8723", 0x0000},
+ 	{}
+ };
+-- 
+2.19.0
+
