@@ -2,122 +2,137 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DC5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78BEC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D8892150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:34:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="y2jeFhJK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8892150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8372F2151C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:37:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8372F2151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbeIZVsM (ORCPT
+        id S1728233AbeIZVuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:48:12 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52818 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbeIZVsL (ORCPT
+        Wed, 26 Sep 2018 17:50:54 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35202 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbeIZVux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:48:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+yiA2HBZL+QfNZk+RyqqeXc+ZJXUYi/CBUzI43dyWyg=; b=y2jeFhJKUzkKxX9nC1gzSNpzor
-        m7cmw4GdAYVdTB8ShoI64NIIoOAuPlBKFUgY3a4GAXIDOuSieayBYc/ssQQE/S9PLL/tjEg4c1n9a
-        ai3MhfVjPvDz6NYfxGx3mH+rnZ1NbX6nghNsRqxSb8DQkMl1mAbCSxcl48bnj1z0Oah3GCC013IGe
-        XwkiXo7ymRGvbRxaArZ4UYAfO1ve+NC3Y3ltwJsKGWlAQcSfZI1j8NdMP+NImGzur7+tr9FVDmtAt
-        QKnUBRsfzPRvFLtGgXORyKofgGPlFwwmnszDiQ95JlrHHjvNcYf3gNKcYQNdQzKW5daj5lCArFWcJ
-        R+E1Ewbg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5BpR-0000vS-Ks; Wed, 26 Sep 2018 15:34:37 +0000
-Subject: Re: [PATCH] of: base: Fix english spelling in
- of_alias_get_alias_list()
-To:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        gregkh@linuxfoundation.org, geert@linux-m68k.org
-Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-References: <b64be28f7705a91fcb84b9c59ca830e057c71d96.1537959997.git.michal.simek@xilinx.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dfd94b86-0a71-a2c4-449d-7f06ff3ae30e@infradead.org>
-Date:   Wed, 26 Sep 2018 08:34:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 26 Sep 2018 17:50:53 -0400
+Received: by mail-vs1-f68.google.com with SMTP id l3-v6so6268657vsc.2;
+        Wed, 26 Sep 2018 08:37:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vVtwsIhmCH4FS/GMHih6iL0Go+1ueTnSWieXyWwaaAg=;
+        b=mFoIFlosHQ1nGL8O/H0PSKHN/1B62HuPOelzcDJFFzFwCz3uCxK3BCMYt05A6Zu1Gt
+         ddLJTz8PoAPzWld3n/zdUzSHNIY64EGx0xs/9DznjgptBIC4atk9jdfRTqef9mp1UOxW
+         tAOdksoQWab3CsEW9tdO7Z20gw3ljwum6bAnvee3NiANTLk6/vRkfMJ/IXgG60/FfzQl
+         2nRzBZ0MUuURn/B9EI30euR2rJhauoSKEWUD8aNXW91MrWiPaBLTCIHKDUyS1BGqsN5E
+         d4I0C0PuxrBjd4DZxoc7a31OhXT9/2Wx6Z5BOUn/9X7kUgxkcKAbZSdFWL3oc7gbwf8D
+         UL+Q==
+X-Gm-Message-State: ABuFfoilyh+vwEINYt8i8RmAFrWx/SbDHja8+sdvKLh7VgwyBANChcmv
+        uQzWkFUlOxTIRCR1xdz2MAqZc0OPTwO0jpOe3/4=
+X-Google-Smtp-Source: ACcGV620hKDi8aBQMJwwqx6FRDiE2ZCW3l1HwDY+aWZnHwb5Eur8Ux8lN5e73FmSUguCRknBU0S/5DfF1cLeA4iY+mQ=
+X-Received: by 2002:a67:6582:: with SMTP id z124-v6mr675337vsb.11.1537976242271;
+ Wed, 26 Sep 2018 08:37:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b64be28f7705a91fcb84b9c59ca830e057c71d96.1537959997.git.michal.simek@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180918093437.26799-1-lukma@denx.de> <20180918093437.26799-2-lukma@denx.de>
+ <5baa1aee.1c69fb81.cc7c6.340b@mx.google.com> <20180926163212.17646e43@jawa>
+In-Reply-To: <20180926163212.17646e43@jawa>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 26 Sep 2018 17:37:10 +0200
+Message-ID: <CAMuHMdWWYvhGX+SmG+WuLJZAX6PdCSd0hzNqiNB1r_A+B6tbSA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: spi: Provide bindings for fsl dspi
+ working in slave mode
+To:     lukma@denx.de
+Cc:     Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/18 4:06 AM, Michal Simek wrote:
-> Fix english spelling in of_alias_get_alias_list().
-> 
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
-> 
-> Greg: Please apply it on the top of tty-next because patch is going via
-> your tree.
+Hi Lukasz,
 
-Maybe a few more fixes first...
+On Wed, Sep 26, 2018 at 4:33 PM Lukasz Majewski <lukma@denx.de> wrote:
+> > On Tue, Sep 18, 2018 at 11:34:35AM +0200, Lukasz Majewski wrote:
+> > > This commit provides the description of new property:
+> > > "fsl,spi-slave-mode" which enables support for DSPI driver working
+> > > in slave mode.
+> > >
+> > > As the new compatible shall be used with SPI bus equipped with
+> > > master device a new "spidev" based node has been introduced to
+> > > avoid confusion.
+> > >
+> > > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > > ---
+> > >  Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt
+> > > b/Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt index
+> > > 18eeafe359d8..b30af19a2bc5 100644 ---
+> > > a/Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt +++
+> > > b/Documentation/devicetree/bindings/spi/spi-fsl-dspi.txt @@ -26,6
+> > > +26,7 @@ Optional SPI properties for slave nodes:
+> > >  - fsl,spi-sck-cs-delay: a delay in nanoseconds between stopping
+> > > the clock signal and deactivating chip select, at the end of a
+> > > transfer.
+> > >  - bus-num : the slave chip chipselect signal number.
+> > > +- fsl,spi-slave-mode: if present, controller runs in slave mode.
+> >
+> > There's a standard property for this.
+>
+> I've just realised that there is "spi-slave" property in the
+> Documentation/devicetree/bindings/spi/spi-bus.txt
+>
+> I will convert the code to use it.
+>
+> >
+> > >
+> > >  Example:
+> > >
+> > > @@ -56,6 +57,13 @@ dspi0@4002c000 {
+> > >             fsl,spi-cs-sck-delay = <100>;
+> > >             fsl,spi-sck-cs-delay = <50>;
+> > >     };
+> > > +
+> > > +   spidev3@1 {
+> > > +           compatible = "fsl,vf610-dspi";
+> > > +           spi-max-frequency = <30000000>;
+> > > +           reg = <1>;
+> > > +           fsl,spi-slave-mode;
+> >
+> > This doesn't look right for how slave mode is described.
+>
+> You mean that I shall replace fsl,spi-slave-mode; with "spi-slave" ?
+>
+> Or is there any other issue with this code?
 
-> ---
->  drivers/of/base.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 33011b88ed3f..ffcbb2963ba2 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -1948,7 +1948,7 @@ int of_alias_get_id(struct device_node *np, const char *stem)
->   * @matches:	Array of OF device match structures to search in
->   * @stem:	Alias stem of the given device_node
->   * @bitmap:	Bitmap field pointer
-> - * @nbits:	Maximum number of alias ID which can be recorded it bitmap
-> + * @nbits:	Maximum number of alias IDs which can be recorded it bitmap
+According to Documentation/devicetree/bindings/spi/spi-bus.txt:
+  1. "spi-slave" should be a property of the controller node, not of the
+     slave node,
+  2. the slave node should be called "slave", without unit address, and
+     without "reg" property.
 
-s/it/in/
+Gr{oetje,eeting}s,
 
->   *
->   * The function travels the lookup table to record alias ids for the given
->   * device match structures and alias stem.
-> @@ -1971,7 +1971,7 @@ int of_alias_get_alias_list(const struct of_device_id *matches,
->  			 __func__, app->stem, app->id);
->  
->  		if (strcmp(app->stem, stem) != 0) {
-> -			pr_debug("%s: stem comparison doesn't passed %s\n",
-> +			pr_debug("%s: stem comparison didn't pass %s\n",
->  				 __func__, app->stem);
->  			continue;
->  		}
-> @@ -1986,7 +1986,7 @@ int of_alias_get_alias_list(const struct of_device_id *matches,
->  			pr_debug("%s: Allocated ID %d\n", __func__, app->id);
->  			set_bit(app->id, bitmap);
->  		}
-> -		/* Alias exist but it not compatible with matches */
-> +		/* Alias exists but it not compatible with matches */
+                        Geert
 
-s/it/is/
-
->  	}
->  	mutex_unlock(&of_mutex);
->  
-> 
-
-thanks,
 -- 
-~Randy
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
