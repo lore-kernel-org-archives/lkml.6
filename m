@@ -6,59 +6,91 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F757C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28859C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BCC2152C
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:59:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BCC2152C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BA1232152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:03:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1232152C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeI0CNz (ORCPT
+        id S1726959AbeI0CR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:13:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36706 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbeI0CNz (ORCPT
+        Wed, 26 Sep 2018 22:17:58 -0400
+Received: from g4t3426.houston.hpe.com ([15.241.140.75]:49293 "EHLO
+        g4t3426.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbeI0CR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:13:55 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90DCA10BE;
-        Wed, 26 Sep 2018 19:59:19 +0000 (UTC)
-Date:   Wed, 26 Sep 2018 21:59:17 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <jroedel@suse.de>,
-        iommu@lists.linux-foundation.org
-Subject: Re: Linux 4.19-rc5: Missing iommu fix
-Message-ID: <20180926195917.GB20689@kroah.com>
-References: <CA+icZUUdxjVe4p-9aui0cqj_EiHD3O2VZ=dW8HqWf-+9jqnWCA@mail.gmail.com>
+        Wed, 26 Sep 2018 22:17:58 -0400
+Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
+        by g4t3426.houston.hpe.com (Postfix) with ESMTP id D42336E;
+        Wed, 26 Sep 2018 20:03:21 +0000 (UTC)
+Received: from anatevka.americas.hpqcorp.net (anatevka.americas.hpqcorp.net [10.34.81.6])
+        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 1B07E57;
+        Wed, 26 Sep 2018 20:03:21 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 14:03:20 -0600
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     erosca@de.adit-jv.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [V2 PATCH] selftests: watchdog: Add gettimeout and get|set
+ pretimeout
+Message-ID: <20180926200320.GB14558@anatevka.americas.hpqcorp.net>
+Reply-To: Jerry.Hoemann@hpe.com
+References: <1537817767-78918-1-git-send-email-jerry.hoemann@hpe.com>
+ <1537817767-78918-2-git-send-email-jerry.hoemann@hpe.com>
+ <16941ebb-85ca-ad4c-de7b-c26f193ca611@kernel.org>
+ <20180926162920.GB3948@anatevka.americas.hpqcorp.net>
+ <ce60e815-10f1-08fd-d853-2629992a4a98@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+icZUUdxjVe4p-9aui0cqj_EiHD3O2VZ=dW8HqWf-+9jqnWCA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ce60e815-10f1-08fd-d853-2629992a4a98@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 11:33:39AM +0200, Sedat Dilek wrote:
-> Hi Greg,
+On Wed, Sep 26, 2018 at 01:47:25PM -0600, Shuah Khan wrote:
+> On 09/26/2018 10:29 AM, Jerry Hoemann wrote:
+> > On Tue, Sep 25, 2018 at 02:51:15PM -0600, Shuah Khan wrote:
+> >> Hi Jerry,
+> >>
+> >>
+> >> The rest looks good to me.
 > 
-> thanks and congrats for this release.
+> I spoke too soon. I ran your patch on softdog and error messages in unsupported
+> cases could you refinement. Please see below:
 > 
-> Me and several other people have an issue with "intel_iommu=on" (see
-> [1]) and a patch is pending in [2].
-> Unfortunately, it is not in linux-iommu Git.
-> Hope this will soon happen.
+> Sorry for not catching this earlier.
 > 
-> Just want to inform you and let people know if they have a similiar problem.
+> >>
+> >>>  }
+> >>>  
+> >>>  int main(int argc, char *argv[])
+> >>> @@ -135,6 +142,30 @@ int main(int argc, char *argv[])
+> >>>  			else
+> >>>  				printf("WDIOC_SETTIMEOUT errno '%s'\n", strerror(errno));
+> >>>  			break;
+> >>> +		case 'T':
+> >>> +			oneshot = 1;
+> >>> +			ret = ioctl(fd, WDIOC_GETTIMEOUT, &flags);
+> >>> +			if (!ret)
+> >>> +				printf("WDIOC_GETTIMEOUT returns %u seconds.\n", flags);
+> >>> +			else
+> >>> +				printf("WDIOC_GETTIMEOUT errno '%s'\n", strerror(errno));
+> 
+> Either remove "errno" or change it to "error '%s'"
 
-Is this all now merged properly?
+Oh, I see. I did a cut/paste from prior printf in file which have same issue.
+I'll fix those while I'm at it.
 
-thanks,
 
-greg k-h
+
+-- 
+
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
