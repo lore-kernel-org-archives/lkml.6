@@ -2,133 +2,100 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4593AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90024C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE00B21502
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:21:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cz+pRrCL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE00B21502
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 516362086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516362086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbeIZVfI (ORCPT
+        id S1727771AbeIZVgo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:35:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46162 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbeIZVfI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:35:08 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z3-v6so15621754wrr.13
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 08:21:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qTc6gR4Y7dDdYSiOtKtvSUO0xhGDDCxmtA9wP1midnQ=;
-        b=cz+pRrCLFisOlzC8eQo6+xVmXmumFW/fhn+V00jFUvJEXYcuV2do4h9P9yGvYeI+ud
-         EWqmk0npQ/d033n5XzLaibx3XLrTSFecl+FTvGP4mfoH7nUf3VpYTq5LzN4NQSKMp0GF
-         WR2ve4vhBSn3zyT4v3Pa3nbha8lQxazKN/ntc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qTc6gR4Y7dDdYSiOtKtvSUO0xhGDDCxmtA9wP1midnQ=;
-        b=N5yfjXJjDZCrShxxaPNUS/5m7aJytHW1It0OooEAxG6ZgFRuSqUuP+sVDfVm+ay5fZ
-         CPleZgZOg/qxHx4IT5c5jCjxyhAtnzylgSFJPEJgQIfGunbvC4stt76EMddG8T95vL1t
-         /o9gvRttd4613v2S1tO5231S7YKotlaRP35ahjrImoNVBv6wiwhfmI+S/PEivKv7Hzbu
-         Vqcpc604Yb6SK+rcOD9nHCF2ruA8Ch74MaoXQjxZ4e8dtwJkYJN3ov3RY4NnDDlXAdX6
-         cR46zptDE6yQuwaZeEShAiNCnbilacX9v5BhXcMzlO1csxHFM3c6a8AagRjLmhygdtvE
-         4JfQ==
-X-Gm-Message-State: ABuFfohHgfdhnHgS7pE3JAeHJ42kAOqJaf4KMjJnOnm2d2rS0hAUw2jZ
-        m08VAJ/PeygZFiWdbcjJBQqfPEEsl6Q=
-X-Google-Smtp-Source: ACcGV61PYeELbIb8p0AsuDOIthpN5ZWZdzBPAb7zvGxeBb+pGYswY7l8f+ymnBWzGB5G6vYe1J40IA==
-X-Received: by 2002:adf:f991:: with SMTP id f17-v6mr5463143wrr.105.1537975300921;
-        Wed, 26 Sep 2018 08:21:40 -0700 (PDT)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id j2-v6sm4630442wmj.5.2018.09.26.08.21.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 08:21:40 -0700 (PDT)
-Subject: Re: [PATCH] clocksource: dw_apb: add reset control
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        Marek Vasut <marex@denx.de>
-References: <1537195934-26035-1-git-send-email-dinguyen@kernel.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b99e898f-176f-b587-0d8e-eea18550f3da@linaro.org>
-Date:   Wed, 26 Sep 2018 17:21:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 17:36:44 -0400
+Received: from mout.gmx.net ([212.227.17.20]:59063 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbeIZVgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:36:44 -0400
+Received: from DESKTOPSLJ7U3P ([95.91.253.176]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MIPhr-1g3Gm803fL-004828; Wed, 26
+ Sep 2018 17:23:14 +0200
+From:   <dollinger.florian@gmx.de>
+To:     "'Bastien Nocera'" <hadess@hadess.net>, <andrew.smirnov@gmail.com>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-input-owner@kernel.org>,
+        <linux-input@vger.kernel.org>
+Subject: Re: hid: microsoft: Add rumble support for Xbox One S controller
+Date:   Wed, 26 Sep 2018 17:23:09 +0200
+Message-ID: <003601d455ac$d5512db0$7ff38910$@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <1537195934-26035-1-git-send-email-dinguyen@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: de
+Thread-Index: AdRVrHF+tcqYHPx6TYmavRikcr9JOw==
+X-Provags-ID: V03:K1:Ll01lt5t8yq1XnXtCwhrfcLV4PNLq29b5jFWPC+2v3BdzqWeA8a
+ aaKUNSK6yiBR+8/U5WV2/ud7+R25uaPIUdUosDGC2uVS6e/p4THmlwPbKCSvAUEOOP5Ess9
+ 2n4G6E/hb8+RqStHEjURin2YXw7vBrUfH79UsTGaY3jvQDeqtH7cWp7o7QhX+De9iARnf0y
+ ZhWwG64zv7J2pUsaoYqqQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Y4QASYeaPIE=:Q4aMZzSkNDWlf5CnZNtwLC
+ vbLJKOXxerJRllAQDb3DTUQYf6fWGqH2K/rT28SRw371jY5/5QWLsUBxED76KWHk3dOfxyu5A
+ cNsHFt3VGvi10e8+yeji4wIhyGRcGSwnabq4rNmoNiDCxgmGCzybpt2oJQrYdvmRsUdk4km4C
+ 7T//5WhuRkXTzT3dlAKAs6c1tkehjvc0GXMdcrxkLEAx5XbZPA3yn99LLVaXG5gc49XrDX7N0
+ Z6JSv9d3+C3TD4uJByOIn3L42s9AK73On4Mus5j8RZBKXDymZaGxiNs3jlCkrIT+m+DDU67rv
+ sfFffkJWRuaAoiFbGr7jRLOMnFuQlb+4HlnK0+W6eS5d0oasPV+lS4sI774Q3GlKRqZRpI0k4
+ DFLi3V9azH2sWfEmDZhZ/DdBstPoSpp9Hf6wPCIfU5D7EqmKt5cTzS10eSIwUSoMtWXlRSeQX
+ wgaNmItf54/E/8aPyR6nkdxIePKJ/xQbk6mWKQb5glC2VKTjacIKdmKNvEW2l7j3+i5vgb3zT
+ uQj3YQXIjpqcVm9uGqJLrWpM8bNENLhntCHziqazGhcD+Yhf7ZmXHONgXGxm2iUcEQ0KoUAPk
+ 0p1N+sKlZXWfYWw8rj5XxDIIUUFIU5vBs4HgbiMHrj/xh7tLKoMKqBtxZ1DjemcFA0qn/OJTS
+ v6vgx9Ij/Ar5rvXRbhFpaFFt7GGoxVbFtt47imYWnritW1Bd0fa3bAaeOTjFLgpyxALFHa+Vr
+ 5zvsXGB+wij7TEhwPfDkueB4WUWmHJRjZQxrzEYbwrurv58GvEB0SJCsEdZTQlZqe1Eh+iTxC
+ 8vswGthxhMQXXBFEHeXjAueTpAzN6IznGn0op9vqUEYiOqfCrg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/09/2018 16:52, Dinh Nguyen wrote:
-> Add code to retrieve the reset property for the dw-apb timers.
+Hey Bastien,
 
-The patch does more than that. Can you explain why the assert/deassert ?
+> Probably because he didn't know about it, and how would he?
 
+Hum, it's the first hit when you search for something like 'xbox one s driver linux' since half an year or longer 😊
 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
->  drivers/clocksource/dw_apb_timer_of.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/clocksource/dw_apb_timer_of.c b/drivers/clocksource/dw_apb_timer_of.c
-> index 69866cd..24bc073 100644
-> --- a/drivers/clocksource/dw_apb_timer_of.c
-> +++ b/drivers/clocksource/dw_apb_timer_of.c
-> @@ -22,6 +22,7 @@
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
->  #include <linux/clk.h>
-> +#include <linux/reset.h>
->  #include <linux/sched_clock.h>
->  
->  static void __init timer_get_base_and_rate(struct device_node *np,
-> @@ -29,12 +30,20 @@ static void __init timer_get_base_and_rate(struct device_node *np,
->  {
->  	struct clk *timer_clk;
->  	struct clk *pclk;
-> +	struct reset_control *rstc;
->  
->  	*base = of_iomap(np, 0);
->  
->  	if (!*base)
->  		panic("Unable to map regs for %s", np->name);
->  
-> +	/* Unreset the timer if applicable */
-> +	rstc = of_reset_control_get(np, NULL);
-> +	if (!IS_ERR(rstc)) {
-> +		reset_control_assert(rstc);
-> +		reset_control_deassert(rstc);
-> +	}
-> +
->  	/*
->  	 * Not all implementations use a periphal clock, so don't panic
->  	 * if it's not present
-> 
+> I spent quite a bit of time trying to get the XBox One S controller working over Bluetooth, without success, and I see that you have a patch for that which you didn't send upstream either:
+https://github.com/atar-axis/xpadneo/blob/master/misc/kernel_patches/0001-fix_bluetooth_reconnect.patch
+
+Jap, I just never pushed it because I never pushed anything to the linux kernel and I don't really know how the whole process works^^ Furthermore I wanted to fix possible before, but it looks like the driver is stable enough to push it now.
+
+> I can imagine that a large portion of the driver can be integrated in the existing XBox pad driver, with each feature added in individual patches.
+
+Would be great! But ist the xpad driver really the right place?
+
+First of all, the BT interface is using HID, USB does not.
+Furthermore, the driver is currently around 1,3k lines long - for a single device and only BT... (okay yes, there are a lot of comments in it).
+But anyway, is it really a good idea to put everything into hid-microsoft?
+Moreover, there is another interface which I am trying to support at the moment - the one which is used by the XBOX (WiFi).
+
+I think in the end the whole hid-microsoft thingy will get blown-up a bit - right?
+Or, everything is scattered over many places (hid-microsoft, xpad, another driver fort he wifi-interface).
+
+Isn't it possible to use "one driver per device" in the kernel too, like I did?
+
+> If I get the time, there are good chances I will send a patch to integrate the battery reporting in the existing driver at least, and then add support for missing buttons if there's a problem there (I see that mentioned in the README).
+
+Jap, the wrong mapping is possibly the biggest problem of all. Battery support and FF is more "nice to have" but not really crucial. 
+
+> "Trigger Force Feedback" is likely something that would need to be integrated at a lower level, this is probably not something we'd want to have replicated in each driver.
+
+True.
 
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Best regards, Flo
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+
 
