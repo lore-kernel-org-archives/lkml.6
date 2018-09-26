@@ -2,169 +2,285 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9617C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ED5C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EF1214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EF1214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4636920684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:44:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBxibkKc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4636920684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeIZO4e (ORCPT
+        id S1727503AbeIZO4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:56:34 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59765 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeIZO4e (ORCPT
+        Wed, 26 Sep 2018 10:56:46 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55444 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727244AbeIZO4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:56:34 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8Q8iXLn3771295
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Sep 2018 01:44:33 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8Q8iXQW3771292;
-        Wed, 26 Sep 2018 01:44:33 -0700
-Date:   Wed, 26 Sep 2018 01:44:33 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-37fed3de555199733805a2d3e03aee7727c09ea4@git.kernel.org>
-Cc:     jolsa@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
-        hpa@zytor.com, kim.phillips@arm.com, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, acme@redhat.com
-Reply-To: mingo@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
-          hpa@zytor.com, kim.phillips@arm.com, ak@linux.intel.com,
-          adrian.hunter@intel.com, tglx@linutronix.de, jolsa@kernel.org
-In-Reply-To: <20180918123214.26728-5-andi@firstfloor.org>
-References: <20180918123214.26728-5-andi@firstfloor.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf script: Allow sym and dso without ip, addr
-Git-Commit-ID: 37fed3de555199733805a2d3e03aee7727c09ea4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 26 Sep 2018 10:56:45 -0400
+Received: by mail-it1-f193.google.com with SMTP id c23-v6so1863101itd.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rr1HvmgafSH2XAIo8bw7+gik9BF1hKrwBsWHDGDTZPk=;
+        b=JBxibkKc8afX6VP/gAgSf9vL9CDP2cdlSQtb1powm9klluXDlwyEq/eWM4T0KyF3NB
+         hharvyw1VtofsQf6n4knOpKTur+yzFkxNU4fu8uBzJcYH2UvfL605zGw9NJx4btM1IIq
+         fJe/aRS6YAYm/JhudiGjtyzvMLC7bb0gtLCqU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rr1HvmgafSH2XAIo8bw7+gik9BF1hKrwBsWHDGDTZPk=;
+        b=PfnUvxG3vLsyj6OPhOFeQerDcJz+rbN8cr8bUdmV/vQ9qEBw5lbhLF5ar9mXXGcA99
+         ZwVnhxQfAM/KvxwT81/o6l00/DYZa0LV9MHSwX+U6f/r2jLc3AZZcgksn08YMokvzZuI
+         OkshgogAWh0Tn2gdte+RLj/+P0Yia34/ekPFQe9c/VIXZ6UfI8FGrISFnHJpPy78sF05
+         vCIzXrqC03zRFF73TtiHCFmS9LFYCT8OrVsgPHzQXI71wE5d5kbABUSX9aKI1sozzILm
+         SayqgwCQCyG4HcVy9cMXxznHYsnQMT1A8HtpKNouYZamNrUV3Dh9oGUOEugnxmeckz9Y
+         xJ8g==
+X-Gm-Message-State: ABuFfogBu4NBGSvfbL5PcbzcjGO3Q1n2lk2pObiNZQnNxovsjTaGqfKp
+        Guyw1bR7IBQXbLpy4KoL0CZzUUa3zQGch3IKLYRH6g==
+X-Google-Smtp-Source: ACcGV62Dox3Bh5geqpRZQ+QpNXCgid5IJPM4p+zd1k2D7Mu2vuTWLiYWR3CMFBjgkeoVYpq5PAMAlGY6PN0KwufLhsY=
+X-Received: by 2002:a24:e48e:: with SMTP id o136-v6mr4093850ith.58.1537951494452;
+ Wed, 26 Sep 2018 01:44:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180807211843.47586-1-keescook@chromium.org> <20180807211843.47586-8-keescook@chromium.org>
+ <CAK8P3a3kiH-a+JG8FqUw7nc_hk+9z-FdsGFT57SxR83W32zKzQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a3kiH-a+JG8FqUw7nc_hk+9z-FdsGFT57SxR83W32zKzQ@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 26 Sep 2018 10:44:41 +0200
+Message-ID: <CAKv+Gu-dGbWsQu0NgOWVFy7Sca3yBD0pLzEMwmkG3mg9LFPpkA@mail.gmail.com>
+Subject: Re: [PATCH v8 7/9] crypto: qat: Remove VLA usage
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@google.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        "Alasdair G. Kergon" <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        qat-linux@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  37fed3de555199733805a2d3e03aee7727c09ea4
-Gitweb:     https://git.kernel.org/tip/37fed3de555199733805a2d3e03aee7727c09ea4
-Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Tue, 18 Sep 2018 05:32:09 -0700
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 19 Sep 2018 15:20:03 -0300
+On Tue, 25 Sep 2018 at 18:12, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Aug 7, 2018 at 11:18 PM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > In the quest to remove all stack VLA usage from the kernel[1], this uses
+> > the new upper bound for the stack buffer. Also adds a sanity check.
+> >
+> > [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> >
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+>
+> After rebasing to linux-next, I now get a warning about this file:
+>
+> drivers/crypto/qat/qat_common/qat_algs.c: In function 'qat_alg_do_precomputes':
+> drivers/crypto/qat/qat_common/qat_algs.c:257:1: error: the frame size
+> of 1112 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+>
+> I assume it was already possible to get into that state with the VLA,
+> but it seems bad enough that I think we need to do something
+> about it.
+>
+> The large stack variables add up to 1084 bytes, which fully explains
+> how we got here:
+>
+>         SHASH_DESC_ON_STACK(shash, ctx->hash_tfm); /* 360 */
+>         struct sha1_state sha1;  /* 92 */
+>         struct sha256_state sha256; /* 104 */
+>         struct sha512_state sha512; /* 208 */
+>         char ipad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
+>         char opad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
+>
+> The question is what we can do about it. One simple step I've tried
+> is to move the sha1/sha256/sha512 into a union, which saves around
+> 200 bytes and should bring us (slightly) below the warning
+> limit, but I suspect we can do better than that. Any ideas?
+>
 
-perf script: Allow sym and dso without ip, addr
+All the processing takes place in the context of a setkey() operation,
+which means only one such operation should be in flight per tfm at any
+given time. So we could move all these pieces into the tfm context
+struct instead. Something like the below [untested] (whitespace
+mangling courtesy of Gmail)
 
-Currently sym and dso require printing ip and addr because the print
-function is tied to those outputs. With callindent it makes sense to
-print the symbol or dso without numerical IP or ADDR. So change the
-dependency check to only check the underlying attribute.
+diff --git a/drivers/crypto/qat/qat_common/qat_algs.c
+b/drivers/crypto/qat/qat_common/qat_algs.c
+index 1138e41d6805..c14f1906bdf4 100644
+--- a/drivers/crypto/qat/qat_common/qat_algs.c
++++ b/drivers/crypto/qat/qat_common/qat_algs.c
+@@ -113,6 +113,13 @@ struct qat_alg_aead_ctx {
+  struct crypto_shash *hash_tfm;
+  enum icp_qat_hw_auth_algo qat_hash_alg;
+  struct qat_crypto_instance *inst;
++ union {
++ struct sha1_state sha1;
++ struct sha256_state sha256;
++ struct sha512_state sha512;
++ };
++ char ipad[MAX_ALGAPI_BLOCKSIZE];
++ char opad[MAX_ALGAPI_BLOCKSIZE];
+ };
 
-Also the branch target output relies on the user_set flag to determine
-if the branch target should be implicitely printed. When modifying the
-fields with + or - also set user_set, so that ADDR can be removed. We
-also need to set wildcard_set to make the initial sanity check pass.
+ struct qat_alg_ablkcipher_ctx {
+@@ -148,37 +155,32 @@ static int qat_alg_do_precomputes(struct
+icp_qat_hw_auth_algo_blk *hash,
+    unsigned int auth_keylen)
+ {
+  SHASH_DESC_ON_STACK(shash, ctx->hash_tfm);
+- struct sha1_state sha1;
+- struct sha256_state sha256;
+- struct sha512_state sha512;
+  int block_size = crypto_shash_blocksize(ctx->hash_tfm);
+  int digest_size = crypto_shash_digestsize(ctx->hash_tfm);
+- char ipad[block_size];
+- char opad[block_size];
+  __be32 *hash_state_out;
+  __be64 *hash512_state_out;
+  int i, offset;
 
-This allows to remove a lot of noise in callindent output by dropping
-the numerical addresses, which are not all that useful.
+- memset(ipad, 0, block_size);
+- memset(opad, 0, block_size);
++ memset(ctx->ipad, 0, block_size);
++ memset(ctx->opad, 0, block_size);
+  shash->tfm = ctx->hash_tfm;
+  shash->flags = 0x0;
 
-Before
+  if (auth_keylen > block_size) {
+  int ret = crypto_shash_digest(shash, auth_key,
+-       auth_keylen, ipad);
++       auth_keylen, ctx->ipad);
+  if (ret)
+  return ret;
 
-% perf script --itrace=cr -F +callindent
-         swapper     0 [000] 156546.354971:          1   branches: pt_config                                       0 [unknown] ([unknown]) => ffffffff81010486 pt_config ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     pt_config                    ffffffff81010499 pt_config ([kernel.kallsyms]) => ffffffff8101063e pt_event_add ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     pt_event_add                 ffffffff81010635 pt_event_add ([kernel.kallsyms]) => ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_enable              ffffffff8115e726 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff811579b0 perf_pmu_enable ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     perf_pmu_nop_void            ffffffff81151730 perf_pmu_nop_void ([kernel.kallsyms]) => ffffffff8115e72b event_sched_in.isra.107 ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     event_sched_in.isra.107      ffffffff8115e737 event_sched_in.isra.107 ([kernel.kallsyms]) => ffffffff8115e7a5 group_sched_in ([kernel.kallsyms])
-         swapper     0 [000] 156546.354971:          1   branches:     __x86_indirect_thunk_rax     ffffffff8115e7f6 group_sched_in ([kernel.kallsyms]) => ffffffff81a03000 __x86_indirect_thunk_rax ([kernel.kallsyms])
+- memcpy(opad, ipad, digest_size);
++ memcpy(ctx->opad, ctx->ipad, digest_size);
+  } else {
+- memcpy(ipad, auth_key, auth_keylen);
+- memcpy(opad, auth_key, auth_keylen);
++ memcpy(ctx->ipad, auth_key, auth_keylen);
++ memcpy(ctx->opad, auth_key, auth_keylen);
+  }
 
-After
+  for (i = 0; i < block_size; i++) {
+- char *ipad_ptr = ipad + i;
+- char *opad_ptr = opad + i;
++ char *ipad_ptr = ctx->ipad + i;
++ char *opad_ptr = ctx->opad + i;
+  *ipad_ptr ^= HMAC_IPAD_VALUE;
+  *opad_ptr ^= HMAC_OPAD_VALUE;
+  }
+@@ -186,7 +188,7 @@ static int qat_alg_do_precomputes(struct
+icp_qat_hw_auth_algo_blk *hash,
+  if (crypto_shash_init(shash))
+  return -EFAULT;
 
-% perf script --itrace=cr -F +callindent,-ip,-sym,-symoff
-       swapper     0 [000] 156546.354971:          1   branches:  pt_config
-         swapper     0 [000] 156546.354971:          1   branches:      pt_config
-         swapper     0 [000] 156546.354971:          1   branches:      pt_event_add
-         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_enable
-         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_void
-         swapper     0 [000] 156546.354971:          1   branches:       event_sched_in.isra.107
-         swapper     0 [000] 156546.354971:          1   branches:       __x86_indirect_thunk_rax
-         swapper     0 [000] 156546.354971:          1   branches:       perf_pmu_nop_int
-         swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
-         swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
-         swapper     0 [000] 156546.354971:          1   branches:       event_filter_match
-         swapper     0 [000] 156546.354971:          1   branches:       group_sched_in
+- if (crypto_shash_update(shash, ipad, block_size))
++ if (crypto_shash_update(shash, ctx->ipad, block_size))
+  return -EFAULT;
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Link: http://lkml.kernel.org/r/20180918123214.26728-5-andi@firstfloor.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-script.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+  hash_state_out = (__be32 *)hash->sha.state1;
+@@ -194,22 +196,22 @@ static int qat_alg_do_precomputes(struct
+icp_qat_hw_auth_algo_blk *hash,
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 66699dd351e0..7aa59696e97a 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -406,9 +406,10 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 					PERF_OUTPUT_WEIGHT))
- 		return -EINVAL;
- 
--	if (PRINT_FIELD(SYM) && !PRINT_FIELD(IP) && !PRINT_FIELD(ADDR)) {
-+	if (PRINT_FIELD(SYM) &&
-+		!(evsel->attr.sample_type & (PERF_SAMPLE_IP|PERF_SAMPLE_ADDR))) {
- 		pr_err("Display of symbols requested but neither sample IP nor "
--			   "sample address\nis selected. Hence, no addresses to convert "
-+			   "sample address\navailable. Hence, no addresses to convert "
- 		       "to symbols.\n");
- 		return -EINVAL;
- 	}
-@@ -417,10 +418,9 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 		       "selected.\n");
- 		return -EINVAL;
- 	}
--	if (PRINT_FIELD(DSO) && !PRINT_FIELD(IP) && !PRINT_FIELD(ADDR) &&
--	    !PRINT_FIELD(BRSTACK) && !PRINT_FIELD(BRSTACKSYM) && !PRINT_FIELD(BRSTACKOFF)) {
--		pr_err("Display of DSO requested but no address to convert.  Select\n"
--		       "sample IP, sample address, brstack, brstacksym, or brstackoff.\n");
-+	if (PRINT_FIELD(DSO) &&
-+		!(evsel->attr.sample_type & (PERF_SAMPLE_IP|PERF_SAMPLE_ADDR))) {
-+		pr_err("Display of DSO requested but no address to convert.\n");
- 		return -EINVAL;
- 	}
- 	if (PRINT_FIELD(SRCLINE) && !PRINT_FIELD(IP)) {
-@@ -2491,6 +2491,8 @@ parse:
- 						output[j].fields &= ~all_output_options[i].field;
- 					else
- 						output[j].fields |= all_output_options[i].field;
-+					output[j].user_set = true;
-+					output[j].wildcard_set = true;
- 				}
- 			}
- 		} else {
-@@ -2501,7 +2503,8 @@ parse:
- 				rc = -EINVAL;
- 				goto out;
- 			}
--			output[type].fields |= all_output_options[i].field;
-+			output[type].user_set = true;
-+			output[type].wildcard_set = true;
- 		}
- 	}
- 
+  switch (ctx->qat_hash_alg) {
+  case ICP_QAT_HW_AUTH_ALGO_SHA1:
+- if (crypto_shash_export(shash, &sha1))
++ if (crypto_shash_export(shash, &ctx->sha1))
+  return -EFAULT;
+  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
+- *hash_state_out = cpu_to_be32(*(sha1.state + i));
++ *hash_state_out = cpu_to_be32(*(ctx->sha1.state + i));
+  break;
+  case ICP_QAT_HW_AUTH_ALGO_SHA256:
+- if (crypto_shash_export(shash, &sha256))
++ if (crypto_shash_export(shash, &ctx->sha256))
+  return -EFAULT;
+  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
+- *hash_state_out = cpu_to_be32(*(sha256.state + i));
++ *hash_state_out = cpu_to_be32(*(ctx->sha256.state + i));
+  break;
+  case ICP_QAT_HW_AUTH_ALGO_SHA512:
+- if (crypto_shash_export(shash, &sha512))
++ if (crypto_shash_export(shash, &ctx->sha512))
+  return -EFAULT;
+  for (i = 0; i < digest_size >> 3; i++, hash512_state_out++)
+- *hash512_state_out = cpu_to_be64(*(sha512.state + i));
++ *hash512_state_out = cpu_to_be64(*(ctx->sha512.state + i));
+  break;
+  default:
+  return -EFAULT;
+@@ -218,7 +220,7 @@ static int qat_alg_do_precomputes(struct
+icp_qat_hw_auth_algo_blk *hash,
+  if (crypto_shash_init(shash))
+  return -EFAULT;
+
+- if (crypto_shash_update(shash, opad, block_size))
++ if (crypto_shash_update(shash, ctx->opad, block_size))
+  return -EFAULT;
+
+  offset = round_up(qat_get_inter_state_size(ctx->qat_hash_alg), 8);
+@@ -227,28 +229,28 @@ static int qat_alg_do_precomputes(struct
+icp_qat_hw_auth_algo_blk *hash,
+
+  switch (ctx->qat_hash_alg) {
+  case ICP_QAT_HW_AUTH_ALGO_SHA1:
+- if (crypto_shash_export(shash, &sha1))
++ if (crypto_shash_export(shash, &ctx->sha1))
+  return -EFAULT;
+  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
+- *hash_state_out = cpu_to_be32(*(sha1.state + i));
++ *hash_state_out = cpu_to_be32(*(ctx->sha1.state + i));
+  break;
+  case ICP_QAT_HW_AUTH_ALGO_SHA256:
+- if (crypto_shash_export(shash, &sha256))
++ if (crypto_shash_export(shash, &ctx->sha256))
+  return -EFAULT;
+  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
+- *hash_state_out = cpu_to_be32(*(sha256.state + i));
++ *hash_state_out = cpu_to_be32(*(ctx->sha256.state + i));
+  break;
+  case ICP_QAT_HW_AUTH_ALGO_SHA512:
+- if (crypto_shash_export(shash, &sha512))
++ if (crypto_shash_export(shash, &ctx->sha512))
+  return -EFAULT;
+  for (i = 0; i < digest_size >> 3; i++, hash512_state_out++)
+- *hash512_state_out = cpu_to_be64(*(sha512.state + i));
++ *hash512_state_out = cpu_to_be64(*(ctx->sha512.state + i));
+  break;
+  default:
+  return -EFAULT;
+  }
+- memzero_explicit(ipad, block_size);
+- memzero_explicit(opad, block_size);
++ memzero_explicit(ctx->ipad, block_size);
++ memzero_explicit(ctx->opad, block_size);
+  return 0;
+ }
