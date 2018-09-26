@@ -2,131 +2,106 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F74C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB747C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC49F214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68BF421531
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="OLGVGS0H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC49F214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lM5EReX1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68BF421531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbeIZWYq (ORCPT
+        id S1728496AbeIZW0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:24:46 -0400
-Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:10420 "EHLO
-        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727442AbeIZWYp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:24:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1537978232; x=1569514232;
-  h=from:to:cc:subject:date:message-id;
-  bh=06OQBzpEygTNfoE2EaoArADsjFWub6dr8IXgjJTaUA0=;
-  b=OLGVGS0HDzw4sSoWNOLvNMizTZ5NpR7KoIJ4qPknig+rEMhDPXN+Pu/8
-   kCV5IO8Mok15YtnJqPEl7hhZv+NegdGogUD4exuGawZVcLoaqKGHqz2tL
-   1JlvsPflo+w3nHJ+xCF1ROT/m4ZdVdLzbsH4BcUUpnkWuoNbvinDacj6c
-   E=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EUAABKrqtbhyeV50NaHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUYJzfyiMCV+LUphcgT87CyMLhD6EACE0GAEDAQECAQECAQECEAEBAQo?=
- =?us-ascii?q?LCQgpIwyCNSQBCgRLOzABAQEBAQEBAQEBAQEBAQEaAg1mFmdPbwESIoJ/AYI?=
- =?us-ascii?q?BD5huiVcBAQGCG4QrAYVkBYYUUTyDWoFYP4EShi0CAhiBEIYPAog2CIYzRo1?=
- =?us-ascii?q?QBwKCCASEN4lqAhWPMwGLe4hvAgQCBAUCFIFCgg5wgzyCM4NPhRSFXFEBinq?=
- =?us-ascii?q?CTAEB?=
-X-IPAS-Result: =?us-ascii?q?A2EUAABKrqtbhyeV50NaHAEBAQQBAQcEAQGBUYJzfyiMC?=
- =?us-ascii?q?V+LUphcgT87CyMLhD6EACE0GAEDAQECAQECAQECEAEBAQoLCQgpIwyCNSQBC?=
- =?us-ascii?q?gRLOzABAQEBAQEBAQEBAQEBAQEaAg1mFmdPbwESIoJ/AYIBD5huiVcBAQGCG?=
- =?us-ascii?q?4QrAYVkBYYUUTyDWoFYP4EShi0CAhiBEIYPAog2CIYzRo1QBwKCCASEN4lqA?=
- =?us-ascii?q?hWPMwGLe4hvAgQCBAUCFIFCgg5wgzyCM4NPhRSFXFEBinqCTAEB?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Sep 2018 11:10:31 -0500
-Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QG8Uld139047;
-        Wed, 26 Sep 2018 12:11:06 -0400
-Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
-        by mx0a-00154901.pphosted.com with ESMTP id 2mnfyqptpk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Sep 2018 12:11:05 -0400
-Received: from ausxippc101.us.dell.com ([143.166.85.207])
-  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Sep 2018 22:11:02 +0600
-X-LoopCount0: from 10.173.37.27
-X-IronPort-AV: E=Sophos;i="5.54,306,1534827600"; 
-   d="scan'208";a="1140620428"
-From:   Mario Limonciello <mario.limonciello@dell.com>
-To:     dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@intel.com>,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: [PATCH] platform/x86: intel-wmi-thunderbolt: Add dynamic debugging
-Date:   Wed, 26 Sep 2018 11:10:58 -0500
-Message-Id: <1537978258-2907-1-git-send-email-mario.limonciello@dell.com>
+        Wed, 26 Sep 2018 18:26:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727442AbeIZW0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:26:07 -0400
+Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F52B2151C;
+        Wed, 26 Sep 2018 16:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537978348;
+        bh=33TV/+XaIUDpufwMbFUhy2R1V/Z01HcvA1T6OInGDRc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lM5EReX1JX8MwDD2YeJBNChjlxz1dk0N2c4tf7MGqT+kQyJwzeVcKz6BDyZhkWnoM
+         m26Ry9O20/crjeEROgVmsx82javTC+KuPfSHDZMmkbGzDGaUCvU0Q1CkfaxnO3BSvB
+         H0PwHIPgRGN0PlcPZFkBxt9zjlsQH1EGRBGili70=
+From:   Alan Tull <atull@kernel.org>
+To:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Federico Vaga <federico.vaga@cern.ch>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, Alan Tull <atull@kernel.org>
+Subject: [PATCH v3 0/4] fpga: add devm managed create APIs
+Date:   Wed, 26 Sep 2018 11:12:18 -0500
+Message-Id: <1537978342-17697-1-git-send-email-atull@kernel.org>
 X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=758 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809260152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some users have been reporting issues with thunderbolt being turned off
-before fully initialized.  This is suspected to be caused by userspace
-turning off the Thunderbolt controller using intel-wmi-thunderbolt
-prematurely.
+Implement managed devm_fpga_(mgr|bridge|region)_create() functions.
 
-Details are available here:
-https://bugzilla.kernel.org/show_bug.cgi?id=201227
-https://bugzilla.kernel.org/show_bug.cgi?id=199631
+Patchset is dependent on the patches that were acked/sent upstream:
+   https://lkml.org/lkml/2018/9/12/639
 
-Userspace has already made some mitigiations for this situation:
-https://github.com/hughsie/fwupd/commit/ef6f1d76983c9b66
-https://github.com/hughsie/fwupd/commit/c07ce5b4889a5384
+v3 changes:
+* take out unclear explanation fpga_(mgr|br|region)_unregister
+* Add acks
+* drop the separately resent "dt-bindings: fpga: fix freeze controller compatible in region doc"
+* drop some of the acked patches that I send to Greg
 
-To allow easier debugging of this situation add output that can be turned
-on with dynamic debugging to better root cause this problem.
+Alan Tull (4):
+  fpga: mgr: add devm_fpga_mgr_create
+  fpga: bridge: add devm_fpga_bridge_create
+  fpga: add devm_fpga_region_create
+  docs: fpga: document programming fpgas using regions
 
-Suggested-by: Mika Westerberg <mika.westerberg@intel.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
----
- drivers/platform/x86/intel-wmi-thunderbolt.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/driver-api/fpga/fpga-bridge.rst      |  37 ++----
+ Documentation/driver-api/fpga/fpga-mgr.rst         | 126 +++------------------
+ Documentation/driver-api/fpga/fpga-programming.rst | 107 +++++++++++++++++
+ Documentation/driver-api/fpga/fpga-region.rst      |  91 +++++++--------
+ Documentation/driver-api/fpga/index.rst            |   2 +
+ Documentation/driver-api/fpga/intro.rst            |   2 +-
+ drivers/fpga/altera-cvp.c                          |   8 +-
+ drivers/fpga/altera-fpga2sdram.c                   |   8 +-
+ drivers/fpga/altera-freeze-bridge.c                |  13 +--
+ drivers/fpga/altera-hps2fpga.c                     |   7 +-
+ drivers/fpga/altera-pr-ip-core.c                   |   9 +-
+ drivers/fpga/altera-ps-spi.c                       |  11 +-
+ drivers/fpga/dfl-fme-br.c                          |  11 +-
+ drivers/fpga/dfl-fme-mgr.c                         |  11 +-
+ drivers/fpga/dfl-fme-region.c                      |   6 +-
+ drivers/fpga/dfl.c                                 |   6 +-
+ drivers/fpga/fpga-bridge.c                         |  68 +++++++++--
+ drivers/fpga/fpga-mgr.c                            |  64 +++++++++--
+ drivers/fpga/fpga-region.c                         |  65 +++++++++--
+ drivers/fpga/ice40-spi.c                           |  10 +-
+ drivers/fpga/machxo2-spi.c                         |  11 +-
+ drivers/fpga/of-fpga-region.c                      |   6 +-
+ drivers/fpga/socfpga-a10.c                         |   5 +-
+ drivers/fpga/socfpga.c                             |  10 +-
+ drivers/fpga/ts73xx-fpga.c                         |  11 +-
+ drivers/fpga/xilinx-pr-decoupler.c                 |   4 +-
+ drivers/fpga/xilinx-spi.c                          |  12 +-
+ drivers/fpga/zynq-fpga.c                           |   5 +-
+ include/linux/fpga/fpga-bridge.h                   |   4 +
+ include/linux/fpga/fpga-mgr.h                      |   4 +
+ include/linux/fpga/fpga-region.h                   |   4 +
+ 31 files changed, 412 insertions(+), 326 deletions(-)
+ create mode 100644 Documentation/driver-api/fpga/fpga-programming.rst
 
-diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
-index c2257bd..ce5fbf0 100644
---- a/drivers/platform/x86/intel-wmi-thunderbolt.c
-+++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
-@@ -38,12 +38,16 @@ static ssize_t force_power_store(struct device *dev,
- 	input.length = sizeof(u8);
- 	input.pointer = &mode;
- 	mode = hex_to_bin(buf[0]);
-+	dev_dbg(dev, "force_power: storing %#x\n", mode);
- 	if (mode == 0 || mode == 1) {
- 		status = wmi_evaluate_method(INTEL_WMI_THUNDERBOLT_GUID, 0, 1,
- 					     &input, NULL);
--		if (ACPI_FAILURE(status))
-+		if (ACPI_FAILURE(status)) {
-+			dev_dbg(dev, "force_power: failed to evaluate ACPI method\n");
- 			return -ENODEV;
-+		}
- 	} else {
-+		dev_dbg(dev, "force_power: unsupported mode\n");
- 		return -EINVAL;
- 	}
- 	return count;
 -- 
 2.7.4
 
