@@ -3,85 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4CCC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8CBC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE92A20842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:58:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE92A20842
+	by mail.kernel.org (Postfix) with ESMTP id DDE9920684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:01:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDE9920684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbeIZTLj (ORCPT
+        id S1727616AbeIZTNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:11:39 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:38261 "EHLO
+        Wed, 26 Sep 2018 15:13:55 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:57905 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbeIZTLj (ORCPT
+        with ESMTP id S1726315AbeIZTNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:11:39 -0400
+        Wed, 26 Sep 2018 15:13:54 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MIMOy-1g1uGN49kC-00EMbd; Wed, 26 Sep 2018 14:58:36 +0200
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MHG4W-1g0nrM0qYa-00DGFy; Wed, 26 Sep 2018 15:00:48 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mark Brown <broonie@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Lanqing Liu <lanqing.liu@spreadtrum.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: sprd: don't mark remove function as __exit
-Date:   Wed, 26 Sep 2018 14:58:21 +0200
-Message-Id: <20180926125833.2225931-1-arnd@arndb.de>
+To:     =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: caam/qi2 - add CONFIG_NETDEVICES dependency
+Date:   Wed, 26 Sep 2018 15:00:34 +0200
+Message-Id: <20180926130045.2295764-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:fNKgtJWj17TIxjEo3MAKRXHvevG7DRPgoBRViWCEWdGYz2znHdG
- 7mzJDyXzjqchK03K6wyAd8tNk78aGTFOE6IyNMlZZYy1yw2HmLQH1hT/QAs6tm4To7n8+Fm
- nEmISL09Bf0pu+yue9G4uyn8OIsNqFky78358YwSoVyOY4gU3GiGNwd0fVUOKahludsiIXM
- 4CbN0PF2PG6q41cBGRpPQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:dS/1xTYKdkY=:Kl2FRuZLFERXC4mfcSbENJ
- l99WhwLkcidBYR+ybcWL7b16HCw+vu5seI1LwN/F//+0W7qGslGqIvI/VDqidMjRT5cK00niq
- mfwcq5w06MN42+a8LI5BusjGb8rLx6Zxo2ejtiGuepqNoWZCtUS3o/PyI7wj+T2WIcRvZ9c95
- KjwL58V7KKHF78bKRph983NtcuiQ57zPF8BDuUJvcyT8BO+olDnFGMjoIV20QHOp94ZxTFlOH
- g0sKrebYKtU750TNeOKEtdiGNSFf1ablq73jZX+QJplFBwUHEHuJfXkrVpif0KltkxIcCF7gX
- /TxAyMQ+Zczr/AJ6KO7vBCr8nlt5/EPACZ9F8P24UQzTr0fV1pTCcNbiZU/VTai3SieVlvIPg
- 2Csllu70KdJK+8ytmlmJsgzpKul5hFIviMXI7cKipgZSkuaH3eRLsO4jTfkC5bFq91BNs5B3j
- y0on/Bvd7z4Ehzjg0eInTyvrdwFvJm3uVRkf/a3+bFMLUjT3waQgsSTSCtyl2wqdEetrlqKEU
- pXMtZgw4yY0depIRs8/6P4OBZSiGCsYrdj4wsUxytOKemGJwRlRY3T1Vm3xSZ0cCAfWLB1V/s
- RefLPMM7F5pVljXpJLVms/nwQ/ib5kUt5FjQ3nLlJ6x1IntfMsSpXv52ewwTmPEeTM+eqYZG/
- 4RQwTpVImwd+9JAD58aKFNgR+onI7olLZKEJO6Onr9Qm5W6Q6lk/odMGY8xtrkW7vjlA=
+X-Provags-ID: V03:K1:jFmvqKPYZ7wjK9eorhQrADMyBvZ0MG9gG4d8kLkp05yhiGADQiK
+ t66jz/xvYHZ3VFEG0wCWfLhsMRFVci9kwYidKhWO/39ULnufaLwuv63yV5bxAu/HxxmjUKA
+ obFdj9AHGL06JKeX8DIdbTlWbNEZW3oxMK7oIAyO+MyJ/cIzOk7xP6zcZN04o6ZnHxdbuSM
+ qBdNVe5ViCm/gfYy0lC7w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:LppjjwIISME=:c7sXElmBtAoa+NpRjCu1kZ
+ ptKrR4rOALMwDBJT/2zquVWdjW/Y4eKjM0C4jlRwHISuJKUwgg1Mx4sfPRF9xFyS51YEYCZi5
+ P2MdN6zL5gEbh6BKKbwAZhqzg5ZdynPQYm7pYq3VxUNHYwW8Je4sRmls9IL7iH3CPUt+5bnM8
+ PtBEFWIGbHU5Ldyb9q51BWBPN22Cpzat2uI2yQw4oDteFNexb7QRjv1K7p+ZLNEC1NI1dIs8B
+ UupfbHYrB23FdkEY0qDt1fC+ch46w3k01KAnpUIlyHTjyGzzqXbTi3Ex0IOu0leuY1cKwYx5s
+ EG+KBwyq6NDmrO3rwhWVV3c219Y9EFAMCP5oJaOHq12NDoX4k21M9tiNX0Cac3svgm9hmwZGY
+ 682lcs/vQ8Mtt9x82mx2Wp7OMVXR6TgH6BC2RaI14zlImQxx39nomYnY433YkehMqVSIYi+dE
+ p+pe8Wxsp8neJJxUHsEPeHJgqztF8Np/7pFTv9GlKZRa1IrMu3cn1v5HRP/3e8Jq30e5JZObO
+ pqHLz9mfybiXT8PgQq4z5tFam+/NlSSPtHHy+DRYL/eZ3dB0AXEig5cJg8DbTY8YKgIXNP5K4
+ hjMM7cSy3CNaFFEDn646M7NxLqxULuDqQEga6suZ2SPn7ONBTwrt+nt5dkdmh/XyyjAHs8Az5
+ 2rkL0OBBxe3IjCKUDeVZdwvT5h4oUiwVXaa6pskFOQTB7I/oNvtBjijBGRYZCDkEsbQY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __exit section is left out for built-in drivers, so a
-'remove' callback must not be marked as such to avoid breaking when
-we unbind a device at runtime. This was pointed out by kbuild:
+This driver implements a (part of a) network driver, and fails to
+build if we have turned off networking support:
 
-`sprd_spi_remove' referenced in section `.data' of drivers/spi/spi-sprd.o: defined in discarded section `.exit.text' of drivers/spi/spi-sprd.o
+drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_caam_fqdan_cb':
+caamalg_qi2.c:(.text+0x577c): undefined reference to `napi_schedule_prep'
+caamalg_qi2.c:(.text+0x578c): undefined reference to `__napi_schedule_irqoff'
+drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_dpseci_poll':
+caamalg_qi2.c:(.text+0x59b8): undefined reference to `napi_complete_done'
+drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_caam_remove':
+caamalg_qi2.c:(.text.unlikely+0x4e0): undefined reference to `napi_disable'
+caamalg_qi2.c:(.text.unlikely+0x4e8): undefined reference to `netif_napi_del'
+drivers/crypto/caam/caamalg_qi2.o: In function `dpaa2_dpseci_setup':
+caamalg_qi2.c:(.text.unlikely+0xc98): undefined reference to `netif_napi_add'
 
-Fixes: e7d973a31c24 ("spi: sprd: Add SPI driver for Spreadtrum SC9860")
+From what I can tell, CONFIG_NETDEVICES is the correct dependency here,
+and adding it fixes the randconfig failures.
+
+Fixes: 8d818c105501 ("crypto: caam/qi2 - add DPAA2-CAAM driver")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/spi/spi-sprd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/caam/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/spi/spi-sprd.c b/drivers/spi/spi-sprd.c
-index a9a6c5ed443f..8daa24eec624 100644
---- a/drivers/spi/spi-sprd.c
-+++ b/drivers/spi/spi-sprd.c
-@@ -676,7 +676,7 @@ static int sprd_spi_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int __exit sprd_spi_remove(struct platform_device *pdev)
-+static int sprd_spi_remove(struct platform_device *pdev)
- {
- 	struct spi_controller *sctlr = platform_get_drvdata(pdev);
- 	struct sprd_spi *ss = spi_controller_get_devdata(sctlr);
+diff --git a/drivers/crypto/caam/Kconfig b/drivers/crypto/caam/Kconfig
+index ec42fb652167..619a2c929f3e 100644
+--- a/drivers/crypto/caam/Kconfig
++++ b/drivers/crypto/caam/Kconfig
+@@ -156,6 +156,7 @@ endif # CRYPTO_DEV_FSL_CAAM
+ config CRYPTO_DEV_FSL_DPAA2_CAAM
+ 	tristate "QorIQ DPAA2 CAAM (DPSECI) driver"
+ 	depends on FSL_MC_DPIO
++	depends on NETDEVICES
+ 	select CRYPTO_DEV_FSL_CAAM_COMMON
+ 	select CRYPTO_BLKCIPHER
+ 	select CRYPTO_AUTHENC
 -- 
 2.18.0
 
