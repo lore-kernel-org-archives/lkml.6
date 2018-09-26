@@ -2,246 +2,131 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D34AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F74C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D622720666
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC49F214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:11:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SaZBpcoa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D622720666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="OLGVGS0H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC49F214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeIZWX4 (ORCPT
+        id S1728482AbeIZWYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:23:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53924 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727698AbeIZWXz (ORCPT
+        Wed, 26 Sep 2018 18:24:46 -0400
+Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:10420 "EHLO
+        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727442AbeIZWYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:23:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wq7ISVzsJDUIsC2v5kxwtm3ZttxBOJm1KM5Ze+GtpdI=; b=SaZBpcoan4NBHmslqQXLGQgY9G
-        KIVovBDrhMeGPNZxlIHy5EgEEgUulRxDrwFll90q8t/ZIjYSabs0xg95nKRHz4L7yL+0rHj49WAFP
-        /1aSWtee9fGT9UW0T9PCi9VLCbN3K8pTLmoDwXChVgEuZPAQPncPpVm21524HZUhpXPMi9bWCRVWq
-        PxfXNg5KkN908LIdxi/+q3reaa+Zotipcpx5lkB8g+wChOVcj+ABOqTVwTxGh0Udsvkwiz+SR2Od+
-        ZGA2LsrEriyshJpSc9fPqgufcC2WFmuIJyqNrKgjR5VtETs/DAsuAoofP46C2pY7uZU4ky4zG+t5S
-        64yXXfFg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5CNs-0001FJ-GP; Wed, 26 Sep 2018 16:10:12 +0000
-Subject: Re: [PATCH 2/2] init: add support to directly boot to a mapped device
-To:     Helen Koike <helen.koike@collabora.com>, dm-devel@redhat.com
-Cc:     agk@redhat.com, snitzer@redhat.com, linux-kernel@vger.kernel.org,
-        enric.balletbo@collabora.com, wad@chromium.org,
-        linux-doc@vger.kernel.org, linux-lvm@redhat.com,
-        kernel@collabora.com
-References: <cover.1537936397.git.helen.koike@collabora.com>
- <2c01b2a43a46fab760208d7af3a7af37eec8c41a.1537936397.git.helen.koike@collabora.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c0da1483-4d82-0e13-d03b-9ee8ea6a9d84@infradead.org>
-Date:   Wed, 26 Sep 2018 09:09:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <2c01b2a43a46fab760208d7af3a7af37eec8c41a.1537936397.git.helen.koike@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 26 Sep 2018 18:24:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1537978232; x=1569514232;
+  h=from:to:cc:subject:date:message-id;
+  bh=06OQBzpEygTNfoE2EaoArADsjFWub6dr8IXgjJTaUA0=;
+  b=OLGVGS0HDzw4sSoWNOLvNMizTZ5NpR7KoIJ4qPknig+rEMhDPXN+Pu/8
+   kCV5IO8Mok15YtnJqPEl7hhZv+NegdGogUD4exuGawZVcLoaqKGHqz2tL
+   1JlvsPflo+w3nHJ+xCF1ROT/m4ZdVdLzbsH4BcUUpnkWuoNbvinDacj6c
+   E=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EUAABKrqtbhyeV50NaHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBUYJzfyiMCV+LUphcgT87CyMLhD6EACE0GAEDAQECAQECAQECEAEBAQo?=
+ =?us-ascii?q?LCQgpIwyCNSQBCgRLOzABAQEBAQEBAQEBAQEBAQEaAg1mFmdPbwESIoJ/AYI?=
+ =?us-ascii?q?BD5huiVcBAQGCG4QrAYVkBYYUUTyDWoFYP4EShi0CAhiBEIYPAog2CIYzRo1?=
+ =?us-ascii?q?QBwKCCASEN4lqAhWPMwGLe4hvAgQCBAUCFIFCgg5wgzyCM4NPhRSFXFEBinq?=
+ =?us-ascii?q?CTAEB?=
+X-IPAS-Result: =?us-ascii?q?A2EUAABKrqtbhyeV50NaHAEBAQQBAQcEAQGBUYJzfyiMC?=
+ =?us-ascii?q?V+LUphcgT87CyMLhD6EACE0GAEDAQECAQECAQECEAEBAQoLCQgpIwyCNSQBC?=
+ =?us-ascii?q?gRLOzABAQEBAQEBAQEBAQEBAQEaAg1mFmdPbwESIoJ/AYIBD5huiVcBAQGCG?=
+ =?us-ascii?q?4QrAYVkBYYUUTyDWoFYP4EShi0CAhiBEIYPAog2CIYzRo1QBwKCCASEN4lqA?=
+ =?us-ascii?q?hWPMwGLe4hvAgQCBAUCFIFCgg5wgzyCM4NPhRSFXFEBinqCTAEB?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Sep 2018 11:10:31 -0500
+Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QG8Uld139047;
+        Wed, 26 Sep 2018 12:11:06 -0400
+Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
+        by mx0a-00154901.pphosted.com with ESMTP id 2mnfyqptpk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Sep 2018 12:11:05 -0400
+Received: from ausxippc101.us.dell.com ([143.166.85.207])
+  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Sep 2018 22:11:02 +0600
+X-LoopCount0: from 10.173.37.27
+X-IronPort-AV: E=Sophos;i="5.54,306,1534827600"; 
+   d="scan'208";a="1140620428"
+From:   Mario Limonciello <mario.limonciello@dell.com>
+To:     dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@intel.com>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH] platform/x86: intel-wmi-thunderbolt: Add dynamic debugging
+Date:   Wed, 26 Sep 2018 11:10:58 -0500
+Message-Id: <1537978258-2907-1-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=758 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809260152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/18 10:00 PM, Helen Koike wrote:
-> From: Will Drewry <wad@chromium.org>
-> 
-> Add a dm= kernel parameter modeled after the md= parameter from
-> do_mounts_md. It allows for device-mapper targets to be configured at
-> boot time for use early in the boot process (as the root device or
-> otherwise).
-> 
-> Signed-off-by: Will Drewry <wad@chromium.org>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> [rework to use dm_ioctl calls]
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> [rework to use concise format | rework for upstream]
-> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Some users have been reporting issues with thunderbolt being turned off
+before fully initialized.  This is suspected to be caused by userspace
+turning off the Thunderbolt controller using intel-wmi-thunderbolt
+prematurely.
 
-Hi,
+Details are available here:
+https://bugzilla.kernel.org/show_bug.cgi?id=201227
+https://bugzilla.kernel.org/show_bug.cgi?id=199631
 
-A few small comments inline...
+Userspace has already made some mitigiations for this situation:
+https://github.com/hughsie/fwupd/commit/ef6f1d76983c9b66
+https://github.com/hughsie/fwupd/commit/c07ce5b4889a5384
 
-> ---
->  .../admin-guide/kernel-parameters.rst         |   1 +
->  .../admin-guide/kernel-parameters.txt         |   3 +
->  Documentation/device-mapper/dm-boot.txt       |  63 +++
->  init/Makefile                                 |   1 +
->  init/do_mounts.c                              |   1 +
->  init/do_mounts.h                              |  10 +
->  init/do_mounts_dm.c                           | 475 ++++++++++++++++++
->  7 files changed, 554 insertions(+)
->  create mode 100644 Documentation/device-mapper/dm-boot.txt
->  create mode 100644 init/do_mounts_dm.c
+To allow easier debugging of this situation add output that can be turned
+on with dynamic debugging to better root cause this problem.
 
-> diff --git a/Documentation/device-mapper/dm-boot.txt b/Documentation/device-mapper/dm-boot.txt
-> new file mode 100644
-> index 000000000000..f598f102c980
-> --- /dev/null
-> +++ b/Documentation/device-mapper/dm-boot.txt
-> @@ -0,0 +1,63 @@
-> +Boot time creation of mapped devices
-> +====================================
-> +
-> +It is possible to configure a device mapper device to act as the root
-> +device for your system in two ways.
-> +
-> +The first is to build an initial ramdisk which boots to a minimal
-> +userspace which configures the device, then pivot_root(8) in to it.
-> +
-> +The second is to possible when the device-mapper and any targets are
+Suggested-by: Mika Westerberg <mika.westerberg@intel.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+---
+ drivers/platform/x86/intel-wmi-thunderbolt.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-parse error:  ^^^^^^^^^^^^^^
-
-> +compiled into the kernel (not a module), one or more device-mappers may
-> +be created and used as the root device at boot time with the parameters
-> +given with the boot line dm=...
-> +
-> +The format is specified as a simple string of data separated by commas and
-
-for some definition of "simple".
-
-> +optionally semi-colons, where:
-> + - a comma is used to separate fields like name, uuid, flags and table (specifies
-> +   one device)
-> + - a semi-colon is used to separate devices.
-> +
-> +So the format will look like this:
-> +
-> + dm=<name>,<uuid>,<minor>,<flags>,<table>[,<table>+][;<dev_name>,<uuid>,<minor>,<flags>,<table>[,<table>+]]
-> +
-> +Where,
-> +	<dev_name>	::= The device name.
-> +	<uuid>		::= xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx | ""
-> +	<minor>		::= The device minor number.
-> +	<flags>		::= "ro" | "rw"
-> +	<table>		::= <start> <length> <type> <options>
-> +	<type>		::= "verity" | "bootcache" | ...
-> +
-> +The dm line may be as normal when using the dmsetup tool when using the
-> +--concise argument.
-> +
-> +Examples
-> +========
-> +An example of booting to a linear array made up of user-mode linux block
-> +devices:
-> +
-> +  dm="lroot,,,rw, 0 4096 linear 98:16 0, 4096 4096 linear 98:32 0" \
-> +  root=/dev/dm-0
-> +
-> +This will boot to a rw dm-linear target of 8192 sectors split across two
-> +block devices identified by their major:minor numbers.  After boot, udev
-> +will rename this target to /dev/mapper/lroot (depending on the rules).
-> +No uuid was assigned.
-> +
-> +An example of multiple device-mappers, with the dm="..." contents shown
-> +here split on multiple lines for readability:
-> +
-> +    vboot,,ro,
-> +      0 1768000 bootcache
-> +        aa55b119-2a47-8c45-946a-5ac57765011f+1
-> +        76e9be054b15884a9fa85973e9cb274c93afadb6
-> +        1768000 100000 23 20000;
-> +    vroot,,ro,
-> +      0 1740800 verity 254:0 254:0 1740800 sha1
-> +        76e9be054b15884a9fa85973e9cb274c93afadb6
-> +        5b3549d54d6c7a3837b9b81ed72e49463a64c03680c47835bef94d768e5646fe;
-> +    vram,,rw,
-> +      0 32768 linear 1:0 0,
-> +      32768 32768 linear 1:1 0
-
-> diff --git a/init/do_mounts_dm.c b/init/do_mounts_dm.c
-> new file mode 100644
-> index 000000000000..507ae31808ef
-> --- /dev/null
-> +++ b/init/do_mounts_dm.c
-> @@ -0,0 +1,475 @@
-> +// SPDX-License-Identifier: <SPDX License Expression>
-> +
-> +/*
-> + * do_mounts_dm.c
-> + * Copyright (C) 2017 The Chromium OS Authors <chromium-os-dev@chromium.org>
-> + * Based on do_mounts_md.c
-> + *
-> + * This file is released under the GPLv2.
-> + */
-> +#include <linux/async.h>
-> +#include <linux/ctype.h>
-> +#include <linux/device-mapper.h>
-> +#include <linux/fs.h>
-> +#include <linux/string.h>
-> +#include <linux/delay.h>
-> +
-> +#include "do_mounts.h"
-> +
-> +#define DM_MAX_DEVICES 256
-> +#define DM_MAX_NAME 32
-> +#define DM_MAX_UUID 129
-> +
-> +#define DM_MSG_PREFIX "init"
-> +
-> +#define is_even(a) (((a) & 1) == 0)
-> +
-> +/* See Documentation/device-mapper/dm-boot.txt for dm="..." format details. */
-> +
-> +struct target {
-> +	sector_t start;
-> +	sector_t length;
-> +	char *type;
-> +	char *params;
-> +	/* simple singly linked list */
-> +	struct target *next;
-> +};
-> +
-> +struct dm_device {
-> +	int minor;
-> +	int ro;
-> +	char name[DM_MAX_NAME];
-> +	char uuid[DM_MAX_UUID];
-> +	struct target *table;
-> +	int table_count;
-> +	/* simple singly linked list */
-> +	struct dm_device *next;
-> +};
-> +
-> +static struct {
-> +	unsigned long num_devices;
-> +	char *str;
-> +} dm_setup_args __initdata;
-> +
-> +static int dm_early_setup __initdata;
-> +
-
-// @a: must be a power of 2
-
-> +static void __init *_align(void *ptr, unsigned int a)
-> +{
-> +	register unsigned long agn = --a;
-> +
-> +	return (void *) (((unsigned long) ptr + agn) & ~agn);
-> +}
-
-
-thanks.
+diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
+index c2257bd..ce5fbf0 100644
+--- a/drivers/platform/x86/intel-wmi-thunderbolt.c
++++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
+@@ -38,12 +38,16 @@ static ssize_t force_power_store(struct device *dev,
+ 	input.length = sizeof(u8);
+ 	input.pointer = &mode;
+ 	mode = hex_to_bin(buf[0]);
++	dev_dbg(dev, "force_power: storing %#x\n", mode);
+ 	if (mode == 0 || mode == 1) {
+ 		status = wmi_evaluate_method(INTEL_WMI_THUNDERBOLT_GUID, 0, 1,
+ 					     &input, NULL);
+-		if (ACPI_FAILURE(status))
++		if (ACPI_FAILURE(status)) {
++			dev_dbg(dev, "force_power: failed to evaluate ACPI method\n");
+ 			return -ENODEV;
++		}
+ 	} else {
++		dev_dbg(dev, "force_power: unsupported mode\n");
+ 		return -EINVAL;
+ 	}
+ 	return count;
 -- 
-~Randy
+2.7.4
+
