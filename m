@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2C1C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E9EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F552152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:53:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F552152F
+	by mail.kernel.org (Postfix) with ESMTP id 790C02152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:54:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 790C02152F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbeIZXHl (ORCPT
+        id S1729013AbeIZXHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:07:41 -0400
-Received: from mga18.intel.com ([134.134.136.126]:30763 "EHLO mga18.intel.com"
+        Wed, 26 Sep 2018 19:07:51 -0400
+Received: from mga04.intel.com ([192.55.52.120]:45007 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728409AbeIZXGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:06:24 -0400
+        id S1728622AbeIZXGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:06:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:52:34 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:52:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
-   d="scan'208";a="89577549"
+   d="scan'208";a="76404449"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga002.fm.intel.com with ESMTP; 26 Sep 2018 09:52:25 -0700
+  by orsmga008.jf.intel.com with ESMTP; 26 Sep 2018 09:52:25 -0700
 Received: from andy by smile with local (Exim 4.91)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1g5D32-00054w-A2; Wed, 26 Sep 2018 19:52:24 +0300
+        id 1g5D32-000554-BQ; Wed, 26 Sep 2018 19:52:24 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alex Hung <alex.hung@canonical.com>,
         Mario Limonciello <mario.limonciello@dell.com>,
@@ -47,9 +47,9 @@ To:     Alex Hung <alex.hung@canonical.com>,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 11/28] platform/x86: intel_mid_thermal: Sort headers alphabetically
-Date:   Wed, 26 Sep 2018 19:52:06 +0300
-Message-Id: <20180926165223.19390-11-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 15/28] platform/x86: intel_pmc: Sort headers alphabetically
+Date:   Wed, 26 Sep 2018 19:52:10 +0300
+Message-Id: <20180926165223.19390-15-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
 References: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
@@ -68,34 +68,50 @@ While here, remove unneeded linux/init.h inclusion.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_mid_thermal.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/platform/x86/intel_pmc_ipc.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_mid_thermal.c b/drivers/platform/x86/intel_mid_thermal.c
-index 008a76903cbf..3fa8207dd34e 100644
---- a/drivers/platform/x86/intel_mid_thermal.c
-+++ b/drivers/platform/x86/intel_mid_thermal.c
-@@ -24,16 +24,15 @@
- 
- #define pr_fmt(fmt) "intel_mid_thermal: " fmt
+diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
+index e7edc8c63936..8b88e1743e41 100644
+--- a/drivers/platform/x86/intel_pmc_ipc.c
++++ b/drivers/platform/x86/intel_pmc_ipc.c
+@@ -15,25 +15,24 @@
+  * core through IPC mechanism which in turn messaging between IA core ad PMC.
+  */
  
 -#include <linux/module.h>
++#include <linux/acpi.h>
++#include <linux/atomic.h>
++#include <linux/bitops.h>
+ #include <linux/delay.h>
+-#include <linux/errno.h>
 -#include <linux/init.h>
-+#include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/mfd/intel_msic.h>
+ #include <linux/device.h>
+-#include <linux/pm.h>
++#include <linux/errno.h>
++#include <linux/interrupt.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
++#include <linux/kernel.h>
 +#include <linux/module.h>
- #include <linux/param.h>
--#include <linux/device.h>
++#include <linux/notifier.h>
+ #include <linux/pci.h>
  #include <linux/platform_device.h>
--#include <linux/slab.h>
- #include <linux/pm.h>
-+#include <linux/slab.h>
- #include <linux/thermal.h>
--#include <linux/mfd/intel_msic.h>
+-#include <linux/interrupt.h>
++#include <linux/pm.h>
+ #include <linux/pm_qos.h>
+-#include <linux/kernel.h>
+-#include <linux/bitops.h>
+ #include <linux/sched.h>
+-#include <linux/atomic.h>
+-#include <linux/notifier.h>
+-#include <linux/suspend.h>
+-#include <linux/acpi.h>
+-#include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/spinlock.h>
++#include <linux/suspend.h>
  
- /* Number of thermal sensors */
- #define MSIC_THERMAL_SENSORS	4
+ #include <asm/intel_pmc_ipc.h>
+ 
 -- 
 2.19.0
 
