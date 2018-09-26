@@ -2,229 +2,236 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 990C4C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B27EBECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44CB0214D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:56:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4SQYKmO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CB0214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4CAB0214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:57:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CAB0214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbeIZRIx (ORCPT
+        id S1727374AbeIZRJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:08:53 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35879 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbeIZRIx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:08:53 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l10-v6so3371756wrp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:56:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CYCpy6wUXybA78VmW2RA9tuZ3zcS78wdiasTrV33UGg=;
-        b=I4SQYKmOsDUJgnDMQ3YYvHdP2DPpJi69/Vsz34S1VNPY/brpmC1pEUZ/GoQ6/am53j
-         kFg753oYJyZojUzxjCL+/CeYYPPSAUkBiEIKp7Xn6BfLvrxXBY0F65QO+wVmna8C7e+i
-         5ZN/l8F+KuX6lCdPaOMO8dQD9CfYfquOJK/gE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CYCpy6wUXybA78VmW2RA9tuZ3zcS78wdiasTrV33UGg=;
-        b=eXo3uI/ib+pQBUsChMvVshYSB+lgjZPTnjJ05Y8xqu9B+02ruaKDVhIW6ICj6i77sv
-         Dn2ZXMsbyIHp407UizPP/wzTAq2StrbetlEkmnGg5/blMQKlNk8etYUGdh066Y8bqOR3
-         b8YL7qHt4lyOOYXLm/yuKaU70x0CKg/js17GGgYgCtMgGtzvzC9fHDxkyrq6+m7HH+ai
-         QBTQWoCUNCcUSCcWKswT3AL99bRMNDqeOLKxJKoEImHQc5xGVd0tYMhl91OS5fkVreFM
-         vioT3smxjFPFVpSwvlb8iMjNGndr+Mj95hsHjkf6m1y09r+I9WZ1CHLbOcvZMlzCEdbh
-         mzKA==
-X-Gm-Message-State: ABuFfojmcCZbEPXEhiIRL5PKFhAMfEotMCD3sziqw3G/3AwWryuho0Cs
-        R7UrAwbqszoP7+PhYHkV4VJx9g==
-X-Google-Smtp-Source: ACcGV61R0p1NqqosLhFLzvwgTLDtwC7lpt3P/pO1EbZnsmmoOEdCmf9ROieibArbqkyuiCqFp1JZJQ==
-X-Received: by 2002:a5d:5391:: with SMTP id d17-v6mr4573003wrv.191.1537959387577;
-        Wed, 26 Sep 2018 03:56:27 -0700 (PDT)
-Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id 184-v6sm8675961wmv.6.2018.09.26.03.56.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 03:56:26 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH v4 14/14] ASoC: qcom: common: move
- be_hw_fixup to common
-To:     Rohit Kumar <rohitkr@codeaurora.org>, lee.jones@linaro.org,
-        robh+dt@kernel.org, broonie@kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org, vkoul@kernel.org
-References: <20180917005727.32728-1-srinivas.kandagatla@linaro.org>
- <20180917005727.32728-15-srinivas.kandagatla@linaro.org>
- <500df2e4-6593-5537-ca08-b20a9b601c47@codeaurora.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <1f89b5e9-a123-02f4-b8e8-ebcc89bbc99c@linaro.org>
-Date:   Wed, 26 Sep 2018 11:56:25 +0100
+        Wed, 26 Sep 2018 13:09:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:43132 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726342AbeIZRJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:09:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62B601596;
+        Wed, 26 Sep 2018 03:57:00 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 706413F5BD;
+        Wed, 26 Sep 2018 03:56:58 -0700 (PDT)
+Subject: Re: [PATCH v5 04/12] PCI: brcmstb: add dma-range mapping for inbound
+ traffic
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Jim Quinlan <jim2101024@gmail.com>, ard.biesheuvel@linaro.org
+Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
+ <1537367527-20773-5-git-send-email-jim2101024@gmail.com>
+ <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
+ <7fa897cf-4d58-c63f-afdd-a3ec5a6a56bf@gmail.com>
+ <CAKv+Gu8aJRV4nqq1e-5HRLvbrANQsYuMf-pwWB53BhxLgX7iWg@mail.gmail.com>
+ <b74d3c16-a512-73dc-c94a-ef6adde5f757@gmail.com>
+ <CAKv+Gu8ZbN3BDRyuFzt4o--SSUmhuOh+jnpq8ZR-Ay13DJrAqg@mail.gmail.com>
+ <fa285694-c3e1-adf8-032a-202e7598de41@gmail.com>
+ <CANCKTBsypcVS_iC1+sbW5fMKfj+tTsxbQv9CvDwcO8GV3a8_Yg@mail.gmail.com>
+ <CAKv+Gu-+OjJi8zGLqvnsOJQ9ygMot-O0EbyMKO-yyG-+k-274A@mail.gmail.com>
+ <CANCKTBtbwSqfSU0b_d6Yi7TV3R_ijEpPE8a4bpgpkcOxJOa_zQ@mail.gmail.com>
+ <7accc1a7-647b-1f92-13f8-2fab315ddc45@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <7b25b09e-6f99-8a9b-d548-03becd9de8b5@arm.com>
+Date:   Wed, 26 Sep 2018 11:56:56 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <500df2e4-6593-5537-ca08-b20a9b601c47@codeaurora.org>
+In-Reply-To: <7accc1a7-647b-1f92-13f8-2fab315ddc45@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 19/09/18 06:49, Rohit Kumar wrote:
-> Hello Srinivas,
+On 26/09/18 03:59, Florian Fainelli wrote:
 > 
 > 
-> We will add support for vi feedback usecase in sdm845 machine driver 
-> where we have to support 4 channel tx data for a particular backend. We 
-> should probably keep be_hw_params_fixup in respective machine driver for 
-> now to support such requirement.
-> 
-I agree, we can drop this patch!
-
-thanks,
-srini
-> 
-> Thanks,
-> 
-> Rohit
-> 
-> 
-> On 9/17/2018 6:27 AM, srinivas.kandagatla@linaro.org wrote:
->> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> On 9/24/2018 8:01 AM, Jim Quinlan wrote:
+>> On Mon, Sep 24, 2018 at 4:25 AM Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>>
+>>> On Fri, 21 Sep 2018 at 19:41, Jim Quinlan <jim2101024@gmail.com> wrote:
+>>>>
+>>>> On Thu, Sep 20, 2018 at 5:39 PM Florian Fainelli 
+>>>> <f.fainelli@gmail.com> wrote:
+>>>>>
+>>>>> On 09/20/2018 02:33 PM, Ard Biesheuvel wrote:
+>>>>>> On 20 September 2018 at 14:31, Florian Fainelli 
+>>>>>> <f.fainelli@gmail.com> wrote:
+>>>>>>> On 09/20/2018 02:04 PM, Ard Biesheuvel wrote:
+>>>>>>>> On 20 September 2018 at 13:55, Florian Fainelli 
+>>>>>>>> <f.fainelli@gmail.com> wrote:
+>>>>>>>>> On 09/19/2018 07:19 PM, Ard Biesheuvel wrote:
+>>>>>>>>>> On 19 September 2018 at 07:31, Jim Quinlan 
+>>>>>>>>>> <jim2101024@gmail.com> wrote:
+>>>>>>>>>>> The Broadcom STB PCIe host controller is intimately related 
+>>>>>>>>>>> to the
+>>>>>>>>>>> memory subsystem.  This close relationship adds complexity to 
+>>>>>>>>>>> how cpu
+>>>>>>>>>>> system memory is mapped to PCIe memory.  Ideally, this 
+>>>>>>>>>>> mapping is an
+>>>>>>>>>>> identity mapping, or an identity mapping off by a constant.  
+>>>>>>>>>>> Not so in
+>>>>>>>>>>> this case.
+>>>>>>>>>>>
+>>>>>>>>>>> Consider the Broadcom reference board BCM97445LCC_4X8 which 
+>>>>>>>>>>> has 6 GB
+>>>>>>>>>>> of system memory.  Here is how the PCIe controller maps the
+>>>>>>>>>>> system memory to PCIe memory:
+>>>>>>>>>>>
+>>>>>>>>>>>    memc0-a@[        0....3fffffff] <=> pci@[        
+>>>>>>>>>>> 0....3fffffff]
+>>>>>>>>>>>    memc0-b@[100000000...13fffffff] <=> pci@[ 
+>>>>>>>>>>> 40000000....7fffffff]
+>>>>>>>>>>>    memc1-a@[ 40000000....7fffffff] <=> pci@[ 
+>>>>>>>>>>> 80000000....bfffffff]
+>>>>>>>>>>>    memc1-b@[300000000...33fffffff] <=> pci@[ 
+>>>>>>>>>>> c0000000....ffffffff]
+>>>>>>>>>>>    memc2-a@[ 80000000....bfffffff] <=> 
+>>>>>>>>>>> pci@[100000000...13fffffff]
+>>>>>>>>>>>    memc2-b@[c00000000...c3fffffff] <=> 
+>>>>>>>>>>> pci@[140000000...17fffffff]
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> So is describing this as
+>>>>>>>>>>
+>>>>>>>>>> dma-ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>,
+>>>>>>>>>>               <0x0 0x40000000 0x1 0x0 0x0 0x40000000>,
+>>>>>>>>>>               <0x0 0x80000000 0x0 0x40000000 0x0 0x40000000>,
+>>>>>>>>>>               <0x0 0xc0000000 0x3 0x0 0x0 0x40000000>,
+>>>>>>>>>>               <0x1 0x0 0x0 0x80000000 0x0 0x40000000>,
+>>>>>>>>>>               <0x1 0x40000000 0x0 0xc0000000 0x0 0x40000000>;
+>>>>>>>>>>
+>>>>>>>>>> not working for you? I haven't tried this myself, but since DT 
+>>>>>>>>>> permits
+>>>>>>>>>> describing the inbound mappings this way, we should fix the 
+>>>>>>>>>> code if it
+>>>>>>>>>> doesn't work at the moment.
+>>>>>>>>>
+>>>>>>>>> You mean encoding the memory controller index in the first 
+>>>>>>>>> cell? If that
+>>>>>>>>> works, that's indeed a much cleaner solution, though is it 
+>>>>>>>>> standard
+>>>>>>>>> compliant in any form?
+>>>>>>>>
+>>>>>>>> No those are just memory addresses (although I may have screwed 
+>>>>>>>> up the
+>>>>>>>> order). From Documentation/devicetree/booting-without-of.txt:
+>>>>>>>>
+>>>>>>>> """
+>>>>>>>> Optional property:
+>>>>>>>> - dma-ranges: <prop-encoded-array> encoded as arbitrary number 
+>>>>>>>> of triplets of
+>>>>>>>>          (child-bus-address, parent-bus-address, length). Each 
+>>>>>>>> triplet specified
+>>>>>>>>          describes a contiguous DMA address range.
+>>>>>>>> """
+>>>>>>>>
+>>>>>>>
+>>>>>>> Then I am confused by your comment, that's what this patch does, 
+>>>>>>> it adds
+>>>>>>> support for reading "dma-ranges" from Device Tree and setting up 
+>>>>>>> inbound
+>>>>>>> windows using that. The only caveat is that because the PCIe root
+>>>>>>> complex has some ties with the memory bus architecture it is 
+>>>>>>> connected
+>>>>>>> to (SCB in our case) there is still a requirement to know the
+>>>>>>> translation between a given physical address and its backing memory
+>>>>>>> controller/aperture.
+>>>>>>>
+>>>>>>
+>>>>>> Ah ok, apologies for the noise then.
+>>>>>>
+>>>>>> I was hoping that having working support for dma-ranges would remove
+>>>>>> the need for the special phys<->dma conversion routines.
+>>>>>
+>>>>> What you describe definitively works with platform devices, but I 
+>>>>> am not
+>>>>> sure this is working for PCIe devices, although, conceptually it 
+>>>>> should,
+>>>>> yes.
+>>>> Sorry for my delay in responding.  One problem is that
+>>>> of_dma_configure() only looks at the first dma-range given and then
+>>>> converts it to dev->dma_pfn_offset which is respected by the DMA API.
+>>>> However, we often have multiple dma-ranges, not just one.  This is the
+>>>> big issue.
+>>>>
+>>>
+>>> Given the recent attention to getting these APIs in shape, this may be
+>>> something Robin or Christoph may care to look into?
 >>
->> be_hw_fixup for qdsp is common across mutiple qcom machine drivers,
->> so move it to common file and remove the redundant code.
+>> It looks like this has been brought up before in the "[RFC PATCH] of:
+>> Fix DMA configuration for non-DT masters" thread aka
 >>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   sound/soc/qcom/apq8096.c | 15 ---------------
->>   sound/soc/qcom/common.c  | 17 +++++++++++++++++
->>   sound/soc/qcom/sdm845.c  | 22 ++--------------------
->>   3 files changed, 19 insertions(+), 35 deletions(-)
+>> https://lists.linuxfoundation.org/pipermail/iommu/2017-April/021325.html
 >>
->> diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
->> index daad43f..9cb26aee 100644
->> --- a/sound/soc/qcom/apq8096.c
->> +++ b/sound/soc/qcom/apq8096.c
->> @@ -20,20 +20,6 @@ struct apq8096_card_data {
->>       bool jack_setup;
->>   };
->> -static int apq8096_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
->> -                      struct snd_pcm_hw_params *params)
->> -{
->> -    struct snd_interval *rate = hw_param_interval(params,
->> -                    SNDRV_PCM_HW_PARAM_RATE);
->> -    struct snd_interval *channels = hw_param_interval(params,
->> -                    SNDRV_PCM_HW_PARAM_CHANNELS);
->> -
->> -    rate->min = rate->max = 48000;
->> -    channels->min = channels->max = 2;
->> -
->> -    return 0;
->> -}
->> -
->>   static int msm_snd_hw_params(struct snd_pcm_substream *substream,
->>                    struct snd_pcm_hw_params *params)
->>   {
->> @@ -139,7 +125,6 @@ static void apq8096_add_be_ops(struct snd_soc_card 
->> *card)
->>       for (i = 0; i < num_links; i++) {
->>           if (link->no_pcm == 1) {
->> -            link->be_hw_params_fixup = apq8096_be_hw_params_fixup;
->>               link->init = apq8096_init;
->>               link->ops = &apq8096_ops;
->>           }
->> diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
->> index eb1b9da..ce8e759 100644
->> --- a/sound/soc/qcom/common.c
->> +++ b/sound/soc/qcom/common.c
->> @@ -3,8 +3,24 @@
->>   // Copyright (c) 2018, The Linux Foundation. All rights reserved.
->>   #include <linux/module.h>
->> +#include <sound/pcm_params.h>
->>   #include "common.h"
->> +static int qcom_snd_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
->> +                       struct snd_pcm_hw_params *params)
->> +{
->> +    struct snd_interval *rate = hw_param_interval(params,
->> +                    SNDRV_PCM_HW_PARAM_RATE);
->> +    struct snd_interval *channels = hw_param_interval(params,
->> +                    SNDRV_PCM_HW_PARAM_CHANNELS);
->> +
->> +    rate->min = rate->max = 48000;
->> +    channels->min = channels->max = 2;
->> +    params_set_format(params, SNDRV_PCM_FORMAT_S16_LE);
->> +
->> +    return 0;
->> +}
->> +
->>   int qcom_snd_parse_of(struct snd_soc_card *card)
->>   {
->>       struct device_node *np;
->> @@ -79,6 +95,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
->>               }
->>               link->no_pcm = 1;
->>               link->ignore_pmdown_time = 1;
->> +            link->be_hw_params_fixup = qcom_snd_be_hw_params_fixup;
->>           } else {
->>               link->platform_of_node = link->cpu_of_node;
->>               link->codec_dai_name = "snd-soc-dummy-dai";
->> diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
->> index 2a781d8..87e150c 100644
->> --- a/sound/soc/qcom/sdm845.c
->> +++ b/sound/soc/qcom/sdm845.c
->> @@ -11,7 +11,6 @@
->>   #include "common.h"
->>   #include "qdsp6/q6afe.h"
->> -#define DEFAULT_SAMPLE_RATE_48K        48000
->>   #define DEFAULT_MCLK_RATE        24576000
->>   #define DEFAULT_BCLK_RATE        12288000
->> @@ -177,32 +176,15 @@ static struct snd_soc_ops sdm845_be_ops = {
->>       .shutdown = sdm845_snd_shutdown,
->>   };
->> -static int sdm845_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
->> -                struct snd_pcm_hw_params *params)
->> -{
->> -    struct snd_interval *rate = hw_param_interval(params,
->> -                    SNDRV_PCM_HW_PARAM_RATE);
->> -    struct snd_interval *channels = hw_param_interval(params,
->> -                    SNDRV_PCM_HW_PARAM_CHANNELS);
->> -    struct snd_mask *fmt = hw_param_mask(params, 
->> SNDRV_PCM_HW_PARAM_FORMAT);
->> -
->> -    rate->min = rate->max = DEFAULT_SAMPLE_RATE_48K;
->> -    channels->min = channels->max = 2;
->> -    snd_mask_set_format(fmt, SNDRV_PCM_FORMAT_S16_LE);
->> -
->> -    return 0;
->> -}
->> -
->>   static void sdm845_add_be_ops(struct snd_soc_card *card)
->>   {
->>       struct snd_soc_dai_link *link = card->dai_link;
->>       int i, num_links = card->num_links;
->>       for (i = 0; i < num_links; i++) {
->> -        if (link->no_pcm == 1) {
->> +        if (link->no_pcm == 1)
->>               link->ops = &sdm845_be_ops;
->> -            link->be_hw_params_fixup = sdm845_be_hw_params_fixup;
->> -        }
->> +
->>           link++;
->>       }
->>   }
+>> In the thread "Oza Oza", a Broadcom coworker probably dealing with the
+>> same exact problem as I,  enumerates three problems.   #1 and #2 are
+>> the exact same ones I've just given: the "dma-ranges" prop of the RC
+>> DT node is "skipped", and of_dma_get_range() only considers the first
+>> entry in any "dma-ranges".
 > 
+> Robin, is that something that is expected or should the "dma-ranges" 
+> somehow propagate from host bridge down the PCIe end-point drivers?
+
+Nope, the code is most definitely incomplete - it's sufficient to 
+support the system it was originally needed for (i.e. platform devices 
+with a single range), but can by no means even pretend to support the 
+binding fully. Furthermore, the way that PCI support was later grafted 
+into of_dma_configure() was *only* in support of dma-coherent without 
+consideration for dma-ranges. Hence the current mess.
+
+>>
+>> Thanks, Jim
+>>
+>>>
+>>> In any case, the description of dma-ranges should be in sync with the
+>>> way Linux interprets it, so this is either a documentation bug or a
+>>> DMA layer bug.
+>>>
+>>>> There is another issue with of_dma_configure() being invoked by the EP
+>>>> driver on "bridge->parent->of_node", which is our RC device,
+>>>> Of_dma_configure() calls of_dma_range() on the of_get_next_parent() of
+>>>> our RC's device node and this misses the dma-ranges property which is
+>>>> contained within the RC.  I think I could workaround this but there is
+>>>> no getting around the first problem.
+>>>>
+>>>
+>>> IIUC dma-ranges should be added to the parent bus of a device, which I
+>>> guess is slightly ambiguous for a root complex that incorporates a
+>>> host bridge.
+> 
+> Humm, why is that ambiguous for a host bridge/root complex?
+
+The real problem is that FDT machines don't describe the PCI hierarchy 
+in DT as proper OF does, so we have this awkward crossing between the DT 
+model and the Linux device model where the devices have no DT 
+representation and the "parent bus" is a DT leaf node, which cocks up 
+the way the current code is expecting to work.
+
+Robin.
