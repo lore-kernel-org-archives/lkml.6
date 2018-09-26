@@ -2,279 +2,109 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5566FC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA36C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03EE021480
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B20921480
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:58:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UogGTugC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03EE021480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="bJDryoPG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B20921480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbeIZQKc (ORCPT
+        id S1727567AbeIZQKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:10:32 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33351 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbeIZQKb (ORCPT
+        Wed, 26 Sep 2018 12:10:36 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:15134 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbeIZQKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:10:31 -0400
-Received: by mail-qt1-f193.google.com with SMTP id i10-v6so16547870qtp.0;
-        Wed, 26 Sep 2018 02:58:21 -0700 (PDT)
+        Wed, 26 Sep 2018 12:10:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dJDlH6lx2quBqOTR2G5084Q8GqD13Br1jToi4PO+4pY=;
-        b=UogGTugCjETbGa64lTdRQE+AOJa4TXBnVzdIcRFa3PkYt+mN+wAsM8w2ii1SvS+SwM
-         PzI7Q1rk+EkvPValZNv8ZP6O/jUbjF8udh+jL9/mUfCrirWCIW01rKSNCa7JxnlthFQC
-         sZX/thTC35zfJYgUPYwH/uc5fHDgtIQWNiYPo3T5LPzX/Ac6OFgmzsM8exmFHmVrHlUH
-         bzL4lK4ajPtKNSg9xnX+lEfheeckGxg4gDSCLqwfbKSc0KhGx1E6Bdb9bwwfJAQHtPNg
-         PdvBgHydRUNCxzsAggnp+GkUaTmuCC4aUsGphKOGFSXCsN7gMK2sySlLtB8xcmopc+vo
-         lDXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dJDlH6lx2quBqOTR2G5084Q8GqD13Br1jToi4PO+4pY=;
-        b=dv2ibMOmmZ5T/VdJGqfuYQ7b7iTlaRg9m86vwqeDwlC6YGk+H3gdIBDVNkPKcxRDiS
-         iNv5Co8FIUN2Ey7otZZ9z6gMW6CqKYXke/N1KLv2TNYGYxbWVBYoRGDvUM/9AAl7m15l
-         eRlG5SLh+I+L2pTei5GsEdHbpW47FsXPmRvCd0XCKaCVxWkDq2lK/uikgBW7mWXpmLhk
-         S0PQ3lFka689hT+4WenwDZyl6sYrKiDHuH5V/Do4Ee9kLXbyUx93DZ+x5Ul8w5xQO0Qv
-         eScXW+Llk95Y/oQBiRTeeDMW1YFBoneaY3aVrmvpi7jjmUFW8WfUlJNZDpzMjoSmGckN
-         ikgQ==
-X-Gm-Message-State: ABuFfogDYrY3h88yxN7b9OfK5qggJJN6mLMZ9K1dG1PaZnjtN1s8x4Cb
-        Xdoj8EAQrCZUQ2/0bFiM9EnaoItMlKw4b9e266U=
-X-Google-Smtp-Source: ACcGV60dM9IWXKJz5+x3jKMhsctHBbxm4btEmbEdmPdsPeQsXGVN3puMwauQyuolTTGB2RavpyPS86CMZfcbwt48Ups=
-X-Received: by 2002:ac8:2f86:: with SMTP id l6-v6mr3779541qta.83.1537955900538;
- Wed, 26 Sep 2018 02:58:20 -0700 (PDT)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1537955905; x=1569491905;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=bhiJG3m7iOEZXjhoifQ33rYgufD8sBS5BtmoLb7wrqU=;
+  b=bJDryoPG8fk/kWhIm9xEudsYZp48ahDoo62QgVii69uWLsBtNZEOrOKj
+   ouncCj0Q/VGrz/1u7vn7SZ79caVsH+KeFgRKuae6VhEnp7MOjxaZdpIs6
+   gbBtsxZFh/dTQbWXLKw04AS2Rw7qPGy/oYKLIjWAWbjjpzcr/q8EiB6Cv
+   M=;
+X-IronPort-AV: E=Sophos;i="5.54,305,1534809600"; 
+   d="scan'208";a="632755737"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2b-2eab95aa.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Sep 2018 09:58:24 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2b-2eab95aa.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w8Q9wKg7106741
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Wed, 26 Sep 2018 09:58:23 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w8Q9wJd2024160;
+        Wed, 26 Sep 2018 11:58:19 +0200
+Subject: Re: [RFC 00/60] Coscheduling for Linux
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+ <20180914111251.GC24106@hirez.programming.kicks-ass.net>
+ <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
+ <20180917122538.GT24124@hirez.programming.kicks-ass.net>
+From:   "=?UTF-8?Q?Jan_H._Sch=c3=b6nherr?=" <jschoenh@amazon.de>
+Openpgp: preference=signencrypt
+Message-ID: <648176de-9ad4-a4b3-c542-bbaf250cd8cb@amazon.de>
+Date:   Wed, 26 Sep 2018 11:58:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180831151828.15175-1-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180831151828.15175-1-benjamin.tissoires@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 12:58:09 +0300
-Message-ID: <CAHp75VdELtEv4LYHXGRVqc+G=Mq0WzQrX1soK2_bApcc19jNWQ@mail.gmail.com>
-Subject: Re: [PATCH v3] platform/x86: surface3_power: MSHW0011 rev-eng implementation
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Bastien Nocera <hadess@hadess.net>,
-        Stephen Just <stephenjust@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180917122538.GT24124@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 6:18 PM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> The MSHW0011 device is a chip that replaces the battery firmware
-> by using ACPI operation regions on the Surface 3.
-> It is unclear whether or not the chip will be reused somewhere else
-> (under Windows, the chip is called "Surface Platform Power Driver"
-> and the driver is provided by Microsoft).
->
-> The values have been obtained by reverse engineering, and are subject to
-> errors. Looks like it works on overall pretty well.
->
-> I couldn't manage to get the IRQ correctly triggered, so I am using a
-> good old polling thread to check for changes. This is something
-> to be fixed in a later version.
-
-I have pushed to my review and testing queue for bots playing with it!
-But below my review.
-
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=106231
->
-
-Remove this blank line.
-
-> +// SPDX-License-Identifier: GPL-2.0+
-
-> +
-
-No need for this blank line either.
-
-> +/*
-> + * Supports for the power IC on the Surface 3 tablet.
-> + *
-> + * (C) Copyright 2016-2018 Red Hat, Inc
-> + * (C) Copyright 2016-2018 Benjamin Tissoires <benjamin.tissoires@gmail.com>
-> + * (C) Copyright 2016 Stephen Just <stephenjust@gmail.com>
-
-> + *
-...and for this.
-
-> + */
-
-> +#include <asm/unaligned.h>
-
-I'm pretty sure this should go after linux/*.h ones
-
-> +#include <linux/acpi.h>
-> +#include <linux/freezer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kthread.h>
-> +#include <linux/slab.h>
-> +#include <linux/uuid.h>
-
-
-> +       char    model[10];
-> +       char    serial[10];
-> +       char    type[10];
-> +       char    OEM[10];
-
-These 10:s is something worth to define:
-
-#define SURFACE_3_STRLEN 10
-
-or alike.
-
-> +
-> +
-
-One blank line is enough
-
-> +#define MSHW0011_EV_2_5                        0x1ff
-
-Is it mask? Value? Some threshold?
-
-> +       static const guid_t mshw0011_guid =
-> +               GUID_INIT(0x3F99E367, 0x6220, 0x4955,
-> +                         0x8B, 0x0F, 0x06, 0xEF, 0x2A, 0xE7, 0x94, 0x12);
-
-Can you move this outside of the function?
-
-> +       char buf[10];
-
-Same definition as I mentioned above?
-
-
-> +       /* get serial number */
-> +       ret = i2c_smbus_read_i2c_block_data(client, MSHW0011_BAT0_REG_SERIAL_NO,
-> +                                           10, buf);
-
-10 -> sizeof() ?
-
-> +       if (ret != 10) {
-
-Ditto.
-
-> +               dev_err(&client->dev, "Error reading serial no: %d\n", ret);
-> +               return ret;
-> +       }
-
-> +       snprintf(bix->serial, ARRAY_SIZE(bix->serial),
-> +                "%*pE%*pE", 3, buf + 7, 6, buf);
-
-It would be one line with format string as "%3pE%6pE" followed by two pointers.
-
-> +       /* get OEM name */
-> +       ret = i2c_smbus_read_i2c_block_data(client, MSHW0011_BAT0_REG_OEM,
-> +                                           4, buf);
-> +       if (ret != 4) {
-
-4 to be defined? Or separate buffer?
-
-> +               dev_err(&client->dev, "Error reading cycle count: %d\n", ret);
-> +               return ret;
-> +       }
-> +       snprintf(bix->OEM, ARRAY_SIZE(bix->OEM), "%*pE", 3, buf);
-
-Depending on the above it might be either "%3pE" or '...sizeof(buf) -
-1, buf...'.
-
-> +       status = ret;
-
-> +
-
-No need to have this blank line.
-
-> +       if (status != cdata->charging)
-> +               mshw0011_notify(cdata, cdata->notify_mask,
-> +                               MSHW0011_NOTIFY_ADP1, &ret);
-
-> +       bat_status = bst.battery_state;
-
-> +
-
-Ditto.
-
-> +       if (bat_status != cdata->bat_charging)
-> +               mshw0011_notify(cdata, cdata->notify_mask,
-> +                               MSHW0011_NOTIFY_BAT0_BST, &ret);
-
-> +       ret = mshw0011_bix(cdata, &bix);
-> +       if (ret < 0)
-> +               return ret;
-
-Unlike here, would be nice to add a blank line.
-
-> +       if (bix.last_full_charg_capacity != cdata->full_capacity)
-> +               mshw0011_notify(cdata, cdata->notify_mask,
-> +                               MSHW0011_NOTIFY_BAT0_BIX, &ret);
-
-> +       if (!value64 || ares->type != ACPI_RESOURCE_TYPE_SERIAL_BUS) {
-> +               ret = AE_BAD_PARAMETER;
-> +               goto err;
-> +       }
-> +
-> +       sb = &ares->data.i2c_serial_bus;
-> +       if (sb->type != ACPI_RESOURCE_SERIAL_TYPE_I2C) {
-> +               ret = AE_BAD_PARAMETER;
-> +               goto err;
-> +       }
-
-Side note: It would be a good candidate to use my (not yet upstreamed) helper.
-
-> +       handle = ACPI_HANDLE(&client->dev);
-
-> +
-
-Remove this blank line.
-
-> +       if (!handle)
-> +               return -ENODEV;
-
-> +static void mshw0011_remove_space_handler(struct i2c_client *client)
-> +{
-> +       acpi_handle handle = ACPI_HANDLE(&client->dev);
-> +       struct mshw0011_handler_data *data;
-> +       acpi_status status;
-> +
-
-I would prefer to see handle assignment here followed by immediate check.
-
-> +       if (!handle)
-> +               return;
-
-> +       struct i2c_board_info board_info;
-> +       struct device *dev = &client->dev;
-> +       struct i2c_client *bat0;
-
-> +
-
-Redundant.
-
-> +       struct mshw0011_data *data;
-> +       int error, mask;
-
-> +       data->notify_mask = mask == MSHW0011_EV_2_5;
-
-Since it's a mask, append _MASK and use GENMASK() above.
-
--- 
-With Best Regards,
-Andy Shevchenko
+On 09/17/2018 02:25 PM, Peter Zijlstra wrote:
+> On Fri, Sep 14, 2018 at 06:25:44PM +0200, Jan H. Schönherr wrote:
+> 
+>> Assuming, there is a cgroup-less solution that can prevent simultaneous
+>> execution of tasks on a core, when they're not supposed to. How would you
+>> tell the scheduler, which tasks these are?
+> 
+> Specifically for L1TF I hooked into/extended KVM's preempt_notifier
+> registration interface, which tells us which tasks are VCPUs and to
+> which VM they belong.
+> 
+> But if we want to actually expose this to userspace, we can either do a
+> prctl() or extend struct sched_attr.
+
+Both, Peter and Subhra, seem to prefer an interface different than cgroups
+to specify what to coschedule.
+
+Can you provide some extra motivation for me, why you feel that way?
+(ignoring the current scalability issues with the cpu group controller)
+
+
+After all, cgroups where designed to create arbitrary groups of tasks and
+to attach functionality to those groups.
+
+If we were to introduce a different interface to control that, we'd need to
+introduce a whole new group concept, so that you make tasks part of some
+group while at the same time preventing unauthorized tasks from joining a
+group.
+
+
+I currently don't see any wins, just a loss in flexibility.
+
+Regards
+Jan
