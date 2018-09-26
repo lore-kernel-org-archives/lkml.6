@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB7FECE560
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62806C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66AC2152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:52:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66AC2152F
+	by mail.kernel.org (Postfix) with ESMTP id 1FF7C2152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF7C2152F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbeIZXGk (ORCPT
+        id S1728847AbeIZXGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:06:40 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28430 "EHLO mga06.intel.com"
+        Wed, 26 Sep 2018 19:06:43 -0400
+Received: from mga05.intel.com ([192.55.52.43]:25839 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728786AbeIZXGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728796AbeIZXGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Sep 2018 19:06:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:52:49 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:52:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
-   d="scan'208";a="236136272"
+   d="scan'208";a="260445797"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga004.jf.intel.com with ESMTP; 26 Sep 2018 09:52:25 -0700
+  by orsmga005.jf.intel.com with ESMTP; 26 Sep 2018 09:52:25 -0700
 Received: from andy by smile with local (Exim 4.91)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1g5D32-00055T-Fz; Wed, 26 Sep 2018 19:52:24 +0300
+        id 1g5D32-000552-B5; Wed, 26 Sep 2018 19:52:24 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alex Hung <alex.hung@canonical.com>,
         Mario Limonciello <mario.limonciello@dell.com>,
@@ -47,9 +47,9 @@ To:     Alex Hung <alex.hung@canonical.com>,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 27/28] platform/x86: intel_turbo_max_3: Convert to use SPDX identifier
-Date:   Wed, 26 Sep 2018 19:52:22 +0300
-Message-Id: <20180926165223.19390-27-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 14/28] platform/x86: intel_oaktrail: Convert to use SPDX identifier
+Date:   Wed, 26 Sep 2018 19:52:09 +0300
+Message-Id: <20180926165223.19390-14-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
 References: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
@@ -66,34 +66,43 @@ No functional change.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_turbo_max_3.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/platform/x86/intel_oaktrail.c | 18 ++----------------
+ 1 file changed, 2 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_turbo_max_3.c b/drivers/platform/x86/intel_turbo_max_3.c
-index 0e1bdb883ceb..7b9cc841ab65 100644
---- a/drivers/platform/x86/intel_turbo_max_3.c
-+++ b/drivers/platform/x86/intel_turbo_max_3.c
-@@ -1,19 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/platform/x86/intel_oaktrail.c b/drivers/platform/x86/intel_oaktrail.c
+index 1d98fd9ca1ea..3c0438ba385e 100644
+--- a/drivers/platform/x86/intel_oaktrail.c
++++ b/drivers/platform/x86/intel_oaktrail.c
+@@ -1,5 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
  /*
-  * Intel Turbo Boost Max Technology 3.0 legacy (non HWP) enumeration driver
-  * Copyright (c) 2017, Intel Corporation.
-  * All rights reserved.
+- * intel_oaktrail.c - Intel OakTrail Platform support.
++ * Intel OakTrail Platform support
   *
-  * Author: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+  * Copyright (C) 2010-2011 Intel Corporation
+  * Author: Yin Kangkai (kangkai.yin@intel.com)
+@@ -8,21 +9,6 @@
+  * <cezary.jackiewicz (at) gmail.com>, based on MSI driver
+  * Copyright (C) 2006 Lennart Poettering <mzxreary (at) 0pointer (dot) de>
+  *
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License, or
+- *  (at your option) any later version.
 - *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
+- *  This program is distributed in the hope that it will be useful, but
+- *  WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+- *  General Public License for more details.
 - *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
+- *  You should have received a copy of the GNU General Public License
+- *  along with this program; if not, write to the Free Software
+- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+- *  02110-1301, USA.
 - *
-  */
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
+  * This driver does below things:
+  * 1. registers itself in the Linux backlight control in
+  *    /sys/class/backlight/intel_oaktrail/
 -- 
 2.19.0
 
