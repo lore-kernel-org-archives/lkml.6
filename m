@@ -2,94 +2,88 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 830D5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396A7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB09214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:04:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J3W4MvQU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB09214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 56B27214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:04:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B27214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbeIZOQY (ORCPT
+        id S1727450AbeIZOQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:16:24 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51983 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbeIZOQY (ORCPT
+        Wed, 26 Sep 2018 10:16:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48561 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeIZOQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:16:24 -0400
-Received: by mail-it1-f194.google.com with SMTP id 74-v6so41436itw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x0f42Gqns6zf18M9daa2+GGLacy2ap0kbjOBzSSUEIs=;
-        b=J3W4MvQU2jaBSARAt9xoijnqO6WXDCTRZjh1I2QTqiwNOgjsi6vcDfd12qVbO/sTYV
-         WoF9OT18HCHvWQR79NJTq9atPCQDTHBGCFkKTDMFpfUD+WwM5Hz50qXa2JDHeooxRaYX
-         npe4Y8sMB9/uITgadSvlQkwzSV7q+G17OjkvQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x0f42Gqns6zf18M9daa2+GGLacy2ap0kbjOBzSSUEIs=;
-        b=lq6zbFsGYVMdWoL2lMIpDQZvgnle2bHFdBc0E4ZUuU93KnmBaQ4RWowiMk2/lr0tSt
-         MBSbWARtVxL64UMCkisWlNDhKbgrWOinuL9mjB4YT67zrImk5IkhuPiPKn2hVpvo1KKG
-         ryp4VqTDW13SmI9j7YCjThQ2fGFaaG3Jvx0DCVKsH3DrYFIjr1OFgAZxpqZjwDb6kwat
-         2x4tlXJ8lvonQzedxmbjkFwgETYMBo+1/Ichbe8DiQNXWxLSSHPspU21FeBSl1csLZDR
-         CjP02br8NvLqdDyS6QoiYY06BdY+fVFq+mZvYE/Hoa/gG2bzg1tVSsFkQ6q1tFq332XD
-         t0xA==
-X-Gm-Message-State: ABuFfojgK7+1GBw9r5Fxbd5x4RejExE1xNK/OrSj1TQueujd0iL1+TbY
-        671JYQ0Fs4f4M/5n93SyxYw0vClsB6iOK9cZ0mTDHA==
-X-Google-Smtp-Source: ACcGV62d8Eahg4iGp/SPHs6vvfAdVmDbTtfhAsQ2wZaDhCsYoKXEGZlRlMzI5GH4KdRzm4SXW6q37axotAXPf7zTttc=
-X-Received: by 2002:a24:7605:: with SMTP id z5-v6mr3790803itb.62.1537949083147;
- Wed, 26 Sep 2018 01:04:43 -0700 (PDT)
+        Wed, 26 Sep 2018 10:16:28 -0400
+Received: from [217.9.97.180] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g54oM-0000yc-5n; Wed, 26 Sep 2018 10:04:42 +0200
+Date:   Wed, 26 Sep 2018 10:04:38 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [Problem] Cache line starvation
+In-Reply-To: <20180926073426.GA31905@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1809261002510.2974@nanos.tec.linutronix.de>
+References: <20180921120226.6xjgr4oiho22ex75@linutronix.de> <20180926073426.GA31905@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <358665e3f4f9ec105dc2f8a2dc6dd98dbe761fae.1537930252.git.baolin.wang@linaro.org>
- <b4b36b7b54cc227e6e7f14c314b4617863a205f5.1537930252.git.baolin.wang@linaro.org>
-In-Reply-To: <b4b36b7b54cc227e6e7f14c314b4617863a205f5.1537930252.git.baolin.wang@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Sep 2018 10:04:31 +0200
-Message-ID: <CACRpkdb1SAWk7EaF5-O5QNXrMVZU7GCwp+XqskmGC==VG2zVLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] dt-bindings: power: Add Spreadtrum SC27XX fuel
- gauge unit documentation
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        yuanjiang.yu@unisoc.com, Mark Brown <broonie@kernel.org>,
-        Craig Tatlor <ctatlor97@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 5:00 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+On Wed, 26 Sep 2018, Peter Zijlstra wrote:
+> On Fri, Sep 21, 2018 at 02:02:26PM +0200, Sebastian Andrzej Siewior wrote:
+> > Instrumentation show always the picture:
+> > 
+> > CPU0                                         CPU1
+> > => do_syscall_64                              => do_syscall_64
+> > => SyS_ptrace                                   => syscall_slow_exit_work
+> > => ptrace_check_attach                          => ptrace_do_notify / rt_read_unlock 
+> > => wait_task_inactive                              rt_spin_lock_slowunlock()
+> >    -> while task_running()                         __rt_mutex_unlock_common()
+> >   /   check_task_state()                           mark_wakeup_next_waiter()
+> >  |     raw_spin_lock_irq(&p->pi_lock);             raw_spin_lock(&current->pi_lock);
+> >  |     .                                               .
+> >  |     raw_spin_unlock_irq(&p->pi_lock);               .
+> >   \  cpu_relax()                                       .
+> >    -                                                   .
+> >     *IRQ*                                          <lock acquired>
+> > 
+> > In the error case we observe that the while() loop is repeated more than
+> > 5000 times which indicates that the pi_lock can be acquired. CPU1 on the
+> > other side does not make progress waiting for the same lock with interrupts
+> > disabled.
+> 
+> I've tried really hard to reproduce this in userspace, but so far have
+> not had any luck. Looks to be a real tricky thing to make happen.
 
-> This patch adds the binding documentation for Spreadtrum SC27XX series PMICs
-> fuel gauge unit device, which is used to calculate the battery capacity.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
-> Changes from v1:
->  - Renamed GPIO property.
->  - Use standand battery properties instead of 'sprd,inner-resist' and
->    'sprd,ocv-cap-table'.
->  - Remove battery node's description.
+It's probably equally tricky to write a reproducer as it was to instrument
+the thing. I assume it's a combination of code sequences on both CPUs which
+involve other (unrelated) lock instructions on the way.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks,
 
-Yours,
-Linus Walleij
+	tglx
+
