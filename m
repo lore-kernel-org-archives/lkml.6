@@ -2,132 +2,168 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A68C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87824C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 185212150C
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:19:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185212150C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 182572150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:21:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182572150C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeI0CeE (ORCPT
+        id S1726991AbeI0Cfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:34:04 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33518 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbeI0CeE (ORCPT
+        Wed, 26 Sep 2018 22:35:53 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42948 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbeI0Cfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:34:04 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f10-v6so266606wrs.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 13:19:24 -0700 (PDT)
+        Wed, 26 Sep 2018 22:35:53 -0400
+Received: by mail-ot1-f68.google.com with SMTP id h26-v6so261926otl.9;
+        Wed, 26 Sep 2018 13:21:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RvKUcGuu6B3B9tJeMQc8r/WkveTyxnEYcqLLgfwoUyA=;
-        b=bIbYiXMrQtkTfxrjMQYA7lasE/vrYIO55YTFy7D2j+Cex62bf2eCPd+vz/9RPXfzXF
-         BYlUEFm4SXYRISPOL09SY6nEdQ92rY9KZy/Nt48GAAI/Oo3NvGyQSl+GdNkvrWH98bAc
-         pMT38x7aJNvbAdjv/MOdl/gtLdobLdoxQBfPdeqlPzLZzgbWNNRe7U5RCuPWu0lTgWz3
-         9ne/H2V+BraakcqKUdzqi087+2D9UXCJftXKFbqBIlxg5JywFbrLJz4bJZGyy0hLLXMA
-         uwPicGaIFyxvzXTR61aculN+ApBA600mOJWEpheKJWisS99Skv19fpASRgwS7TWobLst
-         MQng==
-X-Gm-Message-State: ABuFfohEQmXeASfyUTkX31khe8vNnEulFcIMu8g/JxK+P//88hMI9jnn
-        BbWO5suOmGdIUEc7NP9AI6uvLg==
-X-Google-Smtp-Source: ACcGV62SUsjuAsd+WcSGiTNPI6/+ar9wo0lL0MkahPYy3PhwaaiW+OlUiSIgzR9ZA00dzTaj+B/h/w==
-X-Received: by 2002:adf:a10c:: with SMTP id o12-v6mr6343885wro.169.1537993164130;
-        Wed, 26 Sep 2018 13:19:24 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id 200-v6sm738745wmv.6.2018.09.26.13.19.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 13:19:23 -0700 (PDT)
-Subject: Re: [PATCH 2/2] mmc: Add mmc_force_detect_change_begin / _end
- functions
-To:     Frieder Schrempf <frieder.schrempf@exceet.de>,
-        ulf.hansson@linaro.org, quentin.schulz@free-electrons.com
-Cc:     gregkh@linuxfoundation.org, linus.walleij@linaro.org,
-        shawn.lin@rock-chips.com, adrian.hunter@intel.com,
-        baolin.wang@linaro.org, maxime.ripard@free-electrons.com,
-        thomas.petazzoni@free-electrons.com, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, devel@driverdev.osuosl.org,
-        icenowy@aosc.xyz, wens@csie.org
-References: <CAPDyKFqDrdD+N+foLCwsVABtboz1Vn=OtJs14gp07zJfXHVKSA@mail.gmail.com>
- <f9028dcb-c217-4efc-60a7-d0a2c1804a08@exceet.de>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d9795fde-6bdd-b6fa-da41-839d44df6435@redhat.com>
-Date:   Wed, 26 Sep 2018 22:19:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qKiV69SbqQyHr+eFmOQkreF+1GvupVhedHPU6YRRkEg=;
+        b=XHc7DQHnw1uQ2UQpM1xjIP5uy5Rc652iG+UNQrwIAuEKLMGweL8G/IhjwCrMIZbVa1
+         9eneFFlWFtbHjQQ9d1FY5EFNHUzamz9wFPNJOqVGz2LvFOkXQXDKCJwAHaTFBv0yw5pO
+         lhE+jwdidNEZe5zUhSitIf6ltZcK6WwWh5sUrtMJ1gDxGmS66i5oqB+AfFIaywa5DN3X
+         UEJmg06SPkkcehrMWHF++LEgIs1mNQtQS81L/Y84r5D1MfbZwVfG4iFnEzjL05/m2Lf0
+         +7bfhf8O9DhsJ77K6Orcaw3i3+BBCNyMyDY1QWjuLpnYlR266tQ/gCgxO//D3wUvQuuC
+         0PzQ==
+X-Gm-Message-State: ABuFfojCWCn7QEjyUG5dmhS5retBddm7+C3/NwKDQmt3GnluCgQw8NUT
+        LSyHjodqQsj72Ughp9c9xQ==
+X-Google-Smtp-Source: ACcGV63PJ1D52DvLrtY8EcQ6JfKqHE1WfujvWMnsPsTrTc7C2Zx3cSnJ0kXJqRd/eseWgOjEzlAOmg==
+X-Received: by 2002:a9d:518c:: with SMTP id y12-v6mr5579200otg.252.1537993273385;
+        Wed, 26 Sep 2018 13:21:13 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 89-v6sm2222276ots.72.2018.09.26.13.21.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 13:21:12 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 15:21:12 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/7] dt-bindings: stm32-dma: Add DMA/MDMA chaining
+ support bindings
+Message-ID: <20180926202112.GA6426@bogus>
+References: <1536650820-16076-1-git-send-email-pierre-yves.mordret@st.com>
+ <1536650820-16076-2-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-In-Reply-To: <f9028dcb-c217-4efc-60a7-d0a2c1804a08@exceet.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536650820-16076-2-git-send-email-pierre-yves.mordret@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 26-09-18 16:44, Frieder Schrempf wrote:
-> Hi,
+On Tue, Sep 11, 2018 at 09:26:54AM +0200, Pierre-Yves MORDRET wrote:
+> This patch adds dma bindings to support DMA/MDMA chaining transfer.
+> 1 bit is to manage both DMA FIFO Threshold
+> 1 bit is to manage DMA/MDMA Chaining features.
+> 2 bits are used to specify SDRAM size to use for DMA/MDMA chaining.
+> The size in bytes of a certain order is given by the formula:
+>     (2 ^ order) * PAGE_SIZE.
+> The order is given by those 2 bits.
+> For cyclic, whether chaining is chosen, any value above 1 can be set :
+> SRAM buffer size will rely on period size and not on this DT value.
 > 
-> On Fri, Feb 09, 2018 at 03:01:00PM +0100, Ulf Hansson wrote:
->> [...]
->>
->> >> > I'd like to know if any progress has been made on that problem 
-> (I may
->> >> > have missed patches).
->> >> > Had you had the time to look at the issue?
->> >>
->> >> I have looked at the issue, but not manage to cook some patches 
-> for it.
->> >>
->> >> However, it's on my top of my TODO list for mmc. No promises, but
->> >> perhaps and hopefully I manage to get something posted during the
->> >> coming release cycle.
+> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> ---
+>   Version history:
+>     v1:
+>        * Initial
+> ---
+> ---
+>  .../devicetree/bindings/dma/stm32-dma.txt          | 32 +++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 4 deletions(-)
 > 
-> I would be interested in a ESP8089 driver in mainline and that's why I want to pick up this discussion.
+> diff --git a/Documentation/devicetree/bindings/dma/stm32-dma.txt b/Documentation/devicetree/bindings/dma/stm32-dma.txt
+> index c5f5190..163be09 100644
+> --- a/Documentation/devicetree/bindings/dma/stm32-dma.txt
+> +++ b/Documentation/devicetree/bindings/dma/stm32-dma.txt
+> @@ -17,6 +17,12 @@ Optional properties:
+>  - resets: Reference to a reset controller asserting the DMA controller
+>  - st,mem2mem: boolean; if defined, it indicates that the controller supports
+>    memory-to-memory transfer
+> +- dmas: A list of eight dma specifiers, one for each entry in dma-names.
+> +  Refer to stm32-mdma.txt for more details.
+> +- dma-names: should contain "ch0", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6" and
+> +  "ch7" and represents each STM32 DMA channel connected to a STM32 MDMA one.
+> +- memory-region : phandle to a node describing memory to be used for
+> +  M2M intermediate transfer between DMA and MDMA.
+>  
+>  Example:
+>  
+> @@ -36,6 +42,16 @@ Example:
+>  		st,mem2mem;
+>  		resets = <&rcc 150>;
+>  		dma-requests = <8>;
+> +		dmas = <&mdma1 8 0x10 0x1200000a 0x40026408 0x00000020 1>,
+> +		       <&mdma1 9 0x10 0x1200000a 0x40026408 0x00000800 1>,
+> +		       <&mdma1 10 0x10 0x1200000a 0x40026408 0x00200000 1>,
+> +		       <&mdma1 11 0x10 0x1200000a 0x40026408 0x08000000 1>,
+> +		       <&mdma1 12 0x10 0x1200000a 0x4002640C 0x00000020 1>,
+> +		       <&mdma1 13 0x10 0x1200000a 0x4002640C 0x00000800 1>,
+> +		       <&mdma1 14 0x10 0x1200000a 0x4002640C 0x00200000 1>,
+> +		       <&mdma1 15 0x10 0x1200000a 0x4002640C 0x08000000 1>;
+> +		dma-names = "ch0", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7";
+> +		memory-region = <&sram_dmapool>;
+>  	};
+>  
+>  * DMA client
+> @@ -62,13 +78,21 @@ channel: a phandle to the DMA controller plus the following four integer cells:
+>  	0x1: medium
+>  	0x2: high
+>  	0x3: very high
+> -4. A 32bit bitfield value specifying DMA features which are device dependent:
+> +4. A bitfield value specifying DMA features which are device dependent:
+
+It's still a 32-bit value, right?
+
+>   -bit 0-1: DMA FIFO threshold selection
+>  	0x0: 1/4 full FIFO
+>  	0x1: 1/2 full FIFO
+>  	0x2: 3/4 full FIFO
+>  	0x3: full FIFO
+> -
+> + -bit 2: Intermediate M2M transfer from/to DDR to/from SRAM throughout MDMA
+> +	0: MDMA not used to generate an intermediate M2M transfer
+> +	1: MDMA used to generate an intermediate M2M transfer.
+> + -bit 3-4: indicated SRAM Buffer size in (2^order)*PAGE_SIZE.
+
+What's PAGE_SIZE? That's not defined for DT.
+
+> +	Order is given by those 2 bits starting at 0.
+> +	Valid only whether Intermediate M2M transfer is set.
+> +	For cyclic, whether Intermediate M2M transfer is chosen, any value can
+> +	be set: SRAM buffer size will rely on period size and not on this DT
+> +	value.
+>  
+>  Example:
+>  
+> @@ -77,7 +101,7 @@ Example:
+>  		reg = <0x40011000 0x400>;
+>  		interrupts = <37>;
+>  		clocks = <&clk_pclk2>;
+> -		dmas = <&dma2 2 4 0x10400 0x3>,
+> -		       <&dma2 7 5 0x10200 0x3>;
+> +		dmas = <&dma2 2 4 0x10400 0x1>,
+> +		       <&dma2 7 5 0x10200 0x1>;
+>  		dma-names = "rx", "tx";
+>  	};
+> -- 
+> 2.7.4
 > 
-> What is the current status of the "mmc_reprobe_device" implementation, that Hans was explaining and Ulf wanted to provide some months ago?
-
-Ulf did eventually write a new way to deal with this and then Quentin
-did manage to get the esp8089 driver to work with it, the new function
-to use for this is added by this commit:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/mmc/core?id=1433269c4d2461be1f36db5dbb453976b38996ff
-
-I'm not sure what the status of upstreaming the ep8089 driver is now
-that we've this in place.
-
-Quentin, do you have a version of the esp8089 driver somewhere
-which will work correctly with the new mmc_sw_reset() function?
-
-Also what is the status of adding this driver to say staging?
-
-Regards,
-
-Hans
-
-
-
-> 
-> BTW, I am not on any of the mailing lists involved, so I tried to recreate the proper mail headers manually for the reply to the correct thread.
-> 
-> Thanks,
-> Frieder
-> 
->> >>
->> >
->> > Cool! If you ever need some testing, I'd be glad to test your patches
->> > (even if they are in a draft/RFC state).
->> >
->> > Also, when you send patches, I'd appreciate being Cc'ed so that I can
->> > put my Tested-by :) Thanks!
->>
->> Absolutely! I appreciate it.
