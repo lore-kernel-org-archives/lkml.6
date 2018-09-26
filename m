@@ -2,65 +2,87 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC48C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4280C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F18C20684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F18C20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A42C20684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A42C20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeIZUgP (ORCPT
+        id S1728190AbeIZUgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:36:15 -0400
-Received: from mga09.intel.com ([134.134.136.24]:25759 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727555AbeIZUgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:36:15 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:23:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="93893605"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.55])
-  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 07:15:18 -0700
-Date:   Wed, 26 Sep 2018 07:15:19 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] x86/kvm/mmu: get rid of redundant kvm_mmu_setup()
-Message-ID: <20180926141519.GE27433@linux.intel.com>
-References: <20180925175844.20277-1-vkuznets@redhat.com>
- <20180925175844.20277-6-vkuznets@redhat.com>
+        Wed, 26 Sep 2018 16:36:36 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13128 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727399AbeIZUgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:36:36 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id CAF9F94A3D599;
+        Wed, 26 Sep 2018 22:23:19 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
+ 22:23:17 +0800
+Message-ID: <5BAB9655.6080100@huawei.com>
+Date:   Wed, 26 Sep 2018 22:23:17 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925175844.20277-6-vkuznets@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>, <sameo@linux.intel.com>
+CC:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] NFC: st-nci: remove a redundant null pointer check
+References: <1537965050-16579-1-git-send-email-zhongjiang@huawei.com> <20180926140311.GU15943@smile.fi.intel.com>
+In-Reply-To: <20180926140311.GU15943@smile.fi.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 07:58:40PM +0200, Vitaly Kuznetsov wrote:
-> From: Paolo Bonzini <pbonzini@redhat.com>
-> 
-> Just inline the contents into the sole caller, kvm_init_mmu is now
-> public.
-> 
-> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
+On 2018/9/26 22:03, Andy Shevchenko wrote:
+> On Wed, Sep 26, 2018 at 08:30:50PM +0800, zhong jiang wrote:
+>> The dev is impossible is NULL. hence the check is redundant. We
+>> never will hit it.
+>>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Thanks.
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> ---
+>> v1->v2:
+>>  -  According to Greg's suggestion. just remove the null pointer will be better.
+>>
+>>  drivers/nfc/st-nci/spi.c | 7 -------
+>>  1 file changed, 7 deletions(-)
+>>
+>> diff --git a/drivers/nfc/st-nci/spi.c b/drivers/nfc/st-nci/spi.c
+>> index 1470559..864fd90 100644
+>> --- a/drivers/nfc/st-nci/spi.c
+>> +++ b/drivers/nfc/st-nci/spi.c
+>> @@ -233,13 +233,6 @@ static int st_nci_spi_probe(struct spi_device *dev)
+>>  	dev_dbg(&dev->dev, "%s\n", __func__);
+>>  	dev_dbg(&dev->dev, "IRQ: %d\n", dev->irq);
+>>  
+>> -	/* Check SPI platform functionnalities */
+>> -	if (!dev) {
+>> -		pr_debug("%s: dev is NULL. Device is not accessible.\n",
+>> -			__func__);
+>> -		return -ENODEV;
+>> -	}
+>> -
+>>  	phy = devm_kzalloc(&dev->dev, sizeof(struct st_nci_spi_phy),
+>>  			   GFP_KERNEL);
+>>  	if (!phy)
+>> -- 
+>> 1.7.12.4
+>>
 
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+
