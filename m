@@ -2,134 +2,103 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D2CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB67C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6782D20842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:15:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6782D20842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D762920842
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:16:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="o/u8/UPq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D762920842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeIZU2o (ORCPT
+        id S1727490AbeIZU3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:28:44 -0400
-Received: from mga05.intel.com ([192.55.52.43]:4581 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbeIZU2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:28:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:15:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="266868113"
-Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.74.64]) ([10.252.74.64])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Sep 2018 07:11:51 -0700
-Subject: Re: [PATCH 1/4] platform/x86: intel_pmc_core: Show Latency Tolerance
- info
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
-References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com>
- <CAHp75Vesn4TrdF8tWLkU7nCRGp_o8fEK6gxpTkwM7E7zQo0qKg@mail.gmail.com>
-From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Message-ID: <04398317-a3b8-9387-e532-fcf26da9220e@linux.intel.com>
-Date:   Wed, 26 Sep 2018 19:41:49 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 16:29:34 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:51766 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbeIZU3e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:29:34 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id E48695C0452;
+        Wed, 26 Sep 2018 16:16:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1537971382;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hj8Ul7f6rJMcT4zxhmUo0TqjWwKvRa9H2WlFNCyjKOM=;
+        b=o/u8/UPqD+nKDpMMEC7Y+QmAJxarucloWvIyUL4b1cI4bCVoV++UQNOWV8/0aBIMdwyeh4
+        vygh9oTtt+MiSQXf7hMygZATZUeaIIYiqVDT6jn50nOvzSW+IUhyWRDAn0BfZKtQbSQF37
+        C2+++Q5+RNk3dDBEULEM30aTsnViMsE=
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vesn4TrdF8tWLkU7nCRGp_o8fEK6gxpTkwM7E7zQo0qKg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 26 Sep 2018 16:16:22 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Sean Paul <sean@poorly.run>
+Cc:     alison.wang@nxp.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Move fsl-dcu driver to drm-misc tree
+In-Reply-To: <20180926133945.GR72545@art_vandelay>
+References: <20180926125034.4095-1-stefan@agner.ch>
+ <20180926133945.GR72545@art_vandelay>
+Message-ID: <76874612e9f8613c16962c82e900a812@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26.09.2018 15:39, Sean Paul wrote:
+> On Wed, Sep 26, 2018 at 02:50:34PM +0200, Stefan Agner wrote:
+>> The driver is mostly in maintenance mode.
+> 
+> Is the status still Supported, then?
+> 
 
+Yeah Supported as defined in MAINTAINERS is still accurate. Its just
+that we do not add features at that point.
 
-On 26-Sep-18 7:18 PM, Andy Shevchenko wrote:
-> On Mon, Sep 3, 2018 at 9:06 PM Rajneesh Bhardwaj
-> <rajneesh.bhardwaj@linux.intel.com> wrote:
->> This adds support to show the Latency Tolerance Reporting for the IPs on
->> the PCH as reported by the PMC. The format shown here is raw LTR data
->> payload that can further be decoded as per the PCI specification.
+>> Using drm-misc is a
+>> good fit and should make maintenance a bit easier.
 >>
->> This also fixes some minor alignment issues in the header file by
->> removing spaces and converting to tabs at some places.
-> Thanks for the patch, my comments below.
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> 
+> Acked-by: Sean Paul <sean@poorly.run>
+> 
 
-Hi Andy,
+Thanks.
 
-Thanks for the review, my answers below.
->
->> +static const struct pmc_bit_map spt_ltr_show_map[] = {
->> +       {"IP 0  : LTR_SOUTHPORT_A",             SPT_PMC_LTR_SPA},
->> +       {"IP 1  : LTR_SOUTHPORT_B",             SPT_PMC_LTR_SPB},
->> +       {"IP 2  : LTR_SATA",                    SPT_PMC_LTR_SATA},
->> +       {"IP 3  : LTR_GIGABIT_ETHERNET",        SPT_PMC_LTR_GBE},
->> +       {"IP 4  : LTR_XHCI",                    SPT_PMC_LTR_XHCI},
->> +       /* IP 5 is reserved */
->> +       {"IP 6  : LTR_ME",                      SPT_PMC_LTR_ME},
->> +       /* EVA is Enterprise Value Add, doesn't really exist on PCH */
->> +       {"IP 7  : LTR_EVA",                     SPT_PMC_LTR_EVA},
->> +       {"IP 8  : LTR_SOUTHPORT_C",             SPT_PMC_LTR_SPC},
->> +       {"IP 9  : LTR_HD_AUDIO",                SPT_PMC_LTR_AZ},
->> +       /* IP 10 is reserved */
->> +       {"IP 11 : LTR_LPSS",                    SPT_PMC_LTR_LPSS},
->> +       {"IP 12 : LTR_SOUTHPORT_D",             SPT_PMC_LTR_SPD},
->> +       {"IP 13 : LTR_SOUTHPORT_E",             SPT_PMC_LTR_SPE},
->> +       {"IP 14 : LTR_CAMERA",                  SPT_PMC_LTR_CAM},
->> +       {"IP 15 : LTR_ESPI",                    SPT_PMC_LTR_ESPI},
->> +       {"IP 16 : LTR_SCC",                     SPT_PMC_LTR_SCC},
->> +       {"IP 17 : LTR_ISH",                     SPT_PMC_LTR_ISH},
->> +       /* Below two cannot be for LTR_IGNORE */
->> +       {"LTR_CURRENT_PLATFORM",                SPT_PMC_LTR_CUR_PLT},
->> +       {"LTR_AGGREGATED_SYSTEM",               SPT_PMC_LTR_CUR_ASLT},
-> Before no map has this fancy "IP xx :" prefixes. Please, remove.
+--
+Stefan
 
-  The users of the driver often ask for IP Numbers while performing 
-LTR_IGNORE operation so this is deliberately added. Please consider it.
-
->
->> +       {},
-> No need for comma
-Ok.
->> +
-> Redundant.
-
-OK
->
->> +};
->> +static const struct pmc_bit_map cnp_ltr_show_map[] = {
-> Same comments as above.
->
->> +};
->> +       debugfs_create_file("ltr_show", 0644, dir, pmcdev,
->> +                           &pmc_core_ltr_fops);
-> One line?
-
-IIRC, it was crossing the limit. I will check again and if possible 
-would change it.
-
->
->>   #define NUM_RETRIES                            100
->>   #define NUM_IP_IGN_ALLOWED                     17
-> + blank line here.
-
-Sure.
-
->
->> +#define SPT_PMC_LTR_CUR_PLT                    0x350
-
+>> ---
+>>  MAINTAINERS | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 02a39617ec82..6646a3d098a1 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -4822,6 +4822,7 @@ F:	drivers/gpu/drm/fsl-dcu/
+>>  F:	Documentation/devicetree/bindings/display/fsl,dcu.txt
+>>  F:	Documentation/devicetree/bindings/display/fsl,tcon.txt
+>>  F:	Documentation/devicetree/bindings/display/panel/nec,nl4827hc19-05b.txt
+>> +T:	git git://anongit.freedesktop.org/drm/drm-misc
+>>
+>>  DRM DRIVERS FOR FREESCALE IMX
+>>  M:	Philipp Zabel <p.zabel@pengutronix.de>
+>> --
+>> 2.19.0
+>>
