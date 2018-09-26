@@ -2,285 +2,126 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ED5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AB8C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4636920684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:44:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBxibkKc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4636920684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 39E1620684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:45:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E1620684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbeIZO4q (ORCPT
+        id S1727516AbeIZO5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:56:46 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55444 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727244AbeIZO4p (ORCPT
+        Wed, 26 Sep 2018 10:57:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53323 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeIZO5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:56:45 -0400
-Received: by mail-it1-f193.google.com with SMTP id c23-v6so1863101itd.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Rr1HvmgafSH2XAIo8bw7+gik9BF1hKrwBsWHDGDTZPk=;
-        b=JBxibkKc8afX6VP/gAgSf9vL9CDP2cdlSQtb1powm9klluXDlwyEq/eWM4T0KyF3NB
-         hharvyw1VtofsQf6n4knOpKTur+yzFkxNU4fu8uBzJcYH2UvfL605zGw9NJx4btM1IIq
-         fJe/aRS6YAYm/JhudiGjtyzvMLC7bb0gtLCqU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Rr1HvmgafSH2XAIo8bw7+gik9BF1hKrwBsWHDGDTZPk=;
-        b=PfnUvxG3vLsyj6OPhOFeQerDcJz+rbN8cr8bUdmV/vQ9qEBw5lbhLF5ar9mXXGcA99
-         ZwVnhxQfAM/KvxwT81/o6l00/DYZa0LV9MHSwX+U6f/r2jLc3AZZcgksn08YMokvzZuI
-         OkshgogAWh0Tn2gdte+RLj/+P0Yia34/ekPFQe9c/VIXZ6UfI8FGrISFnHJpPy78sF05
-         vCIzXrqC03zRFF73TtiHCFmS9LFYCT8OrVsgPHzQXI71wE5d5kbABUSX9aKI1sozzILm
-         SayqgwCQCyG4HcVy9cMXxznHYsnQMT1A8HtpKNouYZamNrUV3Dh9oGUOEugnxmeckz9Y
-         xJ8g==
-X-Gm-Message-State: ABuFfogBu4NBGSvfbL5PcbzcjGO3Q1n2lk2pObiNZQnNxovsjTaGqfKp
-        Guyw1bR7IBQXbLpy4KoL0CZzUUa3zQGch3IKLYRH6g==
-X-Google-Smtp-Source: ACcGV62Dox3Bh5geqpRZQ+QpNXCgid5IJPM4p+zd1k2D7Mu2vuTWLiYWR3CMFBjgkeoVYpq5PAMAlGY6PN0KwufLhsY=
-X-Received: by 2002:a24:e48e:: with SMTP id o136-v6mr4093850ith.58.1537951494452;
- Wed, 26 Sep 2018 01:44:54 -0700 (PDT)
+        Wed, 26 Sep 2018 10:57:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8Q8i1XO3769795
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 26 Sep 2018 01:44:01 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8Q8i1dg3769792;
+        Wed, 26 Sep 2018 01:44:01 -0700
+Date:   Wed, 26 Sep 2018 01:44:01 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andi Kleen <tipbot@zytor.com>
+Message-ID: <tip-03a1f49f26482cf832e7f0157ae5da716d927701@git.kernel.org>
+Cc:     jpoimboe@redhat.com, ak@linux.intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org,
+        jolsa@kernel.org, hpa@zytor.com, adrian.hunter@intel.com,
+        kim.phillips@arm.com, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, namhyung@kernel.org,
+          jpoimboe@redhat.com, ak@linux.intel.com, tglx@linutronix.de,
+          kim.phillips@arm.com, hpa@zytor.com, jolsa@kernel.org,
+          adrian.hunter@intel.com, acme@redhat.com, mingo@kernel.org
+In-Reply-To: <20180918123214.26728-3-andi@firstfloor.org>
+References: <20180918123214.26728-3-andi@firstfloor.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] tools lib subcmd: Support overwriting the pager
+Git-Commit-ID: 03a1f49f26482cf832e7f0157ae5da716d927701
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20180807211843.47586-1-keescook@chromium.org> <20180807211843.47586-8-keescook@chromium.org>
- <CAK8P3a3kiH-a+JG8FqUw7nc_hk+9z-FdsGFT57SxR83W32zKzQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a3kiH-a+JG8FqUw7nc_hk+9z-FdsGFT57SxR83W32zKzQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 26 Sep 2018 10:44:41 +0200
-Message-ID: <CAKv+Gu-dGbWsQu0NgOWVFy7Sca3yBD0pLzEMwmkG3mg9LFPpkA@mail.gmail.com>
-Subject: Re: [PATCH v8 7/9] crypto: qat: Remove VLA usage
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        "Alasdair G. Kergon" <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Tudor-Dan Ambarus <tudor.ambarus@microchip.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        qat-linux@intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Sep 2018 at 18:12, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Aug 7, 2018 at 11:18 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > In the quest to remove all stack VLA usage from the kernel[1], this uses
-> > the new upper bound for the stack buffer. Also adds a sanity check.
-> >
-> > [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> >
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
->
-> After rebasing to linux-next, I now get a warning about this file:
->
-> drivers/crypto/qat/qat_common/qat_algs.c: In function 'qat_alg_do_precomputes':
-> drivers/crypto/qat/qat_common/qat_algs.c:257:1: error: the frame size
-> of 1112 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
->
-> I assume it was already possible to get into that state with the VLA,
-> but it seems bad enough that I think we need to do something
-> about it.
->
-> The large stack variables add up to 1084 bytes, which fully explains
-> how we got here:
->
->         SHASH_DESC_ON_STACK(shash, ctx->hash_tfm); /* 360 */
->         struct sha1_state sha1;  /* 92 */
->         struct sha256_state sha256; /* 104 */
->         struct sha512_state sha512; /* 208 */
->         char ipad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
->         char opad[MAX_ALGAPI_BLOCKSIZE]; /* 160 */
->
-> The question is what we can do about it. One simple step I've tried
-> is to move the sha1/sha256/sha512 into a union, which saves around
-> 200 bytes and should bring us (slightly) below the warning
-> limit, but I suspect we can do better than that. Any ideas?
->
+Commit-ID:  03a1f49f26482cf832e7f0157ae5da716d927701
+Gitweb:     https://git.kernel.org/tip/03a1f49f26482cf832e7f0157ae5da716d927701
+Author:     Andi Kleen <ak@linux.intel.com>
+AuthorDate: Tue, 18 Sep 2018 05:32:07 -0700
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 19 Sep 2018 15:16:19 -0300
 
-All the processing takes place in the context of a setkey() operation,
-which means only one such operation should be in flight per tfm at any
-given time. So we could move all these pieces into the tfm context
-struct instead. Something like the below [untested] (whitespace
-mangling courtesy of Gmail)
+tools lib subcmd: Support overwriting the pager
 
-diff --git a/drivers/crypto/qat/qat_common/qat_algs.c
-b/drivers/crypto/qat/qat_common/qat_algs.c
-index 1138e41d6805..c14f1906bdf4 100644
---- a/drivers/crypto/qat/qat_common/qat_algs.c
-+++ b/drivers/crypto/qat/qat_common/qat_algs.c
-@@ -113,6 +113,13 @@ struct qat_alg_aead_ctx {
-  struct crypto_shash *hash_tfm;
-  enum icp_qat_hw_auth_algo qat_hash_alg;
-  struct qat_crypto_instance *inst;
-+ union {
-+ struct sha1_state sha1;
-+ struct sha256_state sha256;
-+ struct sha512_state sha512;
-+ };
-+ char ipad[MAX_ALGAPI_BLOCKSIZE];
-+ char opad[MAX_ALGAPI_BLOCKSIZE];
- };
+Add an interface to the auto pager code that allows callers to overwrite
+the pager.
 
- struct qat_alg_ablkcipher_ctx {
-@@ -148,37 +155,32 @@ static int qat_alg_do_precomputes(struct
-icp_qat_hw_auth_algo_blk *hash,
-    unsigned int auth_keylen)
- {
-  SHASH_DESC_ON_STACK(shash, ctx->hash_tfm);
-- struct sha1_state sha1;
-- struct sha256_state sha256;
-- struct sha512_state sha512;
-  int block_size = crypto_shash_blocksize(ctx->hash_tfm);
-  int digest_size = crypto_shash_digestsize(ctx->hash_tfm);
-- char ipad[block_size];
-- char opad[block_size];
-  __be32 *hash_state_out;
-  __be64 *hash512_state_out;
-  int i, offset;
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lkml.kernel.org/r/20180918123214.26728-3-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/lib/subcmd/pager.c | 11 ++++++++++-
+ tools/lib/subcmd/pager.h |  1 +
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-- memset(ipad, 0, block_size);
-- memset(opad, 0, block_size);
-+ memset(ctx->ipad, 0, block_size);
-+ memset(ctx->opad, 0, block_size);
-  shash->tfm = ctx->hash_tfm;
-  shash->flags = 0x0;
-
-  if (auth_keylen > block_size) {
-  int ret = crypto_shash_digest(shash, auth_key,
--       auth_keylen, ipad);
-+       auth_keylen, ctx->ipad);
-  if (ret)
-  return ret;
-
-- memcpy(opad, ipad, digest_size);
-+ memcpy(ctx->opad, ctx->ipad, digest_size);
-  } else {
-- memcpy(ipad, auth_key, auth_keylen);
-- memcpy(opad, auth_key, auth_keylen);
-+ memcpy(ctx->ipad, auth_key, auth_keylen);
-+ memcpy(ctx->opad, auth_key, auth_keylen);
-  }
-
-  for (i = 0; i < block_size; i++) {
-- char *ipad_ptr = ipad + i;
-- char *opad_ptr = opad + i;
-+ char *ipad_ptr = ctx->ipad + i;
-+ char *opad_ptr = ctx->opad + i;
-  *ipad_ptr ^= HMAC_IPAD_VALUE;
-  *opad_ptr ^= HMAC_OPAD_VALUE;
-  }
-@@ -186,7 +188,7 @@ static int qat_alg_do_precomputes(struct
-icp_qat_hw_auth_algo_blk *hash,
-  if (crypto_shash_init(shash))
-  return -EFAULT;
-
-- if (crypto_shash_update(shash, ipad, block_size))
-+ if (crypto_shash_update(shash, ctx->ipad, block_size))
-  return -EFAULT;
-
-  hash_state_out = (__be32 *)hash->sha.state1;
-@@ -194,22 +196,22 @@ static int qat_alg_do_precomputes(struct
-icp_qat_hw_auth_algo_blk *hash,
-
-  switch (ctx->qat_hash_alg) {
-  case ICP_QAT_HW_AUTH_ALGO_SHA1:
-- if (crypto_shash_export(shash, &sha1))
-+ if (crypto_shash_export(shash, &ctx->sha1))
-  return -EFAULT;
-  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
-- *hash_state_out = cpu_to_be32(*(sha1.state + i));
-+ *hash_state_out = cpu_to_be32(*(ctx->sha1.state + i));
-  break;
-  case ICP_QAT_HW_AUTH_ALGO_SHA256:
-- if (crypto_shash_export(shash, &sha256))
-+ if (crypto_shash_export(shash, &ctx->sha256))
-  return -EFAULT;
-  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
-- *hash_state_out = cpu_to_be32(*(sha256.state + i));
-+ *hash_state_out = cpu_to_be32(*(ctx->sha256.state + i));
-  break;
-  case ICP_QAT_HW_AUTH_ALGO_SHA512:
-- if (crypto_shash_export(shash, &sha512))
-+ if (crypto_shash_export(shash, &ctx->sha512))
-  return -EFAULT;
-  for (i = 0; i < digest_size >> 3; i++, hash512_state_out++)
-- *hash512_state_out = cpu_to_be64(*(sha512.state + i));
-+ *hash512_state_out = cpu_to_be64(*(ctx->sha512.state + i));
-  break;
-  default:
-  return -EFAULT;
-@@ -218,7 +220,7 @@ static int qat_alg_do_precomputes(struct
-icp_qat_hw_auth_algo_blk *hash,
-  if (crypto_shash_init(shash))
-  return -EFAULT;
-
-- if (crypto_shash_update(shash, opad, block_size))
-+ if (crypto_shash_update(shash, ctx->opad, block_size))
-  return -EFAULT;
-
-  offset = round_up(qat_get_inter_state_size(ctx->qat_hash_alg), 8);
-@@ -227,28 +229,28 @@ static int qat_alg_do_precomputes(struct
-icp_qat_hw_auth_algo_blk *hash,
-
-  switch (ctx->qat_hash_alg) {
-  case ICP_QAT_HW_AUTH_ALGO_SHA1:
-- if (crypto_shash_export(shash, &sha1))
-+ if (crypto_shash_export(shash, &ctx->sha1))
-  return -EFAULT;
-  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
-- *hash_state_out = cpu_to_be32(*(sha1.state + i));
-+ *hash_state_out = cpu_to_be32(*(ctx->sha1.state + i));
-  break;
-  case ICP_QAT_HW_AUTH_ALGO_SHA256:
-- if (crypto_shash_export(shash, &sha256))
-+ if (crypto_shash_export(shash, &ctx->sha256))
-  return -EFAULT;
-  for (i = 0; i < digest_size >> 2; i++, hash_state_out++)
-- *hash_state_out = cpu_to_be32(*(sha256.state + i));
-+ *hash_state_out = cpu_to_be32(*(ctx->sha256.state + i));
-  break;
-  case ICP_QAT_HW_AUTH_ALGO_SHA512:
-- if (crypto_shash_export(shash, &sha512))
-+ if (crypto_shash_export(shash, &ctx->sha512))
-  return -EFAULT;
-  for (i = 0; i < digest_size >> 3; i++, hash512_state_out++)
-- *hash512_state_out = cpu_to_be64(*(sha512.state + i));
-+ *hash512_state_out = cpu_to_be64(*(ctx->sha512.state + i));
-  break;
-  default:
-  return -EFAULT;
-  }
-- memzero_explicit(ipad, block_size);
-- memzero_explicit(opad, block_size);
-+ memzero_explicit(ctx->ipad, block_size);
-+ memzero_explicit(ctx->opad, block_size);
-  return 0;
+diff --git a/tools/lib/subcmd/pager.c b/tools/lib/subcmd/pager.c
+index 9997a8805a82..e3d47b59b14d 100644
+--- a/tools/lib/subcmd/pager.c
++++ b/tools/lib/subcmd/pager.c
+@@ -23,6 +23,13 @@ void pager_init(const char *pager_env)
+ 	subcmd_config.pager_env = pager_env;
  }
+ 
++static const char *forced_pager;
++
++void force_pager(const char *pager)
++{
++	forced_pager = pager;
++}
++
+ static void pager_preexec(void)
+ {
+ 	/*
+@@ -66,7 +73,9 @@ void setup_pager(void)
+ 	const char *pager = getenv(subcmd_config.pager_env);
+ 	struct winsize sz;
+ 
+-	if (!isatty(1))
++	if (forced_pager)
++		pager = forced_pager;
++	if (!isatty(1) && !forced_pager)
+ 		return;
+ 	if (ioctl(1, TIOCGWINSZ, &sz) == 0)
+ 		pager_columns = sz.ws_col;
+diff --git a/tools/lib/subcmd/pager.h b/tools/lib/subcmd/pager.h
+index f1a53cf29880..a818964693ab 100644
+--- a/tools/lib/subcmd/pager.h
++++ b/tools/lib/subcmd/pager.h
+@@ -7,5 +7,6 @@ extern void pager_init(const char *pager_env);
+ extern void setup_pager(void);
+ extern int pager_in_use(void);
+ extern int pager_get_columns(void);
++extern void force_pager(const char *);
+ 
+ #endif /* __SUBCMD_PAGER_H */
