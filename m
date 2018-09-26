@@ -2,63 +2,71 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AABC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28000C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6937D21528
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:13:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6937D21528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C220B21528
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:13:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C220B21528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbeIZW1D (ORCPT
+        id S1728713AbeIZW1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:27:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60384 "EHLO mx1.redhat.com"
+        Wed, 26 Sep 2018 18:27:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeIZW1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:27:03 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728241AbeIZW1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:27:17 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E13853082B24;
-        Wed, 26 Sep 2018 16:13:23 +0000 (UTC)
-Received: from napanee.usersys.redhat.com (dhcp-17-211.bos.redhat.com [10.18.17.211])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB6D86B65A;
-        Wed, 26 Sep 2018 16:13:23 +0000 (UTC)
-Received: by napanee.usersys.redhat.com (Postfix, from userid 1000)
-        id 59188C0A4F; Wed, 26 Sep 2018 12:13:23 -0400 (EDT)
-Date:   Wed, 26 Sep 2018 12:13:23 -0400
-From:   Aristeu Rozanski <aris@redhat.com>
-To:     Justin Ernst <justin.ernst@hpe.com>
-Cc:     Borislav Petkov <bp@alien8.de>, russ.anderson@hpe.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Raise maximum number of memory controllers
-Message-ID: <20180926161323.2v4epi622yrknu53@redhat.com>
-References: <20180925143449.284634-1-justin.ernst@hpe.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925143449.284634-1-justin.ernst@hpe.com>
-User-Agent: NeoMutt/20180323
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 26 Sep 2018 16:13:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CB0F21528;
+        Wed, 26 Sep 2018 16:13:37 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.91)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1g5CRU-0003nX-6j; Wed, 26 Sep 2018 12:13:36 -0400
+Message-Id: <20180926161226.098070917@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 26 Sep 2018 12:12:26 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/5] tracing: Updates for 5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 09:34:49AM -0500, Justin Ernst wrote:
-> We observe an oops in the skx_edac module during boot.
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+for-next
 
-That's happening also on sb_edac too and the oops comes from memory corruption
-after trying to load the module several times during boot.
+Head SHA1: 5a5e3d3ceae2121590d67258a4e658d938b4a46d
 
--- 
-Aristeu
 
+Ravi Bangoria (4):
+      uprobes: Support SDT markers having reference count (semaphore)
+      uprobes/sdt: Prevent multiple reference counter for same uprobe
+      trace_uprobe/sdt: Prevent multiple reference counter for same uprobe
+      perf probe: Support SDT markers having reference counter (semaphore)
+
+Steven Rostedt (VMware) (1):
+      tracing/kprobe: Remove unneeded extra strchr() from create_trace_kprobe()
+
+----
+ include/linux/uprobes.h       |   5 +
+ kernel/events/uprobes.c       | 278 ++++++++++++++++++++++++++++++++++++++++--
+ kernel/trace/trace.c          |   2 +-
+ kernel/trace/trace_kprobe.c   |   9 +-
+ kernel/trace/trace_uprobe.c   |  75 +++++++++++-
+ tools/perf/util/probe-event.c |  39 +++++-
+ tools/perf/util/probe-event.h |   1 +
+ tools/perf/util/probe-file.c  |  34 +++++-
+ tools/perf/util/probe-file.h  |   1 +
+ tools/perf/util/symbol-elf.c  |  46 +++++--
+ tools/perf/util/symbol.h      |   7 ++
+ 11 files changed, 459 insertions(+), 38 deletions(-)
