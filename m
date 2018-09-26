@@ -2,138 +2,169 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D09C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E51C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A86BD20685
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:41:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A86BD20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
+	by mail.kernel.org (Postfix) with ESMTP id C421F20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:41:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dG76ReaJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C421F20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeIZOxA (ORCPT
+        id S1727197AbeIZOxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:53:00 -0400
-Received: from out20-14.mail.aliyun.com ([115.124.20.14]:40483 "EHLO
-        out20-14.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbeIZOxA (ORCPT
+        Wed, 26 Sep 2018 10:53:06 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38772 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeIZOxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:53:00 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09386483|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e04463;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.Cw1lGSG_1537951250;
-Received: from linuxproject.localdomain(mailfrom:yong.deng@magewell.com fp:SMTPD_---.Cw1lGSG_1537951250)
-          by smtp.aliyun-inc.com(10.147.41.120);
-          Wed, 26 Sep 2018 16:40:50 +0800
-From:   Yong Deng <yong.deng@magewell.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "\"David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Yong Deng <yong.deng@magewell.com>
-Subject: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
-Date:   Wed, 26 Sep 2018 16:40:04 +0800
-Message-Id: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 26 Sep 2018 10:53:05 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z16-v6so1332925wmi.3;
+        Wed, 26 Sep 2018 01:41:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EPPcyga3dCUWQSIsHTMyoeg/2P0ChGLKCEC2aOamvsE=;
+        b=dG76ReaJRua91qSoZ4xa1NiXFBv1do1qt8axHgUsep8yznu3f/ckak8fBVK3Gtk9BO
+         LExIFvQuLNo01/4GdP2Ue+HO7kz9+vpPaWphotkTApNXF7DtvEt9mi6TOfBnoUlzGmXB
+         z4z6oSd1AiGBUIzPO5jp5kAhYcp3/ERw4EbpsShrnMhcnT+oLGuTFcjrdeygOCFMJi55
+         Ie7QsNh/s6foOgk66gueKAkk5JooDFWwgxOvpS6hhOUBmq07WaBIgqcsCzxfntzjcw8F
+         NEBCiWBDJ4ZdzxAcct1FQ+cRQKdF9mdJq1WL9WSyVlUBNGtNiKgRGD0nMvzllSAfJNJX
+         vixA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EPPcyga3dCUWQSIsHTMyoeg/2P0ChGLKCEC2aOamvsE=;
+        b=c4IMVzh8uSn8v9XLtLqYulE2Iy3OAG/pT2mqCv8wcn80JvwsoY8Uch1wFUgHF20Ayy
+         Hj/9xvaFJ2iULqnfuRKpEThngi2zZUrG57cFhhqipx8wKTq8cVw6/wux/zXw+D0F/1UB
+         zT6zqBj+a1Ycr4aYReCUKD7aGlEatahYs95OW0sdWx5iaY8blcjPhb3RhHIAeDkLZWDB
+         BX/wbT6DcZlMKj2fMJO+GpYTAUIdpQWzW5A4Q/bzX6rxc97cWxEPxE4Iyx3grD7mQHu1
+         RcK9jssQoFsha/HrxulXlBwy0GgmAQuP4rwBVkQX59J6bqTk3l+BRPH316JvKxlAMZJA
+         HeMg==
+X-Gm-Message-State: ABuFfojTTiZmpECZabzMT17TrX2b+9XpvzGKmdBLQOojgtR5mZ0KrQD9
+        wTqDfPAQIST60a6eOO2+AC/eteWV
+X-Google-Smtp-Source: ACcGV60qe9rOC4VRkto1rkdKasevC3jsyUSQxq8Bx2BH5sJdg+ESx0mtlJUzUCBPZ4tT7d/d3AMo1A==
+X-Received: by 2002:a1c:c243:: with SMTP id s64-v6mr1501905wmf.36.1537951273298;
+        Wed, 26 Sep 2018 01:41:13 -0700 (PDT)
+Received: from pc-ceresoli.dev.aim (45.11.168.109.cust.ip.kpnqwest.it. [109.168.11.45])
+        by smtp.gmail.com with ESMTPSA id y11-v6sm3767843wrp.30.2018.09.26.01.41.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 01:41:12 -0700 (PDT)
+From:   Luca Ceresoli <lucaceresoli77@gmail.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH] i2c: mux: remove duplicated i2c_algorithm
+Date:   Wed, 26 Sep 2018 10:40:52 +0200
+Message-Id: <20180926084052.22379-1-lucaceresoli77@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding documentation for Allwinner V3s CSI.
+From: Luca Ceresoli <luca@lucaceresoli.net>
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yong Deng <yong.deng@magewell.com>
+i2c-mux instantiates one i2c_algorithm for each downstream adapter.
+However these algorithms are all identical, depending only on the
+parent adapter.
+
+Avoid duplication by hoisting the i2c_algorithm from the adapters to
+the i2c_mux_core object, and reuse it in all the adapters.
+
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- .../devicetree/bindings/media/sun6i-csi.txt        | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+ drivers/i2c/i2c-mux.c   | 37 ++++++++++++++++++-------------------
+ include/linux/i2c-mux.h |  1 +
+ 2 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-new file mode 100644
-index 000000000000..2ff47a9507a6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-@@ -0,0 +1,59 @@
-+Allwinner V3s Camera Sensor Interface
-+-------------------------------------
+diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
+index f330690b4125..2b0cc2ad0a17 100644
+--- a/drivers/i2c/i2c-mux.c
++++ b/drivers/i2c/i2c-mux.c
+@@ -30,7 +30,6 @@
+ /* multiplexer per channel data */
+ struct i2c_mux_priv {
+ 	struct i2c_adapter adap;
+-	struct i2c_algorithm algo;
+ 	struct i2c_mux_core *muxc;
+ 	u32 chan_id;
+ };
+@@ -263,6 +262,23 @@ struct i2c_mux_core *i2c_mux_alloc(struct i2c_adapter *parent,
+ 	muxc->deselect = deselect;
+ 	muxc->max_adapters = max_adapters;
+ 
++	/* Need to do algo dynamically because we don't know ahead
++	 * of time what sort of physical adapter we'll be dealing with.
++	 */
++	if (parent->algo->master_xfer) {
++		if (muxc->mux_locked)
++			muxc->algo.master_xfer = i2c_mux_master_xfer;
++		else
++			muxc->algo.master_xfer = __i2c_mux_master_xfer;
++	}
++	if (parent->algo->smbus_xfer) {
++		if (muxc->mux_locked)
++			muxc->algo.smbus_xfer = i2c_mux_smbus_xfer;
++		else
++			muxc->algo.smbus_xfer = __i2c_mux_smbus_xfer;
++	}
++	muxc->algo.functionality = i2c_mux_functionality;
 +
-+Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-+interface and CSI1 is used for parallel interface.
-+
-+Required properties:
-+  - compatible: value must be "allwinner,sun8i-v3s-csi"
-+  - reg: base address and size of the memory-mapped region.
-+  - interrupts: interrupt associated to this IP
-+  - clocks: phandles to the clocks feeding the CSI
-+    * bus: the CSI interface clock
-+    * mod: the CSI module clock
-+    * ram: the CSI DRAM clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandles to the reset line driving the CSI
-+
-+Each CSI node should contain one 'port' child node with one child 'endpoint'
-+node, according to the bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt. As mentioned
-+above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel or
-+Bt656 for CSI1.
-+
-+Endpoint node properties for CSI1
-+---------------------------------
-+
-+- remote-endpoint	: (required) a phandle to the bus receiver's endpoint
-+			   node
-+- bus-width:		: (required) must be 8, 10, 12 or 16
-+- pclk-sample		: (optional) (default: sample on falling edge)
-+- hsync-active		: (only required for parallel)
-+- vsync-active		: (only required for parallel)
-+
-+Example:
-+
-+csi1: csi@1cb4000 {
-+	compatible = "allwinner,sun8i-v3s-csi";
-+	reg = <0x01cb4000 0x1000>;
-+	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&ccu CLK_BUS_CSI>,
-+		 <&ccu CLK_CSI1_SCLK>,
-+		 <&ccu CLK_DRAM_CSI>;
-+	clock-names = "bus", "mod", "ram";
-+	resets = <&ccu RST_BUS_CSI>;
-+
-+	port {
-+		/* Parallel bus endpoint */
-+		csi1_ep: endpoint {
-+			remote-endpoint = <&adv7611_ep>;
-+			bus-width = <16>;
-+
-+			/* If hsync-active/vsync-active are missing,
-+			   embedded BT.656 sync is used */
-+			hsync-active = <0>; /* Active low */
-+			vsync-active = <0>; /* Active low */
-+			pclk-sample = <1>;  /* Rising */
-+		};
-+	};
-+};
+ 	return muxc;
+ }
+ EXPORT_SYMBOL_GPL(i2c_mux_alloc);
+@@ -301,28 +317,11 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
+ 	priv->muxc = muxc;
+ 	priv->chan_id = chan_id;
+ 
+-	/* Need to do algo dynamically because we don't know ahead
+-	 * of time what sort of physical adapter we'll be dealing with.
+-	 */
+-	if (parent->algo->master_xfer) {
+-		if (muxc->mux_locked)
+-			priv->algo.master_xfer = i2c_mux_master_xfer;
+-		else
+-			priv->algo.master_xfer = __i2c_mux_master_xfer;
+-	}
+-	if (parent->algo->smbus_xfer) {
+-		if (muxc->mux_locked)
+-			priv->algo.smbus_xfer = i2c_mux_smbus_xfer;
+-		else
+-			priv->algo.smbus_xfer = __i2c_mux_smbus_xfer;
+-	}
+-	priv->algo.functionality = i2c_mux_functionality;
+-
+ 	/* Now fill out new adapter structure */
+ 	snprintf(priv->adap.name, sizeof(priv->adap.name),
+ 		 "i2c-%d-mux (chan_id %d)", i2c_adapter_id(parent), chan_id);
+ 	priv->adap.owner = THIS_MODULE;
+-	priv->adap.algo = &priv->algo;
++	priv->adap.algo = &muxc->algo;
+ 	priv->adap.algo_data = priv;
+ 	priv->adap.dev.parent = &parent->dev;
+ 	priv->adap.retries = parent->retries;
+diff --git a/include/linux/i2c-mux.h b/include/linux/i2c-mux.h
+index bd74d5706f3b..d60b6846ca88 100644
+--- a/include/linux/i2c-mux.h
++++ b/include/linux/i2c-mux.h
+@@ -36,6 +36,7 @@ struct i2c_mux_core {
+ 	unsigned int arbitrator:1;
+ 	unsigned int gate:1;
+ 
++	struct i2c_algorithm algo;
+ 	void *priv;
+ 
+ 	int (*select)(struct i2c_mux_core *, u32 chan_id);
 -- 
-1.8.3.1
+2.17.1
 
