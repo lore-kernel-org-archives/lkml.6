@@ -2,88 +2,63 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E5AECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC4EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F492152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:22:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fPrSog0S";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fPrSog0S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F492152F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id C85A621531
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:23:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85A621531
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbeIZXgJ (ORCPT
+        id S1728630AbeIZXhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:36:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33778 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbeIZXgI (ORCPT
+        Wed, 26 Sep 2018 19:37:41 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:57484 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbeIZXhl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:36:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C374A605FD; Wed, 26 Sep 2018 17:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537982531;
-        bh=b0EeMjliZXOwtqi3OL3EpVd5dzN7wH+nG5jatNJAdZU=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=fPrSog0SDj6UQjPf97PNE9pB/gddvDiwDxrzGjDck+UD6wAlV5IcIXm9Uat6tT0xU
-         F7UmTjrjC5DHdr8y8Wiuw49hEBK+Mys3Zc7qpJB8W2aZg4ZltmXNMKIr2t23AaXaEE
-         kmwDRoRUQt5r9ltfQ0WeZSSF+mE+KmxWTr/sOJCE=
-Received: from [10.80.45.152] (unknown [71.69.156.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 42D5E60251;
-        Wed, 26 Sep 2018 17:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537982531;
-        bh=b0EeMjliZXOwtqi3OL3EpVd5dzN7wH+nG5jatNJAdZU=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=fPrSog0SDj6UQjPf97PNE9pB/gddvDiwDxrzGjDck+UD6wAlV5IcIXm9Uat6tT0xU
-         F7UmTjrjC5DHdr8y8Wiuw49hEBK+Mys3Zc7qpJB8W2aZg4ZltmXNMKIr2t23AaXaEE
-         kmwDRoRUQt5r9ltfQ0WeZSSF+mE+KmxWTr/sOJCE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42D5E60251
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V3] PCI: Enable PASID when End-to-End TLP is supported by
- all bridges
-From:   Sinan Kaya <okaya@codeaurora.org>
-To:     "Raj, Ashok" <ashok.raj@linux.intel.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Ashok Raj <ashok.raj@intel.com>,
-        IOMMU Mailing List <iommu@lists.linux-foundation.org>
-References: <1530372264-20653-1-git-send-email-okaya@codeaurora.org>
- <20180926162235.GA30177@araj-mobl1.jf.intel.com>
- <e2da631e-ccbf-af94-ea0c-6c6c4d842768@codeaurora.org>
-Message-ID: <ff87c6ab-fdd2-c75d-285a-e2d19c640e2b@codeaurora.org>
-Date:   Wed, 26 Sep 2018 13:22:09 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <e2da631e-ccbf-af94-ea0c-6c6c4d842768@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 26 Sep 2018 19:37:41 -0400
+Received: from localhost (unknown [IPv6:2603:3023:50c:85e1:b5c5:ae11:3e54:6a07])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4340610007AC1;
+        Wed, 26 Sep 2018 10:23:44 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 10:23:43 -0700 (PDT)
+Message-Id: <20180926.102343.1414487817812473048.davem@davemloft.net>
+To:     yuehaibing@huawei.com
+Cc:     pshelar@ovn.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, dev@openvswitch.org
+Subject: Re: [PATCH net-next] net: ovs: fix return type of ndo_start_xmit
+ function
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180926091538.17876-1-yuehaibing@huawei.com>
+References: <20180926091538.17876-1-yuehaibing@huawei.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 26 Sep 2018 10:23:44 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/2018 1:20 PM, Sinan Kaya wrote:
-> 
-> This patch actually broke the integrated endpoints like you were mentioning.
-> It was fixed by a follow up patch from nvidia guys.
-> 
-> https://github.com/torvalds/linux/commit/9d27e39d309c93025ae6aa97236af15bef2a5f1f#diff-a7f0acd715e991df5dfb450d2b9abebc 
-> 
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Wed, 26 Sep 2018 17:15:38 +0800
 
-Turns out Felix works at AMD. Apologies for the name confusion.
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, so make sure the implementation in
+> this driver has returns 'netdev_tx_t' value, and change the function
+> return type to netdev_tx_t.
+> 
+> Found by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Applied.
