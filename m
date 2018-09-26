@@ -2,172 +2,264 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA195C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDCDC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FEFF214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE43E214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:29:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="krnKQ8ih"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FEFF214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQRIRfLE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE43E214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbeIZGjH (ORCPT
+        id S1726781AbeIZGjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 02:39:07 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55180 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbeIZGjH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 02:39:07 -0400
-Received: by mail-it1-f195.google.com with SMTP id f14-v6so641752ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 17:29:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=bJUaOZKg72c4OAC3WLSUlx/EPfde1niexsdVqsFxDY8=;
-        b=krnKQ8ihq1gXjFn/MONzq57+Gc1n2eCbsslOy3xc54c6queKEq0TFqHg2canusFgCe
-         Abra1z/RIE37eowR3hrp/3mjkusfyqTjLOURJo1H9Amk900D7luTxrcIyCUzJGewaQm/
-         LB9oiu8Qal2DdV7dz9rWEmDi91o5YK1fATck4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=bJUaOZKg72c4OAC3WLSUlx/EPfde1niexsdVqsFxDY8=;
-        b=QT0K6/JecupfobIOqauHSZN7A6yHHqYGw3rkUlighyixPLP4CX8xldhCJIRT1F4oua
-         lz+IQTZJqfKDxF4IgMwN27Zen827TRYz5KtJCMQh7xuWCAvHvc8zAG6hT2bIoIdqLodK
-         In4Pdgo0k6A2IkZ/rVk2xDrsmSzx6WWttyekfv6ITmKMfFEYeQcne+r6ix+cHaUg2Aja
-         o/kDttuvYXJO0ovr1lDP0kesfq3ULKJFOy2hZFXJz3L+tvSJR/g9dXVZLwzPOpLoacOc
-         ueY+kMKD+Lx2kyKh2Jlu8B1N6EoNDYEFAMgxowH2oLTtE3SsiZHm5McCkBJtDA6APW3E
-         xvsQ==
-X-Gm-Message-State: ABuFfohtxcKoowsfZVt1zWLBPT2Y2MUOntWb0zM3Qjn1ThVcskOLrwDs
-        rkU2Cncb09Dl0beHLjKULtlPXW0sgkE=
-X-Google-Smtp-Source: ACcGV62xsxoTFw6fcxNxBJjVQPyP7c8vvpLKR4v1vUo2kZnjnlDDv0WB2q6x+CUNqgUo4kGGE8IzkA==
-X-Received: by 2002:a24:7012:: with SMTP id f18-v6mr3008375itc.87.1537921739760;
-        Tue, 25 Sep 2018 17:28:59 -0700 (PDT)
-Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id a63-v6sm2192605itc.38.2018.09.25.17.28.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 17:28:58 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 19:28:57 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 000/173] 4.14.72-stable review
-Message-ID: <20180926002857.ajqqxi2qcfcwsg7g@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20180924113114.334025954@linuxfoundation.org>
- <20180925090733.GB21224@kroah.com>
+        Wed, 26 Sep 2018 02:39:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbeIZGjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 02:39:18 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E751214D5;
+        Wed, 26 Sep 2018 00:29:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537921750;
+        bh=4fZOUO7gYG7wPN5Ihp3aEsKpmtN8FtDQE3uV+diNk7E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pQRIRfLEFcnqRbHB7IeVObX8v7zgs0ecQZhFR2P+5oHO6tJ3w60MBRoevcBJ8E0M7
+         S5WSl/aM3H8jJsL+T5RNm5OuXX8NTcJrOkKxO7xrWbvRhVX1HZQoxy7h6UIqW608m2
+         F9cA71D5FnpCyDo+GZDKROh14ipqLtMDcOPfbi1M=
+Date:   Tue, 25 Sep 2018 17:29:09 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Message-ID: <20180926002909.GC3829@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
+ <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
+ <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
+ <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
+ <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
+ <20180919223819.GA79681@jaegeuk-macbookpro.roam.corp.google.com>
+ <157abebb-80e7-d32d-3102-69ddfc5892f2@huawei.com>
+ <20180920214213.GD35918@jaegeuk-macbookpro.roam.corp.google.com>
+ <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180925090733.GB21224@kroah.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:07:33AM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Sep 24, 2018 at 01:50:34PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.72 release.
-> > There are 173 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+On 09/21, Chao Yu wrote:
+> On 2018/9/21 5:42, Jaegeuk Kim wrote:
+> > On 09/20, Chao Yu wrote:
+> >> On 2018/9/20 6:38, Jaegeuk Kim wrote:
+> >>> On 09/19, Chao Yu wrote:
+> >>>> On 2018/9/19 0:45, Jaegeuk Kim wrote:
+> >>>>> On 09/18, Chao Yu wrote:
+> >>>>>> On 2018/9/18 10:05, Jaegeuk Kim wrote:
+> >>>>>>> On 09/18, Chao Yu wrote:
+> >>>>>>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+> >>>>>>>>> On 09/13, Chao Yu wrote:
+> >>>>>>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+> >>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
+> >>>>>>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> >>>>>>>>>>>>>>>>>>> can recover it based on previous user information.
+> >>>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> >>>>>>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> >>>>>>>>>>>>>>>>>> same?
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+> >>>>>>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+> >>>>>>>>>>>>>>>>> fsck after roll-forward recovery.
+> >>>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
+> >>>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+> >>>>>>>>>>>>>>>
+> >>>>>>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+> >>>>>>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+> >>>>>>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+> >>>>>>>>>>>>>>> may was corrupted/inconsistent. Right?
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+> >>>>>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+> >>>>>>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+> >>>>>>>>>>>>> detected by fsck, I guess there is bug in v8.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+> >>>>>>>>>>>> 1. flush time in block_operation exceed a threshold.
+> >>>>>>>>>>>> 2. dquot subsystem error occurs.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> For above case, fsck should repair the quota file by default.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+> >>>>>>>>>>> during the recovery. So, we have something missing in the recovery in terms
+> >>>>>>>>>>> of quota updates.
+> >>>>>>>>>>
+> >>>>>>>>>> Yeah, I checked the code, just found one suspected place:
+> >>>>>>>>>>
+> >>>>>>>>>> find_fsync_dnodes()
+> >>>>>>>>>>  - f2fs_recover_inode_page
+> >>>>>>>>>>   - inc_valid_node_count
+> >>>>>>>>>>    - dquot_reserve_block  dquot info is not initialized now
+> >>>>>>>>>>  - add_fsync_inode
+> >>>>>>>>>>   - dquot_initialize
+> >>>>>>>>>>
+> >>>>>>>>>> I think we should reserve block for inode block after dquot_initialize(), can
+> >>>>>>>>>> you confirm this?
+> >>>>>>>>>
+> >>>>>>>>> Let me test this.
+> >>>>>>>>>
+> >>>>>>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+> >>>>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
+> >>>>>>>>> Subject: [PATCH] f2fs: count inode block for recovered files
+> >>>>>>>>>
+> >>>>>>>>> If a new file is recovered, we missed to reserve its inode block.
+> >>>>>>>>
+> >>>>>>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
+> >>>>>>>> have to keep backward compatibilty, in memory we don't account block number
+> >>>>>>>> for f2fs' inode block, but only account inode number for it, so here like
+> >>>>>>>> we did in inc_valid_node_count(), we don't need to do this.
+> >>>>>>>
+> >>>>>>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
+> >>>>>>> is that caused by uid/gid change during recovery. Let me try out your patch.
+> >>>>>>
+> >>>>>> I guess we should update dquot and inode's uid/gid atomically under
+> >>>>>> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
+> >>>>>>
+> >>>>>> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
+> >>>>>> enabled, but w/ normal quota file, I got one regression reported by
+> >>>>>> generic/232, I fixed in v10, will do some tests and release it later.
+> >>>>>>
+> >>>>>> Note that, my fsck can fix corrupted quota file automatically once
+> >>>>>> CP_QUOTA_NEED_FSCK_FLAG is set.
+> >>>>>
+> >>>>> I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
+> >>>>
+> >>>> That's strange, in my environment, before v9, I always encounter corrupted
+> >>>> quota sysfile after step 9), after v9, I never hit failure again.
+> >>>>
+> >>>> 1) enable fault injection
+> >>>> 2) run fsstress
+> >>>> 3) call shutdowon
+> >>>> 4) kill fsstress
+> >>>> 5) unmount
+> >>>> 6) fsck
+> >>>> 7) mount
+> >>>> 8) umount
+> >>>> 9) fsck
+> >>>> 10) go 1).
+> >>>>
+> >>>>> CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
+> >>>>> flag in roll-forward recovery, everything is fine.
+> >>>>
+> >>>> I do the test based on codes in my git tree, could you check the result
+> >>>> again based on my code? in where I just disable nat_bits recovery, not
+> >>>> sure, in step 6) fsck can break some thing in image.
+> >>>>
+> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
+> >>>>
+> >>>> Also, I just send the fsck code, could you check that too?
+> >>>>
+> >>>> And I'd like to know your mount option and mkfs option, could you list for me?
+> >>>
+> >>> I'm just doing this.
+> >>> https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L220
+> >>
+> >> I just sent one patch to fix POR issue which missed to recover uid/gid of
+> >> inode.
+> >>
+> >> [PATCH] f2fs: fix to recover inode's uid/gid during POR
+> >>
+> >> After applying this patch, I can reproduce sys quota file corruption... let
+> >> me figure out the solution.
 > > 
-> > Responses should be made by Wed Sep 26 11:30:10 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.72-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
+> > Okay.
 > 
-> -rc2 is out to resolve some reported problems:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.72-rc2.gz
+> Could you try v11, no quota corruption in my test now.
 
--rc2 looks good. There is a problem on dragonboard during boot that was
-introduced in v4.14.71 that I didn't notice last week. We'll bisect it
-and report back later this week. dragonboard on the other branches (4.9,
-4.18, mainline) looks fine.
+Chao,
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+I missed your fsck patch to recover this. Could you post it as well?
 
-Summary
-------------------------------------------------------------------------
+Thanks,
 
-kernel: 4.14.72-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.14.y
-git commit: a514b8f4ac33c076ad63ba833cdc3325d8c2e7fc
-git describe: v4.14.71-171-ga514b8f4ac33
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/build/v4.14.71-171-ga514b8f4ac33
-
-No regressions (compared to build v4.14.71)
-------------------------------------------------------------------------
-
-Ran 18749 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-filecaps-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>>
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>>
+> >>>>>>>
+> >>>>>>>>
+> >>>>>>>> Can you test v9 first? I didn't encounter quota corruption with your
+> >>>>>>>> testcase right now. Will check it in cell phone environment.
+> >>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>>>>> ---
+> >>>>>>>>>  fs/f2fs/recovery.c | 5 +++++
+> >>>>>>>>>  1 file changed, 5 insertions(+)
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>>>>>>>> index 56d34193a74b..bff5cf730e13 100644
+> >>>>>>>>> --- a/fs/f2fs/recovery.c
+> >>>>>>>>> +++ b/fs/f2fs/recovery.c
+> >>>>>>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+> >>>>>>>>>  		err = dquot_alloc_inode(inode);
+> >>>>>>>>>  		if (err)
+> >>>>>>>>>  			goto err_out;
+> >>>>>>>>> +		err = dquot_reserve_block(inode, 1);
+> >>>>>>>>> +		if (err) {
+> >>>>>>>>> +			dquot_drop(inode);
+> >>>>>>>>> +			goto err_out;
+> >>>>>>>>> +		}
+> >>>>>>>>>  	}
+> >>>>>>>>>  
+> >>>>>>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+> >>>>>>>>>
+> >>>>>>>
+> >>>>>>> .
+> >>>>>>>
+> >>>>>
+> >>>>> .
+> >>>>>
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
