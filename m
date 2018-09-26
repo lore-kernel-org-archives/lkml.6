@@ -6,89 +6,119 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFDBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CADFC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73E921531
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73E921531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+	by mail.kernel.org (Postfix) with ESMTP id 1478821533
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:44:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1478821533
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbeI0C5o (ORCPT
+        id S1727169AbeI0C6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:57:44 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:57314 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbeI0C5n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:57:43 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id CA3F82006D;
-        Wed, 26 Sep 2018 22:42:53 +0200 (CEST)
-Date:   Wed, 26 Sep 2018 22:42:52 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        =?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
-Subject: Re: [PATCH v1 1/5] dt-binding: rtci-pcf8523: add quartz_load property
-Message-ID: <20180926204252.GA8654@ravnborg.org>
-References: <20180822183555.GA24084@ravnborg.org>
- <20180907193508.24974-2-sam@ravnborg.org>
- <20180913190516.GG14988@piout.net>
- <20180926154708.GA3264@bogus>
- <20180926185121.GF16644@piout.net>
+        Wed, 26 Sep 2018 22:58:45 -0400
+Received: from mga14.intel.com ([192.55.52.115]:50409 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726528AbeI0C6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 22:58:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 13:44:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
+   d="scan'208";a="260500420"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.55])
+  by orsmga005.jf.intel.com with ESMTP; 26 Sep 2018 13:44:00 -0700
+Date:   Wed, 26 Sep 2018 13:44:00 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
+ w/ PF_SGX
+Message-ID: <20180926204400.GA11446@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180926185121.GF16644@piout.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=GNNGDwhTSeOm1O2XKAkA:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 08:51:21PM +0200, Alexandre Belloni wrote:
-> On 26/09/2018 10:47:08-0500, Rob Herring wrote:
-> > > > +Optional property:
-> > > > +- nxp,quartz_load_12.5pF: The capacitive load on the quartz is 12.5 pF,
-> > > > +  which differ from the default value of 7 pF
-> > > > +
-> > > 
-> > > The boolean properties usually don't work well for RTCs because people
-> > > usually want to keep any previous configuration that may have been done
-> > > at the factory or in the bootloader so I would use:
-> > > 
-> > > nxp,quartz_load_fF and this would be either 7000 or 12500.
-> > 
-> > Use '-' rather than '_'.
-> > 
-> > There's already a defined unit suffix of '-picofarads'. If you need 
-> > '-femtofarads', then please add to property-units.txt. Though I'd prefer 
-> > not as wouldn't a value of 12 (or 13) be close enough for the needs 
-> > here?
-> > 
+On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
+> On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
+> >> e omniscient.
+> >>
+> >> How about this?  With formatting changes since it's long-winded...
+> >>
+> >>        /*
+> >>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
+> >>         * access is allowed by the PTE but not the EPCM.  This usually happens
+> >>         * when the EPCM is yanked out from under us, e.g. by hardware after a
+> >>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
+> >>         * fix the source of the fault as the EPCM can't be directly modified
+> >>         * by software.  Handle the fault as an access error in order to signal
+> >>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
+> >>         * though userspace may not have actually violated access permissions.
+> >>         */
+> >>
+> > Looks good to me.
 > 
-> For that particular RTC, yes but the isl1208 has 0.5pF steps and the
-> x1205 has 0.25pf steps. I'd prefer having a single generic property for
-> all the RTCs: quartz-load-femtofarads.
+> Including the actual architectural definition of the bit might add some
+> clarity.  The SDM explicitly says (Vol 3a section 4.7):
+> 
+> 	The fault resulted from violation of SGX-specific access-control
+> 	requirements.
+> 
+> Which totally squares with returning true from access_error().
+> 
+> There's also a tidbit that says:
+> 
+> 	This flag is 1 if the exception is unrelated to paging and
+> 	resulted from violation of SGX-specific access-control
+> 	requirements. ... such a violation can occur only if there
+> 	is no ordinary page fault...
+> 
+> This is pretty important.  It means that *none* of the other
+> paging-related stuff that we're doing applies.
+>
+> We also need to clarify how this can happen.  Is it through something
+> than an app does, or is it solely when the hardware does something under
+> the covers, like suspend/resume.
 
-I will change to use this, and update property-units.txt too, when I get
-back to the patch set in a week or so.
+Are you looking for something in the changelog, the comment, or just
+a response?  If it's the latter...
 
-	Sam
+On bare metal with a bug-free kernel, the only scenario I'm aware of
+where we'll encounter these faults is when hardware pulls the rug out
+from under us.  In a virtualized environment all bets are off because
+the architecture allows VMMs to silently "destroy" the EPC at will,
+e.g. KVM, and I believe Hyper-V, will take advantage of this behavior
+to support live migration.  Post migration, the destination system
+will generate PF_SGX because the EPC{M} can't be migrated between
+system, i.e. the destination EPCM sees all EPC pages as invalid.
+
