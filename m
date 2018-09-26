@@ -2,153 +2,193 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6523C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D21C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD6E21570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:13:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="gZZGILIp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD6E21570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	by mail.kernel.org (Postfix) with ESMTP id DBD0321566
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBD0321566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbeI0K1N (ORCPT
+        id S1726654AbeI0Kod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 06:27:13 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42495 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeI0K1M (ORCPT
+        Thu, 27 Sep 2018 06:44:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57562 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726557AbeI0Koc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 06:27:12 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i4-v6so283201pgq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 21:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=fmn5w2Vsi1vG/lbBOq8Q139Hj9dWw6MZ7Oa4lbqZFSQ=;
-        b=gZZGILIpc7vhBN/Yx3KIOptISTxGRgYccUp3Do2PlS12ynHP0/zPjmX4vuWRYpHmy+
-         3LIE7E/MNbwA/rqLlMgdca2QGTIiGkWcx/slAcXt+Z7w+dn+LLhwVGSmFGuGF8a52Fav
-         s3SOZk0cO5+gOc82x9cL3jpkrrvgYiBZbl9Vqh9Q0NsQr0Ec7HjbWNlxODjS8MFU2Sqa
-         zkkeGl51ijsj1J1uS5vsJCArMgd/vQAjq/V4UeYDhdW8BohE/G8lCmILVolXqKbPuCdA
-         6UKDfV1ebkKQlf+rO7lNt3Xg7FY6jzp7Q0KUqIk7BxDffEj2YYRvRnqrMGsNYa2Cm/Pf
-         6vbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fmn5w2Vsi1vG/lbBOq8Q139Hj9dWw6MZ7Oa4lbqZFSQ=;
-        b=doj1JW83gLkkn9GhbC9H+/AQE0DkIrZBtiYa1A9Jqp2hsRDdwkxlM8M+umC7P+tjzk
-         AvRHIxq8dtbBXUkzeiCaYU6zWiqtuDbxM6V01bUnnKZQ6ACLzAa4YVLU2GsAlq5YESkR
-         7b75AfjBdvZlPo7/M3LFg+Ecjzfdq9uNpBSeo6L1rp2iYOmV8z1ZU9xVWuKn5jN33p4M
-         bPHtglnyWaBjTs4CeyobsI6DNfn7v6zwwOw558rmXHyUpYW9f5JMReC82QRU1SCcjJT9
-         dioTk7mnvGq9yqupcAEXR5EC3Cv1KVqYDRFKjDprvf9IskusofgLyBZqW5OQqWlj+tog
-         l+ow==
-X-Gm-Message-State: ABuFfojGOa7JL+jFmVEgPtqlaL0WxMwJ3y4lCt8sa5Gmcux6xvppiPih
-        ERGifCJCXHphHEevxIEQsxOK7Q==
-X-Google-Smtp-Source: ACcGV60PZCMOML2orOKiC5KTa/VXr/k9u4Rr+LTagwx/c9oAjgIHcLaJ5B3gfvVQL7IBbqb3I7f+tg==
-X-Received: by 2002:a17:902:29e3:: with SMTP id h90-v6mr8804617plb.215.1538021461581;
-        Wed, 26 Sep 2018 21:11:01 -0700 (PDT)
-Received: from endless.endlessm-sf.com (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
-        by smtp.gmail.com with ESMTPSA id t26-v6sm827850pfm.138.2018.09.26.21.10.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 21:10:58 -0700 (PDT)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kai.heng.feng@canonical.com, linux@endlessm.com,
-        Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: [PATCH net] r8169: Enable MSI-X on RTL8106e
-Date:   Thu, 27 Sep 2018 12:09:48 +0800
-Message-Id: <20180927040948.11891-1-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 27 Sep 2018 06:44:32 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8R4OjOg029821
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 00:28:18 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mrpsu2tmp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 00:28:18 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 27 Sep 2018 00:28:16 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Sep 2018 00:28:14 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8R4SDvT43319498
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Sep 2018 04:28:13 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3066B2064;
+        Thu, 27 Sep 2018 00:26:32 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53B64B2067;
+        Thu, 27 Sep 2018 00:26:32 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.198])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Sep 2018 00:26:32 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 9BED316C3A6B; Wed, 26 Sep 2018 15:09:26 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 15:09:26 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Pierce Griffiths <pierceagriffiths@gmail.com>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] torture-test modules: Remove unnecessary "ret" variables
+Reply-To: paulmck@linux.ibm.com
+References: <20180922012132.23373-1-pierceagriffiths@gmail.com>
+ <20180922212630.GF4222@linux.ibm.com>
+ <20180925194706.GA27944@GANOO-Loonix.attlocal.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925194706.GA27944@GANOO-Loonix.attlocal.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18092704-0040-0000-0000-000004770947
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009778; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01094226; UDB=6.00565617; IPR=6.00874261;
+ MB=3.00023523; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-27 04:28:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092704-0041-0000-0000-0000087F0EBD
+Message-Id: <20180926220926.GM4222@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809270046
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Originally, we have an issue where r8169 MSI-X interrupt is broken after
-S3 suspend/resume on RTL8106e of ASUS X441UAR.
+On Tue, Sep 25, 2018 at 02:47:08PM -0500, Pierce Griffiths wrote:
+> Paul,
+> The #ifdef cannot be replaced, as this would break the build for
+> CONFIG_HOTPLUG_CPU=n builds. There are assignments and references to two
+> global variables, a struct, and a function that are declared/defined in
+> a large "#ifdef CONFIG_HOTPLUG_CPU" block which ends directly above
+> torture_onoff_init(). IS_ENABLED() would cause these references to be
+> present at compile time, but not their declarations or definitions,
+> which would certainly cause a compilation error.
 
-02:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
-RTL8101/2/6E PCI Express Fast/Gigabit Ethernet controller [10ec:8136]
-(rev 07)
-	Subsystem: ASUSTeK Computer Inc. RTL810xE PCI Express Fast
-Ethernet controller [1043:200f]
-	Flags: bus master, fast devsel, latency 0, IRQ 16
-	I/O ports at e000 [size=256]
-	Memory at ef100000 (64-bit, non-prefetchable) [size=4K]
-	Memory at e0000000 (64-bit, prefetchable) [size=16K]
-	Capabilities: [40] Power Management version 3
-	Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
-	Capabilities: [70] Express Endpoint, MSI 01
-	Capabilities: [b0] MSI-X: Enable+ Count=4 Masked-
-	Capabilities: [d0] Vital Product Data
-	Capabilities: [100] Advanced Error Reporting
-	Capabilities: [140] Virtual Channel
-	Capabilities: [160] Device Serial Number 01-00-00-00-36-4c-e0-00
-	Capabilities: [170] Latency Tolerance Reporting
-	Kernel driver in use: r8169
-	Kernel modules: r8169
+Good point, and thank you!  I have queued the original patch with a
+minor edit to the Subject line.  It will make it to my -rcu tree once
+I find a decent internet connection.
 
-We found the all of the values in PCI BAR=4 of the ethernet adapter
-become 0xFF after system resumes.  That breaks the MSI-X interrupt.
-Therefore, we can only fall back to MSI interrupt to fix the issue at
-that time.
+							Thanx, Paul
 
-However, there is a commit which resolves the drivers getting nothing in
-PCI BAR=4 after system resumes.  It is 04cb3ae895d7 "PCI: Reprogram
-bridge prefetch registers on resume" by Daniel Drake.
-
-After apply the patch, the ethernet adapter works fine before suspend
-and after resume.  So, we can revert the workaround after the commit
-"PCI: Reprogram bridge prefetch registers on resume" is merged into main
-tree.
-
-This patch reverts commit 7bb05b85bc2d1a1b647b91424b2ed4a18e6ecd81
-"r8169: don't use MSI-X on RTL8106e".
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=201181
-Fixes: 7bb05b85bc2d ("r8169: don't use MSI-X on RTL8106e")
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
----
- drivers/net/ethernet/realtek/r8169.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index bb529ff2ca81..445508c7e067 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7084,20 +7084,17 @@ static int rtl_alloc_irq(struct rtl8169_private *tp)
- {
- 	unsigned int flags;
- 
--	switch (tp->mac_version) {
--	case RTL_GIGA_MAC_VER_01 ... RTL_GIGA_MAC_VER_06:
-+	if (tp->mac_version <= RTL_GIGA_MAC_VER_06) {
- 		RTL_W8(tp, Cfg9346, Cfg9346_Unlock);
- 		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~MSIEnable);
- 		RTL_W8(tp, Cfg9346, Cfg9346_Lock);
- 		flags = PCI_IRQ_LEGACY;
--		break;
--	case RTL_GIGA_MAC_VER_39 ... RTL_GIGA_MAC_VER_40:
-+	} else if (tp->mac_version == RTL_GIGA_MAC_VER_40) {
- 		/* This version was reported to have issues with resume
- 		 * from suspend when using MSI-X
- 		 */
- 		flags = PCI_IRQ_LEGACY | PCI_IRQ_MSI;
--		break;
--	default:
-+	} else {
- 		flags = PCI_IRQ_ALL_TYPES;
- 	}
- 
--- 
-2.11.0
+> On Sat, Sep 22, 2018 at 02:26:30PM -0700, Paul E. McKenney wrote:
+> > On Fri, Sep 21, 2018 at 08:21:31PM -0500, Pierce Griffiths wrote:
+> > > Remove return variables (declared as "ret") in cases where,
+> > > depending on whether a condition evaluates as true, the result of a
+> > > function call can be immediately returned instead of storing the result in
+> > > the return variable. When the condition evaluates as false, the constant
+> > > initially stored in the return variable at declaration is returned instead.
+> > > 
+> > > Signed-off-by: Pierce Griffiths <pierceagriffiths@gmail.com>
+> > 
+> > Not bad, as it does safe a couple of lines.  Is it possible to save
+> > a few more by using "if (!IS_ENABLED(CONFIG_HOTPLUG_CPU))" instead
+> > of the #ifdef?  Or does that end up breaking the build for either
+> > CONFIG_HOTPLUG_CPU=y or CONFIG_HOTPLUG_CPU=n builds?
+> > 
+> > 							Thanx, Paul
+> > 
+> > > ---
+> > >  kernel/torture.c | 22 ++++++++--------------
+> > >  1 file changed, 8 insertions(+), 14 deletions(-)
+> > > 
+> > > diff --git a/kernel/torture.c b/kernel/torture.c
+> > > index 1ac24a826589..f4cec6db7f3c 100644
+> > > --- a/kernel/torture.c
+> > > +++ b/kernel/torture.c
+> > > @@ -233,16 +233,15 @@ torture_onoff(void *arg)
+> > >   */
+> > >  int torture_onoff_init(long ooholdoff, long oointerval)
+> > >  {
+> > > -	int ret = 0;
+> > > -
+> > >  #ifdef CONFIG_HOTPLUG_CPU
+> > >  	onoff_holdoff = ooholdoff;
+> > >  	onoff_interval = oointerval;
+> > >  	if (onoff_interval <= 0)
+> > >  		return 0;
+> > > -	ret = torture_create_kthread(torture_onoff, NULL, onoff_task);
+> > > -#endif /* #ifdef CONFIG_HOTPLUG_CPU */
+> > > -	return ret;
+> > > +	return torture_create_kthread(torture_onoff, NULL, onoff_task);
+> > > +#else /* #ifdef CONFIG_HOTPLUG_CPU */
+> > > +	return 0;
+> > > +#endif /* #else #ifdef CONFIG_HOTPLUG_CPU */
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(torture_onoff_init);
+> > > 
+> > > @@ -513,15 +512,13 @@ static int torture_shutdown(void *arg)
+> > >   */
+> > >  int torture_shutdown_init(int ssecs, void (*cleanup)(void))
+> > >  {
+> > > -	int ret = 0;
+> > > -
+> > >  	torture_shutdown_hook = cleanup;
+> > >  	if (ssecs > 0) {
+> > >  		shutdown_time = ktime_add(ktime_get(), ktime_set(ssecs, 0));
+> > > -		ret = torture_create_kthread(torture_shutdown, NULL,
+> > > +		return torture_create_kthread(torture_shutdown, NULL,
+> > >  					     shutdown_task);
+> > >  	}
+> > > -	return ret;
+> > > +	return 0;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(torture_shutdown_init);
+> > > 
+> > > @@ -619,13 +616,10 @@ static int torture_stutter(void *arg)
+> > >  /*
+> > >   * Initialize and kick off the torture_stutter kthread.
+> > >   */
+> > > -int torture_stutter_init(int s)
+> > > +int torture_stutter_init(const int s)
+> > >  {
+> > > -	int ret;
+> > > -
+> > >  	stutter = s;
+> > > -	ret = torture_create_kthread(torture_stutter, NULL, stutter_task);
+> > > -	return ret;
+> > > +	return torture_create_kthread(torture_stutter, NULL, stutter_task);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(torture_stutter_init);
+> > > 
+> > > -- 
+> > > 2.19.0
+> > > 
+> > 
+> 
 
