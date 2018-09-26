@@ -2,147 +2,185 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDBDC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96553C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FE0520843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKWMGgO6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE0520843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5968C20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:02:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5968C20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbeIZUPo (ORCPT
+        id S1728175AbeIZUPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:15:44 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54593 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbeIZUPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:15:43 -0400
-Received: by mail-it1-f194.google.com with SMTP id f14-v6so3057272ita.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9E4pWiLPLRleapHaOvgVz85A5RfjeA6Uo1z3Q8Cse5Q=;
-        b=HKWMGgO6ECbqsCiC8RTphA7IcDI/lt6KCo6iK43UXMaTmU/XOGCS566fyrPSBGIsG9
-         w5PTTFtd25nMlpRdCs7SBZacd3DSmtdPT6wNO8sBr3QrE94qAZeho/ZW+iRLOioBGxkR
-         Bhvl/RZgZOTNY4TUCXmOMQ2F5Kpr6ELVxIyic=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9E4pWiLPLRleapHaOvgVz85A5RfjeA6Uo1z3Q8Cse5Q=;
-        b=KhSw2FbUl4Su3gMTKqvELaAIwTOt7KpPIYIliO1M+XNVeLmEQjlD5ZjeV9h+Fl85fo
-         f7zXD+ptLwnUbNJs4REtc8lMLkcHniZDmjEuRSx2HEYsb/TGsHYK2mh0mDIAMSi7JKF0
-         56s7mHUEb1Gt5vxWJmD0VWB8DcamjdBe90SfvGjO2+00s1rsDRv1GQndS1gUAXnTpIwD
-         wxoSR+xSZy8TmHKcsOvRN/6n5g4G67btCqymLo3CJ4A1Pg6kAhWg8EuWYCuxVzj9e251
-         +sCCjzed6oOrefmOd6ee4nHN7BVIwNuzEUQQoKteDXphz3msmMFipatjRhbrrbqdXbpb
-         qcyw==
-X-Gm-Message-State: ABuFfohHYGXPG4uvfwSrwmhRY6UIY1SUj9MGtvimslssxdcHhmLokFGC
-        d+ZYCbX4CufZ/B9MZhG1iAosILNMDeZHsQmun7NWt/Tdykc=
-X-Google-Smtp-Source: ACcGV60cgmVYT+YNQqNYyqlPmEoWaQVAAjrzCOYH0YjaE8+M0F8OOFARtykDtlnMEAozKCI1ChdA7vKfq23kkCkUmNU=
-X-Received: by 2002:a24:e48e:: with SMTP id o136-v6mr5080014ith.58.1537970556452;
- Wed, 26 Sep 2018 07:02:36 -0700 (PDT)
+        Wed, 26 Sep 2018 16:15:48 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17316 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726880AbeIZUPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:15:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:02:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="93888618"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.55])
+  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 07:02:39 -0700
+Date:   Wed, 26 Sep 2018 07:02:40 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/9] x86/kvm/mmu: introduce guest_mmu
+Message-ID: <20180926140240.GC27433@linux.intel.com>
+References: <20180925175844.20277-1-vkuznets@redhat.com>
+ <20180925175844.20277-5-vkuznets@redhat.com>
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
- <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com> <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
-In-Reply-To: <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 26 Sep 2018 16:02:22 +0200
-Message-ID: <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925175844.20277-5-vkuznets@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(+ Herbert, Thomas)
+On Tue, Sep 25, 2018 at 07:58:39PM +0200, Vitaly Kuznetsov wrote:
+> When EPT is used for nested guest we need to re-init MMU as shadow
+> EPT MMU (nested_ept_init_mmu_context() does that). When we return back
+> from L2 to L1 kvm_mmu_reset_context() in nested_vmx_load_cr3() resets
+> MMU back to normal TDP mode. Add a special 'guest_mmu' so we can use
+> separate root caches; the improved hit rate is not very important for
+> single vCPU performance, but it avoids contention on the mmu_lock for
+> many vCPUs.
+> 
+> On the nested CPUID benchmark, with 16 vCPUs, an L2->L1->L2 vmexit
+> goes from 42k to 26k cycles.
+> 
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+> Changes since v1:
+> - drop now unneded local vmx variable in vmx_free_vcpu_nested
+>   [Sean Christopherson]
+> ---
+>  arch/x86/include/asm/kvm_host.h |  3 +++
+>  arch/x86/kvm/mmu.c              | 15 +++++++++++----
+>  arch/x86/kvm/vmx.c              | 27 ++++++++++++++++++---------
+>  3 files changed, 32 insertions(+), 13 deletions(-)
 
-On Wed, 26 Sep 2018 at 15:33, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> Hi Ard,
->
-> On Wed, Sep 26, 2018 at 10:59 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> > > +static inline bool chacha20_arch(struct chacha20_ctx *state, u8 *dst,
-> > > +                                const u8 *src, size_t len,
-> > > +                                simd_context_t *simd_context)
-> > > +{
-> > > +#if defined(CONFIG_KERNEL_MODE_NEON)
-> > > +       if (chacha20_use_neon && len >= CHACHA20_BLOCK_SIZE * 3 &&
-> > > +           simd_use(simd_context))
-> > > +               chacha20_neon(dst, src, len, state->key, state->counter);
-> > > +       else
-> > > +#endif
-> >
-> > Better to use IS_ENABLED() here:
-> >
-> > > +       if (IS_ENABLED(CONFIG_KERNEL_MODE_NEON)) &&
-> > > +           chacha20_use_neon && len >= CHACHA20_BLOCK_SIZE * 3 &&
-> > > +           simd_use(simd_context))
->
-> Good idea. I'll fix that up.
->
-> >
-> > Also, this still has unbounded worst case scheduling latency, given
-> > that the outer library function passes its entire input straight into
-> > the NEON routine.
->
-> The vast majority of crypto routines in arch/*/crypto/ follow this
-> same exact pattern, actually. I realize a few don't -- probably the
-> ones you had a hand in :) -- but I think this is up to the caller to
-> handle.
+...
 
-Anything that uses the scatterwalk API (AEADs and skciphers) will
-handle at most a page at a time. Hashes are different, which is why
-some of them have to handle it explicitly.
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 2d55adab52de..93ff08136fc1 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -8468,8 +8468,10 @@ static inline void nested_release_vmcs12(struct vcpu_vmx *vmx)
+>   * Free whatever needs to be freed from vmx->nested when L1 goes down, or
+>   * just stops using VMX.
+>   */
+> -static void free_nested(struct vcpu_vmx *vmx)
+> +static void free_nested(struct kvm_vcpu *vcpu)
+>  {
+> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
+> +
+>  	if (!vmx->nested.vmxon && !vmx->nested.smm.vmxon)
+>  		return;
+>  
+> @@ -8502,6 +8504,8 @@ static void free_nested(struct vcpu_vmx *vmx)
+>  		vmx->nested.pi_desc = NULL;
+>  	}
+>  
+> +	kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu, KVM_MMU_ROOTS_ALL);
+> +
+>  	free_loaded_vmcs(&vmx->nested.vmcs02);
+>  }
+>  
+> @@ -8510,7 +8514,7 @@ static int handle_vmoff(struct kvm_vcpu *vcpu)
+>  {
+>  	if (!nested_vmx_check_permission(vcpu))
+>  		return 1;
+> -	free_nested(to_vmx(vcpu));
+> +	free_nested(vcpu);
+>  	nested_vmx_succeed(vcpu);
+>  	return kvm_skip_emulated_instruction(vcpu);
+>  }
+> @@ -8541,6 +8545,8 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
+>  	if (vmptr == vmx->nested.current_vmptr)
+>  		nested_release_vmcs12(vmx);
+>  
+> +	kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu, KVM_MMU_ROOTS_ALL);
 
-> I made a change so that in chacha20poly1305.c, it calls
-> simd_relax after handling each scatter-gather element, so a
-> "construction" will handle this gracefully. But I believe it's up to
-> the caller to decide on what sizes of information it wants to pass to
-> primitives. Put differently, this also hasn't ever been an issue
-> before -- the existing state of the tree indicates this -- and so I
-> don't anticipate this will be a real issue now.
+Shouldn't we only free guest_mmu if VMCLEAR is targeting current_vmptr?
+Assuming that's the case, we could put the call to kvm_mmu_free_roots()
+in nested_release_vmcs12() instead of calling it from handle_vmclear()
+and handle_vmptrld().
 
-The state of the tree does not capture all relevant context or
-history. The scheduling latency issue was brought up very recently by
-the -rt folks on the mailing lists.
-
-> And if it becomes one,
-> this is something we can address *later*, but certainly there's no use
-> of adding additional complexity to the initial patchset to do this
-> now.
->
-
-You are introducing a very useful SIMD abstraction, but it lets code
-run with preemption disabled for unbounded amounts of time, and so now
-is the time to ensure we get it right.
-
-Part of the [justified] criticism on the current state of the crypto
-API is on its complexity, and so I don't think it makes sense to keep
-it simple now and add the complexity later (and the same concern
-applies to async support btw).
+> +
+>  	kvm_vcpu_write_guest(vcpu,
+>  			vmptr + offsetof(struct vmcs12, launch_state),
+>  			&zero, sizeof(zero));
+> @@ -8924,6 +8930,9 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+>  		}
+>  
+>  		nested_release_vmcs12(vmx);
+> +
+> +		kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu,
+> +				   KVM_MMU_ROOTS_ALL);
+>  		/*
+>  		 * Load VMCS12 from guest memory since it is not already
+>  		 * cached.
+> @@ -10976,12 +10985,10 @@ static void vmx_switch_vmcs(struct kvm_vcpu *vcpu, struct loaded_vmcs *vmcs)
+>   */
+>  static void vmx_free_vcpu_nested(struct kvm_vcpu *vcpu)
+>  {
+> -       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> -
+> -       vcpu_load(vcpu);
+> -       vmx_switch_vmcs(vcpu, &vmx->vmcs01);
+> -       free_nested(vmx);
+> -       vcpu_put(vcpu);
+> +	vcpu_load(vcpu);
+> +	vmx_switch_vmcs(vcpu, &to_vmx(vcpu)->vmcs01);
+> +	free_nested(vcpu);
+> +	vcpu_put(vcpu);
+>  }
+>  
+>  static void vmx_free_vcpu(struct kvm_vcpu *vcpu)
+> @@ -11331,6 +11338,7 @@ static int nested_ept_init_mmu_context(struct kvm_vcpu *vcpu)
+>  	if (!valid_ept_address(vcpu, nested_ept_get_cr3(vcpu)))
+>  		return 1;
+>  
+> +	vcpu->arch.mmu = &vcpu->arch.guest_mmu;
+>  	kvm_init_shadow_ept_mmu(vcpu,
+>  			to_vmx(vcpu)->nested.msrs.ept_caps &
+>  			VMX_EPT_EXECUTE_ONLY_BIT,
+> @@ -11346,6 +11354,7 @@ static int nested_ept_init_mmu_context(struct kvm_vcpu *vcpu)
+>  
+>  static void nested_ept_uninit_mmu_context(struct kvm_vcpu *vcpu)
+>  {
+> +	vcpu->arch.mmu = &vcpu->arch.root_mmu;
+>  	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
+>  }
+>  
+> @@ -13421,7 +13430,7 @@ static void vmx_leave_nested(struct kvm_vcpu *vcpu)
+>  		to_vmx(vcpu)->nested.nested_run_pending = 0;
+>  		nested_vmx_vmexit(vcpu, -1, 0, 0);
+>  	}
+> -	free_nested(to_vmx(vcpu));
+> +	free_nested(vcpu);
+>  }
+>  
+>  /*
+> -- 
+> 2.17.1
+> 
