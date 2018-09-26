@@ -2,79 +2,86 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 988B1C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1C9C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7AD21547
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:47:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7AD21547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id A90DE2154B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A90DE2154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728430AbeI0BCG (ORCPT
+        id S1727649AbeI0BFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:02:06 -0400
-Received: from mail-qt1-f173.google.com ([209.85.160.173]:42037 "EHLO
-        mail-qt1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbeI0BCG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:02:06 -0400
-Received: by mail-qt1-f173.google.com with SMTP id z8-v6so18403625qto.9;
-        Wed, 26 Sep 2018 11:47:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/BCxpbg9rkojz2pblTJvGNuN1y2/HelgYogjp1SFgtY=;
-        b=ZnMhUUkGX07O/XS6kaPH4SdjIhgsWxHHepD5yTI2x/c+CzQNKJrHtrUJp4DP8fC6td
-         lhi76QfhO2y9GYuzQRTmkTM8aIiA7eb2IS2ulzKdR46Wg3pXEsETWjaxolyZTEj7g5M3
-         9U7qJRSABX+T7d1hyhE1FUAoUYCkT+b2AGkrL7VkWOQ41QocKm/gG/txWGYsd8zYaS6r
-         QaQLuEk8Siz4Ejbjlk2JcAqurELnz6Z9IpwQSe5dETQxjoDlqwi3BofUHMt/UogZkgLQ
-         VrlZM/hqiw+zFWeADiF+JJOdGv3LLqdFnEBuiHkw+AaDYPn9MOjvS50oUQipqCnvSFb4
-         0QOA==
-X-Gm-Message-State: ABuFfoiC5noHcmE45Si3TXT0DHO78YsqqbU/+Qxc1PwVkAJsxPb2EqCf
-        W2PFArYfnSeB6rl23faMSdHTg6rDAAy+15DXcVKnhQ==
-X-Google-Smtp-Source: ACcGV63biRXn1bn+fcZlYnKSwBiANk0DUZbnqHSBN4TORyAkS+Ywt5ImZ868CqyKG0WDAT+af4TyaGjRpepoUA1BG/E=
-X-Received: by 2002:a0c:8834:: with SMTP id 49-v6mr5318375qvl.40.1537987667499;
- Wed, 26 Sep 2018 11:47:47 -0700 (PDT)
+        Wed, 26 Sep 2018 21:05:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60127 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725806AbeI0BFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 21:05:52 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0272320731; Wed, 26 Sep 2018 20:51:31 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CFDE720379;
+        Wed, 26 Sep 2018 20:51:20 +0200 (CEST)
+Date:   Wed, 26 Sep 2018 20:51:21 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        =?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v1 1/5] dt-binding: rtci-pcf8523: add quartz_load property
+Message-ID: <20180926185121.GF16644@piout.net>
+References: <20180822183555.GA24084@ravnborg.org>
+ <20180907193508.24974-2-sam@ravnborg.org>
+ <20180913190516.GG14988@piout.net>
+ <20180926154708.GA3264@bogus>
 MIME-Version: 1.0
-References: <20180926124808.1867468-1-arnd@arndb.de> <20180926160328.GA1927@archbook>
-In-Reply-To: <20180926160328.GA1927@archbook>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 26 Sep 2018 20:47:31 +0200
-Message-ID: <CAK8P3a0oFdEkt7NqWzs6_9rMiHaQ+Sn7v+HDV777rO_SUTbREw@mail.gmail.com>
-Subject: Re: [PATCH] net: nixge: fix warnings on 32-bit platforms
-To:     mdf@kernel.org
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926154708.GA3264@bogus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 6:03 PM Moritz Fischer <mdf@kernel.org> wrote:
->
-> Hi Arnd,
->
-> On Wed, Sep 26, 2018 at 02:47:24PM +0200, Arnd Bergmann wrote:
-> > Making it work on 64-bit caused 32-bit builds to regress:
+On 26/09/2018 10:47:08-0500, Rob Herring wrote:
+> > > +Optional property:
+> > > +- nxp,quartz_load_12.5pF: The capacitive load on the quartz is 12.5 pF,
+> > > +  which differ from the default value of 7 pF
+> > > +
+> > 
+> > The boolean properties usually don't work well for RTCs because people
+> > usually want to keep any previous configuration that may have been done
+> > at the factory or in the bootloader so I would use:
+> > 
+> > nxp,quartz_load_fF and this would be either 7000 or 12500.
+> 
+> Use '-' rather than '_'.
+> 
+> There's already a defined unit suffix of '-picofarads'. If you need 
+> '-femtofarads', then please add to property-units.txt. Though I'd prefer 
+> not as wouldn't a value of 12 (or 13) be close enough for the needs 
+> here?
+> 
 
-> >
->
-> I had submitted a similar patch https://lkml.org/lkml/2018/9/24/1719
-> here. I should probably add the Fixes tag yours has but other than that
-> they look largely equivalent. Comments?
+For that particular RTC, yes but the isl1208 has 0.5pF steps and the
+x1205 has 0.25pf steps. I'd prefer having a single generic property for
+all the RTCs: quartz-load-femtofarads.
 
-Yes, I'm sure your version is fine as well, sorry for missing that.
-
-Adding a fixes tag is generally a good idea, but no need to resend it.
-We just need one of the two to get picked up into net-next.
-
-[note: we both forgot to tag the patch as "[PATCH net-next]"]
-
-       Arnd
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
