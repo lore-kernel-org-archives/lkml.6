@@ -2,85 +2,91 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37237C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFEEC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E61E0208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:33:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E61E0208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3426B2089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:34:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FKhmomnF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3426B2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeIZNpM (ORCPT
+        id S1727388AbeIZNpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:45:12 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12705 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726595AbeIZNpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:45:11 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DDB7F18FF7472;
-        Wed, 26 Sep 2018 15:33:32 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
- 15:33:24 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <plai@codeaurora.org>, <bgoswami@codeaurora.org>,
-        <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] ASoC: qcom: qdsp6: remove duplicated include
-Date:   Wed, 26 Sep 2018 15:33:03 +0800
-Message-ID: <20180926073303.25796-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Wed, 26 Sep 2018 09:45:33 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38814 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727139AbeIZNpc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 09:45:32 -0400
+Received: by mail-io1-f65.google.com with SMTP id y3-v6so22518553ioc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:33:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9tUwlxtjju7PUx3Y8Sxrig4iRFK3RYbfktecAdacTy8=;
+        b=FKhmomnFwec2RejFSUsAbyd8BHQUKrSwQnrXOTswZpXxOWRGJpTfjqt1SW9wUlcuDQ
+         sj9WIM+W7he5G7ePcNbdT4HdRlCy69eio3/H8oaQmxW05bbjardT8ZKiR2wwAiUVutxZ
+         uDqxNt190+h3ak3S6Nte7/BHKub1iUGdgEbXo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9tUwlxtjju7PUx3Y8Sxrig4iRFK3RYbfktecAdacTy8=;
+        b=mmEMdQaEqzoyhAVtWQOw53avgGt1SVch+Nl6jndyIGV0wMuiF+N7TfkdfIb9QGlb8A
+         X7U0Pd8yUYfEe5YpiO9QwWGc+qQ/HyLX0vUZBB+THie3zAHCs0vttXuJow6JvMrC9Kth
+         DAHLWJ++i3GVlkG0hL2MjKf8bixBnNkTLUduZLit5Vea7F/LUOQ9c6EiSwFBfkdoIsZi
+         mcmBCfuXMmhpTTbLluvsPpRol2LLGWXEZoe9+qk8Y028qx/HkGM2QCt3Ph0cBzxuRneq
+         dgCATMo0Jl82id9yfP+A1u4BR6r2cV10TZ+hfYDULFsV9Z3AQKajdvGYN6BfZwoPWpyN
+         nYtg==
+X-Gm-Message-State: ABuFfogIkSnjjAf3QMskmf6NbMdZ4FFl3uETax2LgooSjojeqDZP/ziR
+        vffeWJ3BHLTXli99Re5q6SrKjbkqXYwB5tHlpzOzEIBm
+X-Google-Smtp-Source: ACcGV63abI2GLYktztonGAHPkM4XYVxUTqrW7wdBPMujVYABVWL+5d2xcWf2FwRJYWV0U+jBJcnYcDz2NQBZhClpmEo=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3668337ioa.277.1537947238536;
+ Wed, 26 Sep 2018 00:33:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+References: <20180924221748.21584-1-bjorn.andersson@linaro.org> <20180924221748.21584-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20180924221748.21584-5-bjorn.andersson@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 26 Sep 2018 09:33:46 +0200
+Message-ID: <CACRpkdbWVxQsSFtS6FUpn0sBygsQs-jHx0eX196K2UVQXFwntA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] pinctrl: qcom: Add qcs404 pinctrl driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated includes linux/of_platform.h
-and linux/wait.h
+On Tue, Sep 25, 2018 at 12:15 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/soc/qcom/qdsp6/q6asm.c  | 1 -
- sound/soc/qcom/qdsp6/q6core.c | 1 -
- 2 files changed, 2 deletions(-)
+> From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+>
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for qcs404.
+>
+> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+> Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
+> [bjorn: Reworked tile handling and did some minor rework]
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
-index 2b2c723..e1cfa84 100644
---- a/sound/soc/qcom/qdsp6/q6asm.c
-+++ b/sound/soc/qcom/qdsp6/q6asm.c
-@@ -11,7 +11,6 @@
- #include <linux/spinlock.h>
- #include <linux/kref.h>
- #include <linux/of.h>
--#include <linux/of_platform.h>
- #include <uapi/sound/asound.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
-diff --git a/sound/soc/qcom/qdsp6/q6core.c b/sound/soc/qcom/qdsp6/q6core.c
-index ca1be73..cdfc8ab 100644
---- a/sound/soc/qcom/qdsp6/q6core.c
-+++ b/sound/soc/qcom/qdsp6/q6core.c
-@@ -10,7 +10,6 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/jiffies.h>
--#include <linux/wait.h>
- #include <linux/soc/qcom/apr.h>
- #include "q6core.h"
- #include "q6dsp-errno.h"
--- 
-2.7.0
+Patch applied.
 
-
+Yours,
+Linus Walleij
