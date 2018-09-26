@@ -2,72 +2,131 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEAFECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61399C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2074820779
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:45:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2074820779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E97FC214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:52:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E97FC214C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbeIZQ5w (ORCPT
+        id S1726976AbeIZRFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:57:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42922 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbeIZQ5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:57:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 823ECED1;
-        Wed, 26 Sep 2018 03:45:31 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3407B3F5BD;
-        Wed, 26 Sep 2018 03:45:29 -0700 (PDT)
-Subject: Re: [PATCH 4/4] dma-mapping: clear dev->dma_ops in
- arch_teardown_dma_ops
-To:     Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>
-Cc:     iommu@lists.linux-foundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20180827084711.23407-1-hch@lst.de>
- <20180827084711.23407-5-hch@lst.de> <20180922150119.GA14761@roeck-us.net>
- <20180925201619.GB8413@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <fe8bae9a-10d1-ca88-158d-5caf9aa80885@arm.com>
-Date:   Wed, 26 Sep 2018 11:45:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 13:05:09 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43606 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbeIZRFJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:05:09 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x24-v6so22775589lfe.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:52:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M0afTeUMik/pKJbXYWkFFBROPj0k+/qdGyabKMFW/Pc=;
+        b=Exgeqbivql9unBQto513L8iY+Lj1Xl0qL1PFc3zzlzvG/DXtwikZa3kZMGB44CTVK3
+         wl1/vQDJFQ1MHqSkeljPquYVGNW2A0L7vRoXhvJiCrN9hVtNV7S8Go+x4XgJCI5BOdGf
+         VhUwGciNYHDjHes4s68fm90MsZ8FThCFubvp3Frjsqkwb2InQrXsvQ/rd787/5xvhNao
+         jyZTPscxuOFVVfVYQQGiuXC1zQvNHYrYSqssVoR1y244pffs6TWVOUlPjYSOt3FKVIQV
+         bMiAmUsbMuqYPMwZaFc1iVH81yw5Aam33I5Fw9OoeTo8+5LHTYUwNzLTeR+hILzX7yS4
+         fIjw==
+X-Gm-Message-State: ABuFfoih0lsj4jiEzUsV3tsbqAKv8/bPPop4X5UaW4fIK1EJKCrJW4Qu
+        WeqTKmVVCBYh3q4djYF67py92ZUEVJpuKA0G55Nc7w==
+X-Google-Smtp-Source: ACcGV62lr9y7rTpwApMngFHxJ1010RvFlObQEOH6NbreV0s17ohUyZWeY1C0IGRVcSU6x1VCkQ3zUaHs2lyfg+wmCzE=
+X-Received: by 2002:a19:d3c4:: with SMTP id k187-v6mr3910927lfg.101.1537959165445;
+ Wed, 26 Sep 2018 03:52:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180925201619.GB8413@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20180925111020.23834-1-kasong@redhat.com> <6e15796e-31e9-2dc6-4a31-5c1b01554b45@amd.com>
+ <20180925172608.GB15464@zn.tnic> <20180926073252.GC2555@MiWiFi-R3L-srv>
+In-Reply-To: <20180926073252.GC2555@MiWiFi-R3L-srv>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Wed, 26 Sep 2018 18:52:33 +0800
+Message-ID: <CACPcB9efDdBGnU53wRLw8uP0fzLcq0c2O8V3z=8xW_DMSOUtYw@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot: Fix kexec booting failure after SEV early boot support
+To:     Thomas.Lendacky@amd.com
+Cc:     Baoquan He <bhe@redhat.com>, bp@suse.de, brijesh.singh@amd.com,
+        x86@kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
+        tglx@linutronix.de, Dave Young <dyoung@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/09/18 21:16, Christoph Hellwig wrote:
-> Looking at the code I think this commit is simply broken for
-> architectures not using arch_setup_dma_ops, but instead setting up
-> the dma ops through arch specific magic.
-> 
-> I'll revert the patch.
+On Wed, Sep 26, 2018 at 3:33 PM Baoquan He <bhe@redhat.com> wrote:
+>
+> On 09/25/18 at 07:26pm, Borislav Petkov wrote:
+> > IINM, the problem can be addressed in a simpler way by getting rid of
+> > enc_bit and thus getting rid of the need to do relative addressing of
+> > anything and simply doing the whole dance of figuring out the C-bit each
+> > time. It probably wouldn't be even measurable...
+>
+> Couldn't agree more.
+>
+> Obviously enc_bit is redundent here. We only check eax each time,
+> removing it can fix the RIP-relative addressing issue in kexec.
+>
+> diff --git a/arch/x86/boot/compressed/mem_encrypt.S b/arch/x86/boot/compressed/mem_encrypt.S
+> index eaa843a52907..0b60eb867d25 100644
+> --- a/arch/x86/boot/compressed/mem_encrypt.S
+> +++ b/arch/x86/boot/compressed/mem_encrypt.S
+> @@ -27,19 +27,6 @@ ENTRY(get_sev_encryption_bit)
+>         push    %edx
+>         push    %edi
+>
+> -       /*
+> -        * RIP-relative addressing is needed to access the encryption bit
+> -        * variable. Since we are running in 32-bit mode we need this call/pop
+> -        * sequence to get the proper relative addressing.
+> -        */
+> -       call    1f
+> -1:     popl    %edi
+> -       subl    $1b, %edi
+> -
+> -       movl    enc_bit(%edi), %eax
+> -       cmpl    $0, %eax
+> -       jge     .Lsev_exit
+> -
+>         /* Check if running under a hypervisor */
+>         movl    $1, %eax
+>         cpuid
+> @@ -69,12 +56,10 @@ ENTRY(get_sev_encryption_bit)
+>
+>         movl    %ebx, %eax
+>         andl    $0x3f, %eax             /* Return the encryption bit location */
+> -       movl    %eax, enc_bit(%edi)
+>         jmp     .Lsev_exit
+>
+>  .Lno_sev:
+>         xor     %eax, %eax
+> -       movl    %eax, enc_bit(%edi)
+>
+>  .Lsev_exit:
+>         pop     %edi
+> @@ -113,9 +98,6 @@ ENTRY(set_sev_encryption_mask)
+>  ENDPROC(set_sev_encryption_mask)
+>
+>         .data
+> -enc_bit:
+> -       .int    0xffffffff
+> -
+>  #ifdef CONFIG_AMD_MEM_ENCRYPT
+>         .balign 8
+>  GLOBAL(sme_me_mask)
 
-Ugh, sorry about missing that too. Ack to a revert - thinking about 
-those PPC symptoms, it might actually be that other architectures could 
-also get into the same pickle just by unbinding and rebinding a driver 
-(e.g. switching to VFIO then back again).
+That is much cleaner indeed, I'm not sure if enc_bit have any other
+usage, if not we can just drop it for sure.
 
-Robin.
+Hi Thomas, can you help confirm if enc_bit is only a cache to avoid
+doing the cpuid stuff?
+
+-- 
+Best Regards,
+Kairui Song
