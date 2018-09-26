@@ -2,222 +2,303 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6734C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB35C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8382151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:44:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8382151D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=prnet.org
+	by mail.kernel.org (Postfix) with ESMTP id 27FCA20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:50:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iS9TJaNN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27FCA20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbeIZW6f (ORCPT
+        id S1728356AbeIZXED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:58:35 -0400
-Received: from extserverfr1.prnet.org ([188.165.208.21]:34114 "EHLO
-        extserverfr1.prnet.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbeIZW6f (ORCPT
+        Wed, 26 Sep 2018 19:04:03 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39477 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbeIZXED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:58:35 -0400
-Received: from extserver.intern.prnet.org (extserver.prnet.org [192.168.11.1])
-        by extserverfr1.prnet.org (8.14.9/8.14.9) with ESMTP id w8QGiMRC004278;
-        Wed, 26 Sep 2018 18:44:23 +0200
-Received: from [IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28] ([IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28])
-        (authenticated bits=0)
-        by extserver.intern.prnet.org (8.14.9/8.14.9) with ESMTP id w8QGiK0R003529
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Wed, 26 Sep 2018 18:44:20 +0200
-Subject: Re: kernel 4.18.5 Realtek 8111G network adapter stops responding
- under high system load
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Gabriel C <nix.or.die@gmail.com>,
-        =?UTF-8?Q?Ortwin_Gl=c3=bcck?= <odi@odi.ch>
-Cc:     linux-kernel@vger.kernel.org, nic_swsd@realtek.com,
-        netdev@vger.kernel.org
-References: <20180918102349.Horde.yHctatUod-_SC696oYKmySa@cloud.luxmemories.lu>
- <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
- <0e865e74-e587-61b7-d319-9afe0a5e8828@prnet.org>
- <968f03ee-a271-242b-d90a-5c70ea72ce3b@gmail.com>
-From:   David Arendt <admin@prnet.org>
-Message-ID: <ef0d0fb2-f4f1-8fae-6f84-3ed0d6dc92fc@prnet.org>
-Date:   Wed, 26 Sep 2018 18:44:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 26 Sep 2018 19:04:03 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w14-v6so10211744plp.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 09:50:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=q7zq6sWFdDHatzgQTAWbXvKAX6L3FmJYxC01jn9hN+k=;
+        b=iS9TJaNN71n4YyVpPrLm4n5hQmq/DNRXHFV0F1pxSPwO/SyFPOZ3leV+wXP4m8+h/p
+         U3UzHlwVXPaDxrGRyd0IzUUZwHQmIhvkKIjuwAmqYJe7mB3oaMD1f5uDzwudNRR8V+Sj
+         ny8DGX9lplMIxdjnXLl7aiiuD48ZvrOBKO2fs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q7zq6sWFdDHatzgQTAWbXvKAX6L3FmJYxC01jn9hN+k=;
+        b=q31x2hyMrOxmr7zsgnkjCmJvu3GVb6C7K+zsOEGakuHFEOmo2u/xuOJ/VdS0VbuLtJ
+         EAihol+xPSIWpqfKoUx18BYYvJyWYKWtn39pA4NhuaFQIcLkxHDPAySfOL6dHg4xTJl7
+         wSe7hWr1maPQAr6Q1oK00nNPbTaXVj/0w0Qv8NuBLwNNef5m10CjHEemP8K5HuZCASYd
+         eY1QHN99j7bQfR83BEdO5nkTy5BTfPxZ2GQhieMceDNa2FOYz2WHKxkefYaqzysAloR2
+         Fsak8fwCqTEIBEHuKx2cvU5GZlfUMfsNEDGUnz07aeBoLWEGOB00EFCziT6LTvKHUSBy
+         m0fA==
+X-Gm-Message-State: ABuFfog/iguGxMnrM2nGMY+/ZeSt3r8yAFxmYm/XwXeLyKetfqXwlYRh
+        SMtHo1UyYobCcx0dvHZDZh+mViKm0sL/9g==
+X-Google-Smtp-Source: ACcGV610qQXCMkIVLZSg9dvLJEXsnxIJbV0P93qWQaVU4zXv6rhGd5fPJODBImtJWKkibefW6GQOXA==
+X-Received: by 2002:a17:902:f085:: with SMTP id go5mr6991488plb.241.1537980613154;
+        Wed, 26 Sep 2018 09:50:13 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id j22-v6sm7467402pfh.45.2018.09.26.09.50.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 09:50:12 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 09:54:32 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Craig Tatlor <ctatlor97@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: pinctrl: qcom: Add SDM660 pinctrl
+ binding
+Message-ID: <20180926165432.GC27436@tuxbook-pro>
+References: <20180925173801.3835-1-ctatlor97@gmail.com>
+ <20180926162644.10039-1-ctatlor97@gmail.com>
+ <20180926162644.10039-2-ctatlor97@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <968f03ee-a271-242b-d90a-5c70ea72ce3b@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926162644.10039-2-ctatlor97@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed 26 Sep 09:26 PDT 2018, Craig Tatlor wrote:
 
-Thanks.
+> Add the binding for the TLMM pinctrl block found in the SDM660 platform.
+> 
+> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
 
-I have just applied Heiner Kallweit's patch on top of kernel 4.18.10 and
-the TxConfig register contains 0x4f000f80.
+Thanks for the updates Craig.
 
-I will give it 24 hours under high load and report back if the patch
-really solves the problem.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Bye,
-David Arendt
+Regards,
+Bjorn
 
-On 9/25/18 11:03 PM, Heiner Kallweit wrote:
-> On 19.09.2018 06:12, David Arendt wrote:
->> Hi,
->>
->> Thanks for the patch.
->>
->> I just applied it and the TxConfig register now contains 0x4f000f80.
->> The next day will show if it really solves the problem.
->>
->> Thanks in advance,
->> David Arendt
->>
->> On 9/19/18 12:30 AM, Maciej S. Szmigiero wrote:
->>> Hi,
->>>
->>> On 18.09.2018 12:23, David Arendt wrote:
->>>> Hi,
->>>>
->>>> Today I had the network adapter problems again.
->>>> So the patch doesn't seem to change anything regarding this problem.
->>>> This week my time is unfortunately very limited, but I will try to
->>>> find some time next weekend to look a bit more into the issue.
->>> If the problem is caused by missing TXCFG_AUTO_FIFO bit in TxConfig,
->>> as the register difference would suggest, then you can try applying
->>> the following patch (hack) on top of 4.18.8 that is already patched
->>> with commit f74dd480cf4e:
->>> --- a/drivers/net/ethernet/realtek/r8169.c
->>> +++ b/drivers/net/ethernet/realtek/r8169.c
->>> @@ -5043,7 +5043,8 @@
->>>  {
->>>  	/* Set DMA burst size and Interframe Gap Time */
->>>  	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
->>> -		(InterFrameGap << TxInterFrameGapShift));
->>> +		(InterFrameGap << TxInterFrameGapShift)
->>> +		| TXCFG_AUTO_FIFO);
->>>  }
->>>  
->>>  static void rtl_set_rx_max_size(struct rtl8169_private *tp)
->>>
->>> This hack will probably only work properly on RTL_GIGA_MAC_VER_40 or
->>> later NICs.
->>>
->>> Before running any tests please verify with "ethtool -d enp3s0" that
->>> TxConfig register now contains 0x4f000f80, as it did in the old,
->>> working driver version.
->>>
->>> If this does not help then a bisection will most likely be needed.
->>>
->>>> Thanks in advance,
->>>> David Arendt
->>> Maciej
->>
->>
-> @Gabriel:
-> Thanks for the hint, I wasn't fully aware of this thread.
-> @Maciej:
-> Thanks for the analysis.
->
-> It seems that all chip versions from 34 (= RTL8168E-VL) with the
-> exception of version 39 (= RTL8106E, first sub-version) need
-> bit TXCFG_AUTO_FIFO.
->
-> And indeed, due to reordering of calls this bit is overwritten.
-> Following patch moves setting the bit from the chip-specific
-> hw_start function to rtl_set_tx_config_registers().
->
-> Whoever is hit by the issue and has the option to build a kernel,
-> could you please test whether the patch fixes the issue for you?
->
-> Thanks, Heiner
->
 > ---
->  drivers/net/ethernet/realtek/r8169.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-> index f882be49f..ae8abe900 100644
-> --- a/drivers/net/ethernet/realtek/r8169.c
-> +++ b/drivers/net/ethernet/realtek/r8169.c
-> @@ -4514,9 +4514,14 @@ static void rtl8169_hw_reset(struct rtl8169_private *tp)
->  
->  static void rtl_set_tx_config_registers(struct rtl8169_private *tp)
->  {
-> -	/* Set DMA burst size and Interframe Gap Time */
-> -	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
-> -		(InterFrameGap << TxInterFrameGapShift));
-> +	u32 val = TX_DMA_BURST << TxDMAShift |
-> +		  InterFrameGap << TxInterFrameGapShift;
+> Changes from v3: 
+>    Updated for tile structure
+>    change irq field
+> 
+>  .../bindings/pinctrl/qcom,sdm660-pinctrl.txt  | 181 ++++++++++++++++++
+>  1 file changed, 181 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
+> new file mode 100644
+> index 000000000000..97e6622c0b85
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
+> @@ -0,0 +1,191 @@
+> +Qualcomm Technologies, Inc. SDM660 TLMM block
 > +
-> +	if (tp->mac_version >= RTL_GIGA_MAC_VER_34 &&
-> +	    tp->mac_version != RTL_GIGA_MAC_VER_39)
-> +		val |= TXCFG_AUTO_FIFO;
+> +This binding describes the Top Level Mode Multiplexer block found in the
+> +SDM660 platform.
 > +
-> +	RTL_W32(tp, TxConfig, val);
->  }
->  
->  static void rtl_set_rx_max_size(struct rtl8169_private *tp)
-> @@ -5011,7 +5016,6 @@ static void rtl_hw_start_8168e_2(struct rtl8169_private *tp)
->  
->  	rtl_disable_clock_request(tp);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
->  	RTL_W8(tp, MCU, RTL_R8(tp, MCU) & ~NOW_IS_OOB);
->  
->  	/* Adjust EEE LED frequency */
-> @@ -5045,7 +5049,6 @@ static void rtl_hw_start_8168f(struct rtl8169_private *tp)
->  
->  	rtl_disable_clock_request(tp);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
->  	RTL_W8(tp, MCU, RTL_R8(tp, MCU) & ~NOW_IS_OOB);
->  	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) | PFM_EN);
->  	RTL_W32(tp, MISC, RTL_R32(tp, MISC) | PWM_EN);
-> @@ -5090,8 +5093,6 @@ static void rtl_hw_start_8411(struct rtl8169_private *tp)
->  
->  static void rtl_hw_start_8168g(struct rtl8169_private *tp)
->  {
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
-> -
->  	rtl_eri_write(tp, 0xc8, ERIAR_MASK_0101, 0x080002, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xcc, ERIAR_MASK_0001, 0x38, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xd0, ERIAR_MASK_0001, 0x48, ERIAR_EXGMAC);
-> @@ -5189,8 +5190,6 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
->  	rtl_hw_aspm_clkreq_enable(tp, false);
->  	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
-> -
->  	rtl_eri_write(tp, 0xc8, ERIAR_MASK_0101, 0x00080002, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xcc, ERIAR_MASK_0001, 0x38, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xd0, ERIAR_MASK_0001, 0x48, ERIAR_EXGMAC);
-> @@ -5273,8 +5272,6 @@ static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
->  {
->  	rtl8168ep_stop_cmac(tp);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
-> -
->  	rtl_eri_write(tp, 0xc8, ERIAR_MASK_0101, 0x00080002, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xcc, ERIAR_MASK_0001, 0x2f, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xd0, ERIAR_MASK_0001, 0x5f, ERIAR_EXGMAC);
-> @@ -5596,7 +5593,6 @@ static void rtl_hw_start_8402(struct rtl8169_private *tp)
->  	/* Force LAN exit from ASPM if Rx/Tx are not idle */
->  	RTL_W32(tp, FuncEvent, RTL_R32(tp, FuncEvent) | 0x002800);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
->  	RTL_W8(tp, MCU, RTL_R8(tp, MCU) & ~NOW_IS_OOB);
->  
->  	rtl_ephy_init(tp, e_info_8402, ARRAY_SIZE(e_info_8402));
-
-
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must be "qcom,sdm660-pinctrl" or
+> +		    "qcom,sdm630-pinctrl".
+> +
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: the base address and size of the north, center and south
+> +		    TLMM tiles.
+> +
+> +- reg-names:
+> +       Usage: required
+> +       Value type: <stringlist>
+> +       Definition: names for the cells of reg, must contain "north", "center"
+> +                   and "south".
+> +
+> +- interrupts:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: should specify the TLMM summary IRQ.
+> +
+> +- interrupt-controller:
+> +	Usage: required
+> +	Value type: <none>
+> +	Definition: identifies this node as an interrupt controller
+> +
+> +- #interrupt-cells:
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: must be 2. Specifying the pin number and flags, as defined
+> +		    in <dt-bindings/interrupt-controller/irq.h>
+> +
+> +- gpio-controller:
+> +	Usage: required
+> +	Value type: <none>
+> +	Definition: identifies this node as a gpio controller
+> +
+> +- gpio-ranges:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: Specifies the mapping between gpio controller and
+> +		    pin-controller pins.
+> +
+> +- #gpio-cells:
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: must be 2. Specifying the pin number and flags, as defined
+> +		    in <dt-bindings/gpio/gpio.h>
+> +
+> +Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
+> +a general description of GPIO and interrupt bindings.
+> +
+> +Please refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning of the
+> +phrase "pin configuration node".
+> +
+> +The pin configuration nodes act as a container for an arbitrary number of
+> +subnodes. Each of these subnodes represents some desired configuration for a
+> +pin, a group, or a list of pins or groups. This configuration can include the
+> +mux function to select on those pin(s)/group(s), and various pin configuration
+> +parameters, such as pull-up, drive strength, etc.
+> +
+> +
+> +PIN CONFIGURATION NODES:
+> +
+> +The name of each subnode is not important; all subnodes should be enumerated
+> +and processed purely based on their content.
+> +
+> +Each subnode only affects those parameters that are explicitly listed. In
+> +other words, a subnode that lists a mux function but no pin configuration
+> +parameters implies no information about any pin configuration parameters.
+> +Similarly, a pin subnode that describes a pullup parameter implies no
+> +information about e.g. the mux function.
+> +
+> +
+> +The following generic properties as defined in pinctrl-bindings.txt are valid
+> +to specify in a pin configuration subnode:
+> +
+> +- pins:
+> +	Usage: required
+> +	Value type: <string-array>
+> +	Definition: List of gpio pins affected by the properties specified in
+> +		    this subnode.  Valid pins are:
+> +		    gpio0-gpio113,
+> +		        Supports mux, bias and drive-strength
+> +		    sdc1_clk, sdc1_cmd, sdc1_data sdc2_clk, sdc2_cmd, sdc2_data sdc1_rclk,
+> +		        Supports bias and drive-strength
+> +
+> +- function:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: Specify the alternative function to be configured for the
+> +		    specified pins. Functions are only valid for gpio pins.
+> +		    Valid values are:
+> +		    adsp_ext, agera_pll, atest_char, atest_char0, atest_char1,
+> +		    atest_char2, atest_char3, atest_gpsadc0, atest_gpsadc1,
+> +		    atest_tsens, atest_tsens2, atest_usb1, atest_usb10,
+> +		    atest_usb11, atest_usb12, atest_usb13, atest_usb2,
+> +		    atest_usb20, atest_usb21, atest_usb22, atest_usb23,
+> +		    audio_ref, bimc_dte0, bimc_dte1, blsp_i2c1, blsp_i2c2,
+> +		    blsp_i2c3, blsp_i2c4, blsp_i2c5, blsp_i2c6, blsp_i2c7,
+> +		    blsp_i2c8_a, blsp_i2c8_b, blsp_spi1, blsp_spi2, blsp_spi3,
+> +		    blsp_spi3_cs1, blsp_spi3_cs2, blsp_spi4, blsp_spi5,
+> +		    blsp_spi6, blsp_spi7, blsp_spi8_a, blsp_spi8_b,
+> +		    blsp_spi8_cs1, blsp_spi8_cs2, blsp_uart1, blsp_uart2,
+> +		    blsp_uart5, blsp_uart6_a, blsp_uart6_b, blsp_uim1,
+> +		    blsp_uim2, blsp_uim5, blsp_uim6, cam_mclk, cci_async,
+> +		    cci_i2c, cri_trng, cri_trng0, cri_trng1, dbg_out, ddr_bist,
+> +		    gcc_gp1, gcc_gp2, gcc_gp3, gpio, gps_tx_a, gps_tx_b, gps_tx_c,
+> +		    isense_dbg, jitter_bist, ldo_en, ldo_update, m_voc, mdp_vsync,
+> +		    mdss_vsync0, mdss_vsync1, mdss_vsync2, mdss_vsync3, mss_lte,
+> +		    nav_pps_a, nav_pps_b, nav_pps_c, pa_indicator, phase_flag0,
+> +		    phase_flag1, phase_flag10, phase_flag11, phase_flag12,
+> +		    phase_flag13, phase_flag14, phase_flag15, phase_flag16,
+> +		    phase_flag17, phase_flag18, phase_flag19, phase_flag2,
+> +		    phase_flag20, phase_flag21, phase_flag22, phase_flag23,
+> +		    phase_flag24, phase_flag25, phase_flag26, phase_flag27,
+> +		    phase_flag28, phase_flag29, phase_flag3, phase_flag30,
+> +		    phase_flag31, phase_flag4, phase_flag5, phase_flag6,
+> +		    phase_flag7, phase_flag8, phase_flag9, pll_bypassnl,
+> +		    pll_reset, pri_mi2s, pri_mi2s_ws, prng_rosc, pwr_crypto,
+> +		    pwr_modem, pwr_nav, qdss_cti0_a, qdss_cti0_b, qdss_cti1_a,
+> +		    qdss_cti1_b, qdss_gpio, qdss_gpio0, qdss_gpio1, qdss_gpio10,
+> +		    qdss_gpio11, qdss_gpio12, qdss_gpio13, qdss_gpio14, qdss_gpio15,
+> +		    qdss_gpio2, qdss_gpio3, qdss_gpio4, qdss_gpio5, qdss_gpio6,
+> +		    qdss_gpio7, qdss_gpio8, qdss_gpio9, qlink_enable, qlink_request,
+> +		    qspi_clk, qspi_cs, qspi_data0, qspi_data1, qspi_data2,
+> +		    qspi_data3, qspi_resetn, sec_mi2s, sndwire_clk, sndwire_data,
+> +		    sp_cmu, ssc_irq, tgu_ch0, tgu_ch1, tsense_pwm1, tsense_pwm2,
+> +		    uim1_clk, uim1_data, uim1_present, uim1_reset, uim2_clk,
+> +		    uim2_data, uim2_present, uim2_reset, uim_batt, vfr_1,
+> +		    vsense_clkout, vsense_data0, vsense_data1, vsense_mode,
+> +		    wlan1_adc0, wlan1_adc1, wlan2_adc0, wlan2_adc1
+> +
+> +- bias-disable:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as no pull.
+> +
+> +- bias-pull-down:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull down.
+> +
+> +- bias-pull-up:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull up.
+> +
+> +- output-high:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins are configured in output mode, driven
+> +		    high.
+> +		    Not valid for sdc pins.
+> +
+> +- output-low:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins are configured in output mode, driven
+> +		    low.
+> +		    Not valid for sdc pins.
+> +
+> +- drive-strength:
+> +	Usage: optional
+> +	Value type: <u32>
+> +	Definition: Selects the drive strength for the specified pins, in mA.
+> +		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
+> +
+> +Example:
+> +
+> +	tlmm: pinctrl@3100000 {
+> +		compatible = "qcom,sdm660-pinctrl";
+> +		reg = <0x3100000 0x200000>,
+> +		      <0x3500000 0x200000>,
+> +		      <0x3900000 0x200000>;
+> +		reg-names = "south", "center", "north";
+> +		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +		gpio-controller;
+> +		gpio-ranges = <&tlmm 0 0 114>;
+> +		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +	};
+> -- 
+> 2.18.0
