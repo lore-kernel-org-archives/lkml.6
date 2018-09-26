@@ -2,196 +2,135 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFEBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9FBC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E970A214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:54:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4103F208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:56:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qyXai9QG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E970A214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MCdAzYm0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4103F208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbeIZUHM (ORCPT
+        id S1727222AbeIZUJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:07:12 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45279 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbeIZUHM (ORCPT
+        Wed, 26 Sep 2018 16:09:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38460 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbeIZUJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:07:12 -0400
-Received: by mail-qt1-f193.google.com with SMTP id l2-v6so17267348qtr.12;
-        Wed, 26 Sep 2018 06:54:07 -0700 (PDT)
+        Wed, 26 Sep 2018 16:09:24 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p6-v6so25304148ljc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 06:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=88/2cfvdBss3O2vrPN3ChGUN6VdhuZnNWDN6bZX27s8=;
-        b=qyXai9QGBtomAl9+Bu+Frf25vXePFeWtyNTmyUcFOEYZ2WjUuhM5V4WepUOvvct2Qd
-         BHLlQnA82XS/qGo2bEssthKLu/eMCIxiojfRr/1R9qJr0GqXhpRI8I8I0qS06mx2nIEQ
-         uuzSEFT2os+sLbV6nE5vkMVv8KZ4DSJfJUaWJtJtGN6hHGq7WqTOKYxqsKbRZ2ad03zO
-         NMYoFSz2e3KdnTt4QpebNBj9EXfapFyHdFFmzRbLsk9xYwioGUXetb7fXE1JuY/TRptD
-         nGBz0Sz3ATFfYDNWNYBaDSk6EZ4TB0h26ZYZbtHq7ClpslNO3YZPanysR/yqEtsa6C/I
-         GAtg==
+        bh=ZsAGsC2tdyQ3VG7+MAKL6vSEkkQdKnLvZv7u/7W8T6I=;
+        b=MCdAzYm0GdmdX7OXLASImXBkg/fLgZS6LhaYA8QOoxkSg19yTgSj1cuooezrudSXRJ
+         v1y8WOjYJxsK03+0o9h9LzeyrJaFb5s8GDHHwS5+rSZtcDuGDKi0DctNTdZBBA0AcQfa
+         2Zaz9HgTVXJylNyndDpFWTPF6RFdZFoAhzhi0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=88/2cfvdBss3O2vrPN3ChGUN6VdhuZnNWDN6bZX27s8=;
-        b=NAzMqeB+OdHPXHnW8SWkBI3uqybBW/ns1K6m+QLlTYeJ+xco3O47Cd0Wd93flNdJ6m
-         3yHJWklZOUlB7A05Ed7VkjvMNveBpmziJ1WCeCrqPp32mBbxJ4NfcZ/mRgt4kYc45Jgl
-         Wo0aLS6H8edHaLbwoAkbzOytFfbWWAt7hL+QKXqf55VL04xRsqmKaKIheXUbzE8nnPHI
-         ygbMmkMRhDyeA0whSgXnq/nvr8gUhx4InA2Mw/p/RqsG8qjUu6sBsK1SnojYjKTnzv5B
-         YGcJjwjBgdcPxzO0SJq9ij4lh201Vkh1fo7w0s1J+w1XIiogdn6lyZGwdEDN0PMCeYax
-         gqug==
-X-Gm-Message-State: ABuFfoi6uJmpYwYJzX+XiG3Jgh/R2YAlP7M/3K+in1lU84pzqePZYHYG
-        juzzCcQtZbeiYrWr/OT4Z6yPKr20RtXxyQi0JPE=
-X-Google-Smtp-Source: ACcGV61bFvZMz3sltAVDqtN++t3Ssefck4+1lGTe/okvZIdi4f5Us9e3ucpa1wkfuPhrRK+vCdW3wCOov7LyKLF3N8Y=
-X-Received: by 2002:ac8:16c5:: with SMTP id y5-v6mr4645360qtk.187.1537970046966;
- Wed, 26 Sep 2018 06:54:06 -0700 (PDT)
+        bh=ZsAGsC2tdyQ3VG7+MAKL6vSEkkQdKnLvZv7u/7W8T6I=;
+        b=dnB9kKT8SpTMY7iTuUihSfu8gF0e38PHa0o3GjkwOqZWzGCej7Kc7K1ay5NEUZC+j0
+         pBQGKFCvmJhhLQRk+xy9dq7bETApy9pZGOig3h+P0fir9pDKOwsLxiT5AU22gIqndGcH
+         DpwjoIILutVjAmTKeXjIPIfOhrfjj0wI4zgPrnleUoQoVnCkB1EHBrBQQpLHAirfNZ3r
+         lXeE3ReFrkETdEXFQeBZOqqHEGW4bd02Fz58H8UGKBpyUNGfKCyrvMfhbeWpSPb+D9yp
+         Cea68clNLzMakGk4yPWaqGFY5CsitKnTcyPd9oLay83E6K1XiutfDTCKTTHOw5k2cD96
+         L+Cw==
+X-Gm-Message-State: ABuFfoirE2a1iUJxNrwFxvFTx79o9RwJXGCWTjaUtEvzTRu1/HRhWtjN
+        UtYwLE8o25coYvZFzPJmBI5JL6bPXMgSCXYJ4R77TQ==
+X-Google-Smtp-Source: ACcGV62pC+vJMJzdlMeZp1g9OEDWWOi+SZiw9awWOr8LU7HKlKjJzytJQ/Yg1G19itHTbaq1741Z3kMGl+M4P42Y4s4=
+X-Received: by 2002:a2e:9813:: with SMTP id a19-v6mr2370823ljj.36.1537970178046;
+ Wed, 26 Sep 2018 06:56:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com> <20180903180415.31575-3-rajneesh.bhardwaj@linux.intel.com>
-In-Reply-To: <20180903180415.31575-3-rajneesh.bhardwaj@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 16:53:55 +0300
-Message-ID: <CAHp75VcKSVJQ54qFV1BwqnwUu4dkS6sOACT3nTntJV+Ww56Oag@mail.gmail.com>
-Subject: Re: [PATCH 3/4] platform/x86: intel_pmc_core: Decode Snoop / Non
- Snoop LTR
-To:     rajneesh.bhardwaj@linux.intel.com
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
+References: <1537896922-8508-1-git-send-email-valentin.schneider@arm.com>
+ <CAKfTPtB-UiXx39XZeJ0FNeYOU-pLFbY1u7vgbo584MNHSnpr=w@mail.gmail.com>
+ <9209a9ec-72b4-17d7-6596-71b55767a9aa@arm.com> <CAKfTPtAUUcwPThggDMfQ1k7z4kguTwrLVEFKnkMqszs9nTri=g@mail.gmail.com>
+ <c80b5d26-ad8b-3b13-d317-8db7ec59aee0@arm.com>
+In-Reply-To: <c80b5d26-ad8b-3b13-d317-8db7ec59aee0@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 26 Sep 2018 15:56:06 +0200
+Message-ID: <CAKfTPtDxn4C-4wiZtyx-yAMK+pjz=AsRb1WwR5gaWuVkKD16wQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Don't increase sd->balance_interval on
+ newidle balance
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <Dietmar.Eggemann@arm.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 3, 2018 at 9:05 PM Rajneesh Bhardwaj
-<rajneesh.bhardwaj@linux.intel.com> wrote:
+On Wed, 26 Sep 2018 at 15:16, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
 >
-> The LTR values follow PCIE LTR encoding format and can be decoded as per
-> https://pcisig.com/sites/default/files/specification_documents/ECN_LatencyTolnReporting_14Aug08.pdf
+> On 26/09/18 11:33, Vincent Guittot wrote:
+> > On Wed, 26 Sep 2018 at 11:35, Valentin Schneider
+> > [...]
+> >>> Can you give us details about the use case that you care about ?
+> >>>
+> >>
+> >> It's the same as I presented last week - devlib (some python target communication
+> >
+> > ok. you mean at linaro connect
+> >
 >
-> This adds support to translate the raw LTR values as read from the PMC
-> to meaningful values in nanosecond units of time.
-
-> +static void get_ltr_scale(u32 *val)
-
-What's wrong to return converted value? Actually the name should
-reflect what it does, ie *convert* value.
-
-> +{
-> +       /*
-> +        * As per PCIE specification supprting document
-
-supporting
-
-> +        * ECN_LatencyTolnReporting_14Aug08.pdf the Latency
-> +        * Tolerance Reporting data payload is encoded in a
-> +        * 3 bit scale and 10 bit value fields. Values are
-> +        * multiplied by the indicated scale to yield an absolute time
-> +        * value, expressible in a range from 1 nanosecond to
-> +        * 2^25*(2^10-1) = 34,326,183,936 nanoseconds.
-> +        *
-> +        * scale encoding is as follows:
-> +        *
-> +        * ----------------------------------------------
-> +        * |scale factor        |       Multiplier (ns) |
-> +        * ----------------------------------------------
-> +        * |    0               |       1               |
-> +        * |    1               |       32              |
-> +        * |    2               |       1024            |
-> +        * |    3               |       32768           |
-> +        * |    4               |       1048576         |
-> +        * |    5               |       33554432        |
-> +        * |    6               |       Invalid         |
-> +        * |    7               |       Invalid         |
-> +        * ----------------------------------------------
-> +        */
-> +       if (*val > 5) {
-> +               *val = 0;
-> +               pr_warn("Invalid LTR scale factor.\n");
-> +       } else {
-> +               *val = 1U << (5 * (*val));
-> +       }
-> +}
-
-> +
->  static int pmc_core_ltr_show(struct seq_file *s, void *unused)
->  {
->         struct pmc_dev *pmcdev = s->private;
->         const struct pmc_bit_map *map = pmcdev->map->ltr_show_sts;
-> +       u64 decoded_snoop_ltr = 0, decoded_non_snoop_ltr = 0;
-> +       union ltr_payload ltr_data;
-
-> +       u32 scale = 0;
-
-Redundant assignment.
-
->         int index;
+> Yeah, sorry.
 >
->         for (index = 0; map[index].name ; index++) {
-> -               seq_printf(s, "%-32s\tRAW LTR: 0x%x\n",
-> +               ltr_data.raw_data = pmc_core_reg_read(pmcdev,
-> +                                                     map[index].bit_mask);
-> +
-> +               if (ltr_data.bits.non_snoop_req) {
-> +                       scale = ltr_data.bits.non_snoop_scale;
-> +                       get_ltr_scale(&scale);
-> +                       decoded_non_snoop_ltr =
-> +                               ltr_data.bits.non_snoop_val * scale;
-> +               }
-> +
-> +               if (ltr_data.bits.snoop_req) {
-> +                       scale = ltr_data.bits.snoop_scale;
-> +                       get_ltr_scale(&scale);
-> +                       decoded_snoop_ltr =
-> +                               ltr_data.bits.snoop_val * scale;
-> +               }
-> +
-> +               seq_printf(s, "%-24s\tRaw LTR: 0x%-16x\t Non-Snoop LTR (ns): %-16llu\t Snoop LTR (ns): %-16llu\n",
->                            map[index].name,
-> -                          pmc_core_reg_read(pmcdev, map[index].bit_mask));
-> +                          ltr_data.raw_data,
-> +                          decoded_non_snoop_ltr,
-> +                          decoded_snoop_ltr);
-> +
+> >> library I use) has some phase where it spawns at lot of tasks at once to do
+> >> some setup (busybox, shutils, bash...). Some of those tasks are pinned to a
+> >> particular CPU, and that can lead to failed load_balance() - and to make things
+> >> worse, there's a lot of idle_balance() in there.
+> >>
+> >> Eventually when I start running my actual workload a few ~100ms later, it's
+> >> impacted by that balance_interval increase.
+> >>
+> >> Admittedly that's a specific use-case, but I don't think this quick increase
+> >> is something that was intended.
+> >
+> > Yes, this really sounds like a specific use-case. Unluckily you find a
+> > way to reach max interval quite easily/every time with your test
+> > set-up but keep in mind that this can also happen in real system life
+> > and without using the newly idle path.
+> > So if it's a problem to have a interval at max value for your unitary
+> > test, it probably means that it's a problem for the system and the max
+> > value is too high
+> >
+>
+> Limiting the max value for those tests is actually a good point, and I think
+> I'll give it a shot. However...
+>
+> > Taking advantage of all load_balance event to update the interval
+> > makes sense to me. It seems that you care about a short and regular
+> > balance interval more that minimizing overhead of load balancing.
+> > At the opposite, i'm sure that you don't complain if newly idle load
+> > balance resets the interval to min value and overwrite what the
+> > periodic load balance set up previously :-)
+> >
+>
+> ...My concern is more about increasing balance_interval faster than we should.
+> The proposed "fix" is to prevent any balance_interval increase when going
+> through idle_balance(), but Patrick (added in cc) suggested offline that
+> we could simply limit the rate at which we do these increases, so that they
+> match what we do in rebalance_domains().
+>
+> We'd still increase balance_interval on failed newidle load_balance(), but
+> we wouldn't increase from min to max in e.g. 50ms. Would that work better
+> for you?
 
-> +               decoded_snoop_ltr = decoded_non_snoop_ltr = 0;
-
-You may do this at the beginning of the loop and get rid of assignment
-in the definition block.
-
->         }
->         return 0;
->  }
-
-> +union ltr_payload {
-> +       u32 raw_data;
-> +       struct {
-> +       u32 snoop_val : 10;
-> +       u32 snoop_scale : 3;
-> +       u32 snoop_res : 2;
-> +       u32 snoop_req : 1;
-> +       u32 non_snoop_val : 10;
-> +       u32 non_snoop_scale : 3;
-> +       u32 non_snoop_res : 2;
-> +       u32 non_snoop_req : 1;
-> +       } bits;
-> +};
-
-Just use normal masks and shifts.
-
--- 
-With Best Regards,
-Andy Shevchenko
+adding a rate limite would be a reasonnable solution.
+>
+> >> [...]
