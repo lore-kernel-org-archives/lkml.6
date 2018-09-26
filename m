@@ -2,117 +2,184 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C81C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23580C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36058214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:56:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36058214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B5A62214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:56:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSA1HXLM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A62214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeIZVJm (ORCPT
+        id S1728243AbeIZVKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:09:42 -0400
-Received: from mga18.intel.com ([134.134.136.126]:15080 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbeIZVJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:09:41 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:56:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="265904850"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
-  by fmsmga005.fm.intel.com with ESMTP; 26 Sep 2018 07:56:13 -0700
-Date:   Wed, 26 Sep 2018 08:58:21 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Message-ID: <20180926145820.GA14688@localhost.localdomain>
-References: <20180926150051.6ee97aae@canb.auug.org.au>
- <20180926142540.GB14407@localhost.localdomain>
+        Wed, 26 Sep 2018 17:10:11 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33849 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbeIZVKL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:10:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id t15so19453123wrx.1;
+        Wed, 26 Sep 2018 07:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rJgWHZOEgZ+3yjH7Ok2uihEHIRVQuA21uePike8hE5Y=;
+        b=KSA1HXLM9cLvTQCSQmBU7NxVbAsHCgE5rQ44DpOKgpwaA2A3n5hqgo0If2ba1mIjrX
+         DCDT8M4se/qwhKoQMSTUP8Oh5LJmKTStwptdkpQfXHFTGrS5VK8rH4CQ/FlIDxCZhSdU
+         dI7vhSpuV1noqMlbWVBqgpAbWGiPIvGpzif/UvbgYhzcDgdewc2JtCnmAWypYMJX9/5K
+         wxRpMkeQ6Te/wYU6Quj33zZEQJROYkUP3c5gR0da6pL+9VQ3lMMhYAQQgzQRb/T6J9ps
+         2qnmvF87zMqs9OO+xLCfHVoYn6O+PHnRJLGfL3SvuT2+Oug6N0XQaFnYYN/g0Nrh+ojv
+         ge9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rJgWHZOEgZ+3yjH7Ok2uihEHIRVQuA21uePike8hE5Y=;
+        b=McLqL5qqpxWX6hLGSpNOdSJBc1G7sBWdwoO2iWS84Kqe6QQkoAoatvv4PH0z42+Eh8
+         pBc7EE5lk64wcUqO41Uzxc1gnEeyLJDKwJsLbMs0N4tQnIJHjmjyBnK+kljzQPyYGjN5
+         KNFWohb+cz/eb1WykxtVJEBLfj5QXGY6IOG/KbCR5IO7/F1ZW+Z/CII8PFO/N0Dnl0yY
+         glUWJHFvgT+9/4nkva7Glvt8CwKHnoWe5rBCpkQiXAeoCDZyw3+EpyVXNfZFCKaI5tDm
+         uYwLrRvRJYcnfrpmNIvMcxDQ/xEiGLSuRGMlCaojmUOPpLu/9Wa4NLaT1LMnYyexU1by
+         4Jlg==
+X-Gm-Message-State: ABuFfoiVotATcFVCV1JzIirjhPCOvOl3y4s0lEyAnIBHk8onWUiu0Kjt
+        rF3VY4WcBiuq+8VFO5KexpUUSchl
+X-Google-Smtp-Source: ACcGV63tzsa5d6P1uFiUdkixlhVO4YXedu/33wz+Z/hzHei/rCjgkdUKTLmXpLvJYgiEwyzKSwsK7g==
+X-Received: by 2002:adf:9285:: with SMTP id 5-v6mr2779154wrn.69.1537973808347;
+        Wed, 26 Sep 2018 07:56:48 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id z14-v6sm4946852wma.18.2018.09.26.07.56.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 07:56:47 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 16:56:46 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 00/37] ARM: dts: tegra: colibri_t20: major revamp
+ incl. eval board support
+Message-ID: <20180926145646.GG12980@ulmo>
+References: <20180902100906.25792-1-marcel@ziswiler.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yQbNiKLmgenwUfTN"
 Content-Disposition: inline
-In-Reply-To: <20180926142540.GB14407@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180902100906.25792-1-marcel@ziswiler.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 08:25:40AM -0600, Keith Busch wrote:
-> On Wed, Sep 26, 2018 at 03:00:51PM +1000, Stephen Rothwell wrote:
-> > Hi Bjorn,
-> > 
-> > After merging the pci tree, today's linux-next build (powerpc allnoconfig)
-> > failed like this:
-> > 
-> > ld: drivers/pci/pci.o: in function `pci_bus_error_reset':
-> > pci.c:(.text+0x5fba): undefined reference to `pci_slot_mutex'
-> > ld: pci.c:(.text+0x5fc2): undefined reference to `pci_slot_mutex'
-> > 
-> > Caused by commit
-> > 
-> >   131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
-> > 
-> > I have applied the following hack for today (there is probably a better
-> > way):
-> 
-> Thanks for the notice. Does this mean you don't have CONFIG_SYSFS? I
-> must admit I missed that connection for building slot.c.
-> 
->  
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Wed, 26 Sep 2018 14:55:37 +1000
-> > Subject: [PATCH] pci: move pci_slot_mutex so it is available where needed
-> > 
-> > Fixes: 131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/pci/pci.c  | 2 ++
-> >  drivers/pci/slot.c | 1 -
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > index 8c1e99a637d8..1fa67db6b21e 100644
-> > --- a/drivers/pci/pci.c
-> > +++ b/drivers/pci/pci.c
-> > @@ -5190,6 +5190,8 @@ static int pci_bus_reset(struct pci_bus *bus, int probe)
-> >  	return ret;
-> >  }
-> >  
-> > +DEFINE_MUTEX(pci_slot_mutex);
-> > +
-> >  /**
-> >   * pci_bus_error_reset - reset the bridge's subordinate bus
-> >   * @bridge: The parent device that connects to the bus to reset
-> > diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
-> > index 3da03fcc6fbf..c46d5e1ff536 100644
-> > --- a/drivers/pci/slot.c
-> > +++ b/drivers/pci/slot.c
-> > @@ -14,7 +14,6 @@
-> >  
-> >  struct kset *pci_slots_kset;
-> >  EXPORT_SYMBOL_GPL(pci_slots_kset);
-> > -DEFINE_MUTEX(pci_slot_mutex);
-> >  
-> >  static ssize_t pci_slot_attr_show(struct kobject *kobj,
-> >  					struct attribute *attr, char *buf)
-> > -- 
-> > 2.18.0
 
-There's unfortunately second bug here when there are no slots, which
-would be the case without CONFIG_SYSFS: the slot list is empty, and the
-function just returned success, but it should have gone to the default
-secondary bus reset behavior in that case. I'll send a patch shortly.
+--yQbNiKLmgenwUfTN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Sep 02, 2018 at 12:08:29PM +0200, Marcel Ziswiler wrote:
+> This series is a major overhaul and adds support for the Colibri
+> Evaluation Board device tree.
+>=20
+> Changes in v2:
+> - Fix commit message which was mixed up between "[PATCH 03/31] ARM:
+>   tegra: colibri_t20: iris: annotate i2c busses" and "[PATCH 04/31] ARM:
+>   tegra: colibri_t20: iris: add missing aliases".
+> - Also replace underscores in node names with dashes.
+> - Also reflect this change in the Iris device tree.
+> - Also reflect this change in the device tree bindings documentation.
+> - New patch as suggested by Rob.
+> - New patch.
+> - Get rid of fake clocks simple bus as suggested by Rob.
+> - Updated evaluation board device tree with all applicable previous
+>   fixes.
+> - Also reflect this addition in the device tree bindings documentation.
+>=20
+> Marcel Ziswiler (37):
+>   ARM: tegra: colibri_t20: move aliases from module to carrier board
+>   ARM: tegra: colibri_t20: iris: integrate i2c real time clock support
+>   ARM: tegra: colibri_t20: iris: add missing aliases
+>   ARM: tegra: colibri_t20: iris: annotate i2c busses
+>   ARM: tegra: colibri_t20: add local-mac-address property
+>   ARM: tegra: colibri_t20: reorder host1x/hdmi properties
+>   ARM: tegra: colibri_t20: iris: use no-1-8-v
+>   ARM: tegra: colibri_t20: regulator clean-up
+>   ARM: tegra: colibri_t20: add missing regulators
+>   ARM: tegra: colibri_t20: annotate usb ehci instances
+>   ARM: tegra: colibri_t20: remove phy-reset-gpio from controller node
+>   ARM: tegra: colibri_t20: indentation/line-feed/white-space clean-up
+>   ARM: tegra: colibri_t20: update sound nvidia,model
+>   ARM: tegra: colibri_t20: pinmux clean-up
+>   ARM: tegra: colibri_t20: add missing pinmux
+>   ARM: tegra: colibri_t20: iris: display controller rgb panel support
+>   ARM: tegra: colibri_t20: iris: annotate uarts
+>   ARM: tegra: colibri_t20: iris: add uart-c
+>   ARM: tegra: colibri_t20: use high speed uart driver
+>   ARM: tegra: colibri_t20: iris: add gpio wakeup key
+>   ARM: tegra: colibri_t20: iris: add dr_mode property
+>   ARM: tegra: colibri_t20: annotate/rename lm95245 temperature sensor
+>   ARM: tegra: colibri_t20: add i2c-thermtrip
+>   ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
+>   ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
+>   ARM: tegra: colibri_t20: annotate/move sd card detect
+>   ARM: tegra: colibri_t20: add compatibility comment
+>   ARM: tegra: colibri_t20: simplify model and compatible properties
+>   ARM: tegra: colibri_t20: iris: simplify model and compatible
+>     properties
+>   ARM: tegra: colibri_t20: iris: add colibri ssp support
+>   ARM: tegra: colibri_t20: drop module level model and compatible
+>   ARM: tegra: colibri_t20: rename i2c_ddc to hdmi_ddc
+>   ARM: tegra: colibri_t20: iris: drop unused i2c_ddc label
+>   ARM: tegra: colibri_t20: rename tps6586x@34 and drop unused pmic label
+>   ARM: tegra: colibri_t20: get rid of fake clocks simple bus
+>   ARM: tegra: colibri_t20: rename ac97 label to tegra_ac97
+>   ARM: tegra: colibri_t20: add eval board device tree
+>=20
+>  Documentation/devicetree/bindings/arm/tegra.txt |   5 +-
+>  arch/arm/boot/dts/Makefile                      |   1 +
+>  arch/arm/boot/dts/tegra20-colibri-eval-v3.dts   | 262 ++++++++++
+>  arch/arm/boot/dts/tegra20-colibri-iris.dts      | 200 ++++++--
+>  arch/arm/boot/dts/tegra20-colibri.dtsi          | 655 ++++++++++++++++--=
+------
+>  5 files changed, 866 insertions(+), 257 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
+
+Applied, thanks. All of these series together have got to be some kind
+of a record.
+
+Thierry
+
+--yQbNiKLmgenwUfTN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurni4ACgkQ3SOs138+
+s6ET2RAAsam+ERwqoS+mt3Uq24gI1WE8T1QZTaHFCsKhRcaRxR9g1CEAySYuJjAO
+KYGoZhOk9DWZAX/dmcUHQFUyiVOXN+ump0rLiVVhxTLZ8bMCXZQBtAbvxuAk6JFF
+qVaC55+h1OC5fMhEyU2TZm960GXOij+iMaZiCfIXMCferM/Kaz+rvxf7KJ3DPsf1
+TgAbc80xFabjOtOnG29nwwxRj53tEwVPVfnYku77zu8h+0NOblucp6AcyyaaEdVm
+s3P1XiLwqFTBlzD7z2r+P7HN+khzpUICgcwx/JNYiyevMhHTks78XukAiFhZ80m5
+Cz9jQwBVR2m/csHswxSPBBG8dp85tdM5BcvLj23nja7fxwOtJvdvA+4FP/hC5Uf9
+gRvVuJQ6ppzjvVri9/ZvUy0md33qTKwil6XqNROjz7u2zK0T8RNN1SK0mAAXgsoR
+wOyNU9ZyCOSNUD2zeHay8DNmpxqa7DkzrquJyWxpD1GcLiVVDemijlNEFz9f308H
+fgmnfaHKqpt0H39Oju3Jxm6O6/DLK+QIQM27iOeC+lOajBsATXrNX4dM55hUaNNN
+LSAdAWiH45EAR3lIIZU59ziLMmxKXbegYF5dF8qRCDlbUVMoHay1/Ki6qSxhYr6r
+8jQdvhR8GbJyXWtCKH3RdfUcTHbGKGab5oBqPkuWDHTLUHVIkLY=
+=ftqN
+-----END PGP SIGNATURE-----
+
+--yQbNiKLmgenwUfTN--
