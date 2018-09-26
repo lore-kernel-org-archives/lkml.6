@@ -3,141 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514C5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAEAC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16005214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:56:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16005214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AA1720842
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:57:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA1720842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728318AbeIZTI4 (ORCPT
+        id S1728073AbeIZTKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:08:56 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8058 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbeIZTI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:08:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 05:56:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="77425141"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.13])
-  by orsmga006.jf.intel.com with ESMTP; 26 Sep 2018 05:56:00 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -V5 RESEND 03/21] swap: Support PMD swap mapping in swap_duplicate()
-References: <20180925071348.31458-1-ying.huang@intel.com>
-        <20180925071348.31458-4-ying.huang@intel.com>
-        <20180925191953.4ped5ki7u3ymafmd@ca-dmjordan1.us.oracle.com>
-Date:   Wed, 26 Sep 2018 20:55:59 +0800
-In-Reply-To: <20180925191953.4ped5ki7u3ymafmd@ca-dmjordan1.us.oracle.com>
-        (Daniel Jordan's message of "Tue, 25 Sep 2018 12:19:53 -0700")
-Message-ID: <874lecifj4.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 26 Sep 2018 15:10:31 -0400
+Received: from uphb19pa10.eemsg.mail.mil ([214.24.26.84]:7823 "EHLO
+        USFB19PA13.eemsg.mail.mil" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726768AbeIZTKb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 15:10:31 -0400
+X-EEMSG-check-008: 198452046|USFB19PA13_EEMSG_MP9.csd.disa.mil
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by USFB19PA13.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Sep 2018 12:57:36 +0000
+X-IronPort-AV: E=Sophos;i="5.54,306,1534809600"; 
+   d="scan'208";a="18681975"
+IronPort-PHdr: =?us-ascii?q?9a23=3AWElPzRLjFEfDaonAE9mcpTZWNBhigK39O0sv0r?=
+ =?us-ascii?q?FitYgXKvn/rarrMEGX3/hxlliBBdydt6obzbKO+4nbGkU4qa6bt34DdJEeHz?=
+ =?us-ascii?q?Qksu4x2zIaPcieFEfgJ+TrZSFpVO5LVVti4m3peRMNQJW2aFLduGC94iAPER?=
+ =?us-ascii?q?vjKwV1Ov71GonPhMiryuy+4ZLebxlKiTanfb9+MAi9oBnMuMURnYZsMLs6xA?=
+ =?us-ascii?q?HTontPdeRWxGdoKkyWkh3h+Mq+/4Nt/jpJtf45+MFOTav1f6IjTbxFFzsmKH?=
+ =?us-ascii?q?w65NfqtRbYUwSC4GYXX3gMnRpJBwjF6wz6Xov0vyDnuOdxxDWWMMvrRr0vRz?=
+ =?us-ascii?q?+s87lkRwPpiCcfNj427mfXitBrjKlGpB6tvgFzz5LIbI2QMvdxcLndfdcHTm?=
+ =?us-ascii?q?RfWMhfWTFKDoelY4cRE+YNOOBVpJT/qVQTtxuzHRSiCv3hyjFIhXH406M13O?=
+ =?us-ascii?q?sjHg7a0wItBM4OvXfOodnpKKsfX+K4wa/VxjvDdfNW3jL95ZDVfBA9v/6MRb?=
+ =?us-ascii?q?JwftTXyUIyCg3Fi0+fqYjhPzyL1uUGrm+W7/F9WuK0kGMntwFwrSSvxscrkI?=
+ =?us-ascii?q?XJgJkVxUre+SV2x4Y1O8S1RUhmatCnCJtdrzyWOoR5T884Q2xkpTw2xqMJtJ?=
+ =?us-ascii?q?KlZiQG1ZIqzAPFZfOdaYiH+BfjWf6UITd/mX1qZqqyhw238Ui80u38UdS00E?=
+ =?us-ascii?q?pSoipFjNbMsncN2gTP6sedUPt9/1qh2S2V2wDP6uBLPUA0la3BJ54n3rEwjY?=
+ =?us-ascii?q?YcvV7GHi/3nEX6lK6WdkM69ei08+nrf7rrq5CGO4J0lw3yKLoil8OhDegiLw?=
+ =?us-ascii?q?QCR22b9v691L3n8035WrJKjvgun6nCrZ/aPt8WprK5AgBJ0oYj7AyzDzG90N?=
+ =?us-ascii?q?sCh3UHI1VFeAyfg4jzJ17OOOz4Deu4g1m0kTZr2/fGPrvuApjWMHjDjK3tcq?=
+ =?us-ascii?q?hg5E5B0AAz18xQ54pICrEdJ/L+QkvxtN3eDh8kPA242ujnCM5g2YwAR2KAHK?=
+ =?us-ascii?q?uZPbjMsV+H+O0vOfOAZIwLtzbnLfgq+frugWU+mV8HcqmjxYEXZ2ygHvR6P0?=
+ =?us-ascii?q?WZZmLhgtMAEWcMowo/Q/XmiF6cXj5JYXa9QaY86yolCIKpE4jDXJqhgL+f0y?=
+ =?us-ascii?q?ehGJ1ZeGRGBkqLEXfyeIWOQ+0MZz6KIs99jjwEUqCsS4sg1RGoqQ/7xKNrLv?=
+ =?us-ascii?q?HK9SIEqJLjztl15/HTlB0r8Dx0CNmS03yJT25qhW4IWTA2075loUBnyVeMz7?=
+ =?us-ascii?q?J4g/pGGtxX/f9JVR06NZHExexgF9/yQh7BfsuOSFu+TNSpHzcxQck2w9MUeE?=
+ =?us-ascii?q?ZwAM6igQrG3yqxHr8VkbOLCIYo/aLb2niib/p6nkrB0qZpvVkvRMQHYX+6ga?=
+ =?us-ascii?q?hw3xbPQYPFjhPKubytcPEnwCPV9GqFhVGLtUVcXR84Bb7JRlgDd0DWqpL//U?=
+ =?us-ascii?q?qEQLiwX+d0ejBdwNKPf/MZIubiik9LEbK6YozT?=
+X-IPAS-Result: =?us-ascii?q?A2ByAADSgatb/wHyM5BaDgwBAQEBAQIBAQEBBwIBAQEBg?=
+ =?us-ascii?q?zUqgWSEHJRGUAEBBoEILYhpiQWGWzYBhEACg30hOBQBAwEBAQEBAQIBbCiCN?=
+ =?us-ascii?q?SQBgl8BBSMPAQVBEAsOCgICJgICVwYNCAEBgl4/gXUNoxSBLoR3hSOBC4lwF?=
+ =?us-ascii?q?3mBB4E5gmuHf4JXAp0HCZAnBheBN419K5Y/IYFVKwgCGAghD4MokBlWI4ErA?=
+ =?us-ascii?q?QGMRgEB?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 26 Sep 2018 12:57:35 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id w8QCvYNR027922;
+        Wed, 26 Sep 2018 08:57:34 -0400
+Subject: Re: Leaking path for search_binary_handler
+To:     Tong Zhang <ztong@vt.edu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, wenbo.s@samsung.com
+References: <C2D9C687-4964-4DB3-AAF4-7C836324D6BE@vt.edu>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <e36e7259-5cf8-3c5b-98d3-5c4d5c4b82b1@tycho.nsa.gov>
+Date:   Wed, 26 Sep 2018 08:59:38 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+In-Reply-To: <C2D9C687-4964-4DB3-AAF4-7C836324D6BE@vt.edu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+On 09/25/2018 01:27 PM, Tong Zhang wrote:
+> Kernel Version: 4.18.5
+> 
+> Problem Description:
+> 
+> search_binary_handler() should be called after setting bprm using prepare_binprm(),
+> and in prepare_binprm(), there’s a LSM hook security_bprm_set_creds(),
+> which can make a decision that binfmt cares.
+> 
+> We found a leaking path In fs/binfmt_misc.c:235, that don’t ask LSM’s decision.
 
-> On Tue, Sep 25, 2018 at 03:13:30PM +0800, Huang Ying wrote:
->> @@ -3487,35 +3521,66 @@ static int __swap_duplicate_locked(struct swap_info_struct *p,
->>  }
->>  
->>  /*
->> - * Verify that a swap entry is valid and increment its swap map count.
->> + * Verify that the swap entries from *entry is valid and increment their
->> + * PMD/PTE swap mapping count.
->>   *
->>   * Returns error code in following case.
->>   * - success -> 0
->>   * - swp_entry is invalid -> EINVAL
->> - * - swp_entry is migration entry -> EINVAL
->
-> I'm assuming it wasn't possible to hit this error before this patch, and you're
-> just removing it now since you're in the area?
-
-Yes.
-
->>   * - swap-cache reference is requested but there is already one. -> EEXIST
->>   * - swap-cache reference is requested but the entry is not used. -> ENOENT
->>   * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
->> + * - the huge swap cluster has been split. -> ENOTDIR
->
-> Strangely intuitive choice of error code :)
-
-Thanks!  It doesn't match the error exactly, but I have no better choice
-now.  Matthew Wilcox have suggested to use an swap specific enum
-instead.  I think that is good in general, but we need only one extra
-error code, and we need to change the interface of several swap
-functions.  So I think that should be in a separate patchset if
-necessary.
-
->>  /*
->>   * Increase reference count of swap entry by 1.
->> - * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
->> - * but could not be atomically allocated.  Returns 0, just as if it succeeded,
->> - * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
->> - * might occur if a page table entry has got corrupted.
->> + *
->> + * Return error code in following case.
->> + * - success -> 0
->> + * - swap_count_continuation is required but could not be atomically allocated.
->> + *   *entry is used to return swap entry to call add_swap_count_continuation().
->> + *								      -> ENOMEM
->> + * - otherwise same as __swap_duplicate()
->>   */
->> -int swap_duplicate(swp_entry_t entry)
->> +int swap_duplicate(swp_entry_t *entry, int entry_size)
->>  {
->>  	int err = 0;
->>  
->> -	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
->> -		err = add_swap_count_continuation(entry, GFP_ATOMIC);
->> +	while (!err &&
->> +	       (err = __swap_duplicate(entry, entry_size, 1)) == -ENOMEM)
->> +		err = add_swap_count_continuation(*entry, GFP_ATOMIC);
->>  	return err;
->
-> Now we're returning any error we get from __swap_duplicate, apparently to
-> accommodate ENOTDIR later in the series, which is a change from the behavior
-> introduced in 570a335b8e22 ("swap_info: swap count continuations").  This might
-> belong in a separate patch given its potential for side effects.
-
-I have checked all the calls of the function and found there will be no
-bad effect.  Do you have any side effect?
-
-> Although, I don't understand why 570a335b8e22 ignored errors other than -ENOMEM
-> when both swap_duplicate callers _seem_ from a quick read to be able to respond
-> gracefully to any error.
-
-Before 570a335b8e22, all errors are ignored in swap_duplicate() (its
-type is void).  If my understanding were correct, all errors except
--ENOMEM are impossible before changes in this patchset.  So they are
-ignored.
-
-Best Regards,
-Huang, Ying
+Do you mean the MISC_FMT_CREDENTIALS case? That looks intentional to me, 
+as noted in the comment there, and as per 
+Documentation/admin-guide/binfmt-misc.rst's discussion of the 
+credentials flag.
