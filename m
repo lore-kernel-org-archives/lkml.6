@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A3BC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9609DC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA480214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA480214C5
+	by mail.kernel.org (Postfix) with ESMTP id 4D60C214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D60C214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbeIZTf5 (ORCPT
+        id S1728792AbeIZTfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:35:57 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59572 "EHLO inva020.nxp.com"
+        Wed, 26 Sep 2018 15:35:55 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59500 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728709AbeIZTf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:35:57 -0400
+        id S1728322AbeIZTfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 15:35:54 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8CB031A025F;
-        Wed, 26 Sep 2018 15:22:58 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0CC6F1A0251;
+        Wed, 26 Sep 2018 15:22:55 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 801A21A004C;
-        Wed, 26 Sep 2018 15:22:58 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0000F1A004C;
+        Wed, 26 Sep 2018 15:22:54 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id DA739203C2;
-        Wed, 26 Sep 2018 15:22:57 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 5A292203C2;
+        Wed, 26 Sep 2018 15:22:54 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
         bharat.bhushan@nxp.com, Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v2 13/22] dpaa_eth: fix iova handling for contiguous frames
-Date:   Wed, 26 Sep 2018 16:22:38 +0300
-Message-Id: <20180926132247.10971-14-laurentiu.tudor@nxp.com>
+Subject: [PATCH v2 08/22] soc/fsl/qbman_portals: add APIs to retrieve the probing status
+Date:   Wed, 26 Sep 2018 16:22:33 +0300
+Message-Id: <20180926132247.10971-9-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
 References: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
@@ -51,131 +51,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-The driver relies on the no longer valid assumption that dma addresses
-(iovas) are identical to physical addressees and uses phys_to_virt() to
-make iova -> vaddr conversions. Fix this by adding a function that does
-proper iova -> phys conversions using the iommu api and update the code
-to use it.
-Also, a dma_unmap_single() call had to be moved further down the code
-because iova -> vaddr conversions were required before the unmap.
-For now only the contiguous frame case is handled and the SG case is
-split in a following patch.
-While at it, clean-up a redundant dpaa_bpid2pool() and pass the bp
-as parameter.
+Add a couple of new APIs to check the probing status of the required
+cpu bound qman and bman portals:
+ 'int bman_portals_probed()' and 'int qman_portals_probed()'.
+They return the following values.
+ *  1 if qman/bman portals were all probed correctly
+ *  0 if qman/bman portals were not yet probed
+ * -1 if probing of qman/bman portals failed
+Drivers that use qman/bman portal driver services are required to use
+these APIs before calling any functions exported by these drivers or
+otherwise they will crash the kernel.
+First user will be the dpaa1 ethernet driver, coming in a subsequent
+patch.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- .../net/ethernet/freescale/dpaa/dpaa_eth.c    | 44 ++++++++++---------
- 1 file changed, 24 insertions(+), 20 deletions(-)
+ drivers/soc/fsl/qbman/bman_portal.c | 10 ++++++++++
+ drivers/soc/fsl/qbman/qman_portal.c | 10 ++++++++++
+ include/soc/fsl/bman.h              |  8 ++++++++
+ include/soc/fsl/qman.h              |  9 +++++++++
+ 4 files changed, 37 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index ac9e50c8a556..e9e081c3f8cc 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -50,6 +50,7 @@
- #include <linux/highmem.h>
- #include <linux/percpu.h>
- #include <linux/dma-mapping.h>
-+#include <linux/iommu.h>
- #include <linux/sort.h>
- #include <soc/fsl/bman.h>
- #include <soc/fsl/qman.h>
-@@ -1595,6 +1596,17 @@ static int dpaa_eth_refill_bpools(struct dpaa_priv *priv)
+diff --git a/drivers/soc/fsl/qbman/bman_portal.c b/drivers/soc/fsl/qbman/bman_portal.c
+index f9edd28894fd..8048d35de8a2 100644
+--- a/drivers/soc/fsl/qbman/bman_portal.c
++++ b/drivers/soc/fsl/qbman/bman_portal.c
+@@ -32,6 +32,7 @@
+ 
+ static struct bman_portal *affine_bportals[NR_CPUS];
+ static struct cpumask portal_cpus;
++static int __bman_portals_probed;
+ /* protect bman global registers and global data shared among portals */
+ static DEFINE_SPINLOCK(bman_lock);
+ 
+@@ -85,6 +86,12 @@ static int bman_online_cpu(unsigned int cpu)
  	return 0;
  }
  
-+static phys_addr_t dpaa_iova_to_phys(struct device *dev, dma_addr_t addr)
++int bman_portals_probed(void)
 +{
-+	struct iommu_domain *domain;
-+
-+	domain = iommu_get_domain_for_dev(dev);
-+	if (domain)
-+		return iommu_iova_to_phys(domain, addr);
-+	else
-+		return addr;
++	return __bman_portals_probed;
 +}
++EXPORT_SYMBOL_GPL(bman_portals_probed);
 +
- /* Cleanup function for outgoing frame descriptors that were built on Tx path,
-  * either contiguous frames or scatter/gather ones.
-  * Skb freeing is not handled here.
-@@ -1617,7 +1629,7 @@ static struct sk_buff *dpaa_cleanup_tx_fd(const struct dpaa_priv *priv,
- 	int nr_frags, i;
- 	u64 ns;
- 
--	skbh = (struct sk_buff **)phys_to_virt(addr);
-+	skbh = (struct sk_buff **)phys_to_virt(dpaa_iova_to_phys(dev, addr));
- 	skb = *skbh;
- 
- 	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
-@@ -1687,25 +1699,21 @@ static u8 rx_csum_offload(const struct dpaa_priv *priv, const struct qm_fd *fd)
-  * accommodate the shared info area of the skb.
-  */
- static struct sk_buff *contig_fd_to_skb(const struct dpaa_priv *priv,
--					const struct qm_fd *fd)
-+					const struct qm_fd *fd,
-+					struct dpaa_bp *dpaa_bp,
-+					void *vaddr)
+ static int bman_portal_probe(struct platform_device *pdev)
  {
- 	ssize_t fd_off = qm_fd_get_offset(fd);
--	dma_addr_t addr = qm_fd_addr(fd);
--	struct dpaa_bp *dpaa_bp;
- 	struct sk_buff *skb;
--	void *vaddr;
- 
--	vaddr = phys_to_virt(addr);
- 	WARN_ON(!IS_ALIGNED((unsigned long)vaddr, SMP_CACHE_BYTES));
- 
--	dpaa_bp = dpaa_bpid2pool(fd->bpid);
--	if (!dpaa_bp)
--		goto free_buffer;
--
- 	skb = build_skb(vaddr, dpaa_bp->size +
- 			SKB_DATA_ALIGN(sizeof(struct skb_shared_info)));
--	if (WARN_ONCE(!skb, "Build skb failure on Rx\n"))
--		goto free_buffer;
-+	if (WARN_ONCE(!skb, "Build skb failure on Rx\n")) {
-+		skb_free_frag(vaddr);
-+		return NULL;
-+	}
- 	WARN_ON(fd_off != priv->rx_headroom);
- 	skb_reserve(skb, fd_off);
- 	skb_put(skb, qm_fd_get_length(fd));
-@@ -1713,10 +1721,6 @@ static struct sk_buff *contig_fd_to_skb(const struct dpaa_priv *priv,
- 	skb->ip_summed = rx_csum_offload(priv, fd);
- 
- 	return skb;
--
--free_buffer:
--	skb_free_frag(vaddr);
--	return NULL;
+ 	struct device *dev = &pdev->dev;
+@@ -148,6 +155,7 @@ static int bman_portal_probe(struct platform_device *pdev)
+ 	spin_lock(&bman_lock);
+ 	cpu = cpumask_next_zero(-1, &portal_cpus);
+ 	if (cpu >= nr_cpu_ids) {
++		__bman_portals_probed = 1;
+ 		/* unassigned portal, skip init */
+ 		spin_unlock(&bman_lock);
+ 		return 0;
+@@ -173,6 +181,8 @@ static int bman_portal_probe(struct platform_device *pdev)
+ err_ioremap2:
+ 	memunmap(pcfg->addr_virt_ce);
+ err_ioremap1:
++	 __bman_portals_probed = 1;
++
+ 	return -ENXIO;
  }
  
- /* Build an skb with the data of the first S/G entry in the linear portion and
-@@ -2302,12 +2306,12 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
- 	if (!dpaa_bp)
- 		return qman_cb_dqrr_consume;
+diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
+index eef93cab84f1..1b2fc981c269 100644
+--- a/drivers/soc/fsl/qbman/qman_portal.c
++++ b/drivers/soc/fsl/qbman/qman_portal.c
+@@ -39,6 +39,7 @@ EXPORT_SYMBOL(qman_dma_portal);
+ #define CONFIG_FSL_DPA_PIRQ_FAST  1
  
--	dma_unmap_single(dpaa_bp->dev, addr, dpaa_bp->size, DMA_FROM_DEVICE);
--
- 	/* prefetch the first 64 bytes of the frame or the SGT start */
--	vaddr = phys_to_virt(addr);
-+	vaddr = phys_to_virt(dpaa_iova_to_phys(dpaa_bp->dev, addr));
- 	prefetch(vaddr + qm_fd_get_offset(fd));
+ static struct cpumask portal_cpus;
++static int __qman_portals_probed;
+ /* protect qman global registers and global data shared among portals */
+ static DEFINE_SPINLOCK(qman_lock);
  
-+	dma_unmap_single(dpaa_bp->dev, addr, dpaa_bp->size, DMA_FROM_DEVICE);
+@@ -219,6 +220,12 @@ static int qman_online_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
++int qman_portals_probed(void)
++{
++	return __qman_portals_probed;
++}
++EXPORT_SYMBOL_GPL(qman_portals_probed);
 +
- 	/* The only FD types that we may receive are contig and S/G */
- 	WARN_ON((fd_format != qm_fd_contig) && (fd_format != qm_fd_sg));
+ static int qman_portal_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -306,6 +313,7 @@ static int qman_portal_probe(struct platform_device *pdev)
+ 	spin_lock(&qman_lock);
+ 	cpu = cpumask_next_zero(-1, &portal_cpus);
+ 	if (cpu >= nr_cpu_ids) {
++		__qman_portals_probed = 1;
+ 		/* unassigned portal, skip init */
+ 		spin_unlock(&qman_lock);
+ 		return 0;
+@@ -336,6 +344,8 @@ static int qman_portal_probe(struct platform_device *pdev)
+ err_ioremap2:
+ 	memunmap(pcfg->addr_virt_ce);
+ err_ioremap1:
++	__qman_portals_probed = -1;
++
+ 	return -ENXIO;
+ }
  
-@@ -2318,7 +2322,7 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
- 	(*count_ptr)--;
+diff --git a/include/soc/fsl/bman.h b/include/soc/fsl/bman.h
+index 5b99cb2ea5ef..173e4049d963 100644
+--- a/include/soc/fsl/bman.h
++++ b/include/soc/fsl/bman.h
+@@ -133,5 +133,13 @@ int bman_acquire(struct bman_pool *pool, struct bm_buffer *bufs, u8 num);
+  * failed to probe or 0 if the bman driver did not probed yet.
+  */
+ int bman_is_probed(void);
++/**
++ * bman_portals_probed - Check if all cpu bound bman portals are probed
++ *
++ * Returns 1 if all the required cpu bound bman portals successfully probed,
++ * -1 if probe errors appeared or 0 if the bman portals did not yet finished
++ * probing.
++ */
++int bman_portals_probed(void);
  
- 	if (likely(fd_format == qm_fd_contig))
--		skb = contig_fd_to_skb(priv, fd);
-+		skb = contig_fd_to_skb(priv, fd, dpaa_bp, vaddr);
- 	else
- 		skb = sg_fd_to_skb(priv, fd);
- 	if (!skb)
+ #endif	/* __FSL_BMAN_H */
+diff --git a/include/soc/fsl/qman.h b/include/soc/fsl/qman.h
+index 597783b8a3a0..7732e48081eb 100644
+--- a/include/soc/fsl/qman.h
++++ b/include/soc/fsl/qman.h
+@@ -1194,4 +1194,13 @@ int qman_release_cgrid(u32 id);
+  */
+ int qman_is_probed(void);
+ 
++/**
++ * qman_portals_probed - Check if all cpu bound qman portals are probed
++ *
++ * Returns 1 if all the required cpu bound qman portals successfully probed,
++ * -1 if probe errors appeared or 0 if the qman portals did not yet finished
++ * probing.
++ */
++int qman_portals_probed(void);
++
+ #endif	/* __FSL_QMAN_H */
 -- 
 2.17.1
 
