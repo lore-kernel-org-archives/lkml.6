@@ -2,174 +2,121 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 227B9C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB60C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4D9420843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA70420843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:50:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0y8vutT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4D9420843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="l840kU/n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA70420843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbeIZVCJ (ORCPT
+        id S1727356AbeIZVEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:02:09 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54430 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbeIZVCJ (ORCPT
+        Wed, 26 Sep 2018 17:04:04 -0400
+Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:58398 "EHLO
+        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726994AbeIZVEE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:02:09 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c14-v6so2598704wmb.4;
-        Wed, 26 Sep 2018 07:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4NPsaFQIKi2Vbh7rF47Pet2V+NYVqEnmfGB9TKKfKPk=;
-        b=g0y8vutTdDdfFMhXf+PtYiNU/xs/5ehkgdzWKesA3pMIZg9Y/zfnlDm211mt94Hxrp
-         tByt1Dt+iqBwhF/hE8F8U/edzL4T62m8Vskl2wkf/gaMIzSyySa3VccU1XevRzdOuHAw
-         HPDbZLwoaqMbRO57wvlHHJ36bGY8Zv+0VbaK7gh/aWX/7eD9yc804+2E3/LQv8dxLh2S
-         WtZYiIul7i7szPpR4/0SHSBjhZw8IxFPuji83wA7z1K8WYsDTR/B7Z0xfyyFja72Cp2f
-         ohGrppqrkoaqmF/QJtR7O7/vHQzOBz9wqCFJvIu7I4+yGQJbF+qIS5kXQZICnLXuQokA
-         byLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4NPsaFQIKi2Vbh7rF47Pet2V+NYVqEnmfGB9TKKfKPk=;
-        b=e1ym1MKPwNTE8yFUkH1dCg08iZZDgv9N00ADU/ucbeLWIKhrVWz4xfIeEziTZCWwQA
-         FkQF6FuxSekebO3Qq8ECRyv4gxm/CTNO/AKZEIAN7O/4qaSNEmK7xVZK9shC+96IV2jA
-         NOW3ei9CKqtrpyF4vr2TrW5t7JmXpnBVuA6LllWqgYRK4f9c2K0RCB0CiQhQCHwZT95t
-         kyfaQ8tufMyJt9acMeLxN55ih2e3HlTwZw5Jg5EE8x/bLgDyhgpJdS6te2X/uaAi1DGk
-         FXhbd5im5cheoyyOGJ3GWyIyNozqvcWOGkbQgo2SI1BViCCX1qjDKwbevJnAu2QJUosJ
-         SYBg==
-X-Gm-Message-State: ABuFfogfIg/Nbii9KGRIhs4jgftF9yY8jB2gE3xL1q1P586/+yOVv7NX
-        Df50Kt9l1rISH3TfvtzlpjA=
-X-Google-Smtp-Source: ACcGV61DWShCmoLq7VDJRK3bzftQiWq8C+cutkwQ5XEnRGVgTCJdtm6zUK4zXf6Lvb9Zodq1JJ6L9w==
-X-Received: by 2002:a1c:f53:: with SMTP id 80-v6mr1364960wmp.58.1537973327838;
-        Wed, 26 Sep 2018 07:48:47 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id z8-v6sm5319396wmf.19.2018.09.26.07.48.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 07:48:47 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 16:48:46 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 00/34] ARM: dts: tegra: colibri_t30: major revamp
-Message-ID: <20180926144846.GE12980@ulmo>
-References: <20180901081248.22639-1-marcel@ziswiler.com>
+        Wed, 26 Sep 2018 17:04:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1537973440; x=1569509440;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=+4ypBBY0nEEzNWnwXRJ8RIPi91GaXzOhN1bD7y+3csY=;
+  b=l840kU/nJjEfxtH8CwYCPnk7uCwKiO6+mY95qDDUnCfUMuqpWH6xOVoK
+   Q1iUbK6kGQm6AprsZjF+gK9vGP+UDPMimeqgdJ0BXaYlMdumZe+u0ZWHN
+   zKttdkNLrXvPZRuDCE6uZYohhGir9efu0cIEuzQpeqfz9P5OVHP1kJsku
+   s=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EzAABYnKtbhyWd50NaGwEBAQEDAQE?=
+ =?us-ascii?q?BBwMBAQGBUYJzfygKg2qIFV+LUoINgz2FIY1xgXoLGAsLhD4CF4NnITQYAQM?=
+ =?us-ascii?q?BAQIBAQIBAQIQAQEBCgsJCCkjDII1IhGBCQEBAQEBAQEBAU0CDWMBAQEBAgE?=
+ =?us-ascii?q?BEREROgsFCwIBCBUDAgImAgICHwcfEAIEAQ0FCBqCfwGBaQMNCA+YXIlXAQE?=
+ =?us-ascii?q?BbYEuhzgNgkwFgQuJcIIXhCSCVkUDhGGCVwKINpQlLAcCjClqgxIfgUaEUok?=
+ =?us-ascii?q?cK4hFg3qIAAIEAgQFAhSBQoIOcIM8giUOCYgfhXlvAYwkgR4BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2EzAABYnKtbhyWd50NaGwEBAQEDAQEBBwMBAQGBUYJzf?=
+ =?us-ascii?q?ygKg2qIFV+LUoINgz2FIY1xgXoLGAsLhD4CF4NnITQYAQMBAQIBAQIBAQIQA?=
+ =?us-ascii?q?QEBCgsJCCkjDII1IhGBCQEBAQEBAQEBAU0CDWMBAQEBAgEBEREROgsFCwIBC?=
+ =?us-ascii?q?BUDAgImAgICHwcfEAIEAQ0FCBqCfwGBaQMNCA+YXIlXAQEBbYEuhzgNgkwFg?=
+ =?us-ascii?q?QuJcIIXhCSCVkUDhGGCVwKINpQlLAcCjClqgxIfgUaEUokcK4hFg3qIAAIEA?=
+ =?us-ascii?q?gQFAhSBQoIOcIM8giUOCYgfhXlvAYwkgR4BAQ?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa7.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Sep 2018 09:50:33 -0500
+Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QEltEd012004;
+        Wed, 26 Sep 2018 10:50:36 -0400
+Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
+        by mx0b-00154901.pphosted.com with ESMTP id 2mr9aeh42x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Sep 2018 10:50:36 -0400
+From:   <Mario.Limonciello@dell.com>
+Received: from ausc60ps301.us.dell.com ([143.166.148.206])
+  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Sep 2018 20:50:24 +0600
+X-LoopCount0: from 10.166.132.152
+X-IronPort-AV: E=Sophos;i="5.54,306,1534827600"; 
+   d="scan'208";a="1199603124"
+To:     <andy.shevchenko@gmail.com>, <stuart.w.hayes@gmail.com>
+CC:     <dvhart@infradead.org>, <linux-kernel@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>
+Subject: RE: [PATCH 0/5] Update and move Dell drivers dell_rbu and dcdbas
+Thread-Topic: [PATCH 0/5] Update and move Dell drivers dell_rbu and dcdbas
+Thread-Index: AQHUVQbIAkOKMlqYGEi5wPk0PAlAR6UCuxoA///ppiA=
+Date:   Wed, 26 Sep 2018 14:50:32 +0000
+Message-ID: <2c21dba5f4074bc0861277ec5701d2ff@ausx13mpc120.AMER.DELL.COM>
+References: <20180925193418.28493-1-stuart.hayes@dell.com>
+ <CAHp75Ve=ZnkBbdG3Myu1qzubr6+q74Q0u9pR7+nHXG=yAO-0rA@mail.gmail.com>
+In-Reply-To: <CAHp75Ve=ZnkBbdG3Myu1qzubr6+q74Q0u9pR7+nHXG=yAO-0rA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vv4Sf/kQfcwinyKX"
-Content-Disposition: inline
-In-Reply-To: <20180901081248.22639-1-marcel@ziswiler.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=757 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809260144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---vv4Sf/kQfcwinyKX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Sep 01, 2018 at 10:12:14AM +0200, Marcel Ziswiler wrote:
-> This series is a major overhaul for the Toradex Colibri T30 system on
-> module.
->=20
-> Changes in v2:
-> - Also move serial UART "nvidia,tegra30-hsuart" compatible to module
->   level device trees.
-> - Also replace underscores in node names with dashes.
-> - Also replace underscores in UART annotations with dashes.
-> - When running some more tests I realized that the reg-addr should
->   really be 0x3f. Fix this.
-> - Get rid of fake clocks simple bus as suggested by Rob.
-> - Drop "[PATCH 01/26] ARM: tegra: colibri_t30: enable broken-hpi on
->   emmc" which should already be handled by the broken-hpi quirk as
->   pointed out by Dmitry. If I would find more eMMC parts which exhibit
->   the issue I will add them to the quirk as a separate patch.
-> - New patch as suggested by Rob.
-> - New patch.
->=20
-> Marcel Ziswiler (34):
->   ARM: tegra: colibri_t30: add local-mac-address property
->   ARM: tegra: colibri_t30: reorder host1x/hdmi properties
->   ARM: tegra: colibri_t30: regulator clean-up
->   ARM: tegra: colibri_t30: add missing regulators
->   ARM: tegra: colibri_t30: annotate uarts and move compatible to board
->   ARM: tegra: colibri_t30: white-space clean-up
->   ARM: tegra: colibri_t30: move dr_mode property from phy to controller
->   ARM: tegra: colibri_t30: reorder backlight properties
->   ARM: tegra: colibri_t30: drop pwmleds
->   ARM: tegra: colibri_t30: pinmux clean-up
->   ARM: tegra: colibri_t30: add missing pinmux
->   ARM: tegra: colibri_t30: use proper irq-gpio for stmpe811
->   ARM: tegra: colibri_t30: further lm95245 temperature sensor annotation
->   ARM: tegra: colibri_t30: add i2c-thermtrip
->   ARM: tegra: colibri_t30: add proper emmc vmmc and vqmmc supplies
->   ARM: tegra: colibri_t30: enable emmc ddr52 mode
->   ARM: tegra: colibri_t30: get rid of fake clocks simple bus
->   ARM: tegra: colibri_t30: line break long compatible property line
->   ARM: tegra: colibri_t30: move input include to carrier board
->   ARM: tegra: colibri_t30: remove unused nvidia,is-wired property
->   ARM: tegra: colibri_t30: add gpio hog to unreset usb ethernet chip
->   ARM: tegra: colibri_t30: enable hda over hdmi
->   ARM: tegra: colibri_t30: annotate sd card detect
->   ARM: tegra: colibri_t30: annotate ehci instance 1
->   ARM: tegra: colibri_t30: update compatibility comment
->   ARM: tegra: colibri_t30: drop module level model and compatible
->   ARM: tegra: colibri_t30: drop obsolete spidev node
->   ARM: tegra: colibri_t30: rename hdmiddc to hdmi_ddc
->   ARM: tegra: colibri_t30: rename tps65911@2d, stmpe811@41 and
->     tps62362@60
->   ARM: tegra: colibri_t30: fix mcp2515 can controller interrupt polarity
->   ARM: tegra: colibri_t30: remove unused mcp2515 can0 label
->   ARM: tegra: colibri_t30: add mcp2515 vdd and xceiver supplies
->   ARM: tegra: colibri_t30: annotate unused i2c busses
->   ARM: tegra: colibri_t30: annotate power I2C being on-module
->=20
->  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts | 130 ++---
->  arch/arm/boot/dts/tegra30-colibri.dtsi        | 780 ++++++++++++++++++++=
-+-----
->  2 files changed, 706 insertions(+), 204 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---vv4Sf/kQfcwinyKX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurnE4ACgkQ3SOs138+
-s6FiRRAAtJaWRYJXqqEhNMed5JnCOQrFf8sOHd+kyv/lRE63Vc58xGIhtgDXI3MF
-WVzYu4wrRMeRQdzpSheETpWFUbbH9RK+2u8dkXpgRPVKDNdpTYrWBNhykSvAARDE
-ZtuqPz8IAwpr4sKi6CFKI2mqkMCqF2I6YgAN1nAgdgx5lbhohsXFOb6lcEMvNoOq
-B9eVC2p/jXAQfNJYaKF8VXrSdWfad2sD7V/4GATRtlMeT/Fb9nVKQPP4f9RwAHnk
-+PTD2ROrOUMQoZo4Lx89Pbmp3VwxvnPY9sW1kGNBNVPWX4ivu0G5toV0Sn7EWhZW
-nAsG/6XidLnqdqU0Q6RAOM5QYENsmfl16jIQqvYUZCGg35+7XKQ9IqE4+IFFA27w
-IiX+8a66AinnGOleZF5L4M+rz1FJLagBUpKw4H88pYrmJbfH5629klbZgJ29czkg
-dJ1Ro7znDo7E9UAss+kznnsKLZ2mhy+TpIUUMvR1nHxjm8lE3uDjDF3JI2kg/MrY
-ZUOmwakZQzzZwLutQgVEvxE91ULHETwrhnfLBj4WQnMftKfe9Vq2ejLOXtJX5TLs
-0YEF9kStpl0/nnXdPUWs/hhlqdJvdHXzWD69BVJqENIw92U1K/Rnu3McjA0tu/j5
-VWp5G0kUZjMpnwrB8n/A9SVlyEITbMl4Gh0suwt+kpHmCoybqPY=
-=W4g1
------END PGP SIGNATURE-----
-
---vv4Sf/kQfcwinyKX--
+PiBPbiBUdWUsIFNlcCAyNSwgMjAxOCBhdCAxMDozNCBQTSBTdHVhcnQgSGF5ZXMgPHN0dWFydC53
+LmhheWVzQGdtYWlsLmNvbT4NCj4gd3JvdGU6DQo+ID4NCj4gPiBGcm9tOiBTdHVhcnQgSGF5ZXMg
+PHN0dWFydC53LmhheWVzQGdtYWlsLmNvbT4NCj4gPg0KPiA+IFRoZSBkZWxsX3JidSBhbmQgZGNk
+YmFzIGRyaXZlcnMgbmVlZCBzb21lIGNoYW5nZXMsIGFuZCBzaG91bGQgYmUgbW92ZWQgdG8NCj4g
+PiBkcml2ZXJzL3BsYXRmb3JtL3g4Ni4gIEFkZGl0aW9uYWxseSwgZGVsbF9yYnUgbmVlZHMgYSBt
+YWludGFpbmVyLCBhbmQgdGhlDQo+ID4gbGlzdGVkIG1haW50YWluZXIgZm9yIGRjZGJhcyBpcyBp
+bmFjdGl2ZSBhbmQgbmVlZHMgdG8gYmUgY2hhbmdlZC4NCj4gDQo+IEkgcHVzaGVkIHRoaXMgc2Vy
+aWVzIHRvIG15IHJldmlldyBhbmQgdGVzdGluZyBxdWV1ZSB0byBhbGxvdyBib3RzIHBsYXkgd2l0
+aC4NCj4gDQo+IEJ1dC4NCj4gUGxlYXNlLCBhZGQgY29tbWl0IG1lc3NhZ2VzIHRvIHBhdGNoZXMg
+NCBhbmQgNSAoSSBjYW4ndCB0YWtlIHcvbyB0aGVtKS4NCj4gQ29sbGVjdCBEb3VnJ3MgdGFnIHRo
+YXQgcHJvdmVzIGhlIGlzIG9rYXkgd2l0aCB0aGUgY2hhbmdlIChJIHJlbWVtYmVyDQo+IGhlIGFu
+c3dlcmVkIHNvbWV0aGluZyB0byB0aGUgb2xkIHRocmVhZCwgdGhvdWdoIEkgZG9uJ3QgcmVtZW1i
+ZXIgdGhlDQo+IGRldGFpbHMgZXhjZXB0IGFubm95aW5nIGZvb3RlciB3aGljaCBzaG91bGQgbm90
+IGJlIHVwIGluIG9wZW4gc291cmNlDQo+IG1haWxpbmcgbGlzdHMpLg0KPiANCj4gU28sIHdoaWxl
+IGJvdHMgYXJlIHBsYXlpbmcgd2l0aCB0aGUgY29kZSBJJ20gd2FpdGluZyBmb3IgdjIgb2YgdGhp
+cw0KPiB3aXRoIGFib3ZlIGFkZHJlc3NlZC4NCj4gVGhhbmtzIQ0KPiANCg0KSnVzdCBzbyBpdCdz
+IGV4dHJhIGNsZWFyLCB5b3Ugd2FudCBhbiAiQWNrZWQtYnkiIHRhZyBmcm9tIERvdWcgVyBpbiBh
+IHB1YmxpYw0KZm9ydW0/ICBPciBoZSBzaG91bGQgYmUgQ0MgdG8gdGhhdCBwYXRjaCBhbmQgbmVl
+ZHMgdG8gZ2l2ZSB0aGUgYWNrZWQtYnkNCnRhZyBpbiB0aGUgVjI/DQoNCkhlIGFscmVhZHkgZGlk
+IHJlc3BvbmQgaW4gYSBwdWJsaWMgZm9ydW0gaW5kaWNhdGluZyB0aGlzIGFsdGhvdWdoIGhlIGRp
+ZG4ndA0KImdlbmVyYXRlIGEgdGFnIiBmb3IgdGhhdDoNCmh0dHBzOi8vd3d3LnNwaW5pY3MubmV0
+L2xpc3RzL3BsYXRmb3JtLWRyaXZlci14ODYvbXNnMTYzMzYuaHRtbA0KDQpDYW4gU3R1YXJ0IGp1
+c3QgYWRkIHRoZSAiQWNrZWQtYnkiIHRhZyBoaW1zZWxmIHRvIHRoZSBjb21taXQgaW4gVjIgYXQg
+dGhpcw0KcG9pbnQgY29uc2lkZXJpbmcgdGhhdD8gIE9yIGRvIHlvdSBuZWVkIHBhdGNod29yayB0
+byBwaWNrIGl0IHVwIGFuZCBhcHBseSBpdD8NCg0K
