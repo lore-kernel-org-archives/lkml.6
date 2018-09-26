@@ -2,119 +2,76 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F7EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E991AC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A58E214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96CA9214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:04:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="m9V3s67z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A58E214FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LdXtEiQA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96CA9214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbeIZWSC (ORCPT
+        id S1728522AbeIZWSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:18:02 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:37405 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbeIZWSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:18:02 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 21d1137f;
-        Wed, 26 Sep 2018 15:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type:content-transfer-encoding; s=mail; bh=gj88kwP8hALO
-        spsKo2ZO4ZJWaDA=; b=m9V3s67zvrbI8PxfFL8PQCoiadD/ipHoPg2KiMxYl2Go
-        1MS0qKLCm4GhCeUuXj2Z8MKSb/F+L9hYQsLdJg6mq6mv5A0PDOmMqPHX8FBj1uJM
-        vD2KU61p+FRLi3LuPPkuuT9QdI8+0Z9e84nV5XxC1QK/BXI9fDRI6Z2WgyWKBe7S
-        C6xpeprha4CpjucGmsCxsLd11QLVctC1JUEfVPXkN+A6CMcdm3SLAUUV/XenUjpd
-        Y5NpvdJ+Cmdb7E9s+YnmJuRjyMyn9ntlxlzCOI+eplIvwSI+F+ZnIIE4LY8wpul8
-        aTMAzPqJhOWolMVcbMfEaIGPx9m8LyOsIlzCQy4EXw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9178ad68 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Wed, 26 Sep 2018 15:45:48 +0000 (UTC)
-Received: by mail-ot1-f46.google.com with SMTP id e18-v6so28707374oti.8;
-        Wed, 26 Sep 2018 09:04:21 -0700 (PDT)
-X-Gm-Message-State: ABuFfogXM6TQSOy++mLt+JA5jTtaQlOv3rXX7Mh42lmxj0J7xXF23kDr
-        j5BguCUgfHXWTeBvYVykqnrSGpYHQeG8j77pOjk=
-X-Google-Smtp-Source: ACcGV61a9zlmHnw3fNEQC8Cj5gs7h9rK2P03aTKc6NgzXeJ/u8BQdAInJlINo4lScbbPsomLYwErPQQjeo3VLAAYocU=
-X-Received: by 2002:a9d:4a9c:: with SMTP id i28-v6mr2379420otf.138.1537977861013;
- Wed, 26 Sep 2018 09:04:21 -0700 (PDT)
+        Wed, 26 Sep 2018 18:18:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40056 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbeIZWSd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:18:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GY3lQqH+NfL7uzpfwZtKtdjg2OLbNdUfVzhSwDhPJjw=; b=LdXtEiQAgrRfXRcK8ml9igp8z
+        XIIxtzU35Ue3tl0acrYvIniuinAFH64ysviuUTRt1LdxlYN6tgCC8Nk5h3C7S3onmsp5lbMi8pm14
+        qMB4Mue7rgT+3jK0RIn47i3s0piWBWSz0Oii/5k5VIc5DpqcXDND2F+EmVIDCA/gP0wc8LTVvj63U
+        7kE5eo81wjn5zY94H0MDQcX8nRydaKdbu55SE6U7cyguMfpwT/8fikdIzWrzljjoSx0TFXdNMNNfR
+        fS9Zkowonv0D2IPVvqy46TXxlMsoZ1QC+WspZzyPpJMDLcR5Wr0iODT58loW6neW7HsMzpw9yDNIA
+        lIOm2T/qg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5CJ5-0005bM-FS; Wed, 26 Sep 2018 16:04:55 +0000
+Date:   Wed, 26 Sep 2018 09:04:55 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] drm/virtio: Use IDAs more efficiently
+Message-ID: <20180926160455.GA20337@bombadil.infradead.org>
+References: <20180926160031.15721-1-willy@infradead.org>
+ <20180926160031.15721-5-willy@infradead.org>
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-24-Jason@zx2c4.com>
- <7830522a-968e-0880-beb7-44904466cf14@labo.rs>
-In-Reply-To: <7830522a-968e-0880-beb7-44904466cf14@labo.rs>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 26 Sep 2018 18:04:09 +0200
-X-Gmail-Original-Message-ID: <CAHmME9oQJ9y51Pv7U=+=5uDA_tb+U1zWZdsLcyNMhdcFZmjM8Q@mail.gmail.com>
-Message-ID: <CAHmME9oQJ9y51Pv7U=+=5uDA_tb+U1zWZdsLcyNMhdcFZmjM8Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 23/23] net: WireGuard secure network tunnel
-To:     labokml@labo.rs, Dave Taht <dave.taht@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926160031.15721-5-willy@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ivan,
+On Wed, Sep 26, 2018 at 09:00:31AM -0700, Matthew Wilcox wrote:
+> @@ -59,6 +59,7 @@ static int virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
+>  
+>  	if (handle < 0)
+>  		return handle;
+> +	handle++;
+>  	virtio_gpu_cmd_context_create(vgdev, handle, nlen, name);
+>  	return handle;
+>  }
 
-On Wed, Sep 26, 2018 at 6:00 PM Ivan Lab=C3=A1th <labokml@labo.rs> wrote:
->
-> On 25.09.2018 16:56, Jason A. Donenfeld wrote:
-> > Extensive documentation and description of the protocol and
-> > considerations, along with formal proofs of the cryptography, are> avai=
-lable at:
-> >
-> >   * https://www.wireguard.com/
-> >   * https://www.wireguard.com/papers/wireguard.pdf
-> []
-> > +enum { HANDSHAKE_DSCP =3D 0x88 /* AF41, plus 00 ECN */ };
-> []
-> > +     if (skb->protocol =3D=3D htons(ETH_P_IP)) {
-> > +             len =3D ntohs(ip_hdr(skb)->tot_len);
-> > +             if (unlikely(len < sizeof(struct iphdr)))
-> > +                     goto dishonest_packet_size;
-> > +             if (INET_ECN_is_ce(PACKET_CB(skb)->ds))
-> > +                     IP_ECN_set_ce(ip_hdr(skb));
-> > +     } else if (skb->protocol =3D=3D htons(ETH_P_IPV6)) {
-> > +             len =3D ntohs(ipv6_hdr(skb)->payload_len) +
-> > +                   sizeof(struct ipv6hdr);
-> > +             if (INET_ECN_is_ce(PACKET_CB(skb)->ds))
-> > +                     IP6_ECN_set_ce(skb, ipv6_hdr(skb));
-> > +     } else
-> []
-> > +     skb_queue_walk (&packets, skb) {
-> > +             /* 0 for no outer TOS: no leak. TODO: should we use flowi=
-->tos
-> > +              * as outer? */
-> > +             PACKET_CB(skb)->ds =3D ip_tunnel_ecn_encap(0, ip_hdr(skb)=
-, skb);
-> > +             PACKET_CB(skb)->nonce =3D
-> > +                             atomic64_inc_return(&key->counter.counter=
-) - 1;
-> > +             if (unlikely(PACKET_CB(skb)->nonce >=3D REJECT_AFTER_MESS=
-AGES))
-> > +                     goto out_invalid;
-> > +     }
-> Hi,
->
-> is there documentation and/or rationale for ecn handling?
-> Quick search for ecn and dscp didn't reveal any.
+Uh.  This line is missing.
 
-ECN support was developed with Dave Taht so that it does the right
-thing with CAKE and such. He's CC'd, so that he can fill in details,
-and sure, we can write these up. As well, I can add the rationale for
-the handshake-packet-specific DSCP value to the paper in the next few
-days; thanks for pointing out these documentation oversights.
+-       int handle = ida_alloc_min(&vgdev->ctx_id_ida, 1, GFP_KERNEL);
++       int handle = ida_alloc(&vgdev->ctx_id_ida, GFP_KERNEL);
 
-Jason
+It'll be there in v2 ;-)
