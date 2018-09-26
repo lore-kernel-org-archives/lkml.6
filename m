@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE67C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15299C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B98B2064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD82B21533
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:18:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1zFwKZj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B98B2064D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="as1FyHLK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD82B21533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeI0Bcv (ORCPT
+        id S1727516AbeI0BdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:32:51 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38388 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbeI0Bb4 (ORCPT
+        Wed, 26 Sep 2018 21:33:00 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45162 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbeI0Bbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:31:56 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x8-v6so2899134eds.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:17:29 -0700 (PDT)
+        Wed, 26 Sep 2018 21:31:52 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h6-v6so1410634eds.12
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:17:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xHM1Og1FdC5928qK1RtWyMdCqpx4t+JGKtojb6kc5Bg=;
-        b=S1zFwKZj7gFm8maPoWdA6QGyB+uLOZmYjesuc6h1ievfu8Kuk9egWiy+f++MhMf44L
-         zdLgJ3IxdXSK9TTTRaEfNlIlwL5CWzouBz6ZO/QjFxYiFMV1Qj3Y4cL/CrqKvRrXWgxo
-         4UA/6lSZz5JTYWiHis39ZXZoBgfH/ZHVM76P2KAAZskQnXg94EuVB/Hm/tAx74R4+qTw
-         oqF1we3qwS91T1eXpishoLESQ6XKipkvZZBgw2ykqa/E3O646Wl10Db5rUkNnVmU5RZ8
-         Q5JUdz5ZbkwmZir+RcbSaxB1NQzCeb3b7G7EekaBe8GnhF4R6T+nKG4C0bkG7CWlk1Ra
-         VsNg==
+        bh=NCSUFJZohHLws+CYE1ij+yY7M5ODKZmuUFyNy+inoTk=;
+        b=as1FyHLKB1QeC/nFLPPX5ucss5GsPNu79ByIvIicDqPj0awH04LaHIYe/IxaiHTz/X
+         QK1F3wd8civ0fEDlqD73mjvLGaTNIADktsQHWRewDDH4+aMrSwHFKZOt8o7GV/i+3msW
+         LfRntWJViN8aPRFr8EktvnXlKm0Zvz6FMI1hjvZ9+7iGPiB13Dm1zTaJnhHBmRlDw8oU
+         /PZclQJWWo7BKBQ5n5jHDEpM4a1fBfsKEF5F6YKrXq0Cn212zLqLKtcuCZ4HID8kUeBI
+         He6y3a6hv4IIVezzknUa6acjMJy6GawrUaP5OZFCfL+wVRwSv7CeH/0j+V8wcWcE1lN3
+         u+YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xHM1Og1FdC5928qK1RtWyMdCqpx4t+JGKtojb6kc5Bg=;
-        b=BPjwWM+N9BovHNeqmm80UPSWcQkRBCZxkLlJsI/wbHlTlkAcqjWL6By18se0tTxskw
-         48v6gTws+GJ5RweGlBpYFLvtsxKHApwQ1aVb6bFaK8SQ+HBDKE1BwkVaDCrK8rPWO/5J
-         /rEA7EagAGaMQOYa2NPclqBtklQTaKE5PZSJqFmZo55oe7XpxvXCzwP4SRpRVoMINos+
-         6gt+50NVVywzmO5haPIiv/AUG02jxNAuFaUpPPItamN9773L8BVDoFYcwMo8oRzKzY0e
-         OyaqngckHtLrDltjer41lHRJXYsehiUi6nz5sOm03cbk4BgrOd++mjvmJ89R78DKf96j
-         pXig==
-X-Gm-Message-State: ABuFfojcCiORYpOSSUa/eIC3IMusPTqtn/JQCS3nFOW8gVnwl/Kp7JjC
-        w0C+BaDEd8NK3CJ8p+vdmBgtdRMN
-X-Google-Smtp-Source: ACcGV63oXeyQKCsjrhONP0CPnNzLTUU7dBxrVZmMuvJuoxLFj9yU8KamME4oRhHvbWR/hRytW6Wxxw==
-X-Received: by 2002:a50:c40e:: with SMTP id v14-v6mr12214268edf.232.1537989448992;
-        Wed, 26 Sep 2018 12:17:28 -0700 (PDT)
+        bh=NCSUFJZohHLws+CYE1ij+yY7M5ODKZmuUFyNy+inoTk=;
+        b=c1n3MfBj7t8+SPDgpAO3waq4NKni17Ac5dsxCrzkNfAUUSSSY4pUTYvotIFI22PFHi
+         z71qdogRleB/fTEfyzGXf74PACO5pTXJ4AaRBixOr8llGV+nDa/Q6n9lSfa2YuXEilwG
+         mO9I6pI8+EFRRdJTSAY921lpA2MS0FeYyjnsjoz0ccRyos4Apxye9Zt6XLLhIeEgy4D6
+         ndnUfjm1EPfxcBcQaycws7zUZnFXpxqG8m7n29kbn2j05GMvlyLpKEq+OIH+yCKvZgCl
+         FaKPzOm4X68FdQmzuDY7lJs3uXtDO0/yHHmxhvkwY5NSb6iordKLzm0PuIG/Iw5Lps0o
+         tjaw==
+X-Gm-Message-State: ABuFfohl8kkcGUTVVvp5AXYIRFBS1qS7xFCxtQvG1AA6fp323/MD6Jpn
+        pjrwM6mlLxksREEh7j+YsTUkft0y
+X-Google-Smtp-Source: ACcGV60nDPbNHC/6OPCmX6GDkehG/G6as7C/MkopekQBAK4OjAz/R59j0NzEzBcnNt7U7meu3jS8KA==
+X-Received: by 2002:a50:a166:: with SMTP id 93-v6mr11699804edj.184.1537989446036;
+        Wed, 26 Sep 2018 12:17:26 -0700 (PDT)
 Received: from localhost.localdomain ([109.78.196.57])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm91417eda.72.2018.09.26.12.17.27
+        by smtp.gmail.com with ESMTPSA id k13-v6sm91417eda.72.2018.09.26.12.17.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 12:17:28 -0700 (PDT)
+        Wed, 26 Sep 2018 12:17:25 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 05/13] staging:rtl8192u: Remove AdvCoding and GreenField - Style
-Date:   Wed, 26 Sep 2018 20:16:56 +0100
-Message-Id: <20180926191704.16322-6-johnfwhitmore@gmail.com>
+Subject: [PATCH 03/13] staging:rtl8192u: Remove definition of HTSetConnectBwMode - Style
+Date:   Wed, 26 Sep 2018 20:16:54 +0100
+Message-Id: <20180926191704.16322-4-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180926191704.16322-1-johnfwhitmore@gmail.com>
 References: <20180926191704.16322-1-johnfwhitmore@gmail.com>
@@ -73,54 +73,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The member variables AdvCoding and GreenField are unused in code so
-have been removed from the structure and associated initialisation
-function.
+Remove the redundant declaration of the function HTSetConnectBwMode()
+as it is not needed in the code. The function is already declared
+in header file, multiple declarations add nothing.
 
-This is a coding style change which should have no impact on runtime
-code execution.
+This is a style change which should have no impact on runtime code
+execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h     | 2 --
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 --
- 2 files changed, 4 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-index 64d5359cf7e2..83fb8f34ccbd 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-@@ -39,10 +39,8 @@ enum ht_extension_chan_offset {
- 
- struct ht_capability_ele {
- 	//HT capability info
--	u8	AdvCoding:1;
- 	u8	ChlWidth:1;
- 	u8	MimoPwrSave:2;
--	u8	GreenField:1;
- 	u8	ShortGI20Mhz:1;
- 	u8	ShortGI40Mhz:1;
- 	u8	TxSTBC:1;
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index c73a8058cf87..d1fbe65ed428 100644
+index ebe8d527a080..977a1e5c9b52 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -493,7 +493,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 	}
+@@ -837,7 +837,6 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
+ 	return true;
+ }
  
- 	//HT capability info
--	pCapELE->AdvCoding		= 0; // This feature is not supported now!!
- 	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev))
- 		pCapELE->ChlWidth = 0;
- 	else
-@@ -501,7 +500,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 
- //	pCapELE->ChlWidth		= (pHT->bRegBW40MHz?1:0);
- 	pCapELE->MimoPwrSave		= pHT->SelfMimoPs;
--	pCapELE->GreenField		= 0; // This feature is not supported now!!
- 	pCapELE->ShortGI20Mhz		= 1; // We can receive Short GI!!
- 	pCapELE->ShortGI40Mhz		= 1; // We can receive Short GI!!
- 	//DbgPrint("TX HT cap/info ele BW=%d SG20=%d SG40=%d\n\r",
+-void HTSetConnectBwMode(struct ieee80211_device *ieee, enum ht_channel_width Bandwidth, enum ht_extension_chan_offset	Offset);
+ void HTOnAssocRsp(struct ieee80211_device *ieee)
+ {
+ 	PRT_HIGH_THROUGHPUT	pHTInfo = ieee->pHTInfo;
 -- 
 2.18.0
 
