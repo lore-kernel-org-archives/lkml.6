@@ -2,139 +2,113 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC34EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA9EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E3BC214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FBCC214FE
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:57:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAJsPmEy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3BC214FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QsS66B0L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FBCC214FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbeI0EKj (ORCPT
+        id S1726583AbeI0EMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 00:10:39 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37805 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeI0EKj (ORCPT
+        Thu, 27 Sep 2018 00:12:09 -0400
+Received: from sonic312-28.consmr.mail.gq1.yahoo.com ([98.137.69.209]:42621
+        "EHLO sonic312-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726084AbeI0EMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 00:10:39 -0400
-Received: by mail-lf1-f68.google.com with SMTP id a82-v6so441888lfa.4;
-        Wed, 26 Sep 2018 14:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/MiH1De9n30DVbZQwsRuRTwEL6Q0ILnQDij6ZU5UsSA=;
-        b=FAJsPmEyKlHSRyoBUJmpTt9W6YNdswqnIHpjgLZz+i3vgGRIBXZNt91+T1qrnVXule
-         Ai3AgHYs4HyQ6qRqOoExFYBA+c5+lJToqzHzcaYQIm+4RMprxp1WKyiEhky+WIuRA+wG
-         14U/4mmokTpikai1dje+CdiZGBYiPFQFEnCCG87eIdQZa/rvTENV769ST01E7qs/xG9w
-         nAYnOANgwNrWCJoiwDin4dMQl+vqXJX0ZgjXolwCgng2ftaJ9rEOleJXdoTldp/j4MSc
-         NxXQuGLhNVUw1BLH5whjoInluM6hRDc9OHbzOoMW3/Bh+CdSHarkKWsX/1LsRZUWps+D
-         eMdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/MiH1De9n30DVbZQwsRuRTwEL6Q0ILnQDij6ZU5UsSA=;
-        b=rP7dkRr25fNG95NBIqOFOe6KIlHvwYYsvZr0XLdLfGgCoPz8H8hHbcBWoSu1zi+3WQ
-         a89u6hLde634bIz4T2fdg6vCB8YwsiNPUHNT9cedJPPhrOJc/TSIxy6JVfAndCly0M1V
-         UhKcSiUrRCaIgHpMCX5JYRK/PpeGnThCkxMEMMRKhYi01vJUdQmiO9hK0XwQKZJKYaZn
-         rs+KjXjTvMv+agdmp5pI9kl0o6m1+qlyid7cIFCV0+cfaoa44xyT35EQv9D/pHl2yhqt
-         ys14wkgTmhIxtwGdZnGu2xV2PLOvfgBOkpJjh3clMST++hb9ffW8g84DryVz99nXBb+e
-         8WrA==
-X-Gm-Message-State: ABuFfohOmj9RI+l3aAgYfM/Kd3HYxDzIq0BFLc3R6VqEOSPxxK8p4q6H
-        PTQVdULcWIIO1W30xVM3rM5LbAB70diW527X4lY=
-X-Google-Smtp-Source: ACcGV62a7oWrloKHSz/LZoGiVkUTDwXYKz09xAj5mjhI0KC6d2ys9A4Na7n4EG8SczLIHbxdaBrIO8c23W0UlRS+TT8=
-X-Received: by 2002:a19:9d8d:: with SMTP id g135-v6mr5185146lfe.3.1537998936518;
- Wed, 26 Sep 2018 14:55:36 -0700 (PDT)
+        Thu, 27 Sep 2018 00:12:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537999027; bh=buh1wpgQyK9cadodumxz/6f8+58oQVM1eQS5F4Ot6M0=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=QsS66B0L4Jvj1dy8nFXjffJJksY8EfDFVKufc5E6lq4OWjAGRfUWVyFPjmmZXn3nz9dKgiI07+HuZjSPY5o1vPgrkbJptytNw2adlJzjG9luZkssAwNljIhdHt/L03MSR/VgzZAbQ4KuzWf/GJGxNETNAhBJBZgYdCtHTVteYrSf+O9LtjkDVzdgGVA9Ad9mUAvX53CXhsZRnevfGD/qhBrVqA5rKgPMoQkiGadbUs2Yrn4Qxaqbd3uGT8OHcEHM752sTsmPXmN+LRcMectlNb8AdkEkoXaXexD6kXemqXoRwPr8Vd1VbtO+1vPdKX4hqUIrRlVme5bK/vB9tCLO7w==
+X-YMail-OSG: QTk01qUVM1krAtSUvo7sqf1xyyLWivyUA3k3HZ4AwyI1wIeSrAEsGu4cr_aKwq0
+ k73vdxrM_ZPiSyNm5YE.RgRnPH8AXgMZ5nYWWDApabJaJSyMQUHokJTsX1dd07WRRD30uIs9RCHe
+ BwnPat_6QS3GzC3aLxC.r4_o9FSCoLm8qXYUZ.l1EuzlKckHqGq949.2yXYN.M9JQ4fk3SopEdQc
+ IVyvm6iIeqbsLIaqzbUJdhJ6S1UtGWzAniYzgleQOho5DZ6nFBlH.bjQEIDBNJRe07sxgoCl4T.6
+ _BjhGrk7inYMFN3_RN__TbYcqGZmOY.aqwlBBnG9xI98omND2LmdHtOUaqoLLeuIllUkzIu4WCB_
+ 4WV1jI3mV8oVG8XFIuL.89C.xdyaJ6TKHeGK9DTFZMYS_LAr0ilxEvsKo9oDD8Hp.QoTNZxdX.62
+ ek.X0nVIW6EoBZidmnyC63wS1TG4lZH6WEYTwZRtM9E6GEe06cOAe9HXkUZRIIe8n4fZcVykTt1h
+ RQ3WLb_G56MS_HvF4TsGeQZ7zda2ylGR32dFhj0bcPHsBM6KgPE07W7B7b51xpNYd5p0qizLxwdW
+ J7SI89GuE9nrN_QExZz1tuCaBvow.9JGjE7Fjv_LyAtft8BjB2fZk5hjv7_WS1qE7_tjWIAjigoG
+ E5odQBHfe5qZoVhWZCYw8pXGMyG5BwvTzgxICf2w4KIZ9tM2rIXYx4dYF1LG_XFCSIZa_rOJJHaD
+ dE5Td_cZtGsImr6TA5P7uSoLKolM.YVrpn8tjWxsAQw4kjQYC_L55nh6y8wBHa_6kQIfwn5FnkN.
+ LYcO4FWrnUlsjBwmc4ebFYyVB10he05GrHnUMTHCUuRWRkijQL3A8MPPoHMLhuX8DZoA7R_GGIF2
+ bUeL.lOe_1GjzuP_mwNGpaweAC72MTct4dtprEzm.5miBDrVDLqTXN0vRDdl6kJsg0RY0ZPexw5b
+ LjJkxyHyzNywr7LmVSrUQt1SRhcXodUTWiWj_Bq7bcpbxNJQPVqAQFW8nec2oi2OOPb3CviRYPh_
+ o5w2K3BJwX4eID9096sGJX2bTEda6TaQMJbM-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Wed, 26 Sep 2018 21:57:07 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp401.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 328016718fb28565db579b7bd63a67d4;
+          Wed, 26 Sep 2018 21:57:03 +0000 (UTC)
+Subject: [PATCH v4 20/19] LSM: Correct file blob free empty blob check
+To:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <44210861-2830-2321-911d-8783f5f0b172@schaufler-ca.com>
+Date:   Wed, 26 Sep 2018 14:57:03 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <00000000000084e2450576c817cc@google.com> <CAM_iQpXxzR3GP4wK7z+wW_0-vC9cuyiwnrCYqx+NpBgDvBXLcg@mail.gmail.com>
- <7fcb1c03-6976-9b34-601d-5f50b74c5b0a@gmail.com>
-In-Reply-To: <7fcb1c03-6976-9b34-601d-5f50b74c5b0a@gmail.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Wed, 26 Sep 2018 14:55:24 -0700
-Message-ID: <CAM_iQpX4sKSPFXgEjU-be=he=91+=3Bm9KvP3CMciA9zi2b-6g@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in tcf_block_find
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     syzbot+37b8770e6d5a8220a039@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 2:50 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
->
-> On 09/26/2018 02:44 PM, Cong Wang wrote:
-> > On Wed, Sep 26, 2018 at 8:44 AM syzbot
-> > <syzbot+37b8770e6d5a8220a039@syzkaller.appspotmail.com> wrote:
-> >>
-> >> Hello,
-> >>
-> >> syzbot found the following crash on:
-> >>
-> >> HEAD commit:    4b1bd6976945 net: phy: marvell: Fix build.
-> >> git tree:       net-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=16f763fa400000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=443816db871edd66
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=37b8770e6d5a8220a039
-> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a5614e400000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141a532a400000
-> >>
-> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> Reported-by: syzbot+37b8770e6d5a8220a039@syzkaller.appspotmail.com
-> >>
-> >> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-> >> 8021q: adding VLAN 0 to HW filter on device team0
-> >> ==================================================================
-> >> BUG: KASAN: use-after-free in tcf_block_find+0x9d1/0xb90
-> >> net/sched/cls_api.c:646
-> >> Read of size 4 at addr ffff8801cc126978 by task syz-executor002/5646
-> >>
-> >> CPU: 1 PID: 5646 Comm: syz-executor002 Not tainted 4.19.0-rc5+ #232
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> Google 01/01/2011
-> >> Call Trace:
-> >>   __dump_stack lib/dump_stack.c:77 [inline]
-> >>   dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-> >>   print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-> >>   kasan_report_error mm/kasan/report.c:354 [inline]
-> >>   kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-> >>   __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-> >>   tcf_block_find+0x9d1/0xb90 net/sched/cls_api.c:646
-> >
-> > Hmm. looks like missing a rcu_dereference() here:
-> >
-> >                 if (!*parent) {
-> >                         *q = dev->qdisc;
-> >                         *parent = (*q)->handle;
-> >
->
-> We hold RTNL here.
->
-> Have we already done the changes allowing dev->qdisc being changed
-> without RTNL being required ?
+Instead of checking if the kmem_cache for file blobs
+has been initialized check if the blob is NULL. This
+allows non-blob using modules to do other kinds of
+clean up in the security_file_free hooks.
 
-That transition is not completed yet, but holding RTNL doesn't help
-any more after we now free qdisc in rcu callback.
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/security.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-More interestingly, rcu read lock is already held in this context,
-so it seems we still have to use rcu_deference() to read dev->qdisc
-and of course mark it with __rcu too.
+diff --git a/security/security.c b/security/security.c
+index e7c8506041f1..76f7dc49b63c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1202,14 +1202,13 @@ void security_file_free(struct file *file)
+ {
+ 	void *blob;
+ 
+-	if (!lsm_file_cache)
+-		return;
+-
+ 	call_void_hook(file_free_security, file);
+ 
+ 	blob = file->f_security;
+-	file->f_security = NULL;
+-	kmem_cache_free(lsm_file_cache, blob);
++	if (blob) {
++		file->f_security = NULL;
++		kmem_cache_free(lsm_file_cache, blob);
++	}
+ }
+ 
+ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+-- 
+2.17.1
+
+
