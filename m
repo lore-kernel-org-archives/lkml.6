@@ -2,101 +2,104 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC94C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE975C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3765D2150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB772150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ENhB7k/6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3765D2150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGaQ2JN+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB772150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbeIZX0F (ORCPT
+        id S1728849AbeIZX0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:26:05 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37377 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727832AbeIZX0F (ORCPT
+        Wed, 26 Sep 2018 19:26:19 -0400
+Received: from mail-qt1-f170.google.com ([209.85.160.170]:34772 "EHLO
+        mail-qt1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727832AbeIZX0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:26:05 -0400
-Received: by mail-pg1-f195.google.com with SMTP id c10-v6so7255620pgq.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 10:12:10 -0700 (PDT)
+        Wed, 26 Sep 2018 19:26:19 -0400
+Received: by mail-qt1-f170.google.com with SMTP id x23-v6so18094516qtr.1;
+        Wed, 26 Sep 2018 10:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6uFy7MRmrYLiKaM3bTAisAIN/cvQcENDUe82KGxA6y4=;
-        b=ENhB7k/623JGdd8RTeSSY+J3EL8i5SBNdBIRuXnnlXT49xr+JkNeDKtt/NAFzkv0Xb
-         I34+xB5Pf2PmG/toscLNcLvRViQHpg9Cabp2TOBAfGdR/ishk+iiyZ45goQ6xSZXW2ts
-         v9F2jROeamF+TMDhGBtJdMpup+2OPzxYSSMJs=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zH6lQjG/WJ/egxo/nrCXAQNiFiBIKND/Jz0Pqc8eVXs=;
+        b=IGaQ2JN+y6XHUoFnwcwbSvIdtaaa+FcbWalbKTNJposkkNtDfPjFNuB0l2t1T0eMe8
+         js5ih9dmTgHFjeNOVzEP8JBSp0HJFWTk3uB4cjdR3Zj96mhk7+rX4HzBmQCW5ax2BtXl
+         fbAUDvZm+eXKa3sd6JUOp6aHg2qXkp4zRqkAqxYsFKJuPE3eCwMl+B09Mibp/OUDHV+c
+         SSi1sscJctM4Qx1oHOmMC0eQqsHghoTo2AZ5sPUx+WOtNc7nCUd4CRfQ/AnQl6TJN2Ns
+         ivpnZbqhpCqQZ6Epp1d4njZVbTykS2G693h50Rg9touZIAsAKUUNV+WW+cPvT+MHB03t
+         KLBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6uFy7MRmrYLiKaM3bTAisAIN/cvQcENDUe82KGxA6y4=;
-        b=pjC8L2bhBOW0GN8hJ4+TTrHEbKxouFscr2XxbnfSRi0IVil8alPxBcgN9N10a1iOu4
-         Ppurfwk80be11g74Ow11WgFrTsIQ7G3eU3Y6g/BnP3Wff6cVD1peXskMDH19MLrcAkgv
-         vIEfH2ZJXu6M9IabhZ0oydHOAMzorjo0O6xHX2SBnIO15rTIRCQpZp59F/rF65GlzuPi
-         9fc0vUwb6shTy/RNCGrSNbigfVC7mO+RkzAL3ryoq0El0jle0903c0JpP/A2A6sWz7bd
-         YhJWZDuXnpSzbM8TsYftSvehfSQuF+sCj2XMLHQZLheZN1xTr6xoNbxgIodOnPQms/aZ
-         ypWg==
-X-Gm-Message-State: ABuFfoj52rBQs0fVXofv4nwDRxNAsAt9F5aFdPzb8kMbwCUm7fF7EDsP
-        gSIyCiED3M+wFegbOYmesGtWzGYVecg3nA==
-X-Google-Smtp-Source: ACcGV61tWNnF/vdWRGYRJgroPy0JuDDUOFUlyN0uh6Wo+iKBvlktClyRjRZuThjFmNJkQ5KfI5XzGA==
-X-Received: by 2002:a62:985a:: with SMTP id q87-v6mr7341280pfd.64.1537981929854;
-        Wed, 26 Sep 2018 10:12:09 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm12293261pfm.145.2018.09.26.10.12.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 10:12:08 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 10:14:38 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Suman Anna <s-anna@ti.com>, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
-Subject: Re: [PATCH] rpmsg: core: add support to power domains for devices
-Message-ID: <20180926171438.GA29702@builder>
-References: <20180615095939.1331-1-srinivas.kandagatla@linaro.org>
- <a80cce14-9e57-32a2-760f-3d29de009f99@ti.com>
- <91dda9df-8074-925d-dcd3-d7c01e6f2363@st.com>
- <9afb010d-397f-2103-6692-bb4ca55b8236@ti.com>
- <4e1b6773-c4da-4638-eee7-2f996d387903@st.com>
- <0c06bde3-59f2-fad4-90ff-5818e9bab853@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zH6lQjG/WJ/egxo/nrCXAQNiFiBIKND/Jz0Pqc8eVXs=;
+        b=UykQZS1v33ekUVuORbLz3mfEfOX82tSv8W1ruBdIUZhbP9f33K/tIMkNeqCBa08mXr
+         lXmr+Q1N12GODmOaTlg9MBZ9U2D+lv77XN0ovqMrd/TE+s/Cx86/rrE7/JMUdMCg6qqA
+         zWGSWtl0JRSbmWQgA+KOKi64/MylRarDedq2iOJ17AzMuC3EoFy70xTlEo1/lFOBRntz
+         zYI8x+jYR6RVZhVHhW6WsZhv71FEjinV7d1H+H1jO1tSIIzhgudntiLxRz6FtNL5LoxB
+         rewVUAmJdA06KchiPTFMQyN7aSaesWr10CnOtX6k21ZPA9TwJcP7QI95WGZFUq/mJ8M7
+         Z+lw==
+X-Gm-Message-State: ABuFfogtJnldUwG2e995SX2mieDQ66jA5OM6XRZlhKzsPdRU05W/kTMM
+        PE0d3IKlPZfcBBqBrioxS7ueJ/vXsoSr6c4OcTQ=
+X-Google-Smtp-Source: ACcGV61mG0BoHU8a0vabxLGPKgKVXKNn4eXSefPYUdO9aQrJkbg/gHkd1N7wui7fm/pepo49UEw4k4/yw2UlGQhgF/0=
+X-Received: by 2002:a0c:9557:: with SMTP id m23-v6mr5060613qvm.138.1537981943591;
+ Wed, 26 Sep 2018 10:12:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c06bde3-59f2-fad4-90ff-5818e9bab853@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180925191014.85573-1-mka@chromium.org> <20180925191014.85573-2-mka@chromium.org>
+ <20180926113625.GM11965@kuha.fi.intel.com>
+In-Reply-To: <20180926113625.GM11965@kuha.fi.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 26 Sep 2018 20:12:12 +0300
+Message-ID: <CAHp75Vdwkovc+Myd9HSMUYxPdB_8TxqEY1JrCNSOhUwbTTpPEw@mail.gmail.com>
+Subject: Re: [PATCH v3.1 1/2] device property: Add device_get_bd_address() and fwnode_get_bd_address()
+To:     "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, bgodavar@codeaurora.org,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 26 Sep 06:06 PDT 2018, Srinivas Kandagatla wrote:
-> On 26/09/18 13:48, Arnaud Pouliquen wrote:
-> > Sorry something was wrong in my fw used yesterday for testing...so
-> > forget my previous status.
-> > 
-> > I re-tested it and I have the same issue (-ENODEV) with rpmsg device
-> > probed on ns announcement rpmsg from remote side.
-> > So we confirm the issue.
-> 
-> 
-> A revert patch is in the stable queue now for 4.14 and 4.18 stable.
-> http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-> 
-> Issue reported should be fixed soon!!
-> 
+On Wed, Sep 26, 2018 at 2:37 PM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> On Tue, Sep 25, 2018 at 12:10:13PM -0700, Matthias Kaehlcke wrote:
 
-Thanks guys!
+> Let's not fill property.c with framework specific helper functions any
+> more!
+>
+> Those functions are completely bluetooth specific, so they do not
+> belong here. The fact that some other framework already managed to
+> slip their helpers in does not justify others to do the same.
 
-Regards,
-Bjorn
+Actually good point.
+
+-- 
+With Best Regards,
+Andy Shevchenko
