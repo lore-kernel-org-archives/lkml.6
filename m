@@ -2,324 +2,85 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6A8C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD06C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E18B2083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E18B2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0867D204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:48:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DjaltoWI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0867D204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeIZP7u (ORCPT
+        id S1727038AbeIZQAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:59:50 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12710 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727352AbeIZP7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:59:50 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 90DA16EBBE2B7;
-        Wed, 26 Sep 2018 17:47:39 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 26 Sep 2018 17:47:33 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] Revert: "f2fs: check last page index in cached bio to decide submission"
-Date:   Wed, 26 Sep 2018 17:47:30 +0800
-Message-ID: <20180926094730.100570-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Wed, 26 Sep 2018 12:00:47 -0400
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:39443 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbeIZQAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:00:46 -0400
+Received: by mail-wr1-f44.google.com with SMTP id s14-v6so26283963wrw.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=orsfef6aqNRCUJDcozo/1rkqRO2pjQkavkjTroh7ZSk=;
+        b=DjaltoWI7EvFibHJ7od0BWma4skvQtKdvIOONZPiTo0sNLrjF+3nKfTLAIZX58FoIM
+         vHH5TxWTE4QZxIJWS1XLgnUbtFgH6dEs7e/VY1I444bvXc8hNA3OSsKk7lkWGTWzSmfj
+         h4ay5OlnboHanYb0Na4AcyKPoyolal17ldxMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=orsfef6aqNRCUJDcozo/1rkqRO2pjQkavkjTroh7ZSk=;
+        b=DHcmEvQ6xlocbEQfurZ2Tg2+2feAiU0Gi3WgUJoxv9eQ0glAU01WPO+grns2jjp6H+
+         +l5fxivE45tjfn+LOQve4J1Y5DtfMNB//PQVRPlraOsR6PA2xoMB3LO8mgw/PJ5oB50p
+         xYEMxu9FU45KA5uZExUNuwzoB0CluHcQg8k91dDSJ9M7AerX01QxLdDwY2Jez0pvlvn4
+         zRBRSx3V5JtzkAEOslTWFRkvI52vPsN+Mb7wZ7FJH3KMcXQXvWu2Lp3NpqytYb8ZbIgE
+         kN1dDwxe/PITBqd2oqvh3FCQGD3ppUyg+CpQJz1QIlXLbIoT59W0XMf3MRWuG+CxI5tM
+         CJ3w==
+X-Gm-Message-State: ABuFfoiEFOYBmWMHzrwPzEtoyKh6AdFJhsKq+JjFUA9hSMuNYSGMB8B6
+        nbJmXHgk46WjkmY1b17DikO7eIMdC4xcMYHoK4FNqg==
+X-Google-Smtp-Source: ACcGV623NFGT47RuHwZm8LyhvQGwHr/mMJqRWoZVO4x5z5P1icIMmn2ycisMa4pVty9NMdxWwtwqPc0GmitpxuOxLNg=
+X-Received: by 2002:adf:b71d:: with SMTP id l29-v6mr3878782wre.115.1537955317334;
+ Wed, 26 Sep 2018 02:48:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+References: <20180924113114.334025954@linuxfoundation.org> <20180925090733.GB21224@kroah.com>
+ <20180926002857.ajqqxi2qcfcwsg7g@xps.therub.org> <CADtBP2Do8u9Em2kUeb9nuux+kD=sjUpQ2XLetYO3vrdPxiYNKA@mail.gmail.com>
+ <20180926053029.GA3800@kroah.com>
+In-Reply-To: <20180926053029.GA3800@kroah.com>
+From:   Rafael Tinoco <rafael.tinoco@linaro.org>
+Date:   Wed, 26 Sep 2018 06:48:01 -0300
+Message-ID: <CADtBP2AfuwT7udZ88MYksXxOqPe6dYi7LTCJa85zp7v2VX2uyw@mail.gmail.com>
+Subject: Re: [PATCH 4.14 000/173] 4.14.72-stable review
+To:     gregkh@linuxfoundation.org
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, ohad@wizery.com,
+        bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, srinivas.kandagatla@linaro.org,
+        s-anna@ti.com, loic.pallardy@st.com, arnaud.pouliquen@st.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one case that we can leave bio in f2fs, result in hanging
-page writeback waiter.
+> > Do you think we could drop this patch, for now, in a possible -rc3 for
+> > v4.14.72 ? Dragonboards aren't being tested, because of this, since
+> > v4.14.70. Hopefully it isn't too late for this release =).
+>
+> I can't "drop" it as it is already in a released kernel, 4.14.71 and
+> 4.18.9.  I can revert it though, and will do so for the next round of
+> releases after this one.
 
-Thread A				Thread B
-- f2fs_write_cache_pages
- - f2fs_submit_page_write
- page #0 cached in bio #0 of cold log
- - f2fs_submit_page_write
- page #1 cached in bio #1 of warm log
-					- f2fs_write_cache_pages
-					 - f2fs_submit_page_write
-					 bio is full, submit bio #1 contain page #1
- - f2fs_submit_merged_write_cond(, page #1)
- fail to submit bio #0 due to page #1 is not in any cached bios.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- rebase to dev-test.
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/data.c       | 38 +++++++++++++++++++-------------------
- fs/f2fs/f2fs.h       |  4 ++--
- fs/f2fs/node.c       | 12 ++++++------
- fs/f2fs/segment.c    | 11 +++++------
- 5 files changed, 33 insertions(+), 34 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index d624d7983197..b634e7f88d43 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -280,7 +280,7 @@ static int __f2fs_write_meta_page(struct page *page,
- 
- 	if (wbc->for_reclaim)
- 		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
--						0, page->index, META);
-+							page->index, 0, META);
- 
- 	unlock_page(page);
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index be69b6ac6870..8bf08196e91c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -322,8 +322,8 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- 	io->bio = NULL;
- }
- 
--static bool __has_merged_page(struct f2fs_bio_info *io,
--				struct inode *inode, nid_t ino, pgoff_t idx)
-+static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
-+						struct page *page, nid_t ino)
- {
- 	struct bio_vec *bvec;
- 	struct page *target;
-@@ -332,7 +332,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 	if (!io->bio)
- 		return false;
- 
--	if (!inode && !ino)
-+	if (!inode && !page && !ino)
- 		return true;
- 
- 	bio_for_each_segment_all(bvec, io->bio, i) {
-@@ -342,11 +342,10 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 		else
- 			target = fscrypt_control_page(bvec->bv_page);
- 
--		if (idx != target->index)
--			continue;
--
- 		if (inode && inode == target->mapping->host)
- 			return true;
-+		if (page && page == target)
-+			return true;
- 		if (ino && ino == ino_of_node(target))
- 			return true;
- 	}
-@@ -355,7 +354,8 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- }
- 
- static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
--				nid_t ino, pgoff_t idx, enum page_type type)
-+						struct page *page, nid_t ino,
-+						enum page_type type)
- {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
- 	enum temp_type temp;
-@@ -366,7 +366,7 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
- 		io = sbi->write_io[btype] + temp;
- 
- 		down_read(&io->io_rwsem);
--		ret = __has_merged_page(io, inode, ino, idx);
-+		ret = __has_merged_page(io, inode, page, ino);
- 		up_read(&io->io_rwsem);
- 
- 		/* TODO: use HOT temp only for meta pages now. */
-@@ -397,12 +397,12 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
- }
- 
- static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type, bool force)
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type, bool force)
- {
- 	enum temp_type temp;
- 
--	if (!force && !has_merged_page(sbi, inode, ino, idx, type))
-+	if (!force && !has_merged_page(sbi, inode, page, ino, type))
- 		return;
- 
- 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
-@@ -421,10 +421,10 @@ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
- }
- 
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type)
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type)
- {
--	__submit_merged_write_cond(sbi, inode, ino, idx, type, false);
-+	__submit_merged_write_cond(sbi, inode, page, ino, type, false);
- }
- 
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
-@@ -1962,7 +1962,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		ClearPageUptodate(page);
- 
- 	if (wbc->for_reclaim) {
--		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
-+		f2fs_submit_merged_write_cond(sbi, inode, page->index, 0, DATA);
- 		clear_inode_flag(inode, FI_HOT_DATA);
- 		f2fs_remove_dirty_inode(inode);
- 		submitted = NULL;
-@@ -2020,10 +2020,10 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	pgoff_t index;
- 	pgoff_t end;		/* Inclusive */
- 	pgoff_t done_index;
--	pgoff_t last_idx = ULONG_MAX;
- 	int cycled;
- 	int range_whole = 0;
- 	int tag;
-+	int nwritten = 0;
- 
- 	pagevec_init(&pvec);
- 
-@@ -2126,7 +2126,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				done = 1;
- 				break;
- 			} else if (submitted) {
--				last_idx = page->index;
-+				nwritten++;
- 			}
- 
- 			if (--wbc->nr_to_write <= 0 &&
-@@ -2148,9 +2148,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
- 		mapping->writeback_index = done_index;
- 
--	if (last_idx != ULONG_MAX)
-+	if (nwritten)
- 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
--						0, last_idx, DATA);
-+								NULL, 0, DATA);
- 
- 	return ret;
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index dc9306e87a51..464545e40729 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3049,8 +3049,8 @@ int f2fs_init_post_read_processing(void);
- void f2fs_destroy_post_read_processing(void);
- void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type);
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type);
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
- int f2fs_submit_page_bio(struct f2fs_io_info *fio);
- void f2fs_submit_page_write(struct f2fs_io_info *fio);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index ea151e07790f..38a1f0d395a2 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1561,8 +1561,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 	up_read(&sbi->node_write);
- 
- 	if (wbc->for_reclaim) {
--		f2fs_submit_merged_write_cond(sbi, page->mapping->host, 0,
--						page->index, NODE);
-+		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
-+						page->index, 0, NODE);
- 		submitted = NULL;
- 	}
- 
-@@ -1634,13 +1634,13 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			unsigned int *seq_id)
- {
- 	pgoff_t index;
--	pgoff_t last_idx = ULONG_MAX;
- 	struct pagevec pvec;
- 	int ret = 0;
- 	struct page *last_page = NULL;
- 	bool marked = false;
- 	nid_t ino = inode->i_ino;
- 	int nr_pages;
-+	int nwritten = 0;
- 
- 	if (atomic) {
- 		last_page = last_fsync_dnode(sbi, ino);
-@@ -1718,7 +1718,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 				f2fs_put_page(last_page, 0);
- 				break;
- 			} else if (submitted) {
--				last_idx = page->index;
-+				nwritten++;
- 			}
- 
- 			if (page == last_page) {
-@@ -1744,8 +1744,8 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto retry;
- 	}
- out:
--	if (last_idx != ULONG_MAX)
--		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
-+	if (nwritten)
-+		f2fs_submit_merged_write_cond(sbi, NULL, NULL, ino, NODE);
- 	return ret ? -EIO: 0;
- }
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 97a4fae75651..965ef524e2a2 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -371,7 +371,7 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
- 		.io_type = FS_DATA_IO,
- 	};
- 	struct list_head revoke_list;
--	pgoff_t last_idx = ULONG_MAX;
-+	bool submit_bio = false;
- 	int err = 0;
- 
- 	INIT_LIST_HEAD(&revoke_list);
-@@ -406,14 +406,14 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
- 			}
- 			/* record old blkaddr for revoking */
- 			cur->old_addr = fio.old_blkaddr;
--			last_idx = page->index;
-+			submit_bio = true;
- 		}
- 		unlock_page(page);
- 		list_move_tail(&cur->list, &revoke_list);
- 	}
- 
--	if (last_idx != ULONG_MAX)
--		f2fs_submit_merged_write_cond(sbi, inode, 0, last_idx, DATA);
-+	if (submit_bio)
-+		f2fs_submit_merged_write_cond(sbi, inode, NULL, 0, DATA);
- 
- 	if (err) {
- 		/*
-@@ -3179,8 +3179,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
- 	if (PageWriteback(page)) {
- 		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
- 
--		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
--						0, page->index, type);
-+		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
- 		if (ordered)
- 			wait_on_page_writeback(page);
- 		else
--- 
-2.18.0.rc1
-
+Yes, bad wording, sorry. That it was I meant and tested. Thank you.
