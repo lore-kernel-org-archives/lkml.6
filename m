@@ -2,205 +2,143 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24DCC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F06B8C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8216B20842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:34:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FQwlXdpq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pKSFAMvR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8216B20842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 7918C20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:35:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7918C20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kpanic.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbeIZUrz (ORCPT
+        id S1727736AbeIZUtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:47:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42806 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbeIZUrz (ORCPT
+        Wed, 26 Sep 2018 16:49:02 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:36869 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbeIZUtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:47:55 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4FD7060B72; Wed, 26 Sep 2018 14:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537972479;
-        bh=pwYOOaqj6aC5+ihKhw/JZn1+0xD8ppIn7wUUDhj/aF0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FQwlXdpqdlaDniefWgSHh3A7WPwuitM9r84Ak6Dd+/iVsHFnoY6Hfq5CLWCSOHHlI
-         tiD0zzb/exMZr83B6lY2eQsJ3Lgo74Kqf9cFy+t+SnMu/yhxJL+cjlrw2/Hq04S0eU
-         zddg11aww1WFp3ZbJkqlHh0/+xEzdrwJYIZlqb2M=
-Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4582B6021C;
-        Wed, 26 Sep 2018 14:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537972477;
-        bh=pwYOOaqj6aC5+ihKhw/JZn1+0xD8ppIn7wUUDhj/aF0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pKSFAMvRTqxvd0FWsB3KFob71FfPp4qRz86SBLLvCGakzP2cKkr+p30Ss+3q4x0yK
-         V1ZQQjYVqi3JChjGECVx53sTe6Z9IdwIA/XQX22NvXsy8sX26OV6o85XqXBoDGheM/
-         GUT6NsWn+Ph/8hhrTJPh4ubi1WCLEn5Dl/NQU2A8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4582B6021C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Wed, 26 Sep 2018 08:34:33 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
-        mturquette@baylibre.com, khilman@baylibre.com,
-        vincent.guittot@linaro.org, skannan@codeaurora.org,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
-        maxime.ripard@bootlin.com, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, robdclark@gmail.com
-Subject: Re: [PATCH v9 2/8] dt-bindings: Introduce interconnect binding
-Message-ID: <20180926143432.GH10761@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Rob Herring <robh@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
-        mturquette@baylibre.com, khilman@baylibre.com,
-        vincent.guittot@linaro.org, skannan@codeaurora.org,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
-        maxime.ripard@bootlin.com, arnd@arndb.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        robdclark@gmail.com
-References: <20180831140151.13972-1-georgi.djakov@linaro.org>
- <20180831140151.13972-3-georgi.djakov@linaro.org>
- <20180925180215.GA12435@bogus>
+        Wed, 26 Sep 2018 16:49:01 -0400
+Received: from t530.fritz.box ([217.83.97.120]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N7gfa-1fiZtA1Plq-014oLq; Wed, 26 Sep 2018 16:34:50 +0200
+Date:   Wed, 26 Sep 2018 16:34:49 +0200
+From:   Stefan Assmann <sassmann@kpanic.de>
+To:     Alexander Kappner <agk@godking.net>
+Cc:     ibm-acpi@hmh.eng.br, dvhart@infradead.org, andy@infradead.org,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Add Second Fan Support for Thinkpad P50
+Message-ID: <20180926143449.bnqliemloqw7fuyv@t530.fritz.box>
+References: <1522693621-3124-1-git-send-email-agk@godking.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180925180215.GA12435@bogus>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1522693621-3124-1-git-send-email-agk@godking.net>
+User-Agent: NeoMutt/20180716
+X-Provags-ID: V03:K1:8M444cONRvg2IiEFr+OJ0WILOwRlw9zj1cTZLNNPaORVh7Pyv79
+ x/H/kJK9488FysdEutoai0haEqelHe2E+olp640NqadEwOdFi2IcH4NPxlDkZ40ZtTFYj6j
+ 5+2MvgssF9WPDLOKcurvceVVgLP8oWuNGpcv15GS+rwXak7k4SpeQlXUEeudEVnzpCQFVsq
+ 3ovIm2IpvU5iejLC6B09w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WpW4SoZ9yFo=:uzZ14MmnjIS26EUrIcpcVS
+ vYXRC29GGMjAC8RyxO8y5b6AJh2pkbfe1RvoOFD9Coxyl5tu7sigZnyUZ8BURwJIM2sEf9RS4
+ Og26DSNtGGo5a2PAx82PFS19JCU5b+eLlWTZn6vdFfCpICnqoXzdYw+4gQoXVD6YgYKO/2UGn
+ tvk31A62GLrH7LpSTLl+sFIU1qk/gyl2CdZhKUOCGD+grp8H7XL1wLLcy5bZmXYouB4ONhCjo
+ NPJeJPngU2RNsCQX3p17knRM41eWbMLvfv1Sn5RThAetgkNRgvOCIjlPUXAch+4OKB61QG9ER
+ 6DkAC1wBz+8n4aqymYyMgPVqJ2MTW/u6qXkQGnb/Xo6lX32LoXSiu1Bm/YbOo633m0uIF9UqJ
+ BPfU4jYZlE6ihL7f3XPqZ7OIfEXFoxyhuTaLOMhTE6jQetH8ikxFNgBG0I9YyFs5Ezu3aqYUR
+ J2j2K0bEg85rWSRtJPPtTFtVqvp8u4P8Pkj6YNfxr+kNi0o341faUD87Si4fSExIFLbIR6tcs
+ vkkXWvqehxHs4T24flxVxNZ7eRE7oR7QWshV/Hgk4XvV9013x3zcqR0NMuoFJKRlOpCLz65QI
+ NWc6DnLYV7bLdZ8N5nQIpRPjqaNBYP5Zi9J1YrJwD+N+zfO++nU8HY2WqH8Uqa3NNH6s58+KX
+ nwxXYia828vFV++fDDJXifR5V/aYJHeNrxTLqD54Q04Wf7XvzywZfYCDLmUaw7ZHRzJY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 01:02:15PM -0500, Rob Herring wrote:
-> On Fri, Aug 31, 2018 at 05:01:45PM +0300, Georgi Djakov wrote:
-> > This binding is intended to represent the relations between the interconnect
-> > controllers (providers) and consumer device nodes. It will allow creating links
-> > between consumers and interconnect paths (exposed by interconnect providers).
-> 
-> As I mentioned in person, I want to see other SoC families using this 
-> before accepting. They don't have to be ready for upstream, but WIP 
-> patches or even just a "yes, this works for us and we're going to use 
-> this binding on X".
-> 
-> Also, I think the QCom GPU use of this should be fully sorted out. Or 
-> more generically how this fits into OPP binding which seems to be never 
-> ending extended...
+On 2018-04-02 11:27, Alexander Kappner wrote:
+> The Thinkpad P50 has 2 fans. Add the 2FAN quirk so the tpacpi driver
+> properly reports both fan speeds.
+> Because the P50 doesn't report the version of its EC controller, we need to
+> identify it by BIOS version (N1).
 
-This is a discussion I wouldn't mind having now.  To jog memories, this is what
-I posted a few weeks ago:
+With 4.18 (including this patch) I'm seeing both fans on my P50.
+[root@p50 ~]# sensors
+[...]
+thinkpad-isa-0000
+Adapter: ISA adapter
+fan1:        2319 RPM
+fan2:        2323 RPM
 
-https://patchwork.freedesktop.org/patch/246117/
+Is there a way to actually control the second fan? There's pwm1, but no
+pwm2. And pwm1 only affects fan1.
 
-This seems like the easiest way to me to tie the frequency and the bandwidth
-quota together for GPU devfreq scaling but I'm not married to the format and
-I'll happily go a few rounds on the bikeshed if we can get something we can
-be happy with.
+[root@p50 ~]# ls -al /sys/devices/platform/thinkpad_hwmon/hwmon/hwmon3/
+total 0
+drwxr-xr-x 3 root root    0 Sep 26 16:25 .
+drwxr-xr-x 3 root root    0 Sep 26 16:23 ..
+lrwxrwxrwx 1 root root    0 Sep 25 16:11 device -> ../../../thinkpad_hwmon
+-r--r--r-- 1 root root 4096 Sep 25 16:11 fan1_input
+-r--r--r-- 1 root root 4096 Sep 25 16:11 fan2_input
+-r--r--r-- 1 root root 4096 Sep 25 16:11 name
+drwxr-xr-x 2 root root    0 Sep 26 15:57 power
+-rw-r--r-- 1 root root 4096 Sep 26 16:25 pwm1
+-rw-r--r-- 1 root root 4096 Sep 26 16:25 pwm1_enable
+lrwxrwxrwx 1 root root    0 Sep 25 16:11 subsystem -> ../../../../../class/hwmon
+-rw-r--r-- 1 root root 4096 Sep 25 16:11 uevent
 
-Jordan
+[root@p50 ~]# echo 2 > /sys/devices/platform/thinkpad_hwmon/hwmon/hwmon3/pwm1_enable
+[root@p50 ~]# sensors
+[...]
+thinkpad-isa-0000
+Adapter: ISA adapter
+fan1:        3042 RPM
+fan2:        2323 RPM
 
-> > Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> > ---
-> >  .../bindings/interconnect/interconnect.txt    | 60 +++++++++++++++++++
-> >  1 file changed, 60 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-> > new file mode 100644
-> > index 000000000000..5cb7d3c8d44d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-> > @@ -0,0 +1,60 @@
-> > +Interconnect Provider Device Tree Bindings
-> > +=========================================
-> > +
-> > +The purpose of this document is to define a common set of generic interconnect
-> > +providers/consumers properties.
-> > +
-> > +
-> > += interconnect providers =
-> > +
-> > +The interconnect provider binding is intended to represent the interconnect
-> > +controllers in the system. Each provider registers a set of interconnect
-> > +nodes, which expose the interconnect related capabilities of the interconnect
-> > +to consumer drivers. These capabilities can be throughput, latency, priority
-> > +etc. The consumer drivers set constraints on interconnect path (or endpoints)
-> > +depending on the use case. Interconnect providers can also be interconnect
-> > +consumers, such as in the case where two network-on-chip fabrics interface
-> > +directly
+Thanks!
+
+  Stefan
+
+
+> Signed-off-by: Alexander Kappner <agk@godking.net>
+> ---
+>  drivers/platform/x86/thinkpad_acpi.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> missing '.'
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+> index d5eaf3b1..ebdc300 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -8699,16 +8699,24 @@ static const struct attribute_group fan_attr_group = {
+>  	  .ec = TPID(__id1, __id2),		\
+>  	  .quirks = __quirks }
+>  
+> +#define TPACPI_FAN_QL_BIOS(__id1, __id2, __quirks)	\
+> +	{ .vendor = PCI_VENDOR_ID_LENOVO,	\
+> +	  .bios = TPID(__id1, __id2),		\
+> +	  .ec = TPACPI_MATCH_ANY,		\
+> +	  .quirks = __quirks }
+> +
+>  static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
+>  	TPACPI_FAN_QI('1', 'Y', TPACPI_FAN_Q1),
+>  	TPACPI_FAN_QI('7', '8', TPACPI_FAN_Q1),
+>  	TPACPI_FAN_QI('7', '6', TPACPI_FAN_Q1),
+>  	TPACPI_FAN_QI('7', '0', TPACPI_FAN_Q1),
+>  	TPACPI_FAN_QL('7', 'M', TPACPI_FAN_2FAN),
+> +	TPACPI_FAN_QL_BIOS('N', '1', TPACPI_FAN_2FAN) // Thinkpad P50 has 2 fans
+>  };
+>  
+>  #undef TPACPI_FAN_QL
+>  #undef TPACPI_FAN_QI
+> +#undef TPACPI_FAN_QL_BIOS
+>  
+>  static int __init fan_init(struct ibm_init_struct *iibm)
+>  {
+> -- 
+> 2.1.4
 > 
-> > +
-> > +Required properties:
-> > +- compatible : contains the interconnect provider compatible string
-> > +- #interconnect-cells : number of cells in a interconnect specifier needed to
-> > +			encode the interconnect node id
-> > +
-> > +Example:
-> > +
-> > +		snoc: snoc@580000 {
-> > +			compatible = "qcom,msm8916-snoc";
-> > +			#interconnect-cells = <1>;
-> > +			reg = <0x580000 0x14000>;
-> > +			clock-names = "bus_clk", "bus_a_clk";
-> > +			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
-> > +				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
-> > +		};
-> > +
-> > +
-> > += interconnect consumers =
-> > +
-> > +The interconnect consumers are device nodes which dynamically express their
-> > +bandwidth requirements along interconnect paths they are connected to. There
-> > +can be multiple interconnect providers on a SoC and the consumer may consume
-> > +multiple paths from different providers depending on use case and the
-> > +components it has to interact with.
-> > +
-> > +Required properties:
-> > +interconnects : Pairs of phandles and interconnect provider specifier to denote
-> > +	        the edge source and destination ports of the interconnect path.
-> > +
-> > +Optional properties:
-> > +interconnect-names : List of interconnect path name strings sorted in the same
-> > +		     order as the interconnects property. Consumers drivers will use
-> > +		     interconnect-names to match interconnect paths with interconnect
-> > +		     specifiers.
 > 
-> specifier pairs.
-> 
-> > +
-> > +Example:
-> > +
-> > +	sdhci@7864000 {
-> > +		...
-> > +		interconnects = <&pnoc MASTER_SDCC_1 &bimc SLAVE_EBI_CH0>;
-> > +		interconnect-names = "ddr";
-> > +	};
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
