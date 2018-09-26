@@ -2,59 +2,60 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28882C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84ECFC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5301208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DEC7208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tMFqpweL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5301208E4
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UwSZlT+U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEC7208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeIZSY6 (ORCPT
+        id S1728405AbeIZSZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:24:58 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48386 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbeIZSY6 (ORCPT
+        Wed, 26 Sep 2018 14:25:01 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55022 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727157AbeIZSZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:24:58 -0400
+        Wed, 26 Sep 2018 14:25:00 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180926121215euoutp0100b81d445fc677a56e62e6ba7787d8fc~X8gzuidpR2978529785euoutp01k;
-        Wed, 26 Sep 2018 12:12:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180926121215euoutp0100b81d445fc677a56e62e6ba7787d8fc~X8gzuidpR2978529785euoutp01k
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180926121216euoutp029fe1b9b38bcb4e59181dacdeebe1bc75~X8g1UY6eG1543815438euoutp02Y;
+        Wed, 26 Sep 2018 12:12:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180926121216euoutp029fe1b9b38bcb4e59181dacdeebe1bc75~X8g1UY6eG1543815438euoutp02Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537963935;
-        bh=SN8LOFxs6pauT07D446T30foui6JZh3qnIQv4ys4UDc=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=tMFqpweL1thgLifs/KVctjCz1eZ+F1NHfn5gukoGFnfEu7Jb/0GJSinndmhJR2iNl
-         3+q2EyRduE0wpBMHtObseHsP2REmKpHIAVHlMFEaehOHzovTEROs0vt070Rw/S8qd8
-         vh6hdoe6RKRS0q+u430Nvom6HNZqgMsppQ247Tp8=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180926121214eucas1p1e0a23bc71cedd89542abd7c7b0f88b43~X8gzGljli0454904549eucas1p1u;
-        Wed, 26 Sep 2018 12:12:14 +0000 (GMT)
+        s=mail20170921; t=1537963936;
+        bh=AzX9htfGbaegeliqAcQBEJz9hbWdG/HLuktSIH9Xj6o=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=UwSZlT+UyiSIuGfr5trdLQ5YEForHKmP5g7fIEfnRQmitr8dyFuXmTYsZPaXMokQ0
+         Xq/fSvsJ5TKZ2RcG4EF67oKrDPGfWX3bBsRh4QxKtihlVtHKurVHmCIBnsnsNoPdDz
+         hSlhE5iioZcq/v7YYU2FkQEDRqwQZwXJAESOwAT0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180926121216eucas1p24e22c339325c2768810a31ec134eeda1~X8g0vtpb01487714877eucas1p2G;
+        Wed, 26 Sep 2018 12:12:16 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id DE.21.04294.E977BAB5; Wed, 26
-        Sep 2018 13:12:14 +0100 (BST)
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6E.2E.04806.F977BAB5; Wed, 26
+        Sep 2018 13:12:15 +0100 (BST)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180926121213eucas1p1e85f71d1187eb6b50c320377e5ea907f~X8gyJr0Qw0454904549eucas1p1r;
-        Wed, 26 Sep 2018 12:12:13 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-78-5bab779e5496
+        20180926121215eucas1p10437d5bd9db81bedbcc363d24d196ded~X8gz-Za8Q0975409754eucas1p1M;
+        Wed, 26 Sep 2018 12:12:15 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-8c-5bab779f42be
 Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D6.0B.04128.D977BAB5; Wed, 26
-        Sep 2018 13:12:13 +0100 (BST)
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 89.0B.04128.F977BAB5; Wed, 26
+        Sep 2018 13:12:15 +0100 (BST)
 Received: from AMDC3482.DIGITAL.local ([106.120.51.30]) by
         eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
         (built May  5 2014)) with ESMTPA id <0PFN0028YWK7Q120@eusync4.samsung.com>;
-        Wed, 26 Sep 2018 13:12:13 +0100 (BST)
+        Wed, 26 Sep 2018 13:12:15 +0100 (BST)
 From:   Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
@@ -63,130 +64,104 @@ Cc:     linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
         jolsa@redhat.com, namhyung@kernel.org, b.zolnierkie@samsung.com,
         m.szyprowski@samsung.com, k.lewandowsk@samsung.com,
         m.slodczyk2@partner.samsung.com
-Subject: [PATCH v2 0/7] arm64: uprobes - ARM32 instruction probing
-Date:   Wed, 26 Sep 2018 14:11:58 +0200
-Message-id: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
+Subject: [PATCH v2 3/7] arm64: introduce get_swbp_insn() instead of static
+ assignment
+Date:   Wed, 26 Sep 2018 14:12:01 +0200
+Message-id: <1537963925-25313-4-git-send-email-m.slodczyk2@partner.samsung.com>
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsWy7djP87rzyldHG/ydwWbRdW8Hm0XHppms
+In-reply-to: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7djP87rzy1dHG6z7ZWLRdW8Hm0XHppms
         FhtnrGe1eL+sh9Hi6Nm/TBaNn+YyW2x6fI3V4vKuOWwWh6buZbTY07+azWLtkbvsFpcOLGCy
         aFq2lcVi6/5WRovjvQeYLF5+PMHiIOCxZt4aRo/L1y4ye2xeoeWxaVUnm8e8k4Eem5fUexx8
-        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlTFlTQ9jQa9SxdGnqxkbGPdJdDFy
-        ckgImEgc/7ycrYuRi0NIYAWjxLNT/6Ccz4wS1yZeYoWpaul9wg6RWMYoMf1SBwuE859RYun2
-        KywgVWwC5hLbj7aA2SICbhI3GjuYQIqYBS4zSVw+0c0EkhAWcJK43dLCDGKzCKhKHGj5CWbz
-        CvhL7D+xgglinZzEzXOdzBD2ZTaJN2ftIGwXibt/TzBC2MISr45vYYewZSQuT+5mgbDLJXaf
-        uAl2qoRAC6PE1MYDUEOtJf6smsgGYjML8ElM2jYdaAEHUJxXoqNNCML0kHiynA+kQkggVuL0
-        9h1sExglFjAyrGIUTy0tzk1PLTbKSy3XK07MLS7NS9dLzs/dxAiM9tP/jn/ZwbjrT9IhRgEO
-        RiUeXg7bVdFCrIllxZW5hxglOJiVRHi5y1ZHC/GmJFZWpRblxxeV5qQWH2KU5mBREufl00qL
-        FhJITyxJzU5NLUgtgskycXBKNTAu/lT5oMhG/GpynUHVTNaStdLv13moS279tMb+SfYvIWOv
-        QBFlfa0I7rPhZXxuP2sW9Bx9sMGuaFK8ZM7rQ3/WM0gfOqhi8tb707VdM7ckvZlT85jpegG/
-        jMTckHmPG89eE9ps4T/fWN8pUVMz+DcvZ9rS2SflzZr061bkeOqYOn/qiYmJY1JiKc5INNRi
-        LipOBABeH1xy8gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMLMWRmVeSWpSXmKPExsVy+t/xa7pzy1dHG5yZKmnRdW8Hm0XHppms
+        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlbFy/1XGgsOCFc9n9TI1MD7k62Lk
+        5JAQMJFYtfkuM4gtJLCCUWLNFNUuRi4g+zOjRGfbJhaYoqlTdrFAJJYxSmz9epENouM/o8SV
+        ZwEgNpuAucT2oy1gDSICbhI3GjuYQBqYBS4zSVw+0Q3kcHAIC4RLHHqnD1LDIqAq8f/iBrA5
+        vAL+EjvebWWEWCYncfNcJ9hFnAIBEoemr2AGmSMh8JpN4vu/W6wQRS4SK29vZ4KwhSVeHd/C
+        DmHLSFye3A11dbnE7hM32SGaWxglpjYegGqwlvizaiLYZmYBPolJ26YzgxwnIcAr0dEmBFHi
+        IbHt0ntWiI8XA4Pi8C/WCYySCxgZVjGKp5YW56anFhvnpZbrFSfmFpfmpesl5+duYgQmgdP/
+        jn/dwbjvT9IhRgEORiUeXg7bVdFCrIllxZW5hxglOJiVRHi5y1ZHC/GmJFZWpRblxxeV5qQW
+        H2KU5mBREufl00qLFhJITyxJzU5NLUgtgskycXBKNTBuLv8k+uOfjuEqUcUL5ntZ4if+7lZ8
+        o8QezFE24eJDBsW/LIuzXNfxep902sSqrxPzVjB5/dfYsxuestxKDJ7icvvcVYZZly/LTPzT
+        euQT+1be5DAVI0GW5G6BnQvWmvjLBb1MC8kymxWQuy2yLU90xeGKCOnW84udZi/WrKxZPelh
+        mN43qxolluKMREMt5qLiRADvSGVr/gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t/xa7rzy1dHG6x5KGLRdW8Hm0XHppms
         FhtnrGe1eL+sh9Hi6Nm/TBaNn+YyW2x6fI3V4vKuOWwWh6buZbTY07+azWLtkbvsFpcOLGCy
         aFq2lcVi6/5WRovjvQeYLF5+PMHiIOCxZt4aRo/L1y4ye2xeoeWxaVUnm8e8k4Eem5fUexx8
-        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlTFlTQ9jQa9SxdGnqxkbGPdJdDFy
-        ckgImEi09D5h72Lk4hASWMIoMX/2BxYIp5FJ4ubJvewgVWwC5hLbj7awgNgiAm4SNxo7mECK
-        mAUuM0l8XrCXFSQhLOAkcbulhRnEZhFQlTjQ8hPM5hXwl9h/YgUTxDo5iZvnOpknMHItYGRY
-        xSiSWlqcm55bbKRXnJhbXJqXrpecn7uJERiU24793LKDsetd8CFGAQ5GJR5eDttV0UKsiWXF
-        lbmHGCU4mJVEeLnLVkcL8aYkVlalFuXHF5XmpBYfYpTmYFES5z1vUBklJJCeWJKanZpakFoE
-        k2Xi4JRqYBTw0mPQYVvPIChUfL6J0eHj7NMzcw7yyhu5n3u84oPe8/ksFkmTFzdMuMz25vzR
-        gPnPN8buW/is+fgp22Nr9l+0UItLlX/0nU3nYoKGbv1c3pvivP8PT1y/KD9s+sfkpe65WW7J
-        AU9cLf+kOn198sx72qLsK8uz1r+wKqvhiLbdefn80yPh+bpKLMUZiYZazEXFiQBpAuZORgIA
-        AA==
-X-CMS-MailID: 20180926121213eucas1p1e85f71d1187eb6b50c320377e5ea907f
+        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlbFy/1XGgsOCFc9n9TI1MD7k62Lk
+        5JAQMJGYOmUXC4gtJLCEUaKv2bOLkQvIbmSS2HS+lxkkwSZgLrH9aAtYkYiAm8SNxg4mkCJm
+        gctMEp8X7GXtYuTgEBYIlzj0Th+khkVAVeL/xQ1sIDavgL/EjndbGSGWyUncPNcJNpNTIEDi
+        0PQVzBCL/SWunJzJMoGRZwEjwypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAAN527OeWHYxd
+        74IPMQpwMCrx8HLYrooWYk0sK67MPcQowcGsJMLLXbY6Wog3JbGyKrUoP76oNCe1+BCjNAeL
+        kjjveYPKKCGB9MSS1OzU1ILUIpgsEwenVANjQ/yC0vcZ0z16nzTfXtLrJ1XknVLbLOR4/qt9
+        nGdIVlPdw/2StlPeBc90fKu800KcVeVuLWcD3xq3ZS87ZsiaZbhfmnnjcsLXvR8vlR//8oHl
+        34OGDUe83SxiPOV4bnLcY89Ys7dGYuPDebqfApaVfxC+cuRsn3Sj1v/I1ewLQixfBej+DTil
+        xFKckWioxVxUnAgA5orYTFwCAAA=
+X-CMS-MailID: 20180926121215eucas1p10437d5bd9db81bedbcc363d24d196ded
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180926121213eucas1p1e85f71d1187eb6b50c320377e5ea907f
-References: <CGME20180926121213eucas1p1e85f71d1187eb6b50c320377e5ea907f@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20180926121215eucas1p10437d5bd9db81bedbcc363d24d196ded
+References: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
+        <CGME20180926121215eucas1p10437d5bd9db81bedbcc363d24d196ded@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The uprobe feature on ARM64 kernel does not support ARM A32 instruction
-probing, making 32 bit apps running on 64 bit kernel unprobeable.
+In uprobes generic code, an arch specific software breakpoint instruction
+is statically assigned with a #define statement. It does not allow to
+examine the context and set the proper arch on runtime, which is the case
+of uprobing either a 32 or 64 bit app on a 64-bit kernel. Introduce
+get_swbp_insn() with weak attribute that will allow to be redefined in
+ARM64 uprobes code.
 
-This patchset utilizes ARM32 uprobe code in ARM64 tree with following
-modifications:
-- moves ARM32 uprobes code form arch/arm to lib/uprobes/arm to be reused
-by ARM64 code
-- makes adjustments in api so that it suits the one used by ARM64 kernel, e.g.
-struct pt_regs, register numbers
-- takes into account differences between 32 and 64 bit ARM architectures.
-A64 instruction handling is left unchanged.
+Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
+---
+ include/linux/uprobes.h |  1 +
+ kernel/events/uprobes.c | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-Detect what kind of instruction is being probed and depending on the result:
-- if an A64 instruction handle it the old way, using existing A64 instructions
-probing code,
-- if an A32 instruction decode it and handle using the new code, moved from
-32 bit arm kernel tree.
-
-Currently following test cases have been carried out with positive results:
-- simulation-able instructions, like: STM, LDM, BLX, BL
-- xol-able instructions, like: STR, LDR, ADD, CMN, CMP
-- branching
-- uretprobes.
-
-This patchset does not implement T32 (Thumb) instructions probing (which is
-also unsupported on "native" ARM32 arch).
-
-v2:
-- Rebased on 4.19-rc4 and tested against it
-- Fixed build errors reported by kbuild test robot
-
-Maciej Slodczyk (7):
-  arm64: move arm uprobes code to be reused by arm64
-  arm64: uprobes - fix checkpatch issues
-  arm64: introduce get_swbp_insn() instead of static assignment
-  arm64: change arm64 probes handler prototype
-  arm64: make arm uprobes code reusable by arm64
-  arm64: change arm_probe_decode_insn() function name
-  arm64: uprobes - ARM32 instruction probing
-
- arch/arm/include/asm/probes.h                      |   8 ++
- arch/arm/include/asm/ptrace.h                      |  32 +++++
- arch/arm/include/asm/uprobes.h                     |   2 +-
- arch/arm/probes/Makefile                           |   8 +-
- arch/arm/probes/kprobes/actions-arm.c              |   2 +-
- arch/arm/probes/kprobes/checkers-arm.c             |   4 +-
- arch/arm/probes/kprobes/checkers-common.c          |   4 +-
- arch/arm/probes/kprobes/checkers-thumb.c           |   2 +-
- arch/arm/probes/kprobes/checkers.h                 |   2 +-
- arch/arm/probes/kprobes/core.c                     |   2 +-
- arch/arm/probes/kprobes/core.h                     |   2 +-
- arch/arm/probes/kprobes/test-core.c                |   2 +-
- arch/arm/probes/uprobes/Makefile                   |   2 +-
- arch/arm/probes/uprobes/core.c                     |  10 +-
- arch/arm64/include/asm/probes.h                    |  24 +++-
- arch/arm64/include/asm/ptrace.h                    |  21 +++
- arch/arm64/include/asm/uprobes.h                   |  21 ++-
- arch/arm64/kernel/debug-monitors.c                 |   8 ++
- arch/arm64/kernel/probes/Makefile                  |   2 +
- arch/arm64/kernel/probes/decode-insn.c             |  30 ++--
- arch/arm64/kernel/probes/decode-insn.h             |  15 +-
- arch/arm64/kernel/probes/kprobes.c                 |   4 +-
- arch/arm64/kernel/probes/simulate-insn.c           |  32 +++--
- arch/arm64/kernel/probes/simulate-insn.h           |  24 ++--
- arch/arm64/kernel/probes/uprobes.c                 | 122 ++++++++++++++--
- include/linux/uprobes.h                            |   1 +
- kernel/events/uprobes.c                            |  12 +-
- lib/Makefile                                       |   2 +
- lib/probes/Makefile                                |   2 +
- lib/probes/arm/Makefile                            |  11 ++
- .../uprobes => lib/probes/arm}/actions-arm.c       | 153 ++++++++++++++++++---
- {arch/arm/probes => lib/probes/arm}/decode-arm.c   |  58 +++++---
- {arch/arm/probes => lib/probes/arm}/decode-arm.h   |   4 +-
- {arch/arm/probes => lib/probes/arm}/decode.c       |  18 ++-
- {arch/arm/probes => lib/probes/arm}/decode.h       |  48 ++++---
- 35 files changed, 552 insertions(+), 142 deletions(-)
- create mode 100644 lib/probes/Makefile
- create mode 100644 lib/probes/arm/Makefile
- rename {arch/arm/probes/uprobes => lib/probes/arm}/actions-arm.c (61%)
- rename {arch/arm/probes => lib/probes/arm}/decode-arm.c (95%)
- rename {arch/arm/probes => lib/probes/arm}/decode-arm.h (94%)
- rename {arch/arm/probes => lib/probes/arm}/decode.c (98%)
- rename {arch/arm/probes => lib/probes/arm}/decode.h (94%)
-
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index bb9d208..8c2fdd9 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -117,6 +117,7 @@ struct uprobes_state {
+ 
+ extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
+ extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
++extern uprobe_opcode_t get_swbp_insn(void);
+ extern bool is_swbp_insn(uprobe_opcode_t *insn);
+ extern bool is_trap_insn(uprobe_opcode_t *insn);
+ extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 3207a4d..a2c3e62 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -216,6 +216,16 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
+ }
+ 
+ /**
++ * get_swbp_insn - return breakpoint instruction.
++ * Default implementation of get_swbp_insn
++ * Returns architecture-dependent breakpoint instruction opcode
++ */
++uprobe_opcode_t __weak get_swbp_insn(void)
++{
++	return UPROBE_SWBP_INSN;
++}
++
++/**
+  * is_swbp_insn - check if instruction is breakpoint instruction.
+  * @insn: instruction to be checked.
+  * Default implementation of is_swbp_insn
+@@ -1181,7 +1191,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+ static struct xol_area *__create_xol_area(unsigned long vaddr)
+ {
+ 	struct mm_struct *mm = current->mm;
+-	uprobe_opcode_t insn = UPROBE_SWBP_INSN;
++	uprobe_opcode_t insn = get_swbp_insn();
+ 	struct xol_area *area;
+ 
+ 	area = kmalloc(sizeof(*area), GFP_KERNEL);
 -- 
 2.7.4
 
