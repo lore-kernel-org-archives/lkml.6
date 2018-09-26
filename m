@@ -4,244 +4,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFB4C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FECECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 274D12089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:33:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274D12089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2447A2089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2447A2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbeIZSqN (ORCPT
+        id S1728265AbeIZSqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:46:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43309 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeIZSqN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:46:13 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8QCVRf23830603
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Sep 2018 05:31:27 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8QCVRVV3830600;
-        Wed, 26 Sep 2018 05:31:27 -0700
-Date:   Wed, 26 Sep 2018 05:31:27 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
-Message-ID: <tip-53c613fe6349994f023245519265999eed75957f@git.kernel.org>
-Cc:     aarcange@redhat.com, ak@linux.intel.com, peterz@infradead.org,
-        jpoimboe@redhat.com, tim.c.chen@linux.intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        dwmw@amazon.co.uk, jkosina@suse.cz, casey.schaufler@intel.com
-Reply-To: dwmw@amazon.co.uk, tglx@linutronix.de, mingo@kernel.org,
-          hpa@zytor.com, tim.c.chen@linux.intel.com,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          jpoimboe@redhat.com, ak@linux.intel.com, aarcange@redhat.com,
-          casey.schaufler@intel.com, jkosina@suse.cz
-In-Reply-To: <nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Enable cross-hyperthread spectre v2
- STIBP mitigation
-Git-Commit-ID: 53c613fe6349994f023245519265999eed75957f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 26 Sep 2018 14:46:34 -0400
+Received: from mx.socionext.com ([202.248.49.38]:27123 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbeIZSqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 14:46:33 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 26 Sep 2018 21:33:44 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id D18E4180B7D;
+        Wed, 26 Sep 2018 21:33:44 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 26 Sep 2018 21:33:44 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id B2DBF4039A;
+        Wed, 26 Sep 2018 21:33:44 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 74FC2120417;
+        Wed, 26 Sep 2018 21:33:44 +0900 (JST)
+Date:   Wed, 26 Sep 2018 21:33:44 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: add UniPhier PCIe host controller description
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+In-Reply-To: <20180925205502.GA12949@bogus>
+References: <1536226832-5089-2-git-send-email-hayashi.kunihiko@socionext.com> <20180925205502.GA12949@bogus>
+Message-Id: <20180926213343.A4B8.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  53c613fe6349994f023245519265999eed75957f
-Gitweb:     https://git.kernel.org/tip/53c613fe6349994f023245519265999eed75957f
-Author:     Jiri Kosina <jkosina@suse.cz>
-AuthorDate: Tue, 25 Sep 2018 14:38:55 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 26 Sep 2018 14:26:52 +0200
+Hi Rob,
 
-x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
+On Tue, 25 Sep 2018 15:55:02 -0500 <robh@kernel.org> wrote:
 
-STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
-(once enabled) prevents cross-hyperthread control of decisions made by
-indirect branch predictors.
+> On Thu, Sep 06, 2018 at 06:40:31PM +0900, Kunihiko Hayashi wrote:
+> > Add DT bindings for PCIe controller implemented in UniPhier SoCs when
+> > configured in Root Complex (host) mode. This controller is based on
+> > the DesignWare PCIe core.
+> > 
+> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > ---
+> >  .../devicetree/bindings/pci/uniphier-pcie.txt      | 78 ++++++++++++++++++++++
+> >  1 file changed, 78 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+> > new file mode 100644
+> > index 0000000..a34e167
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+> > @@ -0,0 +1,78 @@
+> > +Socionext UniPhier PCIe host controller bindings
+> > +
+> > +This describes the devicetree bindings for PCIe host controller implemented
+> > +on Socionext UniPhier SoCs.
+> > +
+> > +UniPhier PCIe host controller is based on the Synopsys DesignWare PCI core.
+> > +It shares common functions with the PCIe DesignWare core driver and inherits
+> > +common properties defined in
+> > +Documentation/devicetree/bindings/pci/designware-pcie.txt.
+> > +
+> > +Required properties:
+> > +- compatible: Should be "socionext,uniphier-pcie".
+> > +- reg: Specifies offset and length of the register set for the device.
+> > +	According to the reg-names, appropriate register sets are required.
+> > +- reg-names: Must include the following entries:
+> > +    "dbi"    - controller configuration registers
+> > +    "link"   - SoC-specific glue layer registers
+> > +    "config" - PCIe configuration space
+> > +- clocks: A phandle to the clock gate for PCIe glue layer including
+> > +	the host controller.
+> > +- resets: A phandle to the reset line for PCIe glue layer including
+> > +	the host controller.
+> > +- interrupts: A list of interrupt specifiers. According to the
+> > +	interrupt-names, appropriate interrupts are required.
+> > +- interrupt-names: Must include the following entries:
+> > +    "dma"    - DMA interrupt
+> > +    "msi"    - MSI interrupt
+> > +    "intx"   - Legacy INTA/B/C/D interrupt
+> > +
+> > +Optional properties:
+> > +- phys: A phandle to generic PCIe PHY. According to the phy-names, appropriate
+> > +	phys are required.
+> > +- phy-names: Must be "pcie-phy".
+> > +
+> > +Required sub-node:
+> > +- interrupt-controller: Specifies interrupt controller for legacy PCI
+> > +	interrupts. The node name isn't important.
+> 
+> No, it is important.
+> 
+> With that sentence removed,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Enable this feature if
+I was wrong. the node name is important to express its role.
+I'll remove that sentence in next.
 
-- the CPU is vulnerable to spectre v2
-- the CPU supports SMT and has SMT siblings online
-- spectre_v2 mitigation autoselection is enabled (default)
-
-After some previous discussion, this leaves STIBP on all the time, as wrmsr
-on crossing kernel boundary is a no-no. This could perhaps later be a bit
-more optimized (like disabling it in NOHZ, experiment with disabling it in
-idle, etc) if needed.
-
-Note that the synchronization of the mask manipulation via newly added
-spec_ctrl_mutex is currently not strictly needed, as the only updater is
-already being serialized by cpu_add_remove_lock, but let's make this a
-little bit more future-proof.
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm
+Thank you,
 
 ---
- arch/x86/kernel/cpu/bugs.c | 57 +++++++++++++++++++++++++++++++++++++++++-----
- kernel/cpu.c               | 11 ++++++++-
- 2 files changed, 61 insertions(+), 7 deletions(-)
+Best Regards,
+Kunihiko Hayashi
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 40bdaea97fe7..53eb14a65610 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -35,12 +35,10 @@ static void __init spectre_v2_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
- 
--/*
-- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-- * writes to SPEC_CTRL contain whatever reserved bits have been set.
-- */
--u64 __ro_after_init x86_spec_ctrl_base;
-+/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
-+u64 x86_spec_ctrl_base;
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
-+static DEFINE_MUTEX(spec_ctrl_mutex);
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -325,6 +323,46 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 	return cmd;
- }
- 
-+static bool stibp_needed(void)
-+{
-+	if (spectre_v2_enabled == SPECTRE_V2_NONE)
-+		return false;
-+
-+	if (!boot_cpu_has(X86_FEATURE_STIBP))
-+		return false;
-+
-+	return true;
-+}
-+
-+static void update_stibp_msr(void *info)
-+{
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+}
-+
-+void arch_smt_update(void)
-+{
-+	u64 mask;
-+
-+	if (!stibp_needed())
-+		return;
-+
-+	mutex_lock(&spec_ctrl_mutex);
-+	mask = x86_spec_ctrl_base;
-+	if (cpu_smt_control == CPU_SMT_ENABLED)
-+		mask |= SPEC_CTRL_STIBP;
-+	else
-+		mask &= ~SPEC_CTRL_STIBP;
-+
-+	if (mask != x86_spec_ctrl_base) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
-+				cpu_smt_control == CPU_SMT_ENABLED ?
-+				"Enabling" : "Disabling");
-+		x86_spec_ctrl_base = mask;
-+		on_each_cpu(update_stibp_msr, NULL, 1);
-+	}
-+	mutex_unlock(&spec_ctrl_mutex);
-+}
-+
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -424,6 +462,9 @@ specv2_set_mode:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-+
-+	/* Enable STIBP if appropriate */
-+	arch_smt_update();
- }
- 
- #undef pr_fmt
-@@ -814,6 +855,8 @@ static ssize_t l1tf_show_state(char *buf)
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
-+	int ret;
-+
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -831,10 +874,12 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
-+			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       spectre_v2_module_string());
-+		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index aa7fe85ad62e..2fb49916ea56 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2025,6 +2025,12 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
-+/*
-+ * Architectures that need SMT-specific errata handling during SMT hotplug
-+ * should override this.
-+ */
-+void __weak arch_smt_update(void) { };
-+
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
-@@ -2051,8 +2057,10 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- 		 */
- 		cpuhp_offline_cpu_device(cpu);
- 	}
--	if (!ret)
-+	if (!ret) {
- 		cpu_smt_control = ctrlval;
-+		arch_smt_update();
-+	}
- 	cpu_maps_update_done();
- 	return ret;
- }
-@@ -2063,6 +2071,7 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
-+	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
- 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+
