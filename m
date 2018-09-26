@@ -2,91 +2,90 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFEEC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F1FC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3426B2089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 495942089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:35:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FKhmomnF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3426B2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ONGgO6TL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495942089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeIZNpd (ORCPT
+        id S1727295AbeIZNqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:45:33 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:38814 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727139AbeIZNpc (ORCPT
+        Wed, 26 Sep 2018 09:46:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43134 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbeIZNqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:45:32 -0400
-Received: by mail-io1-f65.google.com with SMTP id y3-v6so22518553ioc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9tUwlxtjju7PUx3Y8Sxrig4iRFK3RYbfktecAdacTy8=;
-        b=FKhmomnFwec2RejFSUsAbyd8BHQUKrSwQnrXOTswZpXxOWRGJpTfjqt1SW9wUlcuDQ
-         sj9WIM+W7he5G7ePcNbdT4HdRlCy69eio3/H8oaQmxW05bbjardT8ZKiR2wwAiUVutxZ
-         uDqxNt190+h3ak3S6Nte7/BHKub1iUGdgEbXo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9tUwlxtjju7PUx3Y8Sxrig4iRFK3RYbfktecAdacTy8=;
-        b=mmEMdQaEqzoyhAVtWQOw53avgGt1SVch+Nl6jndyIGV0wMuiF+N7TfkdfIb9QGlb8A
-         X7U0Pd8yUYfEe5YpiO9QwWGc+qQ/HyLX0vUZBB+THie3zAHCs0vttXuJow6JvMrC9Kth
-         DAHLWJ++i3GVlkG0hL2MjKf8bixBnNkTLUduZLit5Vea7F/LUOQ9c6EiSwFBfkdoIsZi
-         mcmBCfuXMmhpTTbLluvsPpRol2LLGWXEZoe9+qk8Y028qx/HkGM2QCt3Ph0cBzxuRneq
-         dgCATMo0Jl82id9yfP+A1u4BR6r2cV10TZ+hfYDULFsV9Z3AQKajdvGYN6BfZwoPWpyN
-         nYtg==
-X-Gm-Message-State: ABuFfogIkSnjjAf3QMskmf6NbMdZ4FFl3uETax2LgooSjojeqDZP/ziR
-        vffeWJ3BHLTXli99Re5q6SrKjbkqXYwB5tHlpzOzEIBm
-X-Google-Smtp-Source: ACcGV63abI2GLYktztonGAHPkM4XYVxUTqrW7wdBPMujVYABVWL+5d2xcWf2FwRJYWV0U+jBJcnYcDz2NQBZhClpmEo=
-X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3668337ioa.277.1537947238536;
- Wed, 26 Sep 2018 00:33:58 -0700 (PDT)
+        Wed, 26 Sep 2018 09:46:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oafizKIcN4uSLdzDZamEnbzJjc6XZNuy5z9AD4S5UuA=; b=ONGgO6TLdfpYT9s+2eyd4Z6Y3
+        TbY4QABIYbeybROx5pY63EOMBMQyuHv+JW0GtTwp2vCyPksGuEClVJArfb45uGqhBEvxEVz0LLgia
+        TeP48uq9yCXrXQdmNctb+CE9J/mSlFanY7IujO8uakAOgSzRnTgdJVkJh2gpzm8KzK/0Lj6t1aujg
+        JOBNdvDUvvBhxPDRSLhVeDUOkLKKpiNdb2cQXqMh/DAkVszPeMhzjruw687Iysw5rppIhP9t4UiYX
+        OWm1ewzJ3hljcQkA/A8HV7betkQy7+MBoawixhkpnqsMPBeXEyjCR7r/RbmiSw5Sx+QWfeVcuYs30
+        YUkBT2KjQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g54L8-0006El-D7; Wed, 26 Sep 2018 07:34:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 50D252029B098; Wed, 26 Sep 2018 09:34:26 +0200 (CEST)
+Date:   Wed, 26 Sep 2018 09:34:26 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: [Problem] Cache line starvation
+Message-ID: <20180926073426.GA31905@hirez.programming.kicks-ass.net>
+References: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
 MIME-Version: 1.0
-References: <20180924221748.21584-1-bjorn.andersson@linaro.org> <20180924221748.21584-5-bjorn.andersson@linaro.org>
-In-Reply-To: <20180924221748.21584-5-bjorn.andersson@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Sep 2018 09:33:46 +0200
-Message-ID: <CACRpkdbWVxQsSFtS6FUpn0sBygsQs-jHx0eX196K2UVQXFwntA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] pinctrl: qcom: Add qcs404 pinctrl driver
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 12:15 AM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Fri, Sep 21, 2018 at 02:02:26PM +0200, Sebastian Andrzej Siewior wrote:
+> Instrumentation show always the picture:
+> 
+> CPU0                                         CPU1
+> => do_syscall_64                              => do_syscall_64
+> => SyS_ptrace                                   => syscall_slow_exit_work
+> => ptrace_check_attach                          => ptrace_do_notify / rt_read_unlock 
+> => wait_task_inactive                              rt_spin_lock_slowunlock()
+>    -> while task_running()                         __rt_mutex_unlock_common()
+>   /   check_task_state()                           mark_wakeup_next_waiter()
+>  |     raw_spin_lock_irq(&p->pi_lock);             raw_spin_lock(&current->pi_lock);
+>  |     .                                               .
+>  |     raw_spin_unlock_irq(&p->pi_lock);               .
+>   \  cpu_relax()                                       .
+>    -                                                   .
+>     *IRQ*                                          <lock acquired>
+> 
+> In the error case we observe that the while() loop is repeated more than
+> 5000 times which indicates that the pi_lock can be acquired. CPU1 on the
+> other side does not make progress waiting for the same lock with interrupts
+> disabled.
 
-> From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
->
-> Add initial pinctrl driver to support pin configuration with
-> pinctrl framework for qcs404.
->
-> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
-> Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-> [bjorn: Reworked tile handling and did some minor rework]
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+I've tried really hard to reproduce this in userspace, but so far have
+not had any luck. Looks to be a real tricky thing to make happen.
