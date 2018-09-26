@@ -4,70 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF8EECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C344AC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B172B2089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:46:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B172B2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A01A2089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A01A2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbeIZM6F (ORCPT
+        id S1727221AbeIZM6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 08:58:05 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:10373 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbeIZM6F (ORCPT
+        Wed, 26 Sep 2018 08:58:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54330 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726578AbeIZM6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 08:58:05 -0400
-Received: from [10.18.16.3] (10.18.16.3) by mail-sh2.amlogic.com (10.18.11.6)
- with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 26 Sep 2018 14:47:18
- +0800
-Subject: Re: [RESEND PATCH v3 2/2] PCI: meson: add the Amlogic Meson PCIe
- controller driver
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jianguo Sun <sunjianguo1@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>
-References: <1537509820-52040-1-git-send-email-hanjie.lin@amlogic.com>
- <1537509820-52040-3-git-send-email-hanjie.lin@amlogic.com>
- <cd234d38-b162-c8c2-edb8-9f1b96d53253@synopsys.com>
-From:   Hanjie Lin <hanjie.lin@amlogic.com>
-Message-ID: <abd273a9-1164-c3e0-b98f-d95d13f4f01f@amlogic.com>
-Date:   Wed, 26 Sep 2018 14:47:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 08:58:42 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8Q6hpXY118618
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:47:17 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mr3u6b4ke-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 02:47:17 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Wed, 26 Sep 2018 00:47:16 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 26 Sep 2018 00:47:13 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8Q6lAcK49938632
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Sep 2018 23:47:10 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA8D178060;
+        Wed, 26 Sep 2018 00:47:10 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59F3F7805C;
+        Wed, 26 Sep 2018 00:47:08 -0600 (MDT)
+Received: from [9.124.31.41] (unknown [9.124.31.41])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 26 Sep 2018 00:47:07 -0600 (MDT)
+Subject: Re: [PATCH v4 01/21] tpm2: add new tpm2 commands according to TCG
+ 1.36
+To:     Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180921135820.20549-1-tomas.winkler@intel.com>
+ <20180921135820.20549-2-tomas.winkler@intel.com>
+From:   Nayna Jain <nayna@linux.vnet.ibm.com>
+Date:   Wed, 26 Sep 2018 12:14:16 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <cd234d38-b162-c8c2-edb8-9f1b96d53253@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180921135820.20549-2-tomas.winkler@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.16.3]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+X-TM-AS-GCONF: 00
+x-cbid: 18092606-8235-0000-0000-00000E06E7B0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009773; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01093792; UDB=6.00565356; IPR=6.00873830;
+ MB=3.00023509; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-26 06:47:15
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092606-8236-0000-0000-000042C67982
+Message-Id: <a6bbd85b-9f24-1e04-fa00-660a8b96ae87@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809260070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,695 +94,332 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018/9/24 16:34, Gustavo Pimentel wrote:
-> Hi Hanjie,
-> 
-> On 21/09/2018 07:03, Hanjie Lin wrote:
->> From: Yue Wang <yue.wang@amlogic.com>
->>
->> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
->> PCI core. This patch adds the driver support for Meson PCIe controller.
->>
->> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
->> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
->> ---
->>  drivers/pci/controller/dwc/Kconfig     |  12 +
->>  drivers/pci/controller/dwc/Makefile    |   1 +
->>  drivers/pci/controller/dwc/pci-meson.c | 617 +++++++++++++++++++++++++++++++++
->>  3 files changed, 630 insertions(+)
->>  create mode 100644 drivers/pci/controller/dwc/pci-meson.c
->>
->> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
->> index 91b0194..6cb36f6 100644
->> --- a/drivers/pci/controller/dwc/Kconfig
->> +++ b/drivers/pci/controller/dwc/Kconfig
->> @@ -193,4 +193,16 @@ config PCIE_HISI_STB
->>  	help
->>            Say Y here if you want PCIe controller support on HiSilicon STB SoCs
->>  
->> +config PCI_MESON
->> +	bool "MESON PCIe controller"
->> +	depends on PCI
->> +	depends on PCI_MSI_IRQ_DOMAIN
-> 
-> I would suggest to compress the previous 2 line into in just one, like:
-> depends on PCI && PCI_MSI_IRQ_DOMAIN
-> 
-> Regards,
-> Gustavo
-> 
+On 09/21/2018 07:28 PM, Tomas Winkler wrote:
+> 1. TPM2_CC_LAST has moved from 182 to 193
+> 2. Convert tpm2_ordinal_duration from an array into a switch statement,
+>     as there are not so many commands that require special duration
+>     relative to a number of commands, the switch statement function
+>     is called tpm2_ordinal_duration_index().
+> 3. Fix kdoc comments for tpm2_calc_ordinal_duration().
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> V2-V3: Rebase.
+> V4: 1. Fix kdoc
+>      2. Rename tpm2_ordinal_duration() to tpm2_ordinal_duration_index()
+>      3. Move the two functions close to each other in the file.
+>
+>   drivers/char/tpm/tpm.h      |  41 +++++---
+>   drivers/char/tpm/tpm2-cmd.c | 236 +++++++++++++++++---------------------------
+>   2 files changed, 113 insertions(+), 164 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f20dc8ece348..0f08518b525d 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -134,22 +134,31 @@ enum tpm2_algorithms {
+>   };
+>
+>   enum tpm2_command_codes {
+> -	TPM2_CC_FIRST		= 0x011F,
+> -	TPM2_CC_CREATE_PRIMARY  = 0x0131,
+> -	TPM2_CC_SELF_TEST	= 0x0143,
+> -	TPM2_CC_STARTUP		= 0x0144,
+> -	TPM2_CC_SHUTDOWN	= 0x0145,
+> -	TPM2_CC_CREATE		= 0x0153,
+> -	TPM2_CC_LOAD		= 0x0157,
+> -	TPM2_CC_UNSEAL		= 0x015E,
+> -	TPM2_CC_CONTEXT_LOAD	= 0x0161,
+> -	TPM2_CC_CONTEXT_SAVE	= 0x0162,
+> -	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+> -	TPM2_CC_GET_CAPABILITY	= 0x017A,
+> -	TPM2_CC_GET_RANDOM	= 0x017B,
+> -	TPM2_CC_PCR_READ	= 0x017E,
+> -	TPM2_CC_PCR_EXTEND	= 0x0182,
+> -	TPM2_CC_LAST		= 0x018F,
+> +	TPM2_CC_FIRST		        = 0x011F,
+> +	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
+> +	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
+> +	TPM2_CC_CREATE_PRIMARY          = 0x0131,
+> +	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
+> +	TPM2_CC_SELF_TEST	        = 0x0143,
+> +	TPM2_CC_STARTUP		        = 0x0144,
+> +	TPM2_CC_SHUTDOWN	        = 0x0145,
+> +	TPM2_CC_NV_READ                 = 0x014E,
+> +	TPM2_CC_CREATE		        = 0x0153,
+> +	TPM2_CC_LOAD		        = 0x0157,
+> +	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
+> +	TPM2_CC_UNSEAL		        = 0x015E,
+> +	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
+> +	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
+> +	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
+> +	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
+> +	TPM2_CC_GET_CAPABILITY	        = 0x017A,
+> +	TPM2_CC_GET_RANDOM	        = 0x017B,
+> +	TPM2_CC_PCR_READ	        = 0x017E,
+> +	TPM2_CC_PCR_EXTEND	        = 0x0182,
+> +	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
+> +	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
+> +	TPM2_CC_CREATE_LOADED           = 0x0191,
+> +	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
+>   };
+>
+>   enum tpm2_permanent_handles {
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 3acf4fd4e5a5..be0a9ebcd7d7 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -40,129 +40,95 @@ static struct tpm2_hash tpm2_hash_map[] = {
+>   	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
+>   };
+>
+> -/*
+> - * Array with one entry per ordinal defining the maximum amount
+> - * of time the chip could take to return the result. The values
+> - * of the SHORT, MEDIUM, and LONG durations are taken from the
+> - * PC Client Profile (PTP) specification.
+> - * LONG_LONG is for commands that generates keys which empirically
+> - * takes longer time on some systems.
+> +/**
+> + * tpm2_ordinal_duration_index() - returns an index to the chip duration
+> + * table (enum tpm_duration), that describes the maximum amount of
+> + * time the chip could take to return the result for a  particular ordinal.
+> + *
+> + * The values of the MEDIUM, and LONG durations are taken
+> + * from the PC Client Profile (PTP) specification (750, 2000 msec)
+> + *
+> + * LONG_LONG is for commands that generates keys which empirically takes
+> + * a longer time on some systems.
+> + *
+> + * @ordinal: TPM command ordinal.
+> + *
+> + * Return: TPM_MEDIUM, TPM_LONG, TPM_LONG_LONG, and TPM_UNDEFINED.
+>    */
+> -static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+> -	TPM_UNDEFINED,		/* 11F */
+> -	TPM_UNDEFINED,		/* 120 */
+> -	TPM_LONG,		/* 121 */
+> -	TPM_UNDEFINED,		/* 122 */
+> -	TPM_UNDEFINED,		/* 123 */
+> -	TPM_UNDEFINED,		/* 124 */
+> -	TPM_UNDEFINED,		/* 125 */
+> -	TPM_UNDEFINED,		/* 126 */
+> -	TPM_UNDEFINED,		/* 127 */
+> -	TPM_UNDEFINED,		/* 128 */
+> -	TPM_LONG,		/* 129 */
+> -	TPM_UNDEFINED,		/* 12a */
+> -	TPM_UNDEFINED,		/* 12b */
+> -	TPM_UNDEFINED,		/* 12c */
+> -	TPM_UNDEFINED,		/* 12d */
+> -	TPM_UNDEFINED,		/* 12e */
+> -	TPM_UNDEFINED,		/* 12f */
+> -	TPM_UNDEFINED,		/* 130 */
+> -	TPM_LONG_LONG,		/* 131 */
+> -	TPM_UNDEFINED,		/* 132 */
+> -	TPM_UNDEFINED,		/* 133 */
+> -	TPM_UNDEFINED,		/* 134 */
+> -	TPM_UNDEFINED,		/* 135 */
+> -	TPM_UNDEFINED,		/* 136 */
+> -	TPM_UNDEFINED,		/* 137 */
+> -	TPM_UNDEFINED,		/* 138 */
+> -	TPM_UNDEFINED,		/* 139 */
+> -	TPM_UNDEFINED,		/* 13a */
+> -	TPM_UNDEFINED,		/* 13b */
+> -	TPM_UNDEFINED,		/* 13c */
+> -	TPM_UNDEFINED,		/* 13d */
+> -	TPM_MEDIUM,		/* 13e */
+> -	TPM_UNDEFINED,		/* 13f */
+> -	TPM_UNDEFINED,		/* 140 */
+> -	TPM_UNDEFINED,		/* 141 */
+> -	TPM_UNDEFINED,		/* 142 */
+> -	TPM_LONG,		/* 143 */
+> -	TPM_MEDIUM,		/* 144 */
+> -	TPM_UNDEFINED,		/* 145 */
+> -	TPM_UNDEFINED,		/* 146 */
+> -	TPM_UNDEFINED,		/* 147 */
+> -	TPM_UNDEFINED,		/* 148 */
+> -	TPM_UNDEFINED,		/* 149 */
+> -	TPM_UNDEFINED,		/* 14a */
+> -	TPM_UNDEFINED,		/* 14b */
+> -	TPM_UNDEFINED,		/* 14c */
+> -	TPM_UNDEFINED,		/* 14d */
+> -	TPM_LONG,		/* 14e */
+> -	TPM_UNDEFINED,		/* 14f */
+> -	TPM_UNDEFINED,		/* 150 */
+> -	TPM_UNDEFINED,		/* 151 */
+> -	TPM_UNDEFINED,		/* 152 */
+> -	TPM_LONG_LONG,		/* 153 */
+> -	TPM_UNDEFINED,		/* 154 */
+> -	TPM_UNDEFINED,		/* 155 */
+> -	TPM_UNDEFINED,		/* 156 */
+> -	TPM_UNDEFINED,		/* 157 */
+> -	TPM_UNDEFINED,		/* 158 */
+> -	TPM_UNDEFINED,		/* 159 */
+> -	TPM_UNDEFINED,		/* 15a */
+> -	TPM_UNDEFINED,		/* 15b */
+> -	TPM_MEDIUM,		/* 15c */
+> -	TPM_UNDEFINED,		/* 15d */
+> -	TPM_UNDEFINED,		/* 15e */
+> -	TPM_UNDEFINED,		/* 15f */
+> -	TPM_UNDEFINED,		/* 160 */
+> -	TPM_UNDEFINED,		/* 161 */
+> -	TPM_UNDEFINED,		/* 162 */
+> -	TPM_UNDEFINED,		/* 163 */
+> -	TPM_UNDEFINED,		/* 164 */
+> -	TPM_UNDEFINED,		/* 165 */
+> -	TPM_UNDEFINED,		/* 166 */
+> -	TPM_UNDEFINED,		/* 167 */
+> -	TPM_UNDEFINED,		/* 168 */
+> -	TPM_UNDEFINED,		/* 169 */
+> -	TPM_UNDEFINED,		/* 16a */
+> -	TPM_UNDEFINED,		/* 16b */
+> -	TPM_UNDEFINED,		/* 16c */
+> -	TPM_UNDEFINED,		/* 16d */
+> -	TPM_UNDEFINED,		/* 16e */
+> -	TPM_UNDEFINED,		/* 16f */
+> -	TPM_UNDEFINED,		/* 170 */
+> -	TPM_UNDEFINED,		/* 171 */
+> -	TPM_UNDEFINED,		/* 172 */
+> -	TPM_UNDEFINED,		/* 173 */
+> -	TPM_UNDEFINED,		/* 174 */
+> -	TPM_UNDEFINED,		/* 175 */
+> -	TPM_UNDEFINED,		/* 176 */
+> -	TPM_LONG,		/* 177 */
+> -	TPM_UNDEFINED,		/* 178 */
+> -	TPM_UNDEFINED,		/* 179 */
+> -	TPM_MEDIUM,		/* 17a */
+> -	TPM_LONG,		/* 17b */
+> -	TPM_UNDEFINED,		/* 17c */
+> -	TPM_UNDEFINED,		/* 17d */
+> -	TPM_UNDEFINED,		/* 17e */
+> -	TPM_UNDEFINED,		/* 17f */
+> -	TPM_UNDEFINED,		/* 180 */
+> -	TPM_UNDEFINED,		/* 181 */
+> -	TPM_MEDIUM,		/* 182 */
+> -	TPM_UNDEFINED,		/* 183 */
+> -	TPM_UNDEFINED,		/* 184 */
+> -	TPM_MEDIUM,		/* 185 */
+> -	TPM_MEDIUM,		/* 186 */
+> -	TPM_UNDEFINED,		/* 187 */
+> -	TPM_UNDEFINED,		/* 188 */
+> -	TPM_UNDEFINED,		/* 189 */
+> -	TPM_UNDEFINED,		/* 18a */
+> -	TPM_UNDEFINED,		/* 18b */
+> -	TPM_UNDEFINED,		/* 18c */
+> -	TPM_UNDEFINED,		/* 18d */
+> -	TPM_UNDEFINED,		/* 18e */
+> -	TPM_UNDEFINED		/* 18f */
+> -};
+> +static u8 tpm2_ordinal_duration_index(u32 ordinal)
+> +{
+> +	switch (ordinal) {
+> +	/* Startup */
+> +	case TPM2_CC_STARTUP:                 /* 144 */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_SELF_TEST:               /* 143 */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_GET_RANDOM:              /* 17B */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
+> +		return TPM_MEDIUM;
+> +	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
+> +		return TPM_MEDIUM;
+> +	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
+> +		return TPM_MEDIUM;
+> +	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_PCR_EXTEND:              /* 182 */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
+> +		return TPM_LONG;
+> +	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_GET_CAPABILITY:          /* 17A */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_NV_READ:                 /* 14E */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
+> +		return TPM_LONG_LONG;
+> +	case TPM2_CC_CREATE:                  /* 153 */
+> +		return TPM_LONG_LONG;
+> +	case TPM2_CC_CREATE_LOADED:           /* 191 */
+> +		return TPM_LONG_LONG;
+> +
+> +	default:
+> +		return TPM_UNDEFINED;
+> +	}
+> +}
+> +
+> +/**
+> + * tpm2_calc_ordinal_duration() - returns the maximum amount of time
+> + * the chip could take to return the result for a particular ordinal
+> + * in jiffies.
+> + *
+> + * @chip:    TPM chip to use.
+> + * @ordinal: TPM command ordinal.
+> + *
+> + * Return: A maxiaml duration time for an ordinal in jiffies.
+typo  *maximal*
+> + */
+> +unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> +{
+> +	unsigned int index;
+> +
+> +	index = tpm2_ordinal_duration_index(ordinal);
+> +
+> +	if (index != TPM_UNDEFINED)
+> +		return chip->duration[index];
+> +	else
+> +		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+> +
+>
+>   struct tpm2_pcr_read_out {
+>   	__be32	update_cnt;
+> @@ -748,32 +714,6 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+>   	tpm_buf_destroy(&buf);
+>   }
+>
+> -/*
+> - * tpm2_calc_ordinal_duration() - maximum duration for a command
+> - *
+> - * @chip:	TPM chip to use.
+> - * @ordinal:	command code number.
+> - *
+> - * Return: maximum duration for a command
+> - */
+> -unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> -{
+> -	int index = TPM_UNDEFINED;
+> -	int duration = 0;
+> -
+> -	if (ordinal >= TPM2_CC_FIRST && ordinal <= TPM2_CC_LAST)
+> -		index = tpm2_ordinal_duration[ordinal - TPM2_CC_FIRST];
+> -
+> -	if (index != TPM_UNDEFINED)
+> -		duration = chip->duration[index];
+> -
+> -	if (duration <= 0)
+> -		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> -
+> -	return duration;
+> -}
+> -EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+> -
+>   /**
+>    * tpm2_do_selftest() - ensure that all self tests have passed
+>    *
 
-Right, depends on PCI is unnecessary actually.
-I will fix it. 
-
-Thanks,
-Hanjie
-
->> +	select PCIEPORTBUS
->> +	select PCIE_DW_HOST
->> +	help
->> +	  Say Y here if you want to enable PCI controller support on Amlogic
->> +	  SoCs. The PCI controller on Amlogic is based on DesignWare hardware
->> +	  and therefore the driver re-uses the DesignWare core functions to
->> +	  implement the driver.
->> +
->>  endmenu
->> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
->> index 5d2ce72..cf676bd 100644
->> --- a/drivers/pci/controller/dwc/Makefile
->> +++ b/drivers/pci/controller/dwc/Makefile
->> @@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
->>  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
->>  obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
->>  obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
->> +obj-$(CONFIG_PCI_MESON) += pci-meson.o
->>  
->>  # The following drivers are for devices that use the generic ACPI
->>  # pci_root.c driver but don't support standard ECAM config access.
->> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
->> new file mode 100644
->> index 0000000..9c92a89
->> --- /dev/null
->> +++ b/drivers/pci/controller/dwc/pci-meson.c
->> @@ -0,0 +1,617 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * PCIe host controller driver for Amlogic MESON SoCs
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Yue Wang <yue.wang@amlogic.com>
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/of_device.h>
->> +#include <linux/of_gpio.h>
->> +#include <linux/pci.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/resource.h>
->> +#include <linux/types.h>
->> +#include <linux/reset.h>
->> +
->> +#include "pcie-designware.h"
->> +
->> +#define to_meson_pcie(x) dev_get_drvdata((x)->dev)
->> +
->> +/* External local bus interface registers */
->> +#define PLR_OFFSET			0x700
->> +#define PCIE_PORT_LINK_CTRL_OFF		(PLR_OFFSET + 0x10)
->> +#define FAST_LINK_MODE			BIT(7)
->> +#define LINK_CAPABLE_MASK		GENMASK(21, 16)
->> +#define LINK_CAPABLE_X1			BIT(16)
->> +
->> +#define PCIE_GEN2_CTRL_OFF		(PLR_OFFSET + 0x10c)
->> +#define NUM_OF_LANES_MASK		GENMASK(12, 8)
->> +#define NUM_OF_LANES_X1			BIT(8)
->> +#define DIRECT_SPEED_CHANGE		BIT(17)
->> +
->> +#define TYPE1_HDR_OFFSET		0x0
->> +#define PCIE_STATUS_COMMAND		(TYPE1_HDR_OFFSET + 0x04)
->> +#define PCI_IO_EN			BIT(0)
->> +#define PCI_MEM_SPACE_EN		BIT(1)
->> +#define PCI_BUS_MASTER_EN		BIT(2)
->> +
->> +#define PCIE_BASE_ADDR0			(TYPE1_HDR_OFFSET + 0x10)
->> +#define PCIE_BASE_ADDR1			(TYPE1_HDR_OFFSET + 0x14)
->> +
->> +#define PCIE_CAP_OFFSET			0x70
->> +#define PCIE_DEV_CTRL_DEV_STUS		(PCIE_CAP_OFFSET + 0x08)
->> +#define PCIE_CAP_MAX_PAYLOAD_MASK	GENMASK(7, 5)
->> +#define PCIE_CAP_MAX_PAYLOAD_SIZE(x)	((x) << 5)
->> +#define PCIE_CAP_MAX_READ_REQ_MASK	GENMASK(14, 12)
->> +#define PCIE_CAP_MAX_READ_REQ_SIZE(x)	((x) << 12)
->> +
->> +#define PCI_CLASS_REVISION_MASK		GENMASK(7, 0)
->> +
->> +/* PCIe specific config registers */
->> +#define PCIE_CFG0			0x0
->> +#define APP_LTSSM_ENABLE		BIT(7)
->> +
->> +#define PCIE_CFG_STATUS12		0x30
->> +#define IS_SMLH_LINK_UP(x)		((x) & (1 << 6))
->> +#define IS_RDLH_LINK_UP(x)		((x) & (1 << 16))
->> +#define IS_LTSSM_UP(x)			((((x) >> 10) & 0x1f) == 0x11)
->> +
->> +#define PCIE_CFG_STATUS17		0x44
->> +#define PM_CURRENT_STATE(x)		(((x) >> 7) & 0x1)
->> +
->> +#define WAIT_LINKUP_TIMEOUT		2000
->> +#define PORT_CLK_RATE			100000000UL
->> +#define MAX_PAYLOAD_SIZE		256
->> +#define MAX_READ_REQ_SIZE		256
->> +#define MESON_PCIE_PHY_POWERUP		0x1c
->> +#define PCIE_RESET_DELAY		500
->> +#define PCIE_SHARED_RESET		1
->> +#define PCIE_NORMAL_RESET		0
->> +
->> +enum pcie_data_rate {
->> +	PCIE_GEN1,
->> +	PCIE_GEN2,
->> +	PCIE_GEN3,
->> +	PCIE_GEN4
->> +};
->> +
->> +struct meson_pcie_mem_res {
->> +	void __iomem *elbi_base; /* DT 0th resource */
->> +	void __iomem *cfg_base; /* DT 1nd resource */
->> +	void __iomem *phy_base; /* DT 2nd resource */
->> +};
->> +
->> +struct meson_pcie_clk_res {
->> +	struct clk *clk;
->> +	struct clk *mipi_gate;
->> +	struct clk *port_clk;
->> +	struct clk *general_clk;
->> +};
->> +
->> +struct meson_pcie_rc_reset {
->> +	struct reset_control *phy;
->> +	struct reset_control *port;
->> +	struct reset_control *apb;
->> +};
->> +
->> +struct meson_pcie {
->> +	struct dw_pcie pci;
->> +	struct meson_pcie_mem_res mem_res;
->> +	struct meson_pcie_clk_res clk_res;
->> +	struct meson_pcie_rc_reset mrst;
->> +	struct gpio_desc *reset_gpio;
->> +
->> +	enum of_gpio_flags gpio_flag;
->> +	int pcie_num;
->> +	u32 port_num;
->> +	u32 device_attch;
->> +};
->> +
->> +static struct reset_control *meson_pcie_get_reset(struct meson_pcie *mp,
->> +						  const char *id,
->> +						  u32 reset_type)
->> +{
->> +	struct device *dev = mp->pci.dev;
->> +	struct reset_control *reset;
->> +
->> +	if (reset_type == PCIE_SHARED_RESET)
->> +		reset = devm_reset_control_get_shared(dev, id);
->> +	else
->> +		reset = devm_reset_control_get(dev, id);
->> +
->> +	return reset;
->> +}
->> +
->> +static int meson_pcie_get_resets(struct meson_pcie *mp)
->> +{
->> +	struct meson_pcie_rc_reset *mrst = &mp->mrst;
->> +
->> +	mrst->phy = meson_pcie_get_reset(mp, "phy", PCIE_SHARED_RESET);
->> +	if (IS_ERR(mrst->phy))
->> +		return PTR_ERR(mrst->phy);
->> +	reset_control_deassert(mrst->phy);
->> +
->> +	mrst->port = meson_pcie_get_reset(mp, "port", PCIE_NORMAL_RESET);
->> +	if (IS_ERR(mrst->port))
->> +		return PTR_ERR(mrst->port);
->> +	reset_control_deassert(mrst->port);
->> +
->> +	mrst->apb = meson_pcie_get_reset(mp, "apb", PCIE_SHARED_RESET);
->> +	if (IS_ERR(mrst->apb))
->> +		return PTR_ERR(mrst->apb);
->> +	reset_control_deassert(mrst->apb);
->> +
->> +	return 0;
->> +}
->> +
->> +static void __iomem *meson_pcie_get_mem_shared(struct platform_device *pdev,
->> +					       struct meson_pcie *mp,
->> +					       const char *id)
->> +{
->> +	struct resource *res;
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, id);
->> +
->> +	return ioremap(res->start, resource_size(res));
->> +}
->> +
->> +static void __iomem *meson_pcie_get_mem(struct platform_device *pdev,
->> +					struct meson_pcie *mp,
->> +					const char *id)
->> +{
->> +	struct device *dev = mp->pci.dev;
->> +	struct resource *res;
->> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, id);
->> +
->> +	return devm_ioremap_resource(dev, res);
->> +}
->> +
->> +static int meson_pcie_get_mems(struct platform_device *pdev,
->> +			       struct meson_pcie *mp)
->> +{
->> +	mp->mem_res.elbi_base = meson_pcie_get_mem(pdev, mp, "elbi");
->> +	if (IS_ERR(mp->mem_res.elbi_base))
->> +		return PTR_ERR(mp->mem_res.elbi_base);
->> +
->> +	mp->mem_res.cfg_base = meson_pcie_get_mem(pdev, mp, "cfg");
->> +	if (IS_ERR(mp->mem_res.cfg_base))
->> +		return PTR_ERR(mp->mem_res.cfg_base);
->> +
->> +	mp->mem_res.phy_base = meson_pcie_get_mem_shared(pdev, mp, "phy");
->> +	if (IS_ERR(mp->mem_res.phy_base))
->> +		return PTR_ERR(mp->mem_res.phy_base);
->> +
->> +	return 0;
->> +}
->> +
->> +static void meson_pcie_power_on(struct meson_pcie *mp)
->> +{
->> +	writel(MESON_PCIE_PHY_POWERUP, mp->mem_res.phy_base);
->> +}
->> +
->> +static void meson_pcie_reset(struct meson_pcie *mp)
->> +{
->> +	struct meson_pcie_rc_reset *mrst = &mp->mrst;
->> +
->> +	reset_control_assert(mrst->phy);
->> +	udelay(PCIE_RESET_DELAY);
->> +	reset_control_deassert(mrst->phy);
->> +	udelay(PCIE_RESET_DELAY);
->> +
->> +	reset_control_assert(mrst->port);
->> +	reset_control_assert(mrst->apb);
->> +	udelay(PCIE_RESET_DELAY);
->> +	reset_control_deassert(mrst->port);
->> +	reset_control_deassert(mrst->apb);
->> +	udelay(PCIE_RESET_DELAY);
->> +}
->> +
->> +static inline struct clk *meson_pcie_probe_clock(struct device *dev,
->> +						 const char *id, u64 rate)
->> +{
->> +	struct clk *clk = NULL;
->> +	int ret;
->> +
->> +	clk = devm_clk_get(dev, id);
->> +	if (IS_ERR(clk))
->> +		return clk;
->> +
->> +	if (rate) {
->> +		ret = clk_set_rate(clk, rate);
->> +		if (ret) {
->> +			dev_err(dev, "set clk rate failed, ret = %d\n", ret);
->> +			return ERR_PTR(ret);
->> +		}
->> +	}
->> +
->> +	ret = clk_prepare_enable(clk);
->> +	if (ret) {
->> +		dev_err(dev, "couldn't enable clk\n");
->> +		return ERR_PTR(ret);
->> +	}
->> +
->> +	devm_add_action_or_reset(dev,
->> +				 (void (*) (void *))clk_disable_unprepare,
->> +				 clk);
->> +
->> +	return clk;
->> +}
->> +
->> +static int meson_pcie_probe_clocks(struct meson_pcie *mp)
->> +{
->> +	struct device *dev = mp->pci.dev;
->> +	struct meson_pcie_clk_res *res = &mp->clk_res;
->> +
->> +	res->port_clk = meson_pcie_probe_clock(dev, "port", PORT_CLK_RATE);
->> +	if (IS_ERR(res->port_clk))
->> +		return PTR_ERR(res->port_clk);
->> +
->> +	res->mipi_gate = meson_pcie_probe_clock(dev, "pcie_mipi_en", 0);
->> +	if (IS_ERR(res->mipi_gate))
->> +		return PTR_ERR(res->mipi_gate);
->> +
->> +	res->general_clk = meson_pcie_probe_clock(dev, "pcie_general", 0);
->> +	if (IS_ERR(res->general_clk))
->> +		return PTR_ERR(res->general_clk);
->> +
->> +	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
->> +	if (IS_ERR(res->clk))
->> +		return PTR_ERR(res->clk);
->> +
->> +	return 0;
->> +}
->> +
->> +static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
->> +{
->> +	writel(val, mp->mem_res.elbi_base + reg);
->> +}
->> +
->> +static inline u32 meson_elb_readl(struct meson_pcie *mp, u32 reg)
->> +{
->> +	return readl(mp->mem_res.elbi_base + reg);
->> +}
->> +
->> +static inline u32 meson_cfg_readl(struct meson_pcie *mp, u32 reg)
->> +{
->> +	return readl(mp->mem_res.cfg_base + reg);
->> +}
->> +
->> +static inline void meson_cfg_writel(struct meson_pcie *mp, u32 val, u32 reg)
->> +{
->> +	writel(val, mp->mem_res.cfg_base + reg);
->> +}
->> +
->> +static void meson_pcie_assert_reset(struct meson_pcie *mp)
->> +{
->> +	gpiod_set_value_cansleep(mp->reset_gpio, 0);
->> +	udelay(500);
->> +	gpiod_set_value_cansleep(mp->reset_gpio, 1);
->> +}
->> +
->> +static void meson_pcie_init_dw(struct meson_pcie *mp)
->> +{
->> +	u32 val = 0;
->> +
->> +	val = meson_cfg_readl(mp, PCIE_CFG0);
->> +	val |= APP_LTSSM_ENABLE;
->> +	meson_cfg_writel(mp, val, PCIE_CFG0);
->> +
->> +	val = meson_elb_readl(mp, PCIE_PORT_LINK_CTRL_OFF);
->> +	val &= ~LINK_CAPABLE_MASK;
->> +	meson_elb_writel(mp, val, PCIE_PORT_LINK_CTRL_OFF);
->> +
->> +	val = meson_elb_readl(mp, PCIE_PORT_LINK_CTRL_OFF);
->> +	val |= LINK_CAPABLE_X1 | FAST_LINK_MODE;
->> +	meson_elb_writel(mp, val, PCIE_PORT_LINK_CTRL_OFF);
->> +
->> +	val = meson_elb_readl(mp, PCIE_GEN2_CTRL_OFF);
->> +	val &= ~NUM_OF_LANES_MASK;
->> +	meson_elb_writel(mp, val, PCIE_GEN2_CTRL_OFF);
->> +
->> +	val = meson_elb_readl(mp, PCIE_GEN2_CTRL_OFF);
->> +	val |= NUM_OF_LANES_X1 | DIRECT_SPEED_CHANGE;
->> +	meson_elb_writel(mp, val, PCIE_GEN2_CTRL_OFF);
->> +
->> +	meson_elb_writel(mp, 0x0, PCIE_BASE_ADDR0);
->> +	meson_elb_writel(mp, 0x0, PCIE_BASE_ADDR1);
->> +}
->> +
->> +static int meson_size_to_payload(int size)
->> +{
->> +	if (size & (size - 1) || size < 128 || size > 4096)
->> +		return 1;
->> +
->> +	return fls(size) - 8;
->> +}
->> +
->> +static void meson_set_max_payload(struct meson_pcie *mp, int size)
->> +{
->> +	u32 val = 0;
->> +	int max_payload_size = meson_size_to_payload(size);
->> +
->> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
->> +	val &= ~PCIE_CAP_MAX_PAYLOAD_MASK;
->> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
->> +
->> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
->> +	val |= PCIE_CAP_MAX_PAYLOAD_SIZE(max_payload_size);
->> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
->> +}
->> +
->> +static void meson_set_max_rd_req_size(struct meson_pcie *mp, int size)
->> +{
->> +	u32 val = 0;
->> +	int max_rd_req_size = meson_size_to_payload(size);
->> +
->> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
->> +	val &= ~PCIE_CAP_MAX_READ_REQ_MASK;
->> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
->> +
->> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
->> +	val |= PCIE_CAP_MAX_READ_REQ_SIZE(max_rd_req_size);
->> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
->> +}
->> +
->> +static inline void meson_enable_memory_space(struct meson_pcie *mp)
->> +{
->> +	/* Set the RC Bus Master, Memory Space and I/O Space enables */
->> +	meson_elb_writel(mp, PCI_IO_EN | PCI_MEM_SPACE_EN | PCI_BUS_MASTER_EN,
->> +			 PCIE_STATUS_COMMAND);
->> +}
->> +
->> +static int meson_pcie_establish_link(struct meson_pcie *mp)
->> +{
->> +	struct dw_pcie *pci = &mp->pci;
->> +	struct pcie_port *pp = &pci->pp;
->> +
->> +	meson_pcie_init_dw(mp);
->> +	meson_set_max_payload(mp, MAX_PAYLOAD_SIZE);
->> +	meson_set_max_rd_req_size(mp, MAX_READ_REQ_SIZE);
->> +
->> +	dw_pcie_setup_rc(pp);
->> +	meson_enable_memory_space(mp);
->> +
->> +	meson_pcie_assert_reset(mp);
->> +
->> +	/* check if the link is up or not */
->> +	if (!dw_pcie_wait_for_link(pci))
->> +		return 0;
->> +
->> +	return -ETIMEDOUT;
->> +}
->> +
->> +static void meson_pcie_msi_init(struct meson_pcie *mp)
->> +{
->> +	struct pcie_port *pp = &mp->pci.pp;
->> +
->> +	dw_pcie_msi_init(pp);
->> +}
->> +
->> +static void meson_pcie_enable_interrupts(struct meson_pcie *mp)
->> +{
->> +	if (IS_ENABLED(CONFIG_PCI_MSI))
->> +		meson_pcie_msi_init(mp);
->> +}
->> +
->> +static u32 meson_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base,
->> +			       u32 reg, size_t size)
->> +{
->> +	u32 val;
->> +
->> +	dw_pcie_read(base + reg, size, &val);
->> +
->> +	return val;
->> +}
->> +
->> +static void meson_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base,
->> +				 u32 reg, size_t size, u32 val)
->> +{
->> +	dw_pcie_write(base + reg, size, val);
->> +}
->> +
->> +static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
->> +				  u32 *val)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> +	struct meson_pcie *mp = to_meson_pcie(pci);
->> +
->> +	if (!mp->device_attch)
->> +		return 0;
->> +
->> +	/* the device class is not reported correctly from the register */
->> +	if (where == PCI_CLASS_REVISION) {
->> +		*val = readl(pci->dbi_base + PCI_CLASS_REVISION);
->> +		/* keep revision id */
->> +		*val &= PCI_CLASS_REVISION_MASK;
->> +		*val |= PCI_CLASS_BRIDGE_PCI << 16;
->> +		return PCIBIOS_SUCCESSFUL;
->> +	}
->> +
->> +	return dw_pcie_read(pci->dbi_base + where, size, val);
->> +}
->> +
->> +static int meson_pcie_wr_own_conf(struct pcie_port *pp, int where,
->> +				  int size, u32 val)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> +	struct meson_pcie *mp = to_meson_pcie(pci);
->> +
->> +	if (!mp->device_attch)
->> +		return 0;
->> +
->> +	return dw_pcie_write(pci->dbi_base + where, size, val);
->> +}
->> +
->> +static int meson_pcie_link_up(struct dw_pcie *pci)
->> +{
->> +	struct meson_pcie *mp = to_meson_pcie(pci);
->> +	struct device *dev = pci->dev;
->> +	u32 smlh_up = 0;
->> +	u32 ltssm_up = 0;
->> +	u32 rdlh_up = 0;
->> +	u32 speed_okay = 0;
->> +	u32 cnt = 0;
->> +	u32 state12, state17;
->> +
->> +	while (smlh_up == 0 || rdlh_up == 0 || ltssm_up == 0 ||
->> +	       speed_okay == 0) {
->> +		udelay(20);
->> +
->> +		state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
->> +		state17 = meson_cfg_readl(mp, PCIE_CFG_STATUS17);
->> +		smlh_up = IS_SMLH_LINK_UP(state12);
->> +		rdlh_up = IS_RDLH_LINK_UP(state12);
->> +		ltssm_up = IS_LTSSM_UP(state12);
->> +
->> +		if (PM_CURRENT_STATE(state17) < PCIE_GEN3)
->> +			speed_okay = 1;
->> +
->> +		if (smlh_up)
->> +			dev_dbg(dev, "smlh_link_up is on\n");
->> +		if (rdlh_up)
->> +			dev_dbg(dev, "rdlh_link_up is on\n");
->> +		if (ltssm_up)
->> +			dev_dbg(dev, "ltssm_up is on\n");
->> +		if (speed_okay)
->> +			dev_dbg(dev, "speed_okay\n");
->> +
->> +		cnt++;
->> +
->> +		if (cnt >= WAIT_LINKUP_TIMEOUT) {
->> +			dev_err(dev, "Error: Wait linkup timeout.\n");
->> +			return 0;
->> +		}
->> +	}
->> +
->> +	return 1;
->> +}
->> +
->> +static int meson_pcie_host_init(struct pcie_port *pp)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> +	struct meson_pcie *mp = to_meson_pcie(pci);
->> +	int ret;
->> +
->> +	ret = meson_pcie_establish_link(mp);
->> +
->> +	if (ret)
->> +		return ret;
->> +
->> +	mp->device_attch = 1;
->> +	meson_pcie_enable_interrupts(mp);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct dw_pcie_host_ops meson_pcie_host_ops = {
->> +	.rd_own_conf = meson_pcie_rd_own_conf,
->> +	.wr_own_conf = meson_pcie_wr_own_conf,
->> +	.host_init = meson_pcie_host_init,
->> +};
->> +
->> +static int meson_add_pcie_port(struct meson_pcie *mp,
->> +			       struct platform_device *pdev)
->> +{
->> +	struct dw_pcie *pci = &mp->pci;
->> +	struct pcie_port *pp = &pci->pp;
->> +	struct device *dev = &pdev->dev;
->> +	int ret;
->> +
->> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
->> +		pp->msi_irq = platform_get_irq(pdev, 0);
->> +		if (pp->msi_irq < 0) {
->> +			dev_err(dev, "failed to get msi irq\n");
->> +			return pp->msi_irq;
->> +		}
->> +	}
->> +
->> +	pp->root_bus_nr = -1;
->> +	pp->ops = &meson_pcie_host_ops;
->> +	pci->dbi_base = mp->mem_res.elbi_base;
->> +
->> +	ret = dw_pcie_host_init(pp);
->> +	if (ret) {
->> +		dev_err(dev, "failed to initialize host\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct dw_pcie_ops dw_pcie_ops = {
->> +	.read_dbi = meson_pcie_read_dbi,
->> +	.write_dbi = meson_pcie_write_dbi,
->> +	.link_up = meson_pcie_link_up,
->> +};
->> +
->> +static int meson_pcie_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct dw_pcie *pci;
->> +	struct meson_pcie *mp;
->> +	int ret;
->> +
->> +	mp = devm_kzalloc(dev, sizeof(*mp), GFP_KERNEL);
->> +	if (!mp)
->> +		return -ENOMEM;
->> +
->> +	pci = &mp->pci;
->> +	pci->dev = dev;
->> +	pci->ops = &dw_pcie_ops;
->> +
->> +	mp->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
->> +	if (IS_ERR(mp->reset_gpio)) {
->> +		dev_err(dev, "Get reset gpio failed\n");
->> +		return PTR_ERR(mp->reset_gpio);
->> +	}
->> +
->> +	ret = meson_pcie_get_resets(mp);
->> +	if (ret) {
->> +		dev_err(dev, "Get reset resource failed, %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	ret = meson_pcie_get_mems(pdev, mp);
->> +	if (ret) {
->> +		dev_err(dev, "Get memory resource failed, %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	meson_pcie_power_on(mp);
->> +	meson_pcie_reset(mp);
->> +
->> +	ret = meson_pcie_probe_clocks(mp);
->> +	if (ret) {
->> +		dev_err(dev, "Init clock resources failed, %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	platform_set_drvdata(pdev, mp);
->> +
->> +	ret = meson_add_pcie_port(mp, pdev);
->> +	if (ret < 0)
->> +		dev_err(dev, "Add PCIE port failed, %d\n", ret);
->> +
->> +	return ret;
->> +}
->> +
->> +static const struct of_device_id meson_pcie_of_match[] = {
->> +	{
->> +		.compatible = "amlogic,axg-pcie",
->> +	},
->> +	{},
->> +};
->> +
->> +static struct platform_driver meson_pcie_driver = {
->> +	.probe = meson_pcie_probe,
->> +	.driver = {
->> +		.name = "meson-pcie",
->> +		.of_match_table = meson_pcie_of_match,
->> +	},
->> +};
->> +
->> +builtin_platform_driver(meson_pcie_driver);
->>
-> 
-> .
-> 
