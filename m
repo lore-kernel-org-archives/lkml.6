@@ -2,138 +2,142 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA746C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 804A8C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7156820833
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C0FA2064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RScEgiQe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7156820833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F+f/LTpn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C0FA2064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbeIZJbt (ORCPT
+        id S1726440AbeIZJgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 05:31:49 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39867 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726213AbeIZJbs (ORCPT
+        Wed, 26 Sep 2018 05:36:04 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43147 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeIZJgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 05:31:48 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 85-v6so9974693pge.6;
-        Tue, 25 Sep 2018 20:21:04 -0700 (PDT)
+        Wed, 26 Sep 2018 05:36:04 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j26-v6so12615424pfi.10
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 20:25:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=tq1v6y8FRSJfgualfH6XlED5+mcTsMTcFSKmNU7q4IA=;
-        b=RScEgiQe1uTmNsWXAMUE4WliWW40AaMfw5KA7qLuVcm/sUPI/BuffIm0Z9XwXrnexQ
-         FgNdTtKh4uOeRjC+xQUl2o5QI4EtQ8Ey3qdyjzD/WL+aN/c/DdELT8WPweYRx0mlStSJ
-         MSVZeJGOE8Rq+/P49tbRmFInHzBC0stLOqlc2qJbQwPooSttoXy1yJopAhbifuOqHyVx
-         Gwlu7aDVc7IUvPmGxMCEtdIAtEq5hFEt7RSi8XV+sBMhAysgZQFROmpUYMvnzYzNEaP6
-         AIkQZEkHtR8IQZWs5ZAISs3X3VQcb9Uhl9mBynukNvi4Nr1H3eUBG1MiTmECfXCx5FbQ
-         NwfQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=zZBmsP5oO4UuC2hC+KXG/IKvs6WIY2otf7jRBtBAZ8E=;
+        b=F+f/LTpnl8QT+P8uhnkPgBWN+k8ow+V1na64InfTfzwNsPLkO+QEracGOvwAtY7/jU
+         2l1p7u+CvRlBZEkxbeqtpZehWJR4AeHWugZoaKiDfNiNrecOATfAyRR/AC9DT4iuwAA2
+         n6vHKwhUZFvhSLtSswmCUw/cQ3Tpv4J9toHgA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=tq1v6y8FRSJfgualfH6XlED5+mcTsMTcFSKmNU7q4IA=;
-        b=Hpw9DZrE9AMyfFPH4W82anDaxC7C/UtuHjxbouL5TV2xl46Mk1B3VRyezQpD+v5W8i
-         7MSHXMNowg4UYmWBt4alKY18xL8Bnk8KZfTxM6myJWDTCUaQpcq0jNhGo9fNSonNowT/
-         ED/KJpRObtMXEAIFQsdIiBfyKnCfbsg8GMSAqpjhZIJJq5qL2qLjh0MUyGtDuVTx2xyv
-         t/AzS8Gfa3EczwsXvFo6NqQx0qQC5OmIEhb3Rh5QuYW0ft3TdEGYTV8hF1o/yg+7jUAf
-         BgtWDnkNr46OdNktWtsuM15LnWY5+5UByvrtnhzzVpVPTvWf8RGm6u77iUbwcmac/Ier
-         O5tA==
-X-Gm-Message-State: ABuFfojfEoqrcBOZeUyjLVKtqeXrr5x4ZwIbQd2zUuyUZUMHg+kGQ3T5
-        CP0aQvy50OzWShMvdhla5Sw=
-X-Google-Smtp-Source: ACcGV63S97NU9zmdsYrFSeAru55zid8dXhiz0ucSbMtXtTWHIZzyPUZr5NIteU5b+GcdeVs8VKEcsw==
-X-Received: by 2002:a17:902:aa02:: with SMTP id be2-v6mr3924810plb.294.1537932063628;
-        Tue, 25 Sep 2018 20:21:03 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id k26-v6sm5740287pfb.167.2018.09.25.20.21.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 20:21:02 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 20:21:01 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     John David Anglin <dave.anglin@bell.net>
-Cc:     jejb@parisc-linux.org, Helge Deller <deller@gmx.de>,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] parisc: Remove PTE load and fault check from L2_ptep
- macro
-Message-ID: <20180926032101.GA2458@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zZBmsP5oO4UuC2hC+KXG/IKvs6WIY2otf7jRBtBAZ8E=;
+        b=tAvOroxse7eoBo70AvfhwLEpeJwAF+7rEP2+2prUMRbeQwK75ENqSsGJFlFjDl9R28
+         tnX6+AIeNXWp/lrfBHzqS64Z1rg2Cb/0/pvo0YPK4eptkQUVE45YV9t19538OgWtbmLT
+         B1JdkqixIALNF0VDZ/RGDH2bjzQ5tKqojXp4T6ZmQXLeBdEHvWjtT3HRucfMp+XahVcN
+         7J31VPgZsWcLVZGw4QoPLtq1WdA9aGLvzxbXtvQ3NvQPLlwpR6hFAxvFswmUsm+v8jjY
+         Hk+rT6N1Xvlp32003SAH1SBQtV+tEc0Wuj643CA3lCenj+zVzxQRYD91x+9uRY1i66Na
+         DetA==
+X-Gm-Message-State: ABuFfohzQCzmg9GqAoeqVNPTAjfNzreCk+df8bP4om4H8JRaMumTxh8S
+        3M/yX6cV5cnKw14JEyctOujFamrgmYc=
+X-Google-Smtp-Source: ACcGV63yguLyqlvnt4KY2vRi+GlIOk1AqjNXeqp3n03YDL4UrNAGYMVrC62bXcQpHVgBYU7h7W7PzA==
+X-Received: by 2002:a62:5343:: with SMTP id h64-v6mr4041255pfb.226.1537932318541;
+        Tue, 25 Sep 2018 20:25:18 -0700 (PDT)
+Received: from excession.tpe.corp.google.com ([2401:fa00:1:10:199d:5882:860a:4adb])
+        by smtp.gmail.com with ESMTPSA id c80-v6sm4262620pfc.109.2018.09.25.20.25.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Sep 2018 20:25:17 -0700 (PDT)
+From:   Louis Collard <louiscollard@chromium.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        apronin@chromium.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        david.bild@xaptum.com
+Subject: [PATCH] Allow hwrng to initialize crng.
+Date:   Wed, 26 Sep 2018 11:24:55 +0800
+Message-Id: <20180926032455.224600-1-louiscollard@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Some systems, for example embedded systems, do not generate
+enough entropy on boot through interrupts, and boot may be blocked for
+several minutes waiting for a call to getrandom to complete.
 
-On Sun, Sep 23, 2018 at 10:55:18AM -0400, John David Anglin wrote:
-> This change removes the PTE load and present check from the L2_ptep
-> macro.  The load and check for kernel pages is now done in the tlb_lock
-> macro.  This avoids a double load and check for user pages.  The load
-> and check for user pages is now done inside the lock so the fault
-> handler can't be called while the entry is being updated.
-> 
+Currently, random data is read from a hwrng when it is registered,
+and is loaded into primary_crng. This data is treated in the same
+way as data that is device-specific but otherwise unchanging, and
+so primary_crng cannot become initialized with the data from the
+hwrng.
 
-This patch causes my parisc qemu tests to fail.
-Unfortunately I don't have any useful log output; the failure
-is silent. Reverting the patch fixes the problem.
+This change causes the data initially read from the hwrng to be
+treated the same as subsequent data that is read from the hwrng if
+it's quality score is non-zero.
 
-Guenter
+The implications of this are:
 
-> Signed-off-by: John David Anglin <dave.anglin@bell.net>
-> Signed-off-by: Helge Deller <deller@gmx.de>
-> ---
->  arch/parisc/kernel/entry.S | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/parisc/kernel/entry.S b/arch/parisc/kernel/entry.S
-> index eeee1d2c4b8e..3371472379a6 100644
-> --- a/arch/parisc/kernel/entry.S
-> +++ b/arch/parisc/kernel/entry.S
-> @@ -431,8 +431,6 @@
->  	extru		\va,31-PAGE_SHIFT,ASM_BITS_PER_PTE,\index
->  	dep		%r0,31,PAGE_SHIFT,\pmd  /* clear offset */
->  	shladd		\index,BITS_PER_PTE_ENTRY,\pmd,\pmd /* pmd is now pte */
-> -	LDREG		%r0(\pmd),\pte
-> -	bb,>=,n		\pte,_PAGE_PRESENT_BIT,\fault
->  	.endm
->  
->  	/* Look up PTE in a 3-Level scheme.
-> @@ -463,7 +461,7 @@
->  	L2_ptep		\pgd,\pte,\index,\va,\fault
->  	.endm
->  
-> -	/* Acquire pa_tlb_lock lock and recheck page is still present. */
-> +	/* Acquire pa_tlb_lock lock and check page is present. */
->  	.macro		tlb_lock	spc,ptp,pte,tmp,tmp1,fault
->  #ifdef CONFIG_SMP
->  	cmpib,COND(=),n	0,\spc,2f
-> @@ -472,10 +470,12 @@
->  	cmpib,COND(=)	0,\tmp1,1b
->  	nop
->  	LDREG		0(\ptp),\pte
-> -	bb,<,n		\pte,_PAGE_PRESENT_BIT,2f
-> +	bb,<,n		\pte,_PAGE_PRESENT_BIT,3f
->  	b		\fault
->  	stw		 \spc,0(\tmp)
-> -2:
-> +2:	LDREG		0(\ptp),\pte
-> +	bb,>=,n		\pte,_PAGE_PRESENT_BIT,\fault
-> +3:
->  #endif
->  	.endm
->  
-> -- 
-> 2.7.4
+The data read from hwrng can cause primary_crng to become
+initialized, therefore avoiding problems of getrandom blocking
+on boot.
+
+Calls to getrandom (with GRND_RANDOM) may be using entropy
+exclusively (or in practise, almost exclusively) from the hwrng.
+
+Regarding the latter point; this behavior is the same as if a
+user specified a quality score of 1 (bit of entropy per 1024 bits)
+so hopefully this is not too scary a change to make.
+
+This change is the result of the discussion here:
+https://patchwork.kernel.org/patch/10453893/
+
+Signed-off-by: Louis Collard <louiscollard@chromium.org>
+---
+ drivers/char/hw_random/core.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+index aaf9e5afaad4..47f358aa0c3d 100644
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@ -24,6 +24,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <crypto/chacha20.h>
+ 
+ #define RNG_MODULE_NAME		"hw_random"
+ 
+@@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
+ static void add_early_randomness(struct hwrng *rng)
+ {
+ 	int bytes_read;
+-	size_t size = min_t(size_t, 16, rng_buffer_size());
++	/* Read enough to initialize crng. */
++	size_t size = 2*CHACHA20_KEY_SIZE;
+ 
+ 	mutex_lock(&reading_mutex);
+ 	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
+ 	mutex_unlock(&reading_mutex);
+ 	if (bytes_read > 0)
+-		add_device_randomness(rng_buffer, bytes_read);
++		/* Allow crng to become initialized, but do not add
++		 * entropy to the pool.
++		 */
++		add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
+ }
+ 
+ static inline void cleanup_rng(struct kref *kref)
+-- 
+2.13.5
+
