@@ -1,196 +1,326 @@
-Return-Path: <SRS0=TXK2=MH=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D00A7C43382
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC198C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 707B620895
-	for <linux-kernel@archiver.kernel.org>; Tue, 25 Sep 2018 23:54:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 707B620895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D435214AB
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:18:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDHs3QB+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D435214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbeIZGEF (ORCPT
+        id S1726727AbeIZG2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 02:04:05 -0400
-Received: from mail-it1-f198.google.com ([209.85.166.198]:58440 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeIZGEF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 02:04:05 -0400
-Received: by mail-it1-f198.google.com with SMTP id d194-v6so713071itb.8
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 16:54:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ReUU9GMMSiK2fME3/XVbL95NLZOdYumWqCnlQXlyNto=;
-        b=m7/9XfzQRO9/l9hF0JXnMk7Pjh6HsVTQNsDzIW3RdIGsuoJWDfxtNbOprf0KjytXnP
-         EJH02NQ9DGc8GBGiYm8ITrW9ujzMiYIYQWlvLCPe8KuNxlVoJAkwxIb1axfEEGDCn1+5
-         NTQNKKd42ZaxJwRV5vNse+fZUGA2G+oiUDjaL7bk25emnJ+quKRiAv6C+rZYRO8U2cw9
-         vbZF8fvRoPei6ZUoSCHM1BhFML/1khfUenP64x9tS4laG0Fb8tavGbNVyfe3gMz6vRSv
-         3kfqP7kmFSm6n5RaCYFL1UpGZx8IgA4eoAhqif1ZKgC+aYjlcGfA44TAkflQi1f63g4a
-         Qehw==
-X-Gm-Message-State: ABuFfojLFdD0C34D9xwqX+vy8kKbEYy8bsipngkZdD1UPv0a22CJ7X1I
-        pWRkxQ3BBLtWqYMS0bs0PMy1OmSe5CsLfNakOq+vfcY4w7Fj
-X-Google-Smtp-Source: ACcGV6086RNULXp29YLaeTioucknkam1kSiofvrjgODNYSWTAdnUe/98/Pe125ZZRaN21kia2UhnWIKRayyl7G1qaX5bkgKcwAqW
+        Wed, 26 Sep 2018 02:28:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726333AbeIZG2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 02:28:13 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16AC020684;
+        Wed, 26 Sep 2018 00:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537921087;
+        bh=ug14g8xZ58bLEoyKDyrEKKmxNjSaClkPlO24AMZkV6U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XDHs3QB+vyhXO7R34GTEAZXWwJWC+oVvGj/vSlx8MFp+hWfoTVqJkGOEh5zTgeceo
+         gcQnO4dfX5xjbLOS42nGGSeHvSy6asw1ypCqZdP2l7vgLY6wtnBV5rxAiMXCYbB6Jg
+         V5qHbceNVt2DfIjvuc9HPHUB+ESnyoUwmS4y6B/Y=
+Date:   Tue, 25 Sep 2018 17:18:06 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 2/2 v2] f2fs: avoid f2fs_bug_on if
+ f2fs_get_meta_page_nofail got EIO
+Message-ID: <20180926001806.GA3829@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918021805.85032-1-jaegeuk@kernel.org>
+ <20180918021805.85032-2-jaegeuk@kernel.org>
+ <20180918175648.GE91945@jaegeuk-macbookpro.roam.corp.google.com>
+ <9813f294-3e09-ee2d-56f0-6bb476e88a5a@huawei.com>
+ <20180920214656.GE35918@jaegeuk-macbookpro.roam.corp.google.com>
+ <e36d331c-d368-fcc4-fa30-15f503b737d7@huawei.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:4a16:: with SMTP id w22-v6mr2642773iob.132.1537919643439;
- Tue, 25 Sep 2018 16:54:03 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 16:54:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000a5b840576bad225@google.com>
-Subject: KASAN: slab-out-of-bounds Read in tls_write_space
-From:   syzbot <syzbot+12638b747fd208f6cff0@syzkaller.appspotmail.com>
-To:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e36d331c-d368-fcc4-fa30-15f503b737d7@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 09/21, Chao Yu wrote:
+> On 2018/9/21 5:46, Jaegeuk Kim wrote:
+> > On 09/20, Chao Yu wrote:
+> >> On 2018/9/19 1:56, Jaegeuk Kim wrote:
+> >>> This patch avoids BUG_ON when f2fs_get_meta_page_nofail got EIO during
+> >>> xfstests/generic/475.
+> >>>
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> ---
+> >>> Change log from v1:
+> >>>  - propagate errno
+> >>>  - drop sum_pages
+> >>>
+> >>>  fs/f2fs/checkpoint.c | 10 +++++-----
+> >>>  fs/f2fs/f2fs.h       |  2 +-
+> >>>  fs/f2fs/gc.c         |  9 +++++++++
+> >>>  fs/f2fs/node.c       | 32 ++++++++++++++++++++++++--------
+> >>>  fs/f2fs/recovery.c   |  2 ++
+> >>>  fs/f2fs/segment.c    |  3 +++
+> >>>  6 files changed, 44 insertions(+), 14 deletions(-)
+> >>>
+> >>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>> index 01e0d8f5bbbe..1ddf332ce4b2 100644
+> >>> --- a/fs/f2fs/checkpoint.c
+> >>> +++ b/fs/f2fs/checkpoint.c
+> >>> @@ -119,11 +119,8 @@ struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
+> >>>  		if (PTR_ERR(page) == -EIO &&
+> >>>  				++count <= DEFAULT_RETRY_IO_COUNT)
+> >>>  			goto retry;
+> >>> -
+> >>>  		f2fs_stop_checkpoint(sbi, false);
+> >>> -		f2fs_bug_on(sbi, 1);
+> >>>  	}
+> >>> -
+> >>>  	return page;
+> >>>  }
+> >>>  
+> >>> @@ -1512,7 +1509,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	ckpt->checkpoint_ver = cpu_to_le64(++ckpt_ver);
+> >>>  
+> >>>  	/* write cached NAT/SIT entries to NAT/SIT area */
+> >>> -	f2fs_flush_nat_entries(sbi, cpc);
+> >>> +	err = f2fs_flush_nat_entries(sbi, cpc);
+> >>> +	if (err)
+> >>> +		goto stop;
+> >>
+> >> To make sure, if partial NAT pages become dirty, flush them back to device
+> >> outside checkpoint() is not harmful, right?
+> > 
+> > I think so.
+> 
+> Oh, one more case, now we use NAT #0, if partial NAT pages were
+> writebacked, then we start to use NAT #1, later, in another checkpoint(),
+> we update those NAT pages again, we will write them to NAT #0, which is
+> belong to last valid checkpoint(), it's may cause corrupted checkpoint in
+> scenario of SPO. So it's harmfull, right?
 
-syzbot found the following crash on:
+We already stopped checkpoint anymore, so there'd be no way to proceed another
+checkpoint. Am I missing something?
 
-HEAD commit:    bd4d08daeb95 Merge branch 'net-dsa-b53-SGMII-modes-fixes'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=110b6a1a400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e79b9299baeb2298
-dashboard link: https://syzkaller.appspot.com/bug?extid=12638b747fd208f6cff0
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167d9b9e400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c4003a400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+12638b747fd208f6cff0@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
-==================================================================
-BUG: KASAN: slab-out-of-bounds in __swab64p include/uapi/linux/swab.h:192  
-[inline]
-BUG: KASAN: slab-out-of-bounds in __be64_to_cpup  
-include/uapi/linux/byteorder/little_endian.h:74 [inline]
-BUG: KASAN: slab-out-of-bounds in is_tx_ready include/net/tls.h:354 [inline]
-BUG: KASAN: slab-out-of-bounds in tls_write_space+0x29d/0x2d0  
-net/tls/tls_main.c:236
-Read of size 8 at addr ffff8801bc3c9ff0 by task ksoftirqd/1/18
-
-CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.19.0-rc4+ #227
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __swab64p include/uapi/linux/swab.h:192 [inline]
-  __be64_to_cpup include/uapi/linux/byteorder/little_endian.h:74 [inline]
-  is_tx_ready include/net/tls.h:354 [inline]
-  tls_write_space+0x29d/0x2d0 net/tls/tls_main.c:236
-  tcp_new_space net/ipv4/tcp_input.c:5154 [inline]
-  tcp_check_space+0x53f/0x920 net/ipv4/tcp_input.c:5165
-  tcp_data_snd_check net/ipv4/tcp_input.c:5175 [inline]
-  tcp_rcv_established+0xde8/0x2120 net/ipv4/tcp_input.c:5656
-  tcp_v6_do_rcv+0x4b3/0x13c0 net/ipv6/tcp_ipv6.c:1326
-  tcp_v6_rcv+0x2f7a/0x38a0 net/ipv6/tcp_ipv6.c:1555
-  ip6_input_finish+0x3fc/0x1aa0 net/ipv6/ip6_input.c:384
-  NF_HOOK include/linux/netfilter.h:287 [inline]
-  ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:427
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
-  NF_HOOK include/linux/netfilter.h:287 [inline]
-  ipv6_rcv+0x113/0x640 net/ipv6/ip6_input.c:272
-  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4894
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5004
-  process_backlog+0x217/0x760 net/core/dev.c:5808
-  napi_poll net/core/dev.c:6228 [inline]
-  net_rx_action+0x7c5/0x1950 net/core/dev.c:6294
-  __do_softirq+0x30b/0xad8 kernel/softirq.c:292
-  run_ksoftirqd+0x94/0x100 kernel/softirq.c:653
-  smpboot_thread_fn+0x68b/0xa00 kernel/smpboot.c:164
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-
-Allocated by task 3559:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  kernfs_fop_open+0x358/0xf90 fs/kernfs/file.c:648
-  do_dentry_open+0x499/0x1250 fs/open.c:771
-  vfs_open+0xa0/0xd0 fs/open.c:880
-  do_last fs/namei.c:3418 [inline]
-  path_openat+0x12bf/0x5160 fs/namei.c:3534
-  do_filp_open+0x255/0x380 fs/namei.c:3564
-  do_sys_open+0x568/0x700 fs/open.c:1063
-  __do_sys_open fs/open.c:1081 [inline]
-  __se_sys_open fs/open.c:1076 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 3559:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3813
-  kernfs_fop_release+0x12b/0x1a0 fs/kernfs/file.c:783
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801bc3c9c80
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 368 bytes to the right of
-  512-byte region [ffff8801bc3c9c80, ffff8801bc3c9e80)
-The buggy address belongs to the page:
-page:ffffea0006f0f240 count:1 mapcount:0 mapping:ffff8801da800940 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea0006ee1408 ffffea0007619c08 ffff8801da800940
-raw: 0000000000000000 ffff8801bc3c9000 0000000100000006 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801bc3c9e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801bc3c9f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801bc3c9f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                                              ^
-  ffff8801bc3ca000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801bc3ca080: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >>> +
+> >>>  	f2fs_flush_sit_entries(sbi, cpc);
+> >>>  
+> >>>  	/* unlock all the fs_lock[] in do_checkpoint() */
+> >>> @@ -1521,7 +1521,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  		f2fs_release_discard_addrs(sbi);
+> >>>  	else
+> >>>  		f2fs_clear_prefree_segments(sbi, cpc);
+> >>> -
+> >>> +stop:
+> >>>  	unblock_operations(sbi);
+> >>>  	stat_inc_cp_count(sbi->stat_info);
+> >>>  
+> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>> index a0c868127a7c..29021dbc8f2a 100644
+> >>> --- a/fs/f2fs/f2fs.h
+> >>> +++ b/fs/f2fs/f2fs.h
+> >>> @@ -2895,7 +2895,7 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
+> >>>  int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
+> >>>  int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+> >>>  			unsigned int segno, struct f2fs_summary_block *sum);
+> >>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+> >>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+> >>>  int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
+> >>>  void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi);
+> >>>  int __init f2fs_create_node_manager_caches(void);
+> >>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >>> index 4bcc8a59fdef..c7d14282dbf4 100644
+> >>> --- a/fs/f2fs/gc.c
+> >>> +++ b/fs/f2fs/gc.c
+> >>> @@ -1070,6 +1070,15 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> >>>  	/* reference all summary page */
+> >>>  	while (segno < end_segno) {
+> >>>  		sum_page = f2fs_get_sum_page(sbi, segno++);
+> >>> +		if (IS_ERR(sum_page)) {
+> >>> +			end_segno = segno - 1;
+> >>> +			for (segno = start_segno; segno < end_segno; segno++) {
+> >>> +				sum_page = find_get_page(META_MAPPING(sbi),
+> >>> +						GET_SUM_BLOCK(sbi, segno));
+> >>> +				f2fs_put_page(sum_page, 0);
+> >>
+> >> find_get_page() will add one more reference on page, so we need to call
+> >> f2fs_put_page(sum_page, 0) twice.
+> > 
+> > Done.
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>> +			}
+> >>> +			return PTR_ERR(sum_page);
+> >>> +		}
+> >>>  		unlock_page(sum_page);
+> >>>  	}
+> >>>  
+> >>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> >>> index fa2381c0bc47..79b6fee354f7 100644
+> >>> --- a/fs/f2fs/node.c
+> >>> +++ b/fs/f2fs/node.c
+> >>> @@ -126,6 +126,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+> >>>  
+> >>>  	/* get current nat block page with lock */
+> >>>  	src_page = get_current_nat_page(sbi, nid);
+> >>> +	if (IS_ERR(src_page))
+> >>> +		return src_page;
+> >>>  	dst_page = f2fs_grab_meta_page(sbi, dst_off);
+> >>>  	f2fs_bug_on(sbi, PageDirty(src_page));
+> >>>  
+> >>> @@ -2265,15 +2267,19 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+> >>>  						nm_i->nat_block_bitmap)) {
+> >>>  			struct page *page = get_current_nat_page(sbi, nid);
+> >>>  
+> >>> -			ret = scan_nat_page(sbi, page, nid);
+> >>> -			f2fs_put_page(page, 1);
+> >>> +			if (IS_ERR(page)) {
+> >>> +				ret = PTR_ERR(page);
+> >>> +			} else {
+> >>> +				ret = scan_nat_page(sbi, page, nid);
+> >>> +				f2fs_put_page(page, 1);
+> >>> +			}
+> >>>  
+> >>>  			if (ret) {
+> >>>  				up_read(&nm_i->nat_tree_lock);
+> >>>  				f2fs_bug_on(sbi, !mount);
+> >>>  				f2fs_msg(sbi->sb, KERN_ERR,
+> >>>  					"NAT is corrupt, run fsck to fix it");
+> >>> -				return -EINVAL;
+> >>> +				return ret;
+> >>>  			}
+> >>>  		}
+> >>>  
+> >>> @@ -2700,7 +2706,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+> >>>  		__clear_bit_le(nat_index, nm_i->full_nat_bits);
+> >>>  }
+> >>>  
+> >>> -static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>> +static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>  		struct nat_entry_set *set, struct cp_control *cpc)
+> >>>  {
+> >>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >>> @@ -2724,6 +2730,9 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>  		down_write(&curseg->journal_rwsem);
+> >>>  	} else {
+> >>>  		page = get_next_nat_page(sbi, start_nid);
+> >>> +		if (IS_ERR(page))
+> >>> +			return PTR_ERR(page);
+> >>> +
+> >>>  		nat_blk = page_address(page);
+> >>>  		f2fs_bug_on(sbi, !nat_blk);
+> >>>  	}
+> >>> @@ -2769,12 +2778,13 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+> >>>  		kmem_cache_free(nat_entry_set_slab, set);
+> >>>  	}
+> >>> +	return 0;
+> >>>  }
+> >>>  
+> >>>  /*
+> >>>   * This function is called during the checkpointing process.
+> >>>   */
+> >>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  {
+> >>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> >>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >>> @@ -2784,6 +2794,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	unsigned int found;
+> >>>  	nid_t set_idx = 0;
+> >>>  	LIST_HEAD(sets);
+> >>> +	int err = 0;
+> >>>  
+> >>>  	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
+> >>>  	if (enabled_nat_bits(sbi, cpc)) {
+> >>> @@ -2793,7 +2804,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	}
+> >>>  
+> >>>  	if (!nm_i->dirty_nat_cnt)
+> >>> -		return;
+> >>> +		return 0;
+> >>>  
+> >>>  	down_write(&nm_i->nat_tree_lock);
+> >>>  
+> >>> @@ -2816,11 +2827,16 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>  	}
+> >>>  
+> >>>  	/* flush dirty nats in nat entry set */
+> >>> -	list_for_each_entry_safe(set, tmp, &sets, set_list)
+> >>> -		__flush_nat_entry_set(sbi, set, cpc);
+> >>> +	list_for_each_entry_safe(set, tmp, &sets, set_list) {
+> >>> +		err = __flush_nat_entry_set(sbi, set, cpc);
+> >>> +		if (err)
+> >>> +			break;
+> >>> +	}
+> >>>  
+> >>>  	up_write(&nm_i->nat_tree_lock);
+> >>>  	/* Allow dirty nats by node block allocation in write_begin */
+> >>> +
+> >>> +	return err;
+> >>>  }
+> >>>  
+> >>>  static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+> >>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>> index 56d34193a74b..ba678efe7cad 100644
+> >>> --- a/fs/f2fs/recovery.c
+> >>> +++ b/fs/f2fs/recovery.c
+> >>> @@ -355,6 +355,8 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+> >>>  	}
+> >>>  
+> >>>  	sum_page = f2fs_get_sum_page(sbi, segno);
+> >>> +	if (IS_ERR(sum_page))
+> >>> +		return PTR_ERR(sum_page);
+> >>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >>>  	sum = sum_node->entries[blkoff];
+> >>>  	f2fs_put_page(sum_page, 1);
+> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>> index aa96a371aaf8..ab7386a7e9d3 100644
+> >>> --- a/fs/f2fs/segment.c
+> >>> +++ b/fs/f2fs/segment.c
+> >>> @@ -2487,6 +2487,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
+> >>>  	__next_free_blkoff(sbi, curseg, 0);
+> >>>  
+> >>>  	sum_page = f2fs_get_sum_page(sbi, new_segno);
+> >>> +	f2fs_bug_on(sbi, IS_ERR(sum_page));
+> >>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >>>  	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
+> >>>  	f2fs_put_page(sum_page, 1);
+> >>> @@ -3971,6 +3972,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+> >>>  
+> >>>  			se = &sit_i->sentries[start];
+> >>>  			page = get_current_sit_page(sbi, start);
+> >>> +			if (IS_ERR(page))
+> >>> +				return PTR_ERR(page);
+> >>>  			sit_blk = (struct f2fs_sit_block *)page_address(page);
+> >>>  			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+> >>>  			f2fs_put_page(page, 1);
+> >>>
+> > 
+> > .
+> > 
