@@ -2,180 +2,357 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7169C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF265C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A5C214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:19:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SeIwdbHz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A5C214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 88A62214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:20:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A62214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeIZQbi (ORCPT
+        id S1727166AbeIZQcf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:31:38 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47568 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeIZQbi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:31:38 -0400
-Received: from avalon.localnet (nat-242.udc.es [193.144.61.242])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 52883506;
-        Wed, 26 Sep 2018 12:19:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1537957161;
-        bh=k5E+cV8204uiIEFCYOzjnGcTC485ZICWfY/2D0hoj2k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SeIwdbHzks0njkhD/e+Nri654s/p48BjFx8dgFWveGbhUJzMFMDyT37CaXf+eX7ZN
-         N09X3+TH246cY3aScrlT93FvCiLT4gjRjt8+LNFH24r+2cOvWRLAo+tpGlGmod/3Gw
-         WFqbIOe2aXGwYbHXbIH4VYZhR4baIhTFq/BQSZds=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Yong Deng <yong.deng@magewell.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "\"David S. Miller" <davem@davemloft.net>,
+        Wed, 26 Sep 2018 12:32:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbeIZQcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:32:35 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C66883002399;
+        Wed, 26 Sep 2018 10:20:20 +0000 (UTC)
+Received: from [10.36.118.43] (unknown [10.36.118.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 009652010DBA;
+        Wed, 26 Sep 2018 10:20:13 +0000 (UTC)
+Subject: Re: [PATCH v5 10/23] iommu: introduce device fault data
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
-Date:   Wed, 26 Sep 2018 13:19:34 +0300
-Message-ID: <7197338.mhOH8fQaEM@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
-References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi L <yi.l.liu@linux.intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Liu@mail.linuxfoundation.org, Jean Delvare <khali@linux-fr.org>
+References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1526072055-86990-11-git-send-email-jacob.jun.pan@linux.intel.com>
+ <72b3e4d8-de99-11d3-c725-1211fc64b262@redhat.com>
+ <20180921100550.51847a02@jacob-builder>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <1d02837a-d74a-9c34-6211-c8bc4c423672@redhat.com>
+Date:   Wed, 26 Sep 2018 12:20:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180921100550.51847a02@jacob-builder>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 26 Sep 2018 10:20:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yong,
+Hi Jacob,
 
-Thank you for the patch.
-
-On Wednesday, 26 September 2018 11:40:04 EEST Yong Deng wrote:
-> Add binding documentation for Allwinner V3s CSI.
+On 9/21/18 7:05 PM, Jacob Pan wrote:
+> On Fri, 21 Sep 2018 12:07:09 +0200
+> Auger Eric <eric.auger@redhat.com> wrote:
 > 
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> ---
->  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+>> Hi Jacob,
+>>
+>> On 5/11/18 10:54 PM, Jacob Pan wrote:
+>>> Device faults detected by IOMMU can be reported outside IOMMU
+>>> subsystem for further processing. This patch intends to provide
+>>> a generic device fault data such that device drivers can be
+>>> communicated with IOMMU faults without model specific knowledge.
+>>>
+>>> The proposed format is the result of discussion at:
+>>> https://lkml.org/lkml/2017/11/10/291
+>>> Part of the code is based on Jean-Philippe Brucker's patchset
+>>> (https://patchwork.kernel.org/patch/9989315/).
+>>>
+>>> The assumption is that model specific IOMMU driver can filter and
+>>> handle most of the internal faults if the cause is within IOMMU
+>>> driver control. Therefore, the fault reasons can be reported are
+>>> grouped and generalized based common specifications such as PCI ATS.
+>>>
+>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>>> ---
+>>>  include/linux/iommu.h | 101
+>>> +++++++++++++++++++++++++++++++++++++++++++++++++- 1 file changed,
+>>> 99 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>> index e8cadb6..aeadb4f 100644
+>>> --- a/include/linux/iommu.h
+>>> +++ b/include/linux/iommu.h
+>>> @@ -49,13 +49,17 @@ struct bus_type;
+>>>  struct device;
+>>>  struct iommu_domain;
+>>>  struct notifier_block;
+>>> +struct iommu_fault_event;
+>>>  
+>>>  /* iommu fault flags */
+>>> -#define IOMMU_FAULT_READ	0x0
+>>> -#define IOMMU_FAULT_WRITE	0x1
+>>> +#define IOMMU_FAULT_READ		(1 << 0)
+>>> +#define IOMMU_FAULT_WRITE		(1 << 1)
+>>> +#define IOMMU_FAULT_EXEC		(1 << 2)
+>>> +#define IOMMU_FAULT_PRIV		(1 << 3)
+>>>  
+>>>  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
+>>>  			struct device *, unsigned long, int, void
+>>> *); +typedef int (*iommu_dev_fault_handler_t)(struct
+>>> iommu_fault_event *, void *); 
+>>>  struct iommu_domain_geometry {
+>>>  	dma_addr_t aperture_start; /* First address that can be
+>>> mapped    */ @@ -264,6 +268,98 @@ struct iommu_device {
+>>>  	struct device *dev;
+>>>  };
+>>>  
+>>> +/*  Generic fault types, can be expanded IRQ remapping fault */
+>>> +enum iommu_fault_type {
+>>> +	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault
+>>> */
+>>> +	IOMMU_FAULT_PAGE_REQ,		/* page request fault
+>>> */ +};  
+>>
+>> While doing the exercise of mapping the SMMUv3 events to this, I
+>> failed to map some event types to iommu_fault_reason enum values.
+> I am not surprised :), this list is intended to grow as we add support
+> more IOMMU models. I was thinking of these guidelines when adding to
+> this list
+> - model agnostic
+> - needs to be reported outside iommu subsystem
+> - per device identifiable
+May be worth adding in the kernel doc comments.
+device may need to be clarified as end point device?
 > 
-> diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> 100644
-> index 000000000000..2ff47a9507a6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> @@ -0,0 +1,59 @@
-> +Allwinner V3s Camera Sensor Interface
-> +-------------------------------------
-> +
-> +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> +interface and CSI1 is used for parallel interface.
-> +
-> +Required properties:
-> +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> +  - reg: base address and size of the memory-mapped region.
-> +  - interrupts: interrupt associated to this IP
-> +  - clocks: phandles to the clocks feeding the CSI
-> +    * bus: the CSI interface clock
-> +    * mod: the CSI module clock
-> +    * ram: the CSI DRAM clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandles to the reset line driving the CSI
-> +
-> +Each CSI node should contain one 'port' child node with one child
-> 'endpoint' +node, according to the bindings defined in
-> +Documentation/devicetree/bindings/media/video-interfaces.txt. As mentioned
-> +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
-> or
-> +Bt656 for CSI1.
+>>> +
+>>> +enum iommu_fault_reason {
+>>> +	IOMMU_FAULT_REASON_UNKNOWN = 0,
+>>> +
+>>> +	/* IOMMU internal error, no specific reason to report out
+>>> */
+>>> +	IOMMU_FAULT_REASON_INTERNAL,
+>>> +
+>>> +	/* Could not access the PASID table */
+>>> +	IOMMU_FAULT_REASON_PASID_FETCH,  
+>>
+>> Would it be possible to add
+>>  /* could not access the device context (fetch caused external abort)
+>> */ IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH,
+>>
+> sounds reasonable.
+>>> +
+>>> +	/*
+>>> +	 * PASID is out of range (e.g. exceeds the maximum PASID
+>>> +	 * supported by the IOMMU) or disabled.
+>>> +	 */
+>>> +	IOMMU_FAULT_REASON_PASID_INVALID,  
+>> Would it be possible to add
+>> /* source id is out of range */
+>> IOMMU_FAULT_REASON_SOURCEID_INVALID,
+>>
+> hmm, the fault here should be per device. I guess source ID is PCI dev
+> requester ID eqivalent. If the source id is invalid, how could it be
+> reported to the right device in the vIOMMU? Should it be handled by the
+> host IOMMU itself?
+hum you're right. The source id is not under control of the guest so
+this should not be exposed to the guest.
+>> or alike
+>> on ARM the sourceid matches the streamid and pasid matches the
+>> substreamid.
+>>
+>> It would be useful to have:
+>> /* pasid entry is invalid or has configuration errors */
+>> IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
+>>
+>> /* device context entry is invalid or has configuration errors */
+>> IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY,
+>>
+>> This typically allows to return information to the guest about fields
+>> in device context entry or pasid entry that are incorrect, not
+>> matching the physical IOMMU capability
+> Sounds good.
+>>> +
+>>> +	/* Could not access the page directory (Invalid PASID
+>>> entry) */
+>>> +	IOMMU_FAULT_REASON_PGD_FETCH,  
+>> I was unsure about this one. On my side I needed something more
+>> general such as:
+>> /*
+>> * An external abort occurred fetching (or updating) a translation
+>> * table descriptor
+>> */
+>> IOMMU_FAULT_REASON_WALK_EABT,
+>>
+>>> +
+>>> +	/* Could not access the page table entry (Bad address) */
+>>> +	IOMMU_FAULT_REASON_PTE_FETCH,  
+>> I interpreted this one as the actual translation failure but that's
+>> not obvious to me either. Is it a fetch abort or is it that the PTE is
+>> marked invalid. Maybe if we have the former we can just have a
+>> translation fault reason instead.
+> How about these two?
+> IOMMU_FAULT_REASON_TRANSL_TBL
+as long as you confirm the semantic matches the one proposed for above
+IOMMU_FAULT_REASON_WALK_EABT one, that's OK, ie. abort while fetching
+one table base address.
+> IOMMU_FAULT_REASON_TRANSL
+means there is no translation for the input address?
+> 
+>>> +
+>>> +	/* Protection flag check failed */
+>>> +	IOMMU_FAULT_REASON_PERMISSION,  
+>> On ARM we also have:
+>>
+>> /* access flag check failed */
+>> IOMMU_FAULT_REASON_ACCESS,
+>>
+>> and
+>>
+>> /* Output address of a translation stage caused Address Size fault */
+>>  IOMMU_FAULT_REASON_OOR_ADDRESS
+>>
+> is that for nested translation where stage 1 result is invalid for
+> stage 2? I am thinking for any misconfiguration, it should be handled
+> by host iommu driver locally.
+not necessarily. Each level has its own max output size
+level 1 has a max intermediate physical address (configured in the PASID
+entry)
+level 2 has a max PA (configured in the device context entry, host owned
+part).
+While decoding either level, each time you decode an address in an
+intermediate or leaf TT descripror which is outside of the authorized
+output range of this level, this triggers the error.
 
-Nitpicking, BT.656 is parallel as well. We should use BT.601 instead of 
-parallel, to differentiate between embedded sync and external sync. This is a 
-problem in Documentation/devicetree/bindings/media/video-interfaces.txt in the 
-first place, so I won't ask you to modify these bindings. I'll try to submit a 
-patch for video-interfaces.txt.
+I understand a level 1 address size fault may stem from inconsistency
+between guest PASID entry programming (max IPA range) and actual TT content.
 
-> +Endpoint node properties for CSI1
-> +---------------------------------
+For instance PASID entry says you support a 40b IPA output range at
+level1. While decoding level 1 PMD you find next table has an IPA beyond
+40b, this error gets triggered
 
-Should you list the CSI0 properties as well ? As the driver in patch 2/2 
-doesn't support the CSI-2 interface I assume you have left out CSI0 for now, 
-but it should still be listed in the bindings. I'm fine with fixing this as a 
-follow-up patch to avoid missing the v4.20 merge window, but if you end up 
-resubmitting the series, could you please address the problem ?
+Hope it clarifies
 
-With this fixed,
+Thanks
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Eric
 
-> +- remote-endpoint	: (required) a phandle to the bus receiver's endpoint
-> +			   node
-> +- bus-width:		: (required) must be 8, 10, 12 or 16
-> +- pclk-sample		: (optional) (default: sample on falling edge)
-> +- hsync-active		: (only required for parallel)
-> +- vsync-active		: (only required for parallel)
->
-> +Example:
-> +
-> +csi1: csi@1cb4000 {
-> +	compatible = "allwinner,sun8i-v3s-csi";
-> +	reg = <0x01cb4000 0x1000>;
-> +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&ccu CLK_BUS_CSI>,
-> +		 <&ccu CLK_CSI1_SCLK>,
-> +		 <&ccu CLK_DRAM_CSI>;
-> +	clock-names = "bus", "mod", "ram";
-> +	resets = <&ccu RST_BUS_CSI>;
-> +
-> +	port {
-> +		/* Parallel bus endpoint */
-> +		csi1_ep: endpoint {
-> +			remote-endpoint = <&adv7611_ep>;
-> +			bus-width = <16>;
-> +
-> +			/* If hsync-active/vsync-active are missing,
-> +			   embedded BT.656 sync is used */
-> +			hsync-active = <0>; /* Active low */
-> +			vsync-active = <0>; /* Active low */
-> +			pclk-sample = <1>;  /* Rising */
-> +		};
-> +	};
-> +};
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+>> I am aware all those suggestions do not match the original goal of
+>> your series, mostly targeted at SVA support. However in the prospect
+>> to make those APIs as generic as possible it may be useful to take
+>> those requirements as well.
+>>
+>> Hope it does not bring extra noise to the topic ;-)
+>>
+> not at all. appreciate the effort to make it generally useful.
+> 
+>> Thanks
+>>
+>> Eric
+>>
+>>
+>>
+>>
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct iommu_fault_event - Generic per device fault data
+>>> + *
+>>> + * - PCI and non-PCI devices
+>>> + * - Recoverable faults (e.g. page request), information based on
+>>> PCI ATS
+>>> + * and PASID spec.
+>>> + * - Un-recoverable faults of device interest
+>>> + * - DMA remapping and IRQ remapping faults
+>>> +
+>>> + * @type contains fault type.
+>>> + * @reason fault reasons if relevant outside IOMMU driver, IOMMU
+>>> driver internal
+>>> + *         faults are not reported
+>>> + * @addr: tells the offending page address
+>>> + * @pasid: contains process address space ID, used in shared
+>>> virtual memory(SVM)
+>>> + * @page_req_group_id: page request group index
+>>> + * @last_req: last request in a page request group
+>>> + * @pasid_valid: indicates if the PRQ has a valid PASID
+>>> + * @prot: page access protection flag, e.g. IOMMU_FAULT_READ,
+>>> IOMMU_FAULT_WRITE
+>>> + * @device_private: if present, uniquely identify device-specific
+>>> + *                  private data for an individual page request.
+>>> + * @iommu_private: used by the IOMMU driver for storing
+>>> fault-specific
+>>> + *                 data. Users should not modify this field before
+>>> + *                 sending the fault response.
+>>> + */
+>>> +struct iommu_fault_event {
+>>> +	enum iommu_fault_type type;
+>>> +	enum iommu_fault_reason reason;
+>>> +	u64 addr;
+>>> +	u32 pasid;
+>>> +	u32 page_req_group_id;
+>>> +	u32 last_req : 1;
+>>> +	u32 pasid_valid : 1;
+>>> +	u32 prot;
+>>> +	u64 device_private;
+>>> +	u64 iommu_private;
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct iommu_fault_param - per-device IOMMU fault data
+>>> + * @dev_fault_handler: Callback function to handle IOMMU faults at
+>>> device level
+>>> + * @data: handler private data
+>>> + *
+>>> + */
+>>> +struct iommu_fault_param {
+>>> +	iommu_dev_fault_handler_t handler;
+>>> +	void *data;
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct iommu_param - collection of per-device IOMMU data
+>>> + *
+>>> + * @fault_param: IOMMU detected device fault reporting data
+>>> + *
+>>> + * TODO: migrate other per device data pointers under
+>>> iommu_dev_data, e.g.
+>>> + *	struct iommu_group	*iommu_group;
+>>> + *	struct iommu_fwspec	*iommu_fwspec;
+>>> + */
+>>> +struct iommu_param {
+>>> +	struct iommu_fault_param *fault_param;
+>>> +};
+>>> +
+>>>  int  iommu_device_register(struct iommu_device *iommu);
+>>>  void iommu_device_unregister(struct iommu_device *iommu);
+>>>  int  iommu_device_sysfs_add(struct iommu_device *iommu,
+>>> @@ -437,6 +533,7 @@ struct iommu_ops {};
+>>>  struct iommu_group {};
+>>>  struct iommu_fwspec {};
+>>>  struct iommu_device {};
+>>> +struct iommu_fault_param {};
+>>>  
+>>>  static inline bool iommu_present(struct bus_type *bus)
+>>>  {
+>>>   
+> 
+> [Jacob Pan]
+> 
