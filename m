@@ -2,75 +2,65 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EE0C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC48C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A652620676
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:22:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A652620676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 9F18C20684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F18C20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbeIZUfs (ORCPT
+        id S1728081AbeIZUgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:35:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52532 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726768AbeIZUfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:35:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A60E1ACE1;
-        Wed, 26 Sep 2018 14:22:35 +0000 (UTC)
-Date:   Wed, 26 Sep 2018 16:22:32 +0200
-From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     <paulus@samba.org>, <benh@kernel.crashing.org>,
-        <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+        Wed, 26 Sep 2018 16:36:15 -0400
+Received: from mga09.intel.com ([134.134.136.24]:25759 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727555AbeIZUgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:36:15 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:23:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="93893605"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.55])
+  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 07:15:18 -0700
+Date:   Wed, 26 Sep 2018 07:15:19 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Move a dereference below a NULL test
-Message-ID: <20180926162232.250c0090@naga>
-In-Reply-To: <1537962368-14019-1-git-send-email-zhongjiang@huawei.com>
-References: <1537962368-14019-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+Subject: Re: [PATCH v2 5/9] x86/kvm/mmu: get rid of redundant kvm_mmu_setup()
+Message-ID: <20180926141519.GE27433@linux.intel.com>
+References: <20180925175844.20277-1-vkuznets@redhat.com>
+ <20180925175844.20277-6-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925175844.20277-6-vkuznets@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Sep 2018 19:46:08 +0800
-zhong jiang <zhongjiang@huawei.com> wrote:
-
-> It is safe to move dereference below a NULL test.
+On Tue, Sep 25, 2018 at 07:58:40PM +0200, Vitaly Kuznetsov wrote:
+> From: Paolo Bonzini <pbonzini@redhat.com>
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> Just inline the contents into the sole caller, kvm_init_mmu is now
+> public.
+> 
+> Suggested-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 > ---
->  arch/powerpc/kernel/cacheinfo.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/cacheinfo.c
-> b/arch/powerpc/kernel/cacheinfo.c index a8f20e5..7f19714 100644
-> --- a/arch/powerpc/kernel/cacheinfo.c
-> +++ b/arch/powerpc/kernel/cacheinfo.c
-> @@ -401,14 +401,13 @@ static struct cache
-> *cache_lookup_or_instantiate(struct device_node *node, struct cache
-> *cache; 
->  	cache = cache_lookup_by_node(node);
-> +	if (!cache)
-> +		cache = cache_do_one_devnode(node, level);
->  
->  	WARN_ONCE(cache && cache->level != level,
 
-This has also null test so cache should be dereferenced only when
-non-null here.
-
-Thanks
-
-Michal
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
