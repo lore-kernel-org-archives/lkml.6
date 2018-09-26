@@ -2,142 +2,119 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7377C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED71C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC5820684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD9A20684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:06:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xm1hdwKW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC5820684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="mxF7WOw1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD9A20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbeIZRRv (ORCPT
+        id S1727405AbeIZRTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:17:51 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46169 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeIZRRv (ORCPT
+        Wed, 26 Sep 2018 13:19:09 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40668 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeIZRTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:17:51 -0400
-Received: by mail-qt1-f195.google.com with SMTP id h22-v6so8732011qtr.13;
-        Wed, 26 Sep 2018 04:05:25 -0700 (PDT)
+        Wed, 26 Sep 2018 13:19:08 -0400
+Received: by mail-wm1-f67.google.com with SMTP id o2-v6so1823620wmh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 04:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I3vSKdVCJHkmAc7jg91f7YGI97xyY9ca0kofoJteseY=;
-        b=Xm1hdwKWAQAcOPkcOeWSyJSzLAAGl+5ATHyWy5Ldk3RCzkeZk+3yzuuXnSSW/wt5xc
-         CfHlnCyFP1D2kx1PQ+B37yyzQ8dNLqi7Ykj/ScCQsmLRAT/0jKNUWC+tB7Ivzr/cLv7G
-         FGr+ZOfNmKJZvQvtDlMNm39sqkyI86AxKV9VlgE0FUoMKDmrnJdOSNvtkftx5p2w2Wgf
-         9bIB9xgO3+hI+WeVZ2+bvkZ2Bz3q21SSwe1xwqkyrBIW7A63/sILdEAVDHPAJluEzvrY
-         U3mwokjjoj/0wPKFANclNUv1GisYiWdT/6VeTjSb3MmC1vBdn/mgt57alv8lWNfLrWIk
-         2amg==
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=wwz8zBFywIOWO1rrnuqL0Dod0nRCz8DA3b4cZbVIAoI=;
+        b=mxF7WOw1wKgHQvAwaOBLZM9o9eqZ0iovq8UXhuBMSrxT/t8uGjylqebrGbAW3Jwxmt
+         O3K2lDXvRWI7D2whocFg85cCqK0KVc4W8uiMQJFdEtQL8MAoliTHmE6upcXY4FlTOg/x
+         bgf+oHZlTHON9lFQ1EoMDy05n97rRBdVNUQ4W7cblag3NcqDvfPBAH8EO86f/XzIZ9LW
+         /AGsTjDOFqvEXGPTDGZkgbPKHs2TAgAKZyPAxFxpcUoI+W99HgWZ5ZcVQ48yH5KuKKgO
+         AlgHYFqovQ/Pm+jo4Z3pGdsl9m67oFEVCcmA0ukbGlEBlbSr05ytH4GDQrirDQqMeK6F
+         dCsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I3vSKdVCJHkmAc7jg91f7YGI97xyY9ca0kofoJteseY=;
-        b=Z+xre88K/IDPTooRbEY5GNz25CEOckB+YIJExg1GBxXRuGc7YgSuL3Mj6QQ5i5WLRs
-         LJeHNUNvOP8M7843hjJG3Uo/Rfz275s9v5AetopOXQcdBpXUqfE9CZIOy/q7QgIq7fET
-         gfm5V/vE18T5y8STAn8SpNWDjLkvODY1/hrZKeMfmLAQw7DAUzrUZI1sADL4FTjHfVTm
-         GwJo/7lF0KNDtVCeKdJRqE4hxwx25h3DWyJ1eIeCg2VEYifAyA+c1cO1eu5lsNNeeSYN
-         MQRkIfHzLtS5qKSQA6DyKODvhnbPxuhh24rwf/i8v6umWnK8rI8WJJI0ESlYgQkF/VQu
-         KOQA==
-X-Gm-Message-State: ABuFfoii+kzjyjfaZuv6yorfjEgl6pCFoEn6wbZ/SDt3VPlokE2e5DRI
-        bSp2tuTzVR5Pnp3q46JIOepHbdyswpdPaiWBY/c=
-X-Google-Smtp-Source: ACcGV62ChZPuipY8fxdGEMyaKsqxIoHui5Bjif24LowVA+KMepgTGHXZDl4qRiqqdM8Ncnu5SMgGZv+aZxl20cyEQdI=
-X-Received: by 2002:ac8:2759:: with SMTP id h25-v6mr3995115qth.274.1537959925479;
- Wed, 26 Sep 2018 04:05:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180925193418.28493-1-stuart.hayes@dell.com> <CAHp75Ve=ZnkBbdG3Myu1qzubr6+q74Q0u9pR7+nHXG=yAO-0rA@mail.gmail.com>
-In-Reply-To: <CAHp75Ve=ZnkBbdG3Myu1qzubr6+q74Q0u9pR7+nHXG=yAO-0rA@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 14:05:14 +0300
-Message-ID: <CAHp75VcMDXsJWTzrEo+L7aQzaj1oRoUb_Cpc91J22p0wcybOjQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Update and move Dell drivers dell_rbu and dcdbas
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=wwz8zBFywIOWO1rrnuqL0Dod0nRCz8DA3b4cZbVIAoI=;
+        b=g8XcvOp1xxqA+MS9VpqDNSF7+r6Fn4eeqrY+WHi3EFlK3nIDbLV30ygcxAQtcWSmph
+         hjGk20oQGCyGYCV+4n8A3gUIP9epqGJnC3QrqneC3n+OikzjRgy9zvHSwr4mVTB/e79n
+         OdEk5Dk6khvXHyQL3YFHQF9c+Qc1iWL/HjoInqmnPgVBPGozA3nMP04OI0SDx7GTmPKi
+         59+FobEbPmnK1+/NMxHma2RxjxGNEJF9U1T0hZ+L6v3/4n3c6ux8PoYFXavLfpxAeW4Y
+         84Y3/Z6o115sywXVEMh1YxKiRLCw49dKpNrb/b2+zCx5PIVb+ay16Xy8inAV2eEz+0TL
+         BxFA==
+X-Gm-Message-State: ABuFfojcLG4TrrxBX8rbFRQ8ZCdtdFbup9R3q5CbEOu5GGSMGGvbO2Wc
+        u/nABmMC70Vkc1oWq6+FLsyUXhnFdi9rtg==
+X-Google-Smtp-Source: ACcGV62kPoHeVNxYNhyOWkljUiiAnUzzbyjwcYiGqjIMG3lUVYzKVYoabVlVAU7ahColrEx9O/MfRg==
+X-Received: by 2002:a1c:8c08:: with SMTP id o8-v6mr4196975wmd.60.1537960001738;
+        Wed, 26 Sep 2018 04:06:41 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id v6-v6sm4860810wrr.60.2018.09.26.04.06.40
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 26 Sep 2018 04:06:41 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        gregkh@linuxfoundation.org, geert@linux-m68k.org
+Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH] of: base: Fix english spelling in of_alias_get_alias_list()
+Date:   Wed, 26 Sep 2018 13:06:39 +0200
+Message-Id: <b64be28f7705a91fcb84b9c59ca830e057c71d96.1537959997.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 2:04 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Tue, Sep 25, 2018 at 10:34 PM Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
-> >
-> > From: Stuart Hayes <stuart.w.hayes@gmail.com>
-> >
-> > The dell_rbu and dcdbas drivers need some changes, and should be moved to
-> > drivers/platform/x86.  Additionally, dell_rbu needs a maintainer, and the
-> > listed maintainer for dcdbas is inactive and needs to be changed.
->
-> I pushed this series to my review and testing queue to allow bots play with.
->
-> But.
-> Please, add commit messages to patches 4 and 5 (I can't take w/o them).
-> Collect Doug's tag that proves he is okay with the change (I remember
-> he answered something to the old thread, though I don't remember the
-> details except annoying footer which should not be up in open source
-> mailing lists).
+Fix english spelling in of_alias_get_alias_list().
 
-Applying: MAINTAINERS: Update maintainer for dcdbas and dell_rbu
-.git/rebase-apply/patch:14: trailing whitespace.
-M:      Stuart Hayes <stuart.w.hayes@gmail.com>
-warning: 1 line adds whitespace errors.
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
-Fix the above as well.
+Greg: Please apply it on the top of tty-next because patch is going via
+your tree.
 
->
-> So, while bots are playing with the code I'm waiting for v2 of this
-> with above addressed.
-> Thanks!
->
-> >
-> > Stuart Hayes (5):
-> >   firmware: dell_rbu: Make payload memory uncachable
-> >   firmware: dcdbas: Add support for WSMT ACPI table
-> >   firmware: dell_rbu: Move dell_rbu to drivers/platform/x86
-> >   firmware: dcdbas: Move dcdbas to drivers/platform/x86
-> >   MAINTAINERS: Update maintainer for dcdbas and dell_rbu
-> >
-> >  MAINTAINERS                                   |  11 +-
-> >  drivers/firmware/Kconfig                      |  28 ----
-> >  drivers/firmware/Makefile                     |   2 -
-> >  drivers/platform/x86/Kconfig                  |  28 ++++
-> >  drivers/platform/x86/Makefile                 |   2 +
-> >  drivers/{firmware => platform/x86}/dcdbas.c   | 123 +++++++++++++++++-
-> >  drivers/{firmware => platform/x86}/dcdbas.h   |  10 ++
-> >  drivers/platform/x86/dell-smbios-smm.c        |   2 +-
-> >  drivers/{firmware => platform/x86}/dell_rbu.c |   8 ++
-> >  9 files changed, 175 insertions(+), 39 deletions(-)
-> >  rename drivers/{firmware => platform/x86}/dcdbas.c (82%)
-> >  rename drivers/{firmware => platform/x86}/dcdbas.h (93%)
-> >  rename drivers/{firmware => platform/x86}/dell_rbu.c (98%)
-> >
-> > --
-> > 2.19.0.221.g150f307af
-> >
->
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+---
+ drivers/of/base.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
-
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 33011b88ed3f..ffcbb2963ba2 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1948,7 +1948,7 @@ int of_alias_get_id(struct device_node *np, const char *stem)
+  * @matches:	Array of OF device match structures to search in
+  * @stem:	Alias stem of the given device_node
+  * @bitmap:	Bitmap field pointer
+- * @nbits:	Maximum number of alias ID which can be recorded it bitmap
++ * @nbits:	Maximum number of alias IDs which can be recorded it bitmap
+  *
+  * The function travels the lookup table to record alias ids for the given
+  * device match structures and alias stem.
+@@ -1971,7 +1971,7 @@ int of_alias_get_alias_list(const struct of_device_id *matches,
+ 			 __func__, app->stem, app->id);
+ 
+ 		if (strcmp(app->stem, stem) != 0) {
+-			pr_debug("%s: stem comparison doesn't passed %s\n",
++			pr_debug("%s: stem comparison didn't pass %s\n",
+ 				 __func__, app->stem);
+ 			continue;
+ 		}
+@@ -1986,7 +1986,7 @@ int of_alias_get_alias_list(const struct of_device_id *matches,
+ 			pr_debug("%s: Allocated ID %d\n", __func__, app->id);
+ 			set_bit(app->id, bitmap);
+ 		}
+-		/* Alias exist but it not compatible with matches */
++		/* Alias exists but it not compatible with matches */
+ 	}
+ 	mutex_unlock(&of_mutex);
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
+
