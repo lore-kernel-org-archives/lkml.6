@@ -2,110 +2,91 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC96C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1340C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B061520838
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:54:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B061520838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A929020838
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:55:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A929020838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbeIZTHE (ORCPT
+        id S1727987AbeIZTIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:07:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:45470 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbeIZTHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:07:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F072815AD;
-        Wed, 26 Sep 2018 05:54:11 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2A2C93F5B7;
-        Wed, 26 Sep 2018 05:54:08 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 13:54:06 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        npiggin@gmail.com, linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        heiko.carstens@de.ibm.com, riel@surriel.com
-Subject: Re: [PATCH 08/18] arm/tlb: Convert to generic mmu_gather
-Message-ID: <20180926125405.GH2979@brain-police>
-References: <20180926113623.863696043@infradead.org>
- <20180926114800.927066872@infradead.org>
+        Wed, 26 Sep 2018 15:08:24 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:16840 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeIZTIY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 15:08:24 -0400
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="20538995"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 26 Sep 2018 05:55:32 -0700
+Received: from localhost (10.10.76.4) by CHN-SV-EXCH01.mchp-main.com
+ (10.10.76.37) with Microsoft SMTP Server id 14.3.352.0; Wed, 26 Sep 2018
+ 05:55:30 -0700
+Date:   Wed, 26 Sep 2018 14:55:28 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <jslaby@suse.com>,
+        <arnd@arndb.de>, <richard.genoud@gmail.com>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] tty/serial: atmel: add ISO7816 support
+Message-ID: <20180926125528.fmfti62ymod2derb@M43218.corp.atmel.com>
+Mail-Followup-To: Greg KH <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, jslaby@suse.com,
+        arnd@arndb.de, richard.genoud@gmail.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        linux-kernel@vger.kernel.org
+References: <20180906134214.29031-1-ludovic.desroches@microchip.com>
+ <20180906134214.29031-3-ludovic.desroches@microchip.com>
+ <20180918132856.GA14333@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180926114800.927066872@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180918132856.GA14333@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 01:36:31PM +0200, Peter Zijlstra wrote:
-> Generic mmu_gather provides everything that ARM needs:
+On Tue, Sep 18, 2018 at 03:28:56PM +0200, Greg KH wrote:
+> On Thu, Sep 06, 2018 at 03:42:14PM +0200, Ludovic Desroches wrote:
+> > From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > 
+> > When mode is set in atmel_config_iso7816() we backup last RS232 mode
+> > for coming back to this mode if requested.
+> > Also allow setup of T=0 and T=1 parameter and basic support in set_termios
+> > function as well.
+> > 
+> > Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > [ludovic.desroches@microchip.com: rebase, add check on fidi ratio, checkpatch fixes]
+> > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> > Acked-by: Richard Genoud <richard.genoud@gmail.com>
+> > ---
+> >  drivers/tty/serial/atmel_serial.c | 190 +++++++++++++++++++++++++++++++++++---
+> >  drivers/tty/serial/atmel_serial.h |   3 +-
+> >  2 files changed, 181 insertions(+), 12 deletions(-)
 > 
->  - range tracking
->  - RCU table free
->  - VM_EXEC tracking
->  - VIPT cache flushing
+> This doesn't apply to my tree :(
 > 
-> The one notable curiosity is the 'funny' range tracking for classical
-> ARM in __pte_free_tlb().
+
+I am rebasing it on tty-next.
+
+> Also, shouldn't this new ioctl be documented somewhere?
 > 
-> Cc: Nick Piggin <npiggin@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  arch/arm/include/asm/tlb.h |  255 ++-------------------------------------------
->  1 file changed, 14 insertions(+), 241 deletions(-)
 
-[...]
+v5 is coming.
 
->  static inline void
-> -tlb_remove_pmd_tlb_entry(struct mmu_gather *tlb, pmd_t *pmdp, unsigned long addr)
-> +__pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp, unsigned long addr)
->  {
-> -	tlb_add_flush(tlb, addr);
-> -}
-> -
-> -#define pte_free_tlb(tlb, ptep, addr)	__pte_free_tlb(tlb, ptep, addr)
-> -#define pmd_free_tlb(tlb, pmdp, addr)	__pmd_free_tlb(tlb, pmdp, addr)
-> -#define pud_free_tlb(tlb, pudp, addr)	pud_free((tlb)->mm, pudp)
-> -
-> -#define tlb_migrate_finish(mm)		do { } while (0)
-> -
-> -static inline void tlb_change_page_size(struct mmu_gather *tlb,
-> -						     unsigned int page_size)
-> -{
-> -}
-> -
-> -static inline void tlb_flush_remove_tables(struct mm_struct *mm)
-> -{
-> -}
-> +#ifdef CONFIG_ARM_LPAE
-> +	struct page *page = virt_to_page(pmdp);
->  
-> -static inline void tlb_flush_remove_tables_local(void *arg)
-> -{
-> +	pgtable_pmd_page_dtor(page);
+Regards
 
-The dtor() is a NOP for Arm, so I don't think you need too call it (and we
-never call the ctor() afaict). I wonder if should be caring about this on
-arm64...
-
-Other than that:
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-
-Will
+Ludovic
