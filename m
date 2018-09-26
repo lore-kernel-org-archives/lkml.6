@@ -2,315 +2,221 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CD8C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F303FC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30699208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:12:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="duLg/Imo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30699208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 9207D214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:17:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9207D214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbeIZSZe (ORCPT
+        id S1727538AbeIZSaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:25:34 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48451 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728131AbeIZSZA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:25:00 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180926121217euoutp0129e7cca67346be2142ac392cec9cca02~X8g2Cdhr72985529855euoutp01Y;
-        Wed, 26 Sep 2018 12:12:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180926121217euoutp0129e7cca67346be2142ac392cec9cca02~X8g2Cdhr72985529855euoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537963937;
-        bh=2/Z7m7WUc7C3MdpGLYqOQp+M/wvsuhI5WqFMeq1JK/s=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=duLg/ImofGt4SCGqz90/PZBiwl4IvOcGiPBNvnrfXTOqXS6O/rHh0xof7liN9iY6h
-         sIm03CKteois6Ee1ooPd8sb5P48sPY8AgKP0q1Yf3HQ6YfXkB+4uWDZ2OCmWXYYAsK
-         UU4VBXkqHNegEk1Ki++2PDmF6hd5Vc09ImofXLCo=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180926121216eucas1p1f6ecf320f6f4746624bb44c38b38709a~X8g1RsZNR0974609746eucas1p1T;
-        Wed, 26 Sep 2018 12:12:16 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 50.3E.04806.0A77BAB5; Wed, 26
-        Sep 2018 13:12:16 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180926121216eucas1p28c13ab1a21ac5ef5058206b92954604f~X8g0jVjVq1327013270eucas1p2B;
-        Wed, 26 Sep 2018 12:12:16 +0000 (GMT)
-X-AuditID: cbfec7f5-79db79c0000012c6-93-5bab77a022a6
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 44.7D.04284.F977BAB5; Wed, 26
-        Sep 2018 13:12:15 +0100 (BST)
-Received: from AMDC3482.DIGITAL.local ([106.120.51.30]) by
-        eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PFN0028YWK7Q120@eusync4.samsung.com>;
-        Wed, 26 Sep 2018 13:12:15 +0100 (BST)
-From:   Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com, k.lewandowsk@samsung.com,
-        m.slodczyk2@partner.samsung.com
-Subject: [PATCH v2 4/7] arm64: change arm64 probes handler prototype
-Date:   Wed, 26 Sep 2018 14:12:02 +0200
-Message-id: <1537963925-25313-5-git-send-email-m.slodczyk2@partner.samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-reply-to: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7djP87oLyldHG3y6I2PRdW8Hm0XHppms
-        FhtnrGe1eL+sh9Hi6Nm/TBaNn+YyW2x6fI3V4vKuOWwWh6buZbTY07+azWLtkbvsFpcOLGCy
-        aFq2lcVi6/5WRovjvQeYLF5+PMHiIOCxZt4aRo/L1y4ye2xeoeWxaVUnm8e8k4Eem5fUexx8
-        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlfHqQmnBfZuKzb/62RoYPxp1MXJy
-        SAiYSHy/d5Cti5GLQ0hgBaPEn0uvGCGcz4wSry4/YYOpWrqmjxnEFhJYxihxeX0FhP2fUeLK
-        swAQm03AXGL70RYWEFtEwE3iRmMHE8ggZoHLTBKXT3QzgSSEBVwkVrbcYQexWQRUJVpmn2YE
-        sXkF/CW6W+8wQyyTk7h5rhPM5hQIkDg0fQUzyCAJgcdsEps7H7JDFLlIfDz5EapBWOLV8S1Q
-        cRmJzo6DTBB2ucTuEzfZIZpbGCWmNh6ASlhL/Fk1Eew1ZgE+iUnbpgMN4gCK80p0tAlBlHhI
-        fH05iwkSFIsZJeb83MIygVFyASPDKkbx1NLi3PTUYuO81HK94sTc4tK8dL3k/NxNjMAkcPrf
-        8a87GPf9STrEKMDBqMTDy2G7KlqINbGsuDL3EKMEB7OSCC932epoId6UxMqq1KL8+KLSnNTi
-        Q4zSHCxK4rx8WmnRQgLpiSWp2ampBalFMFkmDk6pBsazD+O0Tnm+nb5y4gGH6cfEL/Qv7lB8
-        sKJHWoTF62LvyeOWasUS26dYvdsXNEXnrmHxL434Rk0ph4gpzsYNE2JjJReXChYfWNV5v9+p
-        r+Fd58cbzfMbLlSvCzU1m91bsoNz/a0vAlfOrMmccDRIPvtPXNzFP24lL48lRoc/4fjz2vhw
-        5oeSqQZKLMUZiYZazEXFiQDh30X4/gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsVy+t/xa7rzy1dHG7zZY2PRdW8Hm0XHppms
-        FhtnrGe1eL+sh9Hi6Nm/TBaNn+YyW2x6fI3V4vKuOWwWh6buZbTY07+azWLtkbvsFpcOLGCy
-        aFq2lcVi6/5WRovjvQeYLF5+PMHiIOCxZt4aRo/L1y4ye2xeoeWxaVUnm8e8k4Eem5fUexx8
-        t4fJ4/2+q2wefVtWMXp83iQXwBXFZZOSmpNZllqkb5fAlfHqQmnBfZuKzb/62RoYPxp1MXJy
-        SAiYSCxd08cMYgsJLGGUuDyPqYuRC8huZJLYdL4XLMEmYC6x/WgLC4gtIuAmcaOxA6yIWeAy
-        k8TnBXtZQRLCAi4SK1vusIPYLAKqEi2zTzOC2LwC/hLdrXeYIbbJSdw81wlmcwoESByavgJq
-        s7/ElZMzWSYw8ixgZFjFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGMDbjv3cvIPx0sbgQ4wC
-        HIxKPLwctquihVgTy4orcw8xSnAwK4nwcpetjhbiTUmsrEotyo8vKs1JLT7EKM3BoiTOe96g
-        MkpIID2xJDU7NbUgtQgmy8TBKdXAGH5p99PIjo2r3y4NefWCfxnvetOLU9dJi24+svO1lr2W
-        m4cFx69475qslRfapHzeCk96uUzANHHJ3kczD4g69Z/reBGyeI0e20srb9Ot9Sf38eqkh978
-        x/CTPyHmzTNWXtWCCvsF78zfHH6Xlmx45sqRt+/DLi/dtr6hONpgoUHdAVt2Mc6q6UosxRmJ
-        hlrMRcWJACWAtStcAgAA
-X-CMS-MailID: 20180926121216eucas1p28c13ab1a21ac5ef5058206b92954604f
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180926121216eucas1p28c13ab1a21ac5ef5058206b92954604f
-References: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
-        <CGME20180926121216eucas1p28c13ab1a21ac5ef5058206b92954604f@eucas1p2.samsung.com>
+        Wed, 26 Sep 2018 14:30:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38862 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726342AbeIZSaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 14:30:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2C03EAE61;
+        Wed, 26 Sep 2018 12:17:18 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 14:16:44 +0200
+From:   Cyril Hrubis <chrubis@suse.cz>
+To:     ltp@lists.linux.it, linux-kernel@vger.kernel.org,
+        libc-alpha@sourceware.org
+Cc:     lwn@lwn.net, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org
+Subject: [LTP] [ANNOUNCE] The Linux Test Project has been released for
+ SEPTEMBER 2018
+Message-ID: <20180926121644.GA18865@rei.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A probes_handler_t() handler function prototype differ between ARM32 and
-ARM64 arch subtrees. Make ARM64 prototype the same as ARM32 prototype and
-adjust the ARM64 code to work with the new prototype.
+Good news everyone,
 
-Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
----
- arch/arm64/include/asm/probes.h          |  6 +++++-
- arch/arm64/kernel/probes/kprobes.c       |  2 +-
- arch/arm64/kernel/probes/simulate-insn.c | 32 ++++++++++++++++++++++++--------
- arch/arm64/kernel/probes/simulate-insn.h | 24 ++++++++++++++++--------
- arch/arm64/kernel/probes/uprobes.c       |  3 +--
- 5 files changed, 47 insertions(+), 20 deletions(-)
+the Linux Test Project test suite stable release for *September 2018* has been
+released.
 
-diff --git a/arch/arm64/include/asm/probes.h b/arch/arm64/include/asm/probes.h
-index 6a5b289..1747e9a 100644
---- a/arch/arm64/include/asm/probes.h
-+++ b/arch/arm64/include/asm/probes.h
-@@ -16,7 +16,11 @@
- #define _ARM_PROBES_H
- 
- typedef u32 probe_opcode_t;
--typedef void (probes_handler_t) (u32 opcode, long addr, struct pt_regs *);
-+struct arch_probe_insn;
-+
-+typedef void (probes_handler_t) (u32 opcode,
-+			   struct arch_probe_insn *api,
-+			   struct pt_regs *);
- 
- /* architecture specific copy of original instruction */
- struct arch_probe_insn {
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index e78c3ef..3988967 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -69,7 +69,7 @@ static void __kprobes arch_simulate_insn(struct kprobe *p, struct pt_regs *regs)
- 	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
- 
- 	if (p->ainsn.api.handler)
--		p->ainsn.api.handler((u32)p->opcode, (long)p->addr, regs);
-+		p->ainsn.api.handler((u32)p->opcode, &p->ainsn.api, regs);
- 
- 	/* single step simulated, now go for post processing */
- 	post_kprobe_handler(kcb, regs);
-diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-index be05868..22dc7a7 100644
---- a/arch/arm64/kernel/probes/simulate-insn.c
-+++ b/arch/arm64/kernel/probes/simulate-insn.c
-@@ -92,9 +92,11 @@ static bool __kprobes check_tbnz(u32 opcode, struct pt_regs *regs)
-  * instruction simulation functions
-  */
- void __kprobes
--simulate_adr_adrp(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_adr_adrp(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	long imm, xn, val;
-+	long addr = instruction_pointer(regs);
- 
- 	xn = opcode & 0x1f;
- 	imm = ((opcode >> 3) & 0x1ffffc) | ((opcode >> 29) & 0x3);
-@@ -110,9 +112,11 @@ simulate_adr_adrp(u32 opcode, long addr, struct pt_regs *regs)
- }
- 
- void __kprobes
--simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_b_bl(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	int disp = bbl_displacement(opcode);
-+	long addr = instruction_pointer(regs);
- 
- 	/* Link register is x30 */
- 	if (opcode & (1 << 31))
-@@ -122,9 +126,11 @@ simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs)
- }
- 
- void __kprobes
--simulate_b_cond(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_b_cond(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	int disp = 4;
-+	long addr = instruction_pointer(regs);
- 
- 	if (aarch32_opcode_cond_checks[opcode & 0xf](regs->pstate & 0xffffffff))
- 		disp = bcond_displacement(opcode);
-@@ -133,9 +139,11 @@ simulate_b_cond(u32 opcode, long addr, struct pt_regs *regs)
- }
- 
- void __kprobes
--simulate_br_blr_ret(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_br_blr_ret(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	int xn = (opcode >> 5) & 0x1f;
-+	long addr = instruction_pointer(regs);
- 
- 	/* update pc first in case we're doing a "blr lr" */
- 	instruction_pointer_set(regs, get_x_reg(regs, xn));
-@@ -146,9 +154,11 @@ simulate_br_blr_ret(u32 opcode, long addr, struct pt_regs *regs)
- }
- 
- void __kprobes
--simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_cbz_cbnz(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	int disp = 4;
-+	long addr = instruction_pointer(regs);
- 
- 	if (opcode & (1 << 24)) {
- 		if (check_cbnz(opcode, regs))
-@@ -161,9 +171,11 @@ simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs)
- }
- 
- void __kprobes
--simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_tbz_tbnz(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	int disp = 4;
-+	long addr = instruction_pointer(regs);
- 
- 	if (opcode & (1 << 24)) {
- 		if (check_tbnz(opcode, regs))
-@@ -176,11 +188,13 @@ simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs)
- }
- 
- void __kprobes
--simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_ldr_literal(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	u64 *load_addr;
- 	int xn = opcode & 0x1f;
- 	int disp;
-+	long addr = instruction_pointer(regs);
- 
- 	disp = ldr_displacement(opcode);
- 	load_addr = (u64 *) (addr + disp);
-@@ -194,11 +208,13 @@ simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs)
- }
- 
- void __kprobes
--simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
-+simulate_ldrsw_literal(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs)
- {
- 	s32 *load_addr;
- 	int xn = opcode & 0x1f;
- 	int disp;
-+	long addr = instruction_pointer(regs);
- 
- 	disp = ldr_displacement(opcode);
- 	load_addr = (s32 *) (addr + disp);
-diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
-index 050bde6..31b3840 100644
---- a/arch/arm64/kernel/probes/simulate-insn.h
-+++ b/arch/arm64/kernel/probes/simulate-insn.h
-@@ -16,13 +16,21 @@
- #ifndef _ARM_KERNEL_KPROBES_SIMULATE_INSN_H
- #define _ARM_KERNEL_KPROBES_SIMULATE_INSN_H
- 
--void simulate_adr_adrp(u32 opcode, long addr, struct pt_regs *regs);
--void simulate_b_bl(u32 opcode, long addr, struct pt_regs *regs);
--void simulate_b_cond(u32 opcode, long addr, struct pt_regs *regs);
--void simulate_br_blr_ret(u32 opcode, long addr, struct pt_regs *regs);
--void simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs);
--void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
--void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
--void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
-+void simulate_adr_adrp(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
-+void simulate_b_bl(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
-+void simulate_b_cond(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
-+void simulate_br_blr_ret(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
-+void simulate_cbz_cbnz(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
-+void simulate_tbz_tbnz(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
-+void simulate_ldr_literal(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
-+void simulate_ldrsw_literal(u32 opcode, struct arch_probe_insn *api,
-+		struct pt_regs *regs);
- 
- #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
-diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
-index 636ca01..a83642c 100644
---- a/arch/arm64/kernel/probes/uprobes.c
-+++ b/arch/arm64/kernel/probes/uprobes.c
-@@ -112,10 +112,9 @@ bool arch_uprobe_skip_sstep(struct arch_uprobe *auprobe, struct pt_regs *regs)
- 		return false;
- 
- 	insn = *(probe_opcode_t *)(&auprobe->insn[0]);
--	addr = instruction_pointer(regs);
- 
- 	if (auprobe->api.handler)
--		auprobe->api.handler(insn, addr, regs);
-+		auprobe->api.handler(insn, &auprobe->api, regs);
- 
- 	return true;
- }
+Since the last release 275 patches by 39 authors were merged.
+
+NOTABLE CHANGES
+===============
+
+* New tests
+  - statx tests for:
+    * basic tests
+    * invalid inputs
+    * AT_EMPTY_PATH, AT_SYMLINK_NOFOLLOW
+    * FS_* flags
+    * STATX_ATTR_ENCRYPTED (on ext4)
+    + more is on the way
+  - mlock2
+    * basic tests
+    * invalid inputs
+  - memfd_create
+    * MFD_HUGETLB, MFD_HUGE_2MB, MFD_HUGE_1GB
+  - fgetxattr
+  - fsetxattr
+  - prctl
+    * PR_{SET,GET}_CHILD_SUBREAPER
+  - madvise
+    * MADV_WIPEONFORK, MADV_KEEPONFORK
+
+* New regression tests
+  - mlock203
+     b155b4fde5bd mm: mlock: avoid increase mm->locked_vm on mlock() when already mlock2(,MLOCK_ONFAULT)
+  - execveat
+     355139a8dba4 cap_inode_getsecurity: use d_find_any_alias() instead of d_find_alias()
+  - pcrypt_aead01 aka CVE-2017-18075
+     d76c68109f37 crypto: pcrypt - fix freeing pcrypt instances
+  - shmctl05
+     3f05317d9889 ipc/shm: fix use-after-free of shm file via remap_file_pages()
+  - realpath01 aka cve-2018-1000001
+     fixed by glibc commit 52a713fdd0a3
+  - inotify07
+     d90a10e2444b fsnotify: Fix fsnotify_mark_connector race
+  - fanotify09
+     54a307ba8d3c fanotify: fix logic of events on child
+  - pty02
+     966031f340185 n_tty: fix EXTPROC vs ICANON interaction with TIOCINQ (aka FIONREAD)
+  - migrate_pages03
+     4b0ece6fa016 mm: migrate: fix remove_migration_pte() for ksm pages
+
+* msgctl IPC test were redesigned and rewritten
+
+* ~50 tests were cleaned up and rewritten to the new library API
+
+* Several network helper libraries and tests has been ported into new API
+  (busy poll, DHCP, ipneigh, IPsec, iptables, SCTP, TCP fast open, virt, ...)
+
++ Many fixes all over the place
+
+* Removed code
+  - pounder21 - broken and wasn't compiled by default for years
+
+* What didn't make it to this release
+  - second rewrite and simplification of the fuzzy sync library
+    and this time the user API is much easier to use
+  - rewrite of the mempolicy NUMA tests that should finally solve
+    all race conditions and random failures
+
+TODO LIST AND ISSUE TRACKER
+===========================
+
+As noted in the previous release we started to maintain a LTP TODO list in the
+form GitHub issues, as expected the list is growing:
+
+https://github.com/linux-test-project/ltp/labels/missing%20coverage
+
+But more importantly we are starting to implement testcases based on that list,
+recently we added the fsetxattr, fgetxattr, mlock2, prctl, and statx tests and
+more is about to come in the near future.
+
+We do have also list of reproducers to be turned into testcases:
+
+https://github.com/linux-test-project/ltp/labels/reproducer
+
+Lastly but not least I would like to ask everyone to contribute to these lists.
+If you have a reproducer or notice missing coverage do not hesitate to open an
+issue.
+
+DOWNLOAD AND LINKS
+==================
+
+The latest version of the test-suite contains 3000+ tests for the Linux
+and can be downloaded at:
+
+https://github.com/linux-test-project/ltp/releases/tag/20180926
+
+The project pages as well as GIT repository are hosted on GitHub:
+
+https://github.com/linux-test-project/ltp
+http://linux-test-project.github.io/
+
+If you ever wondered how to write a LTP testcase, don't miss our developer
+documentation at:
+
+https://github.com/linux-test-project/ltp/wiki/C-Test-Case-Tutorial
+https://github.com/linux-test-project/ltp/wiki/Test-Writing-Guidelines
+https://github.com/linux-test-project/ltp/wiki/BuildSystem
+
+Patches, new tests, bugs, comments or questions should go to to our mailing
+list at ltp@lists.linux.it.
+
+
+CREDITS
+=======
+
+Many thanks to the people contributing to this release:
+
+git shortlog -s -e -n 20180515..
+
+    61  Petr Vorel <pvorel@suse.cz>
+    31  Xiao Yang <yangx.jy@cn.fujitsu.com>
+    28  Cyril Hrubis <chrubis@suse.cz>
+    25  Alexey Kodanev <alexey.kodanev@oracle.com>
+    18  Jan Stancek <jstancek@redhat.com>
+    13  Li Wang <liwang@redhat.com>
+     9  Alistair Strachan <astrachan@google.com>
+     9  Jinhui huang <huangjh.jy@cn.fujitsu.com>
+     9  Mylene Josserand <mylene.josserand@bootlin.com>
+     8  Yixin Zhang <yixin.zhang@intel.com>
+     7  Punit Agrawal <punit.agrawal@arm.com>
+     7  Rafael David Tinoco <rafael.tinoco@linaro.org>
+     7  Richard Palethorpe <rpalethorpe@suse.com>
+     5  Jinhui Huang <huangjh.jy@cn.fujitsu.com>
+     4  Sun Lianwen <sunlw.fnst@cn.fujitsu.com>
+     4  vaishnavid <vaishnavi.d@zilogic.com>
+     3  Michael Moese <mmoese@suse.de>
+     3  Sandeep Patil <sspatil@google.com>
+     2  Amir Goldstein <amir73il@gmail.com>
+     2  Eric Biggers <ebiggers@google.com>
+     2  Junchi Chen <junchi.chen@intel.com>
+     2  Kewal Ukunde <kewal@zilogic.com>
+     2  Wang Long <w@laoqinren.net>
+     1  Anton Smorodskyi <asmorodskyi@suse.com>
+     1  Chen Rong <chenr.fnst@cn.fujitsu.com>
+     1  Christian Lanig <clanig@suse.com>
+     1  Eddie.Horng <eddie.horng@mediatek.com>
+     1  Fang Guan <fguan322@gmail.com>
+     1  Fathi Boudra <fathi.boudra@linaro.org>
+     1  Guangwen Feng <fenggw-fnst@cn.fujitsu.com>
+     1  He Zhe <zhe.he@windriver.com>
+     1  Kenneth Magic <kmagic@google.com>
+     1  Po-Hsu Lin <po-hsu.lin@canonical.com>
+     1  Stanislav Kholmanskikh <stanislav.kholmanskikh@oracle.com>
+     1  Vishnu K <vishnu@zilogic.com>
+     1  Yang Shi <yang.shi@linux.alibaba.com>
+     1  xiao yang <yangx.jy@cn.fujitsu.com>
+
+And also thanks to patch reviewers:
+
+git log 20180515.. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
+
+     64 Cyril Hrubis <chrubis@suse.cz>
+     36 Jan Stancek <jstancek@redhat.com>
+     33 Petr Vorel <pvorel@suse.cz>
+     18 Alexey Kodanev <alexey.kodanev@oracle.com>
+     17 Li Wang <liwang@redhat.com>
+      2 Richard Palethorpe <rpalethorpe@suse.de>
+      2 Petr Vorel <petr.vorel@gmail.com>
+      1 Xiao Yang <yangx.jy@cn.fujitsu.com>
+      1 Naresh Kamboju <naresh.kamboju@linaro.org>
+      1 Mimi Zohar <zohar@linux.vnet.ibm.com>
+      1 Jan Kara <jack@suse.cz>
+
 -- 
-2.7.4
-
+Cyril Hrubis
+chrubis@suse.cz
