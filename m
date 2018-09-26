@@ -2,102 +2,178 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E7EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD3BC004D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D83B21546
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AE262156E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 21:32:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S5HP7J/C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D83B21546
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TN+BvyVZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AE262156E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeI0Dp4 (ORCPT
+        id S1727171AbeI0Dri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 23:45:56 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39640 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbeI0Dp4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 23:45:56 -0400
-Received: by mail-oi1-f194.google.com with SMTP id y81-v6so404871oia.6
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fDmMp5ROO1w3cDSGWlW7MThzTA4BjePAwlxq+IdgWX0=;
-        b=S5HP7J/CjmE/azDjx+XAL4fxL9yK4Qp0oimKSWs0bpviQdbAEz+7DhVYBadXde43nZ
-         KlkKDi4Q92dyMQOqUhsfNPaTuU4mUi78mC+zGFTzLhuWL5OPS7JKo+KF8iyaHfS1X6/N
-         wipVQQ5RBZg3MRqFRCo8Hnk11fM0QkXi+xgbSIroW95vT8QuIYPSFSMx5dtaLOX3kh70
-         j8zCBGnwRpoO2uwTvxBPyB0dSJpeTUiPv/7jhhk4fgvbu55NOxDXw/z6l++NwuOwlSdg
-         7EvNxULz2h7XMQwbWfzIsX0ivk/hnPc5i2pqC3eTLmYMRXlFb3T7PJJ8A9UBRtjRe4sj
-         3O7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fDmMp5ROO1w3cDSGWlW7MThzTA4BjePAwlxq+IdgWX0=;
-        b=UadYTXzXmY5MUTV0DSKTXHT+3Lw5fTIIIphBsvRMPqHlDr/vnUTFGV2nFb/c+R0DoL
-         H5Drb18lKqfEI60no/F3u24oq+6n3yaG+we5VW1i8ArME+RMT+UYV+/DIvJXRxFvYvMl
-         I2v3bOwELp7Oad5+VKULoo3aQERWcq7xjT4iSeFBWWjvc0APMJozAeJYdc/F1AL1XSio
-         tQD/dm6zY0BSzzyfjmmFbs+XrVRfhHudHZrbCyEigwBqHumN5vW6jKFJNNBtUW5xjgY2
-         jNZdoZXVtrntEmZg+tUMUEWfFiv5SV+Sv8WavOTXG3OxlGkxdUeWIBA1YFN8wrliGzQf
-         Tqzg==
-X-Gm-Message-State: ABuFfoj4EyyZrtJuuxSyVX3vUBfiopUehV8m4gUC+iR7HjCubXZNwrGR
-        LuVynlC3bYJVgmG0FshO6cxM6yJwJT4BJku/EL+qgg==
-X-Google-Smtp-Source: ACcGV61lcffN3FelUzNZvcjBPA2NyvhTZMwyUdMRhg52Vid3qM/9vWnDt+iLPINPpJRG6nWbx9eEDCTvt3WFwL2x+GQ=
-X-Received: by 2002:aca:4d13:: with SMTP id a19-v6mr1665450oib.205.1537997461339;
- Wed, 26 Sep 2018 14:31:01 -0700 (PDT)
+        Wed, 26 Sep 2018 23:47:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726976AbeI0Dri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 23:47:38 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BB9E21569;
+        Wed, 26 Sep 2018 21:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537997562;
+        bh=6cACsCHTLVS2awC08HNZJIcdJiBibJ+QOXjnDKlOYdM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TN+BvyVZilyCM1sT9UvxV2e59Q95we+l+aSA6nrwhvsb4jloZzy/mehCVXX2bXpMZ
+         +VjWUHQDj83rIdohD3vWJeaSXj6tVf+k/L4+t0FVFQz0WIacqeD4Y0XayshhyBlIkW
+         Chp/YvHFxe3BLDSOE3KvKv1xLQMo3o33jHVCbZwk=
+Date:   Wed, 26 Sep 2018 16:32:41 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+Cc:     linux-scsi@vger.kernel.org, linux-pci@vger.kernel.org,
+        lukas@wunner.de, andy.shevchenko@gmail.com,
+        Sathya.Prakash@broadcom.com, sreekanth.reddy@broadcom.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] mpt3sas: Introduce
+ mpt3sas_base_pci_device_is_available
+Message-ID: <20180926213241.GI28024@bhelgaas-glaptop.roam.corp.google.com>
+References: <1537935759-14754-1-git-send-email-suganath-prabu.subramani@broadcom.com>
+ <1537935759-14754-2-git-send-email-suganath-prabu.subramani@broadcom.com>
 MIME-Version: 1.0
-References: <20180926203446.2004-1-casey.schaufler@intel.com> <20180926203446.2004-3-casey.schaufler@intel.com>
-In-Reply-To: <20180926203446.2004-3-casey.schaufler@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 26 Sep 2018 23:30:35 +0200
-Message-ID: <CAG48ez3_XJYCURiCurDeCousGguGUdPego30j5+UF8FebWxUtA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] Smack: Prepare for PTRACE_MODE_SCHED
-To:     Casey Schaufler <casey.schaufler@intel.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
-        deneen.t.dock@intel.com, kristen@linux.intel.com,
-        Arjan van de Ven <arjan@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537935759-14754-2-git-send-email-suganath-prabu.subramani@broadcom.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 10:35 PM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
-> A ptrace access check with mode PTRACE_MODE_SCHED gets called
-> from process switching code. This precludes the use of audit,
-> as the locking is incompatible. Don't do audit in the PTRACE_MODE_SCHED
-> case.
->
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> ---
->  security/smack/smack_lsm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 340fc30ad85d..ffa95bcab599 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -422,7 +422,8 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
->         struct task_smack *tsp;
->         struct smack_known *tracer_known;
->
-> -       if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
-> +       if ((mode & PTRACE_MODE_NOAUDIT) == 0 &&
-> +           (mode & PTRACE_MODE_SCHED) == 0) {
+[+cc LKML]
 
-If you ORed PTRACE_MODE_NOAUDIT into the flags when calling the
-security hook, you could drop this patch, right?
+On Wed, Sep 26, 2018 at 09:52:34AM +0530, Suganath Prabu S wrote:
+> * Driver uses "pci_device_is_present" to check whether
+> If Hot unplugged:
+> the outstanding IOs with 'DID_NO_CONNECT' before removing the drives
+> attached to the HBA.
+
+This sentence needs a verb.
+
+> "DID_NO_CONNECT" status and free the smid, if driver detects that
+> HBA is hot unplugged.
+
+This sentence also needs a verb.
+
+> * In the hard reset flush out all the outstanding IOs even if diag reset
+> fails and also if driver detects that HBA is hot unplugged.
+> 
+> v1 change set:
+> ==============
+> unlock mutex before goto "out_unlocked",
+> if active reset is in progress.
+> 
+> v2 change set:
+> ==============
+> 1) Use pci_device_is_present instead of
+> mpt3sas_base_pci_device_is_unplugged.
+> 2) As suggested by Lukas, removed using
+> watchdog thread for checking hba hot unplug(Patch 02 of V1).
+> Added Hot unplug checks in scan finish and reset paths.
+> 
+> v3 Change Set:
+> =============
+> Simplified function "mpt3sas_base_pci_device_is_available" and
+> made inline.
+> 
+> v4 Changes:
+> ===========
+> Dont split strings in print statement.
+> 
+> Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+> ---
+>  drivers/scsi/mpt3sas/mpt3sas_base.c  | 39 ++++++++++++++++++++++++++++
+>  drivers/scsi/mpt3sas/mpt3sas_base.h  |  3 ++-
+>  drivers/scsi/mpt3sas/mpt3sas_scsih.c | 50 ++++++++++++++++++++++++++++++++----
+>  3 files changed, 86 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> index 59d7844..c880e72 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_base.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+> @@ -543,6 +543,20 @@ static int mpt3sas_remove_dead_ioc_func(void *arg)
+>  }
+>  
+>  /**
+> + * mpt3sas_base_pci_device_is_available - check whether pci device is
+> + *			available for any transactions with FW
+> + *
+> + * @ioc: per adapter object
+> + *
+> + * Return 1 if pci device state is up and running else return 0.
+> + */
+> +inline bool
+> +mpt3sas_base_pci_device_is_available(struct MPT3SAS_ADAPTER *ioc)
+> +{
+> +	return !ioc->pci_error_recovery && pci_device_is_present(ioc->pdev);
+> +}
+> +
+> +/**
+>   * _base_fault_reset_work - workq handling ioc fault conditions
+>   * @work: input argument, used to derive ioc
+>   *
+> @@ -6122,6 +6136,11 @@ _base_diag_reset(struct MPT3SAS_ADAPTER *ioc)
+>  
+>  	count = 0;
+>  	do {
+> +		if (!pci_device_is_present(ioc->pdev)) {
+> +			ioc->remove_host = 1;
+> +			pr_err(MPT3SAS_FMT "Hba Hot unplugged\n", ioc->name);
+
+You capitalized as "HBA" above.
+
+> +			goto out;
+> +		}
+>  		/* Write magic sequence to WriteSequence register
+>  		 * Loop until in diagnostic mode
+>  		 */
+> @@ -6853,6 +6872,13 @@ mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
+>  
+>  	ioc->pending_io_count = 0;
+>  
+> +	if (!mpt3sas_base_pci_device_is_available(ioc)) {
+> +		pr_err(MPT3SAS_FMT
+> +		    "%s: pci error recovery reset or pci device unplug occurred\n",
+> +		    ioc->name, __func__);
+> +		return;
+> +	}
+> +
+>  	ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
+
+This is a good example of why I don't like pci_device_is_present(): it
+is fundamentally racy and gives a false sense of security.  Here we
+*think* we're making the code safer, but in fact we could have this
+sequence:
+
+  mpt3sas_base_pci_device_is_available()    # returns true
+  # device is removed
+  ioc_state = mpt3sas_base_get_iocstate()
+
+In this case the readl() inside mpt3sas_base_get_iocstate() will
+probably return 0xffffffff data, and we assume that's valid and
+continue on our merry way, pretending that "ioc_state" makes sense
+when it really doesn't.
+
+>  	if ((ioc_state & MPI2_IOC_STATE_MASK) != MPI2_IOC_STATE_OPERATIONAL)
+>  		return;
+
+Bjorn
