@@ -2,131 +2,249 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A764DC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B733C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E2D208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:02:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ddNCHJ5b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E2D208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id DCB422089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 06:04:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB422089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbeIZMOA (ORCPT
+        id S1726944AbeIZMPV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 08:14:00 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:54870 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbeIZMOA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 08:14:00 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B7BF924E08FE;
-        Tue, 25 Sep 2018 23:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1537941765; bh=pxlQm2dZ3Yxt2r9Lftg6++qsyxu3o6OkIiKMvYj1SJI=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=ddNCHJ5bAwpCpk3cyvzx/Ae+aKu7R6Ddpow+cV/PTajcgRfn4Tlx0KoN458VXIWpn
-         x7MXzFKIH0BmQGt8dF7QQoiCPVjmnSlGHUT4SQL4vLchOyuPuwbzl9/jH7ih8gCWTv
-         lPlsw5DsinKAVpteKfoqVaLA1avKg5VcTdnAyfnTGU0SGpNmgcl0KEXa0QxNiK3SnF
-         DGNFvuah2cqx69Y6MQ0OLTSt/Ee15MN9AqyaHHKhQG/zauqUqO1L3a01RuAqixWmrN
-         4JgOGR/tf/fqLQj/7NxTfCtJQRqg2IXsThUG1jDfmdQHu+wO4FisZgotqhZrhuBVZr
-         f8pXES0l6vqYw==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 6894E3494;
-        Tue, 25 Sep 2018 23:02:45 -0700 (PDT)
-Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 25 Sep 2018 23:02:44 -0700
-Received: from AM04WEMBXB.internal.synopsys.com ([fe80::1006:bcdd:1b7:579b])
- by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed,
- 26 Sep 2018 10:02:42 +0400
-From:   Artur Petrosyan <arthur.petrosyan@synopsys.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        Artur Petrosyan <arthur.petrosyan@synopsys.com>
-CC:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        John Youn <John.Youn@synopsys.com>,
-        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
- feature
-Thread-Topic: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
- feature
-Thread-Index: AQHT7ws4O+8B/axYs0CeMD+6l4m0jQ==
-Date:   Wed, 26 Sep 2018 06:02:41 +0000
-Message-ID: <3AD91E696667BF4BA728303C178E8A63532AB864@am04wembxb.internal.synopsys.com>
-References: <1526690943-8211-1-git-send-email-john.stultz@linaro.org>
- <410670D7E743164D87FA6160E7907A5601313531E1@am04wembxa.internal.synopsys.com>
- <CALAqxLVZXs97sryfPaGY5Gq50-FZROgaBADNXXadcyiNhP3EPQ@mail.gmail.com>
- <410670D7E743164D87FA6160E7907A560131356C4E@am04wembxa.internal.synopsys.com>
- <CALAqxLU3sWrgPjFqZ2vK0m8wVThtE1hDsbNq9zRC7ritzyNHmQ@mail.gmail.com>
- <3AD91E696667BF4BA728303C178E8A63532AAF6D@am04wembxb.internal.synopsys.com>
- <CALAqxLXKOG8fxtrDaRLDGhJUfD1-4qc5QU60+ZmB3+9LsW69Lg@mail.gmail.com>
- <3AD91E696667BF4BA728303C178E8A63532AB36A@am04wembxb.internal.synopsys.com>
- <CALAqxLXy0YXNLwFQEUZxSsjFKC9boVcGkt+50XwmVfwKCcqsEw@mail.gmail.com>
- <3AD91E696667BF4BA728303C178E8A63532AB5E5@am04wembxb.internal.synopsys.com>
- <CALAqxLW=jT+oUASGKxcFghfHZEU7LtFJBiBBkmMM1oarKjSBKw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.116.70.210]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 26 Sep 2018 08:15:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbeIZMPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 08:15:20 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C1FB83001747;
+        Wed, 26 Sep 2018 06:04:05 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-101.pek2.redhat.com [10.72.12.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4E418600C3;
+        Wed, 26 Sep 2018 06:03:54 +0000 (UTC)
+Subject: Re: [PATCH 0/4 v7] Support kdump for AMD secure memory
+ encryption(SME)
+From:   lijiang <lijiang@redhat.com>
+To:     kexec@lists.infradead.org, Thomas.Lendacky@amd.com
+References: <20180907081805.368-1-lijiang@redhat.com>
+ <fd8af3af-3b7c-75a6-ad67-b2efe78011fb@amd.com>
+ <bdf6961d-3013-f707-bfc9-c55f0c02aba0@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        joro@8bytes.org, tglx@linutronix.de, mingo@redhat.com,
+        ebiederm@xmission.com, hpa@zytor.com,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>
+Message-ID: <06a211dc-5bd4-b76a-56e5-0f3cf47a03bb@redhat.com>
+Date:   Wed, 26 Sep 2018 14:03:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <bdf6961d-3013-f707-bfc9-c55f0c02aba0@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 26 Sep 2018 06:04:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,=0A=
-=0A=
-On 9/25/2018 21:59, John Stultz wrote:=0A=
-> On Tue, Sep 25, 2018 at 3:04 AM, Artur Petrosyan=0A=
-> <arthur.petrosyan@synopsys.com> wrote:=0A=
->> Just a clarification by this commit "[PATCH] usb: dwc2: Fix HiKey=0A=
->> regression caused by power_down feature"=0A=
->> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__marc.info_-3Fl-3D=
-linux-2Dusb-26m-3D152669095513248-26w-3D2&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWq=
-B0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqrC_D7niMJI&m=3D0lMkv7adFVwkzyaUzD=
-6-pUG0iwg4fd6b1-aHQgbqvSI&s=3Dm8SZvo3J_Za08sMbo-S9EkhoA06YnzEN-SRm-uTPnbg&e=
-=3D=0A=
->>=0A=
->> the power_down is disabled setting "p->power_down =3D false;" in=0A=
->> "dwc2_set_his_params" function.=0A=
->>=0A=
->> Could you please clarify that the testes done for those 3 patches were=
-=0A=
->> done enabling "p->power_down =3D true;" in "dwc2_set_his_params" functio=
-n.=0A=
-> =0A=
-> So if I remove the "power_down =3D true" initialization, USB does not=0A=
-> seem to function.=0A=
-> =0A=
-> If I boot w/ the gadget port removed, the USB host ports do work, but=0A=
-> plugging in the gadget cable results in a bunch of:=0A=
->     dwc2 f72c0000.usb: Waiting for Host Mode, Mode=3DPeripheral=0A=
-> messages.=0A=
-> =0A=
-> If I boot w/ the gadget port plugged in, USB gadget mode doesn't seem=0A=
-> to function at all, and when I remove the gadget cable nothing=0A=
-> happens, it doesn't switch to host mode.=0A=
-> =0A=
-> thanks=0A=
-> -john=0A=
-> =0A=
-=0A=
-Could you please send the dmesg logs for those situations?=0A=
-Also, please specify the version of the kernel that the testes has been =0A=
-done on.=0A=
-=0A=
-Regards,=0A=
-Artur=0A=
-=0A=
+Also cc maintainer and other reviewer. Thanks.
+
+在 2018年09月26日 13:52, lijiang 写道:
+> 在 2018年09月26日 03:10, Lendacky, Thomas 写道:
+>> On 09/07/2018 03:18 AM, Lianbo Jiang wrote:
+>>> When SME is enabled on AMD machine, we also need to support kdump. Because
+>>> the memory is encrypted in the first kernel, we will remap the old memory
+>>> to the kdump kernel for dumping data, and SME is also enabled in the kdump
+>>> kernel, otherwise the old memory can not be decrypted.
+>>>
+>>> For the kdump, it is necessary to distinguish whether the memory is encrypted.
+>>> Furthermore, we should also know which part of the memory is encrypted or
+>>> decrypted. We will appropriately remap the memory according to the specific
+>>> situation in order to tell cpu how to access the memory.
+>>>
+>>> As we know, a page of memory that is marked as encrypted, which will be
+>>> automatically decrypted when read from DRAM, and will also be automatically
+>>> encrypted when written to DRAM. If the old memory is encrypted, we have to
+>>> remap the old memory with the memory encryption mask, which will automatically
+>>> decrypt the old memory when we read those data.
+>>>
+>>> For kdump(SME), there are two cases that doesn't support:
+>>>
+>>>  ----------------------------------------------
+>>> | first-kernel | second-kernel | kdump support |
+>>> |      (mem_encrypt=on|off)    |   (yes|no)    |
+>>> |--------------+---------------+---------------|
+>>> |     on       |     on        |     yes       |
+>>> |     off      |     off       |     yes       |
+>>> |     on       |     off       |     no        |
+>>> |     off      |     on        |     no        |
+>>> |______________|_______________|_______________|
+>>>
+>>> 1. SME is enabled in the first kernel, but SME is disabled in kdump kernel
+>>> In this case, because the old memory is encrypted, we can't decrypt the
+>>> old memory.
+>>>
+>>> 2. SME is disabled in the first kernel, but SME is enabled in kdump kernel
+>>> It is unnecessary to support in this case, because the old memory is
+>>> unencrypted, the old memory can be dumped as usual, we don't need to enable
+>>> SME in kdump kernel. Another, If we must support the scenario, it will
+>>> increase the complexity of the code, we will have to consider how to pass
+>>> the SME flag from the first kernel to the kdump kernel, in order to let the
+>>> kdump kernel know that whether the old memory is encrypted.
+>>>
+>>> There are two methods to pass the SME flag to the kdump kernel. The first
+>>> method is to modify the assembly code, which includes some common code and
+>>> the path is too long. The second method is to use kexec tool, which could
+>>> require the SME flag to be exported in the first kernel by "proc" or "sysfs",
+>>> kexec tools will read the SME flag from "proc" or "sysfs" when we use kexec
+>>> tools to load image, subsequently the SME flag will be saved in boot_params,
+>>> we can properly remap the old memory according to the previously saved SME
+>>> flag. But it is too expensive to do this.
+>>>
+>>> This patches are only for SME kdump, the patches don't support SEV kdump.
+>>
+>> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+>>
+> 
+> Thank you, Tom. I'm very glad that you would like to review my patches, and
+> also gave me some advice to improve these patches.
+> 
+>> Just curious, are you planning to add SEV kdump support after this?
+>>
+> 
+> Yes, we are planning to add SEV kdump support after this.
+> And i also welcome that you would like to review my SEV kdump patch again.
+> 
+>> Also, a question below...
+>>
+>>>
+>>> Test tools:
+>>> makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
+>>> commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
+>>> Note: This patch can only dump vmcore in the case of SME enabled.
+>>>
+>>> crash-7.2.3: https://github.com/crash-utility/crash.git
+>>> commit 001f77a05585 (Fix for Linux 4.19-rc1 and later kernels that contain
+>>>                      kernel commit7290d58095712a89f845e1bca05334796dd49ed2)
+>>>
+>>> kexec-tools-2.0.17: git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
+>>> commit b9de21ef51a7 (kexec: fix for "Unhandled rela relocation: R_X86_64_PLT32" error)
+>>> Note:
+>>> Before you load the kernel and initramfs for kdump, this patch(http://lists.infradead.org/pipermail/kexec/2018-September/021460.html)
+>>> must be merged to kexec-tools, and then the kdump kernel will work well. Because there
+>>> is a patch which is removed based on v6(x86/ioremap: strengthen the logic in early_memremap_pgprot_adjust()
+>>> to adjust encryption mask).
+>>>
+>>> Test environment:
+>>> HP ProLiant DL385Gen10 AMD EPYC 7251
+>>> 8-Core Processor
+>>> 32768 MB memory
+>>> 600 GB disk space
+>>>
+>>> Linux 4.19-rc2:
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>>> commit 57361846b52bc686112da6ca5368d11210796804
+>>>
+>>> Reference:
+>>> AMD64 Architecture Programmer's Manual
+>>> https://support.amd.com/TechDocs/24593.pdf
+>>>
+>>> Changes since v6:
+>>> 1. There is a patch which is removed based on v6.
+>>> (x86/ioremap: strengthen the logic in early_memremap_pgprot_adjust() to adjust encryption mask)
+>>> Dave Young suggests that this patch can be removed and fix the kexec-tools.
+>>> Reference: http://lists.infradead.org/pipermail/kexec/2018-September/021460.html)
+>>> 2. Update the patch log.
+>>>
+>>> Some known issues:
+>>> 1. about SME
+>>> Upstream kernel will hang on HP machine(DL385Gen10 AMD EPYC 7251) when
+>>> we execute the kexec command as follow:
+>>>
+>>> # kexec -l /boot/vmlinuz-4.19.0-rc2+ --initrd=/boot/initramfs-4.19.0-rc2+.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=on rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug nokaslr"
+>>> # kexec -e (or reboot)
+>>>
+>>> But this issue can not be reproduced on speedway machine, and this issue
+>>> is irrelevant to my posted patches.
+>>>
+>>> The kernel log:
+>>> [ 1248.932239] kexec_core: Starting new kernel
+>>> early console in extract_kernel
+>>> input_data: 0x000000087e91c3b4
+>>> input_len: 0x000000000067fcbd
+>>> output: 0x000000087d400000
+>>> output_len: 0x0000000001b6fa90
+>>> kernel_total_size: 0x0000000001a9d000
+>>> trampoline_32bit: 0x0000000000099000
+>>>
+>>> Decompressing Linux...
+>>> Parsing ELF...        [---Here the system will hang]
+>>
+>> Do you know the reason for the hang?  It looks like it is hanging in
+>> parse_elf().  Can you add some debug to parse_elf() to see if the
+>> value of ehdr.e_phnum is valid (maybe it is not a valid value and so
+>> the loop takes forever)?
+>>
+> 
+> Previously, i had loaned a speedway machine, however i could not reproduce this
+> issue on this machine. But on the 'HP ProLiant DL385Gen10' machine, this issue
+> was always reproduced.(btw: the code is the same.)
+> 
+> I'm not sure whether this issue is relate to hardware. I had printed these values,
+> and i remembered that the value of ehdr.e_phum was valid.
+> 
+> Because this issue is only reproduced on DL385Gen10 machine, i decreased the priority
+> of dealing with this issue.
+> 
+> If you also care about this issue, i can create a new email thread to trace this issue.
+> What do you think about this?
+> 
+> Thanks
+> Lianbo
+> 
+>> Thanks,
+>> Tom
+>>
+>>>
+>>>
+>>> Lianbo Jiang (4):
+>>>   x86/ioremap: add a function ioremap_encrypted() to remap kdump old
+>>>     memory
+>>>   kexec: allocate unencrypted control pages for kdump in case SME is
+>>>     enabled
+>>>   amd_iommu: remap the device table of IOMMU with the memory encryption
+>>>     mask for kdump
+>>>   kdump/vmcore: support encrypted old memory with SME enabled
+>>>
+>>>  arch/x86/include/asm/io.h            |  3 ++
+>>>  arch/x86/kernel/Makefile             |  1 +
+>>>  arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++
+>>>  arch/x86/mm/ioremap.c                | 25 ++++++++-----
+>>>  drivers/iommu/amd_iommu_init.c       | 14 ++++++--
+>>>  fs/proc/vmcore.c                     | 21 +++++++----
+>>>  include/linux/crash_dump.h           | 12 +++++++
+>>>  kernel/kexec_core.c                  | 12 +++++++
+>>>  8 files changed, 125 insertions(+), 16 deletions(-)
+>>>  create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
+>>>
+>> _______________________________________________
+>> kexec mailing list
+>> kexec@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/kexec
+>>
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+> 
