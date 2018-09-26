@@ -2,202 +2,155 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B0EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3B2C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C55B2152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:30:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C55B2152F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A48632152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A48632152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbeIZXoS (ORCPT
+        id S1728802AbeIZXoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:44:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45460 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeIZXoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:44:18 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A448ECA1E0;
-        Wed, 26 Sep 2018 17:30:19 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.217])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E0F5A308BDB9;
-        Wed, 26 Sep 2018 17:30:17 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/9] x86/kvm/nVMX: introduce source data cache for kvm_init_shadow_ept_mmu()
-In-Reply-To: <20180926150556.GI27433@linux.intel.com>
-References: <20180925175844.20277-1-vkuznets@redhat.com> <20180925175844.20277-8-vkuznets@redhat.com> <20180926150556.GI27433@linux.intel.com>
-Date:   Wed, 26 Sep 2018 19:30:16 +0200
-Message-ID: <87r2hgnp3r.fsf@vitty.brq.redhat.com>
+        Wed, 26 Sep 2018 19:44:32 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:43102 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727280AbeIZXoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:44:32 -0400
+X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
+   d="scan'208";a="17824474"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Sep 2018 10:30:32 -0700
+Received: from validation1-HP-EliteBook-8540p.mchp-main.com (10.10.76.4) by
+ chn-sv-exch03.mchp-main.com (10.10.76.49) with Microsoft SMTP Server id
+ 14.3.352.0; Wed, 26 Sep 2018 10:30:32 -0700
+From:   Yuiko Oshino <yuiko.oshino@microchip.com>
+To:     <andrew@lunn.ch>, <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <UNGLinuxDriver@microchip.com>
+Subject: [PATCH net] net: phy: micrel: add Microchip KSZ9131 inital driver
+Date:   Wed, 26 Sep 2018 14:22:21 -0400
+Message-ID: <1537986141-22832-1-git-send-email-yuiko.oshino@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 26 Sep 2018 17:30:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sean Christopherson <sean.j.christopherson@intel.com> writes:
+Add support for Microchip Technology KSZ9131 10/100/1000 Ethernet phy
 
-> On Tue, Sep 25, 2018 at 07:58:42PM +0200, Vitaly Kuznetsov wrote:
->> MMU re-initialization is expensive, in particular,
->> update_permission_bitmask() and update_pkru_bitmask() are.
->> 
->> Cache the data used to setup shadow EPT MMU and avoid full re-init when
->> it is unchanged.
->> 
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/include/asm/kvm_host.h | 14 +++++++++
->>  arch/x86/kvm/mmu.c              | 51 ++++++++++++++++++++++++---------
->>  2 files changed, 52 insertions(+), 13 deletions(-)
->> 
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index 1821b0215230..87ddaa1579e7 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -274,7 +274,21 @@ union kvm_mmu_page_role {
->>  };
->>  
->>  union kvm_mmu_extended_role {
->> +/*
->> + * This structure complements kvm_mmu_page_role caching everything needed for
->> + * MMU configuration. If nothing in both these structures changed, MMU
->> + * re-configuration can be skipped. @valid bit is set on first usage so we don't
->> + * treat all-zero structure as valid data.
->> + */
->>  	u32 word;
->> +	struct {
->> +		unsigned int valid:1;
->> +		unsigned int execonly:1;
->> +		unsigned int cr4_pse:1;
->> +		unsigned int cr4_pke:1;
->> +		unsigned int cr4_smap:1;
->> +		unsigned int cr4_smep:1;
->> +	};
->>  };
->>  
->>  union kvm_mmu_role {
->> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
->> index bb1ef0f68f8e..d8611914544a 100644
->> --- a/arch/x86/kvm/mmu.c
->> +++ b/arch/x86/kvm/mmu.c
->> @@ -4708,6 +4708,24 @@ static void paging32E_init_context(struct kvm_vcpu *vcpu,
->>  	paging64_init_context_common(vcpu, context, PT32E_ROOT_LEVEL);
->>  }
->>  
->> +static union kvm_mmu_role
->> +kvm_calc_mmu_role_common(struct kvm_vcpu *vcpu)
->> +{
->> +	union kvm_mmu_role role = {0};
->> +
->> +	role.base.access = ACC_ALL;
->> +	role.base.cr0_wp = is_write_protection(vcpu);
->> +
->> +	role.ext.cr4_smep = kvm_read_cr4_bits(vcpu, X86_CR4_SMEP) != 0;
->> +	role.ext.cr4_smap = kvm_read_cr4_bits(vcpu, X86_CR4_SMAP) != 0;
->> +	role.ext.cr4_pse = !!is_pse(vcpu);
->> +	role.ext.cr4_pke = kvm_read_cr4_bits(vcpu, X86_CR4_PKE) != 0;
->> +
->> +	role.ext.valid = 1;
->> +
->> +	return role;
->> +}
->> +
->>  static union kvm_mmu_page_role
->>  kvm_calc_tdp_mmu_root_page_role(struct kvm_vcpu *vcpu)
->>  {
->> @@ -4814,16 +4832,18 @@ void kvm_init_shadow_mmu(struct kvm_vcpu *vcpu)
->>  }
->>  EXPORT_SYMBOL_GPL(kvm_init_shadow_mmu);
->>  
->> -static union kvm_mmu_page_role
->> -kvm_calc_shadow_ept_root_page_role(struct kvm_vcpu *vcpu, bool accessed_dirty)
->> +static union kvm_mmu_role
->> +kvm_calc_shadow_ept_root_page_role(struct kvm_vcpu *vcpu, bool accessed_dirty,
->> +				   bool execonly)
->>  {
->> -	union kvm_mmu_page_role role = vcpu->arch.mmu->mmu_role.base;
->> +	union kvm_mmu_role role = kvm_calc_mmu_role_common(vcpu);
->
-> kvm_calc_mmu_role_common() doesn't preserve the current mmu_role.base
-> and kvm_calc_mmu_role_common() doesn't capture all base fields.  Won't
-> @role will be incorrect for base fields that aren't set below, e.g.
-> cr4_pae, smep_andnot_wp, smap_andnot_wp, etc...
+Signed-off-by: Yuiko Oshino <yuiko.oshino@microchip.com>
+---
+ drivers/net/phy/micrel.c   | 32 +++++++++++++++++++++++++++++---
+ include/linux/micrel_phy.h |  1 +
+ 2 files changed, 30 insertions(+), 3 deletions(-)
 
-Oh, I see what you mean. Actually, PATCH8 of this series adds some of
-this stuff but smep_andnot_wp and smap_andnot_wp are still not set. I
-think I'll enhance kvm_calc_mmu_role_common() and move some stuff from
-PATCH8 to this one.
-(The fact that @role is currently not fully re-initialized here is very
-unobvious so I would definitely prefer to explicitly initialize
-everything over inheriting something from previously initialized role).
-
-Thanks!
-
->
->>  
->> -	role.level = PT64_ROOT_4LEVEL;
->> -	role.direct = false;
->> -	role.ad_disabled = !accessed_dirty;
->> -	role.guest_mode = true;
->> -	role.access = ACC_ALL;
->> +	role.base.level = PT64_ROOT_4LEVEL;
->> +	role.base.direct = false;
->> +	role.base.ad_disabled = !accessed_dirty;
->> +	role.base.guest_mode = true;
->> +
->> +	role.ext.execonly = execonly;
->>  
->>  	return role;
->>  }
->> @@ -4832,10 +4852,16 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
->>  			     bool accessed_dirty, gpa_t new_eptp)
->>  {
->>  	struct kvm_mmu *context = vcpu->arch.mmu;
->> -	union kvm_mmu_page_role root_page_role =
->> -		kvm_calc_shadow_ept_root_page_role(vcpu, accessed_dirty);
->> +	union kvm_mmu_role new_role =
->> +		kvm_calc_shadow_ept_root_page_role(vcpu, accessed_dirty,
->> +						   execonly);
->> +
->> +	__kvm_mmu_new_cr3(vcpu, new_eptp, new_role.base, false);
->> +
->> +	new_role.base.word &= mmu_base_role_mask.word;
->> +	if (new_role.as_u64 == context->mmu_role.as_u64)
->> +		return;
->>  
->> -	__kvm_mmu_new_cr3(vcpu, new_eptp, root_page_role, false);
->>  	context->shadow_root_level = PT64_ROOT_4LEVEL;
->>  
->>  	context->nx = true;
->> @@ -4847,8 +4873,7 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
->>  	context->update_pte = ept_update_pte;
->>  	context->root_level = PT64_ROOT_4LEVEL;
->>  	context->direct_map = false;
->> -	context->mmu_role.base.word =
->> -		root_page_role.word & mmu_base_role_mask.word;
->> +	context->mmu_role.as_u64 = new_role.as_u64;
->>  	context->get_pdptr = kvm_pdptr_read;
->>  
->>  	update_permission_bitmask(vcpu, context, true);
->> -- 
->> 2.17.1
->> 
-
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 3db06b4..a4473cb 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -14,7 +14,7 @@
+  * option) any later version.
+  *
+  * Support : Micrel Phys:
+- *		Giga phys: ksz9021, ksz9031
++ *		Giga phys: ksz9021, ksz9031, ksz9131
+  *		100/10 Phys : ksz8001, ksz8721, ksz8737, ksz8041
+  *			   ksz8021, ksz8031, ksz8051,
+  *			   ksz8081, ksz8091,
+@@ -425,6 +425,7 @@ static int ksz9021_config_init(struct phy_device *phydev)
+ #define MII_KSZ9031RN_MMD_REGDATA_REG	0x0e
+ #define OP_DATA				1
+ #define KSZ9031_PS_TO_REG		60
++#define KSZ9131_PS_TO_REG		100
+ 
+ /* Extended registers */
+ /* MMD Address 0x0 */
+@@ -470,6 +471,10 @@ static int ksz9031_of_load_skew_values(struct phy_device *phydev,
+ 	u16 maxval;
+ 	u16 newval;
+ 	int i;
++	int pstoreg = KSZ9031_PS_TO_REG;
++
++	if (phydev->drv->phy_id == PHY_ID_KSZ9131)
++		pstoreg = KSZ9131_PS_TO_REG;
+ 
+ 	for (i = 0; i < numfields; i++)
+ 		if (!of_property_read_u32(of_node, field[i], val + i))
+@@ -489,7 +494,7 @@ static int ksz9031_of_load_skew_values(struct phy_device *phydev,
+ 			mask = 0xffff;
+ 			mask ^= maxval << (field_sz * i);
+ 			newval = (newval & mask) |
+-				(((val[i] / KSZ9031_PS_TO_REG) & maxval)
++				(((val[i] / pstoreg) & maxval)
+ 					<< (field_sz * i));
+ 		}
+ 
+@@ -602,7 +607,10 @@ static int ksz9031_config_init(struct phy_device *phydev)
+ 		}
+ 	}
+ 
+-	return ksz9031_center_flp_timing(phydev);
++	if (phydev->drv->phy_id == PHY_ID_KSZ9031)
++		return ksz9031_center_flp_timing(phydev);
++	else
++		return 0;
+ 
+ err_force_master:
+ 	phydev_err(phydev, "failed to force the phy to master mode\n");
+@@ -975,6 +983,23 @@ static struct phy_driver ksphy_driver[] = {
+ 	.suspend	= genphy_suspend,
+ 	.resume		= kszphy_resume,
+ }, {
++	.phy_id		= PHY_ID_KSZ9131,
++	.phy_id_mask	= MICREL_PHY_ID_MASK,
++	.name		= "Microchip KSZ9131 Gigabit PHY",
++	.features	= PHY_GBIT_FEATURES,
++	.flags		= PHY_HAS_INTERRUPT,
++	.driver_data	= &ksz9021_type,
++	.probe		= kszphy_probe,
++	.config_init	= ksz9031_config_init,
++	.read_status	= ksz9031_read_status,
++	.ack_interrupt	= kszphy_ack_interrupt,
++	.config_intr	= kszphy_config_intr,
++	.get_sset_count = kszphy_get_sset_count,
++	.get_strings	= kszphy_get_strings,
++	.get_stats	= kszphy_get_stats,
++	.suspend	= genphy_suspend,
++	.resume		= kszphy_resume,
++}, {
+ 	.phy_id		= PHY_ID_KSZ8873MLL,
+ 	.phy_id_mask	= MICREL_PHY_ID_MASK,
+ 	.name		= "Micrel KSZ8873MLL Switch",
+@@ -1022,6 +1047,7 @@ MODULE_LICENSE("GPL");
+ static struct mdio_device_id __maybe_unused micrel_tbl[] = {
+ 	{ PHY_ID_KSZ9021, 0x000ffffe },
+ 	{ PHY_ID_KSZ9031, MICREL_PHY_ID_MASK },
++	{ PHY_ID_KSZ9131, MICREL_PHY_ID_MASK },
+ 	{ PHY_ID_KSZ8001, 0x00fffffc },
+ 	{ PHY_ID_KS8737, MICREL_PHY_ID_MASK },
+ 	{ PHY_ID_KSZ8021, 0x00ffffff },
+diff --git a/include/linux/micrel_phy.h b/include/linux/micrel_phy.h
+index 472fa4d..7361cd3 100644
+--- a/include/linux/micrel_phy.h
++++ b/include/linux/micrel_phy.h
+@@ -31,6 +31,7 @@
+ #define PHY_ID_KSZ8081		0x00221560
+ #define PHY_ID_KSZ8061		0x00221570
+ #define PHY_ID_KSZ9031		0x00221620
++#define PHY_ID_KSZ9131		0x00221640
+ 
+ #define PHY_ID_KSZ886X		0x00221430
+ #define PHY_ID_KSZ8863		0x00221435
 -- 
-Vitaly
+2.7.4
+
