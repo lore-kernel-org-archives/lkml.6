@@ -2,101 +2,115 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3C3C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07F0C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B2420843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 994E220843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:37:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zs5rjHGb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B2420843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsPkd9rv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 994E220843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbeIZUto (ORCPT
+        id S1727622AbeIZUvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:49:44 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:46322 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727048AbeIZUto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:49:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=4lNDk2Damm3eF7pXdfWI+NlmCC5OyVOA7lyOShtZc+k=;
-        b=zs5rjHGbI//5YVaa+EFPY1qGdMibaJ3qY6XwjHW7aBCIEiYHKEX0HdI+klCvqoDWKkuMaT5ECISpgOP2BSX0qC9VU2PHYUW7km3aVmlIa8ghrC3wjA+NVzxqjEAnzQ1KToJqT28AZ9gtrgiXlIKE2ytr3w3nO4nYWDojK8iWvlM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1g5AvG-0008IT-60; Wed, 26 Sep 2018 16:36:14 +0200
-Date:   Wed, 26 Sep 2018 16:36:14 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64
- implementations
-Message-ID: <20180926143614.GL1676@lunn.ch>
-References: <20180925145622.29959-1-Jason@zx2c4.com>
- <20180925145622.29959-8-Jason@zx2c4.com>
- <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
- <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
+        Wed, 26 Sep 2018 16:51:08 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37065 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbeIZUvH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:51:07 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e15-v6so2109839edr.4;
+        Wed, 26 Sep 2018 07:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eujZo+iPsc3p1wxSXjlMjH8RwKx+Rf4KvBqVfOImDOo=;
+        b=JsPkd9rv88dJtZJksokx6TkVRjBwyZNULiK3aNJUXDWeFaOUTGO40iM+3vPnbntW9Y
+         SEibZrIppuF7LDeBjTDQZHMHihsEk+N2gYyrdI0tO69/e7GVsYZLvaDkp3T9SI+nboXb
+         f8gPa1MabJxdwUcAr3IwA5h5SFBTdNFwzkf9En7L4/Gai4KI6kQRTw6kV0h7DR7wyoI7
+         0dtXHFw/RH3dpPKSEBiOvyrU6IgHIZootl8texLbnPLI6Fdao9pnXak6QDJJJL2S3OLV
+         yHv41Km/UorFv2ZuAqDVMPJ3E20Ynv6cILWVrEDigneIPEBNzjphkW/O5AUjjR92H5bb
+         OuWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eujZo+iPsc3p1wxSXjlMjH8RwKx+Rf4KvBqVfOImDOo=;
+        b=OYBs0/w5RIjSuDK9OXLGLIHIBn5Us+p1xhOHkvZa6EsS+EtiqLcjH8l7vJG/UsBO+w
+         czGMU4ITCRxMiKfgc0KpTAEudK6YiqkuqZR7jMFHbK9J16MfzvfILixmuVOJ/SY0Dx42
+         K2lxrAWSl5MUSgYWFxLUxOt5rXugXdgrM64Vdo4UXH/p227tp6Oph3VYwB3GNWnZ9WMS
+         fqIEUnzyf3C5q7IpJVcZLoYIUoQVnonnca3A5Co0mWOuRVT5nTcJR3X0v0Z66ZQ7O66D
+         gV23Tlhg2v5TP92ehwlL3gliZj8U+VwZnakg7Y+Z3Z0gKlZt2RU5Iw5spzQT11n+r9bC
+         37UA==
+X-Gm-Message-State: ABuFfoj2G8EM7AhnmmosyDOOuYIdrFa31916/tkRaTjwasP8f1ZFGIl1
+        MLF4kz/99kVR9M4tImACmpYoIRNgk4QZoYDaF7w=
+X-Google-Smtp-Source: ACcGV63tq0nehJHCMGsF5InDDW0DEgP4Sax0Yba8Y3qAE4qh0g/knB9PIqEqmZLmQHqJuXSy5rKRFj2/H+65xuliyJE=
+X-Received: by 2002:a17:906:f28d:: with SMTP id gu13-v6mr816869ejb.2.1537972670712;
+ Wed, 26 Sep 2018 07:37:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180925203701.13605-1-dangtranhieu2012@gmail.com>
+ <20180925203701.13605-2-dangtranhieu2012@gmail.com> <CABGGiszY6+UDwzfuS6ob0C1zcGL4DfhcZ_iYjUGSXwWcbjPYRg@mail.gmail.com>
+In-Reply-To: <CABGGiszY6+UDwzfuS6ob0C1zcGL4DfhcZ_iYjUGSXwWcbjPYRg@mail.gmail.com>
+From:   =?UTF-8?B?xJDhurduZyBUcuG6p24gSGnhur91?= 
+        <dangtranhieu2012@gmail.com>
+Date:   Wed, 26 Sep 2018 21:37:39 +0700
+Message-ID: <CAAObPoHOEYrDj8uoFK-gW8jvy8i-vtRhTkEEm5aVNn8ucLxRMg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: fsl-lpspi: Option to allow stalling
+To:     robh@kernel.org
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Also, this still has unbounded worst case scheduling latency, given
-> > that the outer library function passes its entire input straight into
-> > the NEON routine.
-> 
-> The vast majority of crypto routines in arch/*/crypto/ follow this
-> same exact pattern, actually. I realize a few don't -- probably the
-> ones you had a hand in :) -- but I think this is up to the caller to
-> handle. I made a change so that in chacha20poly1305.c, it calls
-> simd_relax after handling each scatter-gather element, so a
-> "construction" will handle this gracefully. But I believe it's up to
-> the caller to decide on what sizes of information it wants to pass to
-> primitives. Put differently, this also hasn't ever been an issue
-> before -- the existing state of the tree indicates this -- and so I
-> don't anticipate this will be a real issue now. And if it becomes one,
-> this is something we can address *later*, but certainly there's no use
-> of adding additional complexity to the initial patchset to do this
-> now.
+>
+> DT bindings should be sent to DT list.
+>
 
-Hi Jason
+DT bindings already sent to DT list, included here for completeness
+sake. Of course, this is my first patch to the kernel so I might have
+completely been wrong about the process. I can create another patch
+set to send to correct list if necessary.
 
-This is not my area of expertise, so you should verify what i'm say
-here...
+> On Tue, Sep 25, 2018 at 3:37 PM Hieu Tran Dang
+> <dangtranhieu2012@gmail.com> wrote:
+> >
+> > This patch add fsl,allow-stalling property documentation for fsl-lpspi
+> >
+> > Signed-off-by: Hieu Tran Dang <dangtranhieu2012@gmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
+> > index 4af132606b37..2b012b8cb05e 100644
+> > --- a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
+> > +++ b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
+> > @@ -6,6 +6,8 @@ Required properties:
+> >  - reg : address and length of the lpspi master registers
+> >  - interrupts : lpspi interrupt
+> >  - clocks : lpspi clock specifier
+> > +- fsl,allow-stall : allow stalling of transfers when the transmit FIFO is empty
+> > +  or when the receive FIFO is full
+>
+> This seems odd. That seems like what normal behavior should be.
+>
+> Rob
 
-My guess is, IPSEC will mostly ask the crypto code to work on 1500
-byte full MTU packets and 64 byte TCP ACK packets. Disk encryption i
-guess works on 4K blocks. So these requests are all quite small,
-keeping the latency reasonably bounded.
-
-The wireguard interface claims it is GSO capable. This means the
-network stack will pass it big chunks of data and leave it to the
-network interface to perform the segmentation into 1500 byte MTU
-frames on the wire. I've not looked at how wireguard actually handles
-these big chunks. But to get maximum performance, it should try to
-keep them whole, just add a header and/or trailer. Will wireguard pass
-these big chunks of data to the crypto code? Do we now have 64K blocks
-being worked on? Does the latency jump from 4K to 64K? That might be
-new, so the existing state of the tree does not help you here.
-
-   Andrew
+Default value of the register is to allow stalling (NOSTALL bit not
+set) but the spi-fsl-lpspi driver defaults to setting the NOSTALL bit
+in CFGR1. To me, it's more logical to leave the NOSTALL bit off with
+fsl,nostall binding to set the bit but as I am not sure if there are
+other drivers depending on the NOSTALL bit being set and not wanting
+to break other drivers hence introduction of this binding to keep the
+current default behavior.
