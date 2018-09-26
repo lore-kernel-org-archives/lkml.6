@@ -2,45 +2,44 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B766AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D60C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F63214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:26:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F63214C5
+	by mail.kernel.org (Postfix) with ESMTP id EBA60214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA60214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbeIZTjB (ORCPT
+        id S1728553AbeIZTfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:39:01 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59442 "EHLO inva020.nxp.com"
+        Wed, 26 Sep 2018 15:35:47 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:57562 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728412AbeIZTft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:35:49 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7B36B1A0259;
-        Wed, 26 Sep 2018 15:22:51 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6BEBF1A0251;
-        Wed, 26 Sep 2018 15:22:51 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C593F203C2;
+        id S1728322AbeIZTfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 15:35:47 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 17412200259;
         Wed, 26 Sep 2018 15:22:50 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 096FD200257;
+        Wed, 26 Sep 2018 15:22:50 +0200 (CEST)
+Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 5A78A203C2;
+        Wed, 26 Sep 2018 15:22:49 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com, robin.murphy@arm.com,
         bharat.bhushan@nxp.com, Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v2 03/22] soc/fsl/qman: map FQD and PFDR areas in the iommu
-Date:   Wed, 26 Sep 2018 16:22:28 +0300
-Message-Id: <20180926132247.10971-4-laurentiu.tudor@nxp.com>
+Subject: [PATCH v2 01/22] soc/fsl/qman: fixup liodns only on ppc targets
+Date:   Wed, 26 Sep 2018 16:22:26 +0300
+Message-Id: <20180926132247.10971-2-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
 References: <20180926132247.10971-1-laurentiu.tudor@nxp.com>
@@ -52,55 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-Add a one-to-one iommu mapping for qman private data memory areas
-(FQD and PFDR). This is required for QMAN to work without faults
-behind an iommu.
+ARM SoCs use SMMU so the liodn fixup done in the qman driver is no
+longer making sense and it also breaks the ICID settings inherited
+from u-boot. Do the fixups only for PPC targets.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/soc/fsl/qbman/qman_ccsr.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/soc/fsl/qbman/qman_ccsr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
-index 619e22030460..0cfe79f85a66 100644
+index 79cba58387a5..619e22030460 100644
 --- a/drivers/soc/fsl/qbman/qman_ccsr.c
 +++ b/drivers/soc/fsl/qbman/qman_ccsr.c
-@@ -29,6 +29,7 @@
-  */
- 
- #include "qman_priv.h"
-+#include <linux/iommu.h>
- 
- u16 qman_ip_rev;
- EXPORT_SYMBOL(qman_ip_rev);
-@@ -692,6 +693,7 @@ static int fsl_qman_probe(struct platform_device *pdev)
+@@ -597,6 +597,7 @@ static int qman_init_ccsr(struct device *dev)
+ #define LIO_CFG_LIODN_MASK 0x0fff0000
+ void qman_liodn_fixup(u16 channel)
  {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *node = dev->of_node;
-+	struct iommu_domain *domain;
- 	struct resource *res;
- 	int ret, err_irq;
- 	u16 id;
-@@ -769,6 +771,19 @@ static int fsl_qman_probe(struct platform_device *pdev)
- 	}
- 	dev_dbg(dev, "Allocated PFDR 0x%llx 0x%zx\n", pfdr_a, pfdr_sz);
++#ifdef CONFIG_PPC
+ 	static int done;
+ 	static u32 liodn_offset;
+ 	u32 before, after;
+@@ -616,6 +617,7 @@ void qman_liodn_fixup(u16 channel)
+ 		qm_ccsr_out(REG_REV3_QCSP_LIO_CFG(idx), after);
+ 	else
+ 		qm_ccsr_out(REG_QCSP_LIO_CFG(idx), after);
++#endif
+ }
  
-+	/* Create an 1-to-1 iommu mapping for fqd and pfdr areas */
-+	domain = iommu_get_domain_for_dev(dev);
-+	if (domain) {
-+		ret = iommu_map(domain, fqd_a, fqd_a, fqd_sz,
-+				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
-+		if (ret)
-+			dev_warn(dev, "iommu_map(fqd) failed %d\n", ret);
-+		ret = iommu_map(domain, pfdr_a, pfdr_a, pfdr_sz,
-+				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
-+		if (ret)
-+			dev_warn(dev, "iommu_map(pfdr) failed %d\n", ret);
-+	}
-+
- 	ret = qman_init_ccsr(dev);
- 	if (ret) {
- 		dev_err(dev, "CCSR setup failed\n");
+ #define IO_CFG_SDEST_MASK 0x00ff0000
 -- 
 2.17.1
 
