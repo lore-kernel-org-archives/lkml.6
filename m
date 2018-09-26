@@ -2,120 +2,156 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C2DC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD801C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA2D21537
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA2D21537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 697BB2152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:29:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YFrzy+j1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697BB2152F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbeI0AnH (ORCPT
+        id S1728184AbeI0AnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 20:43:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34970 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725987AbeI0AnH (ORCPT
+        Wed, 26 Sep 2018 20:43:12 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43037 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeI0AnM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 20:43:07 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QIOEv8045978
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:28:52 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mrejq2k3j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:28:52 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 26 Sep 2018 14:28:51 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Sep 2018 14:28:47 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8QISkNq46989312
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Sep 2018 18:28:46 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60DB8B206A;
-        Wed, 26 Sep 2018 14:27:06 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 391EBB2068;
-        Wed, 26 Sep 2018 14:27:06 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.155.193])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Sep 2018 14:27:06 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 072B016C3662; Wed, 26 Sep 2018 11:28:46 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 11:28:46 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: [PATCH memory-model 0/5] Updates to the formal memory model
-Reply-To: paulmck@linux.ibm.com
+        Wed, 26 Sep 2018 20:43:12 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j26-v6so13869516pfi.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 11:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hWu9mVY9V3jJ7QKbmZMGD1mEpNowSEacKM/NpaVX9n4=;
+        b=YFrzy+j1z+dr+JndJ4bBNz5W1XJq2l3moobuxzPZjU5x0rnO6KnwAgL/ishlgV1jc8
+         nN5+/Xbj66CRcHdLIozIQT3VKkDPbGokrgoT+52Jp3Ko03ifTmi/8n79HqcIIsmKISUg
+         g0BKIPLJbEguEkuhoYMq7FPywxA4a+GEQi+WAr3SBu0EnfuAZa/s+WqlwPAToImOEUwU
+         pLsg2IBfN3R27RP2vTkkTcc+4p4zITHO7cs+9PgzDhoyjt14unx+9Ph8xA/ctUcnMKcg
+         Ww0i9E2cBNGKaCLuPLK3ScQVhlLdjdl7IvUjDaAROAtI9n8GMrcvRjkrhg42PjVELVCD
+         JLqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hWu9mVY9V3jJ7QKbmZMGD1mEpNowSEacKM/NpaVX9n4=;
+        b=ttlfcwmBZ61H4sw4ITc14XBmBBEHjBGv1Jvly+3Rp70lGsSQZkzi1L20WoxkuHcnkH
+         PkbvxtcaGlnRi0BX3CwUM9AUqsmj+X1gcmG0lzMefcXxVbCu2rne/LceV0lECDmXBEdT
+         rpWnpnvuF9bJOcCxe2hN7sY9rjfnYQa7Oa2ysZGDHcaxk1hs0yPkAAqIIV1y0chPyn3e
+         OACda2bGEi7fsh1gJo1ft86Qyhv0od0yfLYtf1KjMZsF14AJlSl3DyqyIg5fDlhlN38f
+         N6jQ0CjK9NJJJ0lNrKabZOpkER7lznKR7rmo2zIy+UXajOo5gtX7MOuykDmUk+fDvPX1
+         D4yw==
+X-Gm-Message-State: ABuFfojcfo/rAkI/Az/Go8skxCoEA2vFNkbJyEr/VWYlLyhC1suHN2ol
+        T+qVmWABPnVW+K1iVUibGKLgORSGrNGAdhQRGN0BWg==
+X-Google-Smtp-Source: ACcGV635s5Tpu1pcsRYz4SHhskHx3S0q336mvnq/Y+4vMdEbsXtJTDECF9R4Bn180kvluD1VVoHOGAQD1qI9DhWNyh0=
+X-Received: by 2002:a63:a047:: with SMTP id u7-v6mr6889127pgn.145.1537986537974;
+ Wed, 26 Sep 2018 11:28:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18092618-0064-0000-0000-000003559801
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009776; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01094026; UDB=6.00565496; IPR=6.00874063;
- MB=3.00023518; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-26 18:28:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092618-0065-0000-0000-00003AC823BE
-Message-Id: <20180926182845.GA24839@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=644 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809260171
+References: <20180926070208.16924-1-natechancellor@gmail.com>
+ <20180926071359.GA22855@kroah.com> <20180926074114.GA4966@flashbox> <CAKwvOdkkaCAmizfOr8Bj8QLTN161KqwXRCbuKbiNDoo5RonrpQ@mail.gmail.com>
+In-Reply-To: <CAKwvOdkkaCAmizfOr8Bj8QLTN161KqwXRCbuKbiNDoo5RonrpQ@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 26 Sep 2018 11:28:46 -0700
+Message-ID: <CAKwvOd=HEpvswt_L0nEsimjbcPO9R=z6EJOOpcCfcFVC6P8sNw@mail.gmail.com>
+Subject: Re: [PATCH] staging: rtl8723bs: Mark ACPI table declaration as maybe unused
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Pirama Arumuga Nainar <pirama@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Ingo!
+On Wed, Sep 26, 2018 at 10:55 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Wed, Sep 26, 2018 at 12:41 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > On Wed, Sep 26, 2018 at 09:13:59AM +0200, Greg Kroah-Hartman wrote:
+> > > On Wed, Sep 26, 2018 at 12:02:09AM -0700, Nathan Chancellor wrote:
+> > > > Clang emits the following warning:
+> > > >
+> > > > drivers/staging/rtl8723bs/os_dep/sdio_intf.c:25:36: warning: variable
+> > > > 'acpi_ids' is not needed and will not be emitted
+> > > > [-Wunneeded-internal-declaration]
+> > > > static const struct acpi_device_id acpi_ids[] = {
+> > > >                                    ^
+> > > > 1 warning generated.
+> > > >
+> > > > Mark the declaration as maybe unused like a few other instances of this
+> > > > construct in the kernel.
+> > > >
+> > > > Link: https://github.com/ClangBuiltLinux/linux/issues/169
+> > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > ---
+> > > >  drivers/staging/rtl8723bs/os_dep/sdio_intf.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+> > > > index 6d02904de63f..3285bf36291b 100644
+> > > > --- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+> > > > +++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+> > > > @@ -22,7 +22,7 @@ static const struct sdio_device_id sdio_ids[] =
+> > > >     { SDIO_DEVICE(0x024c, 0xb723), },
+> > > >     { /* end: all zeroes */                         },
+> > > >  };
+> > > > -static const struct acpi_device_id acpi_ids[] = {
+> > > > +static const struct acpi_device_id acpi_ids[] __maybe_unused = {
+> > >
+> > > But it is used.  No "maybe" at all here.  The MODULE_DEVICE_TABLE()
+> > > macro does a functional thing.  Why is gcc not reporting an issue with
+> > > this and clang is?
+>
+> Looks like GCC and Clang handle __attribute__((alias)) differently
+> when optimizations are enabled.  Clang has
+> -Wunneeded-internal-declaration (GCC doesn't have that specific flag,
+> which is why GCC doesn't report, but its behavior is also different),
+> as part of -Wall, which warns that it thinks the static var is dead,
+> then removes it from -O1 and up.
+>
+> https://godbolt.org/z/Dpxnbp
+>
+> I consider this a bug in Clang: https://bugs.llvm.org/show_bug.cgi?id=39088
+>
+> As Nathan notes in this comment in V1:
+> https://lore.kernel.org/lkml/20180926064437.GA29417@flashbox/ having
+> additional references to the static array is enough to keep it around.
+> When there are no other references, then it should not be marked
+> static, in order to still be emitted.
+>
+> We can work around this by removing `static` from struct definitions
+> that no other references than being passed to the MODULE_DEVICE_TABLE
+> macro.  GCC and Clang will then both emit references to both
+> identifiers.
 
-This series contains updates to the Linux kernel's formal memory model
-in tools/memory-model, along with corresponding changes in documentation
-and Linux-kernel code.  These patches are ready for inclusion into -tip.
+Sorry, after thinking more about this and discussing more with a
+coworker, I think Clang is doing the right thing, and that `static`
+should be removed from declarations passed to MODULE_DEVICE_TABLE
+without other references.  Clang's Dead Code Elimination (DCE) here
+seems to be more aggressive, but it still looks correct to me.
 
-1.	Document litmus-test naming scheme.
+int foo [] = { 42, 0xDEAD }; // extern
+extern typeof(foo) bar __attribute__((unused, alias("foo")));
 
-2.	Add extra ordering for locks and remove it for ordinary
-	release/acquire, courtesy of Alan Stern.
+GCC and Clang at -O2 both produce references to foo and bar.
 
-3.	Fix a README typo, courtesy of SeongJae Park.
+Adding `static` to foo, then GCC produces both references, while Clang
+moves the data to bar and removes foo.  This is safe because foo has
+no other references, and bar is what file2alias.c cares about in this
+case.
 
-4.	Expand the list of LKMM limitations.
-
-5.	Replace smp_cond_acquire() with smp_cond_load_acquire(),
-	courtesy of Andrea Parri.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
- Documentation/memory-barriers.txt                                          |    3 
- tools/memory-model/Documentation/explanation.txt                           |  186 +++++++---
- tools/memory-model/Documentation/recipes.txt                               |    2 
- tools/memory-model/README                                                  |   39 ++
- tools/memory-model/linux-kernel.cat                                        |    8 
- tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus |    7 
- tools/memory-model/litmus-tests/README                                     |  104 +++++
- 7 files changed, 293 insertions(+), 56 deletions(-)
-
+-- 
+Thanks,
+~Nick Desaulniers
