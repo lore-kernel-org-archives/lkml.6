@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60651C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A146C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE7A214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D42D4214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V7ermJss"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE7A214C5
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e43z3rL+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42D4214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbeIZQiR (ORCPT
+        id S1727872AbeIZQiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:38:17 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40171 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeIZQiR (ORCPT
+        Wed, 26 Sep 2018 12:38:20 -0400
+Received: from mail-wm1-f51.google.com ([209.85.128.51]:50670 "EHLO
+        mail-wm1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeIZQiS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:38:17 -0400
-Received: by mail-wm1-f68.google.com with SMTP id o2-v6so1688941wmh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:26:00 -0700 (PDT)
+        Wed, 26 Sep 2018 12:38:18 -0400
+Received: by mail-wm1-f51.google.com with SMTP id s12-v6so1694585wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7HEPUdBWDT21/CbUw0qj1CFFc0ibgZ+M4DOX00nfRHk=;
-        b=V7ermJsspmGGZkAixJ06hvGrqfb+can4oZ+NeNgKdvFO5410gXDuzUvrJrUG5fF00q
-         TGrFwIRnXw5e966e5qGEioSNAuwB9mIRFpRkJRqYf8S05vaR63vVS0tm9tdluf+5UCx3
-         LRQDm3+cwEL+olhxnZhpOHBN9MwWWKCu3du9U=
+        bh=mFjadR6BsgPuHP9WgDqWOULIM9tP8Tkl7i3Z5EXFShQ=;
+        b=e43z3rL+N5vhsGt0DCWQU4wbwdPS3YiL15rftgl0WqdWQ6JhQ5M2yXnkEQjVWJAo6k
+         Bqbl6LZFST3bp6Fpyqilvo3qgkEq750tnHG+YlRhOWhQ9j38U3bgkiAPA6vdfNYjGuSy
+         m5eDVL2999XW8PtmVJ4N4VTOsQ2HoHRwOqUaE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7HEPUdBWDT21/CbUw0qj1CFFc0ibgZ+M4DOX00nfRHk=;
-        b=sbHT76EbRVegt7tPaVTZ4jVNyrCZOJbHXqHfd5lkluIexNL8oAm0+pXiFPu+JHHC0U
-         /nIwj6JJsgudDPpoQCor/xVaWVJpOTX+FvHHa9qqKFOfYgPD9TroiLLS2uPbzlAb8pwc
-         UMGrrWuNhwoLobQD5Hu/wgj1LgzMB/HmdAGm2BE6hrwZDn+fxh5R5vURA1WrwveOHjrr
-         R8ax3qDTYIBlpconNMbqsWBkn8c/elcN0Pa9VMPYGT0D9hecKHHS991qES2zp4ffjBhA
-         QGx+buqx9GrAch/SsMSDQSSa14q4NQ2uC2GpLOhM+6ETlyk3N7VgsZFkj9GqwErCqmVX
-         srhg==
-X-Gm-Message-State: ABuFfogiGTW/8+nV7ObS41jpMSDWLgxMYgggznBoIX9nntAOMNYd7ZSq
-        nqm3OyBSxtfPJfHavp4S09d4nw==
-X-Google-Smtp-Source: ACcGV62yOfZ5MarhHsFw04Am56TZudMenMRJYLPWvrbuwleILFYzJz8iPxZ4n+VY49sXGPmaN66WWw==
-X-Received: by 2002:a1c:7305:: with SMTP id d5-v6mr3672366wmb.53.1537957559455;
-        Wed, 26 Sep 2018 03:25:59 -0700 (PDT)
+        bh=mFjadR6BsgPuHP9WgDqWOULIM9tP8Tkl7i3Z5EXFShQ=;
+        b=OiOiLSzEl23MkEsNxmmZkje3FByaEOkLNsuRvAaRD8q8upz5z4zVyUdqj88C+HemcS
+         yVkYoU5ZSpcKo5K8vG5TXtHyB++J6S7Q9oaGhhMiNIUDwfGs10x9zGDEspgVbw4GBr0R
+         5VNyPpIt95AmhCReExgO0XgiyWualfJfyb9rr5TMGeDX57farWKV72Tc9McvgyARXTrX
+         nwCwfeyYwRi4r7BL+4wU38L00LWDfK1pJosvnt2e4UbRt/OuXHku7EWkZ19NQyO9S0xh
+         qnUoupxVZYYv4CHbWn1zWBoc2IRGjhOOKaVxuziik5HsGaxXHNRJDZMM2ihzH9dycvNx
+         h7kw==
+X-Gm-Message-State: ABuFfoi0Qo81vpMt2O0H7O0pDOPId2yc/vNrypd0EyJhE1esO3jIcAvE
+        iHSbVbY8dQJuej2iRjJPSbSmiTQOOw4=
+X-Google-Smtp-Source: ACcGV63ArG+Mf2q89oxQlfmjOt6EIq2yymYcHWwtTCwjGUJnJLfVflXnx41wm7hJOuCXzIbSJdCJlw==
+X-Received: by 2002:a1c:89cd:: with SMTP id l196-v6mr3757018wmd.7.1537957560789;
+        Wed, 26 Sep 2018 03:26:00 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id b12sm4442648wrx.11.2018.09.26.03.25.58
+        by smtp.gmail.com with ESMTPSA id b12sm4442648wrx.11.2018.09.26.03.25.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 26 Sep 2018 03:25:58 -0700 (PDT)
+        Wed, 26 Sep 2018 03:26:00 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org
 Cc:     linux-kernel@vger.kernel.org, vkoul@kernel.org,
@@ -63,9 +63,9 @@ Cc:     linux-kernel@vger.kernel.org, vkoul@kernel.org,
         lgirdwood@gmail.com, tiwai@suse.com, devicetree@vger.kernel.org,
         mark.rutland@arm.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 3/5] ASoC: q6asm-dai: dt-bindings: Add support to compress dais
-Date:   Wed, 26 Sep 2018 11:23:47 +0100
-Message-Id: <20180926102349.23481-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 4/5] ASoC: qdsp6: q6asm: add support to MP3 format
+Date:   Wed, 26 Sep 2018 11:23:48 +0100
+Message-Id: <20180926102349.23481-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180926102349.23481-1-srinivas.kandagatla@linaro.org>
 References: <20180926102349.23481-1-srinivas.kandagatla@linaro.org>
@@ -76,66 +76,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds board specific bindings required for dais, In particular
-for compressed dais and dai direction.
-
-Board specific setup involves setting up some of dais as compressed dais
-and also specify direction of any dai. Some of the dais might only
-support capture/playback depending on the board level wiring.
-
-These two new dt properties will allow such flexibilty at board level dts.
-
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/sound/qcom,q6asm.txt  | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ sound/soc/qcom/qdsp6/q6asm.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6asm.txt b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
-index f9c7bd8c1bc0..9f5378c51686 100644
---- a/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
-@@ -27,6 +27,28 @@ used by the apr service device.
- 	Value type: <u32>
- 	Definition: Must be 1
+diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
+index 2b2c7233bb5f..e98aee1baadd 100644
+--- a/sound/soc/qcom/qdsp6/q6asm.c
++++ b/sound/soc/qcom/qdsp6/q6asm.c
+@@ -13,6 +13,7 @@
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ #include <uapi/sound/asound.h>
++#include <uapi/sound/compress_params.h>
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/mm.h>
+@@ -37,6 +38,7 @@
+ #define ASM_PARAM_ID_ENCDEC_ENC_CFG_BLK_V2	0x00010DA3
+ #define ASM_SESSION_CMD_RUN_V2			0x00010DAA
+ #define ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2	0x00010DA5
++#define ASM_MEDIA_FMT_MP3			0x00010BE9
+ #define ASM_DATA_CMD_WRITE_V2			0x00010DAB
+ #define ASM_DATA_CMD_READ_V2			0x00010DAC
+ #define ASM_SESSION_CMD_SUSPEND			0x00010DEC
+@@ -869,6 +871,9 @@ int q6asm_open_write(struct audio_client *ac, uint32_t format,
+ 	open->postprocopo_id = ASM_NULL_POPP_TOPOLOGY;
  
-+== ASM DAI is subnode of "dais" and represent a dai, it includes board specific
-+configuration of each dai. Must contain the following properties.
-+
-+- reg
-+	Usage: required
-+	Value type: <u32>
-+	Definition: Must be dai id
-+
-+- direction:
-+	Usage: Required for Compress offload dais
-+	Value type: <u32>
-+	Definition: Specifies the direction of the dai stream
-+			0 for both tx and rx
-+			1 for only tx (Capture/Encode)
-+			2 for only rx (Playback/Decode)
-+
-+- is-compress-dai:
-+	Usage: Required for Compress offload dais
-+	Value type: <boolean>
-+	Definition: present for Compress offload dais
-+
-+
- = EXAMPLE
- 
- q6asm@7 {
-@@ -35,5 +57,10 @@ q6asm@7 {
- 	q6asmdai: dais {
- 		compatible = "qcom,q6asm-dais";
- 		#sound-dai-cells = <1>;
-+		mm@0 {
-+			reg = <0>;
-+			direction = <2>;
-+			is-compress-dai;
-+		};
- 	};
- };
+ 	switch (format) {
++	case SND_AUDIOCODEC_MP3:
++		open->dec_fmt_id = ASM_MEDIA_FMT_MP3;
++		break;
+ 	case FORMAT_LINEAR_PCM:
+ 		open->dec_fmt_id = ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2;
+ 		break;
 -- 
 2.19.0
 
