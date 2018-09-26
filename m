@@ -2,90 +2,88 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84604C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345CBC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E3B20842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:35:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E3B20842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EDB7C20843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:36:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB7C20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbeIZQrp (ORCPT
+        id S1727620AbeIZQsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:47:45 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20160 "EHLO mga12.intel.com"
+        Wed, 26 Sep 2018 12:48:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41489 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbeIZQrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:47:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 03:35:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="76312337"
-Received: from imahmed1-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.50.69])
-  by orsmga008.jf.intel.com with ESMTP; 26 Sep 2018 03:35:23 -0700
-Date:   Wed, 26 Sep 2018 13:35:21 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Louis Collard <louiscollard@chromium.org>
-Cc:     linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        id S1726593AbeIZQsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:48:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 10AEC20711; Wed, 26 Sep 2018 12:35:58 +0200 (CEST)
+Received: from localhost (nat-240.udc.es [193.144.61.240])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 89CF02074F;
+        Wed, 26 Sep 2018 12:35:47 +0200 (CEST)
+From:   maxime.ripard@bootlin.com
+Date:   Wed, 26 Sep 2018 12:35:47 +0200
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "\"David S. Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, apronin@chromium.org,
-        Jason Gunthorpe <jgg@ziepe.ca>, david.bild@xaptum.com
-Subject: Re: [PATCH] Allow hwrng to initialize crng.
-Message-ID: <20180926103521.GB4885@linux.intel.com>
-References: <20180926032455.224600-1-louiscollard@chromium.org>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera
+ Sensor Interface (CSI)
+Message-ID: <20180926103547.5ubb6xjkl7xngmfg@flea>
+References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
+ <7197338.mhOH8fQaEM@avalon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180926032455.224600-1-louiscollard@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <7197338.mhOH8fQaEM@avalon>
+gFrom:  Maxime Ripard <maxime.ripard@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 11:24:55AM +0800, Louis Collard wrote:
-> Some systems, for example embedded systems, do not generate
-> enough entropy on boot through interrupts, and boot may be blocked for
-> several minutes waiting for a call to getrandom to complete.
+On Wed, Sep 26, 2018 at 01:19:34PM +0300, Laurent Pinchart wrote:
+> > +Endpoint node properties for CSI1
+> > +---------------------------------
 > 
-> Currently, random data is read from a hwrng when it is registered,
-> and is loaded into primary_crng. This data is treated in the same
-> way as data that is device-specific but otherwise unchanging, and
-> so primary_crng cannot become initialized with the data from the
-> hwrng.
-> 
-> This change causes the data initially read from the hwrng to be
-> treated the same as subsequent data that is read from the hwrng if
-> it's quality score is non-zero.
-> 
-> The implications of this are:
-> 
-> The data read from hwrng can cause primary_crng to become
-> initialized, therefore avoiding problems of getrandom blocking
-> on boot.
-> 
-> Calls to getrandom (with GRND_RANDOM) may be using entropy
-> exclusively (or in practise, almost exclusively) from the hwrng.
-> 
-> Regarding the latter point; this behavior is the same as if a
-> user specified a quality score of 1 (bit of entropy per 1024 bits)
-> so hopefully this is not too scary a change to make.
-> 
-> This change is the result of the discussion here:
-> https://patchwork.kernel.org/patch/10453893/
-> 
-> Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> Should you list the CSI0 properties as well ? As the driver in patch 2/2 
+> doesn't support the CSI-2 interface I assume you have left out CSI0 for now, 
+> but it should still be listed in the bindings. I'm fine with fixing this as a 
+> follow-up patch to avoid missing the v4.20 merge window, but if you end up 
+> resubmitting the series, could you please address the problem ?
 
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+That driver is not available, and the documentation isn't either, so
+there's no easy way to tell which properties are going to be needed
+before doing the actual work of reverse engineering it and writing a
+driver for it. Unfortunately...
 
-/Jarkko
+Maxime
+
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
