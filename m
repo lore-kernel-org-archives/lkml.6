@@ -2,110 +2,114 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2456C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E92BC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6526B20676
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:23:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6526B20676
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 04078206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:24:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04078206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeIZUgq (ORCPT
+        id S1728344AbeIZUhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:36:46 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20753 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727504AbeIZUgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:36:45 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:23:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="73038201"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
-  by fmsmga007.fm.intel.com with ESMTP; 26 Sep 2018 07:23:32 -0700
-Date:   Wed, 26 Sep 2018 08:25:40 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Message-ID: <20180926142540.GB14407@localhost.localdomain>
-References: <20180926150051.6ee97aae@canb.auug.org.au>
+        Wed, 26 Sep 2018 16:37:16 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:59524 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbeIZUhP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:37:15 -0400
+Received: by mail-it1-f198.google.com with SMTP id a10-v6so3433900itc.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:24:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=bA7SQ2zouu6VY9TFoTxktO/MzJFIciD8ymCX4TGnI+A=;
+        b=cLeXwzcoUiLwGEIh7YnNkurOlzc1dq3CNfr8J5lmxLjBNWPUVakVf1hAZG/p7LQwHk
+         +9BmkD/YQMZZvuJqPMNQge2D40IcGP9NL3vEr6OtbO1Vxk6+/GemSSVBp348F0vt/7xh
+         u989yr/OyWTkzqB02ewLJgVE6xYZg3to+sdR19zOOnbMEYHrPxAzfwHtIg5r/pjsvLNk
+         vQrfAC0XF1pQpXTbmwESNrHAa99llehGMgsijMvgFnzxlzJxqXnmbqy9ch0IZM31NJMg
+         ry98TgVqBtPqKxDPCcwTiuzsxMH+kog6CT5PWNvJ13xHFit8Na4CzAvjZxh1IhkrwDrA
+         8xPQ==
+X-Gm-Message-State: ABuFfojcxQrI+dF2D4yuZcHmeBEZPM0mPzl3wD6xEXKYDqrbgXr4JmzC
+        sGzCwH6+jg5nH1abl+6AGLFMUmWTmoYZYZ0AAFBVoBQ5sni5
+X-Google-Smtp-Source: ACcGV61IlNIH2HfIhHZIYCGJmIYaUffhWZX50+nEt+eN4m/3h5M4DmRNxscYqZ02HhbXvLpD/dIt45sQjaNPS5wteczvl2+Tr+sg
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926150051.6ee97aae@canb.auug.org.au>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Received: by 2002:a24:2193:: with SMTP id e141-v6mr4562671ita.2.1537971842852;
+ Wed, 26 Sep 2018 07:24:02 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 07:24:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005e2e530576c6f9ce@google.com>
+Subject: KMSAN: uninit-value in __dev_mc_add
+From:   syzbot <syzbot+001516d86dbe88862cec@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, edumazet@google.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        sunlw.fnst@cn.fujitsu.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 03:00:51PM +1000, Stephen Rothwell wrote:
-> Hi Bjorn,
-> 
-> After merging the pci tree, today's linux-next build (powerpc allnoconfig)
-> failed like this:
-> 
-> ld: drivers/pci/pci.o: in function `pci_bus_error_reset':
-> pci.c:(.text+0x5fba): undefined reference to `pci_slot_mutex'
-> ld: pci.c:(.text+0x5fc2): undefined reference to `pci_slot_mutex'
-> 
-> Caused by commit
-> 
->   131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
-> 
-> I have applied the following hack for today (there is probably a better
-> way):
+Hello,
 
-Thanks for the notice. Does this mean you don't have CONFIG_SYSFS? I
-must admit I missed that connection for building slot.c.
+syzbot found the following crash on:
 
- 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 26 Sep 2018 14:55:37 +1000
-> Subject: [PATCH] pci: move pci_slot_mutex so it is available where needed
-> 
-> Fixes: 131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/pci/pci.c  | 2 ++
->  drivers/pci/slot.c | 1 -
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 8c1e99a637d8..1fa67db6b21e 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5190,6 +5190,8 @@ static int pci_bus_reset(struct pci_bus *bus, int probe)
->  	return ret;
->  }
->  
-> +DEFINE_MUTEX(pci_slot_mutex);
-> +
->  /**
->   * pci_bus_error_reset - reset the bridge's subordinate bus
->   * @bridge: The parent device that connects to the bus to reset
-> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
-> index 3da03fcc6fbf..c46d5e1ff536 100644
-> --- a/drivers/pci/slot.c
-> +++ b/drivers/pci/slot.c
-> @@ -14,7 +14,6 @@
->  
->  struct kset *pci_slots_kset;
->  EXPORT_SYMBOL_GPL(pci_slots_kset);
-> -DEFINE_MUTEX(pci_slot_mutex);
->  
->  static ssize_t pci_slot_attr_show(struct kobject *kobj,
->  					struct attribute *attr, char *buf)
-> -- 
-> 2.18.0
+HEAD commit:    eb2e67596de2 kmsan: minor code cleanup
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=136e3b11400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94a9ed72288f7fef
+dashboard link: https://syzkaller.appspot.com/bug?extid=001516d86dbe88862cec
+compiler:       clang version 8.0.0 (trunk 339414)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+001516d86dbe88862cec@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
+CPU: 0 PID: 14033 Comm: kworker/0:3 Not tainted 4.19.0-rc4+ #58
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x2f6/0x430 lib/dump_stack.c:113
+  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:917
+  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:500
+  memcmp+0x11d/0x180 lib/string.c:863
+  __hw_addr_add_ex net/core/dev_addr_lists.c:61 [inline]
+  __dev_mc_add+0x215/0x8c0 net/core/dev_addr_lists.c:670
+  dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
+  igmp6_group_added+0x2c8/0xaa0 net/ipv6/mcast.c:676
+  __ipv6_dev_mc_inc+0xf4b/0x1270 net/ipv6/mcast.c:934
+  ipv6_dev_mc_inc+0x70/0x80 net/ipv6/mcast.c:941
+  addrconf_join_solict net/ipv6/addrconf.c:2098 [inline]
+  addrconf_dad_begin net/ipv6/addrconf.c:3879 [inline]
+  addrconf_dad_work+0x437/0x29b0 net/ipv6/addrconf.c:4006
+  process_one_work+0x197f/0x2490 kernel/workqueue.c:2153
+  worker_thread+0x1f6a/0x2b00 kernel/workqueue.c:2296
+  kthread+0x59c/0x5d0 kernel/kthread.c:247
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+
+Local variable description: ----buf@igmp6_group_added
+Variable was created at:
+  igmp6_group_added+0x46/0xaa0 net/ipv6/mcast.c:664
+  __ipv6_dev_mc_inc+0xf4b/0x1270 net/ipv6/mcast.c:934
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
