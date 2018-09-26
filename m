@@ -2,33 +2,32 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27D2C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F1CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E30121533
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:34:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E30121533
+	by mail.kernel.org (Postfix) with ESMTP id 99BBE2152E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BBE2152E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbeIZWsM (ORCPT
+        id S1729147AbeIZWsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:48:12 -0400
-Received: from foss.arm.com ([217.140.101.70]:50220 "EHLO foss.arm.com"
+        Wed, 26 Sep 2018 18:48:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:50236 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729121AbeIZWsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:48:11 -0400
+        id S1727366AbeIZWsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:48:14 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A75692379;
-        Wed, 26 Sep 2018 09:34:25 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64E95237B;
+        Wed, 26 Sep 2018 09:34:28 -0700 (PDT)
 Received: from en101.Emea.Arm.com (en101.emea.arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3161A3F5B3;
-        Wed, 26 Sep 2018 09:34:23 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E94493F5B3;
+        Wed, 26 Sep 2018 09:34:25 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
@@ -36,9 +35,9 @@ Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
         suzuki.poulose@arm.com, will.deacon@arm.com, dave.martin@arm.com,
         peter.maydell@linaro.org, pbonzini@redhat.com, rkrcmar@redhat.com,
         julien.grall@arm.com, linux-kernel@vger.kernel.org
-Subject: [kvmtool PATCH v6 21/18] kvmtool: arm64: Switch memory layout
-Date:   Wed, 26 Sep 2018 17:32:57 +0100
-Message-Id: <20180926163258.20218-22-suzuki.poulose@arm.com>
+Subject: [kvmtool PATCH v6 22/18] kvmtool: arm: Add support for creating VM with PA size
+Date:   Wed, 26 Sep 2018 17:32:58 +0100
+Message-Id: <20180926163258.20218-23-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180926163258.20218-1-suzuki.poulose@arm.com>
 References: <20180926163258.20218-1-suzuki.poulose@arm.com>
@@ -49,112 +48,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the guest wants to use a larger physical address space place
-the RAM at upper half of the address space. Otherwise, it uses the
-default layout.
+Specify the physical size for the VM encoded in the vm type.
 
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arm/aarch32/include/kvm/kvm-arch.h |  6 ++++--
- arm/aarch64/include/kvm/kvm-arch.h | 15 ++++++++++++---
- arm/include/arm-common/kvm-arch.h  | 11 ++++++-----
- arm/kvm.c                          |  2 +-
- 4 files changed, 23 insertions(+), 11 deletions(-)
+ arm/include/arm-common/kvm-arch.h |  6 +++++-
+ arm/kvm.c                         | 32 +++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/arm/aarch32/include/kvm/kvm-arch.h b/arm/aarch32/include/kvm/kvm-arch.h
-index cd31e72..bcd382b 100644
---- a/arm/aarch32/include/kvm/kvm-arch.h
-+++ b/arm/aarch32/include/kvm/kvm-arch.h
-@@ -3,8 +3,10 @@
- 
- #define ARM_KERN_OFFSET(...)	0x8000
- 
--#define ARM_MAX_MEMORY(...)	ARM_LOMAP_MAX_MEMORY
--
- #include "arm-common/kvm-arch.h"
- 
-+#define ARM_MAX_MEMORY(...)	ARM32_MAX_MEMORY
-+#define ARM_MEMORY_AREA(...)	ARM32_MEMORY_AREA
-+
-+
- #endif /* KVM__KVM_ARCH_H */
-diff --git a/arm/aarch64/include/kvm/kvm-arch.h b/arm/aarch64/include/kvm/kvm-arch.h
-index 9de623a..bad35b9 100644
---- a/arm/aarch64/include/kvm/kvm-arch.h
-+++ b/arm/aarch64/include/kvm/kvm-arch.h
-@@ -1,14 +1,23 @@
- #ifndef KVM__KVM_ARCH_H
- #define KVM__KVM_ARCH_H
- 
-+#include "arm-common/kvm-arch.h"
-+
-+#define ARM64_MEMORY_AREA(phys_shift)	(1UL << (phys_shift - 1))
-+#define ARM64_MAX_MEMORY(phys_shift)	\
-+	((1ULL << (phys_shift)) - ARM64_MEMORY_AREA(phys_shift))
-+
-+#define ARM_MEMORY_AREA(kvm)	((kvm)->cfg.arch.aarch32_guest ?	\
-+				 ARM32_MEMORY_AREA		:	\
-+				 ARM64_MEMORY_AREA(kvm->cfg.arch.phys_shift))
-+
- #define ARM_KERN_OFFSET(kvm)	((kvm)->cfg.arch.aarch32_guest	?	\
- 				0x8000				:	\
- 				0x80000)
- 
- #define ARM_MAX_MEMORY(kvm)	((kvm)->cfg.arch.aarch32_guest	?	\
--				ARM_LOMAP_MAX_MEMORY		:	\
--				ARM_HIMAP_MAX_MEMORY)
-+				ARM32_MAX_MEMORY		:	\
-+				ARM64_MAX_MEMORY(kvm->cfg.arch.phys_shift))
- 
--#include "arm-common/kvm-arch.h"
- 
- #endif /* KVM__KVM_ARCH_H */
 diff --git a/arm/include/arm-common/kvm-arch.h b/arm/include/arm-common/kvm-arch.h
-index b9d486d..b29b4b1 100644
+index b29b4b1..d77f3ac 100644
 --- a/arm/include/arm-common/kvm-arch.h
 +++ b/arm/include/arm-common/kvm-arch.h
-@@ -6,14 +6,15 @@
- #include <linux/types.h>
+@@ -44,7 +44,11 @@
  
- #include "arm-common/gic.h"
--
- #define ARM_IOPORT_AREA		_AC(0x0000000000000000, UL)
- #define ARM_MMIO_AREA		_AC(0x0000000000010000, UL)
- #define ARM_AXI_AREA		_AC(0x0000000040000000, UL)
--#define ARM_MEMORY_AREA		_AC(0x0000000080000000, UL)
+ #define KVM_IRQ_OFFSET		GIC_SPI_IRQ_BASE
  
--#define ARM_LOMAP_MAX_MEMORY	((1ULL << 32) - ARM_MEMORY_AREA)
--#define ARM_HIMAP_MAX_MEMORY	((1ULL << 40) - ARM_MEMORY_AREA)
-+#define ARM32_MEMORY_AREA	_AC(0x0000000080000000, UL)
-+#define ARM32_MAX_MEMORY	((1ULL << 32) - ARM32_MEMORY_AREA)
+-#define KVM_VM_TYPE		0
++extern unsigned long		kvm_arm_type;
++extern void kvm__arch_init_hyp(struct kvm *kvm);
 +
-+#define ARM_IOMEM_AREA_END	ARM32_MEMORY_AREA
-+
++#define KVM_VM_TYPE		kvm_arm_type
++#define kvm__arch_init_hyp	kvm__arch_init_hyp
  
- #define ARM_GIC_DIST_BASE	(ARM_AXI_AREA - ARM_GIC_DIST_SIZE)
- #define ARM_GIC_CPUI_BASE	(ARM_GIC_DIST_BASE - ARM_GIC_CPUI_SIZE)
-@@ -24,7 +25,7 @@
- #define ARM_IOPORT_SIZE		(ARM_MMIO_AREA - ARM_IOPORT_AREA)
- #define ARM_VIRTIO_MMIO_SIZE	(ARM_AXI_AREA - (ARM_MMIO_AREA + ARM_GIC_SIZE))
- #define ARM_PCI_CFG_SIZE	(1ULL << 24)
--#define ARM_PCI_MMIO_SIZE	(ARM_MEMORY_AREA - \
-+#define ARM_PCI_MMIO_SIZE	(ARM_IOMEM_AREA_END - \
- 				(ARM_AXI_AREA + ARM_PCI_CFG_SIZE))
- 
- #define KVM_IOPORT_AREA		ARM_IOPORT_AREA
+ #define VIRTIO_DEFAULT_TRANS(kvm)	\
+ 	((kvm)->cfg.arch.virtio_trans_pci ? VIRTIO_PCI : VIRTIO_MMIO)
 diff --git a/arm/kvm.c b/arm/kvm.c
-index b824f63..eac2ad2 100644
+index eac2ad2..c8db6b3 100644
 --- a/arm/kvm.c
 +++ b/arm/kvm.c
-@@ -30,7 +30,7 @@ void kvm__init_ram(struct kvm *kvm)
- 	u64 phys_start, phys_size;
- 	void *host_mem;
+@@ -11,6 +11,8 @@
+ #include <linux/kvm.h>
+ #include <linux/sizes.h>
  
--	phys_start	= ARM_MEMORY_AREA;
-+	phys_start	= ARM_MEMORY_AREA(kvm);
- 	phys_size	= kvm->ram_size;
- 	host_mem	= kvm->ram_start;
++unsigned long kvm_arm_type;
++
+ struct kvm_ext kvm_req_ext[] = {
+ 	{ DEFINE_KVM_EXT(KVM_CAP_IRQCHIP) },
+ 	{ DEFINE_KVM_EXT(KVM_CAP_ONE_REG) },
+@@ -18,6 +20,36 @@ struct kvm_ext kvm_req_ext[] = {
+ 	{ 0, 0 },
+ };
  
++#ifndef KVM_CAP_ARM_VM_IPA_SIZE
++#define KVM_CAP_ARM_VM_IPA_SIZE	159
++#endif
++
++#ifndef KVM_VM_TYPE_ARM_IPA_SIZE
++#define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
++#define KVM_VM_TYPE_ARM_IPA_SIZE(x)	\
++	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
++#endif
++
++void kvm__arch_init_hyp(struct kvm *kvm)
++{
++	int max_ipa;
++
++	if (!kvm->cfg.arch.phys_shift)
++		kvm->cfg.arch.phys_shift = 40;
++	if (kvm->cfg.arch.phys_shift == 40)
++		return;
++	max_ipa = ioctl(kvm->sys_fd,
++			KVM_CHECK_EXTENSION, KVM_CAP_ARM_VM_IPA_SIZE);
++	if (!max_ipa)
++		die("Kernel doesn't support IPA size configuration\n");
++	if ((kvm->cfg.arch.phys_shift > max_ipa) ||
++	    (kvm->cfg.arch.phys_shift < 32))
++		die("Requested PA size (%u) is not supported by the host"
++		    " [32 - %u]bit\n",
++		    kvm->cfg.arch.phys_shift, max_ipa);
++	kvm_arm_type = KVM_VM_TYPE_ARM_IPA_SIZE(kvm->cfg.arch.phys_shift);
++}
++
+ bool kvm__arch_cpu_supports_vm(void)
+ {
+ 	/* The KVM capability check is enough. */
 -- 
 2.19.0
 
