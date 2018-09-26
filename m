@@ -2,35 +2,37 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 465BFC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A4BC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C452F21565
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:29:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C452F21565
+	by mail.kernel.org (Postfix) with ESMTP id 862AC21537
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:29:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862AC21537
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbeI0Fo3 (ORCPT
+        id S1726628AbeI0Fob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 01:44:29 -0400
+        Thu, 27 Sep 2018 01:44:31 -0400
 Received: from mga04.intel.com ([192.55.52.120]:33789 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbeI0Fo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 01:44:29 -0400
+        id S1726347AbeI0Foa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 01:44:30 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
   by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 16:29:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,308,1534834800"; 
-   d="scan'208";a="86873123"
+   d="scan'208";a="86873221"
 Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.154])
-  by orsmga003.jf.intel.com with ESMTP; 26 Sep 2018 16:28:20 -0700
-Subject: [RFC mm PATCH 0/5] mm: Deferred page init improvements
+  by orsmga003.jf.intel.com with ESMTP; 26 Sep 2018 16:28:26 -0700
+Subject: [RFC mm PATCH 1/5] mm: Use mm_zero_struct_page from SPARC on all
+ 64b architectures
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     sparclinux@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
@@ -40,8 +42,10 @@ Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
         khalid.aziz@oracle.com, rppt@linux.vnet.ibm.com, vbabka@suse.cz,
         akpm@linux-foundation.org, ldufour@linux.vnet.ibm.com,
         davem@davemloft.net, kirill.shutemov@linux.intel.com
-Date:   Wed, 26 Sep 2018 16:28:20 -0700
-Message-ID: <20180926232117.17365.72207.stgit@localhost.localdomain>
+Date:   Wed, 26 Sep 2018 16:28:26 -0700
+Message-ID: <20180926232826.17365.84669.stgit@localhost.localdomain>
+In-Reply-To: <20180926232117.17365.72207.stgit@localhost.localdomain>
+References: <20180926232117.17365.72207.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,37 +55,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset is essentially a refactor of the page initialization logic
-to provide for better code reuse while providing a significant improvement
-in deferred page initialization performance.
+This change makes it so that we use the same approach that was already in
+use on Sparc on all the archtectures that support a 64b long.
 
-In my testing I have seen a 3:1 reduction in the time needed for deferred
-memory initialization on two different x86_64 based test systems I have.
+This is mostly motivated by the fact that 8 to 10 store/move instructions
+are likely always going to be faster than having to call into a function
+that is not specialized for handling page init.
 
-In addition this provides a very slight improvement for the hotplug memory 
-initialization, although the improvement doesn't exceed 5% from what I can
-tell and that is to be expected since most of the changes related to
-hotplug initialization are just code clean-up to allow for reuse. I had
-been considering using a large memset for the entire pageblock I was
-initializing which showed a significant speedup for persistent memory init
-however that showed no improvements to a slight regression for regular
-deferred initialization of standard memory.
+An added advantage to doing it this way is that the compiler can get away
+with combining writes in the __init_single_page call. As a result the
+memset call will be reduced to only about 4 write operations, or at least
+that is what I am seeing with GCC 6.2 as the flags, LRU poitners, and
+count/mapcount seem to be cancelling out at least 4 of the 8 assignments on
+my system.
 
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
+ arch/sparc/include/asm/pgtable_64.h |   30 ------------------------------
+ include/linux/mm.h                  |   33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 30 deletions(-)
 
-Alexander Duyck (5):
-      mm: Use mm_zero_struct_page from SPARC on all 64b architectures
-      mm: Drop meminit_pfn_in_nid as it is redundant
-      mm: Use memblock/zone specific iterator for handling deferred page init
-      mm: Move hot-plug specific memory init into separate functions and optimize
-      mm: Use common iterator for deferred_init_pages and deferred_free_pages
+diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
+index 1393a8ac596b..22500c3be7a9 100644
+--- a/arch/sparc/include/asm/pgtable_64.h
++++ b/arch/sparc/include/asm/pgtable_64.h
+@@ -231,36 +231,6 @@
+ extern struct page *mem_map_zero;
+ #define ZERO_PAGE(vaddr)	(mem_map_zero)
+ 
+-/* This macro must be updated when the size of struct page grows above 80
+- * or reduces below 64.
+- * The idea that compiler optimizes out switch() statement, and only
+- * leaves clrx instructions
+- */
+-#define	mm_zero_struct_page(pp) do {					\
+-	unsigned long *_pp = (void *)(pp);				\
+-									\
+-	 /* Check that struct page is either 64, 72, or 80 bytes */	\
+-	BUILD_BUG_ON(sizeof(struct page) & 7);				\
+-	BUILD_BUG_ON(sizeof(struct page) < 64);				\
+-	BUILD_BUG_ON(sizeof(struct page) > 80);				\
+-									\
+-	switch (sizeof(struct page)) {					\
+-	case 80:							\
+-		_pp[9] = 0;	/* fallthrough */			\
+-	case 72:							\
+-		_pp[8] = 0;	/* fallthrough */			\
+-	default:							\
+-		_pp[7] = 0;						\
+-		_pp[6] = 0;						\
+-		_pp[5] = 0;						\
+-		_pp[4] = 0;						\
+-		_pp[3] = 0;						\
+-		_pp[2] = 0;						\
+-		_pp[1] = 0;						\
+-		_pp[0] = 0;						\
+-	}								\
+-} while (0)
+-
+ /* PFNs are real physical page numbers.  However, mem_map only begins to record
+  * per-page information starting at pfn_base.  This is to handle systems where
+  * the first physical page in the machine is at some huge physical address,
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 7312fb78ef31..db9aef028690 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -102,8 +102,41 @@ static inline void set_max_mapnr(unsigned long limit) { }
+  * zeroing by defining this macro in <asm/pgtable.h>.
+  */
+ #ifndef mm_zero_struct_page
++#if BITS_PER_LONG == 64
++/* This function must be updated when the size of struct page grows above 80
++ * or reduces below 64. The idea that compiler optimizes out switch()
++ * statement, and only leaves move/store instructions
++ */
++#define	mm_zero_struct_page(pp) __mm_zero_struct_page(pp)
++static inline void __mm_zero_struct_page(struct page *page)
++{
++	unsigned long *_pp = (void *)page;
++
++	 /* Check that struct page is either 64, 72, or 80 bytes */
++	BUILD_BUG_ON(sizeof(struct page) & 7);
++	BUILD_BUG_ON(sizeof(struct page) < 64);
++	BUILD_BUG_ON(sizeof(struct page) > 80);
++
++	switch (sizeof(struct page)) {
++	case 80:
++		_pp[9] = 0;	/* fallthrough */
++	case 72:
++		_pp[8] = 0;	/* fallthrough */
++	default:
++		_pp[7] = 0;
++		_pp[6] = 0;
++		_pp[5] = 0;
++		_pp[4] = 0;
++		_pp[3] = 0;
++		_pp[2] = 0;
++		_pp[1] = 0;
++		_pp[0] = 0;
++	}
++}
++#else
+ #define mm_zero_struct_page(pp)  ((void)memset((pp), 0, sizeof(struct page)))
+ #endif
++#endif
+ 
+ /*
+  * Default maximum number of active map areas, this limits the number of vmas
 
-
- arch/sparc/include/asm/pgtable_64.h |   30 --
- include/linux/memblock.h            |   58 ++++
- include/linux/mm.h                  |   33 ++
- mm/memblock.c                       |   63 ++++
- mm/page_alloc.c                     |  555 +++++++++++++++++++++--------------
- 5 files changed, 485 insertions(+), 254 deletions(-)
-
---
