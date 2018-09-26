@@ -2,213 +2,159 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7525CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286CDC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F7D20685
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:10:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F7D20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D280C214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:11:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WvKfSVtO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D280C214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeIZRWy (ORCPT
+        id S1727684AbeIZRXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:22:54 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13147 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726595AbeIZRWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:22:54 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1EDE84392B3C5;
-        Wed, 26 Sep 2018 19:10:25 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
- 19:10:16 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
-        <shivasharan.srikanteshwara@broadcom.com>,
-        <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <megaraidlinux.pdl@broadcom.com>,
-        <linux-scsi@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] scsi: megaraid: remove set but not used variables
-Date:   Wed, 26 Sep 2018 19:09:40 +0800
-Message-ID: <20180926110940.16024-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Wed, 26 Sep 2018 13:23:37 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50232 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeIZRXg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:23:36 -0400
+Received: by mail-wm1-f68.google.com with SMTP id s12-v6so1841015wmc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 04:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UFoZ3c8H8D8HojkBTGUdAOuoezIBtfeEHIZr07uMF7w=;
+        b=WvKfSVtOhWkl/iY7V1PURUIb3WWl5XuEfJM2tVy6ONaOPdGiyt/mH+H90Jbe2Jllmf
+         X1Sr03Ayeaf2sY+zP8GawlE9X2dG0Li+j0Kmg6XJfhvgsolz/ZtT84AZSVNQOkKMLRnl
+         0vgLE7mq1hrZFHbVma7X/r8iataoPBO1gE+Xo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UFoZ3c8H8D8HojkBTGUdAOuoezIBtfeEHIZr07uMF7w=;
+        b=g+2ZVp0flGSZbsjk+JgI4s+Hu46lsYSodv1MmHtYLLAbZq+v7wnPFFfq3t/N5GZkjJ
+         cUSWH2otNKKPuyzP+9u/E9HAMOwnzw/iULI2FoKohpHSXYaPUzp6ntm/vEw+TCT16c80
+         djqoElLDrf/ebs7zzUhSaFtZ47+lhViGEwUSURS/pc3XHcjt5+QtSNgk/+L52J2zcFRD
+         emcvtZ7ACPdV6TXhSWo1QfHnSlzPuF2T94wV44WH+auu1HUD+E0+AhPI3WfKuziJS/E9
+         AY0EA69GpKmMxfmOhMAh9F1munXVRIPOVi9mGMxbLz+ZQXEIvLWKJVnI6L6Q68PspE6f
+         ctkw==
+X-Gm-Message-State: ABuFfohgK9UqXJZ2yRC0LH7QaxQ9ZkGkYVJcD9oh9wTs461ydyjorb4/
+        p8R8TdNZ47AU6utDaU2EZHIfzg==
+X-Google-Smtp-Source: ACcGV62M6TW5ZmUekOyvrIuJgUrvRBYsFhEXa1NUxO5QiMSyxhiSWBIdyEKZE/hlx9UV7tsT4Tmdkg==
+X-Received: by 2002:a1c:e5cf:: with SMTP id c198-v6mr3949245wmh.113.1537960268746;
+        Wed, 26 Sep 2018 04:11:08 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.googlemail.com with ESMTPSA id k63-v6sm8549559wmd.46.2018.09.26.04.11.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 04:11:07 -0700 (PDT)
+Subject: Re: Re: [PATCH] kdb: use correct pointer when 'btc' calls 'btt'
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kgdb-bugreport@lists.sourceforge.net, stable@vger.kernel.org,
+        me@tobin.cc
+References: <ff05bd36b338f4f914780176e9eba8138e1b254b.1536927765.git.christophe.leroy@c-s.fr>
+ <20180916190610.vzqxwps7zqy2zc6o@holly.lan>
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+Message-ID: <5f0e0241-b7ab-b5fa-de0e-01abdbc85770@linaro.org>
+Date:   Wed, 26 Sep 2018 12:11:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180916190610.vzqxwps7zqy2zc6o@holly.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On 16/09/2018 20:06, Daniel Thompson wrote:
+> On Fri, Sep 14, 2018 at 12:35:44PM +0000, Christophe Leroy wrote:
+>> On a powerpc 8xx, 'btc' fails as follows:
+>>
+>> Entering kdb (current=0x(ptrval), pid 282) due to Keyboard Entry
+>> kdb> btc
+>> btc: cpu status: Currently on cpu 0
+>> Available cpus: 0
+>> kdb_getarea: Bad address 0x0
+>>
+>> when booting the kernel with 'debug_boot_weak_hash', it fails as well
+>>
+>> Entering kdb (current=0xba99ad80, pid 284) due to Keyboard Entry
+>> kdb> btc
+>> btc: cpu status: Currently on cpu 0
+>> Available cpus: 0
+>> kdb_getarea: Bad address 0xba99ad80
+>>
+>> On other platforms, Oopses have been observed too, see
+>> https://github.com/linuxppc/linux/issues/139
+>>
+>> This is due to btc calling 'btt' with %p pointer as an argument.
+>>
+>> This patch replaces %p by %px to get the real pointer value as
+>> expected by 'btt'
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Cc: <stable@vger.kernel.org> # 4.15+
+> 
+> Would a Fixes: be better here?
+> Fixes: ad67b74d2469d9b82 ("printk: hash addresses printed with %p")
 
-drivers/scsi/megaraid/megaraid_mbox.c: In function 'megaraid_mbox_sync_scb':
-drivers/scsi/megaraid/megaraid_mbox.c:2193:14: warning:
- variable 'ccb' set but not used [-Wunused-but-set-variable]
+Christophe, When you add the Fixes: could you also add my
 
-drivers/scsi/megaraid/megaraid_mbox.c: In function 'megaraid_reset_handler':
-drivers/scsi/megaraid/megaraid_mbox.c:2580:7: warning:
- variable 'recovering' set but not used [-Wunused-but-set-variable]
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-drivers/scsi/megaraid/megaraid_mbox.c: In function 'mbox_post_sync_cmd':
-drivers/scsi/megaraid/megaraid_mbox.c:2728:12: warning:
- variable 'mbox64' set but not used [-Wunused-but-set-variable]
 
-drivers/scsi/megaraid/megaraid_mbox.c: In function 'megaraid_mbox_support_random_del':
-drivers/scsi/megaraid/megaraid_mbox.c:3138:11: warning:
- variable 'mbox' set but not used [-Wunused-but-set-variable]
+Thanks.
 
-drivers/scsi/megaraid/megaraid_mbox.c: In function 'megaraid_mbox_flush_cache':
-drivers/scsi/megaraid/megaraid_mbox.c:3266:10: warning:
- variable 'mbox' set but not used [-Wunused-but-set-variable]
 
-drivers/scsi/megaraid/megaraid_mbox.c: In function 'megaraid_mbox_fire_sync_cmd':
-drivers/scsi/megaraid/megaraid_mbox.c:3302:12: warning:
- variable 'mbox64' set but not used [-Wunused-but-set-variable]
-
-drivers/scsi/megaraid/megaraid_mbox.c: In function 'gather_hbainfo':
-drivers/scsi/megaraid/megaraid_mbox.c:3797:10: warning:
- variable 'dmajor' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/megaraid/megaraid_mbox.c | 31 -------------------------------
- 1 file changed, 31 deletions(-)
-
-diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
-index 530358c..e9030c9 100644
---- a/drivers/scsi/megaraid/megaraid_mbox.c
-+++ b/drivers/scsi/megaraid/megaraid_mbox.c
-@@ -202,13 +202,6 @@ static void megaraid_mbox_prepare_epthru(adapter_t *, scb_t *,
- MODULE_PARM_DESC(debug_level, "Debug level for driver (default=0)");
- 
- /*
-- * ### global data ###
-- */
--static uint8_t megaraid_mbox_version[8] =
--	{ 0x02, 0x20, 0x04, 0x06, 3, 7, 20, 5 };
--
--
--/*
-  * PCI table for all supported controllers.
-  */
- static struct pci_device_id pci_id_table_g[] =  {
-@@ -2190,10 +2183,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- static void
- megaraid_mbox_sync_scb(adapter_t *adapter, scb_t *scb)
- {
--	mbox_ccb_t	*ccb;
--
--	ccb	= (mbox_ccb_t *)scb->ccb;
--
- 	if (scb->dma_direction == PCI_DMA_FROMDEVICE)
- 		pci_dma_sync_sg_for_cpu(adapter->pdev,
- 					scsi_sglist(scb->scp),
-@@ -2577,7 +2566,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- 	uint8_t		raw_mbox[sizeof(mbox_t)];
- 	int		rval;
- 	int		recovery_window;
--	int		recovering;
- 	int		i;
- 	uioc_t		*kioc;
- 
-@@ -2591,7 +2579,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- 		return FAILED;
- 	}
- 
--
- 	// Under exceptional conditions, FW can take up to 3 minutes to
- 	// complete command processing. Wait for additional 2 minutes for the
- 	// pending commands counter to go down to 0. If it doesn't, let the
-@@ -2640,8 +2627,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- 
- 	recovery_window = MBOX_RESET_WAIT + MBOX_RESET_EXT_WAIT;
- 
--	recovering = adapter->outstanding_cmds;
--
- 	for (i = 0; i < recovery_window; i++) {
- 
- 		megaraid_ack_sequence(adapter);
-@@ -2725,13 +2710,10 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- mbox_post_sync_cmd(adapter_t *adapter, uint8_t raw_mbox[])
- {
- 	mraid_device_t	*raid_dev = ADAP2RAIDDEV(adapter);
--	mbox64_t	*mbox64;
- 	mbox_t		*mbox;
- 	uint8_t		status;
- 	int		i;
- 
--
--	mbox64	= raid_dev->mbox64;
- 	mbox	= raid_dev->mbox;
- 
- 	/*
-@@ -3135,7 +3117,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- static int
- megaraid_mbox_support_random_del(adapter_t *adapter)
- {
--	mbox_t		*mbox;
- 	uint8_t		raw_mbox[sizeof(mbox_t)];
- 	int		rval;
- 
-@@ -3157,8 +3138,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- 		return 0;
- 	}
- 
--	mbox = (mbox_t *)raw_mbox;
--
- 	memset((caddr_t)raw_mbox, 0, sizeof(mbox_t));
- 
- 	raw_mbox[0] = FC_DEL_LOGDRV;
-@@ -3263,12 +3242,8 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- static void
- megaraid_mbox_flush_cache(adapter_t *adapter)
- {
--	mbox_t	*mbox;
- 	uint8_t	raw_mbox[sizeof(mbox_t)];
- 
--
--	mbox = (mbox_t *)raw_mbox;
--
- 	memset((caddr_t)raw_mbox, 0, sizeof(mbox_t));
- 
- 	raw_mbox[0] = FLUSH_ADAPTER;
-@@ -3299,7 +3274,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- 	mbox_t	*mbox;
- 	uint8_t	raw_mbox[sizeof(mbox_t)];
- 	mraid_device_t	*raid_dev = ADAP2RAIDDEV(adapter);
--	mbox64_t *mbox64;
- 	int	status = 0;
- 	int i;
- 	uint32_t dword;
-@@ -3310,7 +3284,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- 
- 	raw_mbox[0] = 0xFF;
- 
--	mbox64	= raid_dev->mbox64;
- 	mbox	= raid_dev->mbox;
- 
- 	/* Wait until mailbox is free */
-@@ -3794,10 +3767,6 @@ static DEF_SCSI_QCMD(megaraid_queue_command)
- static int
- gather_hbainfo(adapter_t *adapter, mraid_hba_info_t *hinfo)
- {
--	uint8_t	dmajor;
--
--	dmajor			= megaraid_mbox_version[0];
--
- 	hinfo->pci_vendor_id	= adapter->pdev->vendor;
- 	hinfo->pci_device_id	= adapter->pdev->device;
- 	hinfo->subsys_vendor_id	= adapter->pdev->subsystem_vendor;
--- 
-1.8.3.1
-
+> 
+> No blame attached to Tobin, but the fixes makes it super clear what
+> changed and why this breaks kdb (which was not explicitly called out
+> the patch description).
+> 
+> 
+> Daniel.
+> 
+>> ---
+>>   kernel/debug/kdb/kdb_bt.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
+>> index 6ad4a9fcbd6f..7921ae4fca8d 100644
+>> --- a/kernel/debug/kdb/kdb_bt.c
+>> +++ b/kernel/debug/kdb/kdb_bt.c
+>> @@ -179,14 +179,14 @@ kdb_bt(int argc, const char **argv)
+>>   				kdb_printf("no process for cpu %ld\n", cpu);
+>>   				return 0;
+>>   			}
+>> -			sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
+>> +			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
+>>   			kdb_parse(buf);
+>>   			return 0;
+>>   		}
+>>   		kdb_printf("btc: cpu status: ");
+>>   		kdb_parse("cpu\n");
+>>   		for_each_online_cpu(cpu) {
+>> -			sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
+>> +			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
+>>   			kdb_parse(buf);
+>>   			touch_nmi_watchdog();
+>>   		}
+>> -- 
+>> 2.13.3
+>>
 
