@@ -2,92 +2,125 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826EEC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5601C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F06C21533
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:38:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b="pT2Y8V2E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F06C21533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=comcast.net
+	by mail.kernel.org (Postfix) with ESMTP id 6005421536
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:46:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6005421536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbeI0Fxd (ORCPT
+        id S1726609AbeI0GBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 01:53:33 -0400
-Received: from resqmta-ch2-09v.sys.comcast.net ([69.252.207.41]:58936 "EHLO
-        resqmta-ch2-09v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726298AbeI0Fxd (ORCPT
+        Thu, 27 Sep 2018 02:01:48 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46110 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726469AbeI0GBs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 01:53:33 -0400
-Received: from resomta-ch2-20v.sys.comcast.net ([69.252.207.116])
-        by resqmta-ch2-09v.sys.comcast.net with ESMTP
-        id 5INPglItVhaho5JNjgU1uz; Wed, 26 Sep 2018 23:38:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
-        s=q20161114; t=1538005091;
-        bh=wiOMwTrYq5R9ddsvIt6IAAy7iC7WPxxhcmO/6tmD+P8=;
-        h=Received:Received:Subject:To:From:Message-ID:Date:MIME-Version:
-         Content-Type;
-        b=pT2Y8V2Em2+RCD3XtRJZgSSq7fwZ0LvjREFydJqpnBtyotI0pvin4pQPokzd5ev+W
-         wBDDehvNDQ/0upeVMBjjiTjNEA8tDRMeypnuhXmcA+XDE+dmFCGhGPo2IPR78X9rB9
-         LKpgyGLcW+27B2kbliHqpP9+4EJhDoNLZGruHDXNdAcRDWrvwiQDmPh2hoUzYZuENm
-         4CpUbtt/44yNc75bQRD0B1SzY/6CmajeNOiGWSEwAqG5vNYD917B+9Nzwx85RJJCjX
-         XWdoRMmlSX+qek8E4XGMXQvWW08fpELvnOC04kh7si2XFKCcHN6k3/e+DpuxRsS8qM
-         zjCpk3OARjGlg==
-Received: from [10.1.10.100] ([73.214.254.59])
-        by resomta-ch2-20v.sys.comcast.net with ESMTPSA
-        id 5JNhgoe7Fi7DZ5JNig4BFB; Wed, 26 Sep 2018 23:38:10 +0000
-Subject: Re: AMD Athlon bogus performance value causing RCU stalls?
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org
-References: <6243f7cc-1a80-db0b-4765-fa12bda9b06a@comcast.net>
- <alpine.DEB.2.21.1809232314460.1398@nanos.tec.linutronix.de>
-From:   Rob Prowel <rprowel@comcast.net>
-Message-ID: <38932eb1-921f-55f7-10c8-358f9aae32b2@comcast.net>
-Date:   Wed, 26 Sep 2018 19:38:09 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 02:01:48 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QNi7Ae116048
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 19:46:24 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mrh4c6eqj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 19:46:24 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
+        Thu, 27 Sep 2018 00:46:22 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Sep 2018 00:46:20 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8QNkJkT59310110
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Sep 2018 23:46:19 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 566D842042;
+        Thu, 27 Sep 2018 02:46:03 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 038BD42045;
+        Thu, 27 Sep 2018 02:46:03 +0100 (BST)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Sep 2018 02:46:02 +0100 (BST)
+Received: from [9.102.45.49] (unknown [9.102.45.49])
+        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 9E833A01B6;
+        Thu, 27 Sep 2018 09:46:16 +1000 (AEST)
+Subject: Re: [PATCH] misc: cxl: Move a deference below a NULL test
+To:     zhong jiang <zhongjiang@huawei.com>, gregkh@linuxfoundation.org
+Cc:     fbarrat@linux.vnet.ibm.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+References: <1537962072-13732-1-git-send-email-zhongjiang@huawei.com>
+From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date:   Thu, 27 Sep 2018 09:46:16 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809232314460.1398@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMhRBq7tDMgSAFr0dVhVxLzIAV/ZpIK4ohlpupBXtkC1tbHU+aEKT7sGX0vdIiK47t8T4J9rqkiacDDoGhMS2PuZsnJ+JB3Z6opiGQv37JuBIR3JdUtq
- r7DBvlXMfkiHt+/m/aP7a+RclQ3A3kvbe0+CV9qC1VLrc7Ne+CiNKQ2g/ayMaS2Zh7uXq415ZrX9WHwUP4E2hhK5gMSPhmN8QSg=
+In-Reply-To: <1537962072-13732-1-git-send-email-zhongjiang@huawei.com>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 18092623-0012-0000-0000-000002AF0B0C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092623-0013-0000-0000-000020E325E3
+Message-Id: <69a3698c-dac9-1b9f-1161-f55b7b01780e@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809260221
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/23/18 17:19, Thomas Gleixner wrote:
->>
->> Other than RTFM, or please build a bunch of kernels from source on your slow
->> machine, using differing config options to help track down the cause of
->> this...any thoughts about a solution?
+On 26/9/18 9:41 pm, zhong jiang wrote:
+> It is safe to move a deference below a NULL test.
 > 
-> Yes. This was decoded recently as an issue on 32bit due to a calculation
-> which is based on 'unsigned long' but requires to be 64bit wide.
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+
+Thanks for catching this.
+
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+
+> ---
+>   drivers/misc/cxl/guest.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> It's in the 4.18.8 stable kernel, which should be available from your
-> fedora repo anytime soon.
+> diff --git a/drivers/misc/cxl/guest.c b/drivers/misc/cxl/guest.c
+> index 3bc0c15..559e835 100644
+> --- a/drivers/misc/cxl/guest.c
+> +++ b/drivers/misc/cxl/guest.c
+> @@ -1018,11 +1018,11 @@ int cxl_guest_init_afu(struct cxl *adapter, int slice, struct device_node *afu_n
+>   
+>   void cxl_guest_remove_afu(struct cxl_afu *afu)
+>   {
+> -	pr_devel("in %s - AFU(%d)\n", __func__, afu->slice);
+> -
+>   	if (!afu)
+>   		return;
+>   
+> +	pr_devel("in %s - AFU(%d)\n", __func__, afu->slice);
+> +
+>   	/* flush and stop pending job */
+>   	afu->guest->handle_err = false;
+>   	flush_delayed_work(&afu->guest->work_err);
+> 
 
-OK.  Followup on AMD performance counter problem in 4.18.7
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
 
-The Dell machine I was experiencing the problem on had a lot of ACPI
-issues.  One of the invalid ACPI entries was for a system timer.
-dmesg suggests that the broken timer was used in calculating the
-Athlon performance value.  So no, 32/64 bit math was not the issue.
-
-ACPI=off in the kernel boot line fixed the issue completely. Machine
-still functions well as a file/web/postgresql dev server so it's all
-good.
-
-tanks!
