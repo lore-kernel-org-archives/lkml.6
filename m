@@ -2,304 +2,134 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058DDC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACD7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83AB821480
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:09:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcMeZ5zE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83AB821480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7488020895
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7488020895
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeIZITx (ORCPT
+        id S1727024AbeIZIZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 04:19:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33438 "EHLO mail.kernel.org"
+        Wed, 26 Sep 2018 04:25:14 -0400
+Received: from mga06.intel.com ([134.134.136.31]:49705 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbeIZITx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 04:19:53 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3939D2086E;
-        Wed, 26 Sep 2018 02:09:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537927762;
-        bh=QInwRynkjcP/XysdSzqKsq+G/kgscyby4nRgGCPZVmM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PcMeZ5zEQxwi0sC2PJN1zpIhJjFBhhxH9Pus+UOwO97RrZges59AhxODbarMntmZE
-         9N74S+xK6H6CJ1P5rvM1CjuIYHjG8pa2iLCFhYQjv8/z3YSK6kRmxSxjyxReN3tLVM
-         xC53/CwHRULR+FX70MBpzY+wEbeOXjd+pH329W8c=
-Date:   Tue, 25 Sep 2018 19:09:21 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-Message-ID: <20180926020921.GG3829@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
- <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
- <20180919223819.GA79681@jaegeuk-macbookpro.roam.corp.google.com>
- <157abebb-80e7-d32d-3102-69ddfc5892f2@huawei.com>
- <20180920214213.GD35918@jaegeuk-macbookpro.roam.corp.google.com>
- <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
- <20180926002909.GC3829@jaegeuk-macbookpro.roam.corp.google.com>
- <b45beb50-c814-5fb4-63da-060871e33553@huawei.com>
- <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
- <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
+        id S1726321AbeIZIZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 04:25:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2018 19:14:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,304,1534834800"; 
+   d="scan'208";a="89373734"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Sep 2018 19:12:34 -0700
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 08/10] vfio/type1: Add domain at(de)taching group
+ helpers
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
+ <20180830040922.30426-9-baolu.lu@linux.intel.com>
+ <c5124ac1-65fe-7f89-265c-bef229bc5ce9@arm.com>
+ <a97c8f75-ff49-5b87-198f-d3c8950d4e90@linux.intel.com>
+ <04f5dc9d-71b1-37ec-402b-fae5f9e08664@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191300D35@SHSMSX101.ccr.corp.intel.com>
+ <c285871d-2ea0-5878-c7ac-ffa4ba8256ee@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191305A74@SHSMSX101.ccr.corp.intel.com>
+ <f46bcf5f-002b-4269-a750-c4254c9fc89f@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19130EAD7@SHSMSX101.ccr.corp.intel.com>
+ <75517c87-6ffd-2023-a541-3c69ae52ef4b@arm.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <1b4c12c3-1dc2-d9ba-9ba4-5220db3e2302@linux.intel.com>
+Date:   Wed, 26 Sep 2018 10:11:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <75517c87-6ffd-2023-a541-3c69ae52ef4b@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26, Chao Yu wrote:
-> On 2018/9/26 9:44, Jaegeuk Kim wrote:
-> > On 09/26, Chao Yu wrote:
-> >> On 2018/9/26 8:29, Jaegeuk Kim wrote:
-> >>> On 09/21, Chao Yu wrote:
-> >>>> On 2018/9/21 5:42, Jaegeuk Kim wrote:
-> >>>>> On 09/20, Chao Yu wrote:
-> >>>>>> On 2018/9/20 6:38, Jaegeuk Kim wrote:
-> >>>>>>> On 09/19, Chao Yu wrote:
-> >>>>>>>> On 2018/9/19 0:45, Jaegeuk Kim wrote:
-> >>>>>>>>> On 09/18, Chao Yu wrote:
-> >>>>>>>>>> On 2018/9/18 10:05, Jaegeuk Kim wrote:
-> >>>>>>>>>>> On 09/18, Chao Yu wrote:
-> >>>>>>>>>>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>> On 09/13, Chao Yu wrote:
-> >>>>>>>>>>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
-> >>>>>>>>>>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
-> >>>>>>>>>>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
-> >>>>>>>>>>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
-> >>>>>>>>>>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
-> >>>>>>>>>>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
-> >>>>>>>>>>>>>>>>>>>>>>> can recover it based on previous user information.
-> >>>>>>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
-> >>>>>>>>>>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
-> >>>>>>>>>>>>>>>>>>>>>> same?
-> >>>>>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
-> >>>>>>>>>>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
-> >>>>>>>>>>>>>>>>>>>>> fsck after roll-forward recovery.
-> >>>>>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
-> >>>>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
-> >>>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
-> >>>>>>>>>>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
-> >>>>>>>>>>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
-> >>>>>>>>>>>>>>>>>>> may was corrupted/inconsistent. Right?
-> >>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
-> >>>>>>>>>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
-> >>>>>>>>>>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
-> >>>>>>>>>>>>>>>>> detected by fsck, I guess there is bug in v8.
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
-> >>>>>>>>>>>>>>>> 1. flush time in block_operation exceed a threshold.
-> >>>>>>>>>>>>>>>> 2. dquot subsystem error occurs.
-> >>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>> For above case, fsck should repair the quota file by default.
-> >>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
-> >>>>>>>>>>>>>>> during the recovery. So, we have something missing in the recovery in terms
-> >>>>>>>>>>>>>>> of quota updates.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Yeah, I checked the code, just found one suspected place:
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> find_fsync_dnodes()
-> >>>>>>>>>>>>>>  - f2fs_recover_inode_page
-> >>>>>>>>>>>>>>   - inc_valid_node_count
-> >>>>>>>>>>>>>>    - dquot_reserve_block  dquot info is not initialized now
-> >>>>>>>>>>>>>>  - add_fsync_inode
-> >>>>>>>>>>>>>>   - dquot_initialize
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> I think we should reserve block for inode block after dquot_initialize(), can
-> >>>>>>>>>>>>>> you confirm this?
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> Let me test this.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
-> >>>>>>>>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>>>>>>>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
-> >>>>>>>>>>>>> Subject: [PATCH] f2fs: count inode block for recovered files
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> If a new file is recovered, we missed to reserve its inode block.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
-> >>>>>>>>>>>> have to keep backward compatibilty, in memory we don't account block number
-> >>>>>>>>>>>> for f2fs' inode block, but only account inode number for it, so here like
-> >>>>>>>>>>>> we did in inc_valid_node_count(), we don't need to do this.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
-> >>>>>>>>>>> is that caused by uid/gid change during recovery. Let me try out your patch.
-> >>>>>>>>>>
-> >>>>>>>>>> I guess we should update dquot and inode's uid/gid atomically under
-> >>>>>>>>>> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
-> >>>>>>>>>>
-> >>>>>>>>>> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
-> >>>>>>>>>> enabled, but w/ normal quota file, I got one regression reported by
-> >>>>>>>>>> generic/232, I fixed in v10, will do some tests and release it later.
-> >>>>>>>>>>
-> >>>>>>>>>> Note that, my fsck can fix corrupted quota file automatically once
-> >>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG is set.
-> >>>>>>>>>
-> >>>>>>>>> I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
-> >>>>>>>>
-> >>>>>>>> That's strange, in my environment, before v9, I always encounter corrupted
-> >>>>>>>> quota sysfile after step 9), after v9, I never hit failure again.
-> >>>>>>>>
-> >>>>>>>> 1) enable fault injection
-> >>>>>>>> 2) run fsstress
-> >>>>>>>> 3) call shutdowon
-> >>>>>>>> 4) kill fsstress
-> >>>>>>>> 5) unmount
-> >>>>>>>> 6) fsck
-> >>>>>>>> 7) mount
-> >>>>>>>> 8) umount
-> >>>>>>>> 9) fsck
-> >>>>>>>> 10) go 1).
-> >>>>>>>>
-> >>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
-> >>>>>>>>> flag in roll-forward recovery, everything is fine.
-> >>>>>>>>
-> >>>>>>>> I do the test based on codes in my git tree, could you check the result
-> >>>>>>>> again based on my code? in where I just disable nat_bits recovery, not
-> >>>>>>>> sure, in step 6) fsck can break some thing in image.
-> >>>>>>>>
-> >>>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
-> >>>>>>>>
-> >>>>>>>> Also, I just send the fsck code, could you check that too?
-> >>>>>>>>
-> >>>>>>>> And I'd like to know your mount option and mkfs option, could you list for me?
-> >>>>>>>
-> >>>>>>> I'm just doing this.
-> >>>>>>> https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L220
-> >>>>>>
-> >>>>>> I just sent one patch to fix POR issue which missed to recover uid/gid of
-> >>>>>> inode.
-> >>>>>>
-> >>>>>> [PATCH] f2fs: fix to recover inode's uid/gid during POR
-> >>>>>>
-> >>>>>> After applying this patch, I can reproduce sys quota file corruption... let
-> >>>>>> me figure out the solution.
-> >>>>>
-> >>>>> Okay.
-> >>>>
-> >>>> Could you try v11, no quota corruption in my test now.
-> >>>
-> >>> Chao,
-> >>>
-> >>> I missed your fsck patch to recover this. Could you post it as well?
-> >>
-> >> Could you check below one?
-> >>
-> >> https://lore.kernel.org/patchwork/patch/988210/
-> > 
-> > It'd be worth to show the flag in print_cp_state.
-> 
-> That patch has already added that?
-> 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 6a3382dbd449..21a39a7222c6 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -405,6 +405,8 @@  void print_ckpt_info(struct f2fs_sb_info *sbi)
->  void print_cp_state(u32 flag)
->  {
->  	MSG(0, "Info: checkpoint state = %x : ", flag);
-> +	if (flag & CP_QUOTA_NEED_FSCK_FLAG)
-> +		MSG(0, "%s", " quota_need_fsck");
+Hi,
 
-Oh, yeah. :P
-I started to run all my tests with this. Let me see what will happen.
+On 09/26/2018 01:55 AM, Jean-Philippe Brucker wrote:
+> On 19/09/2018 00:26, Tian, Kevin wrote:
+>>> If the core actually calls it, we can implement detach_dev :) The
+>>> problem is that the core never calls detach_dev when default_domain is
+>>> present (affects any IOMMU driver that relies on default_domain,
+>>> including AMD), and even in case 4) the default_domain is present for
+>>> the parent device
+>>
+>> Then can we change that core logic so detach_dev is invoked in all
+>> cases? yes there will be some changes in vendor drivers, but I expect
+>> this change trivial (especially considering the gain in IOMMU API
+>> simplicity side as described below).
+> 
+> Thinking more about this, there might be a way that doesn't require too
+> much rewriting of IOMMU drivers. When VFIO calls iommu_detach_group to
+> detach a vfio-pci device from its domain, it could do detach_dev(dev,
+> old_domain) followed by attach_dev(dev, default_domain) instead of only
+> attach_dev(dev, default_domain), so:
+> 
+> __iommu_attach_group(grp, unmanaged_domain)
+>    ops->attach_dev(dev, unmanaged_domain)
+>      -> IOMMU driver detaches from default_domain only if the dev isn't
+>         in auxiliary mode
+> 
+> __iommu_detach_group(grp, unmanaged_domain)
+>    if (ops->detach_dev)
+>        ops->detach_dev(dev, unmanaged_domain)
+>    ops->attach_dev(dev, default_domain)
+>      -> IOMMU driver ignores this if still attached to default_domain
+> 
 
+This looks good to me.
+
+Just a minor change to make it more readable.
+
+__iommu_detach_group(grp, unmanaged_domain)
+     if (ops->detach_dev)
+         ops->detach_dev(dev, unmanaged_domain)
+     if (default_domain)
+         ops->attach_dev(dev, default_domain)
+
+Best regards,
+Lu Baolu
+
+> It's not trivial: since half the IOMMU drivers seem to be using default
+> domain now, their detach_dev callback might have been dead code for a
+> while (I can't find a path where it still gets called), so re-enabling
+> it requires some attention. However, since most of them won't care about
+> aux domains, maybe we could just remove their detach_dev pointer.
+> 
+> The resulting logic of attach/detach_dev in IOMMU drivers that do use
+> aux domains still seems unnecessarily convoluted. It could as well be
+> done with separate attach_aux/detach_aux functions. If you want to keep
+> it that way though, I think the above could work for us and I'll try to
+> write an RFC.
 > 
 > Thanks,
+> Jean
 > 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> Thanks,
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Thanks,
-> >>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Can you test v9 first? I didn't encounter quota corruption with your
-> >>>>>>>>>>>> testcase right now. Will check it in cell phone environment.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>>>>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>>>>>>>>>> ---
-> >>>>>>>>>>>>>  fs/f2fs/recovery.c | 5 +++++
-> >>>>>>>>>>>>>  1 file changed, 5 insertions(+)
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> >>>>>>>>>>>>> index 56d34193a74b..bff5cf730e13 100644
-> >>>>>>>>>>>>> --- a/fs/f2fs/recovery.c
-> >>>>>>>>>>>>> +++ b/fs/f2fs/recovery.c
-> >>>>>>>>>>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
-> >>>>>>>>>>>>>  		err = dquot_alloc_inode(inode);
-> >>>>>>>>>>>>>  		if (err)
-> >>>>>>>>>>>>>  			goto err_out;
-> >>>>>>>>>>>>> +		err = dquot_reserve_block(inode, 1);
-> >>>>>>>>>>>>> +		if (err) {
-> >>>>>>>>>>>>> +			dquot_drop(inode);
-> >>>>>>>>>>>>> +			goto err_out;
-> >>>>>>>>>>>>> +		}
-> >>>>>>>>>>>>>  	}
-> >>>>>>>>>>>>>  
-> >>>>>>>>>>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>> .
-> >>>>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> .
-> >>>>>>>>>
-> >>>>>>>
-> >>>>>>> .
-> >>>>>>>
-> >>>>>
-> >>>>> .
-> >>>>>
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
