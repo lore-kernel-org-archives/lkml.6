@@ -2,358 +2,212 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6580EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6495BC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2012152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:22:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2012152F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 134F62152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134F62152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeI0AgW (ORCPT
+        id S1727604AbeI0Ahd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 20:36:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44348 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725733AbeI0AgW (ORCPT
+        Wed, 26 Sep 2018 20:37:33 -0400
+Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:25669 "EHLO
+        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725733AbeI0Ahd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 20:36:22 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QIJTPB032224
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:22:07 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mrejq2amj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 14:22:07 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 26 Sep 2018 14:22:06 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Sep 2018 14:22:03 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8QIM29I59179154
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 26 Sep 2018 18:22:02 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD469B206B;
-        Wed, 26 Sep 2018 14:20:21 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4E6FBB205F;
-        Wed, 26 Sep 2018 14:20:19 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.155.193])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Sep 2018 14:20:19 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 16EFD16C3662; Wed, 26 Sep 2018 11:21:59 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 11:21:59 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     mingo@kernel.org
-Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, efault@gmx.de, byungchul.park@lge.com,
-        joel@joelfernandes.org, mhillenb@amazon.de, dwmw2@infradead.org,
-        peterz@infradead.org
-Subject: [GIT PULL rcu/next] RCU commits for 4.20/5.0
-Reply-To: paulmck@linux.ibm.com
+        Wed, 26 Sep 2018 20:37:33 -0400
+Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by g9t1613g.houston.hpe.com (Postfix) with ESMTPS id 33940627DF;
+        Wed, 26 Sep 2018 18:23:20 +0000 (UTC)
+Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
+        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 4F2705A;
+        Wed, 26 Sep 2018 18:23:19 +0000 (UTC)
+Received: from hpe.com (ben.americas.hpqcorp.net [10.33.153.7])
+        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 4D3AC4C;
+        Wed, 26 Sep 2018 18:23:18 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 13:23:18 -0500
+From:   Russ Anderson <rja@hpe.com>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Justin Ernst <justin.ernst@hpe.com>, russ.anderson@hpe.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aristeu Rozanski Filho <arozansk@redhat.com>
+Subject: Re: [PATCH] Raise maximum number of memory controllers
+Message-ID: <20180926182317.patqjso7nzw2oxiz@hpe.com>
+Reply-To: Russ Anderson <rja@hpe.com>
+References: <20180925143449.284634-1-justin.ernst@hpe.com>
+ <20180925152659.GE23986@zn.tnic>
+ <20180925175023.GA16725@agluck-desk>
+ <20180925180458.GG23986@zn.tnic>
+ <20180926093510.GA5584@zn.tnic>
+ <20180926152752.GG5584@zn.tnic>
+ <20180926130340.6b22918b@coco.lan>
+ <20180926161749.GI5584@zn.tnic>
+ <20180926181035.GA1132@agluck-desk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18092618-0068-0000-0000-00000342DDD1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009776; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01094024; UDB=6.00565495; IPR=6.00874061;
- MB=3.00023518; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-26 18:22:06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092618-0069-0000-0000-000045DE3BC8
-Message-Id: <20180926182159.GA26116@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809260170
+In-Reply-To: <20180926181035.GA1132@agluck-desk>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Ingo,
+On Wed, Sep 26, 2018 at 11:10:35AM -0700, Luck, Tony wrote:
+> On Wed, Sep 26, 2018 at 06:17:49PM +0200, Borislav Petkov wrote:
+> > On Wed, Sep 26, 2018 at 01:03:40PM -0300, Mauro Carvalho Chehab wrote:
+> > > I guess this is/was needed to create things like this:
+> > > 
+> > > 	lrwxrwxrwx 1 root root 0 set 26 05:24 /sys/bus/edac/devices/mc -> ../../../devices/system/edac/mc
+> > 
+> > They're still there:
+> > 
+> > $ ls -l /sys/bus/edac/devices/
+> > total 0
+> > lrwxrwxrwx 1 root root 0 Sep 26 18:15 csrow0 -> ../../../devices/system/edac/mc/mc0/csrow0
+> > lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm0 -> ../../../devices/system/edac/mc/mc0/dimm0
+> > lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm3 -> ../../../devices/system/edac/mc/mc0/dimm3
+> > lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm6 -> ../../../devices/system/edac/mc/mc0/dimm6
+> > lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm9 -> ../../../devices/system/edac/mc/mc0/dimm9
+> > lrwxrwxrwx 1 root root 0 Sep 26 18:15 mc -> ../../../devices/system/edac/mc
+> > lrwxrwxrwx 1 root root 0 Sep 26 18:15 mc0 -> ../../../devices/system/edac/mc/mc0
+> 
+> I ran into trouble on my 4 socket broadwell server (so 8 memory controllers,
+> a whole pile of DIMMs, running from sb_edac.c)
 
-This pull request contains the following changes:
+We are also having trouble on a 32 socket system.
 
-1.	Documentation updates, including some good-eye catches from
-	Joel Fernandes.
+---------------------------------------------------------------------------------------------
+[  OK  ] Started Load kdump kernel early on startup.
+[   ***] (2 of 2) A start job is running for...work interfaces (18s / no limit)[  132.638611] BUG: unable to handle kernel paging request at ffff8c7efeebefff
+[  132.640895] PGD 5fec3fdd067 P4D 5fec3fdd067 PUD 5fec3fda067 PMD 0 
+[  132.640895] Oops: 0002 [#1] SMP PTI
+[  132.640895] CPU: 650 PID: 9884 Comm: kworker/650:1 Kdump: loaded Tainted: G            E     4.19.0-rc4-ernstj+ #6
+[  132.640895] Hardware name: HPE Superdome Flex/Superdome Flex, BIOS Bundle:3.0.196 SFW:IP147.007.000.071.000.1809242200 09/24/2018
+[  132.640895] Workqueue: events cache_reap
+[  132.640895] RIP: 0010:free_block+0x11c/0x1e0
+[  132.640895] Code: ea 20 45 29 d7 41 d3 ef 0f b6 4f 1d 45 01 fa 41 d3 ea 8b 48 30 44 8d 79 ff 48 8b 48 20 44 89 78 30 48 85 c9 0f 84 a5 00 00 00 <46> 88 14 39 8b 48 30 85 c9 0f 84 32 ff ff ff 49 8b 49 10 4c 8d 50
+[  132.640895] RSP: 0018:ffffc9004b0c7d90 EFLAGS: 00010086
+[  132.640895] RAX: ffffea11f7fbafc0 RBX: 0000000000000002 RCX: ffff8c7dfeebf000
+[  132.640895] RDX: 0000000000000005 RSI: ffff8c7e08da9328 RDI: ffff880147c02000
+[  132.640895] RBP: 0000000080000000 R08: ffff8c5047c004a8 R09: ffff8c5047c00480
+[  132.640895] R10: 0000000000000001 R11: ffff8c7dfeebf800 R12: ffffea0000000000
+[  132.640895] R13: 000077ff80000000 R14: ffff8c5047c00488 R15: 00000000ffffffff
+[  132.640895] FS:  0000000000000000(0000) GS:ffff8c7e08d80000(0000) knlGS:0000000000000000
+[  132.640895] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  132.640895] CR2: ffff8c7efeebefff CR3: 000000000200a006 CR4: 00000000007606e0
+[  132.640895] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  132.640895] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  132.640895] PKRU: 55555554
+[  132.640895] Call Trace:
+[  132.640895]  drain_array_locked+0x5b/0x80
+[  132.640895]  drain_array+0x63/0x90
+[  132.640895]  cache_reap+0x68/0x1f0
+[  132.640895]  process_one_work+0x165/0x360
+[  132.640895]  worker_thread+0x49/0x3e0
+[  132.640895]  kthread+0xf8/0x130
+[  132.640895]  ? max_active_store+0x60/0x60
+[  132.640895]  ? kthread_bind+0x10/0x10
+[  132.640895]  ret_from_fork+0x35/0x40
+[  132.640895] Modules linked in: acpi_cpufreq(E-) skx_edac(E+) intel_rapl(E) nfit(E) libnvdimm(E) x86_pkg_temp_thermal(E) intel_powerclamp(E) coretemp(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) pcbc(E) aesni_intel(E) aes_x86_64(E) iscsi_ibft(E) crypto_simd(E) iscsi_boot_sysfs(E) cryptd(E) glue_helper(E) pcspkr(E) nls_iso8859_1(E) nls_cp437(E) vfat(E) fat(E) joydev(E) i40e(E) ipmi_ssif(E) lpc_ich(E) i2c_i801(E) mfd_core(E) wmi(E) ipmi_si(E) ipmi_devintf(E) ipmi_msghandler(E) button(E) xfs(E) libcrc32c(E) hid_generic(E) usbhid(E) sd_mod(E) mgag200(E) i2c_algo_bit(E) drm_kms_helper(E) syscopyarea(E) crc32c_intel(E) sysfillrect(E) xhci_pci(E) sysimgblt(E) fb_sys_fops(E) xhci_hcd(E) ahci(E) libahci(E) ttm(E) drm(E) libata(E) usbcore(E) sg(E) dm_multipath(E)
+[  132.916934]  dm_mod(E) scsi_dh_rdac(E) scsi_dh_emc(E) scsi_dh_alua(E) scsi_mod(E) msr(E) efivarfs(E) autofs4(E)
+[  132.916934] CR2: ffff8c7efeebefff
+[  132.916934] ---[ end trace 9ee1381bf4bae01f ]---
+[  *** ] (2 of 2) A start job is running for.[  132.916934] RIP: 0010:free_block+0x11c/0x1e0
+[  132.916934] Code: ea 20 45 29 d7 41 d3 ef 0f b6 4f 1d 45 01 fa 41 d3 ea 8b 48 30 44 8d 79 ff 48 8b 48 20 44 89 78 30 48 85 c9 0f 84 a5 00 00 00 <46> 88 14 39 8b 48 30 85 c9 0f 84 32 ff ff ff 49 8b 49 10 4c 8d 50
+[  132.916934] RSP: 0018:ffffc9004b0c7d90 EFLAGS: 00010086
+..work interface[  132.977236] EDAC MC: Removed device 0 for skx_edac Skylake Socket#0 IMC#0: DEV 0000:80:0a.0
+[  132.916934] RAX: ffffea11f7fbafc0 RBX: 0000000000000002 RCX: ffff8c7dfeebf000
+[  132.916934] RDX: 0000000000000005 RSI: ffff8c7e08da9328 RDI: ffff880147c02000
+s (19s / no limi[  133.004953] RBP: 0000000080000000 R08: ffff8c5047c004a8 R09: ffff8c5047c00480
+[  133.004953] R10: 0000000000000001 R11: ffff8c7dfeebf800 R12: ffffea0000000000
+[  133.004953] R13: 000077ff80000000 R14: ffff8c5047c00488 R15: 00000000ffffffff
+[  133.004953] FS:  0000000000000000(0000) GS:ffff8c7e08d80000(0000) knlGS:0000000000000000
+[  133.004953] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  133.004953] CR2: ffff8c7efeebefff CR3: 000000000200a006 CR4: 00000000007606e0
+[  133.004953] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  133.004953] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  133.004953] PKRU: 55555554
+[  133.004953] Kernel panic - not syncing: Fatal exception
+---------------------------------------------------------------------------------------------
 
-	http://lkml.kernel.org/r/20180829211637.GA20980@linux.vnet.ibm.com
+> Things start going wrong with:
+> 
+> [   45.216657] sysfs: cannot create duplicate filename '/bus/edac/devices/dimm0'
+> [   45.216663] CPU: 37 PID: 2034 Comm: systemd-udevd Not tainted 4.19.0-rc5 #1
+> [   45.216665] Hardware name: Intel Corporation BRICKLAND/BRICKLAND, BIOS BRBDXSD1.86B.0338.V01.1603162127 03/16/2016
+> [   45.216667] Call Trace:
+> [   45.216688]  dump_stack+0x5c/0x7b
+> [   45.216697]  sysfs_warn_dup+0x56/0x70
+> [   45.216702]  sysfs_do_create_link_sd.isra.2+0x98/0xb0
+> [   45.216714]  bus_add_device+0x77/0x160
+> [   45.216720]  device_add+0x424/0x660
+> [   45.216731]  edac_create_sysfs_mci_device+0xb9/0x2f0
+> [   45.216738]  edac_mc_add_mc_with_groups+0x111/0x2b0
+> [   45.216747]  sbridge_init+0x13c9/0x2000 [sb_edac]
+> [   45.216757]  ? _raw_spin_lock+0x1d/0x20
+> [   45.216765]  ? free_pcppages_bulk+0x2ca/0x630
+> [   45.216769]  ? 0xffffffffc050f000
+> [   45.216779]  do_one_initcall+0x46/0x1c8
+> [   45.216784]  ? free_unref_page_commit+0x95/0x120
+> [   45.216791]  ? _cond_resched+0x15/0x40
+> [   45.216798]  ? kmem_cache_alloc_trace+0x153/0x1c0
+> [   45.216805]  do_init_module+0x5b/0x208
+> [   45.216826]  load_module+0x1a2d/0x1fb0
+> [   45.216835]  ? __do_sys_finit_module+0xe9/0x110
+> [   45.216840]  __do_sys_finit_module+0xe9/0x110
+> [   45.216847]  do_syscall_64+0x5b/0x180
+> [   45.216852]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [   45.216856] RIP: 0033:0x7fcdec618bd9
+> 
+> and fell off a cliff after that.
+> 
+> Going back to the old code I have a "dimm0" on each of the eight controllers:
+> 
+> # find /sys -name dimm0
+> /sys/devices/system/edac/mc/mc6/dimm0
+> /sys/devices/system/edac/mc/mc4/dimm0
+> /sys/devices/system/edac/mc/mc2/dimm0
+> /sys/devices/system/edac/mc/mc0/dimm0
+> /sys/devices/system/edac/mc/mc7/dimm0
+> /sys/devices/system/edac/mc/mc5/dimm0
+> /sys/devices/system/edac/mc/mc3/dimm0
+> /sys/devices/system/edac/mc/mc1/dimm0
+> /sys/bus/mc6/devices/dimm0
+> /sys/bus/mc4/devices/dimm0
+> /sys/bus/mc2/devices/dimm0
+> /sys/bus/mc0/devices/dimm0
+> /sys/bus/mc7/devices/dimm0
+> /sys/bus/mc5/devices/dimm0
+> /sys/bus/mc3/devices/dimm0
+> /sys/bus/mc1/devices/dimm0
+> # ls -l /sys/bus/mc0/devices
+> total 0
+> lrwxrwxrwx. 1 root root 0 Sep 26 11:08 csrow0 -> ../../../devices/system/edac/mc/mc0/csrow0
+> lrwxrwxrwx. 1 root root 0 Sep 26 11:08 dimm0 -> ../../../devices/system/edac/mc/mc0/dimm0
+> lrwxrwxrwx. 1 root root 0 Sep 26 11:08 dimm3 -> ../../../devices/system/edac/mc/mc0/dimm3
+> lrwxrwxrwx. 1 root root 0 Sep 26 11:08 dimm6 -> ../../../devices/system/edac/mc/mc0/dimm6
+> lrwxrwxrwx. 1 root root 0 Sep 26 11:08 dimm9 -> ../../../devices/system/edac/mc/mc0/dimm9
+> lrwxrwxrwx. 1 root root 0 Sep 26 11:08 mc0 -> ../../../devices/system/edac/mc/mc0
+> 
+> It looks like the new code isn't trying to place the dimm symlinks
+> in the proper subdirectories.
+> 
+> -Tony
 
-2.	SRCU updates, most notably changes enabling call_srcu() to be
-	invoked very early in the boot sequence.
-
-	http://lkml.kernel.org/r/20180829212036.GA22033@linux.vnet.ibm.com
-
-3.	Torture-test updates, including some preliminary work towards
-	making rcutorture better able to find problems that result in
-	insufficient grace-period forward progress.
-
-	http://lkml.kernel.org/r/20180829214722.GA23411@linux.vnet.ibm.com
-
-4.	Consolidate the RCU-bh, RCU-preempt, and RCU-sched flavors into
-	a single flavor similar to RCU-sched in !PREEMPT kernels and 
-	into a single flavor similar to RCU-preempt (but also waiting
-	on preempt-disabled sequences of code) in PREEMPT kernels.  This
-	branch also includes a refactoring of rcu_{nmi,irq}_{enter,exit}()
-	from Byungchul Park.
-
-	http://lkml.kernel.org/r/20180829222021.GA29944@linux.vnet.ibm.com
-
-5.	Now that there is only one RCU flavor in any given running kernel,
-	the many "rsp" pointers are no longer required, and this cleanup
-	series removes them.
-
-	http://lkml.kernel.org/r/20180829223830.GA1800@linux.vnet.ibm.com
-
-6.	This branch carries out additional cleanups made possible by
-	the RCU flavor consolidation, including inlining how-trivial
-	functions, updating comments and definitions, and removing
-	now-unneeded rcutorture scenarios.
-
-	http://lkml.kernel.org/r/20180829225340.GA7019@linux.vnet.ibm.com
-
-7.	Initial changes to RCU to better promote forward progress of
-	grace periods, including fixing a bug found by Marius Hillenbrand
-	and David Woodhouse, with the fix suggested by Peter Zijlstra.
-
-	http://lkml.kernel.org/r/20180829230035.GA7751@linux.vnet.ibm.com
-
-8.	Now that there is only one flavor of RCU in any running kernel,
-	there is also only on rcu_data structure per CPU.  This means
-	that the rcu_dynticks structure can be merged into the rcu_data
-	structure, a task taken on by this branch.  This branch also
-	contains a -rt-related fix from Mike Galbraith.
-
-	http://lkml.kernel.org/r/20180829230715.GA9431@linux.vnet.ibm.com
-
-Once again, the layout of this pull request is unusual due to the large
-footprint of the commits in #4-#8 above.  These five branches are therefore
-stacked on top of each other instead of my usual practice of laying them
-out in parallel.
-
-This pull request decreases the size of RCU by more than 450 lines,
-offsetting the increase of the v4.19 merge window.  I expect a further
-decrease due to additional outside-of-RCU cleanups, though this will be
-offset by additional forward-progress testing and fixes in response to
-Marius's and David's location of a forward-progress bug that escaped to
-the field -- rcutorture should have located that bug, after all.
-
-All of these changes have been subjected to 0day Test Robot and -next
-testing, and are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-
-for you to fetch changes up to b56ada120921fbb0a4fb2a5bee163717182e7e9e:
-
-  Merge branches 'doc.2018.08.30a', 'dynticks.2018.08.30b', 'srcu.2018.08.30b' and 'torture.2018.08.29a' into HEAD (2018-08-30 16:12:53 -0700)
-
-----------------------------------------------------------------
-Byungchul Park (1):
-      rcu: Refactor rcu_{nmi,irq}_{enter,exit}()
-
-Joel Fernandes (Google) (2):
-      doc: Fix broken RCU-requirements link to LKML archive
-      doc: Improve rcu_dynticks::dynticks documentation
-
-Mike Galbraith (1):
-      rcu: Convert rcu_state.ofl_lock to raw_spinlock_t
-
-Paul E. McKenney (137):
-      doc: Add design documentation on interruption of NMI handlers
-      torture: Stop overwriting Make.out file with obsolete version
-      rcutorture: Force occasional reader waits
-      rcutorture: Warn on bad torture type for built-in tests
-      rcuperf: Warn on bad perf type for built-in tests
-      rcutorture: Remove TREE06 and TREE08 from the default test list
-      rcutorture: Add forward-progress tests for RCU grace periods
-      rcutorture: Also use GP sequence to judge forward progress
-      rcutorture: Avoid no-test complaint if too few forward-progress tries
-      rcutorture: Vary forward-progress test interval
-      rcutorture: Add self-propagating callback to forward-progress testing
-      rcutorture: Increase rcu_read_delay() longdelay_ms
-      rcutorture: Limit reader duration if irq or bh disabled
-      rcutorture: Reduce priority of forward-progress testing
-      rcutorture: Adjust number of reader kthreads per CPU-hotplug operations
-      rcutorture: Print forward-progress test interval on error
-      rcutorture: Check GP completion at stutter end
-      rcutorture: Maintain self-propagating CB only during forward-progress test
-      doc: Update removal of RCU-bh/sched update machinery
-      doc: Fix broken HTML directive
-      rcu: Defer reporting RCU-preempt quiescent states when disabled
-      rcutorture: Test extended "rcu" read-side critical sections
-      rcu: Allow processing deferred QSes for exiting RCU-preempt readers
-      rcu: Remove now-unused ->b.exp_need_qs field from the rcu_special union
-      rcu: Add warning to detect half-interrupts
-      rcu: Apply RCU-bh QSes to RCU-sched and RCU-preempt when safe
-      rcu: Report expedited grace periods at context-switch time
-      rcu: Define RCU-bh update API in terms of RCU
-      rcu: Update comments and help text for no more RCU-bh updaters
-      rcu: Drop "wake" parameter from rcu_report_exp_rdp()
-      rcu: Fix typo in rcu_get_gp_kthreads_prio() header comment
-      rcu: Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds
-      rcu: Express Tiny RCU updates in terms of RCU rather than RCU-sched
-      rcu: Remove RCU_STATE_INITIALIZER()
-      rcu: Eliminate rcu_state structure's ->call field
-      rcu: Remove rcu_state structure's ->rda field
-      rcu: Remove rcu_state_p pointer to default rcu_state structure
-      rcu: Remove rcu_data_p pointer to default rcu_data structure
-      rcu: Remove rsp parameter from rcu_report_qs_rnp()
-      rcu: Remove rsp parameter from rcu_report_qs_rsp()
-      rcu: Remove rsp parameter from rcu_report_unblock_qs_rnp()
-      rcu: Remove rsp parameter from rcu_report_qs_rdp()
-      rcu: Remove rsp parameter from rcu_gp_in_progress()
-      rcu: Remove rsp parameter from rcu_get_root()
-      rcu: Remove rsp parameter from record_gp_stall_check_time()
-      rcu: Remove rsp parameter from rcu_check_gp_kthread_starvation()
-      rcu: Remove rsp parameter from rcu_dump_cpu_stacks()
-      rcu: Remove rsp parameter from rcu_stall_kick_kthreads()
-      rcu: Remove rsp parameter from print_other_cpu_stall()
-      rcu: Remove rsp parameter from print_cpu_stall()
-      rcu: Remove rsp parameter from check_cpu_stall()
-      rcu: Remove rsp parameter from rcu_future_gp_cleanup()
-      rcu: Remove rsp parameter from rcu_gp_kthread_wake()
-      rcu: Remove rsp parameter from rcu_accelerate_cbs()
-      rcu: Remove rsp parameter from rcu_accelerate_cbs_unlocked()
-      rcu: Remove rsp parameter from rcu_advance_cbs()
-      rcu: Remove rsp parameter from __note_gp_changes()
-      rcu: Remove rsp parameter from note_gp_changes()
-      rcu: Remove rsp parameter from rcu_gp_slow()
-      rcu: Remove rsp parameter from rcu_gp_kthread() and friends
-      rcu: Remove rsp parameter from rcu_check_quiescent_state()
-      rcu: Remove rsp parameter from CPU hotplug functions
-      rcu: Remove rsp parameter from rcu_do_batch()
-      rcu: Remove rsp parameter from force-quiescent-state functions
-      rcu: Remove rsp parameter from rcu_check_gp_start_stall()
-      rcu: Remove rsp parameter from __rcu_process_callbacks()
-      rcu: Remove rsp parameter from __call_rcu() and friend
-      rcu: Remove rsp parameter from __rcu_pending()
-      rcu: Remove rsp parameter from _rcu_barrier() and friends
-      rcu: Remove rsp parameter from rcu_boot_init_percpu_data() and friends
-      rcu: Remove rsp parameter from rcu_init_one() and friends
-      rcu: Remove rsp parameter from rcu_print_detail_task_stall()
-      rcu: Remove rsp parameter from dump_blkd_tasks() and friend
-      rcu: Remove rsp parameter from rcu_spawn_one_boost_kthread()
-      rcu: Remove rsp parameter from print_cpu_stall_info()
-      rcu: Remove rsp parameter from no-CBs CPU functions
-      rcu: Remove rsp parameter from expedited grace-period functions
-      rcu: Remove rsp parameter from rcu_node tree accessor macros
-      rcu: Remove rcu_data structure's ->rsp field
-      rcu: Remove last non-flavor-traversal rsp local variable from tree_plugin.h
-      rcu: Remove for_each_rcu_flavor() flavor-traversal macro
-      rcu: Simplify rcutorture_get_gp_data()
-      rcu: Restructure rcu_check_gp_kthread_starvation()
-      rcu: Eliminate stall-warning use of rsp
-      rcu: Eliminate grace-period management code use of rsp
-      rcu: Eliminate callback-invocation/invocation use of rsp
-      rcu: Eliminate quiescent-state and grace-period-nonstart use of rsp
-      rcu: Eliminate RCU-barrier use of rsp
-      rcu: Eliminate initialization-time use of rsp
-      rcu: Fix typo in force_qs_rnp()'s parameter's parameter
-      rcu: Inline increment_cpu_stall_ticks() into its sole caller
-      rcu: Pull rcu_gp_kthread() FQS loop into separate function
-      rcu: Consolidate RCU-bh update-side function definitions
-      rcu: Consolidate RCU-sched update-side function definitions
-      rcutorture: Add RCU-bh and RCU-sched support for extended readers
-      rcu: Stop testing RCU-bh and RCU-sched
-      rcutorture: Remove the "rcu_bh" and "sched" torture types
-      rcuperf: Remove the "rcu_bh" and "sched" torture types
-      rcu: Remove now-unused rcutorture APIs
-      rcu: Clean up flavor-related definitions and comments in rcupdate.h
-      rcu: Clean up flavor-related definitions and comments in rculist.h
-      rcu: Clean up flavor-related definitions and comments in rcupdate_wait.h
-      rcu: Clean up flavor-related definitions and comments in Kconfig
-      rcu: Clean up flavor-related definitions and comments in rcu.h
-      rcu: Clean up flavor-related definitions and comments in rcutorture.c
-      rcu: Clean up flavor-related definitions and comments in srcutree.h
-      rcu: Clean up flavor-related definitions and comments in tiny.c
-      rcu: Clean up flavor-related definitions and comments in tree.c
-      rcu: Clean up flavor-related definitions and comments in tree_exp.h
-      rcu: Clean up flavor-related definitions and comments in tree_plugin.h
-      rcu: Clean up flavor-related definitions and comments in update.c
-      rcu: Remove !PREEMPT code from rcu_note_voluntary_context_switch()
-      rcu: Define rcu_all_qs() only in !PREEMPT builds
-      rcu: Inline _rcu_barrier() into its sole remaining caller
-      rcu: Make need_resched() respond to urgent RCU-QS needs
-      rcu: Provide improved interrupt-from-idle check in rcu_check_callbacks()
-      rcutorture: Dump reader protection sequence if failures or close calls
-      rcu: Motivate Tiny RCU forward progress
-      rcu: Eliminate ->rcu_qs_ctr from the rcu_dynticks structure
-      rcu: Provide functions for determining if call_rcu() has been invoked
-      rcu: Compute jiffies_till_sched_qs from other kernel parameters
-      rcu: More aggressively enlist scheduler aid for nohz_full CPUs
-      rcu: Avoid resched_cpu() when rescheduling the current CPU
-      rcu: Convert "1UL << x" to "BIT(x)"
-      rcu: Remove unused rcu_dynticks_snap() from Tiny RCU
-      rcu: Merge rcu_dynticks structure into rcu_data structure
-      rcu: Switch ->tick_nohz_enabled_snap to rcu_data structure
-      rcu: Switch last accelerate/advance to rcu_data structure
-      rcu: Switch lazy counts to rcu_data structure
-      rcu: Switch urgent quiescent-state requests to rcu_data structure
-      rcu: Switch dyntick nesting counters to rcu_data structure
-      rcu: Switch ->dynticks to rcu_data structure, remove rcu_dynticks
-      rcu: Remove obsolete ->dynticks_fqs and ->cond_resched_completed
-      srcu: Make call_srcu() available during very early boot
-      rcutorture: Test early boot call_srcu()
-      srcu: Make early-boot call_srcu() reuse workqueue lists
-      Merge branches 'doc.2018.08.30a', 'dynticks.2018.08.30b', 'srcu.2018.08.30b' and 'torture.2018.08.29a' into HEAD
-
- .../Design/Data-Structures/Data-Structures.html    |   31 +-
- .../Expedited-Grace-Periods.html                   |    9 +-
- .../RCU/Design/Requirements/Requirements.html      |  214 +-
- Documentation/RCU/stallwarn.txt                    |   13 +-
- Documentation/RCU/whatisRCU.txt                    |    3 +-
- Documentation/admin-guide/kernel-parameters.txt    |   31 +-
- Documentation/kernel-per-CPU-kthreads.txt          |    2 +-
- include/linux/rculist.h                            |   32 +-
- include/linux/rcupdate.h                           |  154 +-
- include/linux/rcupdate_wait.h                      |   14 +-
- include/linux/rcutiny.h                            |   53 +-
- include/linux/rcutree.h                            |   31 +-
- include/linux/sched.h                              |    6 +-
- include/linux/srcutree.h                           |   13 +-
- include/linux/torture.h                            |    2 +-
- include/trace/events/rcu.h                         |   25 +-
- kernel/rcu/Kconfig                                 |   14 +-
- kernel/rcu/rcu.h                                   |   67 +-
- kernel/rcu/rcuperf.c                               |   66 +-
- kernel/rcu/rcutorture.c                            |  397 ++--
- kernel/rcu/srcutiny.c                              |   29 +-
- kernel/rcu/srcutree.c                              |   31 +-
- kernel/rcu/tiny.c                                  |  154 +-
- kernel/rcu/tree.c                                  | 2213 ++++++++------------
- kernel/rcu/tree.h                                  |  132 +-
- kernel/rcu/tree_exp.h                              |  426 ++--
- kernel/rcu/tree_plugin.h                           |  790 +++----
- kernel/rcu/update.c                                |   70 +-
- kernel/softirq.c                                   |    3 +-
- kernel/torture.c                                   |    3 +-
- .../selftests/rcutorture/bin/kvm-test-1-run.sh     |    1 -
- .../selftests/rcutorture/configs/rcu/CFLIST        |    2 -
- .../selftests/rcutorture/configs/rcu/SRCU-P.boot   |    1 +
- .../selftests/rcutorture/configs/rcu/SRCU-u.boot   |    1 +
- .../selftests/rcutorture/configs/rcu/TINY02.boot   |    2 -
- .../selftests/rcutorture/configs/rcu/TREE01.boot   |    2 +-
- .../selftests/rcutorture/configs/rcu/TREE04.boot   |    2 +-
- .../selftests/rcutorture/configs/rcu/TREE05.boot   |    3 +-
- .../selftests/rcutorture/configs/rcu/TREE06.boot   |    2 -
- .../selftests/rcutorture/configs/rcu/TREE08.boot   |    2 -
- 40 files changed, 2294 insertions(+), 2752 deletions(-)
-
+-- 
+Russ Anderson,  SuperDome Flex Linux Kernel Group Manager
+HPE - Hewlett Packard Enterprise (formerly SGI)  rja@hpe.com
