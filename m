@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D86C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A3EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7288B208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1503208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPf2R/0d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7288B208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evfBGTGw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1503208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeIZIDg (ORCPT
+        id S1727460AbeIZIDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 04:03:36 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43613 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbeIZIDg (ORCPT
+        Wed, 26 Sep 2018 04:03:48 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45187 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbeIZIDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 04:03:36 -0400
-Received: by mail-qk1-f196.google.com with SMTP id v18-v6so5200228qka.10;
-        Tue, 25 Sep 2018 18:53:12 -0700 (PDT)
+        Wed, 26 Sep 2018 04:03:48 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l2-v6so15636475qtr.12;
+        Tue, 25 Sep 2018 18:53:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :content-transfer-encoding:user-agent;
-        bh=kvn7jntSbpyZYSyKvpa0GLBcuUphn3p989QYl+ADtiA=;
-        b=VPf2R/0dkyyhlLnQQbV0H3qOVfJdZllY/vX0Q8Jc8Finp2MhgJyyOfrwJ0FCWXCuM1
-         xL/9yQq59mHShtQKK5oJCpgWQ21jaU/m+zqheuiS6bzXNjVcLCqlSzQWy/WpLPJpIoUs
-         F9HTIIgd2AT+tiO1VzRegBXRE7hNH/p6o1ORB4zc/UfV2lnW0UvSFySJYTKIheU1CdS+
-         l9fGNeyYUHnmWz3FMNOPcD42HrK8kQzYgqwVy8CbNJDsuxAEM/iKtBISxe7ymz4Eldns
-         UiwGYhNB+rmD9B0dJql43wcIK0EHC2e6m0ygYYIye05qGn0LnD3dJ4+l41v2Ef9Xanki
-         quAg==
+        bh=UAb82koJUru3xjb0CPohCP8QGMSpSYev3ABFomuLfos=;
+        b=evfBGTGw/kRl+TJ3908uM39VEOlJAQ7WRhEwyFI2xxc6HM+7JUe7VEXal2h/DHJoqf
+         bhk+Frv3ONDiT0qwax6pt9hMPDWKWzhqHGlub/cPG/tT3ex/C5alYiMmo6CQJAkNC1Qh
+         YBDFofJbK0FaMWoAFmmzeIdDVO6d0fyrooRFlt+3Uu7Wf1JTKSEkOXIkjkaDMH9/Xe7Z
+         qKMcatZdT8EWtpf/BQH5rVjTqR/yclReGpkEmEDOVlMBoxG0za+0/rTm80Qfl0Gl+i7s
+         nMyQ5c6iJlxMWOOZ2mCDGByPEkrPUyzkhTrH5Ni57LpI6eLEpntMbjC2jsvGclXllN+i
+         hKYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:content-transfer-encoding:user-agent;
-        bh=kvn7jntSbpyZYSyKvpa0GLBcuUphn3p989QYl+ADtiA=;
-        b=LOH+E2OIrCMCFLQd/rEB3G4YsGH6sgmhM7oIE1AV7v9CEMtd6A0sjsxChG+WxzuuYJ
-         l/5BjZsGBVDtTb2osCy+ZsjXevRlWVFdqMiljXEi5j+T/iLAYBxzEG4Wu60AWmw9ln1c
-         zvQ4U9yGA6pljOxRG6mhl8DeIC+iLtMi5n5HQ7lgDVYvedRjtWtYByyx0z+k2tBnn08Y
-         lHz01RwXt7ZuNCDc47NnycZ8ndgG5TEqXEa+Gvz0btbYQh3Hl+NB9r4ALdQEEF1Oa5RG
-         OoGWq0+oiq/ABCrqgiyrvE3UETVZ1NTKNoWQgTVcaVxIzSojMo5Uo8afBJ/npxSTMNFM
-         Eq8Q==
-X-Gm-Message-State: ABuFfoiBzGrz4+ur6BKsc0QDcwqpOYahV+5IAeCMMTf0MM0cL8m91UHv
-        AkFMExbm4IcNlEEGYm5L6Tw=
-X-Google-Smtp-Source: ACcGV63Xe01CTftNrl6zHk5foKXVj+7d8uIiUEiwpBiumC+jIM+F+wFKrVW/7qU5gSvQMLCOYrlLIw==
-X-Received: by 2002:ae9:e64b:: with SMTP id x11-v6mr2752267qkl.41.1537926792557;
-        Tue, 25 Sep 2018 18:53:12 -0700 (PDT)
+        bh=UAb82koJUru3xjb0CPohCP8QGMSpSYev3ABFomuLfos=;
+        b=jYB5eLR+7vyjeW4uXohapu7aoHSiX3HBjjx0OyAycUatIE7hF5/aYtHt+6IZ8iedx3
+         OU+2VYr71eiebphNQj17LQaLwTifv46SMZ5opYtcl10+tQTXCnJwarQEjk0l/sLOoPCL
+         A26dJWqCOcE93G4rkik9hVkkfYsZd+wUWNNXgpivJ4KsNiJHbHMVYUOrnrCH1fIEoR5J
+         HHHiJ/aF4k26LedtT+DGezTpGSYwoYFaqXZc5USlWE7AwMujtU9vKs+vK3ggbqyoZaNw
+         5Zma6+5IDdnI+sNbqh/4UDMZQcbeUHM3GGEZnpCzppdMSeSDwkjvg0tiFHRlf6Esatz8
+         mMJg==
+X-Gm-Message-State: ABuFfohdp3uLQ9tfoyiwVtpXBov0ubX2e1VT9RHEuUGGUDxP/KD09OTy
+        DnjUdrHuIDNQmjTnyD4LiWk=
+X-Google-Smtp-Source: ACcGV62NRAo2ZdurZjS3+a13DVRgK9HSYy5phc30qNQqX4o5+6pn0bjwpDSMoWGZlzBycmakFAUK6Q==
+X-Received: by 2002:a0c:fb4d:: with SMTP id b13-v6mr2804875qvq.162.1537926804281;
+        Tue, 25 Sep 2018 18:53:24 -0700 (PDT)
 Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id r4-v6sm2067788qtt.92.2018.09.25.18.53.07
+        by smtp.gmail.com with ESMTPSA id c21-v6sm1960712qtj.22.2018.09.25.18.53.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 18:53:12 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 22:53:05 -0300
+        Tue, 25 Sep 2018 18:53:23 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 22:53:16 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH 6/7] drivers: oprofile: Avoids building driver from direct
- make command
-Message-ID: <20180926015305.GA14994@WindFlash>
+Subject: [PATCH 7/7] drivers: hwtracing: Adds Makefile to enable building
+ from directory.
+Message-ID: <20180926015316.GA14997@WindFlash>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -86,26 +86,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Creates new Makefile to avoid building driver if
-'make drivers/oprofile/' is called directly.
-
-This driver is usually built from arch/$ARCH and seems to have
-no meaning building alone.
+Adds Makefile to enable building the driver using
+'make drivers/hwtracing/'.
+Changes drivers/Makefile to call the new Makefile directly.
+It enables user building this driver without building the whole drivers/
+subtree.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/oprofile/Makefile | 1 +
- 1 file changed, 1 insertion(+)
- create mode 100644 drivers/oprofile/Makefile
+ drivers/Makefile           | 4 +---
+ drivers/hwtracing/Makefile | 3 +++
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/hwtracing/Makefile
 
-diff --git a/drivers/oprofile/Makefile b/drivers/oprofile/Makefile
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 578f469f72fb..a237be6b602f 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -174,9 +174,7 @@ obj-$(CONFIG_MCB)		+= mcb/
+ obj-$(CONFIG_PERF_EVENTS)	+= perf/
+ obj-$(CONFIG_RAS)		+= ras/
+ obj-$(CONFIG_THUNDERBOLT)	+= thunderbolt/
+-obj-$(CONFIG_CORESIGHT)		+= hwtracing/coresight/
+-obj-y				+= hwtracing/intel_th/
+-obj-$(CONFIG_STM)		+= hwtracing/stm/
++obj-y				+= hwtracing/
+ obj-$(CONFIG_ANDROID)		+= android/
+ obj-$(CONFIG_NVMEM)		+= nvmem/
+ obj-$(CONFIG_FPGA)		+= fpga/
+diff --git a/drivers/hwtracing/Makefile b/drivers/hwtracing/Makefile
 new file mode 100644
-index 000000000000..6b36c93e9762
+index 000000000000..fe5773caec49
 --- /dev/null
-+++ b/drivers/oprofile/Makefile
-@@ -0,0 +1 @@
-+#Does nothing, since the source is called from arch/$ARCH/ tree.
-\ No newline at end of file
++++ b/drivers/hwtracing/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_CORESIGHT)		+= coresight/
++obj-y				+= intel_th/
++obj-$(CONFIG_STM)		+= stm/
 -- 
 2.19.0
 
