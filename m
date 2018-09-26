@@ -2,106 +2,123 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46798C04E87
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA56C004D5
 	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F4F2173A
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:37:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F4F2173A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 8701721547
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:34:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tQDJO+ke"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8701721547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeI0BwC (ORCPT
+        id S1726744AbeI0Bsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:52:02 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:51181 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbeI0BwB (ORCPT
+        Wed, 26 Sep 2018 21:48:39 -0400
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:39496 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbeI0Bsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:52:01 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MKbc2-1gLfTj32M8-00KyOQ; Wed, 26 Sep 2018 21:37:07 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Lijun Ou <oulijun@huawei.com>,
-        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Yishai Hadas <yishaih@mellanox.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Shaobo Xu <xushaobo2@huawei.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA: fix dependencies for rdma_user_mmap_io
-Date:   Wed, 26 Sep 2018 21:36:52 +0200
-Message-Id: <20180926193706.2447532-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:+vRyNR1nIKmd26OTzp2PhY+zAVub2P5w/v0nK8D5aalyoPp0GMe
- 0HhYVPRbs8RMWMYegoAJ+p2Fk9wGUqwTKTFO9cz6Dc7pxbEAB+Vp9gim7l3ZN/Rimw/2clD
- QIhSLZy7MRoGxfavDD2G0xCvMIS9G0L7KEAgXVLwdlCuI95+iDnpx6c9AlK87/6+LIpxUdW
- Y62gROiE9kytXUv05SiiQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:4XvGftH8zU8=:VWRaC7XUo4RLRKWYyPcWAB
- Jhfzu0CaAvaDWXnRm+Sk3O4wtZZVS/+BP21ltKY25Ym9lBlHOMadGPjaeH6UgEVD9a9bcnJYK
- NulcqRhYng4tYIQU1OedLZLpCRm7ZG5vUdmhiQdkjHt8qCNloIk46H9FgOJcnFoHYszc2WkGb
- zB+4jb2tf/Wyfxwn9F+JfpaPHtTIv4WXeViWCw5NMDlqRxexcDNODbgpKR0u/c51Y++uvGUJd
- VS7YdrPk2MdluE/MbL1rfq5CyI6gjKPbHANIM3TsPBiyZMyjxdT5dSp4tyqv5zHQ56juIisBW
- Pgp2bk13/PkaLY7mSy50Ps4wyP8gy7KGzSvYCVK3Nva8tfQHKkFHSmLNnDE3td1H8MEQwNTFi
- beHv8vntcDlB+2YW5KPVVPFZr0wrHIyPRtiB+Tf3XcArmzkf8iG4O6ZiEz3J/TwpNWmhBcEuw
- y09r01uhyNSGyHNAyBnjXbtURPqanRQZUjmN3eD8qSEzMaTeUDplmgpwOHxT2Jp9jnz8JlvTx
- DGJ5oyNza+YAElTMIU85ePcQBpfIRf8YU5s/c8w0l7/STpmDj59RW8o5/7/V/Khdt2pQaHOQj
- /VnzVW/JviRn+Lj7z0DrgcEEhNp28r5ejmwl/3e16H3hOOpK43QKI1gfQW1Go7GerdJsmov/M
- c+1eLsrvav5sFJzVmx8eURkOyYqAfwpdNYmhBlwXNspWx89HLsKgSuBowUqPkv6SK734=
+        Wed, 26 Sep 2018 21:48:39 -0400
+Received: by mail-lj1-f169.google.com with SMTP id 5-v6so120059lju.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ZbejSOsf/HNSenUZx3ri4rExr0h6w1GsWVc3Mxx78Q4=;
+        b=tQDJO+keoyX6UcUqiSuMUk/vs7qyt4PY/o3ZnpytXl/4MzsgVhD8nIVj7eQae9paHB
+         2l+mJ8k6/kiaqmdI9FwMszbrwTwwOOQKxxyLzfI/+3TWynJkWH/Z64a5nyjdaa1SQ3ZG
+         pOtG/SVSpbk82ofP9pKXvu0O2WYF14OKfA7mdRZavLC0qG2O1kftGBceVfrNpH6Y7ujy
+         uEZ8DBWo/rdD8s08lXmxI0P10dfuNJVVQ2aybPUJ7+bs3ZKhgefTdqvq3klOcaAU0XqU
+         StkxGgSbP6BWyynrsF/ijZWtmv2NF2hSngPHbY3+dpeU/AQVLLmQ2CkZ7fB9aZ/T5msh
+         L/lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZbejSOsf/HNSenUZx3ri4rExr0h6w1GsWVc3Mxx78Q4=;
+        b=DAcdv9Kgj4kJuNolYhFP8TbFm+ghur4AztEglzrBB1lirmka2paS924isvQ5DMoOxt
+         pCd3s0MhmM3ty7ETaS4Hm6TPbsNwrtmCxKW7LJLt9E96jDt9B5mR1kKz+5uQqGBhw9PB
+         adiaUenHe/ySYG7I5KgXeMJEwDCSpdllwhYjMONAGICnkEToduk//ICYno6F4BMWzrwJ
+         EnPeXXV74nYF0sYv1f0lsdD22n6faCKUY77McsU9Ac5InqGLiMxp9Cgd35fXlmY43kZv
+         NS0y5Gn3FhPXVCPfhfrn4/fYuaWaO3Fl0WBKBaJWrAmIc4RzGLSo4OkT9aYGDtFUzBUe
+         RmqQ==
+X-Gm-Message-State: ABuFfoh55MCy8GcYKhblBdZKtQsb/IhxSiCGZF9tW9N7oLRF24Av+rnJ
+        7LKFX4MIJMogoDKyRqTD1A1bnyMSC+66f6MUhVA=
+X-Google-Smtp-Source: ACcGV61OvxksZdxpuf+pF4UQGLCW0UoSHwMOro3eYFucb+JJCqDy5RrdVoVSiR09th9nR5cNXe5AzZcYKa7aCnqNVAc=
+X-Received: by 2002:a2e:44d0:: with SMTP id b77-v6mr3491965ljf.47.1537990448692;
+ Wed, 26 Sep 2018 12:34:08 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:278e:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 12:34:07
+ -0700 (PDT)
+In-Reply-To: <9be16b08-7aa9-d42e-24c0-f054af39b78a@petrovitsch.priv.at>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net> <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net> <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
+ <87zhwbj8xe.fsf@redhat.com> <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+ <20180921231545.GC2966@thunk.org> <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
+ <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
+ <CAMjeLr-a4cCrs0cF0aBRoeeXXLwiM835BXqhP9ZoeLB8=w=YKw@mail.gmail.com>
+ <8c18dcc5-9028-672f-1449-359ac3d73592@petrovitsch.priv.at>
+ <CAMjeLr-j1XhZJgcvsP5z6SHCDmbUA=rMyfvQpX40qKBK+2ojbw@mail.gmail.com> <9be16b08-7aa9-d42e-24c0-f054af39b78a@petrovitsch.priv.at>
+From:   "\\0xDynamite" <dreamingforward@gmail.com>
+Date:   Wed, 26 Sep 2018 14:34:07 -0500
+Message-ID: <CAMjeLr_cx5+96NGedcYB-MjugA53_j+tksP0Na8W9GY-PAhoZA@mail.gmail.com>
+Subject: Re: Code of Conduct: Let's revamp it.
+To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Cc:     "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
+        riel@surriel.com, ec429@cantab.net,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mlx4 driver produces a link error when it is configured
-as built-in while CONFIG_INFINIBAND_USER_ACCESS is set to =m:
+>>>> So, is code a *published* item?  Most of the public can't read it.
+>>>
+>>> I cannot read (or understand) neither Russian nor Chinese nor almost any
+>>> natural (let alone dead) languages of the world. I'm pretty sure that
+>>> I'm not the only one;-)
+>>> Does that make Russian literature non-public? I don't think so ...
+>>
+>> You confuse the issue.  My definition included "intended for the
+>> public".  But it isn't clear that open source code is intended for the
+>> public -- it is intended for those who code or wish to.
 
-drivers/infiniband/hw/mlx4/main.o: In function `mlx4_ib_mmap':
-main.c:(.text+0x1af4): undefined reference to `rdma_user_mmap_io'
+> Well, then I have to repeat myself: Signed-off source code (in form of
+> patches) in a well-known programming language for a (nowadays)
+> well-known GPLv2 licensed project mailed on "everyone can subscribe"
+> mailinglists, (thus) to be found in several $SEARCH_ENGINE-indexed
+> mailinglist archives, if accepted to be found in lots of publicly
+> accessible git repos can be not intended to be published?
 
-The same function is called from mlx5, which already has a
-dependency to ensure we can call it, and from hns, which
-appears to suffer from the same problem.
+You did it again.  You changed words.  I said intended for the public,
+and you ended your sentence with "intended to be published".
 
-This adds the same dependency that mlx5 uses to the other two.
+Like it or not, both the law and English grammar have ambiguities.
+People put up with them because they share a common intuition (in a
+lot of cases) of what each other means.
 
-Fixes: 6745d356ab39 ("RDMA/hns: Use rdma_user_mmap_io")
-Fixes: c282da4109e4 ("RDMA/mlx4: Use rdma_user_mmap_io")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/infiniband/hw/hns/Kconfig  | 1 +
- drivers/infiniband/hw/mlx4/Kconfig | 1 +
- 2 files changed, 2 insertions(+)
+If you share a birthday card with your personal love note inscribed
+and the birthday girl sends it around to everyone at the party, have
+you been violated?  She might argue:  how did you expect it to remain
+private if you knew there were several people invited to the birthday
+party?
 
-diff --git a/drivers/infiniband/hw/hns/Kconfig b/drivers/infiniband/hw/hns/Kconfig
-index fddb5fdf92de..21c2100b2ea9 100644
---- a/drivers/infiniband/hw/hns/Kconfig
-+++ b/drivers/infiniband/hw/hns/Kconfig
-@@ -1,6 +1,7 @@
- config INFINIBAND_HNS
- 	tristate "HNS RoCE Driver"
- 	depends on NET_VENDOR_HISILICON
-+	depends on INFINIBAND_USER_ACCESS || !INFINIBAND_USER_ACCESS
- 	depends on ARM64 || (COMPILE_TEST && 64BIT)
- 	---help---
- 	  This is a RoCE/RDMA driver for the Hisilicon RoCE engine. The engine
-diff --git a/drivers/infiniband/hw/mlx4/Kconfig b/drivers/infiniband/hw/mlx4/Kconfig
-index db4aa13ebae0..d1de3285fd88 100644
---- a/drivers/infiniband/hw/mlx4/Kconfig
-+++ b/drivers/infiniband/hw/mlx4/Kconfig
-@@ -1,6 +1,7 @@
- config MLX4_INFINIBAND
- 	tristate "Mellanox ConnectX HCA support"
- 	depends on NETDEVICES && ETHERNET && PCI && INET
-+	depends on INFINIBAND_USER_ACCESS || !INFINIBAND_USER_ACCESS
- 	depends on MAY_USE_DEVLINK
- 	select NET_VENDOR_MELLANOX
- 	select MLX4_CORE
--- 
-2.18.0
+> I wonder what else must happen.
 
+Wonder no more.
+
+Mark
