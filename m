@@ -2,449 +2,112 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB56C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7C3C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25A222086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:40:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A222086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A5962086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:41:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A5962086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeIZUyE (ORCPT
+        id S1728242AbeIZUyO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:54:04 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41198 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727132AbeIZUyD (ORCPT
+        Wed, 26 Sep 2018 16:54:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60428 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727404AbeIZUyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:54:03 -0400
-Received: by mail-vs1-f66.google.com with SMTP id e128-v6so6217934vsc.8;
-        Wed, 26 Sep 2018 07:40:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LY9TJ/x0TJhRhizQT7izT3R3L+/zjYUuPkv+R9Ub2pc=;
-        b=WfBQcUyHW4QcBqPHvbwl4JSebMx6w1G24/WYbIQ+W/cZW9p+OLRYohzUQTPnT9wWqx
-         ULZAzlkwYnMk9Ju1Vco1vba7kIfLK+Z0xCgQJ8ive0ICI2lwDnItQZanZ7r7mdi24usW
-         zvLgL2IvpPWVhwt1iWfL3Dqp2ILTpsPMU74mkRnReUkf4VFYYLz7JL5nPT21nsWYfMzW
-         ffjZSVKc59AOT4MrYx/PED/F8uAI1+Deav20bgwB5zNPdm6LYi9TnchsI7sMlJrl1VJZ
-         6HEsOz+Bj0ZjZ/mZNtEg5oDPuQixTW6wsOjbBikACeSwiljt84gc+2wyzUFT6yzz/QcJ
-         ZhPA==
-X-Gm-Message-State: ABuFfojom0p320FIcxyZTBP//RrDjdrFQjCpbuRGoL1cTlKuVg8vrGhE
-        EzrACN/P0Qw3YkEr55UxppU8WRGtX4V5DM+4dnQ=
-X-Google-Smtp-Source: ACcGV61+9vmdfL9Zf0eQrfzD0JN+0MwOLUY483tSkDVIMAOClaTDE9M1fyxDaRz/x06hRV0nBevMVXcYG5e/XBXG0XU=
-X-Received: by 2002:a67:d19b:: with SMTP id w27-v6mr1845016vsi.166.1537972845298;
- Wed, 26 Sep 2018 07:40:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180919142346.25468-1-phil.edworthy@renesas.com>
- <20180919142346.25468-2-phil.edworthy@renesas.com> <CABGGisxnAgbkLp7GMZcNeoTDOrg125pcy_9whGhu5KyUzPXZog@mail.gmail.com>
-In-Reply-To: <CABGGisxnAgbkLp7GMZcNeoTDOrg125pcy_9whGhu5KyUzPXZog@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Sep 2018 16:40:33 +0200
-Message-ID: <CAMuHMdWFY9+q6g93s6LWXbpRBVHCox_zO7WO8iCU0YmBif-r3A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
-To:     Rob Herring <robh@kernel.org>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+        Wed, 26 Sep 2018 16:54:14 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8QEdbp5144831
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 10:40:57 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mr9y275h7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 10:40:57 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 26 Sep 2018 15:40:55 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 26 Sep 2018 15:40:52 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8QEepeo66846966
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Sep 2018 14:40:51 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 975A8A4055;
+        Wed, 26 Sep 2018 17:40:32 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E5238A405D;
+        Wed, 26 Sep 2018 17:40:31 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.101.34])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 26 Sep 2018 17:40:31 +0100 (BST)
+Subject: Re: [PATCH v2, RESEND 0/3] tpm: retrieve digest size of unknown
+ algorithms from TPM
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 26 Sep 2018 10:40:40 -0400
+In-Reply-To: <20180917093820.20500-1-roberto.sassu@huawei.com>
+References: <20180917093820.20500-1-roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18092614-4275-0000-0000-000002C0D5D5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092614-4276-0000-0000-000037CADD9E
+Message-Id: <1537972840.3459.6.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809260143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Mon, 2018-09-17 at 11:38 +0200, Roberto Sassu wrote:
+> Resending to maintainer with correct mailing lists in CC.
+> 
+> The TPM driver currently relies on the crypto subsystem to determine the
+> digest size of supported TPM algorithms. In the future, TPM vendors might
+> implement new algorithms in their chips, and those algorithms might not
+> be supported by the crypto subsystem.
+> 
+> Usually, vendors provide patches for the new hardware, and likely
+> the crypto subsystem will be updated before the new algorithm is
+> introduced. However, old kernels might be updated later, after patches
+> are included in the mainline kernel. This would leave the opportunity
+> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+> are not extended.
+> 
+> This patch set provides a long term solution for this issue. If a TPM
+> algorithm is not known by the crypto subsystem, the TPM driver retrieves
+> the digest size from the TPM with a PCR read. All the PCR banks are
+> extended, even if the algorithm is not yet supported by the crypto
+> subsystem.
 
-CC devicetree
+Other than checking the digest size before copying the pcrread buffer,
+the patches look good.  Please add my Ack on all 3 patches.
 
-On Wed, Sep 26, 2018 at 4:20 PM Rob Herring <robh@kernel.org> wrote:
->
-> DT bindings should be sent to DT list.
->
-> On Wed, Sep 19, 2018 at 9:24 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> >
-> > The Renesas RZ/N1 device family PINCTRL node description.
-> >
-> > Based on a patch originally written by Michel Pollet at Renesas.
-> >
-> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > ---
-> > v4:
-> >  - Add alternative way to use the pinmux prop.
-> >  - Remove mention of gpios.
-> >
-> > v3:
-> >  - Use standard bindings
-> >  - Change the way the functions are defined so it is easy to check
-> >    against the hardware numbering.
-> >  - Add functions for the MDIO source peripheral instead of using
-> >    virtual pins.
-> >
-> > v2:
-> >  - Change filename to generic rzn1, instead of device specific.
-> >  - Add "renesas,rzn1-pinctrl" compatible fallback string.
-> >  - Example register size corrected.
-> >  - Typos fixed.
-> >  - Changes suggested by Jacopo Mondi.
-> >  - rzn1-pinctrl.h squashed into this as requested by Rob Herring.
-> > ---
-> >  .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 ++++++++++++++++++
-> >  include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 ++++++++++++++++
-> >  2 files changed, 294 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-> >  create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-> > new file mode 100644
-> > index 000000000000..323ef5c6c1c9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-> > @@ -0,0 +1,153 @@
-> > +Renesas RZ/N1 SoC Pinctrl node description.
-> > +
-> > +Pin controller node
-> > +-------------------
-> > +Required properties:
-> > +- compatible: SoC-specific compatible string "renesas,<soc-specific>-pinctrl"
-> > +  followed by "renesas,rzn1-pinctrl" as fallback. The SoC-specific compatible
-> > +  strings must be one of:
-> > +       "renesas,r9a06g032-pinctrl" for RZ/N1D
-> > +       "renesas,r9a06g033-pinctrl" for RZ/N1S
-> > +- reg: Address base and length of the memory area where the pin controller
-> > +  hardware is mapped to.
-> > +- clocks: phandle for the clock, see the description of clock-names below.
-> > +- clock-names: Contains the name of the clock:
-> > +    "bus", the bus clock, sometimes described as pclk, for register accesses.
-> > +
-> > +Example:
-> > +       pinctrl: pin-controller@40067000 {
-> > +           compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-> > +           reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-> > +           clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-> > +           clock-names = "bus";
-> > +       };
-> > +
-> > +Sub-nodes
-> > +---------
-> > +
-> > +The child nodes of the pin controller node describe a pin multiplexing
-> > +function.
-> > +
-> > +- Pin multiplexing sub-nodes:
-> > +  A pin multiplexing sub-node describes how to configure a set of
-> > +  (or a single) pin in some desired alternate function mode.
-> > +  A single sub-node may define several pin configurations.
-> > +  Please refer to pinctrl-bindings.txt to get to know more on generic
-> > +  pin properties usage.
-> > +
-> > +  The allowed generic formats for a pin multiplexing sub-node are the
-> > +  following ones:
-> > +
-> > +  node-1 {
-> > +      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> > +      GENERIC_PINCONFIG;
-> > +  };
-> > +
-> > +  node-2 {
-> > +      sub-node-1 {
-> > +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> > +          GENERIC_PINCONFIG;
-> > +      };
-> > +
-> > +      sub-node-2 {
-> > +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> > +          GENERIC_PINCONFIG;
-> > +      };
-> > +
-> > +      ...
-> > +
-> > +      sub-node-n {
-> > +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> > +          GENERIC_PINCONFIG;
-> > +      };
-> > +  };
-> > +
-> > +  node-3 {
-> > +      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> > +      GENERIC_PINCONFIG;
-> > +
-> > +      sub-node-1 {
-> > +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> > +          GENERIC_PINCONFIG;
-> > +      };
-> > +
-> > +      ...
-> > +
-> > +      sub-node-n {
-> > +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> > +          GENERIC_PINCONFIG;
-> > +      };
-> > +  };
-> > +
-> > +  Use the latter two formats when pins part of the same logical group need to
-> > +  have different generic pin configuration flags applied. Note that the generic
-> > +  pinconfig in node-3 does not apply to the sub-nodes.
-> > +
-> > +  Client sub-nodes shall refer to pin multiplexing sub-nodes using the phandle
-> > +  of the most external one.
-> > +
-> > +  Eg.
-> > +
-> > +  client-1 {
-> > +      ...
-> > +      pinctrl-0 = <&node-1>;
-> > +      ...
-> > +  };
-> > +
-> > +  client-2 {
-> > +      ...
-> > +      pinctrl-0 = <&node-2>;
-> > +      ...
-> > +  };
-> > +
-> > +  Required properties:
-> > +    - pinmux:
-> > +      integer array representing pin number and pin multiplexing configuration.
-> > +      When a pin has to be configured in alternate function mode, use this
-> > +      property to identify the pin by its global index, and provide its
-> > +      alternate function configuration number along with it.
-> > +      When multiple pins are required to be configured as part of the same
-> > +      alternate function they shall be specified as members of the same
-> > +      argument list of a single "pinmux" property.
-> > +      Integers values in the "pinmux" argument list are assembled as:
-> > +      (PIN | MUX_FUNC << 8)
-> > +      where PIN directly corresponds to the pl_gpio pin number and MUX_FUNC is
-> > +      one of the alternate function identifiers defined in:
-> > +      <include/dt-bindings/pinctrl/rzn1-pinctrl.h>
-> > +      These identifiers collapse the IO Multiplex Configuration Level 1 and
-> > +      Level 2 numbers that are detailed in the hardware reference manual into a
-> > +      single number. The identifiers for Level 2 are simply offset by 10.
-> > +      Additional identifiers are provided to specify the MDIO source peripheral.
-> > +
-> > +  Optional generic properties:
-> > +    - bias-disable             - disable any pin bias
-> > +    - bias-pull-up             - pull up the pin with 50 KOhm
-> > +    - bias-pull-down           - pull down the pin with 50 KOhm
-> > +    - bias-high-impedance      - high impedance mode
-> > +    - drive-strength           - sink or source at most 4, 6, 8 or 12 mA
-> > +
-> > +  Example:
-> > +  A serial communication interface with a TX output pin and an RX input pin.
-> > +
-> > +  &pinctrl {
-> > +       pins_uart0: pins_uart0 {
-> > +               pinmux = <
-> > +                       RZN1_MUX(103, UART0_I)  /* UART0_TXD */
-> > +                       RZN1_MUX(104, UART0_I)  /* UART0_RXD */
-> > +               >;
-> > +       };
-> > +  };
-> > +
-> > +  Example 2:
-> > +  Here we set the pull up on the RXD pin of the UART.
-> > +
-> > +  &pinctrl {
-> > +       pins_uart0: pins_uart0 {
-> > +               pinmux = <RZN1_MUX(103, UART0_I)>;      /* UART0_TXD */
-> > +
-> > +               pins_uart6_rx {
-> > +                       pinmux = <RZN1_MUX(104, UART0_I)>;      /* UART0_RXD */
-> > +                       bias-pull-up;
-> > +               };
-> > +       };
-> > +  };
-> > diff --git a/include/dt-bindings/pinctrl/rzn1-pinctrl.h b/include/dt-bindings/pinctrl/rzn1-pinctrl.h
-> > new file mode 100644
-> > index 000000000000..40369ee36e6a
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/rzn1-pinctrl.h
-> > @@ -0,0 +1,141 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Defines macros and constants for Renesas RZ/N1 pin controller pin
-> > + * muxing functions.
-> > + */
-> > +#ifndef __DT_BINDINGS_RZN1_PINCTRL_H
-> > +#define __DT_BINDINGS_RZN1_PINCTRL_H
-> > +
-> > +#define RZN1_MUX(_gpio, _func) \
-> > +       (((RZN1_FUNC_##_func) << 8) | (_gpio))
->
-> I'm not a fan of token pasting and it also goes against kernel style.
-> If every other Renesas platform is doing this, then fine. Otherwise,
-> you can express it in pretty much the same (source) space:
->
-> pinmux = <RZN1_MUX_UART0_I 104>;
->
-> Yes, this is 2 cells instead of 1, but if you care about space, you
-> can use 8 or 16 bit size.
+(New address) Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Not every Renesas platform uses token pasting. Only RZ/A1 already does,
-cfr. include/dt-bindings/pinctrl/r7s72100-pinctrl.h.
-Most other SoCs used named pin groups, i.e. strings, without relying
-on a header file.
+Thanks!
 
->
-> > +/*
-> > + * Given the different levels of muxing on the SoC, it was decided to
-> > + * 'linearize' them into one numerical space. So mux level 1, 2 and the MDIO
-> > + * muxes are all represented by one single value.
-> > + *
-> > + * You can derive the hardware value pretty easily too, as
-> > + * 0...9   are Level 1
-> > + * 10...71 are Level 2. The Level 2 mux will be set to this
-> > + *         value - RZN1_FUNC_L2_OFFSET, and the Level 1 mux will be
-> > + *         set accordingly.
-> > + * 72...103 are for the 2 MDIO muxes.
->
-> Whatever works best for the driver, but wouldn't aligning the levels
-> to power of 2 make decoding a bit easier? 0-15 for level 1, 16-127 for
-> 2, 128+ for MDIO.
->
-> Rob
->
-> > + */
-> > +#define RZN1_FUNC_HIGHZ                                0
-> > +#define RZN1_FUNC_0L                           1
-> > +#define RZN1_FUNC_CLK_ETH_MII_RGMII_RMII       2
-> > +#define RZN1_FUNC_CLK_ETH_NAND                 3
-> > +#define RZN1_FUNC_QSPI                         4
-> > +#define RZN1_FUNC_SDIO                         5
-> > +#define RZN1_FUNC_LCD                          6
-> > +#define RZN1_FUNC_LCD_E                                7
-> > +#define RZN1_FUNC_MSEBIM                       8
-> > +#define RZN1_FUNC_MSEBIS                       9
-> > +#define RZN1_FUNC_L2_OFFSET                    10      /* I'm Special */
-> > +
-> > +#define RZN1_FUNC_HIGHZ1                       (RZN1_FUNC_L2_OFFSET + 0)
-> > +#define RZN1_FUNC_ETHERCAT                     (RZN1_FUNC_L2_OFFSET + 1)
-> > +#define RZN1_FUNC_SERCOS3                      (RZN1_FUNC_L2_OFFSET + 2)
-> > +#define RZN1_FUNC_SDIO_E                       (RZN1_FUNC_L2_OFFSET + 3)
-> > +#define RZN1_FUNC_ETH_MDIO                     (RZN1_FUNC_L2_OFFSET + 4)
-> > +#define RZN1_FUNC_ETH_MDIO_E1                  (RZN1_FUNC_L2_OFFSET + 5)
-> > +#define RZN1_FUNC_USB                          (RZN1_FUNC_L2_OFFSET + 6)
-> > +#define RZN1_FUNC_MSEBIM_E                     (RZN1_FUNC_L2_OFFSET + 7)
-> > +#define RZN1_FUNC_MSEBIS_E                     (RZN1_FUNC_L2_OFFSET + 8)
-> > +#define RZN1_FUNC_RSV                          (RZN1_FUNC_L2_OFFSET + 9)
-> > +#define RZN1_FUNC_RSV_E                                (RZN1_FUNC_L2_OFFSET + 10)
-> > +#define RZN1_FUNC_RSV_E1                       (RZN1_FUNC_L2_OFFSET + 11)
-> > +#define RZN1_FUNC_UART0_I                      (RZN1_FUNC_L2_OFFSET + 12)
-> > +#define RZN1_FUNC_UART0_I_E                    (RZN1_FUNC_L2_OFFSET + 13)
-> > +#define RZN1_FUNC_UART1_I                      (RZN1_FUNC_L2_OFFSET + 14)
-> > +#define RZN1_FUNC_UART1_I_E                    (RZN1_FUNC_L2_OFFSET + 15)
-> > +#define RZN1_FUNC_UART2_I                      (RZN1_FUNC_L2_OFFSET + 16)
-> > +#define RZN1_FUNC_UART2_I_E                    (RZN1_FUNC_L2_OFFSET + 17)
-> > +#define RZN1_FUNC_UART0                                (RZN1_FUNC_L2_OFFSET + 18)
-> > +#define RZN1_FUNC_UART0_E                      (RZN1_FUNC_L2_OFFSET + 19)
-> > +#define RZN1_FUNC_UART1                                (RZN1_FUNC_L2_OFFSET + 20)
-> > +#define RZN1_FUNC_UART1_E                      (RZN1_FUNC_L2_OFFSET + 21)
-> > +#define RZN1_FUNC_UART2                                (RZN1_FUNC_L2_OFFSET + 22)
-> > +#define RZN1_FUNC_UART2_E                      (RZN1_FUNC_L2_OFFSET + 23)
-> > +#define RZN1_FUNC_UART3                                (RZN1_FUNC_L2_OFFSET + 24)
-> > +#define RZN1_FUNC_UART3_E                      (RZN1_FUNC_L2_OFFSET + 25)
-> > +#define RZN1_FUNC_UART4                                (RZN1_FUNC_L2_OFFSET + 26)
-> > +#define RZN1_FUNC_UART4_E                      (RZN1_FUNC_L2_OFFSET + 27)
-> > +#define RZN1_FUNC_UART5                                (RZN1_FUNC_L2_OFFSET + 28)
-> > +#define RZN1_FUNC_UART5_E                      (RZN1_FUNC_L2_OFFSET + 29)
-> > +#define RZN1_FUNC_UART6                                (RZN1_FUNC_L2_OFFSET + 30)
-> > +#define RZN1_FUNC_UART6_E                      (RZN1_FUNC_L2_OFFSET + 31)
-> > +#define RZN1_FUNC_UART7                                (RZN1_FUNC_L2_OFFSET + 32)
-> > +#define RZN1_FUNC_UART7_E                      (RZN1_FUNC_L2_OFFSET + 33)
-> > +#define RZN1_FUNC_SPI0_M                       (RZN1_FUNC_L2_OFFSET + 34)
-> > +#define RZN1_FUNC_SPI0_M_E                     (RZN1_FUNC_L2_OFFSET + 35)
-> > +#define RZN1_FUNC_SPI1_M                       (RZN1_FUNC_L2_OFFSET + 36)
-> > +#define RZN1_FUNC_SPI1_M_E                     (RZN1_FUNC_L2_OFFSET + 37)
-> > +#define RZN1_FUNC_SPI2_M                       (RZN1_FUNC_L2_OFFSET + 38)
-> > +#define RZN1_FUNC_SPI2_M_E                     (RZN1_FUNC_L2_OFFSET + 39)
-> > +#define RZN1_FUNC_SPI3_M                       (RZN1_FUNC_L2_OFFSET + 40)
-> > +#define RZN1_FUNC_SPI3_M_E                     (RZN1_FUNC_L2_OFFSET + 41)
-> > +#define RZN1_FUNC_SPI4_S                       (RZN1_FUNC_L2_OFFSET + 42)
-> > +#define RZN1_FUNC_SPI4_S_E                     (RZN1_FUNC_L2_OFFSET + 43)
-> > +#define RZN1_FUNC_SPI5_S                       (RZN1_FUNC_L2_OFFSET + 44)
-> > +#define RZN1_FUNC_SPI5_S_E                     (RZN1_FUNC_L2_OFFSET + 45)
-> > +#define RZN1_FUNC_SGPIO0_M                     (RZN1_FUNC_L2_OFFSET + 46)
-> > +#define RZN1_FUNC_SGPIO1_M                     (RZN1_FUNC_L2_OFFSET + 47)
-> > +#define RZN1_FUNC_GPIO                         (RZN1_FUNC_L2_OFFSET + 48)
-> > +#define RZN1_FUNC_CAN                          (RZN1_FUNC_L2_OFFSET + 49)
-> > +#define RZN1_FUNC_I2C                          (RZN1_FUNC_L2_OFFSET + 50)
-> > +#define RZN1_FUNC_SAFE                         (RZN1_FUNC_L2_OFFSET + 51)
-> > +#define RZN1_FUNC_PTO_PWM                      (RZN1_FUNC_L2_OFFSET + 52)
-> > +#define RZN1_FUNC_PTO_PWM1                     (RZN1_FUNC_L2_OFFSET + 53)
-> > +#define RZN1_FUNC_PTO_PWM2                     (RZN1_FUNC_L2_OFFSET + 54)
-> > +#define RZN1_FUNC_PTO_PWM3                     (RZN1_FUNC_L2_OFFSET + 55)
-> > +#define RZN1_FUNC_PTO_PWM4                     (RZN1_FUNC_L2_OFFSET + 56)
-> > +#define RZN1_FUNC_DELTA_SIGMA                  (RZN1_FUNC_L2_OFFSET + 57)
-> > +#define RZN1_FUNC_SGPIO2_M                     (RZN1_FUNC_L2_OFFSET + 58)
-> > +#define RZN1_FUNC_SGPIO3_M                     (RZN1_FUNC_L2_OFFSET + 59)
-> > +#define RZN1_FUNC_SGPIO4_S                     (RZN1_FUNC_L2_OFFSET + 60)
-> > +#define RZN1_FUNC_MAC_MTIP_SWITCH              (RZN1_FUNC_L2_OFFSET + 61)
-> > +
-> > +#define RZN1_FUNC_MDIO_OFFSET                  (RZN1_FUNC_L2_OFFSET + 62)
-> > +
-> > +/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO function */
-> > +#define RZN1_FUNC_MDIO0_HIGHZ                  (RZN1_FUNC_MDIO_OFFSET + 0)
-> > +#define RZN1_FUNC_MDIO0_GMAC0                  (RZN1_FUNC_MDIO_OFFSET + 1)
-> > +#define RZN1_FUNC_MDIO0_GMAC1                  (RZN1_FUNC_MDIO_OFFSET + 2)
-> > +#define RZN1_FUNC_MDIO0_ECAT                   (RZN1_FUNC_MDIO_OFFSET + 3)
-> > +#define RZN1_FUNC_MDIO0_S3_MDIO0               (RZN1_FUNC_MDIO_OFFSET + 4)
-> > +#define RZN1_FUNC_MDIO0_S3_MDIO1               (RZN1_FUNC_MDIO_OFFSET + 5)
-> > +#define RZN1_FUNC_MDIO0_HWRTOS                 (RZN1_FUNC_MDIO_OFFSET + 6)
-> > +#define RZN1_FUNC_MDIO0_SWITCH                 (RZN1_FUNC_MDIO_OFFSET + 7)
-> > +/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-> > +#define RZN1_FUNC_MDIO0_E1_HIGHZ               (RZN1_FUNC_MDIO_OFFSET + 8)
-> > +#define RZN1_FUNC_MDIO0_E1_GMAC0               (RZN1_FUNC_MDIO_OFFSET + 9)
-> > +#define RZN1_FUNC_MDIO0_E1_GMAC1               (RZN1_FUNC_MDIO_OFFSET + 10)
-> > +#define RZN1_FUNC_MDIO0_E1_ECAT                        (RZN1_FUNC_MDIO_OFFSET + 11)
-> > +#define RZN1_FUNC_MDIO0_E1_S3_MDIO0            (RZN1_FUNC_MDIO_OFFSET + 12)
-> > +#define RZN1_FUNC_MDIO0_E1_S3_MDIO1            (RZN1_FUNC_MDIO_OFFSET + 13)
-> > +#define RZN1_FUNC_MDIO0_E1_HWRTOS              (RZN1_FUNC_MDIO_OFFSET + 14)
-> > +#define RZN1_FUNC_MDIO0_E1_SWITCH              (RZN1_FUNC_MDIO_OFFSET + 15)
-> > +
-> > +/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO function */
-> > +#define RZN1_FUNC_MDIO1_HIGHZ                  (RZN1_FUNC_MDIO_OFFSET + 16)
-> > +#define RZN1_FUNC_MDIO1_GMAC0                  (RZN1_FUNC_MDIO_OFFSET + 17)
-> > +#define RZN1_FUNC_MDIO1_GMAC1                  (RZN1_FUNC_MDIO_OFFSET + 18)
-> > +#define RZN1_FUNC_MDIO1_ECAT                   (RZN1_FUNC_MDIO_OFFSET + 19)
-> > +#define RZN1_FUNC_MDIO1_S3_MDIO0               (RZN1_FUNC_MDIO_OFFSET + 20)
-> > +#define RZN1_FUNC_MDIO1_S3_MDIO1               (RZN1_FUNC_MDIO_OFFSET + 21)
-> > +#define RZN1_FUNC_MDIO1_HWRTOS                 (RZN1_FUNC_MDIO_OFFSET + 22)
-> > +#define RZN1_FUNC_MDIO1_SWITCH                 (RZN1_FUNC_MDIO_OFFSET + 23)
-> > +/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-> > +#define RZN1_FUNC_MDIO1_E1_HIGHZ               (RZN1_FUNC_MDIO_OFFSET + 24)
-> > +#define RZN1_FUNC_MDIO1_E1_GMAC0               (RZN1_FUNC_MDIO_OFFSET + 25)
-> > +#define RZN1_FUNC_MDIO1_E1_GMAC1               (RZN1_FUNC_MDIO_OFFSET + 26)
-> > +#define RZN1_FUNC_MDIO1_E1_ECAT                        (RZN1_FUNC_MDIO_OFFSET + 27)
-> > +#define RZN1_FUNC_MDIO1_E1_S3_MDIO0            (RZN1_FUNC_MDIO_OFFSET + 28)
-> > +#define RZN1_FUNC_MDIO1_E1_S3_MDIO1            (RZN1_FUNC_MDIO_OFFSET + 29)
-> > +#define RZN1_FUNC_MDIO1_E1_HWRTOS              (RZN1_FUNC_MDIO_OFFSET + 30)
-> > +#define RZN1_FUNC_MDIO1_E1_SWITCH              (RZN1_FUNC_MDIO_OFFSET + 31)
-> > +
-> > +#define RZN1_FUNC_MAX                          (RZN1_FUNC_MDIO_OFFSET + 32)
-> > +
-> > +#endif /* __DT_BINDINGS_RZN1_PINCTRL_H */
+Mimi
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
