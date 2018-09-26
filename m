@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E38F4C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47815C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9687720684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CB120684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:27:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FqFOdIJw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9687720684
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ca2l7yhC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00CB120684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbeIZSkd (ORCPT
+        id S1728389AbeIZSkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:40:33 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8707 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbeIZSkc (ORCPT
+        Wed, 26 Sep 2018 14:40:35 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12102 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbeIZSke (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:40:32 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bab7b480001>; Wed, 26 Sep 2018 05:27:52 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 26 Sep 2018 05:27:46 -0700
+        Wed, 26 Sep 2018 14:40:34 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bab7b210002>; Wed, 26 Sep 2018 05:27:13 -0700
+Received: from HQMAIL103.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 26 Sep 2018 05:27:48 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 26 Sep 2018 05:27:46 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 26 Sep
- 2018 12:27:46 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 26 Sep 2018 12:27:46 +0000
+        by hqpgpgate102.nvidia.com on Wed, 26 Sep 2018 05:27:48 -0700
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 26 Sep
+ 2018 12:27:48 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Sep 2018 12:27:48 +0000
 Received: from moonraker.nvidia.com (Not Verified[10.21.132.143]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5bab7b400000>; Wed, 26 Sep 2018 05:27:45 -0700
+        id <B5bab7b420000>; Wed, 26 Sep 2018 05:27:48 -0700
 From:   Jon Hunter <jonathanh@nvidia.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -52,9 +52,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/5] PM / Domains: Export symbol for genpd_dev_pm_attach_by_name
-Date:   Wed, 26 Sep 2018 13:27:34 +0100
-Message-ID: <1537964858-30332-2-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 2/5] dt-bindings: usb: xhci-tegra: Add power-domain details
+Date:   Wed, 26 Sep 2018 13:27:35 +0100
+Message-ID: <1537964858-30332-3-git-send-email-jonathanh@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537964858-30332-1-git-send-email-jonathanh@nvidia.com>
 References: <1537964858-30332-1-git-send-email-jonathanh@nvidia.com>
@@ -62,41 +62,49 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1537964872; bh=1w1JFpmw3dg1UHjssFK9Cip16Tg6vgXkahZhvVTfVP0=;
+        t=1537964833; bh=QiCY1OBjJA8jzGGo2BTTCq8k6o92/xxPDihoF/PByhg=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=FqFOdIJwfOG4t2aZW/hofstETrf5NITRLFU70HW0Dxo6bO+tSB4pDqbDJ6Xc5rZp6
-         cIHjDbgQuH1UiN7/10yxsQT3FLeHhGPjq4uOUdAwdcuwTiUtA5lv9IyFrPZJxL1Pad
-         OEzZHbP0lRQEFeXS2jeFHPTLim+KAAHxYcrtWMeEFDWpPucISOJ2/V+5HIkn0cQVGU
-         Bs0CXHvDoYHt7+abVFcdHlAjZZBGB0R+vIatSd3IoAsHuaAgWfEYkgLEY1mcY6XKWq
-         Z/QsYdchGWBu84FZIjSKldhYVe/S0CAHDYOnwzGDX5v51SK8exC6HmkwrqasW49xIS
-         KwZ8dlTh6Pl5g==
+        b=Ca2l7yhCYKP6ACSOjYSaPvGV01Pw/azoKFyaMCyIagbZYqksjfFPcvDWl8xangSAK
+         6FQ3qiGxY74oiess7VvoAqsLXl4tGnLoUYvSKEcEpuuik1CLLwEH1EZFiCJnSs4NXI
+         SSLbtAFxMxUCk+t+13Acinlr5aY7QXnSEH5SO3CN9or/8HVZX255AGVC1t/y2N3m9n
+         MBIvAPXDZK9X/P4GvmiJQfhpVATB0Xvi2r+W2nwYDRnEdrKYHZzQvpCOJlslWFF4Uv
+         cI1rfgdwWE9d6iV5Ehg6fItiVvQZraLpWpGPlxzItBhg+GPNPQ8jbTCB7TNH5U2ecv
+         eQRGLiCLPUb5Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export the symbol for genpd_dev_pm_attach_by_name() so that drivers
-built as modules can call this function.
+Add details for power-domains to the Tegra xHCI bindings so that
+generic power-domains can be used for inconjunction with the xHCI
+driver.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/base/power/domain.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 4b5714199490..b2bbe0d848d2 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2397,6 +2397,7 @@ struct device *genpd_dev_pm_attach_by_name(struct device *dev, char *name)
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+index 3eee9e505400..4156c3e181c5 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+@@ -59,6 +59,14 @@ For Tegra210:
+ - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+ - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+ - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
++- power-domains: A list of PM domain specifiers that reference each power-domain
++  used by the xHCI controller. This list must comprise of a specifier for the
++  XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
++  ../arm/tegra/nvidia,tegra20-pmc.txt for details.
++- power-domain-names: A list of names that represent each of the specifiers in
++  the 'power-domains' property. Must include 'xusb_ss' and 'xusb_host' which
++  represent the power-domains XUSBA and XUSBC, respectively. See
++  ../power/power_domain.txt for details.
  
- 	return genpd_dev_pm_attach_by_id(dev, index);
- }
-+EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_name);
- 
- static const struct of_device_id idle_state_match[] = {
- 	{ .compatible = "domain-idle-state", },
+ Optional properties:
+ --------------------
 -- 
 2.7.4
 
