@@ -2,200 +2,103 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66278C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A257CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BD02089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:26:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ff+dQvB3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04BD02089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 32A1A214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A1A214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbeIZLhv (ORCPT
+        id S1726591AbeIZLlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 07:37:51 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39181 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbeIZLhv (ORCPT
+        Wed, 26 Sep 2018 07:41:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47442 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbeIZLll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 07:37:51 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 5-v6so9347349lju.6;
-        Tue, 25 Sep 2018 22:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BYZ2G8ahY1GvKCtO/HIaj1MAq+s/9diqsMKQJyc29p0=;
-        b=ff+dQvB3F/M3sHrXhpIBKpxa7p5cTlnSATWmLGFrmk4oXNewJVwF2jTWhRsMNzRjPS
-         UhD4h4ar+n+/6BDZdRS8lGoKH4wAaIXBIYw9Zr8F/8lxFrtKKR8p+MkdWRotE8yvQVQL
-         jL5M57kshV69GRBCJH6K0DZLKoNl7Y5BvWd4KiVixgk1bBqNleHeOD3mdYMXqYiZE9IU
-         E1LDnHgMr4BXAJp2+R/R/nqj9rQ+p5NjsZ9VCe/5eS8PcREVT4yDbcvtnkv833rSCxIR
-         5XPESe7GgnFbCDLHFR95y273opDq3uBS6dliGfrhnkdPyYswxrJWL4mIsTk/XWxPgmq7
-         J7Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BYZ2G8ahY1GvKCtO/HIaj1MAq+s/9diqsMKQJyc29p0=;
-        b=Fk0HuH8Wuyqid/0A3fIBMu+OaRSQ4tNuTX643XWq+MdMHgC9mBI5gQ0J1miXiqNkrT
-         M2FbsPXsar77twohrNfAHdwQ9j3QrKBIBoXQA3CJ0jqAAWptaeJNSg5Y3+PetWGS9cOB
-         ZVCEf8RUHWbIz4fOHTYL54881MPTTQSUlc1rkRseSKkzu2ikJhVpxJjafNudz+jfKm2V
-         g5PJqrTi17DrlHxXKf7dCXlJSFaj0Dk7JbqmlB9+sxRKWbmHGzQ11C7SdOKLnFWOJXzN
-         88YbUMZZrCBWwexqFxR0UaQPkKzfM60CEHqIhp83fKOS56dYOPAlCPiUnKfZYLaOTv0i
-         ACdg==
-X-Gm-Message-State: ABuFfoirzc2oQIDH9FD3HS+vJa6GKAjOfZtJsTgMPAxk2UJpdwyssHH0
-        9XFX/3Q+uvJEVsAzCTl7yWRbqZUR+ZHokGY4TgQrsYMu5nY=
-X-Google-Smtp-Source: ACcGV634Np7hWqbmKXmm9ohD0jme13dATl82DaEDTRrP4nI2OYzvf3vywgDJZ0LsjdpbSj1mxkPL2Ld5RkpZRqOiwUs=
-X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr3247122ljh.18.1537939600949;
- Tue, 25 Sep 2018 22:26:40 -0700 (PDT)
+        Wed, 26 Sep 2018 07:41:41 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D64CAE8A;
+        Wed, 26 Sep 2018 05:30:31 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 07:30:29 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Rafael Tinoco <rafael.tinoco@linaro.org>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, ohad@wizery.com,
+        bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Suman Anna <s-anna@ti.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH 4.14 000/173] 4.14.72-stable review
+Message-ID: <20180926053029.GA3800@kroah.com>
+References: <20180924113114.334025954@linuxfoundation.org>
+ <20180925090733.GB21224@kroah.com>
+ <20180926002857.ajqqxi2qcfcwsg7g@xps.therub.org>
+ <CADtBP2Do8u9Em2kUeb9nuux+kD=sjUpQ2XLetYO3vrdPxiYNKA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180921085450.19224-1-ricardo.ribalda@gmail.com>
- <20180921092833.c3bznrhc3yyarmq4@kekkonen.localdomain> <CAPybu_2J4b8C_AQu5trH6fLG3FAkSvFiUOYt-HFwG+YXK9PkkQ@mail.gmail.com>
- <20180924203252.wxeclgjc7zvepyhb@kekkonen.localdomain>
-In-Reply-To: <20180924203252.wxeclgjc7zvepyhb@kekkonen.localdomain>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Wed, 26 Sep 2018 07:26:24 +0200
-Message-ID: <CAPybu_3WF3x42k814dvEwqrMMfaxt2s4OpuK3BGMobBfmsgQ5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] [media] imx214: Add imx214 camera sensor driver
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADtBP2Do8u9Em2kUeb9nuux+kD=sjUpQ2XLetYO3vrdPxiYNKA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Sakari
-On Mon, Sep 24, 2018 at 10:32 PM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Ricardo,
->
-> On Fri, Sep 21, 2018 at 12:15:55PM +0200, Ricardo Ribalda Delgado wrote:
-> ...
-> > > > +static struct reg_8 mode_1920x1080[];
-> > > > +static struct reg_8 mode_4096x2304[];
+On Wed, Sep 26, 2018 at 12:01:53AM -0300, Rafael Tinoco wrote:
+> Greg,
+> 
+> > > > This is the start of the stable review cycle for the 4.14.72 release.
+> > > > There are 173 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > >
+> > > > Responses should be made by Wed Sep 26 11:30:10 UTC 2018.
+> > > > Anything received after that time might be too late.
+> > > >
+> > > > The whole patch series can be found in one patch at:
+> > > >     https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.72-rc1.gz
+> > > > or in the git tree and branch at:
+> > > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > > > and the diffstat can be found below.
 > > >
-> > > Const. Could you rearrange the bits to avoid the forward declarations=
-?
-> > Const done, but I prefer to keep the forward declaration. Otherwise
-> > the long tables will "hide" the mode declaration.
->
-> Well, I guess the long tables do "hide" a bunch of other stuff, too. :-)
-> But... I agree there's no trivial way around those tables either.
->
-> It appears I'm not the only one who's commented on the matter of the
-> forward declaration.
-
-Ok, I will change it, Eppur si muove  ;)
->
-> ...
->
-> > > > +static int imx214_probe(struct i2c_client *client)
-> > > > +{
-> > > > +     struct device *dev =3D &client->dev;
-> > > > +     struct imx214 *imx214;
-> > > > +     struct fwnode_handle *endpoint;
-> > > > +     int ret;
-> > > > +     static const s64 link_freq[] =3D {
-> > > > +             (IMX214_DEFAULT_PIXEL_RATE * 10LL) / 8,
-> > >
-> > > You should check the link frequency matches with that from the firmwa=
-re.
+> > > -rc2 is out to resolve some reported problems:
+> > >       https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.72-rc2.gz
 > >
-> > I am not sure what you mean here sorry.
->
-> The system firmware holds safe frequencies for the CSI-2 bus on that
-> particular system; you should check that the register lists are valid for
-> that frequency.
->
-> ...
->
-> > > > +     imx214->pixel_rate =3D v4l2_ctrl_new_std(&imx214->ctrls, NULL=
-,
-> > > > +                                            V4L2_CID_PIXEL_RATE, 0=
-,
-> > > > +                                            IMX214_DEFAULT_PIXEL_R=
-ATE, 1,
-> > > > +                                            IMX214_DEFAULT_PIXEL_R=
-ATE);
-> > > > +     imx214->link_freq =3D v4l2_ctrl_new_int_menu(&imx214->ctrls, =
-NULL,
-> > > > +                                                V4L2_CID_LINK_FREQ=
-,
-> > > > +                                                ARRAY_SIZE(link_fr=
-eq) - 1,
-> > > > +                                                0, link_freq);
-> > >
-> > > Do I understand this correctly that the driver does not support setti=
-ng
-> > > e.g. exposure time or gain? Those are very basic features...
-> >
-> >
-> > Yep :), this is just a first step. I do not have the register set from
-> > the device :(. So I am reverse engineering a lot of things.
-> > I will add more controls as I am done with them.
->
-> Looking at the registers you have in the register list, the sensor's
-> registers appear similar to those used by the smiapp driver (the old SMIA
-> standard).
->
-> I'd guess the same register would work for setting the exposure time. I'm
-> less certain about the limits though.
+> > -rc2 looks good. There is a problem on dragonboard during boot that was
+> > introduced in v4.14.71 that I didn't notice last week. We'll bisect it
+> > and report back later this week. dragonboard on the other branches (4.9,
+> > 4.18, mainline) looks fine.
+> 
+> As Dan pointed out, during validation, we have bisected this issue on
+> a dragonboard 410c (can't find root device) to the following commit
+> for v4.14:
+> 
+> [1ed3a9307230] rpmsg: core: add support to power domains for devices
+> 
+> There is an on-going discussion on "[PATCH] rpmsg: core: add support
+> to power domains for devices" about this patch having other
+> dependencies and breaking something else on v4.14 as well.
+> 
+> Do you think we could drop this patch, for now, in a possible -rc3 for
+> v4.14.72 ? Dragonboards aren't being tested, because of this, since
+> v4.14.70. Hopefully it isn't too late for this release =).
 
-Thanks for the pointer! I will try this out and probably add it as a patch.
+I can't "drop" it as it is already in a released kernel, 4.14.71 and
+4.18.9.  I can revert it though, and will do so for the next round of
+releases after this one.
 
->
-> >
-> > >
-> > > You'll also need to ensure the s_ctrl() callback works without s_powe=
-r()
-> > > being called. My suggestion is to switch to PM runtime; see e.g. the =
-ov1385
-> > > driver in the current media tree master.
-> >
-> >
-> > There is one limitation with this chip on the dragonboard. I2c only
-> > works if the camss is ON. Therefore whatever s_ctrl needs to be
-> > cached and written at streamon.
->
-> That's something that doesn't belong to this driver. It's the I=E6=B6=8E =
-adapter
-> driver / camss issue, and not necessarily related to drivers only. Is the
-> I=E6=B6=8E controller part of the camss btw.?
+thanks for the report.
 
-I am with you here. The i2c controller is a different driver but is
-integrated with camss. Checkout
-https://patchwork.kernel.org/patch/10569961/ I am interacting with
-Todor and Vinod to enable the i2c port indepently with camss. At least
-now it does not kill the port after an i2c timeout :)
-
-Will fix the fwd declaration and the csi-2 register. Then I wll upload
-it to my github, try it on real hw next monday and send back to the
-mailing list
-
-Thanks!
-
->
-> --
-> Regards,
->
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
-
-
-
---=20
-Ricardo Ribalda
+greg k-h
