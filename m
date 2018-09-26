@@ -2,98 +2,137 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE75C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506D7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 166872152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:49:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkTEenG9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166872152F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1388B2152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:49:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1388B2152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeI0ADK (ORCPT
+        id S1728563AbeI0AD2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 20:03:10 -0400
-Received: from mail-qt1-f175.google.com ([209.85.160.175]:45369 "EHLO
-        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbeI0ADJ (ORCPT
+        Wed, 26 Sep 2018 20:03:28 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:43159 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbeI0AD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 20:03:09 -0400
-Received: by mail-qt1-f175.google.com with SMTP id l2-v6so18187425qtr.12;
-        Wed, 26 Sep 2018 10:49:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=60bpes0MGi/bqgWqMHIi0b4px+0rIt2wSm6eMIg9nx8=;
-        b=QkTEenG9KiIGMXVRe8IEiHJuH5fuUizhMMkpZSRsiVTKbSogstv5uIfwmXoRwqQmQB
-         KFINm4C2+4f4C8d5Dzmu+FbenAkOyNeM9xfWyToOnZA/vsLR+eBeLDVcox8lLUKFrALf
-         FyvSLnCcYbWkY7SsYPh0sbw4K0mnKjM1yO6k7+oowLk/s6FJ53xqLByc97N02DczLHs3
-         cXAQjqqP+5FlR42YvGW+5OxTklw8Opc+4nhHY8SeeYCvX0aMXrnE6S5Hda8d1Wdc6s9M
-         1XMUBa8ByVw33yJTMpXgDMWRKGy+WY99YWLeAvteH9xG8YqUJ7eqZjtC/0nyqSmDQ6bJ
-         t6Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=60bpes0MGi/bqgWqMHIi0b4px+0rIt2wSm6eMIg9nx8=;
-        b=UBkAJZq+Pf7u/9cZlA1NzJuqadsmg/MSRb2grZXzkkCFprEbHFVIk+GkXOuSeED/ZX
-         gZejrfJWUnpajV/Gk1RmfusBxQ9y+A4uIXO+OCD+sQa5mCSLxPdJCtB9D1GT4Gj4dvOo
-         Cu+mxCKGFFw0GoY84MK5d4HbxViaJfi/7A0vuZdKqyorLSW1mG9kAXkN19xUjG2c9DX5
-         iWDqtoCC9c1sb8uYNrIP341Vea1yrSy9baXq7p0igTT76+9xOKTN0Td/MenoCHgMmhxk
-         VDRGnbv8ttlu57HA0fNILPyO8/yAiavetwjW3R9BG/kVukXR23nQH11Is9pnz1qbfmZe
-         WfqQ==
-X-Gm-Message-State: ABuFfogq78NICdnT67EiavpfqIVtwXrUuhuyVctm+8OwbAs4A7ShsrNu
-        eWBmFTIk9O0go/DPyJ0baXMR63z2ZmOc1P9SZQc=
-X-Google-Smtp-Source: ACcGV62n82xESZEXWbIxnLtN2qoconWB4qzsHCEnGtB8ZU1bA2cEqXP5AmdBJ+NkUIoL52PuDK1Vk3WpK94areBRKzk=
-X-Received: by 2002:a0c:93c1:: with SMTP id g1-v6mr5251005qvg.136.1537984145819;
- Wed, 26 Sep 2018 10:49:05 -0700 (PDT)
+        Wed, 26 Sep 2018 20:03:28 -0400
+Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g5DwA-0000xG-8M from Steve_Longerbeam@mentor.com ; Wed, 26 Sep 2018 10:49:22 -0700
+Received: from [172.30.3.188] (147.34.91.1) by svr-orw-mbx-02.mgc.mentorg.com
+ (147.34.90.202) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 26 Sep
+ 2018 10:49:19 -0700
+Subject: Re: [PATCH v6 02/17] media: v4l2: async: Allow searching for asd of
+ any type
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+CC:     Steve Longerbeam <slongerbeam@gmail.com>,
+        <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
+ <1531175957-1973-3-git-send-email-steve_longerbeam@mentor.com>
+ <20180924140604.23e2b56f@coco.lan>
+ <a8ea673c-a519-81e8-35b1-9d4a224dcbf5@mentor.com>
+ <20180925192045.59c83e3d@coco.lan>
+ <36fd43b2-695d-b990-bec2-c4d88ccb8e88@mentor.com>
+ <20180926063335.3c3b863d@coco.lan>
+ <20180926104038.tc3u7vzojumcthen@kekkonen.localdomain>
+From:   Steve Longerbeam <steve_longerbeam@mentor.com>
+Message-ID: <89ff305e-4b0a-b59d-bb4f-99e8e6cfde90@mentor.com>
+Date:   Wed, 26 Sep 2018 10:49:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180816084104.434-1-jian-hong@endlessm.com> <CAPpJ_eeK68jvMQ02hR2i+eP8Xo9YyWWUGYqG7e6dsWP=XTTCyQ@mail.gmail.com>
-In-Reply-To: <CAPpJ_eeK68jvMQ02hR2i+eP8Xo9YyWWUGYqG7e6dsWP=XTTCyQ@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 20:48:54 +0300
-Message-ID: <CAHp75Vc18A6aUBrjyW6Df5gY563J0kbaEg2oi5yAVkJCKm0TZw@mail.gmail.com>
-Subject: Re: [RFC PATCH] platform/x86: asus-wmi: Simplify the keyboard
- brightness updating process
-To:     Jian-Hong Pan <jian-hong@endlessm.com>
-Cc:     Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180926104038.tc3u7vzojumcthen@kekkonen.localdomain>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+ svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 11:57 AM Jian-Hong Pan <jian-hong@endlessm.com> wrote:
+Hi Mauro, Sakari,
+
+
+On 09/26/2018 03:40 AM, Sakari Ailus wrote:
+> Hi Mauro, Steve,
 >
-> 2018-08-16 16:41 GMT+08:00 Jian-Hong Pan <jian-hong@endlessm.com>:
-> > The original asus-wmi queues a work which calls the ACPI/WMI methods to
-> > update the keyboard LED brightness.  Similar drivers - acer-wmi,
-> > dell-wmi-led just call the ACPI/WMI methods directly without workqueues.
-> >
-> > This patch simplifies the keyboard brightness updating process which
-> > calls the kbd_led_update function directly without workqueue in
-> > asus-wmi.
+> On Wed, Sep 26, 2018 at 06:33:35AM -0300, Mauro Carvalho Chehab wrote:
+>> Em Tue, 25 Sep 2018 18:05:36 -0700
+>> Steve Longerbeam <steve_longerbeam@mentor.com> escreveu:
+>>
+>>> On 09/25/2018 03:20 PM, Mauro Carvalho Chehab wrote:
+>>>> Em Tue, 25 Sep 2018 14:04:21 -0700
+>>>> Steve Longerbeam <steve_longerbeam@mentor.com> escreveu:
+>>>>   
+>>>>>>      
+>>>>>>> @@ -392,12 +406,11 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+>>>>>>>     		case V4L2_ASYNC_MATCH_CUSTOM:
+>>>>>>>     		case V4L2_ASYNC_MATCH_DEVNAME:
+>>>>>>>     		case V4L2_ASYNC_MATCH_I2C:
+>>>>>>> -			break;
+>>>>>>>     		case V4L2_ASYNC_MATCH_FWNODE:
+>>>>>>> -			if (v4l2_async_notifier_fwnode_has_async_subdev(
+>>>>>>> -				    notifier, asd->match.fwnode, i)) {
+>>>>>>> +			if (v4l2_async_notifier_has_async_subdev(
+>>>>>>> +				    notifier, asd, i)) {
+>>>>>>>     				dev_err(dev,
+>>>>>>> -					"fwnode has already been registered or in notifier's subdev list\n");
+>>>>>>> +					"asd has already been registered or in notifier's subdev list\n");
+>>>>>> Please, never use "asd" on messages printed to the user. While someone
+>>>>>> may understand it while reading the source code, for a poor use,
+>>>>>> "asd" is just a random sequence of 3 characters.
+>>>>> I will change the message to read:
+>>>>>
+>>>>> "subdev descriptor already listed in this or other notifiers".
+>>>> Perfect!
+>>> But the error message is removed in the subsequent patch
+>>> "[PATCH 03/17] media: v4l2: async: Add v4l2_async_notifier_add_subdev".
+>>>
+>>> I could bring it back as a dev_dbg() in v4l2_async_notifier_asd_valid(), but
+>>> this shouldn't be a dev_err() anymore since it is up to the media platform
+>>> to decide whether an already existing subdev descriptor is an error.
+>> Hmm... that's an interesting discussion... what cases do you think it
+>> would be fine to try to register twice an asd notifier?
 
-> Just gentle ping.  Any comment for this patch?
+It should be a fairly common case that a sub-device has multiple fwnode
+output ports. In that case it's possible multiple sub-devices downstream
+from it will each encounter it when parsing the fwnode graph, and attempt
+to add it to their notifiers asd_list multiple times. That isn't an 
+error, any
+attempt to add it after the first add should be ignored.
 
-RFC patches are not supposed to be applied.
-So, feel free to resend as non-RFC, or wait a bit more if anyone would
-comment on it.
+imx-media is an example, there is a CSI-2 transmitter with four fwnode
+output ports for each CSI-2 virtual channel. Those channels each go to
+one of four Camera Sensor Interface in the imx6 IPU. So each CSI will
+encounter the CSI-2 transmitter when parsing its fwnode ports.
 
--- 
-With Best Regards,
-Andy Shevchenko
+
+> Only the error message is removed; this case is still considered an error.
+> I think it'd be better to keep this error message; it helps debugging.
+
+Ok I will add it back, but it should be a dev_dbg().
+
+Steve
+
+>
+>> Haven't write myself any piece of code using async framework, on a first
+>> glance, trying to register twice sounds like an error to me.
+>>
+>> Sakari, what do you think?
+
