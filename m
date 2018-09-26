@@ -2,98 +2,129 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C197C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD07CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1589421531
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:59:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XUStCvub"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1589421531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7470D21531
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:00:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7470D21531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbeIZXMz (ORCPT
+        id S1728461AbeIZXOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:12:55 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39349 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727280AbeIZXMz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:12:55 -0400
-Received: by mail-lf1-f67.google.com with SMTP id w21-v6so9871598lff.6
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 09:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8CDYY88wS5pqDRjpxTt226fETzlWS39lNRgwIYkq8+c=;
-        b=XUStCvubUqzHTZnt2FIekUxpj8FphpuhsoQ6EZHbnHbM7fcC6axC6jzvIRIz+R4Njt
-         jYYtsuaEh1riGguHQyHzhiiJM8eFSGnTZnQ4ofmKJmhWTFRdSmUdhJ0nl0y4T8ppcgUy
-         GF6eEaq1+E8uAKqCgtT/Aj4j8w5Lr9J8wL5JE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8CDYY88wS5pqDRjpxTt226fETzlWS39lNRgwIYkq8+c=;
-        b=qloumFkxCLp5z6oq5/QK26O79tfLqYQaWZ1LxirBWny6t6U+/954/SZgqA9/WeYRIx
-         J2Qc6iLDeu0xke2KCnfwujDdMZ5NoZQBBMfty9WbnQE4hFO6WGKbUMMRWUEmkQLX7r8h
-         H9H+8bPMKX991W9v3nVfWKUBOWUaAlWY6DZTbbGJIJYavh/UUGifmTaRclk0cfZwz2MD
-         Oy7zbN4r29xViuR1tIuMA/r6z76mjXY2wbrGukT1KIUdW6ac/lcR+jLcfvJKYnSErPvd
-         s09djPKhc+Oc6uwGV4t7v9DcCAYayBB8YNBBNn5M9ghC3DtEDlsqBxQpWgC7OBJmctet
-         4QIA==
-X-Gm-Message-State: ABuFfojJcDddc2uxLGTHzFRkS+eHFbVjeduLsb/znL0yMnNEUt8QJ7OP
-        Y3LFE0EyMwAGZPnwVkc87uKd7A==
-X-Google-Smtp-Source: ACcGV61JxVLiNrrnFA1C36xjWFOMR7184BBa9nKiLOXJKkpu0vdx4he+UHTQetIsll4PqW23oyrecQ==
-X-Received: by 2002:a19:dc42:: with SMTP id f2-v6mr5106650lfj.48.1537981141719;
-        Wed, 26 Sep 2018 09:59:01 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id b132-v6sm1107659lfe.56.2018.09.26.09.59.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 09:59:01 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 18:58:59 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] remoteproc: qcom: Rename Hexagon v5 modem driver
-Message-ID: <20180926165859.GB1773@centauri.lan>
-References: <20180924234526.22916-1-bjorn.andersson@linaro.org>
- <20180924234526.22916-3-bjorn.andersson@linaro.org>
+        Wed, 26 Sep 2018 19:14:01 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5888 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727280AbeIZXOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:14:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 10:00:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
+   d="scan'208";a="265939848"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Sep 2018 09:52:25 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1g5D32-00055E-DG; Wed, 26 Sep 2018 19:52:24 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alex Hung <alex.hung@canonical.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Sujith Thomas <sujith.thomas@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>,
+        platform-driver-x86@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 20/28] platform/x86: intel-rst: Convert to use SPDX identifier
+Date:   Wed, 26 Sep 2018 19:52:15 +0300
+Message-Id: <20180926165223.19390-20-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
+References: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924234526.22916-3-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 04:45:26PM -0700, Bjorn Andersson wrote:
-> The qcom_q6v5_pil implements support for the self-authenticating modem
-> subsystem. With the introduction of other q6v5 based non-TZ based
-> remoteproc driver the current name is cause for confusion, so rename it
-> to be more specific.
-> 
-> No functional change.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Chances since v2:
-> - Updated module description, driver name and header comment
-> 
->  drivers/remoteproc/Kconfig                         | 14 +++++++-------
->  drivers/remoteproc/Makefile                        |  2 +-
->  .../{qcom_q6v5_pil.c => qcom_q6v5_mss.c}           |  6 +++---
->  3 files changed, 11 insertions(+), 11 deletions(-)
->  rename drivers/remoteproc/{qcom_q6v5_pil.c => qcom_q6v5_mss.c} (99%)
-> 
+Reduce size of duplicated comments by switching to use SPDX identifier.
 
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+No functional change.
+
+While here, throw away some extra blank lines.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/platform/x86/intel-rst.c | 20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
+
+diff --git a/drivers/platform/x86/intel-rst.c b/drivers/platform/x86/intel-rst.c
+index 56abf5cbb824..3b81cb896fed 100644
+--- a/drivers/platform/x86/intel-rst.c
++++ b/drivers/platform/x86/intel-rst.c
+@@ -1,22 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  *  Copyright 2013 Matthew Garrett <mjg59@srcf.ucam.org>
+- *
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License, or
+- *  (at your option) any later version.
+- *
+- *  This program is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *  GNU General Public License for more details.
+- *
+- *  You should have received a copy of the GNU General Public License along
+- *  with this program; if not, write to the Free Software Foundation, Inc.,
+- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  */
+ 
+-
+ #include <linux/acpi.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+@@ -52,12 +38,10 @@ static ssize_t irst_store_wakeup_events(struct device *dev,
+ 	acpi = to_acpi_device(dev);
+ 
+ 	error = kstrtoul(buf, 0, &value);
+-
+ 	if (error)
+ 		return error;
+ 
+ 	status = acpi_execute_simple_method(acpi->handle, "SFFS", value);
+-
+ 	if (ACPI_FAILURE(status))
+ 		return -EINVAL;
+ 
+@@ -98,12 +82,10 @@ static ssize_t irst_store_wakeup_time(struct device *dev,
+ 	acpi = to_acpi_device(dev);
+ 
+ 	error = kstrtoul(buf, 0, &value);
+-
+ 	if (error)
+ 		return error;
+ 
+ 	status = acpi_execute_simple_method(acpi->handle, "SFTV", value);
+-
+ 	if (ACPI_FAILURE(status))
+ 		return -EINVAL;
+ 
+-- 
+2.19.0
+
