@@ -2,329 +2,196 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADD5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7195C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E06FE20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E8BB214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjzZSa+9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06FE20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RPay2+CB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E8BB214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbeIZU7e (ORCPT
+        id S1728152AbeIZVAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:59:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58786 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727157AbeIZU7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:59:33 -0400
-Received: from localhost.localdomain (unknown [180.109.255.143])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69693214DC;
-        Wed, 26 Sep 2018 14:46:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537973175;
-        bh=Bedo+unLyYbhsHyGogmDIMRzlCovUG7Wtt5TwuCPQqA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WjzZSa+9uas4/Jb07rBJO/llCXTc8ZEdKuVRr7KjQl9Yiimtx632J8iHuQ/oZ97ER
-         316WajKUQsZa+l9X8B57m4rMq/53lFT84ud7S9zUdZviQCMtOFz+40ljPK6arDFhOY
-         fAXNUfo6lW6jybR/TavjedXPKo3z2TVleftD7ZtQ=
-From:   Chao Yu <chao@kernel.org>
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH RESEND v2] Revert: "f2fs: check last page index in cached bio to decide submission"
-Date:   Wed, 26 Sep 2018 22:44:56 +0800
-Message-Id: <20180926144456.3167-1-chao@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        Wed, 26 Sep 2018 17:00:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40187 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727132AbeIZVAO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:00:14 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y8-v6so23671160wrh.7;
+        Wed, 26 Sep 2018 07:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gABm/mTpsJHWbqy1LRBGQGVd1bR87vhw85AVVLzuZzM=;
+        b=RPay2+CBgqcm/1GFRl/f3tuIdwdbvBSQhGjlDoKfc5/Zlk4Iq4mDdB9M0O2rliUrKl
+         7+6O4qwW+Qf5iOa3IxD9REDeolt1RMwHW0B+nP3FCapS9PQwK/2lzzu7VCqTBQoOi9Ue
+         lFPPgHeCh8NYxJYJPUD9kwU4tDREeYY7uJ8NqNioxWTtWgMq9SsDbDgRuUmsIBt4H9dI
+         YTBjnUGy03nn1GL7DXwbFg01Hn91zYGifpa28YO7ErBRhQce2+IhZ4QhZVidS8YCD4y+
+         uzqk1A1iDBvkGWPI/jVTok4rTTJmbCG6iu17gc0flP6uc2LXpbUuxjvtdv/sLk7M80bk
+         KjeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gABm/mTpsJHWbqy1LRBGQGVd1bR87vhw85AVVLzuZzM=;
+        b=Wd0BLGsp8/v94mg6LcwWv/3JiGGueKutc3G9ke465QVlz+eYgjAzfZxjDOCcQyCChr
+         ZNBdKEn+aIuub2X9u3OOWPES+Day2liKJpENiYGe+pzEjeaRV599FWodgOYYYKyCOQ10
+         Ioiz+V6R4KlXVtA/7yeOBo6WWliXWyXO3p0zS2dc7llhg3LHlOb8rtDGYTZBfMBrTGPC
+         CtO8QQgiwG6jQM6/zMZuJrA08Dn7H/UN9skQY22gj8HCbHk7LX8O6Q8jPRmc3BBhJSKz
+         GmRX32wGenV7Tm6VJSQpiBE3ZBNQ0Zys2LTr3bxftSYZPt6hRGwVrjAAiP4bSbiiQmvI
+         Vfcg==
+X-Gm-Message-State: ABuFfogI0zX8h4ZyFKLNL43wfVwDcapZcRo/mViCc3r99J6VAJ0mgjCt
+        unQIEu6/6fJJ9U9s6wPz4pY=
+X-Google-Smtp-Source: ACcGV62HkQgAKlIfWUdhxS6m9Hr64hgKLFD3whfW4CfP/GPALRlRyMY6iPYVOd0M+Xa3SjaXtLjCug==
+X-Received: by 2002:a5d:6aca:: with SMTP id u10-v6mr5448321wrw.44.1537973214830;
+        Wed, 26 Sep 2018 07:46:54 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id q200-v6sm29319151wmd.2.2018.09.26.07.46.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 07:46:54 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 16:46:53 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Johan Hovold <johan@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v2 00/34] ARM: dts: tegra: apalis_t30: major revamp incl.
+ v1.1 hardware support
+Message-ID: <20180926144653.GD12980@ulmo>
+References: <20180831163817.23970-1-marcel@ziswiler.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="AkbCVLjbJ9qUtAXD"
+Content-Disposition: inline
+In-Reply-To: <20180831163817.23970-1-marcel@ziswiler.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
 
-There is one case that we can leave bio in f2fs, result in hanging
-page writeback waiter.
+--AkbCVLjbJ9qUtAXD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thread A				Thread B
-- f2fs_write_cache_pages
- - f2fs_submit_page_write
- page #0 cached in bio #0 of cold log
- - f2fs_submit_page_write
- page #1 cached in bio #1 of warm log
-					- f2fs_write_cache_pages
-					 - f2fs_submit_page_write
-					 bio is full, submit bio #1 contain page #1
- - f2fs_submit_merged_write_cond(, page #1)
- fail to submit bio #0 due to page #1 is not in any cached bios.
+On Fri, Aug 31, 2018 at 06:37:42PM +0200, Marcel Ziswiler wrote:
+> This series is a major overhaul and adds support for the V1.1 hardware
+> revision of the Toradex Apalis T30 system on module.
+>=20
+> Changes in v2:
+> - Clean-up PCIe controller/port status' as well.
+> - Also move serial UART "nvidia,tegra30-hsuart" compatible to module
+>   level device trees.
+> - Also add two missing newlines.
+> - Also replace underscores in node names with dashes.
+> - Explicitly disable input of BKL1_ON as well.
+> - Replace underscores in node names with dashes.
+> - When running some more tests I realized that the reg-addr should
+>   really be 0x3f. Fix this.
+> - Get rid of fake clocks simple bus as suggested by Rob.
+> - Replace "[PATCH 27/28] ARM: tegra: apalis_t30: fix pcie switch vendor
+>   compatible" with "[PATCH v2 26/34] dt-bindings: add broadcom (formerly
+>   plx technology) vendor prefix" as suggested by Stefan.
+> - New patch as suggested by Rob.
+> - New patch.
+> - Drop "[PATCH 01/28] ARM: tegra: apalis_t30: enable broken-hpi on emmc"
+>   which should already be handled by the broken-hpi quirk as pointed out
+>   by Dmitry. If I would find more eMMC parts which exhibit the issue I
+>   will add them to the quirk as a separate patch.
+> - Updated V1.1 device trees with all applicable previous fixes.
+>=20
+> Marcel Ziswiler (34):
+>   ARM: tegra: apalis_t30: fix mmc1 cmd pull-up
+>   ARM: tegra: apalis_t30: pull-up sd card detect pins
+>   ARM: tegra: apalis_t30: add local-mac-address property
+>   ARM: tegra: apalis_t30: reorder pcie properties
+>   ARM: tegra: apalis_t30: annotate/clean-up pcie controller/port nodes
+>   ARM: tegra: apalis_t30: reorder host1x/hdmi properties
+>   ARM: tegra: apalis_t30: regulator clean-up
+>   ARM: tegra: apalis_t30: add missing regulators
+>   ARM: tegra: apalis_t30: annotate uarts and move compatible to board
+>   ARM: tegra: apalis_t30: drop unused cami2c label
+>   ARM: tegra: apalis_t30: white-space/newline clean-up
+>   ARM: tegra: apalis_t30: drop unused mmc1/sd1 labels
+>   ARM: tegra: apalis_t30: annotate mmc1/sd1
+>   ARM: tegra: apalis_t30: move dr_mode property from phy to controller
+>   ARM: tegra: apalis_t30: reorder backlight properties
+>   ARM: tegra: apalis_t30: drop pwmleds
+>   ARM: tegra: apalis_t30: pinmux clean-up
+>   ARM: tegra: apalis_t30: add missing pinmux
+>   ARM: tegra: apalis_t30: use proper irq-gpio for stmpe811
+>   ARM: tegra: apalis_t30: further lm95245 temperature sensor annotation
+>   ARM: tegra: apalis_t30: add i2c-thermtrip
+>   ARM: tegra: apalis_t30: add proper emmc vmmc and vqmmc supplies
+>   ARM: tegra: apalis_t30: enable emmc ddr52 mode
+>   ARM: tegra: apalis_t30: get rid of fake clocks simple bus
+>   ARM: tegra: apalis_t30: line break long compatible property line
+>   dt-bindings: add broadcom (formerly plx technology) vendor prefix
+>   ARM: tegra: apalis_t30: drop module level model and compatible
+>   ARM: tegra: apalis_t30: drop obsolete spidev nodes
+>   ARM: tegra: apalis_t30: hog group for pcie switch reset gpio
+>   ARM: tegra: apalis_t30: rename hdmiddc to hdmi_ddc
+>   ARM: tegra: apalis_t30: rename tps65911@2d, stmpe811@41 and
+>     tps62362@60
+>   ARM: tegra: apalis_t30: fix mcp2515 can controller interrupt polarity
+>   ARM: tegra: apalis_t30: move hda node from carrier to module
+>   ARM: tegra: apalis_t30: support v1.1 hardware revision
+>=20
+>  Documentation/devicetree/bindings/arm/tegra.txt    |    2 +
+>  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+>  arch/arm/boot/dts/Makefile                         |    1 +
+>  arch/arm/boot/dts/tegra30-apalis-eval.dts          |  148 +--
+>  arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts     |  266 +++++
+>  arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         | 1189 ++++++++++++++=
+++++++
+>  arch/arm/boot/dts/tegra30-apalis.dtsi              |  705 +++++++++---
+>  7 files changed, 2064 insertions(+), 248 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/tegra30-apalis-v1.1-eval.dts
+>  create mode 100644 arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- rebase to dev-test
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/data.c       | 38 +++++++++++++++++++-------------------
- fs/f2fs/f2fs.h       |  4 ++--
- fs/f2fs/node.c       | 12 ++++++------
- fs/f2fs/segment.c    | 11 +++++------
- 5 files changed, 33 insertions(+), 34 deletions(-)
+Applied, thanks.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index d624d7983197..2f63b362ce63 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -280,7 +280,7 @@ static int __f2fs_write_meta_page(struct page *page,
- 
- 	if (wbc->for_reclaim)
- 		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
--						0, page->index, META);
-+							page, 0, META);
- 
- 	unlock_page(page);
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index be69b6ac6870..b03f9d163175 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -322,8 +322,8 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- 	io->bio = NULL;
- }
- 
--static bool __has_merged_page(struct f2fs_bio_info *io,
--				struct inode *inode, nid_t ino, pgoff_t idx)
-+static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
-+						struct page *page, nid_t ino)
- {
- 	struct bio_vec *bvec;
- 	struct page *target;
-@@ -332,7 +332,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 	if (!io->bio)
- 		return false;
- 
--	if (!inode && !ino)
-+	if (!inode && !page && !ino)
- 		return true;
- 
- 	bio_for_each_segment_all(bvec, io->bio, i) {
-@@ -342,11 +342,10 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- 		else
- 			target = fscrypt_control_page(bvec->bv_page);
- 
--		if (idx != target->index)
--			continue;
--
- 		if (inode && inode == target->mapping->host)
- 			return true;
-+		if (page && page == target)
-+			return true;
- 		if (ino && ino == ino_of_node(target))
- 			return true;
- 	}
-@@ -355,7 +354,8 @@ static bool __has_merged_page(struct f2fs_bio_info *io,
- }
- 
- static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
--				nid_t ino, pgoff_t idx, enum page_type type)
-+						struct page *page, nid_t ino,
-+						enum page_type type)
- {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
- 	enum temp_type temp;
-@@ -366,7 +366,7 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
- 		io = sbi->write_io[btype] + temp;
- 
- 		down_read(&io->io_rwsem);
--		ret = __has_merged_page(io, inode, ino, idx);
-+		ret = __has_merged_page(io, inode, page, ino);
- 		up_read(&io->io_rwsem);
- 
- 		/* TODO: use HOT temp only for meta pages now. */
-@@ -397,12 +397,12 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
- }
- 
- static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type, bool force)
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type, bool force)
- {
- 	enum temp_type temp;
- 
--	if (!force && !has_merged_page(sbi, inode, ino, idx, type))
-+	if (!force && !has_merged_page(sbi, inode, page, ino, type))
- 		return;
- 
- 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
-@@ -421,10 +421,10 @@ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
- }
- 
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type)
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type)
- {
--	__submit_merged_write_cond(sbi, inode, ino, idx, type, false);
-+	__submit_merged_write_cond(sbi, inode, page, ino, type, false);
- }
- 
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
-@@ -1962,7 +1962,7 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		ClearPageUptodate(page);
- 
- 	if (wbc->for_reclaim) {
--		f2fs_submit_merged_write_cond(sbi, inode, 0, page->index, DATA);
-+		f2fs_submit_merged_write_cond(sbi, inode, page, 0, DATA);
- 		clear_inode_flag(inode, FI_HOT_DATA);
- 		f2fs_remove_dirty_inode(inode);
- 		submitted = NULL;
-@@ -2020,10 +2020,10 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	pgoff_t index;
- 	pgoff_t end;		/* Inclusive */
- 	pgoff_t done_index;
--	pgoff_t last_idx = ULONG_MAX;
- 	int cycled;
- 	int range_whole = 0;
- 	int tag;
-+	int nwritten = 0;
- 
- 	pagevec_init(&pvec);
- 
-@@ -2126,7 +2126,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				done = 1;
- 				break;
- 			} else if (submitted) {
--				last_idx = page->index;
-+				nwritten++;
- 			}
- 
- 			if (--wbc->nr_to_write <= 0 &&
-@@ -2148,9 +2148,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
- 		mapping->writeback_index = done_index;
- 
--	if (last_idx != ULONG_MAX)
-+	if (nwritten)
- 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
--						0, last_idx, DATA);
-+								NULL, 0, DATA);
- 
- 	return ret;
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index dc9306e87a51..464545e40729 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3049,8 +3049,8 @@ int f2fs_init_post_read_processing(void);
- void f2fs_destroy_post_read_processing(void);
- void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, nid_t ino, pgoff_t idx,
--				enum page_type type);
-+				struct inode *inode, struct page *page,
-+				nid_t ino, enum page_type type);
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
- int f2fs_submit_page_bio(struct f2fs_io_info *fio);
- void f2fs_submit_page_write(struct f2fs_io_info *fio);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index ea151e07790f..c47ca807e245 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1561,8 +1561,8 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 	up_read(&sbi->node_write);
- 
- 	if (wbc->for_reclaim) {
--		f2fs_submit_merged_write_cond(sbi, page->mapping->host, 0,
--						page->index, NODE);
-+		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
-+						page, 0, NODE);
- 		submitted = NULL;
- 	}
- 
-@@ -1634,13 +1634,13 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			unsigned int *seq_id)
- {
- 	pgoff_t index;
--	pgoff_t last_idx = ULONG_MAX;
- 	struct pagevec pvec;
- 	int ret = 0;
- 	struct page *last_page = NULL;
- 	bool marked = false;
- 	nid_t ino = inode->i_ino;
- 	int nr_pages;
-+	int nwritten = 0;
- 
- 	if (atomic) {
- 		last_page = last_fsync_dnode(sbi, ino);
-@@ -1718,7 +1718,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 				f2fs_put_page(last_page, 0);
- 				break;
- 			} else if (submitted) {
--				last_idx = page->index;
-+				nwritten++;
- 			}
- 
- 			if (page == last_page) {
-@@ -1744,8 +1744,8 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto retry;
- 	}
- out:
--	if (last_idx != ULONG_MAX)
--		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
-+	if (nwritten)
-+		f2fs_submit_merged_write_cond(sbi, NULL, NULL, ino, NODE);
- 	return ret ? -EIO: 0;
- }
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 97a4fae75651..965ef524e2a2 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -371,7 +371,7 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
- 		.io_type = FS_DATA_IO,
- 	};
- 	struct list_head revoke_list;
--	pgoff_t last_idx = ULONG_MAX;
-+	bool submit_bio = false;
- 	int err = 0;
- 
- 	INIT_LIST_HEAD(&revoke_list);
-@@ -406,14 +406,14 @@ static int __f2fs_commit_inmem_pages(struct inode *inode)
- 			}
- 			/* record old blkaddr for revoking */
- 			cur->old_addr = fio.old_blkaddr;
--			last_idx = page->index;
-+			submit_bio = true;
- 		}
- 		unlock_page(page);
- 		list_move_tail(&cur->list, &revoke_list);
- 	}
- 
--	if (last_idx != ULONG_MAX)
--		f2fs_submit_merged_write_cond(sbi, inode, 0, last_idx, DATA);
-+	if (submit_bio)
-+		f2fs_submit_merged_write_cond(sbi, inode, NULL, 0, DATA);
- 
- 	if (err) {
- 		/*
-@@ -3179,8 +3179,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
- 	if (PageWriteback(page)) {
- 		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
- 
--		f2fs_submit_merged_write_cond(sbi, page->mapping->host,
--						0, page->index, type);
-+		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
- 		if (ordered)
- 			wait_on_page_writeback(page);
- 		else
--- 
-2.18.0
+Thierry
 
+--AkbCVLjbJ9qUtAXD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurm9wACgkQ3SOs138+
+s6HSCQ//R45gdNTX6DyNyNx6lx8nCarb1h634iBzL2MrJHbtfFzfkv6AyTTqig9Q
+aDCp4Rq3j2CrZ9VWdYrOnD/xw00qUKZ8ltZrRz97qhGdYg0x8iv/c4AMXju861e2
+72zujUoW/0/HdmUXLEultVPl6Bfvbcby+kTJNPjWMqVRZC49rFUs3q96Xe0wQu4L
+2vQ0iO7qq8meNBA2JTq4wBSDibbfOtShzH0kiJ0U614Y/+fbRKBiO+b1Bwdk3PxH
+bEN47VGJjsbq6CzKrjIqUW1Pl2XZeMAB6sNj4YAkfkHW61jZ5V0LQPtQqC3i8ziQ
+byODReetNX/oboF1hkjPAlHOEunATt6qjPg+jxE4d0dNJLMqaUadwAt0TNJtv3mZ
+qATruOQMV2euX3+zFjKzxPjpzL4V+BBSiMbuFQspk180KqBZkIHpzj4KmEo3uAAt
+OivWss2NIxIwZHwFxTuC20KTny2dtfKYqfOkTY8f7h7t7TEdox8DAruCSFY1FGqF
+Cidxdy+r/JwIj4Qhd6O+aNm5TPtWbdB6Hv+nEQ9ahqIKX2xV3hiFRL99l6vakMS1
+IkNODVqPaOXnpsec2UQSUKaOUR6NT5OmyUiEkznQW0PBy9W5fazgtCQVfQa7wsyS
+mapVdJPsjPA1pNU2tXpmSSfBA3n3mvuQQ5fr5THhJN/A9jXxiK4=
+=OnPT
+-----END PGP SIGNATURE-----
+
+--AkbCVLjbJ9qUtAXD--
