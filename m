@@ -2,138 +2,96 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097D3C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE00C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CCE521533
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:02:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jyHzQn44"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CCE521533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 10A8C21531
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10A8C21531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeIZXQg (ORCPT
+        id S1728627AbeIZXQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:16:36 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42570 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbeIZXQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:16:36 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z8-v6so18018219qto.9;
-        Wed, 26 Sep 2018 10:02:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vuAsAFoEkV1aJPn0jXhhkTq+Dvdgmczkft8PmSYqkdk=;
-        b=jyHzQn44W5EjxZE85lLQjsKAr5IrD/ohkguYY4aRYMVhFBNhnkXwoDr5UdB5f0Am6K
-         x3DFEv7aDwIB/aM08d3+jq+Oh3dwxa6VfjS+lRMS7Wk1TEDvt2E/OnwdDZQ82ZZfetFn
-         CuhtyulWwZGn2S5MJJSdeVoVIcKh2PO29emRl9qnCcxgU8wa3gd8kLEBfD6L0k4oPegw
-         GOv+FAafHloCyyRkuL8YHKPkisXBgrATd6vmUilEHk5JD3vi5zfSo6ib/Vtm0UMBFN9+
-         oixk0fEtIEmnOZpNBaUIUZxU2VV3MFbE7b3+OeIFZpLiov2Ts7d2k8rcXJR4gmtqr1Ng
-         zY0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vuAsAFoEkV1aJPn0jXhhkTq+Dvdgmczkft8PmSYqkdk=;
-        b=d9S8YM7SYjHMG2BUP5qh/hjGEQComCGJVajBJMGoYSiAsRbcnPIyWh9uBLdJ4O4LjT
-         uVBVyZlGF5UJUQr37gfwvdLd2ow+E8b/epaHgl12i1F7zKEZvd75IGmqa/pT+GaHrih5
-         VA/HZUcHRIcsfTi1sf/deoGLGBisHghnOqcBmqEcRuQk6TVqjxTEEbN/knqndldvu7m9
-         E2TE1YkJ3GzduknyLncTpDfAWtPd9TN8bLM31BZXZWxwlD0jbq6MA/d707hR1oG2N14R
-         uuBDZrOUJbyCDg0zrfaK5h749bcCe8eNf4ens4EYsNElIWbrQqfG9gjoqFFvaD7vt8Gi
-         Qd4g==
-X-Gm-Message-State: ABuFfojKL7e0MjBiHjFts/zd71nxqoO5p2AoiddXgM/8vo6Oo4YLzZ98
-        TFUAyowXjFhXZ61rDHYIue8sA0PdGIQATEbx2AM=
-X-Google-Smtp-Source: ACcGV62IWoE/HWCTBCHrZiS8SEhV/FbxkSVHUmLb6ggVsxWkIGRept8nj9EnhNk8auYnK2GjrdLLVr7eqmZodcDpN64=
-X-Received: by 2002:ac8:3c3:: with SMTP id z3-v6mr5304085qtg.39.1537981362805;
- Wed, 26 Sep 2018 10:02:42 -0700 (PDT)
+        Wed, 26 Sep 2018 19:16:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52220 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727692AbeIZXQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:16:56 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D4A2B3083391;
+        Wed, 26 Sep 2018 17:03:03 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.217])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 47D4F60BE7;
+        Wed, 26 Sep 2018 17:03:01 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/7] KVM: x86: hyperv: PV IPI support for Windows guests
+Date:   Wed, 26 Sep 2018 19:02:52 +0200
+Message-Id: <20180926170259.29796-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-References: <1537978258-2907-1-git-send-email-mario.limonciello@dell.com>
-In-Reply-To: <1537978258-2907-1-git-send-email-mario.limonciello@dell.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 20:02:31 +0300
-Message-ID: <CAHp75VeGQTEZOrMbNsbsxSb4RcN1y=gAZuZ5Z6FawuU-e0+qcg@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: intel-wmi-thunderbolt: Add dynamic debugging
-To:     Mario Limonciello <mario.limonciello@dell.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 26 Sep 2018 17:03:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 7:11 PM Mario Limonciello
-<mario.limonciello@dell.com> wrote:
->
-> Some users have been reporting issues with thunderbolt being turned off
-> before fully initialized.  This is suspected to be caused by userspace
-> turning off the Thunderbolt controller using intel-wmi-thunderbolt
-> prematurely.
->
+Changes since v5:
+- New 'hybrid' approach to VP indexes: introduce 'num_mismatched_vp_indexes'
+  and use it for optimization in both PV IPI and TLB flush [Paolo Bonzini,
+  Roman Kagan].
+- Rebase, KVM_CAP_HYPERV_SEND_IPI is now '160'.
+- Patches 3-5 are new in this version.
+- Drop "x86/hyper-v: rename ipi_arg_{ex,non_ex} structures" patch as it is
+  already merged in kvm/queue.
 
-> Details are available here:
-> https://bugzilla.kernel.org/show_bug.cgi?id=201227
-> https://bugzilla.kernel.org/show_bug.cgi?id=199631
+Original description:
+Using hypercall for sending IPIs is faster because this allows to specify
+any number of vCPUs (even > 64 with sparse CPU set), the whole procedure
+will take only one VMEXIT.
 
-BugLink: ... ?
-BugLink: ... ?
+Same as PV TLB flush, this allows Windows guests having > 64 vCPUs to boot
+on KVM when Hyper-V extensions are enabled.
 
-I can do it myself if you are okay with this format.
+Vitaly Kuznetsov (7):
+  KVM: x86: hyperv: enforce vp_index < KVM_MAX_VCPUS
+  KVM: x86: hyperv: optimize 'all cpus' case in kvm_hv_flush_tlb()
+  KVM: x86: hyperv: consistently use 'hv_vcpu' for 'struct kvm_vcpu_hv'
+    variables
+  KVM: x86: hyperv: keep track of mismatched VP indexes
+  KVM: x86: hyperv: valid_bank_mask should be 'u64'
+  KVM: x86: hyperv: optimize kvm_hv_flush_tlb() for vp_index == vcpu_idx
+    case
+  KVM: x86: hyperv: implement PV IPI send hypercalls
 
-The patch itself LGTM.
-
->
-> Userspace has already made some mitigiations for this situation:
-> https://github.com/hughsie/fwupd/commit/ef6f1d76983c9b66
-> https://github.com/hughsie/fwupd/commit/c07ce5b4889a5384
->
-> To allow easier debugging of this situation add output that can be turned
-> on with dynamic debugging to better root cause this problem.
->
-> Suggested-by: Mika Westerberg <mika.westerberg@intel.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> ---
->  drivers/platform/x86/intel-wmi-thunderbolt.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
-> index c2257bd..ce5fbf0 100644
-> --- a/drivers/platform/x86/intel-wmi-thunderbolt.c
-> +++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
-> @@ -38,12 +38,16 @@ static ssize_t force_power_store(struct device *dev,
->         input.length = sizeof(u8);
->         input.pointer = &mode;
->         mode = hex_to_bin(buf[0]);
-> +       dev_dbg(dev, "force_power: storing %#x\n", mode);
->         if (mode == 0 || mode == 1) {
->                 status = wmi_evaluate_method(INTEL_WMI_THUNDERBOLT_GUID, 0, 1,
->                                              &input, NULL);
-> -               if (ACPI_FAILURE(status))
-> +               if (ACPI_FAILURE(status)) {
-> +                       dev_dbg(dev, "force_power: failed to evaluate ACPI method\n");
->                         return -ENODEV;
-> +               }
->         } else {
-> +               dev_dbg(dev, "force_power: unsupported mode\n");
->                 return -EINVAL;
->         }
->         return count;
-> --
-> 2.7.4
->
-
+ Documentation/virtual/kvm/api.txt |   7 +
+ arch/x86/include/asm/kvm_host.h   |   3 +
+ arch/x86/kvm/hyperv.c             | 268 +++++++++++++++++++++++-------
+ arch/x86/kvm/trace.h              |  42 +++++
+ arch/x86/kvm/x86.c                |   1 +
+ include/uapi/linux/kvm.h          |   1 +
+ virt/kvm/kvm_main.c               |   6 +-
+ 7 files changed, 265 insertions(+), 63 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
