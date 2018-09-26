@@ -2,90 +2,91 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51282C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E19C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D482089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D482089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id D77172089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:49:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VjMyuHBZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77172089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbeIZG6M convert rfc822-to-8bit (ORCPT
+        id S1727018AbeIZG7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 02:58:12 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:36388 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726190AbeIZG6M (ORCPT
+        Wed, 26 Sep 2018 02:59:12 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57298 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbeIZG7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 02:58:12 -0400
-Received: from mr1.cc.vt.edu (smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w8Q0m1Oj008977
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 20:48:01 -0400
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w8Q0lu4d010913
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 20:48:01 -0400
-Received: by mail-qt1-f198.google.com with SMTP id b12-v6so2168595qtp.16
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 17:48:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:content-transfer-encoding:mime-version
-         :subject:message-id:date:cc:to;
-        bh=x6H14tvZ4JVglBdFz5PN5+IqF/Nwn9Alwin/2d8VLaI=;
-        b=h1FQiU2qcQi2HZGdHpuNQPENsV9WHM+qa1YKGjKBGxVxW1chIvjJLtn+Q0F3/8HZNU
-         hcmSdEZr/A8uoo4/rpU8ITqFVAzsGuTWtB/HJPZENcUtvMcp3Q5Tycje/bXuzjhPECzf
-         ZRElRmduslAF+ea6HVddqT3Dzoq92xGW/ILhv47ieiVVtPVr1DAufv8Hm9UrWXAVQD1f
-         RJ/7zY1tEieq/o4XOETgg73pDtvCnVxdIfUlYsFuudb7IiofAyqrL9BWSBi/6qqKWqPQ
-         J9J4lUw0EUqYbIacGyfIpOGWlnzbh/UzTbHUV+RTC4UyAwd9JMqTwgQwRM1ZqoyCNykg
-         +tdA==
-X-Gm-Message-State: ABuFfohgxqYmwXvaK8L7ASzMq0MbAENX8XD8xJPpnkSQ6oVSzO4LkKY1
-        VeSxGlgtg5cgu1h7sajJL8kVgheIxBx6Gi2rD9r0bELiUzO1yOS/fy20VG9UNGI2+KMc1SIki33
-        wfSY14ydF+PduciBYjQxKcdIdmXr2/AszRQo=
-X-Received: by 2002:ac8:3236:: with SMTP id x51-v6mr2763392qta.275.1537922876488;
-        Tue, 25 Sep 2018 17:47:56 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV63tRpRMsCH8ajI+MT6zJY6osFZB8DMx8NyPPKcrVs/WuAIJNvmKNreFjKBJpeXhbwP78zgGqg==
-X-Received: by 2002:ac8:3236:: with SMTP id x51-v6mr2763376qta.275.1537922876317;
-        Tue, 25 Sep 2018 17:47:56 -0700 (PDT)
-Received: from ?IPv6:2601:5c0:c100:49da:1857:54ff:f889:7a68? ([2601:5c0:c100:49da:1857:54ff:f889:7a68])
-        by smtp.gmail.com with ESMTPSA id e15-v6sm2033287qkm.34.2018.09.25.17.47.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 17:47:55 -0700 (PDT)
-From:   TongZhang <ztong@vt.edu>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Naming confusion and code comments for
- security_kernel_(post_)read_file
-Message-Id: <208C9D5E-E63B-4A89-BC91-E163CF52AD03@vt.edu>
-Date:   Tue, 25 Sep 2018 20:47:54 -0400
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Wenbo Shen <shenwenbosmile@gmail.com>
-To:     james.morris@microsoft.com, Paul Moore <paul@paul-moore.com>,
-        ebiederm@xmission.com, casey@schaufler-ca.com, sargun@sargun.me,
-        fengc@google.com, mjg59@google.com,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        richard_c_haines@btinternet.com
-X-Mailer: Apple Mail (2.3445.100.39)
+        Wed, 26 Sep 2018 02:59:12 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8Q0iOih188101;
+        Wed, 26 Sep 2018 00:48:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=C+uGdWNY8qIhEndDpBNysLi3IyS9ZuIywD+IlIn6vvg=;
+ b=VjMyuHBZI3FtgvD7lwx4HTaNeHrmv7h4RUB3kaJybTRKbIWDK2Dn1k8GjI3usdWr0FB6
+ EDeUGbiyk3TBQxOTGheiCUeL3plevcDZqTR5iAHU5GSr6N0K0IsBXY8F67F0TEE5RHKE
+ Tqszio3KoeyoNgwyKWFd1kQxFARy63WFZZ8Ek3NBEbrQ1iNiuSFG1LYSXrOKYKGfYezJ
+ upXCt2Vwa9sBzH7J1x7Jiomh4YkkEMuEhU1wy6VvkTzPhDe6wQnKbZ/Fxf2V1PYc6KOw
+ /zC+GNLkJi/F9TP56YWHJrzBk3GX15JxNCvuffxdq8QMNzAweRiJHTcHHfuJh8nDIfYi mA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2mnvtup5k7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Sep 2018 00:48:55 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8Q0ms4H023224
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Sep 2018 00:48:54 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8Q0mrHr029178;
+        Wed, 26 Sep 2018 00:48:53 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Sep 2018 17:48:53 -0700
+To:     Hannes Reinecke <hare@suse.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Matthew Wilcox <matthew@wil.cx>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: advansys: Remove unnecessary parentheses
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180920205858.6035-1-natechancellor@gmail.com>
+        <9432dde7-c63f-9c0c-fc9b-8728a0715ff3@suse.com>
+Date:   Tue, 25 Sep 2018 20:48:50 -0400
+In-Reply-To: <9432dde7-c63f-9c0c-fc9b-8728a0715ff3@suse.com> (Hannes
+        Reinecke's message of "Fri, 21 Sep 2018 07:57:31 +0200")
+Message-ID: <yq1y3bpgk25.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9027 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=690
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809260006
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we were doing code review, we found and feel that the current name and 
-description of security_kernel_read_file and security_kernel_post_read_file, 
-and corresponding document/code comment in include/linux/lsm_hooks.h is
-confusing and kind of misleading as we discovered that security_kernel_(post_)read_file and kernel_read() do not always in appear in pair.
 
-security_kerne(post_)read_file is only interested in checking firmware/kernel module/policy file etc, however, kernel_read() are used in other places in which the parameters are also specified by userspace. For example, kernel_read() is used in https://elixir.bootlin.com/linux/latest/source/arch/x86/ia32/ia32_aout.c#L413
+Hannes,
 
-We suggest that it might be better to fixing the code comment as well as 
-the function naming and it may help clarify the purpose of this LSM hook function.
+> On 9/20/18 10:58 PM, Nathan Chancellor wrote:
+>> Clang warns when multiple pairs of parentheses are used for a single
+>> conditional statement.
 
-- Tong
+Applied to 4.20/scsi-queue, thanks!
 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
