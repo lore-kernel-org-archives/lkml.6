@@ -2,447 +2,130 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB42C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65227C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 005DD2083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:43:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="S670xxCM";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="IKzIZpoF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 005DD2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 286DD2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:43:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 286DD2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeIZOyx (ORCPT
+        id S1727385AbeIZOzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:54:53 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:35976 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726497AbeIZOyx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:54:53 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8Q8gT6Q006666;
-        Wed, 26 Sep 2018 01:42:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=EiEeobEIXYMWRNd0hU4aqVQ8ACjkxGLHSAzI+xTMUoA=;
- b=S670xxCMsyETTQN38Sn4/ANIoAhSWJxz6OGAk4UMZsTE49CCzTt60M4k4EGNPmGIZ5Vj
- 4pELxkFGjadUGntbkXJSiCUHIPtyEg1vFxp5bPKXwshlUF94r9VQSERCr0bvbQEFrksB
- HYl/8ZAgLmJzJ7IKs4xJRzCnizv6WGWbxCA= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2mr4vc08wj-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 26 Sep 2018 01:42:29 -0700
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.34) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Wed, 26 Sep 2018 04:42:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EiEeobEIXYMWRNd0hU4aqVQ8ACjkxGLHSAzI+xTMUoA=;
- b=IKzIZpoFp+/3HqjkbttJ5P8piVQbqabGWO3Q49stO+bBXPQXVGUGeeLl8XIOsdPD2QPJeuwZr7OzNMwjx+/vcLcp5TpV2wdLflOeeWtJJ/v1SiLmIsOg7pcQCt3yDJF6Q+fceS+HxrIC4OrFqOg91gCewqM0gazw/3APu7P+FFY=
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
- BY2PR15MB0293.namprd15.prod.outlook.com (10.163.64.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.22; Wed, 26 Sep 2018 08:42:24 +0000
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::5c5b:75ea:cae:1e68]) by BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::5c5b:75ea:cae:1e68%2]) with mapi id 15.20.1164.024; Wed, 26 Sep 2018
- 08:42:24 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Song Liu <songliubraving@fb.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "Alexei Starovoitov" <ast@kernel.org>
-Subject: Re: [PATCH v2 bpf-next 03/10] bpf: introduce per-cpu cgroup local
- storage
-Thread-Topic: [PATCH v2 bpf-next 03/10] bpf: introduce per-cpu cgroup local
- storage
-Thread-Index: AQHUVON1E8pCEF1/JECo0iVDuPhpQ6UBWJ2AgADnQoA=
-Date:   Wed, 26 Sep 2018 08:42:23 +0000
-Message-ID: <20180926084208.GA25056@castle.DHCP.thefacebook.com>
-References: <20180925152114.13537-1-guro@fb.com>
- <20180925152114.13537-4-guro@fb.com>
- <27B81458-17C5-4840-9679-D1F5FBF6E805@fb.com>
-In-Reply-To: <27B81458-17C5-4840-9679-D1F5FBF6E805@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR04CA0012.eurprd04.prod.outlook.com
- (2603:10a6:206:1::25) To BY2PR15MB0167.namprd15.prod.outlook.com
- (2a01:111:e400:58e0::13)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c092:200::1:4d7]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR15MB0293;20:2QqD7XTGoq3jRgLarlFAel2aWtGQU6fbq3chtHoJFD3O9d4hOmN/caHFPPWPPH8urGl6EWjBdHN2cOR7cdsnB5+rYKpWs08KWTxAzzrTrZHyLb27iBPSydNaT/477bXKrcPo6CO10qRe5aXaRdRq/niW2K/dGDkQ9c0/Kdpy2aE=
-x-ms-office365-filtering-correlation-id: 92cb4626-7273-40d2-edc3-08d6238bfa35
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0293;
-x-ms-traffictypediagnostic: BY2PR15MB0293:
-x-microsoft-antispam-prvs: <BY2PR15MB0293C790169A018EC2828F72BE150@BY2PR15MB0293.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(67672495146484);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(3002001)(93006095)(93001095)(10201501046)(3231355)(11241501184)(944501410)(52105095)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:BY2PR15MB0293;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0293;
-x-forefront-prvs: 08076ABC99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(396003)(39860400002)(366004)(199004)(189003)(102836004)(5250100002)(76176011)(476003)(71190400001)(34290500001)(71200400001)(478600001)(486006)(446003)(11346002)(54906003)(305945005)(52116002)(46003)(33896004)(316002)(575784001)(86362001)(99286004)(7736002)(2906002)(6246003)(68736007)(2900100001)(14444005)(6116002)(53546011)(1076002)(5660300001)(6862004)(4326008)(97736004)(256004)(6436002)(6512007)(9686003)(14454004)(53936002)(386003)(25786009)(229853002)(6486002)(6506007)(33656002)(6636002)(105586002)(8676002)(81166006)(81156014)(8936002)(106356001)(345774005)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0293;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: jzgJEHI+PrT0tYmY+++XI3ZJm6zutaxMp77jGJDwT2ATWEZEhYLWW0wIg6OAFkHCqglx7vXag/tFx86ylZpdsicBXZpiGaIwPAxHjsBbtUp7W6V9qM5JauF6PQfvWfeJpMBDRZAKmjjBZlSD2Wd74bpduE63xoraiuCBH9sPpUbqZyknuFxdriIsOK+6+vIW51i09wOKG2FeGEJGrX2pgkk0HQ6hwaaIvklze5MGl2folVeIVpZiyxSsPZoX2NamuVr+UKbqlG4Id8PcUma7mZupBfNl0XE0Nb/ceFi8KUhY8YWChj037cNi9ZQyQ9WD1XZ3GO/3j+UPYnx90oP1CDwgNwTD7u8OtkEHLCY4edY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6C382D34973B104A9A8F4662F2DD006B@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 26 Sep 2018 10:55:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34972 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726497AbeIZOzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 10:55:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 991D8B085;
+        Wed, 26 Sep 2018 08:43:20 +0000 (UTC)
+Subject: Re: [patch v3] mm, thp: always specify disabled vmas as nh in smaps
+To:     David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+References: <alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com>
+ <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz>
+ <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1809241227370.241621@chino.kir.corp.google.com>
+ <20180924195603.GJ18685@dhcp22.suse.cz>
+ <20180924200258.GK18685@dhcp22.suse.cz>
+ <0aa3eb55-82c0-eba3-b12c-2ba22e052a8e@suse.cz>
+ <alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1809251449060.96762@chino.kir.corp.google.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <74154099-1dff-e821-8220-356402a5644f@suse.cz>
+Date:   Wed, 26 Sep 2018 10:40:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92cb4626-7273-40d2-edc3-08d6238bfa35
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2018 08:42:23.9111
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0293
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-26_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <alpine.DEB.2.21.1809251449060.96762@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 11:54:33AM -0700, Song Liu wrote:
->=20
->=20
-> > On Sep 25, 2018, at 8:21 AM, Roman Gushchin <guro@fb.com> wrote:
-> >=20
-> > This commit introduced per-cpu cgroup local storage.
-> >=20
-> > Per-cpu cgroup local storage is very similar to simple cgroup storage
-> > (let's call it shared), except all the data is per-cpu.
-> >=20
-> > The main goal of per-cpu variant is to implement super fast
-> > counters (e.g. packet counters), which don't require neither
-> > lookups, neither atomic operations.
-> >=20
-> > From userspace's point of view, accessing a per-cpu cgroup storage
-> > is similar to other per-cpu map types (e.g. per-cpu hashmaps and
-> > arrays).
-> >=20
-> > Writing to a per-cpu cgroup storage is not atomic, but is performed
-> > by copying longs, so some minimal atomicity is here, exactly
-> > as with other per-cpu maps.
-> >=20
-> > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > Cc: Daniel Borkmann <daniel@iogearbox.net>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > ---
-> > include/linux/bpf-cgroup.h |  20 ++++-
-> > include/linux/bpf.h        |   1 +
-> > include/linux/bpf_types.h  |   1 +
-> > include/uapi/linux/bpf.h   |   1 +
-> > kernel/bpf/helpers.c       |   8 +-
-> > kernel/bpf/local_storage.c | 148 ++++++++++++++++++++++++++++++++-----
-> > kernel/bpf/syscall.c       |  11 ++-
-> > kernel/bpf/verifier.c      |  15 +++-
-> > 8 files changed, 177 insertions(+), 28 deletions(-)
-> >=20
-> > diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-> > index 7e0c9a1d48b7..9bd907657f9b 100644
-> > --- a/include/linux/bpf-cgroup.h
-> > +++ b/include/linux/bpf-cgroup.h
-> > @@ -37,7 +37,10 @@ struct bpf_storage_buffer {
-> > };
-> >=20
-> > struct bpf_cgroup_storage {
-> > -	struct bpf_storage_buffer *buf;
-> > +	union {
-> > +		struct bpf_storage_buffer *buf;
-> > +		char __percpu *percpu_buf;
->=20
-> "char *" here looks weird. Did you mean to use "void *"?
+On 9/25/18 11:50 PM, David Rientjes wrote:
+> Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> introduced a regression in that userspace cannot always determine the set
+> of vmas where thp is disabled.
+> 
+> Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+> to determine if a vma has been disabled from being backed by hugepages.
+> 
+> Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+> be disabled and emit "nh" as a flag for the corresponding vmas as part of
+> /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+> flag and "nh" is not emitted.
+> 
+> This causes smaps parsing libraries to assume a vma is enabled for thp
+> and ends up puzzling the user on why its memory is not backed by thp.
+> 
+> This also clears the "hg" flag to make the behavior of MADV_HUGEPAGE and
+> PR_SET_THP_DISABLE definitive.
+> 
+> Fixes: 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> Signed-off-by: David Rientjes <rientjes@google.com>
 
-Fair enough. It's probably a leftover from (previously used) char[0].
+Well, as Andrew said, we had the opportunity to provide a more complete
+info to userspace e.g. with Michal's suggested /proc/pid/status
+enhancement. If this is good enough for you (and nobody else cares) then
+I won't block it either. It would be unfortunate though if we could not
+revert this in case the MMF_DISABLE_THP querying is implemented later.
+Hopefully the only consumers are internal tools such as yours, which can
+be easily adapted...
 
->=20
-> > +	};
-> > 	struct bpf_cgroup_storage_map *map;
-> > 	struct bpf_cgroup_storage_key key;
-> > 	struct list_head list;
-> > @@ -109,6 +112,9 @@ int __cgroup_bpf_check_dev_permission(short dev_typ=
-e, u32 major, u32 minor,
-> > static inline enum bpf_cgroup_storage_type cgroup_storage_type(
-> > 	struct bpf_map *map)
-> > {
-> > +	if (map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE)
-> > +		return BPF_CGROUP_STORAGE_PERCPU;
-> > +
-> > 	return BPF_CGROUP_STORAGE_SHARED;
-> > }
-> >=20
-> > @@ -131,6 +137,10 @@ void bpf_cgroup_storage_unlink(struct bpf_cgroup_s=
-torage *storage);
-> > int bpf_cgroup_storage_assign(struct bpf_prog *prog, struct bpf_map *ma=
-p);
-> > void bpf_cgroup_storage_release(struct bpf_prog *prog, struct bpf_map *=
-map);
-> >=20
-> > +int bpf_percpu_cgroup_storage_copy(struct bpf_map *map, void *key, voi=
-d *value);
-> > +int bpf_percpu_cgroup_storage_update(struct bpf_map *map, void *key,
-> > +				     void *value, u64 flags);
-> > +
-> > /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_ena=
-bled. */
-> > #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
-> > ({									      \
-> > @@ -285,6 +295,14 @@ static inline struct bpf_cgroup_storage *bpf_cgrou=
-p_storage_alloc(
-> > 	struct bpf_prog *prog, enum bpf_cgroup_storage_type stype) { return 0;=
- }
-> > static inline void bpf_cgroup_storage_free(
-> > 	struct bpf_cgroup_storage *storage) {}
-> > +static inline int bpf_percpu_cgroup_storage_copy(struct bpf_map *map, =
-void *key,
-> > +						 void *value) {
-> > +	return 0;
-> > +}
-> > +static inline int bpf_percpu_cgroup_storage_update(struct bpf_map *map=
-,
-> > +					void *key, void *value, u64 flags) {
-> > +	return 0;
-> > +}
-> >=20
-> > #define cgroup_bpf_enabled (0)
-> > #define BPF_CGROUP_PRE_CONNECT_ENABLED(sk) (0)
-> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> > index b457fbe7b70b..018299a595c8 100644
-> > --- a/include/linux/bpf.h
-> > +++ b/include/linux/bpf.h
-> > @@ -274,6 +274,7 @@ struct bpf_prog_offload {
-> >=20
-> > enum bpf_cgroup_storage_type {
-> > 	BPF_CGROUP_STORAGE_SHARED,
-> > +	BPF_CGROUP_STORAGE_PERCPU,
-> > 	__BPF_CGROUP_STORAGE_MAX
-> > };
-> >=20
-> > diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-> > index c9bd6fb765b0..5432f4c9f50e 100644
-> > --- a/include/linux/bpf_types.h
-> > +++ b/include/linux/bpf_types.h
-> > @@ -43,6 +43,7 @@ BPF_MAP_TYPE(BPF_MAP_TYPE_CGROUP_ARRAY, cgroup_array_=
-map_ops)
-> > #endif
-> > #ifdef CONFIG_CGROUP_BPF
-> > BPF_MAP_TYPE(BPF_MAP_TYPE_CGROUP_STORAGE, cgroup_storage_map_ops)
-> > +BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE, cgroup_storage_map_op=
-s)
-> > #endif
-> > BPF_MAP_TYPE(BPF_MAP_TYPE_HASH, htab_map_ops)
-> > BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_HASH, htab_percpu_map_ops)
-> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> > index aa5ccd2385ed..e2070d819e04 100644
-> > --- a/include/uapi/linux/bpf.h
-> > +++ b/include/uapi/linux/bpf.h
-> > @@ -127,6 +127,7 @@ enum bpf_map_type {
-> > 	BPF_MAP_TYPE_SOCKHASH,
-> > 	BPF_MAP_TYPE_CGROUP_STORAGE,
-> > 	BPF_MAP_TYPE_REUSEPORT_SOCKARRAY,
-> > +	BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE,
-> > };
-> >=20
-> > enum bpf_prog_type {
-> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> > index e42f8789b7ea..1f21ef1c4ad3 100644
-> > --- a/kernel/bpf/helpers.c
-> > +++ b/kernel/bpf/helpers.c
-> > @@ -206,10 +206,16 @@ BPF_CALL_2(bpf_get_local_storage, struct bpf_map =
-*, map, u64, flags)
-> > 	 */
-> > 	enum bpf_cgroup_storage_type stype =3D cgroup_storage_type(map);
-> > 	struct bpf_cgroup_storage *storage;
-> > +	void *ptr =3D NULL;
->=20
-> Not necessary to initialize to NULL.
-
-Fixed.
-
->=20
-> >=20
-> > 	storage =3D this_cpu_read(bpf_cgroup_storage[stype]);
-> >=20
-> > -	return (unsigned long)&READ_ONCE(storage->buf)->data[0];
-> > +	if (stype =3D=3D BPF_CGROUP_STORAGE_SHARED)
-> > +		ptr =3D &READ_ONCE(storage->buf)->data[0];
-> > +	else
-> > +		ptr =3D this_cpu_ptr(storage->percpu_buf);
-> > +
-> > +	return (unsigned long)ptr;
-> > }
-> >=20
-> > const struct bpf_func_proto bpf_get_local_storage_proto =3D {
-> > diff --git a/kernel/bpf/local_storage.c b/kernel/bpf/local_storage.c
-> > index 6742292fb39e..d991355b5b46 100644
-> > --- a/kernel/bpf/local_storage.c
-> > +++ b/kernel/bpf/local_storage.c
-> > @@ -152,6 +152,71 @@ static int cgroup_storage_update_elem(struct bpf_m=
-ap *map, void *_key,
-> > 	return 0;
-> > }
-> >=20
-> > +int bpf_percpu_cgroup_storage_copy(struct bpf_map *_map, void *_key,
-> > +				   void *value)
-> > +{
-> > +	struct bpf_cgroup_storage_map *map =3D map_to_storage(_map);
-> > +	struct bpf_cgroup_storage_key *key =3D _key;
-> > +	struct bpf_cgroup_storage *storage;
-> > +	int cpu, off =3D 0;
-> > +	u32 size;
-> > +
-> > +	rcu_read_lock();
-> > +	storage =3D cgroup_storage_lookup(map, key, false);
-> > +	if (!storage) {
-> > +		rcu_read_unlock();
-> > +		return -ENOENT;
-> > +	}
-> > +
-> > +	/* per_cpu areas are zero-filled and bpf programs can only
-> > +	 * access 'value_size' of them, so copying rounded areas
-> > +	 * will not leak any kernel data
-> > +	 */
-> > +	size =3D round_up(_map->value_size, 8);
-> > +	for_each_possible_cpu(cpu) {
-> > +		bpf_long_memcpy(value + off,
-> > +				per_cpu_ptr(storage->percpu_buf, cpu), size);
-> > +		off +=3D size;
-> > +	}
-> > +	rcu_read_unlock();
-> > +	return 0;
-> > +}
-> > +
-> > +int bpf_percpu_cgroup_storage_update(struct bpf_map *_map, void *_key,
-> > +				     void *value, u64 map_flags)
-> > +{
-> > +	struct bpf_cgroup_storage_map *map =3D map_to_storage(_map);
-> > +	struct bpf_cgroup_storage_key *key =3D _key;
-> > +	struct bpf_cgroup_storage *storage;
-> > +	int cpu, off =3D 0;
-> > +	u32 size;
-> > +
-> > +	if (unlikely(map_flags & BPF_EXIST))
-> > +		return -EINVAL;
-> > +
-> > +	rcu_read_lock();
-> > +	storage =3D cgroup_storage_lookup(map, key, false);
-> > +	if (!storage) {
-> > +		rcu_read_unlock();
-> > +		return -ENOENT;
-> > +	}
-> > +
-> > +	/* the user space will provide round_up(value_size, 8) bytes that
-> > +	 * will be copied into per-cpu area. bpf programs can only access
-> > +	 * value_size of it. During lookup the same extra bytes will be
-> > +	 * returned or zeros which were zero-filled by percpu_alloc,
-> > +	 * so no kernel data leaks possible
-> > +	 */
-> > +	size =3D round_up(_map->value_size, 8);
-> > +	for_each_possible_cpu(cpu) {
-> > +		bpf_long_memcpy(per_cpu_ptr(storage->percpu_buf, cpu),
-> > +				value + off, size);
-> > +		off +=3D size;
-> > +	}
-> > +	rcu_read_unlock();
-> > +	return 0;
-> > +}
-> > +
-> > static int cgroup_storage_get_next_key(struct bpf_map *_map, void *_key=
-,
-> > 				       void *_next_key)
-> > {
-> > @@ -292,55 +357,98 @@ struct bpf_cgroup_storage *bpf_cgroup_storage_all=
-oc(struct bpf_prog *prog,
-> > {
-> > 	struct bpf_cgroup_storage *storage;
-> > 	struct bpf_map *map;
-> > +	gfp_t flags;
-> > +	size_t size;
-> > 	u32 pages;
-> >=20
-> > 	map =3D prog->aux->cgroup_storage[stype];
-> > 	if (!map)
-> > 		return NULL;
-> >=20
-> > -	pages =3D round_up(sizeof(struct bpf_cgroup_storage) +
-> > -			 sizeof(struct bpf_storage_buffer) +
-> > -			 map->value_size, PAGE_SIZE) >> PAGE_SHIFT;
-> > +	if (stype =3D=3D BPF_CGROUP_STORAGE_SHARED) {
-> > +		size =3D sizeof(struct bpf_storage_buffer) + map->value_size;
-> > +		pages =3D round_up(sizeof(struct bpf_cgroup_storage) + size,
-> > +				 PAGE_SIZE) >> PAGE_SHIFT;
-> > +	} else {
-> > +		size =3D map->value_size;
-> > +		pages =3D round_up(round_up(size, 8) * num_possible_cpus(),
-> > +				 PAGE_SIZE) >> PAGE_SHIFT;
-> > +	}
-> > +
-> > 	if (bpf_map_charge_memlock(map, pages))
-> > 		return ERR_PTR(-EPERM);
-> >=20
-> > 	storage =3D kmalloc_node(sizeof(struct bpf_cgroup_storage),
-> > 			       __GFP_ZERO | GFP_USER, map->numa_node);
-> > -	if (!storage) {
-> > -		bpf_map_uncharge_memlock(map, pages);
-> > -		return ERR_PTR(-ENOMEM);
-> > -	}
-> > +	if (!storage)
-> > +		goto enomem;
-> >=20
-> > -	storage->buf =3D kmalloc_node(sizeof(struct bpf_storage_buffer) +
-> > -				    map->value_size, __GFP_ZERO | GFP_USER,
-> > -				    map->numa_node);
-> > -	if (!storage->buf) {
-> > -		bpf_map_uncharge_memlock(map, pages);
-> > -		kfree(storage);
-> > -		return ERR_PTR(-ENOMEM);
-> > +	flags =3D __GFP_ZERO | GFP_USER;
-> > +
-> > +	if (stype =3D=3D BPF_CGROUP_STORAGE_SHARED) {
-> > +		storage->buf =3D kmalloc_node(size, flags, map->numa_node);
-> > +		if (!storage->buf)
-> > +			goto enomem;
-> > +	} else {
-> > +		storage->percpu_buf =3D __alloc_percpu_gfp(size, 8, flags);
-> > +		if (!storage->percpu_buf)
-> > +			goto enomem;
-> > 	}
-> >=20
-> > 	storage->map =3D (struct bpf_cgroup_storage_map *)map;
-> >=20
-> > 	return storage;
-> > +
-> > +enomem:
-> > +	bpf_map_uncharge_memlock(map, pages);
-> > +	kfree(storage);
-> > +	return ERR_PTR(-ENOMEM);
-> > +}
-> > +
-> > +static void free_cgroup_storage_rcu(struct rcu_head *rcu)
->=20
-> Maybe rename as free_shared_cgroup_storage_rcu()?
-
-Yeah, might be more clear.
-
-Thank you for the review!
-Will send v3 with these changes and your acks soon.
-
-Thanks!
+Vlastimil
