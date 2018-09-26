@@ -2,2152 +2,1661 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4903DC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886C5C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7AB206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:45:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7AB206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
+	by mail.kernel.org (Postfix) with ESMTP id 68D12206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:46:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D12206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeIZO5H (ORCPT
+        id S1727541AbeIZO5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:57:07 -0400
-Received: from out20-27.mail.aliyun.com ([115.124.20.27]:41871 "EHLO
-        out20-27.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeIZO5G (ORCPT
+        Wed, 26 Sep 2018 10:57:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39349 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeIZO5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:57:06 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.Cw1pUoJ_1537951462;
-Received: from linuxproject.localdomain(mailfrom:yong.deng@magewell.com fp:SMTPD_---.Cw1pUoJ_1537951462)
-          by smtp.aliyun-inc.com(10.147.44.118);
-          Wed, 26 Sep 2018 16:44:23 +0800
-From:   Yong Deng <yong.deng@magewell.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "\"David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Yong Deng <yong.deng@magewell.com>
-Subject: [PATCH v11 2/2] media: V3s: Add support for Allwinner CSI.
-Date:   Wed, 26 Sep 2018 16:43:40 +0800
-Message-Id: <1537951420-24752-1-git-send-email-yong.deng@magewell.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 26 Sep 2018 10:57:48 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8Q8jfaS3771560
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 26 Sep 2018 01:45:41 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8Q8jeh43771557;
+        Wed, 26 Sep 2018 01:45:40 -0700
+Date:   Wed, 26 Sep 2018 01:45:40 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Tzvetomir Stoyanov (VMware)" <tipbot@zytor.com>
+Message-ID: <tip-4963b0f88bb91ed0122f7b08876ae89fcafb2842@git.kernel.org>
+Cc:     namhyung@kernel.org, rostedt@goodmis.org, acme@redhat.com,
+        jolsa@redhat.com, tglx@linutronix.de, mingo@kernel.org,
+        tz.stoyanov@gmail.com, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, hpa@zytor.com
+Reply-To: hpa@zytor.com, akpm@linux-foundation.org, tz.stoyanov@gmail.com,
+          linux-kernel@vger.kernel.org, jolsa@redhat.com, acme@redhat.com,
+          mingo@kernel.org, tglx@linutronix.de, namhyung@kernel.org,
+          rostedt@goodmis.org
+In-Reply-To: <20180919185722.495820809@goodmis.org>
+References: <20180919185722.495820809@goodmis.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] tools lib traceevent, perf tools: Rename struct
+ event_format to struct tep_event_format
+Git-Commit-ID: 4963b0f88bb91ed0122f7b08876ae89fcafb2842
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-interface and CSI1 is used for parallel interface. This is not
-documented in datasheet but by test and guess.
+Commit-ID:  4963b0f88bb91ed0122f7b08876ae89fcafb2842
+Gitweb:     https://git.kernel.org/tip/4963b0f88bb91ed0122f7b08876ae89fcafb2842
+Author:     Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+AuthorDate: Wed, 19 Sep 2018 14:56:44 -0400
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 19 Sep 2018 17:11:50 -0300
 
-This patch implement a v4l2 framework driver for it.
+tools lib traceevent, perf tools: Rename struct event_format to struct tep_event_format
 
-Currently, the driver only support the parallel interface. MIPI-CSI2,
-ISP's support are not included in this patch.
+In order to make libtraceevent into a proper library, variables, data
+structures and functions require a unique prefix to prevent name space
+conflicts. That prefix will be "tep_". This renames struct event_format
+to struct tep_event_format
 
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Tested-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Yong Deng <yong.deng@magewell.com>
+Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Cc: linux-trace-devel@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180919185722.495820809@goodmis.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- MAINTAINERS                                        |   8 +
- drivers/media/platform/Kconfig                     |   1 +
- drivers/media/platform/Makefile                    |   2 +
- drivers/media/platform/sunxi/sun6i-csi/Kconfig     |   9 +
- drivers/media/platform/sunxi/sun6i-csi/Makefile    |   3 +
- drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 915 +++++++++++++++++++++
- drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h | 135 +++
- .../media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h | 196 +++++
- .../media/platform/sunxi/sun6i-csi/sun6i_video.c   | 675 +++++++++++++++
- .../media/platform/sunxi/sun6i-csi/sun6i_video.h   |  38 +
- 10 files changed, 1982 insertions(+)
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Kconfig
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Makefile
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
- create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h
+ tools/lib/traceevent/event-parse.c                 | 186 ++++++++++-----------
+ tools/lib/traceevent/event-parse.h                 |  66 ++++----
+ tools/lib/traceevent/parse-filter.c                |  42 ++---
+ tools/lib/traceevent/plugin_function.c             |   2 +-
+ tools/lib/traceevent/plugin_hrtimer.c              |   4 +-
+ tools/lib/traceevent/plugin_kmem.c                 |   2 +-
+ tools/lib/traceevent/plugin_kvm.c                  |  14 +-
+ tools/lib/traceevent/plugin_mac80211.c             |   4 +-
+ tools/lib/traceevent/plugin_sched_switch.c         |   4 +-
+ tools/perf/builtin-trace.c                         |   2 +-
+ tools/perf/util/evsel.h                            |   4 +-
+ tools/perf/util/header.c                           |   2 +-
+ tools/perf/util/python.c                           |   4 +-
+ .../perf/util/scripting-engines/trace-event-perl.c |   6 +-
+ .../util/scripting-engines/trace-event-python.c    |   8 +-
+ tools/perf/util/trace-event-parse.c                |  14 +-
+ tools/perf/util/trace-event.c                      |   8 +-
+ tools/perf/util/trace-event.h                      |  16 +-
+ 18 files changed, 194 insertions(+), 194 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9989925f658d..d6c8d13962ab 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3900,6 +3900,14 @@ M:	Jaya Kumar <jayakumar.alsa@gmail.com>
- S:	Maintained
- F:	sound/pci/cs5535audio/
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 70a42bec6931..bb2ebb322124 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -95,7 +95,7 @@ struct tep_function_handler {
  
-+CSI DRIVERS FOR ALLWINNER V3s
-+M:	Yong Deng <yong.deng@magewell.com>
-+L:	linux-media@vger.kernel.org
-+T:	git git://linuxtv.org/media_tree.git
-+S:	Maintained
-+F:	drivers/media/platform/sunxi/sun6i-csi/
-+F:	Documentation/devicetree/bindings/media/sun6i-csi.txt
-+
- CW1200 WLAN driver
- M:	Solomon Peachy <pizza@shaftnet.org>
- S:	Maintained
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index f6275874ec9e..3c8b15ea957f 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -137,6 +137,7 @@ source "drivers/media/platform/am437x/Kconfig"
- source "drivers/media/platform/xilinx/Kconfig"
- source "drivers/media/platform/rcar-vin/Kconfig"
- source "drivers/media/platform/atmel/Kconfig"
-+source "drivers/media/platform/sunxi/sun6i-csi/Kconfig"
+ static unsigned long long
+ process_defined_func(struct trace_seq *s, void *data, int size,
+-		     struct event_format *event, struct print_arg *arg);
++		     struct tep_event_format *event, struct print_arg *arg);
  
- config VIDEO_TI_CAL
- 	tristate "TI CAL (Camera Adaptation Layer) driver"
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 6ab6200dd9c9..2662a230f681 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -98,3 +98,5 @@ obj-$(CONFIG_VIDEO_QCOM_VENUS)		+= qcom/venus/
- obj-y					+= meson/
+ static void free_func_handle(struct tep_function_handler *func);
  
- obj-y					+= cros-ec-cec/
-+
-+obj-$(CONFIG_VIDEO_SUN6I_CSI)		+= sunxi/sun6i-csi/
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/Kconfig b/drivers/media/platform/sunxi/sun6i-csi/Kconfig
-new file mode 100644
-index 000000000000..018e3ec788c0
---- /dev/null
-+++ b/drivers/media/platform/sunxi/sun6i-csi/Kconfig
-@@ -0,0 +1,9 @@
-+config VIDEO_SUN6I_CSI
-+	tristate "Allwinner V3s Camera Sensor Interface driver"
-+	depends on VIDEO_V4L2 && COMMON_CLK && VIDEO_V4L2_SUBDEV_API && HAS_DMA
-+	depends on ARCH_SUNXI || COMPILE_TEST
-+	select VIDEOBUF2_DMA_CONTIG
-+	select REGMAP_MMIO
-+	select V4L2_FWNODE
-+	help
-+	   Support for the Allwinner Camera Sensor Interface Controller on V3s.
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/Makefile b/drivers/media/platform/sunxi/sun6i-csi/Makefile
-new file mode 100644
-index 000000000000..213cb6be9e9c
---- /dev/null
-+++ b/drivers/media/platform/sunxi/sun6i-csi/Makefile
-@@ -0,0 +1,3 @@
-+sun6i-csi-y += sun6i_video.o sun6i_csi.o
-+
-+obj-$(CONFIG_VIDEO_SUN6I_CSI) += sun6i-csi.o
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-new file mode 100644
-index 000000000000..db200764d712
---- /dev/null
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-@@ -0,0 +1,915 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2011-2018 Magewell Electronics Co., Ltd. (Nanjing)
-+ * All rights reserved.
-+ * Author: Yong Deng <yong.deng@magewell.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/err.h>
-+#include <linux/fs.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/ioctl.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/sched.h>
-+#include <linux/sizes.h>
-+#include <linux/slab.h>
-+
-+#include "sun6i_csi.h"
-+#include "sun6i_csi_reg.h"
-+
-+#define MODULE_NAME	"sun6i-csi"
-+
-+struct sun6i_csi_dev {
-+	struct sun6i_csi		csi;
-+	struct device			*dev;
-+
-+	struct regmap			*regmap;
-+	struct clk			*clk_mod;
-+	struct clk			*clk_ram;
-+	struct reset_control		*rstc_bus;
-+
-+	int				planar_offset[3];
-+};
-+
-+static inline struct sun6i_csi_dev *sun6i_csi_to_dev(struct sun6i_csi *csi)
-+{
-+	return container_of(csi, struct sun6i_csi_dev, csi);
-+}
-+
-+/* TODO add 10&12 bit YUV, RGB support */
-+bool sun6i_csi_is_format_supported(struct sun6i_csi *csi,
-+				   u32 pixformat, u32 mbus_code)
-+{
-+	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
-+
-+	/*
-+	 * Some video receivers have the ability to be compatible with
-+	 * 8bit and 16bit bus width.
-+	 * Identify the media bus format from device tree.
-+	 */
-+	if ((sdev->csi.v4l2_ep.bus_type == V4L2_MBUS_PARALLEL
-+	      || sdev->csi.v4l2_ep.bus_type == V4L2_MBUS_BT656)
-+	     && sdev->csi.v4l2_ep.bus.parallel.bus_width == 16) {
-+		switch (pixformat) {
-+		case V4L2_PIX_FMT_HM12:
-+		case V4L2_PIX_FMT_NV12:
-+		case V4L2_PIX_FMT_NV21:
-+		case V4L2_PIX_FMT_NV16:
-+		case V4L2_PIX_FMT_NV61:
-+		case V4L2_PIX_FMT_YUV420:
-+		case V4L2_PIX_FMT_YVU420:
-+		case V4L2_PIX_FMT_YUV422P:
-+			switch (mbus_code) {
-+			case MEDIA_BUS_FMT_UYVY8_1X16:
-+			case MEDIA_BUS_FMT_VYUY8_1X16:
-+			case MEDIA_BUS_FMT_YUYV8_1X16:
-+			case MEDIA_BUS_FMT_YVYU8_1X16:
-+				return true;
-+			default:
-+				dev_dbg(sdev->dev, "Unsupported mbus code: 0x%x\n",
-+					mbus_code);
-+				break;
-+			}
-+			break;
-+		default:
-+			dev_dbg(sdev->dev, "Unsupported pixformat: 0x%x\n",
-+				pixformat);
-+			break;
-+		}
-+		return false;
-+	}
-+
-+	switch (pixformat) {
-+	case V4L2_PIX_FMT_SBGGR8:
-+		return (mbus_code == MEDIA_BUS_FMT_SBGGR8_1X8);
-+	case V4L2_PIX_FMT_SGBRG8:
-+		return (mbus_code == MEDIA_BUS_FMT_SGBRG8_1X8);
-+	case V4L2_PIX_FMT_SGRBG8:
-+		return (mbus_code == MEDIA_BUS_FMT_SGRBG8_1X8);
-+	case V4L2_PIX_FMT_SRGGB8:
-+		return (mbus_code == MEDIA_BUS_FMT_SRGGB8_1X8);
-+	case V4L2_PIX_FMT_SBGGR10:
-+		return (mbus_code == MEDIA_BUS_FMT_SBGGR10_1X10);
-+	case V4L2_PIX_FMT_SGBRG10:
-+		return (mbus_code == MEDIA_BUS_FMT_SGBRG10_1X10);
-+	case V4L2_PIX_FMT_SGRBG10:
-+		return (mbus_code == MEDIA_BUS_FMT_SGRBG10_1X10);
-+	case V4L2_PIX_FMT_SRGGB10:
-+		return (mbus_code == MEDIA_BUS_FMT_SRGGB10_1X10);
-+	case V4L2_PIX_FMT_SBGGR12:
-+		return (mbus_code == MEDIA_BUS_FMT_SBGGR12_1X12);
-+	case V4L2_PIX_FMT_SGBRG12:
-+		return (mbus_code == MEDIA_BUS_FMT_SGBRG12_1X12);
-+	case V4L2_PIX_FMT_SGRBG12:
-+		return (mbus_code == MEDIA_BUS_FMT_SGRBG12_1X12);
-+	case V4L2_PIX_FMT_SRGGB12:
-+		return (mbus_code == MEDIA_BUS_FMT_SRGGB12_1X12);
-+
-+	case V4L2_PIX_FMT_YUYV:
-+		return (mbus_code == MEDIA_BUS_FMT_YUYV8_2X8);
-+	case V4L2_PIX_FMT_YVYU:
-+		return (mbus_code == MEDIA_BUS_FMT_YVYU8_2X8);
-+	case V4L2_PIX_FMT_UYVY:
-+		return (mbus_code == MEDIA_BUS_FMT_UYVY8_2X8);
-+	case V4L2_PIX_FMT_VYUY:
-+		return (mbus_code == MEDIA_BUS_FMT_VYUY8_2X8);
-+
-+	case V4L2_PIX_FMT_HM12:
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_NV61:
-+	case V4L2_PIX_FMT_YUV420:
-+	case V4L2_PIX_FMT_YVU420:
-+	case V4L2_PIX_FMT_YUV422P:
-+		switch (mbus_code) {
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		case MEDIA_BUS_FMT_VYUY8_2X8:
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+		case MEDIA_BUS_FMT_YVYU8_2X8:
-+			return true;
-+		default:
-+			dev_dbg(sdev->dev, "Unsupported mbus code: 0x%x\n",
-+				mbus_code);
-+			break;
-+		}
-+		break;
-+	default:
-+		dev_dbg(sdev->dev, "Unsupported pixformat: 0x%x\n", pixformat);
-+		break;
-+	}
-+
-+	return false;
-+}
-+
-+int sun6i_csi_set_power(struct sun6i_csi *csi, bool enable)
-+{
-+	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
-+	struct regmap *regmap = sdev->regmap;
-+	int ret;
-+
-+	if (!enable) {
-+		regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN, 0);
-+
-+		clk_disable_unprepare(sdev->clk_ram);
-+		clk_disable_unprepare(sdev->clk_mod);
-+		reset_control_assert(sdev->rstc_bus);
-+		return 0;
-+	}
-+
-+	ret = clk_prepare_enable(sdev->clk_mod);
-+	if (ret) {
-+		dev_err(sdev->dev, "Enable csi clk err %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(sdev->clk_ram);
-+	if (ret) {
-+		dev_err(sdev->dev, "Enable clk_dram_csi clk err %d\n", ret);
-+		goto clk_mod_disable;
-+	}
-+
-+	ret = reset_control_deassert(sdev->rstc_bus);
-+	if (ret) {
-+		dev_err(sdev->dev, "reset err %d\n", ret);
-+		goto clk_ram_disable;
-+	}
-+
-+	regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN, CSI_EN_CSI_EN);
-+
-+	return 0;
-+
-+clk_ram_disable:
-+	clk_disable_unprepare(sdev->clk_ram);
-+clk_mod_disable:
-+	clk_disable_unprepare(sdev->clk_mod);
-+	return ret;
-+}
-+
-+static enum csi_input_fmt get_csi_input_format(struct sun6i_csi_dev *sdev,
-+					       u32 mbus_code, u32 pixformat)
-+{
-+	/* bayer */
-+	if ((mbus_code & 0xF000) == 0x3000)
-+		return CSI_INPUT_FORMAT_RAW;
-+
-+	switch (pixformat) {
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_VYUY:
-+		return CSI_INPUT_FORMAT_RAW;
-+	default:
-+		break;
-+	}
-+
-+	/* not support YUV420 input format yet */
-+	dev_dbg(sdev->dev, "Select YUV422 as default input format of CSI.\n");
-+	return CSI_INPUT_FORMAT_YUV422;
-+}
-+
-+static enum csi_output_fmt get_csi_output_format(struct sun6i_csi_dev *sdev,
-+						 u32 pixformat, u32 field)
-+{
-+	bool buf_interlaced = false;
-+
-+	if (field == V4L2_FIELD_INTERLACED
-+	    || field == V4L2_FIELD_INTERLACED_TB
-+	    || field == V4L2_FIELD_INTERLACED_BT)
-+		buf_interlaced = true;
-+
-+	switch (pixformat) {
-+	case V4L2_PIX_FMT_SBGGR8:
-+	case V4L2_PIX_FMT_SGBRG8:
-+	case V4L2_PIX_FMT_SGRBG8:
-+	case V4L2_PIX_FMT_SRGGB8:
-+		return buf_interlaced ? CSI_FRAME_RAW_8 : CSI_FIELD_RAW_8;
-+	case V4L2_PIX_FMT_SBGGR10:
-+	case V4L2_PIX_FMT_SGBRG10:
-+	case V4L2_PIX_FMT_SGRBG10:
-+	case V4L2_PIX_FMT_SRGGB10:
-+		return buf_interlaced ? CSI_FRAME_RAW_10 : CSI_FIELD_RAW_10;
-+	case V4L2_PIX_FMT_SBGGR12:
-+	case V4L2_PIX_FMT_SGBRG12:
-+	case V4L2_PIX_FMT_SGRBG12:
-+	case V4L2_PIX_FMT_SRGGB12:
-+		return buf_interlaced ? CSI_FRAME_RAW_12 : CSI_FIELD_RAW_12;
-+
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_VYUY:
-+		return buf_interlaced ? CSI_FRAME_RAW_8 : CSI_FIELD_RAW_8;
-+
-+	case V4L2_PIX_FMT_HM12:
-+		return buf_interlaced ? CSI_FRAME_MB_YUV420 :
-+					CSI_FIELD_MB_YUV420;
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV21:
-+		return buf_interlaced ? CSI_FRAME_UV_CB_YUV420 :
-+					CSI_FIELD_UV_CB_YUV420;
-+	case V4L2_PIX_FMT_YUV420:
-+	case V4L2_PIX_FMT_YVU420:
-+		return buf_interlaced ? CSI_FRAME_PLANAR_YUV420 :
-+					CSI_FIELD_PLANAR_YUV420;
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_NV61:
-+		return buf_interlaced ? CSI_FRAME_UV_CB_YUV422 :
-+					CSI_FIELD_UV_CB_YUV422;
-+	case V4L2_PIX_FMT_YUV422P:
-+		return buf_interlaced ? CSI_FRAME_PLANAR_YUV422 :
-+					CSI_FIELD_PLANAR_YUV422;
-+	default:
-+		dev_warn(sdev->dev, "Unsupported pixformat: 0x%x\n", pixformat);
-+		break;
-+	}
-+
-+	return CSI_FIELD_RAW_8;
-+}
-+
-+static enum csi_input_seq get_csi_input_seq(struct sun6i_csi_dev *sdev,
-+					    u32 mbus_code, u32 pixformat)
-+{
-+
-+	switch (pixformat) {
-+	case V4L2_PIX_FMT_HM12:
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_YUV420:
-+	case V4L2_PIX_FMT_YUV422P:
-+		switch (mbus_code) {
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		case MEDIA_BUS_FMT_UYVY8_1X16:
-+			return CSI_INPUT_SEQ_UYVY;
-+		case MEDIA_BUS_FMT_VYUY8_2X8:
-+		case MEDIA_BUS_FMT_VYUY8_1X16:
-+			return CSI_INPUT_SEQ_VYUY;
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+		case MEDIA_BUS_FMT_YUYV8_1X16:
-+			return CSI_INPUT_SEQ_YUYV;
-+		case MEDIA_BUS_FMT_YVYU8_1X16:
-+		case MEDIA_BUS_FMT_YVYU8_2X8:
-+			return CSI_INPUT_SEQ_YVYU;
-+		default:
-+			dev_warn(sdev->dev, "Unsupported mbus code: 0x%x\n",
-+				 mbus_code);
-+			break;
-+		}
-+		break;
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_NV61:
-+	case V4L2_PIX_FMT_YVU420:
-+		switch (mbus_code) {
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		case MEDIA_BUS_FMT_UYVY8_1X16:
-+			return CSI_INPUT_SEQ_VYUY;
-+		case MEDIA_BUS_FMT_VYUY8_2X8:
-+		case MEDIA_BUS_FMT_VYUY8_1X16:
-+			return CSI_INPUT_SEQ_UYVY;
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+		case MEDIA_BUS_FMT_YUYV8_1X16:
-+			return CSI_INPUT_SEQ_YVYU;
-+		case MEDIA_BUS_FMT_YVYU8_1X16:
-+		case MEDIA_BUS_FMT_YVYU8_2X8:
-+			return CSI_INPUT_SEQ_YUYV;
-+		default:
-+			dev_warn(sdev->dev, "Unsupported mbus code: 0x%x\n",
-+				 mbus_code);
-+			break;
-+		}
-+		break;
-+
-+	case V4L2_PIX_FMT_YUYV:
-+		return CSI_INPUT_SEQ_YUYV;
-+
-+	default:
-+		dev_warn(sdev->dev, "Unsupported pixformat: 0x%x, defaulting to YUYV\n",
-+			 pixformat);
-+		break;
-+	}
-+
-+	return CSI_INPUT_SEQ_YUYV;
-+}
-+
-+static void sun6i_csi_setup_bus(struct sun6i_csi_dev *sdev)
-+{
-+	struct v4l2_fwnode_endpoint *endpoint = &sdev->csi.v4l2_ep;
-+	struct sun6i_csi *csi = &sdev->csi;
-+	unsigned char bus_width;
-+	u32 flags;
-+	u32 cfg;
-+	bool input_interlaced = false;
-+
-+	if (csi->config.field == V4L2_FIELD_INTERLACED
-+	    || csi->config.field == V4L2_FIELD_INTERLACED_TB
-+	    || csi->config.field == V4L2_FIELD_INTERLACED_BT)
-+		input_interlaced = true;
-+
-+	bus_width = endpoint->bus.parallel.bus_width;
-+
-+	regmap_read(sdev->regmap, CSI_IF_CFG_REG, &cfg);
-+
-+	cfg &= ~(CSI_IF_CFG_CSI_IF_MASK | CSI_IF_CFG_MIPI_IF_MASK |
-+		 CSI_IF_CFG_IF_DATA_WIDTH_MASK |
-+		 CSI_IF_CFG_CLK_POL_MASK | CSI_IF_CFG_VREF_POL_MASK |
-+		 CSI_IF_CFG_HREF_POL_MASK | CSI_IF_CFG_FIELD_MASK |
-+		 CSI_IF_CFG_SRC_TYPE_MASK);
-+
-+	if (input_interlaced)
-+		cfg |= CSI_IF_CFG_SRC_TYPE_INTERLACED;
-+	else
-+		cfg |= CSI_IF_CFG_SRC_TYPE_PROGRESSED;
-+
-+	switch (endpoint->bus_type) {
-+	case V4L2_MBUS_PARALLEL:
-+		cfg |= CSI_IF_CFG_MIPI_IF_CSI;
-+
-+		flags = endpoint->bus.parallel.flags;
-+
-+		cfg |= (bus_width == 16) ? CSI_IF_CFG_CSI_IF_YUV422_16BIT :
-+					   CSI_IF_CFG_CSI_IF_YUV422_INTLV;
-+
-+		if (flags & V4L2_MBUS_FIELD_EVEN_LOW)
-+			cfg |= CSI_IF_CFG_FIELD_POSITIVE;
-+
-+		if (flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
-+			cfg |= CSI_IF_CFG_VREF_POL_POSITIVE;
-+		if (flags & V4L2_MBUS_HSYNC_ACTIVE_LOW)
-+			cfg |= CSI_IF_CFG_HREF_POL_POSITIVE;
-+
-+		if (flags & V4L2_MBUS_PCLK_SAMPLE_RISING)
-+			cfg |= CSI_IF_CFG_CLK_POL_FALLING_EDGE;
-+		break;
-+	case V4L2_MBUS_BT656:
-+		cfg |= CSI_IF_CFG_MIPI_IF_CSI;
-+
-+		flags = endpoint->bus.parallel.flags;
-+
-+		cfg |= (bus_width == 16) ? CSI_IF_CFG_CSI_IF_BT1120 :
-+					   CSI_IF_CFG_CSI_IF_BT656;
-+
-+		if (flags & V4L2_MBUS_FIELD_EVEN_LOW)
-+			cfg |= CSI_IF_CFG_FIELD_POSITIVE;
-+
-+		if (flags & V4L2_MBUS_PCLK_SAMPLE_FALLING)
-+			cfg |= CSI_IF_CFG_CLK_POL_FALLING_EDGE;
-+		break;
-+	default:
-+		dev_warn(sdev->dev, "Unsupported bus type: %d\n",
-+			 endpoint->bus_type);
-+		break;
-+	}
-+
-+	switch (bus_width) {
-+	case 8:
-+		cfg |= CSI_IF_CFG_IF_DATA_WIDTH_8BIT;
-+		break;
-+	case 10:
-+		cfg |= CSI_IF_CFG_IF_DATA_WIDTH_10BIT;
-+		break;
-+	case 12:
-+		cfg |= CSI_IF_CFG_IF_DATA_WIDTH_12BIT;
-+		break;
-+	case 16: /* No need to configure DATA_WIDTH for 16bit */
-+		break;
-+	default:
-+		dev_warn(sdev->dev, "Unsupported bus width: %d\n", bus_width);
-+		break;
-+	}
-+
-+	regmap_write(sdev->regmap, CSI_IF_CFG_REG, cfg);
-+}
-+
-+static void sun6i_csi_set_format(struct sun6i_csi_dev *sdev)
-+{
-+	struct sun6i_csi *csi = &sdev->csi;
-+	u32 cfg;
-+	u32 val;
-+
-+	regmap_read(sdev->regmap, CSI_CH_CFG_REG, &cfg);
-+
-+	cfg &= ~(CSI_CH_CFG_INPUT_FMT_MASK |
-+		 CSI_CH_CFG_OUTPUT_FMT_MASK | CSI_CH_CFG_VFLIP_EN |
-+		 CSI_CH_CFG_HFLIP_EN | CSI_CH_CFG_FIELD_SEL_MASK |
-+		 CSI_CH_CFG_INPUT_SEQ_MASK);
-+
-+	val = get_csi_input_format(sdev, csi->config.code,
-+				   csi->config.pixelformat);
-+	cfg |= CSI_CH_CFG_INPUT_FMT(val);
-+
-+	val = get_csi_output_format(sdev, csi->config.pixelformat,
-+				    csi->config.field);
-+	cfg |= CSI_CH_CFG_OUTPUT_FMT(val);
-+
-+	val = get_csi_input_seq(sdev, csi->config.code,
-+				csi->config.pixelformat);
-+	cfg |= CSI_CH_CFG_INPUT_SEQ(val);
-+
-+	if (csi->config.field == V4L2_FIELD_TOP)
-+		cfg |= CSI_CH_CFG_FIELD_SEL_FIELD0;
-+	else if (csi->config.field == V4L2_FIELD_BOTTOM)
-+		cfg |= CSI_CH_CFG_FIELD_SEL_FIELD1;
-+	else
-+		cfg |= CSI_CH_CFG_FIELD_SEL_BOTH;
-+
-+	regmap_write(sdev->regmap, CSI_CH_CFG_REG, cfg);
-+}
-+
-+static void sun6i_csi_set_window(struct sun6i_csi_dev *sdev)
-+{
-+	struct sun6i_csi_config *config = &sdev->csi.config;
-+	u32 bytesperline_y;
-+	u32 bytesperline_c;
-+	int *planar_offset = sdev->planar_offset;
-+	u32 width = config->width;
-+	u32 height = config->height;
-+	u32 hor_len = width;
-+
-+	switch (config->pixelformat) {
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_VYUY:
-+		dev_dbg(sdev->dev,
-+			"Horizontal length should be 2 times of width for packed YUV formats!\n");
-+		hor_len = width * 2;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	regmap_write(sdev->regmap, CSI_CH_HSIZE_REG,
-+		     CSI_CH_HSIZE_HOR_LEN(hor_len) |
-+		     CSI_CH_HSIZE_HOR_START(0));
-+	regmap_write(sdev->regmap, CSI_CH_VSIZE_REG,
-+		     CSI_CH_VSIZE_VER_LEN(height) |
-+		     CSI_CH_VSIZE_VER_START(0));
-+
-+	planar_offset[0] = 0;
-+	switch (config->pixelformat) {
-+	case V4L2_PIX_FMT_HM12:
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_NV61:
-+		bytesperline_y = width;
-+		bytesperline_c = width;
-+		planar_offset[1] = bytesperline_y * height;
-+		planar_offset[2] = -1;
-+		break;
-+	case V4L2_PIX_FMT_YUV420:
-+	case V4L2_PIX_FMT_YVU420:
-+		bytesperline_y = width;
-+		bytesperline_c = width / 2;
-+		planar_offset[1] = bytesperline_y * height;
-+		planar_offset[2] = planar_offset[1] +
-+				bytesperline_c * height / 2;
-+		break;
-+	case V4L2_PIX_FMT_YUV422P:
-+		bytesperline_y = width;
-+		bytesperline_c = width / 2;
-+		planar_offset[1] = bytesperline_y * height;
-+		planar_offset[2] = planar_offset[1] +
-+				bytesperline_c * height;
-+		break;
-+	default: /* raw */
-+		dev_dbg(sdev->dev,
-+			"Calculating pixelformat(0x%x)'s bytesperline as a packed format\n",
-+			config->pixelformat);
-+		bytesperline_y = (sun6i_csi_get_bpp(config->pixelformat) *
-+				  config->width) / 8;
-+		bytesperline_c = 0;
-+		planar_offset[1] = -1;
-+		planar_offset[2] = -1;
-+		break;
-+	}
-+
-+	regmap_write(sdev->regmap, CSI_CH_BUF_LEN_REG,
-+		     CSI_CH_BUF_LEN_BUF_LEN_C(bytesperline_c) |
-+		     CSI_CH_BUF_LEN_BUF_LEN_Y(bytesperline_y));
-+}
-+
-+int sun6i_csi_update_config(struct sun6i_csi *csi,
-+			    struct sun6i_csi_config *config)
-+{
-+	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
-+
-+	if (config == NULL)
-+		return -EINVAL;
-+
-+	memcpy(&csi->config, config, sizeof(csi->config));
-+
-+	sun6i_csi_setup_bus(sdev);
-+	sun6i_csi_set_format(sdev);
-+	sun6i_csi_set_window(sdev);
-+
-+	return 0;
-+}
-+
-+void sun6i_csi_update_buf_addr(struct sun6i_csi *csi, dma_addr_t addr)
-+{
-+	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
-+
-+	regmap_write(sdev->regmap, CSI_CH_F0_BUFA_REG,
-+		     (addr + sdev->planar_offset[0]) >> 2);
-+	if (sdev->planar_offset[1] != -1)
-+		regmap_write(sdev->regmap, CSI_CH_F1_BUFA_REG,
-+			     (addr + sdev->planar_offset[1]) >> 2);
-+	if (sdev->planar_offset[2] != -1)
-+		regmap_write(sdev->regmap, CSI_CH_F2_BUFA_REG,
-+			     (addr + sdev->planar_offset[2]) >> 2);
-+}
-+
-+void sun6i_csi_set_stream(struct sun6i_csi *csi, bool enable)
-+{
-+	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
-+	struct regmap *regmap = sdev->regmap;
-+
-+	if (!enable) {
-+		regmap_update_bits(regmap, CSI_CAP_REG, CSI_CAP_CH0_VCAP_ON, 0);
-+		regmap_write(regmap, CSI_CH_INT_EN_REG, 0);
-+		return;
-+	}
-+
-+	regmap_write(regmap, CSI_CH_INT_STA_REG, 0xFF);
-+	regmap_write(regmap, CSI_CH_INT_EN_REG,
-+		     CSI_CH_INT_EN_HB_OF_INT_EN |
-+		     CSI_CH_INT_EN_FIFO2_OF_INT_EN |
-+		     CSI_CH_INT_EN_FIFO1_OF_INT_EN |
-+		     CSI_CH_INT_EN_FIFO0_OF_INT_EN |
-+		     CSI_CH_INT_EN_FD_INT_EN |
-+		     CSI_CH_INT_EN_CD_INT_EN);
-+
-+	regmap_update_bits(regmap, CSI_CAP_REG, CSI_CAP_CH0_VCAP_ON,
-+			   CSI_CAP_CH0_VCAP_ON);
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * Media Controller and V4L2
-+ */
-+static int sun6i_csi_link_entity(struct sun6i_csi *csi,
-+				 struct media_entity *entity,
-+				 struct fwnode_handle *fwnode)
-+{
-+	struct media_entity *sink;
-+	struct media_pad *sink_pad;
-+	int src_pad_index;
-+	int ret;
-+
-+	ret = media_entity_get_fwnode_pad(entity, fwnode, MEDIA_PAD_FL_SOURCE);
-+	if (ret < 0) {
-+		dev_err(csi->dev, "%s: no source pad in external entity %s\n",
-+			__func__, entity->name);
-+		return -EINVAL;
-+	}
-+
-+	src_pad_index = ret;
-+
-+	sink = &csi->video.vdev.entity;
-+	sink_pad = &csi->video.pad;
-+
-+	dev_dbg(csi->dev, "creating %s:%u -> %s:%u link\n",
-+		entity->name, src_pad_index, sink->name, sink_pad->index);
-+	ret = media_create_pad_link(entity, src_pad_index, sink,
-+				    sink_pad->index,
-+				    MEDIA_LNK_FL_ENABLED |
-+				    MEDIA_LNK_FL_IMMUTABLE);
-+	if (ret < 0) {
-+		dev_err(csi->dev, "failed to create %s:%u -> %s:%u link\n",
-+			entity->name, src_pad_index,
-+			sink->name, sink_pad->index);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int sun6i_subdev_notify_complete(struct v4l2_async_notifier *notifier)
-+{
-+	struct sun6i_csi *csi = container_of(notifier, struct sun6i_csi,
-+					     notifier);
-+	struct v4l2_device *v4l2_dev = &csi->v4l2_dev;
-+	struct v4l2_subdev *sd;
-+	int ret;
-+
-+	dev_dbg(csi->dev, "notify complete, all subdevs registered\n");
-+
-+	if (notifier->num_subdevs != 1)
-+		return -EINVAL;
-+
-+	sd = list_first_entry(&v4l2_dev->subdevs, struct v4l2_subdev, list);
-+	if (sd == NULL)
-+		return -EINVAL;
-+
-+	ret = sun6i_csi_link_entity(csi, &sd->entity, sd->fwnode);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = v4l2_device_register_subdev_nodes(&csi->v4l2_dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return media_device_register(&csi->media_dev);
-+}
-+
-+static const struct v4l2_async_notifier_operations sun6i_csi_async_ops = {
-+	.complete = sun6i_subdev_notify_complete,
-+};
-+
-+static int sun6i_csi_fwnode_parse(struct device *dev,
-+				  struct v4l2_fwnode_endpoint *vep,
-+				  struct v4l2_async_subdev *asd)
-+{
-+	struct sun6i_csi *csi = dev_get_drvdata(dev);
-+
-+	if (vep->base.port || vep->base.id) {
-+		dev_warn(dev, "Only support a single port with one endpoint\n");
-+		return -ENOTCONN;
-+	}
-+
-+	switch (vep->bus_type) {
-+	case V4L2_MBUS_PARALLEL:
-+	case V4L2_MBUS_BT656:
-+		csi->v4l2_ep = *vep;
-+		return 0;
-+	default:
-+		dev_err(dev, "Unsupported media bus type\n");
-+		return -ENOTCONN;
-+	}
-+}
-+
-+static void sun6i_csi_v4l2_cleanup(struct sun6i_csi *csi)
-+{
-+	v4l2_async_notifier_unregister(&csi->notifier);
-+	v4l2_async_notifier_cleanup(&csi->notifier);
-+	sun6i_video_cleanup(&csi->video);
-+	v4l2_device_unregister(&csi->v4l2_dev);
-+	media_device_unregister(&csi->media_dev);
-+	media_device_cleanup(&csi->media_dev);
-+}
-+
-+static int sun6i_csi_v4l2_init(struct sun6i_csi *csi)
-+{
-+	int ret;
-+
-+	csi->media_dev.dev = csi->dev;
-+	strlcpy(csi->media_dev.model, "Allwinner Video Capture Device",
-+		sizeof(csi->media_dev.model));
-+	csi->media_dev.hw_revision = 0;
-+
-+	media_device_init(&csi->media_dev);
-+
-+	ret = v4l2_ctrl_handler_init(&csi->ctrl_handler, 0);
-+	if (ret) {
-+		dev_err(csi->dev, "V4L2 controls handler init failed (%d)\n",
-+			ret);
-+		goto clean_media;
-+	}
-+
-+	csi->v4l2_dev.mdev = &csi->media_dev;
-+	csi->v4l2_dev.ctrl_handler = &csi->ctrl_handler;
-+	ret = v4l2_device_register(csi->dev, &csi->v4l2_dev);
-+	if (ret) {
-+		dev_err(csi->dev, "V4L2 device registration failed (%d)\n",
-+			ret);
-+		goto clean_media;
-+	}
-+
-+	ret = sun6i_video_init(&csi->video, csi, "sun6i-csi");
-+	if (ret)
-+		goto unreg_v4l2;
-+
-+	ret = v4l2_async_notifier_parse_fwnode_endpoints(
-+		csi->dev, &csi->notifier, sizeof(struct v4l2_async_subdev),
-+		sun6i_csi_fwnode_parse);
-+	if (ret)
-+		goto clean_video;
-+
-+	csi->notifier.ops = &sun6i_csi_async_ops;
-+
-+	ret = v4l2_async_notifier_register(&csi->v4l2_dev, &csi->notifier);
-+	if (ret) {
-+		dev_err(csi->dev, "notifier registration failed\n");
-+		goto clean_notifier;
-+	}
-+
-+	return 0;
-+
-+clean_notifier:
-+	v4l2_async_notifier_cleanup(&csi->notifier);
-+clean_video:
-+	sun6i_video_cleanup(&csi->video);
-+unreg_v4l2:
-+	v4l2_device_unregister(&csi->v4l2_dev);
-+clean_media:
-+	media_device_cleanup(&csi->media_dev);
-+
-+	return ret;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * Resources and IRQ
-+ */
-+static irqreturn_t sun6i_csi_isr(int irq, void *dev_id)
-+{
-+	struct sun6i_csi_dev *sdev = (struct sun6i_csi_dev *)dev_id;
-+	struct regmap *regmap = sdev->regmap;
-+	u32 status;
-+
-+	regmap_read(regmap, CSI_CH_INT_STA_REG, &status);
-+
-+	if (!(status & 0xFF))
-+		return IRQ_NONE;
-+
-+	if ((status & CSI_CH_INT_STA_FIFO0_OF_PD) ||
-+	    (status & CSI_CH_INT_STA_FIFO1_OF_PD) ||
-+	    (status & CSI_CH_INT_STA_FIFO2_OF_PD) ||
-+	    (status & CSI_CH_INT_STA_HB_OF_PD)) {
-+		regmap_write(regmap, CSI_CH_INT_STA_REG, status);
-+		regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN, 0);
-+		regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN,
-+				   CSI_EN_CSI_EN);
-+		return IRQ_HANDLED;
-+	}
-+
-+	if (status & CSI_CH_INT_STA_FD_PD)
-+		sun6i_video_frame_done(&sdev->csi.video);
-+
-+	regmap_write(regmap, CSI_CH_INT_STA_REG, status);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct regmap_config sun6i_csi_regmap_config = {
-+	.reg_bits       = 32,
-+	.reg_stride     = 4,
-+	.val_bits       = 32,
-+	.max_register	= 0x1000,
-+};
-+
-+static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
-+				      struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	void __iomem *io_base;
-+	int ret;
-+	int irq;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	io_base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(io_base))
-+		return PTR_ERR(io_base);
-+
-+	sdev->regmap = devm_regmap_init_mmio_clk(&pdev->dev, "bus", io_base,
-+					    &sun6i_csi_regmap_config);
-+	if (IS_ERR(sdev->regmap)) {
-+		dev_err(&pdev->dev, "Failed to init register map\n");
-+		return PTR_ERR(sdev->regmap);
-+	}
-+
-+	sdev->clk_mod = devm_clk_get(&pdev->dev, "mod");
-+	if (IS_ERR(sdev->clk_mod)) {
-+		dev_err(&pdev->dev, "Unable to acquire csi clock\n");
-+		return PTR_ERR(sdev->clk_mod);
-+	}
-+
-+	sdev->clk_ram = devm_clk_get(&pdev->dev, "ram");
-+	if (IS_ERR(sdev->clk_ram)) {
-+		dev_err(&pdev->dev, "Unable to acquire dram-csi clock\n");
-+		return PTR_ERR(sdev->clk_ram);
-+	}
-+
-+	sdev->rstc_bus = devm_reset_control_get_shared(&pdev->dev, NULL);
-+	if (IS_ERR(sdev->rstc_bus)) {
-+		dev_err(&pdev->dev, "Cannot get reset controller\n");
-+		return PTR_ERR(sdev->rstc_bus);
-+	}
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "No csi IRQ specified\n");
-+		ret = -ENXIO;
-+		return ret;
-+	}
-+
-+	ret = devm_request_irq(&pdev->dev, irq, sun6i_csi_isr, 0, MODULE_NAME,
-+			       sdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Cannot request csi IRQ\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * PHYS_OFFSET isn't available on all architectures. In order to
-+ * accomodate for COMPILE_TEST, let's define it to something dumb.
-+ */
-+#ifndef PHYS_OFFSET
-+#define PHYS_OFFSET 0
-+#endif
-+
-+static int sun6i_csi_probe(struct platform_device *pdev)
-+{
-+	struct sun6i_csi_dev *sdev;
-+	int ret;
-+
-+	sdev = devm_kzalloc(&pdev->dev, sizeof(*sdev), GFP_KERNEL);
-+	if (!sdev)
-+		return -ENOMEM;
-+
-+	sdev->dev = &pdev->dev;
-+	/* The DMA bus has the memory mapped at 0 */
-+	sdev->dev->dma_pfn_offset = PHYS_OFFSET >> PAGE_SHIFT;
-+
-+	ret = sun6i_csi_resource_request(sdev, pdev);
-+	if (ret)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, sdev);
-+
-+	sdev->csi.dev = &pdev->dev;
-+	ret = sun6i_csi_v4l2_init(&sdev->csi);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int sun6i_csi_remove(struct platform_device *pdev)
-+{
-+	struct sun6i_csi_dev *sdev = platform_get_drvdata(pdev);
-+
-+	sun6i_csi_v4l2_cleanup(&sdev->csi);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sun6i_csi_of_match[] = {
-+	{ .compatible = "allwinner,sun8i-v3s-csi", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sun6i_csi_of_match);
-+
-+static struct platform_driver sun6i_csi_platform_driver = {
-+	.probe = sun6i_csi_probe,
-+	.remove = sun6i_csi_remove,
-+	.driver = {
-+		.name = MODULE_NAME,
-+		.of_match_table = of_match_ptr(sun6i_csi_of_match),
-+	},
-+};
-+module_platform_driver(sun6i_csi_platform_driver);
-+
-+MODULE_DESCRIPTION("Allwinner V3s Camera Sensor Interface driver");
-+MODULE_AUTHOR("Yong Deng <yong.deng@magewell.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
-new file mode 100644
-index 000000000000..bd9be36aabfe
---- /dev/null
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
-@@ -0,0 +1,135 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (c) 2011-2018 Magewell Electronics Co., Ltd. (Nanjing)
-+ * All rights reserved.
-+ * Author: Yong Deng <yong.deng@magewell.com>
-+ */
-+
-+#ifndef __SUN6I_CSI_H__
-+#define __SUN6I_CSI_H__
-+
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-fwnode.h>
-+
-+#include "sun6i_video.h"
-+
-+struct sun6i_csi;
-+
-+/**
-+ * struct sun6i_csi_config - configs for sun6i csi
-+ * @pixelformat: v4l2 pixel format (V4L2_PIX_FMT_*)
-+ * @code:	media bus format code (MEDIA_BUS_FMT_*)
-+ * @field:	used interlacing type (enum v4l2_field)
-+ * @width:	frame width
-+ * @height:	frame height
-+ */
-+struct sun6i_csi_config {
-+	u32		pixelformat;
-+	u32		code;
-+	u32		field;
-+	u32		width;
-+	u32		height;
-+};
-+
-+struct sun6i_csi {
-+	struct device			*dev;
-+	struct v4l2_ctrl_handler	ctrl_handler;
-+	struct v4l2_device		v4l2_dev;
-+	struct media_device		media_dev;
-+
-+	struct v4l2_async_notifier	notifier;
-+
-+	/* video port settings */
-+	struct v4l2_fwnode_endpoint	v4l2_ep;
-+
-+	struct sun6i_csi_config		config;
-+
-+	struct sun6i_video		video;
-+};
-+
-+/**
-+ * sun6i_csi_is_format_supported() - check if the format supported by csi
-+ * @csi:	pointer to the csi
-+ * @pixformat:	v4l2 pixel format (V4L2_PIX_FMT_*)
-+ * @mbus_code:	media bus format code (MEDIA_BUS_FMT_*)
-+ */
-+bool sun6i_csi_is_format_supported(struct sun6i_csi *csi, u32 pixformat,
-+				 u32 mbus_code);
-+
-+/**
-+ * sun6i_csi_set_power() - power on/off the csi
-+ * @csi:	pointer to the csi
-+ * @enable:	on/off
-+ */
-+int sun6i_csi_set_power(struct sun6i_csi *csi, bool enable);
-+
-+/**
-+ * sun6i_csi_update_config() - update the csi register setttings
-+ * @csi:	pointer to the csi
-+ * @config:	see struct sun6i_csi_config
-+ */
-+int sun6i_csi_update_config(struct sun6i_csi *csi,
-+			    struct sun6i_csi_config *config);
-+
-+/**
-+ * sun6i_csi_update_buf_addr() - update the csi frame buffer address
-+ * @csi:	pointer to the csi
-+ * @addr:	frame buffer's physical address
-+ */
-+void sun6i_csi_update_buf_addr(struct sun6i_csi *csi, dma_addr_t addr);
-+
-+/**
-+ * sun6i_csi_set_stream() - start/stop csi streaming
-+ * @csi:	pointer to the csi
-+ * @enable:	start/stop
-+ */
-+void sun6i_csi_set_stream(struct sun6i_csi *csi, bool enable);
-+
-+/* get bpp form v4l2 pixformat */
-+static inline int sun6i_csi_get_bpp(unsigned int pixformat)
-+{
-+	switch (pixformat) {
-+	case V4L2_PIX_FMT_SBGGR8:
-+	case V4L2_PIX_FMT_SGBRG8:
-+	case V4L2_PIX_FMT_SGRBG8:
-+	case V4L2_PIX_FMT_SRGGB8:
-+		return 8;
-+	case V4L2_PIX_FMT_SBGGR10:
-+	case V4L2_PIX_FMT_SGBRG10:
-+	case V4L2_PIX_FMT_SGRBG10:
-+	case V4L2_PIX_FMT_SRGGB10:
-+		return 10;
-+	case V4L2_PIX_FMT_SBGGR12:
-+	case V4L2_PIX_FMT_SGBRG12:
-+	case V4L2_PIX_FMT_SGRBG12:
-+	case V4L2_PIX_FMT_SRGGB12:
-+	case V4L2_PIX_FMT_HM12:
-+	case V4L2_PIX_FMT_NV12:
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_YUV420:
-+	case V4L2_PIX_FMT_YVU420:
-+		return 12;
-+	case V4L2_PIX_FMT_YUYV:
-+	case V4L2_PIX_FMT_YVYU:
-+	case V4L2_PIX_FMT_UYVY:
-+	case V4L2_PIX_FMT_VYUY:
-+	case V4L2_PIX_FMT_NV16:
-+	case V4L2_PIX_FMT_NV61:
-+	case V4L2_PIX_FMT_YUV422P:
-+		return 16;
-+	case V4L2_PIX_FMT_RGB24:
-+	case V4L2_PIX_FMT_BGR24:
-+		return 24;
-+	case V4L2_PIX_FMT_RGB32:
-+	case V4L2_PIX_FMT_BGR32:
-+		return 32;
-+	default:
-+		WARN(1, "Unsupported pixformat: 0x%x\n", pixformat);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+#endif /* __SUN6I_CSI_H__ */
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h
-new file mode 100644
-index 000000000000..3a55836a5a4d
---- /dev/null
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h
-@@ -0,0 +1,196 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (c) 2011-2018 Magewell Electronics Co., Ltd. (Nanjing)
-+ * All rights reserved.
-+ * Author: Yong Deng <yong.deng@magewell.com>
-+ */
-+
-+#ifndef __SUN6I_CSI_REG_H__
-+#define __SUN6I_CSI_REG_H__
-+
-+#include <linux/kernel.h>
-+
-+#define CSI_EN_REG			0x0
-+#define CSI_EN_VER_EN				BIT(30)
-+#define CSI_EN_CSI_EN				BIT(0)
-+
-+#define CSI_IF_CFG_REG			0x4
-+#define CSI_IF_CFG_SRC_TYPE_MASK		BIT(21)
-+#define CSI_IF_CFG_SRC_TYPE_PROGRESSED		((0 << 21) & CSI_IF_CFG_SRC_TYPE_MASK)
-+#define CSI_IF_CFG_SRC_TYPE_INTERLACED		((1 << 21) & CSI_IF_CFG_SRC_TYPE_MASK)
-+#define CSI_IF_CFG_FPS_DS_EN			BIT(20)
-+#define CSI_IF_CFG_FIELD_MASK			BIT(19)
-+#define CSI_IF_CFG_FIELD_NEGATIVE		((0 << 19) & CSI_IF_CFG_FIELD_MASK)
-+#define CSI_IF_CFG_FIELD_POSITIVE		((1 << 19) & CSI_IF_CFG_FIELD_MASK)
-+#define CSI_IF_CFG_VREF_POL_MASK		BIT(18)
-+#define CSI_IF_CFG_VREF_POL_NEGATIVE		((0 << 18) & CSI_IF_CFG_VREF_POL_MASK)
-+#define CSI_IF_CFG_VREF_POL_POSITIVE		((1 << 18) & CSI_IF_CFG_VREF_POL_MASK)
-+#define CSI_IF_CFG_HREF_POL_MASK		BIT(17)
-+#define CSI_IF_CFG_HREF_POL_NEGATIVE		((0 << 17) & CSI_IF_CFG_HREF_POL_MASK)
-+#define CSI_IF_CFG_HREF_POL_POSITIVE		((1 << 17) & CSI_IF_CFG_HREF_POL_MASK)
-+#define CSI_IF_CFG_CLK_POL_MASK			BIT(16)
-+#define CSI_IF_CFG_CLK_POL_RISING_EDGE		((0 << 16) & CSI_IF_CFG_CLK_POL_MASK)
-+#define CSI_IF_CFG_CLK_POL_FALLING_EDGE		((1 << 16) & CSI_IF_CFG_CLK_POL_MASK)
-+#define CSI_IF_CFG_IF_DATA_WIDTH_MASK		GENMASK(10, 8)
-+#define CSI_IF_CFG_IF_DATA_WIDTH_8BIT		((0 << 8) & CSI_IF_CFG_IF_DATA_WIDTH_MASK)
-+#define CSI_IF_CFG_IF_DATA_WIDTH_10BIT		((1 << 8) & CSI_IF_CFG_IF_DATA_WIDTH_MASK)
-+#define CSI_IF_CFG_IF_DATA_WIDTH_12BIT		((2 << 8) & CSI_IF_CFG_IF_DATA_WIDTH_MASK)
-+#define CSI_IF_CFG_MIPI_IF_MASK			BIT(7)
-+#define CSI_IF_CFG_MIPI_IF_CSI			(0 << 7)
-+#define CSI_IF_CFG_MIPI_IF_MIPI			(1 << 7)
-+#define CSI_IF_CFG_CSI_IF_MASK			GENMASK(4, 0)
-+#define CSI_IF_CFG_CSI_IF_YUV422_INTLV		((0 << 0) & CSI_IF_CFG_CSI_IF_MASK)
-+#define CSI_IF_CFG_CSI_IF_YUV422_16BIT		((1 << 0) & CSI_IF_CFG_CSI_IF_MASK)
-+#define CSI_IF_CFG_CSI_IF_BT656			((4 << 0) & CSI_IF_CFG_CSI_IF_MASK)
-+#define CSI_IF_CFG_CSI_IF_BT1120		((5 << 0) & CSI_IF_CFG_CSI_IF_MASK)
-+
-+#define CSI_CAP_REG			0x8
-+#define CSI_CAP_CH0_CAP_MASK_MASK		GENMASK(5, 2)
-+#define CSI_CAP_CH0_CAP_MASK(count)		((count << 2) & CSI_CAP_CH0_CAP_MASK_MASK)
-+#define CSI_CAP_CH0_VCAP_ON			BIT(1)
-+#define CSI_CAP_CH0_SCAP_ON			BIT(0)
-+
-+#define CSI_SYNC_CNT_REG		0xc
-+#define CSI_FIFO_THRS_REG		0x10
-+#define CSI_BT656_HEAD_CFG_REG		0x14
-+#define CSI_PTN_LEN_REG			0x30
-+#define CSI_PTN_ADDR_REG		0x34
-+#define CSI_VER_REG			0x3c
-+
-+#define CSI_CH_CFG_REG			0x44
-+#define CSI_CH_CFG_INPUT_FMT_MASK		GENMASK(23, 20)
-+#define CSI_CH_CFG_INPUT_FMT(fmt)		((fmt << 20) & CSI_CH_CFG_INPUT_FMT_MASK)
-+#define CSI_CH_CFG_OUTPUT_FMT_MASK		GENMASK(19, 16)
-+#define CSI_CH_CFG_OUTPUT_FMT(fmt)		((fmt << 16) & CSI_CH_CFG_OUTPUT_FMT_MASK)
-+#define CSI_CH_CFG_VFLIP_EN			BIT(13)
-+#define CSI_CH_CFG_HFLIP_EN			BIT(12)
-+#define CSI_CH_CFG_FIELD_SEL_MASK		GENMASK(11, 10)
-+#define CSI_CH_CFG_FIELD_SEL_FIELD0		((0 << 10) & CSI_CH_CFG_FIELD_SEL_MASK)
-+#define CSI_CH_CFG_FIELD_SEL_FIELD1		((1 << 10) & CSI_CH_CFG_FIELD_SEL_MASK)
-+#define CSI_CH_CFG_FIELD_SEL_BOTH		((2 << 10) & CSI_CH_CFG_FIELD_SEL_MASK)
-+#define CSI_CH_CFG_INPUT_SEQ_MASK		GENMASK(9, 8)
-+#define CSI_CH_CFG_INPUT_SEQ(seq)		((seq << 8) & CSI_CH_CFG_INPUT_SEQ_MASK)
-+
-+#define CSI_CH_SCALE_REG		0x4c
-+#define CSI_CH_SCALE_QUART_EN			BIT(0)
-+
-+#define CSI_CH_F0_BUFA_REG		0x50
-+
-+#define CSI_CH_F1_BUFA_REG		0x58
-+
-+#define CSI_CH_F2_BUFA_REG		0x60
-+
-+#define CSI_CH_STA_REG			0x6c
-+#define CSI_CH_STA_FIELD_STA_MASK		BIT(2)
-+#define CSI_CH_STA_FIELD_STA_FIELD0		((0 << 2) & CSI_CH_STA_FIELD_STA_MASK)
-+#define CSI_CH_STA_FIELD_STA_FIELD1		((1 << 2) & CSI_CH_STA_FIELD_STA_MASK)
-+#define CSI_CH_STA_VCAP_STA			BIT(1)
-+#define CSI_CH_STA_SCAP_STA			BIT(0)
-+
-+#define CSI_CH_INT_EN_REG		0x70
-+#define CSI_CH_INT_EN_VS_INT_EN			BIT(7)
-+#define CSI_CH_INT_EN_HB_OF_INT_EN		BIT(6)
-+#define CSI_CH_INT_EN_MUL_ERR_INT_EN		BIT(5)
-+#define CSI_CH_INT_EN_FIFO2_OF_INT_EN		BIT(4)
-+#define CSI_CH_INT_EN_FIFO1_OF_INT_EN		BIT(3)
-+#define CSI_CH_INT_EN_FIFO0_OF_INT_EN		BIT(2)
-+#define CSI_CH_INT_EN_FD_INT_EN			BIT(1)
-+#define CSI_CH_INT_EN_CD_INT_EN			BIT(0)
-+
-+#define CSI_CH_INT_STA_REG		0x74
-+#define CSI_CH_INT_STA_VS_PD			BIT(7)
-+#define CSI_CH_INT_STA_HB_OF_PD			BIT(6)
-+#define CSI_CH_INT_STA_MUL_ERR_PD		BIT(5)
-+#define CSI_CH_INT_STA_FIFO2_OF_PD		BIT(4)
-+#define CSI_CH_INT_STA_FIFO1_OF_PD		BIT(3)
-+#define CSI_CH_INT_STA_FIFO0_OF_PD		BIT(2)
-+#define CSI_CH_INT_STA_FD_PD			BIT(1)
-+#define CSI_CH_INT_STA_CD_PD			BIT(0)
-+
-+#define CSI_CH_FLD1_VSIZE_REG		0x78
-+
-+#define CSI_CH_HSIZE_REG		0x80
-+#define CSI_CH_HSIZE_HOR_LEN_MASK		GENMASK(28, 16)
-+#define CSI_CH_HSIZE_HOR_LEN(len)		((len << 16) & CSI_CH_HSIZE_HOR_LEN_MASK)
-+#define CSI_CH_HSIZE_HOR_START_MASK		GENMASK(12, 0)
-+#define CSI_CH_HSIZE_HOR_START(start)		((start << 0) & CSI_CH_HSIZE_HOR_START_MASK)
-+
-+#define CSI_CH_VSIZE_REG		0x84
-+#define CSI_CH_VSIZE_VER_LEN_MASK		GENMASK(28, 16)
-+#define CSI_CH_VSIZE_VER_LEN(len)		((len << 16) & CSI_CH_VSIZE_VER_LEN_MASK)
-+#define CSI_CH_VSIZE_VER_START_MASK		GENMASK(12, 0)
-+#define CSI_CH_VSIZE_VER_START(start)		((start << 0) & CSI_CH_VSIZE_VER_START_MASK)
-+
-+#define CSI_CH_BUF_LEN_REG		0x88
-+#define CSI_CH_BUF_LEN_BUF_LEN_C_MASK		GENMASK(29, 16)
-+#define CSI_CH_BUF_LEN_BUF_LEN_C(len)		((len << 16) & CSI_CH_BUF_LEN_BUF_LEN_C_MASK)
-+#define CSI_CH_BUF_LEN_BUF_LEN_Y_MASK		GENMASK(13, 0)
-+#define CSI_CH_BUF_LEN_BUF_LEN_Y(len)		((len << 0) & CSI_CH_BUF_LEN_BUF_LEN_Y_MASK)
-+
-+#define CSI_CH_FLIP_SIZE_REG		0x8c
-+#define CSI_CH_FLIP_SIZE_VER_LEN_MASK		GENMASK(28, 16)
-+#define CSI_CH_FLIP_SIZE_VER_LEN(len)		((len << 16) & CSI_CH_FLIP_SIZE_VER_LEN_MASK)
-+#define CSI_CH_FLIP_SIZE_VALID_LEN_MASK		GENMASK(12, 0)
-+#define CSI_CH_FLIP_SIZE_VALID_LEN(len)		((len << 0) & CSI_CH_FLIP_SIZE_VALID_LEN_MASK)
-+
-+#define CSI_CH_FRM_CLK_CNT_REG		0x90
-+#define CSI_CH_ACC_ITNL_CLK_CNT_REG	0x94
-+#define CSI_CH_FIFO_STAT_REG		0x98
-+#define CSI_CH_PCLK_STAT_REG		0x9c
-+
-+/*
-+ * csi input data format
-+ */
-+enum csi_input_fmt {
-+	CSI_INPUT_FORMAT_RAW		= 0,
-+	CSI_INPUT_FORMAT_YUV422		= 3,
-+	CSI_INPUT_FORMAT_YUV420		= 4,
-+};
-+
-+/*
-+ * csi output data format
-+ */
-+enum csi_output_fmt {
-+	/* only when input format is RAW */
-+	CSI_FIELD_RAW_8			= 0,
-+	CSI_FIELD_RAW_10		= 1,
-+	CSI_FIELD_RAW_12		= 2,
-+	CSI_FIELD_RGB565		= 4,
-+	CSI_FIELD_RGB888		= 5,
-+	CSI_FIELD_PRGB888		= 6,
-+	CSI_FRAME_RAW_8			= 8,
-+	CSI_FRAME_RAW_10		= 9,
-+	CSI_FRAME_RAW_12		= 10,
-+	CSI_FRAME_RGB565		= 12,
-+	CSI_FRAME_RGB888		= 13,
-+	CSI_FRAME_PRGB888		= 14,
-+
-+	/* only when input format is YUV422 */
-+	CSI_FIELD_PLANAR_YUV422		= 0,
-+	CSI_FIELD_PLANAR_YUV420		= 1,
-+	CSI_FRAME_PLANAR_YUV420		= 2,
-+	CSI_FRAME_PLANAR_YUV422		= 3,
-+	CSI_FIELD_UV_CB_YUV422		= 4,
-+	CSI_FIELD_UV_CB_YUV420		= 5,
-+	CSI_FRAME_UV_CB_YUV420		= 6,
-+	CSI_FRAME_UV_CB_YUV422		= 7,
-+	CSI_FIELD_MB_YUV422		= 8,
-+	CSI_FIELD_MB_YUV420		= 9,
-+	CSI_FRAME_MB_YUV420		= 10,
-+	CSI_FRAME_MB_YUV422		= 11,
-+	CSI_FIELD_UV_CB_YUV422_10	= 12,
-+	CSI_FIELD_UV_CB_YUV420_10	= 13,
-+};
-+
-+/*
-+ * csi YUV input data sequence
-+ */
-+enum csi_input_seq {
-+	/* only when input format is YUV422 */
-+	CSI_INPUT_SEQ_YUYV = 0,
-+	CSI_INPUT_SEQ_YVYU,
-+	CSI_INPUT_SEQ_UYVY,
-+	CSI_INPUT_SEQ_VYUY,
-+};
-+
-+#endif /* __SUN6I_CSI_REG_H__ */
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
-new file mode 100644
-index 000000000000..524dc93814d2
---- /dev/null
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
-@@ -0,0 +1,675 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2011-2018 Magewell Electronics Co., Ltd. (Nanjing)
-+ * All rights reserved.
-+ * Author: Yong Deng <yong.deng@magewell.com>
-+ */
-+
-+#include <linux/of.h>
-+
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-event.h>
-+#include <media/v4l2-ioctl.h>
-+#include <media/v4l2-mc.h>
-+#include <media/videobuf2-dma-contig.h>
-+#include <media/videobuf2-v4l2.h>
-+
-+#include "sun6i_csi.h"
-+#include "sun6i_video.h"
-+
-+/* This is got from BSP sources. */
-+#define MIN_WIDTH	(32)
-+#define MIN_HEIGHT	(32)
-+#define MAX_WIDTH	(4800)
-+#define MAX_HEIGHT	(4800)
-+
-+struct sun6i_csi_buffer {
-+	struct vb2_v4l2_buffer		vb;
-+	struct list_head		list;
-+
-+	dma_addr_t			dma_addr;
-+	bool				queued_to_csi;
-+};
-+
-+static const u32 supported_pixformats[] = {
-+	V4L2_PIX_FMT_SBGGR8,
-+	V4L2_PIX_FMT_SGBRG8,
-+	V4L2_PIX_FMT_SGRBG8,
-+	V4L2_PIX_FMT_SRGGB8,
-+	V4L2_PIX_FMT_SBGGR10,
-+	V4L2_PIX_FMT_SGBRG10,
-+	V4L2_PIX_FMT_SGRBG10,
-+	V4L2_PIX_FMT_SRGGB10,
-+	V4L2_PIX_FMT_SBGGR12,
-+	V4L2_PIX_FMT_SGBRG12,
-+	V4L2_PIX_FMT_SGRBG12,
-+	V4L2_PIX_FMT_SRGGB12,
-+	V4L2_PIX_FMT_YUYV,
-+	V4L2_PIX_FMT_YVYU,
-+	V4L2_PIX_FMT_UYVY,
-+	V4L2_PIX_FMT_VYUY,
-+	V4L2_PIX_FMT_HM12,
-+	V4L2_PIX_FMT_NV12,
-+	V4L2_PIX_FMT_NV21,
-+	V4L2_PIX_FMT_YUV420,
-+	V4L2_PIX_FMT_YVU420,
-+	V4L2_PIX_FMT_NV16,
-+	V4L2_PIX_FMT_NV61,
-+	V4L2_PIX_FMT_YUV422P,
-+};
-+
-+static bool
-+is_pixformat_valid(unsigned int pixformat)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(supported_pixformats); i++)
-+		if (supported_pixformats[i] == pixformat)
-+			return true;
-+
-+	return false;
-+}
-+
-+static struct v4l2_subdev *
-+sun6i_video_remote_subdev(struct sun6i_video *video, u32 *pad)
-+{
-+	struct media_pad *remote;
-+
-+	remote = media_entity_remote_pad(&video->pad);
-+
-+	if (!remote || !is_media_entity_v4l2_subdev(remote->entity))
-+		return NULL;
-+
-+	if (pad)
-+		*pad = remote->index;
-+
-+	return media_entity_to_v4l2_subdev(remote->entity);
-+}
-+
-+static int sun6i_video_queue_setup(struct vb2_queue *vq,
-+				 unsigned int *nbuffers, unsigned int *nplanes,
-+				 unsigned int sizes[],
-+				 struct device *alloc_devs[])
-+{
-+	struct sun6i_video *video = vb2_get_drv_priv(vq);
-+	unsigned int size = video->fmt.fmt.pix.sizeimage;
-+
-+	if (*nplanes)
-+		return sizes[0] < size ? -EINVAL : 0;
-+
-+	*nplanes = 1;
-+	sizes[0] = size;
-+
-+	return 0;
-+}
-+
-+static int sun6i_video_buffer_prepare(struct vb2_buffer *vb)
-+{
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct sun6i_csi_buffer *buf =
-+			container_of(vbuf, struct sun6i_csi_buffer, vb);
-+	struct sun6i_video *video = vb2_get_drv_priv(vb->vb2_queue);
-+	unsigned long size = video->fmt.fmt.pix.sizeimage;
-+
-+	if (vb2_plane_size(vb, 0) < size) {
-+		v4l2_err(video->vdev.v4l2_dev, "buffer too small (%lu < %lu)\n",
-+			 vb2_plane_size(vb, 0), size);
-+		return -EINVAL;
-+	}
-+
-+	vb2_set_plane_payload(vb, 0, size);
-+
-+	buf->dma_addr = vb2_dma_contig_plane_dma_addr(vb, 0);
-+
-+	vbuf->field = video->fmt.fmt.pix.field;
-+
-+	return 0;
-+}
-+
-+static int sun6i_video_start_streaming(struct vb2_queue *vq, unsigned int count)
-+{
-+	struct sun6i_video *video = vb2_get_drv_priv(vq);
-+	struct sun6i_csi_buffer *buf;
-+	struct sun6i_csi_buffer *next_buf;
-+	struct sun6i_csi_config config;
-+	struct v4l2_subdev *subdev;
-+	unsigned long flags;
-+	int ret;
-+
-+	video->sequence = 0;
-+
-+	ret = media_pipeline_start(&video->vdev.entity, &video->vdev.pipe);
-+	if (ret < 0)
-+		goto clear_dma_queue;
-+
-+	if (video->mbus_code == 0) {
-+		ret = -EINVAL;
-+		goto stop_media_pipeline;
-+	}
-+
-+	subdev = sun6i_video_remote_subdev(video, NULL);
-+	if (!subdev)
-+		goto stop_media_pipeline;
-+
-+	config.pixelformat = video->fmt.fmt.pix.pixelformat;
-+	config.code = video->mbus_code;
-+	config.field = video->fmt.fmt.pix.field;
-+	config.width = video->fmt.fmt.pix.width;
-+	config.height = video->fmt.fmt.pix.height;
-+
-+	ret = sun6i_csi_update_config(video->csi, &config);
-+	if (ret < 0)
-+		goto stop_media_pipeline;
-+
-+	spin_lock_irqsave(&video->dma_queue_lock, flags);
-+
-+	buf = list_first_entry(&video->dma_queue,
-+			       struct sun6i_csi_buffer, list);
-+	buf->queued_to_csi = true;
-+	sun6i_csi_update_buf_addr(video->csi, buf->dma_addr);
-+
-+	sun6i_csi_set_stream(video->csi, true);
-+
-+	/*
-+	 * CSI will lookup the next dma buffer for next frame before the
-+	 * the current frame done IRQ triggered. This is not documented
-+	 * but reported by Ondřej Jirman.
-+	 * The BSP code has workaround for this too. It skip to mark the
-+	 * first buffer as frame done for VB2 and pass the second buffer
-+	 * to CSI in the first frame done ISR call. Then in second frame
-+	 * done ISR call, it mark the first buffer as frame done for VB2
-+	 * and pass the third buffer to CSI. And so on. The bad thing is
-+	 * that the first buffer will be written twice and the first frame
-+	 * is dropped even the queued buffer is sufficient.
-+	 * So, I make some improvement here. Pass the next buffer to CSI
-+	 * just follow starting the CSI. In this case, the first frame
-+	 * will be stored in first buffer, second frame in second buffer.
-+	 * This method is used to avoid dropping the first frame, it
-+	 * would also drop frame when lacking of queued buffer.
-+	 */
-+	next_buf = list_next_entry(buf, list);
-+	next_buf->queued_to_csi = true;
-+	sun6i_csi_update_buf_addr(video->csi, next_buf->dma_addr);
-+
-+	spin_unlock_irqrestore(&video->dma_queue_lock, flags);
-+
-+	ret = v4l2_subdev_call(subdev, video, s_stream, 1);
-+	if (ret < 0)
-+		goto stop_csi_stream;
-+
-+	return 0;
-+
-+stop_csi_stream:
-+	sun6i_csi_set_stream(video->csi, false);
-+stop_media_pipeline:
-+	media_pipeline_stop(&video->vdev.entity);
-+clear_dma_queue:
-+	spin_lock_irqsave(&video->dma_queue_lock, flags);
-+	list_for_each_entry(buf, &video->dma_queue, list)
-+		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
-+	INIT_LIST_HEAD(&video->dma_queue);
-+	spin_unlock_irqrestore(&video->dma_queue_lock, flags);
-+
-+	return ret;
-+}
-+
-+static void sun6i_video_stop_streaming(struct vb2_queue *vq)
-+{
-+	struct sun6i_video *video = vb2_get_drv_priv(vq);
-+	struct v4l2_subdev *subdev;
-+	unsigned long flags;
-+	struct sun6i_csi_buffer *buf;
-+
-+	subdev = sun6i_video_remote_subdev(video, NULL);
-+	if (subdev)
-+		v4l2_subdev_call(subdev, video, s_stream, 0);
-+
-+	sun6i_csi_set_stream(video->csi, false);
-+
-+	media_pipeline_stop(&video->vdev.entity);
-+
-+	/* Release all active buffers */
-+	spin_lock_irqsave(&video->dma_queue_lock, flags);
-+	list_for_each_entry(buf, &video->dma_queue, list)
-+		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-+	INIT_LIST_HEAD(&video->dma_queue);
-+	spin_unlock_irqrestore(&video->dma_queue_lock, flags);
-+}
-+
-+static void sun6i_video_buffer_queue(struct vb2_buffer *vb)
-+{
-+	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-+	struct sun6i_csi_buffer *buf =
-+			container_of(vbuf, struct sun6i_csi_buffer, vb);
-+	struct sun6i_video *video = vb2_get_drv_priv(vb->vb2_queue);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&video->dma_queue_lock, flags);
-+	buf->queued_to_csi = false;
-+	list_add_tail(&buf->list, &video->dma_queue);
-+	spin_unlock_irqrestore(&video->dma_queue_lock, flags);
-+}
-+
-+void sun6i_video_frame_done(struct sun6i_video *video)
-+{
-+	struct sun6i_csi_buffer *buf;
-+	struct sun6i_csi_buffer *next_buf;
-+	struct vb2_v4l2_buffer *vbuf;
-+
-+	spin_lock(&video->dma_queue_lock);
-+
-+	buf = list_first_entry(&video->dma_queue,
-+			       struct sun6i_csi_buffer, list);
-+	if (list_is_last(&buf->list, &video->dma_queue)) {
-+		dev_dbg(video->csi->dev, "Frame droped!\n");
-+		goto unlock;
-+	}
-+
-+	next_buf = list_next_entry(buf, list);
-+	/* If a new buffer (#next_buf) had not been queued to CSI, the old
-+	 * buffer (#buf) is still holding by CSI for storing the next
-+	 * frame. So, we queue a new buffer (#next_buf) to CSI then wait
-+	 * for next ISR call.
-+	 */
-+	if (!next_buf->queued_to_csi) {
-+		next_buf->queued_to_csi = true;
-+		sun6i_csi_update_buf_addr(video->csi, next_buf->dma_addr);
-+		dev_dbg(video->csi->dev, "Frame droped!\n");
-+		goto unlock;
-+	}
-+
-+	list_del(&buf->list);
-+	vbuf = &buf->vb;
-+	vbuf->vb2_buf.timestamp = ktime_get_ns();
-+	vbuf->sequence = video->sequence;
-+	vb2_buffer_done(&vbuf->vb2_buf, VB2_BUF_STATE_DONE);
-+
-+	/* Prepare buffer for next frame but one.  */
-+	if (!list_is_last(&next_buf->list, &video->dma_queue)) {
-+		next_buf = list_next_entry(next_buf, list);
-+		next_buf->queued_to_csi = true;
-+		sun6i_csi_update_buf_addr(video->csi, next_buf->dma_addr);
-+	} else {
-+		dev_dbg(video->csi->dev, "Next frame will be dropped!\n");
-+	}
-+
-+unlock:
-+	video->sequence++;
-+	spin_unlock(&video->dma_queue_lock);
-+}
-+
-+static const struct vb2_ops sun6i_csi_vb2_ops = {
-+	.queue_setup		= sun6i_video_queue_setup,
-+	.wait_prepare		= vb2_ops_wait_prepare,
-+	.wait_finish		= vb2_ops_wait_finish,
-+	.buf_prepare		= sun6i_video_buffer_prepare,
-+	.start_streaming	= sun6i_video_start_streaming,
-+	.stop_streaming		= sun6i_video_stop_streaming,
-+	.buf_queue		= sun6i_video_buffer_queue,
-+};
-+
-+static int vidioc_querycap(struct file *file, void *priv,
-+				struct v4l2_capability *cap)
-+{
-+	struct sun6i_video *video = video_drvdata(file);
-+
-+	strlcpy(cap->driver, "sun6i-video", sizeof(cap->driver));
-+	strlcpy(cap->card, video->vdev.name, sizeof(cap->card));
-+	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
-+		 video->csi->dev->of_node->name);
-+
-+	return 0;
-+}
-+
-+static int vidioc_enum_fmt_vid_cap(struct file *file, void *priv,
-+				   struct v4l2_fmtdesc *f)
-+{
-+	u32 index = f->index;
-+
-+	if (index >= ARRAY_SIZE(supported_pixformats))
-+		return -EINVAL;
-+
-+	f->pixelformat = supported_pixformats[index];
-+
-+	return 0;
-+}
-+
-+static int vidioc_g_fmt_vid_cap(struct file *file, void *priv,
-+				struct v4l2_format *fmt)
-+{
-+	struct sun6i_video *video = video_drvdata(file);
-+
-+	*fmt = video->fmt;
-+
-+	return 0;
-+}
-+
-+static int sun6i_video_try_fmt(struct sun6i_video *video,
-+			       struct v4l2_format *f)
-+{
-+	struct v4l2_pix_format *pixfmt = &f->fmt.pix;
-+	int bpp;
-+
-+	if (!is_pixformat_valid(pixfmt->pixelformat))
-+		pixfmt->pixelformat = supported_pixformats[0];
-+
-+	v4l_bound_align_image(&pixfmt->width, MIN_WIDTH, MAX_WIDTH, 1,
-+			      &pixfmt->height, MIN_HEIGHT, MAX_WIDTH, 1, 1);
-+
-+	bpp = sun6i_csi_get_bpp(pixfmt->pixelformat);
-+	pixfmt->bytesperline = (pixfmt->width * bpp) >> 3;
-+	pixfmt->sizeimage = pixfmt->bytesperline * pixfmt->height;
-+
-+	if (pixfmt->field == V4L2_FIELD_ANY)
-+		pixfmt->field = V4L2_FIELD_NONE;
-+
-+	pixfmt->colorspace = V4L2_COLORSPACE_RAW;
-+	pixfmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
-+	pixfmt->quantization = V4L2_QUANTIZATION_DEFAULT;
-+	pixfmt->xfer_func = V4L2_XFER_FUNC_DEFAULT;
-+
-+	return 0;
-+}
-+
-+static int sun6i_video_set_fmt(struct sun6i_video *video, struct v4l2_format *f)
-+{
-+	int ret;
-+
-+	ret = sun6i_video_try_fmt(video, f);
-+	if (ret)
-+		return ret;
-+
-+	video->fmt = *f;
-+
-+	return 0;
-+}
-+
-+static int vidioc_s_fmt_vid_cap(struct file *file, void *priv,
-+				struct v4l2_format *f)
-+{
-+	struct sun6i_video *video = video_drvdata(file);
-+
-+	if (vb2_is_busy(&video->vb2_vidq))
-+		return -EBUSY;
-+
-+	return sun6i_video_set_fmt(video, f);
-+}
-+
-+static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
-+				  struct v4l2_format *f)
-+{
-+	struct sun6i_video *video = video_drvdata(file);
-+
-+	return sun6i_video_try_fmt(video, f);
-+}
-+
-+static int vidioc_enum_input(struct file *file, void *fh,
-+			 struct v4l2_input *inp)
-+{
-+	if (inp->index != 0)
-+		return -EINVAL;
-+
-+	strlcpy(inp->name, "camera", sizeof(inp->name));
-+	inp->type = V4L2_INPUT_TYPE_CAMERA;
-+
-+	return 0;
-+}
-+
-+static int vidioc_g_input(struct file *file, void *fh, unsigned int *i)
-+{
-+	*i = 0;
-+
-+	return 0;
-+}
-+
-+static int vidioc_s_input(struct file *file, void *fh, unsigned int i)
-+{
-+	if (i != 0)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ioctl_ops sun6i_video_ioctl_ops = {
-+	.vidioc_querycap		= vidioc_querycap,
-+	.vidioc_enum_fmt_vid_cap	= vidioc_enum_fmt_vid_cap,
-+	.vidioc_g_fmt_vid_cap		= vidioc_g_fmt_vid_cap,
-+	.vidioc_s_fmt_vid_cap		= vidioc_s_fmt_vid_cap,
-+	.vidioc_try_fmt_vid_cap		= vidioc_try_fmt_vid_cap,
-+
-+	.vidioc_enum_input		= vidioc_enum_input,
-+	.vidioc_s_input			= vidioc_s_input,
-+	.vidioc_g_input			= vidioc_g_input,
-+
-+	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
-+	.vidioc_querybuf		= vb2_ioctl_querybuf,
-+	.vidioc_qbuf			= vb2_ioctl_qbuf,
-+	.vidioc_expbuf			= vb2_ioctl_expbuf,
-+	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
-+	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
-+	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
-+	.vidioc_streamon		= vb2_ioctl_streamon,
-+	.vidioc_streamoff		= vb2_ioctl_streamoff,
-+
-+	.vidioc_log_status		= v4l2_ctrl_log_status,
-+	.vidioc_subscribe_event		= v4l2_ctrl_subscribe_event,
-+	.vidioc_unsubscribe_event	= v4l2_event_unsubscribe,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * V4L2 file operations
-+ */
-+static int sun6i_video_open(struct file *file)
-+{
-+	struct sun6i_video *video = video_drvdata(file);
-+	int ret;
-+
-+	if (mutex_lock_interruptible(&video->lock))
-+		return -ERESTARTSYS;
-+
-+	ret = v4l2_fh_open(file);
-+	if (ret < 0)
-+		goto unlock;
-+
-+	ret = v4l2_pipeline_pm_use(&video->vdev.entity, 1);
-+	if (ret < 0)
-+		goto fh_release;
-+
-+	/* check if already powered */
-+	if (!v4l2_fh_is_singular_file(file))
-+		goto unlock;
-+
-+	ret = sun6i_csi_set_power(video->csi, true);
-+	if (ret < 0)
-+		goto fh_release;
-+
-+	mutex_unlock(&video->lock);
-+	return 0;
-+
-+fh_release:
-+	v4l2_fh_release(file);
-+unlock:
-+	mutex_unlock(&video->lock);
-+	return ret;
-+}
-+
-+static int sun6i_video_close(struct file *file)
-+{
-+	struct sun6i_video *video = video_drvdata(file);
-+	bool last_fh;
-+
-+	mutex_lock(&video->lock);
-+
-+	last_fh = v4l2_fh_is_singular_file(file);
-+
-+	_vb2_fop_release(file, NULL);
-+
-+	v4l2_pipeline_pm_use(&video->vdev.entity, 0);
-+
-+	if (last_fh)
-+		sun6i_csi_set_power(video->csi, false);
-+
-+	mutex_unlock(&video->lock);
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_file_operations sun6i_video_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= sun6i_video_open,
-+	.release	= sun6i_video_close,
-+	.unlocked_ioctl	= video_ioctl2,
-+	.mmap		= vb2_fop_mmap,
-+	.poll		= vb2_fop_poll
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Media Operations
-+ */
-+static int sun6i_video_link_validate_get_format(struct media_pad *pad,
-+						struct v4l2_subdev_format *fmt)
-+{
-+	if (is_media_entity_v4l2_subdev(pad->entity)) {
-+		struct v4l2_subdev *sd =
-+				media_entity_to_v4l2_subdev(pad->entity);
-+
-+		fmt->which = V4L2_SUBDEV_FORMAT_ACTIVE;
-+		fmt->pad = pad->index;
-+		return v4l2_subdev_call(sd, pad, get_fmt, NULL, fmt);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int sun6i_video_link_validate(struct media_link *link)
-+{
-+	struct video_device *vdev = container_of(link->sink->entity,
-+						 struct video_device, entity);
-+	struct sun6i_video *video = video_get_drvdata(vdev);
-+	struct v4l2_subdev_format source_fmt;
-+	int ret;
-+
-+	video->mbus_code = 0;
-+
-+	if (!media_entity_remote_pad(link->sink->entity->pads)) {
-+		dev_info(video->csi->dev,
-+			 "video node %s pad not connected\n", vdev->name);
-+		return -ENOTCONN;
-+	}
-+
-+	ret = sun6i_video_link_validate_get_format(link->source, &source_fmt);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!sun6i_csi_is_format_supported(video->csi,
-+					   video->fmt.fmt.pix.pixelformat,
-+					   source_fmt.format.code)) {
-+		dev_err(video->csi->dev,
-+			"Unsupported mbus code: 0x%x\n",
-+			source_fmt.format.code);
-+		return -EINVAL;
-+	}
-+
-+	if (source_fmt.format.width != video->fmt.fmt.pix.width ||
-+	    source_fmt.format.height != video->fmt.fmt.pix.height) {
-+		dev_err(video->csi->dev,
-+			"Wrong width or height %ux%u (%ux%u expected)\n",
-+			video->fmt.fmt.pix.width, video->fmt.fmt.pix.height,
-+			source_fmt.format.width, source_fmt.format.height);
-+		return -EINVAL;
-+	}
-+
-+	video->mbus_code = source_fmt.format.code;
-+
-+	return 0;
-+}
-+
-+static const struct media_entity_operations sun6i_video_media_ops = {
-+	.link_validate = sun6i_video_link_validate
-+};
-+
-+int sun6i_video_init(struct sun6i_video *video, struct sun6i_csi *csi,
-+		     const char *name)
-+{
-+	struct video_device *vdev = &video->vdev;
-+	struct vb2_queue *vidq = &video->vb2_vidq;
-+	struct v4l2_format fmt = { 0 };
-+	int ret;
-+
-+	video->csi = csi;
-+
-+	/* Initialize the media entity... */
-+	video->pad.flags = MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_MUST_CONNECT;
-+	vdev->entity.ops = &sun6i_video_media_ops;
-+	ret = media_entity_pads_init(&vdev->entity, 1, &video->pad);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_init(&video->lock);
-+
-+	INIT_LIST_HEAD(&video->dma_queue);
-+	spin_lock_init(&video->dma_queue_lock);
-+
-+	video->sequence = 0;
-+
-+	/* Setup default format */
-+	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+	fmt.fmt.pix.pixelformat = supported_pixformats[0];
-+	fmt.fmt.pix.width = 1280;
-+	fmt.fmt.pix.height = 720;
-+	fmt.fmt.pix.field = V4L2_FIELD_NONE;
-+	sun6i_video_set_fmt(video, &fmt);
-+
-+	/* Initialize videobuf2 queue */
-+	vidq->type			= V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+	vidq->io_modes			= VB2_MMAP | VB2_DMABUF;
-+	vidq->drv_priv			= video;
-+	vidq->buf_struct_size		= sizeof(struct sun6i_csi_buffer);
-+	vidq->ops			= &sun6i_csi_vb2_ops;
-+	vidq->mem_ops			= &vb2_dma_contig_memops;
-+	vidq->timestamp_flags		= V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-+	vidq->lock			= &video->lock;
-+	/* Make sure non-dropped frame */
-+	vidq->min_buffers_needed	= 3;
-+	vidq->dev			= csi->dev;
-+
-+	ret = vb2_queue_init(vidq);
-+	if (ret) {
-+		v4l2_err(&csi->v4l2_dev, "vb2_queue_init failed: %d\n", ret);
-+		goto error;
-+	}
-+
-+	/* Register video device */
-+	strlcpy(vdev->name, name, sizeof(vdev->name));
-+	vdev->release		= video_device_release_empty;
-+	vdev->fops		= &sun6i_video_fops;
-+	vdev->ioctl_ops		= &sun6i_video_ioctl_ops;
-+	vdev->vfl_type		= VFL_TYPE_GRABBER;
-+	vdev->vfl_dir		= VFL_DIR_RX;
-+	vdev->v4l2_dev		= &csi->v4l2_dev;
-+	vdev->queue		= vidq;
-+	vdev->lock		= &video->lock;
-+	vdev->device_caps	= V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE;
-+	video_set_drvdata(vdev, video);
-+
-+	ret = video_register_device(vdev, VFL_TYPE_GRABBER, -1);
-+	if (ret < 0) {
-+		v4l2_err(&csi->v4l2_dev,
-+			 "video_register_device failed: %d\n", ret);
-+		goto error;
-+	}
-+
-+	return 0;
-+
-+error:
-+	sun6i_video_cleanup(video);
-+	return ret;
-+}
-+
-+void sun6i_video_cleanup(struct sun6i_video *video)
-+{
-+	if (video_is_registered(&video->vdev))
-+		video_unregister_device(&video->vdev);
-+
-+	media_entity_cleanup(&video->vdev.entity);
-+}
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h b/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h
-new file mode 100644
-index 000000000000..b9cd919c24ac
---- /dev/null
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (c) 2011-2018 Magewell Electronics Co., Ltd. (Nanjing)
-+ * All rights reserved.
-+ * Author: Yong Deng <yong.deng@magewell.com>
-+ */
-+
-+#ifndef __SUN6I_VIDEO_H__
-+#define __SUN6I_VIDEO_H__
-+
-+#include <media/v4l2-dev.h>
-+#include <media/videobuf2-core.h>
-+
-+struct sun6i_csi;
-+
-+struct sun6i_video {
-+	struct video_device		vdev;
-+	struct media_pad		pad;
-+	struct sun6i_csi		*csi;
-+
-+	struct mutex			lock;
-+
-+	struct vb2_queue		vb2_vidq;
-+	spinlock_t			dma_queue_lock;
-+	struct list_head		dma_queue;
-+
-+	unsigned int			sequence;
-+	struct v4l2_format		fmt;
-+	u32				mbus_code;
-+};
-+
-+int sun6i_video_init(struct sun6i_video *video, struct sun6i_csi *csi,
-+		     const char *name);
-+void sun6i_video_cleanup(struct sun6i_video *video);
-+
-+void sun6i_video_frame_done(struct sun6i_video *video);
-+
-+#endif /* __SUN6I_VIDEO_H__ */
--- 
-1.8.3.1
-
+@@ -738,16 +738,16 @@ void tep_print_printk(struct tep_handle *pevent)
+ 	}
+ }
+ 
+-static struct event_format *alloc_event(void)
++static struct tep_event_format *alloc_event(void)
+ {
+-	return calloc(1, sizeof(struct event_format));
++	return calloc(1, sizeof(struct tep_event_format));
+ }
+ 
+-static int add_event(struct tep_handle *pevent, struct event_format *event)
++static int add_event(struct tep_handle *pevent, struct tep_event_format *event)
+ {
+ 	int i;
+-	struct event_format **events = realloc(pevent->events, sizeof(event) *
+-					       (pevent->nr_events + 1));
++	struct tep_event_format **events = realloc(pevent->events, sizeof(event) *
++						  (pevent->nr_events + 1));
+ 	if (!events)
+ 		return -1;
+ 
+@@ -1354,7 +1354,7 @@ static unsigned int type_size(const char *name)
+ 	return 0;
+ }
+ 
+-static int event_read_fields(struct event_format *event, struct format_field **fields)
++static int event_read_fields(struct tep_event_format *event, struct format_field **fields)
+ {
+ 	struct format_field *field = NULL;
+ 	enum event_type type;
+@@ -1641,7 +1641,7 @@ fail_expect:
+ 	return -1;
+ }
+ 
+-static int event_read_format(struct event_format *event)
++static int event_read_format(struct tep_event_format *event)
+ {
+ 	char *token;
+ 	int ret;
+@@ -1674,11 +1674,11 @@ static int event_read_format(struct event_format *event)
+ }
+ 
+ static enum event_type
+-process_arg_token(struct event_format *event, struct print_arg *arg,
++process_arg_token(struct tep_event_format *event, struct print_arg *arg,
+ 		  char **tok, enum event_type type);
+ 
+ static enum event_type
+-process_arg(struct event_format *event, struct print_arg *arg, char **tok)
++process_arg(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	enum event_type type;
+ 	char *token;
+@@ -1690,14 +1690,14 @@ process_arg(struct event_format *event, struct print_arg *arg, char **tok)
+ }
+ 
+ static enum event_type
+-process_op(struct event_format *event, struct print_arg *arg, char **tok);
++process_op(struct tep_event_format *event, struct print_arg *arg, char **tok);
+ 
+ /*
+  * For __print_symbolic() and __print_flags, we need to completely
+  * evaluate the first argument, which defines what to print next.
+  */
+ static enum event_type
+-process_field_arg(struct event_format *event, struct print_arg *arg, char **tok)
++process_field_arg(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	enum event_type type;
+ 
+@@ -1711,7 +1711,7 @@ process_field_arg(struct event_format *event, struct print_arg *arg, char **tok)
+ }
+ 
+ static enum event_type
+-process_cond(struct event_format *event, struct print_arg *top, char **tok)
++process_cond(struct tep_event_format *event, struct print_arg *top, char **tok)
+ {
+ 	struct print_arg *arg, *left, *right;
+ 	enum event_type type;
+@@ -1767,7 +1767,7 @@ out_free:
+ }
+ 
+ static enum event_type
+-process_array(struct event_format *event, struct print_arg *top, char **tok)
++process_array(struct tep_event_format *event, struct print_arg *top, char **tok)
+ {
+ 	struct print_arg *arg;
+ 	enum event_type type;
+@@ -1869,7 +1869,7 @@ static int set_op_prio(struct print_arg *arg)
+ 
+ /* Note, *tok does not get freed, but will most likely be saved */
+ static enum event_type
+-process_op(struct event_format *event, struct print_arg *arg, char **tok)
++process_op(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	struct print_arg *left, *right = NULL;
+ 	enum event_type type;
+@@ -2070,7 +2070,7 @@ out_free:
+ }
+ 
+ static enum event_type
+-process_entry(struct event_format *event __maybe_unused, struct print_arg *arg,
++process_entry(struct tep_event_format *event __maybe_unused, struct print_arg *arg,
+ 	      char **tok)
+ {
+ 	enum event_type type;
+@@ -2109,7 +2109,7 @@ process_entry(struct event_format *event __maybe_unused, struct print_arg *arg,
+ 	return EVENT_ERROR;
+ }
+ 
+-static int alloc_and_process_delim(struct event_format *event, char *next_token,
++static int alloc_and_process_delim(struct tep_event_format *event, char *next_token,
+ 				   struct print_arg **print_arg)
+ {
+ 	struct print_arg *field;
+@@ -2444,7 +2444,7 @@ static char *arg_eval (struct print_arg *arg)
+ }
+ 
+ static enum event_type
+-process_fields(struct event_format *event, struct print_flag_sym **list, char **tok)
++process_fields(struct tep_event_format *event, struct print_flag_sym **list, char **tok)
+ {
+ 	enum event_type type;
+ 	struct print_arg *arg = NULL;
+@@ -2525,7 +2525,7 @@ out_free:
+ }
+ 
+ static enum event_type
+-process_flags(struct event_format *event, struct print_arg *arg, char **tok)
++process_flags(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	struct print_arg *field;
+ 	enum event_type type;
+@@ -2578,7 +2578,7 @@ out_free:
+ }
+ 
+ static enum event_type
+-process_symbols(struct event_format *event, struct print_arg *arg, char **tok)
++process_symbols(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	struct print_arg *field;
+ 	enum event_type type;
+@@ -2617,7 +2617,7 @@ out_free:
+ }
+ 
+ static enum event_type
+-process_hex_common(struct event_format *event, struct print_arg *arg,
++process_hex_common(struct tep_event_format *event, struct print_arg *arg,
+ 		   char **tok, enum print_arg_type type)
+ {
+ 	memset(arg, 0, sizeof(*arg));
+@@ -2640,20 +2640,20 @@ out:
+ }
+ 
+ static enum event_type
+-process_hex(struct event_format *event, struct print_arg *arg, char **tok)
++process_hex(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	return process_hex_common(event, arg, tok, PRINT_HEX);
+ }
+ 
+ static enum event_type
+-process_hex_str(struct event_format *event, struct print_arg *arg,
++process_hex_str(struct tep_event_format *event, struct print_arg *arg,
+ 		char **tok)
+ {
+ 	return process_hex_common(event, arg, tok, PRINT_HEX_STR);
+ }
+ 
+ static enum event_type
+-process_int_array(struct event_format *event, struct print_arg *arg, char **tok)
++process_int_array(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	memset(arg, 0, sizeof(*arg));
+ 	arg->type = PRINT_INT_ARRAY;
+@@ -2681,7 +2681,7 @@ out:
+ }
+ 
+ static enum event_type
+-process_dynamic_array(struct event_format *event, struct print_arg *arg, char **tok)
++process_dynamic_array(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	struct format_field *field;
+ 	enum event_type type;
+@@ -2745,7 +2745,7 @@ process_dynamic_array(struct event_format *event, struct print_arg *arg, char **
+ }
+ 
+ static enum event_type
+-process_dynamic_array_len(struct event_format *event, struct print_arg *arg,
++process_dynamic_array_len(struct tep_event_format *event, struct print_arg *arg,
+ 			  char **tok)
+ {
+ 	struct format_field *field;
+@@ -2781,7 +2781,7 @@ process_dynamic_array_len(struct event_format *event, struct print_arg *arg,
+ }
+ 
+ static enum event_type
+-process_paren(struct event_format *event, struct print_arg *arg, char **tok)
++process_paren(struct tep_event_format *event, struct print_arg *arg, char **tok)
+ {
+ 	struct print_arg *item_arg;
+ 	enum event_type type;
+@@ -2844,7 +2844,7 @@ process_paren(struct event_format *event, struct print_arg *arg, char **tok)
+ 
+ 
+ static enum event_type
+-process_str(struct event_format *event __maybe_unused, struct print_arg *arg,
++process_str(struct tep_event_format *event __maybe_unused, struct print_arg *arg,
+ 	    char **tok)
+ {
+ 	enum event_type type;
+@@ -2873,8 +2873,8 @@ process_str(struct event_format *event __maybe_unused, struct print_arg *arg,
+ }
+ 
+ static enum event_type
+-process_bitmask(struct event_format *event __maybe_unused, struct print_arg *arg,
+-	    char **tok)
++process_bitmask(struct tep_event_format *event __maybe_unused, struct print_arg *arg,
++		char **tok)
+ {
+ 	enum event_type type;
+ 	char *token;
+@@ -2934,7 +2934,7 @@ static void remove_func_handler(struct tep_handle *pevent, char *func_name)
+ }
+ 
+ static enum event_type
+-process_func_handler(struct event_format *event, struct tep_function_handler *func,
++process_func_handler(struct tep_event_format *event, struct tep_function_handler *func,
+ 		     struct print_arg *arg, char **tok)
+ {
+ 	struct print_arg **next_arg;
+@@ -2992,7 +2992,7 @@ err:
+ }
+ 
+ static enum event_type
+-process_function(struct event_format *event, struct print_arg *arg,
++process_function(struct tep_event_format *event, struct print_arg *arg,
+ 		 char *token, char **tok)
+ {
+ 	struct tep_function_handler *func;
+@@ -3048,7 +3048,7 @@ process_function(struct event_format *event, struct print_arg *arg,
+ }
+ 
+ static enum event_type
+-process_arg_token(struct event_format *event, struct print_arg *arg,
++process_arg_token(struct tep_event_format *event, struct print_arg *arg,
+ 		  char **tok, enum event_type type)
+ {
+ 	char *token;
+@@ -3136,7 +3136,7 @@ process_arg_token(struct event_format *event, struct print_arg *arg,
+ 	return type;
+ }
+ 
+-static int event_read_print_args(struct event_format *event, struct print_arg **list)
++static int event_read_print_args(struct tep_event_format *event, struct print_arg **list)
+ {
+ 	enum event_type type = EVENT_ERROR;
+ 	struct print_arg *arg;
+@@ -3194,7 +3194,7 @@ static int event_read_print_args(struct event_format *event, struct print_arg **
+ 	return args;
+ }
+ 
+-static int event_read_print(struct event_format *event)
++static int event_read_print(struct tep_event_format *event)
+ {
+ 	enum event_type type;
+ 	char *token;
+@@ -3260,7 +3260,7 @@ static int event_read_print(struct event_format *event)
+  * This only searchs the common fields and not all field.
+  */
+ struct format_field *
+-tep_find_common_field(struct event_format *event, const char *name)
++tep_find_common_field(struct tep_event_format *event, const char *name)
+ {
+ 	struct format_field *format;
+ 
+@@ -3282,7 +3282,7 @@ tep_find_common_field(struct event_format *event, const char *name)
+  * This does not search common fields.
+  */
+ struct format_field *
+-tep_find_field(struct event_format *event, const char *name)
++tep_find_field(struct tep_event_format *event, const char *name)
+ {
+ 	struct format_field *format;
+ 
+@@ -3305,7 +3305,7 @@ tep_find_field(struct event_format *event, const char *name)
+  * the non-common ones if a common one was not found.
+  */
+ struct format_field *
+-tep_find_any_field(struct event_format *event, const char *name)
++tep_find_any_field(struct tep_event_format *event, const char *name)
+ {
+ 	struct format_field *format;
+ 
+@@ -3374,7 +3374,7 @@ int tep_read_number_field(struct format_field *field, const void *data,
+ static int get_common_info(struct tep_handle *pevent,
+ 			   const char *type, int *offset, int *size)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	struct format_field *field;
+ 
+ 	/*
+@@ -3461,11 +3461,11 @@ static int events_id_cmp(const void *a, const void *b);
+  *
+  * Returns an event that has a given @id.
+  */
+-struct event_format *tep_find_event(struct tep_handle *pevent, int id)
++struct tep_event_format *tep_find_event(struct tep_handle *pevent, int id)
+ {
+-	struct event_format **eventptr;
+-	struct event_format key;
+-	struct event_format *pkey = &key;
++	struct tep_event_format **eventptr;
++	struct tep_event_format key;
++	struct tep_event_format *pkey = &key;
+ 
+ 	/* Check cache first */
+ 	if (pevent->last_event && pevent->last_event->id == id)
+@@ -3493,11 +3493,11 @@ struct event_format *tep_find_event(struct tep_handle *pevent, int id)
+  * This returns an event with a given @name and under the system
+  * @sys. If @sys is NULL the first event with @name is returned.
+  */
+-struct event_format *
++struct tep_event_format *
+ tep_find_event_by_name(struct tep_handle *pevent,
+ 		       const char *sys, const char *name)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	int i;
+ 
+ 	if (pevent->last_event &&
+@@ -3522,7 +3522,7 @@ tep_find_event_by_name(struct tep_handle *pevent,
+ }
+ 
+ static unsigned long long
+-eval_num_arg(void *data, int size, struct event_format *event, struct print_arg *arg)
++eval_num_arg(void *data, int size, struct tep_event_format *event, struct print_arg *arg)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	unsigned long long val = 0;
+@@ -3862,7 +3862,7 @@ static void print_bitmask_to_seq(struct tep_handle *pevent,
+ }
+ 
+ static void print_str_arg(struct trace_seq *s, void *data, int size,
+-			  struct event_format *event, const char *format,
++			  struct tep_event_format *event, const char *format,
+ 			  int len_arg, struct print_arg *arg)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+@@ -4117,7 +4117,7 @@ out_warning_field:
+ 
+ static unsigned long long
+ process_defined_func(struct trace_seq *s, void *data, int size,
+-		     struct event_format *event, struct print_arg *arg)
++		     struct tep_event_format *event, struct print_arg *arg)
+ {
+ 	struct tep_function_handler *func_handle = arg->func.func;
+ 	struct func_params *param;
+@@ -4212,7 +4212,7 @@ static void free_args(struct print_arg *args)
+ 	}
+ }
+ 
+-static struct print_arg *make_bprint_args(char *fmt, void *data, int size, struct event_format *event)
++static struct print_arg *make_bprint_args(char *fmt, void *data, int size, struct tep_event_format *event)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	struct format_field *field, *ip_field;
+@@ -4389,7 +4389,7 @@ out_free:
+ 
+ static char *
+ get_bprint_format(void *data, int size __maybe_unused,
+-		  struct event_format *event)
++		  struct tep_event_format *event)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	unsigned long long addr;
+@@ -4424,7 +4424,7 @@ get_bprint_format(void *data, int size __maybe_unused,
+ }
+ 
+ static void print_mac_arg(struct trace_seq *s, int mac, void *data, int size,
+-			  struct event_format *event, struct print_arg *arg)
++			  struct tep_event_format *event, struct print_arg *arg)
+ {
+ 	unsigned char *buf;
+ 	const char *fmt = "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x";
+@@ -4577,7 +4577,7 @@ static void print_ip6_addr(struct trace_seq *s, char i, unsigned char *buf)
+  * %pISpc print an IP address based on sockaddr; p adds port.
+  */
+ static int print_ipv4_arg(struct trace_seq *s, const char *ptr, char i,
+-			  void *data, int size, struct event_format *event,
++			  void *data, int size, struct tep_event_format *event,
+ 			  struct print_arg *arg)
+ {
+ 	unsigned char *buf;
+@@ -4614,7 +4614,7 @@ static int print_ipv4_arg(struct trace_seq *s, const char *ptr, char i,
+ }
+ 
+ static int print_ipv6_arg(struct trace_seq *s, const char *ptr, char i,
+-			  void *data, int size, struct event_format *event,
++			  void *data, int size, struct tep_event_format *event,
+ 			  struct print_arg *arg)
+ {
+ 	char have_c = 0;
+@@ -4664,7 +4664,7 @@ static int print_ipv6_arg(struct trace_seq *s, const char *ptr, char i,
+ }
+ 
+ static int print_ipsa_arg(struct trace_seq *s, const char *ptr, char i,
+-			  void *data, int size, struct event_format *event,
++			  void *data, int size, struct tep_event_format *event,
+ 			  struct print_arg *arg)
+ {
+ 	char have_c = 0, have_p = 0;
+@@ -4746,7 +4746,7 @@ static int print_ipsa_arg(struct trace_seq *s, const char *ptr, char i,
+ }
+ 
+ static int print_ip_arg(struct trace_seq *s, const char *ptr,
+-			void *data, int size, struct event_format *event,
++			void *data, int size, struct tep_event_format *event,
+ 			struct print_arg *arg)
+ {
+ 	char i = *ptr;  /* 'i' or 'I' */
+@@ -4853,7 +4853,7 @@ void tep_print_field(struct trace_seq *s, void *data,
+ }
+ 
+ void tep_print_fields(struct trace_seq *s, void *data,
+-		      int size __maybe_unused, struct event_format *event)
++		      int size __maybe_unused, struct tep_event_format *event)
+ {
+ 	struct format_field *field;
+ 
+@@ -4865,7 +4865,7 @@ void tep_print_fields(struct trace_seq *s, void *data,
+ 	}
+ }
+ 
+-static void pretty_print(struct trace_seq *s, void *data, int size, struct event_format *event)
++static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_event_format *event)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	struct print_fmt *print_fmt = &event->print_fmt;
+@@ -5228,7 +5228,7 @@ int tep_data_type(struct tep_handle *pevent, struct tep_record *rec)
+  *
+  * This returns the event form a given @type;
+  */
+-struct event_format *tep_data_event_from_type(struct tep_handle *pevent, int type)
++struct tep_event_format *tep_data_event_from_type(struct tep_handle *pevent, int type)
+ {
+ 	return tep_find_event(pevent, type);
+ }
+@@ -5386,7 +5386,7 @@ int tep_cmdline_pid(struct tep_handle *pevent, struct cmdline *cmdline)
+  * This parses the raw @data using the given @event information and
+  * writes the print format into the trace_seq.
+  */
+-void tep_event_info(struct trace_seq *s, struct event_format *event,
++void tep_event_info(struct trace_seq *s, struct tep_event_format *event,
+ 		    struct tep_record *record)
+ {
+ 	int print_pretty = 1;
+@@ -5427,7 +5427,7 @@ static bool is_timestamp_in_us(char *trace_clock, bool use_trace_clock)
+  * Returns the associated event for a given record, or NULL if non is
+  * is found.
+  */
+-struct event_format *
++struct tep_event_format *
+ tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record)
+ {
+ 	int type;
+@@ -5452,7 +5452,7 @@ tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record)
+  * Writes the tasks comm, pid and CPU to @s.
+  */
+ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct event_format *event,
++			  struct tep_event_format *event,
+ 			  struct tep_record *record)
+ {
+ 	void *data = record->data;
+@@ -5480,7 +5480,7 @@ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+  * Writes the timestamp of the record into @s.
+  */
+ void tep_print_event_time(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct event_format *event,
++			  struct tep_event_format *event,
+ 			  struct tep_record *record,
+ 			  bool use_trace_clock)
+ {
+@@ -5530,7 +5530,7 @@ void tep_print_event_time(struct tep_handle *pevent, struct trace_seq *s,
+  * Writes the parsing of the record's data to @s.
+  */
+ void tep_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct event_format *event,
++			  struct tep_event_format *event,
+ 			  struct tep_record *record)
+ {
+ 	static const char *spaces = "                    "; /* 20 spaces */
+@@ -5549,7 +5549,7 @@ void tep_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
+ void tep_print_event(struct tep_handle *pevent, struct trace_seq *s,
+ 		     struct tep_record *record, bool use_trace_clock)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 
+ 	event = tep_find_event_by_record(pevent, record);
+ 	if (!event) {
+@@ -5571,8 +5571,8 @@ void tep_print_event(struct tep_handle *pevent, struct trace_seq *s,
+ 
+ static int events_id_cmp(const void *a, const void *b)
+ {
+-	struct event_format * const * ea = a;
+-	struct event_format * const * eb = b;
++	struct tep_event_format * const * ea = a;
++	struct tep_event_format * const * eb = b;
+ 
+ 	if ((*ea)->id < (*eb)->id)
+ 		return -1;
+@@ -5585,8 +5585,8 @@ static int events_id_cmp(const void *a, const void *b)
+ 
+ static int events_name_cmp(const void *a, const void *b)
+ {
+-	struct event_format * const * ea = a;
+-	struct event_format * const * eb = b;
++	struct tep_event_format * const * ea = a;
++	struct tep_event_format * const * eb = b;
+ 	int res;
+ 
+ 	res = strcmp((*ea)->name, (*eb)->name);
+@@ -5602,8 +5602,8 @@ static int events_name_cmp(const void *a, const void *b)
+ 
+ static int events_system_cmp(const void *a, const void *b)
+ {
+-	struct event_format * const * ea = a;
+-	struct event_format * const * eb = b;
++	struct tep_event_format * const * ea = a;
++	struct tep_event_format * const * eb = b;
+ 	int res;
+ 
+ 	res = strcmp((*ea)->system, (*eb)->system);
+@@ -5617,9 +5617,9 @@ static int events_system_cmp(const void *a, const void *b)
+ 	return events_id_cmp(a, b);
+ }
+ 
+-struct event_format **tep_list_events(struct tep_handle *pevent, enum event_sort_type sort_type)
++struct tep_event_format **tep_list_events(struct tep_handle *pevent, enum event_sort_type sort_type)
+ {
+-	struct event_format **events;
++	struct tep_event_format **events;
+ 	int (*sort)(const void *a, const void *b);
+ 
+ 	events = pevent->sort_events;
+@@ -5702,7 +5702,7 @@ get_event_fields(const char *type, const char *name,
+  * Returns an allocated array of fields. The last item in the array is NULL.
+  * The array must be freed with free().
+  */
+-struct format_field **tep_event_common_fields(struct event_format *event)
++struct format_field **tep_event_common_fields(struct tep_event_format *event)
+ {
+ 	return get_event_fields("common", event->name,
+ 				event->format.nr_common,
+@@ -5716,7 +5716,7 @@ struct format_field **tep_event_common_fields(struct event_format *event)
+  * Returns an allocated array of fields. The last item in the array is NULL.
+  * The array must be freed with free().
+  */
+-struct format_field **tep_event_fields(struct event_format *event)
++struct format_field **tep_event_fields(struct tep_event_format *event)
+ {
+ 	return get_event_fields("event", event->name,
+ 				event->format.nr_fields,
+@@ -5958,7 +5958,7 @@ int tep_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long si
+ 	return 0;
+ }
+ 
+-static int event_matches(struct event_format *event,
++static int event_matches(struct tep_event_format *event,
+ 			 int id, const char *sys_name,
+ 			 const char *event_name)
+ {
+@@ -5981,7 +5981,7 @@ static void free_handler(struct event_handler *handle)
+ 	free(handle);
+ }
+ 
+-static int find_event_handle(struct tep_handle *pevent, struct event_format *event)
++static int find_event_handle(struct tep_handle *pevent, struct tep_event_format *event)
+ {
+ 	struct event_handler *handle, **next;
+ 
+@@ -6022,11 +6022,11 @@ static int find_event_handle(struct tep_handle *pevent, struct event_format *eve
+  *
+  * /sys/kernel/debug/tracing/events/.../.../format
+  */
+-enum tep_errno __tep_parse_format(struct event_format **eventp,
++enum tep_errno __tep_parse_format(struct tep_event_format **eventp,
+ 				  struct tep_handle *pevent, const char *buf,
+ 				  unsigned long size, const char *sys)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	int ret;
+ 
+ 	init_input_buf(buf, size);
+@@ -6131,12 +6131,12 @@ enum tep_errno __tep_parse_format(struct event_format **eventp,
+ 
+ static enum tep_errno
+ __parse_event(struct tep_handle *pevent,
+-	      struct event_format **eventp,
++	      struct tep_event_format **eventp,
+ 	      const char *buf, unsigned long size,
+ 	      const char *sys)
+ {
+ 	int ret = __tep_parse_format(eventp, pevent, buf, size, sys);
+-	struct event_format *event = *eventp;
++	struct tep_event_format *event = *eventp;
+ 
+ 	if (event == NULL)
+ 		return ret;
+@@ -6173,7 +6173,7 @@ event_add_failed:
+  * /sys/kernel/debug/tracing/events/.../.../format
+  */
+ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+-				struct event_format **eventp,
++				struct tep_event_format **eventp,
+ 				const char *buf,
+ 				unsigned long size, const char *sys)
+ {
+@@ -6197,7 +6197,7 @@ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+ enum tep_errno tep_parse_event(struct tep_handle *pevent, const char *buf,
+ 			       unsigned long size, const char *sys)
+ {
+-	struct event_format *event = NULL;
++	struct tep_event_format *event = NULL;
+ 	return __parse_event(pevent, &event, buf, size, sys);
+ }
+ 
+@@ -6263,7 +6263,7 @@ int get_field_val(struct trace_seq *s, struct format_field *field,
+  *
+  * On failure, it returns NULL.
+  */
+-void *tep_get_field_raw(struct trace_seq *s, struct event_format *event,
++void *tep_get_field_raw(struct trace_seq *s, struct tep_event_format *event,
+ 			const char *name, struct tep_record *record,
+ 			int *len, int err)
+ {
+@@ -6310,7 +6310,7 @@ void *tep_get_field_raw(struct trace_seq *s, struct event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int tep_get_field_val(struct trace_seq *s, struct event_format *event,
++int tep_get_field_val(struct trace_seq *s, struct tep_event_format *event,
+ 		      const char *name, struct tep_record *record,
+ 		      unsigned long long *val, int err)
+ {
+@@ -6335,7 +6335,7 @@ int tep_get_field_val(struct trace_seq *s, struct event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int tep_get_common_field_val(struct trace_seq *s, struct event_format *event,
++int tep_get_common_field_val(struct trace_seq *s, struct tep_event_format *event,
+ 			     const char *name, struct tep_record *record,
+ 			     unsigned long long *val, int err)
+ {
+@@ -6360,7 +6360,7 @@ int tep_get_common_field_val(struct trace_seq *s, struct event_format *event,
+  *
+  * Returns 0 on success -1 on field not found.
+  */
+-int tep_get_any_field_val(struct trace_seq *s, struct event_format *event,
++int tep_get_any_field_val(struct trace_seq *s, struct tep_event_format *event,
+ 			  const char *name, struct tep_record *record,
+ 			  unsigned long long *val, int err)
+ {
+@@ -6386,7 +6386,7 @@ int tep_get_any_field_val(struct trace_seq *s, struct event_format *event,
+  * Returns: 0 on success, -1 field not found, or 1 if buffer is full.
+  */
+ int tep_print_num_field(struct trace_seq *s, const char *fmt,
+-			struct event_format *event, const char *name,
++			struct tep_event_format *event, const char *name,
+ 			struct tep_record *record, int err)
+ {
+ 	struct format_field *field = tep_find_field(event, name);
+@@ -6418,7 +6418,7 @@ int tep_print_num_field(struct trace_seq *s, const char *fmt,
+  * Returns: 0 on success, -1 field not found, or 1 if buffer is full.
+  */
+ int tep_print_func_field(struct trace_seq *s, const char *fmt,
+-			 struct event_format *event, const char *name,
++			 struct tep_event_format *event, const char *name,
+ 			 struct tep_record *record, int err)
+ {
+ 	struct format_field *field = tep_find_field(event, name);
+@@ -6578,11 +6578,11 @@ int tep_unregister_print_function(struct tep_handle *pevent,
+ 	return -1;
+ }
+ 
+-static struct event_format *search_event(struct tep_handle *pevent, int id,
++static struct tep_event_format *search_event(struct tep_handle *pevent, int id,
+ 					 const char *sys_name,
+ 					 const char *event_name)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 
+ 	if (id >= 0) {
+ 		/* search by id */
+@@ -6622,7 +6622,7 @@ int tep_register_event_handler(struct tep_handle *pevent, int id,
+ 			       const char *sys_name, const char *event_name,
+ 			       tep_event_handler_func func, void *context)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	struct event_handler *handle;
+ 
+ 	event = search_event(pevent, id, sys_name, event_name);
+@@ -6706,7 +6706,7 @@ int tep_unregister_event_handler(struct tep_handle *pevent, int id,
+ 				 const char *sys_name, const char *event_name,
+ 				 tep_event_handler_func func, void *context)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	struct event_handler *handle;
+ 	struct event_handler **next;
+ 
+@@ -6784,7 +6784,7 @@ static void free_formats(struct format *format)
+ 	free_format_fields(format->fields);
+ }
+ 
+-void tep_free_format(struct event_format *event)
++void tep_free_format(struct tep_event_format *event)
+ {
+ 	free(event->name);
+ 	free(event->system);
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index fa665c66bfa4..82de69c2b054 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -54,14 +54,14 @@ struct tep_record {
+ #endif
+ };
+ 
+-/* ----------------------- pevent ----------------------- */
++/* ----------------------- tep ----------------------- */
+ 
+ struct tep_handle;
+-struct event_format;
++struct tep_event_format;
+ 
+ typedef int (*tep_event_handler_func)(struct trace_seq *s,
+ 				      struct tep_record *record,
+-				      struct event_format *event,
++				      struct tep_event_format *event,
+ 				      void *context);
+ 
+ typedef int (*tep_plugin_load_func)(struct tep_handle *pevent);
+@@ -143,7 +143,7 @@ enum format_flags {
+ 
+ struct format_field {
+ 	struct format_field	*next;
+-	struct event_format	*event;
++	struct tep_event_format	*event;
+ 	char			*type;
+ 	char			*name;
+ 	char			*alias;
+@@ -277,7 +277,7 @@ struct print_fmt {
+ 	struct print_arg	*args;
+ };
+ 
+-struct event_format {
++struct tep_event_format {
+ 	struct tep_handle	*pevent;
+ 	char			*name;
+ 	int			id;
+@@ -451,9 +451,9 @@ struct tep_handle {
+ 	unsigned int printk_count;
+ 
+ 
+-	struct event_format **events;
++	struct tep_event_format **events;
+ 	int nr_events;
+-	struct event_format **sort_events;
++	struct tep_event_format **sort_events;
+ 	enum event_sort_type last_type;
+ 
+ 	int type_offset;
+@@ -485,7 +485,7 @@ struct tep_handle {
+ 	struct tep_function_handler *func_handlers;
+ 
+ 	/* cache */
+-	struct event_format *last_event;
++	struct tep_event_format *last_event;
+ 
+ 	char *trace_clock;
+ };
+@@ -585,14 +585,14 @@ int tep_register_print_string(struct tep_handle *pevent, const char *fmt,
+ int tep_pid_is_registered(struct tep_handle *pevent, int pid);
+ 
+ void tep_print_event_task(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct event_format *event,
++			  struct tep_event_format *event,
+ 			  struct tep_record *record);
+ void tep_print_event_time(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct event_format *event,
++			  struct tep_event_format *event,
+ 			  struct tep_record *record,
+ 			  bool use_trace_clock);
+ void tep_print_event_data(struct tep_handle *pevent, struct trace_seq *s,
+-			  struct event_format *event,
++			  struct tep_event_format *event,
+ 			  struct tep_record *record);
+ void tep_print_event(struct tep_handle *pevent, struct trace_seq *s,
+ 		     struct tep_record *record, bool use_trace_clock);
+@@ -603,32 +603,32 @@ int tep_parse_header_page(struct tep_handle *pevent, char *buf, unsigned long si
+ enum tep_errno tep_parse_event(struct tep_handle *pevent, const char *buf,
+ 			       unsigned long size, const char *sys);
+ enum tep_errno tep_parse_format(struct tep_handle *pevent,
+-				struct event_format **eventp,
++				struct tep_event_format **eventp,
+ 				const char *buf,
+ 				unsigned long size, const char *sys);
+-void tep_free_format(struct event_format *event);
++void tep_free_format(struct tep_event_format *event);
+ void tep_free_format_field(struct format_field *field);
+ 
+-void *tep_get_field_raw(struct trace_seq *s, struct event_format *event,
++void *tep_get_field_raw(struct trace_seq *s, struct tep_event_format *event,
+ 			const char *name, struct tep_record *record,
+ 			int *len, int err);
+ 
+-int tep_get_field_val(struct trace_seq *s, struct event_format *event,
++int tep_get_field_val(struct trace_seq *s, struct tep_event_format *event,
+ 		      const char *name, struct tep_record *record,
+ 		      unsigned long long *val, int err);
+-int tep_get_common_field_val(struct trace_seq *s, struct event_format *event,
++int tep_get_common_field_val(struct trace_seq *s, struct tep_event_format *event,
+ 			     const char *name, struct tep_record *record,
+ 			     unsigned long long *val, int err);
+-int tep_get_any_field_val(struct trace_seq *s, struct event_format *event,
++int tep_get_any_field_val(struct trace_seq *s, struct tep_event_format *event,
+ 			  const char *name, struct tep_record *record,
+ 			  unsigned long long *val, int err);
+ 
+ int tep_print_num_field(struct trace_seq *s, const char *fmt,
+-			   struct event_format *event, const char *name,
+-			   struct tep_record *record, int err);
++			struct tep_event_format *event, const char *name,
++			struct tep_record *record, int err);
+ 
+ int tep_print_func_field(struct trace_seq *s, const char *fmt,
+-			 struct event_format *event, const char *name,
++			 struct tep_event_format *event, const char *name,
+ 			 struct tep_record *record, int err);
+ 
+ int tep_register_event_handler(struct tep_handle *pevent, int id,
+@@ -644,9 +644,9 @@ int tep_register_print_function(struct tep_handle *pevent,
+ int tep_unregister_print_function(struct tep_handle *pevent,
+ 				  tep_func_handler func, char *name);
+ 
+-struct format_field *tep_find_common_field(struct event_format *event, const char *name);
+-struct format_field *tep_find_field(struct event_format *event, const char *name);
+-struct format_field *tep_find_any_field(struct event_format *event, const char *name);
++struct format_field *tep_find_common_field(struct tep_event_format *event, const char *name);
++struct format_field *tep_find_field(struct tep_event_format *event, const char *name);
++struct format_field *tep_find_any_field(struct tep_event_format *event, const char *name);
+ 
+ const char *tep_find_function(struct tep_handle *pevent, unsigned long long addr);
+ unsigned long long
+@@ -655,18 +655,18 @@ unsigned long long tep_read_number(struct tep_handle *pevent, const void *ptr, i
+ int tep_read_number_field(struct format_field *field, const void *data,
+ 			  unsigned long long *value);
+ 
+-struct event_format *tep_find_event(struct tep_handle *pevent, int id);
++struct tep_event_format *tep_find_event(struct tep_handle *pevent, int id);
+ 
+-struct event_format *
++struct tep_event_format *
+ tep_find_event_by_name(struct tep_handle *pevent, const char *sys, const char *name);
+ 
+-struct event_format *
++struct tep_event_format *
+ tep_find_event_by_record(struct tep_handle *pevent, struct tep_record *record);
+ 
+ void tep_data_lat_fmt(struct tep_handle *pevent,
+ 		      struct trace_seq *s, struct tep_record *record);
+ int tep_data_type(struct tep_handle *pevent, struct tep_record *rec);
+-struct event_format *tep_data_event_from_type(struct tep_handle *pevent, int type);
++struct tep_event_format *tep_data_event_from_type(struct tep_handle *pevent, int type);
+ int tep_data_pid(struct tep_handle *pevent, struct tep_record *rec);
+ int tep_data_preempt_count(struct tep_handle *pevent, struct tep_record *rec);
+ int tep_data_flags(struct tep_handle *pevent, struct tep_record *rec);
+@@ -679,15 +679,15 @@ int tep_cmdline_pid(struct tep_handle *pevent, struct cmdline *cmdline);
+ void tep_print_field(struct trace_seq *s, void *data,
+ 		     struct format_field *field);
+ void tep_print_fields(struct trace_seq *s, void *data,
+-		      int size __maybe_unused, struct event_format *event);
+-void tep_event_info(struct trace_seq *s, struct event_format *event,
++		      int size __maybe_unused, struct tep_event_format *event);
++void tep_event_info(struct trace_seq *s, struct tep_event_format *event,
+ 		       struct tep_record *record);
+ int tep_strerror(struct tep_handle *pevent, enum tep_errno errnum,
+ 		    char *buf, size_t buflen);
+ 
+-struct event_format **tep_list_events(struct tep_handle *pevent, enum event_sort_type);
+-struct format_field **tep_event_common_fields(struct event_format *event);
+-struct format_field **tep_event_fields(struct event_format *event);
++struct tep_event_format **tep_list_events(struct tep_handle *pevent, enum event_sort_type);
++struct format_field **tep_event_common_fields(struct tep_event_format *event);
++struct format_field **tep_event_fields(struct tep_event_format *event);
+ 
+ static inline int tep_get_cpus(struct tep_handle *pevent)
+ {
+@@ -884,7 +884,7 @@ struct filter_arg {
+ 
+ struct filter_type {
+ 	int			event_id;
+-	struct event_format	*event;
++	struct tep_event_format	*event;
+ 	struct filter_arg	*filter;
+ };
+ 
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index e76154c02ee7..5572756307ab 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -26,7 +26,7 @@ static struct format_field cpu = {
+ 
+ struct event_list {
+ 	struct event_list	*next;
+-	struct event_format	*event;
++	struct tep_event_format	*event;
+ };
+ 
+ static void show_error(char *error_buf, const char *fmt, ...)
+@@ -228,7 +228,7 @@ static void free_arg(struct filter_arg *arg)
+ }
+ 
+ static int add_event(struct event_list **events,
+-		      struct event_format *event)
++		     struct tep_event_format *event)
+ {
+ 	struct event_list *list;
+ 
+@@ -242,7 +242,7 @@ static int add_event(struct event_list **events,
+ 	return 0;
+ }
+ 
+-static int event_match(struct event_format *event,
++static int event_match(struct tep_event_format *event,
+ 		       regex_t *sreg, regex_t *ereg)
+ {
+ 	if (sreg) {
+@@ -258,7 +258,7 @@ static enum tep_errno
+ find_event(struct tep_handle *pevent, struct event_list **events,
+ 	   char *sys_name, char *event_name)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	regex_t ereg;
+ 	regex_t sreg;
+ 	int match = 0;
+@@ -333,7 +333,7 @@ static void free_events(struct event_list *events)
+ }
+ 
+ static enum tep_errno
+-create_arg_item(struct event_format *event, const char *token,
++create_arg_item(struct tep_event_format *event, const char *token,
+ 		enum event_type type, struct filter_arg **parg, char *error_str)
+ {
+ 	struct format_field *field;
+@@ -939,7 +939,7 @@ static int collapse_tree(struct filter_arg *arg,
+ }
+ 
+ static enum tep_errno
+-process_filter(struct event_format *event, struct filter_arg **parg,
++process_filter(struct tep_event_format *event, struct filter_arg **parg,
+ 	       char *error_str, int not)
+ {
+ 	enum event_type type;
+@@ -1179,7 +1179,7 @@ process_filter(struct event_format *event, struct filter_arg **parg,
+ }
+ 
+ static enum tep_errno
+-process_event(struct event_format *event, const char *filter_str,
++process_event(struct tep_event_format *event, const char *filter_str,
+ 	      struct filter_arg **parg, char *error_str)
+ {
+ 	int ret;
+@@ -1204,7 +1204,7 @@ process_event(struct event_format *event, const char *filter_str,
+ }
+ 
+ static enum tep_errno
+-filter_event(struct event_filter *filter, struct event_format *event,
++filter_event(struct event_filter *filter, struct tep_event_format *event,
+ 	     const char *filter_str, char *error_str)
+ {
+ 	struct filter_type *filter_type;
+@@ -1456,7 +1456,7 @@ static int copy_filter_type(struct event_filter *filter,
+ 			     struct filter_type *filter_type)
+ {
+ 	struct filter_arg *arg;
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	const char *sys;
+ 	const char *name;
+ 	char *str;
+@@ -1538,7 +1538,7 @@ int tep_update_trivial(struct event_filter *dest, struct event_filter *source,
+ {
+ 	struct tep_handle *src_pevent;
+ 	struct tep_handle *dest_pevent;
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	struct filter_type *filter_type;
+ 	struct filter_arg *arg;
+ 	char *str;
+@@ -1682,11 +1682,11 @@ int tep_filter_event_has_trivial(struct event_filter *filter,
+ 	}
+ }
+ 
+-static int test_filter(struct event_format *event, struct filter_arg *arg,
++static int test_filter(struct tep_event_format *event, struct filter_arg *arg,
+ 		       struct tep_record *record, enum tep_errno *err);
+ 
+ static const char *
+-get_comm(struct event_format *event, struct tep_record *record)
++get_comm(struct tep_event_format *event, struct tep_record *record)
+ {
+ 	const char *comm;
+ 	int pid;
+@@ -1697,7 +1697,7 @@ get_comm(struct event_format *event, struct tep_record *record)
+ }
+ 
+ static unsigned long long
+-get_value(struct event_format *event,
++get_value(struct tep_event_format *event,
+ 	  struct format_field *field, struct tep_record *record)
+ {
+ 	unsigned long long val;
+@@ -1733,11 +1733,11 @@ get_value(struct event_format *event,
+ }
+ 
+ static unsigned long long
+-get_arg_value(struct event_format *event, struct filter_arg *arg,
++get_arg_value(struct tep_event_format *event, struct filter_arg *arg,
+ 	      struct tep_record *record, enum tep_errno *err);
+ 
+ static unsigned long long
+-get_exp_value(struct event_format *event, struct filter_arg *arg,
++get_exp_value(struct tep_event_format *event, struct filter_arg *arg,
+ 	      struct tep_record *record, enum tep_errno *err)
+ {
+ 	unsigned long long lval, rval;
+@@ -1792,7 +1792,7 @@ get_exp_value(struct event_format *event, struct filter_arg *arg,
+ }
+ 
+ static unsigned long long
+-get_arg_value(struct event_format *event, struct filter_arg *arg,
++get_arg_value(struct tep_event_format *event, struct filter_arg *arg,
+ 	      struct tep_record *record, enum tep_errno *err)
+ {
+ 	switch (arg->type) {
+@@ -1816,7 +1816,7 @@ get_arg_value(struct event_format *event, struct filter_arg *arg,
+ 	return 0;
+ }
+ 
+-static int test_num(struct event_format *event, struct filter_arg *arg,
++static int test_num(struct tep_event_format *event, struct filter_arg *arg,
+ 		    struct tep_record *record, enum tep_errno *err)
+ {
+ 	unsigned long long lval, rval;
+@@ -1859,7 +1859,7 @@ static int test_num(struct event_format *event, struct filter_arg *arg,
+ 
+ static const char *get_field_str(struct filter_arg *arg, struct tep_record *record)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	struct tep_handle *pevent;
+ 	unsigned long long addr;
+ 	const char *val = NULL;
+@@ -1907,7 +1907,7 @@ static const char *get_field_str(struct filter_arg *arg, struct tep_record *reco
+ 	return val;
+ }
+ 
+-static int test_str(struct event_format *event, struct filter_arg *arg,
++static int test_str(struct tep_event_format *event, struct filter_arg *arg,
+ 		    struct tep_record *record, enum tep_errno *err)
+ {
+ 	const char *val;
+@@ -1938,7 +1938,7 @@ static int test_str(struct event_format *event, struct filter_arg *arg,
+ 	}
+ }
+ 
+-static int test_op(struct event_format *event, struct filter_arg *arg,
++static int test_op(struct tep_event_format *event, struct filter_arg *arg,
+ 		   struct tep_record *record, enum tep_errno *err)
+ {
+ 	switch (arg->op.type) {
+@@ -1960,7 +1960,7 @@ static int test_op(struct event_format *event, struct filter_arg *arg,
+ 	}
+ }
+ 
+-static int test_filter(struct event_format *event, struct filter_arg *arg,
++static int test_filter(struct tep_event_format *event, struct filter_arg *arg,
+ 		       struct tep_record *record, enum tep_errno *err)
+ {
+ 	if (*err) {
+diff --git a/tools/lib/traceevent/plugin_function.c b/tools/lib/traceevent/plugin_function.c
+index 2919042e7dc2..528acc75d81a 100644
+--- a/tools/lib/traceevent/plugin_function.c
++++ b/tools/lib/traceevent/plugin_function.c
+@@ -124,7 +124,7 @@ static int add_and_get_index(const char *parent, const char *child, int cpu)
+ }
+ 
+ static int function_handler(struct trace_seq *s, struct tep_record *record,
+-			    struct event_format *event, void *context)
++			    struct tep_event_format *event, void *context)
+ {
+ 	struct tep_handle *pevent = event->pevent;
+ 	unsigned long long function;
+diff --git a/tools/lib/traceevent/plugin_hrtimer.c b/tools/lib/traceevent/plugin_hrtimer.c
+index 29b608076ea0..9aa05b4ca811 100644
+--- a/tools/lib/traceevent/plugin_hrtimer.c
++++ b/tools/lib/traceevent/plugin_hrtimer.c
+@@ -27,7 +27,7 @@
+ 
+ static int timer_expire_handler(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct event_format *event, void *context)
++				struct tep_event_format *event, void *context)
+ {
+ 	trace_seq_printf(s, "hrtimer=");
+ 
+@@ -47,7 +47,7 @@ static int timer_expire_handler(struct trace_seq *s,
+ 
+ static int timer_start_handler(struct trace_seq *s,
+ 			       struct tep_record *record,
+-			       struct event_format *event, void *context)
++			       struct tep_event_format *event, void *context)
+ {
+ 	trace_seq_printf(s, "hrtimer=");
+ 
+diff --git a/tools/lib/traceevent/plugin_kmem.c b/tools/lib/traceevent/plugin_kmem.c
+index a7a162575e2c..5632aff43aba 100644
+--- a/tools/lib/traceevent/plugin_kmem.c
++++ b/tools/lib/traceevent/plugin_kmem.c
+@@ -25,7 +25,7 @@
+ #include "trace-seq.h"
+ 
+ static int call_site_handler(struct trace_seq *s, struct tep_record *record,
+-			     struct event_format *event, void *context)
++			     struct tep_event_format *event, void *context)
+ {
+ 	struct format_field *field;
+ 	unsigned long long val, addr;
+diff --git a/tools/lib/traceevent/plugin_kvm.c b/tools/lib/traceevent/plugin_kvm.c
+index a0dfd3d0f197..d13c22846fa9 100644
+--- a/tools/lib/traceevent/plugin_kvm.c
++++ b/tools/lib/traceevent/plugin_kvm.c
+@@ -249,7 +249,7 @@ static const char *find_exit_reason(unsigned isa, int val)
+ }
+ 
+ static int print_exit_reason(struct trace_seq *s, struct tep_record *record,
+-			     struct event_format *event, const char *field)
++			     struct tep_event_format *event, const char *field)
+ {
+ 	unsigned long long isa;
+ 	unsigned long long val;
+@@ -270,7 +270,7 @@ static int print_exit_reason(struct trace_seq *s, struct tep_record *record,
+ }
+ 
+ static int kvm_exit_handler(struct trace_seq *s, struct tep_record *record,
+-			    struct event_format *event, void *context)
++			    struct tep_event_format *event, void *context)
+ {
+ 	unsigned long long info1 = 0, info2 = 0;
+ 
+@@ -293,7 +293,7 @@ static int kvm_exit_handler(struct trace_seq *s, struct tep_record *record,
+ 
+ static int kvm_emulate_insn_handler(struct trace_seq *s,
+ 				    struct tep_record *record,
+-				    struct event_format *event, void *context)
++				    struct tep_event_format *event, void *context)
+ {
+ 	unsigned long long rip, csbase, len, flags, failed;
+ 	int llen;
+@@ -332,7 +332,7 @@ static int kvm_emulate_insn_handler(struct trace_seq *s,
+ 
+ 
+ static int kvm_nested_vmexit_inject_handler(struct trace_seq *s, struct tep_record *record,
+-					    struct event_format *event, void *context)
++					    struct tep_event_format *event, void *context)
+ {
+ 	if (print_exit_reason(s, record, event, "exit_code") < 0)
+ 		return -1;
+@@ -346,7 +346,7 @@ static int kvm_nested_vmexit_inject_handler(struct trace_seq *s, struct tep_reco
+ }
+ 
+ static int kvm_nested_vmexit_handler(struct trace_seq *s, struct tep_record *record,
+-				     struct event_format *event, void *context)
++				     struct tep_event_format *event, void *context)
+ {
+ 	tep_print_num_field(s, "rip %llx ", event, "rip", record, 1);
+ 
+@@ -372,7 +372,7 @@ union kvm_mmu_page_role {
+ };
+ 
+ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+-			      struct event_format *event, void *context)
++			      struct tep_event_format *event, void *context)
+ {
+ 	unsigned long long val;
+ 	static const char *access_str[] = {
+@@ -419,7 +419,7 @@ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+ 
+ static int kvm_mmu_get_page_handler(struct trace_seq *s,
+ 				    struct tep_record *record,
+-				    struct event_format *event, void *context)
++				    struct tep_event_format *event, void *context)
+ {
+ 	unsigned long long val;
+ 
+diff --git a/tools/lib/traceevent/plugin_mac80211.c b/tools/lib/traceevent/plugin_mac80211.c
+index 0b7779444b63..c16469614690 100644
+--- a/tools/lib/traceevent/plugin_mac80211.c
++++ b/tools/lib/traceevent/plugin_mac80211.c
+@@ -26,7 +26,7 @@
+ 
+ #define INDENT 65
+ 
+-static void print_string(struct trace_seq *s, struct event_format *event,
++static void print_string(struct trace_seq *s, struct tep_event_format *event,
+ 			 const char *name, const void *data)
+ {
+ 	struct format_field *f = tep_find_field(event, name);
+@@ -60,7 +60,7 @@ static void print_string(struct trace_seq *s, struct event_format *event,
+ 
+ static int drv_bss_info_changed(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct event_format *event, void *context)
++				struct tep_event_format *event, void *context)
+ {
+ 	void *data = record->data;
+ 
+diff --git a/tools/lib/traceevent/plugin_sched_switch.c b/tools/lib/traceevent/plugin_sched_switch.c
+index 582d3be2849b..a7eeb42894ae 100644
+--- a/tools/lib/traceevent/plugin_sched_switch.c
++++ b/tools/lib/traceevent/plugin_sched_switch.c
+@@ -67,7 +67,7 @@ static void write_and_save_comm(struct format_field *field,
+ 
+ static int sched_wakeup_handler(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct event_format *event, void *context)
++				struct tep_event_format *event, void *context)
+ {
+ 	struct format_field *field;
+ 	unsigned long long val;
+@@ -96,7 +96,7 @@ static int sched_wakeup_handler(struct trace_seq *s,
+ 
+ static int sched_switch_handler(struct trace_seq *s,
+ 				struct tep_record *record,
+-				struct event_format *event, void *context)
++				struct tep_event_format *event, void *context)
+ {
+ 	struct format_field *field;
+ 	unsigned long long val;
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 7ce277d22a91..9f8c365dacb1 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -862,7 +862,7 @@ static struct syscall_fmt *syscall_fmt__find(const char *name)
+  * args_size: sum of the sizes of the syscall arguments, anything after that is augmented stuff: pathname for openat, etc.
+  */
+ struct syscall {
+-	struct event_format *tp_format;
++	struct tep_event_format *tp_format;
+ 	int		    nr_args;
+ 	int		    args_size;
+ 	bool		    is_exit;
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 4f8430a85531..c0f275cf96ee 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -102,7 +102,7 @@ struct perf_evsel {
+ 	char			*name;
+ 	double			scale;
+ 	const char		*unit;
+-	struct event_format	*tp_format;
++	struct tep_event_format	*tp_format;
+ 	off_t			id_offset;
+ 	struct perf_stat_evsel  *stats;
+ 	void			*priv;
+@@ -211,7 +211,7 @@ static inline struct perf_evsel *perf_evsel__newtp(const char *sys, const char *
+ 
+ struct perf_evsel *perf_evsel__new_cycles(bool precise);
+ 
+-struct event_format *event_format__new(const char *sys, const char *name);
++struct tep_event_format *event_format__new(const char *sys, const char *name);
+ 
+ void perf_evsel__init(struct perf_evsel *evsel,
+ 		      struct perf_event_attr *attr, int idx);
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index c78051ad1fcc..1ec1d9bc2d63 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3206,7 +3206,7 @@ static int read_attr(int fd, struct perf_header *ph,
+ static int perf_evsel__prepare_tracepoint_event(struct perf_evsel *evsel,
+ 						struct tep_handle *pevent)
+ {
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	char bf[128];
+ 
+ 	/* already prepared */
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index ce501ba14b08..6714d2c517db 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -386,7 +386,7 @@ get_tracepoint_field(struct pyrf_event *pevent, PyObject *attr_name)
+ 	struct format_field *field;
+ 
+ 	if (!evsel->tp_format) {
+-		struct event_format *tp_format;
++		struct tep_event_format *tp_format;
+ 
+ 		tp_format = trace_event__tp_format_id(evsel->attr.config);
+ 		if (!tp_format)
+@@ -1240,7 +1240,7 @@ static struct {
+ static PyObject *pyrf__tracepoint(struct pyrf_evsel *pevsel,
+ 				  PyObject *args, PyObject *kwargs)
+ {
+-	struct event_format *tp_format;
++	struct tep_event_format *tp_format;
+ 	static char *kwlist[] = { "sys", "name", NULL };
+ 	char *sys  = NULL;
+ 	char *name = NULL;
+diff --git a/tools/perf/util/scripting-engines/trace-event-perl.c b/tools/perf/util/scripting-engines/trace-event-perl.c
+index 45484f0f7292..370cc60f0afa 100644
+--- a/tools/perf/util/scripting-engines/trace-event-perl.c
++++ b/tools/perf/util/scripting-engines/trace-event-perl.c
+@@ -189,7 +189,7 @@ static void define_flag_field(const char *ev_name,
+ 	LEAVE;
+ }
+ 
+-static void define_event_symbols(struct event_format *event,
++static void define_event_symbols(struct tep_event_format *event,
+ 				 const char *ev_name,
+ 				 struct print_arg *args)
+ {
+@@ -338,7 +338,7 @@ static void perl_process_tracepoint(struct perf_sample *sample,
+ 				    struct addr_location *al)
+ {
+ 	struct thread *thread = al->thread;
+-	struct event_format *event = evsel->tp_format;
++	struct tep_event_format *event = evsel->tp_format;
+ 	struct format_field *field;
+ 	static char handler[256];
+ 	unsigned long long val;
+@@ -537,7 +537,7 @@ static int perl_stop_script(void)
+ 
+ static int perl_generate_script(struct tep_handle *pevent, const char *outfile)
+ {
+-	struct event_format *event = NULL;
++	struct tep_event_format *event = NULL;
+ 	struct format_field *f;
+ 	char fname[PATH_MAX];
+ 	int not_first, count;
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index dfc6093f118c..9a8a7b7ff64a 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -264,7 +264,7 @@ static void define_field(enum print_arg_type field_type,
+ 	Py_DECREF(t);
+ }
+ 
+-static void define_event_symbols(struct event_format *event,
++static void define_event_symbols(struct tep_event_format *event,
+ 				 const char *ev_name,
+ 				 struct print_arg *args)
+ {
+@@ -332,7 +332,7 @@ static void define_event_symbols(struct event_format *event,
+ 		define_event_symbols(event, ev_name, args->next);
+ }
+ 
+-static PyObject *get_field_numeric_entry(struct event_format *event,
++static PyObject *get_field_numeric_entry(struct tep_event_format *event,
+ 		struct format_field *field, void *data)
+ {
+ 	bool is_array = field->flags & FIELD_IS_ARRAY;
+@@ -790,7 +790,7 @@ static void python_process_tracepoint(struct perf_sample *sample,
+ 				      struct perf_evsel *evsel,
+ 				      struct addr_location *al)
+ {
+-	struct event_format *event = evsel->tp_format;
++	struct tep_event_format *event = evsel->tp_format;
+ 	PyObject *handler, *context, *t, *obj = NULL, *callchain;
+ 	PyObject *dict = NULL, *all_entries_dict = NULL;
+ 	static char handler_name[256];
+@@ -1590,7 +1590,7 @@ static int python_stop_script(void)
+ 
+ static int python_generate_script(struct tep_handle *pevent, const char *outfile)
+ {
+-	struct event_format *event = NULL;
++	struct tep_event_format *event = NULL;
+ 	struct format_field *f;
+ 	char fname[PATH_MAX];
+ 	int not_first, count;
+diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
+index e76214f8d596..643cf28e1345 100644
+--- a/tools/perf/util/trace-event-parse.c
++++ b/tools/perf/util/trace-event-parse.c
+@@ -33,7 +33,7 @@ static int get_common_field(struct scripting_context *context,
+ 			    int *offset, int *size, const char *type)
+ {
+ 	struct tep_handle *pevent = context->pevent;
+-	struct event_format *event;
++	struct tep_event_format *event;
+ 	struct format_field *field;
+ 
+ 	if (!*size) {
+@@ -94,7 +94,7 @@ int common_pc(struct scripting_context *context)
+ }
+ 
+ unsigned long long
+-raw_field_value(struct event_format *event, const char *name, void *data)
++raw_field_value(struct tep_event_format *event, const char *name, void *data)
+ {
+ 	struct format_field *field;
+ 	unsigned long long val;
+@@ -108,12 +108,12 @@ raw_field_value(struct event_format *event, const char *name, void *data)
+ 	return val;
+ }
+ 
+-unsigned long long read_size(struct event_format *event, void *ptr, int size)
++unsigned long long read_size(struct tep_event_format *event, void *ptr, int size)
+ {
+ 	return tep_read_number(event->pevent, ptr, size);
+ }
+ 
+-void event_format__fprintf(struct event_format *event,
++void event_format__fprintf(struct tep_event_format *event,
+ 			   int cpu, void *data, int size, FILE *fp)
+ {
+ 	struct tep_record record;
+@@ -130,7 +130,7 @@ void event_format__fprintf(struct event_format *event,
+ 	trace_seq_destroy(&s);
+ }
+ 
+-void event_format__print(struct event_format *event,
++void event_format__print(struct tep_event_format *event,
+ 			 int cpu, void *data, int size)
+ {
+ 	return event_format__fprintf(event, cpu, data, size, stdout);
+@@ -188,8 +188,8 @@ int parse_event_file(struct tep_handle *pevent,
+ 	return tep_parse_event(pevent, buf, size, sys);
+ }
+ 
+-struct event_format *trace_find_next_event(struct tep_handle *pevent,
+-					   struct event_format *event)
++struct tep_event_format *trace_find_next_event(struct tep_handle *pevent,
++					       struct tep_event_format *event)
+ {
+ 	static int idx;
+ 
+diff --git a/tools/perf/util/trace-event.c b/tools/perf/util/trace-event.c
+index 58bb72f266f3..95664b2f771e 100644
+--- a/tools/perf/util/trace-event.c
++++ b/tools/perf/util/trace-event.c
+@@ -72,12 +72,12 @@ void trace_event__cleanup(struct trace_event *t)
+ /*
+  * Returns pointer with encoded error via <linux/err.h> interface.
+  */
+-static struct event_format*
++static struct tep_event_format*
+ tp_format(const char *sys, const char *name)
+ {
+ 	char *tp_dir = get_events_file(sys);
+ 	struct tep_handle *pevent = tevent.pevent;
+-	struct event_format *event = NULL;
++	struct tep_event_format *event = NULL;
+ 	char path[PATH_MAX];
+ 	size_t size;
+ 	char *data;
+@@ -102,7 +102,7 @@ tp_format(const char *sys, const char *name)
+ /*
+  * Returns pointer with encoded error via <linux/err.h> interface.
+  */
+-struct event_format*
++struct tep_event_format*
+ trace_event__tp_format(const char *sys, const char *name)
+ {
+ 	if (!tevent_initialized && trace_event__init2())
+@@ -111,7 +111,7 @@ trace_event__tp_format(const char *sys, const char *name)
+ 	return tp_format(sys, name);
+ }
+ 
+-struct event_format *trace_event__tp_format_id(int id)
++struct tep_event_format *trace_event__tp_format_id(int id)
+ {
+ 	if (!tevent_initialized && trace_event__init2())
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
+index c69d77d7cf55..2da6eff0caaf 100644
+--- a/tools/perf/util/trace-event.h
++++ b/tools/perf/util/trace-event.h
+@@ -22,17 +22,17 @@ int trace_event__init(struct trace_event *t);
+ void trace_event__cleanup(struct trace_event *t);
+ int trace_event__register_resolver(struct machine *machine,
+ 				   tep_func_resolver_t *func);
+-struct event_format*
++struct tep_event_format*
+ trace_event__tp_format(const char *sys, const char *name);
+ 
+-struct event_format *trace_event__tp_format_id(int id);
++struct tep_event_format *trace_event__tp_format_id(int id);
+ 
+ int bigendian(void);
+ 
+-void event_format__fprintf(struct event_format *event,
++void event_format__fprintf(struct tep_event_format *event,
+ 			   int cpu, void *data, int size, FILE *fp);
+ 
+-void event_format__print(struct event_format *event,
++void event_format__print(struct tep_event_format *event,
+ 			 int cpu, void *data, int size);
+ 
+ int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned long size);
+@@ -40,7 +40,7 @@ int parse_event_file(struct tep_handle *pevent,
+ 		     char *buf, unsigned long size, char *sys);
+ 
+ unsigned long long
+-raw_field_value(struct event_format *event, const char *name, void *data);
++raw_field_value(struct tep_event_format *event, const char *name, void *data);
+ 
+ void parse_proc_kallsyms(struct tep_handle *pevent, char *file, unsigned int size);
+ void parse_ftrace_printk(struct tep_handle *pevent, char *file, unsigned int size);
+@@ -48,9 +48,9 @@ void parse_saved_cmdline(struct tep_handle *pevent, char *file, unsigned int siz
+ 
+ ssize_t trace_report(int fd, struct trace_event *tevent, bool repipe);
+ 
+-struct event_format *trace_find_next_event(struct tep_handle *pevent,
+-					   struct event_format *event);
+-unsigned long long read_size(struct event_format *event, void *ptr, int size);
++struct tep_event_format *trace_find_next_event(struct tep_handle *pevent,
++					       struct tep_event_format *event);
++unsigned long long read_size(struct tep_event_format *event, void *ptr, int size);
+ unsigned long long eval_flag(const char *flag);
+ 
+ int read_tracing_data(int fd, struct list_head *pattrs);
