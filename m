@@ -2,130 +2,130 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B3CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 04:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5762CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D23B20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 04:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E848E2086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 05:00:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQHh3K0O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D23B20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UlxnlU9Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E848E2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbeIZLJm (ORCPT
+        id S1726744AbeIZLLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 07:09:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37886 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbeIZLJl (ORCPT
+        Wed, 26 Sep 2018 07:11:49 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:1728 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbeIZLLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 07:09:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so25459522wrr.4;
-        Tue, 25 Sep 2018 21:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t/U/3xhzcXZArG3vw7amUM76vNzuqmicA2916lx0mzM=;
-        b=gQHh3K0OyAeJGj/U0JMQgs6VLMjCVSAhfh3zR1vvgXAPOwuo5iOYeIXlUlsoKUVaBE
-         2ED4R3pMEsTHv/giP0X8QI4iNvclaf0hH3gHdcBxgtFMQXnuU3GSZxT3f6MJ2yV6FB2T
-         y3owipyJAdLvdsgET1H0+kp9exbgfMcDNrzGy+eRYxSmfhYpbEz8IKfDn3amVIrxVCnz
-         MRQTtWCrqhRugLcZKbhTjbu4fRk+t6YTHhCp8m++d9m8+SIdztCXHopzCVCL8O54xnwG
-         peBL33DB5XOzBeDC8dc9h+vdaDXdZpmRB+tjXgbifLmJnOZ5PHaClYx1lknYXHH0MZLy
-         pORQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=t/U/3xhzcXZArG3vw7amUM76vNzuqmicA2916lx0mzM=;
-        b=sknTNQyqva3C1UeArJMBlOqO6ii98JY4bsBWhKaCw8+fyyKrazdhyruCmfHyGw0uAm
-         u7OhCC1vqx48Fa6bJdUR0jrWuuohm+xERPU/NLV25UR+UAtB7L72+XgUus0ZYAJMoF+n
-         P69ZP7xmpUet6Mf+qCnje7C7b1EOuvenDq/c0YRCZZixtMiBU76Q21Yeco2Je/gWcAnc
-         qZ12eGddvpDEr65WBCCx09Nv/fcKQ+ka+4g8Y8xu+IfbXgYZvjbUbSGPojlRXeTiFebH
-         QUspOFvBnFtbS4/D7PiRTWp2IQIk1vIO/RZYaFRThkxnOE4Sd1qrRDrKKfHnFZ9msxly
-         1Dvw==
-X-Gm-Message-State: ABuFfohxMbsnNi83sL8pGrvFIjCkbykmzWhfAG8kTPVl70zE/Al1Xeli
-        v2mHXzS883hpHDSjWhE7zNs=
-X-Google-Smtp-Source: ACcGV62xPe1exZf8YDLILgeirznggUwiTOqXepbuRfOKM0rG0usw9wPSajfT6h+D4z2HGOy17TZT6g==
-X-Received: by 2002:adf:e0c4:: with SMTP id e4-v6mr3301233wri.199.1537937917500;
-        Tue, 25 Sep 2018 21:58:37 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id k34-v6sm5528710wre.18.2018.09.25.21.58.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 21:58:36 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
-        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: bfa: Avoid implicit enum conversion in bfad_im_post_vendor_event
-Date:   Tue, 25 Sep 2018 21:54:37 -0700
-Message-Id: <20180926045435.9213-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Wed, 26 Sep 2018 07:11:49 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bab125c0000>; Tue, 25 Sep 2018 22:00:12 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 25 Sep 2018 22:00:46 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 25 Sep 2018 22:00:46 -0700
+Received: from [10.110.48.28] (10.110.48.28) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 26 Sep
+ 2018 05:00:45 +0000
+Subject: Re: [BUG] mm: direct I/O (using GUP) can write to COW anonymous pages
+To:     Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>
+CC:     Hugh Dickins <hughd@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        <sqazi@google.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Miklos Szeredi <miklos@szeredi.hu>, <john.hubbard@gmail.com>
+References: <CAG48ez17Of=dnymzm8GAN_CNG1okMg1KTeMtBQhXGP2dyB5uJw@mail.gmail.com>
+ <alpine.LSU.2.11.1809171628190.2225@eggly.anvils>
+ <CAG48ez1hk5evqQpyvticPzLFOcESfo2NoWnqrLZk6N4PXwdsOw@mail.gmail.com>
+ <20180918095822.GH10257@quack2.suse.cz>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <4a17705b-5ca9-296b-b24e-d2d9f10b4c06@nvidia.com>
+Date:   Tue, 25 Sep 2018 22:00:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180918095822.GH10257@quack2.suse.cz>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1537938012; bh=wqDsxABzUE8c/7q35edv8o0o9cYz8e4VO0t3mC1yF5k=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=UlxnlU9Q1GNa8tY16EcHXLPdirfKofK0NeDcpgzQFSw5ti9Cf+EMUNKe+HMEx9HEA
+         3zopg+Q8iISYSOkZyCYY1MYwuxm3HL+YA8ClS52moTEmQKJRsYuKmYgUQ5Mhyx4Ef1
+         h2qPxEMruQ3ow7DMKjJ2kIElm+//3zrkiEjrMJDN0z9mrMAhJnd2mkZRlzo4/Ua82g
+         CjA40dHKnj+qvSMJNxOBY05lB2X/SKJb5D8vWpEAzFc6QCq9WX2i+lPabYcIJf83Wb
+         oqGdOjqROVn1lbY5jFcIqWBhuBdMAmcJjKEh1jxsH5+0HoSCAb8BLptSSjUIlC8lyP
+         Lzs7EeaHJZVoA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another.
+On 9/18/18 2:58 AM, Jan Kara wrote:
+> On Tue 18-09-18 02:35:43, Jann Horn wrote:
+>> On Tue, Sep 18, 2018 at 2:05 AM Hugh Dickins <hughd@google.com> wrote:
+> 
+> Thanks for CC Hugh.
+> 
+>>> On Mon, 17 Sep 2018, Jann Horn wrote:
+>>>
+>>
+>> Makes sense, I guess.
+>>
+>> I wonder whether there's a concise way to express this in the fork.2
+>> manpage, or something like that. Maybe I'll take a stab at writing
+>> something. The biggest issue I see with documenting this edgecase is
+>> that, as an application developer, if you don't know whether some file
+>> might be coming from a FUSE filesystem that has opted out of using the
+>> disk cache, the "don't do that" essentially becomes "don't read() into
+>> heap buffers while fork()ing in another thread", since with FUSE,
+>> direct I/O can happen even if you don't open files as O_DIRECT as long
+>> as the filesystem requests direct I/O, and get_user_pages_fast() will
+>> AFAIU be used for non-page-aligned buffers, meaning that an adjacent
+>> heap memory access could trigger CoW page duplication. But then, FUSE
+>> filesystems that opt out of the disk cache are probably so rare that
+>> it's not a concern in practice...
+> 
+> So at least for shared file mappings we do need to fix this issue as it's
+> currently userspace triggerable Oops if you try hard enough. And with RDMA
+> you don't even have to try that hard. Properly dealing with private
+> mappings should not be that hard once the infrastructure is there I hope
+> but I didn't seriously look into that. I've added Miklos and John to CC as
+> they are interested as well. John was working on fixing this problem -
+> https://lkml.org/lkml/2018/7/9/158 - but I didn't hear from him for quite a
+> while so I'm not sure whether it died off or what's the current situation.
+> 
 
-drivers/scsi/bfa/bfa_fcs_lport.c:379:26: warning: implicit conversion
-from enumeration type 'enum bfa_lport_aen_event' to different
-enumeration type 'enum bfa_ioc_aen_event' [-Wenum-conversion]
-                                  BFA_AEN_CAT_LPORT, event);
-                                                     ^~~~~
+Hi,
 
-The root cause of these warnings is the bfad_im_post_vendor_event
-function, which expects a value from enum bfa_ioc_aen_event but there
-are multiple instances of values from enums bfa_port_aen_event,
-bfa_audit_aen_event, and bfa_lport_aen_event being used in this
-function.
+Sorry for missing this even though I was CC'd, I only just now noticed it, while
+trying to get caught up again.
 
-Given that this doesn't appear to be a problem since cat helps with
-differentiating the events, just change evt's type to int so that no
-conversion needs to happen and Clang won't warn.
+Anyway, I've been sidetracked for a...while (since July!), but am jumping back 
+in and working on this now. And I've got time allocated for it. So here goes.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/147
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-The alternate way of fixing these warnings is to explicitly cast the
-conversion when calling the function but since there are about 8-10 of
-these warnings, it seems logical to just change the function definiton
-which is cleaner in my opinion.
-
-See commits 3eb95feac113 ("mm/zsmalloc.c: change stat type parameter to
-int") and 04fecbf51b3c ("mm: memcontrol: use int for event/state
-parameter in several functions") for similar fixes.
-
- drivers/scsi/bfa/bfad_im.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/bfa/bfad_im.h b/drivers/scsi/bfa/bfad_im.h
-index e61ed8dad0b4..bd4ac187fd8e 100644
---- a/drivers/scsi/bfa/bfad_im.h
-+++ b/drivers/scsi/bfa/bfad_im.h
-@@ -143,7 +143,7 @@ struct bfad_im_s {
- static inline void bfad_im_post_vendor_event(struct bfa_aen_entry_s *entry,
- 					     struct bfad_s *drv, int cnt,
- 					     enum bfa_aen_category cat,
--					     enum bfa_ioc_aen_event evt)
-+					     int evt)
- {
- 	struct timespec64 ts;
- 
+thanks,
 -- 
-2.19.0
-
+John Hubbard
+NVIDIA
