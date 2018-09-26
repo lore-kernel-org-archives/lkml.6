@@ -2,120 +2,180 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDB8C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D92C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D421E21529
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:59:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D421E21529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D89E21529
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:59:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="WYjCYwJA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D89E21529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbeIZWMu (ORCPT
+        id S1728562AbeIZWNG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:12:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:49094 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeIZWMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:12:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B514F18A;
-        Wed, 26 Sep 2018 08:59:13 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 864623F5BD;
-        Wed, 26 Sep 2018 08:59:10 -0700 (PDT)
-Subject: Re: [PATCH v16 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2
- variant
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
-        robh+dt@kernel.org, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
-        rjw@rjwysocki.net, robdclark@gmail.com, linux-pm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, sboyd@kernel.org,
-        tfiga@chromium.org, jcrouse@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-6-vivek.gautam@codeaurora.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <80f7a7df-9a6d-9de3-4c7c-261d96fb04e4@arm.com>
-Date:   Wed, 26 Sep 2018 16:59:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 18:13:06 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39361 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728492AbeIZWNF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:13:05 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y81-v6so4831367oia.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 08:59:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=g.ncu.edu.tw; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mQcZ8j5UhwURpGkMn96KJZDe+STDgUlhnYmoyLS8St0=;
+        b=WYjCYwJAEwTxGJODEnU9qeGpv//4UNecmgyVMYAHe7UC8KNEBiVtRgyPK8q4T7vWo3
+         lKSNjVYHXKYpyPI/ZvT0YDisogmdpgrNsegP7jZH27A2nzS4rokGF+sCS5d/eMKP8A/e
+         TO/LD2tiyIPR1vac/JXmAOLay5YE8azvjHVn0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mQcZ8j5UhwURpGkMn96KJZDe+STDgUlhnYmoyLS8St0=;
+        b=JRsK6kiFV+BI4qX6hOL+eS7EwY6fYu41Q5Eo7WiTs5+VjecQpCfth/iZSbycboDfK+
+         omTaX3YKJ/MHQoLFp53bkYnARXuO/SLQwyf+gEWn4D5KeJJ1zJ932V5MC0vQBHk3tSgs
+         F7tlw3iTPCA80UDPrEP1ZI7OEi1APbugr8HSfH5ptWwPAlkAwClHAEIEd2xwPkLQwq/q
+         mqb4zlfCou26sFEqQAKUM8LGhKuMcxjmLhYrSfGNPaL3H0XSyz7fLO2SsspX3o1aBuXQ
+         aorcA/jxkJVb5dsxDTqEQxm3KpJNS0kWL5uO9/Z41kVXl2IoQl9EA5RLjkeiACGbHDxU
+         BXfg==
+X-Gm-Message-State: ABuFfojOAsN/d5CdP+/Fjn1yCmOLWwwp3uqLTPC3ThJS/er9zY03mlSG
+        n5W7ecH+ByiX1rpbyEiK9mUU3Q==
+X-Google-Smtp-Source: ACcGV60wc/bDFebGcbkE0L1hemn9RGjJLV3P/spC8Mre3bD3HtdkxSYrJi3euAj7OdidxgkwdxNiNA==
+X-Received: by 2002:aca:cc04:: with SMTP id c4-v6mr939081oig.314.1537977568879;
+        Wed, 26 Sep 2018 08:59:28 -0700 (PDT)
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com. [209.85.210.42])
+        by smtp.gmail.com with ESMTPSA id o206-v6sm1871453oif.7.2018.09.26.08.59.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 08:59:28 -0700 (PDT)
+Received: by mail-ot1-f42.google.com with SMTP id j9-v6so28713721otl.2;
+        Wed, 26 Sep 2018 08:59:28 -0700 (PDT)
+X-Received: by 2002:a9d:439b:: with SMTP id t27-v6mr4798352ote.142.1537977175406;
+ Wed, 26 Sep 2018 08:52:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180830144541.17740-6-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <cover.1535039998.git.starnight@g.ncu.edu.tw> <fc737f3940bbe91341fb15d85ac11931eb56d1fc.1535039998.git.starnight@g.ncu.edu.tw>
+ <cebcea44-9db3-5564-574c-038d9af79995@suse.de>
+In-Reply-To: <cebcea44-9db3-5564-574c-038d9af79995@suse.de>
+From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Date:   Wed, 26 Sep 2018 23:52:50 +0800
+X-Gmail-Original-Message-ID: <CAC=mGzjFHJi1VHKCXa-dM5XBsbXo_s1QqpPdbLF0+3BdhVMR2Q@mail.gmail.com>
+Message-ID: <CAC=mGzjFHJi1VHKCXa-dM5XBsbXo_s1QqpPdbLF0+3BdhVMR2Q@mail.gmail.com>
+Subject: Re: [RFC 1/3 net] lorawan: Add LoRaWAN class module
+To:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc:     netdev@vger.kernel.org,
+        "<linux-arm-kernel@lists.infradead.org\\" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org>," <linux-kernel@vger.kernel.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?Q?Michael_R=C3=B6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        =?UTF-8?Q?Konstantin_B=C3=B6hm?= <konstantin.boehm@ancud.de>,
+        Jan Jongboom <jan.jongboom@arm.com>,
+        Jon Ortego <Jon.Ortego@imst.de>,
+        "linux-kernel@vger.kernel.org>," <contact@snootlab.com>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
+        Alexander Graf <agraf@suse.de>,
+        =?UTF-8?Q?Michal_Kube=C4=8Dek?= <mkubecek@suse.cz>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Steve deRosier <derosier@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Pieter ROBYNS <pieter.robyns@uhasselt.be>,
+        Hasnain Virk <Hasnain.Virk@arm.com>,
+        linux-wpan - ML <linux-wpan@vger.kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Daniele Comel <dcomel@mipot.com>, shess@hessware.de,
+        Xue Liu <liuxuenetmail@gmail.com>, fomi@rakwireless.com,
+        afonsobordado@az8.co
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/08/18 15:45, Vivek Gautam wrote:
-> qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-> clock and power requirements.
-> On msm8996, multiple cores, viz. mdss, video, etc. use this
-> smmu. On sdm845, this smmu is used with gpu.
-> Add bindings for the same.
-> 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   drivers/iommu/arm-smmu.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index 166c8c6da24f..411e5ac57c64 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -119,6 +119,7 @@ enum arm_smmu_implementation {
->   	GENERIC_SMMU,
->   	ARM_MMU500,
->   	CAVIUM_SMMUV2,
-> +	QCOM_SMMUV2,
+Andreas F=C3=A4rber <afaerber@suse.de> =E6=96=BC 2018=E5=B9=B49=E6=9C=8824=
+=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8A=E5=8D=8812:40=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> Hi Jian-Hong,
+>
+> [+ Afonso]
+>
+> Am 23.08.18 um 19:15 schrieb Jian-Hong Pan:
+> > LoRaWAN defined by LoRa Alliance(TM) is the MAC layer over LoRa devices=
+.
+> >
+> > This patch implements part of Class A end-devices features defined in
+> > LoRaWAN(TM) Specification Ver. 1.0.2:
+> > 1. End-device receive slot timing
+> > 2. Only single channel and single data rate for now
+> > 3. Unconfirmed data up/down message types
+> > 4. Encryption/decryption for up/down link data messages
+> >
+> > It also implements the the functions and maps to Datagram socket for
+> > LoRaWAN unconfirmed data messages.
+> >
+> > On the other side, it defines the basic interface and operation
+> > functions for compatible LoRa device drivers.
+> >
+> > Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+> > ---
+> >  include/linux/maclorawan/lora.h | 239 +++++++++++
+> >  net/maclorawan/Kconfig          |  14 +
+> >  net/maclorawan/Makefile         |   2 +
+> >  net/maclorawan/lorawan.h        | 219 ++++++++++
+> >  net/maclorawan/lrwsec.c         | 237 +++++++++++
+> >  net/maclorawan/lrwsec.h         |  57 +++
+> >  net/maclorawan/mac.c            | 552 +++++++++++++++++++++++++
+> >  net/maclorawan/main.c           | 665 ++++++++++++++++++++++++++++++
+> >  net/maclorawan/socket.c         | 700 ++++++++++++++++++++++++++++++++
+> >  9 files changed, 2685 insertions(+)
+> >  create mode 100644 include/linux/maclorawan/lora.h
+>
+> Can we use include/linux/lora/lorawan.h for simplicity?
 
-Hmm, it seems we don't actually need this right now, but maybe that just 
-means there's more imp-def registers and/or errata to come ;)
+Technically, yes
 
-Either way I guess there's no real harm in having it.
+> >  create mode 100644 net/maclorawan/Kconfig
+> >  create mode 100644 net/maclorawan/Makefile
+> >  create mode 100644 net/maclorawan/lorawan.h
+> >  create mode 100644 net/maclorawan/lrwsec.c
+> >  create mode 100644 net/maclorawan/lrwsec.h
+> >  create mode 100644 net/maclorawan/mac.c
+> >  create mode 100644 net/maclorawan/main.c
+> >  create mode 100644 net/maclorawan/socket.c
+>
+> This patch is much too large for me to review...
+>
+> It also doesn't seem to follow the structure I suggested: 802.15.4 has
+> two separate directories, net/ieee802154/ and net/mac802154/. Therefore
+> I had suggested net/maclorawan/ only for code that translates from
+> ETH_P_LORAWAN to ETH_P_LORA socket buffers, i.e. your soft MAC. Generic
+> socket code that applies also to hard MAC drivers I expected to go
+> either to net/lora/lorawan/ or better net/lorawan/ or some other clearly
+> separate location, with its own Kconfig symbol - any reason not to?
+> Consider which parts can be enabled/used independently of each other,
+> then you can put them into two (or more?) different patches.
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Maybe I misunderstood before.  Besides, the header files need to be
+split for different paths or folders.
+Anyway, I will try to separate it into parts in version 2 patches.
 
->   };
->   
->   struct arm_smmu_s2cr {
-> @@ -1970,6 +1971,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
->   ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
->   ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
->   
-> +static const char * const qcom_smmuv2_clks[] = {
-> +	"bus", "iface",
-> +};
-> +
-> +static const struct arm_smmu_match_data qcom_smmuv2 = {
-> +	.version = ARM_SMMU_V2,
-> +	.model = QCOM_SMMUV2,
-> +	.clks = qcom_smmuv2_clks,
-> +	.num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
-> +};
-> +
->   static const struct of_device_id arm_smmu_of_match[] = {
->   	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
->   	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
-> @@ -1977,6 +1989,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
->   	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
->   	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
->   	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-> +	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
->   	{ },
->   };
->   MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
-> 
+> Also please use SPDX license identifiers in your headers.
+> And please don't put the whole world in To, use CC.
+
+Regards,
+Jian-Hong Pan
