@@ -2,98 +2,81 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E6EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF981C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1254214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:36:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="lVXf+hLR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1254214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 755D12089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:38:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 755D12089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeIZSsw (ORCPT
+        id S1727234AbeIZSvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:48:52 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37913 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeIZSsw (ORCPT
+        Wed, 26 Sep 2018 14:51:16 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:57009 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbeIZSvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:48:52 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r77-v6so8743090pgr.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 05:36:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mO8L9+bJkywsmFzPVE8QncFmHyJu8f72Gzq1LR55OfA=;
-        b=lVXf+hLRseNAM7fT0i+gcSGWfsGuDSLAf8TL7X5BFaMTjIBJB/q6h1paSJHfavVw0l
-         mjEjUSfxx0BCSyAamVBmYIbJjy/9z/RxT6UatOS8ObI3mAHdcUvjx8mTpb6T5+v3h0U3
-         pHxx2JPBoiAOV21w2blQFMeGtk+Ii8K8In1Df+/XiHtjlofm2sOgxgOk3iRaJyeYWV1G
-         /FNoTAUC8zEt9NldmBW1C5FOdJO1dHC49cCEfD5Q2uriGxWg67a/unES3yEIL1Si1G4S
-         5J6mph0XXL/Mo6/oYqNsWiFXb3x9IGL0AWbTJ3KrWQNTSFzjgCCYbhkkCBLGijdl7hus
-         3GzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mO8L9+bJkywsmFzPVE8QncFmHyJu8f72Gzq1LR55OfA=;
-        b=NxfC6Kl6CE3/I/zlPy3AyVNBkb64q02+mwppIZdxZJvh5nedWZTgr4AovKqELgv4xI
-         kxELobvwtYrtlVCG0nyUn2ozIq7iZkUyt8Z9e+wykxDK3IsS5jjWxozZHP4PmlS94ILM
-         kW6yHh4ZDnOjImJy1NcKvRWoyuSPKSMHlNHsPuwsR6hepOoJiTNe22FJFHAkRuhOBSem
-         BE9g+COTnn9EhWB6M5pPY6co/ZyAHZTb6TyvfaqqqzyXPLiBCG1LpnTG+0B/oLBpwdVv
-         6MIINwigM2yIKWbRqpjY3w4m0f8lOPUOXjCQ/0nHOq/rKFZjaOyGkxBZEySD5g3Z6Gpc
-         Bn6Q==
-X-Gm-Message-State: ABuFfogMx6l8nEtjCIgns/4Oig2NHRNYMn5hfTbEYivd9TlOpE5klO/c
-        k9D0CmWVTFhrqkisgo28T5VoOA==
-X-Google-Smtp-Source: ACcGV63WxNAbg1muUVwCcuSTiajfM8a6oDUe+JIkNkZXbkUnag9ZiMMDUakeEj7ZNtRF6+ht74zYYg==
-X-Received: by 2002:a62:868b:: with SMTP id x133-v6mr6177816pfd.252.1537965364163;
-        Wed, 26 Sep 2018 05:36:04 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
-        by smtp.gmail.com with ESMTPSA id t12-v6sm5934574pgg.72.2018.09.26.05.36.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 05:36:03 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id A3BFB300029; Wed, 26 Sep 2018 15:35:58 +0300 (+03)
-Date:   Wed, 26 Sep 2018 15:35:58 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        vbabka@suse.cz, akpm@linux-foundation.org, dave.hansen@intel.com,
-        oleg@redhat.com, srikar@linux.vnet.ibm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v11 PATCH 0/3] mm: zap pages with read mmap_sem in munmap for
- large mapping
-Message-ID: <20180926123558.fiutdxeexeiqbndk@kshutemo-mobl1>
-References: <1537376621-51150-1-git-send-email-yang.shi@linux.alibaba.com>
+        Wed, 26 Sep 2018 14:51:16 -0400
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="20538275"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Sep 2018 05:38:27 -0700
+Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch05.mchp-main.com
+ (10.10.76.106) with Microsoft SMTP Server id 14.3.352.0; Wed, 26 Sep 2018
+ 05:38:27 -0700
+Subject: Re: [PATCH] clocksource/drivers/timer-atmel-pit: properly handle
+ error cases
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Cristian Birsan <Cristian.Birsan@microchip.com>
+References: <20180425101439.28908-1-alexandre.belloni@bootlin.com>
+ <20180501083626.GE27619@mai>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <d2b356f9-6a29-0ce2-c511-ac1aff8e91ca@microchip.com>
+Date:   Wed, 26 Sep 2018 14:38:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537376621-51150-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180501083626.GE27619@mai>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 01:03:38AM +0800, Yang Shi wrote:
+Daniel,
+
+On 01/05/2018 at 10:36, Daniel Lezcano wrote:
+> On Wed, Apr 25, 2018 at 12:14:39PM +0200, Alexandre Belloni wrote:
+>> smatch now reports a possible leak:
+>>
+>> smatch warnings:
+>> drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init() warn: possible memory leak of 'data'
+>>
+>> Ensure data is freed before exiting with an error.
+>>
+>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>> ---
 > 
-> Yang Shi (3):
->       mm: mmap: zap pages with read mmap_sem in munmap
->       mm: unmap VM_HUGETLB mappings with optimized path
->       mm: unmap VM_PFNMAP mappings with optimized path
-> 
->  mm/mmap.c | 50 +++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 39 insertions(+), 11 deletions(-)
+> Applied for 4.17-rc
 
-The patchset looks good to me.
+We don't see it in Mainline as of 4.19-rc neither in linux-next. Has it 
+been forgotten?
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
+Thanks for your help. Best regards,
 -- 
- Kirill A. Shutemov
+Nicolas Ferre
