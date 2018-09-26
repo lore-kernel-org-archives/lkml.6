@@ -2,74 +2,107 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBE3C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6B3C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A31214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:53:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A31214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B1AC0214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:53:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1AC0214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbeIZSG1 (ORCPT
+        id S1728311AbeIZSGb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:06:27 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:32829 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726841AbeIZSG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:06:27 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 60B66AD1920EE;
-        Wed, 26 Sep 2018 19:53:43 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 26 Sep 2018 19:53:39 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <fbarrat@linux.vnet.ibm.com>, <andrew.donnellan@au1.ibm.com>,
-        <arnd@arndb.de>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] misc: cxl: Move a deference below a NULL test
-Date:   Wed, 26 Sep 2018 19:41:12 +0800
-Message-ID: <1537962072-13732-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Wed, 26 Sep 2018 14:06:31 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:61288 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726841AbeIZSGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 14:06:30 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42KxDJ2ltcz9ttFk;
+        Wed, 26 Sep 2018 13:53:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id l2SvsBa-D-nu; Wed, 26 Sep 2018 13:53:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42KxDJ2CJZz9ttBS;
+        Wed, 26 Sep 2018 13:53:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 977708B80D;
+        Wed, 26 Sep 2018 13:53:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ciN1N6zkd27z; Wed, 26 Sep 2018 13:53:52 +0200 (CEST)
+Received: from PO15451 (unknown [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4FE0B8B803;
+        Wed, 26 Sep 2018 13:53:52 +0200 (CEST)
+Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Russell Currey <ruscur@russell.cc>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
+ <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
+ <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr>
+ <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc>
+ <30fb4e6b-0981-c53c-a1db-94138eaad268@c-s.fr>
+ <20180926092806.GM23155@gate.crashing.org>
+ <284752d1-6c32-bdca-72d3-4d8616b26fbf@c-s.fr>
+ <87o9ckfpek.fsf@concordia.ellerman.id.au>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <64ead919-df89-bd08-bdd1-4235aae9d7b2@c-s.fr>
+Date:   Wed, 26 Sep 2018 13:53:51 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <87o9ckfpek.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is safe to move a deference below a NULL test.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/misc/cxl/guest.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/cxl/guest.c b/drivers/misc/cxl/guest.c
-index 3bc0c15..559e835 100644
---- a/drivers/misc/cxl/guest.c
-+++ b/drivers/misc/cxl/guest.c
-@@ -1018,11 +1018,11 @@ int cxl_guest_init_afu(struct cxl *adapter, int slice, struct device_node *afu_n
- 
- void cxl_guest_remove_afu(struct cxl_afu *afu)
- {
--	pr_devel("in %s - AFU(%d)\n", __func__, afu->slice);
--
- 	if (!afu)
- 		return;
- 
-+	pr_devel("in %s - AFU(%d)\n", __func__, afu->slice);
-+
- 	/* flush and stop pending job */
- 	afu->guest->handle_err = false;
- 	flush_delayed_work(&afu->guest->work_err);
--- 
-1.7.12.4
+Le 26/09/2018 à 13:50, Michael Ellerman a écrit :
+> Christophe LEROY <christophe.leroy@c-s.fr> writes:
+>> Le 26/09/2018 à 11:28, Segher Boessenkool a écrit :
+>>> On Wed, Sep 26, 2018 at 09:58:30AM +0200, Christophe LEROY wrote:
+>>>> Segher, any idea about this problem ?
+>>>
+>>>>>> arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_printf':
+>>>>>> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
+>>>>>> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88:
+>>>>>> undefined reference to `__stack_chk_fail_local'
+>>>
+>>> Are you building as PIC?  Are you linking libssp_nonshared.a?  Why not?
+>>
+>> Spotted, thanks.
+>>
+>> arch/powerpc/platforms/powermac/Makefile contains:
+>>
+>> CFLAGS_bootx_init.o  		+= -fPIC
+> ...
+>>
+>> Or maybe stack protection on bootx_init doesn't make much sense and we
+>> could just do the following ?
+>>
+>> CFLAGS_bootx_init.o  		+= -fPIC $(call cc-option, -fno-stack-protector)
+> 
+> That would be fine by me.
 
+Yes, that's what I did in v4, sent a few minutes ago. Indeed the same 
+was already done for prom_init, which is similar.
+
+Christophe
