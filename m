@@ -2,122 +2,120 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D8FC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E81E2C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C02121530
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9613D21531
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:57:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L400fiXa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C02121530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ucgv35ff"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9613D21531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbeIZXJh (ORCPT
+        id S1728501AbeIZXLO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:09:37 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45826 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbeIZXJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:09:37 -0400
-Received: by mail-qt1-f196.google.com with SMTP id l2-v6so17990990qtr.12;
-        Wed, 26 Sep 2018 09:55:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6YQ2OPyWppKUABXvHUYjZ2Kc7952HZGCDvUYuvolAjg=;
-        b=L400fiXaXgxa8bUcKpjdr+gIXg5PgsTGn8JRRmrZE/1o1wxUK1carXLe56pwQQAEMZ
-         7fAShznlhZY46FV2Pwcl4QGVp8ctWOCzioymUayTJmenYBRZTYfMK6rch/hHmvRk4oSb
-         eNx6KxqQQVP8nw9thI7ZK2aSlmyeYZAETr2fFktHsxVo6B9oHzpdVU66XZjF9kMQwmNE
-         LvtHHVfgoA5+du+5zANHhHJOL25HODYQtwiJ27vrrpqn7wETicOMx4ce0PcZIm1A5hDa
-         RMJd3TVkiBztWBO2UPa4fr2wCUSUex+/wK6g268d/613V4UJ4Fucxnn+kODbxsGcdydw
-         oWRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6YQ2OPyWppKUABXvHUYjZ2Kc7952HZGCDvUYuvolAjg=;
-        b=a4zaTPf7h1C9ssHZfNf4IC5gOkj3TIRNn6IfWzUGFzKZ6Qk5befYAMFcVzn4KkZn1B
-         oJqINeV94EFrJhPYcx0QkILjUuYe5rwRqQ3AvruLbi+5VLdF7vxkyf0pcfcOWvPh0FYk
-         X32p4YuYgajuf3VhG/jDgxWr+GfdBm+ULfGzspWpT4TRpESNfjHT8b7Jh8aC3zuNW9Xu
-         xpd25u5NHKTooRBBl5ADrF6exf2ksfIEIOPfavm83BrPxPKH+ZbHGl/fMISTde6I5CHy
-         AIGz7RDVc1ZXacgLyG45bJ2J8aszaDPHKcB+HVCd0pMbgxqNVqRJl7cstL9hHw56j39k
-         YXwA==
-X-Gm-Message-State: ABuFfohUOoZa4NWm0LC6gE0sgs/ipt9Mpwvp4OY6L6mLFNE75kyO1yRC
-        fgXbxBiVqB0LYZeqbjUZpQhD/2HbHgdrJ7vyor0=
-X-Google-Smtp-Source: ACcGV60ncgv7DJH1jsLsERfSnE5ZdJmFqf4nR55kZx1EQTm1QdJiVzL6RDKHh/FaAm0/Ogn0h3lKYpiibl1QuygfL4I=
-X-Received: by 2002:ac8:2f86:: with SMTP id l6-v6mr5146248qta.83.1537980945433;
- Wed, 26 Sep 2018 09:55:45 -0700 (PDT)
+        Wed, 26 Sep 2018 19:11:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbeIZXLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:11:14 -0400
+Received: from localhost (unknown [64.22.249.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76D9621531;
+        Wed, 26 Sep 2018 16:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537981042;
+        bh=XeUQWtqRhYHhZN7bkClx8wCup4APVtIgIyW6VGvib9o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ucgv35ffbKYyu0I33AJ1cXIn7byWu33jQQTK/iRVUaYvUh72mF6uyc06trB/YenFR
+         HWtjhJhR5Exn0SC7qyn4wQsnvcCF8HlYnL/quHq2nLKNIx3uToo5tHLrsKGJ+X48lj
+         VJvoQC0poNX/0ixUQXAjMxiAQm0xHxzsbZcwRFvg=
+Date:   Wed, 26 Sep 2018 11:57:21 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Bin Meng <bmeng.cn@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Thomas Jarosch <thomas.jarosch@intra2net.com>,
+        stable <stable@vger.kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious
+ interrupt" quirk
+Message-ID: <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
+References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
 MIME-Version: 1.0
-References: <20180925193418.28493-1-stuart.hayes@dell.com> <CAHp75Ve=ZnkBbdG3Myu1qzubr6+q74Q0u9pR7+nHXG=yAO-0rA@mail.gmail.com>
- <2c21dba5f4074bc0861277ec5701d2ff@ausx13mpc120.AMER.DELL.COM>
-In-Reply-To: <2c21dba5f4074bc0861277ec5701d2ff@ausx13mpc120.AMER.DELL.COM>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 19:55:34 +0300
-Message-ID: <CAHp75VfbdTxywsamjM=z-3kC__4_2_6i4LD9nD0yOSJayitS5A@mail.gmail.com>
-Subject: Re: [PATCH 0/5] Update and move Dell drivers dell_rbu and dcdbas
-To:     Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 5:50 PM <Mario.Limonciello@dell.com> wrote:
->
-> > On Tue, Sep 25, 2018 at 10:34 PM Stuart Hayes <stuart.w.hayes@gmail.com>
-> > wrote:
-> > >
-> > > From: Stuart Hayes <stuart.w.hayes@gmail.com>
-> > >
-> > > The dell_rbu and dcdbas drivers need some changes, and should be moved to
-> > > drivers/platform/x86.  Additionally, dell_rbu needs a maintainer, and the
-> > > listed maintainer for dcdbas is inactive and needs to be changed.
-> >
-> > I pushed this series to my review and testing queue to allow bots play with.
-> >
-> > But.
-> > Please, add commit messages to patches 4 and 5 (I can't take w/o them).
-> > Collect Doug's tag that proves he is okay with the change (I remember
-> > he answered something to the old thread, though I don't remember the
-> > details except annoying footer which should not be up in open source
-> > mailing lists).
-> >
-> > So, while bots are playing with the code I'm waiting for v2 of this
-> > with above addressed.
-> > Thanks!
-> >
->
-> Just so it's extra clear, you want an "Acked-by" tag from Doug W in a public
-> forum?  Or he should be CC to that patch and needs to give the acked-by
-> tag in the V2?
->
-> He already did respond in a public forum indicating this although he didn't
-> "generate a tag" for that:
-> https://www.spinics.net/lists/platform-driver-x86/msg16336.html
+[+cc Intel DRM maintainers, etc]
 
-Thanks, that is what I need.
+On Wed, Sep 26, 2018 at 08:14:01AM -0700, Bin Meng wrote:
+> Add more PCI IDs to the Intel GPU "spurious interrupt" quirk table,
+> which are known to break.
 
-> Can Stuart just add the "Acked-by" tag himself to the commit in V2 at this
-> point considering that?
+Do you have a reference for this?  Any public bug reports, bugzilla,
+Intel spec reference or errata?  "Which are known to break" is pretty
+vague.
 
-Yes.
+> See commit f67fd55fa96f ("PCI: Add quirk for still enabled interrupts
+> on Intel Sandy Bridge GPUs"), and commit 7c82126a94e6 ("PCI: Add new
+> ID for Intel GPU "spurious interrupt" quirk") for some history.
+> 
+> Based on current findings, it is highly possible that all Intel
+> 1st/2nd/3rd generation Core processors' IGD has such quirk.
 
->  Or do you need patchwork to pick it up and apply it?
+Can you include a reference to these "current findings"?  I assume you
+have bug reports that include the device IDs you're adding?  If not,
+how did you build this list of new IDs?
 
-No need. Manual update would work to me.
+The function comment added by f67fd55fa96f ("PCI: Add quirk for still
+enabled interrupts on Intel Sandy Bridge GPUs") suggests that this is
+actually a BIOS issue, not a hardware erratum, i.e., I don't see
+anything there that suggests a hardware defect.
 
--- 
-With Best Regards,
-Andy Shevchenko
+But there must be a hole somewhere -- the kernel can't be expected to
+disable interrupts in device-specific ways when there's no driver
+loaded.  Maybe it's simply a BIOS defect or maybe there's some
+interrupt or _PRT-related setup we're missing.
+
+> Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+> Cc: <stable@vger.kernel.org> # v3.4+
+> ---
+> 
+>  drivers/pci/quirks.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 6bc27b7..c0673a7 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -3190,7 +3190,11 @@ static void disable_igfx_irq(struct pci_dev *dev)
+>  
+>  	pci_iounmap(dev, regs);
+>  }
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
+>  
+> -- 
+> 2.7.4
+> 
