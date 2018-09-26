@@ -2,109 +2,162 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40023C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DA2C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF82C214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25498214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:56:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLH2UXRT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF82C214DC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qIWeKhIG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25498214DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeIZVIu (ORCPT
+        id S1727845AbeIZVJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:08:50 -0400
-Received: from mail-vs1-f46.google.com ([209.85.217.46]:42696 "EHLO
-        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeIZVIu (ORCPT
+        Wed, 26 Sep 2018 17:09:26 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54317 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbeIZVJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:08:50 -0400
-Received: by mail-vs1-f46.google.com with SMTP id w16-v6so6619973vso.9
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:55:30 -0700 (PDT)
+        Wed, 26 Sep 2018 17:09:26 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c14-v6so2625548wmb.4;
+        Wed, 26 Sep 2018 07:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=x1Vz3KFDQdLEHkcEOLuGZECs8D2WF6kywoplavOvh78=;
-        b=cLH2UXRTKEiwIcfm8xEh5rMoP2Vw8Gizb57RlgwtbrXLSwuzWTHBjNiiqra+SavVof
-         hhIPsQ/hdhPMB4bEXL3x/YzRTg1x/hyz2yhR4rAyPqXEUTAtLzlA2p+8BPR2MerNOcfg
-         chzq68tK79fBuno5t/UHNPo2oMnhKD5CEfkACyZ3sgjpeCb2Ved/Y/t6Kh4W+SpKxF/+
-         eAkJeLjLiqdEq1fOJi12a4kzHZ8jKnn/TqliR/fJA0YhLemr1Oi4hoLxvEC4jyDpBa85
-         HHtIU8cCI+CMCFUDmhvkK0Mp/kzn9cukkMZBXMRTOTCELt5N9XtRJMMFyYnaHy7HxX0A
-         L1gA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pvAbw60RfkuxAIxGXNkj555muDFGPzCgZBA0o9zmpFk=;
+        b=qIWeKhIGxZukQQiH3cOzpucHI8xtGDwfpxzjlFVIUBEK/Co2JvlwwnSA2wWm/6BMqx
+         Uatzm9LBqcYRnnb9QRbwnGx7fH6Ra5hndIZy2DpHfLJQTV9IhKzWcX3tumXGXzf6RjUF
+         56e5E73KWkAB2rHOkTrofus8qSYS0VCgiWyyP1SMUbtsQKAZcTSxeTP5ajaC+jM5eiv+
+         FrV3A+AhUQxHUjEnWArGZL8qeOUVoDGwReZZ7kp9US/sqMTAv1r2qlOON1XpWr+bcMOH
+         cIjk7nK0TKLH4hJr7T6WLNNtoXiM/b5ZCS9VtDqA4QoVsQXZVkLny0ezdoaAPLdXu2Ns
+         LWrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=x1Vz3KFDQdLEHkcEOLuGZECs8D2WF6kywoplavOvh78=;
-        b=OAAY3NKHeir7xrMP+i8AYsyyB0PwpdtsP2BxL0Y/d6uT/mBGrZ6SieytYEoYG1wUZc
-         3OsUJLqEWDZBZ+UFUQWwm8vupT6v/ShQAiYInnoe8makPTzj9mJU4NK1XUu939Q97fZU
-         mI0rMXO8uK2QLoahhsAUvIpFpnmkxpk2bEO/GZHA81U6YDKBppH7JRuN503SZBDi0pG0
-         lLs8B//OdsQ02xCWONxq18YicL8S5EnRG2GguZslepwie0bbqET3WnFO6B9iDXH/Hmd0
-         EI9EpetYFWORBUmuDcFSXX7bNHV9uSJRplF67AJzySTGDZG/uKa0h/4W96/wxp4f8UFl
-         hkpg==
-X-Gm-Message-State: ABuFfoikBkEYsmK4vLHjMrWOP9jadylsJo7kBYENkTCypTXv29ikMu4Y
-        UH4103HUC6tWQP3KH6C6YYmkFrbsPYYWBslgwi/dKWI+
-X-Google-Smtp-Source: ACcGV61bL0ORiSHcGoJC/hiIRHTjigtE9g5qPjVV6sLW5d9gVN3Zdd94eWAdjIbNapqVttV+k2ZO+22UoGE8Y1YMpI0=
-X-Received: by 2002:a67:8906:: with SMTP id l6-v6mr1770338vsd.239.1537973729979;
- Wed, 26 Sep 2018 07:55:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pvAbw60RfkuxAIxGXNkj555muDFGPzCgZBA0o9zmpFk=;
+        b=rjpiqjte9BjB2WHkpSHPED81tSf9d0uOPUQvfpBUddIsAI/kM7dttr2YYaePmZdV4x
+         uZwcW9QDbq9xhtDTrQnI1A1XqyqjjNa7MIcZHAQ/UJkV3JjKEBbKv4BkkGCfG7JCOKRK
+         L5IAwcgivyyw5tUGBvLfxmeJFuIBkVyldYNwDJV28DIZ6uvwPR0MEz3yET/3BMGtVJox
+         kOsnZ19hD4nDEio4mQTLWuKNCg/yQKCdX3j2rIAw/kCve850kQTSR3SDgGzUPaDYaU3H
+         XwkHpa5HM0FZ49jMOGObE8Nt9uyDfGOukCu9FWPdxkZ3mR2MOVUc8VXXaKp8DHrF86Da
+         dMtA==
+X-Gm-Message-State: ABuFfogiGHRxuQ4f6uPq+KM+sTtC/mhEGk+PKVsynv/uItqjtBXg5MFt
+        9UeLnd6jk6xIuB/K9a7L5sg=
+X-Google-Smtp-Source: ACcGV61Dbhr7jc/+TQXTh24tHOLApWJsvqI1R/kwC7RRSyUBydUhyoI5MtBkfhvWstnHLUfAdvdadg==
+X-Received: by 2002:a1c:4887:: with SMTP id v129-v6mr4429000wma.139.1537973763644;
+        Wed, 26 Sep 2018 07:56:03 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id z16-v6sm4481393wrq.78.2018.09.26.07.56.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 07:56:03 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 16:56:02 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 00/19] ARM: dts: tegra: apalis-tk1: minor revamp
+Message-ID: <20180926145602.GF12980@ulmo>
+References: <20180901130504.14318-1-marcel@ziswiler.com>
 MIME-Version: 1.0
-From:   =?UTF-8?B?0JTQvNC40YLRgNC40Lkg0JvQtdC+0L3RgtGM0LXQsg==?= 
-        <dm.leontiev7@gmail.com>
-Date:   Wed, 26 Sep 2018 17:55:18 +0300
-Message-ID: <CA+JonM0_4GSeQ5veX3aDjJ_RBoL065YLNFMuyVftQBn-pCcA=A@mail.gmail.com>
-Subject: Maybe a copyright attack on linux
-To:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yH1ZJFh+qWm+VodA"
+Content-Disposition: inline
+In-Reply-To: <20180901130504.14318-1-marcel@ziswiler.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Or: "Why you should not use "kill switch" option proposed by smdy to
-protest against CoC"
 
-Hello.
+--yH1ZJFh+qWm+VodA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm neither a great software developer nor a lawyer, but I'm not a
-novice and I'm very annoyed whan I see this:
+On Sat, Sep 01, 2018 at 03:04:45PM +0200, Marcel Ziswiler wrote:
+> This series is a minor overhaul for the Toradex Apalis TK1 system on
+> module.
+>=20
+> Changes in v2:
+> - Add Rob's reviewed-by.
+> - New patch as suggested by Rob.
+> - New patch.
+> - Get rid of fake clocks simple bus as suggested by Rob.
+> - Change cover-letter subject to indicate minor revamp.
+> - Drop "[PATCH 02/15] ARM: tegra: apalis-tk1: reorder pcie properties"
+>   as requested by Stefan.
+> - Drop "[PATCH 13/15] ARM: tegra: apalis-tk1: fix pcie switch vendor
+>   compatible" in favour of the new "[PATCH v2 26/34] dt-bindings: add
+>   broadcom (formerly plx technology) vendor prefix" posted earlier as
+>   part of the apalis_t30 revamp v2 as suggested by Stefan.
+>=20
+> Marcel Ziswiler (19):
+>   ARM: tegra: apalis-tk1: add local-mac-address property
+>   ARM: tegra: apalis-tk1: reorder host1x/hdmi properties
+>   ARM: tegra: apalis-tk1: reorder padctl properties
+>   ARM: tegra: apalis-tk1: regulator clean-up
+>   ARM: tegra: apalis-tk1: add missing regulators
+>   ARM: tegra: apalis-tk1: drop unused pinmux label
+>   ARM: tegra: apalis-tk1: white-space clean-up
+>   ARM: tegra: apalis-tk1: reorder backlight properties
+>   ARM: tegra: apalis-tk1: add proper emmc vmmc and vqmmc supplies
+>   ARM: tegra: apalis-tk1: enable emmc ddr52 mode
+>   ARM: tegra: apalis-tk1: add toradex,apalis-tk1-v1.2 compatible
+>   ARM: tegra: apalis-tk1: reorder cpu dfll clock properties
+>   ARM: tegra: apalis-tk1: reorder SD card properties
+>   ARM: tegra: apalis-tk1: drop module level model and compatible
+>   ARM: tegra: apalis-tk1: drop obsolete spidev nodes
+>   ARM: tegra: apalis-tk1: replace underscores in node names with dashes
+>   ARM: tegra: apalis-tk1: get rid of fake clocks simple bus
+>   ARM: tegra: apalis-tk1: shorten temperature-sensor node
+>   ARM: tegra: apalis-tk1: drop unused hdmi_ddc label
+>=20
+>  Documentation/devicetree/bindings/arm/tegra.txt |   2 +
+>  arch/arm/boot/dts/tegra124-apalis-eval.dts      |  40 ++-
+>  arch/arm/boot/dts/tegra124-apalis-v1.2-eval.dts |  43 ++-
+>  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi     | 452 ++++++++++++------=
+------
+>  arch/arm/boot/dts/tegra124-apalis.dtsi          | 451 +++++++++++-------=
+-----
+>  5 files changed, 508 insertions(+), 480 deletions(-)
 
-https://www.reddit.com/r/programming/comments/9iqr3u/linux_developers_threaten_to_pull_kill_switch/
+Applied, thanks.
 
-Or something like this:
+Thierry
 
-https://lulz.com/linux-devs-threaten-killswitch-coc-controversy-1252/
-(sorry, lazy to google other links)
+--yH1ZJFh+qWm+VodA
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Anonymous posts about "linux developers" who want to kill linux(kill
-switch means kill linux) are extremely dangerous because some of
-developers may "revoke" their commits and here is why whis is wrong:
+-----BEGIN PGP SIGNATURE-----
 
-First: even it you have right to revoke the patches, it will be linux
-affected, not the sjws.
-Second: even if someone claims that you can revoke your patches
-because "it is a contract breach", it will be you who broke the
-contract.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlurngEACgkQ3SOs138+
+s6E4YA/+Igpqe3MR/FZa+1S1ez0eA9V8fpZ6QNlHDZQVvgDhFAHiqFFJ2TPORzZU
+ORqCWuTaqh+CezOf8UKGh+PHX3U6RuakeSNOauvX2dDo6FfLjJ34XQGrB14zWFwL
+EhVvo6huUK0p53ksNPGZ4lDHako5u2T7HSpvxWvgD30B4q4ZIMUrsliC1E6mWsoI
+yS4aUuGyH+b5ulI/W8l6GidsTdvJ4xnrmZjk1siJcARaV3v8Bub6J9EgF5kxLzXf
+oF1PWDrXKIyq924rZzxFpdHUaBOuJkpNLz2rLLHaG1sYiHqe5vdSrJT4N6OgYQHK
+N5KK8wuptP87dUraeE1tnirkz4pqgAlB/VT3PVB9rWKYqxBmkdDffUJgV/JM3OGl
+a2LbBQfRhDHHIK5BbP+A4Hqbr9BCX+ocY9RfcrDKAbu8aLjKP5V6J/Vkq7ZycHVi
+jYUQJ64md2VF6j+Auu30y5BKZLLxNNCZoK1Y81w0YcHgiqRxYw9CNmln0g7WsfoE
+vS0c24BPBTIzOMlLKzv/Fyq85YzzwmACgsmTwCbiC9uqifURH4byywymSPQlHT4k
+UJstH3p/J34AdmY0PpVhfjfG2IuWcg1tYJOBu97YR9i2wJHx7+4x9JuOAJaz+PPB
+6lf8eQCO3VvrnxCvOhDSspjYGPTQPjs7tCIcYifAPB6vi+B0NWw=
+=QMGR
+-----END PGP SIGNATURE-----
 
-And the second case is the worst, because I am aftaid it can be used
-as a reason for other kernel commiters to make their code proprietary.
-As far as I know, most of linux sources are made by developers who are
-either paid by corporations or are employeed by the corpotations.
-
-What if they own 90%(or 80 or 70) of linux code? They can say: oh
-look, the essential patches were revoked and it is a breach of
-contract, so we revoke 90-80-70% of linux source(modern linux
-source!). The "klll switch" can kill linux. Do not use it!
-
-Please do not try to "revoke" your commits. It's not an option, it's
-something bad people are trying you convince you.
-
-Sorry for bad english.
-
-Regards,
-Dmitry
+--yH1ZJFh+qWm+VodA--
