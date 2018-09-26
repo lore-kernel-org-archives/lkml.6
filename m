@@ -7,351 +7,534 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EA5ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8127DC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8790721528
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 162A22152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRqeyNxr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8790721528
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1vKNOCSJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162A22152C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbeIZW0L (ORCPT
+        id S1728604AbeIZW0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:26:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54496 "EHLO mail.kernel.org"
+        Wed, 26 Sep 2018 18:26:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728419AbeIZW0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:26:11 -0400
+        id S1727442AbeIZW0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:26:12 -0400
 Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8508C21530;
-        Wed, 26 Sep 2018 16:12:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A41992152F;
+        Wed, 26 Sep 2018 16:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537978350;
-        bh=WA++Pe49aFFSJnBdOQCh7hkvXAGxeuHXw7Q2vCVcSes=;
+        s=default; t=1537978352;
+        bh=c2NAX9JmUJnvN3VWPEI/Urn/ECzF9hVXLsvfQok3SRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WRqeyNxrmRc/2h5zD0Aq/Zbig6Q2GS65GMzeop42Fjk3XsdBYoE83u7ZTb/vYmhHJ
-         R4oPYQUldHQMviSzaFO5PEk6uOFr+qPRVuvmxZTTW99IXxHzY7gOu8b7DbUZ61xDVI
-         zhJzW5P2UEngB1g/VOlJPckgJVChLR/waQY3UJ+Y=
+        b=1vKNOCSJXyBTdrkkmMKjURihp12IlD7NkOijmG/Othq+CukLW6jMLaGUi4jfPt2zB
+         P/OrhWyiHhMMlTs48qCOPEmVGIpnV2NKQoZ6qS3yuhFenZ+19S+pLKw65B0W+UfIYL
+         a5VPbhEc8c3F+wS9DSSpS/Z9Cz/zAMjo71OyF28Y=
 From:   Alan Tull <atull@kernel.org>
 To:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Federico Vaga <federico.vaga@cern.ch>,
         linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
         linux-doc@vger.kernel.org, Alan Tull <atull@kernel.org>
-Subject: [PATCH v3 2/4] fpga: bridge: add devm_fpga_bridge_create
-Date:   Wed, 26 Sep 2018 11:12:20 -0500
-Message-Id: <1537978342-17697-3-git-send-email-atull@kernel.org>
+Subject: [PATCH v3 4/4] docs: fpga: document programming fpgas using regions
+Date:   Wed, 26 Sep 2018 11:12:22 -0500
+Message-Id: <1537978342-17697-5-git-send-email-atull@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537978342-17697-1-git-send-email-atull@kernel.org>
 References: <1537978342-17697-1-git-send-email-atull@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devm_fpga_bridge_create() which is the managed
-version of fpga_bridge_create().
+Clarify the intention that interfaces and upper layers use
+regions rather than managers directly.
 
-Change current bridge drivers to use
-devm_fpga_bridge_create().
+Rearrange API documentation to better group the API functions
+used to create FPGA mgr/bridge/regions and the API used for
+programming FPGAs.
 
 Signed-off-by: Alan Tull <atull@kernel.org>
 Suggested-by: Federico Vaga <federico.vaga@cern.ch>
-Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v2: add suggested-by
-v3: remove some unclear documentation about fpga_bridge_unregister
-    add Acked-by
+v2: Add suggested-by
+    s/a FPGA/an FPGA/
+    document freeing the fpga_mgr_info on success path
+    minor formatting fixes and suggested edits
+v3: no changes
 ---
- Documentation/driver-api/fpga/fpga-bridge.rst |  3 ++
- drivers/fpga/altera-fpga2sdram.c              |  8 ++--
- drivers/fpga/altera-freeze-bridge.c           | 13 ++---
- drivers/fpga/altera-hps2fpga.c                |  7 ++-
- drivers/fpga/dfl-fme-br.c                     | 11 ++---
- drivers/fpga/fpga-bridge.c                    | 68 +++++++++++++++++++++++----
- drivers/fpga/xilinx-pr-decoupler.c            |  4 +-
- include/linux/fpga/fpga-bridge.h              |  4 ++
- 8 files changed, 80 insertions(+), 38 deletions(-)
+ Documentation/driver-api/fpga/fpga-bridge.rst      |  38 ++-----
+ Documentation/driver-api/fpga/fpga-mgr.rst         | 117 ++-------------------
+ Documentation/driver-api/fpga/fpga-programming.rst | 107 +++++++++++++++++++
+ Documentation/driver-api/fpga/fpga-region.rst      |  92 ++++++++--------
+ Documentation/driver-api/fpga/index.rst            |   2 +
+ Documentation/driver-api/fpga/intro.rst            |   2 +-
+ 6 files changed, 171 insertions(+), 187 deletions(-)
+ create mode 100644 Documentation/driver-api/fpga/fpga-programming.rst
 
 diff --git a/Documentation/driver-api/fpga/fpga-bridge.rst b/Documentation/driver-api/fpga/fpga-bridge.rst
-index 2c2aaca..ebbcbde 100644
+index ebbcbde..71c5a40 100644
 --- a/Documentation/driver-api/fpga/fpga-bridge.rst
 +++ b/Documentation/driver-api/fpga/fpga-bridge.rst
-@@ -11,6 +11,9 @@ API to implement a new FPGA bridge
-    :functions: fpga_bridge_ops
+@@ -4,6 +4,12 @@ FPGA Bridge
+ API to implement a new FPGA bridge
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++* struct :c:type:`fpga_bridge` — The FPGA Bridge structure
++* struct :c:type:`fpga_bridge_ops` — Low level Bridge driver ops
++* :c:func:`devm_fpga_bridge_create()` — Allocate and init a bridge struct
++* :c:func:`fpga_bridge_register()` — Register a bridge
++* :c:func:`fpga_bridge_unregister()` — Unregister a bridge
++
+ .. kernel-doc:: include/linux/fpga/fpga-bridge.h
+    :functions: fpga_bridge
+ 
+@@ -14,39 +20,7 @@ API to implement a new FPGA bridge
+    :functions: devm_fpga_bridge_create
  
  .. kernel-doc:: drivers/fpga/fpga-bridge.c
-+   :functions: devm_fpga_bridge_create
-+
-+.. kernel-doc:: drivers/fpga/fpga-bridge.c
-    :functions: fpga_bridge_create
+-   :functions: fpga_bridge_create
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: fpga_bridge_free
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+    :functions: fpga_bridge_register
  
  .. kernel-doc:: drivers/fpga/fpga-bridge.c
-diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
-index 23660cc..a78e49c 100644
---- a/drivers/fpga/altera-fpga2sdram.c
-+++ b/drivers/fpga/altera-fpga2sdram.c
-@@ -121,18 +121,16 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 	/* Get f2s bridge configuration saved in handoff register */
- 	regmap_read(sysmgr, SYSMGR_ISWGRP_HANDOFF3, &priv->mask);
+    :functions: fpga_bridge_unregister
+-
+-API to control an FPGA bridge
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+-You probably won't need these directly.  FPGA regions should handle this.
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: of_fpga_bridge_get
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: fpga_bridge_get
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: fpga_bridge_put
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: fpga_bridge_get_to_list
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: of_fpga_bridge_get_to_list
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: fpga_bridge_enable
+-
+-.. kernel-doc:: drivers/fpga/fpga-bridge.c
+-   :functions: fpga_bridge_disable
+diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
+index db8885e..576f194 100644
+--- a/Documentation/driver-api/fpga/fpga-mgr.rst
++++ b/Documentation/driver-api/fpga/fpga-mgr.rst
+@@ -98,67 +98,19 @@ The ops include a .state function which will determine the state the FPGA is in
+ and return a code of type enum fpga_mgr_states.  It doesn't result in a change
+ in state.
  
--	br = fpga_bridge_create(dev, F2S_BRIDGE_NAME,
--				&altera_fpga2sdram_br_ops, priv);
-+	br = devm_fpga_bridge_create(dev, F2S_BRIDGE_NAME,
-+				     &altera_fpga2sdram_br_ops, priv);
- 	if (!br)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, br);
- 
- 	ret = fpga_bridge_register(br);
--	if (ret) {
--		fpga_bridge_free(br);
-+	if (ret)
- 		return ret;
--	}
- 
- 	dev_info(dev, "driver initialized with handoff %08x\n", priv->mask);
- 
-diff --git a/drivers/fpga/altera-freeze-bridge.c b/drivers/fpga/altera-freeze-bridge.c
-index ffd586c..dd58c4a 100644
---- a/drivers/fpga/altera-freeze-bridge.c
-+++ b/drivers/fpga/altera-freeze-bridge.c
-@@ -213,7 +213,6 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
- 	struct fpga_bridge *br;
- 	struct resource *res;
- 	u32 status, revision;
+-How to write an image buffer to a supported FPGA
+-------------------------------------------------
+-
+-Some sample code::
+-
+-	#include <linux/fpga/fpga-mgr.h>
+-
+-	struct fpga_manager *mgr;
+-	struct fpga_image_info *info;
 -	int ret;
- 
- 	if (!np)
- 		return -ENODEV;
-@@ -245,20 +244,14 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
- 
- 	priv->base_addr = base_addr;
- 
--	br = fpga_bridge_create(dev, FREEZE_BRIDGE_NAME,
--				&altera_freeze_br_br_ops, priv);
-+	br = devm_fpga_bridge_create(dev, FREEZE_BRIDGE_NAME,
-+				     &altera_freeze_br_br_ops, priv);
- 	if (!br)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, br);
- 
--	ret = fpga_bridge_register(br);
--	if (ret) {
--		fpga_bridge_free(br);
--		return ret;
+-
+-	/*
+-	 * Get a reference to FPGA manager.  The manager is not locked, so you can
+-	 * hold onto this reference without it preventing programming.
+-	 *
+-	 * This example uses the device node of the manager.  Alternatively, use
+-	 * fpga_mgr_get(dev) instead if you have the device.
+-	 */
+-	mgr = of_fpga_mgr_get(mgr_node);
+-
+-	/* struct with information about the FPGA image to program. */
+-	info = fpga_image_info_alloc(dev);
+-
+-	/* flags indicates whether to do full or partial reconfiguration */
+-	info->flags = FPGA_MGR_PARTIAL_RECONFIG;
+-
+-	/*
+-	 * At this point, indicate where the image is. This is pseudo-code; you're
+-	 * going to use one of these three.
+-	 */
+-	if (image is in a scatter gather table) {
+-
+-		info->sgt = [your scatter gather table]
+-
+-	} else if (image is in a buffer) {
+-
+-		info->buf = [your image buffer]
+-		info->count = [image buffer size]
+-
+-	} else if (image is in a firmware file) {
+-
+-		info->firmware_name = devm_kstrdup(dev, firmware_name, GFP_KERNEL);
+-
 -	}
 -
--	return 0;
-+	return fpga_bridge_register(br);
- }
- 
- static int altera_freeze_br_remove(struct platform_device *pdev)
-diff --git a/drivers/fpga/altera-hps2fpga.c b/drivers/fpga/altera-hps2fpga.c
-index a974d3f..77b95f2 100644
---- a/drivers/fpga/altera-hps2fpga.c
-+++ b/drivers/fpga/altera-hps2fpga.c
-@@ -180,7 +180,8 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	br = fpga_bridge_create(dev, priv->name, &altera_hps2fpga_br_ops, priv);
-+	br = devm_fpga_bridge_create(dev, priv->name,
-+				     &altera_hps2fpga_br_ops, priv);
- 	if (!br) {
- 		ret = -ENOMEM;
- 		goto err;
-@@ -190,12 +191,10 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 
- 	ret = fpga_bridge_register(br);
- 	if (ret)
--		goto err_free;
-+		goto err;
- 
- 	return 0;
- 
--err_free:
--	fpga_bridge_free(br);
- err:
- 	clk_disable_unprepare(priv->clk);
- 
-diff --git a/drivers/fpga/dfl-fme-br.c b/drivers/fpga/dfl-fme-br.c
-index 7cc041d..3ff9f3a 100644
---- a/drivers/fpga/dfl-fme-br.c
-+++ b/drivers/fpga/dfl-fme-br.c
-@@ -61,7 +61,6 @@ static int fme_br_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct fme_br_priv *priv;
- 	struct fpga_bridge *br;
--	int ret;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -69,18 +68,14 @@ static int fme_br_probe(struct platform_device *pdev)
- 
- 	priv->pdata = dev_get_platdata(dev);
- 
--	br = fpga_bridge_create(dev, "DFL FPGA FME Bridge",
--				&fme_bridge_ops, priv);
-+	br = devm_fpga_bridge_create(dev, "DFL FPGA FME Bridge",
-+				     &fme_bridge_ops, priv);
- 	if (!br)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, br);
- 
--	ret = fpga_bridge_register(br);
--	if (ret)
--		fpga_bridge_free(br);
+-	/* Get exclusive control of FPGA manager */
+-	ret = fpga_mgr_lock(mgr);
 -
--	return ret;
-+	return fpga_bridge_register(br);
- }
+-	/* Load the buffer to the FPGA */
+-	ret = fpga_mgr_buf_load(mgr, &info, buf, count);
+-
+-	/* Release the FPGA manager */
+-	fpga_mgr_unlock(mgr);
+-	fpga_mgr_put(mgr);
+-
+-	/* Deallocate the image info if you're done with it */
+-	fpga_image_info_free(info);
+-
+ API for implementing a new FPGA Manager driver
+ ----------------------------------------------
  
- static int fme_br_remove(struct platform_device *pdev)
-diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
-index c983dac..80bd8f1 100644
---- a/drivers/fpga/fpga-bridge.c
-+++ b/drivers/fpga/fpga-bridge.c
-@@ -324,6 +324,9 @@ ATTRIBUTE_GROUPS(fpga_bridge);
-  * @br_ops:	pointer to structure of fpga bridge ops
-  * @priv:	FPGA bridge private data
-  *
-+ * The caller of this function is responsible for freeing the bridge with
-+ * fpga_bridge_free().  Using devm_fpga_bridge_create() instead is recommended.
-+ *
-  * Return: struct fpga_bridge or NULL
-  */
- struct fpga_bridge *fpga_bridge_create(struct device *dev, const char *name,
-@@ -378,8 +381,8 @@ struct fpga_bridge *fpga_bridge_create(struct device *dev, const char *name,
- EXPORT_SYMBOL_GPL(fpga_bridge_create);
++* ``fpga_mgr_states`` —  Values for :c:member:`fpga_manager->state`.
++* struct :c:type:`fpga_manager` —  the FPGA manager struct
++* struct :c:type:`fpga_manager_ops` —  Low level FPGA manager driver ops
++* :c:func:`devm_fpga_mgr_create` —  Allocate and init a manager struct
++* :c:func:`fpga_mgr_register` —  Register an FPGA manager
++* :c:func:`fpga_mgr_unregister` —  Unregister an FPGA manager
++
++.. kernel-doc:: include/linux/fpga/fpga-mgr.h
++   :functions: fpga_mgr_states
++
+ .. kernel-doc:: include/linux/fpga/fpga-mgr.h
+    :functions: fpga_manager
  
- /**
-- * fpga_bridge_free - free a fpga bridge and its id
-- * @bridge:	FPGA bridge struct created by fpga_bridge_create
-+ * fpga_bridge_free - free a fpga bridge created by fpga_bridge_create()
-+ * @bridge:	FPGA bridge struct
-  */
- void fpga_bridge_free(struct fpga_bridge *bridge)
- {
-@@ -388,9 +391,56 @@ void fpga_bridge_free(struct fpga_bridge *bridge)
- }
- EXPORT_SYMBOL_GPL(fpga_bridge_free);
+@@ -169,56 +121,7 @@ API for implementing a new FPGA Manager driver
+    :functions: devm_fpga_mgr_create
  
-+static void devm_fpga_bridge_release(struct device *dev, void *res)
-+{
-+	struct fpga_bridge *bridge = *(struct fpga_bridge **)res;
+ .. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_mgr_create
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_mgr_free
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+    :functions: fpga_mgr_register
+ 
+ .. kernel-doc:: drivers/fpga/fpga-mgr.c
+    :functions: fpga_mgr_unregister
+-
+-API for programming an FPGA
+----------------------------
+-
+-FPGA Manager flags
+-
+-.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+-   :doc: FPGA Manager flags
+-
+-.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+-   :functions: fpga_image_info
+-
+-.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+-   :functions: fpga_mgr_states
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_image_info_alloc
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_image_info_free
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: of_fpga_mgr_get
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_mgr_get
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_mgr_put
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_mgr_lock
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_mgr_unlock
+-
+-.. kernel-doc:: include/linux/fpga/fpga-mgr.h
+-   :functions: fpga_mgr_states
+-
+-Note - use :c:func:`fpga_region_program_fpga()` instead of :c:func:`fpga_mgr_load()`
+-
+-.. kernel-doc:: drivers/fpga/fpga-mgr.c
+-   :functions: fpga_mgr_load
+diff --git a/Documentation/driver-api/fpga/fpga-programming.rst b/Documentation/driver-api/fpga/fpga-programming.rst
+new file mode 100644
+index 0000000..b5484df
+--- /dev/null
++++ b/Documentation/driver-api/fpga/fpga-programming.rst
+@@ -0,0 +1,107 @@
++In-kernel API for FPGA Programming
++==================================
 +
-+	fpga_bridge_free(bridge);
-+}
++Overview
++--------
 +
- /**
-- * fpga_bridge_register - register a fpga bridge
-- * @bridge:	FPGA bridge struct created by fpga_bridge_create
-+ * devm_fpga_bridge_create - create and init a managed struct fpga_bridge
-+ * @dev:	FPGA bridge device from pdev
-+ * @name:	FPGA bridge name
-+ * @br_ops:	pointer to structure of fpga bridge ops
-+ * @priv:	FPGA bridge private data
-+ *
-+ * This function is intended for use in a FPGA bridge driver's probe function.
-+ * After the bridge driver creates the struct with devm_fpga_bridge_create(), it
-+ * should register the bridge with fpga_bridge_register().  The bridge driver's
-+ * remove function should call fpga_bridge_unregister().  The bridge struct
-+ * allocated with this function will be freed automatically on driver detach.
-+ * This includes the case of a probe function returning error before calling
-+ * fpga_bridge_register(), the struct will still get cleaned up.
-+ *
-+ *  Return: struct fpga_bridge or NULL
-+ */
-+struct fpga_bridge
-+*devm_fpga_bridge_create(struct device *dev, const char *name,
-+			 const struct fpga_bridge_ops *br_ops, void *priv)
-+{
-+	struct fpga_bridge **ptr, *bridge;
++The in-kernel API for FPGA programming is a combination of APIs from
++FPGA manager, bridge, and regions.  The actual function used to
++trigger FPGA programming is :c:func:`fpga_region_program_fpga()`.
 +
-+	ptr = devres_alloc(devm_fpga_bridge_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return NULL;
++:c:func:`fpga_region_program_fpga()` uses functionality supplied by
++the FPGA manager and bridges.  It will:
 +
-+	bridge = fpga_bridge_create(dev, name, br_ops, priv);
-+	if (!bridge) {
-+		devres_free(ptr);
-+	} else {
-+		*ptr = bridge;
-+		devres_add(dev, ptr);
++ * lock the region's mutex
++ * lock the mutex of the region's FPGA manager
++ * build a list of FPGA bridges if a method has been specified to do so
++ * disable the bridges
++ * program the FPGA using info passed in :c:member:`fpga_region->info`.
++ * re-enable the bridges
++ * release the locks
++
++The struct fpga_image_info specifies what FPGA image to program.  It is
++allocated/freed by :c:func:`fpga_image_info_alloc()` and freed with
++:c:func:`fpga_image_info_free()`
++
++How to program an FPGA using a region
++-------------------------------------
++
++When the FPGA region driver probed, it was given a pointer to an FPGA manager
++driver so it knows which manager to use.  The region also either has a list of
++bridges to control during programming or it has a pointer to a function that
++will generate that list.  Here's some sample code of what to do next::
++
++	#include <linux/fpga/fpga-mgr.h>
++	#include <linux/fpga/fpga-region.h>
++
++	struct fpga_image_info *info;
++	int ret;
++
++	/*
++	 * First, alloc the struct with information about the FPGA image to
++	 * program.
++	 */
++	info = fpga_image_info_alloc(dev);
++	if (!info)
++		return -ENOMEM;
++
++	/* Set flags as needed, such as: */
++	info->flags = FPGA_MGR_PARTIAL_RECONFIG;
++
++	/*
++	 * Indicate where the FPGA image is. This is pseudo-code; you're
++	 * going to use one of these three.
++	 */
++	if (image is in a scatter gather table) {
++
++		info->sgt = [your scatter gather table]
++
++	} else if (image is in a buffer) {
++
++		info->buf = [your image buffer]
++		info->count = [image buffer size]
++
++	} else if (image is in a firmware file) {
++
++		info->firmware_name = devm_kstrdup(dev, firmware_name,
++						   GFP_KERNEL);
++
 +	}
 +
-+	return bridge;
-+}
-+EXPORT_SYMBOL_GPL(devm_fpga_bridge_create);
++	/* Add info to region and do the programming */
++	region->info = info;
++	ret = fpga_region_program_fpga(region);
 +
-+/**
-+ * fpga_bridge_register - register a FPGA bridge
-+ *
-+ * @bridge: FPGA bridge struct
-  *
-  * Return: 0 for success, error code otherwise.
-  */
-@@ -412,8 +462,11 @@ int fpga_bridge_register(struct fpga_bridge *bridge)
- EXPORT_SYMBOL_GPL(fpga_bridge_register);
++	/* Deallocate the image info if you're done with it */
++	region->info = NULL;
++	fpga_image_info_free(info);
++
++	if (ret)
++		return ret;
++
++	/* Now enumerate whatever hardware has appeared in the FPGA. */
++
++API for programming an FPGA
++---------------------------
++
++* :c:func:`fpga_region_program_fpga` —  Program an FPGA
++* :c:type:`fpga_image_info` —  Specifies what FPGA image to program
++* :c:func:`fpga_image_info_alloc()` —  Allocate an FPGA image info struct
++* :c:func:`fpga_image_info_free()` —  Free an FPGA image info struct
++
++.. kernel-doc:: drivers/fpga/fpga-region.c
++   :functions: fpga_region_program_fpga
++
++FPGA Manager flags
++
++.. kernel-doc:: include/linux/fpga/fpga-mgr.h
++   :doc: FPGA Manager flags
++
++.. kernel-doc:: include/linux/fpga/fpga-mgr.h
++   :functions: fpga_image_info
++
++.. kernel-doc:: drivers/fpga/fpga-mgr.c
++   :functions: fpga_image_info_alloc
++
++.. kernel-doc:: drivers/fpga/fpga-mgr.c
++   :functions: fpga_image_info_free
+diff --git a/Documentation/driver-api/fpga/fpga-region.rst b/Documentation/driver-api/fpga/fpga-region.rst
+index dc9f75c..0529b2d 100644
+--- a/Documentation/driver-api/fpga/fpga-region.rst
++++ b/Documentation/driver-api/fpga/fpga-region.rst
+@@ -34,41 +34,6 @@ fpga_image_info including:
+  * flags indicating specifics such as whether the image is for partial
+    reconfiguration.
  
- /**
-- * fpga_bridge_unregister - unregister and free a fpga bridge
-- * @bridge:	FPGA bridge struct created by fpga_bridge_create
-+ * fpga_bridge_unregister - unregister a FPGA bridge
-+ *
-+ * @bridge: FPGA bridge struct
-+ *
-+ * This function is intended for use in a FPGA bridge driver's remove function.
-  */
- void fpga_bridge_unregister(struct fpga_bridge *bridge)
- {
-@@ -430,9 +483,6 @@ EXPORT_SYMBOL_GPL(fpga_bridge_unregister);
- 
- static void fpga_bridge_dev_release(struct device *dev)
- {
--	struct fpga_bridge *bridge = to_fpga_bridge(dev);
+-How to program an FPGA using a region
+--------------------------------------
 -
--	fpga_bridge_free(bridge);
- }
+-First, allocate the info struct::
+-
+-	info = fpga_image_info_alloc(dev);
+-	if (!info)
+-		return -ENOMEM;
+-
+-Set flags as needed, i.e.::
+-
+-	info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
+-
+-Point to your FPGA image, such as::
+-
+-	info->sgt = &sgt;
+-
+-Add info to region and do the programming::
+-
+-	region->info = info;
+-	ret = fpga_region_program_fpga(region);
+-
+-:c:func:`fpga_region_program_fpga()` operates on info passed in the
+-fpga_image_info (region->info).  This function will attempt to:
+-
+- * lock the region's mutex
+- * lock the region's FPGA manager
+- * build a list of FPGA bridges if a method has been specified to do so
+- * disable the bridges
+- * program the FPGA
+- * re-enable the bridges
+- * release the locks
+-
+-Then you will want to enumerate whatever hardware has appeared in the FPGA.
+-
+ How to add a new FPGA region
+ ----------------------------
  
- static int __init fpga_bridge_dev_init(void)
-diff --git a/drivers/fpga/xilinx-pr-decoupler.c b/drivers/fpga/xilinx-pr-decoupler.c
-index 07ba153..6410361 100644
---- a/drivers/fpga/xilinx-pr-decoupler.c
-+++ b/drivers/fpga/xilinx-pr-decoupler.c
-@@ -121,8 +121,8 @@ static int xlnx_pr_decoupler_probe(struct platform_device *pdev)
+@@ -77,15 +42,36 @@ An example of usage can be seen in the probe function of [#f2]_.
+ .. [#f1] ../devicetree/bindings/fpga/fpga-region.txt
+ .. [#f2] ../../drivers/fpga/of-fpga-region.c
  
- 	clk_disable(priv->clk);
+-API to program an FPGA
+-----------------------
+-
+-.. kernel-doc:: drivers/fpga/fpga-region.c
+-   :functions: fpga_region_program_fpga
+-
+ API to add a new FPGA region
+ ----------------------------
  
--	br = fpga_bridge_create(&pdev->dev, "Xilinx PR Decoupler",
--				&xlnx_pr_decoupler_br_ops, priv);
-+	br = devm_fpga_bridge_create(&pdev->dev, "Xilinx PR Decoupler",
-+				     &xlnx_pr_decoupler_br_ops, priv);
- 	if (!br) {
- 		err = -ENOMEM;
- 		goto err_clk;
-diff --git a/include/linux/fpga/fpga-bridge.h b/include/linux/fpga/fpga-bridge.h
-index ce550fc..817600a 100644
---- a/include/linux/fpga/fpga-bridge.h
-+++ b/include/linux/fpga/fpga-bridge.h
-@@ -69,4 +69,8 @@ void fpga_bridge_free(struct fpga_bridge *br);
- int fpga_bridge_register(struct fpga_bridge *br);
- void fpga_bridge_unregister(struct fpga_bridge *br);
- 
-+struct fpga_bridge
-+*devm_fpga_bridge_create(struct device *dev, const char *name,
-+			 const struct fpga_bridge_ops *br_ops, void *priv);
++* struct :c:type:`fpga_region` — The FPGA region struct
++* :c:func:`devm_fpga_region_create` — Allocate and init a region struct
++* :c:func:`fpga_region_register` —  Register an FPGA region
++* :c:func:`fpga_region_unregister` —  Unregister an FPGA region
 +
- #endif /* _LINUX_FPGA_BRIDGE_H */
++The FPGA region's probe function will need to get a reference to the FPGA
++Manager it will be using to do the programming.  This usually would happen
++during the region's probe function.
++
++* :c:func:`fpga_mgr_get` — Get a reference to an FPGA manager, raise ref count
++* :c:func:`of_fpga_mgr_get` —  Get a reference to an FPGA manager, raise ref count,
++  given a device node.
++* :c:func:`fpga_mgr_put` — Put an FPGA manager
++
++The FPGA region will need to specify which bridges to control while programming
++the FPGA.  The region driver can build a list of bridges during probe time
++(:c:member:`fpga_region->bridge_list`) or it can have a function that creates
++the list of bridges to program just before programming
++(:c:member:`fpga_region->get_bridges`).  The FPGA bridge framework supplies the
++following APIs to handle building or tearing down that list.
++
++* :c:func:`fpga_bridge_get_to_list` — Get a ref of an FPGA bridge, add it to a
++  list
++* :c:func:`of_fpga_bridge_get_to_list` — Get a ref of an FPGA bridge, add it to a
++  list, given a device node
++* :c:func:`fpga_bridges_put` — Given a list of bridges, put them
++
+ .. kernel-doc:: include/linux/fpga/fpga-region.h
+    :functions: fpga_region
+ 
+@@ -93,13 +79,25 @@ API to add a new FPGA region
+    :functions: devm_fpga_region_create
+ 
+ .. kernel-doc:: drivers/fpga/fpga-region.c
+-   :functions: fpga_region_create
+-
+-.. kernel-doc:: drivers/fpga/fpga-region.c
+-   :functions: fpga_region_free
+-
+-.. kernel-doc:: drivers/fpga/fpga-region.c
+    :functions: fpga_region_register
+ 
+ .. kernel-doc:: drivers/fpga/fpga-region.c
+    :functions: fpga_region_unregister
++
++.. kernel-doc:: drivers/fpga/fpga-mgr.c
++   :functions: fpga_mgr_get
++
++.. kernel-doc:: drivers/fpga/fpga-mgr.c
++   :functions: of_fpga_mgr_get
++
++.. kernel-doc:: drivers/fpga/fpga-mgr.c
++   :functions: fpga_mgr_put
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridge_get_to_list
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: of_fpga_bridge_get_to_list
++
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: fpga_bridges_put
+diff --git a/Documentation/driver-api/fpga/index.rst b/Documentation/driver-api/fpga/index.rst
+index c51e5eb..31a4773 100644
+--- a/Documentation/driver-api/fpga/index.rst
++++ b/Documentation/driver-api/fpga/index.rst
+@@ -11,3 +11,5 @@ FPGA Subsystem
+    fpga-mgr
+    fpga-bridge
+    fpga-region
++   fpga-programming
++
+diff --git a/Documentation/driver-api/fpga/intro.rst b/Documentation/driver-api/fpga/intro.rst
+index 50d1cab..f54c7da 100644
+--- a/Documentation/driver-api/fpga/intro.rst
++++ b/Documentation/driver-api/fpga/intro.rst
+@@ -44,7 +44,7 @@ FPGA Region
+ -----------
+ 
+ If you are adding a new interface to the FPGA framework, add it on top
+-of an FPGA region to allow the most reuse of your interface.
++of an FPGA region.
+ 
+ The FPGA Region framework (fpga-region.c) associates managers and
+ bridges as reconfigurable regions.  A region may refer to the whole
 -- 
 2.7.4
 
