@@ -2,232 +2,187 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D8CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838C7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B16221537
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 281F021537
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:13:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="PiPbHXyg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B16221537
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="0m7mBl2A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 281F021537
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeI0A1f (ORCPT
+        id S1728543AbeI0A1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 20:27:35 -0400
-Received: from mail-eopbgr720055.outbound.protection.outlook.com ([40.107.72.55]:54656
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        Wed, 26 Sep 2018 20:27:39 -0400
+Received: from mail-dm3nam03on0081.outbound.protection.outlook.com ([104.47.41.81]:45669
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726395AbeI0A1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 20:27:34 -0400
+        id S1726127AbeI0A1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 20:27:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ifTdhn7stSnkiOmi8dlEO6iSODQ0W9jNfR3IYrq8DJw=;
- b=PiPbHXygEz7bcaKzni68fkXRqM93HOaaCWhOUKqHKewu0MqMZSxNiHKcYTeXVYU06M0dsGv5WaJ+NYaXm2MbaxWNjY9du37EJBa9y7Af2RqRF9a4HQ6ocUUivDLS/OHsFUr/CuWb2pGmQcHUIQh0Vimz35noIgbOzxxD7NghVKk=
-Received: from BN7PR02CA0001.namprd02.prod.outlook.com (2603:10b6:408:20::14)
- by BYAPR02MB4760.namprd02.prod.outlook.com (2603:10b6:a03:4e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1164.20; Wed, 26 Sep
- 2018 18:13:21 +0000
-Received: from SN1NAM02FT057.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::207) by BN7PR02CA0001.outlook.office365.com
- (2603:10b6:408:20::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1164.20 via Frontend
+ bh=2ieFMMFD5YymlsCrc55U0HWne5a5d7Qf4Mjqq96VLh8=;
+ b=0m7mBl2A7+DbVe2V8b6wEwQqrIh1EcJDgEltAN7GZ4l+e+0tgBfszY0PY0tJY3eJf0rS4f7GC4sYKYY7TY8I9420T2Tu1kXg/ja2mraeCfuiygEbmqIK8pxpB1uFsx6qEB4e8kCrmTE9pYqU+teKlDQonWqiW9QNs15wcaMVRes=
+Received: from DM6PR02CA0025.namprd02.prod.outlook.com (2603:10b6:5:1c::38) by
+ BN7PR02MB5107.namprd02.prod.outlook.com (2603:10b6:408:22::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Wed, 26 Sep 2018 18:13:21 +0000
+Received: from BL2NAM02FT058.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::202) by DM6PR02CA0025.outlook.office365.com
+ (2603:10b6:5:1c::38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1164.22 via Frontend
  Transport; Wed, 26 Sep 2018 18:13:21 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT057.mail.protection.outlook.com (10.152.73.105) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ BL2NAM02FT058.mail.protection.outlook.com (10.152.76.176) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1185.13
- via Frontend Transport; Wed, 26 Sep 2018 18:13:20 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+ via Frontend Transport; Wed, 26 Sep 2018 18:13:21 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:50519 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1g5EJM-0005K2-GB; Wed, 26 Sep 2018 11:13:20 -0700
+        id 1g5EJM-00023L-Hp; Wed, 26 Sep 2018 11:13:20 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1g5EJH-0001bP-CB; Wed, 26 Sep 2018 11:13:15 -0700
-Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8QIDDN3020570;
+        id 1g5EJH-0001bP-Dp; Wed, 26 Sep 2018 11:13:15 -0700
+Received: from xsj-pvapsmtp01 (mailhub.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8QIDDu9020568;
         Wed, 26 Sep 2018 11:13:13 -0700
 Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <jollys@xilinx.com>)
-        id 1g5EJF-0001aj-Hr; Wed, 26 Sep 2018 11:13:13 -0700
+        id 1g5EJF-0001aj-Fj; Wed, 26 Sep 2018 11:13:13 -0700
 From:   Jolly Shah <jolly.shah@xilinx.com>
 To:     <olof@lixom.net>, <mturquette@baylibre.com>,
         <sboyd@codeaurora.org>, <michal.simek@xilinx.com>,
         <arm@kernel.org>, <linux-clk@vger.kernel.org>
 CC:     <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH v3 1/4] Documentation: xilinx: Add documentation for eemi APIs
-Date:   Wed, 26 Sep 2018 11:12:58 -0700
-Message-ID: <1537985581-32164-2-git-send-email-jollys@xilinx.com>
+        <linux-kernel@vger.kernel.org>, Jolly Shah <jollys@xilinx.com>
+Subject: [PATCH v3 0/4] drivers: clk: Add ZynqMP clock driver support
+Date:   Wed, 26 Sep 2018 11:12:57 -0700
+Message-ID: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
-References: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(136003)(2980300002)(438002)(199004)(189003)(966005)(34290500001)(478600001)(7696005)(44832011)(486006)(9786002)(51416003)(76176011)(50226002)(6306002)(4326008)(47776003)(36386004)(107886003)(72206003)(6666003)(2201001)(305945005)(356003)(48376002)(77096007)(2616005)(186003)(50466002)(8936002)(316002)(8676002)(26005)(5660300001)(126002)(476003)(16586007)(81166006)(81156014)(11346002)(426003)(106002)(106466001)(446003)(63266004)(110136005)(36756003)(54906003)(2906002)(336012)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4760;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT057;1:utuqbNxS+RYqqB41iUAolfJPaBozhhG7SQwz0YXVjE63DbCSEOnO0bo0einZRpaFvDIG5yeKcVbMYFAvphaLsmT/cTzgl82Pt1FLujREMAK+0gKOxWUMgupTtA8i+ldX
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(396003)(39860400002)(2980300002)(438002)(199004)(189003)(8676002)(77096007)(6666003)(26005)(356003)(2906002)(63266004)(5660300001)(106466001)(106002)(186003)(72206003)(51416003)(36756003)(478600001)(336012)(107886003)(110136005)(16586007)(54906003)(36386004)(316002)(47776003)(486006)(4326008)(6306002)(50466002)(2616005)(2201001)(7696005)(305945005)(966005)(81166006)(50226002)(81156014)(8936002)(476003)(426003)(44832011)(9786002)(14444005)(48376002)(34290500001)(126002)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR02MB5107;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT058;1:ivfvKu6SPus6Czwv3Ep7svwIGyb8Dy0RLnl9HJd0yyZUvlYp52fUy7qLczPYV8B1j74Fgk+i9X95rdss3T80LE81jXTitczwNQ7pef3fvDa+/bBg9D6k+P211LVaBCYC
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: caebfe34-5049-41b0-d695-08d623dbbe05
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB4760;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4760;3:btbBc9zq7W/d4/bjuh6pbCQc+L8z5FMdcoRF5ovZlZHZ2QWPfMw7SdR9HcVaVFGmTeFAEDaHSkpv0op1PNQ36R9msq+aBza5Dqg9BYhZRHCVw7oVuUMuAwBNeleHwmLBLmiyUadmkc+v5FC180zTA79LgChhDjeWufxlohtd9yo1+hK6njxB09KvIFoqrzzkkx0M8oeE0b1VTOQJXEPq8ToHmTeA+/vY49rprF+PXpk73PsgV0ZdqTtHKljlF8o7+n4hwtUTubKD/hEN0jPW9ywradN7I4hKwaM4OiBUupGLtXOtj3Pz26kK3OF7ViBwhp3aBoscwnIKtWM2z0XB533aNGvX8BHpr9zT1W9klJY=;25:udakhCofuNawlo6+k79hGBW3WMWDO+LZf+PZ7y97wufA6i0odDbsssx53prKRv2TSX7/IPOFxDwN1p496YkEIe1rnpSyk9waY/sf2hMgz4KJTl8R9Dh0rNKIZIgmP8UYYmXSzG/Z4+tg0UM/Lhj/RRlKy4teee3t315uB//d+TUv165ItmML49zLXw8NYJ7Yqf+EzYlREzmnIpRkWUqZzFurXqjyAp5BrpF65eFQe+hkHPR2Sdq3LhEiC55y1f4KSC66U3OcEI9IxC/HI2CJeAGL7wQrexBJVhMXEP9TwtfucnlZ9H2dG5A0sI4bLeR6Zkqj1OlELrzs4tz1KPHjdg==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4760:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4760;31:+wu9lTXOdBz/IWm1jkgrRGDezFQwbg33w1s+sVU2Z0snzyx5wypYH1a7Rd4E/FH/UW0w4bt4LVjvpnrIJkXV8SiwA46seb4QOFzv/I2ZtQSG5DhELf19xYwg53NiXlo8JG31vjfcbjekJFl4RKF138s+2BB6aTFIDbiEuxPL3m+Fmkrnj8DTj8mcYgOzZwDubnv9pWfwwlsQIKZgbrAhfJ5vO7vZG0QwvKKr9MOkLRg=;20:f1Mr/EPJNXJCy6XMotEKNnD+WWLLm21VB0zSRPubpJ6dxHOtCoEUpIR0I6izSPjsvpbMnZSCnABdoHB5OKhxVlsDqK/bpttkrmlUNE0faxbnEP6rBJKek/lAvIgOy6/W2ASF7HEADUI8fWzamGvCclzBEqlZpsdXBfW+aoOJatvHqL0IY3bHjx76x9sF6SE9UxaD9yjaOx3Kv9wQWqGWCTPcthFi6HLH0RSpjZwl3WEB2DsjwF+4R8z/yjMuojdoUgnw5+bJ4kWsL08BELMD8jBFC9Yl8EswxwJ6V9Z1tEemhAtEiQJWqjhkerZPZDsrfhluwlvZ3DznNzez9Qyb7obnp/pr1gh9mbGeOMD+8HMipOLisBoEgffmXBPLBt8o2zA4ov9kpar8Pba01WHj8623TUT5j+prBozX+ZDVy9z6Xlw8lBam/VG+x3E4gbAjPudcPM/CFFXSXRU7Bohb9rtCow+vYThT24fbAxBWBHbwO3blpp/Dg4HO5AOsxsf2
+X-MS-Office365-Filtering-Correlation-Id: a931dc3c-3a4d-4fb2-03d4-08d623dbbe11
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BN7PR02MB5107;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR02MB5107;3:N7l7j+7EGx2fiNALIEWFGSu0XALG3HUgqyxgVEVuYM0SqMhB28teQuag7mfjfnSC1nAgA/jvtmg+o8KuZEnBBFK3wx9qfAOtKiLO+28i8aHQnFpGjRNd0LGgri/dv5+Am5DW2vMCK4vx2qcTKpEKQmOgtc/6GobwD3eRIYrI71of5p4xGQZ7CgnDnfogDufG9m3ULKFqg18zYBwqEXRwKzvVt5i+pYU2XuPNPa5yedxxPJYromQ/jeM/eCbQIiPxG6k96U4AHTWJSXrPEm56POfsPRD4IQ6zLf2PrR56egceipI6Y8jjWW6BFq30kZFSaLU9n07dIe8D4Vb/E0Sjs0YMAEZp8T79dtGhOV/hGUE=;25:FDKuhsf0v4LlmVgJz9zCUqgWinJkuEGytBG5xkL1prhtFNg3twPL6rG077L5pyTzYmjaD6rnP6TobaXUdvqiVVR5FdGIvVod8sXOyJh2QCGkTobUS0PZUCm4Loi7umhU4qmNF8rEwrZQCLsIcDOFd2QKwhNWIptvlJQr4f5ri1XdgEBDwZ3ifTgdRNsWz0kODFJkixGOLA06P09+9iVIIVoLKph142tfFUwzLicKtn3ls5nOZN28D2/NatdI9oVg7FNyas1AucXp2WaAEPweygXNDq7+Hh3EMa4zEGyeFBeEO5cGDbKhSym58qpQq9yJ0lfwbKJn9gY90/G2Xh7X4Q==
+X-MS-TrafficTypeDiagnostic: BN7PR02MB5107:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR02MB5107;31:2oxcRyblRIfIr3A1uUJlt/mEVwrQfcaP/Gcztlup2PtpKPj2uE8KJu99FMxcEYnNiQi0dfWjk5NVC9MNBK6qkSx2GsYKqPPN9wD6z3e3r/RRIXkdHHGyvRzUKvDmWxfRIx3SQ3sbJv/CQljZdXlCuVdCYAdSaA9nJlyOTPK0TiZqj27h7r3jgaELoZBFLgrQSjndWMN7CMe7JfKtn2/3hLb361QOx59emZeCp/px/tU=;20:85VfjeP2V5TFgZfbDOkG/eGrHqhpWAzAT5NvjKruMPyQt3kX+xCN8nvtfnxH503f0IeoZSbyNk44RuS74GytoHVmEnrgmTa2DrHqwWmV3+C1zzTCOrywbdHIufdVLMpbL5GBfywa+RJY1iGkdhEg7FrPQxyV9an80290kE/WrvZvNIQHkhO4UO+Sxw6F/+a4hXgfD2BChnGOddpw5k7dXixK1R22FCr827Or7Og9OZl5iVH2+sieJhWcYpA0mFr1GhmJmumFRuNxSajzfcrGOkA72wiZreQNQH812T+yUb+gkl1yEq0hOqMtmOS2J/ver4gO2U127aJtQJ7mSYRCJG5vypRMfKlTiL+89P+pcg/USXza6Z9VOEMy74RT7T0ZYwwoe2+ULV7ukEuMHpyngeCQ9moSP/MCsdS+hgYyjSnGcqUgrlIkmXB+CPGE2a6uIfp04h1T9oIuhaQjUIlNcdlmOpSuEUQBj6zTvozIatuosty162F4GZ2ZWrb5mAT8
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB47609C0C9C962877F5814171B8150@BYAPR02MB4760.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(189271028609987);
+X-Microsoft-Antispam-PRVS: <BN7PR02MB5107AF26A44E00F2CC938879B8150@BN7PR02MB5107.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(84791874153150);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93004095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051);SRVR:BYAPR02MB4760;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4760;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4760;4:VNDD7jDQGtY6iav99X4NsUzIIOO4iV/PpTMDjx8ri4oxSPNlAYNhhXGRcLGxwk72LI30vKD8UCzH9YvTNyY8Lmwu9AW7yorfvLazc5NcViZnVJZHvfKKwdjWVJPw+ChCOBMuGDQNPZH/Qam7o95hscifOl10z2TtaQfUlmTd88zsG00FoMB8LcrusQAI9uWPL4qKblbQ4HfpGdLpbUA3zunf3qLWF6K/RxynFCFV1bF/08y5hvvBrWBAuvzHp1Ek/vKQYy40ZIpKrgN6V+2fNXHvnH1vQhde2Q60/RlXtHS2LhDjvplzknXkiZnkCUTe7APRZwE51E0nQGfweeRAilXFIfoJwVFF/qBOX2GUDsE=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(3231355)(944501410)(52105095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051);SRVR:BN7PR02MB5107;BCL:0;PCL:0;RULEID:;SRVR:BN7PR02MB5107;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR02MB5107;4:eh9FfeWpC+vga7V7kYkX4j7ToCWXVv3W5oAIdy4a1X94OMt5obo21ZSgNOvdjFzN1Tl22frZpqTo6aisDb8fhueZD4VhLSDjHUKatx+uDCX0Zz85sPlg/IiQrALFzuZsRkzsrSTjXi+ESoT9cR13yZ+DKA6dNJn3RxaEJwTmX72K45ao8GoaYok+/bf4kplLTFGDW8izhgeSm39Nvdo4/exuNRXsiI6rYEWRHsuGu9wzu89mfUQ7GmiLOBBuDrXHj/+2Kg2Kdm9VqKqKiRrvx9y8Ma7B19d1rOZHAlEQ3BZS4EeCJqfj5863bpPVmpBB
 X-Forefront-PRVS: 08076ABC99
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4760;23:ITAHFiHl7FiHTRINKwj9lerwZ8p74gRzEqyIgKoNq?=
- =?us-ascii?Q?JzGNjcTBkCTjt1jtBz9sL21pw+4BW6haakh2picOTZPDf9o/u3PfPMmXSXBx?=
- =?us-ascii?Q?dQM6pkesTDgPrMcfX08AI3NXBVzvtQeoFQzM8+Owk+Ddji0lvnm3ahm0OUSj?=
- =?us-ascii?Q?a2FsW51EInxRtsb98u2yWcCChp5X7+fsMDAPVYHAh2Q5nwWA5BRnjXgIf7TA?=
- =?us-ascii?Q?iWeapdC4SbC2n4/KhAeYS3iAQ1KikWeaFAzMVNiT/IHLor0lbdogBiGhu6WZ?=
- =?us-ascii?Q?bNvqds7Xzceyoqa+xgC8pPHoviy04GPc+9nnIM8yDHrXjtkID4XsmrHpZOEX?=
- =?us-ascii?Q?nH6s95SP9D0w9o7g6AuW7JLS1J0aHh6V1rZuuSl187cdipzEkkjXGd+DO8qM?=
- =?us-ascii?Q?EJO44jCWAKpl7XqaNOmQpi/OkkqkgXTKlagG2ju4VV1ShhiVd6yTcV3JuyVg?=
- =?us-ascii?Q?FH+P5wqP01A6eoMffoviuGOEZcqacaxAql592hLfUJj+dZUYYng1J5DFbkXf?=
- =?us-ascii?Q?DvJzG6De31NKChYIDrL3l/GMlbhwnIvfwQQYE2cvQdKHokKHdiZFJBQ4GuHw?=
- =?us-ascii?Q?AB5hEhLRaeRPCrqwaZHE4LeSdXOKxTLvoO+flD/G5kwdNj8SQv8E6tbwNXBf?=
- =?us-ascii?Q?0sMB/BPnTb629xWmwe+x3DfoLR2USuLB2lljpvt4N3v68N/oDQ05d5MpBO55?=
- =?us-ascii?Q?lfTiG4xnK5ZzOSqcp9ufn8R4s5P+Wig/p/0WoHgESI5Vif4lY2GZce1GKdZ2?=
- =?us-ascii?Q?c2Wm7Mz0ZLBeVB8Pj1rzbRFNJlMFC3sykrK1ehBVMzfJklk1qgcdxGaf/Ki2?=
- =?us-ascii?Q?ShGncLQtVd7EeHFBs7Ug1Vtd7ZEOCjph9hZzqquEw2gHxbRifFrVHDStyj0q?=
- =?us-ascii?Q?3mGh4cF+nO1oVpQ/XSsgNT1k4M1Oi+S7xJrmkl4Kq+HqMlLNQOyXRw5jLZTO?=
- =?us-ascii?Q?9OVYVFy2cXXDVLKLgLCJmJxHec3O1UEqmErZGfzrqF1a3Ov/EyDokK9nSpIr?=
- =?us-ascii?Q?2fAZvDYQDP9hOCYSTz8ewzmu0JdyQ6vNDNaiHEIuVCFoLydbko5id/ntjfW5?=
- =?us-ascii?Q?iCmRciCgJu5exbvqzs71BlZgT+iYjyYS60+XmornOF1m1qs6fYnJ5LYNlZ7G?=
- =?us-ascii?Q?MGBgJ+gsalaqWlYBV47LzDU3uGPWL6eUF/oFWAZ0yQwSFi0O1z7bAfkxJToH?=
- =?us-ascii?Q?87ouYkajwgQiP1zzpwCal4wdykvG7vTRrDBSCohp1R3jeqZ+9R7tGSHwA=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR02MB5107;23:0FFDZAdxn8w6LhvSymMLyk46M0+DvO2GB2TRq1RIG?=
+ =?us-ascii?Q?8BHhqqKYbGoOLQxF75nMsb5qWtHS5/IJoTHcPB30EZfyNC0Fvg6u4nSnyXfc?=
+ =?us-ascii?Q?7qkusRjTRwL2hIlya8xKsCyHpSmYEryyYVBgT966a5ssbznNQ3FSyEKkQ/jq?=
+ =?us-ascii?Q?Tex/0ywA/JUswNOX2m0GsUb86jvHC6qEeNTdhPqaiRSCytrjliXAPNY1knGv?=
+ =?us-ascii?Q?tIq/TSfQkAvoa1MqXvq5LF3c+pRVhisunPFPEzXDHT4CpQkMKRqkNuGlsbzD?=
+ =?us-ascii?Q?2ipL2LJKNYNCa77UqKX4DT8EoRsBQHgw7KbfijWdWJEKK/CBvPwLSkuje6G/?=
+ =?us-ascii?Q?+Amfu7wl8iPmzbW9Z+TMX+ZzpK+biKfqhZ9FtZh0U059Tc8Zwe6qJijpVHyv?=
+ =?us-ascii?Q?7b5cKQSRuP2a4SssR9qlJBshpzqa7cGcl3qLtdzEdgR5doLh9YR3w0j0qvhD?=
+ =?us-ascii?Q?mrgRsvNWDkcK3sZ+C0Nm3RIEJ0lOu3BBFr+E5GkqODEpC4v2+oUqW6PN6v8f?=
+ =?us-ascii?Q?C9Y9hA5C8C8NP6n1Caruau7Noc2F30a9pa4RQKsErTDwSBR8XyW1x7aruQOF?=
+ =?us-ascii?Q?Knaf1APbgydNUpm7IwOJKLIKWZRXwToONdojsAXQl+QYNYq8CgFPnTArc8ag?=
+ =?us-ascii?Q?h/8c3VMbIDVoBiYRnYVh7trZ/OtNFSbcs1+pov36ZdUP2amtnxwzbTR0h5FL?=
+ =?us-ascii?Q?r1HEMs3xvIeQNm+M8BjA15rveAvsVTXXavAXl1SJ1FufMeyRL0h1tvKViE9y?=
+ =?us-ascii?Q?cZP9iP8o8lBsrd/KTOStnopt7vhCl70HUG65Hb4DVqQY3RSB9BOHE0tZcfYx?=
+ =?us-ascii?Q?jpqKQ8Vf0UxDbMrhtekF/En6SBNlNwUOZks2ZrpUQZ3W5dAirrXKJgh8qjMZ?=
+ =?us-ascii?Q?mQqJCH50vxDq91ti0pwCT7wpNfbRrtu+ABs8LJmHAIaLnMxJCM5O1xnmWBF4?=
+ =?us-ascii?Q?XP3vBWjaiNzV7XJAa0Kh+iFgPciGl5Mtux5xaUH8ECl9w55MhL9UGCwY1g0M?=
+ =?us-ascii?Q?hpiCJUOvifKjXR3epBthbC7J6taGEiSSVqTrnZ/CtKXIE+v9bkm+89zOYXPe?=
+ =?us-ascii?Q?CRMYP5RBE9DT9YHnEF4IGi7WeTYsv+DsYxuXLAKr5bRAttzjv2h8tRO1xJpw?=
+ =?us-ascii?Q?V+L6J57CoKtuqW7EvmLMToaAPmM/4nEcHJLJ/3h35y2mOhhRgxsWk8Q1UJIB?=
+ =?us-ascii?Q?Eu2rT0EulDytxcdiCMd17LqCeHH/0Ptyur9hbXqXzSGSJzfepBNAeP2Gw=3D?=
  =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: eZNS2Gb1bvCX5URfSdLNZ670kpmcuXazf7ej/hwzO/yfllAysO16OLiF+kQwZbKdoJIZ21ntz02TrH80tA88CGz7SHSZBrT2UFze0WideqL+tJwo9cczCxmmsCfBZKilrU6zV4BW2HdytudIg9qpx4dNAK1QpTeUTxemQ8xjVJrjGsgQ6G3QkV3CW8UoTasLTY9oqXbyZO7Ly7+NxC5J4K0n0QCEWkxHAMxStww4jWb7VWCE3ouITlAaZsylp1ebZrs1UYo1bgp+TbmAEnOkz6zAACItkQQI7eI9NYET9tzFqAnh/2Vg6nF41979LVrwYgJ8DaIc6OgN7oj7qrahFErncVen4My/hsKfWPeCYVk=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4760;6:i5WCLJ+3GSvPMw/ZBvGa2bqHQzIGTQkWsymFDE7XjMN/wpJJlLfKOC/rNeq6fZo0D/WahY4aFELUt3fRutSE98gUgU+tYKnYXdnoIDfH5Ot2LwaLyRyh+Y0Uooazb45MHG5U0vwkZQqKoQoX5oy80NLCmI8CR+wjck/QdWol7Q8Kq5ALhwF6NnuKdxZdzYU/d2AcK5IMaOFU1EHbC5PQ57EtxxPX716Xi0+vSHmyQZR787YXZTFKH8ZK9OMaV9dQVI7aEhssr4WUlNzCiBDDnuv5rZBmHdanzzptV7bIxh3yGc1mj3oeOWlDtuFM23ZrOMfiK/tkI3UbboupTj8/HGvZHiN/lue8TLYd8kt+IXdINlvbh//hjbs1RCucAsGZhnAFJuUa7ojioJDmuyYHevYbtz1aU8MfR0y1UXMlVc2gJfy3s8nIUHWxyvU8VRTed6VGyXMsFKeKVYN7Rmll7A==;5:nJvvB/aa5DWMoqcbr0oV4kIZyBKAXew4rWGee57IkANHe+8D7J7h6zh9Oief3gbsJKflnnFl8bM+cHJHiSI/Ty27nUKCXSsyWu4KmWFFUNkBO+yAKSSo6LM0CTSmOkjInqaEe9jdXhQGC+zQUKUM03s1iVOJDjRGBqZDWZWHO+o=;7:0UwRnJtwDsjKtOfM4R7L/mU2GTWAH6Lc9sh/eF4OoakMMKM0meYApFX76KbUry0dX+Msz0yZQ0g8VoH9iAJy9yx6wu1cDwdYmalUI3ICIf0gjNq2ou0s8/2DzfaDZJ8StemlawJf4yXrWXTa7omkZ5o+VhlFthBQvPC8c0gpVu5WX6d4JhbS7Ph8ElsLpCDj1mDVaU25O3SOHTlad0sT/OSv5sE9oSmohvvXZY9pQdjHI3StWMvhkk+cF0r8OTBD
+X-Microsoft-Antispam-Message-Info: pvSQrmWFhovM3Md/XeJnnthmu/jGmcKKw5doDKU+HO5e62kiLIVwj7WSUraf75pbH6Xg2xhjnWVfi3j0bWI5LAZDh81NXCUWxH+kNhx/oaTcWfNH2pENmUwjtfHBKsPGY88WxLE8OZ4BuVOMNXX1213KbDm1+oTwYulyQvqUu+GMiZtsC/VOcSN5oKbvsBXCmjhSjOXybiOBcVNexXlcL0OHzt63LJffwo8cHIG4r0AxhgxRS7CU8J0eqSIXCEKEslbJNWQTUkhUK4V1Gx4CyIS6d4u0PImGTyVvdRFXb2fHViD71InJW/p4ZaGRs+oiT2iaFlCEa0uNmmgUz0on2mPhFxbZ2eYOaSNlyI59QWw=
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR02MB5107;6:DX9VU3UkUtY+b7mnvxDUtvqQXRuhlAekjoPuBBieqVH09G8Luny7h7N6TrIUFaUf/kWP8NDBMbxaAuERtkVo09suV2vsmzTCNzar5tlSsQwARY1Ix3f6tDc5iyEp8gRpTrxSMfSZB7KT92w3fJZ/zIfJycTeLQC+JWBlKcd+eLrNeKq2amfbqzQzoDSh8gRAtt4/GImpZwyWmFpaIkN6AQ0r+LhpvKrM5+1fOj4UZJ3HQ2fezDOHr2O6di2MTh7rwr2SqzJm4fdC4z84RIDxCBXPYNcMX4/FcEcORnIbQbIQbmaPIyrOxD18UwpTAbm9alEDTC7ltu9xQqTFqbNQ7xdKH8/itQWm0JFv8g8BM9AbDIU4KcapoKjJgeG3VT4gHVwwTwEWN9lDnCh0iwUx+GrDklVsDEkSKtRcBE36D9UHG+r1sW0d4QbAuFtrBQFLZjlgedU3Aqx4gLkMlh/rTw==;5:U8KllGJ1rfnhNASJfaPoYLUrqK9XmFQBeul1sQql7dxCt6Rga5nBkwzwO5BrcmTMipuN8N4gB9Z9SOZdixPA8niaqHrVPGu6drzSeKxH2sZy9TObW76CukPL+Vs4VIv0VeHe0pLWlCwQepAMyYbnJ/2EuPbADX0+77TZ4LmX7dw=;7:gwLj8QP9rS8OFnYSUdGaHIVK1l+fkSKophNlNrUHzFUhjczOHExZ/qnJ4qOlMJnNgJ/TVnj7Pla4TpjKtIRylpzGn97BzGq3i7lFSZ69FL8Ue14ZQYRPkvgdVLoIYJRXLUEw2Jn1AwPhNPpJQVNgE66/ezfDcZI+pJ4gXdQpETTTAeeKyYkBJOZ70ZDwXKQXKSU2ij7igR3kpX42hGwr/kTkPBhSFyl9bYNp3AlCc1s0wloHQR1SPmZ9CCoNGrWm
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2018 18:13:20.8773
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2018 18:13:21.1224
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: caebfe34-5049-41b0-d695-08d623dbbe05
+X-MS-Exchange-CrossTenant-Network-Message-Id: a931dc3c-3a4d-4fb2-03d4-08d623dbbe11
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4760
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR02MB5107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+This patchset adds CCF compliant clock driver for ZynqMP.Clock driver queries 
+supported clock information from firmware and regiters pll and output clocks with CCF.
 
-Add documentation for embedded energy management interface (EEMI)
-APIs. It includes information about eemi ops and how to use them.
-It also includes API information and supported IOCTL IDs which can
-be used for device and control configuration.
+This patch series is earlier reveiwed as part of FW patchset (https://patchwork.kernel.org/cover/10555405/). 
+FW driver from that patchset is merged. This patchset contains only clock driver and is based on top of 
+xilinx firmware patch set available in below tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/log/?h=next/drivers
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- Documentation/xilinx/eemi.txt | 67 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+v3:
+ - Added check to pass only valid ioctls for ioctl eemi api
+ - Added eemi documentation including ioctl details
+
+Jolly Shah (1):
+  drivers: clk: Add ZynqMP clock driver
+
+Rajan Vaja (3):
+  Documentation: xilinx: Add documentation for eemi APIs
+  firmware: xilinx: Add zynqmp IOCTL API for device control
+  dt-bindings: clock: Add bindings for ZynqMP clock driver
+
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  53 ++
+ Documentation/xilinx/eemi.txt                      |  67 ++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zynqmp/Kconfig                         |  10 +
+ drivers/clk/zynqmp/Makefile                        |   4 +
+ drivers/clk/zynqmp/clk-gate-zynqmp.c               | 144 +++++
+ drivers/clk/zynqmp/clk-mux-zynqmp.c                | 141 ++++
+ drivers/clk/zynqmp/clk-zynqmp.h                    |  68 ++
+ drivers/clk/zynqmp/clkc.c                          | 716 +++++++++++++++++++++
+ drivers/clk/zynqmp/divider.c                       | 217 +++++++
+ drivers/clk/zynqmp/pll.c                           | 335 ++++++++++
+ drivers/firmware/xilinx/zynqmp.c                   |  43 ++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
+ include/linux/firmware/xlnx-zynqmp.h               |   5 +-
+ 15 files changed, 1920 insertions(+), 1 deletion(-)
  create mode 100644 Documentation/xilinx/eemi.txt
+ create mode 100644 drivers/clk/zynqmp/Kconfig
+ create mode 100644 drivers/clk/zynqmp/Makefile
+ create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
+ create mode 100644 drivers/clk/zynqmp/clkc.c
+ create mode 100644 drivers/clk/zynqmp/divider.c
+ create mode 100644 drivers/clk/zynqmp/pll.c
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
 
-diff --git a/Documentation/xilinx/eemi.txt b/Documentation/xilinx/eemi.txt
-new file mode 100644
-index 0000000..0ab686c
---- /dev/null
-+++ b/Documentation/xilinx/eemi.txt
-@@ -0,0 +1,67 @@
-+---------------------------------------------------------------------
-+Xilinx Zynq MPSoC EEMI Documentation
-+---------------------------------------------------------------------
-+
-+Xilinx Zynq MPSoC Firmware Interface
-+-------------------------------------
-+The zynqmp-firmware node describes the interface to platform firmware.
-+ZynqMP has an interface to communicate with secure firmware. Firmware
-+driver provides an interface to firmware APIs. Interface APIs can be
-+used by any driver to communicate with PMC(Platform Management Controller).
-+
-+Embedded Energy Management Interface (EEMI)
-+----------------------------------------------
-+The embedded energy management interface is used to allow software
-+components running across different processing clusters on a chip or
-+device to communicate with a power management controller (PMC) on a
-+device to issue or respond to power management requests.
-+
-+EEMI ops is a structure containing all eemi APIs supported by Zynq MPSoC.
-+The zynqmp-firmware driver maintain all EEMI APIs in zynqmp_eemi_ops
-+structure. Any driver who want to communicate with PMC using EEMI APIs
-+can call zynqmp_pm_get_eemi_ops().
-+
-+Example of EEMI ops:
-+
-+	/* zynqmp-firmware driver maintain all EEMI APIs */
-+	struct zynqmp_eemi_ops {
-+		int (*get_api_version)(u32 *version);
-+		int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
-+	};
-+
-+	static const struct zynqmp_eemi_ops eemi_ops = {
-+		.get_api_version = zynqmp_pm_get_api_version,
-+		.query_data = zynqmp_pm_query_data,
-+	};
-+
-+Example of EEMI ops usage:
-+
-+	static const struct zynqmp_eemi_ops *eemi_ops;
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	eemi_ops = zynqmp_pm_get_eemi_ops();
-+	if (!eemi_ops)
-+		return -ENXIO;
-+
-+	ret = eemi_ops->query_data(qdata, ret_payload);
-+
-+IOCTL
-+------
-+IOCTL API is for device control and configuration. It is not a system
-+IOCTL but it is an EEMI API. This API can be used by master to control
-+any device specific configuration. IOCTL definitions can be platform
-+specific. This API also manage shared device configuration.
-+
-+The following IOCTL IDs are valid for device control:
-+- IOCTL_SET_PLL_FRAC_MODE	8
-+- IOCTL_GET_PLL_FRAC_MODE	9
-+- IOCTL_SET_PLL_FRAC_DATA	10
-+- IOCTL_GET_PLL_FRAC_DATA	11
-+
-+Refer EEMI API guide [0] for IOCTL specific parameters and other EEMI APIs.
-+
-+References
-+----------
-+[0] Embedded Energy Management Interface (EEMI) API guide:
-+    https://www.xilinx.com/support/documentation/user_guides/ug1200-eemi-api.pdf
 -- 
 2.7.4
 
