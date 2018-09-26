@@ -3,39 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F95C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D45EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7732F2064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7732F2064D
+	by mail.kernel.org (Postfix) with ESMTP id C51962064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:15:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51962064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbeI0B3x (ORCPT
+        id S1727295AbeI0BaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:29:53 -0400
+        Wed, 26 Sep 2018 21:30:09 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:25069 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727090AbeI0B3w (ORCPT
+        by vger.kernel.org with ESMTP id S1727232AbeI0B3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:29:52 -0400
+        Wed, 26 Sep 2018 21:29:49 -0400
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 26 Sep 2018 12:15:05 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 2B08AB0E85;
-        Wed, 26 Sep 2018 15:15:10 -0400 (EDT)
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id F3DFFB0E7B;
+        Wed, 26 Sep 2018 15:15:09 -0400 (EDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Arnd Bergmann <arnd@arndb.de>, <gregkh@linuxfoundation.org>
 CC:     Xavier Deguillard <xdeguillard@vmware.com>,
-        <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH v3 20/20] vmw_balloon: split refused pages
-Date:   Wed, 26 Sep 2018 12:13:36 -0700
-Message-ID: <20180926191336.101885-21-namit@vmware.com>
+        <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, <linux-mm@kvack.org>,
+        <virtualization@lists.linux-foundation.org>
+Subject: [PATCH v3 16/20] mm/balloon_compaction: list interfaces
+Date:   Wed, 26 Sep 2018 12:13:32 -0700
+Message-ID: <20180926191336.101885-17-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180926191336.101885-1-namit@vmware.com>
 References: <20180926191336.101885-1-namit@vmware.com>
@@ -48,141 +51,214 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hypervisor might refuse to inflate pages. While the balloon driver
-handles this scenario correctly, a refusal to inflate a 2MB pages might
-cause the same page to be allocated again later just for its inflation
-to be refused again. This wastes energy and time.
+Introduce interfaces for ballooning enqueueing and dequeueing of a list
+of pages. These interfaces reduce the overhead of storing and restoring
+IRQs by batching the operations. In addition they do not panic if the
+list of pages is empty.
 
-To avoid this situation we split the 2MB page to 4KB pages, and then try
-to inflate each one individually. Most of the 4KB pages out of the 2MB
-should be inflated successfully, and we are likely to prevent the
-scenario of repeated refused inflation.
-
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: linux-mm@kvack.org
+Cc: virtualization@lists.linux-foundation.org
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 63 +++++++++++++++++++++++++++++++-------
- 1 file changed, 52 insertions(+), 11 deletions(-)
+ include/linux/balloon_compaction.h |   4 +
+ mm/balloon_compaction.c            | 139 +++++++++++++++++++++--------
+ 2 files changed, 105 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 8d60c7e65242..61d53acb2b9f 100644
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -235,6 +235,7 @@ static DEFINE_STATIC_KEY_FALSE(balloon_stat_enabled);
- struct vmballoon_ctl {
- 	struct list_head pages;
- 	struct list_head refused_pages;
-+	struct list_head prealloc_pages;
- 	unsigned int n_refused_pages;
- 	unsigned int n_pages;
- 	enum vmballoon_page_size_type page_size;
-@@ -634,15 +635,25 @@ static int vmballoon_alloc_page_list(struct vmballoon *b,
- 	unsigned int i;
+diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
+index 53051f3d8f25..2c5a8e09e413 100644
+--- a/include/linux/balloon_compaction.h
++++ b/include/linux/balloon_compaction.h
+@@ -72,6 +72,10 @@ extern struct page *balloon_page_alloc(void);
+ extern void balloon_page_enqueue(struct balloon_dev_info *b_dev_info,
+ 				 struct page *page);
+ extern struct page *balloon_page_dequeue(struct balloon_dev_info *b_dev_info);
++extern void balloon_page_list_enqueue(struct balloon_dev_info *b_dev_info,
++				      struct list_head *pages);
++extern int balloon_page_list_dequeue(struct balloon_dev_info *b_dev_info,
++				     struct list_head *pages, int n_req_pages);
  
- 	for (i = 0; i < req_n_pages; i++) {
--		if (ctl->page_size == VMW_BALLOON_2M_PAGE)
--			page = alloc_pages(__GFP_HIGHMEM|__GFP_NOWARN|
-+		/*
-+		 * First check if we happen to have pages that were allocated
-+		 * before. This happens when 2MB page rejected during inflation
-+		 * by the hypervisor, and then split into 4KB pages.
-+		 */
-+		if (!list_empty(&ctl->prealloc_pages)) {
-+			page = list_first_entry(&ctl->prealloc_pages,
-+						struct page, lru);
-+			list_del(&page->lru);
-+		} else {
-+			if (ctl->page_size == VMW_BALLOON_2M_PAGE)
-+				page = alloc_pages(__GFP_HIGHMEM|__GFP_NOWARN|
- 					__GFP_NOMEMALLOC, VMW_BALLOON_2M_ORDER);
--		else
--			page = balloon_page_alloc();
-+			else
-+				page = balloon_page_alloc();
+ static inline void balloon_devinfo_init(struct balloon_dev_info *balloon)
+ {
+diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
+index a6c0efb3544f..b920c2a10d6f 100644
+--- a/mm/balloon_compaction.c
++++ b/mm/balloon_compaction.c
+@@ -10,6 +10,100 @@
+ #include <linux/export.h>
+ #include <linux/balloon_compaction.h>
  
--		/* Update statistics */
--		vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
--					 ctl->page_size);
-+			vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
-+						 ctl->page_size);
-+		}
- 
- 		if (page) {
- 			/* Success. Add the page to the list and continue. */
-@@ -886,7 +897,8 @@ static void vmballoon_release_page_list(struct list_head *page_list,
- 		__free_pages(page, vmballoon_page_order(page_size));
- 	}
- 
--	*n_pages = 0;
-+	if (n_pages)
-+		*n_pages = 0;
- }
- 
- 
-@@ -1018,6 +1030,32 @@ static void vmballoon_dequeue_page_list(struct vmballoon *b,
- 	*n_pages = i;
- }
- 
-+/**
-+ * vmballoon_split_refused_pages() - Split the 2MB refused pages to 4k.
-+ *
-+ * If inflation of 2MB pages was denied by the hypervisor, it is likely to be
-+ * due to one or few 4KB pages. These 2MB pages may keep being allocated and
-+ * then being refused. To prevent this case, this function splits the refused
-+ * pages into 4KB pages and adds them into @prealloc_pages list.
-+ *
-+ * @ctl: pointer for the %struct vmballoon_ctl, which defines the operation.
-+ */
-+static void vmballoon_split_refused_pages(struct vmballoon_ctl *ctl)
++static int balloon_page_enqueue_one(struct balloon_dev_info *b_dev_info,
++				     struct page *page)
 +{
-+	struct page *page, *tmp;
-+	unsigned int i, order;
-+
-+	order = vmballoon_page_order(ctl->page_size);
-+
-+	list_for_each_entry_safe(page, tmp, &ctl->refused_pages, lru) {
-+		list_del(&page->lru);
-+		split_page(page, order);
-+		for (i = 0; i < (1 << order); i++)
-+			list_add(&page[i].lru, &ctl->prealloc_pages);
++	/*
++	 * Block others from accessing the 'page' when we get around to
++	 * establishing additional references. We should be the only one
++	 * holding a reference to the 'page' at this point.
++	 */
++	if (!trylock_page(page)) {
++		WARN_ONCE(1, "balloon inflation failed to enqueue page\n");
++		return -EFAULT;
 +	}
-+	ctl->n_refused_pages = 0;
++	list_del(&page->lru);
++	balloon_page_insert(b_dev_info, page);
++	unlock_page(page);
++	__count_vm_event(BALLOON_INFLATE);
++	return 0;
 +}
 +
- /**
-  * vmballoon_inflate() - Inflate the balloon towards its target size.
-  *
-@@ -1029,6 +1067,7 @@ static void vmballoon_inflate(struct vmballoon *b)
- 	struct vmballoon_ctl ctl = {
- 		.pages = LIST_HEAD_INIT(ctl.pages),
- 		.refused_pages = LIST_HEAD_INIT(ctl.refused_pages),
-+		.prealloc_pages = LIST_HEAD_INIT(ctl.prealloc_pages),
- 		.page_size = b->max_page_size,
- 		.op = VMW_BALLOON_INFLATE
- 	};
-@@ -1076,10 +1115,10 @@ static void vmballoon_inflate(struct vmballoon *b)
- 				break;
- 
- 			/*
--			 * Ignore errors from locking as we now switch to 4k
--			 * pages and we might get different errors.
-+			 * Split the refused pages to 4k. This will also empty
-+			 * the refused pages list.
- 			 */
--			vmballoon_release_refused_pages(b, &ctl);
-+			vmballoon_split_refused_pages(&ctl);
- 			ctl.page_size--;
- 		}
- 
-@@ -1093,6 +1132,8 @@ static void vmballoon_inflate(struct vmballoon *b)
- 	 */
- 	if (ctl.n_refused_pages != 0)
- 		vmballoon_release_refused_pages(b, &ctl);
++/**
++ * balloon_page_list_enqueue() - inserts a list of pages into the balloon page
++ *				 list.
++ * @b_dev_info: balloon device descriptor where we will insert a new page to
++ * @pages: pages to enqueue - allocated using balloon_page_alloc.
++ *
++ * Driver must call it to properly enqueue a balloon pages before definitively
++ * removing it from the guest system.
++ */
++void balloon_page_list_enqueue(struct balloon_dev_info *b_dev_info,
++			       struct list_head *pages)
++{
++	struct page *page, *tmp;
++	unsigned long flags;
 +
-+	vmballoon_release_page_list(&ctl.prealloc_pages, NULL, ctl.page_size);
- }
++	spin_lock_irqsave(&b_dev_info->pages_lock, flags);
++	list_for_each_entry_safe(page, tmp, pages, lru)
++		balloon_page_enqueue_one(b_dev_info, page);
++	spin_unlock_irqrestore(&b_dev_info->pages_lock, flags);
++}
++EXPORT_SYMBOL_GPL(balloon_page_list_enqueue);
++
++/**
++ * balloon_page_list_dequeue() - removes pages from balloon's page list and
++ *				 returns a list of the pages.
++ * @b_dev_info: balloon device decriptor where we will grab a page from.
++ * @pages: pointer to the list of pages that would be returned to the caller.
++ * @n_req_pages: number of requested pages.
++ *
++ * Driver must call it to properly de-allocate a previous enlisted balloon pages
++ * before definetively releasing it back to the guest system. This function
++ * tries to remove @n_req_pages from the ballooned pages and return it to the
++ * caller in the @pages list.
++ *
++ * Note that this function may fail to dequeue some pages temporarily empty due
++ * to compaction isolated pages.
++ *
++ * Return: number of pages that were added to the @pages list.
++ */
++int balloon_page_list_dequeue(struct balloon_dev_info *b_dev_info,
++			       struct list_head *pages, int n_req_pages)
++{
++	struct page *page, *tmp;
++	unsigned long flags;
++	int n_pages = 0;
++
++	spin_lock_irqsave(&b_dev_info->pages_lock, flags);
++	list_for_each_entry_safe(page, tmp, &b_dev_info->pages, lru) {
++		/*
++		 * Block others from accessing the 'page' while we get around
++		 * establishing additional references and preparing the 'page'
++		 * to be released by the balloon driver.
++		 */
++		if (!trylock_page(page))
++			continue;
++
++		if (IS_ENABLED(CONFIG_BALLOON_COMPACTION) &&
++		    PageIsolated(page)) {
++			/* raced with isolation */
++			unlock_page(page);
++			continue;
++		}
++		balloon_page_delete(page);
++		__count_vm_event(BALLOON_DEFLATE);
++		unlock_page(page);
++		list_add(&page->lru, pages);
++		if (++n_pages >= n_req_pages)
++			break;
++	}
++	spin_unlock_irqrestore(&b_dev_info->pages_lock, flags);
++
++	return n_pages;
++}
++EXPORT_SYMBOL_GPL(balloon_page_list_dequeue);
++
+ /*
+  * balloon_page_alloc - allocates a new page for insertion into the balloon
+  *			  page list.
+@@ -44,17 +138,9 @@ void balloon_page_enqueue(struct balloon_dev_info *b_dev_info,
+ {
+ 	unsigned long flags;
  
- /**
+-	/*
+-	 * Block others from accessing the 'page' when we get around to
+-	 * establishing additional references. We should be the only one
+-	 * holding a reference to the 'page' at this point.
+-	 */
+-	BUG_ON(!trylock_page(page));
+ 	spin_lock_irqsave(&b_dev_info->pages_lock, flags);
+-	balloon_page_insert(b_dev_info, page);
+-	__count_vm_event(BALLOON_INFLATE);
++	balloon_page_enqueue_one(b_dev_info, page);
+ 	spin_unlock_irqrestore(&b_dev_info->pages_lock, flags);
+-	unlock_page(page);
+ }
+ EXPORT_SYMBOL_GPL(balloon_page_enqueue);
+ 
+@@ -71,36 +157,13 @@ EXPORT_SYMBOL_GPL(balloon_page_enqueue);
+  */
+ struct page *balloon_page_dequeue(struct balloon_dev_info *b_dev_info)
+ {
+-	struct page *page, *tmp;
+ 	unsigned long flags;
+-	bool dequeued_page;
++	LIST_HEAD(pages);
++	int n_pages;
+ 
+-	dequeued_page = false;
+-	spin_lock_irqsave(&b_dev_info->pages_lock, flags);
+-	list_for_each_entry_safe(page, tmp, &b_dev_info->pages, lru) {
+-		/*
+-		 * Block others from accessing the 'page' while we get around
+-		 * establishing additional references and preparing the 'page'
+-		 * to be released by the balloon driver.
+-		 */
+-		if (trylock_page(page)) {
+-#ifdef CONFIG_BALLOON_COMPACTION
+-			if (PageIsolated(page)) {
+-				/* raced with isolation */
+-				unlock_page(page);
+-				continue;
+-			}
+-#endif
+-			balloon_page_delete(page);
+-			__count_vm_event(BALLOON_DEFLATE);
+-			unlock_page(page);
+-			dequeued_page = true;
+-			break;
+-		}
+-	}
+-	spin_unlock_irqrestore(&b_dev_info->pages_lock, flags);
++	n_pages = balloon_page_list_dequeue(b_dev_info, &pages, 1);
+ 
+-	if (!dequeued_page) {
++	if (n_pages != 1) {
+ 		/*
+ 		 * If we are unable to dequeue a balloon page because the page
+ 		 * list is empty and there is no isolated pages, then something
+@@ -113,9 +176,9 @@ struct page *balloon_page_dequeue(struct balloon_dev_info *b_dev_info)
+ 			     !b_dev_info->isolated_pages))
+ 			BUG();
+ 		spin_unlock_irqrestore(&b_dev_info->pages_lock, flags);
+-		page = NULL;
++		return NULL;
+ 	}
+-	return page;
++	return list_first_entry(&pages, struct page, lru);
+ }
+ EXPORT_SYMBOL_GPL(balloon_page_dequeue);
+ 
 -- 
 2.17.1
 
