@@ -2,148 +2,162 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E478C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF08C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF74120895
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:29:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF74120895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id D4991208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 02:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4991208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electromag.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeIZIjy (ORCPT
+        id S1727240AbeIZIlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 04:39:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34496 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbeIZIjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 04:39:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0DF6FB049;
-        Wed, 26 Sep 2018 02:29:16 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Joe Perches <joe@perches.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Wed, 26 Sep 2018 12:29:06 +1000
-Cc:     Nishad Kamdar <nishadkamdar@gmail.com>, devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v2] staging: mt7621-mmc: Fix single statement macros in sd.c
-In-Reply-To: <2f93ac5324ef3a229f2b8e855222a5fdd7b32f90.camel@perches.com>
-References: <20180923093805.GA20870@nishad> <b0f415b5b9655571374ab30e37406b494d07bc45.camel@perches.com> <20180925184947.GC16455@kroah.com> <2f93ac5324ef3a229f2b8e855222a5fdd7b32f90.camel@perches.com>
-Message-ID: <87bm8lhtzh.fsf@notabene.neil.brown.name>
+        Wed, 26 Sep 2018 04:41:21 -0400
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:44121 "EHLO
+        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbeIZIlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 04:41:21 -0400
+Received: (qmail 30136 invoked by uid 5089); 26 Sep 2018 02:30:41 -0000
+Received: by simscan 1.2.0 ppid: 30074, pid: 30075, t: 0.3277s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950 spam: 3.1.4
+X-RBL:  $rbltext
+Received: from unknown (HELO ?192.168.0.122?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy3.45ru.net.au with ESMTPA; 26 Sep 2018 02:30:40 -0000
+Subject: Re: [PATCH 2/2] iio: magnetometer: Add driver support for PNI RM3100
+To:     Song Qiang <songqiang1304521@gmail.com>
+Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        rtresidd@electromag.com.au, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180925031724.21399-1-songqiang1304521@gmail.com>
+ <20180925031724.21399-2-songqiang1304521@gmail.com>
+ <20180925143054.00007fcb@huawei.com>
+ <57d8a9d6-c402-068e-0a21-bbd6c20a7816@electromag.com.au>
+ <20180926014951.GA7094@Eros>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <4de691f2-dbc9-6124-efa6-66f2dd7e0f2b@electromag.com.au>
+Date:   Wed, 26 Sep 2018 10:30:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20180926014951.GA7094@Eros>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 26/09/2018 9:49 AM, Song Qiang wrote:
+> On Tue, Sep 25, 2018 at 10:36:54PM +0800, Phil Reid wrote:
+>> On 25/09/2018 9:30 PM, Jonathan Cameron wrote:
+>>>> +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
+>>>> +{
+>>>> +	struct iio_poll_func *pf = p;
+>>>> +	struct iio_dev *indio_dev = pf->indio_dev;
+>>>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>>>> +	struct regmap *regmap = data->regmap;
+>>>> +	u8 buffer[9];
+>>>> +	int ret;
+>>>> +	int i;
+>>>> +
+>>>> +	mutex_lock(&data->lock);
+>>>> +	ret = rm3100_wait_measurement(data);
+>>>> +	if (ret < 0) {
+>>>> +		mutex_unlock(&data->lock);
+>>>> +		goto done;
+>>>> +	}
+>>>> +
+>>>> +	ret = regmap_bulk_read(regmap, RM3100_REG_MX2, buffer, sizeof(buffer));
+>>>> +	mutex_unlock(&data->lock);
+>>>> +	if (ret < 0)
+>>>> +		goto done;
+>>>> +
+>>>> +	/* Convert XXXYYYZZZxxx to XXXxYYYxZZZx. x for padding. */
+>>>> +	for (i = 0; i < 3; i++)
+>>>> +		memcpy(data->buffer + i * 4, buffer + i * 3, 3);
+>>> Firstly X doesn't need copying.
+>>> Secondly the copy of Y actually overwrites the value of Z
+>>> XXXYYYZZZxxx
+>>> XXXxYYYZZxxx
+>>> XXXxYYYxYZZx
+>>>
+>>> I think...
+>>>
+>>>> +
+>>>> +	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
+>>>> +			iio_get_time_ns(indio_dev));
+>>
+>> memcpy target is a different buffer so should be ok.
+>>
+>> But that raises the question of does it need to be?
+>> 'buffer' could be 12 bytes long and just shuffle Z then Y.
+>> Do the unused bytes need to be zeroed? or does libiio mask them anyway?
+>>
+>>
+>>
+>> -- 
+>> Regards
+>> Phil Reid
+> 
+> Hi Phil,
+> 
+> This is interesting, last patch I submitted uses three transactions and
+> shuffles X, Y and Z respectively. You said it should be better to use one
+> transactions, I thought it makes point, and one transaction may reduce
+> IO pressure of the i2c bus. :)
+> And that's not necessary for unused bytes to be zero. I'm not familiar
+> with libiio, actually just been studying it, can't say anything about
+> it.
+> 
+> yours,
+> Song Qiang
+> 
+> 
+G'day Song,
 
-On Tue, Sep 25 2018, Joe Perches wrote:
+yes the one transaction suggestion was to reduce pressure on the bus.
+I think also with 3 calls you can up up with other devices taking over
+the i2c / spi bus in between.
 
-> On Tue, 2018-09-25 at 20:49 +0200, Greg Kroah-Hartman wrote:
->> On Sun, Sep 23, 2018 at 06:31:32AM -0700, Joe Perches wrote:
->> > On Sun, 2018-09-23 at 15:08 +0530, Nishad Kamdar wrote:
->> > > This patch fixes a few single statement macros in sd.c.
->> > > It converts two macros to inline functions. It removes
->> > > five other macros and replaces their usages with calls to
->> > > the function being called in the macro definition.
->> > > Issue found by checkpatch.
->> > >=20
->> > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
->> > > ---
->> > > Changes in v2:
->> > >   - Convert msdc_gate_clk() and msdc_ungate_clk() to inline function=
-s.
->> > >   - Delete msdc_irq_restore(), msdc_vcore_on(), msdc_vcore_off(),
->> > >     msdc_vdd_on() and msdc_vdd_off() and replace their usages direct=
-ly
->> > >     with calls to the function being called by these macros.
->> >=20
->> > Nishad, do please look again for uses of these functions
->> > you are changing.
->> >=20
->> > Please try removing all the #if 0 blocks instead, and then
->> > see if there are also now unused functions from those removed
->> > blocks that could also be removed.
->> >=20
->> > And Greg, if you look at this, look at the odd license of
->> > these files.
->> >=20
->> > It's possible the license is incompatible with the GPL.
->>=20
->> It is odd, but the GPL at the bottom of the file kind of implies it is
->> ok.
->
-> Implications are not licenses.
->
->> Given that it was published by mtk, I am assuming all is good, but
->> it would be a good idea to check with the authors to fix this up
->> properly.
->
-> The initial patch was submitted by
-> John Crispin <blogic@openwrt.org>
+We've got a devkit for this part, but haven't got to wiring it up to our system as yet.
+We're looking at using the i2c interface which could push things at max samplerate, so yes I'm
+keen to see bus pressure reduced as much as possible.
 
-Actually it was submitted by me. I extracted it from libreCMC (I think -
-it is in most of the various openWRT-like distros).
-In libreCMC the patch has John listed as the Author, and I thought it
-right to preserve that.
+I was thinking something like the following:
 
-I believe the code comes from a code-dump made by Mediatek several years
-ago.  It can be found at git://github.com/mqmaker/linux.git.
-The code there contains (in drivers/mmc/host/mtk-mmc/sd.c) both the
-copyright statement and the
- MODULE_LICENSE("GPL");
-declaration.
-I took this declaration as sufficient evidence that Mediatek
-intentionally released it under the GPL.  The fact that the whole
-code dump contains the GPL COPYING file is extra evidence.
+u8 buffer[12];
+regmap_bulk_read(regmap, RM3100_REG_MX2, buffer, 9);
 
-NeilBrown
+buffer[10] = buffer[8]; // or memcpy or some other fancy shuffle code.
+buffer[9]  = buffer[7];
+buffer[8]  = buffer[6];
+
+buffer[6]  = buffer[5];
+buffer[5]  = buffer[4];
+buffer[4]  = buffer[3];
+
+iio_push_to_buffers_with_timestamp(indio_dev, buffer, iio_get_time_ns(indio_dev));
+
+but I'm unsure if this would be needed:
+buffer[7] = 0
+buffer[3] = 0
+
+What you've got does the job I think.
+
+I haven't dug into the datasheet in great detail, and my iio knownledge is limited.
+Are you sure the RM3100_CHANNEL scantype endianness is IIO_LE.
+rm3100_read_mag looks to be doing big endian conversion and the datasheet agrees with that.
 
 
->
-> I do not know John's relationship to mediatek.
->
-> commit 8b634a9c7620b15691322cd53071122d2ab249a7
-> Author: John Crispin <blogic@openwrt.org>
-> Date:   Thu Mar 15 07:22:35 2018 +1100
->
-> John?  Any idea of the providence of these files?
->
-> I do not see anything like it in
-> https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dtree;f=3Dtarget/linu=
-x/mediatek;h=3Dad50ab7e407372a482aafb4183c4e49e25f93739;hb=3Drefs/tags/v18.=
-06.1
+-- 
+Regards
+Phil Reid
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAluq7vIACgkQOeye3VZi
-gblzaBAAkkcqsKncGkHdRphw33C4GUwFvqBrsRQ6WbhmtzYVKS3KCXMlDZYHKulD
-GI2IsoFdBVj8GNCKBBneR9cxy6zDTAXMyW5FfUihjty55cDSi8ABbRbEfbfxhkwx
-05VgU17whypKyS8BBcR0yu7lSjmBQ6EI+FwOmqo73m+LyNsXT9PDAXeXJsAfAMff
-1Nt/+AgqtVPMAv1NVbWR9ZpJnm/9Yrp3dA/FP8ofIdIAuOBT8St3dAu9PFxijTNr
-8ToCIYoqgwVxhoqYd0MIUfNovlJrkElL4XCImHxxul870oWXp21SpflpoR+i1903
-dfACkV5R6jhRGDeiWtJa9EQms71qTtpMgeyp7bgg5z6V4ziVGYRetHtQYGGf2fWo
-pITrJNDr3S/kCoS2A8oG79Tatn/qvGEaOBnek5HS3Fi1y1OCWA8FGTXZV/iliopP
-6dN7pDJlPO1hd5Df1ifq5A+d6l+bC1qDQX8I5U1EoaDnt4Ip5xUblFUAhs+496Dc
-r6lVp87G9QQRik4phSyKGJetJo1wbeh7qIK7Cky87w6DEfav5kG437aCQYbvpVpP
-4A9Yfj1ktxTp1VblIqlDZ/ujiokr07AgasKRW4/vNXj0MQ474d8XP26J1IgN+ayz
-Z4C+QLvDm3rJaSlhxDGrznZQYgrl4e0GhpkC/OhQxRLSUh6Moqg=
-=9+h4
------END PGP SIGNATURE-----
---=-=-=--
