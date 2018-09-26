@@ -2,128 +2,118 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80089C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274DFC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B8DB20666
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:51:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B8DB20666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DACE720666
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:51:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v1PZciB/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DACE720666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbeI0AFU (ORCPT
+        id S1728591AbeI0AFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 20:05:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:51828 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbeI0AFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 20:05:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D3817A9;
-        Wed, 26 Sep 2018 10:51:15 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF3AC3F5B3;
-        Wed, 26 Sep 2018 10:51:12 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 18:51:07 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
- default
-Message-ID: <20180926175106.GA22286@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-15-patrick.bellasi@arm.com>
- <20180904134748.GA4974@localhost.localdomain>
- <20180906144053.GD25636@e110439-lin>
- <20180914111003.GC24082@hirez.programming.kicks-ass.net>
- <20180914140732.GR1413@e110439-lin>
- <20180914142813.GM24124@hirez.programming.kicks-ass.net>
- <20180917122723.GS1413@e110439-lin>
- <20180921091308.GD24082@hirez.programming.kicks-ass.net>
+        Wed, 26 Sep 2018 20:05:53 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55938 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbeI0AFx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 20:05:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8G3h0F79W0AN8AUgvnTarDYNgmvvq+g0X4IgF9XuL4s=; b=v1PZciB/d/xVpqiCUTQMx5qnm
+        nwIKgsWKOG/fFDKBqZACtT7zu4UNvrMl21RsZbnFUdD0X+s3dq3CGloAYLVVcQeI77mjhBcyPZteo
+        Q9vQT+3aZoW1kD/eu/hZLzS3fiVnXBHAt98l2KU3EdwjMXUadV0bns71LlPJRcmBDhRW+0D/RR9zA
+        m8zJoMHj/VhZpFhy8sepgNwNEw2wNPWpXNIHdgGqDd/YOFD61cPO//3vW4urkTV8DNHT2ExEr1OHS
+        txYQ/aAyv+JNTdewrxEwG20lhphCHssjBkONaqb3bdj4g36KGWLi03N1cuROwX89CuQbsSQds/hkz
+        3AFcU575Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5Dy1-0001vC-Hz; Wed, 26 Sep 2018 17:51:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D873E205A76D5; Wed, 26 Sep 2018 19:51:12 +0200 (CEST)
+Date:   Wed, 26 Sep 2018 19:51:12 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     will.deacon@arm.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
+        tglx@linutronix.de
+Subject: Re: [RFC][PATCH 0/3] locking/qspinlock: Improve determinism for x86
+Message-ID: <20180926175112.GA5254@hirez.programming.kicks-ass.net>
+References: <20180926110117.405325143@infradead.org>
+ <2c284b6d-99c1-2686-b8c0-fce8987e747f@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180921091308.GD24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <2c284b6d-99c1-2686-b8c0-fce8987e747f@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On 21-Sep 11:13, Peter Zijlstra wrote:
-> On Mon, Sep 17, 2018 at 01:27:23PM +0100, Patrick Bellasi wrote:
-
-[...]
-
-While going back to one of our previous conversation, I noted these
-comments:
-
-> > Thus, the capacity of little CPUs, or the exact capacity of an OPP, is
-> > something we don't care to specify exactly, since:
-
-[...]
-
-> >  - certain platforms don't even expose OPPs, but just "performance
-> >    levels"... which ultimately are a "percentage"
+On Wed, Sep 26, 2018 at 12:20:09PM -0400, Waiman Long wrote:
+> On 09/26/2018 07:01 AM, Peter Zijlstra wrote:
+> > Back when Will did his qspinlock determinism patches, we were left with one
+> > cmpxchg loop on x86 due to the use of atomic_fetch_or(). Will proposed a nifty
+> > trick:
+> >
+> >   http://lkml.kernel.org/r/20180409145409.GA9661@arm.com
+> >
+> > But at the time we didn't pursue it. This series implements that and argues for
+> > its correctness. In particular it places an smp_mb__after_atomic() in
+> > between the two operations, which forces the load to come after the
+> > store (which is free on x86 anyway).
+> >
+> > In particular this ordering ensures a concurrent unlock cannot trigger
+> > the uncontended handoff. Also it ensures that if the xchg() happens
+> > after a (successful) trylock, we must observe that LOCKED bit.
 > 
-> Well, the whole capacity thing is a 'percentage', it's just that 1024 is
-> much nicer to work with (for computers) than 100 is (also it provides a
-> wee bit more resolution).
+> When you said "concurrent unlock cannot trigger the uncontended
+> handoff", are you saying the current code has this uncontended handoff
+> problem or just when comparing to doing a load first followed by xchg()?
 
-Here above I was referring to the Intel's HWP support [1],
-specifically at the:
+In particular I'm talking about this:
 
-  Ability of HWP to allow software to set an energy/performance
-  preference hint in the IA32_HWP_REQUEST MSR.
+locked:
+	/*
+	 * claim the lock:
+	 *
+	 * n,0,0 -> 0,0,1 : lock, uncontended
+	 * *,0,0 -> *,0,1 : lock, contended
+	 *
+	 * If the queue head is the only one in the queue (lock value == tail)
+	 * and nobody is pending, clear the tail code and grab the lock.
+	 * Otherwise, we only need to grab the lock.
+	 */
+	/*
+	 * In the PV case we might already have _Q_LOCKED_VAL set, because
+	 * of lock stealing; therefore we must also allow:
+	 *
+	 * n,0,1 -> 0,0,1
+	 *
+	 * Note: at this point: (val & _Q_PENDING_MASK) == 0, because of the
+	 *       above wait condition, therefore any concurrent setting of
+	 *       PENDING will make the uncontended transition fail.
+	 */
+	if ((val & _Q_TAIL_MASK) == tail) {
+		if (atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
+			goto release; /* No contention */
+	}
 
-which is detailed in section "14.4.4 Managing HWP".
 
-The {Minimum,Maximum}_Performance registers represent what I consider
-the best semantics for UtilClamp.
+Here queue head acquires the lock and we take the "uncontended" path. If
+we set PENDING prior to this, the cmpxchg above will fail, and the later
+load will observe the tail.
 
-In the HWP case we use 256 range values, and thus for UtilClamp as
-well it would make more sense to use a 1024 scale as suggested by
-Peter, even just to have a bit more room, while still considering the
-clamp values _as a percentage_, with just one decimal digit of
-resolution
 
-I think the important bit here is the abstraction between what we
-the user can require and what the platform can provided.
-
-If HWP does not allow the OS to pinpoint a specific frequency, why
-should a user-space interface be designed to pinpoint a specific
-capacity ?
-
-Can we find here a common ground around the idea that UtilClamp values
-represent a 1024 range percentage of minimum/maximum performance
-expected by a task ?
-
-Would be really nice to know what Rafael thing about all that...
-
-Cheers Patrick
-
-[1] https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3b-part-2-manual.pdf
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
