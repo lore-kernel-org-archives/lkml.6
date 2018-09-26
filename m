@@ -2,125 +2,361 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA876C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8074DC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6B0214DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26B0F214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XlZ1QiUa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6B0214DD
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oWnMQWRG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B0F214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbeIZSHK (ORCPT
+        id S1728495AbeIZSHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:07:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55580 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbeIZSHJ (ORCPT
+        Wed, 26 Sep 2018 14:07:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46278 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbeIZSHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:07:09 -0400
+        Wed, 26 Sep 2018 14:07:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-ID:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4vXKM651yL9SYzrpJ9StXrE0xaFJG55+LSyER0yWd2I=; b=XlZ1QiUamzDpKJA8W8dxiyvoV
-        iHHjbJ+LIOK5LCASMP6k6AqSkebc7wWRZ8k1B+2eK2E5g84PDSjbJ2GtkIzMl8P9CgaWoxYktyZr3
-        g0SORSFsi8tKHahbDZRheB58Pgzo5dfK5SayYQFc0m+/JoCid0+4PrDe6YyrfKQnTdb4heMbhWFV1
-        ejAb5egfeov2daaale4qeZv/hOoW5HzZycXtD58nt49T74yGL2U/kN3tKYsXokK7gkDVeqD/iGEL6
-        A+PxsyShXPhjm5YbgVacJryiji/EX1z7NfQPg+sTLNd0KmFlERvPaMy6rvOp/045IrPg3fP0dh9e8
-        FcQjyCXlg==;
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=N1OVJgW1ngapU7SQzJH0GBbUBqWOoCJ7NvD7fyO4Wgs=; b=oWnMQWRGhGc7ootgQlh/KvKs+m
+        FAkrX1ggqp5t5+U+U9Z2c9HAFlzsuPk2xGm1QUp+6euQu1OTA1JdoIUZUqHsQqe/Bc01Grq0zSkA4
+        UXJe5+8fM49QSQubvb2SA+qzml8AyZ0EgGgD+JcKrqr3PxYZG1kk3w+R1NdrvPVeJU7akpxX03Rs2
+        k8IBKaY5BeZs6+7r3RHXQkwMcgVWIKj9Z2oEdngG4Td14G5eqvZLT4Zfs7pT5k7+toO9heCWuDQgz
+        xW7pSfeKh1TrPAm0EHOMUJZ5Y0JnJuzNQG7gFDfRb3bx+ZjyiXG7z1XB2N+Ltg5t/IL0eHiyy2OhH
+        Dj7Vf0Ww==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g58OM-0005vb-7W; Wed, 26 Sep 2018 11:54:21 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g58OL-0007TT-TU; Wed, 26 Sep 2018 11:54:25 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 717D4206F1802; Wed, 26 Sep 2018 13:54:04 +0200 (CEST)
-Message-ID: <20180926113623.863696043@infradead.org>
+        id 77D45206F1804; Wed, 26 Sep 2018 13:54:04 +0200 (CEST)
+Message-ID: <20180926114800.614533601@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 26 Sep 2018 13:36:23 +0200
+Date:   Wed, 26 Sep 2018 13:36:25 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
         akpm@linux-foundation.org, npiggin@gmail.com
 Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, peterz@infradead.org,
-        linux@armlinux.org.uk, heiko.carstens@de.ibm.com, riel@surriel.com,
-        fengguang.wu@intel.com
-Subject: [PATCH 00/18] my generic mmu_gather patches
+        linux@armlinux.org.uk, heiko.carstens@de.ibm.com, riel@surriel.com
+Subject: [PATCH 02/18] asm-generic/tlb: Provide HAVE_MMU_GATHER_PAGE_SIZE
+References: <20180926113623.863696043@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Move the mmu_gather::page_size things into the generic code instead of
+powerpc specific bits.
 
-Here is my current stash of generic mmu_gather patches that goes on top of Will's
-tlb patches:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tlb/asm-generic
-
-And they include the s390 patches done by Heiko. At the end of this, there is
-not a single arch left with a custom mmu_gather.
-
-I've been slow posting these, because the 0-day bot seems to be having trouble
-and I've not been getting the regular cross-build green light emails that I
-otherwise rely upon.
-
-I hope to have addressed all the feedback from the last time, and I've added a
-bunch of missing Cc's from last time.
-
-Please review with care.
-
+Cc: Nick Piggin <npiggin@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/Kconfig                      |   8 +-
- arch/alpha/include/asm/tlb.h      |   2 -
- arch/arc/include/asm/tlb.h        |  32 -----
- arch/arm/include/asm/tlb.h        | 256 +++----------------------------------
- arch/arm64/Kconfig                |   1 -
- arch/arm64/include/asm/tlb.h      |   1 +
- arch/c6x/include/asm/tlb.h        |   1 +
- arch/h8300/include/asm/tlb.h      |   2 -
- arch/hexagon/include/asm/tlb.h    |  12 --
- arch/ia64/include/asm/tlb.h       | 257 +-------------------------------------
- arch/ia64/include/asm/tlbflush.h  |  25 ++++
- arch/ia64/mm/tlb.c                |  23 +++-
- arch/m68k/include/asm/tlb.h       |   1 -
- arch/microblaze/include/asm/tlb.h |   4 +-
- arch/mips/include/asm/tlb.h       |  17 ---
- arch/nds32/include/asm/tlb.h      |  16 ---
- arch/nios2/include/asm/tlb.h      |  14 +--
- arch/openrisc/include/asm/tlb.h   |   6 +-
- arch/parisc/include/asm/tlb.h     |  18 ---
- arch/powerpc/Kconfig              |   2 +
- arch/powerpc/include/asm/tlb.h    |  18 +--
- arch/riscv/include/asm/tlb.h      |   1 +
- arch/s390/Kconfig                 |   2 +
- arch/s390/include/asm/tlb.h       | 130 ++++++-------------
- arch/s390/mm/pgalloc.c            |  63 +---------
- arch/sh/include/asm/pgalloc.h     |   9 ++
- arch/sh/include/asm/tlb.h         | 132 +-------------------
- arch/sparc/Kconfig                |   1 +
- arch/sparc/include/asm/tlb_32.h   |  18 ---
- arch/um/include/asm/tlb.h         | 158 +----------------------
- arch/unicore32/include/asm/tlb.h  |  10 +-
- arch/x86/Kconfig                  |   1 -
- arch/x86/include/asm/tlb.h        |  22 ++--
- arch/x86/include/asm/tlbflush.h   |  12 +-
- arch/x86/mm/tlb.c                 |  17 ++-
- arch/xtensa/include/asm/tlb.h     |  26 ----
- include/asm-generic/tlb.h         | 238 +++++++++++++++++++++++++++++++----
- mm/huge_memory.c                  |   4 +-
- mm/hugetlb.c                      |   2 +-
- mm/madvise.c                      |   2 +-
- mm/memory.c                       |   6 +-
- mm/mmu_gather.c                   | 129 ++++++++++---------
- mm/pgtable-generic.c              |   1 +
- 43 files changed, 460 insertions(+), 1240 deletions(-)
+ arch/Kconfig                   |    3 +++
+ arch/arm/include/asm/tlb.h     |    3 +--
+ arch/ia64/include/asm/tlb.h    |    3 +--
+ arch/powerpc/Kconfig           |    1 +
+ arch/powerpc/include/asm/tlb.h |   17 -----------------
+ arch/s390/include/asm/tlb.h    |    4 +---
+ arch/sh/include/asm/tlb.h      |    4 +---
+ arch/um/include/asm/tlb.h      |    4 +---
+ include/asm-generic/tlb.h      |   32 +++++++++++++++++++-------------
+ mm/huge_memory.c               |    4 ++--
+ mm/hugetlb.c                   |    2 +-
+ mm/madvise.c                   |    2 +-
+ mm/memory.c                    |    4 ++--
+ mm/mmu_gather.c                |    5 +++++
+ 14 files changed, 39 insertions(+), 49 deletions(-)
+
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -365,6 +365,9 @@ config HAVE_RCU_TABLE_FREE
+ config HAVE_RCU_TABLE_INVALIDATE
+ 	bool
+ 
++config HAVE_MMU_GATHER_PAGE_SIZE
++	bool
++
+ config ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	bool
+ 
+--- a/arch/arm/include/asm/tlb.h
++++ b/arch/arm/include/asm/tlb.h
+@@ -286,8 +286,7 @@ tlb_remove_pmd_tlb_entry(struct mmu_gath
+ 
+ #define tlb_migrate_finish(mm)		do { } while (0)
+ 
+-#define tlb_remove_check_page_size_change tlb_remove_check_page_size_change
+-static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
++static inline void tlb_change_page_size(struct mmu_gather *tlb,
+ 						     unsigned int page_size)
+ {
+ }
+--- a/arch/ia64/include/asm/tlb.h
++++ b/arch/ia64/include/asm/tlb.h
+@@ -282,8 +282,7 @@ do {							\
+ #define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	\
+ 	tlb_remove_tlb_entry(tlb, ptep, address)
+ 
+-#define tlb_remove_check_page_size_change tlb_remove_check_page_size_change
+-static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
++static inline void tlb_change_page_size(struct mmu_gather *tlb,
+ 						     unsigned int page_size)
+ {
+ }
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -216,6 +216,7 @@ config PPC
+ 	select HAVE_PERF_REGS
+ 	select HAVE_PERF_USER_STACK_DUMP
+ 	select HAVE_RCU_TABLE_FREE		if SMP
++	select HAVE_MMU_GATHER_PAGE_SIZE
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RELIABLE_STACKTRACE		if PPC64 && CPU_LITTLE_ENDIAN
+ 	select HAVE_SYSCALL_TRACEPOINTS
+--- a/arch/powerpc/include/asm/tlb.h
++++ b/arch/powerpc/include/asm/tlb.h
+@@ -27,7 +27,6 @@
+ #define tlb_start_vma(tlb, vma)	do { } while (0)
+ #define tlb_end_vma(tlb, vma)	do { } while (0)
+ #define __tlb_remove_tlb_entry	__tlb_remove_tlb_entry
+-#define tlb_remove_check_page_size_change tlb_remove_check_page_size_change
+ 
+ extern void tlb_flush(struct mmu_gather *tlb);
+ 
+@@ -46,22 +45,6 @@ static inline void __tlb_remove_tlb_entr
+ #endif
+ }
+ 
+-static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+-						     unsigned int page_size)
+-{
+-	if (!tlb->page_size)
+-		tlb->page_size = page_size;
+-	else if (tlb->page_size != page_size) {
+-		if (!tlb->fullmm)
+-			tlb_flush_mmu(tlb);
+-		/*
+-		 * update the page size after flush for the new
+-		 * mmu_gather.
+-		 */
+-		tlb->page_size = page_size;
+-	}
+-}
+-
+ #ifdef CONFIG_SMP
+ static inline int mm_is_core_local(struct mm_struct *mm)
+ {
+--- a/arch/s390/include/asm/tlb.h
++++ b/arch/s390/include/asm/tlb.h
+@@ -180,9 +180,7 @@ static inline void pud_free_tlb(struct m
+ #define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	\
+ 	tlb_remove_tlb_entry(tlb, ptep, address)
+ 
+-#define tlb_remove_check_page_size_change tlb_remove_check_page_size_change
+-static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+-						     unsigned int page_size)
++static inline void tlb_change_page_size(struct mmu_gather *tlb, unsigned int page_size)
+ {
+ }
+ 
+--- a/arch/sh/include/asm/tlb.h
++++ b/arch/sh/include/asm/tlb.h
+@@ -127,9 +127,7 @@ static inline void tlb_remove_page_size(
+ 	return tlb_remove_page(tlb, page);
+ }
+ 
+-#define tlb_remove_check_page_size_change tlb_remove_check_page_size_change
+-static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+-						     unsigned int page_size)
++static inline void tlb_change_page_size(struct mmu_gather *tlb, unsigned int page_size)
+ {
+ }
+ 
+--- a/arch/um/include/asm/tlb.h
++++ b/arch/um/include/asm/tlb.h
+@@ -146,9 +146,7 @@ static inline void tlb_remove_page_size(
+ #define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	\
+ 	tlb_remove_tlb_entry(tlb, ptep, address)
+ 
+-#define tlb_remove_check_page_size_change tlb_remove_check_page_size_change
+-static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+-						     unsigned int page_size)
++static inline void tlb_change_page_size(struct mmu_gather *tlb, unsigned int page_size)
+ {
+ }
+ 
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -61,7 +61,7 @@
+  *    tlb_remove_page() and tlb_remove_page_size() imply the call to
+  *    tlb_flush_mmu() when required and has no return value.
+  *
+- *  - tlb_remove_check_page_size_change()
++ *  - tlb_change_page_size()
+  *
+  *    call before __tlb_remove_page*() to set the current page-size; implies a
+  *    possible tlb_flush_mmu() call.
+@@ -110,6 +110,11 @@
+  *
+  * Additionally there are a few opt-in features:
+  *
++ *  HAVE_MMU_GATHER_PAGE_SIZE
++ *
++ *  This ensures we call tlb_flush() every time tlb_change_page_size() actually
++ *  changes the size and provides mmu_gather::page_size to tlb_flush().
++ *
+  *  HAVE_RCU_TABLE_FREE
+  *
+  *  This provides tlb_remove_table(), to be used instead of tlb_remove_page()
+@@ -235,11 +240,15 @@ struct mmu_gather {
+ 	unsigned int		cleared_puds : 1;
+ 	unsigned int		cleared_p4ds : 1;
+ 
++	unsigned int		batch_count;
++
+ 	struct mmu_gather_batch *active;
+ 	struct mmu_gather_batch	local;
+ 	struct page		*__pages[MMU_GATHER_BUNDLE];
+-	unsigned int		batch_count;
+-	int page_size;
++
++#ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
++	unsigned int page_size;
++#endif
+ };
+ 
+ void arch_tlb_gather_mmu(struct mmu_gather *tlb,
+@@ -305,21 +314,18 @@ static inline void tlb_remove_page(struc
+ 	return tlb_remove_page_size(tlb, page, PAGE_SIZE);
+ }
+ 
+-#ifndef tlb_remove_check_page_size_change
+-#define tlb_remove_check_page_size_change tlb_remove_check_page_size_change
+-static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
++static inline void tlb_change_page_size(struct mmu_gather *tlb,
+ 						     unsigned int page_size)
+ {
+-	/*
+-	 * We don't care about page size change, just update
+-	 * mmu_gather page size here so that debug checks
+-	 * doesn't throw false warning.
+-	 */
+-#ifdef CONFIG_DEBUG_VM
++#ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
++	if (tlb->page_size && tlb->page_size != page_size) {
++		if (!tlb->fullmm)
++			tlb_flush_mmu(tlb);
++	}
++
+ 	tlb->page_size = page_size;
+ #endif
+ }
+-#endif
+ 
+ static inline unsigned long tlb_get_unmap_shift(struct mmu_gather *tlb)
+ {
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1617,7 +1617,7 @@ bool madvise_free_huge_pmd(struct mmu_ga
+ 	struct mm_struct *mm = tlb->mm;
+ 	bool ret = false;
+ 
+-	tlb_remove_check_page_size_change(tlb, HPAGE_PMD_SIZE);
++	tlb_change_page_size(tlb, HPAGE_PMD_SIZE);
+ 
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (!ptl)
+@@ -1693,7 +1693,7 @@ int zap_huge_pmd(struct mmu_gather *tlb,
+ 	pmd_t orig_pmd;
+ 	spinlock_t *ptl;
+ 
+-	tlb_remove_check_page_size_change(tlb, HPAGE_PMD_SIZE);
++	tlb_change_page_size(tlb, HPAGE_PMD_SIZE);
+ 
+ 	ptl = __pmd_trans_huge_lock(pmd, vma);
+ 	if (!ptl)
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3337,7 +3337,7 @@ void __unmap_hugepage_range(struct mmu_g
+ 	 * This is a hugetlb vma, all the pte entries should point
+ 	 * to huge page.
+ 	 */
+-	tlb_remove_check_page_size_change(tlb, sz);
++	tlb_change_page_size(tlb, sz);
+ 	tlb_start_vma(tlb, vma);
+ 	mmu_notifier_invalidate_range_start(mm, mmun_start, mmun_end);
+ 	address = start;
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -328,7 +328,7 @@ static int madvise_free_pte_range(pmd_t
+ 	if (pmd_trans_unstable(pmd))
+ 		return 0;
+ 
+-	tlb_remove_check_page_size_change(tlb, PAGE_SIZE);
++	tlb_change_page_size(tlb, PAGE_SIZE);
+ 	orig_pte = pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
+ 	flush_tlb_batched_pending(mm);
+ 	arch_enter_lazy_mmu_mode();
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -355,7 +355,7 @@ void free_pgd_range(struct mmu_gather *t
+ 	 * We add page table cache pages with PAGE_SIZE,
+ 	 * (see pte_free_tlb()), flush the tlb if we need
+ 	 */
+-	tlb_remove_check_page_size_change(tlb, PAGE_SIZE);
++	tlb_change_page_size(tlb, PAGE_SIZE);
+ 	pgd = pgd_offset(tlb->mm, addr);
+ 	do {
+ 		next = pgd_addr_end(addr, end);
+@@ -1046,7 +1046,7 @@ static unsigned long zap_pte_range(struc
+ 	pte_t *pte;
+ 	swp_entry_t entry;
+ 
+-	tlb_remove_check_page_size_change(tlb, PAGE_SIZE);
++	tlb_change_page_size(tlb, PAGE_SIZE);
+ again:
+ 	init_rss_vec(rss);
+ 	start_pte = pte_offset_map_lock(mm, pmd, addr, &ptl);
+--- a/mm/mmu_gather.c
++++ b/mm/mmu_gather.c
+@@ -58,7 +58,9 @@ void arch_tlb_gather_mmu(struct mmu_gath
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
+ 	tlb->batch = NULL;
+ #endif
++#ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
+ 	tlb->page_size = 0;
++#endif
+ 
+ 	__tlb_reset_range(tlb);
+ }
+@@ -121,7 +123,10 @@ bool __tlb_remove_page_size(struct mmu_g
+ 	struct mmu_gather_batch *batch;
+ 
+ 	VM_BUG_ON(!tlb->end);
++
++#ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
+ 	VM_WARN_ON(tlb->page_size != page_size);
++#endif
+ 
+ 	batch = tlb->active;
+ 	/*
 
 
