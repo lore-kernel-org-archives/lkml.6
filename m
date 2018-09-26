@@ -2,152 +2,152 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BBFC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7ABBC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7A8921568
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:23:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A8921568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A2C492147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:23:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C492147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeI0CiO (ORCPT
+        id S1727158AbeI0CiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:38:14 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46014 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbeI0CiO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:38:14 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c13-v6so251894otf.12;
-        Wed, 26 Sep 2018 13:23:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2d3Qs8I55Av+N1zIL7reVCeCO/qRx/311cTebvLYQ04=;
-        b=EDHTLpW0EXTeeb/Rfhoo4MZNaI7yCA8h2U+BVhdQqfqTNz2rgk9arOE01r8AIkFkHM
-         RjF4G8BSN31kiF1RWlRGwfvX9HzD/wKoFnsmq2ezsM8JQKCBI/lK/IZkFsJewwbonDa+
-         dZM3Fh/JOG2m6ysPgNi/zvBsFZx2g904HrDSWfYArOjWoVUSHh+dCMQDvlYffwQa+iYG
-         oV124HqfB7FK4p3pg7rKrPADMNxN5SQvxWlSWaRfRsUKaAIUeUfOqNzvaFCsgkOQjNPP
-         ejfBp8PyMDnc9CjilMYgPstAl8KlWigvfVBjW2TGtyN0Qo8G6e3PRPhMnYuD1cD4RSzy
-         QhoQ==
-X-Gm-Message-State: ABuFfoggVTdXISSt/zfJHEqKcgFasAqqdYLJP4AYxT5gBaNoVV5sV2TU
-        8faXn4hoAryeBg4TkYjCsQ==
-X-Google-Smtp-Source: ACcGV60N7kMncy4QlNQv4pOWc7Y+rLDuaJXZnZhROjTB+nnw2rCE/r8HC6KBcG8YqrF6rRhwgSEFmw==
-X-Received: by 2002:a9d:cd8:: with SMTP id o24-v6mr3789428otd.367.1537993413842;
-        Wed, 26 Sep 2018 13:23:33 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 39-v6sm3012052otz.67.2018.09.26.13.23.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 13:23:33 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 15:23:32 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Cc:     Vinod Koul <vkoul@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/7] dt-bindings: stm32-mdma: Add DMA/MDMA chaining
- support bindings
-Message-ID: <20180926202332.GA13585@bogus>
-References: <1536650820-16076-1-git-send-email-pierre-yves.mordret@st.com>
- <1536650820-16076-4-git-send-email-pierre-yves.mordret@st.com>
+        Wed, 26 Sep 2018 22:38:17 -0400
+Received: from mga02.intel.com ([134.134.136.20]:15554 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726422AbeI0CiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 22:38:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 13:23:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
+   d="scan'208";a="86835322"
+Received: from kushalre-mobl.amr.corp.intel.com (HELO [10.251.20.48]) ([10.251.20.48])
+  by orsmga003.jf.intel.com with ESMTP; 26 Sep 2018 13:16:59 -0700
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
+ PF_SGX
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+Date:   Wed, 26 Sep 2018 13:16:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536650820-16076-4-git-send-email-pierre-yves.mordret@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 09:26:56AM +0200, Pierre-Yves MORDRET wrote:
-> This patch adds the description of the 2 properties needed to support M2M
-> transfer triggered by STM32 DMA when his transfer is complete.
+On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
+>> e omniscient.
+>>
+>> How about this?  With formatting changes since it's long-winded...
+>>
+>>        /*
+>>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
+>>         * access is allowed by the PTE but not the EPCM.  This usually happens
+>>         * when the EPCM is yanked out from under us, e.g. by hardware after a
+>>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
+>>         * fix the source of the fault as the EPCM can't be directly modified
+>>         * by software.  Handle the fault as an access error in order to signal
+>>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
+>>         * though userspace may not have actually violated access permissions.
+>>         */
+>>
+> Looks good to me.
 
-Same problem here.
+Including the actual architectural definition of the bit might add some
+clarity.  The SDM explicitly says (Vol 3a section 4.7):
 
-> 
-> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-> ---
->   Version history:
->     v1:
->        * Initial
-> ---
-> ---
->  .../devicetree/bindings/dma/stm32-mdma.txt         | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/stm32-mdma.txt b/Documentation/devicetree/bindings/dma/stm32-mdma.txt
-> index d18772d..1810f87 100644
-> --- a/Documentation/devicetree/bindings/dma/stm32-mdma.txt
-> +++ b/Documentation/devicetree/bindings/dma/stm32-mdma.txt
-> @@ -10,7 +10,7 @@ Required properties:
->  - interrupts: Should contain the MDMA interrupt.
->  - clocks: Should contain the input clock of the DMA instance.
->  - resets: Reference to a reset controller asserting the DMA controller.
-> -- #dma-cells : Must be <5>. See DMA client paragraph for more details.
-> +- #dma-cells : Must be <6>. See DMA client paragraph for more details.
->  
->  Optional properties:
->  - dma-channels: Number of DMA channels supported by the controller.
-> @@ -26,7 +26,7 @@ Example:
->  		interrupts = <122>;
->  		clocks = <&timer_clk>;
->  		resets = <&rcc 992>;
-> -		#dma-cells = <5>;
-> +		#dma-cells = <6>;
->  		dma-channels = <16>;
->  		dma-requests = <32>;
->  		st,ahb-addr-masks = <0x20000000>, <0x00000000>;
-> @@ -35,8 +35,8 @@ Example:
->  * DMA client
->  
->  DMA clients connected to the STM32 MDMA controller must use the format
-> -described in the dma.txt file, using a five-cell specifier for each channel:
-> -a phandle to the MDMA controller plus the following five integer cells:
-> +described in the dma.txt file, using a six-cell specifier for each channel:
-> +a phandle to the MDMA controller plus the following six integer cells:
->  
->  1. The request line number
->  2. The priority level
-> @@ -76,19 +76,23 @@ a phandle to the MDMA controller plus the following five integer cells:
->     if no HW ack signal is used by the MDMA client
->  5. A 32bit mask specifying the value to be written to acknowledge the request
->     if no HW ack signal is used by the MDMA client
-> +6. A bitfield value specifying if the MDMA client wants to generate M2M
-> +   transfer with HW trigger (1) or not (0). This bitfield should be only
-> +   enabled for M2M transfer triggered by STM32 DMA client. The memory devices
-> +   involved in this kind of transfer are SRAM and DDR.
->  
->  Example:
->  
->  	i2c4: i2c@5c002000 {
->  		compatible = "st,stm32f7-i2c";
->  		reg = <0x5c002000 0x400>;
-> -		interrupts = <95>,
-> -			     <96>;
-> -		clocks = <&timer_clk>;
-> +		interrupts = <GIC_SPI 95 IRQ_TYPE_NONE>,
-> +			     <GIC_SPI 96 IRQ_TYPE_NONE>;
-> +		clocks = <&clk_hsi>;
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> -		dmas = <&mdma1 36 0x0 0x40008 0x0 0x0>,
-> -		       <&mdma1 37 0x0 0x40002 0x0 0x0>;
-> +		dmas = <&mdma1 36 0x0 0x40008 0x0 0x0 0>,
-> +		       <&mdma1 37 0x0 0x40002 0x0 0x0 0>;
->  		dma-names = "rx", "tx";
->  		status = "disabled";
->  	};
-> -- 
-> 2.7.4
-> 
+	The fault resulted from violation of SGX-specific access-control
+	requirements.
+
+Which totally squares with returning true from access_error().
+
+There's also a tidbit that says:
+
+	This flag is 1 if the exception is unrelated to paging and
+	resulted from violation of SGX-specific access-control
+	requirements. ... such a violation can occur only if there
+	is no ordinary page fault...
+
+This is pretty important.  It means that *none* of the other
+paging-related stuff that we're doing applies.
+
+We also need to clarify how this can happen.  Is it through something
+than an app does, or is it solely when the hardware does something under
+the covers, like suspend/resume.
