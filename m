@@ -2,204 +2,93 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CF8C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B592C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8284D21508
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:27:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8284D21508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 22638214FF
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:29:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22638214FF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728394AbeIZVlS (ORCPT
+        id S1728131AbeIZVmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:41:18 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:59172 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbeIZVlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:41:17 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ZsclDkjV1Snl; Wed, 26 Sep 2018 17:27:48 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA1F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:1f00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0D3411EC0347;
-        Wed, 26 Sep 2018 17:27:48 +0200 (CEST)
-Date:   Wed, 26 Sep 2018 17:27:52 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Justin Ernst <justin.ernst@hpe.com>, russ.anderson@hpe.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Raise maximum number of memory controllers
-Message-ID: <20180926152752.GG5584@zn.tnic>
-References: <20180925143449.284634-1-justin.ernst@hpe.com>
- <20180925152659.GE23986@zn.tnic>
- <20180925175023.GA16725@agluck-desk>
- <20180925180458.GG23986@zn.tnic>
- <20180926093510.GA5584@zn.tnic>
+        Wed, 26 Sep 2018 17:42:54 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38978 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbeIZVmy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:42:54 -0400
+Received: by mail-ot1-f66.google.com with SMTP id c12-v6so28587405otl.6;
+        Wed, 26 Sep 2018 08:29:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GQv0rIvfJ7wZrqYG9ldxCaOBz1O3n/V+ddxZgAsKJ8U=;
+        b=AGoeHTw2Gnnp+K9UVbZxUGxO+IiVqhm7JGMH3txOcEvgWjzjOMhZhFbAWOq5b7xrwS
+         as62hqmwEKqg+SA0h7O+yhiXxxU9D0IJXIHUHsTgSPLrWol8w61KvD/tahYKlmj2IFsT
+         DKFzoFJWbcn+DKdyx3MqqEiAsE+hISUwjw9FZgl6noUWlAvHSBwrqEZ0VujDjv9NsN58
+         vW7p9GAWdXyrhg14DcYH9qeowo7ykJ147SjUWZxxuN/lZ0prdn2dVO+PUUBmACY2Hyr6
+         0o3BSJRaWT7zA5Vatu+cwGXUd4YasnrJp6RgNKEwbZfNg7P4XVpaSXw7470Ga9GGaSIK
+         M4mQ==
+X-Gm-Message-State: ABuFfohvIqxfgKtoItUsT35NAj74xcL3Er+lz23+IT/zQiVPbFWHkHJ5
+        YJMTT6Afwfh9h/mz2aRyMhMFY5O2jw==
+X-Google-Smtp-Source: ACcGV61dfwgqd54Oqy+ue7b/pNMDgACflLAGQFoGLQ4etrbIagSu9rNZb3KxGXF1CzNIipfUv2NL5w==
+X-Received: by 2002:a9d:b91:: with SMTP id 17-v6mr4178782oth.263.1537975765180;
+        Wed, 26 Sep 2018 08:29:25 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n30-v6sm2313264otb.73.2018.09.26.08.29.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 08:29:24 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 10:29:23 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Pascal PAILLET-LME <p.paillet@st.com>
+Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        Pascal PAILLET-LME <p.paillet@st.com>
+Subject: Re: [PATCH V2 7/8] dt-bindings: watchdog: document stpmic1 pmic
+ watchdog
+Message-ID: <20180926152923.GA1821@bogus>
+References: <1536325173-16617-1-git-send-email-p.paillet@st.com>
+ <1536325173-16617-8-git-send-email-p.paillet@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180926093510.GA5584@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1536325173-16617-8-git-send-email-p.paillet@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 11:35:11AM +0200, Borislav Petkov wrote:
-> * or Greg coming and saying, you're using bus_type all wrong and you
-> shouldn't and you should remove it completely! :-)
+On Fri, 7 Sep 2018 12:59:45 +0000, Pascal PAILLET-LME wrote:
+> From: pascal paillet <p.paillet@st.com>
+> 
+> The stpmic1 PMIC embeds a watchdog which is disabled by default.
+> In case of watchdog, the PMIC goes off.
+> 
+> Signed-off-by: pascal paillet <p.paillet@st.com>
+> ---
+>  Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
+> 
 
-Yap, and so he did! :-)
-
-It looks like we can remove the whole per-MC bus thing, see below. Patch
-seems to work here and grepping sysfs hierarchy before and after:
-
-find /sys/ | grep -i edac > ...
-
-doesn't show any differences.
-
-Tony, I'd appreciate running this on one of your big boxes to check
-nothing is missing in sysfs...
-
-Thx.
-
----
- drivers/edac/edac_mc.c       |  9 +--------
- drivers/edac/edac_mc_sysfs.c | 30 ++----------------------------
- include/linux/edac.h         |  6 ------
- 3 files changed, 3 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-index 7d3edd713932..13594ffadcb3 100644
---- a/drivers/edac/edac_mc.c
-+++ b/drivers/edac/edac_mc.c
-@@ -55,8 +55,6 @@ static LIST_HEAD(mc_devices);
-  */
- static const char *edac_mc_owner;
- 
--static struct bus_type mc_bus[EDAC_MAX_MCS];
--
- int edac_get_report_status(void)
- {
- 	return edac_report;
-@@ -716,11 +714,6 @@ int edac_mc_add_mc_with_groups(struct mem_ctl_info *mci,
- 	int ret = -EINVAL;
- 	edac_dbg(0, "\n");
- 
--	if (mci->mc_idx >= EDAC_MAX_MCS) {
--		pr_warn_once("Too many memory controllers: %d\n", mci->mc_idx);
--		return -ENODEV;
--	}
--
- #ifdef CONFIG_EDAC_DEBUG
- 	if (edac_debug_level >= 3)
- 		edac_mc_dump_mci(mci);
-@@ -760,7 +753,7 @@ int edac_mc_add_mc_with_groups(struct mem_ctl_info *mci,
- 	/* set load time so that error rate can be tracked */
- 	mci->start_time = jiffies;
- 
--	mci->bus = &mc_bus[mci->mc_idx];
-+	mci->bus = edac_get_sysfs_subsys();
- 
- 	if (edac_create_sysfs_mci_device(mci, groups)) {
- 		edac_mc_printk(mci, KERN_WARNING,
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index 20374b8248f0..2ca2012f2857 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -914,27 +914,8 @@ static const struct device_type mci_attr_type = {
- int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
- 				 const struct attribute_group **groups)
- {
--	char *name;
- 	int i, err;
- 
--	/*
--	 * The memory controller needs its own bus, in order to avoid
--	 * namespace conflicts at /sys/bus/edac.
--	 */
--	name = kasprintf(GFP_KERNEL, "mc%d", mci->mc_idx);
--	if (!name)
--		return -ENOMEM;
--
--	mci->bus->name = name;
--
--	edac_dbg(0, "creating bus %s\n", mci->bus->name);
--
--	err = bus_register(mci->bus);
--	if (err < 0) {
--		kfree(name);
--		return err;
--	}
--
- 	/* get the /sys/devices/system/edac subsys reference */
- 	mci->dev.type = &mci_attr_type;
- 	device_initialize(&mci->dev);
-@@ -950,7 +931,7 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
- 	err = device_add(&mci->dev);
- 	if (err < 0) {
- 		edac_dbg(1, "failure: create device %s\n", dev_name(&mci->dev));
--		goto fail_unregister_bus;
-+		goto out;
- 	}
- 
- 	/*
-@@ -998,10 +979,8 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
- 		device_unregister(&dimm->dev);
- 	}
- 	device_unregister(&mci->dev);
--fail_unregister_bus:
--	bus_unregister(mci->bus);
--	kfree(name);
- 
-+out:
- 	return err;
- }
- 
-@@ -1032,13 +1011,8 @@ void edac_remove_sysfs_mci_device(struct mem_ctl_info *mci)
- 
- void edac_unregister_sysfs(struct mem_ctl_info *mci)
- {
--	struct bus_type *bus = mci->bus;
--	const char *name = mci->bus->name;
--
- 	edac_dbg(1, "Unregistering device %s\n", dev_name(&mci->dev));
- 	device_unregister(&mci->dev);
--	bus_unregister(bus);
--	kfree(name);
- }
- 
- static void mc_attr_release(struct device *dev)
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index a45ce1f84bfc..dd8d006f1837 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -668,10 +668,4 @@ struct mem_ctl_info {
- 	bool fake_inject_ue;
- 	u16 fake_inject_count;
- };
--
--/*
-- * Maximum number of memory controllers in the coherent fabric.
-- */
--#define EDAC_MAX_MCS	16
--
- #endif
--- 
-2.17.0.582.gccdcbd54c
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Reviewed-by: Rob Herring <robh@kernel.org>
