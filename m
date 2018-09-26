@@ -2,98 +2,126 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD26C004D1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B46BC28CBE
 	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC56E2173F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:38:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC56E2173F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 64C7921566
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:35:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V0GW6kj1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C7921566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbeI0BxY (ORCPT
+        id S1727023AbeI0Btm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:53:24 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:47689 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbeI0BxY (ORCPT
+        Wed, 26 Sep 2018 21:49:42 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:40927 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeI0Btl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:53:24 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MMoOy-1gNsyj1pIa-00ImP7; Wed, 26 Sep 2018 21:37:53 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: wm9712: fix unused variable warning
-Date:   Wed, 26 Sep 2018 21:37:40 +0200
-Message-Id: <20180926193750.2468414-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:ta/u0qgWp0cmBz/Syz+o2PFf8tnus0PbJDhOwnfrQ2MQVvO0EWE
- IEuLWswjfu3lv10DsFfnijVua6FQvTbrLLxJ/3E9F6sxr4+uyqRYm10YiMJqNzNsyruwHjK
- iGHsq1PJlSkHJlkmck7x6RbBbT0y+ZISjb5ncTpuWV97d9yEYbSnd1dp2ZMYjZb82eqGMTe
- b8cQPiJcPbD7MX6q+oUPw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:I89YepxwDdw=:Rn2dZ4ApVZBRng68itqPrb
- zqq0gmfPzQ61jJfHXEF0gUYJ9DNi1MoxAkCr5wKE3MWGKrNbQwj/EP1MbgIyD+RKdE8ApLood
- DSiAXqvWao9gakxyed4HpJJtTsnbEaWATk/g7SYikuTdLgiiPv8dLrOv8CaN7z9zzeiEOliYC
- pcfiPjg1gZgllv1zZP7sL34GRbXHxHVieZWil2/FvMIqaAvy6dWla3yDt8207Qd7hXQVvwJT/
- Sq1Nr5oMxzk3u5Ca4c8FpwzuUlXMOQ4uzlPi3rVofbX9yPxmtL8FjcfNkn0FVf2Cmza4nnYeo
- AzeBa6qnGuNaHpWzv4pDkcyz1ThFneAO7s18jRp8n5hH0HWoUo1BwXzgSvsByYPGs+SogVMKu
- AaAhokwoD0RRd/SORTVl6VjkHRCDOcuWSIKOuni/b5EWSwFZeug0Q9ZJfq3EEVFnsTLL4RDZt
- WDRSjpLX/pWE6dKb8ApeZ5bc40rymkGVUPWbuh7GDRWFicnCYV5C7JESaRiotf5+yfJZXZe3s
- IKLjFmu8Oo6haie0ICVpxS2WdRYojalqDSubP6DNciteTvVzsg7Y5/Vpv8NUvyFAuJ9eppbnQ
- 0z5TF1dCfz/kLVTZPaWVWBva9c7dx/r/w8uN8X74/stG2PZR8jf2hkLaIBmZ94s4T3qkTSNEk
- X0qdL7+eqGATreqOSpWBqOtUAAs6QhTuslgVyZNQWqvOcB54/Q0OK1XGQL1CRFevwBU4=
+        Wed, 26 Sep 2018 21:49:41 -0400
+Received: by mail-yw1-f66.google.com with SMTP id z143-v6so62068ywa.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:35:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gy39weLiWkcXXbnViIhFr1a88Sp0IFml5j5Be5XTFvk=;
+        b=V0GW6kj1WoBKj4A2E8hSy0gU54XVMhgYOe/A7TD1I1kud8a9sB7je0C8crHy/4JJEC
+         pKO8Nt+/7haSxuh/NggjG5YKkhpeRik37nLP7XDyAwK6AWKE8gLTlqgm37OsgHmCiJXi
+         gsgHuEn4QJp3OVNAZ1dhjnzgjr0QndQikqzNw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gy39weLiWkcXXbnViIhFr1a88Sp0IFml5j5Be5XTFvk=;
+        b=ZTZPH6FFfi6B9GKV1JJ6Mnp9umAXVaZYAZxPttoxqYkJ8PyXZAyKQaQaESrcOB5Fsa
+         hw82rB0dfy9eBoXf3cxpx8byidyIgKO+48B/rtqntQEMP0rBQWenXVSYIJHYGffMFhdw
+         PXyIOVJe2pls+LmAWrNv9WlBi1DzWWxIo+Wt8OK6wrMkTLXwm5eEWOCMNkXaGBqjngir
+         sxqcjPHvOJbbW6m6fHjgoTwDnpmaOGd25g9OoEejoWu/tU42zgHUzKr9WhWh6tw9H+Uj
+         k7YMzEaYz+obdIMGGm3AvqWmpygLN1EOt2gLuQc/Ixj0bjYV5uvrYzJQj8bzoyBWQpba
+         fvpA==
+X-Gm-Message-State: ABuFfoiC3/GtWeyYKf0vKTGvRvvVlnSlnd2E1UccDggRQGXmEKz+ttod
+        5fMC7wIed9w1VLRL6oJ3FbZxwRulkrI=
+X-Google-Smtp-Source: ACcGV63tFBGhSkpDUA7RaLLHjiExWAJ2neOF1/PEN/tPG8F5ty9+RA0hhDYEJKelB6dDUeT10EBypw==
+X-Received: by 2002:a0d:d281:: with SMTP id u123-v6mr3757890ywd.97.1537990511632;
+        Wed, 26 Sep 2018 12:35:11 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id d136-v6sm4591084ywh.33.2018.09.26.12.35.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 12:35:10 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id w7-v6so61437ybm.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:35:09 -0700 (PDT)
+X-Received: by 2002:a25:396:: with SMTP id 144-v6mr4106650ybd.403.1537990509226;
+ Wed, 26 Sep 2018 12:35:09 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:ab0a:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 12:35:06
+ -0700 (PDT)
+In-Reply-To: <CAKwvOdnx6D+_LeSZ-1v_s8dLErXq4B5Nx1UQozdr1+ZaGYWnrA@mail.gmail.com>
+References: <84cf6ae0-97c8-6b73-ca86-b3d3b3daba5b@pobox.com>
+ <CAKwvOdm7RrGpwk4LMFhsKx=5QMDoFAF8JX=RMZ9YXwOptDfhCg@mail.gmail.com>
+ <8d5cf8c6-556a-96a1-610d-c92355783a9f@pobox.com> <CAKwvOdkD0cmF5373LRS92U--ptRvikSrG_oKyE-AiaybCQYMBg@mail.gmail.com>
+ <CAKwvOdnyA=Y_+KnJrDc5mu7twTAEOMXvb8cAZhwzsXTi7a9sEA@mail.gmail.com>
+ <20180926180019.GD22824@google.com> <CAKwvOd=xYG+r4KU+QurUTyaxkPB2AMane4YfWxuvKtONvVtLxQ@mail.gmail.com>
+ <CAGXu5jLBz1YanL5X4HFZjhb8NZe5QK=Q1ySfBkBDNWqEg4hs5g@mail.gmail.com>
+ <20180926184259.GB14797@kroah.com> <CAGXu5jJaJ+1Sg3uwaZ8hzw3wFbiLrftpZDO8vdjY9_tB+P-HPQ@mail.gmail.com>
+ <20180926190303.GA18293@kroah.com> <CAKwvOdnx6D+_LeSZ-1v_s8dLErXq4B5Nx1UQozdr1+ZaGYWnrA@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 26 Sep 2018 12:35:06 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKRn2EsPwNMtVTPyKyDnt+vqHZF=jdr+DajN_iN1DWjSw@mail.gmail.com>
+Message-ID: <CAGXu5jKRn2EsPwNMtVTPyKyDnt+vqHZF=jdr+DajN_iN1DWjSw@mail.gmail.com>
+Subject: Re: [PATCH v2] compiler.h: give up __compiletime_assert_fallback()
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Santos <daniel.santos@pobox.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'ret' variable is now only used in an #ifdef, and causes a
-warning if it is declared outside of that block:
+On Wed, Sep 26, 2018 at 12:29 PM, Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> On Wed, Sep 26, 2018 at 12:03 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>>
+>> On Wed, Sep 26, 2018 at 11:45:19AM -0700, Kees Cook wrote:
+>> > On Wed, Sep 26, 2018 at 11:42 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>> > > I'm not digging up a compiler.h patch from a web site and adding it to
+>> > > the tree this late in the release cycle.  Especially given that it
+>> > > hasn't had any testing anywhere...
+>> >
+>> > Good point about it not living in -next.
+>> >
+>> > Who should be carrying these sorts of patches? In the past it's been
+>> > Andrew or Masahiro, yes? For linux-next, maybe it can go via -mm?
+>>
+>> Either is fine with me, as long as it isn't one of my trees :)
+>>
+>> thanks,
+>>
+>> greg k-h
+>
+> Besides, I think we want the v2: https://lkml.org/lkml/2018/8/25/103
 
-sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
-sound/soc/codecs/wm9712.c:641:6: error: unused variable 'ret' [-Werror=unused-variable]
+Yeah, that's what I'd linked to in the patchwork URL. Andrew, can you take this?
 
-Fixes: 2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/codecs/wm9712.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+-Kees
 
-diff --git a/sound/soc/codecs/wm9712.c b/sound/soc/codecs/wm9712.c
-index ade34c26ad2f..e873baa9e778 100644
---- a/sound/soc/codecs/wm9712.c
-+++ b/sound/soc/codecs/wm9712.c
-@@ -638,13 +638,14 @@ static int wm9712_soc_probe(struct snd_soc_component *component)
- {
- 	struct wm9712_priv *wm9712 = snd_soc_component_get_drvdata(component);
- 	struct regmap *regmap;
--	int ret;
- 
- 	if (wm9712->mfd_pdata) {
- 		wm9712->ac97 = wm9712->mfd_pdata->ac97;
- 		regmap = wm9712->mfd_pdata->regmap;
- 	} else {
- #ifdef CONFIG_SND_SOC_AC97_BUS
-+		int ret;
-+
- 		wm9712->ac97 = snd_soc_new_ac97_component(component, WM9712_VENDOR_ID,
- 						      WM9712_VENDOR_ID_MASK);
- 		if (IS_ERR(wm9712->ac97)) {
 -- 
-2.18.0
-
+Kees Cook
+Pixel Security
