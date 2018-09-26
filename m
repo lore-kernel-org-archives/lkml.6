@@ -2,86 +2,98 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D549C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B47C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051D821531
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:38:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051D821531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EB7FA21533
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:39:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eNrRKPEk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7FA21533
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeIZXwr (ORCPT
+        id S1728386AbeIZXxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:52:47 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51590 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727399AbeIZXwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:52:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0952C7A9;
-        Wed, 26 Sep 2018 10:38:46 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.Emea.Arm.com [10.4.12.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F07AC3F5B3;
-        Wed, 26 Sep 2018 10:38:44 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 18:38:42 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [REVIEW][PATCH 00/15] signal/arm64: siginfo cleanups
-Message-ID: <20180926173841.GD175719@arrakis.emea.arm.com>
-References: <871s9j462u.fsf@xmission.com>
+        Wed, 26 Sep 2018 19:53:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40522 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbeIZXxr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:53:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mq/KVVDq5oYZWt2QxJWTn2+Z8gX47B21yrOrHlYqnx8=; b=eNrRKPEkWoYpIgvFwli2KRfAU
+        ShxtpkK1VuPu+Ay69yV9ASzTVq17mRMxMbfuH+qV0MsZkLso3pt13QwutoemaFcqu5cnI8dq7Kgz/
+        thhLBxlkIv9vcke9qZCdzmbLA+iU4x2vOjHs9rm2utMSXedu8dOpBsFb6yuCDIoI6YpkLEbzSu1Nz
+        g3y+NnLQqEV8rom5sBMCFJ2O8YZXjhsfIH55l8WBIu1MSE8QWpbXUQjogWeDx6OYD3OKoLAKthE8a
+        Qplj3QgGb0CpL9r23nO1IZxAlU1lauLu0lUfYvqMVeaUUAXGIgweFtm++Fyo+rCAXIBxvOmkzumzs
+        /5rjvRkLQ==;
+Received: from 177.43.23.201.dynamic.adsl.gvt.net.br ([177.43.23.201] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5Dmf-0002rD-1L; Wed, 26 Sep 2018 17:39:42 +0000
+Date:   Wed, 26 Sep 2018 14:39:28 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "Luck, Tony" <tony.luck@intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Justin Ernst <justin.ernst@hpe.com>, russ.anderson@hpe.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aristeu Rozanski Filho <arozansk@redhat.com>
+Subject: Re: [PATCH] Raise maximum number of memory controllers
+Message-ID: <20180926143928.56f1f079@coco.lan>
+In-Reply-To: <20180926161749.GI5584@zn.tnic>
+References: <20180925143449.284634-1-justin.ernst@hpe.com>
+        <20180925152659.GE23986@zn.tnic>
+        <20180925175023.GA16725@agluck-desk>
+        <20180925180458.GG23986@zn.tnic>
+        <20180926093510.GA5584@zn.tnic>
+        <20180926152752.GG5584@zn.tnic>
+        <20180926130340.6b22918b@coco.lan>
+        <20180926161749.GI5584@zn.tnic>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871s9j462u.fsf@xmission.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Em Wed, 26 Sep 2018 18:17:49 +0200
+Borislav Petkov <bp@alien8.de> escreveu:
 
-On Mon, Sep 24, 2018 at 11:07:05AM +0200, Eric W. Biederman wrote:
-> This is the continuation of my work to sort out signaling of exceptions
-> with siginfo.  The old signal sending functions by taking a siginfo
-> argument resulted in their callers having to deal with the fiddly nature
-> of siginfo directly.  In small numbers of callers this is not a problem
-> but in the number of callers in the kernel this resulted in cases
-> where fields were not initialized or improperly initialized before
-> being passed to userspace.
+> On Wed, Sep 26, 2018 at 01:03:40PM -0300, Mauro Carvalho Chehab wrote:
+> > I guess this is/was needed to create things like this:
+> > 
+> > 	lrwxrwxrwx 1 root root 0 set 26 05:24 /sys/bus/edac/devices/mc -> ../../../devices/system/edac/mc  
 > 
-> To avoid having to worry about those issues I have added new signal
-> sending functions that each deal wit a different siginfo case.  When
-> using these functions there is no room for the fiddly nature of siginfo
-> to cause mistakes.
+> They're still there:
 > 
-> This is my set of changes to update arm64 to use those functions.
-> Along with some refactoring so those functions can be cleanly used.
+> $ ls -l /sys/bus/edac/devices/
+> total 0
+> lrwxrwxrwx 1 root root 0 Sep 26 18:15 csrow0 -> ../../../devices/system/edac/mc/mc0/csrow0
+> lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm0 -> ../../../devices/system/edac/mc/mc0/dimm0
+> lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm3 -> ../../../devices/system/edac/mc/mc0/dimm3
+> lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm6 -> ../../../devices/system/edac/mc/mc0/dimm6
+> lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm9 -> ../../../devices/system/edac/mc/mc0/dimm9
+> lrwxrwxrwx 1 root root 0 Sep 26 18:15 mc -> ../../../devices/system/edac/mc
+> lrwxrwxrwx 1 root root 0 Sep 26 18:15 mc0 -> ../../../devices/system/edac/mc/mc0
 > 
-> Folks please review and double check me.  I think I have kept these
-> changes simple and obviously correct but I am human and mess up
-> sometimes.
 
-Nice clean-up, thanks. I started reviewing the patches, I should finish
-by tomorrow (I also applied them locally to give some testing).
+Ok. Yeah, probably some changes at the driver's core made that bus
+thing obsolete. Or maybe it is there to allow unbind/remove
+the edac driver. Had you test it with KASAN and tried to unbind/remove
+the EDAC driver?
 
-> After these patches have had a chance to be reviewed I plan to merge
-> them by my siginfo tree.  If you would rather take them in the arm64
-> tree let me know.   All of the prerequisites should have been merged
-> through Linus's tree several releases ago.
-
-Either way works for me. There is a trivial conflict in
-force_signal_inject() with the arm64 for-next/core tree so I could as
-well put them on top of this branch and send them during the 4.20
-merging window.
-
--- 
-Catalin
+Thanks,
+Mauro
