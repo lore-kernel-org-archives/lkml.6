@@ -2,173 +2,110 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD8BC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93ACBC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13B0D214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 483062151D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qwXn1UEQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B0D214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NMtLNU3f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483062151D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727326AbeIZQgx (ORCPT
+        id S1727615AbeIZQiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:36:53 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50030 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbeIZQgx (ORCPT
+        Wed, 26 Sep 2018 12:38:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39393 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbeIZQiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:36:53 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8QAOZ44018067;
-        Wed, 26 Sep 2018 05:24:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537957475;
-        bh=x6XFqD5p4e4clCNru816FSciA/vyqqXsmOyBE8bEoNI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qwXn1UEQSrD6GEMx5NinDBy7U7xiCqRBpHBh7zLqVqjNTcvduEVVLZELMmVHRkfdI
-         B9QX7n3GHrJy6JVYc5+0xZ3aO+lv9XBfD/VQMCmxnLZxA7Ig+5OvekoW49lPT7XPgW
-         GWlKmvMBdOObmaG3vU1zJqxg1MMoc/Rtkmyk397Y=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8QAOZlC001093;
-        Wed, 26 Sep 2018 05:24:35 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 26
- Sep 2018 05:24:34 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 26 Sep 2018 05:24:34 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8QAOWN7022919;
-        Wed, 26 Sep 2018 05:24:33 -0500
-Subject: Re: [PATCH RESEND] backlight: gpio-backlight: Correct initial power
- state handling
-To:     Daniel Thompson <daniel.thompson@linaro.org>,
-        <lee.jones@linaro.org>, <jingoohan1@gmail.com>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180508070426.32211-1-peter.ujfalusi@ti.com>
- <cb603304-2052-2586-1673-96ab421a5547@linaro.org>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <94685994-98ff-2a1d-901c-6d3cce71db16@ti.com>
-Date:   Wed, 26 Sep 2018 13:25:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 12:38:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s14-v6so26408191wrw.6
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lcd6u1ndTCnAc1VHhAVdt0N3LitCvS0N9H8ozFD8tYE=;
+        b=NMtLNU3f+JW+ic3veGUj+7PyrO++3Mv3VnrVgAiHhHhoTLWHi3u8muLf7J6DDO693V
+         nRGqo4ePRsIJWwqHVyXI3DZpynGcnTz0209FaSFZ40zKrc2aIDt/ETI2SFWtx0kvh+w0
+         yz1V/x6ozWQR8r+m0k1gWvNTD6hj1APoWDMyM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lcd6u1ndTCnAc1VHhAVdt0N3LitCvS0N9H8ozFD8tYE=;
+        b=o3fQ/6/kcqJHh/cIKFJldAJb3K9ss/fZx57iaVA2OnuY29XS9cbAkqGhFAvBKJne4W
+         gH1szCO5siAq2jJhv5lvWCk7zzjjaZ6p7u+T5fr7B49/TxIIgMZSOJ6SFnUiKS6TaPSp
+         0KeI7GGQiCFwTzR0TZwVgmJWdGezfMcZlYcsT3mp5TsQttK3F0bx2OAcI1IfKsKyD6uY
+         iqsOJMwgfYY2iTjTYU/lMWfydcff2sX4aolTYgCyMXRtF3qrvZaJkc+T6FnDogZiFTtv
+         gpo+liVW7Z/nlVeJkRKl1/6r2PisCIXftupMULR/dQxww7k5QB9c0QkfuHgyE6FiNAyC
+         J3Xg==
+X-Gm-Message-State: ABuFfoj/izrBBoDj0TxDUxixyU5qyb29bDEouI3YVh5PeK3X2HbnrLe9
+        rzizvmDumlc6R2Rf4T704ZFgTQ==
+X-Google-Smtp-Source: ACcGV63FHtOgDt2F+TjLEQEdMg8AhpmPxnHtFo2PRQH2wBNJ+gLst0w2SVMq3nj6X/LzTk3SkinDNA==
+X-Received: by 2002:adf:9a84:: with SMTP id a4-v6mr4389463wrc.78.1537957555741;
+        Wed, 26 Sep 2018 03:25:55 -0700 (PDT)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id b12sm4442648wrx.11.2018.09.26.03.25.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 26 Sep 2018 03:25:55 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org
+Cc:     linux-kernel@vger.kernel.org, vkoul@kernel.org,
+        bgoswami@codeaurora.org, rohitkr@codeaurora.org,
+        lgirdwood@gmail.com, tiwai@suse.com, devicetree@vger.kernel.org,
+        mark.rutland@arm.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 0/5] ASoC: qdsp6: add compress offload support
+Date:   Wed, 26 Sep 2018 11:23:44 +0100
+Message-Id: <20180926102349.23481-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <cb603304-2052-2586-1673-96ab421a5547@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel,
+This patchset adds support to very basic MP3 playback compress offload
+support via QDSP ASM module.
 
-On 2018-06-13 18:11, Daniel Thompson wrote:
-> On 08/05/18 08:04, Peter Ujfalusi wrote:
->> The default-on property - or the def_value via legacy pdata) should be
->> handled as:
->> if it is 1, the backlight must be enabled (kept enabled)
->> if it is 0, the backlight must be disabled (kept disabled)
->>
->> This only works for the case when default-on is set. If it is not set
->> then
->> the brightness of the backlight is set to 0. Now if the backlight is
->> enabled by external driver (graphics) the backlight will stay disabled
->> since
->> the brightness is configured as 0. The backlight will not turn on.
->>
->> The correct action at probe time is to configure the props.power to
->> FB_BLANK_UNBLANK if we want the backlight on by default or to
->> FB_BLANK_POWERDOWN if the backlight should be off by default.
->>
->> The initial brightness should be set to 1.
-> 
-> Hmnn... I guess this comes down to the definition of "on" for a binary
-> 
-> Actually I'm a little worried that backlight already has too many
-> different behaviors and that this patch introduces another way for them
-> to be different!
-> 
-> Is there any mileage in adopting the same approach as PWM backlight for
-> blank/unblank management as a way to get a flicker free boot?
+Tested this patchset on DB410c with APQ8016 and DB820c with APQ8096 using
+tinycompress library.
 
-This patch is merely fixing a bug in the driver.
+Adding other codec support should be trivial w.r.t qdsp6 side, however
+there are other dependencies like compress UAPI header changes and
+FastRPC which are being worked in parallel. Once ready will post them!
 
-> For PWM the default property controls the initial brightness and the
-> initial power state is unblanked *unless* there is a phandle link to the
-> node, in which case we inherit whatever the power state the bootloader
-> had configured before the driver probed.
-> 
-> Put another way, what happens is we implement
-> gpio_backlight_initial_power_state() to perform a similar task to
-> pwm_backlight_initial_power_state().
+thanks,
+srini
 
-I agree, but what should we do with the default-on parameter?
+Changes since v1 (https://patchwork.kernel.org/cover/10585805/)
+- added support to snd_compr_set_runtime_buffer()
+- make use of generic copy function
+- few trivial cleanups suggested by Vinod Koul
 
-non DT boot or DT boot, no phandle link:
-default-on ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN
+Srinivas Kandagatla (5):
+  ALSA: soc-compress: add support to snd_compr_set_runtime_buffer()
+  ALSA: compress: make use of runtime buffer for copy
+  ASoC: q6asm-dai: dt-bindings: Add support to compress dais
+  ASoC: qdsp6: q6asm: add support to MP3 format
+  ASoC: qdsp6: q6asm-dai: Add support to compress offload
 
-DT boot and phandle link:
-if the GPIO was enabled by the bootloader: FB_BLANK_UNBLANK
-if the GIOP was not enabled by the bootloader: FB_BLANK_POWERDOWN
+ .../devicetree/bindings/sound/qcom,q6asm.txt  |  27 ++
+ include/sound/compress_driver.h               |  19 +
+ sound/core/compress_offload.c                 |  18 +-
+ sound/soc/qcom/Kconfig                        |   1 +
+ sound/soc/qcom/qdsp6/q6asm-dai.c              | 377 +++++++++++++++++-
+ sound/soc/qcom/qdsp6/q6asm.c                  |   5 +
+ 6 files changed, 443 insertions(+), 4 deletions(-)
 
-I think this will mimic closely what the
-pwm_backlight_initial_power_state() does.
+-- 
+2.19.0
 
-- Péter
-
-> 
-> 
-> Daniel.
-> 
-> 
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> ---
->> Hi,
->>
->> for some reason the original patch got lost:
->> https://patchwork.kernel.org/patch/9445539/
->>
->> But it is still valid, so I'm resending it.
->>
->> Regards,
->> Peter
->>
->>   drivers/video/backlight/gpio_backlight.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/video/backlight/gpio_backlight.c
->> b/drivers/video/backlight/gpio_backlight.c
->> index e470da95d806..904a4462cefe 100644
->> --- a/drivers/video/backlight/gpio_backlight.c
->> +++ b/drivers/video/backlight/gpio_backlight.c
->> @@ -142,7 +142,9 @@ static int gpio_backlight_probe(struct
->> platform_device *pdev)
->>           return PTR_ERR(bl);
->>       }
->>   -    bl->props.brightness = gbl->def_value;
->> +    bl->props.power = gbl->def_value ? FB_BLANK_UNBLANK :
->> FB_BLANK_POWERDOWN;
->> +    bl->props.brightness = 1;
->> +
->>       backlight_update_status(bl);
->>         platform_set_drvdata(pdev, bl);
->>
-> 
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
