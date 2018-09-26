@@ -2,158 +2,133 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43D1C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E33BC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92E4020843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:19:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E4020843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id D765620843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D765620843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbeIZRbw (ORCPT
+        id S1727417AbeIZRep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:31:52 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:42176 "EHLO pegase1.c-s.fr"
+        Wed, 26 Sep 2018 13:34:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59486 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbeIZRbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:31:52 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42KwSS0DmXz9ttFk;
-        Wed, 26 Sep 2018 13:19:20 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id j2nLRa-gITL0; Wed, 26 Sep 2018 13:19:19 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42KwSR6ZjLz9ttCH;
-        Wed, 26 Sep 2018 13:19:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 114268B80B;
-        Wed, 26 Sep 2018 13:19:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id xJQKDjtdK-1a; Wed, 26 Sep 2018 13:19:19 +0200 (CEST)
-Received: from PO15451 (unknown [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A57258B80A;
-        Wed, 26 Sep 2018 13:19:19 +0200 (CEST)
-Subject: Re: [PATCH] kdb: use correct pointer when 'btc' calls 'btt'
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kgdb-bugreport@lists.sourceforge.net, stable@vger.kernel.org,
-        me@tobin.cc
-References: <ff05bd36b338f4f914780176e9eba8138e1b254b.1536927765.git.christophe.leroy@c-s.fr>
- <20180916190610.vzqxwps7zqy2zc6o@holly.lan>
- <5f0e0241-b7ab-b5fa-de0e-01abdbc85770@linaro.org>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <760ed3ff-43d9-75e5-b36c-aaa7871ffe50@c-s.fr>
-Date:   Wed, 26 Sep 2018 13:19:18 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726841AbeIZRep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:34:45 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A4E630832E6;
+        Wed, 26 Sep 2018 11:22:16 +0000 (UTC)
+Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 178D060BE1;
+        Wed, 26 Sep 2018 11:22:10 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 19:22:08 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Borislav Petkov <bp@suse.de>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Cc:     Kairui Song <kasong@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "dyoung@redhat.com" <dyoung@redhat.com>
+Subject: Re: [PATCH] x86/boot: Fix kexec booting failure after SEV early boot
+ support
+Message-ID: <20180926112208.GE2555@MiWiFi-R3L-srv>
+References: <20180925111020.23834-1-kasong@redhat.com>
+ <6e15796e-31e9-2dc6-4a31-5c1b01554b45@amd.com>
+ <20180925172608.GB15464@zn.tnic>
+ <20180926073252.GC2555@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <5f0e0241-b7ab-b5fa-de0e-01abdbc85770@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926073252.GC2555@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 26 Sep 2018 11:22:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 26/09/2018 à 13:11, Daniel Thompson a écrit :
-> On 16/09/2018 20:06, Daniel Thompson wrote:
->> On Fri, Sep 14, 2018 at 12:35:44PM +0000, Christophe Leroy wrote:
->>> On a powerpc 8xx, 'btc' fails as follows:
->>>
->>> Entering kdb (current=0x(ptrval), pid 282) due to Keyboard Entry
->>> kdb> btc
->>> btc: cpu status: Currently on cpu 0
->>> Available cpus: 0
->>> kdb_getarea: Bad address 0x0
->>>
->>> when booting the kernel with 'debug_boot_weak_hash', it fails as well
->>>
->>> Entering kdb (current=0xba99ad80, pid 284) due to Keyboard Entry
->>> kdb> btc
->>> btc: cpu status: Currently on cpu 0
->>> Available cpus: 0
->>> kdb_getarea: Bad address 0xba99ad80
->>>
->>> On other platforms, Oopses have been observed too, see
->>> https://github.com/linuxppc/linux/issues/139
->>>
->>> This is due to btc calling 'btt' with %p pointer as an argument.
->>>
->>> This patch replaces %p by %px to get the real pointer value as
->>> expected by 'btt'
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>> Cc: <stable@vger.kernel.org> # 4.15+
->>
->> Would a Fixes: be better here?
->> Fixes: ad67b74d2469d9b82 ("printk: hash addresses printed with %p")
+On 09/26/18 at 03:32pm, Baoquan He wrote:
+> On 09/25/18 at 07:26pm, Borislav Petkov wrote:
+> > IINM, the problem can be addressed in a simpler way by getting rid of
+> > enc_bit and thus getting rid of the need to do relative addressing of
+> > anything and simply doing the whole dance of figuring out the C-bit each
+> > time. It probably wouldn't be even measurable...
 > 
-> Christophe, When you add the Fixes: could you also add my
+> Couldn't agree more.
 > 
-> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Obviously enc_bit is redundent here. We only check eax each time,
+> removing it can fix the RIP-relative addressing issue in kexec.
 
+OK, in distros CONFIG_AMD_MEM_ENCRYPT=y is set by default usually.
+enc_bit can save once in normal boot, then fetch and skip the cpuid
+detection in initialize_identity_maps(). However this only speeds up in
+amd system with SME, on intel cpu and amd cpu w/o sme, it still needs to
+do cpuid twice. Removing it should be not measurable as Boris said.
+Not sure if Tom has other concern.
 
-Ok, thanks for the review, but do I have to do anything really ?
-
-The Fixes: and now your Reviewed-by: appear automatically in patchwork 
-(https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=65715), 
-so I believe they'll be automatically included when Jason or someone 
-else takes the patch, no ?
-
-Christophe
+Thanks
+Baoquan
 
 > 
-> 
-> Thanks.
-> 
-> 
->>
->> No blame attached to Tobin, but the fixes makes it super clear what
->> changed and why this breaks kdb (which was not explicitly called out
->> the patch description).
->>
->>
->> Daniel.
->>
->>> ---
->>>   kernel/debug/kdb/kdb_bt.c | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
->>> index 6ad4a9fcbd6f..7921ae4fca8d 100644
->>> --- a/kernel/debug/kdb/kdb_bt.c
->>> +++ b/kernel/debug/kdb/kdb_bt.c
->>> @@ -179,14 +179,14 @@ kdb_bt(int argc, const char **argv)
->>>                   kdb_printf("no process for cpu %ld\n", cpu);
->>>                   return 0;
->>>               }
->>> -            sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
->>> +            sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
->>>               kdb_parse(buf);
->>>               return 0;
->>>           }
->>>           kdb_printf("btc: cpu status: ");
->>>           kdb_parse("cpu\n");
->>>           for_each_online_cpu(cpu) {
->>> -            sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
->>> +            sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
->>>               kdb_parse(buf);
->>>               touch_nmi_watchdog();
->>>           }
->>> -- 
->>> 2.13.3
->>>
+> diff --git a/arch/x86/boot/compressed/mem_encrypt.S b/arch/x86/boot/compressed/mem_encrypt.S
+> index eaa843a52907..0b60eb867d25 100644
+> --- a/arch/x86/boot/compressed/mem_encrypt.S
+> +++ b/arch/x86/boot/compressed/mem_encrypt.S
+> @@ -27,19 +27,6 @@ ENTRY(get_sev_encryption_bit)
+>  	push	%edx
+>  	push	%edi
+>  
+> -	/*
+> -	 * RIP-relative addressing is needed to access the encryption bit
+> -	 * variable. Since we are running in 32-bit mode we need this call/pop
+> -	 * sequence to get the proper relative addressing.
+> -	 */
+> -	call	1f
+> -1:	popl	%edi
+> -	subl	$1b, %edi
+> -
+> -	movl	enc_bit(%edi), %eax
+> -	cmpl	$0, %eax
+> -	jge	.Lsev_exit
+> -
+>  	/* Check if running under a hypervisor */
+>  	movl	$1, %eax
+>  	cpuid
+> @@ -69,12 +56,10 @@ ENTRY(get_sev_encryption_bit)
+>  
+>  	movl	%ebx, %eax
+>  	andl	$0x3f, %eax		/* Return the encryption bit location */
+> -	movl	%eax, enc_bit(%edi)
+>  	jmp	.Lsev_exit
+>  
+>  .Lno_sev:
+>  	xor	%eax, %eax
+> -	movl	%eax, enc_bit(%edi)
+>  
+>  .Lsev_exit:
+>  	pop	%edi
+> @@ -113,9 +98,6 @@ ENTRY(set_sev_encryption_mask)
+>  ENDPROC(set_sev_encryption_mask)
+>  
+>  	.data
+> -enc_bit:
+> -	.int	0xffffffff
+> -
+>  #ifdef CONFIG_AMD_MEM_ENCRYPT
+>  	.balign	8
+>  GLOBAL(sme_me_mask)
