@@ -2,326 +2,575 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289FDC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C154EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDBAF21480
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:34:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTk0HbAW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDBAF21480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 456C621480
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:38:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456C621480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeIZHoV (ORCPT
+        id S1727053AbeIZHse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 03:44:21 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34508 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbeIZHoU (ORCPT
+        Wed, 26 Sep 2018 03:48:34 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:29845 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726321AbeIZHsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 03:44:20 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d19-v6so12882771pgv.1;
-        Tue, 25 Sep 2018 18:34:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0PWseoF7GMEyiBQBQADgYiyXwnPtQe+XqULuu2vy1PI=;
-        b=gTk0HbAW8CZp/DW4bRk5kNrlHjevipCnBx30h9ZzZNB1PtJhSCJWzgkdZ7NptXiLeQ
-         mKAzVVBP+Zf5/MWjmKP1+GuulS0q1fEIj4T8ei0NEKx+0y/DvFbNeGBiDEwLMl4AtePr
-         vpkDoolyVoaTfszSeBed2CyC93tCatfJ6RfBd/nJwhyfTwJ0xN/dqzFmFwv1M0V3Nkll
-         H5K+oB/YlKj1V3BZGoNYpDWf7Dc7K7VLhlfw+dcbqru9gwBjrUgiGzOc0Cy4IJsk4cJK
-         eBUpyxzWYSpUzrmklZVbrvFuTniwCJeM6PVmneL6MgJgGxLpRAIDx736wpy+0ROGG2VN
-         uvmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0PWseoF7GMEyiBQBQADgYiyXwnPtQe+XqULuu2vy1PI=;
-        b=oUHu+wuyaORIgRuaBXdnPk/vkb0HHGqYvJtA7+czPPcwgfD9tDLDfB/ihLB1I0CSCX
-         tMLfYKZFiAGqzJyQTg7Aeh/YJgWWfyQp5ywuqI5TQXUASDEr93aQDI7kx1H+xwAzxyrF
-         uJZ/GNrKDAXnZadBUV9nMirwCUUEamGUbFypSM21UWRu4Wk9Ct2UBdsMTbsrrpL7ifRQ
-         IySP2qBOx3I/6RyYffyVihWH65X7f3tDIpjGZKa6ctb6sJAnlbb/dDZGACVFlOlCrFiy
-         RYwXIhGM57jy0bOXkQk9qvGrljuE+L1qXF7qKhJT76PSE0Ke6tOoos6Y6qomgnu956xD
-         rwxQ==
-X-Gm-Message-State: ABuFfojyn1Y6JhEhUiVxDlMmA7anLwEWe6jmEhmEbXdLLidcI4/XbDhZ
-        K5jNHBvPKST+aUH7BwpyEwc=
-X-Google-Smtp-Source: ACcGV63lOua51YhwBPI+3zvDGBIT7keufo+Q+omaSVLq4lrS0Qb851Ad9bHO0JVw3CQfwrVREsBBUQ==
-X-Received: by 2002:a62:444d:: with SMTP id r74-v6mr3760937pfa.96.1537925641073;
-        Tue, 25 Sep 2018 18:34:01 -0700 (PDT)
-Received: from Eros (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
-        by smtp.gmail.com with ESMTPSA id x77-v6sm6680888pff.37.2018.09.25.18.33.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 18:34:00 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 09:33:53 +0800
-From:   Song Qiang <songqiang1304521@gmail.com>
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        preid@electromag.com.au, rtresidd@electromag.com.au,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iio: magnetometer: Add driver support for PNI RM3100
-Message-ID: <20180926013353.GA6152@Eros>
-References: <20180925031724.21399-1-songqiang1304521@gmail.com>
- <20180925031724.21399-2-songqiang1304521@gmail.com>
- <20180925143054.00007fcb@huawei.com>
+        Wed, 26 Sep 2018 03:48:33 -0400
+X-UUID: 6c3fab1ee55f488ba4a8255f53229700-20180926
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1940166560; Wed, 26 Sep 2018 09:38:03 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 26 Sep 2018 09:37:59 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Sep 2018 09:38:00 +0800
+Message-ID: <1537925879.20118.3.camel@mtksdaap41>
+Subject: Re: [Resend PATCH 5/5] arm: dts: mt7623: add display subsystem
+ related device nodes
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Roy Luo <cheng-hao.luo@mediatek.com>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+Date:   Wed, 26 Sep 2018 09:37:59 +0800
+In-Reply-To: <7105c341de3525761ad4067ca57c641c7097f773.1536155449.git.ryder.lee@mediatek.com>
+References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536155449.git.ryder.lee@mediatek.com>
+         <7105c341de3525761ad4067ca57c641c7097f773.1536155449.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925143054.00007fcb@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 9DE9980F913013648DD690BEEA69E3D3548556C8CD94D0E506717D0BBD1E1C452000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 02:30:54PM +0100, Jonathan Cameron wrote:
-> On Tue, 25 Sep 2018 11:17:24 +0800
-> Song Qiang <songqiang1304521@gmail.com> wrote:
-> 
-> > PNI RM3100 is a high resolution, large signal immunity magnetometer,
-> > composed of 3 single sensors and a processing chip with MagI2C Interface.
-> > 
-> > Following functions are available:
-> > - Single-shot measurement from
-> >   /sys/bus/iio/devices/iio:deviceX/in_magn_{axis}_raw
-> > - Triggerd buffer measurement.
-> > - Both i2c and spi interface are supported.
-> > - Both interrupt and polling measurement is supported, depands on if
-> >   the 'interrupts' in DT is declared.
-> > 
-> > Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
-> Various minor comments inline.  Definitely heading in the right direction.
-> 
-> Good work.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
+Hi, Ryder:
 
-...
+On Wed, 2018-09-05 at 22:09 +0800, Ryder Lee wrote:
+> Add display subsystem related device nodes for MT7623.
+> 
+> Cc: CK Hu <ck.hu@mediatek.com>
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+> I forgot to sort nodes in my previous mail. Sorry for the inconvenience.
+> 
+> This patch depends on the series: https://lkml.org/lkml/2018/9/5/223
+> 
+> @Matthias,
+> I know you're working on broken MMSYS - just want to ask whether it's possible
+> to let the patch to go to your tree (if others are okay with it), and send a
+> fixup one for MT7623 MMSYS later?
+> ---
+>  arch/arm/boot/dts/mt7623.dtsi                 | 177 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  83 ++++++++++++
+>  arch/arm/boot/dts/mt7623n-rfb-emmc.dts        |  83 ++++++++++++
+>  3 files changed, 343 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+> index d01bdee..fdf9078 100644
+> --- a/arch/arm/boot/dts/mt7623.dtsi
+> +++ b/arch/arm/boot/dts/mt7623.dtsi
+> @@ -23,6 +23,11 @@
+>  	#address-cells = <2>;
+>  	#size-cells = <2>;
+>  
+> +	aliases {
+> +		rdma0 = &rdma0;
+> +		rdma1 = &rdma1;
+> +	};
+> +
+>  	cpu_opp_table: opp-table {
+>  		compatible = "operating-points-v2";
+>  		opp-shared;
+> @@ -311,6 +316,25 @@
+>  		clock-names = "spi", "wrap";
+>  	};
+>  
+> +	mipi_tx0: mipi-dphy@10010000 {
+> +		compatible = "mediatek,mt7623-mipi-tx",
+> +			     "mediatek,mt2701-mipi-tx";
+> +		reg = <0 0x10010000 0 0x90>;
+> +		clocks = <&clk26m>;
+> +		clock-output-names = "mipi_tx0_pll";
+> +		#clock-cells = <0>;
+> +		#phy-cells = <0>;
+> +	};
+> +
+> +	cec: cec@10012000 {
+> +		compatible = "mediatek,mt7623-cec",
+> +			     "mediatek,mt8173-cec";
+> +		reg = <0 0x10012000 0 0xbc>;
+> +		interrupts = <GIC_SPI 182 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&infracfg CLK_INFRA_CEC>;
+> +		status = "disabled";
+> +	};
+> +
+>  	cir: cir@10013000 {
+>  		compatible = "mediatek,mt7623-cir";
+>  		reg = <0 0x10013000 0 0x1000>;
+> @@ -359,6 +383,18 @@
+>  		#clock-cells = <1>;
+>  	};
+>  
+> +	hdmi_phy: phy@10209100 {
+> +		compatible = "mediatek,mt7623-hdmi-phy",
+> +			     "mediatek,mt2701-hdmi-phy";
+> +		reg = <0 0x10209100 0 0x24>;
+> +		clocks = <&apmixedsys CLK_APMIXED_HDMI_REF>;
+> +		clock-names = "pll_ref";
+> +		clock-output-names = "hdmitx_dig_cts";
+> +		#clock-cells = <0>;
+> +		#phy-cells = <0>;
+> +		status = "disabled";
+> +	};
+> +
+>  	rng: rng@1020f000 {
+>  		compatible = "mediatek,mt7623-rng";
+>  		reg = <0 0x1020f000 0 0x1000>;
+> @@ -558,6 +594,16 @@
+>  		status = "disabled";
+>  	};
+>  
+> +	hdmiddc0: i2c@11013000 {
+> +		compatible = "mediatek,mt7623-hdmi-ddc",
+> +			     "mediatek,mt8173-hdmi-ddc";
+> +		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_LOW>;
+> +		reg = <0 0x11013000 0 0x1C>;
+> +		clocks = <&pericfg CLK_PERI_I2C3>;
+> +		clock-names = "ddc-i2c";
+> +		status = "disabled";
+> +	};
+> +
+>  	nor_flash: spi@11014000 {
+>  		compatible = "mediatek,mt7623-nor",
+>  			     "mediatek,mt8173-nor";
+> @@ -732,6 +778,84 @@
+>  		#clock-cells = <1>;
+>  	};
+>  
+> +	display_components: dispsys@14000000 {
+> +		compatible = "mediatek,mt7623-mmsys",
 
-> > +static int rm3100_get_samp_freq(struct rm3100_data *data, int *val, int *val2)
-> > +{
-> > +	int ret;
-> > +	int tmp;
-> > +
-> > +	mutex_lock(&data->lock);
-> > +	ret = regmap_read(data->regmap, RM3100_REG_TMRC, &tmp);
-> > +	mutex_unlock(&data->lock);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	*val = rm3100_samp_rates[tmp - RM3100_TMRC_OFFSET][0];
-> > +	*val2 = rm3100_samp_rates[tmp - RM3100_TMRC_OFFSET][1];
-> > +
-> > +	return IIO_VAL_INT_PLUS_MICRO;
-> > +}
-> > +
-> > +static int rm3100_set_cycle_count(struct rm3100_data *data, int val)
-> > +{
-> > +	int ret;
-> > +	u8 i;
-> > +
-> > +	for (i = 0; i < 3; i++) {
-> > +		ret = regmap_write(data->regmap, RM3100_REG_CC_X + 2 * i, 100);
-> 
-> Does this write it to the same value irrespective of the value of val?
-> Seems odd.
-> 
-Hi Jonathan,
+Checkpatch warning:
 
-Sometimes I see these mistakes I couldn't stop laughing at my stupiness.
-Should be val, my mistake submitting without a throughout functional
-check, I think I'll write a script to prevent this from happening again.
+WARNING: DT compatible string "mediatek,mt7623-mmsys" appears
+un-documented -- check ./Documentation/devicetree/bindings/
+#101: FILE: arch/arm/boot/dts/mt7623.dtsi:782:
++               compatible = "mediatek,mt7623-mmsys",
 
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	}
-> > +	if (val == 50)
-> 
-> Switch would be nicer.  Also why have all other values call back to
-> 2 rather than generating an error?
-> 
-I could have given it an error path, but I checked the code, 'val' in
-this function is always given by my code. I think this leads no
-possibility for val to go wrong. Do I still need an error path in this
-circumstance?
 
-> > +		data->cycle_count_index = 0;
-> > +	else if (val == 100)
-> > +		data->cycle_count_index = 1;
-> > +	else
-> > +		data->cycle_count_index = 2;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int rm3100_set_samp_freq(struct rm3100_data *data, int val, int val2)
-> > +{
-> > +	struct regmap *regmap = data->regmap;
-> > +	int cycle_count;
-> > +	int ret;
-> > +	int i;
-> > +
-> > +	mutex_lock(&data->lock);
-> 
-> Why are you taking this lock? It's not well documented what it protects
-> so it's not clear in this path why it is taken.
-> (hint add a comment to the definition of the lock to make it clear!)
-> - note I'm not saying it shouldn't be taken here, just that there is no
-> comment to justify it..
-> 
-When I was considering the lock, I read Robert Love's 'Linux Kernel
-Development', whose chapter 9 talks about how to understand the lock.
-It was talking about protecting data, but in here, my purpose is to
-protect the i2c execution consistency. I think it may be possible that
-one person is extracting the data while another person is planning set
-the frequency. Setting the frequency within queuing data will causing
-CMM(Continuous Measurement Mode) register reset, breaking the measurement
-process. That's why I added lock to callbacks where a i2c sequence can
-happen. I referred code from hmc5843, which did the similar lock stuff,
-am I understanding about lock right?
+> +			     "mediatek,mt2701-mmsys";
+> +		reg = <0 0x14000000 0 0x1000>;
+> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
+> +	};
+> +
+> +	ovl@14007000 {
+> +		compatible = "mediatek,mt7623-disp-ovl",
 
-> > +	/* All cycle count registers use the same value. */
-> > +	ret = regmap_read(regmap, RM3100_REG_CC_X, &cycle_count);
-> > +	if (ret < 0)
-> > +		goto unlock_return;
-> > +
-> > +	for (i = 0; i < RM3100_SAMP_NUM; i++) {
-> > +		if (val == rm3100_samp_rates[i][0] &&
-> > +		    val2 == rm3100_samp_rates[i][1])
-> > +			break;
-> > +	}
-> > +	if (i == RM3100_SAMP_NUM) {
-> > +		ret = -EINVAL;
-> > +		goto unlock_return;
-> > +	}
-> > +
-> > +	ret = regmap_write(regmap, RM3100_REG_TMRC, i + RM3100_TMRC_OFFSET);
-> > +	if (ret < 0)
-> > +		goto unlock_return;
+I think this is also un-documented, but I don't know why checkpatch does
+not show any warning.
 
-...
+Regards,
+CK
 
-> > +	if (ret < 0)
-> > +		goto done;
-> > +
-> > +	/* Convert XXXYYYZZZxxx to XXXxYYYxZZZx. x for padding. */
-> > +	for (i = 0; i < 3; i++)
-> > +		memcpy(data->buffer + i * 4, buffer + i * 3, 3);
-> 
-> Firstly X doesn't need copying.
-> Secondly the copy of Y actually overwrites the value of Z
-> XXXYYYZZZxxx
-> XXXxYYYZZxxx
-> XXXxYYYxYZZx
-> 
-> I think...
-> 
-They are in different memories, buffer is a temporary memory for data
-reading out, data->buffer is for pushing to the userspace.
+> +			     "mediatek,mt2701-disp-ovl";
+> +		reg = <0 0x14007000 0 0x1000>;
+> +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_OVL>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_OVL_0>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	rdma0: rdma@14008000 {
+> +		compatible = "mediatek,mt7623-disp-rdma",
+> +			     "mediatek,mt2701-disp-rdma";
+> +		reg = <0 0x14008000 0 0x1000>;
+> +		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_RDMA>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_RDMA>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	wdma@14009000 {
+> +		compatible = "mediatek,mt7623-disp-wdma",
+> +			     "mediatek,mt2701-disp-wdma";
+> +		reg = <0 0x14009000 0 0x1000>;
+> +		interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_WDMA>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_WDMA>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	bls: pwm@1400a000 {
+> +		compatible = "mediatek,mt7623-disp-pwm",
+> +			     "mediatek,mt2701-disp-pwm";
+> +		reg = <0 0x1400a000 0 0x1000>;
+> +		#pwm-cells = <2>;
+> +		clocks = <&mmsys CLK_MM_MDP_BLS_26M>,
+> +			 <&mmsys CLK_MM_DISP_BLS>;
+> +		clock-names = "main", "mm";
+> +		status = "disabled";
+> +	};
+> +
+> +	color@1400b000 {
+> +		compatible = "mediatek,mt7623-disp-color",
+> +			     "mediatek,mt2701-disp-color";
+> +		reg = <0 0x1400b000 0 0x1000>;
+> +		interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_COLOR>;
+> +	};
+> +
+> +	dsi: dsi@1400c000 {
+> +		compatible = "mediatek,mt7623-dsi",
+> +			     "mediatek,mt2701-dsi";
+> +		reg = <0 0x1400c000 0 0x1000>;
+> +		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DSI_ENGINE>,
+> +			 <&mmsys CLK_MM_DSI_DIG>,
+> +			 <&mipi_tx0>;
+> +		clock-names = "engine", "digital", "hs";
+> +		phys = <&mipi_tx0>;
+> +		phy-names = "dphy";
+> +		status = "disabled";
+> +	};
+> +
+> +	mutex: mutex@1400e000 {
+> +		compatible = "mediatek,mt7623-disp-mutex",
+> +			     "mediatek,mt2701-disp-mutex";
+> +		reg = <0 0x1400e000 0 0x1000>;
+> +		interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_MUTEX_32K>;
+> +	};
+> +
+>  	larb0: larb@14010000 {
+>  		compatible = "mediatek,mt7623-smi-larb",
+>  			     "mediatek,mt2701-smi-larb";
+> @@ -744,6 +868,44 @@
+>  		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
+>  	};
+>  
+> +	rdma1: rdma@14012000 {
+> +		compatible = "mediatek,mt7623-disp-rdma",
+> +			     "mediatek,mt2701-disp-rdma";
+> +		reg = <0 0x14012000 0 0x1000>;
+> +		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DISP_RDMA1>;
+> +		iommus = <&iommu MT2701_M4U_PORT_DISP_RDMA1>;
+> +		mediatek,larb = <&larb0>;
+> +	};
+> +
+> +	dpi0: dpi@14014000 {
+> +		compatible = "mediatek,mt7623-dpi",
+> +			     "mediatek,mt2701-dpi";
+> +		reg = <0 0x14014000 0 0x1000>;
+> +		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&mmsys CLK_MM_DPI1_DIGL>,
+> +			 <&mmsys CLK_MM_DPI1_ENGINE>,
+> +			 <&topckgen CLK_TOP_TVDPLL>;
+> +		clock-names = "pixel", "engine", "pll";
+> +		status = "disabled";
+> +	};
+> +
+> +	hdmi0: hdmi@14015000 {
+> +		compatible = "mediatek,mt7623-hdmi",
+> +			     "mediatek,mt8173-hdmi";
+> +		reg = <0 0x14015000 0 0x400>;
+> +		clocks = <&mmsys CLK_MM_HDMI_PIXEL>,
+> +			 <&mmsys CLK_MM_HDMI_PLL>,
+> +			 <&mmsys CLK_MM_HDMI_AUDIO>,
+> +			 <&mmsys CLK_MM_HDMI_SPDIF>;
+> +		clock-names = "pixel", "pll", "bclk", "spdif";
+> +		phys = <&hdmi_phy>;
+> +		phy-names = "hdmi";
+> +		mediatek,syscon-hdmi = <&mmsys 0x900>;
+> +		cec = <&cec>;
+> +		status = "disabled";
+> +	};
+> +
+>  	imgsys: syscon@15000000 {
+>  		compatible = "mediatek,mt7623-imgsys",
+>  			     "mediatek,mt2701-imgsys",
+> @@ -1071,6 +1233,21 @@
+>  		};
+>  	};
+>  
+> +	hdmi_pins_a: hdmi-default {
+> +		pins-hdmi {
+> +			pinmux = <MT7623_PIN_123_HTPLG_FUNC_HTPLG>;
+> +			input-enable;
+> +			bias-pull-down;
+> +		};
+> +	};
+> +
+> +	hdmi_ddc_pins_a: hdmi_ddc-default {
+> +		pins-hdmi-ddc {
+> +			pinmux = <MT7623_PIN_124_GPIO124_FUNC_HDMISCK>,
+> +				 <MT7623_PIN_125_GPIO125_FUNC_HDMISD>;
+> +		};
+> +	};
+> +
+>  	i2c0_pins_a: i2c0-default {
+>  		pins-i2c0 {
+>  			pinmux = <MT7623_PIN_75_SDA0_FUNC_SDA0>,
+> diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> index 2b760f9..dbce86b 100644
+> --- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> +++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+> @@ -21,6 +21,19 @@
+>  		stdout-path = "serial2:115200n8";
+>  	};
+>  
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		label = "hdmi";
+> +		type = "d";
+> +		ddc-i2c-bus = <&hdmiddc0>;
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&hdmi0_out>;
+> +			};
+> +		};
+> +	};
+> +
+>  	cpus {
+>  		cpu@0 {
+>  			proc-supply = <&mt6323_vproc_reg>;
+> @@ -114,10 +127,24 @@
+>  	};
+>  };
+>  
+> +&bls {
+> +	status = "okay";
+> +
+> +	port {
+> +		bls_out: endpoint {
+> +			remote-endpoint = <&dpi0_in>;
+> +		};
+> +	};
+> +};
+> +
+>  &btif {
+>  	status = "okay";
+>  };
+>  
+> +&cec {
+> +	status = "okay";
+> +};
+> +
+>  &cir {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&cir_pins_a>;
+> @@ -128,6 +155,26 @@
+>  	status = "okay";
+>  };
+>  
+> +&dpi0 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@0 {
+> +			reg = <0>;
+> +			dpi0_out: endpoint {
+> +				remote-endpoint = <&hdmi0_in>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			dpi0_in: endpoint {
+> +				remote-endpoint = <&bls_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &eth {
+>  	status = "okay";
+>  
+> @@ -199,6 +246,42 @@
+>  	};
+>  };
+>  
+> +&hdmi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_pins_a>;
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		port@0 {
+> +			reg = <0>;
+> +			hdmi0_in: endpoint {
+> +				remote-endpoint = <&dpi0_out>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			hdmi0_out: endpoint {
+> +				remote-endpoint = <&hdmi_connector_in>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&hdmiddc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_ddc_pins_a>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_phy {
+> +	mediatek,ibias = <0xa>;
+> +	mediatek,ibias_up = <0x1c>;
+> +	status = "okay";
+> +};
+> +
+>  &i2c0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c0_pins_a>;
+> diff --git a/arch/arm/boot/dts/mt7623n-rfb-emmc.dts b/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+> index b760613..bdf9010 100644
+> --- a/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+> +++ b/arch/arm/boot/dts/mt7623n-rfb-emmc.dts
+> @@ -24,6 +24,19 @@
+>  		stdout-path = "serial2:115200n8";
+>  	};
+>  
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		label = "hdmi";
+> +		type = "d";
+> +		ddc-i2c-bus = <&hdmiddc0>;
+> +
+> +		port {
+> +			hdmi_connector_in: endpoint {
+> +				remote-endpoint = <&hdmi0_out>;
+> +			};
+> +		};
+> +	};
+> +
+>  	cpus {
+>  		cpu@0 {
+>  			proc-supply = <&mt6323_vproc_reg>;
+> @@ -106,10 +119,24 @@
+>  	};
+>  };
+>  
+> +&bls {
+> +	status = "okay";
+> +
+> +	port {
+> +		bls_out: endpoint {
+> +			remote-endpoint = <&dpi0_in>;
+> +		};
+> +	};
+> +};
+> +
+>  &btif {
+>  	status = "okay";
+>  };
+>  
+> +&cec {
+> +	status = "okay";
+> +};
+> +
+>  &cir {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&cir_pins_a>;
+> @@ -120,6 +147,26 @@
+>  	status = "okay";
+>  };
+>  
+> +&dpi0 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@0 {
+> +			reg = <0>;
+> +			dpi0_out: endpoint {
+> +				remote-endpoint = <&hdmi0_in>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			dpi0_in: endpoint {
+> +				remote-endpoint = <&bls_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &eth {
+>  	status = "okay";
+>  
+> @@ -202,6 +249,42 @@
+>  	};
+>  };
+>  
+> +&hdmi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_pins_a>;
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		port@0 {
+> +			reg = <0>;
+> +			hdmi0_in: endpoint {
+> +				remote-endpoint = <&dpi0_out>;
+> +			};
+> +		};
+> +
+> +		port@1 {
+> +			reg = <1>;
+> +			hdmi0_out: endpoint {
+> +				remote-endpoint = <&hdmi_connector_in>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&hdmiddc0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_ddc_pins_a>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_phy {
+> +	mediatek,ibias = <0xa>;
+> +	mediatek,ibias_up = <0x1c>;
+> +	status = "okay";
+> +};
+> +
+>  &i2c0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c0_pins_a>;
 
-> > +
-> > +	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
-> > +			iio_get_time_ns(indio_dev));
-> 
-> Align with opening bracket. 
-> 
-> > +
-> > +done:
-> > +	iio_trigger_notify_done(indio_dev->trig);
-> > +
-> > +	return IRQ_HANDLED;
-> > +}
-> > +
-> > +static void rm3100_remove(void *dh)
-> > +{
-> > +	struct rm3100_data *data = (struct rm3100_data *)dh;
-> > +	int ret;
-> > +
-> > +	ret = regmap_write(data->regmap, RM3100_REG_CMM, 0x00);
-> > +	if (ret < 0)
-> > +		dev_err(data->dev, "failed to stop device.\n");
-> > +}
-> > +
-> > +int rm3100_common_probe(struct device *dev, struct regmap *regmap, int irq)
-> > +{
-> > +	struct iio_dev *indio_dev;
-> > +	struct rm3100_data *data;
-> > +	int tmp;
-> > +	int ret;
-> > +
-> > +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> > +	if (!indio_dev)
-> > +		return -ENOMEM;
-> > +
-> > +	data = iio_priv(indio_dev);
-> > +	data->dev = dev;
-> > +	data->regmap = regmap;
-> > +	data->buffer = devm_kzalloc(dev, RM3100_SCAN_BYTES, GFP_KERNEL);
-> > +	if (!data->buffer)
-> > +		return -ENOMEM;
-> > +
-> > +	mutex_init(&data->lock);
-> > +
-> > +	indio_dev->dev.parent = dev;
-> > +	indio_dev->name = "rm3100";
-> > +	indio_dev->info = &rm3100_info;
-> > +	indio_dev->channels = rm3100_channels;
-> > +	indio_dev->num_channels = ARRAY_SIZE(rm3100_channels);
-> > +	indio_dev->modes = INDIO_DIRECT_MODE;
-> > +	indio_dev->available_scan_masks = rm3100_scan_masks;
-> > +
-> > +	if (!irq)
-> > +		data->use_interrupt = false;
-> > +	else {
-> > +		data->use_interrupt = true;
-> > +		ret = devm_request_irq(dev,
-> > +				       irq,
-> > +				       rm3100_irq_handler,
-> > +				       IRQF_TRIGGER_RISING,
-> > +				       indio_dev->name,
-> > +				       data);
-> > +		if (ret < 0) {
-> > +			dev_err(dev, "request irq line failed.\n");
-> > +			return ret;
-> > +		}
-> > +		init_completion(&data->measuring_done);
-> > +	}
-> > +
-> > +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
-> > +					      rm3100_trigger_handler, NULL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	/* 3sec more wait time. */
-> 
-> I have no idea what this comment is referring to..
-> Not seeing any waiting here...
-> 
-The thing is, measurement time of this sensor span from ~1.7ms to ~13
-seconds. I'll need a wait time for *_wait_measurement(), and I use
-measurement time + 3 seconds for waiting time. This is an initialization.
-Usage of this is in *_wait_measurement.
 
-yours,
-Song Qiang
-
-> > +	ret = regmap_read(regmap, RM3100_REG_TMRC, &tmp);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	data->conversion_time =
-> > +		rm3100_samp_rates[tmp-RM3100_TMRC_OFFSET][2] + 3000;
-> 
-> spacing around -  
-> Please check this throughout.
-
-...
