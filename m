@@ -2,84 +2,136 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7656EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEF1C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32DBC21524
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:45:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="C5Dnm0oA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32DBC21524
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 144852152A
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:47:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 144852152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728466AbeIZV7I (ORCPT
+        id S1728250AbeIZWAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:59:08 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:54209 "EHLO frisell.zx2c4.com"
+        Wed, 26 Sep 2018 18:00:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:48824 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727104AbeIZV7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:59:08 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 01dd254b;
-        Wed, 26 Sep 2018 15:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=Ye0gNrGAiMxFaM5DVYfED5qBxwU=; b=C5Dnm0
-        oAKO6AqKkfiQly1sKoeIjVDbkY05p38EWfb3kfx21bQW81uYyYWfjMNkhmz4syQT
-        iCTmUXitavt+DPfeWs43L632DJV/3UVMIIoq19/nmbabNdLvnXDheMYr3iJxtkH8
-        Hgc4y0UTyQyQPpbdfO2BtQW43hDH8GLK1Cv8gsceqi6Mgf4j8hn8Lzo7P4NAgR82
-        pUdyq+94EYtCXeGI6Brz77WIiEDLUqeQUjNy7maZUcFWMVK6MduyZtosTI4dHkh0
-        YGbpqEDPiXVlFkV9BI5xt7gFmoDs5lTjKDdXqLlnv68DoQO3cCiSs5yTXWaNQuKa
-        r52IZEJIospOWA9A==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 97307b1f (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Wed, 26 Sep 2018 15:26:59 +0000 (UTC)
-Received: by mail-ot1-f43.google.com with SMTP id h26-v6so28604269otl.9;
-        Wed, 26 Sep 2018 08:45:32 -0700 (PDT)
-X-Gm-Message-State: ABuFfojXEoQG2ltE8gM/xF2qQ15wmKYhv443vmFvpEqse2A1wg/BzgZG
-        x1Dl3euO2QoLpNnD7efXe+69uwkt25hyOGbLBCw=
-X-Google-Smtp-Source: ACcGV60gMSyNjzZVQfR+P7TtA7d2qRLrtvEQaU/EVG1d0TltSL0anO4Yek/Dy/NvHSOdESk4YsgjyB5NYOdjZ9soNdI=
-X-Received: by 2002:a9d:6554:: with SMTP id q20-v6mr4757686otl.209.1537976731409;
- Wed, 26 Sep 2018 08:45:31 -0700 (PDT)
+        id S1727285AbeIZWAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:00:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6010B18A;
+        Wed, 26 Sep 2018 08:47:01 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D4B43F5BD;
+        Wed, 26 Sep 2018 08:46:57 -0700 (PDT)
+Subject: Re: [PATCH v16 4/5] dt-bindings: arm-smmu: Add bindings for
+ qcom,smmu-v2
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
+        robh+dt@kernel.org, will.deacon@arm.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
+        rjw@rjwysocki.net, robdclark@gmail.com, linux-pm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, sboyd@kernel.org,
+        tfiga@chromium.org, jcrouse@codeaurora.org,
+        sricharan@codeaurora.org, m.szyprowski@samsung.com,
+        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
+References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
+ <20180830144541.17740-5-vivek.gautam@codeaurora.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <52cc5a5e-d497-ad24-8dd2-3455707a3eef@arm.com>
+Date:   Wed, 26 Sep 2018 16:46:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
- <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
- <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
- <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com> <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 26 Sep 2018 17:45:20 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pbRabkGjNh-65S9qBNNS1GLJSwZ_tTM507S_Ezr1=QLg@mail.gmail.com>
-Message-ID: <CAHmME9pbRabkGjNh-65S9qBNNS1GLJSwZ_tTM507S_Ezr1=QLg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180830144541.17740-5-vivek.gautam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 5:42 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> On Wed, 26 Sep 2018 at 16:02, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> Actually, looking at the code again, the abstraction does appear to be
-> fine, it is just the chacha20 code that does not make use of it.
+On 30/08/18 15:45, Vivek Gautam wrote:
+> Add bindings doc for Qcom's smmu-v2 implementation.
 
-So what you have in mind is something like calling simd_relax() every
-4096 bytes or so?
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   .../devicetree/bindings/iommu/arm,smmu.txt         | 39 ++++++++++++++++++++++
+>   1 file changed, 39 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> index 8a6ffce12af5..a6504b37cc21 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> @@ -17,10 +17,16 @@ conditions.
+>                           "arm,mmu-401"
+>                           "arm,mmu-500"
+>                           "cavium,smmu-v2"
+> +                        "qcom,smmu-v2"
+>   
+>                     depending on the particular implementation and/or the
+>                     version of the architecture implemented.
+>   
+> +                  Qcom SoCs must contain, as below, SoC-specific compatibles
+> +                  along with "qcom,smmu-v2":
+> +                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2",
+> +                  "qcom,sdm845-smmu-v2", "qcom,smmu-v2".
+> +
+>   - reg           : Base address and size of the SMMU.
+>   
+>   - #global-interrupts : The number of global interrupts exposed by the
+> @@ -71,6 +77,22 @@ conditions.
+>                     or using stream matching with #iommu-cells = <2>, and
+>                     may be ignored if present in such cases.
+>   
+> +- clock-names:    List of the names of clocks input to the device. The
+> +                  required list depends on particular implementation and
+> +                  is as follows:
+> +                  - for "qcom,smmu-v2":
+> +                    - "bus": clock required for downstream bus access and
+> +                             for the smmu ptw,
+> +                    - "iface": clock required to access smmu's registers
+> +                               through the TCU's programming interface.
+> +                  - unspecified for other implementations.
+> +
+> +- clocks:         Specifiers for all clocks listed in the clock-names property,
+> +                  as per generic clock bindings.
+> +
+> +- power-domains:  Specifiers for power domains required to be powered on for
+> +                  the SMMU to operate, as per generic power domain bindings.
+> +
+>   ** Deprecated properties:
+>   
+>   - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+> @@ -137,3 +159,20 @@ conditions.
+>                   iommu-map = <0 &smmu3 0 0x400>;
+>                   ...
+>           };
+> +
+> +	/* Qcom's arm,smmu-v2 implementation */
+> +	smmu4: iommu@d00000 {
+> +		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
+> +		reg = <0xd00000 0x10000>;
+> +
+> +		#global-interrupts = <1>;
+> +		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
+> +		#iommu-cells = <1>;
+> +		power-domains = <&mmcc MDSS_GDSC>;
+> +
+> +		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
+> +			 <&mmcc SMMU_MDP_AHB_CLK>;
+> +		clock-names = "bus", "iface";
+> +	};
+> 
