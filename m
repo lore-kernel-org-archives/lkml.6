@@ -2,265 +2,224 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6739AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAA9C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A58208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:34:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A58208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id B96E820645
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:34:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B96E820645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeIZPqj (ORCPT
+        id S1727610AbeIZPqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:46:39 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:64914 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726401AbeIZPqj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:46:39 -0400
-X-UUID: 73f96691dc574b8684952faca25e1f6f-20180926
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1806482232; Wed, 26 Sep 2018 17:34:30 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 26 Sep 2018 17:34:29 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 26 Sep 2018 17:34:28 +0800
-Message-ID: <1537954469.18381.0.camel@mtkswgap22>
-Subject: Re: [Resend PATCH 5/5] arm: dts: mt7623: add display subsystem
- related device nodes
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     CK Hu <ck.hu@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        Bibby Hsieh <bibby.hsieh@mediatek.com>
-Date:   Wed, 26 Sep 2018 17:34:29 +0800
-In-Reply-To: <67eb0b9c-f2a3-a9c4-202f-d3c64b6a2b3e@gmail.com>
-References: <84011aa94dd7be9239b7a2f944dd30fc70568fbb.1536155449.git.ryder.lee@mediatek.com>
-         <7105c341de3525761ad4067ca57c641c7097f773.1536155449.git.ryder.lee@mediatek.com>
-         <1537925879.20118.3.camel@mtksdaap41>
-         <1537929498.32631.16.camel@mtkswgap22>
-         <1537939280.20005.19.camel@mtksdaap41>
-         <67eb0b9c-f2a3-a9c4-202f-d3c64b6a2b3e@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 26 Sep 2018 11:46:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55414 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726401AbeIZPqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:46:42 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0B77BC05D3F6;
+        Wed, 26 Sep 2018 09:34:39 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-101.pek2.redhat.com [10.72.12.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BFB245DD92;
+        Wed, 26 Sep 2018 09:34:25 +0000 (UTC)
+Subject: Re: [PATCH 1/4 v8] x86/ioremap: add a function ioremap_encrypted() to
+ remap kdump old memory
+From:   lijiang <lijiang@redhat.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, joro@8bytes.org, mingo@redhat.com,
+        ebiederm@xmission.com, hpa@zytor.com, tglx@linutronix.de,
+        Dave Young <dyoung@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        kexec@lists.infradead.org
+References: <20180907081805.368-1-lijiang@redhat.com>
+ <20180907081805.368-2-lijiang@redhat.com>
+ <20180926022123.GA2555@MiWiFi-R3L-srv>
+ <e6cd5448-b314-e142-1169-9e3e907faf16@redhat.com>
+ <e7634c77-1657-4665-3bc4-bd00196f28e4@redhat.com>
+Message-ID: <c076568c-aaf8-9b83-40bd-55c406bd88d0@redhat.com>
+Date:   Wed, 26 Sep 2018 17:34:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <e7634c77-1657-4665-3bc4-bd00196f28e4@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 26 Sep 2018 09:34:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-26 at 10:50 +0200, Matthias Brugger wrote:
-> 
-> On 26/09/2018 07:21, CK Hu wrote:
-> > Hi, Ryder:
-> > 
-> > On Wed, 2018-09-26 at 10:38 +0800, Ryder Lee wrote:
-> >> On Wed, 2018-09-26 at 09:37 +0800, CK Hu wrote:
-> >>> Hi, Ryder:
-> >>>
-> >>> On Wed, 2018-09-05 at 22:09 +0800, Ryder Lee wrote:
-> >>>> Add display subsystem related device nodes for MT7623.
-> >>>>
-> >>>> Cc: CK Hu <ck.hu@mediatek.com>
-> >>>> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> >>>> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-> >>>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> >>>> ---
-> >>>> I forgot to sort nodes in my previous mail. Sorry for the inconvenience.
-> >>>>
-> >>>> This patch depends on the series: https://lkml.org/lkml/2018/9/5/223
-> >>>>
-> >>>> @Matthias,
-> >>>> I know you're working on broken MMSYS - just want to ask whether it's possible
-> >>>> to let the patch to go to your tree (if others are okay with it), and send a
-> >>>> fixup one for MT7623 MMSYS later?
-> >>>> ---
-> >>>>  arch/arm/boot/dts/mt7623.dtsi                 | 177 ++++++++++++++++++++++++++
-> >>>>  arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  83 ++++++++++++
-> >>>>  arch/arm/boot/dts/mt7623n-rfb-emmc.dts        |  83 ++++++++++++
-> >>>>  3 files changed, 343 insertions(+)
-> >>>>
-> >>>> diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-> >>>> index d01bdee..fdf9078 100644
-> >>>> --- a/arch/arm/boot/dts/mt7623.dtsi
-> >>>> +++ b/arch/arm/boot/dts/mt7623.dtsi
-> >>>> @@ -23,6 +23,11 @@
-> >>>>  	#address-cells = <2>;
-> >>>>  	#size-cells = <2>;
-> >>>>  
-> >>>> +	aliases {
-> >>>> +		rdma0 = &rdma0;
-> >>>> +		rdma1 = &rdma1;
-> >>>> +	};
-> >>>> +
-> >>>>  	cpu_opp_table: opp-table {
-> >>>>  		compatible = "operating-points-v2";
-> >>>>  		opp-shared;
-> >>>> @@ -311,6 +316,25 @@
-> >>>>  		clock-names = "spi", "wrap";
-> >>>>  	};
-> >>>>  
-> >>>> +	mipi_tx0: mipi-dphy@10010000 {
-> >>>> +		compatible = "mediatek,mt7623-mipi-tx",
-> >>>> +			     "mediatek,mt2701-mipi-tx";
-> >>>> +		reg = <0 0x10010000 0 0x90>;
-> >>>> +		clocks = <&clk26m>;
-> >>>> +		clock-output-names = "mipi_tx0_pll";
-> >>>> +		#clock-cells = <0>;
-> >>>> +		#phy-cells = <0>;
-> >>>> +	};
-> >>>> +
-> >>>> +	cec: cec@10012000 {
-> >>>> +		compatible = "mediatek,mt7623-cec",
-> >>>> +			     "mediatek,mt8173-cec";
-> >>>> +		reg = <0 0x10012000 0 0xbc>;
-> >>>> +		interrupts = <GIC_SPI 182 IRQ_TYPE_LEVEL_LOW>;
-> >>>> +		clocks = <&infracfg CLK_INFRA_CEC>;
-> >>>> +		status = "disabled";
-> >>>> +	};
-> >>>> +
-> >>>>  	cir: cir@10013000 {
-> >>>>  		compatible = "mediatek,mt7623-cir";
-> >>>>  		reg = <0 0x10013000 0 0x1000>;
-> >>>> @@ -359,6 +383,18 @@
-> >>>>  		#clock-cells = <1>;
-> >>>>  	};
-> >>>>  
-> >>>> +	hdmi_phy: phy@10209100 {
-> >>>> +		compatible = "mediatek,mt7623-hdmi-phy",
-> >>>> +			     "mediatek,mt2701-hdmi-phy";
-> >>>> +		reg = <0 0x10209100 0 0x24>;
-> >>>> +		clocks = <&apmixedsys CLK_APMIXED_HDMI_REF>;
-> >>>> +		clock-names = "pll_ref";
-> >>>> +		clock-output-names = "hdmitx_dig_cts";
-> >>>> +		#clock-cells = <0>;
-> >>>> +		#phy-cells = <0>;
-> >>>> +		status = "disabled";
-> >>>> +	};
-> >>>> +
-> >>>>  	rng: rng@1020f000 {
-> >>>>  		compatible = "mediatek,mt7623-rng";
-> >>>>  		reg = <0 0x1020f000 0 0x1000>;
-> >>>> @@ -558,6 +594,16 @@
-> >>>>  		status = "disabled";
-> >>>>  	};
-> >>>>  
-> >>>> +	hdmiddc0: i2c@11013000 {
-> >>>> +		compatible = "mediatek,mt7623-hdmi-ddc",
-> >>>> +			     "mediatek,mt8173-hdmi-ddc";
-> >>>> +		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_LOW>;
-> >>>> +		reg = <0 0x11013000 0 0x1C>;
-> >>>> +		clocks = <&pericfg CLK_PERI_I2C3>;
-> >>>> +		clock-names = "ddc-i2c";
-> >>>> +		status = "disabled";
-> >>>> +	};
-> >>>> +
-> >>>>  	nor_flash: spi@11014000 {
-> >>>>  		compatible = "mediatek,mt7623-nor",
-> >>>>  			     "mediatek,mt8173-nor";
-> >>>> @@ -732,6 +778,84 @@
-> >>>>  		#clock-cells = <1>;
-> >>>>  	};
-> >>>>  
-> >>>> +	display_components: dispsys@14000000 {
-> >>>> +		compatible = "mediatek,mt7623-mmsys",
-> >>>
-> >>> Checkpatch warning:
-> >>>
-> >>> WARNING: DT compatible string "mediatek,mt7623-mmsys" appears
-> >>> un-documented -- check ./Documentation/devicetree/bindings/
-> >>> #101: FILE: arch/arm/boot/dts/mt7623.dtsi:782:
-> >>> +               compatible = "mediatek,mt7623-mmsys",
-> >>>
-> >>>
-> >>>> +			     "mediatek,mt2701-mmsys";
-> >>>> +		reg = <0 0x14000000 0 0x1000>;
-> >>>> +		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
-> >>>> +	};
-> >>>> +
-> >>>> +	ovl@14007000 {
-> >>>> +		compatible = "mediatek,mt7623-disp-ovl",
-> >>>
-> >>> I think this is also un-documented, but I don't know why checkpatch does
-> >>> not show any warning.
-> >>>
-> >>> Regards,
-> >>> CK
-> >>>> +			     "mediatek,mt2701-disp-ovl";
-> >>>> +		reg = <0 0x14007000 0 0x1000>;
-> >>>> +		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_LOW>;
-> >>>> +		clocks = <&mmsys CLK_MM_DISP_OVL>;
-> >>>> +		iommus = <&iommu MT2701_M4U_PORT_DISP_OVL_0>;
-> >>>> +		mediatek,larb = <&larb0>;
-> >>>> +	};
-> >>>> +
-> >>
-> >> I fallback to use the MT2701's compatible string here and there, but I
-> >> could add a new one for MT7623.
-> >>
-> >> BTW, I've had this question for a long time - should I add a new
-> >> compatible for the very same IPs, or could we just use the old one in
-> >> DTS?
-> >>
-> >> Ryder
-> >>
-> > 
-> > From [1], there is a description for the multiple compatible string
-> > scheme:
-> > 
-> > ====
-> > The reasoning behind this scheme is the observation that in the majority
-> > of cases, a single machine_desc can support a large number of boards
-> > if they all use the same SoC, or same family of SoCs.  However,
-> > invariably there will be some exceptions where a specific board will
-> > require special setup code that is not useful in the generic case.
-> > Special cases could be handled by explicitly checking for the
-> > troublesome board(s) in generic setup code, but doing so very quickly
-> > becomes ugly and/or unmaintainable if it is more than just a couple of
-> > cases.
-> > 
-> > Instead, the compatible list allows a generic machine_desc to provide
-> > support for a wide common set of boards by specifying "less
-> > compatible" values in the dt_compat list.  In the example above,
-> > generic board support can claim compatibility with "ti,omap3" or
-> > "ti,omap3450".  If a bug was discovered on the original beagleboard
-> > that required special workaround code during early boot, then a new
-> > machine_desc could be added which implements the workarounds and only
-> > matches on "ti,omap3-beagleboard".
-> > ====
-> > 
-> > I don't know would there be a problem happened only in MT7623 even
-> > though this hardware is identical in both MT2701 and MT7623. Maybe the
-> > system-wide configuration would influence this driver. So the easy way
-> > is to add the compatible string for MT7623. If you could prove that 
-> > this driver would never be influenced by system-wide configuration,
-> > using only MT2701 compatible string is acceptable for me.
-> > 
-> > This is my opinion, but the most important is maintainer's opinion.
-> > 
-> 
-> The compatible string looks good. But you should update the binding documentation :)
+When SME is enabled on AMD machine, the memory is encrypted in the first
+kernel. In this case, SME also needs to be enabled in kdump kernel, and
+we have to remap the old memory with the memory encryption mask.
 
-Okay, I will update it.
+Here we only talk about the case that SME is active in the first kernel,
+and only care it's active too in kdump kernel. there are four cases we
+need considered.
 
-> Regards,
-> Matthias
+a. dump vmcore
+   It is encrypted in the first kernel, and needs be read out in kdump
+   kernel.
+
+b. crash notes
+   When dumping vmcore, the people usually need to read the useful
+   information from notes, and the notes is also encrypted.
+
+c. iommu device table
+   It is allocated by kernel, need fill its pointer into mmio of amd iommu.
+   It's encrypted in the first kernel, need read the old content to analyze
+   and get useful information.
+
+d. mmio of amd iommu
+   Register reported by amd firmware, it's not RAM, we don't encrypt in
+   both the first kernel and kdump kernel.
+
+To achieve the goal, the solution is:
+1. add a new bool parameter "encrypted" to __ioremap_caller()
+   It is a low level function, and check the newly added parameter, if it's
+   true and in kdump kernel, will remap the memory with sme mask.
+
+2. add a new function ioremap_encrypted() to explicitly passed in a "true"
+   value for "encrypted".
+   For above a, b, c, we will call ioremap_encrypted();
+
+3. adjust all existed ioremap wrapper functions, passed in "false" for
+   encrypted to make them an before.
+
+   ioremap_encrypted()\
+   ioremap_cache()     |
+   ioremap_prot()      |
+   ioremap_wt()        |->__ioremap_caller()
+   ioremap_wc()        |
+   ioremap_uc()        |
+   ioremap_nocache()  /
+
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+---
+Changes since v7:
+1. Only modify patch log(suggested by Baoquan He)
+
+ arch/x86/include/asm/io.h |  3 +++
+ arch/x86/mm/ioremap.c     | 25 +++++++++++++++++--------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
+index 6de64840dd22..f8795f9581c7 100644
+--- a/arch/x86/include/asm/io.h
++++ b/arch/x86/include/asm/io.h
+@@ -192,6 +192,9 @@ extern void __iomem *ioremap_cache(resource_size_t offset, unsigned long size);
+ #define ioremap_cache ioremap_cache
+ extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, unsigned long prot_val);
+ #define ioremap_prot ioremap_prot
++extern void __iomem *ioremap_encrypted(resource_size_t phys_addr,
++					unsigned long size);
++#define ioremap_encrypted ioremap_encrypted
+ 
+ /**
+  * ioremap     -   map bus memory into CPU space
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index c63a545ec199..e01e6c695add 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -24,6 +24,7 @@
+ #include <asm/pgalloc.h>
+ #include <asm/pat.h>
+ #include <asm/setup.h>
++#include <linux/crash_dump.h>
+ 
+ #include "physaddr.h"
+ 
+@@ -131,7 +132,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+  * caller shouldn't need to know that small detail.
+  */
+ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+-		unsigned long size, enum page_cache_mode pcm, void *caller)
++		unsigned long size, enum page_cache_mode pcm,
++		void *caller, bool encrypted)
+ {
+ 	unsigned long offset, vaddr;
+ 	resource_size_t last_addr;
+@@ -199,7 +201,7 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+ 	 * resulting mapping.
+ 	 */
+ 	prot = PAGE_KERNEL_IO;
+-	if (sev_active() && mem_flags.desc_other)
++	if ((sev_active() && mem_flags.desc_other) || encrypted)
+ 		prot = pgprot_encrypted(prot);
+ 
+ 	switch (pcm) {
+@@ -291,7 +293,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
+ 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC_MINUS;
+ 
+ 	return __ioremap_caller(phys_addr, size, pcm,
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_nocache);
+ 
+@@ -324,7 +326,7 @@ void __iomem *ioremap_uc(resource_size_t phys_addr, unsigned long size)
+ 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC;
+ 
+ 	return __ioremap_caller(phys_addr, size, pcm,
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL_GPL(ioremap_uc);
+ 
+@@ -341,7 +343,7 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
+ void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
+ {
+ 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
+-					__builtin_return_address(0));
++					__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_wc);
+ 
+@@ -358,14 +360,21 @@ EXPORT_SYMBOL(ioremap_wc);
+ void __iomem *ioremap_wt(resource_size_t phys_addr, unsigned long size)
+ {
+ 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WT,
+-					__builtin_return_address(0));
++					__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_wt);
+ 
++void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size)
++{
++	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
++				__builtin_return_address(0), true);
++}
++EXPORT_SYMBOL(ioremap_encrypted);
++
+ void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
+ {
+ 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_cache);
+ 
+@@ -374,7 +383,7 @@ void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
+ {
+ 	return __ioremap_caller(phys_addr, size,
+ 				pgprot2cachemode(__pgprot(prot_val)),
+-				__builtin_return_address(0));
++				__builtin_return_address(0), false);
+ }
+ EXPORT_SYMBOL(ioremap_prot);
+ 
+-- 
+2.17.1
 
 
