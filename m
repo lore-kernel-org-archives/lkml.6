@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC5EC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BC9C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3A592152F
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3A592152F
+	by mail.kernel.org (Postfix) with ESMTP id 3BAB92152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:54:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BAB92152F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbeIZXGT (ORCPT
+        id S1729019AbeIZXIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:06:19 -0400
-Received: from mga02.intel.com ([134.134.136.20]:65193 "EHLO mga02.intel.com"
+        Wed, 26 Sep 2018 19:08:22 -0400
+Received: from mga01.intel.com ([192.55.52.88]:43793 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727692AbeIZXGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:06:18 -0400
+        id S1728419AbeIZXGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:06:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:52:28 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:52:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
-   d="scan'208";a="77480840"
+   d="scan'208";a="93929756"
 Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga006.jf.intel.com with ESMTP; 26 Sep 2018 09:52:25 -0700
+  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 09:52:25 -0700
 Received: from andy by smile with local (Exim 4.91)
         (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1g5D32-00054s-9L; Wed, 26 Sep 2018 19:52:24 +0300
+        id 1g5D32-00055G-Dh; Wed, 26 Sep 2018 19:52:24 +0300
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alex Hung <alex.hung@canonical.com>,
         Mario Limonciello <mario.limonciello@dell.com>,
@@ -47,9 +47,9 @@ To:     Alex Hung <alex.hung@canonical.com>,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 09/28] platform/x86: intel_mid_powerbtn: Remove unnecessary init.h inclusion
-Date:   Wed, 26 Sep 2018 19:52:04 +0300
-Message-Id: <20180926165223.19390-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 21/28] platform/x86: intel_scu_ipc: Sort headers alphabetically
+Date:   Wed, 26 Sep 2018 19:52:16 +0300
+Message-Id: <20180926165223.19390-21-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
 References: <20180926165223.19390-1-andriy.shevchenko@linux.intel.com>
@@ -60,27 +60,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No need to include linux/init.h when linux/module.h is.
+Sort headers alphabetically for better maintenance.
 
-No functional change intended.
+No functional change.
+
+While here, remove unneeded linux/init.h inclusion.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/platform/x86/intel_mid_powerbtn.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/platform/x86/intel_scu_ipc.c     |  8 +++++---
+ drivers/platform/x86/intel_scu_ipcutil.c | 12 ++++++------
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_mid_powerbtn.c b/drivers/platform/x86/intel_mid_powerbtn.c
-index c93299002169..b8d659233c6a 100644
---- a/drivers/platform/x86/intel_mid_powerbtn.c
-+++ b/drivers/platform/x86/intel_mid_powerbtn.c
-@@ -16,7 +16,6 @@
-  * General Public License for more details.
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index 75c8fef7a482..3f4b24a33430 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -16,14 +16,16 @@
+  * IPC-1 Driver provides an API for power control unit registers (e.g. MSIC)
+  * along with other APIs.
+  */
++
+ #include <linux/delay.h>
++#include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+-#include <linux/device.h>
+-#include <linux/pm.h>
+-#include <linux/pci.h>
+ #include <linux/interrupt.h>
++#include <linux/pci.h>
++#include <linux/pm.h>
+ #include <linux/sfi.h>
++
+ #include <asm/intel-mid.h>
+ #include <asm/intel_scu_ipc.h>
+ 
+diff --git a/drivers/platform/x86/intel_scu_ipcutil.c b/drivers/platform/x86/intel_scu_ipcutil.c
+index aa454241489c..2a65cabe87f4 100644
+--- a/drivers/platform/x86/intel_scu_ipcutil.c
++++ b/drivers/platform/x86/intel_scu_ipcutil.c
+@@ -12,16 +12,16 @@
+  * This driver provides ioctl interfaces to call intel scu ipc driver api
   */
  
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+ #include <linux/errno.h>
+-#include <linux/types.h>
+-#include <linux/fs.h>
+ #include <linux/fcntl.h>
++#include <linux/fs.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/sched.h>
+-#include <linux/uaccess.h>
+ #include <linux/slab.h>
 -#include <linux/init.h>
- #include <linux/input.h>
- #include <linux/interrupt.h>
- #include <linux/mfd/intel_msic.h>
++#include <linux/types.h>
++#include <linux/uaccess.h>
++
+ #include <asm/intel_scu_ipc.h>
+ 
+ static int major;
 -- 
 2.19.0
 
