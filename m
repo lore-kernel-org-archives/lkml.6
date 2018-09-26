@@ -2,139 +2,98 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A94AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C490EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D439220676
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:24:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D439220676
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A4EC20666
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:25:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="NitFmy3j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A4EC20666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbeIZUiC (ORCPT
+        id S1727804AbeIZUi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:38:02 -0400
-Received: from mga18.intel.com ([134.134.136.126]:11086 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbeIZUiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:38:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:24:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="266870072"
-Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.74.64]) ([10.252.74.64])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Sep 2018 07:24:45 -0700
-Subject: Re: [PATCH 2/4] platform/x86: intel_pmc_core: Fix LTR IGNORE Max
- offset
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
-References: <20180903180415.31575-1-rajneesh.bhardwaj@linux.intel.com>
- <20180903180415.31575-2-rajneesh.bhardwaj@linux.intel.com>
- <CAHp75Vcx-rk_dgf6fNRMa6o-zFeSXAG+HSNMAN-1XVCsXvvv1w@mail.gmail.com>
-From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Message-ID: <92d451b5-e6b7-74a2-dc71-19e30654c2f3@linux.intel.com>
-Date:   Wed, 26 Sep 2018 19:54:44 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAHp75Vcx-rk_dgf6fNRMa6o-zFeSXAG+HSNMAN-1XVCsXvvv1w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 26 Sep 2018 16:38:58 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:44060 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeIZUi6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:38:58 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id CFC1F24E238D;
+        Wed, 26 Sep 2018 07:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1537971945; bh=ReVafM3t9npTlHFTc12wOnkxcS9D2M+4a44nR9nLSDM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NitFmy3jAZua4yQnmew77fgKsWhWUPq/JJBMjRELx/dRPAulu43+UqfHEmWmEGTvD
+         /gI4LpxyAlq+nIQnLY3AmOQbn7nGZPDsaMt+eQs1UgmR16FJG6tD27o7J0vPwndhNj
+         qamcmd0widoWSUVs978U+sCqqrxczxqhBUHzlBkK6oHa291UQJ9PL75y6HOj68Aq3V
+         uN9L7CY/R7gWZkRyOJkyJIdfcJkgk9LfVGbo5+raQfnFFf/pT5nIiBuITtez69obDc
+         NqdM2/XNx4JGqrAlsZSk6BI5MoZ1tJ0dqHXVE1mHH9MD7EmT+3PRgFEdzJ1RGfTgAB
+         rvDIKT3i1Oa9A==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.38])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 8155E5CD0;
+        Wed, 26 Sep 2018 07:25:38 -0700 (PDT)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] DRM: VBLANK: provide valid timestamp for EVENT_FLIP
+Date:   Wed, 26 Sep 2018 17:25:35 +0300
+Message-Id: <20180926142535.17997-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you.
+If driver/HW doesn't support vblank functionality (for example
+UDL driver, ARCPGU driver, ...) we always have vblank->time == 0.
+In result we always provide zero timestamp for
+DRM_EVENT_FLIP_COMPLETE. This breaks userspace apps (for example
+weston) which relies on timestamp value.
 
+Setup time to provide valid timestamp for DRM_EVENT_FLIP_COMPLETE
+event.
 
-On 26-Sep-18 7:27 PM, Andy Shevchenko wrote:
-> On Mon, Sep 3, 2018 at 9:05 PM Rajneesh Bhardwaj
-> <rajneesh.bhardwaj@linux.intel.com> wrote:
->> Cannonlake PCH allows us to ignore LTR from more IPs than Sunrisepoint
->> PCH so make the LTR ignore platform specific.
->>
-> This looks fine to me.
->
->> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
->> ---
->>   drivers/platform/x86/intel_pmc_core.c | 4 +++-
->>   drivers/platform/x86/intel_pmc_core.h | 4 +++-
->>   2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
->> index 972735bd4c75..c1330a03523d 100644
->> --- a/drivers/platform/x86/intel_pmc_core.c
->> +++ b/drivers/platform/x86/intel_pmc_core.c
->> @@ -149,6 +149,7 @@ static const struct pmc_reg_map spt_reg_map = {
->>          .ppfear_buckets = SPT_PPFEAR_NUM_ENTRIES,
->>          .pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
->>          .pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
->> +       .ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
->>   };
->>
->>   /* Cannonlake: PGD PFET Enable Ack Status Register(s) bitmap */
->> @@ -320,6 +321,7 @@ static const struct pmc_reg_map cnp_reg_map = {
->>          .ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
->>          .pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
->>          .pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
->> +       .ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
->>   };
->>
->>   static inline u8 pmc_core_reg_read_byte(struct pmc_dev *pmcdev, int offset)
->> @@ -566,7 +568,7 @@ static ssize_t pmc_core_ltr_ignore_write(struct file *file, const char __user
->>                  goto out_unlock;
->>          }
->>
->> -       if (val > NUM_IP_IGN_ALLOWED) {
->> +       if (val > map->ltr_ignore_max) {
->>                  err = -EINVAL;
->>                  goto out_unlock;
->>          }
->> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
->> index b24407048fa1..12663c58f122 100644
->> --- a/drivers/platform/x86/intel_pmc_core.h
->> +++ b/drivers/platform/x86/intel_pmc_core.h
->> @@ -44,7 +44,7 @@
->>   #define SPT_PMC_READ_DISABLE_BIT               0x16
->>   #define SPT_PMC_MSG_FULL_STS_BIT               0x18
->>   #define NUM_RETRIES                            100
->> -#define NUM_IP_IGN_ALLOWED                     17
->> +#define SPT_NUM_IP_IGN_ALLOWED                 17
->>   #define SPT_PMC_LTR_CUR_PLT                    0x350
->>   #define SPT_PMC_LTR_CUR_ASLT                   0x354
->>   #define SPT_PMC_LTR_SPA                                0x360
->> @@ -153,6 +153,7 @@ enum ppfear_regs {
->>   #define CNP_PPFEAR_NUM_ENTRIES                 8
->>   #define CNP_PMC_READ_DISABLE_BIT               22
->>   #define CNP_PMC_LATCH_SLPS0_EVENTS             BIT(31)
->> +#define CNP_NUM_IP_IGN_ALLOWED                 19
->>   #define CNP_PMC_LTR_CUR_PLT                    0x1B50
->>   #define CNP_PMC_LTR_CUR_ASLT                   0x1B54
->>   #define CNP_PMC_LTR_SPA                                0x1B60
->> @@ -215,6 +216,7 @@ struct pmc_reg_map {
->>          const u32 pm_cfg_offset;
->>          const int pm_read_disable_bit;
->>          const u32 slps0_dbg_offset;
->> +       const u32 ltr_ignore_max;
->>   };
->>
->>   /**
->> --
->> 2.17.1
->>
->
+Cc: stable@vger.kernel.org
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+ drivers/gpu/drm/drm_vblank.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+index 28cdcf76b6f9..0d19aca48782 100644
+--- a/drivers/gpu/drm/drm_vblank.c
++++ b/drivers/gpu/drm/drm_vblank.c
+@@ -911,6 +911,15 @@ void drm_crtc_send_vblank_event(struct drm_crtc *crtc,
+ 
+ 	if (dev->num_crtcs > 0) {
+ 		seq = drm_vblank_count_and_time(dev, pipe, &now);
++
++		/*
++		 * If driver/HW doesn't support vblank functionality we
++		 * always have vblank->time == 0. Setup time to provide valid
++		 * timestamp for DRM_EVENT_FLIP_COMPLETE event.
++		 */
++		if (!now && e->event.base.type == DRM_EVENT_FLIP_COMPLETE)
++			now = ktime_get();
++
+ 	} else {
+ 		seq = 0;
+ 
+-- 
+2.14.4
 
