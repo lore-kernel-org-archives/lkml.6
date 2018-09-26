@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA47C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80876C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A537020685
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8C82089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:31:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZgcniTQM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A537020685
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ACEwAEXS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B8C82089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeIZNmE (ORCPT
+        id S1727284AbeIZNm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 09:42:04 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50188 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbeIZNmE (ORCPT
+        Wed, 26 Sep 2018 09:42:57 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35006 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbeIZNm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 09:42:04 -0400
-Received: by mail-it1-f196.google.com with SMTP id j81-v6so1681609ite.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:30:31 -0700 (PDT)
+        Wed, 26 Sep 2018 09:42:57 -0400
+Received: by mail-io1-f67.google.com with SMTP id w11-v6so22543121iob.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:31:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LXeBHRcSNresoy543JnyQTVC14q9FdIl+nms9b/1YxU=;
-        b=ZgcniTQMSGvE6LBULEpVhHK7Cb9J+xLv1X0dAPHZWdUcd1kmz2iMYqXIVcnSljJWPh
-         PepQuEI3LzOXGpUZN2BoBU7OYmjtbZah9/CmHeN5ERPfPohzA6PWS/h497zTPdDwmxOm
-         EZ6XLjMSCYLOSWYNp8rbd1gP1rbHCBkz8FbKY=
+        bh=L+p5WaPW7GbAsg1iXJQPbTuM98mJORGn3sbInfZuMNs=;
+        b=ACEwAEXSTd0QUuwNeBYN1nmI85YrF0W/RJ1TkgjJ9zmFdqAMkZ5Pq7DFE+mX1miaYQ
+         NN3wZggtPxO5trxbKz/GZJ6TkpsrUAdbHvOoC2rN+yE2rVHmEgImKWKCXtMv1E8hP1R0
+         y2MtQdgjGgSLukXezgxRIqU5LEg/L9AJs/6H0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LXeBHRcSNresoy543JnyQTVC14q9FdIl+nms9b/1YxU=;
-        b=V53hSRCcbvG5PPk2Mk9BirVyRYeMCadLl8iZ0RcLzwCdbAtVvtA+o+RaSgzaeUSZyN
-         uWbIMarXILAnR9bVLva5pueZHqb7T1dmRYHHjUCFAM7L2tjGNpZG9NLzs5kYehL+XXV4
-         fURFJaCa4Z17pEAiIoC2IE4bjSzjwqC9/FoFQLmCLTMezgja9d8koDsQsKKivh7dl6bu
-         0gz9izwm+ycUAf48LD8KWT/7lUok4ny+ihR25If1/TwwBF4rXy3sR1ISbZA4Rv9fLeMO
-         UJIRuQSn0PjjtV2wRF0IOcuejwfVaBxr7/qrHBrHV7tOA2TIQEhJ1JWpElfmy634QFU3
-         ahWQ==
-X-Gm-Message-State: ABuFfoi8TIP9cfp4cgH0UUl1+fwCba034bj4PLgG7gKLADKCxBr/F5M8
-        OZBKiRI+mBmNWZ9yd4kO/6MgG7jiyWJvI9+IuMz1hw==
-X-Google-Smtp-Source: ACcGV60fyDld2yg9xI42WE3PZNnfOB6VwHeL89cFzUGN1875DbOkIf3pRz//CDzlg9R1Ap/l76SIKdEsAtJO6AuwvFY=
-X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr4459965jab.87.1537947031161;
- Wed, 26 Sep 2018 00:30:31 -0700 (PDT)
+        bh=L+p5WaPW7GbAsg1iXJQPbTuM98mJORGn3sbInfZuMNs=;
+        b=s6xm5NSHll9uWW85N7uByH3X0vB/lZ0NtCdDf2eUqEAYJAV/VWq0+edhl900eReykN
+         x3joeBQGRXn+Fp672fh49DIzxv8OSTukjPfyNj/fgX9I159Hilkzd6lW2z5C5vTSnY8/
+         h04ybLYzmA0mHovH9eLvGyUIMrCY8kUTtvFqKY0PHgdZXL932YD3lbM0OO//8AP14nus
+         tvZSjyY1E8YtzOTBhVCws03l3hUlE79kzEEQ1pjRfscdBcHx1dOIghWXS449FnXKKh43
+         8IDgCMT2nqrdFFQujEwYmrM3kuflas9QS/up0+tBMvfFgDVCu2RllP/l+SqkgN8tYfAh
+         Kqpw==
+X-Gm-Message-State: ABuFfojgipSfjQ20X3TA5hYf+LoAXeFhhc6YaKb+EDOPrAnd5PBAdvLn
+        kW2r1l90hU8dzOtIoX2iRTRIIBlRj/5RxY4qaeVYtw==
+X-Google-Smtp-Source: ACcGV61R7d2/QTfd/vY65R11pgqQImxrpVpVOmzjGLSqFXvDFY8kIbmtkaGwTORQq9cuHW6l7xkMY0eNkZhmk41zCz4=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr3662100ioa.277.1537947084143;
+ Wed, 26 Sep 2018 00:31:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180924221748.21584-1-bjorn.andersson@linaro.org> <20180924221748.21584-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20180924221748.21584-2-bjorn.andersson@linaro.org>
+References: <20180924221748.21584-1-bjorn.andersson@linaro.org> <20180924221748.21584-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20180924221748.21584-3-bjorn.andersson@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Sep 2018 09:30:19 +0200
-Message-ID: <CACRpkdazp0TNkaHufedgH5vBVjgy4DeA_Jw7XJj2b3cTJZJ8cg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] pinctrl: qcom: Introduce readl/writel accessors
+Date:   Wed, 26 Sep 2018 09:31:12 +0200
+Message-ID: <CACRpkdamu83JidqT89iLOfqsuW_UxAUVxU=Faq_QownNb-R10Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] pinctrl: qcom: Support dispersed tiles
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -75,15 +75,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Tue, Sep 25, 2018 at 12:15 AM Bjorn Andersson
 <bjorn.andersson@linaro.org> wrote:
 
-> In preparation for the support for dispersed tiles move all readl and
-> writel calls to helper functions. This will allow us to isolate the
-> added complexity of another indirection.
+> On some new platforms the tiles have been placed too far apart to be
+> covered in a single ioremap. Turn "regs" into an array of base addresses
+> and make the pingroup carry the information about which tile the pin
+> resides in.
+>
+> For existing platforms we map the first entry regs and the existing
+> pingroups will all use tile 0, meaning that there's no functional
+> change.
 >
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->
-> Changes since v1:
-> - Rebased onto "devel"
 
 Patch applied.
 
