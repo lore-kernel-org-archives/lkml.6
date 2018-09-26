@@ -2,110 +2,89 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE34BC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8508C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA7C21546
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:36:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="npULKWnz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n5NIzhpl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA7C21546
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B8B321546
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:38:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B8B321546
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbeI0AvH (ORCPT
+        id S1727285AbeI0AxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 20:51:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59092 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbeI0AvH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 20:51:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 29C1960B13; Wed, 26 Sep 2018 18:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537987011;
-        bh=cGn4ZC/eSXW140uepSZQpcTMVvrdBpnar+M3gVXlIWQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=npULKWnzeJzsTYOlaHHqt7j67C+pS3X6hz4acrreSWS3VwHTkLtGOUZ5iclF/oXYb
-         hzc42g0SuAnSlPZqb0/lIpZxFMnlHY8YXeELnler6oLvS4T/G/eYJqYdOHIGrkwL/B
-         NHmct99Ua390SueauOVaW9Cya3mQLW79JMY1RJdI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 9A4E5602BA;
-        Wed, 26 Sep 2018 18:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537987010;
-        bh=cGn4ZC/eSXW140uepSZQpcTMVvrdBpnar+M3gVXlIWQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=n5NIzhplM2RCy5/Hlh9YklYaukAMqTUBPtVymfoVwlxZfspuy2OCkXis2aVOqxv0t
-         2Z8+ATOKBdI+KNdf4DsQzZbxAikgjnHxP1k0m/AY4ScLNRehMDZa2Mc7ruUq5GJBEr
-         5A7JBJR5EEVDDlHE66bF6/pNtp3Lf5NuEMgFYECI=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 27 Sep 2018 00:06:50 +0530
-From:   dkota@codeaurora.org
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Girish Mahadevan <girishm@codeaurora.org>, dkota@codeaurora.org
-Subject: Re: [PATCH V4 3/4] spi: spi-geni-qcom: Add SPI driver support for
- GENI based QUP
-In-Reply-To: <CAD=FV=VJA_qUDp3mxej4gANpzY6TFy7bpK_VzFy=W1X31vmifQ@mail.gmail.com>
-References: <1537294047-12093-1-git-send-email-dkota@codeaurora.org>
- <1537294047-12093-4-git-send-email-dkota@codeaurora.org>
- <153780767551.119890.9339380838620508307@swboyd.mtv.corp.google.com>
- <8866de0e7a687cea1d800d6b3dcfb60b@codeaurora.org>
- <CAD=FV=VJA_qUDp3mxej4gANpzY6TFy7bpK_VzFy=W1X31vmifQ@mail.gmail.com>
-Message-ID: <12ec7543043b89eeb848a2cc87db5c47@codeaurora.org>
-X-Sender: dkota@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 26 Sep 2018 20:53:07 -0400
+Received: from gate.crashing.org ([63.228.1.57]:48524 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726127AbeI0AxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 20:53:07 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w8QHbphO017440;
+        Wed, 26 Sep 2018 12:37:52 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id w8QHbjIp017396;
+        Wed, 26 Sep 2018 12:37:45 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Wed, 26 Sep 2018 12:37:44 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     Russell Currey <ruscur@russell.cc>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
+Message-ID: <20180926173744.GN23155@gate.crashing.org>
+References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr> <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr> <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr> <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc> <30fb4e6b-0981-c53c-a1db-94138eaad268@c-s.fr> <20180926092806.GM23155@gate.crashing.org> <284752d1-6c32-bdca-72d3-4d8616b26fbf@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <284752d1-6c32-bdca-72d3-4d8616b26fbf@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-26 01:24, Doug Anderson wrote:
-> Hi,
+On Wed, Sep 26, 2018 at 11:41:26AM +0200, Christophe LEROY wrote:
+> Le 26/09/2018 à 11:28, Segher Boessenkool a écrit :
+> >On Wed, Sep 26, 2018 at 09:58:30AM +0200, Christophe LEROY wrote:
+> >>Segher, any idea about this problem ?
+> >
+> >>>>arch/powerpc/platforms/powermac/bootx_init.o: In function 
+> >>>>`bootx_printf':
+> >>>>/var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
+> >>>>sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88:
+> >>>>undefined reference to `__stack_chk_fail_local'
+> >
+> >Are you building as PIC?  Are you linking libssp_nonshared.a?  Why not?
 > 
-> On Tue, Sep 25, 2018 at 12:36 PM <dkota@codeaurora.org> wrote:
->> >> +       unsigned int cur_speed_hz;
->> >
->> > unsigned long for Hz? The clk framework uses that type.
->> 
->> cur_speed_hz stores the speed value requested as part of transfer (not
->> the resultant or rounded off frequency got from clk framework. It is 
->> u32
->> type, i will change cur_speed_hz to u32 type instead of unsigned long.
->> Code snippet:
->>          mas->cur_speed_hz = xfer->speed_hz;
+> Spotted, thanks.
 > 
-> Change it to "unsigned long" anyway to match the clock framework.  In
-> theory maybe the "xfer" structure will be updated eventually.
-Ok. WIll update it
+> arch/powerpc/platforms/powermac/Makefile contains:
 > 
+> CFLAGS_bootx_init.o  		+= -fPIC
+> 
+> Does it mean we should add -lssp_nonshared to LDFLAGS_vmlinux ?
+
+Something like that.
+
+> Or maybe stack protection on bootx_init doesn't make much sense and we 
+> could just do the following ?
+> 
+> CFLAGS_bootx_init.o  		+= -fPIC $(call cc-option, 
+> -fno-stack-protector)
+
+But more likely this.  Why does it use -fPIC?
+
+If it is only boot-time init (which the name suggests) then disabling
+ssp makes a lot of sense.
 
 
->> Is it possible for all three conditions above to happen in one
->> interrupt? I ask because 'ret' is overwritten and so what may have 
->> been
->> IRQ_HANDLED may become IRQ_NONE which will lead to confusion in the 
->> irq
->> layer. Maybe the handle tx/rx functions can return a bool, that gets
->> orred together each time so that we know if something handled an
->> interrupt?
->> 
-> Will check it again by running fullduplex transfer and update.
-Added the changes in V5 to ensure return value doesn't get overwritten.
-
---Dilip
+Segher
