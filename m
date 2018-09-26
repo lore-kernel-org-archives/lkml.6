@@ -2,200 +2,144 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C74C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B08C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368A22152C
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:47:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368A22152C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5F3992150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:48:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k7PiHkdT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F3992150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbeI0CCH (ORCPT
+        id S1727085AbeI0CCz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:02:07 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:38139 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeI0CCG (ORCPT
+        Wed, 26 Sep 2018 22:02:55 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44023 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeI0CCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:02:06 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id D481A22294;
-        Wed, 26 Sep 2018 19:47:32 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id E0bWXYLIbEqO; Wed, 26 Sep 2018 19:47:32 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id B1D89220F7;
-        Wed, 26 Sep 2018 19:47:26 +0000 (UTC)
-Reply-To: shuah@kernel.org
-Subject: Re: [V2 PATCH] selftests: watchdog: Add gettimeout and get|set
- pretimeout
-To:     Jerry.Hoemann@hpe.com
-Cc:     erosca@de.adit-jv.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <1537817767-78918-1-git-send-email-jerry.hoemann@hpe.com>
- <1537817767-78918-2-git-send-email-jerry.hoemann@hpe.com>
- <16941ebb-85ca-ad4c-de7b-c26f193ca611@kernel.org>
- <20180926162920.GB3948@anatevka.americas.hpqcorp.net>
-From:   Shuah Khan <shuah@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuah@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ce60e815-10f1-08fd-d853-2629992a4a98@kernel.org>
-Date:   Wed, 26 Sep 2018 13:47:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 22:02:54 -0400
+Received: by mail-yb1-f196.google.com with SMTP id w80-v6so69984ybe.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 12:48:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O/Ni5qmta3WyPruumK25iSu8XeGsUBcijA1J9mhHkHQ=;
+        b=k7PiHkdT8lBwpVCut+nwkRkpNLaEAfeMt8nV8gByniagQtlKDnnoaZkwlY7gU0QWpM
+         MaKT65QHYdy8dckUFjBYn1QuljAieO4wMNBxD+q/dPhw1kBsP7ikM+HOkVH31N8ORW2h
+         mfjZlI7RbYc6Mt7sIaEDM2OfOYtu1q5RXkZSMH6pvuvXskkI2kNMx9aeQBeFvoykbHmo
+         RNj4imJpgtKIBTPTlcOC2GBbvcJTXDLGPWoe+voQTt/7MPbkt3X+ZnZgAIk6OOBxJGOd
+         7ZEzBwdO8qS3VEAskGiZ2IVteft9nChbTbN9p43CTJoQ/3djkfZ5/v5lSgotgP2YYuEe
+         WiRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O/Ni5qmta3WyPruumK25iSu8XeGsUBcijA1J9mhHkHQ=;
+        b=Zqdck7ItAY8yXWaLs/nLud3480Gsdz85dlz1wj//2Nm9FzxNoJM0eSC5uZtC20FEg+
+         s2aExzy3o3Te2b2eZ8dOzFE8DDW5atQkNUletHOk1f2HzVlmN2XIzTDgJSd9eD7OBOQT
+         O8nunwT29Z6+7kCdzZwWPg8jl0ErfehKWsvsfbsC4N6WaRSg8LrpCIo0KKkYMP8G8cFb
+         HW3+nj0k52qtYqxa3T2Sd2BS/2D4MMMny7uKrvVTKRG8eYlSPG7pNO/QbJqVfh3A3oEd
+         kpKt1gJUgli+Amiy4V5xsebpOwOb6aqpuVtK530PONceGzOc71qIri4Cg8gIol6rGzUt
+         szEg==
+X-Gm-Message-State: ABuFfoge/VZwmPgdR2W120Mc8tTk+ez866pRVZotIvFN/Tc4ZRjTRJmy
+        C0tRzPV9hgPyFFOGJZ2PlBz4+CsnDzLpHh4/cJQ4
+X-Google-Smtp-Source: ACcGV60UZ29PQ94hG4ghTaPVpMkzGFt1kYkc50vQzcbshWDU4BBaJr0GRXooMrJ1kDuOW2Jf1sSx+NupKX+9bUOyMFw=
+X-Received: by 2002:a25:a207:: with SMTP id b7-v6mr3979620ybi.186.1537991301810;
+ Wed, 26 Sep 2018 12:48:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180926162920.GB3948@anatevka.americas.hpqcorp.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180926150051.6ee97aae@canb.auug.org.au> <20180926142540.GB14407@localhost.localdomain>
+ <20180926145820.GA14688@localhost.localdomain>
+In-Reply-To: <20180926145820.GA14688@localhost.localdomain>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Wed, 26 Sep 2018 14:48:10 -0500
+Message-ID: <CAErSpo6CAMrNafXPcdkYRgZsNtBj+zOdWoAKqG2r5h-jDCaVJQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next list <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/2018 10:29 AM, Jerry Hoemann wrote:
-> On Tue, Sep 25, 2018 at 02:51:15PM -0600, Shuah Khan wrote:
->> Hi Jerry,
->>
->> On 09/24/2018 01:36 PM, Jerry Hoemann wrote:
->>>  	{"disable",             no_argument, NULL, 'd'},
->>> @@ -27,6 +27,9 @@
->>>  	{"help",                no_argument, NULL, 'h'},
->>>  	{"pingrate",      required_argument, NULL, 'p'},
->>>  	{"timeout",       required_argument, NULL, 't'},
->>> +	{"gettimeout",          no_argument, NULL, 'T'},
->>> +	{"pretimeout",    required_argument, NULL, 'n'},
->>> +	{"getpretimeout",       no_argument, NULL, 'N'},
->>>  	{NULL,                  no_argument, NULL, 0x0}
->>>  };
->>>  
->>> @@ -71,9 +74,13 @@ static void usage(char *progname)
->>>  	printf(" -h, --help          Print the help message\n");
->>>  	printf(" -p, --pingrate=P    Set ping rate to P seconds (default %d)\n", DEFAULT_PING_RATE);
->>>  	printf(" -t, --timeout=T     Set timeout to T seconds\n");
->>> +	printf(" -T, --gettimeout    Get the timeout\n");
->>> +	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
->>> +	printf(" -N, --getpretimeout Get the pretimeout\n");
->>>  	printf("\n");
->>>  	printf("Parameters are parsed left-to-right in real-time.\n");
->>>  	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
->>> +	printf("Example: %s -t 12 -T -n 7 -N\n", progname);
->>
->> Would this work the way you want it though, since -N now is oneshot?
->> Should this be just "printf("Example: %s -t 12 -T -n 7\n", progname); ??
-> 
-> 
-> Example shows how to set/query the timers to make sure value set was what
-> was intended.
-> 
-> Note: "oneshot" is a bit of a misnomer as it causes clean exit before
-> going into the keep alive loop, but one can still specify multiple
-> options.
-> 
-> 
->>
->> The rest looks good to me.
+On Wed, Sep 26, 2018 at 9:56 AM Keith Busch <keith.busch@intel.com> wrote:
+>
+> On Wed, Sep 26, 2018 at 08:25:40AM -0600, Keith Busch wrote:
+> > On Wed, Sep 26, 2018 at 03:00:51PM +1000, Stephen Rothwell wrote:
+> > > Hi Bjorn,
+> > >
+> > > After merging the pci tree, today's linux-next build (powerpc allnoconfig)
+> > > failed like this:
+> > >
+> > > ld: drivers/pci/pci.o: in function `pci_bus_error_reset':
+> > > pci.c:(.text+0x5fba): undefined reference to `pci_slot_mutex'
+> > > ld: pci.c:(.text+0x5fc2): undefined reference to `pci_slot_mutex'
+> > >
+> > > Caused by commit
+> > >
+> > >   131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
+> > >
+> > > I have applied the following hack for today (there is probably a better
+> > > way):
+> >
+> > Thanks for the notice. Does this mean you don't have CONFIG_SYSFS? I
+> > must admit I missed that connection for building slot.c.
+> >
+> >
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Wed, 26 Sep 2018 14:55:37 +1000
+> > > Subject: [PATCH] pci: move pci_slot_mutex so it is available where needed
+> > >
+> > > Fixes: 131b0ca2c7b2 ("PCI/ERR: Use slot reset if available")
+> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > ---
+> > >  drivers/pci/pci.c  | 2 ++
+> > >  drivers/pci/slot.c | 1 -
+> > >  2 files changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > > index 8c1e99a637d8..1fa67db6b21e 100644
+> > > --- a/drivers/pci/pci.c
+> > > +++ b/drivers/pci/pci.c
+> > > @@ -5190,6 +5190,8 @@ static int pci_bus_reset(struct pci_bus *bus, int probe)
+> > >     return ret;
+> > >  }
+> > >
+> > > +DEFINE_MUTEX(pci_slot_mutex);
+> > > +
+> > >  /**
+> > >   * pci_bus_error_reset - reset the bridge's subordinate bus
+> > >   * @bridge: The parent device that connects to the bus to reset
+> > > diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+> > > index 3da03fcc6fbf..c46d5e1ff536 100644
+> > > --- a/drivers/pci/slot.c
+> > > +++ b/drivers/pci/slot.c
+> > > @@ -14,7 +14,6 @@
+> > >
+> > >  struct kset *pci_slots_kset;
+> > >  EXPORT_SYMBOL_GPL(pci_slots_kset);
+> > > -DEFINE_MUTEX(pci_slot_mutex);
+> > >
+> > >  static ssize_t pci_slot_attr_show(struct kobject *kobj,
+> > >                                     struct attribute *attr, char *buf)
+> > > --
+> > > 2.18.0
+>
+> There's unfortunately second bug here when there are no slots, which
+> would be the case without CONFIG_SYSFS: the slot list is empty, and the
+> function just returned success, but it should have gone to the default
+> secondary bus reset behavior in that case. I'll send a patch shortly.
 
-I spoke too soon. I ran your patch on softdog and error messages in unsupported
-cases could you refinement. Please see below:
-
-Sorry for not catching this earlier.
-
->>
->>>  }
->>>  
->>>  int main(int argc, char *argv[])
->>> @@ -135,6 +142,30 @@ int main(int argc, char *argv[])
->>>  			else
->>>  				printf("WDIOC_SETTIMEOUT errno '%s'\n", strerror(errno));
->>>  			break;
->>> +		case 'T':
->>> +			oneshot = 1;
->>> +			ret = ioctl(fd, WDIOC_GETTIMEOUT, &flags);
->>> +			if (!ret)
->>> +				printf("WDIOC_GETTIMEOUT returns %u seconds.\n", flags);
->>> +			else
->>> +				printf("WDIOC_GETTIMEOUT errno '%s'\n", strerror(errno));
-
-Either remove "errno" or change it to "error '%s'"
-
->>> +			break;
->>> +		case 'n':
->>> +			flags = strtoul(optarg, NULL, 0);
->>> +			ret = ioctl(fd, WDIOC_SETPRETIMEOUT, &flags);
->>> +			if (!ret)
->>> +				printf("Watchdog pretimeout set to %u seconds.\n", flags);
->>> +			else
->>> +				printf("WDIOC_SETPRETIMEOUT errno '%s'\n", strerror(errno));
-
-Same as above.
-
->>> +			break;
->>> +		case 'N':
->>> +			oneshot = 1;
->>> +			ret = ioctl(fd, WDIOC_GETPRETIMEOUT, &flags);
->>> +			if (!ret)
->>> +				printf("WDIOC_GETPRETIMEOUT returns %u seconds.\n", flags);
->>> +			else
->>> +				printf("WDIOC_GETPRETIMEOUT errno '%s'\n", strerror(errno));
-
-Same as above.
-
->>> +			break;
->>>  		default:
->>>  			usage(argv[0]);
->>>  			goto end;
->>>
->>
-
-thanks,
--- Shuah
-
+I folded in Keith's patch for this, so you should be able to drop your
+workaround, Stephen.
