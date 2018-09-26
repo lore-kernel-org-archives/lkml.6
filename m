@@ -2,99 +2,87 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEC7C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84031C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6740C21480
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:44:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6740C21480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 36B2E2089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 00:45:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="URV++VXw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B2E2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbeIZGy6 convert rfc822-to-8bit (ORCPT
+        id S1726976AbeIZGza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 02:54:58 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:35920 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726265AbeIZGy6 (ORCPT
+        Wed, 26 Sep 2018 02:55:30 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54528 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbeIZGz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 02:54:58 -0400
-Received: from mr4.cc.vt.edu (junk.cc.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w8Q0imiv008433
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 20:44:48 -0400
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w8Q0ihZW006329
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 20:44:48 -0400
-Received: by mail-qt1-f198.google.com with SMTP id d12-v6so10295433qtk.13
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Sep 2018 17:44:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sIP7gHKEtexL5M9PPLcXiOIKvq5d5gduR2aNe9uHcJw=;
-        b=tVHHKXA96hFlZ3/kP3oezAyZs2nprAO2CpOJIuhpNQ/Ip8wxSSNgACTwW3q1Z22ROi
-         FLKm4ssByFeravux6aCVhz+RZxBMgRSOvJFD67Jgxhzu5ZLpPr+bsJicqLEBu2Bf7P32
-         /OA11Sa/1cyM90y8M9ljuyaarX47e7M4V+QUU2piOU4il+0+Ahox5YfwMBd7WcLCuYHJ
-         S9aVybIFMDv2IJIYnVAyaHIhng9btd8nLKI4phmHSZa981ZVyAB7HEj53c1MH0KQ9Ya4
-         V6pyo1ulSvp+Siq2uNjXYKwfyChQwkwS2PkYFORsQrzy8QstUZWhxfaHPNbKQXb6oo5N
-         ZXsA==
-X-Gm-Message-State: ABuFfohn897NNM3RksiEiXHOUidGaq6+PcXDil9CEhpFAXDkk/AMQ5u6
-        W7Kv2eG+H8CyaTawWp9Q7uWoBLFCVngKEXwsWAvjH1x6NgyMmZ8oouHRC+J6rbRuyv88+5i+YCy
-        oseB+znldCQRGnrNYdkRoQywbZZH1wNc0vRE=
-X-Received: by 2002:a37:5c81:: with SMTP id q123-v6mr2590070qkb.8.1537922682963;
-        Tue, 25 Sep 2018 17:44:42 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV61/s2L5omAYt517lcfyTR66zlfZYK6aj33DzDwyrTwYL8Hq4cEggSrydnM/8LnLhIymEXAbXg==
-X-Received: by 2002:a37:5c81:: with SMTP id q123-v6mr2590055qkb.8.1537922682768;
-        Tue, 25 Sep 2018 17:44:42 -0700 (PDT)
-Received: from ?IPv6:2601:5c0:c100:49da:1857:54ff:f889:7a68? ([2601:5c0:c100:49da:1857:54ff:f889:7a68])
-        by smtp.gmail.com with ESMTPSA id q10-v6sm2117797qtp.7.2018.09.25.17.44.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 17:44:41 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: Leaking path for set_task_comm
-From:   TongZhang <ztong@vt.edu>
-In-Reply-To: <20180925183953.GI15710@uranus>
-Date:   Tue, 25 Sep 2018 20:44:39 -0400
-Cc:     adobriyan@gmail.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Wenbo Shen <shenwenbosmile@gmail.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <0CD63E6E-7512-4DD6-8858-4408416DC730@vt.edu>
-References: <F7DFF547-5267-4EF3-8BF3-70DAF6C2A53A@vt.edu>
- <20180925183953.GI15710@uranus>
-To:     Cyrill Gorcunov <gorcunov@gmail.com>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Wed, 26 Sep 2018 02:55:29 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8Q0iMrg188087;
+        Wed, 26 Sep 2018 00:45:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=JL6NBRksQqRxvivNTU570LUzSfCFvQQYxnhTllGBtFs=;
+ b=URV++VXw/P/AIXn51615PI0hBfBitW/pJGapuMGljE9L9RTexpMZSUS1hI2SW7Mrvet2
+ rrzbnKjDn3VQZZwALWT0jU1MRh1Nt1BrFA5QgXPhmBkuE9LHJKPRr13z+XFf6YA7qwDG
+ AF8LbECJeHA0nXCbML2d47M3WzVS7877PI1oebXAB1C9BGVn4dF0hjscezf90/Y2qDL1
+ EvVtdSGb8mYyZUN0DM+l5bsxENjuiZH1v/y60B2H67Ps6bPdCurzUNZrrKbTrbJF2I3t
+ bOR88ejv9lltxYlTAdPFEIUXWEdbR7Fvabsm98KrJSfk64RQxjJ+LmdnDzeiPLkT0BtM QA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2mnvtup5b1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Sep 2018 00:45:09 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8Q0j87F009881
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Sep 2018 00:45:09 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8Q0j7fH027482;
+        Wed, 26 Sep 2018 00:45:08 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Sep 2018 17:45:07 -0700
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <martin.petersen@oracle.com>, <don.brace@microsemi.com>,
+        <jejb@linux.vnet.ibm.com>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH v2] scsi: Use vmemdup_user to replace the open code
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1537286081-63081-1-git-send-email-zhongjiang@huawei.com>
+Date:   Tue, 25 Sep 2018 20:45:05 -0400
+In-Reply-To: <1537286081-63081-1-git-send-email-zhongjiang@huawei.com> (zhong
+        jiang's message of "Tue, 18 Sep 2018 23:54:41 +0800")
+Message-ID: <yq17ej9hysu.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9027 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=397
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809260006
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yes, this is exactly what I am saying.
-A process can change its own name using prctl or /proc/self/comm.
-prctl is protected by security_task_prctl, whereas /proc/self/comm is not protected by this LSM hook.
 
-A system admin may expect to use security_task_prctl to block all attempt to change process name, however, it can still change name using /proc/self/comm.
+zhong,
 
-> On Sep 25, 2018, at 2:39 PM, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
-> 
-> On Tue, Sep 25, 2018 at 01:27:08PM -0400, Tong Zhang wrote:
->> Kernel Version: 4.18.5
->> 
->> Problem Description:
->> 
->> When using prctl(PR_SET_NAME) to set the thread name, it is checked by security_task_prctl.
->> 
->> We discovered a leaking path that can also use method implemented in 
->> fs/proc/base.c:1526 comm_write(), to do similar thing without asking LSM’s decision.
-> 
-> I don't understand how it is a problem. Could you please explain?
-> procfs/comm is created with S_IRUGO|S_IWUSR permissions. So
-> prctl and procfs are simply different interfaces.
+> vmemdup_user is better than duplicating its implementation, So just
+> replace the open code.
 
+Applied to 4.20/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
