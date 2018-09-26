@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09142C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FA4C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C202021480
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C202021480
+	by mail.kernel.org (Postfix) with ESMTP id F0A1220671
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0A1220671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbeIZPgN (ORCPT
+        id S1728227AbeIZPhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:36:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47058 "EHLO mx1.suse.de"
+        Wed, 26 Sep 2018 11:37:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47304 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727857AbeIZPgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:36:12 -0400
+        id S1726777AbeIZPhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:37:35 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D477EAE02;
-        Wed, 26 Sep 2018 09:24:08 +0000 (UTC)
-Date:   Wed, 26 Sep 2018 11:24:04 +0200
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B0991AE25;
+        Wed, 26 Sep 2018 09:25:30 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 11:25:29 +0200
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
 Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
@@ -67,30 +67,25 @@ Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         linux-um@lists.infradead.org, nios2-dev@lists.rocketboards.org,
         openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
         uclinux-h8-devel@lists.sourceforge.jp
-Subject: Re: [PATCH 03/30] mm: remove CONFIG_HAVE_MEMBLOCK
-Message-ID: <20180926092404.GL6278@dhcp22.suse.cz>
+Subject: Re: [PATCH 05/30] mm: nobootmem: remove dead code
+Message-ID: <20180926092529.GM6278@dhcp22.suse.cz>
 References: <1536927045-23536-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1536927045-23536-4-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536927045-23536-6-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1536927045-23536-4-git-send-email-rppt@linux.vnet.ibm.com>
+In-Reply-To: <1536927045-23536-6-git-send-email-rppt@linux.vnet.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 14-09-18 15:10:18, Mike Rapoport wrote:
-> All architecures use memblock for early memory management. There is no need
-> for the CONFIG_HAVE_MEMBLOCK configuration option.
-
-git grep says
-arch/csky/Kconfig:  select HAVE_MEMBLOCK
-
+On Fri 14-09-18 15:10:20, Mike Rapoport wrote:
+> Several bootmem functions and macros are not used. Remove them.
+> 
 > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-Other than that
 Acked-by: Michal Hocko <mhocko@suse.com>
 -- 
 Michal Hocko
