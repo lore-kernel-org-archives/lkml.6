@@ -2,146 +2,85 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379FFC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38835C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CFA2152A
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:57:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CFA2152A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E788021529
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:59:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fRAZ76kc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E788021529
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbeIZWLH (ORCPT
+        id S1728354AbeIZWMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:11:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:37532 "EHLO mga04.intel.com"
+        Wed, 26 Sep 2018 18:12:44 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:58721 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbeIZWLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:11:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 08:57:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="89560296"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by fmsmga002.fm.intel.com with ESMTP; 26 Sep 2018 08:57:29 -0700
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx-trybot@lists.freedesktop.org
-Cc:     Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
+        id S1727280AbeIZWMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:12:44 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 06e56684;
+        Wed, 26 Sep 2018 15:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=lshxYNCqFNlJpm47xTM+hyy1bEM=; b=fRAZ76
+        kcchxTBrumLxo43s7Ox4jn5G7oRcQv/hMnLWnwplRKo8BNJ43IrVaAzmufLUjW9C
+        /5nblbAP5mEtWgR/6RO2qWKkcwotSysogJm/F/4760W1YWrh1od2G6uia4s9RuUC
+        DLQfbjlQ2RLdEDWCtXmGrU0Wbq542jEZIy4kgvlxK8p135m4213b9qabc7n5ZKKY
+        cbMcjfBD7SeHuIaOpP6GX8zkndGK8kNZWnk86lhez8drFtQyGtnoAqoyAR9ThSoa
+        H+4iG9WAPBG/hBfL51eLz24bFBfIxERC8MGVIaiuwxzHj1xSA2aDR/Uls02nxZ57
+        P4E9oeymfgpo0Fcw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 65788f5d (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Wed, 26 Sep 2018 15:40:32 +0000 (UTC)
+Received: by mail-oi1-f180.google.com with SMTP id v198-v6so4825371oif.9;
+        Wed, 26 Sep 2018 08:59:05 -0700 (PDT)
+X-Gm-Message-State: ABuFfogrIER0h96sfuxr6+2n0p4z17YUOXN4QNTYTaSQhRFpDBqG9CiI
+        x6gMwbqjBzb2rL7AVBlmKLo62SHDNSujbwgPDXQ=
+X-Google-Smtp-Source: ACcGV61KQwfqPH9mMxrwXqZ/cYTC9CSKI078O9KVJYN93kQHECGbZJuReoj/wlskK/MzN3YLrd7//x5HxfygVIHV12s=
+X-Received: by 2002:aca:df42:: with SMTP id w63-v6mr958452oig.295.1537977544891;
+ Wed, 26 Sep 2018 08:59:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
+ <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
+ <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
+ <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com>
+ <CAHmME9pbRabkGjNh-65S9qBNNS1GLJSwZ_tTM507S_Ezr1=QLg@mail.gmail.com>
+ <CAHmME9ru=kJO8QiW+uNNgt5NgFVZzRsQ4tNSgo+f+KfHs3fAKQ@mail.gmail.com> <CAKv+Gu-WDt8f9qVjLDRPHL7THS0BjtKHThw2RMfHbWBT8Hs8aQ@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-WDt8f9qVjLDRPHL7THS0BjtKHThw2RMfHbWBT8Hs8aQ@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Wed, 26 Sep 2018 17:58:53 +0200
+X-Gmail-Original-Message-ID: <CAHmME9q9QcCEZfTykJdS5Qcvv97Ve4PEFhFKYWKFyQXgn8+m9g@mail.gmail.com>
+Message-ID: <CAHmME9q9QcCEZfTykJdS5Qcvv97Ve4PEFhFKYWKFyQXgn8+m9g@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 06/39] component: alloc component_match without any comp to match
-Date:   Wed, 26 Sep 2018 21:24:37 +0530
-Message-Id: <1537977310-24650-7-git-send-email-ramalingam.c@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537977310-24650-1-git-send-email-ramalingam.c@intel.com>
-References: <1537977310-24650-1-git-send-email-ramalingam.c@intel.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
+On Wed, Sep 26, 2018 at 5:52 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> Nice one :-)
+>
+> This works for me (but perhaps add a comment as well)
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
-
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
-
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
-
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
-
-v2:
-  No Change.
-
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index 8946dfee4768..007fb738263a 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -312,6 +312,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
--- 
-2.7.4
-
+Sure. Just a prototype; it'll be clean for v7.
