@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B805CC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25648C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E4292083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:13:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4292083A
+	by mail.kernel.org (Postfix) with ESMTP id B81A3208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81A3208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeIZPZj (ORCPT
+        id S1728178AbeIZP17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:25:39 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34116 "EHLO huawei.com"
+        Wed, 26 Sep 2018 11:27:59 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35085 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726404AbeIZPZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:25:39 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C342147C77B4B;
-        Wed, 26 Sep 2018 17:13:36 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
- 17:13:27 +0800
+        id S1727157AbeIZP17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:27:59 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 22487A641F1F9;
+        Wed, 26 Sep 2018 17:15:56 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
+ 17:15:48 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-        <joel@jms.id.au>, <sam@mendozajonas.com>, <garsilva@embeddedor.com>
+To:     <davem@davemloft.net>, <pshelar@ovn.org>
 CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] net: faraday: fix return type of ndo_start_xmit function
-Date:   Wed, 26 Sep 2018 17:13:05 +0800
-Message-ID: <20180926091305.24556-1-yuehaibing@huawei.com>
+        <dev@openvswitch.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: ovs: fix return type of ndo_start_xmit function
+Date:   Wed, 26 Sep 2018 17:15:38 +0800
+Message-ID: <20180926091538.17876-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -55,50 +54,32 @@ Found by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/ethernet/faraday/ftgmac100.c | 4 ++--
- drivers/net/ethernet/faraday/ftmac100.c  | 7 ++++---
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ net/openvswitch/vport-internal_dev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index d8ead7e..4d67322 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -712,8 +712,8 @@ static bool ftgmac100_prep_tx_csum(struct sk_buff *skb, u32 *csum_vlan)
- 	return skb_checksum_help(skb) == 0;
+diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
+index bb95c43..26f71cb 100644
+--- a/net/openvswitch/vport-internal_dev.c
++++ b/net/openvswitch/vport-internal_dev.c
+@@ -43,7 +43,8 @@ static struct internal_dev *internal_dev_priv(struct net_device *netdev)
  }
  
--static int ftgmac100_hard_start_xmit(struct sk_buff *skb,
--				     struct net_device *netdev)
-+static netdev_tx_t ftgmac100_hard_start_xmit(struct sk_buff *skb,
-+					     struct net_device *netdev)
- {
- 	struct ftgmac100 *priv = netdev_priv(netdev);
- 	struct ftgmac100_txdes *txdes, *first;
-diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
-index a1197d3..570caeb 100644
---- a/drivers/net/ethernet/faraday/ftmac100.c
-+++ b/drivers/net/ethernet/faraday/ftmac100.c
-@@ -634,8 +634,8 @@ static void ftmac100_tx_complete(struct ftmac100 *priv)
- 		;
- }
- 
--static int ftmac100_xmit(struct ftmac100 *priv, struct sk_buff *skb,
--			 dma_addr_t map)
-+static netdev_tx_t ftmac100_xmit(struct ftmac100 *priv, struct sk_buff *skb,
-+				 dma_addr_t map)
- {
- 	struct net_device *netdev = priv->netdev;
- 	struct ftmac100_txdes *txdes;
-@@ -1016,7 +1016,8 @@ static int ftmac100_stop(struct net_device *netdev)
- 	return 0;
- }
- 
--static int ftmac100_hard_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+ /* Called with rcu_read_lock_bh. */
+-static int internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
 +static netdev_tx_t
-+ftmac100_hard_start_xmit(struct sk_buff *skb, struct net_device *netdev)
++internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
  {
- 	struct ftmac100 *priv = netdev_priv(netdev);
- 	dma_addr_t map;
+ 	int len, err;
+ 
+@@ -62,7 +63,7 @@ static int internal_dev_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	} else {
+ 		netdev->stats.tx_errors++;
+ 	}
+-	return 0;
++	return NETDEV_TX_OK;
+ }
+ 
+ static int internal_dev_open(struct net_device *netdev)
 -- 
 1.8.3.1
 
