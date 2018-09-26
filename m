@@ -2,138 +2,116 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E94C1C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A63ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A257E2152C
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:21:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="G2fPxZNz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A257E2152C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id D40302152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:22:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D40302152C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbeIZWfI (ORCPT
+        id S1728521AbeIZWgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:35:08 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40998 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeIZWfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:35:07 -0400
-Received: by mail-pf1-f195.google.com with SMTP id m77-v6so4975943pfi.8
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 09:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IItGuF9Cd6xIR7yEn1bw/RTknS2eJDnbTUJYwwXhwDI=;
-        b=G2fPxZNz6ir7ab/bXLz5shQfyXpggsEI1j6RxPBgrFfibLosh/+86haXoZ2nmxgV8G
-         Cw70WDJgOXL+Z/wHBgrG4drJOqUoXn6Et+20RkzR4waXnpEKhjz9BFrPHsi/u85LLOha
-         UWYJNIePnJIgbqhmRO5Ts4RdANfCdeVIPlzqrpSbtrHBATIZTz5RZ2VvSmhVfzdoS7yF
-         DQs3NY/xfmVG/lGfcaRb0IOkkDCkrfSSriL/ymhd+59RD1C9galuv1lYokaEs7z/N/OQ
-         QsxJCM8R4tZtbi2x9aQNdtd+hD/IEl3jdsjqSp5Ls3Xt3+g4yeYEH3PE679JDKjeGHiN
-         HKAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=IItGuF9Cd6xIR7yEn1bw/RTknS2eJDnbTUJYwwXhwDI=;
-        b=Dn0cKlVhknVIEvOTKc/hzddcgacJk79b+NJfK1NUf6HJxed9rZBJHDCYSTD23RrKFH
-         GmlAQx7jlF2Et255uQMUAaohwYCQg09CNZC2UlCR2wkYcmEFxQKjUkU7qzDZxaWVTmnE
-         Ft58+txi2IRxb0WnwXFPsb74xPpy/+rdZInjiez/QtSjLwB6UlAKL0KxhDU5RxNVy/zD
-         9ng9TBWUx+LIycQuT+DfTn5hizegZ4YfLpktWV2YQyL5xgS2gunRQQcLyHmdsignHzpQ
-         mXjJdUDgtoVa6uhXP7kr2PGw0Y3hvnCp5VLhsnLqMqFDRrxIorDERkcHv4AdT7AH5Fb+
-         P6Hg==
-X-Gm-Message-State: ABuFfoh6y3OC3ci0h/+DZ2LUOfCWD2uJnL/mtX7vdnHhvtmC0n/boF5f
-        9P6wrfSCK4uOHOWyC0NiwG02SA==
-X-Google-Smtp-Source: ACcGV63Ajv0t2W0EWPREEa+78y1EIExCvQ/w2zwVy5HD/ET6VBjI5uFIIjtZa5xiw8OgIfBrXjmoaA==
-X-Received: by 2002:a62:7885:: with SMTP id t127-v6mr7091641pfc.6.1537978885682;
-        Wed, 26 Sep 2018 09:21:25 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:583:1c0b:7305:80fc? ([2601:646:c200:7429:583:1c0b:7305:80fc])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm9643049pfc.28.2018.09.26.09.21.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 09:21:24 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A366)
-In-Reply-To: <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
-Date:   Wed, 26 Sep 2018 09:21:23 -0700
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D93C2C15-DC70-4A95-9350-AD4036C9556A@amacapital.net>
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com> <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com> <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com> <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+        Wed, 26 Sep 2018 18:36:18 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24519 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728025AbeIZWgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:36:17 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:22:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="93922814"
+Received: from araj-mobl1.jf.intel.com ([10.7.201.19])
+  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 09:22:35 -0700
+Date:   Wed, 26 Sep 2018 09:22:35 -0700
+From:   "Raj, Ashok" <ashok.raj@linux.intel.com>
+To:     Sinan Kaya <okaya@codeaurora.org>
+Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Ashok Raj <ashok.raj@intel.com>,
+        IOMMU Mailing List <iommu@lists.linux-foundation.org>
+Subject: Re: [PATCH V3] PCI: Enable PASID when End-to-End TLP is supported by
+ all bridges
+Message-ID: <20180926162235.GA30177@araj-mobl1.jf.intel.com>
+References: <1530372264-20653-1-git-send-email-okaya@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530372264-20653-1-git-send-email-okaya@codeaurora.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sinan
 
++ IOMMU list.
 
-> On Sep 26, 2018, at 7:02 AM, Ard Biesheuvel <ard.biesheuvel@linaro.org> wr=
-ote:
->=20
-> (+ Herbert, Thomas)
->=20
->> On Wed, 26 Sep 2018 at 15:33, Jason A. Donenfeld <Jason@zx2c4.com> wrote:=
+On Sat, Jun 30, 2018 at 11:24:24AM -0400, Sinan Kaya wrote:
+> A PCIe endpoint carries the process address space identifier (PASID) in
+> the TLP prefix as part of the memory read/write transaction. The address
+> information in the TLP is relevant only for a given PASID context.
+> 
+> An IOMMU takes PASID value and the address information from the
+> TLP to look up the physical address in the system.
+> 
+> PASID is an End-End TLP Prefix (PCIe r4.0, sec 6.20).  Sec 2.2.10.2 says
+> 
+>   It is an error to receive a TLP with an End-End TLP Prefix by a
+>   Receiver that does not support End-End TLP Prefixes. A TLP in
+>   violation of this rule is handled as a Malformed TLP. This is a
+>   reported error associated with the Receiving Port (see Section 6.2).
+> 
+> Prevent error condition by proactively requiring End-to-End TLP
+> prefix to be supported on the entire data path between the endpoint and
+> the root port before enabling PASID.
+> 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> ---
+>  
+> +static void pci_configure_eetlp_prefix(struct pci_dev *dev)
+> +{
+> +#ifdef CONFIG_PCI_PASID
+> +	struct pci_dev *bridge;
+> +	u32 cap;
+> +
+> +	if (!pci_is_pcie(dev))
+> +		return;
+> +
+> +	pcie_capability_read_dword(dev, PCI_EXP_DEVCAP2, &cap);
+> +	if (!(cap & PCI_EXP_DEVCAP2_E2ETLP))
+> +		return;
 
->>=20
->> Hi Ard,
->> .
->=20
->> And if it becomes one,
->> this is something we can address *later*, but certainly there's no use
->> of adding additional complexity to the initial patchset to do this
->> now.
->>=20
->=20
-> You are introducing a very useful SIMD abstraction, but it lets code
-> run with preemption disabled for unbounded amounts of time, and so now
-> is the time to ensure we get it right.
->=20
-> Part of the [justified] criticism on the current state of the crypto
-> API is on its complexity, and so I don't think it makes sense to keep
-> it simple now and add the complexity later (and the same concern
-> applies to async support btw).
+Forgot to notice this.. I'm not sure if the same enforcement is 
+required for devices that are RCIEP. The spec isn't clear about calling
+any excemption. Although it should be simple for devices to expose
+e2etlp support, but if they don't that should be ok, since there are
+nothing between itself and the root port.
 
-Are, is what you=E2=80=99re saying that the Zinc chacha20 functions should c=
-all simd_relax() every n bytes automatically for some reasonable value of n?=
-  If so, seems sensible, except that some care might be needed to make sure t=
-hey interact with preemption correctly.
+We are seeking help from our SIG reps, but thought I'll ask here as well
+if there are other opinions.
 
-What I mean is: the public Zinc entry points should either be callable in an=
- atomic context or they should not be.  I think this should be checked at ru=
-ntime in an appropriate place with an __might_sleep or similar.  Or simd_rel=
-ax should learn to *not* schedule if the result of preempt_enable() leaves i=
-t atomic. (And the latter needs to be done in a way that works even on non-p=
-reempt kernels, and I don=E2=80=99t remember whether that=E2=80=99s possible=
-.). And this should happen regardless of how many bytes are processed. IOW, c=
-alling into Zinc should be equally not atomic-safe for 100 bytes and for 10 M=
-B.
+> +
+> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT)
+> +		dev->eetlp_prefix_path = 1;
+> +	else {
+> +		bridge = pci_upstream_bridge(dev);
+> +		if (bridge && bridge->eetlp_prefix_path)
+> +			dev->eetlp_prefix_path = 1;
+> +	}
+> +#endif
+> +}
 
-As for async, ISTM a really good WireGuard accelerator would expose a differ=
-ent interface than crypto API supports, and it probably makes sense to wait f=
-or such hardware to show up before figuring out how to use it.  And no matte=
-r what form it takes, I don=E2=80=99t think it should complicate the basic Z=
-inc crypto entry points.=
+Cheers,
+Ashok
