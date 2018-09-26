@@ -2,125 +2,75 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5C7C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC85EC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B33521568
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:51:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="qaiiTuL8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B33521568
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	by mail.kernel.org (Postfix) with ESMTP id 94EF02154B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 23:58:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EF02154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeI0GGp (ORCPT
+        id S1726667AbeI0GN5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 02:06:45 -0400
-Received: from onstation.org ([52.200.56.107]:46912 "EHLO onstation.org"
+        Thu, 27 Sep 2018 02:13:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50550 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726991AbeI0GGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 02:06:41 -0400
-Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726298AbeI0GN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 02:13:57 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 2435F1A5D;
-        Wed, 26 Sep 2018 23:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1538005876;
-        bh=AbijTUlqJEINkKBnFEwxoR55EO04oXxqQCEAq2xE4Mc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qaiiTuL8uM+2h+hEWg1yV9rcMO7mlG4BSoWLhOXbyi0SH6/76BrcwqOsOmjkYlpMa
-         DPb1B2GIuQYvIt6SmH3IL+FgsI0kA6+M3ai5oziwjUCJnV3MoOzX63olRgnJi3kcTJ
-         CG8sIQbmTc0V9kmBAdPxR9tC2Yqd5xVnNzOdNmFQ=
-From:   Brian Masney <masneyb@onstation.org>
-To:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
-        andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     masneyb@onstation.org, jonathan@marek.ca, ctatlor97@gmail.com
-Subject: [PATCH v2 3/3] ARM: dts: qcom: msm8974-hammerhead: add device tree bindings for vibrator
-Date:   Wed, 26 Sep 2018 19:51:12 -0400
-Message-Id: <20180926235112.25710-4-masneyb@onstation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180926235112.25710-1-masneyb@onstation.org>
-References: <20180926235112.25710-1-masneyb@onstation.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id BB8474E8BC;
+        Wed, 26 Sep 2018 23:58:31 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3DEA76D7E1;
+        Wed, 26 Sep 2018 23:58:26 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     mingo@kernel.org
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-doc@vger.kernel.org, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, thgarnie@google.com,
+        corbet@lwn.net, Baoquan He <bhe@redhat.com>
+Subject: [PATCH v2 0/3] x86/mm/doc: Clean up mm.txt
+Date:   Thu, 27 Sep 2018 07:58:20 +0800
+Message-Id: <20180926235823.3567-1-bhe@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 26 Sep 2018 23:58:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds device device tree bindings for the vibrator found on
-the LG Nexus 5 (hammerhead) phone.
+This clean up is suggested by Ingo.
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
- .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
+It firstly fix the confusions in mm layout tables by unifying
+each memory region description in the consistent style.
 
-diff --git a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-index ed8f064d0895..e67d61f25a96 100644
---- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-@@ -5,6 +5,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+#include <dt-bindings/clock/qcom,mmcc-msm8974.h>
- 
- / {
- 	model = "LGE MSM 8974 HAMMERHEAD";
-@@ -268,6 +269,44 @@
- 				input-enable;
- 			};
- 		};
-+
-+		vibrator_pin: vibrator {
-+			pwm {
-+				pins = "gpio27";
-+				function = "gp1_clk";
-+
-+				drive-strength = <6>;
-+				bias-disable;
-+			};
-+
-+			enable {
-+				pins = "gpio60";
-+				function = "gpio";
-+			};
-+		};
-+	};
-+
-+	msm_pwm_vibrator_enable: pwm@fd8c3450 {
-+		compatible = "qcom,msm8974-pwm-vibrator";
-+		reg = <0xfd8c3450 0x400>;
-+		#pwm-cells = <3>;
-+
-+		vcc-supply = <&pm8941_l19>;
-+
-+		clocks = <&mmcc CAMSS_GP1_CLK>;
-+		clock-names = "pwm";
-+
-+		enable-gpios = <&msmgpio 60 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vibrator_pin>;
-+	};
-+
-+	vibrator {
-+		compatible = "pwm-vibrator";
-+
-+		pwms = <&msm_pwm_vibrator_enable 0 1000000000 0>;
-+		pwm-names = "enable";
- 	};
- 
- 	sdhci@f9824900 {
+Secondly take the KASLR words out of the mm layout tables to make
+it as a separate section to only list mm layout in non-KASLR case.
+Then add KASLR document at the end of mm.txt.
+
+Meanwhile update document about KERNEL_IMAGE_SIZE in
+arch/x86/include/asm/page_64_types.h .
+
+v1->v2:
+
+Resend v2 since some typo and incorrect descriptions found in v1 post.
+
+Baoquan He (3):
+  x86/KASLR: Update document about KERNEL_IMAGE_SIZE
+  x86/mm/doc: Clean up the memory region layout descriptions
+  x86/doc/kaslr.txt: Create a separate part of document abourt KASLR at
+    the end of file
+
+ Documentation/x86/x86_64/mm.txt      | 140 +++++++++++++++++++++++------------
+ arch/x86/include/asm/page_64_types.h |   7 +-
+ 2 files changed, 98 insertions(+), 49 deletions(-)
+
 -- 
-2.17.1
+2.13.6
 
