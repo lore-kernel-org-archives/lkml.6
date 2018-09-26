@@ -2,90 +2,90 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E41C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31549C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 012D220843
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:11:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012D220843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DAAFD214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:12:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KM33zOJ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAFD214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeIZUYj (ORCPT
+        id S1727556AbeIZUZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:24:39 -0400
-Received: from mga05.intel.com ([192.55.52.43]:4032 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727066AbeIZUYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:24:38 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 07:11:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="83410669"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.55])
-  by FMSMGA003.fm.intel.com with ESMTP; 26 Sep 2018 07:11:29 -0700
-Date:   Wed, 26 Sep 2018 07:11:29 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] x86/kvm/mmu.c: set get_pdptr hook in
- kvm_init_shadow_ept_mmu()
-Message-ID: <20180926141129.GD27433@linux.intel.com>
-References: <20180925175844.20277-1-vkuznets@redhat.com>
- <20180925175844.20277-3-vkuznets@redhat.com>
+        Wed, 26 Sep 2018 16:25:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42938 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbeIZUZL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:25:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hZ52ygBMlFoD8bPvzFpyWVqrCC2R1SvadCEhHpo+XMU=; b=KM33zOJ72m1oKPSTq80xIo9xD
+        YoH186K780QYxR8125SpLM9M7UmQnEYntWAF80VgJqtgN9TO4V9ZB3kaFkYpKvjDr5HYimUxVmo92
+        xy1njRPYwgImRyd9dELMhT0azJrYrX/5mHUFsf0YfCD/qvD4VYy+/FmK+VHd7BOHKpdQGB6yRO8TX
+        mjRpeeWNvEMtFOPqlXm+4LIWL6ZG6nQpJ3tjQR5HzvxMFuO3AHdpazGEfSzxQASBuBIHwyK/iICcu
+        4mIjCCWVjLJ9CdbmaYPZyhuwItMNr2e+I5NBHUNV22/s/jbbrUxMdleRwus17f/WvFDmKZGMv/q97
+        YBWEqBlJw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5AXn-0007kS-Tl; Wed, 26 Sep 2018 14:11:59 +0000
+Date:   Wed, 26 Sep 2018 07:11:59 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Zong Li <zongbox@gmail.com>
+Cc:     palmer@sifive.com, aou@eecs.berkeley.edu, hch@infradead.org,
+        zong@andestech.com, vincentc@andestech.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] lib: Add umoddi3 and udivmoddi4 of GCC library
+ routines
+Message-ID: <20180926141159.GA28142@infradead.org>
+References: <cover.1537949825.git.zongbox@gmail.com>
+ <7a24493868f29559a1628eed44af15dc10a9940a.1537949825.git.zongbox@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180925175844.20277-3-vkuznets@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <7a24493868f29559a1628eed44af15dc10a9940a.1537949825.git.zongbox@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 07:58:37PM +0200, Vitaly Kuznetsov wrote:
-> kvm_init_shadow_ept_mmu() doesn't set get_pdptr() hook and is this
-> not a problem just because MMU context is already initialized and this
-> hook points to kvm_pdptr_read(). As we're intended to use a dedicated
-> MMU for shadow EPT MMU set this hook explicitly.
-> 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/mmu.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index ca79ec0d8060..2bdc63f67886 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -4846,6 +4846,8 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
->  	context->root_level = PT64_ROOT_4LEVEL;
->  	context->direct_map = false;
->  	context->base_role.word = root_page_role.word & mmu_base_role_mask.word;
-> +	context->get_pdptr = kvm_pdptr_read;
+On Wed, Sep 26, 2018 at 04:31:12PM +0800, Zong Li wrote:
+> diff --git a/lib/udivmoddi4.c b/lib/udivmoddi4.c
+> new file mode 100644
+> index 0000000..6518b3a
+> --- /dev/null
+> +++ b/lib/udivmoddi4.c
+> @@ -0,0 +1,309 @@
 
-Would it make sense to set this in nested_ept_init_mmu_context()
-along with set_cr3, get_cr3 and inject_page_fault?  The other MMU
-flows set them as a package deal.
+needs and SPDX tag.
 
-Either way...
+> +/*
+> + * This program is free software; you can redistribute it and/or modify it under
+> + * the terms of the GNU General Public License as published by the Free
+> + * Software Foundation; either version 3, or (at your option) any later
+> + * version.
 
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+We can't take GPLv3 code for the kernel.
 
-> +
->  	update_permission_bitmask(vcpu, context, true);
->  	update_pkru_bitmask(vcpu, context, true);
->  	update_last_nonleaf_level(vcpu, context);
+> + * Under Section 7 of GPL version 3, you are granted additional
+> + * permissions described in the GCC Runtime Library Exception, version
+> + * 3.1, as published by the Free Software Foundation.
+> + *
+> + * You should have received a copy of the GNU General Public License and
+> + * a copy of the GCC Runtime Library Exception along with this program;
+> + * see the files COPYING3 and COPYING.RUNTIME respectively.
+
+unless this exception somehow counts (which I doubt), but for that we'd
+actually need it in the tree.
