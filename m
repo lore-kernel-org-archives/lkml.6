@@ -2,100 +2,106 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E53C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9289C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3A2B20779
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:40:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A2B20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id AC83320779
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:41:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC83320779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeIZPwx (ORCPT
+        id S1727230AbeIZPxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:52:53 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12709 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726565AbeIZPww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:52:52 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BC914B0A9D6DA;
-        Wed, 26 Sep 2018 17:40:43 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
- 17:40:38 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <t.sailer@alumni.ethz.ch>,
-        <jreuter@yaina.de>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-hams@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] net: hamradio: fix return type of ndo_start_xmit function
-Date:   Wed, 26 Sep 2018 17:40:22 +0800
-Message-ID: <20180926094022.22632-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Wed, 26 Sep 2018 11:53:39 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:55052 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726565AbeIZPxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:53:39 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42KtHW0gZbz9ttST;
+        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id c59T4_WQr0DD; Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42KtHW038zz9ttRc;
+        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4AD958B803;
+        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 2ttDEZ_Gdx60; Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
+Received: from PO15451 (unknown [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 217E58B7EB;
+        Wed, 26 Sep 2018 11:41:27 +0200 (CEST)
+Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Russell Currey <ruscur@russell.cc>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
+ <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
+ <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr>
+ <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc>
+ <30fb4e6b-0981-c53c-a1db-94138eaad268@c-s.fr>
+ <20180926092806.GM23155@gate.crashing.org>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <284752d1-6c32-bdca-72d3-4d8616b26fbf@c-s.fr>
+Date:   Wed, 26 Sep 2018 11:41:26 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180926092806.GM23155@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
-
-Found by coccinelle.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/hamradio/baycom_epp.c | 3 ++-
- drivers/net/hamradio/dmascc.c     | 4 ++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
-index 1e62d00..f4ceccf 100644
---- a/drivers/net/hamradio/baycom_epp.c
-+++ b/drivers/net/hamradio/baycom_epp.c
-@@ -772,7 +772,8 @@ static void epp_bh(struct work_struct *work)
-  * ===================== network driver interface =========================
-  */
- 
--static int baycom_send_packet(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+baycom_send_packet(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct baycom_state *bc = netdev_priv(dev);
- 
-diff --git a/drivers/net/hamradio/dmascc.c b/drivers/net/hamradio/dmascc.c
-index cde4120..2798870 100644
---- a/drivers/net/hamradio/dmascc.c
-+++ b/drivers/net/hamradio/dmascc.c
-@@ -239,7 +239,7 @@ struct scc_info {
- static int scc_open(struct net_device *dev);
- static int scc_close(struct net_device *dev);
- static int scc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd);
--static int scc_send_packet(struct sk_buff *skb, struct net_device *dev);
-+static netdev_tx_t scc_send_packet(struct sk_buff *skb, struct net_device *dev);
- static int scc_set_mac_address(struct net_device *dev, void *sa);
- 
- static inline void tx_on(struct scc_priv *priv);
-@@ -921,7 +921,7 @@ static int scc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- }
- 
- 
--static int scc_send_packet(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t scc_send_packet(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct scc_priv *priv = dev->ml_priv;
- 	unsigned long flags;
--- 
-1.8.3.1
 
 
+Le 26/09/2018 à 11:28, Segher Boessenkool a écrit :
+> On Wed, Sep 26, 2018 at 09:58:30AM +0200, Christophe LEROY wrote:
+>> Segher, any idea about this problem ?
+> 
+>>>> arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_printf':
+>>>> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
+>>>> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88:
+>>>> undefined reference to `__stack_chk_fail_local'
+> 
+> Are you building as PIC?  Are you linking libssp_nonshared.a?  Why not?
+
+Spotted, thanks.
+
+arch/powerpc/platforms/powermac/Makefile contains:
+
+CFLAGS_bootx_init.o  		+= -fPIC
+
+Does it mean we should add -lssp_nonshared to LDFLAGS_vmlinux ?
+
+Or maybe stack protection on bootx_init doesn't make much sense and we 
+could just do the following ?
+
+CFLAGS_bootx_init.o  		+= -fPIC $(call cc-option, -fno-stack-protector)
+
+Christophe
+
+
+> 
+> :-)
+> 
+> 
+> Segher
+> 
