@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D74C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60651C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C265B21508
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BE7A214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="k191EyrX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C265B21508
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V7ermJss"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE7A214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727700AbeIZQiQ (ORCPT
+        id S1727761AbeIZQiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:38:16 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54749 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeIZQiO (ORCPT
+        Wed, 26 Sep 2018 12:38:17 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40171 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727637AbeIZQiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:38:14 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c14-v6so1672762wmb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:25:57 -0700 (PDT)
+        Wed, 26 Sep 2018 12:38:17 -0400
+Received: by mail-wm1-f68.google.com with SMTP id o2-v6so1688941wmh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:26:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4syfqTgzquPxdJpZoTtqhiu/8ooDs0QTCE3IX5nC3NM=;
-        b=k191EyrXLxWe+xiQxSAFleVYd57c5YfWYMhvy3ifTPCKeKUNV6EfTXWfrPdGHCSRdU
-         DxJ8I9SNiz1uJP3Q8WbPqouHfzduVLENter9FM0Mre29fpJ2loEIapa2BizMqOVx6U9/
-         EPGWwZGV3Vmg55d401Z5Ph+RzI1bl4JGnDfxI=
+        bh=7HEPUdBWDT21/CbUw0qj1CFFc0ibgZ+M4DOX00nfRHk=;
+        b=V7ermJsspmGGZkAixJ06hvGrqfb+can4oZ+NeNgKdvFO5410gXDuzUvrJrUG5fF00q
+         TGrFwIRnXw5e966e5qGEioSNAuwB9mIRFpRkJRqYf8S05vaR63vVS0tm9tdluf+5UCx3
+         LRQDm3+cwEL+olhxnZhpOHBN9MwWWKCu3du9U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4syfqTgzquPxdJpZoTtqhiu/8ooDs0QTCE3IX5nC3NM=;
-        b=rJztC2iKNDc78oPEs9B6bpYRyJn9w9fgbU2A2Ps9EWHMIxJC9PByr/bFKAzddnH1v/
-         esdO0Op0elN2tv3fma9FUXo7JAoBzaaljfd/A5iGqfd+PyZFHnTBs1TifNd7sN6csg2X
-         YbUrQXbP2sD8QWEalOqa/cfy+AEFCDgNgUc5o3dWevzpLZ+rmz3un1BQjaS3fPXjSKJO
-         ZZOYTY+/F8X9UGBHbyJdLjsXQjn6jiIZE5/Z/+shVaj+AR1ohj/ml1voww9D3x1mEtAB
-         cbV2KRs15GtJ1alt2sc3DfBpzPFJufCdSohCp2xYycpANetJBiXnIeNzIlqvhmxzpkQb
-         dd8Q==
-X-Gm-Message-State: ABuFfojQHZhELNHf3pw0wHoJ2OSTvj8bW2Qj0ZvwvMkY5poQ+VB1IoC/
-        0eummKC3svaq3brx7DeZmYF9VA==
-X-Google-Smtp-Source: ACcGV61i85jCbDz71x/RTs5M3lny71g92xieAMhZk4rXdqW0VR2CdPNm4PoWugbN19c61u83cF06yA==
-X-Received: by 2002:a1c:7fc6:: with SMTP id a189-v6mr3682238wmd.42.1537957556849;
-        Wed, 26 Sep 2018 03:25:56 -0700 (PDT)
+        bh=7HEPUdBWDT21/CbUw0qj1CFFc0ibgZ+M4DOX00nfRHk=;
+        b=sbHT76EbRVegt7tPaVTZ4jVNyrCZOJbHXqHfd5lkluIexNL8oAm0+pXiFPu+JHHC0U
+         /nIwj6JJsgudDPpoQCor/xVaWVJpOTX+FvHHa9qqKFOfYgPD9TroiLLS2uPbzlAb8pwc
+         UMGrrWuNhwoLobQD5Hu/wgj1LgzMB/HmdAGm2BE6hrwZDn+fxh5R5vURA1WrwveOHjrr
+         R8ax3qDTYIBlpconNMbqsWBkn8c/elcN0Pa9VMPYGT0D9hecKHHS991qES2zp4ffjBhA
+         QGx+buqx9GrAch/SsMSDQSSa14q4NQ2uC2GpLOhM+6ETlyk3N7VgsZFkj9GqwErCqmVX
+         srhg==
+X-Gm-Message-State: ABuFfogiGTW/8+nV7ObS41jpMSDWLgxMYgggznBoIX9nntAOMNYd7ZSq
+        nqm3OyBSxtfPJfHavp4S09d4nw==
+X-Google-Smtp-Source: ACcGV62yOfZ5MarhHsFw04Am56TZudMenMRJYLPWvrbuwleILFYzJz8iPxZ4n+VY49sXGPmaN66WWw==
+X-Received: by 2002:a1c:7305:: with SMTP id d5-v6mr3672366wmb.53.1537957559455;
+        Wed, 26 Sep 2018 03:25:59 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id b12sm4442648wrx.11.2018.09.26.03.25.55
+        by smtp.gmail.com with ESMTPSA id b12sm4442648wrx.11.2018.09.26.03.25.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 26 Sep 2018 03:25:56 -0700 (PDT)
+        Wed, 26 Sep 2018 03:25:58 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org
 Cc:     linux-kernel@vger.kernel.org, vkoul@kernel.org,
@@ -63,9 +63,9 @@ Cc:     linux-kernel@vger.kernel.org, vkoul@kernel.org,
         lgirdwood@gmail.com, tiwai@suse.com, devicetree@vger.kernel.org,
         mark.rutland@arm.com,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 1/5] ALSA: soc-compress: add support to snd_compr_set_runtime_buffer()
-Date:   Wed, 26 Sep 2018 11:23:45 +0100
-Message-Id: <20180926102349.23481-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 3/5] ASoC: q6asm-dai: dt-bindings: Add support to compress dais
+Date:   Wed, 26 Sep 2018 11:23:47 +0100
+Message-Id: <20180926102349.23481-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180926102349.23481-1-srinivas.kandagatla@linaro.org>
 References: <20180926102349.23481-1-srinivas.kandagatla@linaro.org>
@@ -76,57 +76,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to set runtime dma buffer on compressed stream.
+This patch adds board specific bindings required for dais, In particular
+for compressed dais and dai direction.
+
+Board specific setup involves setting up some of dais as compressed dais
+and also specify direction of any dai. Some of the dais might only
+support capture/playback depending on the board level wiring.
+
+These two new dt properties will allow such flexibilty at board level dts.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- include/sound/compress_driver.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../devicetree/bindings/sound/qcom,q6asm.txt  | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/include/sound/compress_driver.h b/include/sound/compress_driver.h
-index ea8c93bbb0e0..0cdc3999ecfa 100644
---- a/include/sound/compress_driver.h
-+++ b/include/sound/compress_driver.h
-@@ -23,6 +23,7 @@ struct snd_compr_ops;
-  * struct snd_compr_runtime: runtime stream description
-  * @state: stream state
-  * @ops: pointer to DSP callbacks
-+ * @dma_buffer_p: runtime dma buffer pointer
-  * @buffer: pointer to kernel buffer, valid only when not in mmap mode or
-  *	DSP doesn't implement copy
-  * @buffer_size: size of the above buffer
-@@ -37,6 +38,7 @@ struct snd_compr_ops;
- struct snd_compr_runtime {
- 	snd_pcm_state_t state;
- 	struct snd_compr_ops *ops;
-+	struct snd_dma_buffer *dma_buffer_p;
- 	void *buffer;
- 	u64 buffer_size;
- 	u32 fragment_size;
-@@ -175,6 +177,23 @@ static inline void snd_compr_drain_notify(struct snd_compr_stream *stream)
- 	wake_up(&stream->runtime->sleep);
- }
+diff --git a/Documentation/devicetree/bindings/sound/qcom,q6asm.txt b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
+index f9c7bd8c1bc0..9f5378c51686 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
++++ b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
+@@ -27,6 +27,28 @@ used by the apr service device.
+ 	Value type: <u32>
+ 	Definition: Must be 1
  
-+/**
-+ * snd_compr_set_runtime_buffer - Set the Compress runtime buffer
-+ * @substream: compress substream to set
-+ * @bufp: the buffer information, NULL to clear
-+ *
-+ * Copy the buffer information to runtime buffer when @bufp is non-NULL.
-+ * Otherwise it clears the current buffer information.
-+ */
-+static inline void snd_compr_set_runtime_buffer(
-+					struct snd_compr_stream *substream,
-+					struct snd_dma_buffer *bufp)
-+{
-+	struct snd_compr_runtime *runtime = substream->runtime;
++== ASM DAI is subnode of "dais" and represent a dai, it includes board specific
++configuration of each dai. Must contain the following properties.
 +
-+	runtime->dma_buffer_p = bufp;
-+}
++- reg
++	Usage: required
++	Value type: <u32>
++	Definition: Must be dai id
 +
- int snd_compr_stop_error(struct snd_compr_stream *stream,
- 			 snd_pcm_state_t state);
++- direction:
++	Usage: Required for Compress offload dais
++	Value type: <u32>
++	Definition: Specifies the direction of the dai stream
++			0 for both tx and rx
++			1 for only tx (Capture/Encode)
++			2 for only rx (Playback/Decode)
++
++- is-compress-dai:
++	Usage: Required for Compress offload dais
++	Value type: <boolean>
++	Definition: present for Compress offload dais
++
++
+ = EXAMPLE
  
+ q6asm@7 {
+@@ -35,5 +57,10 @@ q6asm@7 {
+ 	q6asmdai: dais {
+ 		compatible = "qcom,q6asm-dais";
+ 		#sound-dai-cells = <1>;
++		mm@0 {
++			reg = <0>;
++			direction = <2>;
++			is-compress-dai;
++		};
+ 	};
+ };
 -- 
 2.19.0
 
