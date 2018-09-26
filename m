@@ -2,136 +2,161 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F41FC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482E7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25F552089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A9E208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="JcKi6OzE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F552089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ICsV8uGr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A9E208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeIZO27 (ORCPT
+        id S1727431AbeIZOb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:28:59 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:41012 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeIZO27 (ORCPT
+        Wed, 26 Sep 2018 10:31:29 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37184 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbeIZOb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:28:59 -0400
-Received: by mail-yw1-f67.google.com with SMTP id q129-v6so10447304ywg.8
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:17:15 -0700 (PDT)
+        Wed, 26 Sep 2018 10:31:29 -0400
+Received: by mail-io1-f66.google.com with SMTP id v14-v6so22614577iob.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uBGQXOGojHHwKoMRwZdZjiFpvz9OVMQYIma4ZdH920Q=;
-        b=JcKi6OzEKF2Pv7pyfSOPtDFYJsCJC3rspcLk3Vy4tZqwfY0DVd2HfFY+93eHSQPKQ3
-         MgYkvuCDgrA+f4IYW9WdYqi7X1VQ5yz/lyPXkT/bJDVNfgy4AqtEOv2RArQJBlxqIhyb
-         HLGgYUuvfOCdp0fSpoza6h9ty7R4xM/Jl2eM8rfqHfcuABcodM+VSv/RDI/1UIgTZcGR
-         YgP8MlRSEA+XW1zYftNoah1/PEJ7UIlaec7nRfQu+H4rhBOjmySSTERu46wJIKFvNXeA
-         Kvnww77VK8ygRTSTaUyMsqPQtFayVEUVXMQwTzdo9iS0HZYuFAPbFRo45PAm+h/bEGT4
-         OroQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bywhI0QRBMo8SrhPMTSwkwlpczTVhh3MZgIlE5XvC38=;
+        b=ICsV8uGrvVcrGqx/te5QDU6vOgUBkWZ9A5MZY63oK36vlT7HOp2fhhnAPoLSMjKBJN
+         xEE7IgB7iEMQKZpoNFtGvbffZF7SJ1yt/CviiCUolfxmTzkhsRP8EJG9YcnGgvHHgMXL
+         +bw2MBTsQ2V9ma3uttl2H34OvIwz2Xl1k0b1I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uBGQXOGojHHwKoMRwZdZjiFpvz9OVMQYIma4ZdH920Q=;
-        b=i+PobjL1Etx61iPqv2fQDu4WogLSfTPlz96pz+hnFw8OGrhZ4vEIiKq9IMG5qua5E5
-         K+KzvIgWLryWyVNMITpxLaNUMdZFWAPuCDm8iEy3teWf31ANEc9gpZ+qu741QqbjANaQ
-         45wpWCHWt3j44cFMdooyfeotnxbCm8LqxAsgVVGxo9x88VsTCxbnbKnRCPKjMmhK/RYn
-         K96TSNQqTcXQ+oQ+chT8xvsuK6R8Q2IELEx++FfQ0+kX1flYEtM6pU/LY9varPBXXwnH
-         0KHO8gQtsFkYnhAhfUvp/0qQBJgdswdbTHtKSeaH2y4ZfF1hOThWuUXfB3Oz0gTteNZb
-         /WqA==
-X-Gm-Message-State: ABuFfoheNd2iPe80Bww6I6jB67HjivmUg8f2HSqV2Nkk/dX3HKz2iFgA
-        +RsoUWD0ai/amiygyilHykX2ZA==
-X-Google-Smtp-Source: ACcGV63+fi6NQyq5EgWKHFLgwLCoYYRTWMp6ZtaMtBWnzZPyr9lHOx7MND9zdVV8iff1zLS2M7Qc+w==
-X-Received: by 2002:a0d:fd45:: with SMTP id n66-v6mr2348319ywf.414.1537949834518;
-        Wed, 26 Sep 2018 01:17:14 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id 128-v6sm1717881ywl.60.2018.09.26.01.17.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 01:17:14 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 04:17:13 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Sean Paul <sean@poorly.run>, Marek Vasut <marex@denx.de>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH 2/2] MAINTAINERS: Move mxsfb drm driver to drm-misc tree
-Message-ID: <20180926081713.GP72545@art_vandelay>
-References: <20180919204026.3217-1-sean@poorly.run>
- <20180919204026.3217-2-sean@poorly.run>
- <072931e0b649c4e3da8d187f3acd3a2e@agner.ch>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bywhI0QRBMo8SrhPMTSwkwlpczTVhh3MZgIlE5XvC38=;
+        b=HQsP2k2ag9+anDx4sDrhqvUtf1OtiXOtNCrfAwuvIjy+KVR3+Mfnx+WuM6g2UT+CO6
+         umAVTNpAZdXL/TaqfWgYXHWI0e5ackLjd9LNsBco9e0LoE3BpRRvbWP61rn0SEBUPjZ9
+         vCDUUEh0M1O3DX8YyOhpewupmV00pOmARfDIYXmfQrQ8NJorh3hCfP5VYv5aEhY9pG26
+         g8KwivStMwwREevsIADeZdSilLOfGjZDfd3ui06BxjApAiclIFW3S9Nrrt6Hm+g8N7WQ
+         qtEjujd4be8F4Xwucc0ydBiz3IRXnvIx1HyVUCsRUQbflX88UEUVH1WRwMBEZpcMR5WJ
+         LkiQ==
+X-Gm-Message-State: ABuFfoiSsmlYuNZTGn7TLg34f+4BAg7GwR2/4y7N9CDiM/Sz8c/4Dkak
+        I+kgtP8j0HEpyq+fzHvVjKlPIX/ZEkkj7jjL1eBwIw==
+X-Google-Smtp-Source: ACcGV6275vfD4wr0l6I40Fw3304+3f3szDdzzGMcBKIKV4O7nzYJd0pY3Ya1Z3rrCwp15z4sx5TbBG8LSPHnns/yUww=
+X-Received: by 2002:a6b:5d12:: with SMTP id r18-v6mr3975273iob.170.1537949983491;
+ Wed, 26 Sep 2018 01:19:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <072931e0b649c4e3da8d187f3acd3a2e@agner.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180919021100.3380-1-keescook@chromium.org> <20180919021100.3380-8-keescook@chromium.org>
+ <CAKv+Gu8ynaVi1KCMNsjCU0ucAjFFku=ourh9Yc9Rizoc4ztvOQ@mail.gmail.com>
+ <CAGXu5jLw3+nvb9opPeoCyH0MhyVK5UY7H5qeQ2b8GFTUGDGrUQ@mail.gmail.com>
+ <CAKv+Gu-xKWsiegZXnsMvmMVgKTo7S2cm4wEqdaL7w9z64X7SAA@mail.gmail.com>
+ <9c71afda-a668-10b3-842e-26f72e425691@kernel.dk> <CAKv+Gu_p2UgYMZ5jEUudruUOPYQEF-=VMou=xXbj_rd+-Lxktg@mail.gmail.com>
+ <eaf66894-2f85-12ba-f91c-4387437cc8d9@kernel.dk>
+In-Reply-To: <eaf66894-2f85-12ba-f91c-4387437cc8d9@kernel.dk>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 26 Sep 2018 10:19:30 +0200
+Message-ID: <CAKv+Gu8ZNVTBsQQQaFgbXLkRkwm1tKf32+Mo98gv12HhWrFbxg@mail.gmail.com>
+Subject: Re: [PATCH crypto-next 07/23] block: cryptoloop: Remove VLA usage of skcipher
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-block@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 03:28:31PM +0200, Stefan Agner wrote:
-> On 19.09.2018 22:39, Sean Paul wrote:
-> > From: Sean Paul <seanpaul@chromium.org>
-> > 
-> > Another "small driver" moving into drm-misc. Stefan has also offered to
-> > co-maintain it.
-> > 
-> > Cc: Marek Vasut <marex@denx.de>
-> > Cc: Stefan Agner <stefan@agner.ch>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Gustavo Padovan <gustavo@padovan.org>
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> 
-> Marek, I guess Sean needs your ack here.
-> 
-> Are you fine with this?
+On Tue, 25 Sep 2018 at 18:32, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 9/25/18 10:16 AM, Ard Biesheuvel wrote:
+> > On Tue, 25 Sep 2018 at 18:03, Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 9/25/18 3:25 AM, Ard Biesheuvel wrote:
+> >>> On Mon, 24 Sep 2018 at 19:53, Kees Cook <keescook@chromium.org> wrote:
+> >>>>
+> >>>> On Mon, Sep 24, 2018 at 4:52 AM, Ard Biesheuvel
+> >>>> <ard.biesheuvel@linaro.org> wrote:
+> >>>>> On Wed, 19 Sep 2018 at 04:11, Kees Cook <keescook@chromium.org> wrote:
+> >>>>>> @@ -119,7 +119,7 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
+> >>>>>>         unsigned in_offs, out_offs;
+> >>>>>>         int err;
+> >>>>>>
+> >>>>>> -       skcipher_request_set_tfm(req, tfm);
+> >>>>>> +       skcipher_request_set_sync_tfm(req, tfm);
+> >>>>>>         skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
+> >>>>>>                                       NULL, NULL);
+> >>>>>>
+> >>>>>
+> >>>>> Does this work?
+> >>>>
+> >>>> Everything is a direct wrapper for existing types and functions, so I
+> >>>> wouldn't expect any functional change. I haven't been able to test
+> >>>> this particular interface, though. cryptoloop is very deprecated,
+> >>>> isn't it?
+> >>>>
+> >>>
+> >>> Ah yes, I managed to confuse myself there. This looks all fine to me.
+> >>>
+> >>> In any case, this is another example where we may decide to fix the
+> >>> code rather than retain the request allocation on the stack (but that
+> >>> is Jens's call ultimately, I suppose)
+> >>>
+> >>> diff --git a/drivers/block/cryptoloop.c b/drivers/block/cryptoloop.c
+> >>> index 7033a4beda66..5ed2167219ba 100644
+> >>> --- a/drivers/block/cryptoloop.c
+> >>> +++ b/drivers/block/cryptoloop.c
+> >>> @@ -110,7 +110,7 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
+> >>>                     int size, sector_t IV)
+> >>>  {
+> >>>         struct crypto_skcipher *tfm = lo->key_data;
+> >>> -       SKCIPHER_REQUEST_ON_STACK(req, tfm);
+> >>> +       struct skcipher_request *req;
+> >>>         struct scatterlist sg_out;
+> >>>         struct scatterlist sg_in;
+> >>>
+> >>> @@ -119,7 +119,10 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
+> >>>         unsigned in_offs, out_offs;
+> >>>         int err;
+> >>>
+> >>> -       skcipher_request_set_tfm(req, tfm);
+> >>> +       req = skcipher_request_alloc(tfm, GFP_NOIO);
+> >>> +       if (!req)
+> >>> +               return -ENOMEM;
+> >>
+> >> Is this going to be reliable? ->transfer() is called when we're doing IO,
+> >> and you'd normally need a mempool backed allocation to make this safe
+> >> and guarantee forward progress.
+> >>
+> >
+> > As far as I can tell, this function is only called from
+> > lo_read_transfer/lo_write_transfer, both of which do an unconditional
+> > alloc_page(GFP_NOIO), which is why I assumed that kmalloc(GFP_NOIO)
+> > would be permissible in the same context. Are you saying this may not
+> > be the case?
+>
+> Doesn't appear to be safe for either your case, nor the page it's
+> allocating. If the allocator fails this allocation, then you'll get
+> an EIO on that request. The more likely case is the allocator taking
+> forever to satisfy the request, in which case you'll have very
+> large latencies for IO when you are close to being out of memory.
+> The preferred setup for allocating memory for IO is having a mempool
+> of at least one item. If you end up blocking for memory, you'll at
+> most get to wait for the existing IO that's using that memory to
+> complete (per waiter, of course).
+>
 
-I spoke with Marek on IRC before spinning this, so they're aware and approve of
-this. Since we haven't had any responses to this or patches on the list, I've
-pushed the change to drm-misc. Stefan is going to push the pm_runtime set.
+Ah, great. So the code is already broken to begin with.
 
-Sean
-
-> 
-> --
-> Stefan
-> 
-> > ---
-> >  MAINTAINERS | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index ba1dbb8735b8..7184d53dcbd8 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -9891,9 +9891,12 @@ F:	drivers/media/tuners/mxl5007t.*
-> >  
-> >  MXSFB DRM DRIVER
-> >  M:	Marek Vasut <marex@denx.de>
-> > +M:	Stefan Agner <stefan@agner.ch>
-> > +L:	dri-devel@lists.freedesktop.org
-> >  S:	Supported
-> >  F:	drivers/gpu/drm/mxsfb/
-> >  F:	Documentation/devicetree/bindings/display/mxsfb.txt
-> > +T:	git git://anongit.freedesktop.org/drm/drm-misc
-> >  
-> >  MYRICOM MYRI-10G 10GbE DRIVER (MYRI10GE)
-> >  M:	Chris Lee <christopher.lee@cspi.com>
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+In that case, may we have your ack for Kees's original patch, which is
+effectively a no-op except for the fact that the size of the stack
+buffer is no longer decided at runtime?
