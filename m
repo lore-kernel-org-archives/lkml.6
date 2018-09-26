@@ -2,49 +2,50 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0170CC43382
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EA5ECE562
 	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 926D421528
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8790721528
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhhMT4Gj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 926D421528
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRqeyNxr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8790721528
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbeIZW0K (ORCPT
+        id S1728576AbeIZW0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54468 "EHLO mail.kernel.org"
+        Wed, 26 Sep 2018 18:26:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727442AbeIZW0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:26:09 -0400
+        id S1728419AbeIZW0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:26:11 -0400
 Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D7622152E;
-        Wed, 26 Sep 2018 16:12:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8508C21530;
+        Wed, 26 Sep 2018 16:12:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537978349;
-        bh=MEGtOYbblTY0JaUOyi6qfuBLH13Etk4/WsYNMvOX7OU=;
+        s=default; t=1537978350;
+        bh=WA++Pe49aFFSJnBdOQCh7hkvXAGxeuHXw7Q2vCVcSes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lhhMT4GjQ5Qji0g/pCN+uTZuNC8jZFpZObA/KFs9k6bQRqcNW7jZ71M9xH8QYZ/pj
-         wgXE3iqfy4L5Xoyg5HMuNQBJ/ryGLzq0w03Nk7JgcUhOftweq6UbTc/7rcJkXszHpC
-         T3s0WNq7j6b7Hnx795ekAAdbRKQj6Sv9ZFA1Udhg=
+        b=WRqeyNxrmRc/2h5zD0Aq/Zbig6Q2GS65GMzeop42Fjk3XsdBYoE83u7ZTb/vYmhHJ
+         R4oPYQUldHQMviSzaFO5PEk6uOFr+qPRVuvmxZTTW99IXxHzY7gOu8b7DbUZ61xDVI
+         zhJzW5P2UEngB1g/VOlJPckgJVChLR/waQY3UJ+Y=
 From:   Alan Tull <atull@kernel.org>
 To:     Moritz Fischer <mdf@kernel.org>, Jonathan Corbet <corbet@lwn.net>
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Federico Vaga <federico.vaga@cern.ch>,
         linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
         linux-doc@vger.kernel.org, Alan Tull <atull@kernel.org>
-Subject: [PATCH v3 1/4] fpga: mgr: add devm_fpga_mgr_create
-Date:   Wed, 26 Sep 2018 11:12:19 -0500
-Message-Id: <1537978342-17697-2-git-send-email-atull@kernel.org>
+Subject: [PATCH v3 2/4] fpga: bridge: add devm_fpga_bridge_create
+Date:   Wed, 26 Sep 2018 11:12:20 -0500
+Message-Id: <1537978342-17697-3-git-send-email-atull@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537978342-17697-1-git-send-email-atull@kernel.org>
 References: <1537978342-17697-1-git-send-email-atull@kernel.org>
@@ -53,516 +54,304 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devm_fpga_mgr_create() which is the managed
-version of fpga_mgr_create().
+Add devm_fpga_bridge_create() which is the managed
+version of fpga_bridge_create().
 
-Change current FPGA manager drivers to use
-devm_fpga_mgr_create()
+Change current bridge drivers to use
+devm_fpga_bridge_create().
 
 Signed-off-by: Alan Tull <atull@kernel.org>
 Suggested-by: Federico Vaga <federico.vaga@cern.ch>
+Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
 v2: add suggested-by
-v3: remove some unclear documentation about fpga_mgr_unregister
+v3: remove some unclear documentation about fpga_bridge_unregister
+    add Acked-by
 ---
- Documentation/driver-api/fpga/fpga-mgr.rst | 13 +++---
- drivers/fpga/altera-cvp.c                  |  8 ++--
- drivers/fpga/altera-pr-ip-core.c           |  9 +----
- drivers/fpga/altera-ps-spi.c               | 11 ++---
- drivers/fpga/dfl-fme-mgr.c                 | 11 ++---
- drivers/fpga/fpga-mgr.c                    | 64 ++++++++++++++++++++++++++----
- drivers/fpga/ice40-spi.c                   | 10 ++---
- drivers/fpga/machxo2-spi.c                 | 11 ++---
- drivers/fpga/socfpga-a10.c                 |  5 +--
- drivers/fpga/socfpga.c                     | 10 ++---
- drivers/fpga/ts73xx-fpga.c                 | 11 ++---
- drivers/fpga/xilinx-spi.c                  | 12 ++----
- drivers/fpga/zynq-fpga.c                   |  5 +--
- include/linux/fpga/fpga-mgr.h              |  4 ++
- 14 files changed, 97 insertions(+), 87 deletions(-)
+ Documentation/driver-api/fpga/fpga-bridge.rst |  3 ++
+ drivers/fpga/altera-fpga2sdram.c              |  8 ++--
+ drivers/fpga/altera-freeze-bridge.c           | 13 ++---
+ drivers/fpga/altera-hps2fpga.c                |  7 ++-
+ drivers/fpga/dfl-fme-br.c                     | 11 ++---
+ drivers/fpga/fpga-bridge.c                    | 68 +++++++++++++++++++++++----
+ drivers/fpga/xilinx-pr-decoupler.c            |  4 +-
+ include/linux/fpga/fpga-bridge.h              |  4 ++
+ 8 files changed, 80 insertions(+), 38 deletions(-)
 
-diff --git a/Documentation/driver-api/fpga/fpga-mgr.rst b/Documentation/driver-api/fpga/fpga-mgr.rst
-index 82b6dbb..db8885e 100644
---- a/Documentation/driver-api/fpga/fpga-mgr.rst
-+++ b/Documentation/driver-api/fpga/fpga-mgr.rst
-@@ -49,18 +49,14 @@ probe function calls fpga_mgr_register(), such as::
- 		 * them in priv
- 		 */
+diff --git a/Documentation/driver-api/fpga/fpga-bridge.rst b/Documentation/driver-api/fpga/fpga-bridge.rst
+index 2c2aaca..ebbcbde 100644
+--- a/Documentation/driver-api/fpga/fpga-bridge.rst
++++ b/Documentation/driver-api/fpga/fpga-bridge.rst
+@@ -11,6 +11,9 @@ API to implement a new FPGA bridge
+    :functions: fpga_bridge_ops
  
--		mgr = fpga_mgr_create(dev, "Altera SOCFPGA FPGA Manager",
--				      &socfpga_fpga_ops, priv);
-+		mgr = devm_fpga_mgr_create(dev, "Altera SOCFPGA FPGA Manager",
-+					   &socfpga_fpga_ops, priv);
- 		if (!mgr)
- 			return -ENOMEM;
- 
- 		platform_set_drvdata(pdev, mgr);
- 
--		ret = fpga_mgr_register(mgr);
--		if (ret)
--			fpga_mgr_free(mgr);
--
--		return ret;
-+		return fpga_mgr_register(mgr);
- 	}
- 
- 	static int socfpga_fpga_remove(struct platform_device *pdev)
-@@ -170,6 +166,9 @@ API for implementing a new FPGA Manager driver
-    :functions: fpga_manager_ops
- 
- .. kernel-doc:: drivers/fpga/fpga-mgr.c
-+   :functions: devm_fpga_mgr_create
+ .. kernel-doc:: drivers/fpga/fpga-bridge.c
++   :functions: devm_fpga_bridge_create
 +
-+.. kernel-doc:: drivers/fpga/fpga-mgr.c
-    :functions: fpga_mgr_create
++.. kernel-doc:: drivers/fpga/fpga-bridge.c
+    :functions: fpga_bridge_create
  
- .. kernel-doc:: drivers/fpga/fpga-mgr.c
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 7fa7936..610a155 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -453,8 +453,8 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 	snprintf(conf->mgr_name, sizeof(conf->mgr_name), "%s @%s",
- 		 ALTERA_CVP_MGR_NAME, pci_name(pdev));
+ .. kernel-doc:: drivers/fpga/fpga-bridge.c
+diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
+index 23660cc..a78e49c 100644
+--- a/drivers/fpga/altera-fpga2sdram.c
++++ b/drivers/fpga/altera-fpga2sdram.c
+@@ -121,18 +121,16 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 	/* Get f2s bridge configuration saved in handoff register */
+ 	regmap_read(sysmgr, SYSMGR_ISWGRP_HANDOFF3, &priv->mask);
  
--	mgr = fpga_mgr_create(&pdev->dev, conf->mgr_name,
--			      &altera_cvp_ops, conf);
-+	mgr = devm_fpga_mgr_create(&pdev->dev, conf->mgr_name,
-+				   &altera_cvp_ops, conf);
- 	if (!mgr) {
- 		ret = -ENOMEM;
- 		goto err_unmap;
-@@ -463,10 +463,8 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 	pci_set_drvdata(pdev, mgr);
+-	br = fpga_bridge_create(dev, F2S_BRIDGE_NAME,
+-				&altera_fpga2sdram_br_ops, priv);
++	br = devm_fpga_bridge_create(dev, F2S_BRIDGE_NAME,
++				     &altera_fpga2sdram_br_ops, priv);
+ 	if (!br)
+ 		return -ENOMEM;
  
- 	ret = fpga_mgr_register(mgr);
+ 	platform_set_drvdata(pdev, br);
+ 
+ 	ret = fpga_bridge_register(br);
 -	if (ret) {
--		fpga_mgr_free(mgr);
+-		fpga_bridge_free(br);
 +	if (ret)
- 		goto err_unmap;
+ 		return ret;
 -	}
  
- 	ret = driver_create_file(&altera_cvp_driver.driver,
- 				 &driver_attr_chkcfg);
-diff --git a/drivers/fpga/altera-pr-ip-core.c b/drivers/fpga/altera-pr-ip-core.c
-index 65e0b6a..a7a3bf0 100644
---- a/drivers/fpga/altera-pr-ip-core.c
-+++ b/drivers/fpga/altera-pr-ip-core.c
-@@ -177,7 +177,6 @@ int alt_pr_register(struct device *dev, void __iomem *reg_base)
- {
- 	struct alt_pr_priv *priv;
- 	struct fpga_manager *mgr;
--	int ret;
- 	u32 val;
+ 	dev_info(dev, "driver initialized with handoff %08x\n", priv->mask);
  
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -192,17 +191,13 @@ int alt_pr_register(struct device *dev, void __iomem *reg_base)
- 		(val & ALT_PR_CSR_STATUS_MSK) >> ALT_PR_CSR_STATUS_SFT,
- 		(int)(val & ALT_PR_CSR_PR_START));
- 
--	mgr = fpga_mgr_create(dev, dev_name(dev), &alt_pr_ops, priv);
-+	mgr = devm_fpga_mgr_create(dev, dev_name(dev), &alt_pr_ops, priv);
- 	if (!mgr)
- 		return -ENOMEM;
- 
- 	dev_set_drvdata(dev, mgr);
- 
--	ret = fpga_mgr_register(mgr);
--	if (ret)
--		fpga_mgr_free(mgr);
--
--	return ret;
-+	return fpga_mgr_register(mgr);
- }
- EXPORT_SYMBOL_GPL(alt_pr_register);
- 
-diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
-index 24b25c6..33aafda 100644
---- a/drivers/fpga/altera-ps-spi.c
-+++ b/drivers/fpga/altera-ps-spi.c
-@@ -239,7 +239,6 @@ static int altera_ps_probe(struct spi_device *spi)
- 	struct altera_ps_conf *conf;
- 	const struct of_device_id *of_id;
- 	struct fpga_manager *mgr;
--	int ret;
- 
- 	conf = devm_kzalloc(&spi->dev, sizeof(*conf), GFP_KERNEL);
- 	if (!conf)
-@@ -275,18 +274,14 @@ static int altera_ps_probe(struct spi_device *spi)
- 	snprintf(conf->mgr_name, sizeof(conf->mgr_name), "%s %s",
- 		 dev_driver_string(&spi->dev), dev_name(&spi->dev));
- 
--	mgr = fpga_mgr_create(&spi->dev, conf->mgr_name,
--			      &altera_ps_ops, conf);
-+	mgr = devm_fpga_mgr_create(&spi->dev, conf->mgr_name,
-+				   &altera_ps_ops, conf);
- 	if (!mgr)
- 		return -ENOMEM;
- 
- 	spi_set_drvdata(spi, mgr);
- 
--	ret = fpga_mgr_register(mgr);
--	if (ret)
--		fpga_mgr_free(mgr);
--
--	return ret;
-+	return fpga_mgr_register(mgr);
- }
- 
- static int altera_ps_remove(struct spi_device *spi)
-diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
-index 9f045d0..76f3770 100644
---- a/drivers/fpga/dfl-fme-mgr.c
-+++ b/drivers/fpga/dfl-fme-mgr.c
-@@ -287,7 +287,6 @@ static int fme_mgr_probe(struct platform_device *pdev)
- 	struct fme_mgr_priv *priv;
- 	struct fpga_manager *mgr;
+diff --git a/drivers/fpga/altera-freeze-bridge.c b/drivers/fpga/altera-freeze-bridge.c
+index ffd586c..dd58c4a 100644
+--- a/drivers/fpga/altera-freeze-bridge.c
++++ b/drivers/fpga/altera-freeze-bridge.c
+@@ -213,7 +213,6 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
+ 	struct fpga_bridge *br;
  	struct resource *res;
+ 	u32 status, revision;
+-	int ret;
+ 
+ 	if (!np)
+ 		return -ENODEV;
+@@ -245,20 +244,14 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
+ 
+ 	priv->base_addr = base_addr;
+ 
+-	br = fpga_bridge_create(dev, FREEZE_BRIDGE_NAME,
+-				&altera_freeze_br_br_ops, priv);
++	br = devm_fpga_bridge_create(dev, FREEZE_BRIDGE_NAME,
++				     &altera_freeze_br_br_ops, priv);
+ 	if (!br)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, br);
+ 
+-	ret = fpga_bridge_register(br);
+-	if (ret) {
+-		fpga_bridge_free(br);
+-		return ret;
+-	}
+-
+-	return 0;
++	return fpga_bridge_register(br);
+ }
+ 
+ static int altera_freeze_br_remove(struct platform_device *pdev)
+diff --git a/drivers/fpga/altera-hps2fpga.c b/drivers/fpga/altera-hps2fpga.c
+index a974d3f..77b95f2 100644
+--- a/drivers/fpga/altera-hps2fpga.c
++++ b/drivers/fpga/altera-hps2fpga.c
+@@ -180,7 +180,8 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	br = fpga_bridge_create(dev, priv->name, &altera_hps2fpga_br_ops, priv);
++	br = devm_fpga_bridge_create(dev, priv->name,
++				     &altera_hps2fpga_br_ops, priv);
+ 	if (!br) {
+ 		ret = -ENOMEM;
+ 		goto err;
+@@ -190,12 +191,10 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
+ 
+ 	ret = fpga_bridge_register(br);
+ 	if (ret)
+-		goto err_free;
++		goto err;
+ 
+ 	return 0;
+ 
+-err_free:
+-	fpga_bridge_free(br);
+ err:
+ 	clk_disable_unprepare(priv->clk);
+ 
+diff --git a/drivers/fpga/dfl-fme-br.c b/drivers/fpga/dfl-fme-br.c
+index 7cc041d..3ff9f3a 100644
+--- a/drivers/fpga/dfl-fme-br.c
++++ b/drivers/fpga/dfl-fme-br.c
+@@ -61,7 +61,6 @@ static int fme_br_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct fme_br_priv *priv;
+ 	struct fpga_bridge *br;
 -	int ret;
  
  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
  	if (!priv)
-@@ -309,19 +308,15 @@ static int fme_mgr_probe(struct platform_device *pdev)
+@@ -69,18 +68,14 @@ static int fme_br_probe(struct platform_device *pdev)
  
- 	fme_mgr_get_compat_id(priv->ioaddr, compat_id);
+ 	priv->pdata = dev_get_platdata(dev);
  
--	mgr = fpga_mgr_create(dev, "DFL FME FPGA Manager",
--			      &fme_mgr_ops, priv);
-+	mgr = devm_fpga_mgr_create(dev, "DFL FME FPGA Manager",
-+				   &fme_mgr_ops, priv);
- 	if (!mgr)
+-	br = fpga_bridge_create(dev, "DFL FPGA FME Bridge",
+-				&fme_bridge_ops, priv);
++	br = devm_fpga_bridge_create(dev, "DFL FPGA FME Bridge",
++				     &fme_bridge_ops, priv);
+ 	if (!br)
  		return -ENOMEM;
  
- 	mgr->compat_id = compat_id;
- 	platform_set_drvdata(pdev, mgr);
+ 	platform_set_drvdata(pdev, br);
  
--	ret = fpga_mgr_register(mgr);
+-	ret = fpga_bridge_register(br);
 -	if (ret)
--		fpga_mgr_free(mgr);
+-		fpga_bridge_free(br);
 -
 -	return ret;
-+	return fpga_mgr_register(mgr);
++	return fpga_bridge_register(br);
  }
  
- static int fme_mgr_remove(struct platform_device *pdev)
-diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-index a41b07e..c386681 100644
---- a/drivers/fpga/fpga-mgr.c
-+++ b/drivers/fpga/fpga-mgr.c
-@@ -558,6 +558,9 @@ EXPORT_SYMBOL_GPL(fpga_mgr_unlock);
-  * @mops:	pointer to structure of fpga manager ops
-  * @priv:	fpga manager private data
+ static int fme_br_remove(struct platform_device *pdev)
+diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
+index c983dac..80bd8f1 100644
+--- a/drivers/fpga/fpga-bridge.c
++++ b/drivers/fpga/fpga-bridge.c
+@@ -324,6 +324,9 @@ ATTRIBUTE_GROUPS(fpga_bridge);
+  * @br_ops:	pointer to structure of fpga bridge ops
+  * @priv:	FPGA bridge private data
   *
-+ * The caller of this function is responsible for freeing the struct with
-+ * fpga_mgr_free().  Using devm_fpga_mgr_create() instead is recommended.
++ * The caller of this function is responsible for freeing the bridge with
++ * fpga_bridge_free().  Using devm_fpga_bridge_create() instead is recommended.
 + *
-  * Return: pointer to struct fpga_manager or NULL
+  * Return: struct fpga_bridge or NULL
   */
- struct fpga_manager *fpga_mgr_create(struct device *dev, const char *name,
-@@ -618,8 +621,8 @@ struct fpga_manager *fpga_mgr_create(struct device *dev, const char *name,
- EXPORT_SYMBOL_GPL(fpga_mgr_create);
+ struct fpga_bridge *fpga_bridge_create(struct device *dev, const char *name,
+@@ -378,8 +381,8 @@ struct fpga_bridge *fpga_bridge_create(struct device *dev, const char *name,
+ EXPORT_SYMBOL_GPL(fpga_bridge_create);
  
  /**
-- * fpga_mgr_free - deallocate a FPGA manager
-- * @mgr:	fpga manager struct created by fpga_mgr_create
-+ * fpga_mgr_free - free a FPGA manager created with fpga_mgr_create()
-+ * @mgr:	fpga manager struct
+- * fpga_bridge_free - free a fpga bridge and its id
+- * @bridge:	FPGA bridge struct created by fpga_bridge_create
++ * fpga_bridge_free - free a fpga bridge created by fpga_bridge_create()
++ * @bridge:	FPGA bridge struct
   */
- void fpga_mgr_free(struct fpga_manager *mgr)
+ void fpga_bridge_free(struct fpga_bridge *bridge)
  {
-@@ -628,9 +631,55 @@ void fpga_mgr_free(struct fpga_manager *mgr)
+@@ -388,9 +391,56 @@ void fpga_bridge_free(struct fpga_bridge *bridge)
  }
- EXPORT_SYMBOL_GPL(fpga_mgr_free);
+ EXPORT_SYMBOL_GPL(fpga_bridge_free);
  
-+static void devm_fpga_mgr_release(struct device *dev, void *res)
++static void devm_fpga_bridge_release(struct device *dev, void *res)
 +{
-+	struct fpga_manager *mgr = *(struct fpga_manager **)res;
++	struct fpga_bridge *bridge = *(struct fpga_bridge **)res;
 +
-+	fpga_mgr_free(mgr);
++	fpga_bridge_free(bridge);
 +}
 +
-+/**
-+ * devm_fpga_mgr_create - create and initialize a managed FPGA manager struct
-+ * @dev:	fpga manager device from pdev
-+ * @name:	fpga manager name
-+ * @mops:	pointer to structure of fpga manager ops
-+ * @priv:	fpga manager private data
+ /**
+- * fpga_bridge_register - register a fpga bridge
+- * @bridge:	FPGA bridge struct created by fpga_bridge_create
++ * devm_fpga_bridge_create - create and init a managed struct fpga_bridge
++ * @dev:	FPGA bridge device from pdev
++ * @name:	FPGA bridge name
++ * @br_ops:	pointer to structure of fpga bridge ops
++ * @priv:	FPGA bridge private data
 + *
-+ * This function is intended for use in a FPGA manager driver's probe function.
-+ * After the manager driver creates the manager struct with
-+ * devm_fpga_mgr_create(), it should register it with fpga_mgr_register().  The
-+ * manager driver's remove function should call fpga_mgr_unregister().  The
-+ * manager struct allocated with this function will be freed automatically on
-+ * driver detach.  This includes the case of a probe function returning error
-+ * before calling fpga_mgr_register(), the struct will still get cleaned up.
++ * This function is intended for use in a FPGA bridge driver's probe function.
++ * After the bridge driver creates the struct with devm_fpga_bridge_create(), it
++ * should register the bridge with fpga_bridge_register().  The bridge driver's
++ * remove function should call fpga_bridge_unregister().  The bridge struct
++ * allocated with this function will be freed automatically on driver detach.
++ * This includes the case of a probe function returning error before calling
++ * fpga_bridge_register(), the struct will still get cleaned up.
 + *
-+ * Return: pointer to struct fpga_manager or NULL
++ *  Return: struct fpga_bridge or NULL
 + */
-+struct fpga_manager *devm_fpga_mgr_create(struct device *dev, const char *name,
-+					  const struct fpga_manager_ops *mops,
-+					  void *priv)
++struct fpga_bridge
++*devm_fpga_bridge_create(struct device *dev, const char *name,
++			 const struct fpga_bridge_ops *br_ops, void *priv)
 +{
-+	struct fpga_manager **ptr, *mgr;
++	struct fpga_bridge **ptr, *bridge;
 +
-+	ptr = devres_alloc(devm_fpga_mgr_release, sizeof(*ptr), GFP_KERNEL);
++	ptr = devres_alloc(devm_fpga_bridge_release, sizeof(*ptr), GFP_KERNEL);
 +	if (!ptr)
 +		return NULL;
 +
-+	mgr = fpga_mgr_create(dev, name, mops, priv);
-+	if (!mgr) {
++	bridge = fpga_bridge_create(dev, name, br_ops, priv);
++	if (!bridge) {
 +		devres_free(ptr);
 +	} else {
-+		*ptr = mgr;
++		*ptr = bridge;
 +		devres_add(dev, ptr);
 +	}
 +
-+	return mgr;
++	return bridge;
 +}
-+EXPORT_SYMBOL_GPL(devm_fpga_mgr_create);
++EXPORT_SYMBOL_GPL(devm_fpga_bridge_create);
 +
- /**
-  * fpga_mgr_register - register a FPGA manager
-- * @mgr:	fpga manager struct created by fpga_mgr_create
-+ * @mgr: fpga manager struct
-  *
-  * Return: 0 on success, negative error code otherwise.
-  */
-@@ -661,8 +710,10 @@ int fpga_mgr_register(struct fpga_manager *mgr)
- EXPORT_SYMBOL_GPL(fpga_mgr_register);
- 
- /**
-- * fpga_mgr_unregister - unregister and free a FPGA manager
-- * @mgr:	fpga manager struct
-+ * fpga_mgr_unregister - unregister a FPGA manager
-+ * @mgr: fpga manager struct
++/**
++ * fpga_bridge_register - register a FPGA bridge
 + *
-+ * This function is intended for use in a FPGA manager driver's remove function.
++ * @bridge: FPGA bridge struct
+  *
+  * Return: 0 for success, error code otherwise.
   */
- void fpga_mgr_unregister(struct fpga_manager *mgr)
+@@ -412,8 +462,11 @@ int fpga_bridge_register(struct fpga_bridge *bridge)
+ EXPORT_SYMBOL_GPL(fpga_bridge_register);
+ 
+ /**
+- * fpga_bridge_unregister - unregister and free a fpga bridge
+- * @bridge:	FPGA bridge struct created by fpga_bridge_create
++ * fpga_bridge_unregister - unregister a FPGA bridge
++ *
++ * @bridge: FPGA bridge struct
++ *
++ * This function is intended for use in a FPGA bridge driver's remove function.
+  */
+ void fpga_bridge_unregister(struct fpga_bridge *bridge)
  {
-@@ -681,9 +732,6 @@ EXPORT_SYMBOL_GPL(fpga_mgr_unregister);
+@@ -430,9 +483,6 @@ EXPORT_SYMBOL_GPL(fpga_bridge_unregister);
  
- static void fpga_mgr_dev_release(struct device *dev)
+ static void fpga_bridge_dev_release(struct device *dev)
  {
--	struct fpga_manager *mgr = to_fpga_manager(dev);
+-	struct fpga_bridge *bridge = to_fpga_bridge(dev);
 -
--	fpga_mgr_free(mgr);
+-	fpga_bridge_free(bridge);
  }
  
- static int __init fpga_mgr_class_init(void)
-diff --git a/drivers/fpga/ice40-spi.c b/drivers/fpga/ice40-spi.c
-index 5981c7e..6154661 100644
---- a/drivers/fpga/ice40-spi.c
-+++ b/drivers/fpga/ice40-spi.c
-@@ -175,18 +175,14 @@ static int ice40_fpga_probe(struct spi_device *spi)
- 		return ret;
- 	}
- 
--	mgr = fpga_mgr_create(dev, "Lattice iCE40 FPGA Manager",
--			      &ice40_fpga_ops, priv);
-+	mgr = devm_fpga_mgr_create(dev, "Lattice iCE40 FPGA Manager",
-+				   &ice40_fpga_ops, priv);
- 	if (!mgr)
- 		return -ENOMEM;
- 
- 	spi_set_drvdata(spi, mgr);
- 
--	ret = fpga_mgr_register(mgr);
--	if (ret)
--		fpga_mgr_free(mgr);
--
--	return ret;
-+	return fpga_mgr_register(mgr);
- }
- 
- static int ice40_fpga_remove(struct spi_device *spi)
-diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
-index a582e00..4d8a876 100644
---- a/drivers/fpga/machxo2-spi.c
-+++ b/drivers/fpga/machxo2-spi.c
-@@ -356,25 +356,20 @@ static int machxo2_spi_probe(struct spi_device *spi)
- {
- 	struct device *dev = &spi->dev;
- 	struct fpga_manager *mgr;
--	int ret;
- 
- 	if (spi->max_speed_hz > MACHXO2_MAX_SPEED) {
- 		dev_err(dev, "Speed is too high\n");
- 		return -EINVAL;
- 	}
- 
--	mgr = fpga_mgr_create(dev, "Lattice MachXO2 SPI FPGA Manager",
--			      &machxo2_ops, spi);
-+	mgr = devm_fpga_mgr_create(dev, "Lattice MachXO2 SPI FPGA Manager",
-+				   &machxo2_ops, spi);
- 	if (!mgr)
- 		return -ENOMEM;
- 
- 	spi_set_drvdata(spi, mgr);
- 
--	ret = fpga_mgr_register(mgr);
--	if (ret)
--		fpga_mgr_free(mgr);
--
--	return ret;
-+	return fpga_mgr_register(mgr);
- }
- 
- static int machxo2_spi_remove(struct spi_device *spi)
-diff --git a/drivers/fpga/socfpga-a10.c b/drivers/fpga/socfpga-a10.c
-index be30c48..573d88b 100644
---- a/drivers/fpga/socfpga-a10.c
-+++ b/drivers/fpga/socfpga-a10.c
-@@ -508,8 +508,8 @@ static int socfpga_a10_fpga_probe(struct platform_device *pdev)
- 		return -EBUSY;
- 	}
- 
--	mgr = fpga_mgr_create(dev, "SoCFPGA Arria10 FPGA Manager",
--			      &socfpga_a10_fpga_mgr_ops, priv);
-+	mgr = devm_fpga_mgr_create(dev, "SoCFPGA Arria10 FPGA Manager",
-+				   &socfpga_a10_fpga_mgr_ops, priv);
- 	if (!mgr)
- 		return -ENOMEM;
- 
-@@ -517,7 +517,6 @@ static int socfpga_a10_fpga_probe(struct platform_device *pdev)
- 
- 	ret = fpga_mgr_register(mgr);
- 	if (ret) {
--		fpga_mgr_free(mgr);
- 		clk_disable_unprepare(priv->clk);
- 		return ret;
- 	}
-diff --git a/drivers/fpga/socfpga.c b/drivers/fpga/socfpga.c
-index 959d71f..4a8a2fc 100644
---- a/drivers/fpga/socfpga.c
-+++ b/drivers/fpga/socfpga.c
-@@ -571,18 +571,14 @@ static int socfpga_fpga_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	mgr = fpga_mgr_create(dev, "Altera SOCFPGA FPGA Manager",
--			      &socfpga_fpga_ops, priv);
-+	mgr = devm_fpga_mgr_create(dev, "Altera SOCFPGA FPGA Manager",
-+				   &socfpga_fpga_ops, priv);
- 	if (!mgr)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, mgr);
- 
--	ret = fpga_mgr_register(mgr);
--	if (ret)
--		fpga_mgr_free(mgr);
--
--	return ret;
-+	return fpga_mgr_register(mgr);
- }
- 
- static int socfpga_fpga_remove(struct platform_device *pdev)
-diff --git a/drivers/fpga/ts73xx-fpga.c b/drivers/fpga/ts73xx-fpga.c
-index 08efd18..dc22a58 100644
---- a/drivers/fpga/ts73xx-fpga.c
-+++ b/drivers/fpga/ts73xx-fpga.c
-@@ -118,7 +118,6 @@ static int ts73xx_fpga_probe(struct platform_device *pdev)
- 	struct ts73xx_fpga_priv *priv;
- 	struct fpga_manager *mgr;
- 	struct resource *res;
--	int ret;
- 
- 	priv = devm_kzalloc(kdev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -133,18 +132,14 @@ static int ts73xx_fpga_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->io_base);
- 	}
- 
--	mgr = fpga_mgr_create(kdev, "TS-73xx FPGA Manager",
--			      &ts73xx_fpga_ops, priv);
-+	mgr = devm_fpga_mgr_create(kdev, "TS-73xx FPGA Manager",
-+				   &ts73xx_fpga_ops, priv);
- 	if (!mgr)
- 		return -ENOMEM;
- 
- 	platform_set_drvdata(pdev, mgr);
- 
--	ret = fpga_mgr_register(mgr);
--	if (ret)
--		fpga_mgr_free(mgr);
--
--	return ret;
-+	return fpga_mgr_register(mgr);
- }
- 
- static int ts73xx_fpga_remove(struct platform_device *pdev)
-diff --git a/drivers/fpga/xilinx-spi.c b/drivers/fpga/xilinx-spi.c
-index 8d19459..469486b 100644
---- a/drivers/fpga/xilinx-spi.c
-+++ b/drivers/fpga/xilinx-spi.c
-@@ -144,7 +144,6 @@ static int xilinx_spi_probe(struct spi_device *spi)
- {
- 	struct xilinx_spi_conf *conf;
- 	struct fpga_manager *mgr;
--	int ret;
- 
- 	conf = devm_kzalloc(&spi->dev, sizeof(*conf), GFP_KERNEL);
- 	if (!conf)
-@@ -167,18 +166,15 @@ static int xilinx_spi_probe(struct spi_device *spi)
- 		return PTR_ERR(conf->done);
- 	}
- 
--	mgr = fpga_mgr_create(&spi->dev, "Xilinx Slave Serial FPGA Manager",
--			      &xilinx_spi_ops, conf);
-+	mgr = devm_fpga_mgr_create(&spi->dev,
-+				   "Xilinx Slave Serial FPGA Manager",
-+				   &xilinx_spi_ops, conf);
- 	if (!mgr)
- 		return -ENOMEM;
- 
- 	spi_set_drvdata(spi, mgr);
- 
--	ret = fpga_mgr_register(mgr);
--	if (ret)
--		fpga_mgr_free(mgr);
--
--	return ret;
-+	return fpga_mgr_register(mgr);
- }
- 
- static int xilinx_spi_remove(struct spi_device *spi)
-diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
-index 3110e00..bb82efe 100644
---- a/drivers/fpga/zynq-fpga.c
-+++ b/drivers/fpga/zynq-fpga.c
-@@ -614,8 +614,8 @@ static int zynq_fpga_probe(struct platform_device *pdev)
+ static int __init fpga_bridge_dev_init(void)
+diff --git a/drivers/fpga/xilinx-pr-decoupler.c b/drivers/fpga/xilinx-pr-decoupler.c
+index 07ba153..6410361 100644
+--- a/drivers/fpga/xilinx-pr-decoupler.c
++++ b/drivers/fpga/xilinx-pr-decoupler.c
+@@ -121,8 +121,8 @@ static int xlnx_pr_decoupler_probe(struct platform_device *pdev)
  
  	clk_disable(priv->clk);
  
--	mgr = fpga_mgr_create(dev, "Xilinx Zynq FPGA Manager",
--			      &zynq_fpga_ops, priv);
-+	mgr = devm_fpga_mgr_create(dev, "Xilinx Zynq FPGA Manager",
-+				   &zynq_fpga_ops, priv);
- 	if (!mgr)
- 		return -ENOMEM;
+-	br = fpga_bridge_create(&pdev->dev, "Xilinx PR Decoupler",
+-				&xlnx_pr_decoupler_br_ops, priv);
++	br = devm_fpga_bridge_create(&pdev->dev, "Xilinx PR Decoupler",
++				     &xlnx_pr_decoupler_br_ops, priv);
+ 	if (!br) {
+ 		err = -ENOMEM;
+ 		goto err_clk;
+diff --git a/include/linux/fpga/fpga-bridge.h b/include/linux/fpga/fpga-bridge.h
+index ce550fc..817600a 100644
+--- a/include/linux/fpga/fpga-bridge.h
++++ b/include/linux/fpga/fpga-bridge.h
+@@ -69,4 +69,8 @@ void fpga_bridge_free(struct fpga_bridge *br);
+ int fpga_bridge_register(struct fpga_bridge *br);
+ void fpga_bridge_unregister(struct fpga_bridge *br);
  
-@@ -624,7 +624,6 @@ static int zynq_fpga_probe(struct platform_device *pdev)
- 	err = fpga_mgr_register(mgr);
- 	if (err) {
- 		dev_err(dev, "unable to register FPGA manager\n");
--		fpga_mgr_free(mgr);
- 		clk_unprepare(priv->clk);
- 		return err;
- 	}
-diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-index 8ab5df7..e8ca62b 100644
---- a/include/linux/fpga/fpga-mgr.h
-+++ b/include/linux/fpga/fpga-mgr.h
-@@ -198,4 +198,8 @@ void fpga_mgr_free(struct fpga_manager *mgr);
- int fpga_mgr_register(struct fpga_manager *mgr);
- void fpga_mgr_unregister(struct fpga_manager *mgr);
- 
-+struct fpga_manager *devm_fpga_mgr_create(struct device *dev, const char *name,
-+					  const struct fpga_manager_ops *mops,
-+					  void *priv);
++struct fpga_bridge
++*devm_fpga_bridge_create(struct device *dev, const char *name,
++			 const struct fpga_bridge_ops *br_ops, void *priv);
 +
- #endif /*_LINUX_FPGA_MGR_H */
+ #endif /* _LINUX_FPGA_BRIDGE_H */
 -- 
 2.7.4
 
