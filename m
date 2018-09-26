@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31789C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D20BEC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2A23214AB
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:59:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A23214AB
+	by mail.kernel.org (Postfix) with ESMTP id 96593208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 03:59:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96593208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeIZKJy (ORCPT
+        id S1727126AbeIZKKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 06:09:54 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:49930 "EHLO
+        Wed, 26 Sep 2018 06:10:21 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:49968 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbeIZKJx (ORCPT
+        with ESMTP id S1726386AbeIZKJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Sep 2018 06:09:53 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1g50yN-0006sG-To; Tue, 25 Sep 2018 23:58:47 -0400
+        id 1g50yO-0006sG-1T; Tue, 25 Sep 2018 23:58:48 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, kernel-team@fb.com, will.deacon@arm.com,
         songliubraving@fb.com, mingo@kernel.org, luto@kernel.org,
         hpa@zytor.com, npiggin@gmail.com, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 4/7] smp,cpumask: introduce on_each_cpu_cond_mask
-Date:   Tue, 25 Sep 2018 23:58:41 -0400
-Message-Id: <20180926035844.1420-5-riel@surriel.com>
+Subject: [PATCH 7/7] x86/mm/tlb: Make lazy TLB mode lazier
+Date:   Tue, 25 Sep 2018 23:58:44 -0400
+Message-Id: <20180926035844.1420-8-riel@surriel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180926035844.1420-1-riel@surriel.com>
 References: <20180926035844.1420-1-riel@surriel.com>
@@ -44,114 +44,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a variant of on_each_cpu_cond that iterates only over the
-CPUs in a cpumask, in order to avoid making callbacks for every single
-CPU in the system when we only need to test a subset.
+Lazy TLB mode can result in an idle CPU being woken up by a TLB flush,
+when all it really needs to do is reload %CR3 at the next context switch,
+assuming no page table pages got freed.
 
+Memory ordering is used to prevent race conditions between switch_mm_irqs_off,
+which checks whether .tlb_gen changed, and the TLB invalidation code, which
+increments .tlb_gen whenever page table entries get invalidated.
+
+The atomic increment in inc_mm_tlb_gen is its own barrier; the context
+switch code adds an explicit barrier between reading tlbstate.is_lazy and
+next->context.tlb_gen.
+
+CPUs in lazy TLB mode remain part of the mm_cpumask(mm), both because
+that allows TLB flush IPIs to be sent at page table freeing time, and
+because the cache line bouncing on the mm_cpumask(mm) was responsible
+for about half the CPU use in switch_mm_irqs_off().
+
+Tested-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- include/linux/smp.h |  4 ++++
- kernel/smp.c        | 17 +++++++++++++----
- kernel/up.c         | 14 +++++++++++---
- 3 files changed, 28 insertions(+), 7 deletions(-)
+ arch/x86/mm/tlb.c | 67 ++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 58 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index 9fb239e12b82..a56f08ff3097 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -53,6 +53,10 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 		smp_call_func_t func, void *info, bool wait,
- 		gfp_t gfp_flags);
- 
-+void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
-+		smp_call_func_t func, void *info, bool wait,
-+		gfp_t gfp_flags, const struct cpumask *mask);
-+
- int smp_call_function_single_async(int cpu, call_single_data_t *csd);
- 
- #ifdef CONFIG_SMP
-diff --git a/kernel/smp.c b/kernel/smp.c
-index a7d4f9f50a49..163c451af42e 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -669,9 +669,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
-  * You must not call this function with disabled interrupts or
-  * from a hardware interrupt handler or from a bottom half handler.
-  */
--void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
-+void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
- 			smp_call_func_t func, void *info, bool wait,
--			gfp_t gfp_flags)
-+			gfp_t gfp_flags, const struct cpumask *mask)
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index b228d2a6b5fa..707d757e70ec 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -185,6 +185,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
  {
- 	cpumask_var_t cpus;
- 	int cpu, ret;
-@@ -680,7 +680,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 	struct mm_struct *real_prev = this_cpu_read(cpu_tlbstate.loaded_mm);
+ 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
++	bool was_lazy = this_cpu_read(cpu_tlbstate.is_lazy);
+ 	unsigned cpu = smp_processor_id();
+ 	u64 next_tlb_gen;
+ 	bool need_flush;
+@@ -242,17 +243,40 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 			   next->context.ctx_id);
  
- 	if (likely(zalloc_cpumask_var(&cpus, (gfp_flags|__GFP_NOWARN)))) {
- 		preempt_disable();
--		for_each_online_cpu(cpu)
-+		for_each_cpu(cpu, mask)
- 			if (cond_func(cpu, info))
- 				__cpumask_set_cpu(cpu, cpus);
- 		on_each_cpu_mask(cpus, func, info, wait);
-@@ -692,7 +692,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 		 * just have to IPI them one by one.
+ 		/*
+-		 * We don't currently support having a real mm loaded without
+-		 * our cpu set in mm_cpumask().  We have all the bookkeeping
+-		 * in place to figure out whether we would need to flush
+-		 * if our cpu were cleared in mm_cpumask(), but we don't
+-		 * currently use it.
++		 * Even in lazy TLB mode, the CPU should stay set in the
++		 * mm_cpumask. The TLB shootdown code can figure out from
++		 * from cpu_tlbstate.is_lazy whether or not to send an IPI.
  		 */
- 		preempt_disable();
--		for_each_online_cpu(cpu)
-+		for_each_cpu(cpu, mask)
- 			if (cond_func(cpu, info)) {
- 				ret = smp_call_function_single(cpu, func,
- 								info, wait);
-@@ -701,6 +701,15 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
- 		preempt_enable();
- 	}
- }
-+EXPORT_SYMBOL(on_each_cpu_cond_mask);
-+
-+void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
-+			smp_call_func_t func, void *info, bool wait,
-+			gfp_t gfp_flags)
-+{
-+	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags,
-+				cpu_online_mask);
-+}
- EXPORT_SYMBOL(on_each_cpu_cond);
+ 		if (WARN_ON_ONCE(real_prev != &init_mm &&
+ 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
+ 			cpumask_set_cpu(cpu, mm_cpumask(next));
  
- static void do_nothing(void *unused)
-diff --git a/kernel/up.c b/kernel/up.c
-index 42c46bf3e0a5..ff536f9cc8a2 100644
---- a/kernel/up.c
-+++ b/kernel/up.c
-@@ -68,9 +68,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
-  * Preemption is disabled here to make sure the cond_func is called under the
-  * same condtions in UP and SMP.
-  */
--void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
--		      smp_call_func_t func, void *info, bool wait,
--		      gfp_t gfp_flags)
-+void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
-+			   smp_call_func_t func, void *info, bool wait,
-+			   gfp_t gfp_flags, const struct cpumask *mask)
+-		return;
++		/*
++		 * If the CPU is not in lazy TLB mode, we are just switching
++		 * from one thread in a process to another thread in the same
++		 * process. No TLB flush required.
++		 */
++		if (!was_lazy)
++			return;
++
++		/*
++		 * Read the tlb_gen to check whether a flush is needed.
++		 * If the TLB is up to date, just use it.
++		 * The barrier synchronizes with the tlb_gen increment in
++		 * the TLB shootdown code.
++		 */
++		smp_mb();
++		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
++		if (this_cpu_read(cpu_tlbstate.ctxs[prev_asid].tlb_gen) ==
++				next_tlb_gen)
++			return;
++
++		/*
++		 * TLB contents went out of date while we were in lazy
++		 * mode. Fall through to the TLB switching code below.
++		 */
++		new_asid = prev_asid;
++		need_flush = true;
+ 	} else {
+ 		u16 new_asid;
+ 		bool need_flush;
+@@ -348,8 +372,10 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 	this_cpu_write(cpu_tlbstate.loaded_mm, next);
+ 	this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
+ 
+-	load_mm_cr4(next);
+-	switch_ldt(real_prev, next);
++	if (next != real_prev) {
++		load_mm_cr4(next);
++		switch_ldt(real_prev, next);
++	}
+ }
+ 
+ /*
+@@ -457,6 +483,9 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+ 		 * paging-structure cache to avoid speculatively reading
+ 		 * garbage into our TLB.  Since switching to init_mm is barely
+ 		 * slower than a minimal flush, just switch to init_mm.
++		 *
++		 * This should be rare, with native_flush_tlb_others skipping
++		 * IPIs to lazy TLB mode CPUs.
+ 		 */
+ 		switch_mm_irqs_off(NULL, &init_mm, NULL);
+ 		return;
+@@ -559,6 +588,11 @@ static void flush_tlb_func_remote(void *info)
+ 	flush_tlb_func_common(f, false, TLB_REMOTE_SHOOTDOWN);
+ }
+ 
++static bool tlb_is_not_lazy(int cpu, void *data)
++{
++	return !per_cpu(cpu_tlbstate.is_lazy, cpu);
++}
++
+ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 			     const struct flush_tlb_info *info)
  {
- 	unsigned long flags;
- 
-@@ -82,6 +82,14 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+@@ -594,8 +628,23 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 					       (void *)info, 1);
+ 		return;
  	}
- 	preempt_enable();
- }
-+EXPORT_SYMBOL(on_each_cpu_cond_mask);
+-	smp_call_function_many(cpumask, flush_tlb_func_remote,
 +
-+void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
-+		      smp_call_func_t func, void *info, bool wait,
-+		      gfp_t gfp_flags)
-+{
-+	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags, NULL);
-+}
- EXPORT_SYMBOL(on_each_cpu_cond);
++	/*
++	 * If no page tables were freed, we can skip sending IPIs to
++	 * CPUs in lazy TLB mode. They will flush the CPU themselves
++	 * at the next context switch.
++	 *
++	 * However, if page tables are getting freed, we need to send the
++	 * IPI everywhere, to prevent CPUs in lazy TLB mode from tripping
++	 * up on the new contents of what used to be page tables, while
++	 * doing a speculative memory access.
++	 */
++	if (info->freed_tables)
++		smp_call_function_many(cpumask, flush_tlb_func_remote,
+ 			       (void *)info, 1);
++	else
++		on_each_cpu_cond_mask(tlb_is_not_lazy, flush_tlb_func_remote,
++				(void *)info, 1, GFP_ATOMIC, cpumask);
+ }
  
- int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
+ /*
 -- 
 2.17.1
 
