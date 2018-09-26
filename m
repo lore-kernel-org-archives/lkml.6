@@ -2,155 +2,142 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60054C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A69C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E12142150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:10:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vXzXcoJb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12142150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 138A62150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138A62150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeIZXYl (ORCPT
+        id S1728728AbeIZX0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:24:41 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35700 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbeIZXYl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:24:41 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z14-v6so13055164qtn.2;
-        Wed, 26 Sep 2018 10:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UqsZ50gsEsMPkg4JVh0IrkGsmEX3d9KsNG31A9HIiVg=;
-        b=vXzXcoJbr2UBRwYYlkF1oni4lx0FW9p1u6OtbXMR27bkeEAbdocdpZPtm6FgOXCtP7
-         S9wWJybBKhpWOJR6thSOgwR/YS1OpiHvr18CdS0G/cMwTdWOolvV4UPPIzRSOz77hma+
-         knHVQ/cAMNkBlhj3tPA+7Jc4KSz9LNDB5P6x3LI6tQ0HsAU+ccxxdndMBhNHFG5M6cZc
-         t6Y07yQka2IleaAVxt4bvqPX5aLcw0J5Qvqy1D8WCWO8Cg5V+2br5MuZT19U+iIyc9Fw
-         KDuFuPInBN79CHv6pQHWXPSp1eXK1bwOyckJfyX1fZGiM1t2rMmKufPCu4/aWQeqDdcY
-         /Ueg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UqsZ50gsEsMPkg4JVh0IrkGsmEX3d9KsNG31A9HIiVg=;
-        b=V6eK3/vngpAtYm+iLz287tw+3koOXgurPCY+WUAwf/oc4qy6C/TZiyVje+t9Yo6As/
-         BxGagVkHYvLJdWo1pl+mUMbENSSKQPccFzmjqYUlHntYpcqIZ79N2vMRO2xMnGLAs+HV
-         1OisbdXC/hLnq+X+KOffuKT//J8dTRc3acYNEpU2a7/1qJJPovxFoufDvOpuWbb7q0I6
-         hgor3SbFCtiGMAHVNIEruQ5QbRkcW/ut5yZXdPvIJtMPWQFsO7RiMGHwUtWdufll+6nj
-         5M0vMCm372qj7Fm//quhP4sq55lht2ln+W4zAQydV9sBNcKwxhKYq390gdO0vzMUYihE
-         Q9Rg==
-X-Gm-Message-State: ABuFfogwK4n6wOXfXEG5DrADqs6Z+KCSl2tL7M+AYuMqLWvoXVFE73TT
-        YE2ami7vkkgNIuHmQCV2r96cQTckoBssTHuggcs=
-X-Google-Smtp-Source: ACcGV62jFTGwcJHdQoePWq1++TKViPySa7xXqBQjptiVhZUfHx3CDKfFJTAGZi1en//a9UcB49z9NiljsR0pXLYY4bk=
-X-Received: by 2002:ac8:29ef:: with SMTP id 44-v6mr5105088qtt.174.1537981845523;
- Wed, 26 Sep 2018 10:10:45 -0700 (PDT)
+        Wed, 26 Sep 2018 19:26:00 -0400
+Received: from muru.com ([72.249.23.125]:57370 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727832AbeIZX0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:26:00 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id E583D80FA;
+        Wed, 26 Sep 2018 17:16:24 +0000 (UTC)
+Date:   Wed, 26 Sep 2018 10:12:00 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: omap: switch to use irq_chip pm runtime
+Message-ID: <20180926171200.GV5662@atomide.com>
+References: <20180925191446.31504-1-grygorii.strashko@ti.com>
 MIME-Version: 1.0
-References: <1537978258-2907-1-git-send-email-mario.limonciello@dell.com>
- <CAHp75VeGQTEZOrMbNsbsxSb4RcN1y=gAZuZ5Z6FawuU-e0+qcg@mail.gmail.com> <72af799dd45442e6bd35082e1579013a@ausx13mpc120.AMER.DELL.COM>
-In-Reply-To: <72af799dd45442e6bd35082e1579013a@ausx13mpc120.AMER.DELL.COM>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 26 Sep 2018 20:10:34 +0300
-Message-ID: <CAHp75VcMDbiOhGzm7oXZ2jPcxe494YhSRFVzQtbUNj0ugUZfrQ@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: intel-wmi-thunderbolt: Add dynamic debugging
-To:     Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925191446.31504-1-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 8:03 PM <Mario.Limonciello@dell.com> wrote:
->
-> >
-> > On Wed, Sep 26, 2018 at 7:11 PM Mario Limonciello
-> > <mario.limonciello@dell.com> wrote:
-> > >
-> > > Some users have been reporting issues with thunderbolt being turned off
-> > > before fully initialized.  This is suspected to be caused by userspace
-> > > turning off the Thunderbolt controller using intel-wmi-thunderbolt
-> > > prematurely.
-> > >
-> >
-> > > Details are available here:
-> > > https://bugzilla.kernel.org/show_bug.cgi?id=201227
-> > > https://bugzilla.kernel.org/show_bug.cgi?id=199631
-> >
-> > BugLink: ... ?
-> > BugLink: ... ?
-> >
-> > I can do it myself if you are okay with this format.
-> >
-> > The patch itself LGTM.
->
-> Sure, thank you.
+* Grygorii Strashko <grygorii.strashko@ti.com> [180925 19:19]:
+> The PM runtime management can be delegated from OMAP GPIO driver to the IRQ
+> chip core, since commit be45beb2df69 ("genirq: Add runtime power management
+> support for IRQ chips") introduces runtime power management support for IRQ
+> chips.
+> 
+> Hence, drop custom PM runtime support for OMAP GPIO IRQs and switch to IRQ
+> chip core PM runtime (set irq_chip->parent_device).
 
-Pushed to my review and testing queue with mentioned changes, thanks!
+This would be cool but looks like this patch oopses early during boot
+at least on omap3 though, maybe because BANK_USED is not for
+irqs only?
 
->
-> >
-> > >
-> > > Userspace has already made some mitigiations for this situation:
-> > > https://github.com/hughsie/fwupd/commit/ef6f1d76983c9b66
-> > > https://github.com/hughsie/fwupd/commit/c07ce5b4889a5384
-> > >
-> > > To allow easier debugging of this situation add output that can be turned
-> > > on with dynamic debugging to better root cause this problem.
-> > >
-> > > Suggested-by: Mika Westerberg <mika.westerberg@intel.com>
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> > > ---
-> > >  drivers/platform/x86/intel-wmi-thunderbolt.c | 6 +++++-
-> > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c
-> > b/drivers/platform/x86/intel-wmi-thunderbolt.c
-> > > index c2257bd..ce5fbf0 100644
-> > > --- a/drivers/platform/x86/intel-wmi-thunderbolt.c
-> > > +++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
-> > > @@ -38,12 +38,16 @@ static ssize_t force_power_store(struct device *dev,
-> > >         input.length = sizeof(u8);
-> > >         input.pointer = &mode;
-> > >         mode = hex_to_bin(buf[0]);
-> > > +       dev_dbg(dev, "force_power: storing %#x\n", mode);
-> > >         if (mode == 0 || mode == 1) {
-> > >                 status = wmi_evaluate_method(INTEL_WMI_THUNDERBOLT_GUID, 0, 1,
-> > >                                              &input, NULL);
-> > > -               if (ACPI_FAILURE(status))
-> > > +               if (ACPI_FAILURE(status)) {
-> > > +                       dev_dbg(dev, "force_power: failed to evaluate ACPI method\n");
-> > >                         return -ENODEV;
-> > > +               }
-> > >         } else {
-> > > +               dev_dbg(dev, "force_power: unsupported mode\n");
-> > >                 return -EINVAL;
-> > >         }
-> > >         return count;
-> > > --
-> > > 2.7.4
-> > >
-> >
-> >
-> > --
-> > With Best Regards,
-> > Andy Shevchenko
+Regards,
 
+Tony
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+8< ---------------------
+gpio gpiochip0: (gpio-0-31): added GPIO chardev (254:0)
+gpiochip_setup_dev: registered GPIOs 0 to 31 on device: gpiochip0 (gpio-0-31)
+OMAP GPIO hardware version 2.5
+gpio gpiochip1: (gpio-32-63): added GPIO chardev (254:1)
+gpiochip_setup_dev: registered GPIOs 32 to 63 on device: gpiochip1 (gpio-32-63)
+gpio gpiochip2: (gpio-64-95): added GPIO chardev (254:2)
+gpiochip_setup_dev: registered GPIOs 64 to 95 on device: gpiochip2 (gpio-64-95)
+gpio gpiochip3: (gpio-96-127): added GPIO chardev (254:3)
+gpiochip_setup_dev: registered GPIOs 96 to 127 on device: gpiochip3 (gpio-96-127)
+gpio gpiochip4: (gpio-128-159): added GPIO chardev (254:4)
+gpiochip_setup_dev: registered GPIOs 128 to 159 on device: gpiochip4 (gpio-128-159)
+gpio gpiochip5: (gpio-160-191): added GPIO chardev (254:5)
+gpiochip_setup_dev: registered GPIOs 160 to 191 on device: gpiochip5 (gpio-160-191)
+omap-gpmc 6e000000.gpmc: GPMC revision 5.0
+gpmc_mem_init: disabling cs 0 mapped at 0x0-0x1000000
+gpiochip_find_base: found new base at 508
+gpio gpiochip6: (omap-gpmc): added GPIO chardev (254:6)
+gpiochip_setup_dev: registered GPIOs 508 to 511 on device: gpiochip6 (omap-gpmc)
+Unhandled fault: external abort on non-linefetch (0x1028) at 0xfb056028
+pgd = (ptrval)
+[fb056028] *pgd=49011452(bad)
+Internal error: : 1028 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc4+ #4913
+Hardware name: Generic OMAP36xx (Flattened Device Tree)
+PC is at omap_gpio_ack_irq+0x54/0x5c
+LR is at omap_gpio_ack_irq+0x20/0x5c
+pc : [<c05bc6cc>]    lr : [<c05bc698>]    psr: 200000d3
+sp : c7103718  ip : 00000001  fp : c710372c
+r10: c72b2860  r9 : c17028b8  r8 : 00000000
+r7 : 00000000  r6 : c01c4418  r5 : 00000000  r4 : c7297414
+r3 : fb056028  r2 : 00000002  r1 : 00000028  r0 : fb056000
+Flags: nzCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 80004019  DAC: 00000051
+Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+...
+[<c05bc6cc>] (omap_gpio_ack_irq) from [<c01c9470>] (__irq_do_set_handler+0x1c0/0x1e4)
+[<c01c9470>] (__irq_do_set_handler) from [<c01c94ec>] (__irq_set_handler+0x58/0x88)
+[<c01c94ec>] (__irq_set_handler) from [<c01c9554>] (irq_set_chip_and_handler_name+0x38/0x3c)
+[<c01c9554>] (irq_set_chip_and_handler_name) from [<c05b3fd4>] (gpiochip_irq_map+0x94/0x13c)
+[<c05b3fd4>] (gpiochip_irq_map) from [<c01cc7e0>] (irq_domain_associate+0x80/0x1c0)
+[<c01cc7e0>] (irq_domain_associate) from [<c01cd210>] (irq_create_mapping+0x74/0xdc)
+[<c01cd210>] (irq_create_mapping) from [<c01cd904>] (irq_create_fwspec_mapping+0x15c/0x338)
+[<c01cd904>] (irq_create_fwspec_mapping) from [<c01cdb48>] (irq_create_of_mapping+0x68/0x88)
+[<c01cdb48>] (irq_create_of_mapping) from [<c07cb038>] (of_irq_get+0x74/0xc4)
+[<c07cb038>] (of_irq_get) from [<c07cb0bc>] (of_irq_to_resource+0x34/0xe8)
+[<c07cb0bc>] (of_irq_to_resource) from [<c07cb1b8>] (of_irq_to_resource_table+0x48/0x5c)
+[<c07cb1b8>] (of_irq_to_resource_table) from [<c07c625c>] (of_device_alloc+0xf8/0x294)
+[<c07c625c>] (of_device_alloc) from [<c07c6450>] (of_platform_device_create_pdata+0x58/0xc8)
+[<c07c6450>] (of_platform_device_create_pdata) from [<c07c64e0>] (of_platform_device_create+0x20/0x24)
+[<c07c64e0>] (of_platform_device_create) from [<c07d1d68>] (gpmc_probe_generic_child+0x2ec/0x990)
+[<c07d1d68>] (gpmc_probe_generic_child) from [<c07d27ec>] (gpmc_probe+0x3e0/0x5a8)
+[<c07d27ec>] (gpmc_probe) from [<c067d0e8>] (platform_drv_probe+0x58/0xa8)
+[<c067d0e8>] (platform_drv_probe) from [<c067aa44>] (really_probe+0x200/0x2cc)
+[<c067aa44>] (really_probe) from [<c067ace0>] (driver_probe_device+0x6c/0x174)
+[<c067ace0>] (driver_probe_device) from [<c067afa0>] (__device_attach_driver+0xc0/0xe4)
+[<c067afa0>] (__device_attach_driver) from [<c0678a3c>] (bus_for_each_drv+0x8c/0xd4)
+[<c0678a3c>] (bus_for_each_drv) from [<c067a7b4>] (__device_attach+0xdc/0x14c)
+[<c067a7b4>] (__device_attach) from [<c067b020>] (device_initial_probe+0x1c/0x20)
+[<c067b020>] (device_initial_probe) from [<c0679a70>] (bus_probe_device+0x98/0xa0)
+[<c0679a70>] (bus_probe_device) from [<c06762b4>] (device_add+0x364/0x628)
+[<c06762b4>] (device_add) from [<c07c5f1c>] (of_device_add+0x40/0x48)
+[<c07c5f1c>] (of_device_add) from [<c07c6494>] (of_platform_device_create_pdata+0x9c/0xc8)
+[<c07c6494>] (of_platform_device_create_pdata) from [<c07c66e4>] (of_platform_bus_create+0x1b4/0x254)
+[<c07c66e4>] (of_platform_bus_create) from [<c07c6730>] (of_platform_bus_create+0x200/0x254)
+[<c07c6730>] (of_platform_bus_create) from [<c07c68d4>] (of_platform_populate+0x6c/0xbc)
+[<c07c68d4>] (of_platform_populate) from [<c0e14284>] (pdata_quirks_init+0x7c/0xa0)
+[<c0e14284>] (pdata_quirks_init) from [<c0e13c40>] (omap_generic_init+0x1c/0x28)
+[<c0e13c40>] (omap_generic_init) from [<c0e04474>] (customize_machine+0x2c/0x38)
+[<c0e04474>] (customize_machine) from [<c0103390>] (do_one_initcall+0x90/0x398)
+[<c0103390>] (do_one_initcall) from [<c0e01494>] (kernel_init_freeable+0x478/0x558)
+[<c0e01494>] (kernel_init_freeable) from [<c09aad78>] (kernel_init+0x18/0x124)
+[<c09aad78>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xc7103fb0 to 0xc7103ff8)
+3fa0:                                     00000000 00000000 00000000 00000000
+3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+Code: e3510000 0a000001 e0803001 e5832000 (e5933000)
+---[ end trace 43f0b1bf9cbb2007 ]---
