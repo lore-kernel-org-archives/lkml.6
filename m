@@ -2,152 +2,178 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7ABBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17040C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C492147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:23:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C492147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C47742147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:24:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47742147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeI0CiR (ORCPT
+        id S1727200AbeI0Cin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:38:17 -0400
-Received: from mga02.intel.com ([134.134.136.20]:15554 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeI0CiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:38:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 13:23:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
-   d="scan'208";a="86835322"
-Received: from kushalre-mobl.amr.corp.intel.com (HELO [10.251.20.48]) ([10.251.20.48])
-  by orsmga003.jf.intel.com with ESMTP; 26 Sep 2018 13:16:59 -0700
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/
- PF_SGX
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
-Date:   Wed, 26 Sep 2018 13:16:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 22:38:43 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:52825 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbeI0Cin (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 22:38:43 -0400
+Received: by mail-it1-f198.google.com with SMTP id e9-v6so5180882itf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 13:24:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=DfQdkNQpGZ6NEiQVA5H26eJ9g5ITnA/qlrkOPcDu9uY=;
+        b=IK65bq6wlWw9lDoRh2Wpustx7Ugjg6zDG6BVwjuhSX7OWmciuZrW6Ema8PaJQDMBC9
+         FvR0icjJfHwCNP/XxdhcS1A5/obrcV7U8VuqJfRoyqp5uLyFAMgRBcLFvWPdOTA1RSPO
+         WiVLGFdUYyK6pK3vjIMyZGSvKAWe5Ze2TzHw44/YLhoH7zLMfb90M+1J8uXQHAPc4920
+         +7eJHn4Kujh5X7NOLz4ZrHBiSm0kjDwN1cJHlYyYHPKLdV3eWfHSbqVgfcCKP7oRQ89I
+         BDu8VVk5/xN50WHoGuShNvRB3EnKBKJCBzcRdkUFG1ejxIg1lLRsrW9Ks7DG9vryip+C
+         8rkQ==
+X-Gm-Message-State: ABuFfohCAP88tfy1NMUCBfrkyjYNgXfoCAcfwhCZR+OcuRnKJF+YFkZp
+        oJJU/+l/8Tl+ozVp62SbnbLjPgUvSW+4+B99RfIQ0xOqt1XQ
+X-Google-Smtp-Source: ACcGV63rbJ4hMna+qepg7K62go0DEpD0qTZJ4flLKRMmnJ/P9lrA0uu6EMUbCgJPqWjJU6tJh5yc4VBmt+FoPf+/CYS2OB/2aPW9
 MIME-Version: 1.0
-In-Reply-To: <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:e70d:: with SMTP id b13-v6mr5683440ioh.105.1537993442593;
+ Wed, 26 Sep 2018 13:24:02 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 13:24:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d014010576cc00f4@google.com>
+Subject: KASAN: use-after-free Read in generic_gcmaes_encrypt
+From:   syzbot <syzbot+6d3612ba5e254e387153@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
->> e omniscient.
->>
->> How about this?  With formatting changes since it's long-winded...
->>
->>        /*
->>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
->>         * access is allowed by the PTE but not the EPCM.  This usually happens
->>         * when the EPCM is yanked out from under us, e.g. by hardware after a
->>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
->>         * fix the source of the fault as the EPCM can't be directly modified
->>         * by software.  Handle the fault as an access error in order to signal
->>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
->>         * though userspace may not have actually violated access permissions.
->>         */
->>
-> Looks good to me.
+Hello,
 
-Including the actual architectural definition of the bit might add some
-clarity.  The SDM explicitly says (Vol 3a section 4.7):
+syzbot found the following crash on:
 
-	The fault resulted from violation of SGX-specific access-control
-	requirements.
+HEAD commit:    739d0def85ca Merge branch 'hv_netvsc-Support-LRO-RSC-in-th..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1146ffae400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e79b9299baeb2298
+dashboard link: https://syzkaller.appspot.com/bug?extid=6d3612ba5e254e387153
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16200b9e400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102311c6400000
 
-Which totally squares with returning true from access_error().
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6d3612ba5e254e387153@syzkaller.appspotmail.com
 
-There's also a tidbit that says:
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KASAN: use-after-free in memcpy include/linux/string.h:345 [inline]
+BUG: KASAN: use-after-free in generic_gcmaes_encrypt+0xc6/0x186  
+arch/x86/crypto/aesni-intel_glue.c:1291
+Read of size 12 at addr ffff8801d7ad0900 by task kworker/0:1/14
 
-	This flag is 1 if the exception is unrelated to paging and
-	resulted from violation of SGX-specific access-control
-	requirements. ... such a violation can occur only if there
-	is no ordinary page fault...
+CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted 4.19.0-rc4+ #228
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: pencrypt padata_parallel_worker
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  memcpy+0x23/0x50 mm/kasan/kasan.c:302
+  memcpy include/linux/string.h:345 [inline]
+  generic_gcmaes_encrypt+0xc6/0x186 arch/x86/crypto/aesni-intel_glue.c:1291
+  crypto_aead_encrypt include/crypto/aead.h:335 [inline]
+  gcmaes_wrapper_encrypt+0x162/0x200 arch/x86/crypto/aesni-intel_glue.c:1127
+  crypto_aead_encrypt include/crypto/aead.h:335 [inline]
+  pcrypt_aead_enc+0xcb/0x190 crypto/pcrypt.c:143
+  padata_parallel_worker+0x49d/0x760 kernel/padata.c:86
+  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x420 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
 
-This is pretty important.  It means that *none* of the other
-paging-related stuff that we're doing applies.
+Allocated by task 5474:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  tls_set_sw_offload+0xcc4/0x14b0 net/tls/tls_sw.c:1741
+  do_tls_setsockopt_conf net/tls/tls_main.c:467 [inline]
+  do_tls_setsockopt net/tls/tls_main.c:514 [inline]
+  tls_setsockopt+0x689/0x770 net/tls/tls_main.c:533
+  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
+  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
+  __do_sys_setsockopt net/socket.c:1913 [inline]
+  __se_sys_setsockopt net/socket.c:1910 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-We also need to clarify how this can happen.  Is it through something
-than an app does, or is it solely when the hardware does something under
-the covers, like suspend/resume.
+Freed by task 5472:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3813
+  tls_sk_proto_close+0x5fd/0x750 net/tls/tls_main.c:277
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:458
+  __sock_release+0xd7/0x250 net/socket.c:579
+  sock_close+0x19/0x20 net/socket.c:1141
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801d7ad0900
+  which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 0 bytes inside of
+  32-byte region [ffff8801d7ad0900, ffff8801d7ad0920)
+The buggy address belongs to the page:
+page:ffffea00075eb400 count:1 mapcount:0 mapping:ffff8801da8001c0  
+index:0xffff8801d7ad0fc1
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea00075eb948 ffffea00075ff688 ffff8801da8001c0
+raw: ffff8801d7ad0fc1 ffff8801d7ad0000 000000010000003f 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d7ad0800: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
+  ffff8801d7ad0880: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> ffff8801d7ad0900: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+                    ^
+  ffff8801d7ad0980: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
+  ffff8801d7ad0a00: 00 00 00 00 fc fc fc fc 00 00 00 00 fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
