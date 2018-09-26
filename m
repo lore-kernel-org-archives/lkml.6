@@ -6,75 +6,94 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB6FC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1C7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91D8E20684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:22:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91D8E20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 869FB214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:24:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 869FB214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeIZSer (ORCPT
+        id S1727259AbeIZShW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:34:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48633 "EHLO huawei.com"
+        Wed, 26 Sep 2018 14:37:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41088 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726937AbeIZSer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:34:47 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2376B46C56AA6;
-        Wed, 26 Sep 2018 20:21:59 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 26 Sep 2018 20:21:59 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <mpe@ellerman.id.au>, <paulus@samba.org>,
-        <akpm@linux-foundation.org>
-CC:     <npiggin@gmail.com>, <fbarrat@linux.vnet.ibm.com>,
-        <fthain@telegraphics.com.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] powerpc: xive: Move a dereference below a NULL test
-Date:   Wed, 26 Sep 2018 20:09:32 +0800
-Message-ID: <1537963772-15309-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        id S1726602AbeIZShW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 14:37:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 259A2B0A4;
+        Wed, 26 Sep 2018 12:24:36 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Cyril Bur <cyrilbur@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michal Suchanek <msuchanek@suse.de>,
+        Haren Myneni <haren@linux.vnet.ibm.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/64s: consolidate MCE counter increment.
+Date:   Wed, 26 Sep 2018 14:24:30 +0200
+Message-Id: <20180926122430.13924-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is safe to move dereference below a NULL test.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+The code in machine_check_exception excludes 64s hvmode when
+incrementing the MCE counter only to call opal_machine_check to
+increment it specifically for this case.
+
+Remove the exclusion and special case.
+
+Fixes: a43c1590426c ("powerpc/pseries: Flush SLB contents on SLB MCE
+		errors.")
+
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- arch/powerpc/sysdev/xive/common.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/traps.c           | 4 +---
+ arch/powerpc/platforms/powernv/opal.c | 2 --
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/common.c
-index 959a2a6..9824074 100644
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -1010,12 +1010,13 @@ static void xive_ipi_eoi(struct irq_data *d)
- {
- 	struct xive_cpu *xc = __this_cpu_read(xive_cpu);
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 6ab66a88db14..e5bc413c7d53 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -741,9 +741,7 @@ void machine_check_exception(struct pt_regs *regs)
+ 	if (!nested)
+ 		nmi_enter();
  
--	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
--		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
+-	/* 64s accounts the mce in machine_check_early when in HVMODE */
+-	if (!IS_ENABLED(CONFIG_PPC_BOOK3S_64) || !cpu_has_feature(CPU_FTR_HVMODE))
+-		__this_cpu_inc(irq_stat.mce_exceptions);
++	__this_cpu_inc(irq_stat.mce_exceptions);
+ 
+ 	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_NOW_UNRELIABLE);
+ 
+diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
+index 62c291e23dbe..38fe4087484a 100644
+--- a/arch/powerpc/platforms/powernv/opal.c
++++ b/arch/powerpc/platforms/powernv/opal.c
+@@ -578,8 +578,6 @@ int opal_machine_check(struct pt_regs *regs)
+ {
+ 	struct machine_check_event evt;
+ 
+-	__this_cpu_inc(irq_stat.mce_exceptions);
 -
- 	/* Handle possible race with unplug and drop stale IPIs */
- 	if (!xc)
- 		return;
-+
-+	DBG_VERBOSE("IPI eoi: irq=%d [0x%lx] (HW IRQ 0x%x) pending=%02x\n",
-+		    d->irq, irqd_to_hwirq(d), xc->hw_ipi, xc->pending_prio);
-+
- 	xive_do_source_eoi(xc->hw_ipi, &xc->ipi_data);
- 	xive_do_queue_eoi(xc);
- }
+ 	if (!get_mce_event(&evt, MCE_EVENT_RELEASE))
+ 		return 0;
+ 
 -- 
-1.7.12.4
+2.13.7
 
