@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD97C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D86C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79BC208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7288B208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 01:53:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWqZJCTb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79BC208E4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPf2R/0d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7288B208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeIZID0 (ORCPT
+        id S1727443AbeIZIDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 04:03:26 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35061 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbeIZIDZ (ORCPT
+        Wed, 26 Sep 2018 04:03:36 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43613 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbeIZIDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 04:03:25 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z14-v6so10644239qtn.2;
-        Tue, 25 Sep 2018 18:53:02 -0700 (PDT)
+        Wed, 26 Sep 2018 04:03:36 -0400
+Received: by mail-qk1-f196.google.com with SMTP id v18-v6so5200228qka.10;
+        Tue, 25 Sep 2018 18:53:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :content-transfer-encoding:user-agent;
-        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
-        b=AWqZJCTbrbLZQCGcJApGVRek4I3vA42BSNQkkRD11Myr+SEonNHwQhWgK+QDAevvPe
-         /7IHIuN1ZhkJEjAYay/kWeM/qaYWm0/SRg4pvQme8/718tnZrR3IKQqz48B8lIrbG6N1
-         eB1LqqY8piNAFKk+HZdb3y34qpT7jKGSS9fSOerbm3wsTjKTUaCNAquQhQ0VcTXNV/m7
-         fA8/RSYTwbCseFXQddxI/40XDv5Ep7UFVJOcmyUZ1EeKKdxU0Bt2YNkE5FCHdxHqm0Np
-         n6lYMx1EdQtGra//kIEAH/fBqOWj2BGJum2uhpQTK4EvvtiB3y5QF33wLRFiOHlkZe0E
-         dw+Q==
+        bh=kvn7jntSbpyZYSyKvpa0GLBcuUphn3p989QYl+ADtiA=;
+        b=VPf2R/0dkyyhlLnQQbV0H3qOVfJdZllY/vX0Q8Jc8Finp2MhgJyyOfrwJ0FCWXCuM1
+         xL/9yQq59mHShtQKK5oJCpgWQ21jaU/m+zqheuiS6bzXNjVcLCqlSzQWy/WpLPJpIoUs
+         F9HTIIgd2AT+tiO1VzRegBXRE7hNH/p6o1ORB4zc/UfV2lnW0UvSFySJYTKIheU1CdS+
+         l9fGNeyYUHnmWz3FMNOPcD42HrK8kQzYgqwVy8CbNJDsuxAEM/iKtBISxe7ymz4Eldns
+         UiwGYhNB+rmD9B0dJql43wcIK0EHC2e6m0ygYYIye05qGn0LnD3dJ4+l41v2Ef9Xanki
+         quAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:content-transfer-encoding:user-agent;
-        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
-        b=BxAEqJMXYnqUyTs62Hz2/azm0ZHM9Xd0P45CRcRPhk2dTiR3ug52ZwzRvw0PXc17uA
-         fkl8+ZaR2jtVQs7kSkxGFwQTFTINMmnlIiw7tYF7X+IrKQp01pWJmwOV54aB1xxbUEr5
-         3R+WKI39Nv1OfDkhb9AjBWS+Dx2zmr1QrwLhw1KjmOWr23345ZoTLbhR///QlvXKZBl3
-         /BB4G8CEH/0zeiApD6SoQDHQGfwOjaDrNp1123UftoRN/rlIIBqtA2kHRvYdXlb/9pds
-         U1rDxjvmI2UaDULTLaQKhT1eC4VYRatkDMfpL0HSe/6rxkZqeDyy4wfgFoEbW9pSYQzT
-         RNnw==
-X-Gm-Message-State: ABuFfohJqeRmhUNjZX5KAFZJ/pHC3PveNPvLlJq25KI3B6FkN8AZTtMu
-        m5i1HGep63rzN49bYGGkWw8=
-X-Google-Smtp-Source: ACcGV63+EQKDCynaQfmq1FTk6y4P/HI9trpCntexAQnt/InAZzDAwlDYMXOt2UFFl30xeRp/IOs/TA==
-X-Received: by 2002:ac8:1493:: with SMTP id l19-v6mr2896194qtj.129.1537926782117;
-        Tue, 25 Sep 2018 18:53:02 -0700 (PDT)
+        bh=kvn7jntSbpyZYSyKvpa0GLBcuUphn3p989QYl+ADtiA=;
+        b=LOH+E2OIrCMCFLQd/rEB3G4YsGH6sgmhM7oIE1AV7v9CEMtd6A0sjsxChG+WxzuuYJ
+         l/5BjZsGBVDtTb2osCy+ZsjXevRlWVFdqMiljXEi5j+T/iLAYBxzEG4Wu60AWmw9ln1c
+         zvQ4U9yGA6pljOxRG6mhl8DeIC+iLtMi5n5HQ7lgDVYvedRjtWtYByyx0z+k2tBnn08Y
+         lHz01RwXt7ZuNCDc47NnycZ8ndgG5TEqXEa+Gvz0btbYQh3Hl+NB9r4ALdQEEF1Oa5RG
+         OoGWq0+oiq/ABCrqgiyrvE3UETVZ1NTKNoWQgTVcaVxIzSojMo5Uo8afBJ/npxSTMNFM
+         Eq8Q==
+X-Gm-Message-State: ABuFfoiBzGrz4+ur6BKsc0QDcwqpOYahV+5IAeCMMTf0MM0cL8m91UHv
+        AkFMExbm4IcNlEEGYm5L6Tw=
+X-Google-Smtp-Source: ACcGV63Xe01CTftNrl6zHk5foKXVj+7d8uIiUEiwpBiumC+jIM+F+wFKrVW/7qU5gSvQMLCOYrlLIw==
+X-Received: by 2002:ae9:e64b:: with SMTP id x11-v6mr2752267qkl.41.1537926792557;
+        Tue, 25 Sep 2018 18:53:12 -0700 (PDT)
 Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id z8-v6sm2024556qto.72.2018.09.25.18.52.57
+        by smtp.gmail.com with ESMTPSA id r4-v6sm2067788qtt.92.2018.09.25.18.53.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 25 Sep 2018 18:53:01 -0700 (PDT)
-Date:   Tue, 25 Sep 2018 22:52:54 -0300
+        Tue, 25 Sep 2018 18:53:12 -0700 (PDT)
+Date:   Tue, 25 Sep 2018 22:53:05 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH 5/7] drivers: s390: Avoids building drivers if ARCH is not
- s390.
-Message-ID: <20180926015254.GA14984@WindFlash>
+Subject: [PATCH 6/7] drivers: oprofile: Avoids building driver from direct
+ make command
+Message-ID: <20180926015305.GA14994@WindFlash>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -86,30 +86,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoids building s390 drivers if 'make drivers/s390/' is called but
-ARCH is not s390.
+Creates new Makefile to avoid building driver if
+'make drivers/oprofile/' is called directly.
+
+This driver is usually built from arch/$ARCH and seems to have
+no meaning building alone.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/s390/Makefile | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/oprofile/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 drivers/oprofile/Makefile
 
-diff --git a/drivers/s390/Makefile b/drivers/s390/Makefile
-index a863b0462b43..0575f02dba45 100644
---- a/drivers/s390/Makefile
-+++ b/drivers/s390/Makefile
-@@ -3,7 +3,7 @@
- # Makefile for the S/390 specific device drivers
- #
- 
--obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
--
--drivers-y += drivers/s390/built-in.a
--
-+ifeq ($(ARCH),s390)
-+	obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
-+	drivers-y += drivers/s390/built-in.a
-+endif
+diff --git a/drivers/oprofile/Makefile b/drivers/oprofile/Makefile
+new file mode 100644
+index 000000000000..6b36c93e9762
+--- /dev/null
++++ b/drivers/oprofile/Makefile
+@@ -0,0 +1 @@
++#Does nothing, since the source is called from arch/$ARCH/ tree.
+\ No newline at end of file
 -- 
 2.19.0
 
