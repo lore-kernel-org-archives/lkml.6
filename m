@@ -2,121 +2,117 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED025C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A9FC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EAB220685
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:13:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EAB220685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id BFA8E20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:14:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5LDYAcg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA8E20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeIZRZn (ORCPT
+        id S1727239AbeIZR00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:25:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47068 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726342AbeIZRZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:25:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4B7C3B0C5;
-        Wed, 26 Sep 2018 11:13:14 +0000 (UTC)
-Subject: Re: [v11 PATCH 2/3] mm: unmap VM_HUGETLB mappings with optimized path
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        kirill@shutemov.name, akpm@linux-foundation.org
-Cc:     dave.hansen@intel.com, oleg@redhat.com, srikar@linux.vnet.ibm.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1537376621-51150-1-git-send-email-yang.shi@linux.alibaba.com>
- <1537376621-51150-3-git-send-email-yang.shi@linux.alibaba.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <88f0a142-a263-858d-83af-dc9abfc5bad8@suse.cz>
-Date:   Wed, 26 Sep 2018 13:10:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 26 Sep 2018 13:26:26 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46323 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbeIZR0Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:26:25 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h22-v6so8755480qtr.13;
+        Wed, 26 Sep 2018 04:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T2QwmtGowTCamIEGtEgBGuep7x/hEYpcq79fjd3AIDQ=;
+        b=a5LDYAcgphPS8ydeCju2jco38wnF6jjPcWNkQTYbCKyK3QripUKjXHGOdZ/+hRogAc
+         LptydAp1+EmxW/snizrFh5fPqNU1/Lo3mQh6sIUMm1cSb2mnt+PA7DByPhF5Fn9FuE89
+         avpMlJESkjsYWKFH+ej44fSnMEUNnT8DRYXjkyWbThdeNi3Iqik7ZveN7Gri9T8cX4pd
+         8sXA2DxTZycAOsJxG3gALQmUAe0tL+nhvdRH1PYn6wtJF1x3NEdCl7b1n76qdjEm6Nfa
+         VV9sgCyuJ4lQRPy3fUzj9v2PFqcdPGfMwhcDiYBaB47PQsTbd4W8sa8y5d9GWSk2IiX0
+         zbQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T2QwmtGowTCamIEGtEgBGuep7x/hEYpcq79fjd3AIDQ=;
+        b=gopcOkZ0z9JuATLl88JBmo/234Wx2FK5pk3zZOu8MUbtzIphVulvDBPTPsR28yw2Fd
+         WBL4SAES+nf3MzYyuZbuzw7K11J02EOfXEDwsJ+XiVuI9Fkb3aZe8L1VZzg3mpjDIMcx
+         nEY6K69NhcUwSb3XCRg4VZKjoEB/2QgUmci+zgYvyZS238ANGHI+jm5Z1OdtwhDvlDl0
+         3PilK+tI0BbF30dKIrPBZ8jl81ybpeexudlVEsRCGfZbblcrjD2M5UxvCpVDRGgfenqZ
+         n6/5BxqXKCV7YbhnbqKUP5DywoLWDf1zo7y4UYEzw4lcZwN9Yk3CB7eiKi1bmNgVbsil
+         MD6g==
+X-Gm-Message-State: ABuFfogGQZ9SfjF/wOpJ+RZ/5ADULujWDld4m32IgyDRIIKQq1Q+InB5
+        Nwd9Zd3GZg10onQyAH8zeXWv0Wt9eS5tNxsKC0s=
+X-Google-Smtp-Source: ACcGV63ELFQOd8FJKyXS7Xq7CQwb9ID8sGpmjWeIYwBBA2aDSkoYHRW0tfcaa6XZyK/24Dg2gGsiMkY3ZWRdFf+UwPA=
+X-Received: by 2002:ac8:2f86:: with SMTP id l6-v6mr3968217qta.83.1537960437892;
+ Wed, 26 Sep 2018 04:13:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1537376621-51150-3-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180921014421.30804-1-paul.gortmaker@windriver.com>
+ <f401b6fed813afb86f5442c7707bf9fb@piie.net> <CAHp75Vd3L2BQX02NQVM=ZTMkv4WpM=AXXVMyG0Cyc0SjjUU55g@mail.gmail.com>
+In-Reply-To: <CAHp75Vd3L2BQX02NQVM=ZTMkv4WpM=AXXVMyG0Cyc0SjjUU55g@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 26 Sep 2018 14:13:47 +0300
+Message-ID: <CAHp75VecQvirM=XXFCHQ7qn_hh+ix2u2HFq9u+JOOzcmjeRrdQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] platform/x86: acerhdf: new BIOS string, better
+ modparam handling
+To:     peter@piie.net
+Cc:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/19/18 7:03 PM, Yang Shi wrote:
-> When unmapping VM_HUGETLB mappings, vm flags need to be updated. Since
-> the vmas have been detached, so it sounds safe to update vm flags with
-> read mmap_sem.
-> 
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+On Wed, Sep 26, 2018 at 2:09 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Fri, Sep 21, 2018 at 9:20 AM Peter Feuerer <peter@piie.net> wrote:
+> >
+> > Hi,
+> >
+> > 21. September 2018 03:45, "Paul Gortmaker" <paul.gortmaker@windriver.com> schrieb:
+> >
+> > > I came across this older netbook over the xmas holidays, and noticed the
+> > > acerhdf driver wouldn't load. Turns out the BIOS string was too new,
+> > > and not listed in the driver. There were module params for overrides,
+> > > but I found their use isn't quite clear without reading the source.
+> > >
+> > > Here I clarify some of the module parameter usage, and then add the new
+> > > BIOS string, so they won't be needed for this particular platform. Some
+> > > probe code is also shifted out to be __init to reduce the driver size a
+> > > bit. Further details can be found in the respective commit logs.
+> > >
+> > > Since it was months ago when I created these patches, I retested on top
+> > > of tree to ensure things still work, as can be seen below.
+> >
+> > Thanks a lot for your work and this set of changes.  This improves quality.
+> > I reviewed all 6 patches.
+> >
+> > Reviewed-by: Peter Feuerer <peter@piie.net>
+> >
+> > Please also add CC: Boris Petkov <bp@suse.de> for review.
+>
+> Shall I wait for Boris'  tags?
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Anyway, all suggested changes look good to me, I go ahead and push
+them to my review and testing queue.
+If nothing happens during let's say a week, I will move them forward.
 
-> ---
->  mm/mmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 982dd00..490340e 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2777,7 +2777,7 @@ static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->  			 * update vm_flags.
->  			 */
->  			if (downgrade &&
-> -			    (tmp->vm_flags & (VM_HUGETLB | VM_PFNMAP)))
-> +			    (tmp->vm_flags & VM_PFNMAP))
->  				downgrade = false;
->  
->  			tmp = tmp->vm_next;
-> 
+Thanks!
 
+-- 
+With Best Regards,
+Andy Shevchenko
