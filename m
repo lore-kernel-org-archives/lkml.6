@@ -2,117 +2,118 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9946C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4794DC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 988C2208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01F07214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:58:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="nzEdnxYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988C2208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XW4tCmPr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F07214C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeIZULa (ORCPT
+        id S1728084AbeIZULw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:11:30 -0400
-Received: from mail.kdab.com ([176.9.126.58]:32799 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbeIZULa (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:11:30 -0400
-X-Greylist: delayed 361 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Sep 2018 16:11:28 EDT
-Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
- reason="pass (just generated,
- assumed good)" header.d=kdab.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-transfer-encoding:mime-version:message-id:date:date
- :subject:subject:from:from; s=dkim; t=1537969941; x=1538833942;
- bh=i1Qtlkpx+6Z8imN6l1q1mTZGSu/ZqG0b/MQLOJ4rM04=; b=nzEdnxYjmPvW
- FPi1r69URrjkopwUBmABC1tL6gm+5R8VccgWWfp5dgaI5jTWG5R+UXM7lTDQZMid
- cnTKLL1ysrZH0kkhBXfDQUqToODfRn+g6O2dNmQH6IxgS7SbrhkfFEWkS5IfTso+
- gskzoVwXoz0C4sbH0JtjiGmR1w1gTqA=
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     acme@kernel.org, jolsa@kernel.org, yao.jin@linux.intel.com,
-        namhyung@kernel.org
-Cc:     Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Sandipan Das <sandipan@linux.ibm.com>
-Subject: [PATCH 1/3] perf report: don't try to map ip to invalid map
-Date:   Wed, 26 Sep 2018 15:52:05 +0200
-Message-Id: <20180926135207.30263-1-milian.wolff@kdab.com>
+        Wed, 26 Sep 2018 16:11:52 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43217 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbeIZULv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:11:51 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x24-v6so23289701lfe.10
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 06:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jMvbVWHeoCkcQ+J+E4VFyUw/Kb2VssH63cpbHynMeOU=;
+        b=XW4tCmPrk/l52xGB4xXmBqbQOCYhqUdcAX4WnDeTlifMPEkewd8PzhOox7r9TpnK8a
+         E9NcDQSfV1MJsi2vA2NppmuciEQKsmbtCTpV+FHuIdupDHXFxPpQzn93qfGaCgV6J1IL
+         aOTaxZ0eSa2AHqfmhrsxQxxfC/9ZPgwTSYynY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jMvbVWHeoCkcQ+J+E4VFyUw/Kb2VssH63cpbHynMeOU=;
+        b=Es8iQh1SLTXqgSTBmG4HBiZbNVD0VlKRr7ZGnzZzA577QyUGWJ7OKH6p4cyFp4PrfQ
+         Jy1ZIVzpvZrx6ncMCrs6BzxbDyAvADa0f+cL/HWh/RG8dEUn9Kibmh83ifY1lamWvcSX
+         kd7Fo++Bde3hsegYJSFl0qmJuBAVJiZFrdMJlaK/zB0kGBbZu/Kauqoacf06/KTVHRiX
+         uoXUEuqogtVYvkLZchgkwhWu6juRfhrYf+WpJP1QB9FgMWnmjACOwsV8GzxM8+/qNnZq
+         ufB3Zqin6Pp7eEtXQ+k+OOUl5vepQR3mC202Z8h07Qsg19h8aq1l2CjghJYKaY5f9/qv
+         OMMg==
+X-Gm-Message-State: ABuFfohkj2z11qLMYNdcX3IEVKAUXAWrOoBMSaB5eVJLsUaelWKH1GVA
+        3AKYIlkhbn4ACFITRRrf7+F0E/neibhZ2S3N9T1+2w==
+X-Google-Smtp-Source: ACcGV62HWVDbMINDxSaD97LTR6irhDiAZu5sdCxCBsiI1S3CS2shsf8ik0UgqLMe2wPBz1vgsWTn3wN8bWq38FBDb7A=
+X-Received: by 2002:a19:7391:: with SMTP id h17-v6mr4215394lfk.140.1537970324469;
+ Wed, 26 Sep 2018 06:58:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <1537896922-8508-1-git-send-email-valentin.schneider@arm.com>
+ <CAKfTPtB-UiXx39XZeJ0FNeYOU-pLFbY1u7vgbo584MNHSnpr=w@mail.gmail.com>
+ <9209a9ec-72b4-17d7-6596-71b55767a9aa@arm.com> <CAKfTPtAUUcwPThggDMfQ1k7z4kguTwrLVEFKnkMqszs9nTri=g@mail.gmail.com>
+ <20180926131724.GB2512@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180926131724.GB2512@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 26 Sep 2018 15:58:33 +0200
+Message-ID: <CAKfTPtBBGh+=uGzPTTJQpYOpO42UG2+ktBffA-zT1TvOqn06Xg@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Don't increase sd->balance_interval on
+ newidle balance
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <Dietmar.Eggemann@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes a crash when the report encounters an address that
-could not be associated with an mmaped region:
+On Wed, 26 Sep 2018 at 15:17, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, Sep 26, 2018 at 12:33:25PM +0200, Vincent Guittot wrote:
+> > On Wed, 26 Sep 2018 at 11:35, Valentin Schneider
+>
+> > > library I use) has some phase where it spawns at lot of tasks at once to do
+> > > some setup (busybox, shutils, bash...). Some of those tasks are pinned to a
+> > > particular CPU, and that can lead to failed load_balance() - and to make things
+> > > worse, there's a lot of idle_balance() in there.
+> > >
+> > > Eventually when I start running my actual workload a few ~100ms later, it's
+> > > impacted by that balance_interval increase.
+> > >
+> > > Admittedly that's a specific use-case, but I don't think this quick increase
+> > > is something that was intended.
+> >
+> > Yes, this really sounds like a specific use-case. Unluckily you find a
+> > way to reach max interval quite easily/every time with your test
+> > set-up but keep in mind that this can also happen in real system life
+> > and without using the newly idle path.
+> > So if it's a problem to have a interval at max value for your unitary
+> > test, it probably means that it's a problem for the system and the max
+> > value is too high
+> >
+> > Taking advantage of all load_balance event to update the interval
+> > makes sense to me. It seems that you care about a short and regular
+> > balance interval more that minimizing overhead of load balancing.
+> > At the opposite, i'm sure that you don't complain if newly idle load
+> > balance resets the interval to min value and overwrite what the
+> > periodic load balance set up previously :-)
+>
+> Well, we've excluded newidle balance from updating such stats before. So
+> in that respect the patch proposed by Valentin isn't weird.
+>
+> Consider for example:
+>
+>   58b26c4c0257 ("sched: Increment cache_nice_tries only on periodic lb")
+>
+> In general I think it makes perfect sense to exclude newidle balance
+> from such stats; you get much more stable results from the regular
+> balance.
 
-#0  0x00005555557bdc4a in callchain_srcline (ip=3D<error reading variable=
-: Cannot access memory at address 0x38>, sym=3D0x0, map=3D0x0) at util/ma=
-chine.c:2329
-#1  unwind_entry (entry=3Dentry@entry=3D0x7fffffff9180, arg=3Darg@entry=3D=
-0x7ffff5642498) at util/machine.c:2329
-#2  0x00005555558370af in entry (arg=3D0x7ffff5642498, cb=3D0x5555557bdb5=
-0 <unwind_entry>, thread=3D<optimized out>, ip=3D18446744073709551615) at=
- util/unwind-libunwind-local.c:586
-#3  get_entries (ui=3Dui@entry=3D0x7fffffff9620, cb=3D0x5555557bdb50 <unw=
-ind_entry>, arg=3D0x7ffff5642498, max_stack=3D<optimized out>) at util/un=
-wind-libunwind-local.c:703
-#4  0x0000555555837192 in _unwind__get_entries (cb=3D<optimized out>, arg=
-=3D<optimized out>, thread=3D<optimized out>, data=3D<optimized out>, max=
-_stack=3D<optimized out>) at util/unwind-libunwind-local.c:725
-#5  0x00005555557c310f in thread__resolve_callchain_unwind (max_stack=3D1=
-27, sample=3D0x7fffffff9830, evsel=3D0x555555c7b3b0, cursor=3D0x7ffff5642=
-498, thread=3D0x555555c7f6f0) at util/machine.c:2351
-#6  thread__resolve_callchain (thread=3D0x555555c7f6f0, cursor=3D0x7ffff5=
-642498, evsel=3D0x555555c7b3b0, sample=3D0x7fffffff9830, parent=3D0x7ffff=
-fff97b8, root_al=3D0x7fffffff9750, max_stack=3D127) at util/machine.c:237=
-8
-#7  0x00005555557ba4ee in sample__resolve_callchain (sample=3D<optimized =
-out>, cursor=3D<optimized out>, parent=3Dparent@entry=3D0x7fffffff97b8, e=
-vsel=3D<optimized out>, al=3Dal@entry=3D0x7fffffff9750,
-    max_stack=3D<optimized out>) at util/callchain.c:1085
-
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Cc: Sandipan Das <sandipan@linux.ibm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
----
- tools/perf/util/machine.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index c4acd2001db0..0cb4f8bf3ca7 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2312,7 +2312,7 @@ static int unwind_entry(struct unwind_entry *entry,=
- void *arg)
- {
- 	struct callchain_cursor *cursor =3D arg;
- 	const char *srcline =3D NULL;
--	u64 addr;
-+	u64 addr =3D entry->ip;
-=20
- 	if (symbol_conf.hide_unresolved && entry->sym =3D=3D NULL)
- 		return 0;
-@@ -2324,7 +2324,8 @@ static int unwind_entry(struct unwind_entry *entry,=
- void *arg)
- 	 * Convert entry->ip from a virtual address to an offset in
- 	 * its corresponding binary.
- 	 */
--	addr =3D map__map_ip(entry->map, entry->ip);
-+	if (entry->map)
-+		addr =3D map__map_ip(entry->map, entry->ip);
-=20
- 	srcline =3D callchain_srcline(entry->map, entry->sym, addr);
- 	return callchain_cursor_append(cursor, entry->ip,
---=20
-2.19.0
+Ok so in this case we should exclude all update of  the interval
+during newly idle and not only some of them
