@@ -2,249 +2,214 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC88DC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A2DECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE593208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:58:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE593208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id E883120842
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:00:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEAT/7VE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E883120842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbeIZOKN (ORCPT
+        id S1727401AbeIZOLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:10:13 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:48606 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbeIZOKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:10:13 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42Kr0k47V3z9ttSF;
-        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Kcmp2dNm6TXh; Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42Kr0k3TRMz9ttRh;
-        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D3BFF8B7FE;
-        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id xrunNcvQoKlG; Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
-Received: from PO15451 (unknown [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8A6A08B7EB;
-        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
-Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Russell Currey <ruscur@russell.cc>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
- <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
- <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr>
- <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <30fb4e6b-0981-c53c-a1db-94138eaad268@c-s.fr>
-Date:   Wed, 26 Sep 2018 09:58:30 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 10:11:39 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:37438 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbeIZOLj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 10:11:39 -0400
+Received: by mail-it1-f193.google.com with SMTP id m9-v6so1657556ita.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 00:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ABsFaoHgt4PlNiB6x3QFwQxhmlzQiyn9hJrKrFvnYOI=;
+        b=hEAT/7VEhy9SF27SUTw7rDNsCeL08PgINkQ6nm2qerUxszNfZ8UmLwIppZBas7zpFX
+         aETfAaKZeCza5Kmu2IB0Gbhu/ODayKGZyGRxarwmfg/tJEY+BEWTt3r4jMOx28Y42wMx
+         291OYBEWKS3iD9UpBorPaRPDHKUoVslm4Lt/E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ABsFaoHgt4PlNiB6x3QFwQxhmlzQiyn9hJrKrFvnYOI=;
+        b=WmJzSNq2xaPfVGueh1oWwcH+HAzkAc28YzOeLD1fSYNpCGzU4DKz3RIQgyg7R/VaIY
+         t/NhJCS3Zni+i1rF8y5H905X/7fUdY/l0Ui/g88I8/PnwtVs+WwPZrDiSxvcDfymS+fm
+         exPF8ZgriyNv98Kzx6cdq49nHYWhfE5NOv3t5vfqhSAgBlERvFvcVzqEYfg7aiggvAJm
+         HJuQw09IYFWL5pt7QP7yd2vepa4yYMGTnKqwieVM5Et2oCCG5Dxy/0N9vqEZ1/PtdU8+
+         XtvpAgobpMqMLgb+M/LIxNygkBzqIpSSFSOGzmd38SvRGuwDQeYGBmpLB0lG+mGTbFQB
+         xtTA==
+X-Gm-Message-State: ABuFfoizO8PZ0KdX2hBZo0bKEPSmTQFok9KE8qbkQLNCNFVGM7nPoHkE
+        H4qt7WjgqvjTHRm1jdwbYL9un/AAw45mbP3yfAGf9g==
+X-Google-Smtp-Source: ACcGV623sZAltYwLhrzDPY2eFELOkHf5NbocbuaPVg2qaeQ3VShFBsm8oiPiVRGuMSDKdp2uELagLpFRhleupjP4v6E=
+X-Received: by 2002:a02:9b97:: with SMTP id p23-v6mr4581782jak.5.1537948798044;
+ Wed, 26 Sep 2018 00:59:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
+ <1537367527-20773-5-git-send-email-jim2101024@gmail.com> <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
+ <7fa897cf-4d58-c63f-afdd-a3ec5a6a56bf@gmail.com> <CAKv+Gu8aJRV4nqq1e-5HRLvbrANQsYuMf-pwWB53BhxLgX7iWg@mail.gmail.com>
+ <b74d3c16-a512-73dc-c94a-ef6adde5f757@gmail.com> <CAKv+Gu8ZbN3BDRyuFzt4o--SSUmhuOh+jnpq8ZR-Ay13DJrAqg@mail.gmail.com>
+ <fa285694-c3e1-adf8-032a-202e7598de41@gmail.com> <CANCKTBsypcVS_iC1+sbW5fMKfj+tTsxbQv9CvDwcO8GV3a8_Yg@mail.gmail.com>
+ <CAKv+Gu-+OjJi8zGLqvnsOJQ9ygMot-O0EbyMKO-yyG-+k-274A@mail.gmail.com>
+ <CANCKTBtbwSqfSU0b_d6Yi7TV3R_ijEpPE8a4bpgpkcOxJOa_zQ@mail.gmail.com> <7accc1a7-647b-1f92-13f8-2fab315ddc45@gmail.com>
+In-Reply-To: <7accc1a7-647b-1f92-13f8-2fab315ddc45@gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 26 Sep 2018 09:59:45 +0200
+Message-ID: <CAKv+Gu-h4kjxE-ErthJqWQRh7r1EJhC5Na4n2Ma=foJEtDLdcg@mail.gmail.com>
+Subject: Re: [PATCH v5 04/12] PCI: brcmstb: add dma-range mapping for inbound traffic
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Jim Quinlan <jim2101024@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Segher, any idea about this problem ?
+On Wed, 26 Sep 2018 at 04:59, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+>
+> On 9/24/2018 8:01 AM, Jim Quinlan wrote:
+> > On Mon, Sep 24, 2018 at 4:25 AM Ard Biesheuvel
+> > <ard.biesheuvel@linaro.org> wrote:
+> >>
+> >> On Fri, 21 Sep 2018 at 19:41, Jim Quinlan <jim2101024@gmail.com> wrote:
+> >>>
+> >>> On Thu, Sep 20, 2018 at 5:39 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >>>>
+> >>>> On 09/20/2018 02:33 PM, Ard Biesheuvel wrote:
+> >>>>> On 20 September 2018 at 14:31, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >>>>>> On 09/20/2018 02:04 PM, Ard Biesheuvel wrote:
+> >>>>>>> On 20 September 2018 at 13:55, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >>>>>>>> On 09/19/2018 07:19 PM, Ard Biesheuvel wrote:
+> >>>>>>>>> On 19 September 2018 at 07:31, Jim Quinlan <jim2101024@gmail.com> wrote:
+> >>>>>>>>>> The Broadcom STB PCIe host controller is intimately related to the
+> >>>>>>>>>> memory subsystem.  This close relationship adds complexity to how cpu
+> >>>>>>>>>> system memory is mapped to PCIe memory.  Ideally, this mapping is an
+> >>>>>>>>>> identity mapping, or an identity mapping off by a constant.  Not so in
+> >>>>>>>>>> this case.
+> >>>>>>>>>>
+> >>>>>>>>>> Consider the Broadcom reference board BCM97445LCC_4X8 which has 6 GB
+> >>>>>>>>>> of system memory.  Here is how the PCIe controller maps the
+> >>>>>>>>>> system memory to PCIe memory:
+> >>>>>>>>>>
+> >>>>>>>>>>    memc0-a@[        0....3fffffff] <=> pci@[        0....3fffffff]
+> >>>>>>>>>>    memc0-b@[100000000...13fffffff] <=> pci@[ 40000000....7fffffff]
+> >>>>>>>>>>    memc1-a@[ 40000000....7fffffff] <=> pci@[ 80000000....bfffffff]
+> >>>>>>>>>>    memc1-b@[300000000...33fffffff] <=> pci@[ c0000000....ffffffff]
+> >>>>>>>>>>    memc2-a@[ 80000000....bfffffff] <=> pci@[100000000...13fffffff]
+> >>>>>>>>>>    memc2-b@[c00000000...c3fffffff] <=> pci@[140000000...17fffffff]
+> >>>>>>>>>>
+> >>>>>>>>>
+> >>>>>>>>> So is describing this as
+> >>>>>>>>>
+> >>>>>>>>> dma-ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>,
+> >>>>>>>>>               <0x0 0x40000000 0x1 0x0 0x0 0x40000000>,
+> >>>>>>>>>               <0x0 0x80000000 0x0 0x40000000 0x0 0x40000000>,
+> >>>>>>>>>               <0x0 0xc0000000 0x3 0x0 0x0 0x40000000>,
+> >>>>>>>>>               <0x1 0x0 0x0 0x80000000 0x0 0x40000000>,
+> >>>>>>>>>               <0x1 0x40000000 0x0 0xc0000000 0x0 0x40000000>;
+> >>>>>>>>>
+> >>>>>>>>> not working for you? I haven't tried this myself, but since DT permits
+> >>>>>>>>> describing the inbound mappings this way, we should fix the code if it
+> >>>>>>>>> doesn't work at the moment.
+> >>>>>>>>
+> >>>>>>>> You mean encoding the memory controller index in the first cell? If that
+> >>>>>>>> works, that's indeed a much cleaner solution, though is it standard
+> >>>>>>>> compliant in any form?
+> >>>>>>>
+> >>>>>>> No those are just memory addresses (although I may have screwed up the
+> >>>>>>> order). From Documentation/devicetree/booting-without-of.txt:
+> >>>>>>>
+> >>>>>>> """
+> >>>>>>> Optional property:
+> >>>>>>> - dma-ranges: <prop-encoded-array> encoded as arbitrary number of triplets of
+> >>>>>>>          (child-bus-address, parent-bus-address, length). Each triplet specified
+> >>>>>>>          describes a contiguous DMA address range.
+> >>>>>>> """
+> >>>>>>>
+> >>>>>>
+> >>>>>> Then I am confused by your comment, that's what this patch does, it adds
+> >>>>>> support for reading "dma-ranges" from Device Tree and setting up inbound
+> >>>>>> windows using that. The only caveat is that because the PCIe root
+> >>>>>> complex has some ties with the memory bus architecture it is connected
+> >>>>>> to (SCB in our case) there is still a requirement to know the
+> >>>>>> translation between a given physical address and its backing memory
+> >>>>>> controller/aperture.
+> >>>>>>
+> >>>>>
+> >>>>> Ah ok, apologies for the noise then.
+> >>>>>
+> >>>>> I was hoping that having working support for dma-ranges would remove
+> >>>>> the need for the special phys<->dma conversion routines.
+> >>>>
+> >>>> What you describe definitively works with platform devices, but I am not
+> >>>> sure this is working for PCIe devices, although, conceptually it should,
+> >>>> yes.
+> >>> Sorry for my delay in responding.  One problem is that
+> >>> of_dma_configure() only looks at the first dma-range given and then
+> >>> converts it to dev->dma_pfn_offset which is respected by the DMA API.
+> >>> However, we often have multiple dma-ranges, not just one.  This is the
+> >>> big issue.
+> >>>
+> >>
+> >> Given the recent attention to getting these APIs in shape, this may be
+> >> something Robin or Christoph may care to look into?
+> >
+> > It looks like this has been brought up before in the "[RFC PATCH] of:
+> > Fix DMA configuration for non-DT masters" thread aka
+> >
+> > https://lists.linuxfoundation.org/pipermail/iommu/2017-April/021325.html
+> >
+> > In the thread "Oza Oza", a Broadcom coworker probably dealing with the
+> > same exact problem as I,  enumerates three problems.   #1 and #2 are
+> > the exact same ones I've just given: the "dma-ranges" prop of the RC
+> > DT node is "skipped", and of_dma_get_range() only considers the first
+> > entry in any "dma-ranges".
+>
+> Robin, is that something that is expected or should the "dma-ranges"
+> somehow propagate from host bridge down the PCIe end-point drivers?
+>
+> >
+> > Thanks, Jim
+> >
+> >>
+> >> In any case, the description of dma-ranges should be in sync with the
+> >> way Linux interprets it, so this is either a documentation bug or a
+> >> DMA layer bug.
+> >>
+> >>> There is another issue with of_dma_configure() being invoked by the EP
+> >>> driver on "bridge->parent->of_node", which is our RC device,
+> >>> Of_dma_configure() calls of_dma_range() on the of_get_next_parent() of
+> >>> our RC's device node and this misses the dma-ranges property which is
+> >>> contained within the RC.  I think I could workaround this but there is
+> >>> no getting around the first problem.
+> >>>
+> >>
+> >> IIUC dma-ranges should be added to the parent bus of a device, which I
+> >> guess is slightly ambiguous for a root complex that incorporates a
+> >> host bridge.
+>
+> Humm, why is that ambiguous for a host bridge/root complex?
 
-Christophe
-
-Le 26/09/2018 à 09:05, Russell Currey a écrit :
-> On Tue, 2018-09-25 at 17:56 +0200, Christophe LEROY wrote:
->> Snowpatch reports failure on pmac32_defconfig, as follows:
->>
->> arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_printf':
->> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
->> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88:
->> undefined reference to `__stack_chk_fail_local'
->> arch/powerpc/platforms/powermac/bootx_init.o: In function
->> `bootx_add_display_props':
->> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
->> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:211:
->> undefined reference to `__stack_chk_fail_local'
->> arch/powerpc/platforms/powermac/bootx_init.o: In function
->> `bootx_scan_dt_build_struct':
->> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
->> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:350:
->> undefined reference to `__stack_chk_fail_local'
->> arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_init':
->> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
->> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:598:
->> undefined reference to `__stack_chk_fail_local'
->> ld: .tmp_vmlinux1: hidden symbol `__stack_chk_fail_local' isn't defined
->> ld: final link failed: Bad value
->> Makefile:1040: recipe for target 'vmlinux' failed
->> make: *** [vmlinux] Error 1
->>
->> I don't have this issue with GCC 8.1, bootx_init.o has references to
->> __stack_chk_fail, not to __stack_chk_fail_local
->>
->> Looking online, it may be due to an old build and a lack of 'make
->> clean', could it be the case here ?
-> 
-> We do make mrproper AND clean, just to be sure :)
-> 
->>
->> Otherwise, can you retry the build to see if it's happen again ?
-> 
-> I've retried the build and the same thing happens.  Our build environment is using
-> GCC 7.3 on Ubuntu 18.04.  Reproduced on a different machine too, running the same
-> OS and compiler.
-> 
-> You can see exactly what gets run here:
-> https://github.com/ajdlinux/openpower.xyz-snowpatch/blob/master/kernel-build-sparse.sh
-> 
-> - Russell
-> 
->>
->> Christophe
->>
->> Le 24/09/2018 à 17:15, Christophe Leroy a écrit :
->>> On PPC64, as register r13 points to the paca_struct at all time,
->>> this patch adds a copy of the canary there, which is copied at
->>> task_switch.
->>> That new canary is then used by using the following GCC options:
->>> -mstack-protector-guard=tls
->>> -mstack-protector-guard-reg=r13
->>> -mstack-protector-guard-offset=offsetof(struct paca_struct, canary))
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>> ---
->>>    arch/powerpc/Kconfig                      | 2 +-
->>>    arch/powerpc/Makefile                     | 8 ++++++++
->>>    arch/powerpc/include/asm/paca.h           | 3 +++
->>>    arch/powerpc/include/asm/stackprotector.h | 3 +++
->>>    arch/powerpc/kernel/asm-offsets.c         | 3 +++
->>>    arch/powerpc/kernel/entry_64.S            | 4 ++++
->>>    6 files changed, 22 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->>> index 3bcb05929931..602eea723624 100644
->>> --- a/arch/powerpc/Kconfig
->>> +++ b/arch/powerpc/Kconfig
->>> @@ -180,7 +180,7 @@ config PPC
->>>    	select HAVE_ARCH_SECCOMP_FILTER
->>>    	select HAVE_ARCH_TRACEHOOK
->>>    	select HAVE_CBPF_JIT			if !PPC64
->>> -	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-
->>> guard=tls) && PPC32
->>> +	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-
->>> guard=tls)
->>>    	select HAVE_CONTEXT_TRACKING		if PPC64
->>>    	select HAVE_DEBUG_KMEMLEAK
->>>    	select HAVE_DEBUG_STACKOVERFLOW
->>> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
->>> index 45b8eb4d8fe7..81552c7b46eb 100644
->>> --- a/arch/powerpc/Makefile
->>> +++ b/arch/powerpc/Makefile
->>> @@ -113,7 +113,11 @@ KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
->>>    endif
->>>    
->>>    cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
->>> +ifdef CONFIG_PPC64
->>> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r13
->>> +else
->>>    cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r2
->>> +endif
->>>    
->>>    LDFLAGS_vmlinux-y := -Bstatic
->>>    LDFLAGS_vmlinux-$(CONFIG_RELOCATABLE) := -pie
->>> @@ -411,8 +415,12 @@ ifdef CONFIG_STACKPROTECTOR
->>>    prepare: stack_protector_prepare
->>>    
->>>    stack_protector_prepare: prepare0
->>> +ifdef CONFIG_PPC64
->>> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if
->>> ($$2 == "PACA_CANARY") print $$3;}' include/generated/asm-offsets.h))
->>> +else
->>>    	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if
->>> ($$2 == "TASK_CANARY") print $$3;}' include/generated/asm-offsets.h))
->>>    endif
->>> +endif
->>>    
->>>    # Use the file '.tmp_gas_check' for binutils tests, as gas won't output
->>>    # to stdout and these checks are run even on install targets.
->>> diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
->>> index 6d6b3706232c..98d883e58945 100644
->>> --- a/arch/powerpc/include/asm/paca.h
->>> +++ b/arch/powerpc/include/asm/paca.h
->>> @@ -246,6 +246,9 @@ struct paca_struct {
->>>    	struct slb_entry *mce_faulty_slbs;
->>>    	u16 slb_save_cache_ptr;
->>>    #endif /* CONFIG_PPC_BOOK3S_64 */
->>> +#ifdef CONFIG_STACKPROTECTOR
->>> +	unsigned long canary;
->>> +#endif
->>>    } ____cacheline_aligned;
->>>    
->>>    extern struct paca_struct **paca_ptrs;
->>> diff --git a/arch/powerpc/include/asm/stackprotector.h
->>> b/arch/powerpc/include/asm/stackprotector.h
->>> index 263e2aab1862..e81991955c0d 100644
->>> --- a/arch/powerpc/include/asm/stackprotector.h
->>> +++ b/arch/powerpc/include/asm/stackprotector.h
->>> @@ -29,6 +29,9 @@ static __always_inline void boot_init_stack_canary(void)
->>>    	canary ^= LINUX_VERSION_CODE;
->>>    
->>>    	current->stack_canary = canary;
->>> +#ifdef CONFIG_PPC64
->>> +	get_paca()->canary = canary;
->>> +#endif
->>>    }
->>>    
->>>    #endif	/* _ASM_STACKPROTECTOR_H */
->>> diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-
->>> offsets.c
->>> index a992f7a53cf3..773dee55b3f6 100644
->>> --- a/arch/powerpc/kernel/asm-offsets.c
->>> +++ b/arch/powerpc/kernel/asm-offsets.c
->>> @@ -81,6 +81,9 @@ int main(void)
->>>    	OFFSET(MM, task_struct, mm);
->>>    #ifdef CONFIG_STACKPROTECTOR
->>>    	OFFSET(TASK_CANARY, task_struct, stack_canary);
->>> +#ifdef CONFIG_PPC64
->>> +	OFFSET(PACA_CANARY, paca_struct, canary);
->>> +#endif
->>>    #endif
->>>    	OFFSET(MMCONTEXTID, mm_struct, context.id);
->>>    #ifdef CONFIG_PPC64
->>> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
->>> index 77a888bfcb53..573fa879d785 100644
->>> --- a/arch/powerpc/kernel/entry_64.S
->>> +++ b/arch/powerpc/kernel/entry_64.S
->>> @@ -624,6 +624,10 @@ _GLOBAL(_switch)
->>>    
->>>    	addi	r6,r4,-THREAD	/* Convert THREAD to 'current' */
->>>    	std	r6,PACACURRENT(r13)	/* Set new 'current' */
->>> +#if defined(CONFIG_STACKPROTECTOR)
->>> +	ld	r6, TASK_CANARY(r6)
->>> +	std	r6, PACA_CANARY(r13)
->>> +#endif
->>>    
->>>    	ld	r8,KSP(r4)	/* new stack pointer */
->>>    #ifdef CONFIG_PPC_BOOK3S_64
->>>
+Well, perhaps I am the only one who is slightly confused by this, but
+the fact that the device node describes both the host bridge and the
+root port/bridge (which is arguably a device behind the bus) makes it
+somewhat non-intuitive to me.
