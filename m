@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD99C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D985CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D37214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C14214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:55:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SKVl8yeC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D37214FE
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jbD8plmc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C14214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728684AbeIZSHy (ORCPT
+        id S1728653AbeIZSHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:07:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46480 "EHLO
+        Wed, 26 Sep 2018 14:07:52 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46478 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbeIZSHw (ORCPT
+        with ESMTP id S1728632AbeIZSHw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 26 Sep 2018 14:07:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -31,27 +31,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=AJ/FeihIS/WiUtEfjDbg6CRgoMVGPUxLj7TmPmBEqU8=; b=SKVl8yeCprFBC/uN3i/cyFvKUt
-        XarrrRHP42O9ay5qHsxYQofUAs52UA+0BleMRp8+GLZGETe9OzGhwyQZFpwmvN7lzPo1MPwRlXymn
-        b2ulcMeUrOrgQuvVRx6d9EdloryH+etBGbag9jzzgIa9zYN0fJ1Qm7/fzhTUkhmSlUMkic4Z9ZHoC
-        5IHV4ALZh3gEgZiGYCbI4DjzL1MkP726VsTRPJqJjbHbzZfIjPnpZHrh6SGaQRZYcDw+Tqh/gEpDG
-        YgQlMeOfYyv3gHf2FOp3u4DhunMmij1kOW3caAbqNTuV5PiEOXhcAoWGrW4By3KZPn+QkYKIa9pri
-        oR4mCrlQ==;
+        bh=KA2dSx29O1++y9jSzA5WFLAkZsmP8i/iX3gCcgZBjng=; b=jbD8plmcHGE46ObbvYYsmPpiTB
+        UC0Kyw06PgzPDYzi0+oBF+bFhAzFpTr07l6g8FuYwDuOtuEgNzaK6Zwh/HGeBajYXkgFTYq+WwEH8
+        9aGMfmI+DpYw5Z5Hfdg9ykvhEn1fQNxKnU1YAQ0szSs/dHGT2MV1cKurOGHNVz9gjH18Lig2eSVI+
+        3QWhc8Yj4eGPVTOkZdwQE6tJcMAQTG6icBLlij5y8+WnMiiKxp68tlYeWI+oRgbyPrmqk93fmNu2h
+        kGh2U99J2CWuxvv4YBeAqNfQhZhEmHPsZ9Dhl/zqlRKqwKlz0/IZrbOClOeg4ZCzQZjpYr+z2yy+A
+        AT26wr8Q==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g58Oy-0007Up-23; Wed, 26 Sep 2018 11:55:04 +0000
+        id 1g58Oy-0007Uo-2N; Wed, 26 Sep 2018 11:55:04 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id C1B02206F1836; Wed, 26 Sep 2018 13:54:04 +0200 (CEST)
-Message-ID: <20180926114801.417460864@infradead.org>
+        id B9A40206F1834; Wed, 26 Sep 2018 13:54:04 +0200 (CEST)
+Message-ID: <20180926114801.366086396@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 26 Sep 2018 13:36:40 +0200
+Date:   Wed, 26 Sep 2018 13:36:39 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
         akpm@linux-foundation.org, npiggin@gmail.com
 Cc:     linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, peterz@infradead.org,
         linux@armlinux.org.uk, heiko.carstens@de.ibm.com, riel@surriel.com
-Subject: [PATCH 17/18] asm-generic/tlb: Remove tlb_flush_mmu_free()
+Subject: [PATCH 16/18] asm-generic/tlb: Remove HAVE_GENERIC_MMU_GATHER
 References: <20180926113623.863696043@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -60,68 +60,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the comment notes; it is a potentially dangerous operation. Just
-use tlb_flush_mmu(), that will skip the (double) TLB invalidate if
-it really isn't needed anyway.
+Since all architectures are now using it, it is redundant.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/asm-generic/tlb.h |   10 +++-------
- mm/memory.c               |    2 +-
- mm/mmu_gather.c           |    2 +-
- 3 files changed, 5 insertions(+), 9 deletions(-)
+ include/asm-generic/tlb.h |    1 -
+ mm/mmu_gather.c           |    4 ----
+ 2 files changed, 5 deletions(-)
 
 --- a/include/asm-generic/tlb.h
 +++ b/include/asm-generic/tlb.h
-@@ -67,16 +67,13 @@
-  *    call before __tlb_remove_page*() to set the current page-size; implies a
-  *    possible tlb_flush_mmu() call.
+@@ -139,7 +139,6 @@
+  *  page-tables natively.
   *
-- *  - tlb_flush_mmu() / tlb_flush_mmu_tlbonly() / tlb_flush_mmu_free()
-+ *  - tlb_flush_mmu() / tlb_flush_mmu_tlbonly()
-  *
-  *    tlb_flush_mmu_tlbonly() - does the TLB invalidate (and resets
-  *                              related state, like the range)
-  *
-- *    tlb_flush_mmu_free() - frees the queued pages; make absolutely
-- *			     sure no additional tlb_remove_page()
-- *			     calls happen between _tlbonly() and this.
-- *
-- *    tlb_flush_mmu() - the above two calls.
-+ *    tlb_flush_mmu() - in addition to the above TLB invalidate, also frees
-+ *			whatever pages are still batched.
-  *
-  *  - mmu_gather::fullmm
-  *
-@@ -274,7 +271,6 @@ void arch_tlb_gather_mmu(struct mmu_gath
- void tlb_flush_mmu(struct mmu_gather *tlb);
- void arch_tlb_finish_mmu(struct mmu_gather *tlb,
- 			 unsigned long start, unsigned long end, bool force);
--void tlb_flush_mmu_free(struct mmu_gather *tlb);
+  */
+-#define HAVE_GENERIC_MMU_GATHER
  
- static inline void __tlb_adjust_range(struct mmu_gather *tlb,
- 				      unsigned long address,
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1155,7 +1155,7 @@ static unsigned long zap_pte_range(struc
- 	 */
- 	if (force_flush) {
- 		force_flush = 0;
--		tlb_flush_mmu_free(tlb);
-+		tlb_flush_mmu(tlb);
- 		if (addr != end)
- 			goto again;
- 	}
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
+ /*
 --- a/mm/mmu_gather.c
 +++ b/mm/mmu_gather.c
-@@ -91,7 +91,7 @@ bool __tlb_remove_page_size(struct mmu_g
+@@ -11,8 +11,6 @@
+ #include <asm/pgalloc.h>
+ #include <asm/tlb.h>
  
- #endif /* HAVE_MMU_GATHER_NO_GATHER */
+-#ifdef HAVE_GENERIC_MMU_GATHER
+-
+ #ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
  
--void tlb_flush_mmu_free(struct mmu_gather *tlb)
-+static void tlb_flush_mmu_free(struct mmu_gather *tlb)
- {
+ static bool tlb_next_batch(struct mmu_gather *tlb)
+@@ -109,8 +107,6 @@ void tlb_flush_mmu(struct mmu_gather *tl
+ 	tlb_flush_mmu_free(tlb);
+ }
+ 
+-#endif /* HAVE_GENERIC_MMU_GATHER */
+-
  #ifdef CONFIG_HAVE_RCU_TABLE_FREE
- 	tlb_table_flush(tlb);
+ 
+ /*
 
 
