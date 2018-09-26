@@ -6,86 +6,83 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F67C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DCEC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A015B20684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:05:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A015B20684
+	by mail.kernel.org (Postfix) with ESMTP id 277F920684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:05:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277F920684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeIZTSX (ORCPT
+        id S1728328AbeIZTSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:18:23 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:34965 "EHLO
+        Wed, 26 Sep 2018 15:18:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:58905 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbeIZTSW (ORCPT
+        with ESMTP id S1726802AbeIZTSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:18:22 -0400
+        Wed, 26 Sep 2018 15:18:33 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MKMIR-1gKu2S301f-00LniG; Wed, 26 Sep 2018 15:05:27 +0200
+ 1M6YEz-1g76Mm1W6j-006uFm; Wed, 26 Sep 2018 15:05:01 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-mtd@lists.infradead.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: ixp4xx: include linux/mtd/platnand.h
-Date:   Wed, 26 Sep 2018 15:04:39 +0200
-Message-Id: <20180926130458.2406549-2-arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: omap1: add nand_chip declaration
+Date:   Wed, 26 Sep 2018 15:04:38 +0200
+Message-Id: <20180926130458.2406549-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180926130458.2406549-1-arnd@arndb.de>
-References: <20180926130458.2406549-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:eesi5L5oJRNUXfWq2ccLh2og1C9GMWU0FkGZdoVipVyHPt9fW6w
- oE+VoAxq4XVMNQhPapgsIuxwuQ15b1HTAglY0QXFnOgxP90+tFx3CGH0SS4n7Pz/p85zNrM
- IqJ0UO7TGIlZ7nOjyCgS/aK425+HK3xeHJiRwzUgC2GxNYz5inTgmJdpNrVoFgbAmG/YpA6
- yDcPpnrrrsmggcCzaeuMg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ukSRywdMagk=:g7NFJP+1r1caKMiUdvVi65
- sG3r4fvXv41d+ydIZ4fBCDElVgCjd4bPMHcpkEpX9AWYRw3HdWzO9mM8ZMhhOfRAduXHbvGwT
- dQku4losMvxTCGri5phxYo5iBx7BjhnClLBpg1cqTkKpcUdUzTvP36AXzQChDqO82cGdY9Dyu
- j9GCINTDVCAuy5RYW2vSI25QP+dhUsHobhMIL552/ATD/fkGza4npXTUPgoWmQBV8T7Vn65/v
- L3MdcQ9i1KTLUIyxSeDZS9dM7FsC2TYEdBpZWdhP5aQxPDWzV2VfvTjkj/qV4KXH+lkwbMGba
- QTX+SAeuWJZ09Yl+OV3Yxs1fBTgD8AZVhI6vzVLGEMWw2jJy1h/Iz2QQzEUfFUa632CDJiWxz
- SJag5CkqWQF5ygL2+vd9aBaRH+7cIMt2nWKuhil8aTErbskV8DqFVhfZjcYDaSvIMWU/WeBI3
- DmhSOaP/raY+YAYEGoCdmzvs6BAeC/GfNpDg9CB9RHuAhuzEzhqQkSPRqWRdRDQ6YBIKTTxdC
- P+lZnMayJYk/846SWZmxItuV863D54xp/9GcTiCsSVSk6WbDxQoe3N6PYgoZec2HOpisBVuw/
- zYuhFWZe+6mXDVFlyfKlpQhymvgKs812aXiwDRoeZbyySOhpcvzbg0N5mQY0cRkjl+HfuuUeN
- MLhIW6cuN19Gm7AGQxrTr85lvWMk2o1Rx4OxY26Dl0xPm+t1hYcthm3Wm4AAPcejUzgk=
+X-Provags-ID: V03:K1:m5iUF1QnVkusghXWgP4SqCCellrpwKLxVclQJ9DBo7UN+pqJT+H
+ u2OnBUP29prUHouYz0Z4G8YvYiYL4PP4pOAvzzeieaJKfZ00Vwrik26hdxhM7O0gWD7xu60
+ AtbTOswXyzzgirz63jaG3Osb3ImUq+/xxktvZo50vq39xLVmTO3Vog+7rH7/ogpvwxnde2p
+ TFXgSlNSp3pJsXwLynSww==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:HUlBE//1IRk=:Hx9TyCIzXs3DMv9Fk1HIYH
+ lVuUMPycA1c3OwO9ea08jlYq8kgtWqXJ9vUBc0/gl7/g60cX5KKxw0VDkkQX5JbAfo6zgtdZa
+ 3AoUTNyy6n0NZ+KQ0EcOUx9SmR21ceVcfoe51YHT2yLFF96Nwm8A1B66oVfApnrJcpo+7E3Ci
+ bZPcYQo5ZL1e4L96d0a3U9Eb2C+2BjkdrawWT/K44LgGIS86YXHLWBRdQVHpEiU4S4zWe9X2s
+ P0DWLGiLvvITaRjbtnO2qjLvIiid7NxMN3VRPqAQUbtkpqYinSOHMBR3lj7FsVC3EyPr30MU9
+ BGs6PCXr3ga7ei6HtZYpLyP+NfPZ6u+TglY/cfPvRyWCkEwpjyJhg7lMPUO3Tpgy63auTAsHU
+ SFDzTDuP8hm1pgnzQ7Wb0KG6Hr6MvXV6BGmKn4tqPXS2Tzz2LVjUZGfksN+lj42X4P1WNdR0n
+ GINkyAGikL1Fee84iQtj9JqEjNqmdBXagBxVcYLsKRpvfgVrEpM0XJxoAPoP/xu6AfSpvuDpe
+ sKUvgBLSPyGNpMRbehU2JXh/bOrOUYumhcl43eV7aLXQ/Q2cSN5PRB/HUQIqHjcNNWZu07Trs
+ Cv0P3WEc7fAKR6Di09FtIpBvtXFafcxdJhAM7U7zwaQjvRQPeewq5dU3CJxN7yw/BdK4dLqML
+ PxdIgewNH+6GD3XZY7woKpcbwEqh5dSDKg47PlSMa0m/50ZF5yIoOb0dWnT+mcEH1fD8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The platform_nand_data structure definition is required for ixdp425
-but has now moved to a new header file:
+Recent MTD changes caused a minor build regression on OMAP1:
 
-arch/arm/mach-ixp4xx/ixdp425-setup.c:98:15: error: variable 'ixdp425_flash_nand_data' has initializer but incomplete type
- static struct platform_nand_data ixdp425_flash_nand_data = {
-               ^~~~~~~~~~~~~~~~~~
-arch/arm/mach-ixp4xx/ixdp425-setup.c:99:3: error: 'struct platform_nand_data' has no member named 'chip'
+In file included from arch/arm/mach-omap1/devices.c:31:
+arch/arm/mach-omap1/common.h:85:39: error: 'struct nand_chip' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
 
-Fixes: 19cf5dfa3a31 ("mtd: rawnand: Move platform_nand_xxx definitions out of rawnand.h")
+Fixes: 1002aed789bc ("mtd: rawnand: plat_nand: Pass a nand_chip object to all platform_nand_ctrl hooks")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-ixp4xx/ixdp425-setup.c | 1 +
+ arch/arm/mach-omap1/common.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-ixp4xx/ixdp425-setup.c b/arch/arm/mach-ixp4xx/ixdp425-setup.c
-index 797e7edc7124..57d7df79d838 100644
---- a/arch/arm/mach-ixp4xx/ixdp425-setup.c
-+++ b/arch/arm/mach-ixp4xx/ixdp425-setup.c
-@@ -20,6 +20,7 @@
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
-+#include <linux/mtd/platnand.h>
- #include <linux/delay.h>
- #include <linux/gpio.h>
- #include <asm/types.h>
+diff --git a/arch/arm/mach-omap1/common.h b/arch/arm/mach-omap1/common.h
+index 11b87a4c84d4..82f2c065040a 100644
+--- a/arch/arm/mach-omap1/common.h
++++ b/arch/arm/mach-omap1/common.h
+@@ -82,6 +82,7 @@ void omap1_restart(enum reboot_mode, const char *);
+ 
+ extern void __init omap_check_revision(void);
+ 
++struct nand_chip;
+ extern void omap1_nand_cmd_ctl(struct nand_chip *this, int cmd,
+ 			       unsigned int ctrl);
+ 
 -- 
 2.18.0
 
