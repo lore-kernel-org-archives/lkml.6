@@ -2,232 +2,353 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0DAC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CC0C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 794BA214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1DF520684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:10:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3SvHWx3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794BA214C5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yoc5CMZe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DF520684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbeIZOVg (ORCPT
+        id S1727469AbeIZOWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:21:36 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46447 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeIZOVf (ORCPT
+        Wed, 26 Sep 2018 10:22:18 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33428 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeIZOWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:21:35 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d8-v6so6103756pfo.13;
-        Wed, 26 Sep 2018 01:09:53 -0700 (PDT)
+        Wed, 26 Sep 2018 10:22:17 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b97-v6so9588950plb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d/m7KNb/ScisxKtxaNhYNgvcrtqIq6lGo9kjSwlatAU=;
-        b=M3SvHWx3/KVvfKHAt0ifP6+GjYBQTJM2A8LG4o1JMYYXtePccD65STqL15640hNKi4
-         biBuB5DgnMnRO1ZqyIsBjnXeyF4DzGr1mKxZPyRinTyHoGZ6aht387+dB6npyKdfM/xm
-         A2a6ttEaaU6fU/aU8E/qvgGDVzgw+SqNN/CcT+EZJecv1dTKfbNqLa4Bub69VdsCDsz7
-         0A42rAKQt4p9MbbezncYcEORqjv3Qpov2IUR3RxyHyahkUf5ItaZd9W7HKc1JeOTmGgE
-         ++L4xtlaYArrTjWXybKsG7ECLklyYJLiIQGwTlYP5MM7TvdvTEgtrbBI6X3RSa7xYsaJ
-         eCag==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=y/jETNbStI+fUQ3J68FJ+i0wF/lv2NmuwtnCLGJdTBE=;
+        b=Yoc5CMZeS9WKsV+g/BR7YO8bsz5kXy2tq1xRI4L/7u0o7ZfixLxYj8RwIX5EAqAimj
+         OqlQMtuoqEAsgcWeKaN6ID4U3Lugi/AZswZosJzOj9L0g/xM9MANBf2RRzZJQNYKuv37
+         nGiZotqUcjYVXbLMxOMk/efCY/32OUTRpS9xdYyerMR7ow2IO93IKoHp1H1QXcojeiEe
+         EZ5LSTiaA3P/e84IU6fmnp/PceRlK/X+/PwuvdFsdjjibAgeRJW0S7LijjjA2/Yfb49m
+         SXGg8srHXeAPXky3mHF1H0J9mK/XC/NfJYKu63XK9o9e1Trwu0m0K1vmefYc5pWnT7l2
+         YZew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d/m7KNb/ScisxKtxaNhYNgvcrtqIq6lGo9kjSwlatAU=;
-        b=NeziWGMVB2kveLPwTFb+Qf9gmJPu81YH22jyZ9f0Xv7EpjBta98+n3RjqkjpU5QkLI
-         IVd201vK8+9OuHq9s0LvWD9d16a082aOCd+pKiSGsBaLWgdOI0Jdbd0rmnspiRghl8uu
-         x96abCHgjc6jnZYwC8AXFmNKCtokj5HPuojoy9NWZMXi79qp8KtnC79zZ7QT1pvfqFBq
-         7Ef2TSdr/YlAJoCS8iHBcwlg+fVthzxXYbCKSMVIk7x/6RhEbSFq4harPsEmOKZ/hw5K
-         z72C6j0ckx3Cg4vWiB/v/0ULQLoo2hRBE5rAJ/IrbTkjJIYj8WMax7VreeCvaxyAMpTC
-         D3xA==
-X-Gm-Message-State: ABuFfoiN4Kzp7J3iOg6BFew7vhMhnhQzFB45NY2IigVN3WZBwPEfMPnK
-        C4A/Xpti+mjvV3IkOVYhXfE=
-X-Google-Smtp-Source: ACcGV62R9qi2RHWqZRMBos1P7BRuqwRdu1bVcRo5/Kptu7OwnLoTMX+PWwrzI06+S14LGW6VBHyhVA==
-X-Received: by 2002:a63:4c16:: with SMTP id z22-v6mr4689105pga.312.1537949392654;
-        Wed, 26 Sep 2018 01:09:52 -0700 (PDT)
-Received: from Eros (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
-        by smtp.gmail.com with ESMTPSA id f81-v6sm16182252pfh.46.2018.09.26.01.09.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 01:09:52 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 16:09:45 +0800
-From:   Song Qiang <songqiang1304521@gmail.com>
-To:     Phil Reid <preid@electromag.com.au>
-Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        rtresidd@electromag.com.au, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iio: magnetometer: Add driver support for PNI RM3100
-Message-ID: <20180926080752.GA12183@Eros>
-References: <20180925031724.21399-1-songqiang1304521@gmail.com>
- <20180925031724.21399-2-songqiang1304521@gmail.com>
- <20180925143054.00007fcb@huawei.com>
- <57d8a9d6-c402-068e-0a21-bbd6c20a7816@electromag.com.au>
- <20180926014951.GA7094@Eros>
- <4de691f2-dbc9-6124-efa6-66f2dd7e0f2b@electromag.com.au>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=y/jETNbStI+fUQ3J68FJ+i0wF/lv2NmuwtnCLGJdTBE=;
+        b=QR2W8/Ho1XW/anpiz1v/pdxLgzHORPmLXPpkHbmA1VXef1rkFzsXE87lSIPLpEdGsZ
+         Rqt6T6Cc9DwnkV99509jDrQfGIm6/FvKuktujWZcxY50E6G9TXaY2JDPRLCOrNNG8sBO
+         PZLSzZZbzE3cId2hY9phUKCIpCRmCU9ms9RHR8jLWNZglhlmg2OQtDqJIafB/hq0nePJ
+         BQvcQdh5CU+rqO9cL1MP/IrMUM3QmxnjmkX37hRPjDHAGSG6pIP/8UEqRnXmgdQoOOaO
+         CpJ9PSiX6bh/ubSW9xCYz5BOcBgEAI9mtQOESnydpaj3acWYYip9CcKJ4/6HU7mxl3H1
+         j3Qg==
+X-Gm-Message-State: ABuFfoiIRmoesmMZOYX+kQCwaKRrPabBOyL6qNcn9fUIqD7zEPH0K2zM
+        BSsjvKgJ5qcCsChqs9FhZwA=
+X-Google-Smtp-Source: ACcGV63lSnLUhxrow/5h3roM3i0IN8mjwTWCHnrVKI5slJ1tjQo+p+2m+qcgMlCiiPS9zPqNX0EFjA==
+X-Received: by 2002:a17:902:b712:: with SMTP id d18-v6mr4985202pls.53.1537949434562;
+        Wed, 26 Sep 2018 01:10:34 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id n22-v6sm6476821pfi.185.2018.09.26.01.10.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 01:10:33 -0700 (PDT)
+Subject: Re: [PATCH v14 06/16] of/fdt: add helper functions for handling
+ properties
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
+        james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+References: <20180907080040.4967-1-takahiro.akashi@linaro.org>
+ <a535515a-92f1-fc33-bdb9-6f5e0392cb11@gmail.com>
+ <8403dfd5-3188-219b-966c-72b009f94e0f@gmail.com>
+ <16a39f7f-a8cc-72a1-89a7-e9b49a4d6547@gmail.com>
+ <20180926055704.GC27322@linaro.org>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <8394773d-e614-3868-c725-f6825690a57e@gmail.com>
+Date:   Wed, 26 Sep 2018 01:10:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4de691f2-dbc9-6124-efa6-66f2dd7e0f2b@electromag.com.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180926055704.GC27322@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 10:30:34AM +0800, Phil Reid wrote:
-> On 26/09/2018 9:49 AM, Song Qiang wrote:
-> > On Tue, Sep 25, 2018 at 10:36:54PM +0800, Phil Reid wrote:
-> > > On 25/09/2018 9:30 PM, Jonathan Cameron wrote:
-> > > > > +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
-> > > > > +{
-> > > > > +	struct iio_poll_func *pf = p;
-> > > > > +	struct iio_dev *indio_dev = pf->indio_dev;
-> > > > > +	struct rm3100_data *data = iio_priv(indio_dev);
-> > > > > +	struct regmap *regmap = data->regmap;
-> > > > > +	u8 buffer[9];
-> > > > > +	int ret;
-> > > > > +	int i;
-> > > > > +
-> > > > > +	mutex_lock(&data->lock);
-> > > > > +	ret = rm3100_wait_measurement(data);
-> > > > > +	if (ret < 0) {
-> > > > > +		mutex_unlock(&data->lock);
-> > > > > +		goto done;
-> > > > > +	}
-> > > > > +
-> > > > > +	ret = regmap_bulk_read(regmap, RM3100_REG_MX2, buffer, sizeof(buffer));
-> > > > > +	mutex_unlock(&data->lock);
-> > > > > +	if (ret < 0)
-> > > > > +		goto done;
-> > > > > +
-> > > > > +	/* Convert XXXYYYZZZxxx to XXXxYYYxZZZx. x for padding. */
-> > > > > +	for (i = 0; i < 3; i++)
-> > > > > +		memcpy(data->buffer + i * 4, buffer + i * 3, 3);
-> > > > Firstly X doesn't need copying.
-> > > > Secondly the copy of Y actually overwrites the value of Z
-> > > > XXXYYYZZZxxx
-> > > > XXXxYYYZZxxx
-> > > > XXXxYYYxYZZx
-> > > > 
-> > > > I think...
-> > > > 
-> > > > > +
-> > > > > +	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
-> > > > > +			iio_get_time_ns(indio_dev));
-> > > 
-> > > memcpy target is a different buffer so should be ok.
-> > > 
-> > > But that raises the question of does it need to be?
-> > > 'buffer' could be 12 bytes long and just shuffle Z then Y.
-> > > Do the unused bytes need to be zeroed? or does libiio mask them anyway?
-> > > 
-> > > 
-> > > 
-> > > -- 
-> > > Regards
-> > > Phil Reid
-> > 
-> > Hi Phil,
-> > 
-> > This is interesting, last patch I submitted uses three transactions and
-> > shuffles X, Y and Z respectively. You said it should be better to use one
-> > transactions, I thought it makes point, and one transaction may reduce
-> > IO pressure of the i2c bus. :)
-> > And that's not necessary for unused bytes to be zero. I'm not familiar
-> > with libiio, actually just been studying it, can't say anything about
-> > it.
-> > 
-> > yours,
-> > Song Qiang
-> > 
-> > 
-> G'day Song,
-> 
-> yes the one transaction suggestion was to reduce pressure on the bus.
-> I think also with 3 calls you can up up with other devices taking over
-> the i2c / spi bus in between.
-> 
-> We've got a devkit for this part, but haven't got to wiring it up to our system as yet.
-> We're looking at using the i2c interface which could push things at max samplerate, so yes I'm
-> keen to see bus pressure reduced as much as possible.
-> 
-> I was thinking something like the following:
-> 
-> u8 buffer[12];
-> regmap_bulk_read(regmap, RM3100_REG_MX2, buffer, 9);
-> 
-> buffer[10] = buffer[8]; // or memcpy or some other fancy shuffle code.
-> buffer[9]  = buffer[7];
-> buffer[8]  = buffer[6];
-> 
-> buffer[6]  = buffer[5];
-> buffer[5]  = buffer[4];
-> buffer[4]  = buffer[3];
-> 
-> iio_push_to_buffers_with_timestamp(indio_dev, buffer, iio_get_time_ns(indio_dev));
-> 
-> but I'm unsure if this would be needed:
-> buffer[7] = 0
-> buffer[3] = 0
-> 
-> What you've got does the job I think.
-> 
-> I haven't dug into the datasheet in great detail, and my iio knownledge is limited.
-> Are you sure the RM3100_CHANNEL scantype endianness is IIO_LE.
-> rm3100_read_mag looks to be doing big endian conversion and the datasheet agrees with that.
-> 
-> 
-> -- 
-> Regards
-> Phil Reid
-> 
+Hi Rob,
 
-Hi Phil,
+On 09/25/18 22:57, AKASHI Takahiro wrote:
+> Frank,
+> 
+> On Fri, Sep 14, 2018 at 10:19:38AM -0700, Frank Rowand wrote:
+>> On 09/13/18 18:26, Frank Rowand wrote:
+>>> I was re-reading this while answering a later email in the thread.  After reading
+>>> other patches in the series that were not sent to me, I have a better understanding
+>>> of the intent behind this patch, and some changes to my previous reply.
+>>>
+>>> The intent of the helper functions is related to properties whose values are
+>>> tuples of the same format as the "reg" property of the "/memory" nodes.  For
+>>> example, the "linux,usable-memory-range" and "linux,elfcoredhr" properties of
+>>> the "/chosen" node.
+>>>
+>>> The patch header and the function names should be updated to reflect this intent.
+>>> This means most or all of my previous suggested function name changes are no longer
+>>> useful.
+>>>
+>>> Please add devicetree@vger.kernel.org to the next version of this patch and to
+>>> the patches that use the functions in this patch.
+>>>
+>>>
+>>> On 09/07/18 12:53, Frank Rowand wrote:
+>>>> On 09/07/18 01:00, AKASHI Takahiro wrote:
+>>>>> These functions will be used later to handle kexec-specific properties
+>>>>> in arm64's kexec_file implementation.
+>>>>>
+>>>>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>>>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>>>> Cc: Frank Rowand <frowand.list@gmail.com>
+>>>>> ---
+>>>>>  drivers/of/fdt.c       | 62 ++++++++++++++++++++++++++++++++++++++++--
+>>>>>  include/linux/of_fdt.h | 10 +++++--
+>>>>>  2 files changed, 68 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+>>>>> index 800ad252cf9c..dc960cea1355 100644
+>>>>> --- a/drivers/of/fdt.c
+>>>>> +++ b/drivers/of/fdt.c
+>>>>> @@ -25,6 +25,7 @@
+>>>>>  #include <linux/debugfs.h>
+>>>>>  #include <linux/serial_core.h>
+>>>>>  #include <linux/sysfs.h>
+>>>>> +#include <linux/types.h>
+>>>>>  
+>>>>>  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
+>>>>>  #include <asm/page.h>
+>>>>> @@ -537,8 +538,8 @@ void *of_fdt_unflatten_tree(const unsigned long *blob,
+>>>>>  EXPORT_SYMBOL_GPL(of_fdt_unflatten_tree);
+>>>>>  
+>>>>>  /* Everything below here references initial_boot_params directly. */
+>>>>> -int __initdata dt_root_addr_cells;
+>>>>> -int __initdata dt_root_size_cells;
+>>>>> +int dt_root_addr_cells;
+>>>>> +int dt_root_size_cells;
+>>>>>  
+>>>>>  void *initial_boot_params;
+>>>>>  
+>>>>> @@ -1323,3 +1324,60 @@ late_initcall(of_fdt_raw_init);
+>>>>>  #endif
+>>>>>  
+>>>>>  #endif /* CONFIG_OF_EARLY_FLATTREE */
+>>>>> +
+>>>
+>>> Global comment: this code should not be using the variables
+>>> dt_root_addr_cells and dt_root_size_cells.  These variables are
+>>> __initdata.
+>>>
+>>> The code that is using these helpers is acting upon a specific FDT
+>>> (copied from initial_boot_params).  This code should be getting the
+>>> values of the root node's "#address-cells" and "#size-cells" from
+>>> the FDT.
+>>
 
-You're absolutely right!
-This should be big endian, I think I probably just want something there
-when I was writing this code, planned to change it later, but apparently
-I've forgotten it...
 
-AFAIK, filling places we do not need with 0 is not needed, we just
-extract valid data from valid bit field(24 here).
+Can you confirm whether "[PATCH 3/3] scripts/dtc: ..." (see below) will
+be in the v4.20 pull request?
 
-Both one transaction and three transactions way have their point, but
-this is a OS, probably the spiltted one is better, I need some real
-thinking about this...
 
-I could have use the same buffer to read from the sensor and send it to
-userspace like this:
+>> There will be new functions available soon to return the values of
+>> a node's "#address-cells" and "#size-cells" from an fdt.  They are
+>> fdt_address_cells() and fdt_size_cells().
+>>
+>> Rob submitted the patch to add them yesterday in "[PATCH 3/3] scripts/dtc:
+>> Update to upstream version v1.4.7-14-gc86da84d30e4" [1]
+> 
+> Will this patch go into mainline in v4.20 merge window?
+> 
+>>   [1] https://lkml.kernel.org/r/<20180913202828.15372-3-robh@kernel.org>
+> 
+> Unfortunately, fdt_addresses.c where fdt_address_cells() and
+> fdt_size_cells() are defined is NOT compiled in the kernel.
+> I will submit a patch.
+> 
+> -Takahiro Akashi
+> 
+> 
+>> -Frank
 
-int i = 0;
-ret = regmap_bulk_read(regmap, RM3100_REG_MX2, 9);
-if(ret)
-	...
-/* Convert XXXYYYZZZxxx to XXXxYYYxZZZx. */
-for (i = 0; i < 2; i++)
-	memcpy(buffer + (2 - i) * 4, buffer + (2 - i) * 3), 3);
+Thanks,
 
-This code snippet will use the same buffer, actually that's what I was
-using the first time. Jonathan must thinks so, from what he commented,
-he assumed I was using the same buffer, also what you want.
-But I changed this due to Peter's comment, maybe not a big deal, he
-suggests to use sizeof(buffer), this makes me use an additional size 9
-buffer. I thought this doesn't matter too much, just some additional
-space from the stack, but now I think maybe less memory using would be
-better...
-After all, this length 9 seems like never shouldn't be changed...
+Frank
 
-yours,
-Song Qiang
+
+>>
+>>
+>>>
+>>>
+>>>> Please add comment:
+>>>>
+>>>> /* helper functions for arm64 kexec */
+>>>>
+>>>>
+>>>>> +bool of_fdt_cells_size_fitted(u64 base, u64 size)
+>>>>
+>>>> Please rename as of_fdt_range_valid()
+>>>
+>>> I'm not entirely sure of what the caller in 12/16 is trying to ensure
+>>> with this function.
+>>>
+>>> (1) At the minimum (and what the implementation in of_fdt_cells_size_fitted()
+>>> does) is make sure that an address and size tuple are consistent with
+>>> the root properties "#address-cells" and "#size-cells".
+>>>
+>>> The caller in 12/16 is using this check to validate values for the
+>>> properties  "linux,elfcorehdr" and "linux,usable-memory-range".
+>>>
+>>> (2) A more complete check _might_ be to ensure that the values also
+>>> specify memory that is available to the kernel.  This memory is described
+>>> by the "reg" property of one or more "/memory" nodes.
+>>>
+>>> This second check is probably what is actually desired.
+>>>
+>>> One possible issue to note is that the binding for "linux,usable-memory-range"
+>>> suggests that available memory could be described by an EFI memory map.
+>>> I am not familiar with how or when an EFI memory map might exist instead
+>>> of the "/memory" nodes.
+>>>
+>>>
+>>>>> +{
+>>>>> +	/* if *_cells >= 2, cells can hold 64-bit values anyway */
+>>>>> +	if ((dt_root_addr_cells == 1) && (base > U32_MAX))
+>>>>> +		return false;
+>>>>> +
+>>>>> +	if ((dt_root_size_cells == 1) && (size > U32_MAX))
+>>>>> +		return false;
+>>>>
+>>>> Should also check that base + size does not wrap around.
+>>>>
+>>>>
+>>>>> +
+>>>>> +	return true;
+>>>>> +}
+>>>>> +
+>>>>> +size_t of_fdt_reg_cells_size(void)
+>>>>
+>>>> Please rename as of_fdt_root_range_size()
+>>>
+>>> Even better would be to remove this function and replace the one place
+>>> that it is called from with the one line of code in this function.
+>>>
+>>> -Frank
+>>>
+>>>
+>>>>> +{
+>>>>> +	return (dt_root_addr_cells + dt_root_size_cells) * sizeof(u32);
+>>>>> +}
+>>>>> +
+>>>>> +#define FDT_ALIGN(x, a)	(((x) + (a) - 1) & ~((a) - 1))
+>>>>> +#define FDT_TAGALIGN(x)	(FDT_ALIGN((x), FDT_TAGSIZE))
+>>>>> +
+>>>>> +int fdt_prop_len(const char *prop_name, int len)
+>>>>
+>>>> Please rename as fdt_len_added_prop()
+>>>>
+>>>>
+>>>>> +{
+>>>>> +	return (strlen(prop_name) + 1) +
+>>>>> +		sizeof(struct fdt_property) +
+>>>>> +		FDT_TAGALIGN(len);
+>>>>> +}
+>>>>> +
+>>>>
+>>>> Please add comment, something like:
+>>>>
+>>>> /* cells must be 1 or 2 */
+>>>>
+>>>>
+>>>>> +static void fill_property(void *buf, u64 val64, int cells)
+>>>>
+>>>> Please rename as cpu64_to_fdt_cells()
+>>>>
+>>>> Thanks,
+>>>>
+>>>> Frank
+>>>>
+>>>>> +{
+>>>>> +	__be32 val32;
+>>>>> +
+>>>>> +	while (cells) {
+>>>>> +		val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
+>>>>> +		memcpy(buf, &val32, sizeof(val32));
+>>>>> +		buf += sizeof(val32);
+>>>>> +	}
+>>>>> +}
+>>>>> +
+>>>>> +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
+>>>>> +						u64 addr, u64 size)
+>>>>> +{
+>>>>> +	char buf[sizeof(__be32) * 2 * 2];
+>>>>> +		/* assume dt_root_[addr|size]_cells <= 2 */
+>>>>> +	void *prop;
+>>>>> +	size_t buf_size;
+>>>>> +
+>>>>> +	buf_size = of_fdt_reg_cells_size();
+>>>>> +	prop = buf;
+>>>>> +
+>>>>> +	fill_property(prop, addr, dt_root_addr_cells);
+>>>>> +	prop += dt_root_addr_cells * sizeof(u32);
+>>>>> +
+>>>>> +	fill_property(prop, size, dt_root_size_cells);
+>>>>> +
+>>>>> +	return fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
+>>>>> +}
+>>>>> diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+>>>>> index b9cd9ebdf9b9..9615d6142578 100644
+>>>>> --- a/include/linux/of_fdt.h
+>>>>> +++ b/include/linux/of_fdt.h
+>>>>> @@ -37,8 +37,8 @@ extern void *of_fdt_unflatten_tree(const unsigned long *blob,
+>>>>>  				   struct device_node **mynodes);
+>>>>>  
+>>>>>  /* TBD: Temporary export of fdt globals - remove when code fully merged */
+>>>>> -extern int __initdata dt_root_addr_cells;
+>>>>> -extern int __initdata dt_root_size_cells;
+>>>>> +extern int dt_root_addr_cells;
+>>>>> +extern int dt_root_size_cells;
+>>>>>  extern void *initial_boot_params;
+>>>>>  
+>>>>>  extern char __dtb_start[];
+>>>>> @@ -108,5 +108,11 @@ static inline void unflatten_device_tree(void) {}
+>>>>>  static inline void unflatten_and_copy_device_tree(void) {}
+>>>>>  #endif /* CONFIG_OF_EARLY_FLATTREE */
+>>>>>  
+>>>>> +bool of_fdt_cells_size_fitted(u64 base, u64 size);
+>>>>> +size_t of_fdt_reg_cells_size(void);
+>>>>> +int fdt_prop_len(const char *prop_name, int len);
+>>>>> +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
+>>>>> +						u64 addr, u64 size);
+>>>>> +
+>>>>>  #endif /* __ASSEMBLY__ */
+>>>>>  #endif /* _LINUX_OF_FDT_H */
+>>>>>
+>>>>
+>>>>
+>>>
+>>>
+>>
+> 
 
