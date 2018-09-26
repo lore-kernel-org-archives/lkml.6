@@ -2,83 +2,95 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2853AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1FDC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF2E21530
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:34:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF2E21530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C873B2152F
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C873B2152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hadess.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbeIZWsX (ORCPT
+        id S1728903AbeIZWro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:48:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41610 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728241AbeIZWsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:48:22 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 44BB7308214B;
-        Wed, 26 Sep 2018 16:34:37 +0000 (UTC)
-Received: from mmorsy.remote.csb (unknown [10.36.112.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E40410694C6;
-        Wed, 26 Sep 2018 16:34:27 +0000 (UTC)
-From:   Mohammed Gamal <mgamal@redhat.com>
-To:     sthemmin@microsoft.com, netdev@vger.kernel.org
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, vkuznets@redhat.com,
-        otubo@redhat.com, cavery@redhat.com, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, Mohammed Gamal <mgamal@redhat.com>
-Subject: [PATCH] hv_netvsc: Make sure out channel is fully opened on send
-Date:   Wed, 26 Sep 2018 18:34:19 +0200
-Message-Id: <1537979659-26979-1-git-send-email-mgamal@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 26 Sep 2018 16:34:37 +0000 (UTC)
+        Wed, 26 Sep 2018 18:47:44 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:60502 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbeIZWrn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:47:43 -0400
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id E8CFC3A5595
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 18:09:37 +0200 (CEST)
+X-Originating-IP: 83.155.44.161
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 3B909FF802;
+        Wed, 26 Sep 2018 16:09:34 +0000 (UTC)
+Message-ID: <932c109c28bbba7b833ff82cc68ee0ccc9a30374.camel@hadess.net>
+Subject: XBox One S controller, Bluetooth support (was Re: hid: microsoft:
+ Add rumble support for Xbox One S controller)
+From:   Bastien Nocera <hadess@hadess.net>
+To:     Dollinger Florian <dollinger.florian@gmx.de>,
+        andrew.smirnov@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@kernel.org,
+        linux-input@vger.kernel.org
+Date:   Wed, 26 Sep 2018 18:09:33 +0200
+In-Reply-To: <701e5f0fc3b24adf4b1ca4d817b3091fe73102ba.camel@hadess.net>
+References: <20180810001714.14659-1-andrew.smirnov@gmail.com>
+         <20180926125130.974-1-dollinger.florian@gmx.de>
+         <701e5f0fc3b24adf4b1ca4d817b3091fe73102ba.camel@hadess.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dring high network traffic changes to network interface parameters
-such as number of channels or MTU can cause a kernel panic with a NULL
-pointer dereference. This is due to netvsc_device_remove() being
-called and deallocating the channel ring buffers, which can then be
-accessed by netvsc_send_pkt() before they're allocated on calling
-netvsc_device_add()
+On Wed, 2018-09-26 at 15:45 +0200, Bastien Nocera wrote:
+> Hey Florian,
+> 
+> On Wed, 2018-09-26 at 14:51 +0200, Dollinger Florian wrote:
+> > From: Florian Dollinger <dollinger.florian@gmx.de>
+> > 
+> > Hi there! Why do you re-engineer the wheel? :) There is already a
+> > fully functional and tested driver out there (
+> > https://github.com/atar-axis/xpadneo). Would be much easier to help
+> > me (the owner of xpadneo) to push it into the kernel.
+> 
+> Probably because he didn't know about it, and how would he? I also
+> didn't know about it, because it didn't exist last I worked on those
+> joypads.
+> 
+> I spent quite a bit of time trying to get the XBox One S controller
+> working over Bluetooth, without success, and I see that you have a
+> patch for that which you didn't send upstream either:
+> https://github.com/atar-axis/xpadneo/blob/master/misc/kernel_patches/0001-fix_bluetooth_reconnect.patch
 
-The patch fixes this problem by checking the channel state and returning
-ENODEV if not yet opened. We also move the call to hv_ringbuf_avail_percent()
-which may access the uninitialized ring buffer.
+For this patch, after speaking with the Bluetooth maintainers, we would
+need to:
+- add relevant btmon outputs before and after the patch in the commit
+message
+- remove the mention of "many devices" (if you've seen other devices
+with that problem in the wild, please mention them, otherwise mention
+that it's for "XBox One S" controllers, and clones)
+- run the patch against the "Profile Tuning Suite Tool" from the
+Bluetooth SIG. This requires a Windows laptop, and a piece of hardware
+from the Bluetooth SIG, see below.
 
-Signed-off-by: Mohammed Gamal <mgamal@redhat.com>
----
- drivers/net/hyperv/netvsc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+The first 2 should be pretty easy to do, just send your patch using
+"git send-email" to the linux-bluetooth list (CC:ed), with the data
+attached.
 
-diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-index fe01e14..75f1b31 100644
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -825,7 +825,12 @@ static inline int netvsc_send_pkt(
- 	struct netdev_queue *txq = netdev_get_tx_queue(ndev, packet->q_idx);
- 	u64 req_id;
- 	int ret;
--	u32 ring_avail = hv_get_avail_to_write_percent(&out_channel->outbound);
-+	u32 ring_avail;
-+
-+	if (out_channel->state != CHANNEL_OPENED_STATE)
-+		return -ENODEV;
-+
-+	ring_avail = hv_get_avail_to_write_percent(&out_channel->outbound);
- 
- 	nvmsg.hdr.msg_type = NVSP_MSG1_TYPE_SEND_RNDIS_PKT;
- 	if (skb)
--- 
-1.8.3.1
+For the qualification test, I was told Szymon has a test suite that he
+could use to double-check the tests. If not, I should be able to buy
+the adapter and run that test suite locally.
+
+Cheers
 
