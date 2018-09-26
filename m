@@ -6,92 +6,100 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44136C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B805CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039B820842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039B820842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E4292083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 09:13:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4292083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeIZPXk (ORCPT
+        id S1727574AbeIZPZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:23:40 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:62573 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726404AbeIZPXk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:23:40 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie3.idc.renesas.com with ESMTP; 26 Sep 2018 18:11:41 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 1785584AE1;
-        Wed, 26 Sep 2018 18:11:41 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,305,1534777200"; 
-   d="scan'208";a="293532890"
-Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii2.idc.renesas.com with ESMTP; 26 Sep 2018 18:11:38 +0900
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v5 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date:   Wed, 26 Sep 2018 10:10:53 +0100
-Message-Id: <20180926091053.21255-4-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180926091053.21255-1-phil.edworthy@renesas.com>
-References: <20180926091053.21255-1-phil.edworthy@renesas.com>
+        Wed, 26 Sep 2018 11:25:39 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34116 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726404AbeIZPZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:25:39 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C342147C77B4B;
+        Wed, 26 Sep 2018 17:13:36 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 26 Sep 2018
+ 17:13:27 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
+        <joel@jms.id.au>, <sam@mendozajonas.com>, <garsilva@embeddedor.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: faraday: fix return type of ndo_start_xmit function
+Date:   Wed, 26 Sep 2018 17:13:05 +0800
+Message-ID: <20180926091305.24556-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-Based on a patch originally written by Michel Pollet at Renesas.
+Found by coccinelle.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
-v5:
- - No changes.
+ drivers/net/ethernet/faraday/ftgmac100.c | 4 ++--
+ drivers/net/ethernet/faraday/ftmac100.c  | 7 ++++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-v4:
- - No changes.
-
-v3:
- - No changes.
-
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
+index d8ead7e..4d67322 100644
+--- a/drivers/net/ethernet/faraday/ftgmac100.c
++++ b/drivers/net/ethernet/faraday/ftgmac100.c
+@@ -712,8 +712,8 @@ static bool ftgmac100_prep_tx_csum(struct sk_buff *skb, u32 *csum_vlan)
+ 	return skb_checksum_help(skb) == 0;
+ }
  
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
+-static int ftgmac100_hard_start_xmit(struct sk_buff *skb,
+-				     struct net_device *netdev)
++static netdev_tx_t ftgmac100_hard_start_xmit(struct sk_buff *skb,
++					     struct net_device *netdev)
+ {
+ 	struct ftgmac100 *priv = netdev_priv(netdev);
+ 	struct ftgmac100_txdes *txdes, *first;
+diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
+index a1197d3..570caeb 100644
+--- a/drivers/net/ethernet/faraday/ftmac100.c
++++ b/drivers/net/ethernet/faraday/ftmac100.c
+@@ -634,8 +634,8 @@ static void ftmac100_tx_complete(struct ftmac100 *priv)
+ 		;
+ }
+ 
+-static int ftmac100_xmit(struct ftmac100 *priv, struct sk_buff *skb,
+-			 dma_addr_t map)
++static netdev_tx_t ftmac100_xmit(struct ftmac100 *priv, struct sk_buff *skb,
++				 dma_addr_t map)
+ {
+ 	struct net_device *netdev = priv->netdev;
+ 	struct ftmac100_txdes *txdes;
+@@ -1016,7 +1016,8 @@ static int ftmac100_stop(struct net_device *netdev)
+ 	return 0;
+ }
+ 
+-static int ftmac100_hard_start_xmit(struct sk_buff *skb, struct net_device *netdev)
++static netdev_tx_t
++ftmac100_hard_start_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct ftmac100 *priv = netdev_priv(netdev);
+ 	dma_addr_t map;
 -- 
-2.17.1
+1.8.3.1
+
 
