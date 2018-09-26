@@ -2,132 +2,92 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD92C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC28C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D752F214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:26:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XWqQE2Il"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D752F214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A6824214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 10:28:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6824214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbeIZQiy (ORCPT
+        id S1727335AbeIZQlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:38:54 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38100 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbeIZQiP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 12:38:15 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z16-v6so1710193wmi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 03:25:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TN2IJYdHgtT3BemFu8Zp1UT/5yhsLzCn9bEmOt6lOpI=;
-        b=XWqQE2IlUVNjMtveRD6CAvGlRmZ/OpsYOg/IqRzN+4gUlbqaODkme2cXgvvgtNOYIb
-         rl+o44RLqc6nYU44jqWDMUAZiaRLOXpzX92CALCquPVR/MXXkAN9Y15ZL7VSx8tCvFjG
-         e2BwbnieNa3JuEMRFoFkEULU0C+4TENskguac=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TN2IJYdHgtT3BemFu8Zp1UT/5yhsLzCn9bEmOt6lOpI=;
-        b=IU54IP06KXwQei2+yEdmCJYk8CRetA3jo8r2WmPEiB3IXuNLJJSJibuPDkaUwXb7er
-         VVzOl5mlgALQU9kIhQB3Zv5IkcX7wKpVkwIJqJ2Dl6hQOiNxY18AOffHDGW2O0ZmfAf3
-         86FqHfPB9iHnFuQ+TljwK1xEaHuLRI6qfVBaXP4UoISXKd1FRUckVnkvDNnnpVKrszPC
-         UR/fzphik5whOcGpQ/eaI9IyJgx60WdWbWm6aEkpboNDyPthbHqnA57/Nug54hxbnV0e
-         VEaRG4loGLKRcecfzlLbHm8XyjnIobxduzPaa3TOkWqhnAiPbfglEifWPBW7k4t3IZx/
-         gKOg==
-X-Gm-Message-State: ABuFfojiyl8K0IPaI7WebIM1OEbkyL9BlBDJ6hULPZuoVYN7ZjCeOcPK
-        o5/FSYvUXXLTa7mxkqarBnyd5w==
-X-Google-Smtp-Source: ACcGV61IQc4UNYNuueAkF8cfA2HqxkNRLoh9Mv5p5MjB4ce+iIXd2DxO11NlR7+zr5Tndi8WW/ROUA==
-X-Received: by 2002:a1c:c145:: with SMTP id r66-v6mr3813360wmf.131.1537957558038;
-        Wed, 26 Sep 2018 03:25:58 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id b12sm4442648wrx.11.2018.09.26.03.25.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 26 Sep 2018 03:25:57 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     broonie@kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org
-Cc:     linux-kernel@vger.kernel.org, vkoul@kernel.org,
-        bgoswami@codeaurora.org, rohitkr@codeaurora.org,
-        lgirdwood@gmail.com, tiwai@suse.com, devicetree@vger.kernel.org,
-        mark.rutland@arm.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2 2/5] ALSA: compress: make use of runtime buffer for copy
-Date:   Wed, 26 Sep 2018 11:23:46 +0100
-Message-Id: <20180926102349.23481-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180926102349.23481-1-srinivas.kandagatla@linaro.org>
-References: <20180926102349.23481-1-srinivas.kandagatla@linaro.org>
+        Wed, 26 Sep 2018 12:41:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42464 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbeIZQlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 12:41:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 497BA18A;
+        Wed, 26 Sep 2018 03:28:50 -0700 (PDT)
+Received: from [10.4.13.85] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE6023F5BD;
+        Wed, 26 Sep 2018 03:28:48 -0700 (PDT)
+Subject: Re: [PATCH 02/10] irqchip/gic-v3-its: Consolidate LPI_PENDBASE_SZ
+ usage
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180921195954.21574-1-marc.zyngier@arm.com>
+ <20180921195954.21574-3-marc.zyngier@arm.com>
+ <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <1fe9460d-c90a-a6ce-b0ce-754e22d834e1@arm.com>
+Date:   Wed, 26 Sep 2018 11:28:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Default copy function uses kmalloc to allocate buffers, lets check
-if the runtime buffers are setup before making this allocations.
-This can be useful if the buffers are dma buffers.
+On 24/09/18 11:33, Suzuki K Poulose wrote:
+> Hi Marc,
+> 
+> On 21/09/18 20:59, Marc Zyngier wrote:
+>> LPI_PENDING_SZ is always used in conjunction with a max(). Let's
+>> factor this in the definition of the macro, and simplify the rest
+>> of the code.
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>    drivers/irqchip/irq-gic-v3-its.c | 12 ++++--------
+>>    1 file changed, 4 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>> index c2df341ff6fa..ed6aab11e019 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -62,7 +62,7 @@ static u32 lpi_id_bits;
+>>     */
+>>    #define LPI_NRBITS		lpi_id_bits
+>>    #define LPI_PROPBASE_SZ		ALIGN(BIT(LPI_NRBITS), SZ_64K)
+>> -#define LPI_PENDBASE_SZ		ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K)
+>> +#define LPI_PENDBASE_SZ		max_t(u32, SZ_64K, ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K))
+> 
+> minor nit: The ALIGN() already aligns the given value up to the required
+> alignment. So, if the LPI_NRBITS is guaranteed to be non-zero,
+> we could simply drop the max_t().
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- sound/core/compress_offload.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Yeah, that's a brain fart on my part. I've fixed up.
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index 26b5e245b074..a5b09e75e787 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -171,7 +171,8 @@ static int snd_compr_free(struct inode *inode, struct file *f)
- 	}
- 
- 	data->stream.ops->free(&data->stream);
--	kfree(data->stream.runtime->buffer);
-+	if (!data->stream.runtime->dma_buffer_p)
-+		kfree(data->stream.runtime->buffer);
- 	kfree(data->stream.runtime);
- 	kfree(data);
- 	return 0;
-@@ -505,7 +506,7 @@ static int snd_compr_allocate_buffer(struct snd_compr_stream *stream,
- 		struct snd_compr_params *params)
- {
- 	unsigned int buffer_size;
--	void *buffer;
-+	void *buffer = NULL;
- 
- 	buffer_size = params->buffer.fragment_size * params->buffer.fragments;
- 	if (stream->ops->copy) {
-@@ -514,7 +515,18 @@ static int snd_compr_allocate_buffer(struct snd_compr_stream *stream,
- 		 * the data from core
- 		 */
- 	} else {
--		buffer = kmalloc(buffer_size, GFP_KERNEL);
-+		if (stream->runtime->dma_buffer_p) {
-+
-+			if (buffer_size > stream->runtime->dma_buffer_p->bytes)
-+				dev_err(&stream->device->dev,
-+						"Not enough DMA buffer");
-+			else
-+				buffer = stream->runtime->dma_buffer_p->area;
-+
-+		} else {
-+			buffer = kmalloc(buffer_size, GFP_KERNEL);
-+		}
-+
- 		if (!buffer)
- 			return -ENOMEM;
- 	}
+Thanks,
+
+	M.
 -- 
-2.19.0
-
+Jazz is not dead. It just smells funny...
