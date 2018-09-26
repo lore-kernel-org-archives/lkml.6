@@ -2,102 +2,147 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D25ECE560
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDBDC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACA9D214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:58:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA9D214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 7FE0520843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:02:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKWMGgO6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE0520843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeIZUL4 (ORCPT
+        id S1727710AbeIZUPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:11:56 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40472 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbeIZUL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:11:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42L00S6PV6z9ttfr;
-        Wed, 26 Sep 2018 15:58:48 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id XzXnEebpN7Lz; Wed, 26 Sep 2018 15:58:48 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42L00S5kY8z9ttfn;
-        Wed, 26 Sep 2018 15:58:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 525B78B817;
-        Wed, 26 Sep 2018 15:58:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id uIZE3cJYrG0Z; Wed, 26 Sep 2018 15:58:49 +0200 (CEST)
-Received: from PO15451 (unknown [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2C3E98B803;
-        Wed, 26 Sep 2018 15:58:49 +0200 (CEST)
-Subject: Re: [PATCH] powerpc: Move a dereference below a NULL test
-To:     zhong jiang <zhongjiang@huawei.com>, paulus@samba.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <1537962368-14019-1-git-send-email-zhongjiang@huawei.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <fb8bc993-2adc-6a70-2643-6195ba5f020f@c-s.fr>
-Date:   Wed, 26 Sep 2018 15:58:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 16:15:44 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54593 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbeIZUPn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:15:43 -0400
+Received: by mail-it1-f194.google.com with SMTP id f14-v6so3057272ita.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9E4pWiLPLRleapHaOvgVz85A5RfjeA6Uo1z3Q8Cse5Q=;
+        b=HKWMGgO6ECbqsCiC8RTphA7IcDI/lt6KCo6iK43UXMaTmU/XOGCS566fyrPSBGIsG9
+         w5PTTFtd25nMlpRdCs7SBZacd3DSmtdPT6wNO8sBr3QrE94qAZeho/ZW+iRLOioBGxkR
+         Bhvl/RZgZOTNY4TUCXmOMQ2F5Kpr6ELVxIyic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9E4pWiLPLRleapHaOvgVz85A5RfjeA6Uo1z3Q8Cse5Q=;
+        b=KhSw2FbUl4Su3gMTKqvELaAIwTOt7KpPIYIliO1M+XNVeLmEQjlD5ZjeV9h+Fl85fo
+         f7zXD+ptLwnUbNJs4REtc8lMLkcHniZDmjEuRSx2HEYsb/TGsHYK2mh0mDIAMSi7JKF0
+         56s7mHUEb1Gt5vxWJmD0VWB8DcamjdBe90SfvGjO2+00s1rsDRv1GQndS1gUAXnTpIwD
+         wxoSR+xSZy8TmHKcsOvRN/6n5g4G67btCqymLo3CJ4A1Pg6kAhWg8EuWYCuxVzj9e251
+         +sCCjzed6oOrefmOd6ee4nHN7BVIwNuzEUQQoKteDXphz3msmMFipatjRhbrrbqdXbpb
+         qcyw==
+X-Gm-Message-State: ABuFfohHYGXPG4uvfwSrwmhRY6UIY1SUj9MGtvimslssxdcHhmLokFGC
+        d+ZYCbX4CufZ/B9MZhG1iAosILNMDeZHsQmun7NWt/Tdykc=
+X-Google-Smtp-Source: ACcGV60cgmVYT+YNQqNYyqlPmEoWaQVAAjrzCOYH0YjaE8+M0F8OOFARtykDtlnMEAozKCI1ChdA7vKfq23kkCkUmNU=
+X-Received: by 2002:a24:e48e:: with SMTP id o136-v6mr5080014ith.58.1537970556452;
+ Wed, 26 Sep 2018 07:02:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1537962368-14019-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com> <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
+In-Reply-To: <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 26 Sep 2018 16:02:22 +0200
+Message-ID: <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+(+ Herbert, Thomas)
 
+On Wed, 26 Sep 2018 at 15:33, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Hi Ard,
+>
+> On Wed, Sep 26, 2018 at 10:59 AM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+> > > +static inline bool chacha20_arch(struct chacha20_ctx *state, u8 *dst,
+> > > +                                const u8 *src, size_t len,
+> > > +                                simd_context_t *simd_context)
+> > > +{
+> > > +#if defined(CONFIG_KERNEL_MODE_NEON)
+> > > +       if (chacha20_use_neon && len >= CHACHA20_BLOCK_SIZE * 3 &&
+> > > +           simd_use(simd_context))
+> > > +               chacha20_neon(dst, src, len, state->key, state->counter);
+> > > +       else
+> > > +#endif
+> >
+> > Better to use IS_ENABLED() here:
+> >
+> > > +       if (IS_ENABLED(CONFIG_KERNEL_MODE_NEON)) &&
+> > > +           chacha20_use_neon && len >= CHACHA20_BLOCK_SIZE * 3 &&
+> > > +           simd_use(simd_context))
+>
+> Good idea. I'll fix that up.
+>
+> >
+> > Also, this still has unbounded worst case scheduling latency, given
+> > that the outer library function passes its entire input straight into
+> > the NEON routine.
+>
+> The vast majority of crypto routines in arch/*/crypto/ follow this
+> same exact pattern, actually. I realize a few don't -- probably the
+> ones you had a hand in :) -- but I think this is up to the caller to
+> handle.
 
-Le 26/09/2018 à 13:46, zhong jiang a écrit :
-> It is safe to move dereference below a NULL test.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->   arch/powerpc/kernel/cacheinfo.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/cacheinfo.c b/arch/powerpc/kernel/cacheinfo.c
-> index a8f20e5..7f19714 100644
-> --- a/arch/powerpc/kernel/cacheinfo.c
-> +++ b/arch/powerpc/kernel/cacheinfo.c
-> @@ -401,14 +401,13 @@ static struct cache *cache_lookup_or_instantiate(struct device_node *node,
->   	struct cache *cache;
->   
->   	cache = cache_lookup_by_node(node);
-> +	if (!cache)
-> +		cache = cache_do_one_devnode(node, level);
+Anything that uses the scatterwalk API (AEADs and skciphers) will
+handle at most a page at a time. Hashes are different, which is why
+some of them have to handle it explicitly.
 
-But by doing this, you change the meaning of the following warning. Is 
-that what you want ? In that case the text of the WARN_ONCE() should be 
-changed, because the mismatch is not only on lookup now.
+> I made a change so that in chacha20poly1305.c, it calls
+> simd_relax after handling each scatter-gather element, so a
+> "construction" will handle this gracefully. But I believe it's up to
+> the caller to decide on what sizes of information it wants to pass to
+> primitives. Put differently, this also hasn't ever been an issue
+> before -- the existing state of the tree indicates this -- and so I
+> don't anticipate this will be a real issue now.
 
-Christophe
+The state of the tree does not capture all relevant context or
+history. The scheduling latency issue was brought up very recently by
+the -rt folks on the mailing lists.
 
->   
->   	WARN_ONCE(cache && cache->level != level,
->   		  "cache level mismatch on lookup (got %d, expected %d)\n",
->   		  cache->level, level);
->   
-> -	if (!cache)
-> -		cache = cache_do_one_devnode(node, level);
-> -
->   	return cache;
->   }
->   
-> 
+> And if it becomes one,
+> this is something we can address *later*, but certainly there's no use
+> of adding additional complexity to the initial patchset to do this
+> now.
+>
+
+You are introducing a very useful SIMD abstraction, but it lets code
+run with preemption disabled for unbounded amounts of time, and so now
+is the time to ensure we get it right.
+
+Part of the [justified] criticism on the current state of the crypto
+API is on its complexity, and so I don't think it makes sense to keep
+it simple now and add the complexity later (and the same concern
+applies to async support btw).
