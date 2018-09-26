@@ -2,130 +2,153 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E5F2C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8FAC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1974E20842
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C481420842
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:13:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="A4sN8ZE8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1974E20842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Og/ksjGm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C481420842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeIZOZO (ORCPT
+        id S1727389AbeIZOZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:25:14 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:38020 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbeIZOZO (ORCPT
+        Wed, 26 Sep 2018 10:25:22 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36415 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeIZOZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:25:14 -0400
-Received: by mail-yb1-f194.google.com with SMTP id e190-v6so10959913ybb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:13:30 -0700 (PDT)
+        Wed, 26 Sep 2018 10:25:22 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p89-v6so8159423ljb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 01:13:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NdnN4SfQ44YwgQ8rObNfKien4uGhVxz3nQuD8q4giV4=;
-        b=A4sN8ZE8ARHs1vMzGSE2wwHokZRnL2gmBiCZK6veT2rO5zZO3fg1gWmbCa4aeYrapz
-         d12NQgU8G1xcHH/ZKbDTST8+acy/7uyAGaO4XgEGuQar/sRabPoyIC64emJh+22TWLWT
-         Z5ICTkjVTCLEZD/N019GzyUKR7U7qbahj5Nyd805nPC4RUurScFsgZ43ntPO+7OXybzG
-         Npw/CWMfII4YruXmgLtQJlR3n9mPr9nuOSYs8HzEeCz81piJFaR8Yy+Kzw4MeoP7hzHX
-         Hj91YhxZefXxt4J8So4lqBk6zITB1Qx/QyMjhBf9rCaQ7EqDF+93hp0kPFJ7QyACmcWY
-         uhFw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P3yqeNtqP1Hs2mUeKB85OX+9+mIhvvp1W4nizwhzafY=;
+        b=Og/ksjGmpLChfRs3zu9nyAvlcwgpkOIix6UoM6nKVRoVuYHXyvxiB096L+yIOL5Gpm
+         pxP/f1kuUqKz7JZ+bjOzEJITzaT484CzAPb5NpV5eDD0repdIKbHml0GpGOBADsuaYlk
+         ivUHsVGx5v6FyAJ8S5EUVQdcFLjqFhnEcfmnM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NdnN4SfQ44YwgQ8rObNfKien4uGhVxz3nQuD8q4giV4=;
-        b=iFcEAo4AjZ4GPv/B7HoD5qtV47Hotv0Z4ZPq06Bhq4Y6z7P4RKVZVFHF1O/PDR/HMo
-         FaGSOdiupLgYGNw/JiseoM1o7C3R3394RuzsT8my2ihoDEZi/S2VeIvd/INgMl9hsd4Z
-         cpe7w/1t/CGY+QhpP6g6pPhWMsvMfHs1WjWx2ptgoxRiTUY7Ivd44q1p2OV8gnsVp8CI
-         mTTuT3xa4OrhtO7kiL9416vbr0FIACBp2nx6GdoHMFE2/JI/r5xz7r1Ec3eK73bVKraU
-         RHWrLBzqClPrFDRzHarE0F9iNCAQ66SwY9BYuvYeMqtL16IQ1jkLlbDeCSBeXPg3qyGT
-         36LA==
-X-Gm-Message-State: ABuFfohOxfc4zg37sT1ibEuZ9+i3ZdORXwBSUJI64pMzW6GWFfUTH2tu
-        +CevtYhUkYmM8dpZe+xzKN/3iA==
-X-Google-Smtp-Source: ACcGV60YRaUDm8T195G6MRQLihT+uZeSlwhTLrw+WT6yGkL9+23x1nY+umRVD3hPhyJBRFVV3RuZhQ==
-X-Received: by 2002:a25:9b43:: with SMTP id u3-v6mr2456360ybo.86.1537949610618;
-        Wed, 26 Sep 2018 01:13:30 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id z125-v6sm1773609ywe.72.2018.09.26.01.13.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 01:13:30 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 04:13:29 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        David Airlie <airlied@linux.ie>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        dri-devel@lists.freedesktop.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif block
-Message-ID: <20180926081329.GO72545@art_vandelay>
-References: <cover.1537191359.git.leonard.crestez@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P3yqeNtqP1Hs2mUeKB85OX+9+mIhvvp1W4nizwhzafY=;
+        b=nzU4dXWl549gt/0x2UFgXIxJscJMzOYHNxrzUQ0Fo2W6XhbsGm8LxAJf676E2S22yC
+         Qb5sCsQC1pTUYfkW7CvJ/YgO2QsER4iKpjVS3Beg+tUII1kLoogzAwYY4Y5IX5cI763q
+         S+SYisCOHUspWfydcqB+KVwzjYCKLnxcoFyHRguLF2RerPqToVFsAgz4GAlMZoqsGj/h
+         naTU5sxJaREqfukPE4/6rMrawlkdipb6UYbb7tYNaUr0PFuuBMPwSE3r67wrpeqNTRAY
+         anYe7nIbxPAbUdX7UvGmHn0guPsSL6QlMTGadklm8ruJA9Gh/QULjLBEoR735ITsRQ9A
+         fmFQ==
+X-Gm-Message-State: ABuFfoicWyMWhQz8zcrid2HZS6pXMWzbqBlsIooWfpRFg/g5nse852hk
+        HMn2qJmKVMd8aROpeP/pe0U2JNqxf8qPRVfRJhgyjw==
+X-Google-Smtp-Source: ACcGV61m563peC0YwKKJcycHt7NCQ3QkJjXLJ6sgOXcs+GmkE+JZU6KVzlOOpGZk2IxyeOkwRexPEkieu3qLxuDqXTc=
+X-Received: by 2002:a2e:2bd5:: with SMTP id r82-v6mr3327462ljr.63.1537949617054;
+ Wed, 26 Sep 2018 01:13:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1537191359.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1537896922-8508-1-git-send-email-valentin.schneider@arm.com>
+In-Reply-To: <1537896922-8508-1-git-send-email-valentin.schneider@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 26 Sep 2018 10:13:25 +0200
+Message-ID: <CAKfTPtB-UiXx39XZeJ0FNeYOU-pLFbY1u7vgbo584MNHSnpr=w@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Don't increase sd->balance_interval on
+ newidle balance
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <Dietmar.Eggemann@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 04:42:10PM +0300, Leonard Crestez wrote:
-> Adding lcdif nodes to a power domain currently doesn't work, it results
-> in black/corrupted screens or hangs. While the driver does enable
-> runtime pm it does not deal correctly with the block being unpowered.
-> 
+On Tue, 25 Sep 2018 at 19:38, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+> When load_balance() fails to move some load because of task affinity,
+> we end up increasing sd->balance_interval to delay the next periodic
+> balance in the hopes that next time we look, that annoying pinned
+> task(s) will be gone.
+
+It's not about hope but to minimize useless periodic load balance as
+there is no possibility to balance anything
+
+>
+> However, idle_balance() pays no attention to sd->balance_interval, yet
+> it will still lead to an increase in balance_interval in case of
+> pinned tasks.
+
+I would say that this makes sense as there is no way to pull the
+pinned task on this rq so running periodic load balance (busy or idle)
+is a waste of time  and resources
+
+>
+> If we're going through several newidle balances (e.g. we have a
+> periodic task), this can lead to a huge increase of the
+
+This only happen when overload is set which means that there are tasks
+on another CPU but this one can't pull one of them.
+
+Can you give us details about the use case that you care about ?
+
+Also, If the interval reaches a value that becomes a problem for you
+why don't you reduce the max_interval with sysfs ? This max interval
+can be reach in several other occasions
+
+> balance_interval in a very small amount of time.
+>
+> To prevent that, don't increase the balance interval when going
+> through a newidle balance.
+>
+> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 > ---
-> 
-> All patches in this series have review tags from a while ago and I
-> tested them again on top of next-20180913. No changes since last
-> version: https://lkml.org/lkml/2018/8/27/299
-> 
-> This series stalled so I reached out to Marek on IRC and he was
-> surprised to be listed as maintainer and asked me to resend and add
-> Daniel Vetter.
-> 
-> Perhaps it would help to clarify that the pengutronix people should feel
-> free to push patches in this area?
-> 
-> Right now drm/imx is mostly for IPUv3 but there are other display output
-> paths on imx, such as the LCDIF supported by this driver. This LCDIF
-> block is included on imx8 so still quite relevant.
-> 
-> Leonard Crestez (5):
->   drm/mxsfb: Move axi clk enable/disable to crtc enable/disable
->   drm/mxsfb: Fix initial corrupt frame when activating display
->   drm/mxsfb: Add pm_runtime calls to pipe_enable/disable
->   drm/mxsfb: Add PM_SLEEP support
->   drm/mxsfb: Switch to drm_atomic_helper_commit_tail_rpm
+>  kernel/sched/fair.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 6bd142d..620910d 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8782,13 +8782,22 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>         sd->nr_balance_failed = 0;
+>
+>  out_one_pinned:
+> +       ld_moved = 0;
+> +
+> +       /*
+> +        * idle_balance() disregards balance intervals, so we could repeatedly
+> +        * reach this code, which would lead to balance_interval skyrocketting
+> +        * in a short amount of time. Skip the balance_interval increase logic
+> +        * to avoid that.
+> +        */
+> +       if (env.idle == CPU_NEWLY_IDLE)
+> +               goto out;
+> +
+>         /* tune up the balancing interval */
+> -       if (((env.flags & LBF_ALL_PINNED) &&
+> -                       sd->balance_interval < MAX_PINNED_INTERVAL) ||
+> -                       (sd->balance_interval < sd->max_interval))
+> +       if ((env.flags & LBF_ALL_PINNED &&
+> +            sd->balance_interval < MAX_PINNED_INTERVAL) ||
+> +           (sd->balance_interval < sd->max_interval))
 
-The whole set is
+This looks like a code cleanup that is not related to the subject
 
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-
-> 
->  drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 53 +++++++++++++++++++-----------
->  drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 40 ++++++++++++++++++++++
->  2 files changed, 74 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+>                 sd->balance_interval *= 2;
+> -
+> -       ld_moved = 0;
+>  out:
+>         return ld_moved;
+>  }
+> --
+> 2.7.4
+>
