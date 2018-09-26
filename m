@@ -2,142 +2,101 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A69C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC94C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 138A62150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138A62150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 3765D2150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 17:12:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ENhB7k/6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3765D2150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbeIZX0A (ORCPT
+        id S1728803AbeIZX0F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 19:26:00 -0400
-Received: from muru.com ([72.249.23.125]:57370 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727832AbeIZX0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 19:26:00 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id E583D80FA;
-        Wed, 26 Sep 2018 17:16:24 +0000 (UTC)
-Date:   Wed, 26 Sep 2018 10:12:00 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: omap: switch to use irq_chip pm runtime
-Message-ID: <20180926171200.GV5662@atomide.com>
-References: <20180925191446.31504-1-grygorii.strashko@ti.com>
+        Wed, 26 Sep 2018 19:26:05 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37377 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727832AbeIZX0F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 19:26:05 -0400
+Received: by mail-pg1-f195.google.com with SMTP id c10-v6so7255620pgq.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 10:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6uFy7MRmrYLiKaM3bTAisAIN/cvQcENDUe82KGxA6y4=;
+        b=ENhB7k/623JGdd8RTeSSY+J3EL8i5SBNdBIRuXnnlXT49xr+JkNeDKtt/NAFzkv0Xb
+         I34+xB5Pf2PmG/toscLNcLvRViQHpg9Cabp2TOBAfGdR/ishk+iiyZ45goQ6xSZXW2ts
+         v9F2jROeamF+TMDhGBtJdMpup+2OPzxYSSMJs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6uFy7MRmrYLiKaM3bTAisAIN/cvQcENDUe82KGxA6y4=;
+        b=pjC8L2bhBOW0GN8hJ4+TTrHEbKxouFscr2XxbnfSRi0IVil8alPxBcgN9N10a1iOu4
+         Ppurfwk80be11g74Ow11WgFrTsIQ7G3eU3Y6g/BnP3Wff6cVD1peXskMDH19MLrcAkgv
+         vIEfH2ZJXu6M9IabhZ0oydHOAMzorjo0O6xHX2SBnIO15rTIRCQpZp59F/rF65GlzuPi
+         9fc0vUwb6shTy/RNCGrSNbigfVC7mO+RkzAL3ryoq0El0jle0903c0JpP/A2A6sWz7bd
+         YhJWZDuXnpSzbM8TsYftSvehfSQuF+sCj2XMLHQZLheZN1xTr6xoNbxgIodOnPQms/aZ
+         ypWg==
+X-Gm-Message-State: ABuFfoj52rBQs0fVXofv4nwDRxNAsAt9F5aFdPzb8kMbwCUm7fF7EDsP
+        gSIyCiED3M+wFegbOYmesGtWzGYVecg3nA==
+X-Google-Smtp-Source: ACcGV61tWNnF/vdWRGYRJgroPy0JuDDUOFUlyN0uh6Wo+iKBvlktClyRjRZuThjFmNJkQ5KfI5XzGA==
+X-Received: by 2002:a62:985a:: with SMTP id q87-v6mr7341280pfd.64.1537981929854;
+        Wed, 26 Sep 2018 10:12:09 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 1-v6sm12293261pfm.145.2018.09.26.10.12.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 10:12:08 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 10:14:38 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Suman Anna <s-anna@ti.com>, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
+Subject: Re: [PATCH] rpmsg: core: add support to power domains for devices
+Message-ID: <20180926171438.GA29702@builder>
+References: <20180615095939.1331-1-srinivas.kandagatla@linaro.org>
+ <a80cce14-9e57-32a2-760f-3d29de009f99@ti.com>
+ <91dda9df-8074-925d-dcd3-d7c01e6f2363@st.com>
+ <9afb010d-397f-2103-6692-bb4ca55b8236@ti.com>
+ <4e1b6773-c4da-4638-eee7-2f996d387903@st.com>
+ <0c06bde3-59f2-fad4-90ff-5818e9bab853@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180925191446.31504-1-grygorii.strashko@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0c06bde3-59f2-fad4-90ff-5818e9bab853@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Grygorii Strashko <grygorii.strashko@ti.com> [180925 19:19]:
-> The PM runtime management can be delegated from OMAP GPIO driver to the IRQ
-> chip core, since commit be45beb2df69 ("genirq: Add runtime power management
-> support for IRQ chips") introduces runtime power management support for IRQ
-> chips.
+On Wed 26 Sep 06:06 PDT 2018, Srinivas Kandagatla wrote:
+> On 26/09/18 13:48, Arnaud Pouliquen wrote:
+> > Sorry something was wrong in my fw used yesterday for testing...so
+> > forget my previous status.
+> > 
+> > I re-tested it and I have the same issue (-ENODEV) with rpmsg device
+> > probed on ns announcement rpmsg from remote side.
+> > So we confirm the issue.
 > 
-> Hence, drop custom PM runtime support for OMAP GPIO IRQs and switch to IRQ
-> chip core PM runtime (set irq_chip->parent_device).
+> 
+> A revert patch is in the stable queue now for 4.14 and 4.18 stable.
+> http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+> 
+> Issue reported should be fixed soon!!
+> 
 
-This would be cool but looks like this patch oopses early during boot
-at least on omap3 though, maybe because BANK_USED is not for
-irqs only?
+Thanks guys!
 
 Regards,
-
-Tony
-
-8< ---------------------
-gpio gpiochip0: (gpio-0-31): added GPIO chardev (254:0)
-gpiochip_setup_dev: registered GPIOs 0 to 31 on device: gpiochip0 (gpio-0-31)
-OMAP GPIO hardware version 2.5
-gpio gpiochip1: (gpio-32-63): added GPIO chardev (254:1)
-gpiochip_setup_dev: registered GPIOs 32 to 63 on device: gpiochip1 (gpio-32-63)
-gpio gpiochip2: (gpio-64-95): added GPIO chardev (254:2)
-gpiochip_setup_dev: registered GPIOs 64 to 95 on device: gpiochip2 (gpio-64-95)
-gpio gpiochip3: (gpio-96-127): added GPIO chardev (254:3)
-gpiochip_setup_dev: registered GPIOs 96 to 127 on device: gpiochip3 (gpio-96-127)
-gpio gpiochip4: (gpio-128-159): added GPIO chardev (254:4)
-gpiochip_setup_dev: registered GPIOs 128 to 159 on device: gpiochip4 (gpio-128-159)
-gpio gpiochip5: (gpio-160-191): added GPIO chardev (254:5)
-gpiochip_setup_dev: registered GPIOs 160 to 191 on device: gpiochip5 (gpio-160-191)
-omap-gpmc 6e000000.gpmc: GPMC revision 5.0
-gpmc_mem_init: disabling cs 0 mapped at 0x0-0x1000000
-gpiochip_find_base: found new base at 508
-gpio gpiochip6: (omap-gpmc): added GPIO chardev (254:6)
-gpiochip_setup_dev: registered GPIOs 508 to 511 on device: gpiochip6 (omap-gpmc)
-Unhandled fault: external abort on non-linefetch (0x1028) at 0xfb056028
-pgd = (ptrval)
-[fb056028] *pgd=49011452(bad)
-Internal error: : 1028 [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc4+ #4913
-Hardware name: Generic OMAP36xx (Flattened Device Tree)
-PC is at omap_gpio_ack_irq+0x54/0x5c
-LR is at omap_gpio_ack_irq+0x20/0x5c
-pc : [<c05bc6cc>]    lr : [<c05bc698>]    psr: 200000d3
-sp : c7103718  ip : 00000001  fp : c710372c
-r10: c72b2860  r9 : c17028b8  r8 : 00000000
-r7 : 00000000  r6 : c01c4418  r5 : 00000000  r4 : c7297414
-r3 : fb056028  r2 : 00000002  r1 : 00000028  r0 : fb056000
-Flags: nzCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 80004019  DAC: 00000051
-Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
-...
-[<c05bc6cc>] (omap_gpio_ack_irq) from [<c01c9470>] (__irq_do_set_handler+0x1c0/0x1e4)
-[<c01c9470>] (__irq_do_set_handler) from [<c01c94ec>] (__irq_set_handler+0x58/0x88)
-[<c01c94ec>] (__irq_set_handler) from [<c01c9554>] (irq_set_chip_and_handler_name+0x38/0x3c)
-[<c01c9554>] (irq_set_chip_and_handler_name) from [<c05b3fd4>] (gpiochip_irq_map+0x94/0x13c)
-[<c05b3fd4>] (gpiochip_irq_map) from [<c01cc7e0>] (irq_domain_associate+0x80/0x1c0)
-[<c01cc7e0>] (irq_domain_associate) from [<c01cd210>] (irq_create_mapping+0x74/0xdc)
-[<c01cd210>] (irq_create_mapping) from [<c01cd904>] (irq_create_fwspec_mapping+0x15c/0x338)
-[<c01cd904>] (irq_create_fwspec_mapping) from [<c01cdb48>] (irq_create_of_mapping+0x68/0x88)
-[<c01cdb48>] (irq_create_of_mapping) from [<c07cb038>] (of_irq_get+0x74/0xc4)
-[<c07cb038>] (of_irq_get) from [<c07cb0bc>] (of_irq_to_resource+0x34/0xe8)
-[<c07cb0bc>] (of_irq_to_resource) from [<c07cb1b8>] (of_irq_to_resource_table+0x48/0x5c)
-[<c07cb1b8>] (of_irq_to_resource_table) from [<c07c625c>] (of_device_alloc+0xf8/0x294)
-[<c07c625c>] (of_device_alloc) from [<c07c6450>] (of_platform_device_create_pdata+0x58/0xc8)
-[<c07c6450>] (of_platform_device_create_pdata) from [<c07c64e0>] (of_platform_device_create+0x20/0x24)
-[<c07c64e0>] (of_platform_device_create) from [<c07d1d68>] (gpmc_probe_generic_child+0x2ec/0x990)
-[<c07d1d68>] (gpmc_probe_generic_child) from [<c07d27ec>] (gpmc_probe+0x3e0/0x5a8)
-[<c07d27ec>] (gpmc_probe) from [<c067d0e8>] (platform_drv_probe+0x58/0xa8)
-[<c067d0e8>] (platform_drv_probe) from [<c067aa44>] (really_probe+0x200/0x2cc)
-[<c067aa44>] (really_probe) from [<c067ace0>] (driver_probe_device+0x6c/0x174)
-[<c067ace0>] (driver_probe_device) from [<c067afa0>] (__device_attach_driver+0xc0/0xe4)
-[<c067afa0>] (__device_attach_driver) from [<c0678a3c>] (bus_for_each_drv+0x8c/0xd4)
-[<c0678a3c>] (bus_for_each_drv) from [<c067a7b4>] (__device_attach+0xdc/0x14c)
-[<c067a7b4>] (__device_attach) from [<c067b020>] (device_initial_probe+0x1c/0x20)
-[<c067b020>] (device_initial_probe) from [<c0679a70>] (bus_probe_device+0x98/0xa0)
-[<c0679a70>] (bus_probe_device) from [<c06762b4>] (device_add+0x364/0x628)
-[<c06762b4>] (device_add) from [<c07c5f1c>] (of_device_add+0x40/0x48)
-[<c07c5f1c>] (of_device_add) from [<c07c6494>] (of_platform_device_create_pdata+0x9c/0xc8)
-[<c07c6494>] (of_platform_device_create_pdata) from [<c07c66e4>] (of_platform_bus_create+0x1b4/0x254)
-[<c07c66e4>] (of_platform_bus_create) from [<c07c6730>] (of_platform_bus_create+0x200/0x254)
-[<c07c6730>] (of_platform_bus_create) from [<c07c68d4>] (of_platform_populate+0x6c/0xbc)
-[<c07c68d4>] (of_platform_populate) from [<c0e14284>] (pdata_quirks_init+0x7c/0xa0)
-[<c0e14284>] (pdata_quirks_init) from [<c0e13c40>] (omap_generic_init+0x1c/0x28)
-[<c0e13c40>] (omap_generic_init) from [<c0e04474>] (customize_machine+0x2c/0x38)
-[<c0e04474>] (customize_machine) from [<c0103390>] (do_one_initcall+0x90/0x398)
-[<c0103390>] (do_one_initcall) from [<c0e01494>] (kernel_init_freeable+0x478/0x558)
-[<c0e01494>] (kernel_init_freeable) from [<c09aad78>] (kernel_init+0x18/0x124)
-[<c09aad78>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-Exception stack(0xc7103fb0 to 0xc7103ff8)
-3fa0:                                     00000000 00000000 00000000 00000000
-3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-Code: e3510000 0a000001 e0803001 e5832000 (e5933000)
----[ end trace 43f0b1bf9cbb2007 ]---
+Bjorn
