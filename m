@@ -2,80 +2,249 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80043C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC88DC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CEB2208E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:57:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CEB2208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AE593208E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 07:58:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE593208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbeIZOJN convert rfc822-to-8bit (ORCPT
+        id S1727351AbeIZOKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:09:13 -0400
-Received: from mga18.intel.com ([134.134.136.126]:23729 "EHLO mga18.intel.com"
+        Wed, 26 Sep 2018 10:10:13 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:48606 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbeIZOJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 10:09:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 00:57:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,305,1534834800"; 
-   d="scan'208";a="93348355"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga001.fm.intel.com with ESMTP; 26 Sep 2018 00:55:42 -0700
-Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 26 Sep 2018 00:55:42 -0700
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 26 Sep 2018 00:55:41 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.220]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.183]) with mapi id 14.03.0319.002;
- Wed, 26 Sep 2018 15:55:40 +0800
-From:   "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To:     Justin Ernst <justin.ernst@hpe.com>, Borislav Petkov <bp@alien8.de>
-CC:     "Luck, Tony" <tony.luck@intel.com>,
-        "russ.anderson@hpe.com" <russ.anderson@hpe.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] Raise maximum number of memory controllers
-Thread-Topic: [PATCH] Raise maximum number of memory controllers
-Thread-Index: AQHUVOOl0b0Pfp6TDESxlQMynIK4rKUCMAbA
-Date:   Wed, 26 Sep 2018 07:55:39 +0000
-Message-ID: <E6AF1AFDEA62A94A97508F458CBDD47F6F70517B@SHSMSX101.ccr.corp.intel.com>
-References: <20180925143449.284634-1-justin.ernst@hpe.com>
-In-Reply-To: <20180925143449.284634-1-justin.ernst@hpe.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTc5NWUxNjQtNjE2ZC00NzI0LWIyZTgtZGE5M2Q5MDQzZjU4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiXC8yTlNyUE9HOEFjM01KcTdaQWJDbUg5SDVUbU9zMUhVN0Z4bTd6Zjhoa2lpYkhhZGVienNEbkpCRGRpZ1hHZ1cifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726401AbeIZOKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 10:10:13 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Kr0k47V3z9ttSF;
+        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Kcmp2dNm6TXh; Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Kr0k3TRMz9ttRh;
+        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D3BFF8B7FE;
+        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id xrunNcvQoKlG; Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
+Received: from PO15451 (unknown [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8A6A08B7EB;
+        Wed, 26 Sep 2018 09:58:30 +0200 (CEST)
+Subject: Re: [PATCH v3 2/2] powerpc/64: add stack protector support
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Russell Currey <ruscur@russell.cc>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
+ <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
+ <0797fc91-6400-2508-1cc0-4bba78aafbbb@c-s.fr>
+ <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <30fb4e6b-0981-c53c-a1db-94138eaad268@c-s.fr>
+Date:   Wed, 26 Sep 2018 09:58:30 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <d203ccfce64c8f9fd403162f2fa3807ade7f1d28.camel@russell.cc>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Justin,
+Segher, any idea about this problem ?
 
-> [ 3401.987556] EDAC MC15: Giving out device to module skx_edac controller Skylake Socket#1 IMC#1
-    Just curious, has the system(two memory controllers per socket) got more than 8 sockets?
-    Normally, the number "1" in the above string "Skylake Socekt#1 IMC#1" should be 7 (that was 15/2), but it was 1 here.
+Christophe
 
-Thanks!
--Qiuxu
+Le 26/09/2018 à 09:05, Russell Currey a écrit :
+> On Tue, 2018-09-25 at 17:56 +0200, Christophe LEROY wrote:
+>> Snowpatch reports failure on pmac32_defconfig, as follows:
+>>
+>> arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_printf':
+>> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
+>> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:88:
+>> undefined reference to `__stack_chk_fail_local'
+>> arch/powerpc/platforms/powermac/bootx_init.o: In function
+>> `bootx_add_display_props':
+>> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
+>> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:211:
+>> undefined reference to `__stack_chk_fail_local'
+>> arch/powerpc/platforms/powermac/bootx_init.o: In function
+>> `bootx_scan_dt_build_struct':
+>> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
+>> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:350:
+>> undefined reference to `__stack_chk_fail_local'
+>> arch/powerpc/platforms/powermac/bootx_init.o: In function `bootx_init':
+>> /var/lib/jenkins-slave/workspace/snowpatch/snowpatch-linux-
+>> sparse/linux/arch/powerpc/platforms/powermac/bootx_init.c:598:
+>> undefined reference to `__stack_chk_fail_local'
+>> ld: .tmp_vmlinux1: hidden symbol `__stack_chk_fail_local' isn't defined
+>> ld: final link failed: Bad value
+>> Makefile:1040: recipe for target 'vmlinux' failed
+>> make: *** [vmlinux] Error 1
+>>
+>> I don't have this issue with GCC 8.1, bootx_init.o has references to
+>> __stack_chk_fail, not to __stack_chk_fail_local
+>>
+>> Looking online, it may be due to an old build and a lack of 'make
+>> clean', could it be the case here ?
+> 
+> We do make mrproper AND clean, just to be sure :)
+> 
+>>
+>> Otherwise, can you retry the build to see if it's happen again ?
+> 
+> I've retried the build and the same thing happens.  Our build environment is using
+> GCC 7.3 on Ubuntu 18.04.  Reproduced on a different machine too, running the same
+> OS and compiler.
+> 
+> You can see exactly what gets run here:
+> https://github.com/ajdlinux/openpower.xyz-snowpatch/blob/master/kernel-build-sparse.sh
+> 
+> - Russell
+> 
+>>
+>> Christophe
+>>
+>> Le 24/09/2018 à 17:15, Christophe Leroy a écrit :
+>>> On PPC64, as register r13 points to the paca_struct at all time,
+>>> this patch adds a copy of the canary there, which is copied at
+>>> task_switch.
+>>> That new canary is then used by using the following GCC options:
+>>> -mstack-protector-guard=tls
+>>> -mstack-protector-guard-reg=r13
+>>> -mstack-protector-guard-offset=offsetof(struct paca_struct, canary))
+>>>
+>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>> ---
+>>>    arch/powerpc/Kconfig                      | 2 +-
+>>>    arch/powerpc/Makefile                     | 8 ++++++++
+>>>    arch/powerpc/include/asm/paca.h           | 3 +++
+>>>    arch/powerpc/include/asm/stackprotector.h | 3 +++
+>>>    arch/powerpc/kernel/asm-offsets.c         | 3 +++
+>>>    arch/powerpc/kernel/entry_64.S            | 4 ++++
+>>>    6 files changed, 22 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+>>> index 3bcb05929931..602eea723624 100644
+>>> --- a/arch/powerpc/Kconfig
+>>> +++ b/arch/powerpc/Kconfig
+>>> @@ -180,7 +180,7 @@ config PPC
+>>>    	select HAVE_ARCH_SECCOMP_FILTER
+>>>    	select HAVE_ARCH_TRACEHOOK
+>>>    	select HAVE_CBPF_JIT			if !PPC64
+>>> -	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-
+>>> guard=tls) && PPC32
+>>> +	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-
+>>> guard=tls)
+>>>    	select HAVE_CONTEXT_TRACKING		if PPC64
+>>>    	select HAVE_DEBUG_KMEMLEAK
+>>>    	select HAVE_DEBUG_STACKOVERFLOW
+>>> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+>>> index 45b8eb4d8fe7..81552c7b46eb 100644
+>>> --- a/arch/powerpc/Makefile
+>>> +++ b/arch/powerpc/Makefile
+>>> @@ -113,7 +113,11 @@ KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
+>>>    endif
+>>>    
+>>>    cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
+>>> +ifdef CONFIG_PPC64
+>>> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r13
+>>> +else
+>>>    cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r2
+>>> +endif
+>>>    
+>>>    LDFLAGS_vmlinux-y := -Bstatic
+>>>    LDFLAGS_vmlinux-$(CONFIG_RELOCATABLE) := -pie
+>>> @@ -411,8 +415,12 @@ ifdef CONFIG_STACKPROTECTOR
+>>>    prepare: stack_protector_prepare
+>>>    
+>>>    stack_protector_prepare: prepare0
+>>> +ifdef CONFIG_PPC64
+>>> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if
+>>> ($$2 == "PACA_CANARY") print $$3;}' include/generated/asm-offsets.h))
+>>> +else
+>>>    	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if
+>>> ($$2 == "TASK_CANARY") print $$3;}' include/generated/asm-offsets.h))
+>>>    endif
+>>> +endif
+>>>    
+>>>    # Use the file '.tmp_gas_check' for binutils tests, as gas won't output
+>>>    # to stdout and these checks are run even on install targets.
+>>> diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
+>>> index 6d6b3706232c..98d883e58945 100644
+>>> --- a/arch/powerpc/include/asm/paca.h
+>>> +++ b/arch/powerpc/include/asm/paca.h
+>>> @@ -246,6 +246,9 @@ struct paca_struct {
+>>>    	struct slb_entry *mce_faulty_slbs;
+>>>    	u16 slb_save_cache_ptr;
+>>>    #endif /* CONFIG_PPC_BOOK3S_64 */
+>>> +#ifdef CONFIG_STACKPROTECTOR
+>>> +	unsigned long canary;
+>>> +#endif
+>>>    } ____cacheline_aligned;
+>>>    
+>>>    extern struct paca_struct **paca_ptrs;
+>>> diff --git a/arch/powerpc/include/asm/stackprotector.h
+>>> b/arch/powerpc/include/asm/stackprotector.h
+>>> index 263e2aab1862..e81991955c0d 100644
+>>> --- a/arch/powerpc/include/asm/stackprotector.h
+>>> +++ b/arch/powerpc/include/asm/stackprotector.h
+>>> @@ -29,6 +29,9 @@ static __always_inline void boot_init_stack_canary(void)
+>>>    	canary ^= LINUX_VERSION_CODE;
+>>>    
+>>>    	current->stack_canary = canary;
+>>> +#ifdef CONFIG_PPC64
+>>> +	get_paca()->canary = canary;
+>>> +#endif
+>>>    }
+>>>    
+>>>    #endif	/* _ASM_STACKPROTECTOR_H */
+>>> diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-
+>>> offsets.c
+>>> index a992f7a53cf3..773dee55b3f6 100644
+>>> --- a/arch/powerpc/kernel/asm-offsets.c
+>>> +++ b/arch/powerpc/kernel/asm-offsets.c
+>>> @@ -81,6 +81,9 @@ int main(void)
+>>>    	OFFSET(MM, task_struct, mm);
+>>>    #ifdef CONFIG_STACKPROTECTOR
+>>>    	OFFSET(TASK_CANARY, task_struct, stack_canary);
+>>> +#ifdef CONFIG_PPC64
+>>> +	OFFSET(PACA_CANARY, paca_struct, canary);
+>>> +#endif
+>>>    #endif
+>>>    	OFFSET(MMCONTEXTID, mm_struct, context.id);
+>>>    #ifdef CONFIG_PPC64
+>>> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+>>> index 77a888bfcb53..573fa879d785 100644
+>>> --- a/arch/powerpc/kernel/entry_64.S
+>>> +++ b/arch/powerpc/kernel/entry_64.S
+>>> @@ -624,6 +624,10 @@ _GLOBAL(_switch)
+>>>    
+>>>    	addi	r6,r4,-THREAD	/* Convert THREAD to 'current' */
+>>>    	std	r6,PACACURRENT(r13)	/* Set new 'current' */
+>>> +#if defined(CONFIG_STACKPROTECTOR)
+>>> +	ld	r6, TASK_CANARY(r6)
+>>> +	std	r6, PACA_CANARY(r13)
+>>> +#endif
+>>>    
+>>>    	ld	r8,KSP(r4)	/* new stack pointer */
+>>>    #ifdef CONFIG_PPC_BOOK3S_64
+>>>
