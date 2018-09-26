@@ -2,100 +2,92 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=FROM_WORDY,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90024C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F818C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 516362086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:23:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516362086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 057512086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057512086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeIZVgo convert rfc822-to-8bit (ORCPT
+        id S1728240AbeIZVhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:36:44 -0400
-Received: from mout.gmx.net ([212.227.17.20]:59063 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbeIZVgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:36:44 -0400
-Received: from DESKTOPSLJ7U3P ([95.91.253.176]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MIPhr-1g3Gm803fL-004828; Wed, 26
- Sep 2018 17:23:14 +0200
-From:   <dollinger.florian@gmx.de>
-To:     "'Bastien Nocera'" <hadess@hadess.net>, <andrew.smirnov@gmail.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-input-owner@kernel.org>,
-        <linux-input@vger.kernel.org>
-Subject: Re: hid: microsoft: Add rumble support for Xbox One S controller
-Date:   Wed, 26 Sep 2018 17:23:09 +0200
-Message-ID: <003601d455ac$d5512db0$7ff38910$@gmx.de>
+        Wed, 26 Sep 2018 17:37:20 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.2]:38630 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726937AbeIZVhT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:37:19 -0400
+Received: from [85.158.142.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-2.bemta.az-a.eu-central-1.aws.symcld.net id 57/FF-23311-784ABAB5; Wed, 26 Sep 2018 15:23:51 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPIsWRWlGSWpSXmKPExsUSt3OpsW7bktX
+  RBr9vWVk0L17PZtG1eieLxeVdc9gsFi1rZbZ4svAMkwOrx7yTgR77565h99j5vYHd4/MmuQCW
+  KNbMvKT8igTWjA0Hv7EXLGatOHLmAnMD4w6WLkYuDiGB9YwS/z69Ye5i5ARyKiT6lnwBs3kF3
+  CR2rdrJBGKzCVhITD7xgA3EZhFQldi0pxesRlggQGLr9Pdgg0QEehglNh5Zwg6SYBZIklj7tg
+  dqkKDEyZlPWCDiEhIHX7yAWmYgcXpBI1hcQsBeYvr7q0BxDiBbX6LxWCxE2FDi+6xvUCXmEl3
+  TpzJPYOSfhWTqLCRTFzAyrWK0SCrKTM8oyU3MzNE1NDDQNTQ01jXSNTHRS6zSTdRLLdVNTs0r
+  KUoESuollhfrFVfmJuek6OWllmxiBAZ0SiGTzg7GTwvTDzFKcjApifIq+KyOFuJLyk+pzEgsz
+  ogvKs1JLT7EKMPBoSTBa7gYKCdYlJqeWpGWmQOMLZi0BAePkgivCUiat7ggMbc4Mx0idYpRUU
+  qcVwUkIQCSyCjNg2uDxfMlRlkpYV5GBgYGIZ6C1KLczBJU+VeM4hyMSsK8XiBTeDLzSuCmvwJ
+  azAS0eELPCpDFJYkIKakGRrHvblz9VxWVlx1u31m24lTs7LMcN82PGcj+npe7sIeNw3TShKtz
+  09xlrlwTmm1p27ySbcvUsyF34mVZPj3aaeFj/Sr03OqUopii1vT5m8sePRT7eHp/h/URCW6bh
+  O7fKlK9Mpb9r1PWLBZdN/loFnenc2JHvVWB/vqtX0uOcnBa1silrD30VYmlOCPRUIu5qDgRAK
+  Nux8LiAgAA
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-18.tower-229.messagelabs.com!1537975430!361960!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.14.24; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 2814 invoked from network); 26 Sep 2018 15:23:50 -0000
+Received: from mailrelay2.diasemi.com (HELO sw-ex-cashub01.diasemi.com) (94.185.165.51)
+  by server-18.tower-229.messagelabs.com with AES128-SHA encrypted SMTP; 26 Sep 2018 15:23:50 -0000
+Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
+ SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
+ 14.3.382.0; Wed, 26 Sep 2018 16:23:50 +0100
+Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
+ 2A0513FAF0; Wed, 26 Sep 2018 16:23:50 +0100 (BST)
+Message-ID: <cover.1537975081.git.Adam.Thomson.Opensource@diasemi.com>
+From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date:   Wed, 26 Sep 2018 16:23:50 +0100
+Subject: [PATCH 0/2] usb: typec: fusb302: Resolve fixed role power configuration
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <support.opensource@diasemi.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: de
-Thread-Index: AdRVrHF+tcqYHPx6TYmavRikcr9JOw==
-X-Provags-ID: V03:K1:Ll01lt5t8yq1XnXtCwhrfcLV4PNLq29b5jFWPC+2v3BdzqWeA8a
- aaKUNSK6yiBR+8/U5WV2/ud7+R25uaPIUdUosDGC2uVS6e/p4THmlwPbKCSvAUEOOP5Ess9
- 2n4G6E/hb8+RqStHEjURin2YXw7vBrUfH79UsTGaY3jvQDeqtH7cWp7o7QhX+De9iARnf0y
- ZhWwG64zv7J2pUsaoYqqQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Y4QASYeaPIE=:Q4aMZzSkNDWlf5CnZNtwLC
- vbLJKOXxerJRllAQDb3DTUQYf6fWGqH2K/rT28SRw371jY5/5QWLsUBxED76KWHk3dOfxyu5A
- cNsHFt3VGvi10e8+yeji4wIhyGRcGSwnabq4rNmoNiDCxgmGCzybpt2oJQrYdvmRsUdk4km4C
- 7T//5WhuRkXTzT3dlAKAs6c1tkehjvc0GXMdcrxkLEAx5XbZPA3yn99LLVaXG5gc49XrDX7N0
- Z6JSv9d3+C3TD4uJByOIn3L42s9AK73On4Mus5j8RZBKXDymZaGxiNs3jlCkrIT+m+DDU67rv
- sfFffkJWRuaAoiFbGr7jRLOMnFuQlb+4HlnK0+W6eS5d0oasPV+lS4sI774Q3GlKRqZRpI0k4
- DFLi3V9azH2sWfEmDZhZ/DdBstPoSpp9Hf6wPCIfU5D7EqmKt5cTzS10eSIwUSoMtWXlRSeQX
- wgaNmItf54/E/8aPyR6nkdxIePKJ/xQbk6mWKQb5glC2VKTjacIKdmKNvEW2l7j3+i5vgb3zT
- uQj3YQXIjpqcVm9uGqJLrWpM8bNENLhntCHziqazGhcD+Yhf7ZmXHONgXGxm2iUcEQ0KoUAPk
- 0p1N+sKlZXWfYWw8rj5XxDIIUUFIU5vBs4HgbiMHrj/xh7tLKoMKqBtxZ1DjemcFA0qn/OJTS
- v6vgx9Ij/Ar5rvXRbhFpaFFt7GGoxVbFtt47imYWnritW1Bd0fa3bAaeOTjFLgpyxALFHa+Vr
- 5zvsXGB+wij7TEhwPfDkueB4WUWmHJRjZQxrzEYbwrurv58GvEB0SJCsEdZTQlZqe1Eh+iTxC
- 8vswGthxhMQXXBFEHeXjAueTpAzN6IznGn0op9vqUEYiOqfCrg=
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 26/09/2018 13:22:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Bastien,
+This small patch set updates the fusb302 driver to correctly report CC line
+status during attach, when the device is configured as source only or sink only
+(non-DRP), so that TCPM state machine correctly proceeds with contract
+establishment. In addition, a trivial typo with regards to the OFF toggling
+state for the device is corrected.
 
-> Probably because he didn't know about it, and how would he?
+Changes are based on usb-testing (ae8a2ca8a221)
 
-Hum, it's the first hit when you search for something like 'xbox one s driver linux' since half an year or longer 😊
+Adam Thomson (2):
+  usb: typec: fusb302: Correct spelling mistake for toggling state
+  usb: typec: fusb302: Resolve fixed power role contract setup
 
-> I spent quite a bit of time trying to get the XBox One S controller working over Bluetooth, without success, and I see that you have a patch for that which you didn't send upstream either:
-https://github.com/atar-axis/xpadneo/blob/master/misc/kernel_patches/0001-fix_bluetooth_reconnect.patch
+ drivers/usb/typec/tcpm/fusb302.c | 36 ++++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-Jap, I just never pushed it because I never pushed anything to the linux kernel and I don't really know how the whole process works^^ Furthermore I wanted to fix possible before, but it looks like the driver is stable enough to push it now.
-
-> I can imagine that a large portion of the driver can be integrated in the existing XBox pad driver, with each feature added in individual patches.
-
-Would be great! But ist the xpad driver really the right place?
-
-First of all, the BT interface is using HID, USB does not.
-Furthermore, the driver is currently around 1,3k lines long - for a single device and only BT... (okay yes, there are a lot of comments in it).
-But anyway, is it really a good idea to put everything into hid-microsoft?
-Moreover, there is another interface which I am trying to support at the moment - the one which is used by the XBOX (WiFi).
-
-I think in the end the whole hid-microsoft thingy will get blown-up a bit - right?
-Or, everything is scattered over many places (hid-microsoft, xpad, another driver fort he wifi-interface).
-
-Isn't it possible to use "one driver per device" in the kernel too, like I did?
-
-> If I get the time, there are good chances I will send a patch to integrate the battery reporting in the existing driver at least, and then add support for missing buttons if there's a problem there (I see that mentioned in the README).
-
-Jap, the wrong mapping is possibly the biggest problem of all. Battery support and FF is more "nice to have" but not really crucial. 
-
-> "Trigger Force Feedback" is likely something that would need to be integrated at a lower level, this is probably not something we'd want to have replicated in each driver.
-
-True.
-
-
-Best regards, Flo
-
-
+-- 
+1.9.1
 
