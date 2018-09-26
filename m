@@ -2,78 +2,143 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404ABC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C257C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39042154B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:03:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39042154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 466342152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:06:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 466342152C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbeI0BR3 (ORCPT
+        id S1728492AbeI0BVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:17:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51698 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeI0BR2 (ORCPT
+        Wed, 26 Sep 2018 21:21:07 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34422 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbeI0BVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:17:28 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20604FF7;
-        Wed, 26 Sep 2018 19:03:06 +0000 (UTC)
-Date:   Wed, 26 Sep 2018 21:03:03 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Santos <daniel.santos@pobox.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v2] compiler.h: give up __compiletime_assert_fallback()
-Message-ID: <20180926190303.GA18293@kroah.com>
-References: <84cf6ae0-97c8-6b73-ca86-b3d3b3daba5b@pobox.com>
- <CAKwvOdm7RrGpwk4LMFhsKx=5QMDoFAF8JX=RMZ9YXwOptDfhCg@mail.gmail.com>
- <8d5cf8c6-556a-96a1-610d-c92355783a9f@pobox.com>
- <CAKwvOdkD0cmF5373LRS92U--ptRvikSrG_oKyE-AiaybCQYMBg@mail.gmail.com>
- <CAKwvOdnyA=Y_+KnJrDc5mu7twTAEOMXvb8cAZhwzsXTi7a9sEA@mail.gmail.com>
- <20180926180019.GD22824@google.com>
- <CAKwvOd=xYG+r4KU+QurUTyaxkPB2AMane4YfWxuvKtONvVtLxQ@mail.gmail.com>
- <CAGXu5jLBz1YanL5X4HFZjhb8NZe5QK=Q1ySfBkBDNWqEg4hs5g@mail.gmail.com>
- <20180926184259.GB14797@kroah.com>
- <CAGXu5jJaJ+1Sg3uwaZ8hzw3wFbiLrftpZDO8vdjY9_tB+P-HPQ@mail.gmail.com>
+        Wed, 26 Sep 2018 21:21:06 -0400
+Received: by mail-ed1-f66.google.com with SMTP id q19-v6so2890644edr.1;
+        Wed, 26 Sep 2018 12:06:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eyAUno7dCoPQO4E2Fq/fpMiyoPi9ZXVl138MM23sWII=;
+        b=B1nAOVuLeheqCaIhLtBct5q34pB0NjVpIVWRoq64TBArgd94URwwljIyW2BOxEwU8Z
+         vHWqrqF3J0XoTWNqe6QWH/sqmp6lb66HjioHyHKtpKUH5m8pcSifrtkmVSF//ziuKKMY
+         Qi7Lz7BnmfVf/eHLtFkINbZAIKL8ZtVYMvKwsh59ZqXZ8kDauWBxh9t2eT9Xc+21emhM
+         4e6A9s8rBiYYA14moion5gx2GM5tk9XDSHjRNFBgTof6LMGhRstnq/C60WNDtfdFII3/
+         u87h1IN2ZGCdPrL4zWQBjdV9up7X5wswj8QODkuVWjsqQw8BwyCz/k1YbhrWIOz+cip3
+         nhbQ==
+X-Gm-Message-State: ABuFfojKgav0QtfMIEhukp6vJP3bBJ8Iv9GzDukDV8PdiirV5BulZAuS
+        DoNxLfj9PkSVJSfR4h8AcB/qTasz
+X-Google-Smtp-Source: ACcGV60u2nukFHccRxvcU/qIMeOKFSma0pJtsm3per+nL0XddR+yKclC8aJ78yP0xmE+gkTI/PbFig==
+X-Received: by 2002:a50:f1c2:: with SMTP id y2-v6mr10540952edl.21.1537988802128;
+        Wed, 26 Sep 2018 12:06:42 -0700 (PDT)
+Received: from kozik-lap ([178.38.103.27])
+        by smtp.googlemail.com with ESMTPSA id b58-v6sm369315ede.37.2018.09.26.12.06.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 12:06:41 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 21:06:39 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCHv4 4/6] ARM: dts: exynos: Add CD and WP pins to Odroid
+ XU3/XU4 SD card
+Message-ID: <20180926190639.GA6461@kozik-lap>
+References: <20180922075238.884-1-linux.amoon@gmail.com>
+ <20180922075238.884-6-linux.amoon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jJaJ+1Sg3uwaZ8hzw3wFbiLrftpZDO8vdjY9_tB+P-HPQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180922075238.884-6-linux.amoon@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 11:45:19AM -0700, Kees Cook wrote:
-> On Wed, Sep 26, 2018 at 11:42 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > I'm not digging up a compiler.h patch from a web site and adding it to
-> > the tree this late in the release cycle.  Especially given that it
-> > hasn't had any testing anywhere...
+On Sat, Sep 22, 2018 at 07:52:36AM +0000, Anand Moon wrote:
+> Add the card-detect and write-protect GPIO pins for OdroidXU3/XU4
+> SD card by adding pinctrl setting for wp-gpio pin and set it to
+> active low.
 > 
-> Good point about it not living in -next.
+> This also removes debug messages:
+>     dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
+>     dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
 > 
-> Who should be carrying these sorts of patches? In the past it's been
-> Andrew or Masahiro, yes? For linux-next, maybe it can go via -mm?
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> Fix the commit message and squash it with cd-gpios and wp-gpio
+> patches into single patch as suggested by Krzysztof.
 
-Either is fine with me, as long as it isn't one of my trees :)
+As Marek pointed to my Odroid XU patch, there is no point of adding
+cd-gpios and wp-gpios properties.
 
-thanks,
+Adding pin configuration for wp pin is also not needed. Reset values are
+working properly. However there might be meaning of adding it just in
+case - if bootloader decided to touch it...
 
-greg k-h
+Best regards,
+Krzysztof
+
+
+> ---
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi     | 8 ++++++++
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 4 +++-
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> index dda8ca2d2324..9a39a0d8ec86 100644
+> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> @@ -289,6 +289,14 @@
+>  		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+>  		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
+>  	};
+> +
+> +	sd2_wp: sd2-wp {
+> +		samsung,pins = "gpc4-0";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
+> +		/* Pin is floating so pull it up to disable write-protect */
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
+> +	};
+>  };
+>  
+>  &pinctrl_2 {
+> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> index a80b6c045154..2aacfb669140 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> @@ -498,10 +498,12 @@
+>  	samsung,dw-mshc-sdr-timing = <0 4>;
+>  	samsung,dw-mshc-ddr-timing = <0 2>;
+>  	pinctrl-names = "default";
+> -	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+> +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_wp &sd2_bus1 &sd2_bus4>;
+>  	bus-width = <4>;
+>  	cap-sd-highspeed;
+>  	max-frequency = <200000000>;
+> +	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
+> +	wp-gpios = <&gpc4 0 GPIO_ACTIVE_LOW>;
+>  	vmmc-supply = <&ldo19_reg>;
+>  	vqmmc-supply = <&ldo13_reg>;
+>  	sd-uhs-sdr50;
+> -- 
+> 2.17.1
+> 
