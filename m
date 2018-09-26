@@ -2,119 +2,77 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8767C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AF7C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF6BA20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:31:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CQcn5NBo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF6BA20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A4172150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A4172150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbeIZVpA (ORCPT
+        id S1728293AbeIZVqL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:45:00 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39222 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeIZVo7 (ORCPT
+        Wed, 26 Sep 2018 17:46:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49899 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbeIZVqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:44:59 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8QFVJct050770;
-        Wed, 26 Sep 2018 10:31:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537975879;
-        bh=VN9raH1xpjNwA8Cj4SNFjkkLdpshBijCH0k5lOufgMw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=CQcn5NBowDR8WsnukkRqnOsGcODyqkEOnplISfj/VwlyC03KcCttepM+3vOKnDJLS
-         o/oLBeoxiz3gXRXaRFk1atw0tMYloN4Jai2Qw4QKlDosuawOj3JV4ZW9CRknWCw1x6
-         UkeTHEpPRz20Iooy13h3UWoaEpkVBsQkMgupispU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8QFVJ27021256;
-        Wed, 26 Sep 2018 10:31:19 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 26
- Sep 2018 10:31:18 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 26 Sep 2018 10:31:19 -0500
-Received: from [128.247.58.174] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8QFVJcQ026346;
-        Wed, 26 Sep 2018 10:31:19 -0500
-Subject: Re: [RFC PATCH 1/9] leds: add TI LMU backlight driver
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lee.jones@linaro.org>, <linux-omap@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-References: <20180926130921.12329-1-dmurphy@ti.com>
- <20180926130921.12329-2-dmurphy@ti.com> <20180926150145.GS5662@atomide.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <ee0185f0-1fc9-9176-2236-836ca0ac6f41@ti.com>
-Date:   Wed, 26 Sep 2018 10:30:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 26 Sep 2018 17:46:11 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1g5Bni-0001nJ-8c; Wed, 26 Sep 2018 17:32:30 +0200
+Date:   Wed, 26 Sep 2018 17:32:30 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        Denys Vlasenko <dvlasenk@redhat.com>, Ong@linutronix.de,
+        Boon Leong <boon.leong.ong@intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [RFC PATCH 10/10] x86/fpu: defer FPU state load until return to
+ userspace
+Message-ID: <20180926153229.n5rwlfhuqu42ds6v@linutronix.de>
+References: <20180912133353.20595-1-bigeasy@linutronix.de>
+ <20180912133353.20595-11-bigeasy@linutronix.de>
+ <650FC457-7E4C-473A-9E5F-EAFC74F6444B@amacapital.net>
+ <20180919170515.ptqmmpsxrdjsi64j@linutronix.de>
+ <D5D1FB08-9CE8-498B-9636-C0390153814A@amacapital.net>
+ <A5B266A3-1EF7-44A4-9AAF-1AA1858CEFCF@amacapital.net>
+ <20180926111222.hihueuagmb4qfmtz@linutronix.de>
+ <59E2EBC5-C483-4788-B490-4A3770DBB993@amacapital.net>
 MIME-Version: 1.0
-In-Reply-To: <20180926150145.GS5662@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <59E2EBC5-C483-4788-B490-4A3770DBB993@amacapital.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony
+On 2018-09-26 07:34:09 [-0700], Andy Lutomirski wrote:
+> > So I *think* nobody relies on FPU-emulation anymore. I would suggest to
+> > get this patch set into shape and then getting rid of
+> > CONFIG_MATH_EMULATION?
 
-On 09/26/2018 10:01 AM, Tony Lindgren wrote:
-> * Dan Murphy <dmurphy@ti.com> [180926 13:14]:
->> --- /dev/null
->> +++ b/drivers/leds/ti-lmu-led-common.c
->> +static int ti_lmu_common_enable(struct ti_lmu_bank *lmu_bank, bool enable)
->> +{
->> +	struct regmap *regmap = lmu_bank->regmap;
->> +	unsigned long enable_time = lmu_bank->enable_usec;
->> +	u8 reg = lmu_bank->enable_reg;
->> +	u8 mask = BIT(lmu_bank->bank_id);
->> +	u8 val = (enable == true) ? mask : 0;
->> +	int ret;
->> +
->> +	return 0;
-> 
-> Hmm this early return probably needs to be left out on real hardawre?
-> 
+Bryan, Denys, does anyone of you rely on CONFIG_MATH_EMULATION?
+The manual for Quark claims that the CPU has no FPU and yet the current
+kernel (or the yocto v3.14) does not select this option.
+Denys added support for some opcodes in 2015 but I didn't figure out
+*why* or which CPU in particular requires this.
 
-Yes it does.  I have not debugged or completed this function yet.
+> I don’t think you can boot a kernel without math emulation on a no-FPU CPU. So maybe we should table this particular idea.  I didn’t realize there were Quark CPUs without FPU.
 
->> +	if (!reg)
->> +		return -EINVAL;
->> +
->> +	ret = regmap_update_bits(regmap, reg, mask, val);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (enable_time > 0)
->> +		usleep_range(enable_time, enable_time + 100);
->> +
->> +	return 0;
->> +}
-> 
-> Regards,
-> 
-> Tony
-> 
+Okay.
 
-
--- 
-------------------
-Dan Murphy
+Sebastian
