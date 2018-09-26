@@ -2,82 +2,87 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B41C9C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F733C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56E1D21527
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:17:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56E1D21527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 49FD021527
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49FD021527
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728477AbeIZWb2 (ORCPT
+        id S1728510AbeIZWct (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:31:28 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33152 "EHLO mail.skyhub.de"
+        Wed, 26 Sep 2018 18:32:49 -0400
+Received: from mga18.intel.com ([134.134.136.126]:26260 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727782AbeIZWb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:31:28 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id h64KTM2ht_5m; Wed, 26 Sep 2018 18:17:46 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA1F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:1f00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 304E81EC04FB;
-        Wed, 26 Sep 2018 18:17:46 +0200 (CEST)
-Date:   Wed, 26 Sep 2018 18:17:49 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     "Luck, Tony" <tony.luck@intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Justin Ernst <justin.ernst@hpe.com>, russ.anderson@hpe.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aristeu Rozanski Filho <arozansk@redhat.com>
-Subject: Re: [PATCH] Raise maximum number of memory controllers
-Message-ID: <20180926161749.GI5584@zn.tnic>
-References: <20180925143449.284634-1-justin.ernst@hpe.com>
- <20180925152659.GE23986@zn.tnic>
- <20180925175023.GA16725@agluck-desk>
- <20180925180458.GG23986@zn.tnic>
- <20180926093510.GA5584@zn.tnic>
- <20180926152752.GG5584@zn.tnic>
- <20180926130340.6b22918b@coco.lan>
+        id S1727285AbeIZWct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:32:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:19:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="76115327"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.154]) ([10.7.198.154])
+  by orsmga007.jf.intel.com with ESMTP; 26 Sep 2018 09:18:16 -0700
+Subject: Re: [PATCH v5 2/4] mm: Provide kernel parameter to allow disabling
+ page init poisoning
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
+        jglisse@redhat.com, rppt@linux.vnet.ibm.com,
+        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925201921.3576.84239.stgit@localhost.localdomain>
+ <20180926073831.GC6278@dhcp22.suse.cz>
+ <c57da51a-009a-9500-4dc5-1d9912e78abd@linux.intel.com>
+ <98411844-19b7-a75b-d52c-6e2c46b40d57@intel.com>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <0845f5c1-5737-3749-69dd-e7fb5d1b75c6@linux.intel.com>
+Date:   Wed, 26 Sep 2018 09:18:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180926130340.6b22918b@coco.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <98411844-19b7-a75b-d52c-6e2c46b40d57@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 01:03:40PM -0300, Mauro Carvalho Chehab wrote:
-> I guess this is/was needed to create things like this:
+
+
+On 9/26/2018 8:41 AM, Dave Hansen wrote:
+> On 09/26/2018 08:24 AM, Alexander Duyck wrote:
+>> With no options it works just like slub_debug and enables all
+>> available options. So in our case it is a NOP since we wanted the
+>> debugging enabled by default.
 > 
-> 	lrwxrwxrwx 1 root root 0 set 26 05:24 /sys/bus/edac/devices/mc -> ../../../devices/system/edac/mc
+> Yeah, but slub_debug is different.
+> 
+> First, nobody uses the slub_debug=- option because *that* is only used
+> when you have SLUB_DEBUG=y *and* CONFIG_SLUB_DEBUG_ON=y, which not even
+> Fedora does.
+> 
+> slub_debug is *primarily* for *adding* debug features.  For this, we
+> need to turn them off.
+> 
+> It sounds like following slub_debug was a bad idea, especially following
+> its semantics too closely when it doesn't make sense.
 
-They're still there:
-
-$ ls -l /sys/bus/edac/devices/
-total 0
-lrwxrwxrwx 1 root root 0 Sep 26 18:15 csrow0 -> ../../../devices/system/edac/mc/mc0/csrow0
-lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm0 -> ../../../devices/system/edac/mc/mc0/dimm0
-lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm3 -> ../../../devices/system/edac/mc/mc0/dimm3
-lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm6 -> ../../../devices/system/edac/mc/mc0/dimm6
-lrwxrwxrwx 1 root root 0 Sep 26 18:15 dimm9 -> ../../../devices/system/edac/mc/mc0/dimm9
-lrwxrwxrwx 1 root root 0 Sep 26 18:15 mc -> ../../../devices/system/edac/mc
-lrwxrwxrwx 1 root root 0 Sep 26 18:15 mc0 -> ../../../devices/system/edac/mc/mc0
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+I actually like the idea of using slub_debug style semantics. It makes 
+sense when you start thinking about future features being added. Then we 
+might actually have scenarios where vm_debug=P will make sense, but for 
+right now it is probably not going to be used. Basically this all makes 
+room for future expansion. It is just ugly to read right now while we 
+only have one feature controlled by this bit.
