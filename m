@@ -2,161 +2,239 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07059C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41465C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 988EB2086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC4FC2086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="N0EjHl++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988EB2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Awx/r/KL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC4FC2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbeIZUyz (ORCPT
+        id S1727512AbeIZUzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 16:54:55 -0400
-Received: from mail.kdab.com ([176.9.126.58]:46509 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727136AbeIZUyz (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 16:54:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1537972893; x=1538836894; bh=8FxmbjfgVzms1uONviiRt4O5t12
- fIzAfTzSh8aKnzWY=; b=N0EjHl++6iY1TF+LGFa8+k/yUrjJtPGMYFZWiKWmiWT
- uIXvU1qbgzr9Ap6unWCcUs+HRKVeGyEP12eLyBdveiY78AUqlMuJ5fU2anDXTJ9l
- JLcU9G7mfh86DdBcKjY+brZ53kabISrBMUDW1dpuaRIIq+/M8VJwFWbOnUp3vSIs
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     jolsa@kernel.org, yao.jin@linux.intel.com, namhyung@kernel.org,
-        Linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Sandipan Das <sandipan@linux.ibm.com>
-Subject: Re: [PATCH 1/3] perf report: don't try to map ip to invalid map
-Date:   Wed, 26 Sep 2018 16:41:23 +0200
-Message-ID: <2962236.ln4BiC7fMR@milian-kdab2>
-Organization: KDAB
-In-Reply-To: <20180926141819.GD25764@kernel.org>
-References: <20180926135207.30263-1-milian.wolff@kdab.com>
- <20180926141819.GD25764@kernel.org>
+        Wed, 26 Sep 2018 16:55:39 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33678 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727048AbeIZUzi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 16:55:38 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f10-v6so6280392wrs.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=X9qAK/EHVtOPpzFnGz6jfQWV6x8EeAkgSU6li2EAqc4=;
+        b=Awx/r/KLPTTZcg421KhZne9x6lKum1jP+Maba7m9qs+lHt6jt5P+4JnMMY+KG5DGhb
+         dX82rQRXRSJvBC+WzLngVgox48yrK4Q4/S8n9NC02OX35xCzNJGdumGKeKJDc3CXiKP9
+         2YAGEg6U5cWd0PTs75+UbpVzLP0vxS2J/jXgs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=X9qAK/EHVtOPpzFnGz6jfQWV6x8EeAkgSU6li2EAqc4=;
+        b=tIL+7BVMVHXq73Eut/Rp1/+aR+CA5yZCakvzNYXpK/bpQNWzqJS/FskS73CuGTTW1V
+         cbc4FJEtHvz86251dO9ZBXmWfFZQM+uM/c4I7wXbjsv8epEcyeKV+QWrgwggA2B47AHu
+         GgNaaCeessmlI5WQy+bHEjNcW0GoXmXUnnzXI8I8lVhPmx+1+zHKPR0wWFcZ8WgFJ5ju
+         oHbPoAK8thlXDIEIGNwXPYjc7qn6vcuuyeUwFNE9jIl7YzlWSJQfd8ChnKeHlOoPDcmn
+         6hQI+gzkykIYhjfzRuQ87HqF975LwV6USXk7gLb6N693yzH3QXCQ27Ob7m/reesDhQEn
+         rccA==
+X-Gm-Message-State: ABuFfoi7MDxSLuk2IevUnag8ttjYcG55WbrFQBOs7GLesmB8h7vT+MZE
+        DjdFo53Y9o3TimVM+oQJfVrr58xjytw=
+X-Google-Smtp-Source: ACcGV61aBc6C+LTzPGYB9HUutueR9PpH5DW4TcGWmflUcxC3Dm8QP9UMUHsbY7xRPV9z3qS91We6iw==
+X-Received: by 2002:a05:6000:1201:: with SMTP id e1mr5435938wrx.157.1537972939337;
+        Wed, 26 Sep 2018 07:42:19 -0700 (PDT)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id y203-v6sm4883869wmd.1.2018.09.26.07.42.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 07:42:18 -0700 (PDT)
+Subject: Re: [PATCH v9 2/8] dt-bindings: Introduce interconnect binding
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, mturquette@baylibre.com, khilman@baylibre.com,
+        vincent.guittot@linaro.org, skannan@codeaurora.org,
+        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        evgreen@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
+        maxime.ripard@bootlin.com, arnd@arndb.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20180831140151.13972-1-georgi.djakov@linaro.org>
+ <20180831140151.13972-3-georgi.djakov@linaro.org>
+ <20180925180215.GA12435@bogus>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <b67253fb-d86d-2ddd-6c30-0833d6ed62ad@linaro.org>
+Date:   Wed, 26 Sep 2018 17:42:15 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2320475.92ApF3PXdc";
- micalg="sha256"; protocol="application/pkcs7-signature"
+In-Reply-To: <20180925180215.GA12435@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart2320475.92ApF3PXdc
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Hi Rob,
 
-On Wednesday, September 26, 2018 4:18:19 PM CEST Arnaldo Carvalho de Melo 
-wrote:
-> Em Wed, Sep 26, 2018 at 03:52:05PM +0200, Milian Wolff escreveu:
-> > Fixes a crash when the report encounters an address that
+Thanks for the comments!
+
+On 09/25/2018 09:02 PM, Rob Herring wrote:
+> On Fri, Aug 31, 2018 at 05:01:45PM +0300, Georgi Djakov wrote:
+>> This binding is intended to represent the relations between the interconnect
+>> controllers (providers) and consumer device nodes. It will allow creating links
+>> between consumers and interconnect paths (exposed by interconnect providers).
 > 
-> > could not be associated with an mmaped region:
-> Milian, can you spot which cset introduced this problem? So that we can
-> add a "Fixes: sha" tag in this (and the others, if needed) to help the
-> stable kernel maintainers to find which kernels this has to be
-> backported to?
+> As I mentioned in person, I want to see other SoC families using this 
+> before accepting. They don't have to be ready for upstream, but WIP 
+> patches or even just a "yes, this works for us and we're going to use 
+> this binding on X".
 
-The issue was introduced by
+Other than the 3 Qualcomm SoCs (msm8916, msm8996, sdm845) that are
+currently using this binding, there is ongoing work from at least two
+other vendors that would be using this same binding. I will check on
+what is their progress so far.
 
-perf script: Show correct offsets for DWARF-based unwinding
+> Also, I think the QCom GPU use of this should be fully sorted out. Or 
+> more generically how this fits into OPP binding which seems to be never 
+> ending extended...
 
-This in turn got backported already a few times, at which point the 
-2a9d5050dc84fa2060f08a52f632976923e0fa7e sha was used when referencing the 
-"Upstream commit".
+I see this as a further step. It could be OPP binding which include
+bandwidth values or some separate DT property. Jordan has already
+proposed something, do you have any initial comments on that?
 
-Is that enough, or do you need me to find all the backported shas too?
--- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart2320475.92ApF3PXdc
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+BR,
+Georgi
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgwOTI2MTQ0MTIzWjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQgZZ1FomyxsnlNyIVVpUVsDs+mq3wl
-SP2D4GugXFXfmVUwDQYJKoZIhvcNAQEBBQAEggEAJM4Cz42fRYx8vK9xB1/e25z+a4rUh5zR2bCR
-4pEswG18Y4thuqgkuPAZehmKD3+walUl718hCZGZCFToOKSyRRMNf4Cykn4OILC5Wlg+dvapvIo0
-1Sk928GH6e9y3ms+Ox/5s7zWN7ghV40//HgZBF/jl9qN30gEKlK+mLz5E0iAipylzNqjYo2NMnHs
-yHbR89wGBaPmQlXEGiyRzoWJlb607NI+c/1s8nIETp0SyoycIdR8J85RpuvGKo6lTA2+UmevZ7kQ
-/nMdk3kVUxb+qObPZ2RSXkyTkhYjzZksGFqDPuiSLYGh3quWb9L8FspyhOYwxC6xZ1DxUvslv+5z
-ngAAAAAAAA==
-
-
---nextPart2320475.92ApF3PXdc--
-
-
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
+>>  .../bindings/interconnect/interconnect.txt    | 60 +++++++++++++++++++
+>>  1 file changed, 60 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+>> new file mode 100644
+>> index 000000000000..5cb7d3c8d44d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+>> @@ -0,0 +1,60 @@
+>> +Interconnect Provider Device Tree Bindings
+>> +=========================================
+>> +
+>> +The purpose of this document is to define a common set of generic interconnect
+>> +providers/consumers properties.
+>> +
+>> +
+>> += interconnect providers =
+>> +
+>> +The interconnect provider binding is intended to represent the interconnect
+>> +controllers in the system. Each provider registers a set of interconnect
+>> +nodes, which expose the interconnect related capabilities of the interconnect
+>> +to consumer drivers. These capabilities can be throughput, latency, priority
+>> +etc. The consumer drivers set constraints on interconnect path (or endpoints)
+>> +depending on the use case. Interconnect providers can also be interconnect
+>> +consumers, such as in the case where two network-on-chip fabrics interface
+>> +directly
+> 
+> missing '.'
+> 
+>> +
+>> +Required properties:
+>> +- compatible : contains the interconnect provider compatible string
+>> +- #interconnect-cells : number of cells in a interconnect specifier needed to
+>> +			encode the interconnect node id
+>> +
+>> +Example:
+>> +
+>> +		snoc: snoc@580000 {
+>> +			compatible = "qcom,msm8916-snoc";
+>> +			#interconnect-cells = <1>;
+>> +			reg = <0x580000 0x14000>;
+>> +			clock-names = "bus_clk", "bus_a_clk";
+>> +			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
+>> +				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
+>> +		};
+>> +
+>> +
+>> += interconnect consumers =
+>> +
+>> +The interconnect consumers are device nodes which dynamically express their
+>> +bandwidth requirements along interconnect paths they are connected to. There
+>> +can be multiple interconnect providers on a SoC and the consumer may consume
+>> +multiple paths from different providers depending on use case and the
+>> +components it has to interact with.
+>> +
+>> +Required properties:
+>> +interconnects : Pairs of phandles and interconnect provider specifier to denote
+>> +	        the edge source and destination ports of the interconnect path.
+>> +
+>> +Optional properties:
+>> +interconnect-names : List of interconnect path name strings sorted in the same
+>> +		     order as the interconnects property. Consumers drivers will use
+>> +		     interconnect-names to match interconnect paths with interconnect
+>> +		     specifiers.
+> 
+> specifier pairs.
+> 
+>> +
+>> +Example:
+>> +
+>> +	sdhci@7864000 {
+>> +		...
+>> +		interconnects = <&pnoc MASTER_SDCC_1 &bimc SLAVE_EBI_CH0>;
+>> +		interconnect-names = "ddr";
+>> +	};
