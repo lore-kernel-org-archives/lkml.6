@@ -2,116 +2,106 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A63ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1D0C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D40302152C
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:22:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D40302152C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ED072152C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 16:24:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="f3qo0Vsz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED072152C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbeIZWgS (ORCPT
+        id S1728740AbeIZWiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 18:36:18 -0400
-Received: from mga06.intel.com ([134.134.136.31]:24519 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728025AbeIZWgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 18:36:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 09:22:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="93922814"
-Received: from araj-mobl1.jf.intel.com ([10.7.201.19])
-  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 09:22:35 -0700
-Date:   Wed, 26 Sep 2018 09:22:35 -0700
-From:   "Raj, Ashok" <ashok.raj@linux.intel.com>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Ashok Raj <ashok.raj@intel.com>,
-        IOMMU Mailing List <iommu@lists.linux-foundation.org>
-Subject: Re: [PATCH V3] PCI: Enable PASID when End-to-End TLP is supported by
- all bridges
-Message-ID: <20180926162235.GA30177@araj-mobl1.jf.intel.com>
-References: <1530372264-20653-1-git-send-email-okaya@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530372264-20653-1-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Wed, 26 Sep 2018 18:38:23 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46143 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728492AbeIZWiX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 18:38:23 -0400
+Received: by mail-pl1-f194.google.com with SMTP id v19-v6so2524339ply.13
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 09:24:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=UDwQP7CFTfD9UqfKiVP8V6knc0Dzcq6m5bKereoNnDE=;
+        b=f3qo0VszZZxOLT4Z0cb0JdAdaLxZzJw3nBvOcktegne1iauNG5VxAMSSH/BELgs1li
+         L3FCI0cH3imlcYLbw8z5O+cuCCWxZxZeqvn9+n4vQhH4ZGYspmCdPHQvb2m4aYBYFv6v
+         CfEZcAwj9z57iEauACavO19MxoQlkhYZ17aRgkN/xkCUvpT1XXOJ/D/0lyP0+bruADZD
+         z4CWiQt2flOI7WD9Nu84xfxarschk3nkRiUY6awHLwwDg2xh57G1tNTL/qsKM+O5oL1h
+         ufiH5q4WwSZEsIhJHlrjZTal5bQCLqgz4svl/3/bMxlI0O+2StyrQyhtHXi0VUG6PxC3
+         flsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=UDwQP7CFTfD9UqfKiVP8V6knc0Dzcq6m5bKereoNnDE=;
+        b=U13YNfputDnt+jPzUVrTVdPaooCgoFdJD55bT1SyWlqZ9B8w653BXVwigGCDjg3s0w
+         A3eTqIivqseZnkFUlxQIwzoX/YPOnnd3xYVP45elS1/1EB8I1n6HIqE4ODNgyRSzMPE5
+         wZsYMGt2E1ySQkDymaEHSJAbXKCjhhock0pyDIomN4aahMlreoERv7Sz8ERwI83vi22y
+         DLvH3PEoi2KJjwAXAQqWE5QavtdA5cyC3N2Hk/AZqEO9kemBhvDaNcNH4Shnmvnahu4y
+         qr4MZyKi/8YgHNDXjkuZfKTMV6lWLbILHpcHtfIjU/grUFkuBG4ucdyTOf9X/4yj4siX
+         YWbA==
+X-Gm-Message-State: ABuFfogtW6k/6+FsO3OzVKRpn8kPzR9frH5Q5Zg8af6s//il/f2XnX49
+        dAfJDK8eiOXmMLTlU2mDlo687A==
+X-Google-Smtp-Source: ACcGV61x4JPdVUY5WKkd6Vrw6eFPB1FRtGsMx160Kg0Pgx99xsbzytaC4OlGTisOf4rVmUleYy3EIA==
+X-Received: by 2002:a17:902:22cc:: with SMTP id o12-v6mr6884647plg.108.1537979080606;
+        Wed, 26 Sep 2018 09:24:40 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:f021:f41a:9790:a132? ([2601:646:c200:7429:f021:f41a:9790:a132])
+        by smtp.gmail.com with ESMTPSA id b18-v6sm11149765pgk.15.2018.09.26.09.24.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 09:24:39 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH 10/10] x86/fpu: defer FPU state load until return to userspace
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <20180926153229.n5rwlfhuqu42ds6v@linutronix.de>
+Date:   Wed, 26 Sep 2018 09:24:38 -0700
+Cc:     Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+        Denys Vlasenko <dvlasenk@redhat.com>, Ong@linutronix.de,
+        Boon Leong <boon.leong.ong@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?Q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <176B4B39-6471-401C-A1E1-4B6B3FF157C3@amacapital.net>
+References: <20180912133353.20595-1-bigeasy@linutronix.de> <20180912133353.20595-11-bigeasy@linutronix.de> <650FC457-7E4C-473A-9E5F-EAFC74F6444B@amacapital.net> <20180919170515.ptqmmpsxrdjsi64j@linutronix.de> <D5D1FB08-9CE8-498B-9636-C0390153814A@amacapital.net> <A5B266A3-1EF7-44A4-9AAF-1AA1858CEFCF@amacapital.net> <20180926111222.hihueuagmb4qfmtz@linutronix.de> <59E2EBC5-C483-4788-B490-4A3770DBB993@amacapital.net> <20180926153229.n5rwlfhuqu42ds6v@linutronix.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sinan
 
-+ IOMMU list.
 
-On Sat, Jun 30, 2018 at 11:24:24AM -0400, Sinan Kaya wrote:
-> A PCIe endpoint carries the process address space identifier (PASID) in
-> the TLP prefix as part of the memory read/write transaction. The address
-> information in the TLP is relevant only for a given PASID context.
-> 
-> An IOMMU takes PASID value and the address information from the
-> TLP to look up the physical address in the system.
-> 
-> PASID is an End-End TLP Prefix (PCIe r4.0, sec 6.20).  Sec 2.2.10.2 says
-> 
->   It is an error to receive a TLP with an End-End TLP Prefix by a
->   Receiver that does not support End-End TLP Prefixes. A TLP in
->   violation of this rule is handled as a Malformed TLP. This is a
->   reported error associated with the Receiving Port (see Section 6.2).
-> 
-> Prevent error condition by proactively requiring End-to-End TLP
-> prefix to be supported on the entire data path between the endpoint and
-> the root port before enabling PASID.
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-> ---
->  
-> +static void pci_configure_eetlp_prefix(struct pci_dev *dev)
-> +{
-> +#ifdef CONFIG_PCI_PASID
-> +	struct pci_dev *bridge;
-> +	u32 cap;
-> +
-> +	if (!pci_is_pcie(dev))
-> +		return;
-> +
-> +	pcie_capability_read_dword(dev, PCI_EXP_DEVCAP2, &cap);
-> +	if (!(cap & PCI_EXP_DEVCAP2_E2ETLP))
-> +		return;
+> On Sep 26, 2018, at 8:32 AM, Sebastian Andrzej Siewior <bigeasy@linutronix=
+.de> wrote:
+>=20
+> On 2018-09-26 07:34:09 [-0700], Andy Lutomirski wrote:
+>>> So I *think* nobody relies on FPU-emulation anymore. I would suggest to
+>>> get this patch set into shape and then getting rid of
+>>> CONFIG_MATH_EMULATION?
+>=20
+> Bryan, Denys, does anyone of you rely on CONFIG_MATH_EMULATION?
+> The manual for Quark claims that the CPU has no FPU and yet the current
+> kernel (or the yocto v3.14) does not select this option.
+> Denys added support for some opcodes in 2015 but I didn't figure out
+> *why* or which CPU in particular requires this.
 
-Forgot to notice this.. I'm not sure if the same enforcement is 
-required for devices that are RCIEP. The spec isn't clear about calling
-any excemption. Although it should be simple for devices to expose
-e2etlp support, but if they don't that should be ok, since there are
-nothing between itself and the root port.
+Certainly the early Quark CPUs were, um, crappy. They had so many terrifying=
+ errata that I=E2=80=99m surprised anyone is willing to use them.
 
-We are seeking help from our SIG reps, but thought I'll ask here as well
-if there are other opinions.
-
-> +
-> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT)
-> +		dev->eetlp_prefix_path = 1;
-> +	else {
-> +		bridge = pci_upstream_bridge(dev);
-> +		if (bridge && bridge->eetlp_prefix_path)
-> +			dev->eetlp_prefix_path = 1;
-> +	}
-> +#endif
-> +}
-
-Cheers,
-Ashok
+I would *hope* that all supported Quark CPUs support FPU instructions even i=
+f they=E2=80=99re microcoded and run extremely slowly.
