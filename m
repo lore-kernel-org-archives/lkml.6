@@ -6,101 +6,119 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 987ADC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A98DC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BB0E214C5
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BB0E214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 0E564214C5
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 11:37:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E564214C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbeIZRso (ORCPT
+        id S1728249AbeIZRtj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 13:48:44 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49164 "EHLO mail.skyhub.de"
+        Wed, 26 Sep 2018 13:49:39 -0400
+Received: from mga14.intel.com ([192.55.52.115]:39696 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbeIZRso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 13:48:44 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id jCKH_iKQPgvF; Wed, 26 Sep 2018 13:36:09 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCA1F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:1f00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3D0741EC01FA;
-        Wed, 26 Sep 2018 13:36:09 +0200 (CEST)
-Date:   Wed, 26 Sep 2018 13:36:17 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        David Wang <davidwang@zhaoxin.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>, He Chen <he.chen@linux.intel.com>,
-        Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Piotr Luc <Piotr.Luc@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v14 04/19] x86/cpufeatures: Add SGX feature bits
-Message-ID: <20180926113617.GD5584@zn.tnic>
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
- <20180925130845.9962-5-jarkko.sakkinen@linux.intel.com>
- <20180925164854.GF23986@zn.tnic>
- <20180926111139.GA12037@linux.intel.com>
+        id S1727003AbeIZRtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 13:49:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 04:37:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="93394694"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 26 Sep 2018 04:36:26 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 26 Sep 2018 14:36:25 +0300
+Date:   Wed, 26 Sep 2018 14:36:25 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Andy Shevchenko Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v3.1 1/2] device property: Add device_get_bd_address()
+ and fwnode_get_bd_address()
+Message-ID: <20180926113625.GM11965@kuha.fi.intel.com>
+References: <20180925191014.85573-1-mka@chromium.org>
+ <20180925191014.85573-2-mka@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180926111139.GA12037@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180925191014.85573-2-mka@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 02:11:39PM +0300, Jarkko Sakkinen wrote:
-> Thank you. I guess I understand what you want me to do i.e.
-> 
-> +       { X86_FEATURE_SGX1,             CPUID_EAX,  0, 0x00000012, 0 },
-> +       { X86_FEATURE_SGX2,             CPUID_EAX,  1, 0x00000012, 0 },
-> +       { X86_FEATURE_ENCLV,            CPUID_EAX,  5, 0x00000012, 0 },
-> +       { X86_FEATURE_ENCLS_C,          CPUID_EAX,  6, 0x00000012, 0 },
+On Tue, Sep 25, 2018 at 12:10:13PM -0700, Matthias Kaehlcke wrote:
+> +/**
+> + * fwnode_get_bd_address - Get the Bluetooth Device Address (BD_ADDR) from the
+> + *                         firmware node
+> + * @fwnode:	Pointer to the firmware node
+> + * @bd_addr:	Pointer to struct to store the BD address in
+> + *
+> + * Search the firmware node for 'local-bd-address'.
+> + *
+> + * All-zero BD addresses are rejected, because those could be properties
+> + * that exist in the firmware tables, but were not updated by the firmware. For
+> + * example, the DTS could define 'local-bd-address', with zero BD addresses.
+> + */
+> +int fwnode_get_bd_address(struct fwnode_handle *fwnode, bdaddr_t *bd_addr)
+> +{
+> +	bdaddr_t ba;
+> +	int ret;
+> +
+> +	ret = fwnode_property_read_u8_array(fwnode, "local-bd-address",
+> +					    (u8 *)&ba, sizeof(bdaddr_t));
+> +	if (ret < 0)
+> +		return ret;
+> +	if (is_zero_ether_addr((u8 *)&ba))
+> +		return -ENODATA;
+> +
+> +	memcpy(bd_addr, &ba, sizeof(bdaddr_t));
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(fwnode_get_bd_address);
+> +
+> +/**
+> + * device_get_bd_address - Get the Bluetooth Device Address (BD_ADDR) for a
+> + *                         given device
+> + * @dev:	Pointer to the device
+> + * @bd_addr:	Pointer to struct to store the BD address in
+> + */
+> +int device_get_bd_address(struct device *dev, bdaddr_t *bd_addr)
+> +{
+> +	return fwnode_get_bd_address(dev_fwnode(dev), bd_addr);
+> +}
+> +EXPORT_SYMBOL_GPL(device_get_bd_address);
 
-Yap.
+Let's not fill property.c with framework specific helper functions any
+more!
 
-> What puzzles me is that I cannot find any call site for
-> get_scattered_cpuid_leaf():
-> 
-> $ git grep get_scattered
-> arch/x86/kernel/cpu/cpu.h:extern u32 get_scattered_cpuid_leaf(unsigned int level,
-> arch/x86/kernel/cpu/scattered.c:u32 get_scattered_cpuid_leaf(unsigned int level, unsigned int sub_leaf,
-> arch/x86/kernel/cpu/scattered.c:EXPORT_SYMBOL_GPL(get_scattered_cpuid_leaf);
+Those functions are completely bluetooth specific, so they do not
+belong here. The fact that some other framework already managed to
+slip their helpers in does not justify others to do the same.
 
-That used to be used in kvm last, see b7b27aa011a1df42728d1768fc181d9ce69e6911,
-which removed it.
 
-And it got added by
-
-  47bdf3378d62 ("x86/cpuid: Provide get_scattered_cpuid_leaf()")
-
-Lemme add those people to CC.
-
-If no one wants it, feel free to decomission it.
+Thanks,
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+heikki
