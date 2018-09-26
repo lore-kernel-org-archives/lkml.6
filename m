@@ -6,209 +6,115 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3661C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75166C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CB86204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:53:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CB86204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 30725206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 08:53:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30725206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeIZPFT (ORCPT
+        id S1727995AbeIZPFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:05:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46045 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbeIZPFT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 11:05:19 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8Q8rIAJ3772554
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Sep 2018 01:53:18 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8Q8rIQH3772551;
-        Wed, 26 Sep 2018 01:53:18 -0700
-Date:   Wed, 26 Sep 2018 01:53:18 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Tzvetomir Stoyanov (VMware)" <tipbot@zytor.com>
-Message-ID: <tip-035c450ffa0483e715fc7b14a2e8b744bf8a740a@git.kernel.org>
-Cc:     namhyung@kernel.org, akpm@linux-foundation.org, jolsa@redhat.com,
-        mingo@kernel.org, hpa@zytor.com, acme@redhat.com,
-        rostedt@goodmis.org, tz.stoyanov@gmail.com, tglx@linutronix.de,
+        Wed, 26 Sep 2018 11:05:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38056 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726404AbeIZPFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 11:05:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5C40FAF3C;
+        Wed, 26 Sep 2018 08:53:35 +0000 (UTC)
+Subject: Re: [PATCH] btrfs: list usage cleanup
+To:     zhong jiang <zhongjiang@huawei.com>, dsterba@suse.com
+Cc:     jbacik@fb.com, clm@fb.com, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Reply-To: acme@redhat.com, rostedt@goodmis.org, hpa@zytor.com,
-          mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, tz.stoyanov@gmail.com,
-          jolsa@redhat.com, akpm@linux-foundation.org, namhyung@kernel.org
-In-Reply-To: <20180919185725.076387655@goodmis.org>
-References: <20180919185725.076387655@goodmis.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] tools lib traceevent: Add prefix tep_ to enum
- filter_trivial_type
-Git-Commit-ID: 035c450ffa0483e715fc7b14a2e8b744bf8a740a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+References: <1537950945-5627-1-git-send-email-zhongjiang@huawei.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8ae5e9ce-8c5d-0b27-1007-1e9594bc0a4d@suse.com>
+Date:   Wed, 26 Sep 2018 11:53:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1537950945-5627-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  035c450ffa0483e715fc7b14a2e8b744bf8a740a
-Gitweb:     https://git.kernel.org/tip/035c450ffa0483e715fc7b14a2e8b744bf8a740a
-Author:     Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-AuthorDate: Wed, 19 Sep 2018 14:56:58 -0400
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 19 Sep 2018 17:30:46 -0300
 
-tools lib traceevent: Add prefix tep_ to enum filter_trivial_type
 
-In order to make libtraceevent into a proper library, variables, data
-structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_". This adds prefix tep_ to
-enum filter_trivial_type and all its members.
+On 26.09.2018 11:35, zhong jiang wrote:
+> Trival cleanup, list_move_tail will implement the same function that
+> list_del() + list_add_tail() will do. hence just replace them.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Cc: linux-trace-devel@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180919185725.076387655@goodmis.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/lib/traceevent/event-parse.h  | 14 +++++++-------
- tools/lib/traceevent/parse-filter.c | 22 +++++++++++-----------
- 2 files changed, 18 insertions(+), 18 deletions(-)
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 830147dc6b21..9c29a5f7aa39 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -905,10 +905,10 @@ struct tep_event_filter *tep_filter_alloc(struct tep_handle *pevent);
- #define FILTER_MISS		TEP_ERRNO__FILTER_MISS
- #define FILTER_MATCH		TEP_ERRNO__FILTER_MATCH
- 
--enum filter_trivial_type {
--	FILTER_TRIVIAL_FALSE,
--	FILTER_TRIVIAL_TRUE,
--	FILTER_TRIVIAL_BOTH,
-+enum tep_filter_trivial_type {
-+	TEP_FILTER_TRIVIAL_FALSE,
-+	TEP_FILTER_TRIVIAL_TRUE,
-+	TEP_FILTER_TRIVIAL_BOTH,
- };
- 
- enum tep_errno tep_filter_add_filter_str(struct tep_event_filter *filter,
-@@ -926,7 +926,7 @@ int tep_event_filtered(struct tep_event_filter *filter,
- void tep_filter_reset(struct tep_event_filter *filter);
- 
- int tep_filter_clear_trivial(struct tep_event_filter *filter,
--			     enum filter_trivial_type type);
-+			     enum tep_filter_trivial_type type);
- 
- void tep_filter_free(struct tep_event_filter *filter);
- 
-@@ -937,12 +937,12 @@ int tep_filter_remove_event(struct tep_event_filter *filter,
- 
- int tep_filter_event_has_trivial(struct tep_event_filter *filter,
- 				 int event_id,
--				 enum filter_trivial_type type);
-+				 enum tep_filter_trivial_type type);
- 
- int tep_filter_copy(struct tep_event_filter *dest, struct tep_event_filter *source);
- 
- int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *source,
--			enum filter_trivial_type type);
-+			enum tep_filter_trivial_type type);
- 
- int tep_filter_compare(struct tep_event_filter *filter1, struct tep_event_filter *filter2);
- 
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index 875bfaf79771..d64b6128fa7d 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -1534,7 +1534,7 @@ int tep_filter_copy(struct tep_event_filter *dest, struct tep_event_filter *sour
-  *   events may have still been updated on error.
-  */
- int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *source,
--		       enum filter_trivial_type type)
-+		       enum tep_filter_trivial_type type)
- {
- 	struct tep_handle *src_pevent;
- 	struct tep_handle *dest_pevent;
-@@ -1556,8 +1556,8 @@ int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *s
- 		arg = filter_type->filter;
- 		if (arg->type != TEP_FILTER_ARG_BOOLEAN)
- 			continue;
--		if ((arg->boolean.value && type == FILTER_TRIVIAL_FALSE) ||
--		    (!arg->boolean.value && type == FILTER_TRIVIAL_TRUE))
-+		if ((arg->boolean.value && type == TEP_FILTER_TRIVIAL_FALSE) ||
-+		    (!arg->boolean.value && type == TEP_FILTER_TRIVIAL_TRUE))
- 			continue;
- 
- 		event = filter_type->event;
-@@ -1593,7 +1593,7 @@ int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *s
-  * Returns 0 on success and -1 if there was a problem.
-  */
- int tep_filter_clear_trivial(struct tep_event_filter *filter,
--			     enum filter_trivial_type type)
-+			     enum tep_filter_trivial_type type)
- {
- 	struct tep_filter_type *filter_type;
- 	int count = 0;
-@@ -1614,11 +1614,11 @@ int tep_filter_clear_trivial(struct tep_event_filter *filter,
- 		if (filter_type->filter->type != TEP_FILTER_ARG_BOOLEAN)
- 			continue;
- 		switch (type) {
--		case FILTER_TRIVIAL_FALSE:
-+		case TEP_FILTER_TRIVIAL_FALSE:
- 			if (filter_type->filter->boolean.value)
- 				continue;
- 			break;
--		case FILTER_TRIVIAL_TRUE:
-+		case TEP_FILTER_TRIVIAL_TRUE:
- 			if (!filter_type->filter->boolean.value)
- 				continue;
- 		default:
-@@ -1656,7 +1656,7 @@ int tep_filter_clear_trivial(struct tep_event_filter *filter,
-  */
- int tep_filter_event_has_trivial(struct tep_event_filter *filter,
- 				 int event_id,
--				 enum filter_trivial_type type)
-+				 enum tep_filter_trivial_type type)
- {
- 	struct tep_filter_type *filter_type;
- 
-@@ -1672,10 +1672,10 @@ int tep_filter_event_has_trivial(struct tep_event_filter *filter,
- 		return 0;
- 
- 	switch (type) {
--	case FILTER_TRIVIAL_FALSE:
-+	case TEP_FILTER_TRIVIAL_FALSE:
- 		return !filter_type->filter->boolean.value;
- 
--	case FILTER_TRIVIAL_TRUE:
-+	case TEP_FILTER_TRIVIAL_TRUE:
- 		return filter_type->filter->boolean.value;
- 	default:
- 		return 1;
-@@ -2409,8 +2409,8 @@ int tep_filter_compare(struct tep_event_filter *filter1, struct tep_event_filter
- 		if (filter_type1->filter->type != filter_type2->filter->type)
- 			break;
- 		switch (filter_type1->filter->type) {
--		case FILTER_TRIVIAL_FALSE:
--		case FILTER_TRIVIAL_TRUE:
-+		case TEP_FILTER_TRIVIAL_FALSE:
-+		case TEP_FILTER_TRIVIAL_TRUE:
- 			/* trivial types just need the type compared */
- 			continue;
- 		default:
+> ---
+>  fs/btrfs/send.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> index 094cc144..d87f416 100644
+> --- a/fs/btrfs/send.c
+> +++ b/fs/btrfs/send.c
+> @@ -2075,8 +2075,7 @@ static struct name_cache_entry *name_cache_search(struct send_ctx *sctx,
+>   */
+>  static void name_cache_used(struct send_ctx *sctx, struct name_cache_entry *nce)
+>  {
+> -	list_del(&nce->list);
+> -	list_add_tail(&nce->list, &sctx->name_cache_list);
+> +	list_move_tail(&nce->list, &sctx->name_cache_list);
+>  }
+>  
+>  /*
+> 
