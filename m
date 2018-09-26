@@ -2,360 +2,243 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 343CBECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F46C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D60214FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:31:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D60214FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B0882089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:32:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0882089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbeIZSo1 (ORCPT
+        id S1727612AbeIZSpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:44:27 -0400
-Received: from mx.socionext.com ([202.248.49.38]:27106 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbeIZSo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:44:26 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 26 Sep 2018 21:31:37 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 5189B6006C;
-        Wed, 26 Sep 2018 21:31:37 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 26 Sep 2018 21:31:37 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id EB2734039A;
-        Wed, 26 Sep 2018 21:31:36 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id A9CA5120417;
-        Wed, 26 Sep 2018 21:31:36 +0900 (JST)
-Date:   Wed, 26 Sep 2018 21:31:36 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: Re: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host controller support
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <b869b273-e681-0b8c-52f5-6e02f9de5485@synopsys.com>
-References: <20180925161417.GA30943@e107981-ln.cambridge.arm.com> <b869b273-e681-0b8c-52f5-6e02f9de5485@synopsys.com>
-Message-Id: <20180926213135.A4B4.4A936039@socionext.com>
+        Wed, 26 Sep 2018 14:45:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47093 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbeIZSpC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 14:45:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8QCUrnV3830568
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 26 Sep 2018 05:30:53 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8QCUqnh3830565;
+        Wed, 26 Sep 2018 05:30:52 -0700
+Date:   Wed, 26 Sep 2018 05:30:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
+Message-ID: <tip-dbfe2953f63c640463c630746cd5d9de8b2f63ae@git.kernel.org>
+Cc:     jpoimboe@redhat.com, ak@linux.intel.com,
+        linux-kernel@vger.kernel.org, jkosina@suse.cz, dwmw@amazon.co.uk,
+        aarcange@redhat.com, casey.schaufler@intel.com,
+        peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
+        tim.c.chen@linux.intel.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, tim.c.chen@linux.intel.com, mingo@kernel.org,
+          tglx@linutronix.de, peterz@infradead.org,
+          casey.schaufler@intel.com, aarcange@redhat.com,
+          dwmw@amazon.co.uk, ak@linux.intel.com, jkosina@suse.cz,
+          linux-kernel@vger.kernel.org, jpoimboe@redhat.com
+In-Reply-To: <nycvar.YFH.7.76.1809251437340.15880@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1809251437340.15880@cbobk.fhfr.pm>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/speculation: Apply IBPB more strictly to avoid
+ cross-process data leak
+Git-Commit-ID: dbfe2953f63c640463c630746cd5d9de8b2f63ae
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo, Gustavo,
+Commit-ID:  dbfe2953f63c640463c630746cd5d9de8b2f63ae
+Gitweb:     https://git.kernel.org/tip/dbfe2953f63c640463c630746cd5d9de8b2f63ae
+Author:     Jiri Kosina <jkosina@suse.cz>
+AuthorDate: Tue, 25 Sep 2018 14:38:18 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 26 Sep 2018 14:26:51 +0200
 
-Thank you for reviewing.
+x86/speculation: Apply IBPB more strictly to avoid cross-process data leak
 
-On Tue, 25 Sep 2018 18:53:01 +0100
-Gustavo Pimentel <gustavo.pimentel@synopsys.com> wrote:
+Currently, IBPB is only issued in cases when switching into a non-dumpable
+process, the rationale being to protect such 'important and security
+sensitive' processess (such as GPG) from data leaking into a different
+userspace process via spectre v2.
 
-> On 25/09/2018 17:14, Lorenzo Pieralisi wrote:
-> > [+Gustavo, please have a look at INTX/MSI management]
-> > 
-> > On Thu, Sep 06, 2018 at 06:40:32PM +0900, Kunihiko Hayashi wrote:
-> >> This introduces specific glue layer for UniPhier platform to support
-> >> PCIe host controller that is based on the DesignWare PCIe core, and
-> >> this driver supports Root Complex (host) mode.
-> > 
-> > Please read this thread and apply it to next versions:
-> > 
-> > https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D150905742808166-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=H8UNDDUGQnQnqfWr4CBios689dJcjxu4qeTTRGulLmU&s=CgcXc_2LThyOpW-4bCriJNo9H1lzROEdy_cG9p-Y5hU&e=
+This is however completely insufficient to provide proper userspace-to-userpace
+spectrev2 protection, as any process can poison branch buffers before being
+scheduled out, and the newly scheduled process immediately becomes spectrev2
+victim.
 
-I also found this thread in previous linux-pci, and I think it's helpful for me.
-I'll check it carefully.
+In order to minimize the performance impact (for usecases that do require
+spectrev2 protection), issue the barrier only in cases when switching between
+processess where the victim can't be ptraced by the potential attacker (as in
+such cases, the attacker doesn't have to bother with branch buffers at all).
 
-> > 
-> > [...]
-> > 
-> >> +static int uniphier_pcie_link_up(struct dw_pcie *pci)
-> >> +{
-> >> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> >> +	u32 val, mask;
-> >> +
-> >> +	val = readl(priv->base + PCL_STATUS_LINK);
-> >> +	mask = PCL_RDLH_LINK_UP | PCL_XMLH_LINK_UP;
-> >> +
-> >> +	return (val & mask) == mask;
-> >> +}
-> >> +
-> >> +static int uniphier_pcie_establish_link(struct dw_pcie *pci)
-> >> +{
-> >> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> >> +	int ret;
-> >> +
-> >> +	if (dw_pcie_link_up(pci))
-> >> +		return 0;
-> >> +
-> >> +	uniphier_pcie_ltssm_enable(priv);
-> >> +
-> >> +	ret = dw_pcie_wait_for_link(pci);
-> >> +	if (ret == -ETIMEDOUT) {
-> >> +		dev_warn(pci->dev, "Link not up\n");
-> >> +		ret = 0;
-> > 
-> > So if the link is not up we warn, return and all is fine ?
+[ tglx: Split up PTRACE_MODE_NOACCESS_CHK into PTRACE_MODE_SCHED and
+  PTRACE_MODE_IBPB to be able to do ptrace() context tracking reasonably
+  fine-grained ]
 
-Although I was not sure about driver's behavior if the link isn't up,
-since the driver can't do anything after that,
-so it seems suitable to return -ETIMEOUT and fail to probe.
-
-> > 
-> >> +	}
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static void uniphier_pcie_stop_link(struct dw_pcie *pci)
-> >> +{
-> >> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> >> +
-> >> +	uniphier_pcie_ltssm_disable(priv);
-> >> +}
-> >> +
-> >> +static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
-> >> +				  irq_hw_number_t hwirq)
-> >> +{
-> >> +	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
-> >> +	irq_set_chip_data(irq, domain->host_data);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct irq_domain_ops uniphier_intx_domain_ops = {
-> >> +	.map = uniphier_pcie_intx_map,
-> >> +};
-> > 
-> > I looped in Gustavo since this is not how I expect INTX management
-> > should be done. I do not think there is a DWC INTX generic layer
-> > but I think drivers/pci/controller/dwc/pci-keystone-dw.c is how
-> > it has to be done.
-> > 
-> >> +
-> >> +static int uniphier_pcie_init_irq_domain(struct pcie_port *pp)
-> >> +{
-> >> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> >> +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
-> >> +	struct device_node *np = pci->dev->of_node;
-> >> +	struct device_node *np_intc = of_get_next_child(np, NULL);
-> >> +
-> >> +	if (!np_intc) {
-> >> +		dev_err(pci->dev, "Failed to get child node\n");
-> >> +		return -ENODEV;
-> >> +	}
-> >> +
-> >> +	priv->irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
-> >> +						 &uniphier_intx_domain_ops,
-> >> +						 pp);
-> >> +	if (!priv->irq_domain) {
-> >> +		dev_err(pci->dev, "Failed to get INTx domain\n");
-> >> +		return -ENODEV;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static void uniphier_pcie_irq_enable(struct uniphier_pcie_priv *priv)
-> >> +{
-> >> +	writel(PCL_RCV_INT_ALL_ENABLE, priv->base + PCL_RCV_INT);
-> >> +	writel(PCL_RCV_INTX_ALL_ENABLE, priv->base + PCL_RCV_INTX);
-> >> +}
-> >> +
-> >> +static void uniphier_pcie_irq_disable(struct uniphier_pcie_priv *priv)
-> >> +{
-> >> +	writel(0, priv->base + PCL_RCV_INT);
-> >> +	writel(0, priv->base + PCL_RCV_INTX);
-> >> +}
-> > 
-> >> +
-> >> +static irqreturn_t uniphier_pcie_irq_handler(int irq, void *arg)
-> > 
-> > This should not be an IRQ handler (and we should not use
-> > devm_request_irq() for the multiplexed IRQ line), it is a chained
-> > interrupt controller configuration and should be managed by an IRQ
-> > chain, again the way keystone does it seems reasonable to me.
-
-I see. I'll try to refer to keystone driver as an example for chained interrupt
-management.
-
-> > 
-> >> +{
-> >> +	struct uniphier_pcie_priv *priv = arg;
-> >> +	struct dw_pcie *pci = &priv->pci;
-> >> +	u32 val;
-> >> +
-> >> +	/* INT for debug */
-> >> +	val = readl(priv->base + PCL_RCV_INT);
-> >> +
-> >> +	if (val & PCL_CFG_BW_MGT_STATUS)
-> >> +		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
-> >> +	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
-> >> +		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
-> >> +	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
-> >> +		dev_dbg(pci->dev, "Root Error\n");
-> >> +	if (val & PCL_CFG_PME_MSI_STATUS)
-> >> +		dev_dbg(pci->dev, "PME Interrupt\n");
-> >> +
-> >> +	writel(val, priv->base + PCL_RCV_INT);
-> >> +
-> >> +	/* INTx */
-> >> +	val = readl(priv->base + PCL_RCV_INTX);
-> >> +
-> >> +	if (val & PCL_RADM_INTA_STATUS)
-> >> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 0));
-> >> +	if (val & PCL_RADM_INTB_STATUS)
-> >> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 1));
-> >> +	if (val & PCL_RADM_INTC_STATUS)
-> >> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 2));
-> >> +	if (val & PCL_RADM_INTD_STATUS)
-> >> +		generic_handle_irq(irq_find_mapping(priv->irq_domain, 3));
-> > 
-> > Nit: Do you really need 4 if statements to handle INTX ?
-
-I found an example to use for_each_set_bit() in pci-dra7xx.c.
-I'll replace it.
-
-> > 
-> >> +
-> >> +	writel(val, priv->base + PCL_RCV_INTX);
-> >> +
-> >> +	return IRQ_HANDLED;
-> >> +}
-> >> +
-> >> +static irqreturn_t uniphier_pcie_msi_irq_handler(int irq, void *arg)
-> >> +{
-> >> +	struct pcie_port *pp = arg;
-> >> +
-> >> +	return dw_handle_msi_irq(pp);
-> >> +}
-> > 
-> > This IRQ handler must be removed, the MSI irq is handled by dwc core.
-
-I see. I'll remove it.
-
-> > 
-> >> +static int uniphier_pcie_host_init(struct pcie_port *pp)
-> >> +{
-> >> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> >> +	int ret;
-> >> +
-> >> +	dw_pcie_setup_rc(pp);
-> >> +	ret = uniphier_pcie_establish_link(pci);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	if (IS_ENABLED(CONFIG_PCI_MSI))
-> >> +		dw_pcie_msi_init(pp);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const struct dw_pcie_host_ops uniphier_pcie_host_ops = {
-> >> +	.host_init = uniphier_pcie_host_init,
-> >> +};
-> >> +
-> >> +static int uniphier_add_pcie_port(struct uniphier_pcie_priv *priv,
-> >> +				  struct platform_device *pdev)
-> >> +{
-> >> +	struct dw_pcie *pci = &priv->pci;
-> >> +	struct pcie_port *pp = &pci->pp;
-> >> +	struct device *dev = &pdev->dev;
-> >> +	int ret;
-> >> +
-> >> +	pp->root_bus_nr = -1;
-> > 
-> > Useless initialization, remove it.
-> > 
-> > (ie dw_pcie_host_init() initializes root_bus_nr for you).
-
-I found it. This will be removed.
-
-> > 
-> >> +	pp->ops = &uniphier_pcie_host_ops;
-> >> +
-> >> +	pp->irq = platform_get_irq_byname(pdev, "intx");
-> >> +	if (pp->irq < 0) {
-> >> +		dev_err(dev, "Failed to get intx irq\n");
-> >> +		return pp->irq;
-> >> +	}
-> >> +
-> >> +	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
-> >> +			       IRQF_SHARED, "pcie", priv);
-> > 
-> > This is wrong, you should set-up a chained IRQ for INTX.
-> > 
-> > I *think* that
-> > 
-> > ks_pcie_setup_interrupts()
-> > 
-> > is a good example to start with but I wonder whether it is worth
-> > generalizing the INTX approach to designware as a whole as it was
-> > done for MSIs.
-> > 
-> > Thoughts ?
-> 
-> From what I understood this is for legacy IRQ, right?
-
-Yes. For legacy IRQ.
-
-> Like you (Lorenzo) said there is 2 drivers (pci-keystone-dw.c and pci-dra7xx.c)
-> that uses it and can be use as a template for handling this type of interrupts.
-> 
-> We can try to pass some kind of generic INTX function to the DesignWare host
-> library to handling this, but this will require some help from keystone and
-> dra7xx maintainers, since my setup doesn't have legacy IRQ HW support.
-
-Now I think it's difficult to make a template for INTX function,
-and at first, I'll try to re-write this part with reference to pci-keystone-dw.c.
-
-> 
-> > 
-> >> +	if (ret) {
-> >> +		dev_err(dev, "Failed to request irq %d\n", pp->irq);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	ret = uniphier_pcie_init_irq_domain(pp);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> >> +		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
-> >> +		if (pp->msi_irq < 0)
-> >> +			return pp->msi_irq;
-> >> +
-> >> +		ret = devm_request_irq(dev, pp->msi_irq,
-> >> +				       uniphier_pcie_msi_irq_handler,
-> >> +				       IRQF_SHARED, "pcie-msi", pp);
-> > 
-> > No. With MSI management in DWC core all you need to do is initializing
-> > pp->msi_irq.
-
-Okay, it isn't necessary to call devm_request_irq() here no longer.
-
-Thank you,
+Fixes: 18bf3c3ea8 ("x86/speculation: Use Indirect Branch Prediction Barrier in context switch")
+Originally-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251437340.15880@cbobk.fhfr.pm
 
 ---
-Best Regards,
-Kunihiko Hayashi
+ arch/x86/mm/tlb.c      | 31 ++++++++++++++++++++-----------
+ include/linux/ptrace.h | 21 +++++++++++++++++++--
+ kernel/ptrace.c        | 10 ++++++++++
+ 3 files changed, 49 insertions(+), 13 deletions(-)
 
-
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index e96b99eb800c..073b8df349a0 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/ptrace.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -180,6 +181,19 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
+ 	}
+ }
+ 
++static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
++{
++	/*
++	 * Check if the current (previous) task has access to the memory
++	 * of the @tsk (next) task. If access is denied, make sure to
++	 * issue a IBPB to stop user->user Spectre-v2 attacks.
++	 *
++	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
++	 */
++	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
++		ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB));
++}
++
+ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 			struct task_struct *tsk)
+ {
+@@ -262,18 +276,13 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * one process from doing Spectre-v2 attacks on another.
+ 		 *
+ 		 * As an optimization, flush indirect branches only when
+-		 * switching into processes that disable dumping. This
+-		 * protects high value processes like gpg, without having
+-		 * too high performance overhead. IBPB is *expensive*!
+-		 *
+-		 * This will not flush branches when switching into kernel
+-		 * threads. It will also not flush if we switch to idle
+-		 * thread and back to the same process. It will flush if we
+-		 * switch to a different non-dumpable process.
++		 * switching into a processes that can't be ptrace by the
++		 * current one (as in such case, attacker has much more
++		 * convenient way how to tamper with the next process than
++		 * branch buffer poisoning).
+ 		 */
+-		if (tsk && tsk->mm &&
+-		    tsk->mm->context.ctx_id != last_ctx_id &&
+-		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
++		if (static_cpu_has(X86_FEATURE_USE_IBPB) &&
++				ibpb_needed(tsk, last_ctx_id))
+ 			indirect_branch_prediction_barrier();
+ 
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+index 4f36431c380b..e5e5ef513df3 100644
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -62,14 +62,17 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
+ #define PTRACE_MODE_READ	0x01
+ #define PTRACE_MODE_ATTACH	0x02
+ #define PTRACE_MODE_NOAUDIT	0x04
+-#define PTRACE_MODE_FSCREDS 0x08
+-#define PTRACE_MODE_REALCREDS 0x10
++#define PTRACE_MODE_FSCREDS	0x08
++#define PTRACE_MODE_REALCREDS	0x10
++#define PTRACE_MODE_SCHED	0x20
++#define PTRACE_MODE_IBPB	0x40
+ 
+ /* shorthands for READ/ATTACH and FSCREDS/REALCREDS combinations */
+ #define PTRACE_MODE_READ_FSCREDS (PTRACE_MODE_READ | PTRACE_MODE_FSCREDS)
+ #define PTRACE_MODE_READ_REALCREDS (PTRACE_MODE_READ | PTRACE_MODE_REALCREDS)
+ #define PTRACE_MODE_ATTACH_FSCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_FSCREDS)
+ #define PTRACE_MODE_ATTACH_REALCREDS (PTRACE_MODE_ATTACH | PTRACE_MODE_REALCREDS)
++#define PTRACE_MODE_SPEC_IBPB (PTRACE_MODE_ATTACH_REALCREDS | PTRACE_MODE_IBPB)
+ 
+ /**
+  * ptrace_may_access - check whether the caller is permitted to access
+@@ -87,6 +90,20 @@ extern void exit_ptrace(struct task_struct *tracer, struct list_head *dead);
+  */
+ extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
+ 
++/**
++ * ptrace_may_access - check whether the caller is permitted to access
++ * a target task.
++ * @task: target task
++ * @mode: selects type of access and caller credentials
++ *
++ * Returns true on success, false on denial.
++ *
++ * Similar to ptrace_may_access(). Only to be called from context switch
++ * code. Does not call into audit and the regular LSM hooks due to locking
++ * constraints.
++ */
++extern bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode);
++
+ static inline int ptrace_reparented(struct task_struct *child)
+ {
+ 	return !same_thread_group(child->real_parent, child->parent);
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 21fec73d45d4..99cfddde6a55 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -261,6 +261,9 @@ static int ptrace_check_attach(struct task_struct *child, bool ignore_state)
+ 
+ static int ptrace_has_cap(struct user_namespace *ns, unsigned int mode)
+ {
++	if (mode & PTRACE_MODE_SCHED)
++		return false;
++
+ 	if (mode & PTRACE_MODE_NOAUDIT)
+ 		return has_ns_capability_noaudit(current, ns, CAP_SYS_PTRACE);
+ 	else
+@@ -328,9 +331,16 @@ ok:
+ 	     !ptrace_has_cap(mm->user_ns, mode)))
+ 	    return -EPERM;
+ 
++	if (mode & PTRACE_MODE_SCHED)
++		return 0;
+ 	return security_ptrace_access_check(task, mode);
+ }
+ 
++bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode)
++{
++	return __ptrace_may_access(task, mode | PTRACE_MODE_SCHED);
++}
++
+ bool ptrace_may_access(struct task_struct *task, unsigned int mode)
+ {
+ 	int err;
