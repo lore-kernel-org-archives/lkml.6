@@ -2,91 +2,120 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504A5C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71861C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1591521528
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:44:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1591521528
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2672E21524
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 15:45:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2672E21524
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbeIZV54 (ORCPT
+        id S1728281AbeIZV67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:57:56 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48764 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbeIZV5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:57:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A5F318A;
-        Wed, 26 Sep 2018 08:44:23 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD7003F5BD;
-        Wed, 26 Sep 2018 08:44:19 -0700 (PDT)
-Subject: Re: [PATCH v16 3/5] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>, joro@8bytes.org,
-        robh+dt@kernel.org, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
-        rjw@rjwysocki.net, robdclark@gmail.com, linux-pm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, sboyd@kernel.org,
-        tfiga@chromium.org, jcrouse@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-4-vivek.gautam@codeaurora.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d72decbe-354c-9852-2dbc-d1a393006e25@arm.com>
-Date:   Wed, 26 Sep 2018 16:44:17 +0100
+        Wed, 26 Sep 2018 17:58:59 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36574 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727104AbeIZV67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:58:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 08:45:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
+   d="scan'208";a="93912187"
+Received: from ray.jf.intel.com (HELO [10.7.198.157]) ([10.7.198.157])
+  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2018 08:41:29 -0700
+Subject: Re: [PATCH v5 2/4] mm: Provide kernel parameter to allow disabling
+ page init poisoning
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925201921.3576.84239.stgit@localhost.localdomain>
+ <20180926073831.GC6278@dhcp22.suse.cz>
+ <c57da51a-009a-9500-4dc5-1d9912e78abd@linux.intel.com>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
+        jglisse@redhat.com, rppt@linux.vnet.ibm.com,
+        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <98411844-19b7-a75b-d52c-6e2c46b40d57@intel.com>
+Date:   Wed, 26 Sep 2018 08:41:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180830144541.17740-4-vivek.gautam@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <c57da51a-009a-9500-4dc5-1d9912e78abd@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/08/18 15:45, Vivek Gautam wrote:
-> From: Sricharan R <sricharan@codeaurora.org>
-> 
-> Finally add the device link between the master device and
-> smmu, so that the smmu gets runtime enabled/disabled only when the
-> master needs it. This is done from add_device callback which gets
-> called once when the master is added to the smmu.
+On 09/26/2018 08:24 AM, Alexander Duyck wrote:
+> With no options it works just like slub_debug and enables all
+> available options. So in our case it is a NOP since we wanted the
+> debugging enabled by default.
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Yeah, but slub_debug is different.
 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   drivers/iommu/arm-smmu.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index 1bf542010be7..166c8c6da24f 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -1461,6 +1461,9 @@ static int arm_smmu_add_device(struct device *dev)
->   
->   	iommu_device_link(&smmu->iommu, dev);
->   
-> +	device_link_add(dev, smmu->dev,
-> +			DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER);
-> +
->   	return 0;
->   
->   out_cfg_free:
-> 
+First, nobody uses the slub_debug=- option because *that* is only used
+when you have SLUB_DEBUG=y *and* CONFIG_SLUB_DEBUG_ON=y, which not even
+Fedora does.
+
+slub_debug is *primarily* for *adding* debug features.  For this, we
+need to turn them off.
+
+It sounds like following slub_debug was a bad idea, especially following
+its semantics too closely when it doesn't make sense.
