@@ -6,372 +6,86 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8DFECE560
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F67C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8AF20684
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:02:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8AF20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id A015B20684
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:05:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A015B20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbeIZTPh (ORCPT
+        id S1728029AbeIZTSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:15:37 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:26688 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeIZTPg (ORCPT
+        Wed, 26 Sep 2018 15:18:23 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:34965 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbeIZTSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:15:36 -0400
-X-IronPort-AV: E=Sophos;i="5.54,306,1534834800"; 
-   d="scan'208";a="17805712"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Sep 2018 06:02:43 -0700
-Received: from ibiza.corp.atmel.com (10.10.76.4) by
- chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 26 Sep 2018 06:02:43 -0700
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
-        <richard.genoud@gmail.com>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [PATCH v5 2/2] tty/serial: atmel: add ISO7816 support
-Date:   Wed, 26 Sep 2018 14:58:48 +0200
-Message-ID: <20180926125848.31032-3-ludovic.desroches@microchip.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <20180926125848.31032-1-ludovic.desroches@microchip.com>
-References: <20180926125848.31032-1-ludovic.desroches@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 26 Sep 2018 15:18:22 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MKMIR-1gKu2S301f-00LniG; Wed, 26 Sep 2018 15:05:27 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-mtd@lists.infradead.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] ARM: ixp4xx: include linux/mtd/platnand.h
+Date:   Wed, 26 Sep 2018 15:04:39 +0200
+Message-Id: <20180926130458.2406549-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180926130458.2406549-1-arnd@arndb.de>
+References: <20180926130458.2406549-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:eesi5L5oJRNUXfWq2ccLh2og1C9GMWU0FkGZdoVipVyHPt9fW6w
+ oE+VoAxq4XVMNQhPapgsIuxwuQ15b1HTAglY0QXFnOgxP90+tFx3CGH0SS4n7Pz/p85zNrM
+ IqJ0UO7TGIlZ7nOjyCgS/aK425+HK3xeHJiRwzUgC2GxNYz5inTgmJdpNrVoFgbAmG/YpA6
+ yDcPpnrrrsmggcCzaeuMg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ukSRywdMagk=:g7NFJP+1r1caKMiUdvVi65
+ sG3r4fvXv41d+ydIZ4fBCDElVgCjd4bPMHcpkEpX9AWYRw3HdWzO9mM8ZMhhOfRAduXHbvGwT
+ dQku4losMvxTCGri5phxYo5iBx7BjhnClLBpg1cqTkKpcUdUzTvP36AXzQChDqO82cGdY9Dyu
+ j9GCINTDVCAuy5RYW2vSI25QP+dhUsHobhMIL552/ATD/fkGza4npXTUPgoWmQBV8T7Vn65/v
+ L3MdcQ9i1KTLUIyxSeDZS9dM7FsC2TYEdBpZWdhP5aQxPDWzV2VfvTjkj/qV4KXH+lkwbMGba
+ QTX+SAeuWJZ09Yl+OV3Yxs1fBTgD8AZVhI6vzVLGEMWw2jJy1h/Iz2QQzEUfFUa632CDJiWxz
+ SJag5CkqWQF5ygL2+vd9aBaRH+7cIMt2nWKuhil8aTErbskV8DqFVhfZjcYDaSvIMWU/WeBI3
+ DmhSOaP/raY+YAYEGoCdmzvs6BAeC/GfNpDg9CB9RHuAhuzEzhqQkSPRqWRdRDQ6YBIKTTxdC
+ P+lZnMayJYk/846SWZmxItuV863D54xp/9GcTiCsSVSk6WbDxQoe3N6PYgoZec2HOpisBVuw/
+ zYuhFWZe+6mXDVFlyfKlpQhymvgKs812aXiwDRoeZbyySOhpcvzbg0N5mQY0cRkjl+HfuuUeN
+ MLhIW6cuN19Gm7AGQxrTr85lvWMk2o1Rx4OxY26Dl0xPm+t1hYcthm3Wm4AAPcejUzgk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+The platform_nand_data structure definition is required for ixdp425
+but has now moved to a new header file:
 
-When mode is set in atmel_config_iso7816() we backup last RS232 mode
-for coming back to this mode if requested.
-Also allow setup of T=0 and T=1 parameter and basic support in set_termios
-function as well.
+arch/arm/mach-ixp4xx/ixdp425-setup.c:98:15: error: variable 'ixdp425_flash_nand_data' has initializer but incomplete type
+ static struct platform_nand_data ixdp425_flash_nand_data = {
+               ^~~~~~~~~~~~~~~~~~
+arch/arm/mach-ixp4xx/ixdp425-setup.c:99:3: error: 'struct platform_nand_data' has no member named 'chip'
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-[ludovic.desroches@microchip.com: rebase, add check on fidi ratio, checkpatch fixes]
-Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
+Fixes: 19cf5dfa3a31 ("mtd: rawnand: Move platform_nand_xxx definitions out of rawnand.h")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/tty/serial/atmel_serial.c | 190 +++++++++++++++++++++++++++++++++++---
- drivers/tty/serial/atmel_serial.h |   3 +-
- 2 files changed, 181 insertions(+), 12 deletions(-)
+ arch/arm/mach-ixp4xx/ixdp425-setup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 267d4d1de3f8..05147fe24343 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -34,6 +34,7 @@
- #include <linux/suspend.h>
- #include <linux/mm.h>
- 
-+#include <asm/div64.h>
- #include <asm/io.h>
- #include <asm/ioctls.h>
- 
-@@ -147,6 +148,8 @@ struct atmel_uart_port {
- 	struct circ_buf		rx_ring;
- 
- 	struct mctrl_gpios	*gpios;
-+	u32			backup_mode;	/* MR saved during iso7816 operations */
-+	u32			backup_brgr;	/* BRGR saved during iso7816 operations */
- 	unsigned int		tx_done_mask;
- 	u32			fifo_size;
- 	u32			rts_high;
-@@ -163,6 +166,10 @@ struct atmel_uart_port {
- 	unsigned int		pending_status;
- 	spinlock_t		lock_suspended;
- 
-+	/* ISO7816 */
-+	unsigned int		fidi_min;
-+	unsigned int		fidi_max;
-+
- #ifdef CONFIG_PM
- 	struct {
- 		u32		cr;
-@@ -361,6 +368,127 @@ static int atmel_config_rs485(struct uart_port *port,
- 	return 0;
- }
- 
-+static unsigned int atmel_calc_cd(struct uart_port *port,
-+				  struct serial_iso7816 *iso7816conf)
-+{
-+	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	unsigned int cd;
-+	u64 mck_rate;
-+
-+	mck_rate = (u64)clk_get_rate(atmel_port->clk);
-+	do_div(mck_rate, iso7816conf->clk);
-+	cd = mck_rate;
-+	return cd;
-+}
-+
-+static unsigned int atmel_calc_fidi(struct uart_port *port,
-+				    struct serial_iso7816 *iso7816conf)
-+{
-+	u64 fidi = 0;
-+
-+	if (iso7816conf->sc_fi && iso7816conf->sc_di) {
-+		fidi = (u64)iso7816conf->sc_fi;
-+		do_div(fidi, iso7816conf->sc_di);
-+	}
-+	return (u32)fidi;
-+}
-+
-+/* Enable or disable the iso7816 support */
-+/* Called with interrupts disabled */
-+static int atmel_config_iso7816(struct uart_port *port,
-+				struct serial_iso7816 *iso7816conf)
-+{
-+	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	unsigned int mode;
-+	unsigned int cd, fidi;
-+	int ret = 0;
-+
-+	/* Disable interrupts */
-+	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
-+
-+	mode = atmel_uart_readl(port, ATMEL_US_MR);
-+
-+	if (iso7816conf->flags & SER_ISO7816_ENABLED) {
-+		mode &= ~ATMEL_US_USMODE;
-+
-+		if (iso7816conf->tg > 255) {
-+			dev_err(port->dev, "ISO7816: Timeguard exceeding 255\n");
-+			memset(iso7816conf, 0, sizeof(struct serial_iso7816));
-+			ret = -EINVAL;
-+			goto err_out;
-+		}
-+
-+		if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
-+		    == SER_ISO7816_T(0)) {
-+			mode |= ATMEL_US_USMODE_ISO7816_T0 | ATMEL_US_DSNACK;
-+		} else if ((iso7816conf->flags & SER_ISO7816_T_PARAM)
-+			   == SER_ISO7816_T(1)) {
-+			mode |= ATMEL_US_USMODE_ISO7816_T1 | ATMEL_US_INACK;
-+		} else {
-+			dev_err(port->dev, "ISO7816: Type not supported\n");
-+			memset(iso7816conf, 0, sizeof(struct serial_iso7816));
-+			ret = -EINVAL;
-+			goto err_out;
-+		}
-+
-+		mode &= ~(ATMEL_US_USCLKS | ATMEL_US_NBSTOP | ATMEL_US_PAR);
-+
-+		/* select mck clock, and output  */
-+		mode |= ATMEL_US_USCLKS_MCK | ATMEL_US_CLKO;
-+		/* set parity for normal/inverse mode + max iterations */
-+		mode |= ATMEL_US_PAR_EVEN | ATMEL_US_NBSTOP_1 | ATMEL_US_MAX_ITER(3);
-+
-+		cd = atmel_calc_cd(port, iso7816conf);
-+		fidi = atmel_calc_fidi(port, iso7816conf);
-+		if (fidi == 0) {
-+			dev_warn(port->dev, "ISO7816 fidi = 0, Generator generates no signal\n");
-+		} else if (fidi < atmel_port->fidi_min
-+			   || fidi > atmel_port->fidi_max) {
-+			dev_err(port->dev, "ISO7816 fidi = %u, value not supported\n", fidi);
-+			memset(iso7816conf, 0, sizeof(struct serial_iso7816));
-+			ret = -EINVAL;
-+			goto err_out;
-+		}
-+
-+		if (!(port->iso7816.flags & SER_ISO7816_ENABLED)) {
-+			/* port not yet in iso7816 mode: store configuration */
-+			atmel_port->backup_mode = atmel_uart_readl(port, ATMEL_US_MR);
-+			atmel_port->backup_brgr = atmel_uart_readl(port, ATMEL_US_BRGR);
-+		}
-+
-+		atmel_uart_writel(port, ATMEL_US_TTGR, iso7816conf->tg);
-+		atmel_uart_writel(port, ATMEL_US_BRGR, cd);
-+		atmel_uart_writel(port, ATMEL_US_FIDI, fidi);
-+
-+		atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXDIS | ATMEL_US_RXEN);
-+		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY | ATMEL_US_NACK | ATMEL_US_ITERATION;
-+	} else {
-+		dev_dbg(port->dev, "Setting UART back to RS232\n");
-+		/* back to last RS232 settings */
-+		mode = atmel_port->backup_mode;
-+		memset(iso7816conf, 0, sizeof(struct serial_iso7816));
-+		atmel_uart_writel(port, ATMEL_US_TTGR, 0);
-+		atmel_uart_writel(port, ATMEL_US_BRGR, atmel_port->backup_brgr);
-+		atmel_uart_writel(port, ATMEL_US_FIDI, 0x174);
-+
-+		if (atmel_use_pdc_tx(port))
-+			atmel_port->tx_done_mask = ATMEL_US_ENDTX |
-+						   ATMEL_US_TXBUFE;
-+		else
-+			atmel_port->tx_done_mask = ATMEL_US_TXRDY;
-+	}
-+
-+	port->iso7816 = *iso7816conf;
-+
-+	atmel_uart_writel(port, ATMEL_US_MR, mode);
-+
-+err_out:
-+	/* Enable interrupts */
-+	atmel_uart_writel(port, ATMEL_US_IER, atmel_port->tx_done_mask);
-+
-+	return ret;
-+}
-+
- /*
-  * Return TIOCSER_TEMT when transmitter FIFO and Shift register is empty.
-  */
-@@ -480,8 +608,9 @@ static void atmel_stop_tx(struct uart_port *port)
- 	/* Disable interrupts */
- 	atmel_uart_writel(port, ATMEL_US_IDR, atmel_port->tx_done_mask);
- 
--	if ((port->rs485.flags & SER_RS485_ENABLED) &&
--	    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
-+	if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+	     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+	    port->iso7816.flags & SER_ISO7816_ENABLED)
- 		atmel_start_rx(port);
- }
- 
-@@ -499,8 +628,9 @@ static void atmel_start_tx(struct uart_port *port)
- 		return;
- 
- 	if (atmel_use_pdc_tx(port) || atmel_use_dma_tx(port))
--		if ((port->rs485.flags & SER_RS485_ENABLED) &&
--		    !(port->rs485.flags & SER_RS485_RX_DURING_TX))
-+		if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+		     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+		    port->iso7816.flags & SER_ISO7816_ENABLED)
- 			atmel_stop_rx(port);
- 
- 	if (atmel_use_pdc_tx(port))
-@@ -798,8 +928,9 @@ static void atmel_complete_tx_dma(void *arg)
- 	 */
- 	if (!uart_circ_empty(xmit))
- 		atmel_tasklet_schedule(atmel_port, &atmel_port->tasklet_tx);
--	else if ((port->rs485.flags & SER_RS485_ENABLED) &&
--		 !(port->rs485.flags & SER_RS485_RX_DURING_TX)) {
-+	else if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+		  !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+		 port->iso7816.flags & SER_ISO7816_ENABLED) {
- 		/* DMA done, stop TX, start RX for RS485 */
- 		atmel_start_rx(port);
- 	}
-@@ -1282,6 +1413,9 @@ atmel_handle_status(struct uart_port *port, unsigned int pending,
- 			wake_up_interruptible(&port->state->port.delta_msr_wait);
- 		}
- 	}
-+
-+	if (pending & (ATMEL_US_NACK | ATMEL_US_ITERATION))
-+		dev_dbg(port->dev, "ISO7816 ERROR (0x%08x)\n", pending);
- }
- 
- /*
-@@ -1374,8 +1508,9 @@ static void atmel_tx_pdc(struct uart_port *port)
- 		atmel_uart_writel(port, ATMEL_US_IER,
- 				  atmel_port->tx_done_mask);
- 	} else {
--		if ((port->rs485.flags & SER_RS485_ENABLED) &&
--		    !(port->rs485.flags & SER_RS485_RX_DURING_TX)) {
-+		if (((port->rs485.flags & SER_RS485_ENABLED) &&
-+		     !(port->rs485.flags & SER_RS485_RX_DURING_TX)) ||
-+		    port->iso7816.flags & SER_ISO7816_ENABLED) {
- 			/* DMA done, stop TX, start RX for RS485 */
- 			atmel_start_rx(port);
- 		}
-@@ -1727,6 +1862,22 @@ static void atmel_get_ip_name(struct uart_port *port)
- 		atmel_port->has_frac_baudrate = true;
- 		atmel_port->has_hw_timer = true;
- 		atmel_port->rtor = ATMEL_US_RTOR;
-+		version = atmel_uart_readl(port, ATMEL_US_VERSION);
-+		switch (version) {
-+		case 0x814:	/* sama5d2 */
-+			/* fall through */
-+		case 0x701:	/* sama5d4 */
-+			atmel_port->fidi_min = 3;
-+			atmel_port->fidi_max = 65535;
-+			break;
-+		case 0x502:	/* sam9x5, sama5d3 */
-+			atmel_port->fidi_min = 3;
-+			atmel_port->fidi_max = 2047;
-+			break;
-+		default:
-+			atmel_port->fidi_min = 1;
-+			atmel_port->fidi_max = 2047;
-+		}
- 	} else if (name == dbgu_uart) {
- 		dev_dbg(port->dev, "Dbgu or uart without hw timer\n");
- 	} else {
-@@ -2100,6 +2251,17 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
- 		atmel_uart_writel(port, ATMEL_US_TTGR,
- 				  port->rs485.delay_rts_after_send);
- 		mode |= ATMEL_US_USMODE_RS485;
-+	} else if (port->iso7816.flags & SER_ISO7816_ENABLED) {
-+		atmel_uart_writel(port, ATMEL_US_TTGR, port->iso7816.tg);
-+		/* select mck clock, and output  */
-+		mode |= ATMEL_US_USCLKS_MCK | ATMEL_US_CLKO;
-+		/* set max iterations */
-+		mode |= ATMEL_US_MAX_ITER(3);
-+		if ((port->iso7816.flags & SER_ISO7816_T_PARAM)
-+				== SER_ISO7816_T(0))
-+			mode |= ATMEL_US_USMODE_ISO7816_T0;
-+		else
-+			mode |= ATMEL_US_USMODE_ISO7816_T1;
- 	} else if (termios->c_cflag & CRTSCTS) {
- 		/* RS232 with hardware handshake (RTS/CTS) */
- 		if (atmel_use_fifo(port) &&
-@@ -2176,7 +2338,8 @@ static void atmel_set_termios(struct uart_port *port, struct ktermios *termios,
- 	}
- 	quot = cd | fp << ATMEL_US_FP_OFFSET;
- 
--	atmel_uart_writel(port, ATMEL_US_BRGR, quot);
-+	if (!(port->iso7816.flags & SER_ISO7816_ENABLED))
-+		atmel_uart_writel(port, ATMEL_US_BRGR, quot);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_RSTSTA | ATMEL_US_RSTRX);
- 	atmel_uart_writel(port, ATMEL_US_CR, ATMEL_US_TXEN | ATMEL_US_RXEN);
- 	atmel_port->tx_stopped = false;
-@@ -2357,6 +2520,7 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- 	port->mapbase		= mpdev->resource[0].start;
- 	port->irq		= mpdev->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
-+	port->iso7816_config	= atmel_config_iso7816;
- 	port->membase		= NULL;
- 
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
-@@ -2380,8 +2544,12 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- 		/* only enable clock when USART is in use */
- 	}
- 
--	/* Use TXEMPTY for interrupt when rs485 else TXRDY or ENDTX|TXBUFE */
--	if (port->rs485.flags & SER_RS485_ENABLED)
-+	/*
-+	 * Use TXEMPTY for interrupt when rs485 or ISO7816 else TXRDY or
-+	 * ENDTX|TXBUFE
-+	 */
-+	if (port->rs485.flags & SER_RS485_ENABLED ||
-+	    port->iso7816.flags & SER_ISO7816_ENABLED)
- 		atmel_port->tx_done_mask = ATMEL_US_TXEMPTY;
- 	else if (atmel_use_pdc_tx(port)) {
- 		port->fifosize = PDC_BUFFER_SIZE;
-diff --git a/drivers/tty/serial/atmel_serial.h b/drivers/tty/serial/atmel_serial.h
-index ba3a2437cde4..d811d4f2d0c0 100644
---- a/drivers/tty/serial/atmel_serial.h
-+++ b/drivers/tty/serial/atmel_serial.h
-@@ -78,7 +78,8 @@
- #define	ATMEL_US_OVER		BIT(19)	/* Oversampling Mode */
- #define	ATMEL_US_INACK		BIT(20)	/* Inhibit Non Acknowledge */
- #define	ATMEL_US_DSNACK		BIT(21)	/* Disable Successive NACK */
--#define	ATMEL_US_MAX_ITER	GENMASK(26, 24)	/* Max Iterations */
-+#define	ATMEL_US_MAX_ITER_MASK	GENMASK(26, 24)	/* Max Iterations */
-+#define	ATMEL_US_MAX_ITER(n)	(((n) << 24) & ATMEL_US_MAX_ITER_MASK)
- #define	ATMEL_US_FILTER		BIT(28)	/* Infrared Receive Line Filter */
- 
- #define ATMEL_US_IER		0x08	/* Interrupt Enable Register */
+diff --git a/arch/arm/mach-ixp4xx/ixdp425-setup.c b/arch/arm/mach-ixp4xx/ixdp425-setup.c
+index 797e7edc7124..57d7df79d838 100644
+--- a/arch/arm/mach-ixp4xx/ixdp425-setup.c
++++ b/arch/arm/mach-ixp4xx/ixdp425-setup.c
+@@ -20,6 +20,7 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
++#include <linux/mtd/platnand.h>
+ #include <linux/delay.h>
+ #include <linux/gpio.h>
+ #include <asm/types.h>
 -- 
-2.12.2
+2.18.0
 
