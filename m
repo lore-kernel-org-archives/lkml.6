@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB306C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFB4C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 905242089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 905242089D
+	by mail.kernel.org (Postfix) with ESMTP id 274D12089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 12:33:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274D12089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbeIZSpk (ORCPT
+        id S1728237AbeIZSqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 14:45:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58275 "EHLO
+        Wed, 26 Sep 2018 14:46:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43309 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeIZSpk (ORCPT
+        with ESMTP id S1726315AbeIZSqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 14:45:40 -0400
+        Wed, 26 Sep 2018 14:46:13 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8QCVxA23830639
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8QCVRf23830603
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Sep 2018 05:31:59 -0700
+        Wed, 26 Sep 2018 05:31:27 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8QCVx9B3830636;
-        Wed, 26 Sep 2018 05:31:59 -0700
-Date:   Wed, 26 Sep 2018 05:31:59 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8QCVRVV3830600;
+        Wed, 26 Sep 2018 05:31:27 -0700
+Date:   Wed, 26 Sep 2018 05:31:27 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
-Message-ID: <tip-bb4b3b7762735cdaba5a40fd94c9303d9ffa147a@git.kernel.org>
-Cc:     dwmw@amazon.co.uk, hpa@zytor.com, ak@linux.intel.com,
-        aarcange@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-        jkosina@suse.cz, peterz@infradead.org, tim.c.chen@linux.intel.com,
-        linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
-        casey.schaufler@intel.com
-Reply-To: tim.c.chen@linux.intel.com, peterz@infradead.org,
-          jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
-          casey.schaufler@intel.com, dwmw@amazon.co.uk,
-          aarcange@redhat.com, ak@linux.intel.com, hpa@zytor.com,
-          mingo@kernel.org, jkosina@suse.cz, tglx@linutronix.de
-In-Reply-To: <nycvar.YFH.7.76.1809251438580.15880@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1809251438580.15880@cbobk.fhfr.pm>
+Message-ID: <tip-53c613fe6349994f023245519265999eed75957f@git.kernel.org>
+Cc:     aarcange@redhat.com, ak@linux.intel.com, peterz@infradead.org,
+        jpoimboe@redhat.com, tim.c.chen@linux.intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        dwmw@amazon.co.uk, jkosina@suse.cz, casey.schaufler@intel.com
+Reply-To: dwmw@amazon.co.uk, tglx@linutronix.de, mingo@kernel.org,
+          hpa@zytor.com, tim.c.chen@linux.intel.com,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          jpoimboe@redhat.com, ak@linux.intel.com, aarcange@redhat.com,
+          casey.schaufler@intel.com, jkosina@suse.cz
+In-Reply-To: <nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Propagate information about RSB
- filling mitigation to sysfs
-Git-Commit-ID: bb4b3b7762735cdaba5a40fd94c9303d9ffa147a
+Subject: [tip:x86/pti] x86/speculation: Enable cross-hyperthread spectre v2
+ STIBP mitigation
+Git-Commit-ID: 53c613fe6349994f023245519265999eed75957f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,19 +62,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bb4b3b7762735cdaba5a40fd94c9303d9ffa147a
-Gitweb:     https://git.kernel.org/tip/bb4b3b7762735cdaba5a40fd94c9303d9ffa147a
+Commit-ID:  53c613fe6349994f023245519265999eed75957f
+Gitweb:     https://git.kernel.org/tip/53c613fe6349994f023245519265999eed75957f
 Author:     Jiri Kosina <jkosina@suse.cz>
-AuthorDate: Tue, 25 Sep 2018 14:39:28 +0200
+AuthorDate: Tue, 25 Sep 2018 14:38:55 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 26 Sep 2018 14:26:52 +0200
 
-x86/speculation: Propagate information about RSB filling mitigation to sysfs
+x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
 
-If spectrev2 mitigation has been enabled, RSB is filled on context switch
-in order to protect from various classes of spectrev2 attacks.
+STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
+(once enabled) prevents cross-hyperthread control of decisions made by
+indirect branch predictors.
 
-If this mitigation is enabled, say so in sysfs for spectrev2.
+Enable this feature if
+
+- the CPU is vulnerable to spectre v2
+- the CPU supports SMT and has SMT siblings online
+- spectre_v2 mitigation autoselection is enabled (default)
+
+After some previous discussion, this leaves STIBP on all the time, as wrmsr
+on crossing kernel boundary is a no-no. This could perhaps later be a bit
+more optimized (like disabling it in NOHZ, experiment with disabling it in
+idle, etc) if needed.
+
+Note that the synchronization of the mask manipulation via newly added
+spec_ctrl_mutex is currently not strictly needed, as the only updater is
+already being serialized by cpu_add_remove_lock, but let's make this a
+little bit more future-proof.
 
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -86,26 +100,148 @@ Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438580.15880@cbobk.fhfr.pm
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm
 
 ---
- arch/x86/kernel/cpu/bugs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c | 57 +++++++++++++++++++++++++++++++++++++++++-----
+ kernel/cpu.c               | 11 ++++++++-
+ 2 files changed, 61 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 53eb14a65610..fe32103fcdc7 100644
+index 40bdaea97fe7..53eb14a65610 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -874,10 +874,11 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+@@ -35,12 +35,10 @@ static void __init spectre_v2_select_mitigation(void);
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
+ 
+-/*
+- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+- * writes to SPEC_CTRL contain whatever reserved bits have been set.
+- */
+-u64 __ro_after_init x86_spec_ctrl_base;
++/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
++u64 x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
++static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -325,6 +323,46 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ 	return cmd;
+ }
+ 
++static bool stibp_needed(void)
++{
++	if (spectre_v2_enabled == SPECTRE_V2_NONE)
++		return false;
++
++	if (!boot_cpu_has(X86_FEATURE_STIBP))
++		return false;
++
++	return true;
++}
++
++static void update_stibp_msr(void *info)
++{
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++}
++
++void arch_smt_update(void)
++{
++	u64 mask;
++
++	if (!stibp_needed())
++		return;
++
++	mutex_lock(&spec_ctrl_mutex);
++	mask = x86_spec_ctrl_base;
++	if (cpu_smt_control == CPU_SMT_ENABLED)
++		mask |= SPEC_CTRL_STIBP;
++	else
++		mask &= ~SPEC_CTRL_STIBP;
++
++	if (mask != x86_spec_ctrl_base) {
++		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
++				cpu_smt_control == CPU_SMT_ENABLED ?
++				"Enabling" : "Disabling");
++		x86_spec_ctrl_base = mask;
++		on_each_cpu(update_stibp_msr, NULL, 1);
++	}
++	mutex_unlock(&spec_ctrl_mutex);
++}
++
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -424,6 +462,9 @@ specv2_set_mode:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
++
++	/* Enable STIBP if appropriate */
++	arch_smt_update();
+ }
+ 
+ #undef pr_fmt
+@@ -814,6 +855,8 @@ static ssize_t l1tf_show_state(char *buf)
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
++	int ret;
++
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+ 
+@@ -831,10 +874,12 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
  		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
  
  	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
  			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
  			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
++			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
  			       spectre_v2_module_string());
- 		return ret;
++		return ret;
  
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index aa7fe85ad62e..2fb49916ea56 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2025,6 +2025,12 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
++/*
++ * Architectures that need SMT-specific errata handling during SMT hotplug
++ * should override this.
++ */
++void __weak arch_smt_update(void) { };
++
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2051,8 +2057,10 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret)
++	if (!ret) {
+ 		cpu_smt_control = ctrlval;
++		arch_smt_update();
++	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2063,6 +2071,7 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
++	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
