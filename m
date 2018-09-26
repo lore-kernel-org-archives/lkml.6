@@ -2,78 +2,112 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2C3C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 317A0C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2EF4214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 18:58:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Uods2sfm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EF4214FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by mail.kernel.org (Postfix) with ESMTP id D6DEF2150C
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 19:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DEF2150C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbeI0BM6 (ORCPT
+        id S1728580AbeI0BPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 21:12:58 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:35176 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbeI0BM6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 21:12:58 -0400
-Received: by mail-it1-f195.google.com with SMTP id 139-v6so4377925itf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 11:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GvF3hx6SZ7O58Dj7CNWRg8qHyyDSmnsNO+d797xSqnM=;
-        b=Uods2sfmQwGzeckrJm7Ugl6NTalhteOt0NVXYw8RJibL6OjaKZ5nK9Bh7OqokySVF+
-         xZes99y8N14qJR/wCwDnA4KKvXyv9oG9LQkbM9u+bKbsQXq2LE1Jb0rJKBjxIku9F6bp
-         tjEUuzN2CzcAXPEYUMyZdxEOiRcLUulXMJoiY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GvF3hx6SZ7O58Dj7CNWRg8qHyyDSmnsNO+d797xSqnM=;
-        b=Nyt6hJ9WROruZAevQeuX8+WxtiiQRJOI5AL7bEVH4GMrDg7s6WLdIPQRGiU/NssWk+
-         8PlU8j7X5ocMr6LNZjRlaF7Hj/v7/YCbgu2YU8UUp72gJeiwomlOUMSIExjfWpyDfu0R
-         TI0uvc8wQTzBX/c6cu1Ehhm5NziPRbONy1PKL1Z8xdrIlLpTlFJRoNkp4sxZJ2itHlcn
-         J+IA4lXEjcaAXIOr6pjod6oM9fq56ujj25S0Aa1tcddbBGeFqFmA6eDUQHxRNV9RbHlQ
-         0niWmvXmOz3Y0BgJnypZYVmNHDtfAatP70UFDD+ewwuD7J2Q65PAEK2mhErQ0ZQ533Bt
-         jRLg==
-X-Gm-Message-State: ABuFfojrWN0hRKW8LmufaBqU3Exml7HwdlC0oblSf+7Fn9KrwxwCOxCo
-        1FpwRj5x8oj1PyFZqguM6hPLOQj++yPqpQfUMHTrfw==
-X-Google-Smtp-Source: ACcGV62t05XhlxJRugo/XrmP3dUFmVZ7QE4KOXQQyPjH1KKsM31S5K/PD5254Qlx2uGYH1j1AoqeUvippi0/Ssd33g0=
-X-Received: by 2002:a02:e44:: with SMTP id 65-v6mr7007741jae.7.1537988317295;
- Wed, 26 Sep 2018 11:58:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:996e:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 11:58:36
- -0700 (PDT)
-In-Reply-To: <20180815142749.18804-1-linux@rasmusvillemoes.dk>
-References: <20180815142749.18804-1-linux@rasmusvillemoes.dk>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date:   Wed, 26 Sep 2018 20:58:36 +0200
-Message-ID: <CAKwiHFj5yGtsR+s0Ukjy0Pe1pDpd_euyT0MRZdTt0H3ssXqYXQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Kbuild: Some fixdep tweaks
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 26 Sep 2018 21:15:05 -0400
+Received: from mga04.intel.com ([192.55.52.120]:64733 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725848AbeI0BPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 21:15:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 12:00:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,307,1534834800"; 
+   d="scan'208";a="76436979"
+Received: from rchatre-s.jf.intel.com ([10.54.70.76])
+  by orsmga008.jf.intel.com with ESMTP; 26 Sep 2018 12:00:39 -0700
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com
+Cc:     jithu.joseph@intel.com, gavin.hindman@intel.com,
+        dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH 0/3] x86/intel_rdt: Fix exclusive mode with CDP resources
+Date:   Wed, 26 Sep 2018 11:59:42 -0700
+Message-Id: <cover.1537987801.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 August 2018 at 16:27, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
-> These patches eliminate two (albeit tiny and shortlived) processes
-> from the cmd_and_fixdep rule, i.e. from every TU being
-> compiled. Whether the diffstat below is worth it I'll leave to Kbuild
-> maintainers to decide.
+Dear Maintainers,
 
-Ping.
+CDP resources do not currently behave as expected when there are resource
+groups with mode 'exclusive'.
+
+In the example below it was possible to create two resource groups,
+p1 and p2, that are both in exclusive mode but their usage of the
+underlying L2 cache actually overlaps.
+
+root@glk:/sys/fs/resctrl# ls
+cpus  cpus_list  info  mode  p1  p2  schemata  size  tasks
+root@glk:/sys/fs/resctrl# cat schemata
+L2DATA:0=fff0
+L2CODE:0=fff0
+root@glk:/sys/fs/resctrl# cat mode
+shareable
+
+root@glk:/sys/fs/resctrl# cat p1/schemata
+L2DATA:0=0003
+L2CODE:0=000c
+root@glk:/sys/fs/resctrl# cat p1/mode
+exclusive
+
+root@glk:/sys/fs/resctrl# cat p2/schemata
+L2DATA:0=000c
+L2CODE:0=0003
+root@glk:/sys/fs/resctrl# cat p2/mode
+exclusive
+
+root@glk:/sys/fs/resctrl# cat info/L2CODE/bit_usage
+0=SSSSSSSSSSSSEEEE
+root@glk:/sys/fs/resctrl# cat info/L2DATA/bit_usage
+0=SSSSSSSSSSSSEEEE
+root@glk:/sys/fs/resctrl#
+
+In the above example, the CBM of L2DATA in p1 overlaps with the CBM of
+L2CODE in p2 while they are both in exclusive mode. While it may reflect no
+overlap among the L2DATA resources specifically it does actually imply
+overlap of use of the underlying hardware that is not the intention of
+'exclusive' mode. This happens because the current implementation treats
+L2CODE and L2DATA as totally independent, when it is actually referring to
+the same underlying hardware.
+
+This series fixes the potential for overlap of hardware resource use when
+resource groups are in 'exclusive' mode by ensuring that if there is a CDP
+peer on the same hardware then any overlap test would consider it also.
+
+Allocations of data and code resources within the same exclusive resource
+group are allowed to overlap.
+
+Your feedback will be greatly appreciated.
+
+Reinette
+
+Reinette Chatre (3):
+  x86/intel_rdt: Introduce utility to obtain CDP peer
+  x86/intel_rdt: CBM overlap should also check for overlap with CDP peer
+  x86/intel_rdt: Fix initial allocation to consider CDP
+
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 133 ++++++++++++++++++++++-
+ 1 file changed, 128 insertions(+), 5 deletions(-)
+
+-- 
+2.17.0
+
