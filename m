@@ -4,42 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904DBC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B23C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33738214DC
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:41:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51F120843
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 13:42:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1kZmSc6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33738214DC
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9P3Tyze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51F120843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbeIZTy5 (ORCPT
+        id S1727523AbeIZTzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 15:54:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35550 "EHLO mail.kernel.org"
+        Wed, 26 Sep 2018 15:55:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbeIZTy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 15:54:56 -0400
+        id S1726994AbeIZTza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 15:55:30 -0400
 Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C32CB20842;
-        Wed, 26 Sep 2018 13:41:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2FF720842;
+        Wed, 26 Sep 2018 13:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537969315;
-        bh=3dnGQKzxMxXgbThUFWcMIglmsuNfUpdPzBAlfoLx+wo=;
+        s=default; t=1537969348;
+        bh=Z92CWBhxchpZUdGlVAfoiQQp7znMUcP+3xfTFgPhnMM=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=1kZmSc6U/sjc+SYh+yNbUimQakC7pW0q51vep4cwv68C1cMvC7xL/AVW09Lwe7HVp
-         U6/NUbF40Wevb62x3NIFgPI+/DLg5NXK0Ght4ST27yMl+GRosSNKnfM9dB0mvyV5oc
-         Ek+9096+3qkoUBgeHVzlaWLinse/9pozdYnLv1AA=
-Subject: Re: [PATCH] reset: socfpga: add an early reset driver for SoCFPGA
-To:     p.zabel@pengutronix.de
-Cc:     marex@denx.de, linux-kernel@vger.kernel.org
-References: <1537195830-25759-1-git-send-email-dinguyen@kernel.org>
+        b=r9P3TyzeXtW0UeE28DSjtEbj34jr4Cw7/jdHQ5ECCnWFj+92TL/fkpHc5UVacfepK
+         WUtoDbCGC7D/etlgnUBDkSsAXHKSg5JxPuKllsG/YWlTTTXy0dt0OAJBHQEOf/8gnO
+         puQy/WSdvG/TgNDJix8/iPUDVST0pjnS0I6zKCCE=
+Subject: Re: [PATCH] clocksource: dw_apb: add reset control
+To:     daniel.lezcano@linaro.org
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        Marek Vasut <marex@denx.de>
+References: <1537195934-26035-1-git-send-email-dinguyen@kernel.org>
 From:   Dinh Nguyen <dinguyen@kernel.org>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
@@ -84,12 +85,12 @@ Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
  cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
  Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
  JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
-Message-ID: <d0156a0e-3687-4ca4-f847-bf384f405f3c@kernel.org>
-Date:   Wed, 26 Sep 2018 08:41:53 -0500
+Message-ID: <3a00eb7a-d16a-ce86-6c8f-6f0a142bd316@kernel.org>
+Date:   Wed, 26 Sep 2018 08:42:26 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1537195830-25759-1-git-send-email-dinguyen@kernel.org>
+In-Reply-To: <1537195934-26035-1-git-send-email-dinguyen@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -100,210 +101,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Ping?
 
-On 09/17/2018 09:50 AM, Dinh Nguyen wrote:
-> Create a separate reset driver that uses the reset operations in reset-simple.
-> The reset driver for the SoCFPGA platform needs to register early in order to
-> be able bring online timers that needed early in the kernel bootup.
+On 09/17/2018 09:52 AM, Dinh Nguyen wrote:
+> Add code to retrieve the reset property for the dw-apb timers.
 > 
+> Signed-off-by: Marek Vasut <marex@denx.de>
 > Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
->  arch/arm/mach-socfpga/socfpga.c |  4 ++
->  drivers/reset/Kconfig           |  7 ++++
->  drivers/reset/Makefile          |  1 +
->  drivers/reset/reset-simple.c    | 17 ---------
->  drivers/reset/reset-socfpga.c   | 85 +++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 97 insertions(+), 17 deletions(-)
->  create mode 100644 drivers/reset/reset-socfpga.c
+>  drivers/clocksource/dw_apb_timer_of.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
-> index dde14f7..cc64576 100644
-> --- a/arch/arm/mach-socfpga/socfpga.c
-> +++ b/arch/arm/mach-socfpga/socfpga.c
-> @@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
->  void __iomem *sdr_ctl_base_addr;
->  unsigned long socfpga_cpu1start_addr;
+> diff --git a/drivers/clocksource/dw_apb_timer_of.c b/drivers/clocksource/dw_apb_timer_of.c
+> index 69866cd..24bc073 100644
+> --- a/drivers/clocksource/dw_apb_timer_of.c
+> +++ b/drivers/clocksource/dw_apb_timer_of.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/clk.h>
+> +#include <linux/reset.h>
+>  #include <linux/sched_clock.h>
 >  
-> +extern void __init socfpga_reset_init(void);
-> +
->  void __init socfpga_sysmgr_init(void)
+>  static void __init timer_get_base_and_rate(struct device_node *np,
+> @@ -29,12 +30,20 @@ static void __init timer_get_base_and_rate(struct device_node *np,
 >  {
->  	struct device_node *np;
-> @@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
+>  	struct clk *timer_clk;
+>  	struct clk *pclk;
+> +	struct reset_control *rstc;
 >  
->  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
->  		socfpga_init_ocram_ecc();
-> +	socfpga_reset_init();
->  }
+>  	*base = of_iomap(np, 0);
 >  
->  static void __init socfpga_arria10_init_irq(void)
-> @@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
->  		socfpga_init_arria10_l2_ecc();
->  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
->  		socfpga_init_arria10_ocram_ecc();
-> +	socfpga_reset_init();
->  }
+>  	if (!*base)
+>  		panic("Unable to map regs for %s", np->name);
 >  
->  static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 13d28fd..dcc5f1d 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -119,6 +119,13 @@ config RESET_STM32MP157
->  	help
->  	  This enables the RCC reset controller driver for STM32 MPUs.
->  
-> +config RESET_SOCFPGA
-> +	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
-> +	default ARCH_SOCFPGA
-> +	select RESET_SIMPLE
-> +	help
-> +	  This enables the reset driver for SoCFPGA.
-> +
->  config RESET_SUNXI
->  	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
->  	default ARCH_SUNXI
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 4243c38..d09bb41 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -18,6 +18,7 @@ obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
->  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
->  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
->  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
-> +obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
->  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
->  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
->  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
-> diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
-> index a91107f..483824f 100644
-> --- a/drivers/reset/reset-simple.c
-> +++ b/drivers/reset/reset-simple.c
-> @@ -106,21 +106,12 @@ struct reset_simple_devdata {
->  	bool status_active_low;
->  };
->  
-> -#define SOCFPGA_NR_BANKS	8
-> -
-> -static const struct reset_simple_devdata reset_simple_socfpga = {
-> -	.reg_offset = 0x10,
-> -	.nr_resets = SOCFPGA_NR_BANKS * 32,
-> -	.status_active_low = true,
-> -};
-> -
->  static const struct reset_simple_devdata reset_simple_active_low = {
->  	.active_low = true,
->  	.status_active_low = true,
->  };
->  
->  static const struct of_device_id reset_simple_dt_ids[] = {
-> -	{ .compatible = "altr,rst-mgr", .data = &reset_simple_socfpga },
->  	{ .compatible = "st,stm32-rcc", },
->  	{ .compatible = "allwinner,sun6i-a31-clock-reset",
->  		.data = &reset_simple_active_low },
-> @@ -166,14 +157,6 @@ static int reset_simple_probe(struct platform_device *pdev)
->  		data->status_active_low = devdata->status_active_low;
->  	}
->  
-> -	if (of_device_is_compatible(dev->of_node, "altr,rst-mgr") &&
-> -	    of_property_read_u32(dev->of_node, "altr,modrst-offset",
-> -				 &reg_offset)) {
-> -		dev_warn(dev,
-> -			 "missing altr,modrst-offset property, assuming 0x%x!\n",
-> -			 reg_offset);
-> -	}
-> -
->  	data->membase += reg_offset;
->  
->  	return devm_reset_controller_register(dev, &data->rcdev);
-> diff --git a/drivers/reset/reset-socfpga.c b/drivers/reset/reset-socfpga.c
-> new file mode 100644
-> index 0000000..b6e8fe8
-> --- /dev/null
-> +++ b/drivers/reset/reset-socfpga.c
-> @@ -0,0 +1,85 @@
-> +// SPDX-License-Identifier:	GPL-2.0
-> +/*
-> + * Copyright (C) 2018, Intel Corporation
-> + * Copied from reset-sunxi.c
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/init.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
-> +
-> +#include "reset-simple.h"
-> +
-> +static int a10_reset_init(struct device_node *np)
-> +{
-> +	struct reset_simple_data *data;
-> +	struct resource res;
-> +	resource_size_t size;
-> +	int ret;
-> +	u32 reg_offset = 0;
-> +
-> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	ret = of_address_to_resource(np, 0, &res);
-> +	if (ret)
-> +		goto err_alloc;
-> +
-> +	size = resource_size(&res);
-> +	if (!request_mem_region(res.start, size, np->name)) {
-> +		ret = -EBUSY;
-> +		goto err_alloc;
+> +	/* Unreset the timer if applicable */
+> +	rstc = of_reset_control_get(np, NULL);
+> +	if (!IS_ERR(rstc)) {
+> +		reset_control_assert(rstc);
+> +		reset_control_deassert(rstc);
 > +	}
 > +
-> +	data->membase = ioremap(res.start, size);
-> +	if (!data->membase) {
-> +		ret = -ENOMEM;
-> +		goto err_alloc;
-> +	}
-> +
-> +	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
-> +		pr_warn("missing altr,modrst-offset property, assuming 0x0\n");
-> +	data->membase += reg_offset;
-> +
-> +	spin_lock_init(&data->lock);
-> +
-> +	data->rcdev.owner = THIS_MODULE;
-> +	data->rcdev.nr_resets = 32 * 8;
-> +	data->rcdev.ops = &reset_simple_ops;
-> +	data->rcdev.of_node = np;
-> +	data->status_active_low = true;
-> +
-> +	return reset_controller_register(&data->rcdev);
-> +
-> +err_alloc:
-> +	kfree(data);
-> +	return ret;
-> +};
-> +
-> +/*
-> + * These are the reset controller we need to initialize early on in
-> + * our system, before we can even think of using a regular device
-> + * driver for it.
-> + * The controllers that we can register through the regular device
-> + * model are handled by the simple reset driver directly.
-> + */
-> +static const struct of_device_id socfpga_early_reset_dt_ids[] __initconst = {
-> +	{ .compatible = "altr,rst-mgr", },
-> +	{ /* sentinel */ },
-> +};
-> +
-> +void __init socfpga_reset_init(void)
-> +{
-> +	struct device_node *np;
-> +
-> +	for_each_matching_node(np, socfpga_early_reset_dt_ids)
-> +		a10_reset_init(np);
-> +}
+>  	/*
+>  	 * Not all implementations use a periphal clock, so don't panic
+>  	 * if it's not present
 > 
