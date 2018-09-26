@@ -2,419 +2,131 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4490C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6771CC43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 553AE2154B
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:36:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 553AE2154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id E9F0B21568
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 22:38:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="MY9tHArU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F0B21568
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeI0Ev1 (ORCPT
+        id S1726576AbeI0ExI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 00:51:27 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48725 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbeI0Ev1 (ORCPT
+        Thu, 27 Sep 2018 00:53:08 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41283 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbeI0ExI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 00:51:27 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0DF9680879; Thu, 27 Sep 2018 00:36:12 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 00:36:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lee.jones@linaro.org, linux-omap@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [RFC PATCH 7/9] leds: lm3633: Introduce the lm3633 driver
-Message-ID: <20180926223612.GA32286@amd>
-References: <20180926130921.12329-1-dmurphy@ti.com>
- <20180926130921.12329-8-dmurphy@ti.com>
+        Thu, 27 Sep 2018 00:53:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j15-v6so502429wrt.8
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 15:37:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tjCid2raywD9TiP/EG3nqgGcPqMQjzebtE2YnSs0iIk=;
+        b=MY9tHArUFddizrowgA6vJAy3w3tm5x2TojafHcyCfxTRxYObxe4Qnnwfb9rLI5t+0B
+         ly/JSX+avKDjEVPoP8bFX/6fMWvxIntu5CE+o7mXV0Hdt5lOa2RNO71xvdCh8EcCoaeD
+         JKPlSZwnmMhWXtFWid5dNRVWx5po1ymQcOS3ZWzgoFok+D2Ow9xh2K6arumybw4aYDGj
+         q2C3KlL40kjL2CY9vKTrWuVkmuBNEAboQZ35A29qtpR3AlR4APJiUTz4lowX88Lt6gZx
+         e5ObnkbkKawEhxozfAQVx4PDUqasIAs5NpTDIJ86YRAdNIAya3E/S+k+o33WStzSA9yl
+         VMJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tjCid2raywD9TiP/EG3nqgGcPqMQjzebtE2YnSs0iIk=;
+        b=HdcZs6p+zlcrrUfjgfzR0PKwl6hKxhGNZ+KHTGwQgYiBc7zTrq/Xp7I0lJhwFtKeND
+         DCryMKW+akkIlnK+/MfJJt4lUM/HtgVaQnMlq3PoI2s9GDbubh9DCaWpZcXPoSCK7fak
+         muwEXbgqEZ55YT62SrBP0Ftp2sTaz2S+ZMpGfZLolxjsycEIgHEpgVLojcDzliN6Fjwy
+         HR/Y2D87OY9Esh+Dbqe42gCgDeYAmka+cLhKKEme2CeAqFQuFQsvjUbiDWQ33EwX9Hoo
+         6vabyF0ZZG9CMygWxb+hUT3csF069OhuscAJ9VbFEEgBsWJcwyjOZJvgBH/DT50FQ7SY
+         y5bQ==
+X-Gm-Message-State: ABuFfoiaqWpsMBixEh9rpBhQsQcj90quHCF8dA5Vzd+HbLodMu4BLjEM
+        6NSDdK5QifvTiWDoyiMs4HS6fLzk48H1ZSnj0jUAqw==
+X-Google-Smtp-Source: ACcGV62KdfoXCLWz4mKm4KMSAVF/KS4dcv8+OiqQ+yH16Q1rbeD7TzgUQsL9CtmXPwTpF0FHfgeVN6kd5r2UA6xyAyo=
+X-Received: by 2002:adf:dcc1:: with SMTP id x1-v6mr6644969wrm.21.1538001476929;
+ Wed, 26 Sep 2018 15:37:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
-Content-Disposition: inline
-In-Reply-To: <20180926130921.12329-8-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com> <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com> <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com> <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+ <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+In-Reply-To: <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Wed, 26 Sep 2018 15:37:45 -0700
+Message-ID: <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 26, 2018 at 2:45 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 09/26/2018 02:15 PM, Andy Lutomirski wrote:
+> > Could we perhaps have a little vDSO entry (or syscall, I suppose) that
+> > runs an enclave an returns an error code, and rig up the #PF handler
+> > to check if the error happened in the vDSO entry and fix it up rather
+> > than sending a signal?
+>
+> Yeah, signals suck.
+>
+> So, instead of doing the enclave entry instruction (EENTER is it?), the
+> app would do the vDSO call.  It would have some calling convention, like
+> "set %rax to 0 before entering".  Then, we just teach the page fault
+> handler about the %RIP in the vDSO that can fault and how to move one
+> instruction later, munge %RIP to a value that tells about the error,
+> then return from the fault.  It would basically be like the kernel
+> exception tables, but for userspace.  Right?
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah.  Maybe like this:
 
-Hi!
+xorl %eax,%eax
+eenter_insn:
+ENCLU[whatever]
+eenter_landing_pad:
+ret
 
-> Introduce the LED LM3633 driver.  This LED
-> driver has 9 total LED outputs with runtime
-> internal ramp configurations.
->=20
-> Data sheet:
-> http://www.ti.com/lit/ds/symlink/lm3633.pdf
->=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+And the kernel would use the existing vdso2c vdso-symbol-finding
+mechanism to do the fixup.
 
-I did some editing... and this code looks very similar to 3697 code.
+>
+> How would a syscall work, though?  I assume we can't just enter the
+> enclave from ring0.
 
-> diff --git a/drivers/leds/leds-lm3633.c b/drivers/leds/leds-lm3633.c
-> new file mode 100644
-> index 000000000000..3d29b0ed67d3
-> --- /dev/null
-> +++ b/drivers/leds/leds-lm3633.c
-> @@ -0,0 +1,430 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// TI LM3633 LED chip family driver
-> +// Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-> +
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/init.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/slab.h>
-> +#include <uapi/linux/uleds.h>
-> +
-> +#include "ti-lmu-led-common.h"
+My understanding of how AEX works is a bit vague, but maybe a syscall
+could reuse the mechanism?  The vDSO approach seems considerably
+simpler.
 
-You might want to move includes to ti-lmu-led-common.h, so these are
-not repeated?
+We do need to make sure that a fault that happens on or after return
+from an AEX event does the right thing.  But I'm still vague on how
+that works, sigh.
 
-> +/**
-> + * struct lm3633 -
-> + * @enable_gpio - Hardware enable gpio
-> + * @regulator - LED supply regulator pointer
-> + * @client - Pointer to the I2C client
-> + * @regmap - Devices register map
-> + * @dev - Pointer to the devices device struct
-> + * @lock - Lock for reading/writing the device
-> + * @leds - Array of LED strings
-> + */
-> +struct lm3633 {
-> +	struct gpio_desc *enable_gpio;
-> +	struct regulator *regulator;
-> +	struct i2c_client *client;
-> +	struct regmap *regmap;
-> +	struct device *dev;
-> +	struct mutex lock;
-> +	struct lm3633_led leds[];
-> +};
-
-Exactly same structure is used for 3697. Worth sharing?
-
-> +static const struct regmap_config lm3633_regmap_config =3D {
-> +	.reg_bits =3D 8,
-> +	.val_bits =3D 8,
-> +
-> +	.max_register =3D LM3633_CTRL_ENABLE,
-> +	.reg_defaults =3D lm3633_reg_defs,
-> +	.num_reg_defaults =3D ARRAY_SIZE(lm3633_reg_defs),
-> +	.cache_type =3D REGCACHE_FLAT,
-> +};
-
-Same regmap config. Maybe difficult to share.
-
-> +static int lm3633_brightness_set(struct led_classdev *led_cdev,
-> +				enum led_brightness brt_val)
-> +{
-> +	struct lm3633_led *led =3D container_of(led_cdev, struct lm3633_led,
-> +					      led_dev);
-> +	int ctrl_en_val;
-> +	int ret;
-> +
-> +	mutex_lock(&led->priv->lock);
-> +
-> +	if (led->control_bank =3D=3D LM3633_CONTROL_A) {
-> +		led->lmu_data.msb_brightness_reg =3D LM3633_CTRL_A_BRT_MSB;
-> +		led->lmu_data.lsb_brightness_reg =3D LM3633_CTRL_A_BRT_LSB;
-> +		ctrl_en_val =3D LM3633_CTRL_A_EN;
-> +	} else {
-> +		led->lmu_data.msb_brightness_reg =3D LM3633_CTRL_B_BRT_MSB;
-> +		led->lmu_data.lsb_brightness_reg =3D LM3633_CTRL_B_BRT_LSB;
-> +		ctrl_en_val =3D LM3633_CTRL_B_EN;
-> +	}
-> +
-> +	if (brt_val =3D=3D LED_OFF)
-> +		ret =3D regmap_update_bits(led->priv->regmap, LM3633_CTRL_ENABLE,
-> +					 ctrl_en_val, ~ctrl_en_val);
-> +	else
-> +		ret =3D regmap_update_bits(led->priv->regmap, LM3633_CTRL_ENABLE,
-> +					 ctrl_en_val, ctrl_en_val);
-> +
-> +	ret =3D ti_lmu_common_set_brightness(&led->lmu_data, brt_val);
-> +	if (ret)
-> +		dev_err(&led->priv->client->dev, "Cannot write brightness\n");
-> +
-> +	mutex_unlock(&led->priv->lock);
-> +	return ret;
-> +}
-
-Duplicate of 3697 function with different constants.
-
-> +static int lm3633_set_control_bank(struct lm3633 *priv)
-> +{
-> +	u8 control_bank_config =3D 0;
-> +	struct lm3633_led *led;
-> +	int ret, i;
-> +
-> +	led =3D &priv->leds[0];
-> +	if (led->control_bank =3D=3D LM3633_CONTROL_A)
-> +		led =3D &priv->leds[1];
-> +
-> +	for (i =3D 0; i < LM3633_MAX_HVLED_STRINGS; i++)
-> +		if (led->hvled_strings[i] =3D=3D LM3633_HVLED_ASSIGNMENT)
-> +			control_bank_config |=3D 1 << i;
-> +
-> +	ret =3D regmap_write(priv->regmap, LM3633_HVLED_OUTPUT_CONFIG,
-> +			   control_bank_config);
-> +	if (ret)
-> +		dev_err(&priv->client->dev, "Cannot write OUTPUT config\n");
-> +
-> +	return ret;
-> +}
-
-Duplicate of 3697 function.
-
-> +static int lm3633_init(struct lm3633 *priv)
-> +{
-> +	struct lm3633_led *led;
-> +	int i, ret;
-> +
-> +	if (priv->enable_gpio) {
-> +		gpiod_direction_output(priv->enable_gpio, 1);
-> +	} else {
-> +		ret =3D regmap_write(priv->regmap, LM3633_RESET, LM3633_SW_RESET);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "Cannot reset the device\n");
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	ret =3D regmap_write(priv->regmap, LM3633_CTRL_ENABLE, 0x0);
-> +	if (ret) {
-> +		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
-> +		goto out;
-> +	}
-> +
-> +	ret =3D lm3633_set_control_bank(priv);
-> +	if (ret)
-> +		dev_err(&priv->client->dev, "Setting the CRTL bank failed\n");
-> +
-> +	for (i =3D 0; i < LM3633_MAX_CONTROL_BANKS; i++) {
-> +		led =3D &priv->leds[i];
-> +		ti_lmu_common_set_ramp(&led->lmu_data);
-> +		if (ret)
-> +			dev_err(&priv->client->dev, "Setting the ramp rate failed\n");
-> +	}
-> +out:
-> +	return ret;
-> +}
-
-Duplicate of 3697 function.
-
-> +static int lm3633_probe_dt(struct lm3633 *priv)
-> +{
-> +	struct fwnode_handle *child =3D NULL;
-> +	struct lm3633_led *led;
-> +	const char *name;
-> +	int control_bank;
-> +	size_t i =3D 0;
-> +	int ret;
-> +
-> +	priv->enable_gpio =3D devm_gpiod_get_optional(&priv->client->dev,
-> +						   "enable", GPIOD_OUT_LOW);
-> +	if (IS_ERR(priv->enable_gpio)) {
-> +		ret =3D PTR_ERR(priv->enable_gpio);
-> +		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	priv->regulator =3D devm_regulator_get(&priv->client->dev, "vled");
-> +	if (IS_ERR(priv->regulator))
-> +		priv->regulator =3D NULL;
-> +
-> +	device_for_each_child_node(priv->dev, child) {
-> +		ret =3D fwnode_property_read_u32(child, "reg", &control_bank);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "reg property missing\n");
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		if (control_bank > LM3633_CONTROL_B) {
-> +			dev_err(&priv->client->dev, "reg property is invalid\n");
-> +			ret =3D -EINVAL;
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		led =3D &priv->leds[i];
-> +
-> +		led->control_bank =3D control_bank;
-> +		led->lmu_data.bank_id =3D control_bank;
-> +		led->lmu_data.enable_reg =3D LM3633_CTRL_ENABLE;
-> +		led->lmu_data.regmap =3D priv->regmap;
-> +		if (control_bank =3D=3D LM3633_CONTROL_A)
-> +			led->lmu_data.runtime_ramp_reg =3D LM3633_CTRL_A_RAMP;
-> +		else
-> +			led->lmu_data.runtime_ramp_reg =3D LM3633_CTRL_B_RAMP;
-> +
-> +		if (control_bank <=3D LM3633_CONTROL_B)
-> +			ret =3D fwnode_property_read_u32_array(child, "led-sources",
-> +						    led->hvled_strings,
-> +						    LM3633_MAX_HVLED_STRINGS);
-> +		else
-> +			ret =3D fwnode_property_read_u32_array(child, "led-sources",
-> +						    led->lvled_strings,
-> +						    LM3633_MAX_LVLED_STRINGS);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "led-sources property missing\n");
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		ret =3D ti_lmu_common_get_ramp_params(&priv->client->dev, child, &led-=
->lmu_data);
-> +		if (ret)
-> +			dev_warn(&priv->client->dev, "runtime-ramp properties missing\n");
-> +
-> +		fwnode_property_read_string(child, "linux,default-trigger",
-> +					    &led->led_dev.default_trigger);
-> +
-> +		ret =3D fwnode_property_read_string(child, "label", &name);
-> +		if (ret)
-> +			snprintf(led->label, sizeof(led->label),
-> +				"%s::", priv->client->name);
-> +		else
-> +			snprintf(led->label, sizeof(led->label),
-> +				 "%s:%s", priv->client->name, name);
-> +
-> +		led->priv =3D priv;
-> +		led->led_dev.name =3D led->label;
-> +		led->led_dev.brightness_set_blocking =3D lm3633_brightness_set;
-> +
-> +		ret =3D devm_led_classdev_register(priv->dev, &led->led_dev);
-> +		if (ret) {
-> +			dev_err(&priv->client->dev, "led register err: %d\n",
-> +				ret);
-> +			fwnode_handle_put(child);
-> +			goto child_out;
-> +		}
-> +
-> +		i++;
-> +	}
-> +
-> +child_out:
-> +	return ret;
-> +}
-
-Very similar, but not quite same.
-
-> +static int lm3633_probe(struct i2c_client *client,
-> +			const struct i2c_device_id *id)
-> +{
-> +	struct lm3633 *led;
-> +	int count;
-> +	int ret;
-> +
-> +	count =3D device_get_child_node_count(&client->dev);
-> +	if (!count) {
-> +		dev_err(&client->dev, "LEDs are not defined in device tree!");
-> +		return -ENODEV;
-> +	}
-> +
-> +	led =3D devm_kzalloc(&client->dev, struct_size(led, leds, count),
-> +			   GFP_KERNEL);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&led->lock);
-> +	i2c_set_clientdata(client, led);
-> +
-> +	led->client =3D client;
-> +	led->dev =3D &client->dev;
-> +	led->regmap =3D devm_regmap_init_i2c(client, &lm3633_regmap_config);
-> +	if (IS_ERR(led->regmap)) {
-> +		ret =3D PTR_ERR(led->regmap);
-> +		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	ret =3D lm3633_probe_dt(led);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return lm3633_init(led);
-> +}
-
-Duplicate.
-
-> +static int lm3633_remove(struct i2c_client *client)
-> +{
-> +	struct lm3633 *led =3D i2c_get_clientdata(client);
-> +	int ret;
-> +
-> +	ret =3D regmap_update_bits(led->regmap, LM3633_CTRL_ENABLE,
-> +				 LM3633_CTRL_A_B_EN, 0);
-> +	if (ret) {
-> +		dev_err(&led->client->dev, "Failed to disable the device\n");
-> +		return ret;
-> +	}
-> +
-> +	if (led->enable_gpio)
-> +		gpiod_direction_output(led->enable_gpio, 0);
-> +
-> +	if (led->regulator) {
-> +		ret =3D regulator_disable(led->regulator);
-> +		if (ret)
-> +			dev_err(&led->client->dev,
-> +				"Failed to disable regulator\n");
-> +	}
-> +
-> +	mutex_destroy(&led->lock);
-> +
-> +	return 0;
-> +}
-
-Duplicate.
-
-Can we get some more sharing? One way would be to have struct with
-all the constants (instead of #defines) use that...?
-
-Thanks,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlusCdwACgkQMOfwapXb+vIMeQCgt/BFsztdwtGe/a74jaCOFVbQ
-pRgAn1JCsTRDgYbhoPHFrCEoy1iQgamP
-=g1HH
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
+--Andy
