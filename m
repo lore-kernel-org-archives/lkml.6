@@ -2,178 +2,209 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17040C43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44C1C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C47742147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:24:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47742147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 643352147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 20:25:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oLsKnJ+k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643352147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbeI0Cin (ORCPT
+        id S1727149AbeI0Cjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 22:38:43 -0400
-Received: from mail-it1-f198.google.com ([209.85.166.198]:52825 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbeI0Cin (ORCPT
+        Wed, 26 Sep 2018 22:39:44 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37286 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeI0Cjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 22:38:43 -0400
-Received: by mail-it1-f198.google.com with SMTP id e9-v6so5180882itf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 13:24:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=DfQdkNQpGZ6NEiQVA5H26eJ9g5ITnA/qlrkOPcDu9uY=;
-        b=IK65bq6wlWw9lDoRh2Wpustx7Ugjg6zDG6BVwjuhSX7OWmciuZrW6Ema8PaJQDMBC9
-         FvR0icjJfHwCNP/XxdhcS1A5/obrcV7U8VuqJfRoyqp5uLyFAMgRBcLFvWPdOTA1RSPO
-         WiVLGFdUYyK6pK3vjIMyZGSvKAWe5Ze2TzHw44/YLhoH7zLMfb90M+1J8uXQHAPc4920
-         +7eJHn4Kujh5X7NOLz4ZrHBiSm0kjDwN1cJHlYyYHPKLdV3eWfHSbqVgfcCKP7oRQ89I
-         BDu8VVk5/xN50WHoGuShNvRB3EnKBKJCBzcRdkUFG1ejxIg1lLRsrW9Ks7DG9vryip+C
-         8rkQ==
-X-Gm-Message-State: ABuFfohCAP88tfy1NMUCBfrkyjYNgXfoCAcfwhCZR+OcuRnKJF+YFkZp
-        oJJU/+l/8Tl+ozVp62SbnbLjPgUvSW+4+B99RfIQ0xOqt1XQ
-X-Google-Smtp-Source: ACcGV63rbJ4hMna+qepg7K62go0DEpD0qTZJ4flLKRMmnJ/P9lrA0uu6EMUbCgJPqWjJU6tJh5yc4VBmt+FoPf+/CYS2OB/2aPW9
+        Wed, 26 Sep 2018 22:39:44 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8QKOoDO025422;
+        Wed, 26 Sep 2018 15:24:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537993490;
+        bh=h1fJG8HiIjuKNQdtpbHzIfBfErWIbZScNNG+VKdwfCg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=oLsKnJ+kCQC6UTv5y8USJ1td6cmS7Vuofw0qcbpqs/6bD/SRjMxuk0F4JJro/msue
+         Bre12uH8fM93O+lBQ4+FtSl80DJiJWDz/KQhiU9LuT//tPzTOzWhX4IPVaZzGHxY73
+         T37+76AY04DWtiCNQ4fNCAipWSUC59hvBf3kNRmE=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8QKOodr012224;
+        Wed, 26 Sep 2018 15:24:50 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 26
+ Sep 2018 15:24:50 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 26 Sep 2018 15:24:50 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8QKOokh027088;
+        Wed, 26 Sep 2018 15:24:50 -0500
+Subject: Re: [PATCH] gpio: omap: switch to use irq_chip pm runtime
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180925191446.31504-1-grygorii.strashko@ti.com>
+ <20180926171200.GV5662@atomide.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <48408c84-793a-bf16-4a59-c9b266a5726f@ti.com>
+Date:   Wed, 26 Sep 2018 15:24:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e70d:: with SMTP id b13-v6mr5683440ioh.105.1537993442593;
- Wed, 26 Sep 2018 13:24:02 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 13:24:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d014010576cc00f4@google.com>
-Subject: KASAN: use-after-free Read in generic_gcmaes_encrypt
-From:   syzbot <syzbot+6d3612ba5e254e387153@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180926171200.GV5662@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    739d0def85ca Merge branch 'hv_netvsc-Support-LRO-RSC-in-th..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1146ffae400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e79b9299baeb2298
-dashboard link: https://syzkaller.appspot.com/bug?extid=6d3612ba5e254e387153
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16200b9e400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102311c6400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6d3612ba5e254e387153@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-==================================================================
-BUG: KASAN: use-after-free in memcpy include/linux/string.h:345 [inline]
-BUG: KASAN: use-after-free in generic_gcmaes_encrypt+0xc6/0x186  
-arch/x86/crypto/aesni-intel_glue.c:1291
-Read of size 12 at addr ffff8801d7ad0900 by task kworker/0:1/14
-
-CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted 4.19.0-rc4+ #228
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: pencrypt padata_parallel_worker
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  memcpy+0x23/0x50 mm/kasan/kasan.c:302
-  memcpy include/linux/string.h:345 [inline]
-  generic_gcmaes_encrypt+0xc6/0x186 arch/x86/crypto/aesni-intel_glue.c:1291
-  crypto_aead_encrypt include/crypto/aead.h:335 [inline]
-  gcmaes_wrapper_encrypt+0x162/0x200 arch/x86/crypto/aesni-intel_glue.c:1127
-  crypto_aead_encrypt include/crypto/aead.h:335 [inline]
-  pcrypt_aead_enc+0xcb/0x190 crypto/pcrypt.c:143
-  padata_parallel_worker+0x49d/0x760 kernel/padata.c:86
-  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-
-Allocated by task 5474:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  tls_set_sw_offload+0xcc4/0x14b0 net/tls/tls_sw.c:1741
-  do_tls_setsockopt_conf net/tls/tls_main.c:467 [inline]
-  do_tls_setsockopt net/tls/tls_main.c:514 [inline]
-  tls_setsockopt+0x689/0x770 net/tls/tls_main.c:533
-  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
-  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
-  __do_sys_setsockopt net/socket.c:1913 [inline]
-  __se_sys_setsockopt net/socket.c:1910 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 5472:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3813
-  tls_sk_proto_close+0x5fd/0x750 net/tls/tls_main.c:277
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:458
-  __sock_release+0xd7/0x250 net/socket.c:579
-  sock_close+0x19/0x20 net/socket.c:1141
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801d7ad0900
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
-  32-byte region [ffff8801d7ad0900, ffff8801d7ad0920)
-The buggy address belongs to the page:
-page:ffffea00075eb400 count:1 mapcount:0 mapping:ffff8801da8001c0  
-index:0xffff8801d7ad0fc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea00075eb948 ffffea00075ff688 ffff8801da8001c0
-raw: ffff8801d7ad0fc1 ffff8801d7ad0000 000000010000003f 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801d7ad0800: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
-  ffff8801d7ad0880: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff8801d7ad0900: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-                    ^
-  ffff8801d7ad0980: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
-  ffff8801d7ad0a00: 00 00 00 00 fc fc fc fc 00 00 00 00 fc fc fc fc
-==================================================================
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 09/26/2018 12:12 PM, Tony Lindgren wrote:
+> * Grygorii Strashko <grygorii.strashko@ti.com> [180925 19:19]:
+>> The PM runtime management can be delegated from OMAP GPIO driver to the IRQ
+>> chip core, since commit be45beb2df69 ("genirq: Add runtime power management
+>> support for IRQ chips") introduces runtime power management support for IRQ
+>> chips.
+>>
+>> Hence, drop custom PM runtime support for OMAP GPIO IRQs and switch to IRQ
+>> chip core PM runtime (set irq_chip->parent_device).
+> 
+> This would be cool but looks like this patch oopses early during boot
+> at least on omap3 though, maybe because BANK_USED is not for
+> irqs only?
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+thanks for testing.
+
+From IRQ chip PM point of view there is unexpected call to HW from 
+gpiochip_irq_map()
+ irq_set_chip_and_handler(irq, chip->irq.chip, handle_bad_irq);
+    irq_set_chip_and_handler_name
+	__irq_set_handler
+		__irq_do_set_handler
+			if (handle == handle_bad_irq) {
+				if (desc->irq_data.chip != &no_irq_chip)
+					mask_ack_irq(desc); <<--
+
+Not sure, but seems when handler installed first time it's more correct to first
+set handler and then chip:
+ irq_set_chip_and_handler_name(unsigned int irq, struct irq_chip *chip,
+                              irq_flow_handler_t handle, const char *name)
+ {
+-       irq_set_chip(irq, chip);
+        __irq_set_handler(irq, handle, 0, name);
++       irq_set_chip(irq, chip);
+ }
+
+above is also seems more correct when handler uninstalled, otherwise
+chip will be set to no_irq_chip first and mask_ack_irq() will not be called
+(case 	irq_set_chip_and_handler(irq, NULL, NULL)).
+
+For OMAP GPIO will need to keep pm_runtime calls in irq_bus_lock/unlock.
+
+Will re-send.
+
+
+
+> 
+> 
+> 8< ---------------------
+> gpio gpiochip0: (gpio-0-31): added GPIO chardev (254:0)
+> gpiochip_setup_dev: registered GPIOs 0 to 31 on device: gpiochip0 (gpio-0-31)
+> OMAP GPIO hardware version 2.5
+> gpio gpiochip1: (gpio-32-63): added GPIO chardev (254:1)
+> gpiochip_setup_dev: registered GPIOs 32 to 63 on device: gpiochip1 (gpio-32-63)
+> gpio gpiochip2: (gpio-64-95): added GPIO chardev (254:2)
+> gpiochip_setup_dev: registered GPIOs 64 to 95 on device: gpiochip2 (gpio-64-95)
+> gpio gpiochip3: (gpio-96-127): added GPIO chardev (254:3)
+> gpiochip_setup_dev: registered GPIOs 96 to 127 on device: gpiochip3 (gpio-96-127)
+> gpio gpiochip4: (gpio-128-159): added GPIO chardev (254:4)
+> gpiochip_setup_dev: registered GPIOs 128 to 159 on device: gpiochip4 (gpio-128-159)
+> gpio gpiochip5: (gpio-160-191): added GPIO chardev (254:5)
+> gpiochip_setup_dev: registered GPIOs 160 to 191 on device: gpiochip5 (gpio-160-191)
+> omap-gpmc 6e000000.gpmc: GPMC revision 5.0
+> gpmc_mem_init: disabling cs 0 mapped at 0x0-0x1000000
+> gpiochip_find_base: found new base at 508
+> gpio gpiochip6: (omap-gpmc): added GPIO chardev (254:6)
+> gpiochip_setup_dev: registered GPIOs 508 to 511 on device: gpiochip6 (omap-gpmc)
+> Unhandled fault: external abort on non-linefetch (0x1028) at 0xfb056028
+> pgd = (ptrval)
+> [fb056028] *pgd=49011452(bad)
+> Internal error: : 1028 [#1] SMP ARM
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc4+ #4913
+> Hardware name: Generic OMAP36xx (Flattened Device Tree)
+> PC is at omap_gpio_ack_irq+0x54/0x5c
+> LR is at omap_gpio_ack_irq+0x20/0x5c
+> pc : [<c05bc6cc>]    lr : [<c05bc698>]    psr: 200000d3
+> sp : c7103718  ip : 00000001  fp : c710372c
+> r10: c72b2860  r9 : c17028b8  r8 : 00000000
+> r7 : 00000000  r6 : c01c4418  r5 : 00000000  r4 : c7297414
+> r3 : fb056028  r2 : 00000002  r1 : 00000028  r0 : fb056000
+> Flags: nzCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+> Control: 10c5387d  Table: 80004019  DAC: 00000051
+> Process swapper/0 (pid: 1, stack limit = 0x(ptrval))
+> ...
+> [<c05bc6cc>] (omap_gpio_ack_irq) from [<c01c9470>] (__irq_do_set_handler+0x1c0/0x1e4)
+> [<c01c9470>] (__irq_do_set_handler) from [<c01c94ec>] (__irq_set_handler+0x58/0x88)
+> [<c01c94ec>] (__irq_set_handler) from [<c01c9554>] (irq_set_chip_and_handler_name+0x38/0x3c)
+> [<c01c9554>] (irq_set_chip_and_handler_name) from [<c05b3fd4>] (gpiochip_irq_map+0x94/0x13c)
+> [<c05b3fd4>] (gpiochip_irq_map) from [<c01cc7e0>] (irq_domain_associate+0x80/0x1c0)
+> [<c01cc7e0>] (irq_domain_associate) from [<c01cd210>] (irq_create_mapping+0x74/0xdc)
+> [<c01cd210>] (irq_create_mapping) from [<c01cd904>] (irq_create_fwspec_mapping+0x15c/0x338)
+> [<c01cd904>] (irq_create_fwspec_mapping) from [<c01cdb48>] (irq_create_of_mapping+0x68/0x88)
+> [<c01cdb48>] (irq_create_of_mapping) from [<c07cb038>] (of_irq_get+0x74/0xc4)
+> [<c07cb038>] (of_irq_get) from [<c07cb0bc>] (of_irq_to_resource+0x34/0xe8)
+> [<c07cb0bc>] (of_irq_to_resource) from [<c07cb1b8>] (of_irq_to_resource_table+0x48/0x5c)
+> [<c07cb1b8>] (of_irq_to_resource_table) from [<c07c625c>] (of_device_alloc+0xf8/0x294)
+> [<c07c625c>] (of_device_alloc) from [<c07c6450>] (of_platform_device_create_pdata+0x58/0xc8)
+> [<c07c6450>] (of_platform_device_create_pdata) from [<c07c64e0>] (of_platform_device_create+0x20/0x24)
+> [<c07c64e0>] (of_platform_device_create) from [<c07d1d68>] (gpmc_probe_generic_child+0x2ec/0x990)
+> [<c07d1d68>] (gpmc_probe_generic_child) from [<c07d27ec>] (gpmc_probe+0x3e0/0x5a8)
+> [<c07d27ec>] (gpmc_probe) from [<c067d0e8>] (platform_drv_probe+0x58/0xa8)
+> [<c067d0e8>] (platform_drv_probe) from [<c067aa44>] (really_probe+0x200/0x2cc)
+> [<c067aa44>] (really_probe) from [<c067ace0>] (driver_probe_device+0x6c/0x174)
+> [<c067ace0>] (driver_probe_device) from [<c067afa0>] (__device_attach_driver+0xc0/0xe4)
+> [<c067afa0>] (__device_attach_driver) from [<c0678a3c>] (bus_for_each_drv+0x8c/0xd4)
+> [<c0678a3c>] (bus_for_each_drv) from [<c067a7b4>] (__device_attach+0xdc/0x14c)
+> [<c067a7b4>] (__device_attach) from [<c067b020>] (device_initial_probe+0x1c/0x20)
+> [<c067b020>] (device_initial_probe) from [<c0679a70>] (bus_probe_device+0x98/0xa0)
+> [<c0679a70>] (bus_probe_device) from [<c06762b4>] (device_add+0x364/0x628)
+> [<c06762b4>] (device_add) from [<c07c5f1c>] (of_device_add+0x40/0x48)
+> [<c07c5f1c>] (of_device_add) from [<c07c6494>] (of_platform_device_create_pdata+0x9c/0xc8)
+> [<c07c6494>] (of_platform_device_create_pdata) from [<c07c66e4>] (of_platform_bus_create+0x1b4/0x254)
+> [<c07c66e4>] (of_platform_bus_create) from [<c07c6730>] (of_platform_bus_create+0x200/0x254)
+> [<c07c6730>] (of_platform_bus_create) from [<c07c68d4>] (of_platform_populate+0x6c/0xbc)
+> [<c07c68d4>] (of_platform_populate) from [<c0e14284>] (pdata_quirks_init+0x7c/0xa0)
+> [<c0e14284>] (pdata_quirks_init) from [<c0e13c40>] (omap_generic_init+0x1c/0x28)
+> [<c0e13c40>] (omap_generic_init) from [<c0e04474>] (customize_machine+0x2c/0x38)
+> [<c0e04474>] (customize_machine) from [<c0103390>] (do_one_initcall+0x90/0x398)
+> [<c0103390>] (do_one_initcall) from [<c0e01494>] (kernel_init_freeable+0x478/0x558)
+> [<c0e01494>] (kernel_init_freeable) from [<c09aad78>] (kernel_init+0x18/0x124)
+> [<c09aad78>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+> Exception stack(0xc7103fb0 to 0xc7103ff8)
+> 3fa0:                                     00000000 00000000 00000000 00000000
+> 3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> 3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> Code: e3510000 0a000001 e0803001 e5832000 (e5933000)
+> ---[ end trace 43f0b1bf9cbb2007 ]---
+> 
+
+-- 
+regards,
+-grygorii
