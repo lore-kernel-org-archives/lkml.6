@@ -2,97 +2,109 @@ Return-Path: <SRS0=3sEf=MI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7651AC43382
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40023C43382
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6D4214FE
-	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:52:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6D4214FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CF82C214DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 26 Sep 2018 14:55:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLH2UXRT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF82C214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbeIZVGM convert rfc822-to-8bit (ORCPT
+        id S1727404AbeIZVIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 26 Sep 2018 17:06:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51998 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbeIZVGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 26 Sep 2018 17:06:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7ECE720798; Wed, 26 Sep 2018 16:52:50 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 32E51204AE;
-        Wed, 26 Sep 2018 16:52:40 +0200 (CEST)
-Date:   Wed, 26 Sep 2018 16:52:40 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd@lists.infradead.org,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Wolfram Sang <wsa@the-dreams.de>, Suman Anna <s-anna@ti.com>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] ARM: omap1: add nand_chip declaration
-Message-ID: <20180926165240.77a78fc4@xps13>
-In-Reply-To: <20180926142029.619397-1-arnd@arndb.de>
-References: <20180926142029.619397-1-arnd@arndb.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 26 Sep 2018 17:08:50 -0400
+Received: from mail-vs1-f46.google.com ([209.85.217.46]:42696 "EHLO
+        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbeIZVIu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 26 Sep 2018 17:08:50 -0400
+Received: by mail-vs1-f46.google.com with SMTP id w16-v6so6619973vso.9
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 07:55:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=x1Vz3KFDQdLEHkcEOLuGZECs8D2WF6kywoplavOvh78=;
+        b=cLH2UXRTKEiwIcfm8xEh5rMoP2Vw8Gizb57RlgwtbrXLSwuzWTHBjNiiqra+SavVof
+         hhIPsQ/hdhPMB4bEXL3x/YzRTg1x/hyz2yhR4rAyPqXEUTAtLzlA2p+8BPR2MerNOcfg
+         chzq68tK79fBuno5t/UHNPo2oMnhKD5CEfkACyZ3sgjpeCb2Ved/Y/t6Kh4W+SpKxF/+
+         eAkJeLjLiqdEq1fOJi12a4kzHZ8jKnn/TqliR/fJA0YhLemr1Oi4hoLxvEC4jyDpBa85
+         HHtIU8cCI+CMCFUDmhvkK0Mp/kzn9cukkMZBXMRTOTCELt5N9XtRJMMFyYnaHy7HxX0A
+         L1gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=x1Vz3KFDQdLEHkcEOLuGZECs8D2WF6kywoplavOvh78=;
+        b=OAAY3NKHeir7xrMP+i8AYsyyB0PwpdtsP2BxL0Y/d6uT/mBGrZ6SieytYEoYG1wUZc
+         3OsUJLqEWDZBZ+UFUQWwm8vupT6v/ShQAiYInnoe8makPTzj9mJU4NK1XUu939Q97fZU
+         mI0rMXO8uK2QLoahhsAUvIpFpnmkxpk2bEO/GZHA81U6YDKBppH7JRuN503SZBDi0pG0
+         lLs8B//OdsQ02xCWONxq18YicL8S5EnRG2GguZslepwie0bbqET3WnFO6B9iDXH/Hmd0
+         EI9EpetYFWORBUmuDcFSXX7bNHV9uSJRplF67AJzySTGDZG/uKa0h/4W96/wxp4f8UFl
+         hkpg==
+X-Gm-Message-State: ABuFfoikBkEYsmK4vLHjMrWOP9jadylsJo7kBYENkTCypTXv29ikMu4Y
+        UH4103HUC6tWQP3KH6C6YYmkFrbsPYYWBslgwi/dKWI+
+X-Google-Smtp-Source: ACcGV61bL0ORiSHcGoJC/hiIRHTjigtE9g5qPjVV6sLW5d9gVN3Zdd94eWAdjIbNapqVttV+k2ZO+22UoGE8Y1YMpI0=
+X-Received: by 2002:a67:8906:: with SMTP id l6-v6mr1770338vsd.239.1537973729979;
+ Wed, 26 Sep 2018 07:55:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From:   =?UTF-8?B?0JTQvNC40YLRgNC40Lkg0JvQtdC+0L3RgtGM0LXQsg==?= 
+        <dm.leontiev7@gmail.com>
+Date:   Wed, 26 Sep 2018 17:55:18 +0300
+Message-ID: <CA+JonM0_4GSeQ5veX3aDjJ_RBoL065YLNFMuyVftQBn-pCcA=A@mail.gmail.com>
+Subject: Maybe a copyright attack on linux
+To:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Or: "Why you should not use "kill switch" option proposed by smdy to
+protest against CoC"
 
-Arnd Bergmann <arnd@arndb.de> wrote on Wed, 26 Sep 2018 16:20:16 +0200:
+Hello.
 
-> Recent MTD changes caused a minor build regression on OMAP1:
-> 
-> In file included from arch/arm/mach-omap1/devices.c:31:
-> arch/arm/mach-omap1/common.h:85:39: error: 'struct nand_chip' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
-> 
-> Fixes: 1002aed789bc ("mtd: rawnand: plat_nand: Pass a nand_chip object to all platform_nand_ctrl hooks")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ----
-> v2: remove unused linux/mtd/mtd.h inclusion
-> ---
->  arch/arm/mach-omap1/common.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-omap1/common.h b/arch/arm/mach-omap1/common.h
-> index 11b87a4c84d4..504b959ba5cf 100644
-> --- a/arch/arm/mach-omap1/common.h
-> +++ b/arch/arm/mach-omap1/common.h
-> @@ -26,7 +26,6 @@
->  #ifndef __ARCH_ARM_MACH_OMAP1_COMMON_H
->  #define __ARCH_ARM_MACH_OMAP1_COMMON_H
->  
-> -#include <linux/mtd/mtd.h>
->  #include <linux/platform_data/i2c-omap.h>
->  #include <linux/reboot.h>
->  
-> @@ -82,6 +81,7 @@ void omap1_restart(enum reboot_mode, const char *);
->  
->  extern void __init omap_check_revision(void);
->  
-> +struct nand_chip;
->  extern void omap1_nand_cmd_ctl(struct nand_chip *this, int cmd,
->  			       unsigned int ctrl);
->  
+I'm neither a great software developer nor a lawyer, but I'm not a
+novice and I'm very annoyed whan I see this:
 
-Boris pointed me that the commit introducing the regression is still
-in nand/next, so do you mind if I squash both patches with it?
+https://www.reddit.com/r/programming/comments/9iqr3u/linux_developers_threaten_to_pull_kill_switch/
+
+Or something like this:
+
+https://lulz.com/linux-devs-threaten-killswitch-coc-controversy-1252/
+(sorry, lazy to google other links)
+
+Anonymous posts about "linux developers" who want to kill linux(kill
+switch means kill linux) are extremely dangerous because some of
+developers may "revoke" their commits and here is why whis is wrong:
+
+First: even it you have right to revoke the patches, it will be linux
+affected, not the sjws.
+Second: even if someone claims that you can revoke your patches
+because "it is a contract breach", it will be you who broke the
+contract.
+
+And the second case is the worst, because I am aftaid it can be used
+as a reason for other kernel commiters to make their code proprietary.
+As far as I know, most of linux sources are made by developers who are
+either paid by corporations or are employeed by the corpotations.
+
+What if they own 90%(or 80 or 70) of linux code? They can say: oh
+look, the essential patches were revoked and it is a breach of
+contract, so we revoke 90-80-70% of linux source(modern linux
+source!). The "klll switch" can kill linux. Do not use it!
+
+Please do not try to "revoke" your commits. It's not an option, it's
+something bad people are trying you convince you.
+
+Sorry for bad english.
 
 Regards,
-Miquèl
+Dmitry
