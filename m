@@ -3,39 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBBCEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396C8C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 791F020836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 791F020836
+	by mail.kernel.org (Postfix) with ESMTP id E3B4920836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B4920836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbeI0P2X (ORCPT
+        id S1728508AbeI0P23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:28:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55212 "EHLO
+        Thu, 27 Sep 2018 11:28:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727447AbeI0P2W (ORCPT
+        with ESMTP id S1727355AbeI0P22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:28:22 -0400
+        Thu, 27 Sep 2018 11:28:28 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8CFCD111D;
-        Thu, 27 Sep 2018 09:11:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 798761117;
+        Thu, 27 Sep 2018 09:11:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Jiri Slaby <jslaby@suse.cz>, Michal Hocko <mhocko@suse.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        syzbot <syzkaller@googlegroups.com>, NeilBrown <neilb@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.18 51/88] mm: disable deferred struct page for 32-bit arches
-Date:   Thu, 27 Sep 2018 11:03:32 +0200
-Message-Id: <20180927090307.031484475@linuxfoundation.org>
+Subject: [PATCH 4.18 52/88] mm: shmem.c: Correctly annotate new inodes for lockdep
+Date:   Thu, 27 Sep 2018 11:03:33 +0200
+Message-Id: <20180927090307.154675829@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -53,80 +56,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+From: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-commit 889c695d419f19e5db52592dafbaf26143c36d1f upstream.
+commit b45d71fb89ab8adfe727b9d0ee188ed58582a647 upstream.
 
-Deferred struct page init is needed only on systems with large amount of
-physical memory to improve boot performance.  32-bit systems do not
-benefit from this feature.
+Directories and inodes don't necessarily need to be in the same lockdep
+class.  For ex, hugetlbfs splits them out too to prevent false positives
+in lockdep.  Annotate correctly after new inode creation.  If its a
+directory inode, it will be put into a different class.
 
-Jiri reported a problem where deferred struct pages do not work well with
-x86-32:
+This should fix a lockdep splat reported by syzbot:
 
-[    0.035162] Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
-[    0.035725] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
-[    0.036269] Initializing CPU#0
-[    0.036513] Initializing HighMem for node 0 (00036ffe:0007ffe0)
-[    0.038459] page:f6780000 is uninitialized and poisoned
-[    0.038460] raw: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff
-[    0.039509] page dumped because: VM_BUG_ON_PAGE(1 && PageCompound(page))
-[    0.040038] ------------[ cut here ]------------
-[    0.040399] kernel BUG at include/linux/page-flags.h:293!
-[    0.040823] invalid opcode: 0000 [#1] SMP PTI
-[    0.041166] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc1_pt_jiri #9
-[    0.041694] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-[    0.042496] EIP: free_highmem_page+0x64/0x80
-[    0.042839] Code: 13 46 d8 c1 e8 18 5d 83 e0 03 8d 04 c0 c1 e0 06 ff 80 ec 5f 44 d8 c3 8d b4 26 00 00 00 00 ba 08 65 28 d8 89 d8 e8 fc 71 02 00 <0f> 0b 8d 76 00 8d bc 27 00 00 00 00 ba d0 b1 26 d8 89 d8 e8 e4 71
-[    0.044338] EAX: 0000003c EBX: f6780000 ECX: 00000000 EDX: d856cbe8
-[    0.044868] ESI: 0007ffe0 EDI: d838df20 EBP: d838df00 ESP: d838defc
-[    0.045372] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210086
-[    0.045913] CR0: 80050033 CR2: 00000000 CR3: 18556000 CR4: 00040690
-[    0.046413] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
-[    0.046913] DR6: fffe0ff0 DR7: 00000400
-[    0.047220] Call Trace:
-[    0.047419]  add_highpages_with_active_regions+0xbd/0x10d
-[    0.047854]  set_highmem_pages_init+0x5b/0x71
-[    0.048202]  mem_init+0x2b/0x1e8
-[    0.048460]  start_kernel+0x1d2/0x425
-[    0.048757]  i386_start_kernel+0x93/0x97
-[    0.049073]  startup_32_smp+0x164/0x168
-[    0.049379] Modules linked in:
-[    0.049626] ---[ end trace 337949378db0abbb ]---
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.18.0-rc8-next-20180810+ #36 Not tainted
+> ------------------------------------------------------
+> syz-executor900/4483 is trying to acquire lock:
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
+> include/linux/fs.h:765 [inline]
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
+> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>
+> but task is already holding lock:
+> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
+> drivers/staging/android/ashmem.c:448
+>
+> which lock already depends on the new lock.
+>
+> -> #2 (ashmem_mutex){+.+.}:
+>        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+>        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+>        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+>        call_mmap include/linux/fs.h:1844 [inline]
+>        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
+>        do_mmap+0xa10/0x1220 mm/mmap.c:1535
+>        do_mmap_pgoff include/linux/mm.h:2298 [inline]
+>        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+>        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+>        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+>        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+>        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #1 (&mm->mmap_sem){++++}:
+>        __might_fault+0x155/0x1e0 mm/memory.c:4568
+>        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+>        copy_to_user include/linux/uaccess.h:155 [inline]
+>        filldir+0x1ea/0x3a0 fs/readdir.c:196
+>        dir_emit_dot include/linux/fs.h:3464 [inline]
+>        dir_emit_dots include/linux/fs.h:3475 [inline]
+>        dcache_readdir+0x13a/0x620 fs/libfs.c:193
+>        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
+>        __do_sys_getdents fs/readdir.c:231 [inline]
+>        __se_sys_getdents fs/readdir.c:212 [inline]
+>        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
+>        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+>        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+>        inode_lock include/linux/fs.h:765 [inline]
+>        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+>        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+>        vfs_ioctl fs/ioctl.c:46 [inline]
+>        file_ioctl fs/ioctl.c:501 [inline]
+>        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+>        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+>        __do_sys_ioctl fs/ioctl.c:709 [inline]
+>        __se_sys_ioctl fs/ioctl.c:707 [inline]
+>        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(ashmem_mutex);
+>                                lock(&mm->mmap_sem);
+>                                lock(ashmem_mutex);
+>   lock(&sb->s_type->i_mutex_key#9);
+>
+>  *** DEADLOCK ***
+>
+> 1 lock held by syz-executor900/4483:
+>  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
+> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
 
-We free highmem pages before their struct pages are initialized:
-
-mem_init()
- set_highmem_pages_init()
-  add_highpages_with_active_regions()
-   free_highmem_page()
-    .. Access uninitialized struct page here..
-
-Because there is no reason to have this feature on 32-bit systems, just
-disable it.
-
-Link: http://lkml.kernel.org/r/20180831150506.31246-1-pavel.tatashin@microsoft.com
-Fixes: 2e3ca40f03bb ("mm: relax deferred struct page requirements")
-Signed-off-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Reported-by: Jiri Slaby <jslaby@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Link: http://lkml.kernel.org/r/20180821231835.166639-1-joel@joelfernandes.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Suggested-by: NeilBrown <neilb@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ mm/shmem.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -637,6 +637,7 @@ config DEFERRED_STRUCT_PAGE_INIT
- 	depends on NO_BOOTMEM
- 	depends on SPARSEMEM
- 	depends on !NEED_PER_CPU_KM
-+	depends on 64BIT
- 	help
- 	  Ordinarily all struct pages are initialised during early boot in a
- 	  single thread. On very large machines this can take a considerable
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2226,6 +2226,8 @@ static struct inode *shmem_get_inode(str
+ 			mpol_shared_policy_init(&info->policy, NULL);
+ 			break;
+ 		}
++
++		lockdep_annotate_inode_mutex_key(inode);
+ 	} else
+ 		shmem_free_inode(sb);
+ 	return inode;
 
 
