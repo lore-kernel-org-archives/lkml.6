@@ -2,129 +2,155 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67087C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BC4C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2656A216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:56:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2656A216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id AF1FE21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:58:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF1FE21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbeI0VOz (ORCPT
+        id S1727675AbeI0VQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:14:55 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50215 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727270AbeI0VOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:14:54 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3F8919E1510C6;
-        Thu, 27 Sep 2018 22:56:09 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 27 Sep 2018 22:56:08 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <gregkh@linux-foundation.org>
-CC:     <iamjoonsoo.kim@lge.com>, <rientjes@google.com>, <cl@linux.com>,
-        <penberg@kernel.org>, <akpm@linux-foundation.org>,
-        <mhocko@suse.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: [STABLE PATCH] slub: make ->cpu_partial unsigned int
-Date:   Thu, 27 Sep 2018 22:43:40 +0800
-Message-ID: <1538059420-14439-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Thu, 27 Sep 2018 17:16:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:35922 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727076AbeI0VQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 17:16:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F36B7A9;
+        Thu, 27 Sep 2018 07:58:07 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DAB033F5BD;
+        Thu, 27 Sep 2018 07:58:05 -0700 (PDT)
+Subject: Re: [PATCH 4/5] dma-direct: implement complete bus_dma_mask handling
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20180920185247.20037-1-hch@lst.de>
+ <20180920185247.20037-5-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a7626d1b-4dd8-abc4-0ab0-21ab7e5d1a4c@arm.com>
+Date:   Thu, 27 Sep 2018 15:58:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180920185247.20037-5-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+On 20/09/18 19:52, Christoph Hellwig wrote:
+> Instead of rejecting devices with a too small bus_dma_mask we can handle
+> by taking the bus dma_mask into account for allocations and bounce
+> buffering decisions.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   include/linux/dma-direct.h |  3 ++-
+>   kernel/dma/direct.c        | 21 +++++++++++----------
+>   2 files changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+> index b79496d8c75b..fbca184ff5a0 100644
+> --- a/include/linux/dma-direct.h
+> +++ b/include/linux/dma-direct.h
+> @@ -27,7 +27,8 @@ static inline bool dma_capable(struct device *dev, dma_addr_t addr, size_t size)
+>   	if (!dev->dma_mask)
+>   		return false;
+>   
+> -	return addr + size - 1 <= *dev->dma_mask;
+> +	return addr + size - 1 <=
+> +		min_not_zero(*dev->dma_mask, dev->bus_dma_mask);
+>   }
+>   #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+>   
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 3c404e33d946..64466b7ef67b 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -43,10 +43,11 @@ check_addr(struct device *dev, dma_addr_t dma_addr, size_t size,
+>   			return false;
+>   		}
+>   
+> -		if (*dev->dma_mask >= DMA_BIT_MASK(32)) {
+> +		if (*dev->dma_mask >= DMA_BIT_MASK(32) || dev->bus_dma_mask) {
 
-        /*
-         * cpu_partial determined the maximum number of objects
-         * kept in the per cpu partial lists of a processor.
-         */
+Hmm... say *dev->dma_mask is 31 bits and dev->bus_dma_mask is 40 bits 
+due to a global DT property, we'll now scream where we didn't before 
+even though the bus mask is almost certainly irrelevant - is that desirable?
 
-Can't be negative.
+>   			dev_err(dev,
+> -				"%s: overflow %pad+%zu of device mask %llx\n",
+> -				caller, &dma_addr, size, *dev->dma_mask);
+> +				"%s: overflow %pad+%zu of device mask %llx bus mask %llx\n",
+> +				caller, &dma_addr, size,
+> +				*dev->dma_mask, dev->bus_dma_mask);
+>   		}
+>   		return false;
+>   	}
+> @@ -65,12 +66,18 @@ u64 dma_direct_get_required_mask(struct device *dev)
+>   {
+>   	u64 max_dma = phys_to_dma_direct(dev, (max_pfn - 1) << PAGE_SHIFT);
+>   
+> +	if (dev->bus_dma_mask && dev->bus_dma_mask < max_dma)
+> +		max_dma = dev->bus_dma_mask;
 
-I hit a real issue that it will result in a large number of memory leak.
-Because Freeing slabs are in interrupt context. So it can trigger this issue.
-put_cpu_partial can be interrupted more than once.
-due to a union struct of lru and pobjects in struct page, when other core handles
-page->lru list, for eaxmple, remove_partial in freeing slab code flow, It will
-result in pobjects being a negative value(0xdead0000). Therefore, a large number
-of slabs will be added to per_cpu partial list.
+Again, I think we could just do another min_not_zero() here. A device 
+wired to address only one single page of RAM isn't a realistic prospect 
+(and we could just flip the -1 and the shift in the max_dma calculation 
+if we *really* wanted to support such things).
 
-I had posted the issue to community before. The detailed issue description is as follows.
+> +
+>   	return (1ULL << (fls64(max_dma) - 1)) * 2 - 1;
+>   }
+>   
+>   static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
+>   		u64 *phys_mask)
+>   {
+> +	if (dev->bus_dma_mask && dev->bus_dma_mask < dma_mask)
+> +		dma_mask = dev->bus_dma_mask;
+> +
 
-Link: https://www.spinics.net/lists/kernel/msg2870979.html
+Similarly, can't we assume dma_mask to be nonzero here too? It feels 
+like we really shouldn't have managed to get this far without one.
 
-After applying the patch, The issue is fixed. So the patch is a effective bugfix.
-It should go into stable.
+Robin.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Acked-by: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: stable@vger.kernel.org 
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- include/linux/slub_def.h | 3 ++-
- mm/slub.c                | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-index 3388511..9b681f2 100644
---- a/include/linux/slub_def.h
-+++ b/include/linux/slub_def.h
-@@ -67,7 +67,8 @@ struct kmem_cache {
- 	int size;		/* The size of an object including meta data */
- 	int object_size;	/* The size of an object without meta data */
- 	int offset;		/* Free pointer offset. */
--	int cpu_partial;	/* Number of per cpu partial objects to keep around */
-+	/* Number of per cpu partial objects to keep around */
-+	unsigned int cpu_partial;
- 	struct kmem_cache_order_objects oo;
- 
- 	/* Allocation and freeing of slabs */
-diff --git a/mm/slub.c b/mm/slub.c
-index 2284c43..c33b0e1 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1661,7 +1661,7 @@ static void *get_partial_node(struct kmem_cache *s, struct kmem_cache_node *n,
- {
- 	struct page *page, *page2;
- 	void *object = NULL;
--	int available = 0;
-+	unsigned int available = 0;
- 	int objects;
- 
- 	/*
-@@ -4674,10 +4674,10 @@ static ssize_t cpu_partial_show(struct kmem_cache *s, char *buf)
- static ssize_t cpu_partial_store(struct kmem_cache *s, const char *buf,
- 				 size_t length)
- {
--	unsigned long objects;
-+	unsigned int objects;
- 	int err;
- 
--	err = kstrtoul(buf, 10, &objects);
-+	err = kstrtouint(buf, 10, &objects);
- 	if (err)
- 		return err;
- 	if (objects && !kmem_cache_has_cpu_partial(s))
--- 
-1.7.12.4
-
+>   	if (force_dma_unencrypted())
+>   		*phys_mask = __dma_to_phys(dev, dma_mask);
+>   	else
+> @@ -87,7 +94,7 @@ static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
+>   static bool dma_coherent_ok(struct device *dev, phys_addr_t phys, size_t size)
+>   {
+>   	return phys_to_dma_direct(dev, phys) + size - 1 <=
+> -			dev->coherent_dma_mask;
+> +			min_not_zero(dev->coherent_dma_mask, dev->bus_dma_mask);
+>   }
+>   
+>   void *dma_direct_alloc_pages(struct device *dev, size_t size,
+> @@ -291,12 +298,6 @@ int dma_direct_supported(struct device *dev, u64 mask)
+>   	if (mask < phys_to_dma(dev, DMA_BIT_MASK(32)))
+>   		return 0;
+>   #endif
+> -	/*
+> -	 * Upstream PCI/PCIe bridges or SoC interconnects may not carry
+> -	 * as many DMA address bits as the device itself supports.
+> -	 */
+> -	if (dev->bus_dma_mask && mask > dev->bus_dma_mask)
+> -		return 0;
+>   	return 1;
+>   }
+>   
+> 
