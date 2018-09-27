@@ -2,151 +2,122 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5FBC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8506C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B112C216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 897BB216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XW6P1xw+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B112C216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="lhgOjqtf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 897BB216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbeI1A1w (ORCPT
+        id S1728397AbeI1A3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:27:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43231 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbeI1A1w (ORCPT
+        Thu, 27 Sep 2018 20:29:12 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39795 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeI1A3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:27:52 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z14-v6so3599873wrs.10
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:08:23 -0700 (PDT)
+        Thu, 27 Sep 2018 20:29:12 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j8-v6so2463363pff.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=flRR8F8OTkIYxE6BzPRv1OhgkiIEInLPjiA3JO1lvWo=;
-        b=XW6P1xw++wewyLQcaRWr5E29CjWVT5J9cDQ+bKO5vKxmBn4+bpuW17VUUQR2pgwYZs
-         Oq9nbzouyo9xeOSTDnAXsRIYqh+kh8LMB43mbHGwYR9YT71AgMf5h72qT2cr7PKYV3qs
-         SXhiFEiF6eiaX8uJkDMPgWHJ5nj5is3eELOWtMHI5Z0YksnVo5jjIDUvZBvXRFt8J79S
-         hN0Mh4zOWeZfhIjvZojBXcWCbf6TXjU0yo9+oRlgwY5ExPInYji3mQceq81j4gof9Ki4
-         PvD5MvJBW6bEgXitzEgZjuBc5Mvuf9dq4+3vbjFuBTjOX+LUl7zfiOSlHT1RWKEvp892
-         qqsw==
+        bh=g3nXO2b01c3gJjfiAhZLNr9nLLCLhOURHg4Sg4kcG4s=;
+        b=lhgOjqtfP50FOb7jR9pEGHFRtolEYBWkkjgyg6FK+W+vIQqjEDGVk9MTBBcz7Lct46
+         Xhq9cXSdbARNUu6AOUv5CaNIWbAYXRKWB73sY4SUHASQNBXs3lo47OWVKF9BYOAziDsB
+         opag2ZwWF0Bquy1n9znMpoI7phSNuaTK0SB408YxWCHP8x5MVGZO9xGHWWk0HhGAVNG/
+         zrBi6ul72CIXcYsfsMLNAYN2QRTgGovl7UzzHIzCwhYJXWfCl95SKmJDDSCzI6NX/rMI
+         3NY2ZUMwEkmOEPHOQz0Y8ZNPqw46tsavqVRX32RgRHerkPdvqew2VMOflCweeZ1HZa2J
+         y91w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=flRR8F8OTkIYxE6BzPRv1OhgkiIEInLPjiA3JO1lvWo=;
-        b=EtrdCVfAk/Jg0qYKqrhOXV0o8osUCUuj+tM94le4Xxbp8JJlAwSVCn7ophIuEBEGBH
-         mJIDOMYXImDyLW5uWs77lKuNyA4HCpVdtEqT+NEec0KWkLHSiTr21gszXUDaiGjPaoRG
-         xoXQbAPQmr1gixhno185MpxtVgbetG6axd/WNkchvvjzdijaxAuNcPf9UmNR1UUHBaiq
-         J1lM8nb/AgoeAOKiQcAgIxwMDpSeVEasmTS1DUbg/evVWESQvze5SlCtKpkjcFMbUoHf
-         5Vg+p5rBICSPIWamZdTe62HtKNiHYWCSl3eyUNEe3b7HB/hOv0H8ZfLL++cUEDUu1XPN
-         1IYQ==
-X-Gm-Message-State: ABuFfoiLqvSk0n3i8rD7r2Wo51Xzaog/uFCToBtC7w9Oed3cneLQSeZj
-        i4UMwHwInka5bWq78Mf+aTo=
-X-Google-Smtp-Source: ACcGV60+n3zCSlP/JXg00fLgpHBRSL0iPqRWPA/PBLhjuP1u1I8oh9CJnhdXjdkNbe+ehSIg3ZNIUw==
-X-Received: by 2002:adf:fccc:: with SMTP id f12-v6mr2538914wrs.166.1538071698177;
-        Thu, 27 Sep 2018 11:08:18 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id u23-v6sm3731846wrc.42.2018.09.27.11.08.17
+        bh=g3nXO2b01c3gJjfiAhZLNr9nLLCLhOURHg4Sg4kcG4s=;
+        b=KZSUVcJUTGKRZvtZ+Wa30fuoI2yJqYq3N1iTGYCD0MJQzMbT96GPU9FglA05FLzBKH
+         FOGrtP3TiwaRPzt+sujUy3dZTQI0JUbkFm7Jgq13u1tSVMZYH84QpsQvygljNWweGkaM
+         4IZAafL6UutVpFhqN04njyFDWAXZbN034mgwJMQxwdXe2la2vSSbyn8oLPRcl5gADyxo
+         UwiWPEyPaJyj66+z9+Z72Ba8b9ncbDrjf99FzGhArhPjaK4vIsxFkxLpBT0gvPWWE2Yi
+         D5Q0AVxI0hLjLwRSI3Av8ghgbThQ8pU59BKbn4dt7Njm6W2Yoy9Bo6r9bXAXZwFm5DTH
+         psYA==
+X-Gm-Message-State: ABuFfohLWxJG8rio4XIduCpwhCB1lvHOvg4kpwwzisdNYx06dVKL0mge
+        lLi1fdNTtrCj1567e6UUV9J1og==
+X-Google-Smtp-Source: ACcGV61Typxcsk8bCqXKRJygm8u3fGglGE14glUiJtTLGK/XD98J+Crs+bBpSJEDpCqCWtoSZzmeRg==
+X-Received: by 2002:a65:448a:: with SMTP id l10-v6mr11559978pgq.382.1538071782786;
+        Thu, 27 Sep 2018 11:09:42 -0700 (PDT)
+Received: from cisco.cisco.com ([128.107.241.165])
+        by smtp.gmail.com with ESMTPSA id 71-v6sm4018217pfx.182.2018.09.27.11.09.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:08:17 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 11:08:16 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2] drm/amd/display: Use proper enums in
- process_channel_reply
-Message-ID: <20180927180816.GA12545@flashbox>
-References: <20180921215505.14634-1-natechancellor@gmail.com>
- <20180927180632.11520-1-natechancellor@gmail.com>
+        Thu, 27 Sep 2018 11:09:41 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 12:09:39 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        suda.akihiro@lab.ntt.co.jp, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20180927180939.GB15491@cisco.cisco.com>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-4-tycho@tycho.ws>
+ <CAG48ez14hkjQr8_ysg13Ax9uc+abKeTtN7pCxuiJ83Ms3Gbo5Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927180632.11520-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAG48ez14hkjQr8_ysg13Ax9uc+abKeTtN7pCxuiJ83Ms3Gbo5Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 11:06:33AM -0700, Nathan Chancellor wrote:
-> Clang warns when one enumerated type is implicitly converted to another.
+On Thu, Sep 27, 2018 at 07:35:06PM +0200, Jann Horn wrote:
+> On Thu, Sep 27, 2018 at 5:11 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> >
+> > As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+> > version which can acquire filters is useful. There are at least two reasons
+> > this is preferable, even though it uses ptrace:
+> >
+> > 1. You can control tasks that aren't cooperating with you
+> > 2. You can control tasks whose filters block sendmsg() and socket(); if the
+> >    task installs a filter which blocks these calls, there's no way with
+> >    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+> [...]
+> > diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> > index 21fec73d45d4..289960ac181b 100644
+> > --- a/kernel/ptrace.c
+> > +++ b/kernel/ptrace.c
+> > @@ -1096,6 +1096,10 @@ int ptrace_request(struct task_struct *child, long request,
+> >                 ret = seccomp_get_metadata(child, addr, datavp);
+> >                 break;
+> >
+> > +       case PTRACE_SECCOMP_NEW_LISTENER:
+> > +               ret = seccomp_new_listener(child, addr);
+> > +               break;
 > 
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dce/dce_aux.c:315:19: warning:
-> implicit conversion from enumeration type 'enum
-> aux_channel_operation_result' to different enumeration type 'enum
-> aux_transaction_reply' [-Wenum-conversion]
->                 reply->status = AUX_CHANNEL_OPERATION_FAILED_HPD_DISCON;
->                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/amd/amdgpu/../display/dc/i2caux/dce110/aux_engine_dce110.c:349:19:
-> warning: implicit conversion from enumeration type 'enum
-> aux_channel_operation_result' to different enumeration type 'enum
-> aux_transaction_reply' [-Wenum-conversion]
->                 reply->status = AUX_CHANNEL_OPERATION_FAILED_HPD_DISCON;
->                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> The current enum is incorrect, it should be from aux_transaction_reply,
-> so use AUX_TRANSACTION_REPLY_HPD_DISCON.
-> 
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
-> 
-> v1 -> v2:
-> 
-> * Rather than change status to an integer, use the proper enumerated
->   type from aux_transaction reply as suggested by Nick and confirmed
->   by Henry.
+> Actually, could you amend this to also ensure that `data == 0` and
+> return -EINVAL otherwise? Then if we want to abuse `data` for passing
+> flags in the future, we don't have to worry about what happens if
+> someone passes in garbage as `data`.
 
-Sigh Harry, sorry...
+Yes, good idea. Thanks!
 
-> 
->  drivers/gpu/drm/amd/display/dc/dce/dce_aux.c                    | 2 +-
->  .../gpu/drm/amd/display/dc/i2caux/dce110/aux_engine_dce110.c    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-> index 3f5b2e6f7553..aaeb7faac0c4 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-> @@ -312,7 +312,7 @@ static void process_channel_reply(
->  
->  	/* in case HPD is LOW, exit AUX transaction */
->  	if ((sw_status & AUX_SW_STATUS__AUX_SW_HPD_DISCON_MASK)) {
-> -		reply->status = AUX_CHANNEL_OPERATION_FAILED_HPD_DISCON;
-> +		reply->status = AUX_TRANSACTION_REPLY_HPD_DISCON;
->  		return;
->  	}
->  
-> diff --git a/drivers/gpu/drm/amd/display/dc/i2caux/dce110/aux_engine_dce110.c b/drivers/gpu/drm/amd/display/dc/i2caux/dce110/aux_engine_dce110.c
-> index 8eee8ace1259..59c3ed43d609 100644
-> --- a/drivers/gpu/drm/amd/display/dc/i2caux/dce110/aux_engine_dce110.c
-> +++ b/drivers/gpu/drm/amd/display/dc/i2caux/dce110/aux_engine_dce110.c
-> @@ -346,7 +346,7 @@ static void process_channel_reply(
->  
->  	/* in case HPD is LOW, exit AUX transaction */
->  	if ((sw_status & AUX_SW_STATUS__AUX_SW_HPD_DISCON_MASK)) {
-> -		reply->status = AUX_CHANNEL_OPERATION_FAILED_HPD_DISCON;
-> +		reply->status = AUX_TRANSACTION_REPLY_HPD_DISCON;
->  		return;
->  	}
->  
-> -- 
-> 2.19.0
-> 
+Tycho
