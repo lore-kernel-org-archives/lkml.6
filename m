@@ -2,157 +2,112 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAFEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2525FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA40821547
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCF9D21547
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:07:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="Bvdb2wMw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA40821547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AUToTjPO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF9D21547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbeI0UXz (ORCPT
+        id S1727574AbeI0U0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:23:55 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:37853 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbeI0UXy (ORCPT
+        Thu, 27 Sep 2018 16:26:22 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42144 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727263AbeI0U0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:23:54 -0400
-Received: by mail-yb1-f193.google.com with SMTP id b3-v6so1137072yba.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 07:05:29 -0700 (PDT)
+        Thu, 27 Sep 2018 16:26:22 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l9-v6so1995012pff.9;
+        Thu, 27 Sep 2018 07:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=lSG+OlWM19SkNSccKFKY7EdU69CFuZI33Agpsi/tkvo=;
-        b=Bvdb2wMwxhcmxp2wdsFG76RGWFZsrANNRGz3D3v1tuW4akPW1M0BbXHbzbwWogO0uT
-         kAvk0SQYzz/2EREAWmiDUasSclKu1U1hSJxLYjwsdU2tt8XCGsctRbxSDBkU7sJVKDe+
-         yEW5EDgc/Ll+N0BfHc90Wbvd23PWBMW1ANOOd3KZVF3vTlhlfvVeG7PpMbfr7KimJfIs
-         AHFjLcCoT8oNNpiSxTrKkHZ6mNML15N2Yb2sADoyGhYnJji3lgsvRlD/kN0e2RvdMM+G
-         Dmo6Llt+KtqJuDf3AawTgENU0HUknotD0LH2lQpkTGGwsIGZQMeiiNLFZgQJnIf1EHcU
-         PTcw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4wU85w7H+oaarIb16lBdT5BL2pUjU6Tw9xWJ71FPLqE=;
+        b=AUToTjPO+0MqX+6ENrNwF633WKWlvDLyoVzwASb6SsgqLAnSvTfF8NJgfh7A1VMvgs
+         h4xsAgi/BSXBOZZolVNqIyQe1aOO79jPtcgpLk3+cfAhsWG3PlyNQQ3QFWiZVeUG8emQ
+         wTDUlmyC3+c7ZrQwEFSshXfntT2rulaSoR+5/AtXVadSK59IXlu0rXZ6SlisPzqQXfzJ
+         Xo1sOnFvf7VksmBQS6Avd8sbVulJslpjMKk579tYJj07G+KwMf5nWQMXDRe+pWNVdv8v
+         G9kbnkCmygUj3wEB91ekvZV0hphWBujgniSrABGzOZ+Fw8YL6kI2LgHgskYp1vGiB7bC
+         yVqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=lSG+OlWM19SkNSccKFKY7EdU69CFuZI33Agpsi/tkvo=;
-        b=UJUBVUDWV9QBJ+eLLDK9yG8cKTUz5V5D4TNKluC2qe0NhVexiQuhaF88awM+YPLaes
-         a4gWevHA24Hr9aQUpfO40vjovWC4YVpbicZlEJg2RJKPVLwmYcNsyjIUcvUp8zZt//L2
-         KAsFsOfzz5Qw9CS3pf1vaLee7J9HNdFQQ/zjNiPGWJghpIv17rl4gNPnm0RK3XMLzioD
-         nStOueWUwxWkAnGnaRyMsZ3iKtyg5ys8ft2nmZ6tJeXu4Wdt1ptI7VgTem9eQiqfgmNI
-         CKRxeIk4d6y6mjgFerXVRhFfAil8UxdkD9yy/8cGqH/3ZLsmRD4+xfCBKpHMM52WMu8h
-         cp+g==
-X-Gm-Message-State: ABuFfogLTdx04Yvlqsz5t5VcmeNRccOQRIIJhYgCkk/QYodQsBTwUVgE
-        TEGGTZ+h27djq98sJKjF9cE+BQ==
-X-Google-Smtp-Source: ACcGV626WdZ3I2NNnFH7bAMLfAOu0La9NIcDbV4AqAs7GZf+zpneBTtrbXIMQcLq/8gufEa0xhtdQQ==
-X-Received: by 2002:a25:d8cc:: with SMTP id p195-v6mr5940504ybg.446.1538057128837;
-        Thu, 27 Sep 2018 07:05:28 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id u8-v6sm1073475ywl.59.2018.09.27.07.05.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 07:05:28 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 10:05:27 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Holger =?iso-8859-1?Q?Hoffst=E4tte?= 
-        <holger@applied-asynchrony.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lyude Paul <lyude@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 4.18 74/88] drm/atomic: Use drm_drv_uses_atomic_modeset()
- for debugfs creation
-Message-ID: <20180927140527.GV72545@art_vandelay>
-References: <20180927090300.631426620@linuxfoundation.org>
- <20180927090309.614592493@linuxfoundation.org>
- <42cbbf9c-3076-0c49-36c2-b6fd09628694@applied-asynchrony.com>
- <20180927123706.GA23563@kroah.com>
- <f54355c2-4eeb-9b7a-3964-57ca465dae17@applied-asynchrony.com>
- <c3afb9a2-1cd6-b5b9-83ac-eed92fbc066e@applied-asynchrony.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c3afb9a2-1cd6-b5b9-83ac-eed92fbc066e@applied-asynchrony.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4wU85w7H+oaarIb16lBdT5BL2pUjU6Tw9xWJ71FPLqE=;
+        b=JoumQqdT37KllT9QJGnNSYAT/QXQyK5PkmNNozdac4K0UFHRJCWOZ4SIPoBwJg++pF
+         bPOKSweZXfBLGUNd5k3ma7nKReuI2qDB3Ur0wQrbJo7HjHhNnrTMppLusjCFo6KpewMn
+         1bPC3AwCV9oojKzxsimUicFL4CvsuG7ytmjr9xFGVfjEf0yvAMm50hcGeWSK2g/luJaf
+         2OXNCJA/g9SAwLre9TDlv6HxD0FeFAaRpN3aPFU2beqcH8Ugz8oTUeBFAptC9nadC3K8
+         sA0BQReBTdIfvpGIzASHjc1lQQLzEKqzvQLW4wTqYWHbJiud1FJxNXycCfj6MgWlN8yo
+         a6mQ==
+X-Gm-Message-State: ABuFfoi/OFEOD1kJYBRTVRgfHi8LoLrP50/u9C4Z674hp0TQeEYPoSL2
+        n+4MFmK66ht21hFq8IUpqCA=
+X-Google-Smtp-Source: ACcGV639jB6sl3ck0qsKCH9YUBqLSujnZtUtxWzt+84QHN0YTGJWgYgn6uuMQ3yJ6YiyB3ISTM/Orw==
+X-Received: by 2002:a63:2605:: with SMTP id m5-v6mr10048766pgm.225.1538057275678;
+        Thu, 27 Sep 2018 07:07:55 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.185])
+        by smtp.gmail.com with ESMTPSA id r205-v6sm4259763pgr.11.2018.09.27.07.07.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 07:07:55 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: [PATCHv5 0/6] Add support for UHS-I on Exynos5422 odroid boards
+Date:   Thu, 27 Sep 2018 14:07:32 +0000
+Message-Id: <20180927140738.1006-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 03:53:26PM +0200, Holger Hoffstätte wrote:
-> On 09/27/18 15:26, Holger Hoffstätte wrote:
-> > On 09/27/18 14:37, Greg Kroah-Hartman wrote:
-> > > On Thu, Sep 27, 2018 at 12:43:33PM +0200, Holger Hoffstätte wrote:
-> > > > On 09/27/18 11:03, Greg Kroah-Hartman wrote:
-> > > > > 4.18-stable review patch.  If anyone has any objections, please let me know.
-> > > > > 
-> > > > > ------------------
-> > > > > 
-> > > > > From: Lyude Paul <lyude@redhat.com>
-> > > > > 
-> > > > > commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
-> > > > > 
-> > > > > As pointed out by Daniel Vetter, we should be usinng
-> > > > > drm_drv_uses_atomic_modeset() for determining whether or not we want to
-> > > > > make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
-> > > > > the former isn't an accurate representation of whether or not the driver
-> > > > > is actually using atomic modesetting internally (even though it might
-> > > > > not be exposing atomic capabilities).
-> > > > > 
-> > > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > > > > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Reviewed-by: Sean Paul <seanpaul@chromium.org>
-> > > > > Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
-> > > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > 
-> > > > This patch breaks switching the console to high resolution during boot on my
-> > > > workstation with a Radeon card; it worked fine with 4.18.10 and reverting it
-> > > > fixes the problem:
-> > > 
-> > > Is 4.19-rc5 also a problem?
-> > > 
-> > 
-> > No, 4.19-rc5 with the same config works fine and properly switches the
-> > console during boot.
-> > 
-> > Interestingly another machine with i915 chip seemed to work fine with this
-> > patch included (rebooted that one first), so it might well be related to
-> > different motherboard/chipset or the Radeon card (an admittedly old, but
-> > otherwise completely functional fanless r600).
-> > 
-> > I'll try to find more clues, but for now that's all I got.
-> 
-> Looking at mainline include/drm I see several recent movements and cleanups
-> related to drm_drv_uses_atomic_modeset(), moving it out of drmP.h and into
-> drm, changes to atomic modesetting and such, all part of the 4.19 merge
-> window. I'm reasonably sure some relatred changes went missing here wrt.
-> this patch.
+This is series v4 since my previous patches were incomplete with driver
+changes missing.
 
-Hey all,
-Thanks for testing, Holger.
+v5 changes.
+drop the cd-gpios wp-gpio gpio pin setting, just add the pinctrl
+configration to support write protect.
 
-This was fixed with https://patchwork.freedesktop.org/patch/250350/ which is not
-Cc stable.
+v4 changes.
+squash cd-gpios and wp-gpio changes into single patch.
+change the subject prefix to "ARM: dts: exynos:"
 
-I think it'd be best to just drop the initial patch from stable, it
-doesn't need to go back afaict.
+These changes add UHS-I tuning for dw_mmc-exynos driver.
 
-Sean
+Rebased on Krzysztof branch next/dt
+[0] git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git 
 
-> 
-> -h
+Anand Moon (6):
+  ARM: dts: exynos: Added UHS-I bus speed support
+  ARM: dts: exynos: fix regulator min values of LDO13 for Odroid XU3/XU4
+  ARM: dts: exynos: update maximum frequency for sdcard to 200MHz
+  ARM: dts: exynos: Add pin configuration for SD write protect on Odroid
+    XU3/XU4
+  ARM: dts: exynos: update maximum frequency for emmc to 200MHz
+  mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
+
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  7 +++++++
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 ++++++--
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
+ drivers/mmc/host/dw_mmc-exynos.c                   | 11 +++++++++++
+ 4 files changed, 25 insertions(+), 2 deletions(-)
 
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.17.1
+
