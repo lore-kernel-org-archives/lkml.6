@@ -2,133 +2,130 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E8EECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8347EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08AEB215E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08AEB215E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 39F20216F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:18:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F20216F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=applied-asynchrony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbeI0Ufk (ORCPT
+        id S1727529AbeI0Ug6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:35:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40656 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbeI0Ufk (ORCPT
+        Thu, 27 Sep 2018 16:36:58 -0400
+Received: from mail02.iobjects.de ([188.40.134.68]:49286 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbeI0Ug6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:35:40 -0400
-Received: by mail-ed1-f68.google.com with SMTP id j62-v6so5183746edd.7;
-        Thu, 27 Sep 2018 07:17:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D1il2Nqf0kQ+yKYGeQhVEWTl3F8qYWRASqe1kYkVxU4=;
-        b=PJfQ1gM0mCoP/9UzWUWcvRxu26jvmk3FR/sgtNyMsMbCCnwQ559wbLzis1ar+CE3Zr
-         xeAylfN3hgtQ41YmqdDdBj435es448o01WbtYie9fxsaunivLt8hSo3gfbZEj8oGZDPb
-         QI8Ne02MJY65fJAgUnrYnuGo/dsRvYoXPiATm2trRdWLqQlgmotWN2lmnizfhnigYqpE
-         RO5LFei5s28SEBEiz7SxmqQVYlpn2FYnpCWAdkMy+PprCXRvLKMAOat2aElqmTF55o3U
-         9p38xkk26NCguYDDXMblV4BtLtfVW9xKf8mY/7OF+w7Q908unHLXH1OtuBgpxvEr2Kja
-         3Tbw==
-X-Gm-Message-State: ABuFfojuXt4/xovtSDS3aMb6aH262PKpbWk2iqkkHDOPHeQPOh4hw0b0
-        NANFjM1DJc9OXsTzM5OMWDX2ixEp0pU=
-X-Google-Smtp-Source: ACcGV61MyLSr61hr2BfsnQoH4GpIJT2ZxbHEMmM+JfLvsgCa6osr8IwZ7Nw+J/QpabXMApVdwAKAtA==
-X-Received: by 2002:a17:906:838a:: with SMTP id p10-v6mr2088252ejx.3.1538057830217;
-        Thu, 27 Sep 2018 07:17:10 -0700 (PDT)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
-        by smtp.gmail.com with ESMTPSA id ay6-v6sm101268ejb.4.2018.09.27.07.17.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 07:17:09 -0700 (PDT)
-Received: by mail-wm1-f54.google.com with SMTP id y25-v6so6090277wmi.1;
-        Thu, 27 Sep 2018 07:17:09 -0700 (PDT)
-X-Received: by 2002:a1c:8dd1:: with SMTP id p200-v6mr8114625wmd.145.1538057828877;
- Thu, 27 Sep 2018 07:17:08 -0700 (PDT)
+        Thu, 27 Sep 2018 16:36:58 -0400
+Received: from tux.wizards.de (p3EE2F45F.dip0.t-ipconnect.de [62.226.244.95])
+        by mail02.iobjects.de (Postfix) with ESMTPSA id E6798416531F;
+        Thu, 27 Sep 2018 16:18:26 +0200 (CEST)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+        by tux.wizards.de (Postfix) with ESMTP id 99E33F0162C;
+        Thu, 27 Sep 2018 16:18:26 +0200 (CEST)
+Subject: Re: [PATCH 4.18 74/88] drm/atomic: Use drm_drv_uses_atomic_modeset()
+ for debugfs creation
+To:     Sean Paul <sean@poorly.run>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Lyude Paul <lyude@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+References: <20180927090300.631426620@linuxfoundation.org>
+ <20180927090309.614592493@linuxfoundation.org>
+ <42cbbf9c-3076-0c49-36c2-b6fd09628694@applied-asynchrony.com>
+ <20180927123706.GA23563@kroah.com>
+ <f54355c2-4eeb-9b7a-3964-57ca465dae17@applied-asynchrony.com>
+ <c3afb9a2-1cd6-b5b9-83ac-eed92fbc066e@applied-asynchrony.com>
+ <20180927140527.GV72545@art_vandelay>
+From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <0614233b-8934-336b-d509-90973cd8d69c@applied-asynchrony.com>
+Date:   Thu, 27 Sep 2018 16:18:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
- <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
-In-Reply-To: <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 27 Sep 2018 22:16:56 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com>
-Message-ID: <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable
- missing DSI bus clock
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180927140527.GV72545@art_vandelay>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 9:44 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > DSI bus_clk is already available in sun6i_dsi but missed to
-> > > get the clk and process for enable/disable.
-> > >
-> > > This patch add support for it.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > index 8e9c76febca2..156b371243c6 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
-> > >                 return PTR_ERR(dsi->reset);
-> > >         }
-> > >
-> > > +       dsi->bus_clk = devm_clk_get(dev, "bus");
-> > > +       if (IS_ERR(dsi->bus_clk)) {
-> > > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
-> > > +               return PTR_ERR(dsi->bus_clk);
-> > > +       }
-> > > +
-> >
-> > The DSI driver uses devm_regmap_init_mmio_clk, which enables the
-> > clock behind the scenes when regmap access needs it enabled.
-> >
-> > Did you have any issues without this patch?
->
-> I'm unable to read register values via devmem, I see all 0's for all
-> dsi reg space.
+On 09/27/18 16:05, Sean Paul wrote:
+> On Thu, Sep 27, 2018 at 03:53:26PM +0200, Holger Hoffstätte wrote:
+>> On 09/27/18 15:26, Holger Hoffstätte wrote:
+>>> On 09/27/18 14:37, Greg Kroah-Hartman wrote:
+>>>> On Thu, Sep 27, 2018 at 12:43:33PM +0200, Holger Hoffstätte wrote:
+>>>>> On 09/27/18 11:03, Greg Kroah-Hartman wrote:
+>>>>>> 4.18-stable review patch.  If anyone has any objections, please let me know.
+>>>>>>
+>>>>>> ------------------
+>>>>>>
+>>>>>> From: Lyude Paul <lyude@redhat.com>
+>>>>>>
+>>>>>> commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
+>>>>>>
+>>>>>> As pointed out by Daniel Vetter, we should be usinng
+>>>>>> drm_drv_uses_atomic_modeset() for determining whether or not we want to
+>>>>>> make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
+>>>>>> the former isn't an accurate representation of whether or not the driver
+>>>>>> is actually using atomic modesetting internally (even though it might
+>>>>>> not be exposing atomic capabilities).
+>>>>>>
+>>>>>> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>>>>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>>>>> Cc: stable@vger.kernel.org
+>>>>>> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+>>>>>> Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
+>>>>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>>
+>>>>> This patch breaks switching the console to high resolution during boot on my
+>>>>> workstation with a Radeon card; it worked fine with 4.18.10 and reverting it
+>>>>> fixes the problem:
+>>>>
+>>>> Is 4.19-rc5 also a problem?
+>>>>
+>>>
+>>> No, 4.19-rc5 with the same config works fine and properly switches the
+>>> console during boot.
+>>>
+>>> Interestingly another machine with i915 chip seemed to work fine with this
+>>> patch included (rebooted that one first), so it might well be related to
+>>> different motherboard/chipset or the Radeon card (an admittedly old, but
+>>> otherwise completely functional fanless r600).
+>>>
+>>> I'll try to find more clues, but for now that's all I got.
+>>
+>> Looking at mainline include/drm I see several recent movements and cleanups
+>> related to drm_drv_uses_atomic_modeset(), moving it out of drmP.h and into
+>> drm, changes to atomic modesetting and such, all part of the 4.19 merge
+>> window. I'm reasonably sure some relatred changes went missing here wrt.
+>> this patch.
+> 
+> Hey all,
+> Thanks for testing, Holger.
+> 
+> This was fixed with https://patchwork.freedesktop.org/patch/250350/ which is not
+> Cc stable.
 
-Well that is to be expected given how mmio with clk regmap works.
-Did you encounter any other problems besides this?
+That's what I just looked at, it's in mainline as well. I briefly considered
+backporting that fix manually, but was not sure why radeon is apparently not
+a "modesetting driver" and figured I'd rather wait for someone who understands
+drm better than me.
 
-FYI you can dump regmap contents using /sys/kernel/debug/regmap/*/registers
+> I think it'd be best to just drop the initial patch from stable, it
+> doesn't need to go back afaict.
 
-ChenYu
+Agreed - using 4.18.11 just fine right now without it. :)
+
+cheers,
+Holger
