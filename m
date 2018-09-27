@@ -3,299 +3,401 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7193FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2306C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C4921537
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:49:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C4921537
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 315DB21537
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:51:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315DB21537
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbeI0MF6 (ORCPT
+        id S1727171AbeI0MI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 08:05:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13133 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726708AbeI0MF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 08:05:58 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D44E69CDA0361;
-        Thu, 27 Sep 2018 13:49:25 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Thu, 27 Sep 2018
- 13:49:24 +0800
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: allow out-place-update for direct IO
- in LFS mode
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Chao Yu <chao@kernel.org>
-CC:     <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180921131222.32057-1-chao@kernel.org>
- <20180927051237.GJ22939@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <e78b16c5-1256-f94d-07b5-792cd1d3a026@huawei.com>
-Date:   Thu, 27 Sep 2018 13:49:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180927051237.GJ22939@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Thu, 27 Sep 2018 08:08:27 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:53181 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726760AbeI0MI1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 08:08:27 -0400
+X-UUID: ca4f4c53a9dd49658e4ba4feb77b55c5-20180927
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 433596077; Thu, 27 Sep 2018 13:51:38 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32N2.mediatek.inc
+ (172.27.4.72) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 27 Sep
+ 2018 13:51:37 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 27 Sep 2018 13:51:36 +0800
+Message-ID: <1538027496.32173.56.camel@mhfsdcap03>
+Subject: Re: [PATCH 4/5] usb: host: Add XHCI driver for Broadcom STB SoCs
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Al Cooper <alcooperx@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        James Hogan <jhogan@kernel.org>, Alban Bedel <albeu@free.fr>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        "Alex Elder" <elder@linaro.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>
+Date:   Thu, 27 Sep 2018 13:51:36 +0800
+In-Reply-To: <1538000414-24873-5-git-send-email-alcooperx@gmail.com>
+References: <1538000414-24873-1-git-send-email-alcooperx@gmail.com>
+         <1538000414-24873-5-git-send-email-alcooperx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/27 13:12, Sahitya Tummala wrote:
-> On Fri, Sep 21, 2018 at 09:12:22PM +0800, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
->>
->> Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
->> allow triggering any in-place-update writes, so we fallback direct
->> write to buffered write, result in bad performance of large size
->> write.
->>
->> This patch adds to support triggering out-place-update for direct IO
->> to enhance its performance.
->>
->> Note that it needs to exclude direct read IO during direct write,
->> since new data writing to new block address will no be valid until
->> write finished.
->>
->> storage: zram
->>
->> time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
->>
->> Before:
->> real	0m13.061s
->> user	0m0.327s
->> sys	0m12.486s
->>
->> After:
->> real	0m6.448s
->> user	0m0.228s
->> sys	0m6.212s
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v4:
->> - correct parameter in f2fs_sb_has_blkzoned()
->>  fs/f2fs/data.c | 44 +++++++++++++++++++++++++++++++++++---------
->>  fs/f2fs/f2fs.h | 45 +++++++++++++++++++++++++++++++++++++++++----
->>  fs/f2fs/file.c |  3 ++-
->>  3 files changed, 78 insertions(+), 14 deletions(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index b96f8588d565..38d5baa1c35d 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
->>  
->>  	dn->data_blkaddr = datablock_addr(dn->inode,
->>  				dn->node_page, dn->ofs_in_node);
->> -	if (dn->data_blkaddr == NEW_ADDR)
->> +	if (dn->data_blkaddr != NULL_ADDR)
->>  		goto alloc;
->>  
->>  	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
->> @@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>  
->>  	if (direct_io) {
->>  		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
->> -		flag = f2fs_force_buffered_io(inode, WRITE) ?
->> +		flag = f2fs_force_buffered_io(inode, iocb, from) ?
->>  					F2FS_GET_BLOCK_PRE_AIO :
->>  					F2FS_GET_BLOCK_PRE_DIO;
->>  		goto map_blocks;
->> @@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>  		goto sync_out;
->>  	}
->>  
->> -	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
->> +	if (is_valid_data_blkaddr(sbi, blkaddr)) {
->> +		/* use out-place-update for driect IO under LFS mode */
->> +		if (test_opt(sbi, LFS) && create &&
->> +				flag == F2FS_GET_BLOCK_DEFAULT) {
+Hi,
+
+On Wed, 2018-09-26 at 18:20 -0400, Al Cooper wrote:
+> This driver enables USB XHCI on Broadcom ARM STB SoCs.
+> The drivers depend on a matching "brcm,brcmstb-usb-phy"
+> Broadcom STB USB Phy driver.
 > 
-> One of the recent patches from Jaegeuk, 0a4daae5ffea ("f2fs: update i_size after DIO
-> completion") added new flag for DIO - F2FS_GET_BLOCK_DIO. I think this patch needs to be
-> updated accordingly.
+> The standard platform driver can't be used because of differences
+> in PHY and Clock handling. The standard PHY handling in hcd.c will
+> do a phy_exit/phy_init on suspend/resume and this will end up
+> shutting down the PHYs to the point that the host controller
+> registers are no longer accessible and will cause suspend to crash.
+You can avoid hcd.c to do a phy_exit/phy_init on suspend/resume by
+device_init_wakeup(dev, true);
 
-Right, I will adjust this patch, thanks for your reminder.
-
-Thanks,
+> The clocks specified in device tree for these drivers are not
+> available in mainline so instead of returning EPROBE_DEFER when
+> the specified clock is not found and eventually failing probe,
+> the clock pointer is set to NULL which disables all clock handling.
+Try to use a fixed-clock as dummy clock if the clock is optional?
 
 > 
->> +			err = __allocate_data_block(&dn, map->m_seg_type);
->> +			if (!err)
->> +				set_inode_flag(inode, FI_APPEND_WRITE);
->> +		}
->> +	} else {
->>  		if (create) {
->>  			if (unlikely(f2fs_cp_error(sbi))) {
->>  				err = -EIO;
->> @@ -2493,36 +2501,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->>  	struct inode *inode = mapping->host;
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->>  	size_t count = iov_iter_count(iter);
->>  	loff_t offset = iocb->ki_pos;
->>  	int rw = iov_iter_rw(iter);
->>  	int err;
->>  	enum rw_hint hint = iocb->ki_hint;
->>  	int whint_mode = F2FS_OPTION(sbi).whint_mode;
->> +	bool do_opu;
->>  
->>  	err = check_direct_IO(inode, iter, offset);
->>  	if (err)
->>  		return err < 0 ? err : 0;
->>  
->> -	if (f2fs_force_buffered_io(inode, rw))
->> +	if (f2fs_force_buffered_io(inode, iocb, iter))
->>  		return 0;
->>  
->> +	do_opu = allow_outplace_dio(inode, iocb, iter);
->> +
->>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
->>  
->>  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
->>  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
->>  
->> -	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
->> -		if (iocb->ki_flags & IOCB_NOWAIT) {
->> +	if (iocb->ki_flags & IOCB_NOWAIT) {
->> +		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
->> +			iocb->ki_hint = hint;
->> +			err = -EAGAIN;
->> +			goto out;
->> +		}
->> +		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
->> +			up_read(&fi->i_gc_rwsem[rw]);
->>  			iocb->ki_hint = hint;
->>  			err = -EAGAIN;
->>  			goto out;
->>  		}
->> -		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
->> +	} else {
->> +		down_read(&fi->i_gc_rwsem[rw]);
->> +		if (do_opu)
->> +			down_read(&fi->i_gc_rwsem[READ]);
->>  	}
->>  
->>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
->> -	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
->> +
->> +	if (do_opu)
->> +		up_read(&fi->i_gc_rwsem[READ]);
->> +
->> +	up_read(&fi->i_gc_rwsem[rw]);
->>  
->>  	if (rw == WRITE) {
->>  		if (whint_mode == WHINT_MODE_OFF)
->> @@ -2530,7 +2555,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->>  		if (err > 0) {
->>  			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
->>  									err);
->> -			set_inode_flag(inode, FI_UPDATE_WRITE);
->> +			if (!do_opu)
->> +				set_inode_flag(inode, FI_UPDATE_WRITE);
->>  		} else if (err < 0) {
->>  			f2fs_write_failed(mapping, offset + count);
->>  		}
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 894a2503e722..72d46860cee3 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -8,6 +8,7 @@
->>  #ifndef _LINUX_F2FS_H
->>  #define _LINUX_F2FS_H
->>  
->> +#include <linux/uio.h>
->>  #include <linux/types.h>
->>  #include <linux/page-flags.h>
->>  #include <linux/buffer_head.h>
->> @@ -3486,11 +3487,47 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
->>  #endif
->>  }
->>  
->> -static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
->> +static inline int block_unaligned_IO(struct inode *inode,
->> +				struct kiocb *iocb, struct iov_iter *iter)
->>  {
->> -	return (f2fs_post_read_required(inode) ||
->> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
->> -			F2FS_I_SB(inode)->s_ndevs);
->> +	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
->> +	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
->> +	loff_t offset = iocb->ki_pos;
->> +	unsigned long align = offset | iov_iter_alignment(iter);
->> +
->> +	return align & blocksize_mask;
->> +}
->> +
->> +static inline int allow_outplace_dio(struct inode *inode,
->> +				struct kiocb *iocb, struct iov_iter *iter)
->> +{
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> +	int rw = iov_iter_rw(iter);
->> +
->> +	return (test_opt(sbi, LFS) && (rw == WRITE) &&
->> +				!block_unaligned_IO(inode, iocb, iter));
->> +}
->> +
->> +static inline bool f2fs_force_buffered_io(struct inode *inode,
->> +				struct kiocb *iocb, struct iov_iter *iter)
->> +{
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> +	int rw = iov_iter_rw(iter);
->> +
->> +	if (f2fs_post_read_required(inode))
->> +		return true;
->> +	if (sbi->s_ndevs)
->> +		return true;
->> +	/*
->> +	 * for blkzoned device, fallback direct IO to buffered IO, so
->> +	 * all IOs can be serialized by log-structured write.
->> +	 */
->> +	if (f2fs_sb_has_blkzoned(sbi->sb))
->> +		return true;
->> +	if (test_opt(sbi, LFS) && (rw == WRITE) &&
->> +				block_unaligned_IO(inode, iocb, iter))
->> +		return true;
->> +	return false;
->>  }
->>  
->>  #ifdef CONFIG_F2FS_FAULT_INJECTION
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index a75f3e145bf1..a388866e71ee 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -3019,7 +3019,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>  				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
->>  						iov_iter_count(from)) ||
->>  					f2fs_has_inline_data(inode) ||
->> -					f2fs_force_buffered_io(inode, WRITE)) {
->> +					f2fs_force_buffered_io(inode,
->> +							iocb, from)) {
->>  						clear_inode_flag(inode,
->>  								FI_NO_PREALLOC);
->>  						inode_unlock(inode);
->> -- 
->> 2.18.0
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> Signed-off-by: Al Cooper <alcooperx@gmail.com>
+> ---
+>  drivers/usb/host/xhci-brcm.c | 294 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 294 insertions(+)
+>  create mode 100644 drivers/usb/host/xhci-brcm.c
 > 
+> diff --git a/drivers/usb/host/xhci-brcm.c b/drivers/usb/host/xhci-brcm.c
+> new file mode 100644
+> index 000000000000..1a7578b8ef6a
+> --- /dev/null
+> +++ b/drivers/usb/host/xhci-brcm.c
+> @@ -0,0 +1,294 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2018, Broadcom */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/clk.h>
+> +#include <linux/phy/phy.h>
+> +
+> +#include "xhci.h"
+> +
+> +static struct hc_driver __read_mostly xhci_brcm_hc_driver;
+> +
+> +#define BRCM_DRIVER_DESC "xHCI Broadcom STB driver"
+> +#define BRCM_DRIVER_NAME "xhci-brcm"
+> +
+> +#define hcd_to_xhci_priv(h) ((struct brcm_priv *)hcd_to_xhci(h)->priv)
+> +
+> +struct brcm_priv {
+> +	struct phy *phy;
+> +};
+> +
+> +static void xhci_brcm_quirks(struct device *dev, struct xhci_hcd *xhci)
+> +{
+> +	/*
+> +	 * As of now platform drivers don't provide MSI support so we ensure
+> +	 * here that the generic code does not try to make a pci_dev from our
+> +	 * dev struct in order to setup MSI
+> +	 */
+> +	xhci->quirks |= XHCI_PLAT;
+> +
+> +	/*
+> +	 * The Broadcom XHCI core does not support save/restore state
+> +	 * so we need to reset on resume.
+> +	 */
+> +	xhci->quirks |= XHCI_RESET_ON_RESUME;
+> +}
+> +
+> +/* called during probe() after chip reset completes */
+> +static int xhci_brcm_setup(struct usb_hcd *hcd)
+> +{
+> +	return xhci_gen_setup(hcd, xhci_brcm_quirks);
+> +}
+> +
+> +static const struct xhci_driver_overrides brcm_overrides __initconst = {
+> +
+> +	.extra_priv_size = sizeof(struct brcm_priv),
+> +	.reset = xhci_brcm_setup,
+> +};
+> +
+> +static int xhci_brcm_probe(struct platform_device *pdev)
+> +{
+> +	const struct hc_driver	*driver;
+> +	struct brcm_priv	*priv;
+> +	struct xhci_hcd		*xhci;
+> +	struct resource         *res;
+> +	struct usb_hcd		*hcd;
+> +	int			ret;
+> +	int			irq;
+> +
+> +	if (usb_disabled())
+> +		return -ENODEV;
+> +
+> +	driver = &xhci_brcm_hc_driver;
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return -ENODEV;
+> +
+> +	/* Try to set 64-bit DMA first */
+> +	if (WARN_ON(!pdev->dev.dma_mask))
+> +		/* Platform did not initialize dma_mask */
+> +		ret = dma_coerce_mask_and_coherent(&pdev->dev,
+> +						   DMA_BIT_MASK(64));
+> +	else
+> +		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+> +
+> +	/* If seting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
+> +	if (ret) {
+> +		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_get_noresume(&pdev->dev);
+> +
+> +	hcd = __usb_create_hcd(driver, &pdev->dev, &pdev->dev,
+> +			       dev_name(&pdev->dev), NULL);
+> +	if (!hcd) {
+> +		return -ENOMEM;
+> +		goto disable_runtime;
+> +	}
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	hcd->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(hcd->regs)) {
+> +		ret = PTR_ERR(hcd->regs);
+> +		goto put_hcd;
+> +	}
+> +
+> +	hcd->rsrc_start = res->start;
+> +	hcd->rsrc_len = resource_size(res);
+> +
+> +	/*
+> +	 * Not all platforms have a clk so it is not an error if the
+> +	 * clock does not exists.
+> +	 */
+> +	xhci = hcd_to_xhci(hcd);
+> +	xhci->clk = devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(xhci->clk)) {
+> +		dev_err(&pdev->dev, "Clock not found in Device Tree\n");
+> +		xhci->clk = NULL;
+> +	}
+> +	device_wakeup_enable(hcd->self.controller);
+> +
+> +	xhci->main_hcd = hcd;
+> +	xhci->shared_hcd = __usb_create_hcd(driver, &pdev->dev, &pdev->dev,
+> +					    dev_name(&pdev->dev), hcd);
+> +	if (!xhci->shared_hcd) {
+> +		ret = -ENOMEM;
+> +		goto disable_clk;
+> +	}
+> +
+> +	if (device_property_read_bool(&pdev->dev, "usb3-lpm-capable"))
+> +		xhci->quirks |= XHCI_LPM_SUPPORT;
+> +
+> +	priv = hcd_to_xhci_priv(hcd);
+> +	priv->phy = devm_of_phy_get_by_index(&pdev->dev, pdev->dev.of_node, 0);
+> +	if (IS_ERR(priv->phy)) {
+> +		dev_err(&pdev->dev, "USB Phy not found.\n");
+> +		ret = PTR_ERR(priv->phy);
+> +		goto put_usb3_hcd;
+> +	}
+> +	ret = phy_init(priv->phy);
+> +	if (ret)
+> +		goto put_usb3_hcd;
+> +
+> +	hcd->skip_phy_initialization = 1;
+> +	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
+> +	if (ret)
+> +		goto disable_usb_phy;
+> +
+> +	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
+> +		xhci->shared_hcd->can_do_streams = 1;
+> +
+> +	ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
+> +	if (ret)
+> +		goto dealloc_usb2_hcd;
+> +
+> +	device_enable_async_suspend(&pdev->dev);
+> +	pm_runtime_put_noidle(&pdev->dev);
+> +
+> +	/*
+> +	 * Prevent runtime pm from being on as default, users should enable
+> +	 * runtime pm using power/control in sysfs.
+> +	 */
+> +	pm_runtime_forbid(&pdev->dev);
+> +
+> +	return 0;
+> +
+> +dealloc_usb2_hcd:
+> +	usb_remove_hcd(hcd);
+> +
+> +disable_usb_phy:
+> +	phy_exit(priv->phy);
+> +
+> +put_usb3_hcd:
+> +	usb_put_hcd(xhci->shared_hcd);
+> +
+> +disable_clk:
+> +	if (!IS_ERR(xhci->clk))
+> +		clk_disable_unprepare(xhci->clk);
+> +
+> +put_hcd:
+> +	usb_put_hcd(hcd);
+> +
+> +disable_runtime:
+> +	pm_runtime_put_noidle(&pdev->dev);
+> +	pm_runtime_disable(&pdev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int xhci_brcm_remove(struct platform_device *dev)
+> +{
+> +	struct usb_hcd	*hcd = platform_get_drvdata(dev);
+> +	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+> +	struct brcm_priv *priv = hcd_to_xhci_priv(hcd);
+> +
+> +	xhci->xhc_state |= XHCI_STATE_REMOVING;
+> +
+> +	usb_remove_hcd(xhci->shared_hcd);
+> +	usb_remove_hcd(hcd);
+> +	usb_put_hcd(xhci->shared_hcd);
+> +	phy_exit(priv->phy);
+> +	clk_disable_unprepare(xhci->clk);
+> +	usb_put_hcd(hcd);
+> +
+> +	pm_runtime_set_suspended(&dev->dev);
+> +	pm_runtime_disable(&dev->dev);
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int xhci_brcm_suspend(struct device *dev)
+> +{
+> +	int ret;
+> +	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+> +	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+> +
+> +	ret = xhci_suspend(xhci, device_may_wakeup(dev));
+> +	clk_disable_unprepare(xhci->clk);
+> +	return ret;
+> +}
+> +
+> +static int xhci_brcm_resume(struct device *dev)
+> +{
+> +	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+> +	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+> +	int err;
+> +
+> +	err = clk_prepare_enable(xhci->clk);
+> +	if (err)
+> +		return err;
+> +	return xhci_resume(xhci, 0);
+> +}
+> +
+> +static int xhci_brcm_runtime_suspend(struct device *dev)
+> +{
+> +	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+> +	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+> +
+> +	return xhci_suspend(xhci, true);
+> +}
+> +
+> +static int xhci_brcm_runtime_resume(struct device *dev)
+> +{
+> +	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+> +	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+> +
+> +	return xhci_resume(xhci, 0);
+> +}
+> +
+> +#endif /* CONFIG_PM_SLEEP */
+> +
+> +
+> +static const struct dev_pm_ops xhci_brcm_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(xhci_brcm_suspend, xhci_brcm_resume)
+> +
+> +	SET_RUNTIME_PM_OPS(xhci_brcm_runtime_suspend,
+> +			   xhci_brcm_runtime_resume,
+> +			   NULL)
+> +};
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id brcm_xhci_of_match[] = {
+> +	{ .compatible = "brcm,xhci-brcm-v2" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, brcm_xhci_of_match);
+> +#endif
+> +
+> +static struct platform_driver xhci_brcm_driver = {
+> +	.probe	= xhci_brcm_probe,
+> +	.remove	= xhci_brcm_remove,
+> +	.driver	= {
+> +		.name = BRCM_DRIVER_NAME,
+> +		.pm = &xhci_brcm_pm_ops,
+> +		.of_match_table = of_match_ptr(brcm_xhci_of_match),
+> +	},
+> +};
+> +
+> +static int __init xhci_brcm_init(void)
+> +{
+> +	pr_info("%s: " BRCM_DRIVER_DESC "\n", BRCM_DRIVER_NAME);
+> +	xhci_init_driver(&xhci_brcm_hc_driver, &brcm_overrides);
+> +	return platform_driver_register(&xhci_brcm_driver);
+> +}
+> +module_init(xhci_brcm_init);
+> +
+> +static void __exit xhci_brcm_exit(void)
+> +{
+> +	platform_driver_unregister(&xhci_brcm_driver);
+> +}
+> +module_exit(xhci_brcm_exit);
+> +
+> +MODULE_ALIAS("platform:xhci-brcm");
+> +MODULE_DESCRIPTION(BRCM_DRIVER_DESC);
+> +MODULE_AUTHOR("Al Cooper");
+> +MODULE_LICENSE("GPL");
+
 
