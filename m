@@ -2,218 +2,134 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 486D7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF7AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A3E21714
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:34:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A3E21714
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=prnet.org
+	by mail.kernel.org (Postfix) with ESMTP id EB08321708
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB08321708
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbeI1ByM (ORCPT
+        id S1728713AbeI1BzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:54:12 -0400
-Received: from extserverfr1.prnet.org ([188.165.208.21]:34154 "EHLO
-        extserverfr1.prnet.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbeI1ByM (ORCPT
+        Thu, 27 Sep 2018 21:55:01 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59526 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727621AbeI1BzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:54:12 -0400
-Received: from extserver.intern.prnet.org (extserver.prnet.org [192.168.11.1])
-        by extserverfr1.prnet.org (8.14.9/8.14.9) with ESMTP id w8RJXxH4018319;
-        Thu, 27 Sep 2018 21:33:59 +0200
-Received: from [IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28] ([IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28])
-        (authenticated bits=0)
-        by extserver.intern.prnet.org (8.14.9/8.14.9) with ESMTP id w8RJXrLi009037
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Thu, 27 Sep 2018 21:33:57 +0200
-Subject: Re: kernel 4.18.5 Realtek 8111G network adapter stops responding
- under high system load
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Gabriel C <nix.or.die@gmail.com>,
-        =?UTF-8?Q?Ortwin_Gl=c3=bcck?= <odi@odi.ch>
-Cc:     linux-kernel@vger.kernel.org, nic_swsd@realtek.com,
-        netdev@vger.kernel.org
-References: <20180918102349.Horde.yHctatUod-_SC696oYKmySa@cloud.luxmemories.lu>
- <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
- <0e865e74-e587-61b7-d319-9afe0a5e8828@prnet.org>
- <968f03ee-a271-242b-d90a-5c70ea72ce3b@gmail.com>
-From:   David Arendt <admin@prnet.org>
-Message-ID: <135f9c69-be24-fb73-b1e4-8c8d236b5edc@prnet.org>
-Date:   Thu, 27 Sep 2018 21:33:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 27 Sep 2018 21:55:01 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 49B8F634C80;
+        Thu, 27 Sep 2018 22:35:09 +0300 (EEST)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1g5c45-0000Ew-42; Thu, 27 Sep 2018 22:35:09 +0300
+Date:   Thu, 27 Sep 2018 22:35:08 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 6/7] [media] ad5820: Add support for ad5821 and ad5823
+Message-ID: <20180927193508.r25owgcwfeui2x7k@valkosipuli.retiisi.org.uk>
+References: <20180920204751.29117-1-ricardo.ribalda@gmail.com>
+ <20180920204751.29117-6-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <968f03ee-a271-242b-d90a-5c70ea72ce3b@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920204751.29117-6-ricardo.ribalda@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Ricardo,
 
-Heiner Kallweit's patch seems to resolve the problem. The machine was
-under high disk and network io pressure today and networking was
-perfectly stable.
+On Thu, Sep 20, 2018 at 10:47:50PM +0200, Ricardo Ribalda Delgado wrote:
+> According to the datasheet, both AD5821 and AD5820 share a compatible
+> register-set:
+> http://www.analog.com/media/en/technical-documentation/data-sheets/AD5821.pdf
+> 
+> Some camera modules also refer that AD5823 is a replacement of AD5820:
+> https://download.kamami.com/p564094-OV8865_DS.pdf
 
-Bye,
-David Arendt
+A silly question --- the maximum current of these devices differs from each
+other. Is the control value range still the same?
 
-On 9/25/18 11:03 PM, Heiner Kallweit wrote:
-> On 19.09.2018 06:12, David Arendt wrote:
->> Hi,
->>
->> Thanks for the patch.
->>
->> I just applied it and the TxConfig register now contains 0x4f000f80.
->> The next day will show if it really solves the problem.
->>
->> Thanks in advance,
->> David Arendt
->>
->> On 9/19/18 12:30 AM, Maciej S. Szmigiero wrote:
->>> Hi,
->>>
->>> On 18.09.2018 12:23, David Arendt wrote:
->>>> Hi,
->>>>
->>>> Today I had the network adapter problems again.
->>>> So the patch doesn't seem to change anything regarding this problem.
->>>> This week my time is unfortunately very limited, but I will try to
->>>> find some time next weekend to look a bit more into the issue.
->>> If the problem is caused by missing TXCFG_AUTO_FIFO bit in TxConfig,
->>> as the register difference would suggest, then you can try applying
->>> the following patch (hack) on top of 4.18.8 that is already patched
->>> with commit f74dd480cf4e:
->>> --- a/drivers/net/ethernet/realtek/r8169.c
->>> +++ b/drivers/net/ethernet/realtek/r8169.c
->>> @@ -5043,7 +5043,8 @@
->>>  {
->>>  	/* Set DMA burst size and Interframe Gap Time */
->>>  	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
->>> -		(InterFrameGap << TxInterFrameGapShift));
->>> +		(InterFrameGap << TxInterFrameGapShift)
->>> +		| TXCFG_AUTO_FIFO);
->>>  }
->>>  
->>>  static void rtl_set_rx_max_size(struct rtl8169_private *tp)
->>>
->>> This hack will probably only work properly on RTL_GIGA_MAC_VER_40 or
->>> later NICs.
->>>
->>> Before running any tests please verify with "ethtool -d enp3s0" that
->>> TxConfig register now contains 0x4f000f80, as it did in the old,
->>> working driver version.
->>>
->>> If this does not help then a bisection will most likely be needed.
->>>
->>>> Thanks in advance,
->>>> David Arendt
->>> Maciej
->>
->>
-> @Gabriel:
-> Thanks for the hint, I wasn't fully aware of this thread.
-> @Maciej:
-> Thanks for the analysis.
->
-> It seems that all chip versions from 34 (= RTL8168E-VL) with the
-> exception of version 39 (= RTL8106E, first sub-version) need
-> bit TXCFG_AUTO_FIFO.
->
-> And indeed, due to reordering of calls this bit is overwritten.
-> Following patch moves setting the bit from the chip-specific
-> hw_start function to rtl_set_tx_config_registers().
->
-> Whoever is hit by the issue and has the option to build a kernel,
-> could you please test whether the patch fixes the issue for you?
->
-> Thanks, Heiner
->
+> 
+> Suggested-by: Pavel Machek <pavel@ucw.cz>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 > ---
->  drivers/net/ethernet/realtek/r8169.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-> index f882be49f..ae8abe900 100644
-> --- a/drivers/net/ethernet/realtek/r8169.c
-> +++ b/drivers/net/ethernet/realtek/r8169.c
-> @@ -4514,9 +4514,14 @@ static void rtl8169_hw_reset(struct rtl8169_private *tp)
+>  drivers/media/i2c/ad5820.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
+> index 5d1185e7f78d..c52af302d516 100644
+> --- a/drivers/media/i2c/ad5820.c
+> +++ b/drivers/media/i2c/ad5820.c
+> @@ -34,8 +34,6 @@
+>  #include <media/v4l2-device.h>
+>  #include <media/v4l2-subdev.h>
 >  
->  static void rtl_set_tx_config_registers(struct rtl8169_private *tp)
->  {
-> -	/* Set DMA burst size and Interframe Gap Time */
-> -	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
-> -		(InterFrameGap << TxInterFrameGapShift));
-> +	u32 val = TX_DMA_BURST << TxDMAShift |
-> +		  InterFrameGap << TxInterFrameGapShift;
-> +
-> +	if (tp->mac_version >= RTL_GIGA_MAC_VER_34 &&
-> +	    tp->mac_version != RTL_GIGA_MAC_VER_39)
-> +		val |= TXCFG_AUTO_FIFO;
-> +
-> +	RTL_W32(tp, TxConfig, val);
+> -#define AD5820_NAME		"ad5820"
+> -
+>  /* Register definitions */
+>  #define AD5820_POWER_DOWN		(1 << 15)
+>  #define AD5820_DAC_SHIFT		4
+> @@ -368,7 +366,9 @@ static int ad5820_remove(struct i2c_client *client)
 >  }
 >  
->  static void rtl_set_rx_max_size(struct rtl8169_private *tp)
-> @@ -5011,7 +5016,6 @@ static void rtl_hw_start_8168e_2(struct rtl8169_private *tp)
->  
->  	rtl_disable_clock_request(tp);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
->  	RTL_W8(tp, MCU, RTL_R8(tp, MCU) & ~NOW_IS_OOB);
->  
->  	/* Adjust EEE LED frequency */
-> @@ -5045,7 +5049,6 @@ static void rtl_hw_start_8168f(struct rtl8169_private *tp)
->  
->  	rtl_disable_clock_request(tp);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
->  	RTL_W8(tp, MCU, RTL_R8(tp, MCU) & ~NOW_IS_OOB);
->  	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) | PFM_EN);
->  	RTL_W32(tp, MISC, RTL_R32(tp, MISC) | PWM_EN);
-> @@ -5090,8 +5093,6 @@ static void rtl_hw_start_8411(struct rtl8169_private *tp)
->  
->  static void rtl_hw_start_8168g(struct rtl8169_private *tp)
->  {
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
-> -
->  	rtl_eri_write(tp, 0xc8, ERIAR_MASK_0101, 0x080002, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xcc, ERIAR_MASK_0001, 0x38, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xd0, ERIAR_MASK_0001, 0x48, ERIAR_EXGMAC);
-> @@ -5189,8 +5190,6 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
->  	rtl_hw_aspm_clkreq_enable(tp, false);
->  	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
-> -
->  	rtl_eri_write(tp, 0xc8, ERIAR_MASK_0101, 0x00080002, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xcc, ERIAR_MASK_0001, 0x38, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xd0, ERIAR_MASK_0001, 0x48, ERIAR_EXGMAC);
-> @@ -5273,8 +5272,6 @@ static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
->  {
->  	rtl8168ep_stop_cmac(tp);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
-> -
->  	rtl_eri_write(tp, 0xc8, ERIAR_MASK_0101, 0x00080002, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xcc, ERIAR_MASK_0001, 0x2f, ERIAR_EXGMAC);
->  	rtl_eri_write(tp, 0xd0, ERIAR_MASK_0001, 0x5f, ERIAR_EXGMAC);
-> @@ -5596,7 +5593,6 @@ static void rtl_hw_start_8402(struct rtl8169_private *tp)
->  	/* Force LAN exit from ASPM if Rx/Tx are not idle */
->  	RTL_W32(tp, FuncEvent, RTL_R32(tp, FuncEvent) | 0x002800);
->  
-> -	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
->  	RTL_W8(tp, MCU, RTL_R8(tp, MCU) & ~NOW_IS_OOB);
->  
->  	rtl_ephy_init(tp, e_info_8402, ARRAY_SIZE(e_info_8402));
+>  static const struct i2c_device_id ad5820_id_table[] = {
+> -	{ AD5820_NAME, 0 },
+> +	{ "ad5820", 0 },
+> +	{ "ad5821", 0 },
+> +	{ "ad5823", 0 },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
+> @@ -376,6 +376,8 @@ MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id ad5820_of_table[] = {
+>  	{ .compatible = "adi,ad5820" },
+> +	{ .compatible = "adi,ad5821" },
+> +	{ .compatible = "adi,ad5823" },
 
+You could set the subdev name accordingly as well.
 
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, ad5820_of_table);
+> @@ -384,6 +386,8 @@ MODULE_DEVICE_TABLE(of, ad5820_of_table);
+>  #ifdef CONFIG_ACPI
+>  static const struct acpi_device_id ad5820_acpi_ids[] = {
+>  	{ "AD5820" },
+> +	{ "AD5821" },
+> +	{ "AD5823" },
+>  	{ }
+>  };
+>  
+> @@ -394,7 +398,7 @@ static SIMPLE_DEV_PM_OPS(ad5820_pm, ad5820_suspend, ad5820_resume);
+>  
+>  static struct i2c_driver ad5820_i2c_driver = {
+>  	.driver		= {
+> -		.name	= AD5820_NAME,
+> +		.name	= "ad5820",
+>  		.pm	= &ad5820_pm,
+>  		.of_match_table = of_match_ptr(ad5820_of_table),
+>  		.acpi_match_table = ACPI_PTR(ad5820_acpi_ids),
+
+-- 
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
