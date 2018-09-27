@@ -2,143 +2,138 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808E1C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D82C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8292168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8292168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 82233216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:27:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="m1XUjTzM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82233216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbeI0Wpy (ORCPT
+        id S1728469AbeI0WqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:45:54 -0400
-Received: from mga01.intel.com ([192.55.52.88]:37355 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727335AbeI0Wpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:45:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 09:26:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
-   d="scan'208";a="260853968"
-Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
-  by orsmga005.jf.intel.com with ESMTP; 27 Sep 2018 09:23:28 -0700
-Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
- ORSMSX109.amr.corp.intel.com (10.22.240.7) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 27 Sep 2018 09:23:28 -0700
-Received: from orsmsx107.amr.corp.intel.com ([169.254.1.14]) by
- ORSMSX157.amr.corp.intel.com ([169.254.9.138]) with mapi id 14.03.0319.002;
- Thu, 27 Sep 2018 09:23:28 -0700
-From:   "Schaufler, Casey" <casey.schaufler@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        Paul Moore <paul@paul-moore.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Subject: RE: [PATCH v5 3/5] SELinux: Prepare for PTRACE_MODE_SCHED
-Thread-Topic: [PATCH v5 3/5] SELinux: Prepare for PTRACE_MODE_SCHED
-Thread-Index: AQHUVdhjbL0Q8He2uUOeWqu62/Rqf6UEvS6A//+OGHA=
-Date:   Thu, 27 Sep 2018 16:23:27 +0000
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC673214631B5@ORSMSX107.amr.corp.intel.com>
-References: <20180926203446.2004-1-casey.schaufler@intel.com>
- <20180926203446.2004-4-casey.schaufler@intel.com>
- <6e21f471-ff88-c57c-8892-e0bb626bea12@tycho.nsa.gov>
-In-Reply-To: <6e21f471-ff88-c57c-8892-e0bb626bea12@tycho.nsa.gov>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDAwNWUzMjEtNTE2Ni00MmJiLTk1OTctZDkzNmQyZWIwMTU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaW9JS3ZSQUU1dkw3bEtpallxQkZ6UEJzb2EwM2hFU1MwcWdnYWc3eUZlUGxrYURmeXN4TzlhMHh0K0R2WlVBaCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Thu, 27 Sep 2018 18:46:06 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38527 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbeI0WqF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 18:46:05 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r77-v6so2340528pgr.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:27:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=DEWO0Ik7SdvaS0AR+ePmgjg9n040jb3bK19kQSGQ8AM=;
+        b=m1XUjTzMNTcGC1cPfmq1rHnWwkDauFxUTwlvZYmEuTNraAQ+i64oFrai+2MSvDCz2r
+         DZDb2mGUAAJrrto1QFlWw/wml00Ia9B99Odkd7NCUgZIjpDtbfvIHl1cC3Amt1Z7nGIU
+         Xb6u+7Qj6Z4+vwfoCKRMe/eapz3gAlKj4K40nLYL8sqXtGiM/kcT2Zqp5nc/9D3/1ZTV
+         CKQw4kMJbMnT/IZF9vn3DyvI/FTMHWbRQzt5OlR6SvaZi8gcchfT8g4NyA+cfs8ivyd0
+         UyxLQzD2rFWDEi9u5D+jpA9JedGIEnCQJEiijB0meUJiJ/Ikxb9ybDTaUZJ7zJTG7YnB
+         TCYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=DEWO0Ik7SdvaS0AR+ePmgjg9n040jb3bK19kQSGQ8AM=;
+        b=nnr7LggE9pzGolkgMk77Y9kAYWb+RssfTSAgDIHGpKMQJYxsRIi58VGswbZLh7e+nb
+         lb76+bUgqtYgXSDY7C3WCxjDFqcpJGCC/zxbbVrXLNWzHUFeeGW/EMuWRhpDAeGuoyal
+         mks7Szat6eixULyKs3yIeq4L9+c110007tiiZO6s5dIs2n0EN6r7Kgcue/yTS49jWZqY
+         +FPNb5tPtDdjFXvxtAXm5snABw2MdfBYKaHVwDPdG91M1ZyTX0+prRn+IojUby7QRoXI
+         7+Fgw6uwbJ1vU4MPO/eiqZ0WVgfHsbNsPXiYfe5W3zMV5UceUPcWsFYHKp79z4BxGESi
+         NGMQ==
+X-Gm-Message-State: ABuFfoiZCQcew7NLPgQYffQ5PtkB62bviX+o6e2D7+gr7j9xvkr3Nsvu
+        c7nRs1efIdJdQOjJMIUFDxNNNw==
+X-Google-Smtp-Source: ACcGV62QJw913ePj/5vQx0Lwia5LjoCwqNp9vWD8lGrc+Rrzch68SQh0tAldPiSrbjtot52a+l4AsQ==
+X-Received: by 2002:a63:ed07:: with SMTP id d7-v6mr11157915pgi.429.1538065622687;
+        Thu, 27 Sep 2018 09:27:02 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b05d:f41a:9474:81e7:a055:d5b2? ([2600:1010:b05d:f41a:9474:81e7:a055:d5b2])
+        by smtp.gmail.com with ESMTPSA id k185-v6sm5142551pfc.160.2018.09.27.09.27.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 09:27:01 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <CAHmME9pBRu4hC5=Ef62R_nWOi3jTegxvxNrR8qDM+VfO=2t8Tg@mail.gmail.com>
+Date:   Thu, 27 Sep 2018 09:26:59 -0700
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BB2CD8D5-E7FF-4D25-8C83-F64960253248@amacapital.net>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com> <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com> <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com> <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com> <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com> <CAHmME9pbRabkGjNh-65S9qBNNS1GLJSwZ_tTM507S_Ezr1=QLg@mail.gmail.com> <CAHmME9ru=kJO8QiW+uNNgt5NgFVZzRsQ4tNSgo+f+KfHs3fAKQ@mail.gmail.com> <CAKv+Gu-WDt8f9qVjLDRPHL7THS0BjtKHThw2RMfHbWBT8Hs8aQ@mail.gmail.com> <CAHmME9qNn5aRgtbV3bAsz3xW1A49a7RMMkOzGruBUPzLVUxVNg@mail.gmail.com> <CAHmME9rN3-7Mj5JQqt2EFPauG9vjkN5pQn3tPiJY4fPiwksaDA@mail.gmail.com> <CAHmME9pBRu4hC5=Ef62R_nWOi3jTegxvxNrR8qDM+VfO=2t8Tg@mail.gmail.com>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIFNtYWxsZXkgW21h
-aWx0bzpzZHNAdHljaG8ubnNhLmdvdl0NCj4gU2VudDogVGh1cnNkYXksIFNlcHRlbWJlciAyNywg
-MjAxOCA4OjUwIEFNDQo+IFRvOiBTY2hhdWZsZXIsIENhc2V5IDxjYXNleS5zY2hhdWZsZXJAaW50
-ZWwuY29tPjsga2VybmVsLQ0KPiBoYXJkZW5pbmdAbGlzdHMub3BlbndhbGwuY29tOyBsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1zZWN1cml0eS0NCj4gbW9kdWxlQHZnZXIua2Vy
-bmVsLm9yZzsgc2VsaW51eEB0eWNoby5uc2EuZ292OyBIYW5zZW4sIERhdmUNCj4gPGRhdmUuaGFu
-c2VuQGludGVsLmNvbT47IERvY2ssIERlbmVlbiBUIDxkZW5lZW4udC5kb2NrQGludGVsLmNvbT47
-DQo+IGtyaXN0ZW5AbGludXguaW50ZWwuY29tOyBhcmphbkBsaW51eC5pbnRlbC5jb207IFBhdWwg
-TW9vcmUgPHBhdWxAcGF1bC0NCj4gbW9vcmUuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1
-IDMvNV0gU0VMaW51eDogUHJlcGFyZSBmb3IgUFRSQUNFX01PREVfU0NIRUQNCj4gDQo+IE9uIDA5
-LzI2LzIwMTggMDQ6MzQgUE0sIENhc2V5IFNjaGF1ZmxlciB3cm90ZToNCj4gPiBGcm9tOiBDYXNl
-eSBTY2hhdWZsZXIgPGNhc2V5QHNjaGF1Zmxlci1jYS5jb20+DQo+ID4NCj4gPiBBIHB0cmFjZSBh
-Y2Nlc3MgY2hlY2sgd2l0aCBtb2RlIFBUUkFDRV9NT0RFX1NDSEVEIGdldHMgY2FsbGVkDQo+ID4g
-ZnJvbSBwcm9jZXNzIHN3aXRjaGluZyBjb2RlLiBUaGlzIHByZWNsdWRlcyB0aGUgdXNlIG9mIGF1
-ZGl0IG9yIGF2YywNCj4gPiBhcyB0aGUgbG9ja2luZyBpcyBpbmNvbXBhdGlibGUuIFRoZSBvbmx5
-IGF2YWlsYWJsZSBjaGVjayB0aGF0DQo+ID4gY2FuIGJlIG1hZGUgd2l0aG91dCB1c2luZyBhdmMg
-aXMgYSBjb21wYXJpc29uIG9mIHRoZSBzZWNpZHMuDQo+ID4gVGhpcyBpcyBub3QgdmVyeSBzYXRp
-c2ZhY3RvcnkgYXMgaXQgd2lsbCBpbmRpY2F0ZSBwb3NzaWJsZQ0KPiA+IHZ1bG5lcmFiaWxpZXMg
-bXVjaCB0b28gYWdncmVzc2l2ZWx5Lg0KPiBDYW4geW91IGRvY3VtZW50IChpbiB0aGUgcGF0Y2gg
-ZGVzY3JpcHRpb24gYW5kL29yIGluIHRoZSBpbmxpbmUNCj4gZG9jdW1lbnRhdGlvbiBpbiBsc21f
-aG9va3MuaCkgd2hhdCBsb2NrcyBjYW4gYmUgc2FmZWx5IHVzZWQgd2hlbiB0aGlzDQo+IGhvb2sg
-aXMgY2FsbGVkIHdpdGggUFRSQUNFX01PREVfU0NIRUQ/ICByY3VfcmVhZF9sb2NrKCkgc2VlbWlu
-Z2x5IG11c3QNCj4gYmUgc2FmZSBzaW5jZSBpdCBpcyBiZWluZyBjYWxsZWQgYnkgdGFza19zaWQo
-KSBiZWxvdy4gQXJlIGFueSBvdGhlcg0KPiBsb2NraW5nIHByaW1pdGl2ZXMgc2FmZT8NCg0KUGV0
-ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPiBoYWQgdGhpcyBjb21tZW50IG9uDQps
-b2NraW5nIGluIHRoZSBTRUxpbnV4IHB0cmFjZSBwYXRoLiANCg0KIAlhdmNfaGFzX3Blcm1fbm9h
-dWRpdCgpDQoJICBzZWN1cml0eV9jb21wdXRlX2F2KCkNCgkgICAgcmVhZF9sb2NrKCZzdGF0ZS0+
-c3MtPnBvbGljeV9yd2xvY2spOw0KCSAgYXZjX2luc2VydCgpDQoJICAgIHNwaW5fbG9ja19pcnFz
-YXZlKCk7DQoJICBhdmNfZGVuaWVkKCkNCgkgICAgYXZjX3VwZGF0ZV9ub2RlKCkNCgkgICAgICBz
-cGluX2xvY2tfaXJxc2F2ZSgpOw0KDQp1bmRlciB0aGUgc2NoZWR1bGVyJ3MgcmF3X3NwaW5sb2Nr
-X3QsIHdoaWNoIGFyZSBpbnZhbGlkIGxvY2sgbmVzdGluZ3MuDQoNCkkgZG9uJ3Qga25vdyB0aGF0
-IGl0IHdvdWxkIGJlIGltcG9zc2libGUgdG8gYWRkcmVzcyB0aGVzZSBpc3N1ZXMsDQpidXQgYXMg
-bWFueSBwZW9wbGUgaGF2ZSBub3RlZCBvdmVyIHRoZSB5ZWFycyBJIGFtIG5vdCBub3cNCm5vciBo
-YXZlIGV2ZXIgYmVlbiBhbiBleHBlcnQgb24gbG9ja2luZy4NCg0KPiANCj4gRG9lcyB0aGUgUFRS
-QUNFX01PREVfU0NIRUQgY2hlY2sgaGF2ZSB0byBvY2N1ciB3aGlsZSBob2xkaW5nIHRoZQ0KPiBz
-Y2hlZHVsZXIgbG9jaywgb3IgY291bGQgaXQgYmUgcGVyZm9ybWVkIGJlZm9yZSB0YWtpbmcgdGhl
-IGxvY2s/DQoNCk15IHVuZGVyc3RhbmRpbmcgaXMgdGhhdCB0aGUgbG9jayBpcyByZXF1aXJlZC4N
-Cg0KIA0KPiBDYW4geW91IGNpdGUgdGhlIGNvbW1pdCBvciBwYXRjaCBwb3N0aW5nIChlLmcuIGZy
-b20gbG9yZSBvciBwYXRjaHdvcmspDQo+IHRoYXQgZGVmaW5lcyBQVFJBQ0VfTU9ERV9TQ0hFRCBh
-bmQgaXRzIHVzYWdlIGFzIHBhcnQgb2YgdGhlIHBhdGNoDQo+IGRlc2NyaXB0aW9uIGZvciBjb250
-ZXh0PyAgSXMgdGhpcyBiYXNlZCBvbiB0aGUgdjcgcGF0Y2hzZXQsIGUuZy4NCj4gaHR0cHM6Ly9s
-b3JlLmtlcm5lbC5vcmcvbGttbC9ueWN2YXIuWUZILjcuNzYuMTgwOTI1MTQzNzM0MC4xNTg4MEBj
-Ym9iay5maGYNCj4gci5wbS8NCg0KWWVzLCB0aGF0J3MgdGhlIG9uZS4gU29ycnksIEkgc2hvdWxk
-IGhhdmUgaWRlbnRpZmllZCB0aGF0Lg0KDQo+IA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQ2Fz
-ZXkgU2NoYXVmbGVyIDxjYXNleS5zY2hhdWZsZXJAaW50ZWwuY29tPg0KPiA+IC0tLQ0KPiA+ICAg
-c2VjdXJpdHkvc2VsaW51eC9ob29rcy5jIHwgMiArKw0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDIg
-aW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL3NlY3VyaXR5L3NlbGludXgvaG9v
-a3MuYyBiL3NlY3VyaXR5L3NlbGludXgvaG9va3MuYw0KPiA+IGluZGV4IGFkOWE5YjhlOTk3OS4u
-MTYwMjM5NzkxMDA3IDEwMDY0NA0KPiA+IC0tLSBhL3NlY3VyaXR5L3NlbGludXgvaG9va3MuYw0K
-PiA+ICsrKyBiL3NlY3VyaXR5L3NlbGludXgvaG9va3MuYw0KPiA+IEBAIC0yMjY3LDYgKzIyNjcs
-OCBAQCBzdGF0aWMgaW50IHNlbGludXhfcHRyYWNlX2FjY2Vzc19jaGVjayhzdHJ1Y3QNCj4gdGFz
-a19zdHJ1Y3QgKmNoaWxkLA0KPiA+ICAgCXUzMiBzaWQgPSBjdXJyZW50X3NpZCgpOw0KPiA+ICAg
-CXUzMiBjc2lkID0gdGFza19zaWQoY2hpbGQpOw0KPiA+DQo+ID4gKwlpZiAobW9kZSAmIFBUUkFD
-RV9NT0RFX1NDSEVEKQ0KPiA+ICsJCXJldHVybiBzaWQgPT0gY3NpZCA/IDAgOiAtRUFDQ0VTOw0K
-PiBJSVVDLCB0aGlzIGxvZ2ljIGlzIGVzc2VudGlhbGx5IHRoZSBzYW1lIGFzIHRoZSB1aWQtYmFz
-ZWQgY2hlY2ssDQo+IGluY2x1ZGluZyB0aGUgZmFjdCB0aGF0IGV2ZW4gYSAicHJpdmlsZWdlZCIg
-cHJvY2VzcyBpcyBub3QgZ2l2ZW4gYW55DQo+IHNwZWNpYWwgaGFuZGxpbmcgc2luY2UgdGhleSBh
-bHdheXMgcmV0dXJuIGZhbHNlIGZyb20gcHRyYWNlX2hhc19jYXAoKQ0KPiBmb3IgUFRSQUNFX01P
-REVfU0NIRUQuIElmIHRoZXkgYXJlIG9rIHdpdGggYXBwbHlpbmcgSUJQQiB3aGVuZXZlciB1aWRz
-DQo+IGRpZmZlciwgdGhlbiBkb2luZyBzbyB3aGVuZXZlciBzaWRzL2NvbnRleHRzIGRpZmZlciBk
-b2VzIG5vdCBzZWVtIGxpa2UNCj4gYW4gb25lcm91cyB0aGluZy4NCj4gDQo+IA0KPiA+ICAgCWlm
-IChtb2RlICYgUFRSQUNFX01PREVfUkVBRCkNCj4gPiAgIAkJcmV0dXJuIGF2Y19oYXNfcGVybSgm
-c2VsaW51eF9zdGF0ZSwNCj4gPiAgIAkJCQkgICAgc2lkLCBjc2lkLCBTRUNDTEFTU19GSUxFLCBG
-SUxFX19SRUFELA0KPiBOVUxMKTsNCj4gPg0KDQo=
+
+
+> On Sep 27, 2018, at 8:19 AM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>=20
+> Hey again Thomas,
+>=20
+>> On Thu, Sep 27, 2018 at 3:26 PM Jason A. Donenfeld <Jason@zx2c4.com> wrot=
+e:
+>>=20
+>> Hi Thomas,
+>>=20
+>> I'm trying to optimize this for crypto performance while still taking
+>> into account preemption concerns. I'm having a bit of trouble figuring
+>> out a way to determine numerically what the upper bounds for this
+>> stuff looks like. I'm sure I could pick a pretty sane number that's
+>> arguably okay -- and way under the limit -- but I still am interested
+>> in determining what that limit actually is. I was hoping there'd be a
+>> debugging option called, "warn if preemption is disabled for too
+>> long", or something, but I couldn't find anything like that. I'm also
+>> not quite sure what the latency limits are, to just compute this with
+>> a formula. Essentially what I'm trying to determine is:
+>>=20
+>> preempt_disable();
+>> asm volatile(".fill N, 1, 0x90;");
+>> preempt_enable();
+>>=20
+>> What is the maximum value of N for which the above is okay? What
+>> technique would you generally use in measuring this?
+>>=20
+>> Thanks,
+>> Jason
+>=20
+> =46rom talking to Peter (now CC'd) on IRC, it sounds like what you're
+> mostly interested in is clocktime latency on reasonable hardware, with
+> a goal of around ~20=C2=B5s as a maximum upper bound? I don't expect to ge=
+t
+> anywhere near this value at all, but if you can confirm that's a
+> decent ballpark, it would make for some interesting calculations.
+>=20
+>=20
+
+I would add another consideration: if you can get better latency with neglig=
+ible overhead (0.1%? 0.05%), then that might make sense too. For example, it=
+ seems plausible that checking need_resched() every few blocks adds basicall=
+y no overhead, and the SIMD helpers could do this themselves or perhaps only=
+ ever do a block at a time.
+
+need_resched() costs a cacheline access, but it=E2=80=99s usually a hot cach=
+eline, and the actual check is just whether a certain bit in memory is set.=
