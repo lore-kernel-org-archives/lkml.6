@@ -2,147 +2,135 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00062C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F14C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923DA20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 799F920838
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=8chan.co header.i=@8chan.co header.b="WwbT7suy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923DA20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=8chan.co
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZw3VcjU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799F920838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbeI0Nms (ORCPT
+        id S1727118AbeI0Nnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:42:48 -0400
-Received: from cock.li ([185.100.85.212]:44402 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726719AbeI0Nmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:42:47 -0400
+        Thu, 27 Sep 2018 09:43:45 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34804 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbeI0Nnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:43:45 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 80-v6so999401qkj.1;
+        Thu, 27 Sep 2018 00:26:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QIjr7lA69Q6T8Q3M0NSjP0c34DQtTrjB+YLR9/BpnLo=;
+        b=nZw3VcjUVRX49lo3HpsIAjUG2uOgAxI3V2SvTt1nO7ah1p9eFkVhG9UzFqEP4PsnQm
+         0QJ5vtjehvcvKwXf47mhwiJlYHccKzV0x5Gz4QP+upPC+a07X77xr8woHB9h1mS42RUV
+         xOWDlSa/M93TnD8pkGFtjsX06OHrBZCZfJLzgCA3t2/jYD9IQqiXhe9ceOD3/SB+Xpft
+         E1KfN34ZWzpmfdg04FE93KrEsjl37T3y8BDgkkfg0ySfIiitIc+CnUwNS2JnrKWojf4Q
+         8hgbjd10fPe5rD0j4dAgrIddrUQYvsk1//cESHYiCoFLNI6Qkxyh1EHmWDRLnlvflMKs
+         6w3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QIjr7lA69Q6T8Q3M0NSjP0c34DQtTrjB+YLR9/BpnLo=;
+        b=I132AihTUAB7WsiEv0RWWibCSkTtBKrHk7zHxNuWHzuAslGxSLWuAzO1YDT/F5lVhI
+         2Zw/tkYh/h13x5RSZzjHscBWh7bQ2FP6VQUviXPEGj1cGqlqLW+Blrh9Ch2Py2eXaBoe
+         8mrjpQPEKlqKTSFA1qjB8LxNz9DZ6Zwo18MUCxnMA8ky4BSvBxAmRoidp8LYbnOUpmmV
+         NR5F5sUXPYz+rqK585DRlYJDjZzV+VdQ70eX19fInRWqFRK6Oq810vagD++OJD2lIbCD
+         IZf+aZJS8znGBUtp171te6Bv5izmr18fVROPaPY2s2CDJwzz1gtRfRHRkiueczukUaTK
+         /P9Q==
+X-Gm-Message-State: ABuFfogkBrXD5WPDJ+uB3uSIDVKoXN+lauz9063+ToDmksXozzBasjSi
+        MzEzeNZTYHA3U2bPsqYqkrUyDfwICuLzYIemTBc=
+X-Google-Smtp-Source: ACcGV63Uxlli77PgssZYqLpsTAEjexFrCRGLSgNaX84MNEvVKGWqGCcsXSum3CYepwAX3z1jY9+xdN/9LwL0YlYDx1c=
+X-Received: by 2002:a37:4712:: with SMTP id u18-v6mr7016515qka.301.1538033213589;
+ Thu, 27 Sep 2018 00:26:53 -0700 (PDT)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8chan.co; s=mail;
-        t=1538033153; bh=1pm4y+bwewZkwnTMD11H/MPXWMI+t7VoASrMbW2MTLA=;
-        h=Date:From:To:Subject:From;
-        b=WwbT7suyKC/4zk5ztmle0UcOIAYHixkmoKl34PtNiLKPx6Q16nJjNv/4dgkh2iFBM
-         cbqI4LcQ40AUef+yApYVnvxUEs57PqgbaDdEMgqOoT2KqA1aMHzYSh0boX0F6ariKp
-         XRipTRV2Q99sZQc9CmGbBoD5hD1YTQcO5ZbrjmNZmtBhqYmsoNsEtDzIBEskDZz42d
-         DG8UzlHH1K4IJ9KmRZ7mIIWTwgnbIyJtXZbD0baZRXaz/npo+wF2QO3TCMznCTuCDA
-         0gy+KsYsdBc1JQNvKhCW8Q5pW43bvlUHQNVb7pzbHoOQSpn7/yTD2EyMFJdA57gMKn
-         39hqUd9EIPhMg==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 27 Sep 2018 07:25:53 +0000
-From:   vwdfrwd@8chan.co
-To:     linux-kernel@vger.kernel.org
-Subject: The software freedom conservancy has tendered its response
-Message-ID: <f19ab95cd87580eabc2e5072b487bc73@8chan.co>
-X-Sender: vwdfrwd@8chan.co
-User-Agent: Roundcube Webmail/1.3.6
+References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
+ <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
+ <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
+In-Reply-To: <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 27 Sep 2018 10:26:42 +0300
+Message-ID: <CAHp75VcQ0SviZ6vsn_5inn5oZxxj-5ZQq5bC+bXPxuF8KOa_Rg@mail.gmail.com>
+Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
+ to _CRS?
+To:     Rajat Jain <rajatja@google.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dtor@google.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The software freedom conservancy has tendered its response:
-http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
-http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
+On Wed, Sep 26, 2018 at 10:26 PM Rajat Jain <rajatja@google.com> wrote:
+> On Wed, Sep 26, 2018 at 1:42 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Wed, Sep 26, 2018 at 10:49 AM Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
 
+> > > Or you can use con_id=<actual string> everywhere and supply
+> > > acpi_dev_add_driver_gpios() where needed to cover cases where BIOS does
+> > > not provide _DSD.
+>
+> This sounds like a good idea and I'd like to do this. I have some
+> questions though:
+>
+> 1) If the BIOS does provide a _DSD entry for "cd-gpio", and
+> additionally driver also uses devm_acpi_dev_add_driver_gpios() to add
+> one more entry for the same string "cd-gpio", which one will (should?)
+> actually be returned by the gpiolib? The one in BIOS or the one that
+> was added by the driver?
 
-""
-"The GPLv2 have several provisions that, when taken together, can be 
-construed as an irrevocable license from each contributor. "
-""
+Of course the one that BIOS provides. This hardcoded mapping tables is
+a fallback for *old* BIOSes which do not have _DSD.
 
-It cites:
+> 2) Related, I'm trying to understand how can a driver use
+> devm_acpi_dev_add_driver_gpios(), for *only* the case where the BIOS
+> does not have a _DSD (Or should it really care)? Does the driver need
+> to check for _DSD using some other ACPI call?
 
+The magic happens internally in ACPI core.
+Whenever one calls gpiod_get() with a name on ACPI-enabled platform,
+_DSD would be checked first.
 
-           " That license granted to downstream is irrevocable, again 
-provided that the downstream user complies with the license terms: 
-"[P]arties who have received copies, or rights, from you under this 
-License will not have their licenses terminated so long as such parties 
-remain in full compliance" (GPLv2§4). "
+> > See also Documentation/acpi/gpio-properties.txt for
+> > > more information.
 
-However this is disingenuous
+> > > In case of SDHCI I think the correct way is to stick using _CRS lookup
+> > > only because there typically is just one GpioInt() and I have not seen a
+> > > single BIOS yet where they implement _DSD for this besides yours. If
+> > > there is not way to change the BIOS implementation then I guess we just
+> > > need to amend the driver to call acpi_dev_add_driver_gpios().
+>
+> Since we shouldn't discourage a BIOS that is trying to do the right
+> thing by exposing the details in _DST, I think it would be preferable
+> if we can solve this in the kernel.
 
-The full text of section 4 is as follows:
+Patches are welcome, I think.
 
-""
-   4. You may not copy, modify, sublicense, or distribute the Program
-except as expressly provided under this License.  Any attempt
-otherwise to copy, modify, sublicense or distribute the Program is
-void, and will automatically terminate your rights under this License.
-However, parties who have received copies, or rights, from you under
-this License will not have their licenses terminated so long as such
-parties remain in full compliance.
-""
+Btw, is there any existing hardware on the market with such BIOS?
 
-
-
-The "You" in section 4 is speaking of the licensee regarding 
-sub-licensees, it is not speaking to the licensor/copyright-holder.
-
-IE: if the licensee loses his license, through operation of the 
-automatic-revocation provisions, the sub-licensees do not also lose 
-their licenses.
-
-IE: The language is disclaiming a chain topography for license 
-distribution, and instead substituting a hub-and-spoke topography (all 
-licenses originating from the copyright holder, not the 
-previous-in-line)
-
-GPLv3 added a no-rescission clause for a reason: the reason being to 
-attempt to create an estoppel defense for the licensees against the 
-licensor. You will notice that Eben Moglen never speaks on these issues. 
-(He preumably is aware of the weaknesses vis a vis the US copyright 
-regime.)
-
-Section 6 further clarifies the hub-and-spoke model:
-""
-    6. Each time you redistribute the Program (or any work based on the
-Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
-these terms and conditions.  You may not impose any further
-restrictions on the recipients' exercise of the rights granted herein.
-You are not responsible for enforcing compliance by third parties to
-this License.
-""
-
-The memorandum posted then goes on to a discussion of estoppel, 
-detrimental reliance, etc; noting that users may have relied on the 
-software and their licenses may be estopped from being revoked from said 
-users since doing so might cause them unanticipated loss. This is 
-speaking of already published, existent, versions of the program used by 
-end users.
-
-The memorandum seems to ignore what happens to "upstream" once said 
-project  receives a revocation notice. Thought it may be possible that 
-users of a published piece of software may have defenses to license 
-revocation, the same is not true regarding the rescinded property 
-vis-a-vis future prospective versions of the software nor of future 
-prospective licensees of said software.
-
-That is: once the grant to use the code in question is rescinded, future 
-versions of the software may not use that code. Current users of the 
-software may be-able to raise an estoppel / detrimental reliance defense 
-regarding the current published software, however the programmers 
-working on the next version of said software cannot continue to use the 
-property in future versions of the software (such would be a copyright 
-violation once the gratuitous license is rescinded by the grantor).
-
-Additionally, prospective-licensees, once the grant was rescinded and 
-such was published, would have no same-such estoppel defense (not being 
-user-licensees at the time of revocation).
-
-(Ignoring this eventuality in the published memorandum, is, of-course, 
-by design.)
-(Now, to note: the free-software movement is focused on the freedom of 
-the user, not the progenitors of the software, so one could certainly 
-say that ignoring some developer-focused analysis is consistent with 
-their prerogative...)
-
+-- 
+With Best Regards,
+Andy Shevchenko
