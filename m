@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6853C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3827EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B3720836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B3720836
+	by mail.kernel.org (Postfix) with ESMTP id E813E21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E813E21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbeI0P2F (ORCPT
+        id S1728483AbeI0P2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:28:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55180 "EHLO
+        Thu, 27 Sep 2018 11:28:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbeI0P2E (ORCPT
+        with ESMTP id S1727417AbeI0P2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:28:04 -0400
+        Thu, 27 Sep 2018 11:28:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9DF191117;
-        Thu, 27 Sep 2018 09:10:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5225B1117;
+        Thu, 27 Sep 2018 09:10:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Behmer <jbehmer@google.com>,
-        Vaibhav Nagarnaik <vnagarnaik@google.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.18 48/88] ring-buffer: Allow for rescheduling when removing pages
-Date:   Thu, 27 Sep 2018 11:03:29 +0200
-Message-Id: <20180927090306.659733490@linuxfoundation.org>
+        stable@vger.kernel.org, Zdenek Kaspar <zkaspar82@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.18 49/88] crypto: x86/aegis,morus - Do not require OSXSAVE for SSE2
+Date:   Thu, 27 Sep 2018 11:03:30 +0200
+Message-Id: <20180927090306.774764066@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,44 +52,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vaibhav Nagarnaik <vnagarnaik@google.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-commit 83f365554e47997ec68dc4eca3f5dce525cd15c3 upstream.
+commit 24568b47d48ec8c906fd0f589489a08b17e1edca upstream.
 
-When reducing ring buffer size, pages are removed by scheduling a work
-item on each CPU for the corresponding CPU ring buffer. After the pages
-are removed from ring buffer linked list, the pages are free()d in a
-tight loop. The loop does not give up CPU until all pages are removed.
-In a worst case behavior, when lot of pages are to be freed, it can
-cause system stall.
+It turns out OSXSAVE needs to be checked only for AVX, not for SSE.
+Without this patch the affected modules refuse to load on CPUs with SSE2
+but without AVX support.
 
-After the pages are removed from the list, the free() can happen while
-the work is rescheduled. Call cond_resched() in the loop to prevent the
-system hangup.
-
-Link: http://lkml.kernel.org/r/20180907223129.71994-1-vnagarnaik@google.com
-
-Cc: stable@vger.kernel.org
-Fixes: 83f40318dab00 ("ring-buffer: Make removal of ring buffer pages atomic")
-Reported-by: Jason Behmer <jbehmer@google.com>
-Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 877ccce7cbe8 ("crypto: x86/aegis,morus - Fix and simplify CPUID checks")
+Cc: <stable@vger.kernel.org> # 4.18
+Reported-by: Zdenek Kaspar <zkaspar82@gmail.com>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/ring_buffer.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/crypto/aegis128-aesni-glue.c  |    1 -
+ arch/x86/crypto/aegis128l-aesni-glue.c |    1 -
+ arch/x86/crypto/aegis256-aesni-glue.c  |    1 -
+ arch/x86/crypto/morus1280-sse2-glue.c  |    1 -
+ arch/x86/crypto/morus640-sse2-glue.c   |    1 -
+ 5 files changed, 5 deletions(-)
 
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1545,6 +1545,8 @@ rb_remove_pages(struct ring_buffer_per_c
- 	tmp_iter_page = first_page;
+--- a/arch/x86/crypto/aegis128-aesni-glue.c
++++ b/arch/x86/crypto/aegis128-aesni-glue.c
+@@ -379,7 +379,6 @@ static int __init crypto_aegis128_aesni_
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+ 	    !boot_cpu_has(X86_FEATURE_AES) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
  
- 	do {
-+		cond_resched();
-+
- 		to_remove_page = tmp_iter_page;
- 		rb_inc_page(cpu_buffer, &tmp_iter_page);
+--- a/arch/x86/crypto/aegis128l-aesni-glue.c
++++ b/arch/x86/crypto/aegis128l-aesni-glue.c
+@@ -379,7 +379,6 @@ static int __init crypto_aegis128l_aesni
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+ 	    !boot_cpu_has(X86_FEATURE_AES) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
+ 
+--- a/arch/x86/crypto/aegis256-aesni-glue.c
++++ b/arch/x86/crypto/aegis256-aesni-glue.c
+@@ -379,7 +379,6 @@ static int __init crypto_aegis256_aesni_
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+ 	    !boot_cpu_has(X86_FEATURE_AES) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
+ 
+--- a/arch/x86/crypto/morus1280-sse2-glue.c
++++ b/arch/x86/crypto/morus1280-sse2-glue.c
+@@ -40,7 +40,6 @@ MORUS1280_DECLARE_ALGS(sse2, "morus1280-
+ static int __init crypto_morus1280_sse2_module_init(void)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
+ 
+--- a/arch/x86/crypto/morus640-sse2-glue.c
++++ b/arch/x86/crypto/morus640-sse2-glue.c
+@@ -40,7 +40,6 @@ MORUS640_DECLARE_ALGS(sse2, "morus640-ss
+ static int __init crypto_morus640_sse2_module_init(void)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
  
 
 
