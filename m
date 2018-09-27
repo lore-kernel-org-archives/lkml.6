@@ -2,108 +2,143 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E202FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56459C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE9521571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE9521571
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 0E28021571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:14:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E28021571
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbeI1DeI (ORCPT
+        id S1728608AbeI1Dei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:34:08 -0400
-Received: from www62.your-server.de ([213.133.104.62]:37313 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727331AbeI1DeI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:34:08 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g5dbc-0004nQ-QB; Thu, 27 Sep 2018 23:13:52 +0200
-Received: from [178.197.248.15] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g5dbc-000M4u-Kg; Thu, 27 Sep 2018 23:13:52 +0200
-Subject: Re: [PATCH v3 bpf-next 00/10] bpf: per-cpu cgroup local storage
-To:     Roman Gushchin <guro@fb.com>, netdev@vger.kernel.org
-Cc:     Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-References: <20180926113326.29069-1-guro@fb.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <34e73535-8e95-c7b8-0f1a-acd4a7053c5f@iogearbox.net>
-Date:   Thu, 27 Sep 2018 23:13:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 27 Sep 2018 23:34:38 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:41086 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727331AbeI1Deh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 23:34:37 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id eRuZGft152Vs; Thu, 27 Sep 2018 23:14:23 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC7FB00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:fb00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 113E21EC0104;
+        Thu, 27 Sep 2018 23:14:23 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 23:14:25 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Baoquan He <bhe@redhat.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] ACPI / NUMA: Add warning message if the padding
+ size for KASLR is not enough
+Message-ID: <20180927211425.GC19687@zn.tnic>
+References: <20180927203146.12201-1-msys.mizuma@gmail.com>
+ <20180927203146.12201-3-msys.mizuma@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180926113326.29069-1-guro@fb.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24987/Thu Sep 27 18:52:11 2018)
+Content-Disposition: inline
+In-Reply-To: <20180927203146.12201-3-msys.mizuma@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/2018 01:33 PM, Roman Gushchin wrote:
-> This patchset implements per-cpu cgroup local storage and provides
-> an example how per-cpu and shared cgroup local storage can be used
-> for efficient accounting of network traffic.
+On Thu, Sep 27, 2018 at 04:31:45PM -0400, Masayoshi Mizuma wrote:
+> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 > 
-> v3->v2:
->   1) incorporated Song's feedback
->   2) rebased on top of current bpf-next
+> Add warning message if the padding size for KASLR,
+> rand_mem_physical_padding, is not enough. The message also
+> says the suitable padding size.
 > 
-> v2->v1:
->   1) added a selftest implementing network counters
->   2) added a missing free() in cgroup local storage selftest
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> ---
+>  arch/x86/include/asm/setup.h |  2 ++
+>  drivers/acpi/numa.c          | 14 ++++++++++++++
+>  2 files changed, 16 insertions(+)
 > 
-> Roman Gushchin (10):
->   bpf: extend cgroup bpf core to allow multiple cgroup storage types
->   bpf: rework cgroup storage pointer passing
->   bpf: introduce per-cpu cgroup local storage
->   bpf: don't allow create maps of per-cpu cgroup local storages
->   bpf: sync include/uapi/linux/bpf.h to tools/include/uapi/linux/bpf.h
->   bpftool: add support for PERCPU_CGROUP_STORAGE maps
->   selftests/bpf: add verifier per-cpu cgroup storage tests
->   selftests/bpf: extend the storage test to test per-cpu cgroup storage
->   samples/bpf: extend test_cgrp2_attach2 test to use per-cpu cgroup
->     storage
->   selftests/bpf: cgroup local storage-based network counters
-> 
->  include/linux/bpf-cgroup.h                    |  55 ++++--
->  include/linux/bpf.h                           |  12 +-
->  include/linux/bpf_types.h                     |   1 +
->  include/uapi/linux/bpf.h                      |   1 +
->  kernel/bpf/cgroup.c                           |  74 +++++---
->  kernel/bpf/helpers.c                          |  25 ++-
->  kernel/bpf/local_storage.c                    | 167 +++++++++++++++---
->  kernel/bpf/map_in_map.c                       |   3 +-
->  kernel/bpf/syscall.c                          |  20 ++-
->  kernel/bpf/verifier.c                         |  23 ++-
->  net/bpf/test_run.c                            |  20 ++-
->  samples/bpf/test_cgrp2_attach2.c              |  19 +-
->  tools/bpf/bpftool/map.c                       |   4 +-
->  tools/include/uapi/linux/bpf.h                |   1 +
->  tools/testing/selftests/bpf/Makefile          |   6 +-
->  tools/testing/selftests/bpf/netcnt_common.h   |  23 +++
->  tools/testing/selftests/bpf/netcnt_prog.c     |  71 ++++++++
->  .../selftests/bpf/test_cgroup_storage.c       |  60 ++++++-
->  tools/testing/selftests/bpf/test_netcnt.c     | 153 ++++++++++++++++
->  tools/testing/selftests/bpf/test_verifier.c   | 139 ++++++++++++++-
->  20 files changed, 778 insertions(+), 99 deletions(-)
->  create mode 100644 tools/testing/selftests/bpf/netcnt_common.h
->  create mode 100644 tools/testing/selftests/bpf/netcnt_prog.c
->  create mode 100644 tools/testing/selftests/bpf/test_netcnt.c
-> 
+> diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+> index ae13bc9..65a5bf8 100644
+> --- a/arch/x86/include/asm/setup.h
+> +++ b/arch/x86/include/asm/setup.h
+> @@ -80,6 +80,8 @@ static inline unsigned long kaslr_offset(void)
+>  	return (unsigned long)&_text - __START_KERNEL;
+>  }
+>  
+> +extern int rand_mem_physical_padding;
+> +
+>  /*
+>   * Do NOT EVER look at the BIOS memory size location.
+>   * It does not work on many machines.
+> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> index 8516760..9c3cc3c 100644
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -32,6 +32,7 @@
+>  #include <linux/numa.h>
+>  #include <linux/nodemask.h>
+>  #include <linux/topology.h>
+> +#include <asm/setup.h>
+>  
+>  static nodemask_t nodes_found_map = NODE_MASK_NONE;
+>  
+> @@ -435,6 +436,8 @@ acpi_table_parse_srat(enum acpi_srat_type id,
+>  int __init acpi_numa_init(void)
+>  {
+>  	int cnt = 0;
+> +	u32 max_phys_addr_tb;
+> +	u64 max_phys_addr;
+>  
+>  	if (acpi_disabled)
+>  		return -EINVAL;
+> @@ -463,6 +466,17 @@ int __init acpi_numa_init(void)
+>  
+>  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+>  					    acpi_parse_memory_affinity, 0);
+> +
+> +		if (parsed_numa_memblks && kaslr_enabled()) {
+> +			max_phys_addr = PFN_PHYS(max_possible_pfn);
+> +			max_phys_addr_tb = (roundup(max_phys_addr, 1ULL << 40)) >> 40;
+> +
+> +			if (max_phys_addr_tb > rand_mem_physical_padding)
+> +				pr_warn("Set 'rand_mem_physical_padding=%d' "
+> +					"as the kernel parameter. "
+> +					"Otherwise, memory hotadd may be failed.\n",
+> +					max_phys_addr_tb);
 
-Applied to bpf-next, thanks Roman!
+Please integrate scripts/checkpatch.pl into your patch creation
+workflow. Some of the warnings/errors *actually* make sense:
+
+WARNING: quoted string split across lines
+#75: FILE: drivers/acpi/numa.c:476:
++                               pr_warn("Set 'rand_mem_physical_padding=%d' "
++                                       "as the kernel parameter. "
+
+WARNING: quoted string split across lines
+#76: FILE: drivers/acpi/numa.c:477:
++                                       "as the kernel parameter. "
++                                       "Otherwise, memory hotadd may be failed.\n",
+
+total: 0 errors, 2 warnings, 40 lines checked
+
+Also, that sentence needs polishing:
+
+				pr_warn("Set 'rand_mem_physical_padding=%d' to avoid memory hotadd failure.\n",
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
