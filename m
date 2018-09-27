@@ -2,1504 +2,169 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C5EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E32A7C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 242F12159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AEF52170E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="miJAfMlE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242F12159D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iMrIYMIf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AEF52170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeI1Dvs (ORCPT
+        id S1728300AbeI1D4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:51:48 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45299 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeI1Dvr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:51:47 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d9-v6so1748271ybr.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cmao5ka5LGNtl7QmwlrNP+YdzkLqn8e5WNrRbv+AoNc=;
-        b=miJAfMlE5YED6NUo7rardP5Ong4pmr65vVLTDg9LSpwhhm1zm0ZpH9/FQWi8ox3Y6t
-         KN56Nak5PDkOoiw5cs4UT01p/nqzQz2alSp75Lfl7N/6WiHx59WvkFxvE3vYd/rjl4UM
-         cnaWkaKUHtRaBI+cLrK4d/oZELUchOITdnbmA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cmao5ka5LGNtl7QmwlrNP+YdzkLqn8e5WNrRbv+AoNc=;
-        b=NPRbqcfF71vORMxHCuOtsZaxxeDVx5tvNDyBFJ4+HcZLJY5rkTH9EVN5uCzyFKrh6Q
-         B9Z6euCKRJX9w+JqOJ0jCHnVpJcuYwK101asFuut/jhEAs7mWKzTEWKxktsJOqE++Z+l
-         4iHaWwIKl3Km2LXHHo7v9w2J5LIqZp15NC6kkCTLYKmIEjg/fTxoi2DIeBPI/xtXggDD
-         19ZNT3QBZT+eJER+cimZSF4hJNH7DIwyJNC3A+7Lj9HHE2K6WXXbWDcssdKPYRg8MyRz
-         Rde3Kf/znf8BeRk0wyb9cLwf3kBDI2qSTM5owzAAMX6T0XmCK83XLL6dZ7dnB14vBc25
-         9c5A==
-X-Gm-Message-State: ABuFfoh+KqSMhRDKJeBTV5ngEFaP3rqMTT2Cd/EqXkq5cSY8A6RppRz5
-        I6JGIboGVWMEcCTZeFySVVNWST8V15I=
-X-Google-Smtp-Source: ACcGV62Ju3kNGTvySa3BsDsilx79Wdk1ocKNYGFqbq8DN7QaZPS0p0srDfOTqpGUyhm8Vm94aBMm7g==
-X-Received: by 2002:a25:598a:: with SMTP id n132-v6mr6854038ybb.342.1538083887770;
-        Thu, 27 Sep 2018 14:31:27 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id z20-v6sm3784823ywz.75.2018.09.27.14.31.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 14:31:26 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id x5-v6so1755407ybl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:31:25 -0700 (PDT)
-X-Received: by 2002:a25:19c3:: with SMTP id 186-v6mr6979061ybz.410.1538083885003;
- Thu, 27 Sep 2018 14:31:25 -0700 (PDT)
+        Thu, 27 Sep 2018 23:56:01 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:52921 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727295AbeI1D4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 23:56:01 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0da977a0;
+        Thu, 27 Sep 2018 21:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
+        :cc:subject:message-id:references:mime-version:content-type
+        :in-reply-to; s=mail; bh=BejqcjSPoa3NwQuoc3ysgXYnCPk=; b=iMrIYMI
+        fpD984xCMvLS6vh4ihdntKNi9a2tSexQ0IQ7AqOYGNn42H49b1FhQAgVmvCcM6on
+        QFeDzIre0G8D98+A4Ou0Gp0qC+X8MJzeXL3JUVXHrdHw5JUMkDnBU10zDQc45bcO
+        LjeYdLi7F4mCsKKNIq+iz1xswuqelXkgYH2/A3TdVXFLFIR2IRM4fkAxm+DZ19H1
+        6YLHXrL5P32KEW2ZV6g4KJ5dkrZ7/nLsGobNvVY/4eINL3GV92Ra05siZI6Eap0t
+        dYlhM/QzhL/EYYDE1aqNQdrH5FRPrBy48YU+jsqX1cYJi8xY539Myt69utBUPx3N
+        9y5UJMVlKxQ+sCw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3b2b6331 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Thu, 27 Sep 2018 21:16:58 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 23:35:39 +0200
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
+Message-ID: <20180927213537.GA27576@zx2c4.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com>
+ <20180927182944.GA22921@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 14:31:24
- -0700 (PDT)
-In-Reply-To: <20180927151119.9989-2-tycho@tycho.ws>
-References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-2-tycho@tycho.ws>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 27 Sep 2018 14:31:24 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJr3JWLYGrJ+knu3sj4wwJ_irVvs+JRrY5MuYT3voLegg@mail.gmail.com>
-Message-ID: <CAGXu5jJr3JWLYGrJ+knu3sj4wwJ_irVvs+JRrY5MuYT3voLegg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/6] seccomp: add a return code to trap to userspace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180927182944.GA22921@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> This patch introduces a means for syscalls matched in seccomp to notify
-> some other task that a particular filter has been triggered.
+Hi Eric,
+
+On Thu, Sep 27, 2018 at 8:29 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> Why is Herbert Xu's existing crypto tree being circumvented, especially for
+> future patches (the initial merge isn't quite as important as that's a one-time
+> event)?  I like being able to check out cryptodev to test upcoming crypto
+> patches.  And currently, changes to APIs, algorithms, tests, and implementations
+> all go through cryptodev, which is convenient for crypto developers.
 >
-> The motivation for this is primarily for use with containers. For example,
-> if a container does an init_module(), we obviously don't want to load this
-> untrusted code, which may be compiled for the wrong version of the kernel
-> anyway. Instead, we could parse the module image, figure out which module
-> the container is trying to load and load it on the host.
+> Apparently, you're proposing that someone adding a new algorithm will now have
+> to submit the API portion to one maintainer (Herbert Xu) and the implementation
+> portion to another maintainer (you), and they'll go through separate git trees.
+> That's inconvenient for developers, and it seems that in practice you and
+> Herbert will be stepping on each other's toes a lot.
 >
-> As another example, containers cannot mknod(), since this checks
-> capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
-> /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
-> coding some whitelist in the kernel. Another example is mount(), which has
-> many security restrictions for good reason, but configuration or runtime
-> knowledge could potentially be used to relax these restrictions.
+> Can you please reach some kind of sane agreement with Herbert so that the
+> development process isn't fractured into two?  Perhaps you could review patches,
+> but Herbert could still apply them?
+
+I think you're overthinking it a bit. Zinc will have a few software
+implementations of primitives that are useful in cases where it's nice to call
+the primitive directly. Think: various usages of sha2, siphash, the wireguard
+suite (what this patchset includes), other things in lib/, etc. In so much as
+this winds up duplicating things within the crypto API, I'll work with Herbert
+to build one on top of the other -- as I've done in the two commits in this
+series. But beyond that, think of the two initiatives as orthogonal. I'm
+working on curating a few primitives that are maximally useful throughout
+the kernel for various uses, and doing so in a way that I think brings
+about a certain quality. Meanwhile the crypto API is amassing a huge
+collection of primitives for some things, and that will continue to exist,
+and Herbert will continue to maintain that. I expect for the crossover
+to be fairly isolated and manageable, without too much foreseeable tree-
+conflicts and such. Therefore, Samuel Neves and I plan to maintain the
+codebase we've spent quite some time writing, and maintain our own tree for
+it, which we'll be submitting through Greg. In other words, this is not
+a matter of "circumvention" or "stepping on toes", but rather separate
+efforts. I'm quite certain to the extent they overlap we'll be able to work
+out fairly easily.
+
+Either way, I'll take your suggestion and reach out to Herbert, since at
+least a discussion between the two of us sounds like it could be productive.
+
+> I'm also wondering about the criteria for making additions and changes to
+> "Zinc".  You mentioned before that one of the "advantages" of Zinc is that it
+> doesn't include "cipher modes from 90s cryptographers" -- what does that mean
+> exactly?  You've also indicated before that you don't want people modifying the
+> Poly1305 implementations as they are too error-prone.  Useful contributions
+> could be blocked or discouraged in the future. Can you please elaborate on
+> your criteria for contributions to Zinc?
 >
-> This patch adds functionality that is already possible via at least two
-> other means that I know about, both of which involve ptrace(): first, one
-> could ptrace attach, and then iterate through syscalls via PTRACE_SYSCALL.
-> Unfortunately this is slow, so a faster version would be to install a
-> filter that does SECCOMP_RET_TRACE, which triggers a PTRACE_EVENT_SECCOMP.
-> Since ptrace allows only one tracer, if the container runtime is that
-> tracer, users inside the container (or outside) trying to debug it will not
-> be able to use ptrace, which is annoying. It also means that older
-> distributions based on Upstart cannot boot inside containers using ptrace,
-> since upstart itself uses ptrace to start services.
+> Also, will you allow algorithms that aren't up to modern security standards but
+> are needed for compatibility reasons, e.g. MD5, SHA-1, and DES?  There are
+> existing standards, APIs, and data formats that use these "legacy" algorithms;
+> so implementations of them are often still needed, whether we like it or not.
 >
-> The actual implementation of this is fairly small, although getting the
-> synchronization right was/is slightly complex.
->
-> Finally, it's worth noting that the classic seccomp TOCTOU of reading
-> memory data from the task still applies here, but can be avoided with
-> careful design of the userspace handler: if the userspace handler reads all
-> of the task memory that is necessary before applying its security policy,
-> the tracee's subsequent memory edits will not be read by the tracer.
->
-> v2: * make id a u64; the idea here being that it will never overflow,
->       because 64 is huge (one syscall every nanosecond => wrap every 584
->       years) (Andy)
->     * prevent nesting of user notifications: if someone is already attached
->       the tree in one place, nobody else can attach to the tree (Andy)
->     * notify the listener of signals the tracee receives as well (Andy)
->     * implement poll
-> v3: * lockdep fix (Oleg)
->     * drop unnecessary WARN()s (Christian)
->     * rearrange error returns to be more rpetty (Christian)
->     * fix build in !CONFIG_SECCOMP_USER_NOTIFICATION case
-> v4: * fix implementation of poll to use poll_wait() (Jann)
->     * change listener's fd flags to be 0 (Jann)
->     * hoist filter initialization out of ifdefs to its own function
->       init_user_notification()
->     * add some more testing around poll() and closing the listener while a
->       syscall is in action
->     * s/GET_LISTENER/NEW_LISTENER, since you can't _get_ a listener, but it
->       creates a new one (Matthew)
->     * correctly handle pid namespaces, add some testcases (Matthew)
->     * use EINPROGRESS instead of EINVAL when a notification response is
->       written twice (Matthew)
->     * fix comment typo from older version (SEND vs READ) (Matthew)
->     * whitespace and logic simplification (Tobin)
->     * add some Documentation/ bits on userspace trapping
-> v5: * fix documentation typos (Jann)
->     * add signalled field to struct seccomp_notif (Jann)
->     * switch to using ioctls instead of read()/write() for struct passing
->       (Jann)
->     * add an ioctl to ensure an id is still valid
-> v6: * docs typo fixes, update docs for ioctl() change (Christian)
-> v7: * switch struct seccomp_knotif's id member to a u64 (derp :)
->     * use notify_lock in IS_ID_VALID query to avoid racing
->     * s/signalled/signaled (Tyler)
->     * fix docs to reflect that ids are not globally unique (Tyler)
->     * add a test to check -ERESTARTSYS behavior (Tyler)
->     * drop CONFIG_SECCOMP_USER_NOTIFICATION (Tyler)
->     * reorder USER_NOTIF in seccomp return codes list (Tyler)
->     * return size instead of sizeof(struct user_notif) (Tyler)
->     * ENOENT instead of EINVAL when invalid id is passed (Tyler)
->     * drop CONFIG_SECCOMP_USER_NOTIFICATION guards (Tyler)
->     * s/IS_ID_VALID/ID_VALID and switch ioctl to be "well behaved" (Tyler)
->     * add a new struct notification to minimize the additions to
->       struct seccomp_filter, also pack the necessary additions a bit more
->       cleverly (Tyler)
->     * switch to keeping track of the task itself instead of the pid (we'll
->       use this for implementing PUT_FD)
-
-Patch-sending nit: can you put the versioning below the "---" line so
-it isn't included in the final commit? (And I normally read these
-backwards, so I'd expect v7 at the top, but that's not a big deal. I
-mean... neither is the --- thing, but it makes "git am" easier for me
-since I don't have to go edit the versioning out of the log.)
-
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Andy Lutomirski <luto@amacapital.net>
-> CC: Oleg Nesterov <oleg@redhat.com>
-> CC: Eric W. Biederman <ebiederm@xmission.com>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: Christian Brauner <christian.brauner@ubuntu.com>
-> CC: Tyler Hicks <tyhicks@canonical.com>
-> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-> ---
->  Documentation/ioctl/ioctl-number.txt          |   1 +
->  .../userspace-api/seccomp_filter.rst          |  73 +++
->  include/linux/seccomp.h                       |   7 +-
->  include/uapi/linux/seccomp.h                  |  33 +-
->  kernel/seccomp.c                              | 436 +++++++++++++++++-
->  tools/testing/selftests/seccomp/seccomp_bpf.c | 413 ++++++++++++++++-
->  6 files changed, 954 insertions(+), 9 deletions(-)
->
-> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-> index 13a7c999c04a..31e9707f7e06 100644
-> --- a/Documentation/ioctl/ioctl-number.txt
-> +++ b/Documentation/ioctl/ioctl-number.txt
-> @@ -345,4 +345,5 @@ Code  Seq#(hex)     Include File            Comments
->                                         <mailto:raph@8d.com>
->  0xF6   all     LTTng                   Linux Trace Toolkit Next Generation
->                                         <mailto:mathieu.desnoyers@efficios.com>
-> +0xF7    00-1F   uapi/linux/seccomp.h
->  0xFD   all     linux/dm-ioctl.h
-
-I spent some time looking at this, and yes, it seems preferred to add
-an entry here.
-
-> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-> index e5320f6c8654..017444b5efed 100644
-> --- a/include/linux/seccomp.h
-> +++ b/include/linux/seccomp.h
-> @@ -4,9 +4,10 @@
->
->  #include <uapi/linux/seccomp.h>
->
-> -#define SECCOMP_FILTER_FLAG_MASK       (SECCOMP_FILTER_FLAG_TSYNC      | \
-> -                                        SECCOMP_FILTER_FLAG_LOG        | \
-> -                                        SECCOMP_FILTER_FLAG_SPEC_ALLOW)
-> +#define SECCOMP_FILTER_FLAG_MASK       (SECCOMP_FILTER_FLAG_TSYNC | \
-> +                                        SECCOMP_FILTER_FLAG_LOG | \
-> +                                        SECCOMP_FILTER_FLAG_SPEC_ALLOW | \
-> +                                        SECCOMP_FILTER_FLAG_NEW_LISTENER)
->
->  #ifdef CONFIG_SECCOMP
->
-> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> index 9efc0e73d50b..d4ccb32fe089 100644
-> --- a/include/uapi/linux/seccomp.h
-> +++ b/include/uapi/linux/seccomp.h
-> @@ -17,9 +17,10 @@
->  #define SECCOMP_GET_ACTION_AVAIL       2
->
->  /* Valid flags for SECCOMP_SET_MODE_FILTER */
-> -#define SECCOMP_FILTER_FLAG_TSYNC      (1UL << 0)
-> -#define SECCOMP_FILTER_FLAG_LOG                (1UL << 1)
-> -#define SECCOMP_FILTER_FLAG_SPEC_ALLOW (1UL << 2)
-> +#define SECCOMP_FILTER_FLAG_TSYNC              (1UL << 0)
-> +#define SECCOMP_FILTER_FLAG_LOG                        (1UL << 1)
-> +#define SECCOMP_FILTER_FLAG_SPEC_ALLOW         (1UL << 2)
-> +#define SECCOMP_FILTER_FLAG_NEW_LISTENER       (1UL << 3)
-
-Since these are all getting indentation updates, can you switch them
-to BIT(0), BIT(1), etc?
-
->  /*
->   * All BPF programs must return a 32-bit value.
-> @@ -35,6 +36,7 @@
->  #define SECCOMP_RET_KILL        SECCOMP_RET_KILL_THREAD
->  #define SECCOMP_RET_TRAP        0x00030000U /* disallow and force a SIGSYS */
->  #define SECCOMP_RET_ERRNO       0x00050000U /* returns an errno */
-> +#define SECCOMP_RET_USER_NOTIF   0x7fc00000U /* notifies userspace */
->  #define SECCOMP_RET_TRACE       0x7ff00000U /* pass to a tracer or disallow */
->  #define SECCOMP_RET_LOG                 0x7ffc0000U /* allow after logging */
->  #define SECCOMP_RET_ALLOW       0x7fff0000U /* allow */
-> @@ -60,4 +62,29 @@ struct seccomp_data {
->         __u64 args[6];
->  };
->
-> +struct seccomp_notif {
-> +       __u16 len;
-> +       __u64 id;
-> +       __u32 pid;
-> +       __u8 signaled;
-> +       struct seccomp_data data;
-> +};
-> +
-> +struct seccomp_notif_resp {
-> +       __u16 len;
-> +       __u64 id;
-> +       __s32 error;
-> +       __s64 val;
-> +};
-
-So, len has to come first, for versioning. However, since it's ahead
-of a u64, this leaves a struct padding hole. pahole output:
-
-struct seccomp_notif {
-        __u16                      len;                  /*     0     2 */
-
-        /* XXX 6 bytes hole, try to pack */
-
-        __u64                      id;                   /*     8     8 */
-        __u32                      pid;                  /*    16     4 */
-        __u8                       signaled;             /*    20     1 */
-
-        /* XXX 3 bytes hole, try to pack */
-
-        struct seccomp_data        data;                 /*    24    64 */
-        /* --- cacheline 1 boundary (64 bytes) was 24 bytes ago --- */
-
-        /* size: 88, cachelines: 2, members: 5 */
-        /* sum members: 79, holes: 2, sum holes: 9 */
-        /* last cacheline: 24 bytes */
-};
-struct seccomp_notif_resp {
-        __u16                      len;                  /*     0     2 */
-
-        /* XXX 6 bytes hole, try to pack */
-
-        __u64                      id;                   /*     8     8 */
-        __s32                      error;                /*    16     4 */
-
-        /* XXX 4 bytes hole, try to pack */
-
-        __s64                      val;                  /*    24     8 */
-
-        /* size: 32, cachelines: 1, members: 4 */
-        /* sum members: 22, holes: 2, sum holes: 10 */
-        /* last cacheline: 32 bytes */
-};
-
-How about making len u32, and moving pid and error above "id"? This
-leaves a hole after signaled, so changing "len" won't be sufficient
-for versioning here. Perhaps move it after data?
-
-> +
-> +#define SECCOMP_IOC_MAGIC              0xF7
-
-Was there any specific reason for picking this value? There are lots
-of fun ASCII code left like '!' or '*'. :)
-
-> +
-> +/* Flags for seccomp notification fd ioctl. */
-> +#define SECCOMP_NOTIF_RECV     _IOWR(SECCOMP_IOC_MAGIC, 0,     \
-> +                                       struct seccomp_notif)
-> +#define SECCOMP_NOTIF_SEND     _IOWR(SECCOMP_IOC_MAGIC, 1,     \
-> +                                       struct seccomp_notif_resp)
-> +#define SECCOMP_NOTIF_ID_VALID _IOR(SECCOMP_IOC_MAGIC, 2,      \
-> +                                       __u64)
-
-To match other UAPI ioctl, can these have a prefix of "SECCOMP_IOCTOL_..."?
-
-It may also be useful to match how other uapis do this, like for DRM:
-
-#define DRM_IOCTL_BASE                  'd'
-#define DRM_IO(nr)                      _IO(DRM_IOCTL_BASE,nr)
-#define DRM_IOR(nr,type)                _IOR(DRM_IOCTL_BASE,nr,type)
-#define DRM_IOW(nr,type)                _IOW(DRM_IOCTL_BASE,nr,type)
-#define DRM_IOWR(nr,type)               _IOWR(DRM_IOCTL_BASE,nr,type)
-
-#define DRM_IOCTL_VERSION               DRM_IOWR(0x00, struct drm_version)
-#define DRM_IOCTL_GET_UNIQUE            DRM_IOWR(0x01, struct drm_unique)
-#define DRM_IOCTL_GET_MAGIC             DRM_IOR( 0x02, struct drm_auth)
-...
-
-
-> +
->  #endif /* _UAPI_LINUX_SECCOMP_H */
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index fd023ac24e10..fa6fe9756c80 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -33,12 +33,78 @@
->  #endif
->
->  #ifdef CONFIG_SECCOMP_FILTER
-> +#include <linux/file.h>
->  #include <linux/filter.h>
->  #include <linux/pid.h>
->  #include <linux/ptrace.h>
->  #include <linux/security.h>
->  #include <linux/tracehook.h>
->  #include <linux/uaccess.h>
-> +#include <linux/anon_inodes.h>
-> +
-> +enum notify_state {
-> +       SECCOMP_NOTIFY_INIT,
-> +       SECCOMP_NOTIFY_SENT,
-> +       SECCOMP_NOTIFY_REPLIED,
-> +};
-> +
-> +struct seccomp_knotif {
-> +       /* The struct pid of the task whose filter triggered the notification */
-> +       struct task_struct *task;
-> +
-> +       /* The "cookie" for this request; this is unique for this filter. */
-> +       u64 id;
-> +
-> +       /* Whether or not this task has been given an interruptible signal. */
-> +       bool signaled;
-> +
-> +       /*
-> +        * The seccomp data. This pointer is valid the entire time this
-> +        * notification is active, since it comes from __seccomp_filter which
-> +        * eclipses the entire lifecycle here.
-> +        */
-> +       const struct seccomp_data *data;
-> +
-> +       /*
-> +        * Notification states. When SECCOMP_RET_USER_NOTIF is returned, a
-> +        * struct seccomp_knotif is created and starts out in INIT. Once the
-> +        * handler reads the notification off of an FD, it transitions to SENT.
-> +        * If a signal is received the state transitions back to INIT and
-> +        * another message is sent. When the userspace handler replies, state
-> +        * transitions to REPLIED.
-> +        */
-> +       enum notify_state state;
-> +
-> +       /* The return values, only valid when in SECCOMP_NOTIFY_REPLIED */
-> +       int error;
-> +       long val;
-> +
-> +       /* Signals when this has entered SECCOMP_NOTIFY_REPLIED */
-> +       struct completion ready;
-> +
-> +       struct list_head list;
-> +};
-> +
-> +/**
-> + * struct notification - container for seccomp userspace notifications. Since
-> + * most seccomp filters will not have notification listeners attached and this
-> + * structure is fairly large, we store the notification-specific stuff in a
-> + * separate structure.
-> + *
-> + * @request: A semaphore that users of this notification can wait on for
-> + *           changes. Actual reads and writes are still controlled with
-> + *           filter->notify_lock.
-> + * @notify_lock: A lock for all notification-related accesses.
-> + * @next_id: The id of the next request.
-> + * @notifications: A list of struct seccomp_knotif elements.
-> + * @wqh: A wait queue for poll.
-> + */
-> +struct notification {
-> +       struct semaphore request;
-> +       u64 next_id;
-> +       struct list_head notifications;
-> +       wait_queue_head_t wqh;
-> +};
->
->  /**
->   * struct seccomp_filter - container for seccomp BPF programs
-> @@ -66,6 +132,8 @@ struct seccomp_filter {
->         bool log;
->         struct seccomp_filter *prev;
->         struct bpf_prog *prog;
-> +       struct notification *notif;
-> +       struct mutex notify_lock;
->  };
->
->  /* Limit any path through the tree to 256KB worth of instructions. */
-> @@ -392,6 +460,7 @@ static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
->         if (!sfilter)
->                 return ERR_PTR(-ENOMEM);
->
-> +       mutex_init(&sfilter->notify_lock);
->         ret = bpf_prog_create_from_user(&sfilter->prog, fprog,
->                                         seccomp_check_filter, save_orig);
->         if (ret < 0) {
-> @@ -556,11 +625,13 @@ static void seccomp_send_sigsys(int syscall, int reason)
->  #define SECCOMP_LOG_TRACE              (1 << 4)
->  #define SECCOMP_LOG_LOG                        (1 << 5)
->  #define SECCOMP_LOG_ALLOW              (1 << 6)
-> +#define SECCOMP_LOG_USER_NOTIF         (1 << 7)
->
->  static u32 seccomp_actions_logged = SECCOMP_LOG_KILL_PROCESS |
->                                     SECCOMP_LOG_KILL_THREAD  |
->                                     SECCOMP_LOG_TRAP  |
->                                     SECCOMP_LOG_ERRNO |
-> +                                   SECCOMP_LOG_USER_NOTIF |
->                                     SECCOMP_LOG_TRACE |
->                                     SECCOMP_LOG_LOG;
->
-> @@ -581,6 +652,9 @@ static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
->         case SECCOMP_RET_TRACE:
->                 log = requested && seccomp_actions_logged & SECCOMP_LOG_TRACE;
->                 break;
-> +       case SECCOMP_RET_USER_NOTIF:
-> +               log = requested && seccomp_actions_logged & SECCOMP_LOG_USER_NOTIF;
-> +               break;
->         case SECCOMP_RET_LOG:
->                 log = seccomp_actions_logged & SECCOMP_LOG_LOG;
->                 break;
-> @@ -652,6 +726,73 @@ void secure_computing_strict(int this_syscall)
->  #else
->
->  #ifdef CONFIG_SECCOMP_FILTER
-> +static u64 seccomp_next_notify_id(struct seccomp_filter *filter)
-> +{
-> +       /* Note: overflow is ok here, the id just needs to be unique */
-
-Maybe just clarify in the comment: unique to the filter.
-
-> +       return filter->notif->next_id++;
-
-Also, it might be useful to add for both documentation and lockdep:
-
-lockdep_assert_held(filter->notif->notify_lock);
-
-into this function?
-
-
-> +}
-> +
-> +static void seccomp_do_user_notification(int this_syscall,
-> +                                        struct seccomp_filter *match,
-> +                                        const struct seccomp_data *sd)
-> +{
-> +       int err;
-> +       long ret = 0;
-> +       struct seccomp_knotif n = {};
-> +
-> +       mutex_lock(&match->notify_lock);
-> +       err = -ENOSYS;
-> +       if (!match->notif)
-> +               goto out;
-> +
-> +       n.task = current;
-> +       n.state = SECCOMP_NOTIFY_INIT;
-> +       n.data = sd;
-> +       n.id = seccomp_next_notify_id(match);
-> +       init_completion(&n.ready);
-> +
-> +       list_add(&n.list, &match->notif->notifications);
-> +       wake_up_poll(&match->notif->wqh, EPOLLIN | EPOLLRDNORM);
-> +
-> +       mutex_unlock(&match->notify_lock);
-> +       up(&match->notif->request);
-> +
-
-Maybe add a big comment here saying this is where we're waiting for a reply?
-
-> +       err = wait_for_completion_interruptible(&n.ready);
-> +       mutex_lock(&match->notify_lock);
-> +
-> +       /*
-> +        * Here it's possible we got a signal and then had to wait on the mutex
-> +        * while the reply was sent, so let's be sure there wasn't a response
-> +        * in the meantime.
-> +        */
-> +       if (err < 0 && n.state != SECCOMP_NOTIFY_REPLIED) {
-> +               /*
-> +                * We got a signal. Let's tell userspace about it (potentially
-> +                * again, if we had already notified them about the first one).
-> +                */
-> +               n.signaled = true;
-> +               if (n.state == SECCOMP_NOTIFY_SENT) {
-> +                       n.state = SECCOMP_NOTIFY_INIT;
-> +                       up(&match->notif->request);
-> +               }
-> +               mutex_unlock(&match->notify_lock);
-> +               err = wait_for_completion_killable(&n.ready);
-> +               mutex_lock(&match->notify_lock);
-> +               if (err < 0)
-> +                       goto remove_list;
-> +       }
-> +
-> +       ret = n.val;
-> +       err = n.error;
-> +
-> +remove_list:
-> +       list_del(&n.list);
-> +out:
-> +       mutex_unlock(&match->notify_lock);
-> +       syscall_set_return_value(current, task_pt_regs(current),
-> +                                err, ret);
-> +}
-> +
->  static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
->                             const bool recheck_after_trace)
->  {
-> @@ -728,6 +869,9 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
->
->                 return 0;
->
-> +       case SECCOMP_RET_USER_NOTIF:
-> +               seccomp_do_user_notification(this_syscall, match, sd);
-> +               goto skip;
-
-Nit: please add a blank line here (to match the other cases).
-
->         case SECCOMP_RET_LOG:
->                 seccomp_log(this_syscall, 0, action, true);
->                 return 0;
-> @@ -834,6 +978,9 @@ static long seccomp_set_mode_strict(void)
->  }
->
->  #ifdef CONFIG_SECCOMP_FILTER
-> +static struct file *init_listener(struct task_struct *,
-> +                                 struct seccomp_filter *);
-
-Why is the forward declaration needed instead of just moving the
-function here? I didn't see anything in it that looked like it
-couldn't move.
-
-> +
->  /**
->   * seccomp_set_mode_filter: internal function for setting seccomp filter
->   * @flags:  flags to change filter behavior
-> @@ -853,6 +1000,8 @@ static long seccomp_set_mode_filter(unsigned int flags,
->         const unsigned long seccomp_mode = SECCOMP_MODE_FILTER;
->         struct seccomp_filter *prepared = NULL;
->         long ret = -EINVAL;
-> +       int listener = 0;
-
-Nit: "invalid fd" should be -1, not 0.
-
-> +       struct file *listener_f = NULL;
->
->         /* Validate flags. */
->         if (flags & ~SECCOMP_FILTER_FLAG_MASK)
-> @@ -863,13 +1012,28 @@ static long seccomp_set_mode_filter(unsigned int flags,
->         if (IS_ERR(prepared))
->                 return PTR_ERR(prepared);
->
-> +       if (flags & SECCOMP_FILTER_FLAG_NEW_LISTENER) {
-> +               listener = get_unused_fd_flags(0);
-
-As with the other place pointed out by Jann, this should maybe be O_CLOEXEC too?
-
-> +               if (listener < 0) {
-> +                       ret = listener;
-> +                       goto out_free;
-> +               }
-> +
-> +               listener_f = init_listener(current, prepared);
-> +               if (IS_ERR(listener_f)) {
-> +                       put_unused_fd(listener);
-> +                       ret = PTR_ERR(listener_f);
-> +                       goto out_free;
-> +               }
-> +       }
-> +
->         /*
->          * Make sure we cannot change seccomp or nnp state via TSYNC
->          * while another thread is in the middle of calling exec.
->          */
->         if (flags & SECCOMP_FILTER_FLAG_TSYNC &&
->             mutex_lock_killable(&current->signal->cred_guard_mutex))
-> -               goto out_free;
-> +               goto out_put_fd;
->
->         spin_lock_irq(&current->sighand->siglock);
->
-> @@ -887,6 +1051,16 @@ static long seccomp_set_mode_filter(unsigned int flags,
->         spin_unlock_irq(&current->sighand->siglock);
->         if (flags & SECCOMP_FILTER_FLAG_TSYNC)
->                 mutex_unlock(&current->signal->cred_guard_mutex);
-> +out_put_fd:
-> +       if (flags & SECCOMP_FILTER_FLAG_NEW_LISTENER) {
-> +               if (ret < 0) {
-> +                       fput(listener_f);
-> +                       put_unused_fd(listener);
-> +               } else {
-> +                       fd_install(listener, listener_f);
-> +                       ret = listener;
-> +               }
-> +       }
-
-Can you update the kern-docs for seccomp_set_mode_filter(), since we
-can now return positive values?
-
- * Returns 0 on success or -EINVAL on failure.
-
-(this shoudln't say only -EINVAL, I realize too)
-
-I have to say, I'm vaguely nervous about changing the semantics here
-for passing back the fd as the return code from the seccomp() syscall.
-Alternatives seem less appealing, though: changing the meaning of the
-uargs parameter when SECCOMP_FILTER_FLAG_NEW_LISTENER is set, for
-example. Hmm.
-
->  out_free:
->         seccomp_filter_free(prepared);
->         return ret;
-> @@ -911,6 +1085,7 @@ static long seccomp_get_action_avail(const char __user *uaction)
->         case SECCOMP_RET_KILL_THREAD:
->         case SECCOMP_RET_TRAP:
->         case SECCOMP_RET_ERRNO:
-> +       case SECCOMP_RET_USER_NOTIF:
->         case SECCOMP_RET_TRACE:
->         case SECCOMP_RET_LOG:
->         case SECCOMP_RET_ALLOW:
-> @@ -1111,6 +1286,7 @@ long seccomp_get_metadata(struct task_struct *task,
->  #define SECCOMP_RET_KILL_THREAD_NAME   "kill_thread"
->  #define SECCOMP_RET_TRAP_NAME          "trap"
->  #define SECCOMP_RET_ERRNO_NAME         "errno"
-> +#define SECCOMP_RET_USER_NOTIF_NAME    "user_notif"
->  #define SECCOMP_RET_TRACE_NAME         "trace"
->  #define SECCOMP_RET_LOG_NAME           "log"
->  #define SECCOMP_RET_ALLOW_NAME         "allow"
-> @@ -1120,6 +1296,7 @@ static const char seccomp_actions_avail[] =
->                                 SECCOMP_RET_KILL_THREAD_NAME    " "
->                                 SECCOMP_RET_TRAP_NAME           " "
->                                 SECCOMP_RET_ERRNO_NAME          " "
-> +                               SECCOMP_RET_USER_NOTIF_NAME     " "
->                                 SECCOMP_RET_TRACE_NAME          " "
->                                 SECCOMP_RET_LOG_NAME            " "
->                                 SECCOMP_RET_ALLOW_NAME;
-> @@ -1134,6 +1311,7 @@ static const struct seccomp_log_name seccomp_log_names[] = {
->         { SECCOMP_LOG_KILL_THREAD, SECCOMP_RET_KILL_THREAD_NAME },
->         { SECCOMP_LOG_TRAP, SECCOMP_RET_TRAP_NAME },
->         { SECCOMP_LOG_ERRNO, SECCOMP_RET_ERRNO_NAME },
-> +       { SECCOMP_LOG_USER_NOTIF, SECCOMP_RET_USER_NOTIF_NAME },
->         { SECCOMP_LOG_TRACE, SECCOMP_RET_TRACE_NAME },
->         { SECCOMP_LOG_LOG, SECCOMP_RET_LOG_NAME },
->         { SECCOMP_LOG_ALLOW, SECCOMP_RET_ALLOW_NAME },
-> @@ -1342,3 +1520,259 @@ static int __init seccomp_sysctl_init(void)
->  device_initcall(seccomp_sysctl_init)
->
->  #endif /* CONFIG_SYSCTL */
-> +
-> +#ifdef CONFIG_SECCOMP_FILTER
-> +static int seccomp_notify_release(struct inode *inode, struct file *file)
-> +{
-> +       struct seccomp_filter *filter = file->private_data;
-> +       struct seccomp_knotif *knotif;
-> +
-> +       mutex_lock(&filter->notify_lock);
-> +
-> +       /*
-> +        * If this file is being closed because e.g. the task who owned it
-> +        * died, let's wake everyone up who was waiting on us.
-> +        */
-> +       list_for_each_entry(knotif, &filter->notif->notifications, list) {
-> +               if (knotif->state == SECCOMP_NOTIFY_REPLIED)
-> +                       continue;
-> +
-> +               knotif->state = SECCOMP_NOTIFY_REPLIED;
-> +               knotif->error = -ENOSYS;
-> +               knotif->val = 0;
-> +
-> +               complete(&knotif->ready);
-> +       }
-> +
-> +       wake_up_all(&filter->notif->wqh);
-> +       kfree(filter->notif);
-> +       filter->notif = NULL;
-> +       mutex_unlock(&filter->notify_lock);
-
-It looks like that means nothing waiting on knotif->ready can access
-filter->notif without rechecking it, yes?
-
-e.g. in seccomp_do_user_notification() I see:
-
-                        up(&match->notif->request);
-
-I *think* this isn't reachable due to the test for n.state !=
-SECCOMP_NOTIFY_REPLIED, though. Perhaps, just for sanity and because
-it's not fast-path, we could add a WARN_ON() while checking for
-unreplied signal death?
-
-                n.signaled = true;
-                if (n.state == SECCOMP_NOTIFY_SENT) {
-                        n.state = SECCOMP_NOTIFY_INIT;
-                        if (!WARN_ON(match->notif))
-                            up(&match->notif->request);
-                }
-                mutex_unlock(&match->notify_lock);
-
-
-> +       __put_seccomp_filter(filter);
-> +       return 0;
-> +}
-> +
-> +static long seccomp_notify_recv(struct seccomp_filter *filter,
-> +                               unsigned long arg)
-> +{
-> +       struct seccomp_knotif *knotif = NULL, *cur;
-> +       struct seccomp_notif unotif = {};
-> +       ssize_t ret;
-> +       u16 size;
-> +       void __user *buf = (void __user *)arg;
-
-I'd prefer this casting happen in seccomp_notify_ioctl(). This keeps
-anything from accidentally using "arg" directly here.
-
-> +
-> +       if (copy_from_user(&size, buf, sizeof(size)))
-> +               return -EFAULT;
-> +
-> +       ret = down_interruptible(&filter->notif->request);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       mutex_lock(&filter->notify_lock);
-> +       list_for_each_entry(cur, &filter->notif->notifications, list) {
-> +               if (cur->state == SECCOMP_NOTIFY_INIT) {
-> +                       knotif = cur;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       /*
-> +        * If we didn't find a notification, it could be that the task was
-> +        * interrupted between the time we were woken and when we were able to
-> +        * acquire the rw lock.
-> +        */
-> +       if (!knotif) {
-> +               ret = -ENOENT;
-> +               goto out;
-> +       }
-> +
-> +       size = min_t(size_t, size, sizeof(unotif));
-> +
-
-It is possible (though unlikely given the type widths involved here)
-for unotif = {} to not initialize padding, so I would recommend an
-explicit memset(&unotif, 0, sizeof(unotif)) here.
-
-> +       unotif.len = size;
-> +       unotif.id = knotif->id;
-> +       unotif.pid = task_pid_vnr(knotif->task);
-> +       unotif.signaled = knotif->signaled;
-> +       unotif.data = *(knotif->data);
-> +
-> +       if (copy_to_user(buf, &unotif, size)) {
-> +               ret = -EFAULT;
-> +               goto out;
-> +       }
-> +
-> +       ret = size;
-> +       knotif->state = SECCOMP_NOTIFY_SENT;
-> +       wake_up_poll(&filter->notif->wqh, EPOLLOUT | EPOLLWRNORM);
-> +
-> +
-> +out:
-> +       mutex_unlock(&filter->notify_lock);
-
-Is there some way to rearrange the locking here to avoid holding the
-mutex while doing copy_to_user() (which userspace could block with
-userfaultfd, and then stall all the other notifications for this
-filter)?
-
-> +       return ret;
-> +}
-> +
-> +static long seccomp_notify_send(struct seccomp_filter *filter,
-> +                               unsigned long arg)
-> +{
-> +       struct seccomp_notif_resp resp = {};
-> +       struct seccomp_knotif *knotif = NULL;
-> +       long ret;
-> +       u16 size;
-> +       void __user *buf = (void __user *)arg;
-
-Same cast note as above.
-
-> +
-> +       if (copy_from_user(&size, buf, sizeof(size)))
-> +               return -EFAULT;
-> +       size = min_t(size_t, size, sizeof(resp));
-> +       if (copy_from_user(&resp, buf, size))
-> +               return -EFAULT;
-
-For sanity checking on a double-read from userspace, please add:
-
-    if (resp.len != size)
-        return -EINVAL;
-
-> +
-> +       ret = mutex_lock_interruptible(&filter->notify_lock);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       list_for_each_entry(knotif, &filter->notif->notifications, list) {
-> +               if (knotif->id == resp.id)
-> +                       break;
-> +       }
-> +
-> +       if (!knotif || knotif->id != resp.id) {
-> +               ret = -ENOENT;
-> +               goto out;
-> +       }
-> +
-> +       /* Allow exactly one reply. */
-> +       if (knotif->state != SECCOMP_NOTIFY_SENT) {
-> +               ret = -EINPROGRESS;
-> +               goto out;
-> +       }
-> +
-> +       ret = size;
-> +       knotif->state = SECCOMP_NOTIFY_REPLIED;
-> +       knotif->error = resp.error;
-> +       knotif->val = resp.val;
-> +       complete(&knotif->ready);
-> +out:
-> +       mutex_unlock(&filter->notify_lock);
-> +       return ret;
-> +}
-> +
-> +static long seccomp_notify_id_valid(struct seccomp_filter *filter,
-> +                                   unsigned long arg)
-> +{
-> +       struct seccomp_knotif *knotif = NULL;
-> +       void __user *buf = (void __user *)arg;
-> +       u64 id;
-> +       long ret;
-> +
-> +       if (copy_from_user(&id, buf, sizeof(id)))
-> +               return -EFAULT;
-> +
-> +       ret = mutex_lock_interruptible(&filter->notify_lock);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       ret = -1;
-
-Isn't this EPERM? Shouldn't it be -ENOENT?
-
-> +       list_for_each_entry(knotif, &filter->notif->notifications, list) {
-> +               if (knotif->id == id) {
-> +                       ret = 0;
-> +                       goto out;
-> +               }
-> +       }
-> +
-> +out:
-> +       mutex_unlock(&filter->notify_lock);
-> +       return ret;
-> +}
-> +
-> +static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
-> +                                unsigned long arg)
-> +{
-> +       struct seccomp_filter *filter = file->private_data;
-> +
-> +       switch (cmd) {
-> +       case SECCOMP_NOTIF_RECV:
-> +               return seccomp_notify_recv(filter, arg);
-> +       case SECCOMP_NOTIF_SEND:
-> +               return seccomp_notify_send(filter, arg);
-> +       case SECCOMP_NOTIF_ID_VALID:
-> +               return seccomp_notify_id_valid(filter, arg);
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +}
-> +
-> +static __poll_t seccomp_notify_poll(struct file *file,
-> +                                   struct poll_table_struct *poll_tab)
-> +{
-> +       struct seccomp_filter *filter = file->private_data;
-> +       __poll_t ret = 0;
-> +       struct seccomp_knotif *cur;
-> +
-> +       poll_wait(file, &filter->notif->wqh, poll_tab);
-> +
-> +       ret = mutex_lock_interruptible(&filter->notify_lock);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       list_for_each_entry(cur, &filter->notif->notifications, list) {
-> +               if (cur->state == SECCOMP_NOTIFY_INIT)
-> +                       ret |= EPOLLIN | EPOLLRDNORM;
-> +               if (cur->state == SECCOMP_NOTIFY_SENT)
-> +                       ret |= EPOLLOUT | EPOLLWRNORM;
-> +               if (ret & EPOLLIN && ret & EPOLLOUT)
-
-My eyes! :) Can you wrap the bit operations in parens here?
-
-> +                       break;
-> +       }
-
-Should POLLERR be handled here too? I don't quite see the conditions
-that might be exposed? All the processes die for the filter, which
-does what here?
-
-> +
-> +       mutex_unlock(&filter->notify_lock);
-> +
-> +       return ret;
-> +}
-> +
-> +static const struct file_operations seccomp_notify_ops = {
-> +       .poll = seccomp_notify_poll,
-> +       .release = seccomp_notify_release,
-> +       .unlocked_ioctl = seccomp_notify_ioctl,
-> +};
-> +
-> +static struct file *init_listener(struct task_struct *task,
-> +                                 struct seccomp_filter *filter)
-> +{
-> +       struct file *ret = ERR_PTR(-EBUSY);
-> +       struct seccomp_filter *cur, *last_locked = NULL;
-> +       int filter_nesting = 0;
-> +
-> +       for (cur = task->seccomp.filter; cur; cur = cur->prev) {
-> +               mutex_lock_nested(&cur->notify_lock, filter_nesting);
-> +               filter_nesting++;
-> +               last_locked = cur;
-> +               if (cur->notif)
-> +                       goto out;
-> +       }
-> +
-> +       ret = ERR_PTR(-ENOMEM);
-> +       filter->notif = kzalloc(sizeof(*(filter->notif)), GFP_KERNEL);
-> +       if (!filter->notif)
-> +               goto out;
-> +
-> +       sema_init(&filter->notif->request, 0);
-> +       INIT_LIST_HEAD(&filter->notif->notifications);
-> +       filter->notif->next_id = get_random_u64();
-> +       init_waitqueue_head(&filter->notif->wqh);
-> +
-> +       ret = anon_inode_getfile("seccomp notify", &seccomp_notify_ops,
-> +                                filter, O_RDWR);
-> +       if (IS_ERR(ret))
-> +               goto out;
-> +
-> +
-> +       /* The file has a reference to it now */
-> +       __get_seccomp_filter(filter);
-> +
-> +out:
-> +       for (cur = task->seccomp.filter; cur; cur = cur->prev) {
-> +               mutex_unlock(&cur->notify_lock);
-> +               if (cur == last_locked)
-> +                       break;
-> +       }
-> +
-> +       return ret;
-> +}
-> +#endif
-> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> index e1473234968d..5f4b836a6792 100644
-> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> @@ -5,6 +5,7 @@
->   * Test code for seccomp bpf.
->   */
->
-> +#define _GNU_SOURCE
->  #include <sys/types.h>
->
->  /*
-> @@ -40,10 +41,12 @@
->  #include <sys/fcntl.h>
->  #include <sys/mman.h>
->  #include <sys/times.h>
-> +#include <sys/socket.h>
-> +#include <sys/ioctl.h>
->
-> -#define _GNU_SOURCE
->  #include <unistd.h>
->  #include <sys/syscall.h>
-> +#include <poll.h>
->
->  #include "../kselftest_harness.h"
->
-> @@ -154,6 +157,34 @@ struct seccomp_metadata {
->  };
->  #endif
->
-> +#ifndef SECCOMP_FILTER_FLAG_NEW_LISTENER
-> +#define SECCOMP_FILTER_FLAG_NEW_LISTENER (1UL << 3)
-> +
-> +#define SECCOMP_RET_USER_NOTIF 0x7fc00000U
-> +
-> +#define SECCOMP_IOC_MAGIC              0xF7
-> +#define SECCOMP_NOTIF_RECV     _IOWR(SECCOMP_IOC_MAGIC, 0,     \
-> +                                       struct seccomp_notif)
-> +#define SECCOMP_NOTIF_SEND     _IOWR(SECCOMP_IOC_MAGIC, 1,     \
-> +                                       struct seccomp_notif_resp)
-> +#define SECCOMP_NOTIF_ID_VALID _IOR(SECCOMP_IOC_MAGIC, 2,      \
-> +                                       __u64)
-> +struct seccomp_notif {
-> +       __u16 len;
-> +       __u64 id;
-> +       __u32 pid;
-> +       __u8 signaled;
-> +       struct seccomp_data data;
-> +};
-> +
-> +struct seccomp_notif_resp {
-> +       __u16 len;
-> +       __u64 id;
-> +       __s32 error;
-> +       __s64 val;
-> +};
-> +#endif
-> +
->  #ifndef seccomp
->  int seccomp(unsigned int op, unsigned int flags, void *args)
->  {
-> @@ -2077,7 +2108,8 @@ TEST(detect_seccomp_filter_flags)
->  {
->         unsigned int flags[] = { SECCOMP_FILTER_FLAG_TSYNC,
->                                  SECCOMP_FILTER_FLAG_LOG,
-> -                                SECCOMP_FILTER_FLAG_SPEC_ALLOW };
-> +                                SECCOMP_FILTER_FLAG_SPEC_ALLOW,
-> +                                SECCOMP_FILTER_FLAG_NEW_LISTENER };
->         unsigned int flag, all_flags;
->         int i;
->         long ret;
-> @@ -2933,6 +2965,383 @@ TEST(get_metadata)
->         ASSERT_EQ(0, kill(pid, SIGKILL));
->  }
->
-> +static int user_trap_syscall(int nr, unsigned int flags)
-> +{
-> +       struct sock_filter filter[] = {
-> +               BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
-> +                       offsetof(struct seccomp_data, nr)),
-> +               BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, nr, 0, 1),
-> +               BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_USER_NOTIF),
-> +               BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
-> +       };
-> +
-> +       struct sock_fprog prog = {
-> +               .len = (unsigned short)ARRAY_SIZE(filter),
-> +               .filter = filter,
-> +       };
-> +
-> +       return seccomp(SECCOMP_SET_MODE_FILTER, flags, &prog);
-> +}
-> +
-> +static int read_notif(int listener, struct seccomp_notif *req)
-> +{
-> +       int ret;
-> +
-> +       do {
-> +               errno = 0;
-> +               req->len = sizeof(*req);
-> +               ret = ioctl(listener, SECCOMP_NOTIF_RECV, req);
-> +       } while (ret == -1 && errno == ENOENT);
-> +       return ret;
-> +}
-> +
-> +static void signal_handler(int signal)
-> +{
-> +}
-> +
-> +#define USER_NOTIF_MAGIC 116983961184613L
-> +TEST(get_user_notification_syscall)
-> +{
-> +       pid_t pid;
-> +       long ret;
-> +       int status, listener;
-> +       struct seccomp_notif req = {};
-> +       struct seccomp_notif_resp resp = {};
-> +       struct pollfd pollfd;
-> +
-> +       struct sock_filter filter[] = {
-> +               BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
-> +       };
-> +       struct sock_fprog prog = {
-> +               .len = (unsigned short)ARRAY_SIZE(filter),
-> +               .filter = filter,
-> +       };
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       /* Check that we get -ENOSYS with no listener attached */
-> +       if (pid == 0) {
-> +               if (user_trap_syscall(__NR_getpid, 0) < 0)
-> +                       exit(1);
-> +               ret = syscall(__NR_getpid);
-> +               exit(ret >= 0 || errno != ENOSYS);
-> +       }
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +
-> +       /* Add some no-op filters so that we (don't) trigger lockdep. */
-> +       EXPECT_EQ(seccomp(SECCOMP_SET_MODE_FILTER, 0, &prog), 0);
-> +       EXPECT_EQ(seccomp(SECCOMP_SET_MODE_FILTER, 0, &prog), 0);
-> +       EXPECT_EQ(seccomp(SECCOMP_SET_MODE_FILTER, 0, &prog), 0);
-> +       EXPECT_EQ(seccomp(SECCOMP_SET_MODE_FILTER, 0, &prog), 0);
-> +
-> +       /* Check that the basic notification machinery works */
-> +       listener = user_trap_syscall(__NR_getpid,
-> +                                    SECCOMP_FILTER_FLAG_NEW_LISTENER);
-> +       EXPECT_GE(listener, 0);
-> +
-> +       /* Installing a second listener in the chain should EBUSY */
-> +       EXPECT_EQ(user_trap_syscall(__NR_getpid,
-> +                                   SECCOMP_FILTER_FLAG_NEW_LISTENER),
-> +                 -1);
-> +       EXPECT_EQ(errno, EBUSY);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               ret = syscall(__NR_getpid);
-> +               exit(ret != USER_NOTIF_MAGIC);
-> +       }
-> +
-> +       pollfd.fd = listener;
-> +       pollfd.events = POLLIN | POLLOUT;
-> +
-> +       EXPECT_GT(poll(&pollfd, 1, -1), 0);
-> +       EXPECT_EQ(pollfd.revents, POLLIN);
-> +
-> +       req.len = sizeof(req);
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_RECV, &req), sizeof(req));
-> +
-> +       pollfd.fd = listener;
-> +       pollfd.events = POLLIN | POLLOUT;
-> +
-> +       EXPECT_GT(poll(&pollfd, 1, -1), 0);
-> +       EXPECT_EQ(pollfd.revents, POLLOUT);
-> +
-> +       EXPECT_EQ(req.data.nr,  __NR_getpid);
-> +
-> +       resp.len = sizeof(resp);
-> +       resp.id = req.id;
-> +       resp.error = 0;
-> +       resp.val = USER_NOTIF_MAGIC;
-> +
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +
-> +       /*
-> +        * Check that nothing bad happens when we kill the task in the middle
-> +        * of a syscall.
-> +        */
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               ret = syscall(__NR_getpid);
-> +               exit(ret != USER_NOTIF_MAGIC);
-> +       }
-> +
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_RECV, &req), sizeof(req));
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_ID_VALID, &req.id), 0);
-> +
-> +       EXPECT_EQ(kill(pid, SIGKILL), 0);
-> +       EXPECT_EQ(waitpid(pid, NULL, 0), pid);
-> +
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_ID_VALID, &req.id), -1);
-
-Please document SECCOMP_NOTIF_ID_VALID in seccomp_filter.rst. I had
-been wondering what it's for, and now I see it's kind of an advisory
-"is the other end still alive?" test.
-
-> +
-> +       resp.id = req.id;
-> +       ret = ioctl(listener, SECCOMP_NOTIF_SEND, &resp);
-> +       EXPECT_EQ(ret, -1);
-> +       EXPECT_EQ(errno, ENOENT);
-> +
-> +       /*
-> +        * Check that we get another notification about a signal in the middle
-> +        * of a syscall.
-> +        */
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               if (signal(SIGUSR1, signal_handler) == SIG_ERR) {
-> +                       perror("signal");
-> +                       exit(1);
-> +               }
-> +               ret = syscall(__NR_getpid);
-> +               exit(ret != USER_NOTIF_MAGIC);
-> +       }
-> +
-> +       ret = read_notif(listener, &req);
-> +       EXPECT_EQ(ret, sizeof(req));
-> +       EXPECT_EQ(errno, 0);
-> +
-> +       EXPECT_EQ(kill(pid, SIGUSR1), 0);
-> +
-> +       ret = read_notif(listener, &req);
-> +       EXPECT_EQ(req.signaled, 1);
-> +       EXPECT_EQ(ret, sizeof(req));
-> +       EXPECT_EQ(errno, 0);
-> +
-> +       resp.len = sizeof(resp);
-> +       resp.id = req.id;
-> +       resp.error = -512; /* -ERESTARTSYS */
-> +       resp.val = 0;
-> +
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
-> +
-> +       ret = read_notif(listener, &req);
-> +       resp.len = sizeof(resp);
-> +       resp.id = req.id;
-> +       resp.error = 0;
-> +       resp.val = USER_NOTIF_MAGIC;
-> +       ret = ioctl(listener, SECCOMP_NOTIF_SEND, &resp);
-
-I was slightly confused here: why have there been 3 reads? I was
-expecting one notification for hitting getpid and one from catching a
-signal. But in rereading, I see that NOTIF_RECV will return the most
-recently unresponded notification, yes?
-
-But... catching a signal replaces the existing seccomp_knotif? I
-remain confused about how signal handling is meant to work here. What
-happens if two signals get sent? It looks like you just block without
-allowing more signals? (Thank you for writing the tests!)
-
-(And can you document the expected behavior in the seccomp_filter.rst too?)
-
-> +       EXPECT_EQ(ret, sizeof(resp));
-> +       EXPECT_EQ(errno, 0);
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +
-> +       /*
-> +        * Check that we get an ENOSYS when the listener is closed.
-> +        */
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0) {
-> +               close(listener);
-> +               ret = syscall(__NR_getpid);
-> +               exit(ret != -1 && errno != ENOSYS);
-> +       }
-> +
-> +       close(listener);
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +}
-> +
-> +/*
-> + * Check that a pid in a child namespace still shows up as valid in ours.
-> + */
-> +TEST(user_notification_child_pid_ns)
-> +{
-> +       pid_t pid;
-> +       int status, listener;
-> +       int sk_pair[2];
-> +       char c;
-> +       struct seccomp_notif req = {};
-> +       struct seccomp_notif_resp resp = {};
-> +
-> +       ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
-> +       ASSERT_EQ(unshare(CLONE_NEWPID), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
-> +
-> +               /* Signal we're ready and have installed the filter. */
-> +               EXPECT_EQ(write(sk_pair[1], "J", 1), 1);
-> +
-> +               EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
-> +               EXPECT_EQ(c, 'H');
-> +
-> +               exit(syscall(__NR_getpid) != USER_NOTIF_MAGIC);
-> +       }
-> +
-> +       EXPECT_EQ(read(sk_pair[0], &c, 1), 1);
-> +       EXPECT_EQ(c, 'J');
-> +
-> +       EXPECT_EQ(ptrace(PTRACE_ATTACH, pid), 0);
-> +       EXPECT_EQ(waitpid(pid, NULL, 0), pid);
-> +       listener = ptrace(PTRACE_SECCOMP_NEW_LISTENER, pid, 0);
-> +       EXPECT_GE(listener, 0);
-> +       EXPECT_EQ(ptrace(PTRACE_DETACH, pid, NULL, 0), 0);
-> +
-> +       /* Now signal we are done and respond with magic */
-> +       EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
-> +
-> +       req.len = sizeof(req);
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_RECV, &req), sizeof(req));
-> +       EXPECT_EQ(req.pid, pid);
-> +
-> +       resp.len = sizeof(resp);
-> +       resp.id = req.id;
-> +       resp.error = 0;
-> +       resp.val = USER_NOTIF_MAGIC;
-> +
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +       close(listener);
-> +}
-> +
-> +/*
-> + * Check that a pid in a sibling (i.e. unrelated) namespace shows up as 0, i.e.
-> + * invalid.
-> + */
-> +TEST(user_notification_sibling_pid_ns)
-> +{
-> +       pid_t pid, pid2;
-> +       int status, listener;
-> +       int sk_pair[2];
-> +       char c;
-> +       struct seccomp_notif req = {};
-> +       struct seccomp_notif_resp resp = {};
-> +
-> +       ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               int child_pair[2];
-> +
-> +               ASSERT_EQ(unshare(CLONE_NEWPID), 0);
-> +
-> +               ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, child_pair), 0);
-> +
-> +               pid2 = fork();
-> +               ASSERT_GE(pid2, 0);
-> +
-> +               if (pid2 == 0) {
-> +                       close(child_pair[0]);
-> +                       EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
-> +
-> +                       /* Signal we're ready and have installed the filter. */
-> +                       EXPECT_EQ(write(child_pair[1], "J", 1), 1);
-> +
-> +                       EXPECT_EQ(read(child_pair[1], &c, 1), 1);
-> +                       EXPECT_EQ(c, 'H');
-> +
-> +                       exit(syscall(__NR_getpid) != USER_NOTIF_MAGIC);
-> +               }
-> +
-> +               /* check that child has installed the filter */
-> +               EXPECT_EQ(read(child_pair[0], &c, 1), 1);
-> +               EXPECT_EQ(c, 'J');
-> +
-> +               /* tell parent who child is */
-> +               EXPECT_EQ(write(sk_pair[1], &pid2, sizeof(pid2)), sizeof(pid2));
-> +
-> +               /* parent has installed listener, tell child to call syscall */
-> +               EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
-> +               EXPECT_EQ(c, 'H');
-> +               EXPECT_EQ(write(child_pair[0], "H", 1), 1);
-> +
-> +               EXPECT_EQ(waitpid(pid2, &status, 0), pid2);
-> +               EXPECT_EQ(true, WIFEXITED(status));
-> +               EXPECT_EQ(0, WEXITSTATUS(status));
-> +               exit(WEXITSTATUS(status));
-> +       }
-> +
-> +       EXPECT_EQ(read(sk_pair[0], &pid2, sizeof(pid2)), sizeof(pid2));
-> +
-> +       EXPECT_EQ(ptrace(PTRACE_ATTACH, pid2), 0);
-> +       EXPECT_EQ(waitpid(pid2, NULL, 0), pid2);
-> +       listener = ptrace(PTRACE_SECCOMP_NEW_LISTENER, pid2, 0);
-> +       EXPECT_GE(listener, 0);
-> +       EXPECT_EQ(errno, 0);
-> +       EXPECT_EQ(ptrace(PTRACE_DETACH, pid2, NULL, 0), 0);
-> +
-> +       /* Create the sibling ns, and sibling in it. */
-> +       EXPECT_EQ(unshare(CLONE_NEWPID), 0);
-> +       EXPECT_EQ(errno, 0);
-> +
-> +       pid2 = fork();
-> +       EXPECT_GE(pid2, 0);
-> +
-> +       if (pid2 == 0) {
-> +               req.len = sizeof(req);
-> +               ASSERT_EQ(ioctl(listener, SECCOMP_NOTIF_RECV, &req), sizeof(req));
-> +               /*
-> +                * The pid should be 0, i.e. the task is in some namespace that
-> +                * we can't "see".
-> +                */
-> +               ASSERT_EQ(req.pid, 0);
-> +
-> +               resp.len = sizeof(resp);
-> +               resp.id = req.id;
-> +               resp.error = 0;
-> +               resp.val = USER_NOTIF_MAGIC;
-> +
-> +               ASSERT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
-> +               exit(0);
-> +       }
-> +
-> +       close(listener);
-> +
-> +       /* Now signal we are done setting up sibling listener. */
-> +       EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +
-> +       EXPECT_EQ(waitpid(pid2, &status, 0), pid2);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +}
-> +
-> +
->  /*
->   * TODO:
->   * - add microbenchmarks
-> --
-> 2.17.1
->
-
-Looking good!
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+> And does it matter who designed the algorithms, e.g. do algorithms from Daniel
+> Bernstein get effectively a free pass, while algorithms from certain countries,
+> governments, or organizations are not allowed?  E.g. wireless driver developers
+> may need the SM4 block cipher (which is now supported by the crypto API) as it's
+> specified in a Chinese wireless standard.  Will you allow SM4 in Zinc?  Or will
+> people have to submit some algorithms to Herbert and some to you due to
+> disagreements about what algorithms should be included?
+
+Similarly here, I think you're over-politicizing everything. Stable address
+generation for IPv6 uses SHA1 -- see net/ipv6/addrconf.c:3203 -- do you think
+that this should use, say, the SM3 chinese hash function instead? No, of
+course not, for a variety of interesting reasons. Rather, it should use some
+simple hash function that's fast in software that we have available in Zinc.
+On the other hand, it seems like parts of the kernel that have pretty high-
+levels of cipher agility -- such as dmcrypt, ipsec, wifi apparently, and
+so on -- will continue to use dynamic-dispatch system like the crypto API,
+since that's what it was made to do and is effective at doing. And so, your
+example of SM4 seems to fit perfectly into what the crypto API is well-suited
+for, and it would fit naturally in there.
+
+In other words, the "political criteria" for what we add to lib/zinc/ will
+mostly be the same as for the rest of lib/: are there things using it that
+benefit from it being there in a direct and obvious way, and does the
+implementation meet certain quality standards.
+
+> to change them yourself, e.g. when you added the part that converts the
+> accumulator from base 26 to base 32.  I worry there may be double standards
+> here
+
+We do actually appreciate your concern here. However, there's a lot more that
+went into that short patch than meets the eye:
+
+  - It matches exactly what Andy Polyakov's code is doing for the exact
+    same reason, so this isn't something that's actually "new". (There
+    are paths inside his implementation that branch from the vector code
+    to the scalar code.)
+  - It has been discussed at length with Andy, including what kinds of
+    proofs we'll need if we want to chop it down further (to remove that
+    final reduction), and why we both don't want to do that yet, and so
+    we go with the full carrying for the avoidance of risk.
+  - We've proved its correctness with Z3, actually using an even looser
+    constraint on digit size than what Andy mentioned to us, thus resulting
+    in a stronger proof result. So we're certain this isn't rubbish.
+  - There's been some considerable computing power sunk into fuzzing it.
+
+There's no doubt about it, we've done our due-diligence here. This is in
+fact the kind of efforts we require of submissions. You could fault us for
+not detailing this in "the commit message" -- except as this is still a
+patch series, we're putting improvements into the 00/XX change log, instead
+of adding fixes and additions on top of the series. Of course in the ordinary
+course of kernel development, this would exist instead as a standalone commit.
+If you have a better idea of how this kind of thing can be communicated, and
+where precisely, in the pre-merge process, I'd be interested in hearing
+suggestions.
+
+Thanks,
+Jason
