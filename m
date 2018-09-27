@@ -2,88 +2,146 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA07C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370ECC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DDD82172F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DDD82172F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D9D7B2172F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:38:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sf4QyFN+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D7B2172F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeI1F6f (ORCPT
+        id S1728089AbeI1F6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 01:58:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57230 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbeI1F6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 01:58:35 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 00E7A308429C;
-        Thu, 27 Sep 2018 23:37:49 +0000 (UTC)
-Received: from [10.72.12.26] (ovpn-12-26.pek2.redhat.com [10.72.12.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 616D46531E;
-        Thu, 27 Sep 2018 23:37:40 +0000 (UTC)
-Subject: Re: [PATCH net V2] vhost-vsock: fix use after free
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     stefanha@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sergei.shtylyov@cogentembedded.com
-References: <20180927122204.4188-1-jasowang@redhat.com>
- <20180927123539-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <588ed28b-7e4b-9dc8-92ce-d75692836c9e@redhat.com>
-Date:   Fri, 28 Sep 2018 07:37:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 28 Sep 2018 01:58:55 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42058 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbeI1F6z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 01:58:55 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w81-v6so2065161oiw.9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 16:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LqJvNLwT6E7hF1ZOVnmSnSLRMEXZqYaKuyANFe9UirI=;
+        b=Sf4QyFN+dGDESiDY1n8zmxXTv/7rfjgg+2S/Fed1jnQA/9JIg3G791VAMNYEYH/Plt
+         VFv2sDMi4BzY3sO+QhXJfT/30zmFyuaxvOlbK22ViVTARX5Jzf+C9CMEpji+QhFSWWNs
+         x0znLkgXdwpXp7e49nIfn8tgoQ3FUqR+j4BbZy4LOkgfMDEY6XNpnlRCp1OOHoY92bAX
+         y3Y7gdkrsY7ac5V5MGFKA4WFi//tQK6MW9hC52/VFgfWwn30VU66w2farHSJ2RF0wwSa
+         V5gpexn4Guu3NeflcGhK04tDyPFo1ChEqxDffv3Jj7b55gle+JMoY8b0o9plUSrWb4qs
+         IJYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LqJvNLwT6E7hF1ZOVnmSnSLRMEXZqYaKuyANFe9UirI=;
+        b=DLr4xxEaQZVZg9hbtuI1OVtgpZUmwLQU0MHA/Uwv33Frbjbz6FZvATqJTtMmIsze0H
+         YBuZerbrQTlCNdy/S78TbBfD2d+UZMJ/WlzSeyFFO1jr7vahs7VGhTsdqTmjrCp/NEj7
+         mwE9dvtl44yFDH6GJSqZJjp5lNzSNQQdwSqzVLyelpmDapfSFjQk1I2Ro7AQ1bVA7/jH
+         NgHRHevbyMYp9m+Td4im4XHrwHfbBmmzJ+UBm4iERhE+yNMmB33xlt/02FGU/TkiPSgE
+         hUnGh7XemJSY/i6rbSDIgCzv1aY4hni9Q0GqlcPjvdT4yqe+wgauUZrXTATPeInXUyY1
+         jaKg==
+X-Gm-Message-State: ABuFfojLy2cbQQAI/X+8tb1N7j2pTd8D05SbwkhBTqpwwMfoI6yISEZp
+        Yhcsw37TvgeZ0k2/3QEbtZRlG+OF4A2UjPi9bbQs8A==
+X-Google-Smtp-Source: ACcGV61e6YopQIuZHSelNsxeFCrGNJHPcQRYvz0ufxqEWHE4equ7BpS8bFXpftJs+nYhiy/YSkGTeyGsvmq5hjxBo8s=
+X-Received: by 2002:aca:4d13:: with SMTP id a19-v6mr4063132oib.205.1538091487257;
+ Thu, 27 Sep 2018 16:38:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180927123539-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 27 Sep 2018 23:37:49 +0000 (UTC)
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-2-tycho@tycho.ws>
+ <CAG48ez05LyQOb4pw5H74VhHdQFDEOPLoLuhDPMEqFG7W1hwA_Q@mail.gmail.com> <20180927230408.GH15491@cisco.cisco.com>
+In-Reply-To: <20180927230408.GH15491@cisco.cisco.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 28 Sep 2018 01:37:40 +0200
+Message-ID: <CAG48ez0Zs1FCjyQsXp5aDGVxBsF=EuaQc9xrq_OiRT6ScXb3WQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/6] seccomp: add a return code to trap to userspace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     hch@lst.de, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>, suda.akihiro@lab.ntt.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年09月28日 01:04, Michael S. Tsirkin wrote:
-> On Thu, Sep 27, 2018 at 08:22:04PM +0800, Jason Wang wrote:
->> The access of vsock is not protected by vhost_vsock_lock. This may
->> lead to use after free since vhost_vsock_dev_release() may free the
->> pointer at the same time.
->>
->> Fix this by holding the lock during the access.
->>
->> Reported-by:syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com
->> Fixes: 16320f363ae1 ("vhost-vsock: add pkt cancel capability")
->> Fixes: 433fc58e6bf2 ("VSOCK: Introduce vhost_vsock.ko")
->> Cc: Stefan Hajnoczi<stefanha@redhat.com>
->> Signed-off-by: Jason Wang<jasowang@redhat.com>
-> Wow is that really the best we can do?
-
-For net/stable, probably yes.
-
->   A global lock on a data path
-> operation?
-
-It's already there, and the patch only increase the critical section.
-
->   Granted use after free is nasty but Stefan said he sees
-> a way to fix it using a per socket refcount. He's on vacation
-> until Oct 4 though ...
+On Fri, Sep 28, 2018 at 1:04 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> On Thu, Sep 27, 2018 at 11:51:40PM +0200, Jann Horn wrote:
+> > > +It is worth noting that ``struct seccomp_data`` contains the values of register
+> > > +arguments to the syscall, but does not contain pointers to memory. The task's
+> > > +memory is accessible to suitably privileged traces via ``ptrace()`` or
+> > > +``/proc/pid/map_files/``.
+> >
+> > You probably don't actually want to use /proc/pid/map_files here; you
+> > can't use that to access anonymous memory, and it needs CAP_SYS_ADMIN.
+> > And while reading memory via ptrace() is possible, the interface is
+> > really ugly (e.g. you can only read data in 4-byte chunks), and your
+> > caveat about locking out other ptracers (or getting locked out by
+> > them) applies. I'm not even sure if you could read memory via ptrace
+> > while a process is stopped in the seccomp logic? PTRACE_PEEKDATA
+> > requires the target to be in a __TASK_TRACED state.
+> > The two interfaces you might want to use instead are /proc/$pid/mem
+> > and process_vm_{readv,writev}, which allow you to do nice,
+> > arbitrarily-sized, vectored IO on the memory of another process.
 >
+> Yes, in fact the sample code does use /proc/$pid/mem, but the docs
+> should be correct :)
 
-Stefan has acked the pacth, so I think it's ok? We can do optimization 
-for -next on top.
+Please also mention the process_vm_readv/writev syscalls though, given
+that fast access to remote processes is what they were made for.
 
-Thanks
+> > > +#ifdef CONFIG_SECCOMP_FILTER
+> > > +static int seccomp_notify_release(struct inode *inode, struct file *file)
+[...]
+> > > +       wake_up_all(&filter->notif->wqh);
+> >
+> > If select() is polling us, a reference to the open file is being held,
+> > and this can't be reached; and I think if epoll is polling us,
+> > eventpoll_release() will remove itself from the wait queue, right? So
+> > can this wake_up_all() actually ever notify anyone?
+>
+> I don't know actually, I just thought better safe than sorry. I can
+> drop it, though.
+
+Let's see if any fs people have some insight...
+
+> > > +               ret = -ENOENT;
+> > > +               goto out;
+> > > +       }
+> > > +
+> > > +       /* Allow exactly one reply. */
+> > > +       if (knotif->state != SECCOMP_NOTIFY_SENT) {
+> > > +               ret = -EINPROGRESS;
+> > > +               goto out;
+> > > +       }
+> >
+> > This means that if seccomp_do_user_notification() has in the meantime
+> > received a signal and transitioned from SENT back to INIT, this will
+> > fail, right? So we fail here, then we read the new notification, and
+> > then we can retry SECCOMP_NOTIF_SEND? Is that intended?
+>
+> I think so, the idea being that you might want to do something
+> different if a signal was sent. But Andy seemed to think that we might
+> not actually do anything different.
+
+If you already have the proper response ready, you'd probably want to
+just go through with it, no? Otherwise you'll just end up re-emulating
+the syscall afterwards for no good reason. If you noticed the
+interruption in the middle of the emulated syscall, that'd be
+different, but since this is the case where we're already done with
+the emulation and getting ready to continue...
