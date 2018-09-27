@@ -2,108 +2,107 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A6AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBBCC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2ED82170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:28:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 980B02170E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:28:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZ1uogw6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2ED82170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="LwdBT7AG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980B02170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbeI1EtJ (ORCPT
+        id S1728161AbeI1EtW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:49:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36776 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbeI1EtJ (ORCPT
+        Fri, 28 Sep 2018 00:49:22 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:27551 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbeI1EtW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:49:09 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l10-v6so4297242wrp.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 15:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yTBXIHltE4t0vT1BdNbfQcRDNDxJHiRQEbIUATmrrU4=;
-        b=lZ1uogw6XeE+iMbKuicD9lJIwQQH0bMixk8L1P/sKiKy6ce1Lkd37OSmVb0BTef5Lv
-         5n27v4hODuowhWESTVo+MjFPzWf5pQoVIlSTsxkYFen2mRY6FsS+nkKAjFn0Cnq3FSVK
-         6olxieBj2VPtiymYNV8bXl1OjSoS0AXwV9MPb60feQEz5yCHKXp2Bb5z00s6Zt/UqHWu
-         sNZQSHPmYA9GeA9/BvJbWrtnscHji1RBLU9/+Pt7MGUKpPQ9/5Fu3zD2hLL1QRtW6Xit
-         bH3plLG6F8stEEkGDWYGm7HGy+5FzjwyBs6KM+6YxEopYm54UEwsAT4hGdVdPtZGurVF
-         DU/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yTBXIHltE4t0vT1BdNbfQcRDNDxJHiRQEbIUATmrrU4=;
-        b=i3DqJ9ghWUBmBNvf5oZLDLy7Wvch4hcJ3zWUHNw20nNIZ+ctW32vuiH1kZ9FxcEp8F
-         MRtpykbbg6d3YSClClazx/g9o/bH0eUzMqYk2F5mHMbu5Vz4AbWM3VBCq/FBVDs4YqQ0
-         +ycHH6gEvJCw8IR3LKIj6ODYZ9lqCjupLXdEao1sHLlVWK+Omyz7ANcGabeqcRG252Sb
-         7qmJbCOFOWlWS8BvRZTnC+kEKHw+qxs5Xb+spjbAxelLpls45qk9pc0FV/Hh5KMERb7D
-         YSQlmICpNjqHwGcSn//wWAfCbJE4WcoU/2RW0ZCbEyhd0ys9ZyRTGojp8YXQi7kcmhEQ
-         SSmg==
-X-Gm-Message-State: ABuFfogEP5ILpQcr9feVPJwsHgHSsk0TMyIXjXDdZVXY24zly7YJrDVq
-        ADqpW4sUy0p5EjlPn2n8gOo=
-X-Google-Smtp-Source: ACcGV62mGFZS7WcXLlC4PLCuR05zClJxWyz3K2aHLQBL0ENXtJtQx2ZM0gnQiItj6yLtXrq6e4soFw==
-X-Received: by 2002:adf:f391:: with SMTP id m17-v6mr10669292wro.279.1538087317458;
-        Thu, 27 Sep 2018 15:28:37 -0700 (PDT)
-Received: from localhost.co.uk ([2a01:388:3ce:110::1:5])
-        by smtp.gmail.com with ESMTPSA id f69-v6sm232968wmf.34.2018.09.27.15.28.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 15:28:36 -0700 (PDT)
-From:   Aymen Qader <qader.aymen@gmail.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Bastien Nocera <hadess@hadess.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Aymen Qader <qader.aymen@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: Skip unnecessary field checks
-Date:   Thu, 27 Sep 2018 23:28:14 +0100
-Message-Id: <20180927222814.11370-1-qader.aymen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 28 Sep 2018 00:49:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1538087330; x=1569623330;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=QXGBpjou41IlEYutkrf87r4e6Z+A+gmWSTaqlxwJQsU=;
+  b=LwdBT7AGl+KUDMtVx3ZsFNkotHqxf9W33nrp4YkJPexq/WrsiMceVRG5
+   ngjulRKb2NH/OR3ftqpm6cOxsXa/Cdp0JD2eLCqQYEIJxYeR+MglgrsVU
+   HVNXfwIk8S5ixxLavGR9beAi2Bws9fS56cWtD3z4zu2P++fDFtqd6VPKa
+   TVHB8YN4wC7sSMwlG1nr9RlFP+c9J26xo2Gr0Fj8Qca8Vm4YC728iEPNR
+   j4DfGvNwXktDX1ZNPULEypdexkvd8M5sTkdXjPdO9I9x/5ItHfspbXiSD
+   E3XNxFbzkV4HjsSIYeJQmPBhH2oVnI9xQyRpoyIf9sisVBXoaOJd8RfYH
+   A==;
+X-IronPort-AV: E=Sophos;i="5.54,312,1534780800"; 
+   d="scan'208";a="91821599"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Sep 2018 06:28:50 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 27 Sep 2018 15:14:39 -0700
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.148]) ([10.196.159.148])
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Sep 2018 15:28:50 -0700
+Subject: Re: [PATCH v2] RISC-V: Show CPU ID and Hart ID separately in
+ /proc/cpuinfo
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+References: <20180923133737.22693-1-anup@brainfault.org>
+ <a7c64e1a-405e-6a2c-cb42-211c4f89367d@wdc.com>
+ <CAAhSdy2ZOXk3fDt8W_G1=h_OrifFsXP3XwZ2xnXwt9ztzW4GEg@mail.gmail.com>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <d0c811f0-02f0-3503-fb03-4a07ebdfb477@wdc.com>
+Date:   Thu, 27 Sep 2018 15:28:50 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAAhSdy2ZOXk3fDt8W_G1=h_OrifFsXP3XwZ2xnXwt9ztzW4GEg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Skip unnecessary request field checks when the information element
-pointer is null.
+On 9/25/18 9:17 PM, Anup Patel wrote:
+> On Tue, Sep 25, 2018 at 11:29 PM Atish Patra <atish.patra@wdc.com> wrote:
+>>
+>> On 9/23/18 6:37 AM, Anup Patel wrote:
+>>> Currently, /proc/cpuinfo show logical CPU ID as Hart ID which
+>>> is in-correct. This patch shows CPU ID and Hart ID separately
+>>> in /proc/cpuinfo using cpuid_to_hardid_map().
+>>>
+>> I noticed it should be cpuid_to_hartid_map instead of
+>> cpuid_to_hardid_map. It was a typo in my smp cleanup patch series.
+>> Sorry for the inconvenience here.
+> 
+> Thanks for pointing.
+> 
+>>
+>> I can include this patch in into my series fixing the typo if you want.
+> 
+> Yes, please.
+> 
 
-Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Great.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index bf055935ef65..69c7abc0e3a5 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -1267,13 +1267,12 @@ unsigned int OnAssocReq(struct adapter *padapter, union recv_frame *precv_frame)
- 	/*  checking SSID */
- 	p = rtw_get_ie(pframe + WLAN_HDR_A3_LEN + ie_offset, _SSID_IE_, &ie_len,
- 		pkt_len - WLAN_HDR_A3_LEN - ie_offset);
--	if (p == NULL) {
--		status = _STATS_FAILURE_;
--	}
- 
--	if (ie_len == 0) /*  broadcast ssid, however it is not allowed in assocreq */
-+	if (!p || ie_len == 0) {
-+		/*  broadcast ssid, however it is not allowed in assocreq */
- 		status = _STATS_FAILURE_;
--	else {
-+		goto OnAssocReqFail;
-+	} else {
- 		/*  check if ssid match */
- 		if (memcmp((void *)(p+2), cur->Ssid.Ssid, cur->Ssid.SsidLength))
- 			status = _STATS_FAILURE_;
--- 
-2.17.1
+> You can also include "RISC-V: Show IPI stats" patch in your series.
+> This patch was reviewed by Christoph.
+> 
+
+I already had that included as a part of v5.
+
+Regards,
+Atish
+> Thanks,
+> Anup
+> 
 
