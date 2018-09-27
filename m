@@ -2,118 +2,135 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37445C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3690EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D559C2156E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:18:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWpmxmQq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D559C2156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D5CE121570
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:28:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CE121570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbeI0IeZ (ORCPT
+        id S1727219AbeI0Ior convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 04:34:25 -0400
-Received: from mail-pg1-f175.google.com ([209.85.215.175]:39687 "EHLO
-        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeI0IeZ (ORCPT
+        Thu, 27 Sep 2018 04:44:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58960 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbeI0Ior (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 04:34:25 -0400
-Received: by mail-pg1-f175.google.com with SMTP id 85-v6so712205pge.6;
-        Wed, 26 Sep 2018 19:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A90Lp2W6H1+QKdsi/tGZOMLHo6szgWaNW4589vJxLIU=;
-        b=hWpmxmQqMq//uMr1RRZQxPLg13DaJvapc2iL6jBFg+FZsF1MYDtiXiKRA993sE77fz
-         BX9k7v9lAum8LM3OytcNSj9/AvcngWEXW9hNjzm7qtt3oSZ7cjIdtgS2FRfE2MeRU25E
-         TmgiT/B6b/a2YbpeBQl2Mf/zJrLTcQl7TTSwF6b6wotPNSS+Fu3B9AaFcy80UPK2Kvy7
-         RzmSBx15y0l5lyTaMhNbScWWfdliPGvlvMBZX5hEX2EVF2CCoNKOp/pQQcfqMe/hIu3I
-         3pIWHdf65rUbMVhCBeqRXIPkMzPawKi+dDRrDw6yglMM2+nYsqHrmQhDKuh8BCfbiFGm
-         bzxA==
+        Thu, 27 Sep 2018 04:44:47 -0400
+Received: from mail-wm1-f71.google.com ([209.85.128.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <chia-lin.kao@canonical.com>)
+        id 1g5M2s-0004wH-79
+        for linux-kernel@vger.kernel.org; Thu, 27 Sep 2018 02:28:50 +0000
+Received: by mail-wm1-f71.google.com with SMTP id a69-v6so3993266wma.7
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 19:28:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A90Lp2W6H1+QKdsi/tGZOMLHo6szgWaNW4589vJxLIU=;
-        b=qQlC+rJ5HCz+WmZJNqiKPgq9BwjLY2PPRa5P0ELweP5XhKYB2mqW1aaRO6Ib7hDWhO
-         XlSi72K/8J2YqoR0dzgPhOy6b8vY1ew8vpFsqujatk9OYJKt8NSfYKd1EPFg2rlzDSqx
-         KbRLFPn/8QgBw9ZfefkkvMfCunc0JIykYWaRluqMEK4IbjSvBYxiY+BCYaGHwUMo6FSe
-         UIaDAUWP5LMEH1mJOYRjIqtoeuTZ82u+q3TOewtZndyk87lB5kJAzvEVCHgJLOH7aYn2
-         dRPLmNTSJ/66oSLrgyx0HWTSPPDfEjHvp2pA0STX11mcFOB8iyw+OoSJa+h8cUdX92ds
-         dnDg==
-X-Gm-Message-State: ABuFfojOY/k9QOq3BZnbDABFj5zhAE9Tpq35HM21qqkh/kmYjnDm6s+l
-        rJc5Opgcr5OhIQuebgtycdc=
-X-Google-Smtp-Source: ACcGV606d2p3BewOLi5iJqWKh7rYxkas3Cgn6BPfd2hazvev7WDUEE7+EirUHOD9P4gD/Er0kIPs/w==
-X-Received: by 2002:a17:902:6909:: with SMTP id j9-v6mr8512247plk.196.1538014710485;
-        Wed, 26 Sep 2018 19:18:30 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm604434pfm.145.2018.09.26.19.18.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 19:18:29 -0700 (PDT)
-Subject: Re: nfs+tcp boot failures on linuxnext-20180924 from switch
- tcp_clock_ns to CLOCK_TAI
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        Jesus Sanchez-Palencia <jesus.sanchez-palencia@intel.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>
-References: <30e76d01dd08c2d9127072ad28c5a99afc5daabf.camel@nxp.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <2185d09d-90e1-81ef-7c7f-346eeb951bf4@gmail.com>
-Date:   Wed, 26 Sep 2018 19:18:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MOHsVTItP7K4W+cz+BT1+YHPuQ3I7f97g5h1bFF7Fdo=;
+        b=tgHvcYIQqOfUrEn9fwD1AxX6UErnV/WG7Z7f/do2eD5sze9Za+f0W/8f6OX/ijexn3
+         PGxInUZHznyjqGpSC6q4c7rrpsZQWlinaUgiEhKSMdi56ust4LtR/hnATngcugzK0fqJ
+         OwFHmTbysAJKmOb2ZD860N0sArSNRMO/73Fo503eOEKhDF2BD0P4/E9qnDTFNV8qqJD9
+         SxruyIK6bIoCXcGEpEuupnrM52dUTa+fiH0xLs/c2bFCKCdiXS16TFuOi7TH+SVeIQzZ
+         CHEY9+3gKKPVoG3V/RYeMY8z8wSvUPFVGrKkhkmUf3SZpkscg0/DkBPhByqv5vOp5mv5
+         /tOg==
+X-Gm-Message-State: ABuFfojvzTzGJUwvL2DMsqH/OuHMFeo9StaJ6sgmpVYuBbC8Kt6Od2da
+        zKyhtXTsCb/kD6F4TIIwK4RJ7zrhqk5PN+HM2xyU8vUY/mDE/9Yr6pJCSuPKC42kzN6kqTT7DPk
+        PJ3KeiZQKJu80U6TkkJMohOaOo1KDgQhVjocxLr3365bSCnjNUr06M3EJTA==
+X-Received: by 2002:adf:f7c8:: with SMTP id a8-v6mr7350234wrq.86.1538015329788;
+        Wed, 26 Sep 2018 19:28:49 -0700 (PDT)
+X-Google-Smtp-Source: ACcGV61H2s2YbrteX5WmeuEGgqI8wQBoR+xfdWQJ1vRGlwcBZ7elzjsMD5Ra4oGCK44OA8GrX+FTxMRJGcxZbtwW5Vg=
+X-Received: by 2002:adf:f7c8:: with SMTP id a8-v6mr7350220wrq.86.1538015329421;
+ Wed, 26 Sep 2018 19:28:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <30e76d01dd08c2d9127072ad28c5a99afc5daabf.camel@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180920070940.14773-1-acelan.kao@canonical.com> <Pine.LNX.4.44L0.1809201037540.2141-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1809201037540.2141-100000@iolanthe.rowland.org>
+From:   AceLan Kao <acelan.kao@canonical.com>
+Date:   Thu, 27 Sep 2018 10:28:37 +0800
+Message-ID: <CAFv23Q=xUFxwgXZZ_Q6G4CoHx_-Hs5PJRxcrUmcqutV9Ovrg1g@mail.gmail.com>
+Subject: Re: [PATCH] usb: core: disable USB2 LPM when suspending
+To:     stern@rowland.harvard.edu
+Cc:     felipe.balbi@linux.intel.com, Daniel Drake <drake@endlessm.com>,
+        joe@perches.com, mathias.nyman@linux.intel.com,
+        linux-usb@vger.kernel.org,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/26/2018 06:15 PM, Leonard Crestez wrote:
-> Hello,
->  
-> It seems that after commit 72b0094f9182 ("tcp: switch tcp_clock_ns() to
-> CLOCK_TAI base") some systems that use nfs over tcp fail to boot. The
-> last line printed in the log is from systemd:
->  
-> [    7.232579] systemd[1]: System time before build time, advancing clock.
->  
-> Superficially it looks like very large clock discontinuities now break
-> TCP. Maybe boottime could avoid such issues?
->  
-> I didn't find similar reports anywhere else. The machines I’m seeing
-> this are all 32bit arm imx (this shouldn’t matter) and it seems their
-> RTC isn’t properly setup so they boot with realtime set to unix zero,
-> then a ~50 years jump happens when systemd starts up. This is the
-> likely trigger for this issue.
->  
-
-Thanks for the report.
-
-It is annoying, because SCM_TXTIME and net/sched/sch_etf.c are using CLOCK_TAI,
-so it means that if we convert TCP (and net/sched/sch_fq.c) back to ktime_get_ns(),
-we will have to differentiate in skbs the clock base.
-
-This has been discussed in the past (When ETF was merged in 4.19) and we chose
-to use a common clock base.
-
+Alan Stern <stern@rowland.harvard.edu> 於 2018年9月20日 週四 下午10:43寫道：
+>
+> On Thu, 20 Sep 2018, AceLan Kao wrote:
+>
+> > We found a S5 current leakage issue on Dell DW1820 WiFi/BT combo card
+> > which uses Qualcomm QCA6174 SoC. It also comes with WiFi and BT failure
+> > when encountered current leakage issue.
+> >    1. Power on, both WiFi and BT work.
+> >    2. Power off and found a current leakage issue(consumes ~0.5W)
+> >    3. Power on, no WiFi and BT devices can be found in lspci and lsusb.
+> >    4. Power off, there is no current leakage issue at S5.
+> >    5. continue to 1.
+> >
+> > From Qualcomm's report:
+> > Based on the USB sniffer log, the difference between Linux and Windows
+> > is USB LPM setting(no LPM transaction on Windows) which may leads to
+> > the voltage leakage on Linux S5 state.
+> >
+> > After checked the LPM related code and found, when system is going to
+> > enter S5, it resumes the USB devices from runtime suspend and enables
+> > USB2 LPM, and then it calls usb_dev_poweroff() -> usb_suspend(), and
+> > leave USB2 LPM stays enabled.
+>
+> But usb_suspend() -> usb_suspend_both() -> usb_suspend_device() ->
+> generic_suspend() -> usb_port_suspend() ->
+> usb_set_usb2_hardware_lpm(udev, 0).  So why does USB2 LPM stay enabled?
+Right, after checking the normal case, it calls
+usb_set_usb2_hardware_lpm(udev, 0) eventually.
+In the buggy machine, it doesn't reach that part and stops somewhere
+after resume.
+But unfortunately, I can't duplicate the issue after doing some
+experiments anymore, so I can't get more info about that.
+I'll dig further and get back to you when I have any progress.
+>
+> > Disable USB2 LPM in usb_suspend() fixes the issue mentioned above,
+> > and try 30 times of s2idle, S3 and S5, the USB devices keep working
+> > well. Disable USB2 LPM seems do no harm to the system.
+> >
+> > Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
+> > ---
+> >  drivers/usb/core/driver.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> > index e76e95f62f76..ac5e60d7104f 100644
+> > --- a/drivers/usb/core/driver.c
+> > +++ b/drivers/usb/core/driver.c
+> > @@ -1463,6 +1463,9 @@ int usb_suspend(struct device *dev, pm_message_t msg)
+> >       struct usb_device       *udev = to_usb_device(dev);
+> >       int r;
+> >
+> > +     if (udev->usb2_hw_lpm_enabled == 1)
+> > +             usb_set_usb2_hardware_lpm(udev, 0);
+>
+> At this point the device may still be in runtime suspend.  Is that
+> really okay?
+>
+> Alan Stern
+>
+> > +
+> >       unbind_no_pm_drivers_interfaces(udev);
+> >
+> >       /* From now on we are sure all drivers support suspend/resume
+> >
+>
