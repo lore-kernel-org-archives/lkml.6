@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2680C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA600C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 306E821565
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70E8221565
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:12:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tdYbAId4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306E821565
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kk9JevsI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E8221565
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeI0G11 (ORCPT
+        id S1727077AbeI0G1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 02:27:27 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55120 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbeI0G11 (ORCPT
+        Thu, 27 Sep 2018 02:27:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39961 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbeI0G1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 02:27:27 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c14-v6so4018450wmb.4;
-        Wed, 26 Sep 2018 17:11:57 -0700 (PDT)
+        Thu, 27 Sep 2018 02:27:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y8-v6so649203wrh.7;
+        Wed, 26 Sep 2018 17:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=4RcO7Xka82eBCqQUf12Pto9/X1Xq+0RNbQUAV8QuDM0=;
-        b=tdYbAId4saJpBi9jMRnJwWgsWGYfudwW6VzqFqsAJlB1+VNYig1gVVrJ0YKmqIfLrx
-         dltpAKoINc5F4Jk94FizZdYBKLrXVlxCc0qKIpktOz0yVLJAstOcQNKOjlMveIzbqybY
-         fh5FxpsHcOAocHHxzQXDvGJRnccpAiWrMlYUZJhDmP+LCTzdKLkl/ZkN1bmHZkFTUbEC
-         sNWvqZ0FTXb/RvrPrJShc0KsSBVlE4s82TYF4Vbx1Qf9ZZDsr7XhucHvvp/zCa/e1Cxx
-         66ACZw85W/lRTq1aVMJW91WBPdURGadUDJDDlR0REAxAdtDJrRicxx+6J9NJQd+Ipc09
-         ObqQ==
+        bh=5bQbsamm/LYhlgXhcl5giMo3OUz1T8eeEzrnPWLqAKw=;
+        b=kk9JevsIVGIszGB11BajytRUzGLaL9OG4aw/XHPterEPDLUegTlWCPhTBJ5SgaQQxw
+         hXIUhSlrvV8H23UXdCO2yyjbYJICmIvk4Z79t4LjRPCFuVV5kZdC3YlkPzjQF8tAqucw
+         Zx9brxzHz5iHu8puyoaiKtCLYMDIaavR3zX9inqDibLh18xcr4ioVneNFD37251PbvDt
+         ymjZ/YmCNdreYl+0xpo4M/nj8MS2saHPFKaj+Z2QiGHiC0Y1zUup3oz/EGHeYtVUBcFi
+         l9eaycaVg4P5Lc0i9ujD2N9vEFT/lo45iks15KQInKCPMfAncQvkf/jjiA5zJis/jVO7
+         8HKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=4RcO7Xka82eBCqQUf12Pto9/X1Xq+0RNbQUAV8QuDM0=;
-        b=ugc0Mp5N8krDgN37JPVmSKb2OF6v3A5QlteXR8BjhLFDrXs1uwhGJBJUsMMrEzAUm0
-         HMnL9/PdEFghgi/BZAlKT+1W6jVEKhevoDHSzB+FgFGhxe9I6WHH1YWy2AmdOG/RU39s
-         VYFpOt+gR2fCK5WDihGBUBboVPdf5FwtKZ3kWc53yuQOFyR1Ru7j6f7fqZgL+sZImp8T
-         oRngvB+yyufBV21EJL4fJyR+a4fZgMKj9CV6k5oRCiJJw85b+CreLfDIodivPHKEkevW
-         cNqnc5BlrWGpY581pcgaqUo1GmnUrTnygpsGJWZdT6xpi+ryXrAfusx3SCEzgK1tsCxo
-         Y9eA==
-X-Gm-Message-State: ABuFfoiMRL+p7N/KAiRcsuKdZ692q0PqSNi1QQ/R8a98+CUbJgiANjos
-        q7HX7sChdjJHAvRBt1JS7rk=
-X-Google-Smtp-Source: ACcGV629yL4+eZfhMHsZXAAC9x8QS/cJjV7YuA0UkRlE3nzxw+wym/VSzhNx5Gi0Oz0CxlI4lL9w0Q==
-X-Received: by 2002:a1c:1203:: with SMTP id 3-v6mr6268978wms.46.1538007116939;
-        Wed, 26 Sep 2018 17:11:56 -0700 (PDT)
+        bh=5bQbsamm/LYhlgXhcl5giMo3OUz1T8eeEzrnPWLqAKw=;
+        b=hZz4pErLt/sb8L6Uq/aNUFTS6JgmuaDMYI9aDMhHLHrcloKixOSExH6WA6EoVld8m7
+         Joz5jrZKmuhrsq0Z1oS6YpxR+QDWyBQs9d2KZXhyEhLe01uTgiSbiSXb0R6RkLHkozcw
+         YMYZdFSZR23INOj1W+tTR95eAwOX8pj1yShPwYPtuQRYB+mlQiVKrtS55XhGG4r6u9er
+         cwPvCDuPQHIuOIUVbv/WlSSfQVVbf7V5/jX4GKmHDQUFEcuOnOO3MsM0u4Ugx7KV4ceP
+         nY9NqxVCz1KWTDx0jSVmaMhuBAnPPhlQPCVEvb7DX40kWnbzuEv5xkkMlSUzlJz9i4DA
+         DYqQ==
+X-Gm-Message-State: ABuFfojAVBZc8wFEFapJSPX3TV5kOTtUyA8PnC/RLqMIL2zzTLn9dLNF
+        ZyuCMtWLPS0Y1oB5wCgJ4q0=
+X-Google-Smtp-Source: ACcGV60P7Ooa06mVKSWVDkc8vlkIpZzo7b3sIn3dEFEkT/FpaRYHdGG9ngI/F4qufc/JVsY8/LK5xw==
+X-Received: by 2002:a5d:54cb:: with SMTP id x11-v6mr7161288wrv.150.1538007123239;
+        Wed, 26 Sep 2018 17:12:03 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id b138-v6sm694852wmb.1.2018.09.26.17.11.56
+        by smtp.gmail.com with ESMTPSA id l40-v6sm416615wre.38.2018.09.26.17.12.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 17:11:56 -0700 (PDT)
+        Wed, 26 Sep 2018 17:12:02 -0700 (PDT)
 From:   Nathan Chancellor <natechancellor@gmail.com>
 To:     Intel SCU Linux support <intel-linux-scu@intel.com>,
         Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
@@ -67,9 +67,9 @@ To:     Intel SCU Linux support <intel-linux-scu@intel.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: isci: Use proper enumerated type in atapi_d2h_reg_frame_handler
-Date:   Wed, 26 Sep 2018 17:11:50 -0700
-Message-Id: <20180927001150.26212-1-natechancellor@gmail.com>
+Subject: [PATCH] scsi: isci: Change sci_controller_start_task's return type to sci_status
+Date:   Wed, 26 Sep 2018 17:12:00 -0700
+Message-Id: <20180927001200.26343-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -78,47 +78,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another.
+Clang warns when an enumerated type is implicitly converted to another.
 
-drivers/scsi/isci/request.c:1629:13: warning: implicit conversion from
-enumeration type 'enum sci_io_status' to different enumeration type
+drivers/scsi/isci/request.c:3476:13: warning: implicit conversion from
+enumeration type 'enum sci_task_status' to different enumeration type
 'enum sci_status' [-Wenum-conversion]
-                        status = SCI_IO_FAILURE_RESPONSE_VALID;
-                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/scsi/isci/request.c:1631:12: warning: implicit conversion from
-enumeration type 'enum sci_io_status' to different enumeration type
-'enum sci_status' [-Wenum-conversion]
-                status = SCI_IO_FAILURE_RESPONSE_VALID;
-                       ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        status = sci_controller_start_task(ihost,
+                               ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/isci/host.c:2744:10: warning: implicit conversion from
+enumeration type 'enum sci_status' to different enumeration type 'enum
+sci_task_status' [-Wenum-conversion]
+                return SCI_SUCCESS;
+                ~~~~~~ ^~~~~~~~~~~
+drivers/scsi/isci/host.c:2753:9: warning: implicit conversion from
+enumeration type 'enum sci_status' to different enumeration type 'enum
+sci_task_status' [-Wenum-conversion]
+        return status;
+        ~~~~~~ ^~~~~~
 
-status is of type sci_status but SCI_IO_FAILURE_RESPONSE_VALID is of
-type sci_io_status. Use SCI_FAILURE_IO_RESPONSE_VALID, which is from
-sci_status and has SCI_IO_FAILURE_RESPONSE_VALID's exact value since
-that is what SCI_IO_FAILURE_RESPONSE_VALID is mapped to in the isci.h
-file.
+Avoid all of these implicit conversion by just making
+sci_controller_start_task use sci_status. This silences
+Clang and has no functional change since sci_task_status
+has all of its values mapped to something in sci_status.
 
 Link: https://github.com/ClangBuiltLinux/linux/issues/153
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/scsi/isci/request.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/isci/host.c | 8 ++++----
+ drivers/scsi/isci/host.h | 2 +-
+ drivers/scsi/isci/task.c | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/isci/request.c b/drivers/scsi/isci/request.c
-index ed197bc8e801..2f151708b59a 100644
---- a/drivers/scsi/isci/request.c
-+++ b/drivers/scsi/isci/request.c
-@@ -1626,9 +1626,9 @@ static enum sci_status atapi_d2h_reg_frame_handler(struct isci_request *ireq,
+diff --git a/drivers/scsi/isci/host.c b/drivers/scsi/isci/host.c
+index 1ee3868ade07..7b5deae68d33 100644
+--- a/drivers/scsi/isci/host.c
++++ b/drivers/scsi/isci/host.c
+@@ -2717,9 +2717,9 @@ enum sci_status sci_controller_continue_io(struct isci_request *ireq)
+  *    the task management request.
+  * @task_request: the handle to the task request object to start.
+  */
+-enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
+-					       struct isci_remote_device *idev,
+-					       struct isci_request *ireq)
++enum sci_status sci_controller_start_task(struct isci_host *ihost,
++					  struct isci_remote_device *idev,
++					  struct isci_request *ireq)
+ {
+ 	enum sci_status status;
  
- 	if (status == SCI_SUCCESS) {
- 		if (ireq->stp.rsp.status & ATA_ERR)
--			status = SCI_IO_FAILURE_RESPONSE_VALID;
-+			status = SCI_FAILURE_IO_RESPONSE_VALID;
- 	} else {
--		status = SCI_IO_FAILURE_RESPONSE_VALID;
-+		status = SCI_FAILURE_IO_RESPONSE_VALID;
+@@ -2728,7 +2728,7 @@ enum sci_task_status sci_controller_start_task(struct isci_host *ihost,
+ 			 "%s: SCIC Controller starting task from invalid "
+ 			 "state\n",
+ 			 __func__);
+-		return SCI_TASK_FAILURE_INVALID_STATE;
++		return SCI_FAILURE_INVALID_STATE;
  	}
  
- 	if (status != SCI_SUCCESS) {
+ 	status = sci_remote_device_start_task(ihost, idev, ireq);
+diff --git a/drivers/scsi/isci/host.h b/drivers/scsi/isci/host.h
+index b3539928073c..6bc3f022630a 100644
+--- a/drivers/scsi/isci/host.h
++++ b/drivers/scsi/isci/host.h
+@@ -489,7 +489,7 @@ enum sci_status sci_controller_start_io(
+ 	struct isci_remote_device *idev,
+ 	struct isci_request *ireq);
+ 
+-enum sci_task_status sci_controller_start_task(
++enum sci_status sci_controller_start_task(
+ 	struct isci_host *ihost,
+ 	struct isci_remote_device *idev,
+ 	struct isci_request *ireq);
+diff --git a/drivers/scsi/isci/task.c b/drivers/scsi/isci/task.c
+index 6dcaed0c1fc8..fb6eba331ac6 100644
+--- a/drivers/scsi/isci/task.c
++++ b/drivers/scsi/isci/task.c
+@@ -258,7 +258,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
+ 				 struct isci_tmf *tmf, unsigned long timeout_ms)
+ {
+ 	DECLARE_COMPLETION_ONSTACK(completion);
+-	enum sci_task_status status = SCI_TASK_FAILURE;
++	enum sci_status status = SCI_FAILURE;
+ 	struct isci_request *ireq;
+ 	int ret = TMF_RESP_FUNC_FAILED;
+ 	unsigned long flags;
+@@ -301,7 +301,7 @@ static int isci_task_execute_tmf(struct isci_host *ihost,
+ 	/* start the TMF io. */
+ 	status = sci_controller_start_task(ihost, idev, ireq);
+ 
+-	if (status != SCI_TASK_SUCCESS) {
++	if (status != SCI_SUCCESS) {
+ 		dev_dbg(&ihost->pdev->dev,
+ 			 "%s: start_io failed - status = 0x%x, request = %p\n",
+ 			 __func__,
 -- 
 2.19.0
 
