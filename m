@@ -2,167 +2,115 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE7DC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD06C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F08CE216E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:46:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vazNJLqM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08CE216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AE0E9216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:46:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE0E9216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbeI0UEk (ORCPT
+        id S1727499AbeI0UFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:04:40 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44796 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeI0UEk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:04:40 -0400
-Received: by mail-pg1-f196.google.com with SMTP id g2-v6so1995070pgu.11;
-        Thu, 27 Sep 2018 06:46:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4phDb1xWxQiiR8jky/VREeoibO5x9Y96ECC8F1IMjuA=;
-        b=vazNJLqMAoLx/XSRRv0Kuv0cP8eXa7U24Qbf0VWlQiza9YEgat7A2MD24r0dqE5FPr
-         FDatFsSsVeBhv/KWyuc0lWhaZ4+OYy4OuklhsLL4nQczqD84jxt7Lc2nBStsV2+A45Wo
-         adeKM7Fm3atR0+y3hhYYTi8G4BVL+EpgEDU0eXduF6IR9vrYUJWxQtPaNBfD5BaJZO30
-         /etCL3ReMZcxB+9mYe+lUDza90P49n2J6xHO+qykBpHJ5v1GEnrIXIRdlTL86VsqyGAH
-         3lPBI0m89gGYvSk4s8mGCijlxkoA5kcGYFhQfUsUds1EcDTudQeKSS4qOoyhDnTi9jkF
-         ZOxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4phDb1xWxQiiR8jky/VREeoibO5x9Y96ECC8F1IMjuA=;
-        b=KUs6Kiahmiyw2gnXjdqF8PfQFjNy6PP8t0kCLIhL4PWcSa3TwmRbbTKdTb01V6vIcp
-         O+iYU6r+uqzeg+RF9G3qsY1B9Mh5Cz/Qv4Vl8d94ht6pu7odEa3EV3MJHnCfXx2xlI7E
-         7VbYN4x+ltXEA+czl0A3ez96nUxkvNzVuVLOgDSOJBDA+czbChTnwF0jubDypTllsujD
-         HLgPA0mj2o9Nd76uKm/l11vw86HFwNoQgfPIekljYr/b8hAvKZpXIZTuE+A1/ex0skIP
-         UdCk912Sq7fiJHh51IKZ7U1IZ+B7Nmm8CILh2OfFxyrktMmoNdcvEF4ZELWOI9lef8bW
-         tYhQ==
-X-Gm-Message-State: ABuFfoiIUy8MHNXFhOVwJJSCg//MyXK5EgZJn3mNgi+kOPkZxtEsvRkv
-        oLytOayyjytfJ+Y/V2cZ4mDmZMPRpVPieQ==
-X-Google-Smtp-Source: ACcGV62o0aUKZOQGn7ECtMuqZDXHPuGkvmbiUzuD1gRyF/XiM3Rog4m8YrB07fM8fTdCCwTVV9aoEA==
-X-Received: by 2002:a65:4849:: with SMTP id i9-v6mr10200135pgs.350.1538055979569;
-        Thu, 27 Sep 2018 06:46:19 -0700 (PDT)
-Received: from localhost.localdomain.localdomain ([113.88.12.25])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm3137049pfh.83.2018.09.27.06.46.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 06:46:18 -0700 (PDT)
-From:   guoju <fangguoju@gmail.com>
-To:     colyli@suse.de, kent.overstreet@gmail.com,
-        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     guoju <fangguoju@gmail.com>
-Subject: [PATCH] bcache: add separate workqueue for journal_write to avoid deadlock
-Date:   Thu, 27 Sep 2018 21:45:19 +0800
-Message-Id: <1538055919-5757-1-git-send-email-fangguoju@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 27 Sep 2018 16:05:00 -0400
+Received: from mga07.intel.com ([134.134.136.100]:4292 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727175AbeI0UE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 16:04:59 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 06:46:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
+   d="scan'208";a="89929163"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.69])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Sep 2018 06:42:24 -0700
+Date:   Thu, 27 Sep 2018 16:42:23 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
+ w/ PF_SGX
+Message-ID: <20180927134223.GA8242@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After write SSD completed, bcache schedule journal_write work to
-system_wq, that is a public workqueue in system, without WQ_MEM_RECLAIM
-flag. system_wq is also a bound wq, and there may be no idle kworker on
-current processor. Creating a new kworker may unfortunately need to
-reclaim memory first, by shrinking cache and slab used by vfs, which
-depends on bcache device. That's a deadlock.
+On Wed, Sep 26, 2018 at 01:16:59PM -0700, Dave Hansen wrote:
+> On 09/26/2018 11:12 AM, Andy Lutomirski wrote:
+> >> e omniscient.
+> >>
+> >> How about this?  With formatting changes since it's long-winded...
+> >>
+> >>        /*
+> >>         * Access is blocked by the Enclave Page Cache Map (EPCM), i.e. the
+> >>         * access is allowed by the PTE but not the EPCM.  This usually happens
+> >>         * when the EPCM is yanked out from under us, e.g. by hardware after a
+> >>         * suspend/resume cycle.  In any case, software, i.e. the kernel, can't
+> >>         * fix the source of the fault as the EPCM can't be directly modified
+> >>         * by software.  Handle the fault as an access error in order to signal
+> >>         * userspace, e.g. so that userspace can rebuild their enclave(s), even
+> >>         * though userspace may not have actually violated access permissions.
+> >>         */
+> >>
+> > Looks good to me.
+> 
+> Including the actual architectural definition of the bit might add some
+> clarity.  The SDM explicitly says (Vol 3a section 4.7):
+> 
+> 	The fault resulted from violation of SGX-specific access-control
+> 	requirements.
+> 
+> Which totally squares with returning true from access_error().
+> 
+> There's also a tidbit that says:
+> 
+> 	This flag is 1 if the exception is unrelated to paging and
+> 	resulted from violation of SGX-specific access-control
+> 	requirements. ... such a violation can occur only if there
+> 	is no ordinary page fault...
+> 
+> This is pretty important.  It means that *none* of the other
+> paging-related stuff that we're doing applies.
+> 
+> We also need to clarify how this can happen.  Is it through something
+> than an app does, or is it solely when the hardware does something under
+> the covers, like suspend/resume.
 
-This patch create a new workqueue for journal_write with WQ_MEM_RECLAIM
-flag. It's rescuer thread will work to avoid the deadlock.
+When you change page permissions lets say with mprotect after the and
+try to do an invalid access according to the EPCM permissions this can
+happen.
 
-Signed-off-by: guoju <fangguoju@gmail.com>
----
- drivers/md/bcache/bcache.h  | 1 +
- drivers/md/bcache/journal.c | 6 +++---
- drivers/md/bcache/super.c   | 8 ++++++++
- 3 files changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 83504dd..954dad2 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -965,6 +965,7 @@ bool bch_alloc_sectors(struct cache_set *c, struct bkey *k,
- void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
- 
- extern struct workqueue_struct *bcache_wq;
-+extern struct workqueue_struct *bch_journal_wq;
- extern struct mutex bch_register_lock;
- extern struct list_head bch_cache_sets;
- 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 6116bbf..522c742 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -485,7 +485,7 @@ static void do_journal_discard(struct cache *ca)
- 
- 		closure_get(&ca->set->cl);
- 		INIT_WORK(&ja->discard_work, journal_discard_work);
--		schedule_work(&ja->discard_work);
-+		queue_work(bch_journal_wq, &ja->discard_work);
- 	}
- }
- 
-@@ -592,7 +592,7 @@ static void journal_write_done(struct closure *cl)
- 		: &j->w[0];
- 
- 	__closure_wake_up(&w->wait);
--	continue_at_nobarrier(cl, journal_write, system_wq);
-+	continue_at_nobarrier(cl, journal_write, bch_journal_wq);
- }
- 
- static void journal_write_unlock(struct closure *cl)
-@@ -627,7 +627,7 @@ static void journal_write_unlocked(struct closure *cl)
- 		spin_unlock(&c->journal.lock);
- 
- 		btree_flush_write(c);
--		continue_at(cl, journal_write, system_wq);
-+		continue_at(cl, journal_write, bch_journal_wq);
- 		return;
- 	}
- 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 3ede144..64715a8 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -47,6 +47,7 @@
- static DEFINE_IDA(bcache_device_idx);
- static wait_queue_head_t unregister_wait;
- struct workqueue_struct *bcache_wq;
-+struct workqueue_struct *bch_journal_wq;
- 
- #define BTREE_MAX_PAGES		(256 * 1024 / PAGE_SIZE)
- /* limitation of partitions number on single bcache device */
-@@ -2344,6 +2345,9 @@ static void bcache_exit(void)
- 		kobject_put(bcache_kobj);
- 	if (bcache_wq)
- 		destroy_workqueue(bcache_wq);
-+	if (bch_journal_wq)
-+		destroy_workqueue(bch_journal_wq);
-+
- 	if (bcache_major)
- 		unregister_blkdev(bcache_major, "bcache");
- 	unregister_reboot_notifier(&reboot);
-@@ -2373,6 +2377,10 @@ static int __init bcache_init(void)
- 	if (!bcache_wq)
- 		goto err;
- 
-+	bch_journal_wq = alloc_workqueue("bch_journal", WQ_MEM_RECLAIM, 0);
-+	if (!bch_journal_wq)
-+		goto err;
-+
- 	bcache_kobj = kobject_create_and_add("bcache", fs_kobj);
- 	if (!bcache_kobj)
- 		goto err;
--- 
-1.8.3.1
-
+/Jarkko
