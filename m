@@ -2,311 +2,243 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5FBC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6D4C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E2821582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B77B2168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:24:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mADmgmg+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E2821582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OEIqtxU7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B77B2168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeI0Wjv (ORCPT
+        id S1728268AbeI0Wns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:39:51 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44359 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728285AbeI0Wjv (ORCPT
+        Thu, 27 Sep 2018 18:43:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39478 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbeI0Wns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:39:51 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 36-v6so3104212oth.11
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WmfJZ8I3ByYiNWKyiZ67w64THDEDx9w7tnj/8EtSRPw=;
-        b=mADmgmg+7OMfA3wqKNTesEfVENnn0c0yA61kpZCZib5Mcywm9ORo5UV51I2K8E41/2
-         OeSnYwY6nr/hamYhc1h83HFNaZp6TfYOPBXI9nyNdO4VIDFDFHzPwAXhx4eTbJEUTPoD
-         NE26fgWedJrd9MvysPgWK1lbn5fZF3CXdsMEnkIBguCR3w1MEe9OXMCn+RoQAxGOhj5S
-         9n9eJY1QLdsLX26Ft8fb609dslup7dBy+JFE1ta8nbAfSFVKicOB+iOvT+4v6YR+20M8
-         0K1J34RYhpsHrit+bBNEDqDK0tZVb0suMlVr82cweeEGsLV6g01EBpkO5XYHN9ntDd1V
-         OLDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WmfJZ8I3ByYiNWKyiZ67w64THDEDx9w7tnj/8EtSRPw=;
-        b=QtULo0O+RTx9lewoZrtDtcVb2ESIRIXvJNxjJpx7iU35NaqfUp6MWMv2OcB6fJI6iC
-         +Lbb47ZQY3pQf0UkwRGkJpBai8rkSJGpimsm6opSKKdV2k8sEtVXKIGjrWoSD9+IKa/t
-         gRkXdYZi9SW5hzj9E/ZYgEJK9z6hKinO9YLqV+lDFz3Z3X019agm9jHxv/ncjCFl8Dh7
-         R21ezonAhkiWzcwpmkPnxtX+FgQHoRY8Quw/SK3oT7gvS3NRORbJG/FZOI85byZOsjYZ
-         qRIBQeQr7+uYgWDBZ2B6u7gncowTL7KUatQmJUMskOJ3+TE+47Y09LWB1IzzqChHk9Pp
-         qrNQ==
-X-Gm-Message-State: ABuFfojrE3ectX5FnRpaXYO09U4zoIuMsolZKcDcHeqCdF/F1IlJziyy
-        wCcCkhypqrvmu0AjyZyVqzWP9/cfTPVjezOoGmy1vg==
-X-Google-Smtp-Source: ACcGV62RN+oYDDnFLfjO0a+q33qle746L7fBySfNAoJkiDp1JqsXnuijRfd1u06x1iCGZBSjYG6TzMjGyE6/LAoZGVo=
-X-Received: by 2002:a9d:2843:: with SMTP id h3-v6mr8013807otd.230.1538065249380;
- Thu, 27 Sep 2018 09:20:49 -0700 (PDT)
+        Thu, 27 Sep 2018 18:43:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Wby51G2NB9G7Kn3hCCXsZ0XQPL0e9eaX7u2kScMWcVQ=; b=OEIqtxU7Ezkw61T5Z/99++hgG
+        vUvJEv4nT1kah2xME5EGse5H2r6vMg8mu5KQuyM63L0ZlCHfUcJnQxxorVhcw2ZLLOvbqAblhCxIJ
+        VWsQMEpXITXltZjITvbiqa5It6YS1zm96keH4qlwSUaUA0E+IH1Rjhf8Z4V38DMSAs/OmTC8F3X58
+        ER9FOiZUopyz41+BSQ71KZfZiGCNpc0vJ+ofRF3ewXo1rgvhJ/vGuPxCwKLQveH/ZiFQl9OjWqoBD
+        Y6GHlUXobL7j1uYmHxDaRtohpdeuWwyldL1KLpKWghq0TFmmfzvqouvPtbEr9nyD6SVHSQNWFFzDQ
+        JJEiGeHYA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5Z5n-0006s5-9K; Thu, 27 Sep 2018 16:24:43 +0000
+Date:   Thu, 27 Sep 2018 09:24:43 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        hannes@cmpxchg.org, tj@kernel.org, linux-fsdevel@vger.kernel.org,
+        akpm@linux-foundation.org, riel@redhat.com, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 1/9] mm: infrastructure for page fault page caching
+Message-ID: <20180927162442.GC19006@bombadil.infradead.org>
+References: <20180926210856.7895-1-josef@toxicpanda.com>
+ <20180926210856.7895-2-josef@toxicpanda.com>
 MIME-Version: 1.0
-References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
-In-Reply-To: <20180927151119.9989-4-tycho@tycho.ws>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 27 Sep 2018 18:20:23 +0200
-Message-ID: <CAG48ez0V--kdYh5-tqLJxu=+jOLLjJ65QdGoqoJMdySCDw2CzQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        suda.akihiro@lab.ntt.co.jp, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926210856.7895-2-josef@toxicpanda.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 5:11 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
-> version which can acquire filters is useful. There are at least two reasons
-> this is preferable, even though it uses ptrace:
->
-> 1. You can control tasks that aren't cooperating with you
-> 2. You can control tasks whose filters block sendmsg() and socket(); if the
->    task installs a filter which blocks these calls, there's no way with
->    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
->
-> v2: fix a bug where listener mode was not unset when an unused fd was not
->     available
-> v3: fix refcounting bug (Oleg)
-> v4: * change the listener's fd flags to be 0
->     * rename GET_LISTENER to NEW_LISTENER (Matthew)
-> v5: * add capable(CAP_SYS_ADMIN) requirement
-> v7: * point the new listener at the right filter (Jann)
->
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Andy Lutomirski <luto@amacapital.net>
-> CC: Oleg Nesterov <oleg@redhat.com>
-> CC: Eric W. Biederman <ebiederm@xmission.com>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: Christian Brauner <christian.brauner@ubuntu.com>
-> CC: Tyler Hicks <tyhicks@canonical.com>
-> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+On Wed, Sep 26, 2018 at 05:08:48PM -0400, Josef Bacik wrote:
+> We want to be able to cache the result of a previous loop of a page
+> fault in the case that we use VM_FAULT_RETRY, so introduce
+> handle_mm_fault_cacheable that will take a struct vm_fault directly, add
+> a ->cached_page field to vm_fault, and add helpers to init/cleanup the
+> struct vm_fault.
+> 
+> I've converted x86, other arch's can follow suit if they so wish, it's
+> relatively straightforward.
 
-If you address the two nits below, you can add:
-Reviewed-by: Jann Horn <jannh@google.com>
+Here's what I did back in January ... feel free to steal any of it if you
+like it better.
 
->  include/linux/seccomp.h                       |  7 ++
->  include/uapi/linux/ptrace.h                   |  2 +
->  kernel/ptrace.c                               |  4 ++
->  kernel/seccomp.c                              | 31 +++++++++
->  tools/testing/selftests/seccomp/seccomp_bpf.c | 68 +++++++++++++++++++
->  5 files changed, 112 insertions(+)
->
-> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-> index 017444b5efed..234c61b37405 100644
-> --- a/include/linux/seccomp.h
-> +++ b/include/linux/seccomp.h
-> @@ -83,6 +83,8 @@ static inline int seccomp_mode(struct seccomp *s)
->  #ifdef CONFIG_SECCOMP_FILTER
->  extern void put_seccomp_filter(struct task_struct *tsk);
->  extern void get_seccomp_filter(struct task_struct *tsk);
-> +extern long seccomp_new_listener(struct task_struct *task,
-> +                                unsigned long filter_off);
 
-Nit: Sorry, I only noticed this just now, but this should have return
-type int, not long. ptrace_request() returns an int, and an fd is also
-normally represented as an int, not a long.
-
->  #else  /* CONFIG_SECCOMP_FILTER */
->  static inline void put_seccomp_filter(struct task_struct *tsk)
->  {
-> @@ -92,6 +94,11 @@ static inline void get_seccomp_filter(struct task_struct *tsk)
->  {
->         return;
->  }
-> +static inline long seccomp_new_listener(struct task_struct *task,
-> +                                       unsigned long filter_off)
-> +{
-> +       return -EINVAL;
-> +}
->  #endif /* CONFIG_SECCOMP_FILTER */
->
->  #if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_CHECKPOINT_RESTORE)
-> diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
-> index d5a1b8a492b9..e80ecb1bd427 100644
-> --- a/include/uapi/linux/ptrace.h
-> +++ b/include/uapi/linux/ptrace.h
-> @@ -73,6 +73,8 @@ struct seccomp_metadata {
->         __u64 flags;            /* Output: filter's flags */
->  };
->
-> +#define PTRACE_SECCOMP_NEW_LISTENER    0x420e
-> +
->  /* Read signals from a shared (process wide) queue */
->  #define PTRACE_PEEKSIGINFO_SHARED      (1 << 0)
->
-> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> index 21fec73d45d4..289960ac181b 100644
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -1096,6 +1096,10 @@ int ptrace_request(struct task_struct *child, long request,
->                 ret = seccomp_get_metadata(child, addr, datavp);
->                 break;
->
-> +       case PTRACE_SECCOMP_NEW_LISTENER:
-> +               ret = seccomp_new_listener(child, addr);
-> +               break;
-> +
->         default:
->                 break;
->         }
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index 44a31ac8373a..17685803a2af 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
->
->         return ret;
->  }
-> +
-> +long seccomp_new_listener(struct task_struct *task,
-> +                         unsigned long filter_off)
-> +{
-> +       struct seccomp_filter *filter;
-> +       struct file *listener;
-> +       int fd;
-> +
-> +       if (!capable(CAP_SYS_ADMIN))
-> +               return -EACCES;
-> +
-> +       filter = get_nth_filter(task, filter_off);
-> +       if (IS_ERR(filter))
-> +               return PTR_ERR(filter);
-> +
-> +       fd = get_unused_fd_flags(0);
-
-s/0/O_CLOEXEC/ ? If userspace needs a non-cloexec fd, userspace can
-easily unset O_CLOEXEC; but the reverse isn't true, because it'd be
-racy.
-
-> +       if (fd < 0) {
-> +               __put_seccomp_filter(filter);
-> +               return fd;
-> +       }
-> +
-> +       listener = init_listener(task, filter);
-> +       __put_seccomp_filter(filter);
-> +       if (IS_ERR(listener)) {
-> +               put_unused_fd(fd);
-> +               return PTR_ERR(listener);
-> +       }
-> +
-> +       fd_install(fd, listener);
-> +       return fd;
-> +}
->  #endif
-> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> index 5f4b836a6792..c6ba3ed5392e 100644
-> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> @@ -193,6 +193,10 @@ int seccomp(unsigned int op, unsigned int flags, void *args)
->  }
->  #endif
->
-> +#ifndef PTRACE_SECCOMP_NEW_LISTENER
-> +#define PTRACE_SECCOMP_NEW_LISTENER 0x420e
-> +#endif
-> +
->  #if __BYTE_ORDER == __LITTLE_ENDIAN
->  #define syscall_arg(_n) (offsetof(struct seccomp_data, args[_n]))
->  #elif __BYTE_ORDER == __BIG_ENDIAN
-> @@ -3175,6 +3179,70 @@ TEST(get_user_notification_syscall)
->         EXPECT_EQ(0, WEXITSTATUS(status));
->  }
->
-> +TEST(get_user_notification_ptrace)
-> +{
-> +       pid_t pid;
-> +       int status, listener;
-> +       int sk_pair[2];
-> +       char c;
-> +       struct seccomp_notif req = {};
-> +       struct seccomp_notif_resp resp = {};
-> +
-> +       ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +
-> +       if (pid == 0) {
-> +               EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
-> +
-> +               /* Test that we get ENOSYS while not attached */
-> +               EXPECT_EQ(syscall(__NR_getpid), -1);
-> +               EXPECT_EQ(errno, ENOSYS);
-> +
-> +               /* Signal we're ready and have installed the filter. */
-> +               EXPECT_EQ(write(sk_pair[1], "J", 1), 1);
-> +
-> +               EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
-> +               EXPECT_EQ(c, 'H');
-> +
-> +               exit(syscall(__NR_getpid) != USER_NOTIF_MAGIC);
-> +       }
-> +
-> +       EXPECT_EQ(read(sk_pair[0], &c, 1), 1);
-> +       EXPECT_EQ(c, 'J');
-> +
-> +       EXPECT_EQ(ptrace(PTRACE_ATTACH, pid), 0);
-> +       EXPECT_EQ(waitpid(pid, NULL, 0), pid);
-> +       listener = ptrace(PTRACE_SECCOMP_NEW_LISTENER, pid, 0);
-> +       EXPECT_GE(listener, 0);
-> +
-> +       /* EBUSY for second listener */
-> +       EXPECT_EQ(ptrace(PTRACE_SECCOMP_NEW_LISTENER, pid, 0), -1);
-> +       EXPECT_EQ(errno, EBUSY);
-> +
-> +       EXPECT_EQ(ptrace(PTRACE_DETACH, pid, NULL, 0), 0);
-> +
-> +       /* Now signal we are done and respond with magic */
-> +       EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
-> +
-> +       req.len = sizeof(req);
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_RECV, &req), sizeof(req));
-> +
-> +       resp.len = sizeof(resp);
-> +       resp.id = req.id;
-> +       resp.error = 0;
-> +       resp.val = USER_NOTIF_MAGIC;
-> +
-> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
-> +
-> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
-> +       EXPECT_EQ(true, WIFEXITED(status));
-> +       EXPECT_EQ(0, WEXITSTATUS(status));
-> +
-> +       close(listener);
-> +}
-> +
->  /*
->   * Check that a pid in a child namespace still shows up as valid in ours.
->   */
-> --
-> 2.17.1
->
+diff --git a/mm/memory.c b/mm/memory.c
+index 5eb3d2524bdc..403934297a3d 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3977,36 +3977,28 @@ static int handle_pte_fault(struct vm_fault *vmf)
+  * The mmap_sem may have been released depending on flags and our
+  * return value.  See filemap_fault() and __lock_page_or_retry().
+  */
+-static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+-		unsigned int flags)
++static int __handle_mm_fault(struct vm_fault *vmf)
+ {
+-	struct vm_fault vmf = {
+-		.vma = vma,
+-		.address = address & PAGE_MASK,
+-		.flags = flags,
+-		.pgoff = linear_page_index(vma, address),
+-		.gfp_mask = __get_fault_gfp_mask(vma),
+-	};
+-	unsigned int dirty = flags & FAULT_FLAG_WRITE;
+-	struct mm_struct *mm = vma->vm_mm;
++	unsigned int dirty = vmf->flags & FAULT_FLAG_WRITE;
++	struct mm_struct *mm = vmf->vma->vm_mm;
+ 	pgd_t *pgd;
+ 	p4d_t *p4d;
+ 	int ret;
+ 
+-	pgd = pgd_offset(mm, address);
+-	p4d = p4d_alloc(mm, pgd, address);
++	pgd = pgd_offset(mm, vmf->address);
++	p4d = p4d_alloc(mm, pgd, vmf->address);
+ 	if (!p4d)
+ 		return VM_FAULT_OOM;
+ 
+-	vmf.pud = pud_alloc(mm, p4d, address);
+-	if (!vmf.pud)
++	vmf->pud = pud_alloc(mm, p4d, vmf->address);
++	if (!vmf->pud)
+ 		return VM_FAULT_OOM;
+-	if (pud_none(*vmf.pud) && transparent_hugepage_enabled(vma)) {
+-		ret = create_huge_pud(&vmf);
++	if (pud_none(*vmf->pud) && transparent_hugepage_enabled(vmf->vma)) {
++		ret = create_huge_pud(vmf);
+ 		if (!(ret & VM_FAULT_FALLBACK))
+ 			return ret;
+ 	} else {
+-		pud_t orig_pud = *vmf.pud;
++		pud_t orig_pud = *vmf->pud;
+ 
+ 		barrier();
+ 		if (pud_trans_huge(orig_pud) || pud_devmap(orig_pud)) {
+@@ -4014,50 +4006,51 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 			/* NUMA case for anonymous PUDs would go here */
+ 
+ 			if (dirty && !pud_access_permitted(orig_pud, WRITE)) {
+-				ret = wp_huge_pud(&vmf, orig_pud);
++				ret = wp_huge_pud(vmf, orig_pud);
+ 				if (!(ret & VM_FAULT_FALLBACK))
+ 					return ret;
+ 			} else {
+-				huge_pud_set_accessed(&vmf, orig_pud);
++				huge_pud_set_accessed(vmf, orig_pud);
+ 				return 0;
+ 			}
+ 		}
+ 	}
+ 
+-	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
+-	if (!vmf.pmd)
++	vmf->pmd = pmd_alloc(mm, vmf->pud, vmf->address);
++	if (!vmf->pmd)
+ 		return VM_FAULT_OOM;
+-	if (pmd_none(*vmf.pmd) && transparent_hugepage_enabled(vma)) {
+-		ret = create_huge_pmd(&vmf);
++	if (pmd_none(*vmf->pmd) && transparent_hugepage_enabled(vmf->vma)) {
++		ret = create_huge_pmd(vmf);
+ 		if (!(ret & VM_FAULT_FALLBACK))
+ 			return ret;
+ 	} else {
+-		pmd_t orig_pmd = *vmf.pmd;
++		pmd_t orig_pmd = *vmf->pmd;
+ 
+ 		barrier();
+ 		if (unlikely(is_swap_pmd(orig_pmd))) {
+ 			VM_BUG_ON(thp_migration_supported() &&
+ 					  !is_pmd_migration_entry(orig_pmd));
+ 			if (is_pmd_migration_entry(orig_pmd))
+-				pmd_migration_entry_wait(mm, vmf.pmd);
++				pmd_migration_entry_wait(mm, vmf->pmd);
+ 			return 0;
+ 		}
+ 		if (pmd_trans_huge(orig_pmd) || pmd_devmap(orig_pmd)) {
+-			if (pmd_protnone(orig_pmd) && vma_is_accessible(vma))
+-				return do_huge_pmd_numa_page(&vmf, orig_pmd);
++			if (pmd_protnone(orig_pmd) &&
++						vma_is_accessible(vmf->vma))
++				return do_huge_pmd_numa_page(vmf, orig_pmd);
+ 
+ 			if (dirty && !pmd_access_permitted(orig_pmd, WRITE)) {
+-				ret = wp_huge_pmd(&vmf, orig_pmd);
++				ret = wp_huge_pmd(vmf, orig_pmd);
+ 				if (!(ret & VM_FAULT_FALLBACK))
+ 					return ret;
+ 			} else {
+-				huge_pmd_set_accessed(&vmf, orig_pmd);
++				huge_pmd_set_accessed(vmf, orig_pmd);
+ 				return 0;
+ 			}
+ 		}
+ 	}
+ 
+-	return handle_pte_fault(&vmf);
++	return handle_pte_fault(vmf);
+ }
+ 
+ /*
+@@ -4066,9 +4059,10 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+  * The mmap_sem may have been released depending on flags and our
+  * return value.  See filemap_fault() and __lock_page_or_retry().
+  */
+-int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+-		unsigned int flags)
++int vm_handle_fault(struct vm_fault *vmf)
+ {
++	unsigned int flags = vmf->flags;
++	struct vm_area_struct *vma = vmf->vma;
+ 	int ret;
+ 
+ 	__set_current_state(TASK_RUNNING);
+@@ -4092,9 +4086,9 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 		mem_cgroup_oom_enable();
+ 
+ 	if (unlikely(is_vm_hugetlb_page(vma)))
+-		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
++		ret = hugetlb_fault(vma->vm_mm, vma, vmf->address, flags);
+ 	else
+-		ret = __handle_mm_fault(vma, address, flags);
++		ret = __handle_mm_fault(vmf);
+ 
+ 	if (flags & FAULT_FLAG_USER) {
+ 		mem_cgroup_oom_disable();
+@@ -4110,6 +4104,26 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 
+ 	return ret;
+ }
++
++/*
++ * By the time we get here, we already hold the mm semaphore
++ *
++ * The mmap_sem may have been released depending on flags and our
++ * return value.  See filemap_fault() and __lock_page_or_retry().
++ */
++int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
++		unsigned int flags)
++{
++	struct vm_fault vmf = {
++		.vma = vma,
++		.address = address & PAGE_MASK,
++		.flags = flags,
++		.pgoff = linear_page_index(vma, address),
++		.gfp_mask = __get_fault_gfp_mask(vma),
++	};
++
++	return vm_handle_fault(&vmf);
++}
+ EXPORT_SYMBOL_GPL(handle_mm_fault);
+ 
+ #ifndef __PAGETABLE_P4D_FOLDED
