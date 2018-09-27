@@ -2,184 +2,121 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0853C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE5BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A020C21566
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:12:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A020C21566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 6240E21566
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:12:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6240E21566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbeI0L2r (ORCPT
+        id S1727259AbeI0L2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:28:47 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:58151 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeI0L2r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:28:47 -0400
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1g5Ob9-0002xI-Cw from Jiada_Wang@mentor.com ; Wed, 26 Sep 2018 22:12:23 -0700
-Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 26 Sep 2018 22:12:19 -0700
-From:   <jiada_wang@mentor.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
-CC:     <jiada_wang@mentor.com>, <twischer@de.adit-jv.com>,
-        <dragos_tarcatu@mentor.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH linux-next 10/10] ASoC: rsnd: Add kctrl to configure dai's busif
-Date:   Thu, 27 Sep 2018 14:12:29 +0900
-Message-ID: <20180927051229.18080-1-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 27 Sep 2018 07:28:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54304 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726469AbeI0L2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 07:28:50 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E6A5285A01;
+        Thu, 27 Sep 2018 05:12:27 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-101.pek2.redhat.com [10.72.12.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6E627A2791;
+        Thu, 27 Sep 2018 05:12:19 +0000 (UTC)
+Subject: Re: [PATCH 1/4 v8] x86/ioremap: add a function ioremap_encrypted() to
+ remap kdump old memory
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, joro@8bytes.org, mingo@redhat.com,
+        ebiederm@xmission.com, hpa@zytor.com, tglx@linutronix.de,
+        Dave Young <dyoung@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        kexec@lists.infradead.org
+References: <20180907081805.368-1-lijiang@redhat.com>
+ <20180907081805.368-2-lijiang@redhat.com>
+ <20180926022123.GA2555@MiWiFi-R3L-srv>
+ <e6cd5448-b314-e142-1169-9e3e907faf16@redhat.com>
+ <e7634c77-1657-4665-3bc4-bd00196f28e4@redhat.com>
+ <c076568c-aaf8-9b83-40bd-55c406bd88d0@redhat.com>
+ <20180927020647.GH2555@MiWiFi-R3L-srv>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <db7caa5e-76fa-7b1c-b93d-29a4a978d37c@redhat.com>
+Date:   Thu, 27 Sep 2018 13:12:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+In-Reply-To: <20180927020647.GH2555@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 27 Sep 2018 05:12:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+在 2018年09月27日 10:06, Baoquan He 写道:
+> Hi Lianbo,
+> 
+> On 09/26/18 at 05:34pm, lijiang wrote:
+>> When SME is enabled on AMD machine, the memory is encrypted in the first
+>> kernel. In this case, SME also needs to be enabled in kdump kernel, and
+>> we have to remap the old memory with the memory encryption mask.
+>>
+>> Here we only talk about the case that SME is active in the first kernel,
+>> and only care it's active too in kdump kernel. there are four cases we
+>> need considered.
+>>
+>> a. dump vmcore
+>>    It is encrypted in the first kernel, and needs be read out in kdump
+>>    kernel.
+>>
+>> b. crash notes
+>>    When dumping vmcore, the people usually need to read the useful
+>>    information from notes, and the notes is also encrypted.
+>>
+>> c. iommu device table
+>>    It is allocated by kernel, need fill its pointer into mmio of amd iommu.
+>>    It's encrypted in the first kernel, need read the old content to analyze
+>>    and get useful information.
+>>
+>> d. mmio of amd iommu
+>>    Register reported by amd firmware, it's not RAM, we don't encrypt in
+>>    both the first kernel and kdump kernel.
+>>
+>> To achieve the goal, the solution is:
+>> 1. add a new bool parameter "encrypted" to __ioremap_caller()
+>>    It is a low level function, and check the newly added parameter, if it's
+>>    true and in kdump kernel, will remap the memory with sme mask.
+>>
+>> 2. add a new function ioremap_encrypted() to explicitly passed in a "true"
+>>    value for "encrypted".
+>>    For above a, b, c, we will call ioremap_encrypted();
+>>
+>> 3. adjust all existed ioremap wrapper functions, passed in "false" for
+>>    encrypted to make them an before.
+>>
+>>    ioremap_encrypted()\
+>>    ioremap_cache()     |
+>>    ioremap_prot()      |
+>>    ioremap_wt()        |->__ioremap_caller()
+>>    ioremap_wc()        |
+>>    ioremap_uc()        |
+>>    ioremap_nocache()  /
+> 
+> Thanks, I think it's better. Since no code change, just patch log
+> improvement, maybe you can repost a series and carry both Tom and
+> Joerg's ACK.
+> 
+Thank you, Baoquan.
+I will resend a series, and add Tom's Reviewed-by for all patches, also
+add Joerg's Acked-by for patch 3/4.
 
-ssi0, ssi1, ssi2, ssi3, ssi4 and ssi9 have busif0 to busif7,
-currently only busif0 is used by all ssi.
-But tdm split and tdm ex-split mode, which require busif1 to
-busif7.
-
-This patch adds kctrl in ssi for dai-link, to make it possible
-to configure the busif used by each dai-link.
-Also adds rsnd_dma_addr_update() interface to make it possible
-to update dma data address when there is change in condition
-of dai connection.
-
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- sound/soc/sh/rcar/dma.c  | 32 ++++++++++++++++++++++++++++++++
- sound/soc/sh/rcar/rsnd.h |  2 ++
- sound/soc/sh/rcar/ssi.c  | 31 ++++++++++++++++++++++++++++++-
- 3 files changed, 64 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/sh/rcar/dma.c b/sound/soc/sh/rcar/dma.c
-index 6d1947515dc8..8c284fd73fc1 100644
---- a/sound/soc/sh/rcar/dma.c
-+++ b/sound/soc/sh/rcar/dma.c
-@@ -792,6 +792,38 @@ int rsnd_dma_attach(struct rsnd_dai_stream *io, struct rsnd_mod *mod,
- 	return rsnd_dai_connect(*dma_mod, io, (*dma_mod)->type);
- }
- 
-+void rsnd_dma_addr_update(struct rsnd_dai_stream *io,
-+			  struct rsnd_mod *mod,
-+			  struct rsnd_mod *dma_mod)
-+{
-+	struct rsnd_mod *mod_from = NULL;
-+	struct rsnd_mod *mod_to = NULL;
-+	struct rsnd_priv *priv = rsnd_io_to_priv(io);
-+	struct rsnd_dma_ctrl *dmac = rsnd_priv_to_dmac(priv);
-+	struct device *dev = rsnd_priv_to_dev(priv);
-+	int is_play = rsnd_io_is_play(io);
-+	struct rsnd_dma *dma = rsnd_mod_to_dma(dma_mod);
-+
-+	if (!dmac)
-+		return;
-+
-+	rsnd_dma_of_path(mod, io, is_play, &mod_from, &mod_to);
-+
-+	dma->src_addr = rsnd_dma_addr(io, mod_from, is_play, 1);
-+	dma->dst_addr = rsnd_dma_addr(io, mod_to,   is_play, 0);
-+
-+	if (mod_from && mod_to) {
-+		struct rsnd_dmapp *dmapp = rsnd_dma_to_dmapp(dma);
-+
-+		dmapp->chcr = rsnd_dmapp_get_chcr(io, mod_from, mod_to) |
-+						  PDMACHCR_DE;
-+	}
-+
-+	dev_dbg(dev, "%s[%d] %pad -> %pad\n",
-+		rsnd_mod_name(mod), rsnd_mod_id(mod),
-+		&dma->src_addr, &dma->dst_addr);
-+}
-+
- int rsnd_dma_probe(struct rsnd_priv *priv)
- {
- 	struct platform_device *pdev = rsnd_priv_to_pdev(priv);
-diff --git a/sound/soc/sh/rcar/rsnd.h b/sound/soc/sh/rcar/rsnd.h
-index 59b6d89d8edc..6c16d8403f7a 100644
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -233,6 +233,8 @@ u32 rsnd_get_busif_shift(struct rsnd_dai_stream *io, struct rsnd_mod *mod);
-  */
- int rsnd_dma_attach(struct rsnd_dai_stream *io,
- 		    struct rsnd_mod *mod, struct rsnd_mod **dma_mod);
-+void rsnd_dma_addr_update(struct rsnd_dai_stream *io,
-+			  struct rsnd_mod *mod, struct rsnd_mod *dma_mod);
- int rsnd_dma_probe(struct rsnd_priv *priv);
- struct dma_chan *rsnd_dma_request_channel(struct device_node *of_node,
- 					  struct rsnd_mod *mod, char *name);
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index 4ac4b5b75ae2..b469db238697 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -160,6 +160,15 @@ int rsnd_ssi_get_busif(struct rsnd_dai_stream *io)
- 	return io->busif->val;
- }
- 
-+static void rsnd_ssi_set_busif(struct rsnd_dai_stream *io,
-+			       struct rsnd_mod *mod)
-+{
-+	if (!rsnd_ssi_use_busif(io))
-+		return;
-+
-+	rsnd_dma_addr_update(io, mod, io->dma);
-+}
-+
- static void rsnd_ssi_status_clear(struct rsnd_mod *mod)
- {
- 	rsnd_mod_write(mod, SSISR, 0);
-@@ -718,6 +727,10 @@ static int rsnd_ssi_pcm_new(struct rsnd_mod *mod,
- 			    struct rsnd_dai_stream *io,
- 			    struct snd_soc_pcm_runtime *rtd)
- {
-+	int is_play = rsnd_io_is_play(io);
-+	int id = rsnd_mod_id(mod);
-+	int ret = 0;
-+
- 	/*
- 	 * rsnd_rdai_is_clk_master() will be enabled after set_fmt,
- 	 * and, pcm_new will be called after it.
-@@ -725,7 +738,23 @@ static int rsnd_ssi_pcm_new(struct rsnd_mod *mod,
- 	 */
- 	rsnd_ssi_parent_attach(mod, io);
- 
--	return 0;
-+	if (!rsnd_ssi_use_busif(io))
-+		return 0;
-+
-+	if (rsnd_ssi_is_multi_slave(mod, io))
-+		return 0;
-+
-+	/* SSI5 to SSI8 only have one BUSIF */
-+	if (id <= 4 || id == 9)
-+		ret = rsnd_kctrl_new_s(mod, io, rtd,
-+				       is_play ?
-+				       "SSI Out BUSIF" :
-+				       "SSI In BUSIF",
-+				       rsnd_kctrl_accept_anytime,
-+				       rsnd_ssi_set_busif,
-+				       io->busif, 7);
-+
-+	return ret;
- }
- 
- static int rsnd_ssi_common_probe(struct rsnd_mod *mod,
--- 
-2.17.0
-
+Thanks.
+Lianbo
