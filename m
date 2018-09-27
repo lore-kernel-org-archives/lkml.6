@@ -2,113 +2,137 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57782C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A237C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C3D21571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C3D21571
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 5BC9021571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC9021571
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeI0Q1S (ORCPT
+        id S1727331AbeI0Q1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 12:27:18 -0400
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:59932 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726929AbeI0Q1R (ORCPT
+        Thu, 27 Sep 2018 12:27:37 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:52007 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726929AbeI0Q1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 12:27:17 -0400
-Received: from [192.168.1.10] ([80.101.105.217])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id 5TEtgvMIvgyCD5TEugUsAc; Thu, 27 Sep 2018 12:09:45 +0200
-Subject: Re: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async
- notifier complete
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "Qiu, Tian Shu" <tian.shu.qiu@intel.com>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Bing Bu Cao <bingbu.cao@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Zheng, Jian Xu" <jian.xu.zheng@intel.com>,
-        "Zhi, Yong" <yong.zhi@intel.com>,
-        "Cao, Bingbu" <bingbu.cao@intel.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-References: <20180831152045.9957-1-javierm@redhat.com>
- <cd307d41-ed19-5ab0-cbdb-a743cdb76e09@linux.intel.com>
- <c1e54228-a21a-b4a2-1083-c75b2dda797c@redhat.com>
- <b15b236e-e0a7-8b2f-1e1f-196c9dc04f4d@linux.intel.com>
- <44eb94a8-3712-155b-b3ab-35538f5b6b38@redhat.com>
- <F4B393EC1A37C8418714AECDAAEF72A93C9A39FC@shsmsx102.ccr.corp.intel.com>
- <20180904064605.6prcawieb4ooxtyl@paasikivi.fi.intel.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <5c6944ec-ee1f-8be6-3eff-2c65fd888222@xs4all.nl>
-Date:   Thu, 27 Sep 2018 12:09:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180904064605.6prcawieb4ooxtyl@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMYizZfNC/3+JnBXuRWzPpX5ORTqAigwhsuTMkQHjuW0qlShaW/0RfAI6i5LIvturcqJVfD7woUdOXUZ0rHfgAYD/SBXPLmA4SFqo5njsPJCyf4MSJuI
- Km65uu8nqph9Vf/TR84GTcMq4bbl5TmSZpjdcNsD3HWWM7zSF29JpsUHizYwC97G6+uaCiu22Ov6UZrh8FEWe0zpBONTRCxnLkn7bWjQEfUEMxInznLrwwiA
- vitK2XpcDPOpnay2GGuiASKE2H1UXu5lc7UNB3+dfpeFMyqzuFD1AqN0f9TymdSea9JZW4nTxOWuMpchZo8eXXcbGpMKHnkZiMCUgeMqOu/hiYDpeJZ99pPJ
- hh43JhYSO+uQUDbjW9hVuynCCRjzQmCOKYhdsJEuAfExUpKbAEtrLtrlQklViijzTAC9cYIurU4jB4pU2hUhi6tbLm6WvHiIAL4owBid7/yXoXsb30kTwjF8
- ZaX63w6bH445rOmJBpthxOWSoWe4X5XHDhb2Ww==
+        Thu, 27 Sep 2018 12:27:36 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MEmAV-1fzfoD3kEt-00GFmy; Thu, 27 Sep 2018 12:09:50 +0200
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MEmAV-1fzfoD3kEt-00GFmy; Thu, 27 Sep 2018 12:09:50 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Thor Thayer <thor.thayer@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, David Frey <dpfrey@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] EDAC, altera: work around int-to-pointer-cast warnings
+Date:   Thu, 27 Sep 2018 12:09:26 +0200
+Message-Id: <20180927100949.973078-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:3QJ/C/Rf+i3z9FRlTihlNO24jKimfWyCxZq0uKh3BjBu7ik+OJk
+ CLMxMnwdqkOfi/H2nGk15wipvvDpXE9nmTwMnTcnYdLn7Smm17iA/PhUJNINP6zUyiaAF9L
+ VGm8+eo6/91gLtGwVhSUTKxMLPJcFgBULg370CFpIE0a1aqqf+jnypOLyCT+xuS1b/K7qYD
+ g9v5ohKB2kCy9jbu6KorA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nfUj0+BZv9c=:8oGeiRVXSeLoQqLBX/nZHm
+ xzEtWQ9i615K/rwxmytJAwNcZOcbl4Ti0Ae4xMZP+NabwWK+v/t7tm1PXsVK6pWUFplkuAe6r
+ oVJJbY+cc9xjsstryYeKANa8zZYjCU8ZRyKw361Cd4nAkF1GTrHBUIJ7lxzjcqNEeqPA95KFa
+ 2QCmTyoNIcxIO+OuTM353PzuP6obpAG1Pwf1Wng3C5ohWBH1dYKCvVIHNG4ck7feN4065mvd6
+ BVZkLlZ5KZJhCQO1Bbsu4Dm3PfJ4BGHYDqj9XQ5EYX0V2qc9nQ9/BkWF7Hv5TXpcU5zVrPjGa
+ MfGuM5AGQ1ngp54Of9jC/4XgAsp6vtOXBaG9uLyhGtlUwnFXu0xtxD6pgc1B5N/AJ5PIst2gf
+ ds6OhXRANI9m0qllCIUahUKOWA6cinXhE1l0lo89X5RFpximkzWRSDsdGnsoJZh7559uvUT+Y
+ laXpyyo7AzPrGmln0lmD13YeADA9pfYQit2eRmdqPRhWiCH2DDQMLtBhsNOF+9fpK1r5pOYPb
+ oh+QJNW55DsjVz9+qG4LOseafR99fc8tATsU0uZMvFqALG03rTyBHniTAhJHfe69zAdSXhQaJ
+ KiX57CnJ6Bu7KO8LdriL9Lnt2SdCpJS9/xBcKb82A2VXcYau9C0Ivz85rz47a5+jyHz/+92am
+ 4vY8EtH3xoNota5vAEyxR5dmNyalMEPZXrJT3KKFNi2A/b7aFLwvOtV+Ad6jSkDAEMzo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/04/2018 08:46 AM, Sakari Ailus wrote:
-> Hi Javier, Tian Shu,
-> 
-> On Tue, Sep 04, 2018 at 05:01:56AM +0000, Qiu, Tian Shu wrote:
->> Hi,
->>
->> Raise my point.
->> The case here is that we have multiple sensors connected to CIO2. The sensors work independently. So failure on one sensor should not block the function of the other.
->> That is, we should not rely on that all sensors are ready before allowing user to operate on the ready cameras.
->> Sometimes due to hardware issues or incompleteness, we did met the case that one sensor is not probing properly. And in this case, the current implementation blocks us using the working one.
->> What I can think now to solve this are:
->> 1. Register multiple media devices. One for each sensor path. This will increase media device count.
->> 2. Use .bound callback to create the link and register the subdev node for each sensor. Leave .complete empty.
->>      Not sure if this breaks the rule of media framework. And also have not found an API to register one single subdev node.
-> 
-> I'd prefer to keep the driver as-is.
-> 
-> Even if the media device is only created once all the sub-devices are
-> around, the devices are still created one by one so there's no way to
-> prevent the user space seeing a partially registered media device complex.
-> 
-> In general that doesn't happen as the sensors are typically registered
-> early during system boot.
-> 
-> Javier is right in asking a way for the user to know whether everything is
-> fully initialised. That should be added but I don't think it is in any way
-> specific to the cio2 driver.
-> 
+The altera edac driver passes a token from a DT resource as
+resource_size_t into an SMC call, but casts it to an __iomem pointer
+and then a plain void pointer inbetween, mixing three or four
+incompatible types in the process. The compiler complains about
+one of the conversions:
 
-Today we have no userspace mechanism to deal with partially initialized topologies.
-Instead if parts fails to come up we shouldn't register any media device and
-instead (once we discover that something is broken) tear everything down.
+drivers/edac/altera_edac.c: In function 'altr_init_a10_ecc_block':
+drivers/edac/altera_edac.c:1053:10: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+   base = (void __iomem *)res.start;
+          ^
+drivers/edac/altera_edac.c: In function 'altr_edac_a10_probe':
+drivers/edac/altera_edac.c:2062:10: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+   base = (void __iomem *)res.start;
 
-In fact, video/subdev/media devices shouldn't be registered until everything is
-complete.
+Using a static checker probably also notices the __iomem cast.  Solving
+this properly isn't trivial, but simply casting to a 'uintptr_t' instead
+of 'void __iomem *' makes it less wrong and should avoid the warnings.
 
-I know we want to allow for partial bring up as well, and I fully agree with that,
-but in that case someone needs to write an RFC with a proposal how userspace should
-handle this.
+Fixes: d5fc9125566c ("EDAC, altera: Combine Stratix10 and Arria10 probe functions")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/edac/altera_edac.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-We've discussed this in the past, but I have not seen such an RFC.
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index 0e9e80789d99..c89d82aa2776 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1036,7 +1036,7 @@ altr_init_a10_ecc_block(struct device_node *np, u32 irq_mask,
+ 	} else {
+ 		struct device_node *sysmgr_np;
+ 		struct resource res;
+-		void __iomem *base;
++		uintptr_t base;
+ 
+ 		sysmgr_np = of_parse_phandle(np_eccmgr,
+ 					     "altr,sysmgr-syscon", 0);
+@@ -1050,9 +1050,9 @@ altr_init_a10_ecc_block(struct device_node *np, u32 irq_mask,
+ 			return -ENOMEM;
+ 
+ 		/* Need physical address for SMCC call */
+-		base = (void __iomem *)res.start;
++		base = res.start;
+ 
+-		ecc_mgr_map = regmap_init(NULL, NULL, base,
++		ecc_mgr_map = regmap_init(NULL, NULL, (void *)base,
+ 					  &s10_sdram_regmap_cfg);
+ 	}
+ 	of_node_put(np_eccmgr);
+@@ -2045,7 +2045,7 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
+ 	} else {
+ 		struct device_node *sysmgr_np;
+ 		struct resource res;
+-		void __iomem *base;
++		uintptr_t base;
+ 
+ 		sysmgr_np = of_parse_phandle(pdev->dev.of_node,
+ 					     "altr,sysmgr-syscon", 0);
+@@ -2059,9 +2059,10 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
+ 			return -ENOMEM;
+ 
+ 		/* Need physical address for SMCC call */
+-		base = (void __iomem *)res.start;
++		base = res.start;
+ 
+-		edac->ecc_mgr_map = devm_regmap_init(&pdev->dev, NULL, base,
++		edac->ecc_mgr_map = devm_regmap_init(&pdev->dev, NULL,
++						     (void *)base,
+ 						     &s10_sdram_regmap_cfg);
+ 	}
+ 
+-- 
+2.18.0
 
-So until we add support for partial bringup I think this patch does the right
-thing since otherwise this is out-of-spec.
-
-Regards,
-
-	Hans
