@@ -2,105 +2,128 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C375C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D990C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 236422152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:26:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ByGzEMvs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236422152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 2EEA72152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:27:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EEA72152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbeI0Uov (ORCPT
+        id S1727610AbeI0UqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:44:51 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42791 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbeI0Uov (ORCPT
+        Thu, 27 Sep 2018 16:46:04 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40665 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727341AbeI0UqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:44:51 -0400
-Received: by mail-io1-f65.google.com with SMTP id n18-v6so2066886ioa.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 07:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Jx/Yw2jAwCRr+817KCbU5DlwUdU/0vB+9VGXL3ZqI9c=;
-        b=ByGzEMvsL8rR8IpG0SeGS0I57qBvj55a4WNy+e9kObpHnka4q7NaTuaMZZTiwqIbT2
-         Hf5UNGWrH/Q3C5tE0ANbPr2fX5QhpL+SuX5ko0X697T99pc09oZ/hWPWozuUaP2BAUuI
-         OvTNG+gwGdGcJvxoUamAY7atADgE7vUP1J3nINVlfT3Icota7UcEu8mBR/zJsKRcWBIv
-         jNHlXyvDj0rnO/90Zh9DyorcRkdi5s/zpmC0/kPX9gN/K63MOxRDrqss0tP9suErCOLi
-         SHD7mauE0M94dAxpE7hxBVMMOx3RLme0GmgP3X4bIkCJgFs3XK9bRFU4gOyXcV0twpvI
-         tX4Q==
+        Thu, 27 Sep 2018 16:46:04 -0400
+Received: by mail-oi1-f196.google.com with SMTP id j68-v6so2313431oib.7;
+        Thu, 27 Sep 2018 07:27:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jx/Yw2jAwCRr+817KCbU5DlwUdU/0vB+9VGXL3ZqI9c=;
-        b=Y9y01PvveYtaGX0aV8DvsePeTPgrplvWTwykmAjMM+RXjL3QiaortBbh4DlNetbjm2
-         LvFnzYdl5j7EP05XEzRqAzOqm59zhzqSaY7WQMJVt4Cj1R97Thmkfgu8S6UoOyXeq/1p
-         iHJAx4NcntTFwmy/m+Qr3jhDRIXAnVb7a2ueFNmPEIPWE6MVlIa0vxo/CdZfy6aN38Xh
-         Zex7Fe0p72Sd60BJyir6smYntbBsZhoy8JlpetzcAXwgDd1C7KUmZBsTU6rKO/lz4WGi
-         CeEh7Y8Tmr3HZFLIEWBXs08c5u9+wKE8gKtHU8w8TRAbXiycHWdzZBxHW+wgBbWH/xEs
-         d/cA==
-X-Gm-Message-State: ABuFfoiB9VO73llAfRjbEUoYuBhSAfbyWL+kvVXm7ZZ/PfNi3xAON/+k
-        SqyTzFtD4eaJ1M2MDwcOeD/tANh9PC8=
-X-Google-Smtp-Source: ACcGV60t+A0GUKDyzsNcWPD2IRpVgDCnCjrJtRRaXn9kmYDWPw3UkA/9ZI2j868G19weaGJi+uWsdw==
-X-Received: by 2002:a6b:7c4b:: with SMTP id b11-v6mr9219811ioq.251.1538058378709;
-        Thu, 27 Sep 2018 07:26:18 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id b28-v6sm1161899itd.37.2018.09.27.07.26.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 07:26:17 -0700 (PDT)
-Subject: Re: [PATCH] xen/blkfront: When purging persistent grants, keep them
- in the buffer
-To:     Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        konrad.wilk@oracle.com, roger.pau@citrix.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
- <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5bd1a695-50c6-e79f-38dd-c980fc2138ad@kernel.dk>
-Date:   Thu, 27 Sep 2018 08:26:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=A+fxqrdhGjsSvR0U2nmMm7zHy+fn4lKay1VsHft6GBk=;
+        b=sFZ24+9cY054VztzUgtk7g8B4rhtG+8dg3d+zqmK86Ur2LBTiu4QsXMm7uVqVsJEhQ
+         zXCDssGyG44L6kIETZFB5N2MJbIq9TlBbPBWVBs8vXwHNBbALaxEfM1kzDZJEYg0ptRM
+         gB8G1XcvMbv+tc44kJ7sAD6jwrUX/0uULZdeiAbGHNPglEiDHjA2eOl02hvI9QKUKQSV
+         89r1CkEThMpTP2Mv0c/pJEIdvEp64klbVky1kmc2GBRxmVrKyUGLo3Cmer86s0kAcpWZ
+         v0ryCOmZa7oszIYgETgwPGwLomIqyhSNm0aFEuimeK3YnsBqS8Nb3UgRu4Gec48hZAYC
+         CQow==
+X-Gm-Message-State: ABuFfohflqEwT3j2Z65GzlCb6zKJrYPpmmk9ekNLZlbUGZHp2IoSUSJx
+        /XhS4VwvD3uXjTC2InnOKw==
+X-Google-Smtp-Source: ACcGV63PregxNzVKnE22rzK1muw0DDpnuOIUpx0oCP+msf6GT29tID28AQcAzeAlblKmm9MdTELBBg==
+X-Received: by 2002:aca:120b:: with SMTP id 11-v6mr3107008ois.151.1538058452021;
+        Thu, 27 Sep 2018 07:27:32 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z41-v6sm922652otc.13.2018.09.27.07.27.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 07:27:31 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 09:27:30 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] of: unittest: Disable interrupt node tests for old
+ world MAC systems
+Message-ID: <20180927142730.GA27916@bogus>
+References: <1537934784-19819-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537934784-19819-1-git-send-email-linux@roeck-us.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/18 1:12 AM, Juergen Gross wrote:
-> On 22/09/18 21:55, Boris Ostrovsky wrote:
->> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->> added support for purging persistent grants when they are not in use. As
->> part of the purge, the grants were removed from the grant buffer, This
->> eventually causes the buffer to become empty, with BUG_ON triggered in
->> get_free_grant(). This can be observed even on an idle system, within
->> 20-30 minutes.
->>
->> We should keep the grants in the buffer when purging, and only free the
->> grant ref.
->>
->> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+On Tue, Sep 25, 2018 at 09:06:24PM -0700, Guenter Roeck wrote:
+> On systems with OF_IMAP_OLDWORLD_MAC set in of_irq_workarounds, the
+> devicetree interrupt parsing code is different, causing unit tests of
+> devicetree interrupt nodes to fail. Due to a bug in unittest code, which
+> tries to dereference an uninitialized pointer, this results in a crash.
 > 
-> Reviewed-by: Juergen Gross <jgross@suse.com>
+> OF: /testcase-data/phandle-tests/consumer-a: arguments longer than property
+> Unable to handle kernel paging request for data at address 0x00bc616e
+> Faulting instruction address: 0xc08e9468
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> BE PREEMPT PowerMac
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Not tainted 4.14.72-rc1-yocto-standard+ #1
+> task: cf8e0000 task.stack: cf8da000
+> NIP:  c08e9468 LR: c08ea5bc CTR: c08ea5ac
+> REGS: cf8dbb50 TRAP: 0300   Not tainted  (4.14.72-rc1-yocto-standard+)
+> MSR:  00001032 <ME,IR,DR,RI>  CR: 82004044  XER: 00000000
+> DAR: 00bc616e DSISR: 40000000
+> GPR00: c08ea5bc cf8dbc00 cf8e0000 c13ca517 c13ca517 c13ca8a0 00000066 00000002
+> GPR08: 00000063 00bc614e c0b05865 000affff 82004048 00000000 c00047f0 00000000
+> GPR16: c0a80000 c0a9cc34 c13ca517 c0ad1134 05ffffff 000affff c0b05860 c0abeef8
+> GPR24: cecec278 cecec278 c0a8c4d0 c0a885e0 c13ca8a0 05ffffff c13ca8a0 c13ca517
+> 
+> NIP [c08e9468] device_node_gen_full_name+0x30/0x15c
+> LR [c08ea5bc] device_node_string+0x190/0x3c8
+> Call Trace:
+> [cf8dbc00] [c007f670] trace_hardirqs_on_caller+0x118/0x1fc (unreliable)
+> [cf8dbc40] [c08ea5bc] device_node_string+0x190/0x3c8
+> [cf8dbcb0] [c08eb794] pointer+0x25c/0x4d0
+> [cf8dbd00] [c08ebcbc] vsnprintf+0x2b4/0x5ec
+> [cf8dbd60] [c08ec00c] vscnprintf+0x18/0x48
+> [cf8dbd70] [c008e268] vprintk_store+0x4c/0x22c
+> [cf8dbda0] [c008ecac] vprintk_emit+0x94/0x130
+> [cf8dbdd0] [c008ff54] printk+0x5c/0x6c
+> [cf8dbe10] [c0b8ddd4] of_unittest+0x2220/0x26f8
+> [cf8dbea0] [c0004434] do_one_initcall+0x4c/0x184
+> [cf8dbf00] [c0b4534c] kernel_init_freeable+0x13c/0x1d8
+> [cf8dbf30] [c0004814] kernel_init+0x24/0x118
+> [cf8dbf40] [c0013398] ret_from_kernel_thread+0x5c/0x64
+> 
+> The problem was observed when running a qemu test for the g3beige machine
+> with devicetree unittests enabled.
+> 
+> Disable interrupt node tests on affected systems to avoid both false
+> unittest failures and the crash.
+> 
+> With this patch in place, unittest on the affected system passes with
+> the following message.
+> 
+> 	dt-test ### end of unittest - 144 passed, 0 failed
+> 
+> Fixes: 53a42093d96ef ("of: Add device tree selftests")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> v2: Do not use goto to skip tests.
+>     Provide test log in commit message.
+> 
+>  drivers/of/unittest.c | 26 ++++++++++++++++++--------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
 
-Since Konrad is out, I'm going to queue this up for 4.19.
+Applied.
 
--- 
-Jens Axboe
-
+Rob
