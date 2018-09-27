@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDCFEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A81C004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C9D21569
+	by mail.kernel.org (Postfix) with ESMTP id BC1DB21564
 	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:49:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m3tkLILb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C9D21569
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SRhFElSo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1DB21564
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeI0HE1 (ORCPT
+        id S1727085AbeI0HE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 03:04:27 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43435 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeI0HE0 (ORCPT
+        Thu, 27 Sep 2018 03:04:28 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37449 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbeI0HE1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 03:04:26 -0400
-Received: by mail-pg1-f194.google.com with SMTP id q19-v6so554084pgn.10
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 17:48:52 -0700 (PDT)
+        Thu, 27 Sep 2018 03:04:27 -0400
+Received: by mail-pg1-f196.google.com with SMTP id c10-v6so576680pgq.4
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 17:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5REZXXpcj+68mcIHPkGrgZEdADbEUsZWPA7Jej+JYQ4=;
-        b=m3tkLILbDSqJuLyGHBXfp6FY4TS7WkokaTy+u9/+Usg4bEE1wAeZL1qVTeq6SsIWLx
-         onj8Wltks21QW4nu/gaUB7r1qM72LxOCKYc5/wwYDUTbDBSDQUZoUTQBNUO3+V/WDIf4
-         sHsKkTJaS+7Y/aBAbsIU4UUcgD7nsBUYHzn98=
+        bh=fWYnNtZ4a6D8LyJB9LjwUCYzhe7IWzyM7UwIqps5/hs=;
+        b=SRhFElSocMu8D3UWzkzHzHJ3uZfTcieZLbfnUE33wZ/jqaT9n7P4DfXlelYrhJoGhn
+         micCEpRenFOghg0cMhxnDPWbhTm6s1mEuWSOClzeRH+3/4rby4zBZRvdg+2X0rDs3DK+
+         pGgOHFbNS5L6XZJCExxxozvMtH2VGpzXOfCO0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5REZXXpcj+68mcIHPkGrgZEdADbEUsZWPA7Jej+JYQ4=;
-        b=h+IPioF03CkDDWVSWib7Wg54MzoVvwXBEzoNpdHdc9q5GQ6Y9amMJCVXiFroxysKto
-         xWtRB4ge0t58nAmMHr42BURcoMupZxSFg+zHCK5qO38Zzox5W8ftbq8o4maGZShVFXT9
-         gHvymw7eEPh+xcrwogXHuXbLeiI/K1yv+EN2kAks6cIZOFGzh3y5wdQIKJ3CF0xQfxOK
-         0sArzpDcjFMt/TaylgHN6RhhEINkbYfP+Wxw2NGMEs1skhIY/lmvAOKu8q9auA+i1VK9
-         Lf8CxJxSx9T+fi5jXWunEg35BzUte27PU19k0SuJcgfub5NdUw2oHTAcDal5+dxpHH+r
-         d+kw==
-X-Gm-Message-State: ABuFfoiYeDm2BOQwj+XH+uFff08++E1NrvQyc1ApKGvxtU2q+Q9AOXwT
-        wyqsGS657xzJ8Od3t7HsyDKr7Q==
-X-Google-Smtp-Source: ACcGV60bFenmjD/2KB8fYBuxqK57Dyr1xEgnOLxsTcarhiEV93BwpNTi6iZcPmEOUqYokQ38zv7WOg==
-X-Received: by 2002:a63:fd06:: with SMTP id d6-v6mr7647309pgh.348.1538009331602;
-        Wed, 26 Sep 2018 17:48:51 -0700 (PDT)
+        bh=fWYnNtZ4a6D8LyJB9LjwUCYzhe7IWzyM7UwIqps5/hs=;
+        b=rmDLmmNOo+BcnUuQ6x5TpfckGDluM+Ses/tO29kexqVSXagYNiFCsmd4otD7zUOCKI
+         1IeCcyYzuCmb3BW0lEVSCwAXpIohpLeMB9b75JSya/rzzK1kuVhrSxWlitr9AkDEiBYd
+         XYVK76PVoBQ7GiJR+T7nHrIYCAbzHi9/GSuKr76K/u/wFuyCLwrrtV6W4vQ5pdzjfqAS
+         csgoig1n37CsZMeND/MUDJBtMz0z+0GCUMjMg1JH0sGd8RcDDzJuoDPRcCVWsTVqKNY0
+         32lUnMhoghOHrwqQq44tbFce4LqZ2aBPluL5KzSdDlvZ4I2risAmB/t31ny2PD4y2RE9
+         +8bg==
+X-Gm-Message-State: ABuFfoh4HkP5l2M05I6uHslnwjOFqxCjMqPTr89//miZcviCbkb0MFXV
+        OnGypthAZsMwfbDOWDRckWE3QA==
+X-Google-Smtp-Source: ACcGV61eBwlDseiX1qB1V5mDs2SaQ+uJ6fdx3t/6A9CVVNdWiKkSoU2FvLO2h0SFbtGtXjSBYzKQCQ==
+X-Received: by 2002:a62:9402:: with SMTP id m2-v6mr8503794pfe.3.1538009332749;
+        Wed, 26 Sep 2018 17:48:52 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm404173pfi.9.2018.09.26.17.48.50
+        by smtp.gmail.com with ESMTPSA id g3-v6sm404173pfi.9.2018.09.26.17.48.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 17:48:51 -0700 (PDT)
+        Wed, 26 Sep 2018 17:48:52 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
@@ -70,9 +70,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
         Loic Poulain <loic.poulain@linaro.org>,
         Brian Norris <briannorris@chromium.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 1/2] Bluetooth: Add device_get_bd_address()
-Date:   Wed, 26 Sep 2018 17:48:09 -0700
-Message-Id: <20180927004810.124185-2-mka@chromium.org>
+Subject: [PATCH v4 2/2] Bluetooth: btqcomsmd: Get the BD address with device_get_bd_address()
+Date:   Wed, 26 Sep 2018 17:48:10 -0700
+Message-Id: <20180927004810.124185-3-mka@chromium.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 In-Reply-To: <20180927004810.124185-1-mka@chromium.org>
 References: <20180927004810.124185-1-mka@chromium.org>
@@ -83,101 +83,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide an API for Bluetooth drivers to retrieve the Bluetooth Device
-address (BD_ADDR) for a device. If the firmware node of the device
-has a property 'local-bd-address' the BD address is read from this
-property.
+Use the new API to get the BD address instead of reading it directly
+from the device tree.
+
+Also remove an unncessary pair of braces in the same area of code.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
 Changes in v4:
-- move code from driver/base/property.c to net/bluetooth/lib.c
-- undo move of bdaddr_t declaration
-- merge fwnode_get_bd_address() into device_get_bd_address(). as of now
-  the function is not needed, it can be created later if necessary
-- minor improvements suggested by Sakari
-- updated commit message
 - added 'Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>' tag
 
 Changes in v3:
-- move definition of bdaddr_t to types.h to avoid include of
-  bluetooth.h from property.h
-- add stubs for the new functions
+- added 'Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>' tag
 
 Changes in v2:
-- use bdaddr_t instead of byte pointer + len
-- use EXPORT_SYMBOL_GPL for the new functions instead of EXPORT_SYMBOL
-- put new functions inside #if IS_ENABLED(CONFIG_BT)
-- some new line juggling in property.h
-- added 'Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>' tag
+- pass bdaddr_t instead of byte pointer + len
 ---
- include/net/bluetooth/bluetooth.h |  2 ++
- net/bluetooth/lib.c               | 34 +++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ drivers/bluetooth/btqcomsmd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/net/bluetooth/bluetooth.h b/include/net/bluetooth/bluetooth.h
-index ec9d6bc65855..6c4cecfda816 100644
---- a/include/net/bluetooth/bluetooth.h
-+++ b/include/net/bluetooth/bluetooth.h
-@@ -413,4 +413,6 @@ void mgmt_exit(void);
+diff --git a/drivers/bluetooth/btqcomsmd.c b/drivers/bluetooth/btqcomsmd.c
+index 7df3eed1ef5e..ff74d2c46991 100644
+--- a/drivers/bluetooth/btqcomsmd.c
++++ b/drivers/bluetooth/btqcomsmd.c
+@@ -172,11 +172,9 @@ static int btqcomsmd_probe(struct platform_device *pdev)
+ 	/* The local-bd-address property is usually injected by the
+ 	 * bootloader which has access to the allocated BD address.
+ 	 */
+-	if (!of_property_read_u8_array(pdev->dev.of_node, "local-bd-address",
+-				       (u8 *)&btq->bdaddr, sizeof(bdaddr_t))) {
++	if (!device_get_bd_address(&pdev->dev, &btq->bdaddr))
+ 		dev_info(&pdev->dev, "BD address %pMR retrieved from device-tree",
+ 			 &btq->bdaddr);
+-	}
  
- void bt_sock_reclassify_lock(struct sock *sk, int proto);
- 
-+int device_get_bd_address(struct device *dev, bdaddr_t *bd_addr);
-+
- #endif /* __BLUETOOTH_H */
-diff --git a/net/bluetooth/lib.c b/net/bluetooth/lib.c
-index 63e65d9b4b24..78a58ea586c6 100644
---- a/net/bluetooth/lib.c
-+++ b/net/bluetooth/lib.c
-@@ -26,7 +26,10 @@
- 
- #define pr_fmt(fmt) "Bluetooth: " fmt
- 
-+#include <linux/etherdevice.h>
- #include <linux/export.h>
-+#include <linux/fwnode.h>
-+#include <linux/property.h>
- 
- #include <net/bluetooth/bluetooth.h>
- 
-@@ -198,3 +201,34 @@ void bt_err_ratelimited(const char *format, ...)
- 	va_end(args);
- }
- EXPORT_SYMBOL(bt_err_ratelimited);
-+
-+/**
-+ * device_get_bd_address - Get the Bluetooth Device Address (BD_ADDR) for a
-+ *                         given device
-+ * @dev:	Pointer to the device
-+ * @bd_addr:	Pointer to struct to store the BD address in
-+ *
-+ * Search the firmware node of the device for 'local-bd-address'.
-+ *
-+ * All-zero BD addresses are rejected, because those could be properties
-+ * that exist in the firmware tables, but were not updated by the firmware. For
-+ * example, the DTS could define 'local-bd-address', with zero BD addresses.
-+ */
-+int device_get_bd_address(struct device *dev, bdaddr_t *bd_addr)
-+{
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
-+	bdaddr_t ba;
-+	int ret;
-+
-+	ret = fwnode_property_read_u8_array(fwnode, "local-bd-address",
-+					    (u8 *)&ba, sizeof(ba));
-+	if (ret < 0)
-+		return ret;
-+	if (is_zero_ether_addr((u8 *)&ba))
-+		return -ENODATA;
-+
-+	*bd_addr = ba;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(device_get_bd_address);
+ 	hdev = hci_alloc_dev();
+ 	if (!hdev)
 -- 
 2.19.0.605.g01d371f741-goog
 
