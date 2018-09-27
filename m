@@ -6,95 +6,67 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D567C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DC7C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5DA216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:00:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5DA216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id D8F4A216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:00:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F4A216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbeI0US3 (ORCPT
+        id S1727725AbeI0UTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:18:29 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:50005 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727240AbeI0US2 (ORCPT
+        Thu, 27 Sep 2018 16:19:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41394 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbeI0UTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:18:28 -0400
-Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie2.idc.renesas.com with ESMTP; 27 Sep 2018 23:00:03 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 9E82E8A860;
-        Thu, 27 Sep 2018 23:00:03 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,310,1534777200"; 
-   d="scan'208";a="292093595"
-Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii1.idc.renesas.com with ESMTP; 27 Sep 2018 22:59:59 +0900
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v6 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Date:   Thu, 27 Sep 2018 14:59:22 +0100
-Message-Id: <20180927135922.12015-4-phil.edworthy@renesas.com>
+        Thu, 27 Sep 2018 16:19:20 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g5Wqa-0004cm-ID; Thu, 27 Sep 2018 14:00:52 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: elan: fix spelling mistake "registred" -> "registered"
+Date:   Thu, 27 Sep 2018 15:00:52 +0100
+Message-Id: <20180927140052.28166-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180927135922.12015-1-phil.edworthy@renesas.com>
-References: <20180927135922.12015-1-phil.edworthy@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This provides a pinctrl driver for the Renesas R9A06G032 SoC
+From: Colin Ian King <colin.king@canonical.com>
 
-Based on a patch originally written by Michel Pollet at Renesas.
+Trivial fix to spelling mistake in hid_err error message
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v6:
- - No changes.
+ drivers/hid/hid-elan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v5:
- - No changes.
-
-v4:
- - No changes.
-
-v3:
- - No changes.
-
-v2:
- - Add "renesas,rzn1-pinctrl" compatible fallback string
- - Register size corrected.
----
- arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index eaf94976ed6d..2322268bc862 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -165,6 +165,14 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
+index 07e26c3567eb..0bfd6d1b44c1 100644
+--- a/drivers/hid/hid-elan.c
++++ b/drivers/hid/hid-elan.c
+@@ -497,7 +497,7 @@ static int elan_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		return 0;
  
-+		pinctrl: pin-controller@40067000 {
-+			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+			clock-names = "bus";
-+			status = "okay";
-+		};
-+
- 		gic: gic@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
+ 	if (!drvdata->input) {
+-		hid_err(hdev, "Input device is not registred\n");
++		hid_err(hdev, "Input device is not registered\n");
+ 		ret = -ENAVAIL;
+ 		goto err;
+ 	}
 -- 
 2.17.1
 
