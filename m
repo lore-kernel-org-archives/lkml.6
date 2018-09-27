@@ -2,181 +2,155 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2FAC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610E7C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98DC721571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:42:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Nih9Dj9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98DC721571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id AF8A221571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:43:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF8A221571
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=applied-asynchrony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeI0Q75 (ORCPT
+        id S1727292AbeI0RBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 12:59:57 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:40926 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbeI0Q74 (ORCPT
+        Thu, 27 Sep 2018 13:01:16 -0400
+Received: from mail02.iobjects.de ([188.40.134.68]:48716 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727057AbeI0RBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 12:59:56 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8RAdFFc180000;
-        Thu, 27 Sep 2018 10:41:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=HkKuifm6HndyIPAiUM/dsxQmb5jn/HcD2CQ1W0hSYcY=;
- b=Nih9Dj9uVB+5yThlU5f71ZTZwkYnXtcV7R/+r6ls8pEjq6uFlkyMFiZQyiOSr6ZTbg7l
- du/xDG/j0fTHiqI3soBUcV0v0LSi9YdH8OMp01+iyktCSWaJw6Bys1cm1OdmNBVO2bQw
- BYxcocQtKM3JeCDeZbCNaG3lMWe9Wv/U2VMp3DfmF06GX+nOGZ9UMai/xT/YGHrAdMC3
- kWr6WuyJH29cf+pslbSZw+kktyqqVvWMfla1mqPjtJlpcWP6GfXJ2COOoSBdzKJPj/9z
- HmesMd5/qnYyCAquboW7EzhIv/D8r7T0DeCsBPHlYzjdVUnHTWbWXTGuuZl9gSuV2u2B 3w== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2mnd5ts9vm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 10:41:14 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8RAfD6r008170
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 10:41:13 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8RAfDlW021352;
-        Thu, 27 Sep 2018 10:41:13 GMT
-Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Sep 2018 03:41:12 -0700
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     keith.busch@linux.intel.com, ming.lei@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] blk-mq: adjust debugfs and sysfs register when updating nr_hw_queues
-Date:   Thu, 27 Sep 2018 18:43:03 +0800
-Message-Id: <1538044984-2147-2-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538044984-2147-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1538044984-2147-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9028 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809270109
+        Thu, 27 Sep 2018 13:01:16 -0400
+Received: from tux.wizards.de (p3EE2F45F.dip0.t-ipconnect.de [62.226.244.95])
+        by mail02.iobjects.de (Postfix) with ESMTPSA id 01EA9416066B;
+        Thu, 27 Sep 2018 12:43:34 +0200 (CEST)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+        by tux.wizards.de (Postfix) with ESMTP id 96F0AF0160B;
+        Thu, 27 Sep 2018 12:43:33 +0200 (CEST)
+Subject: Re: [PATCH 4.18 74/88] drm/atomic: Use drm_drv_uses_atomic_modeset()
+ for debugfs creation
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+References: <20180927090300.631426620@linuxfoundation.org>
+ <20180927090309.614592493@linuxfoundation.org>
+From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <42cbbf9c-3076-0c49-36c2-b6fd09628694@applied-asynchrony.com>
+Date:   Thu, 27 Sep 2018 12:43:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180927090309.614592493@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blk-mq debugfs and sysfs entries need to be removed before updating
-queue map, otherwise, we get get wrong result there. This patch fixes
-it and remove the redundant debugfs and sysfs register/unregister
-operations during __blk_mq_update_nr_hw_queues.
+On 09/27/18 11:03, Greg Kroah-Hartman wrote:
+> 4.18-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Lyude Paul <lyude@redhat.com>
+> 
+> commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
+> 
+> As pointed out by Daniel Vetter, we should be usinng
+> drm_drv_uses_atomic_modeset() for determining whether or not we want to
+> make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
+> the former isn't an accurate representation of whether or not the driver
+> is actually using atomic modesetting internally (even though it might
+> not be exposing atomic capabilities).
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+> Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- block/blk-mq.c | 39 ++++++++++++---------------------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
+This patch breaks switching the console to high resolution during boot on my
+workstation with a Radeon card; it worked fine with 4.18.10 and reverting it
+fixes the problem:
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 85a1c1a..6356455 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2137,8 +2137,6 @@ static void blk_mq_exit_hctx(struct request_queue *q,
- 		struct blk_mq_tag_set *set,
- 		struct blk_mq_hw_ctx *hctx, unsigned int hctx_idx)
- {
--	blk_mq_debugfs_unregister_hctx(hctx);
--
- 	if (blk_mq_hw_queue_mapped(hctx))
- 		blk_mq_tag_idle(hctx);
- 
-@@ -2165,6 +2163,7 @@ static void blk_mq_exit_hw_queues(struct request_queue *q,
- 	queue_for_each_hw_ctx(q, hctx, i) {
- 		if (i == nr_queue)
- 			break;
-+		blk_mq_debugfs_unregister_hctx(hctx);
- 		blk_mq_exit_hctx(q, set, hctx, i);
- 	}
- }
-@@ -2222,8 +2221,6 @@ static int blk_mq_init_hctx(struct request_queue *q,
- 	if (hctx->flags & BLK_MQ_F_BLOCKING)
- 		init_srcu_struct(hctx->srcu);
- 
--	blk_mq_debugfs_register_hctx(q, hctx);
--
- 	return 0;
- 
-  free_fq:
-@@ -2512,8 +2509,6 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
- 	int i, j;
- 	struct blk_mq_hw_ctx **hctxs = q->queue_hw_ctx;
- 
--	blk_mq_sysfs_unregister(q);
--
- 	/* protect against switching io scheduler  */
- 	mutex_lock(&q->sysfs_lock);
- 	for (i = 0; i < set->nr_hw_queues; i++) {
-@@ -2561,7 +2556,6 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
- 	}
- 	q->nr_hw_queues = i;
- 	mutex_unlock(&q->sysfs_lock);
--	blk_mq_sysfs_register(q);
- }
- 
- struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
-@@ -2659,25 +2653,6 @@ void blk_mq_free_queue(struct request_queue *q)
- 	blk_mq_exit_hw_queues(q, set, set->nr_hw_queues);
- }
- 
--/* Basically redo blk_mq_init_queue with queue frozen */
--static void blk_mq_queue_reinit(struct request_queue *q)
--{
--	WARN_ON_ONCE(!atomic_read(&q->mq_freeze_depth));
--
--	blk_mq_debugfs_unregister_hctxs(q);
--	blk_mq_sysfs_unregister(q);
--
--	/*
--	 * redo blk_mq_init_cpu_queues and blk_mq_init_hw_queues. FIXME: maybe
--	 * we should change hctx numa_node according to the new topology (this
--	 * involves freeing and re-allocating memory, worth doing?)
--	 */
--	blk_mq_map_swqueue(q);
--
--	blk_mq_sysfs_register(q);
--	blk_mq_debugfs_register_hctxs(q);
--}
--
- static int __blk_mq_alloc_rq_maps(struct blk_mq_tag_set *set)
- {
- 	int i;
-@@ -2987,11 +2962,21 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
- 		if (!blk_mq_elv_switch_none(&head, q))
- 			goto switch_back;
- 
-+	list_for_each_entry(q, &set->tag_list, tag_set_list) {
-+		blk_mq_debugfs_unregister_hctxs(q);
-+		blk_mq_sysfs_unregister(q);
-+	}
-+
- 	set->nr_hw_queues = nr_hw_queues;
- 	blk_mq_update_queue_map(set);
- 	list_for_each_entry(q, &set->tag_list, tag_set_list) {
- 		blk_mq_realloc_hw_ctxs(set, q);
--		blk_mq_queue_reinit(q);
-+		blk_mq_map_swqueue(q);
-+	}
-+
-+	list_for_each_entry(q, &set->tag_list, tag_set_list) {
-+		blk_mq_sysfs_register(q);
-+		blk_mq_debugfs_register_hctxs(q);
- 	}
- 
- switch_back:
--- 
-2.7.4
+Sep 27 12:21:49 ragnarok kernel: [drm] radeon kernel modesetting enabled.
+Sep 27 12:21:49 ragnarok kernel: checking generic (e0000000 500000) vs hw (e0000000 10000000)
+Sep 27 12:21:49 ragnarok kernel: fb: switching to radeondrmfb from VESA VGA
+Sep 27 12:21:49 ragnarok kernel: Console: switching to colour dummy device 80x25
+Sep 27 12:21:49 ragnarok kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000028
+Sep 27 12:21:49 ragnarok kernel: PGD 0 P4D 0
+Sep 27 12:21:49 ragnarok kernel: Oops: 0000 [#1] SMP
+Sep 27 12:21:49 ragnarok kernel: CPU: 2 PID: 2157 Comm: systemd-udevd Not tainted 4.18.11 #1
+Sep 27 12:21:49 ragnarok kernel: Hardware name: Gigabyte Technology Co., Ltd. P67-DS3-B3/P67-DS3-B3, BIOS F1 05/06/2011
+Sep 27 12:21:49 ragnarok kernel: RIP: 0010:drm_debugfs_init+0xa6/0x1b0 [drm]
+Sep 27 12:21:49 ragnarok kernel: Code: 00 48 89 d9 48 89 c2 be 03 00 00 00 48 c7 c7 40 9d 15 a0 e8 8c fb ff ff 89 c5 85 c0 0f 85 84 00 00 00 49 8b 84 24 90 03 00 00 <48> 83 78 28 00 74 10 48 89 df e8 fb 06 ff ff 85 c0 0f 85 92 00 00
+Sep 27 12:21:49 ragnarok kernel: RSP: 0018:ffffc900020dfaa0 EFLAGS: 00010246
+Sep 27 12:21:49 ragnarok kernel: RAX: 0000000000000000 RBX: ffff8805fdbe64e0 RCX: 0000000000000000
+Sep 27 12:21:49 ragnarok kernel: RDX: ffff8806033fe780 RSI: 0000000000000100 RDI: ffff8805fdbe6510
+Sep 27 12:21:49 ragnarok kernel: RBP: 0000000000000000 R08: ffff880600d87c38 R09: 0000000000000000
+Sep 27 12:21:49 ragnarok kernel: R10: ffffc900020dfa20 R11: ffffc900020dfaab R12: ffff8806000ee800
+Sep 27 12:21:49 ragnarok kernel: R13: 0000000000000080 R14: 0000000000000000 R15: ffff8805fdbe6408
+Sep 27 12:21:49 ragnarok kernel: FS:  00007fc81fb3c800(0000) GS:ffff88061f480000(0000) knlGS:0000000000000000
+Sep 27 12:21:49 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Sep 27 12:21:49 ragnarok kernel: CR2: 0000000000000028 CR3: 00000006003bf002 CR4: 00000000000606e0
+Sep 27 12:21:49 ragnarok kernel: Call Trace:
+Sep 27 12:21:49 ragnarok kernel:  ? pci_conf1_read+0xa4/0x100
+Sep 27 12:21:49 ragnarok kernel:  ? pci_bus_read_config_word+0x43/0x70
+Sep 27 12:21:49 ragnarok kernel:  drm_minor_register+0x4c/0xe0 [drm]
+Sep 27 12:21:49 ragnarok kernel:  drm_dev_register+0x32/0x140 [drm]
+Sep 27 12:21:49 ragnarok kernel:  drm_get_pci_dev+0x90/0x170 [drm]
+Sep 27 12:21:49 ragnarok kernel:  pci_device_probe+0xc8/0x140
+Sep 27 12:21:49 ragnarok kernel:  driver_probe_device+0x21e/0x2d0
+Sep 27 12:21:49 ragnarok kernel:  __driver_attach+0xb1/0xd0
+Sep 27 12:21:49 ragnarok kernel:  ? driver_probe_device+0x2d0/0x2d0
+Sep 27 12:21:49 ragnarok kernel:  bus_for_each_dev+0x73/0xb0
+Sep 27 12:21:49 ragnarok kernel:  bus_add_driver+0x19c/0x1e0
+Sep 27 12:21:49 ragnarok kernel:  ? 0xffffffffa02b3000
+Sep 27 12:21:49 ragnarok kernel:  driver_register+0x6b/0xb0
+Sep 27 12:21:49 ragnarok kernel:  ? 0xffffffffa02b3000
+Sep 27 12:21:49 ragnarok kernel:  do_one_initcall+0x43/0x1af
+Sep 27 12:21:49 ragnarok kernel:  ? _cond_resched+0x15/0x30
+Sep 27 12:21:49 ragnarok kernel:  ? kmem_cache_alloc_trace+0x15c/0x1c0
+Sep 27 12:21:49 ragnarok kernel:  do_init_module+0x5a/0x210
+Sep 27 12:21:49 ragnarok kernel:  load_module+0x2149/0x2660
+Sep 27 12:21:49 ragnarok kernel:  ? xfs_file_read_iter+0x64/0xc0
+Sep 27 12:21:49 ragnarok kernel:  ? __se_sys_finit_module+0xb1/0xd0
+Sep 27 12:21:49 ragnarok kernel:  __se_sys_finit_module+0xb1/0xd0
+Sep 27 12:21:49 ragnarok kernel:  do_syscall_64+0x3e/0xe0
+Sep 27 12:21:49 ragnarok kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Sep 27 12:21:49 ragnarok kernel: RIP: 0033:0x7fc81e999cc9
+Sep 27 12:21:49 ragnarok kernel: Code: 00 00 00 75 05 48 83 c4 18 c3 e8 92 98 01 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 97 91 2c 00 f7 d8 64 89 01 48
+Sep 27 12:21:49 ragnarok kernel: RSP: 002b:00007ffe7ab81f58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+Sep 27 12:21:49 ragnarok kernel: RAX: ffffffffffffffda RBX: 0000556a340e2ae0 RCX: 00007fc81e999cc9
+Sep 27 12:21:49 ragnarok kernel: RDX: 0000000000000000 RSI: 00007fc81f75211d RDI: 0000000000000017
+Sep 27 12:21:49 ragnarok kernel: RBP: 00007fc81f75211d R08: 0000000000000000 R09: 00007ffe7ab82070
+Sep 27 12:21:49 ragnarok kernel: R10: 0000000000000017 R11: 0000000000000246 R12: 0000000000000000
+Sep 27 12:21:49 ragnarok kernel: R13: 0000556a340ebdf0 R14: 0000000000020000 R15: 000000000aba9500
+Sep 27 12:21:49 ragnarok kernel: Modules linked in: videobuf2_vmalloc x86_pkg_temp_thermal videobuf2_memops videobuf2_v4l2 snd_hwdep coretemp snd_usbmidi_lib videodev snd_rawmidi radeon(+) kvm_intel videobuf2_common snd_seq_device usbhid(+) i2c_algo_bit kvm drm_kms_helper snd_hda_codec_realtek irqbypass syscopyarea snd_hda_codec_generic sysfillrect snd_hda_codec_hdmi sysimgblt pcbc fb_sys_fops mq_deadline aesni_intel snd_hda_intel ttm aes_x86_64 crypto_simd cryptd glue_helper snd_hda_codec drm snd_hda_core i2c_i801 snd_pcm drm_panel_orientation_quirks i2c_core snd_timer parport_pc backlight snd r8169 soundcore mii parport
+Sep 27 12:21:49 ragnarok kernel: CR2: 0000000000000028
+Sep 27 12:21:49 ragnarok kernel: ---[ end trace 2f2cb8be562d405e ]---
+Sep 27 12:21:49 ragnarok kernel: RIP: 0010:drm_debugfs_init+0xa6/0x1b0 [drm]
+Sep 27 12:21:49 ragnarok kernel: Code: 00 48 89 d9 48 89 c2 be 03 00 00 00 48 c7 c7 40 9d 15 a0 e8 8c fb ff ff 89 c5 85 c0 0f 85 84 00 00 00 49 8b 84 24 90 03 00 00 <48> 83 78 28 00 74 10 48 89 df e8 fb 06 ff ff 85 c0 0f 85 92 00 00
+Sep 27 12:21:49 ragnarok kernel: RSP: 0018:ffffc900020dfaa0 EFLAGS: 00010246
+Sep 27 12:21:49 ragnarok kernel: RAX: 0000000000000000 RBX: ffff8805fdbe64e0 RCX: 0000000000000000
+Sep 27 12:21:49 ragnarok kernel: RDX: ffff8806033fe780 RSI: 0000000000000100 RDI: ffff8805fdbe6510
+Sep 27 12:21:49 ragnarok kernel: RBP: 0000000000000000 R08: ffff880600d87c38 R09: 0000000000000000
+Sep 27 12:21:49 ragnarok kernel: R10: ffffc900020dfa20 R11: ffffc900020dfaab R12: ffff8806000ee800
+Sep 27 12:21:49 ragnarok kernel: R13: 0000000000000080 R14: 0000000000000000 R15: ffff8805fdbe6408
+Sep 27 12:21:49 ragnarok kernel: FS:  00007fc81fb3c800(0000) GS:ffff88061f480000(0000) knlGS:0000000000000000
+Sep 27 12:21:49 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Sep 27 12:21:49 ragnarok kernel: CR2: 0000000000000028 CR3: 00000006003bf002 CR4: 00000000000606e0
+Sep 27 12:21:49 ragnarok kernel: it87: Found IT8728F chip at 0x290, revision 1
 
+Full logs available on request.
+
+cheers,
+Holger
