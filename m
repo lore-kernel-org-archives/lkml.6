@@ -2,203 +2,95 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2430C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EAFC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64DF1215EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:32:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64DF1215EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id E9C38215E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:32:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C38215E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeI0Rt4 convert rfc822-to-8bit (ORCPT
+        id S1727529AbeI0Rui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:49:56 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58415 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727171AbeI0Rt4 (ORCPT
+        Thu, 27 Sep 2018 13:50:38 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:47452 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727213AbeI0Rui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:49:56 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8RBO9D2025250;
-        Thu, 27 Sep 2018 13:32:01 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mncmep1jb-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 27 Sep 2018 13:32:01 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DB81831;
-        Thu, 27 Sep 2018 11:32:00 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B456C294E;
-        Thu, 27 Sep 2018 11:32:00 +0000 (GMT)
-Received: from SFHDAG6NODE1.st.com (10.75.127.16) by SFHDAG6NODE3.st.com
- (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 27 Sep
- 2018 13:32:00 +0200
-Received: from SFHDAG6NODE1.st.com ([fe80::8d96:4406:44e3:eb27]) by
- SFHDAG6NODE1.st.com ([fe80::8d96:4406:44e3:eb27%20]) with mapi id
- 15.00.1347.000; Thu, 27 Sep 2018 13:32:00 +0200
-From:   Yannick FERTRE <yannick.fertre@st.com>
-To:     Philippe CORNU <philippe.cornu@st.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        "airlied@linux.ie" <airlied@linux.ie>
-CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm: stm: implement get_scanout_position function
-Thread-Topic: [PATCH] drm: stm: implement get_scanout_position function
-Thread-Index: AQHUD6lh/FtQB5XoQ0G3N1zp/AXzb6R9OioAgIb5igCAADbZgA==
-Date:   Thu, 27 Sep 2018 11:32:00 +0000
-Message-ID: <dc2d8602-7a89-6926-2b2d-4aa069076fde@st.com>
-References: <7441c31c-7427-da4e-c877-6d58b5bd869f@st.com>
- <c1148671-4df1-3815-bd62-75541873bad6@st.com>
-In-Reply-To: <c1148671-4df1-3815-bd62-75541873bad6@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.48]
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <8DDFC31A9EA01D4492CE076675B2CD8D@st.com>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_06:,,
- signatures=0
+        Thu, 27 Sep 2018 13:50:38 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id gbYj1y00X3XaVaC01bYjxB; Thu, 27 Sep 2018 13:32:46 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1g5UXD-0001Sq-Qv; Thu, 27 Sep 2018 13:32:43 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1g5UXD-0007uX-Ph; Thu, 27 Sep 2018 13:32:43 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/3] thermal: da9062/61: Prevent hardware access during system suspend
+Date:   Thu, 27 Sep 2018 13:32:35 +0200
+Message-Id: <20180927113235.30354-4-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180927113235.30354-1-geert+renesas@glider.be>
+References: <20180927113235.30354-1-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Yannick Fertré <yannick.fertre@st.com>
-Tested-by: Yannick Fertré <yannick.fertre@st.com>
+The workqueue used for monitoring the hardware may run while the device
+is already suspended.  Fix this by using the freezable system workqueue
+instead, cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from
+happening during system suspend").
 
-On 09/27/2018 10:15 AM, Yannick FERTRE wrote:
-> Reviewed-by/tested-by: yannick.fertre@st.com
->
-> -------- Forwarded Message --------
-> Subject: [PATCH] drm: stm: implement get_scanout_position function
-> Date: Fri, 29 Jun 2018 15:01:40 +0200
-> From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-> To: yannick.fertre@st.com, philippe.cornu@st.com, airlied@linux.ie
-> CC: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-> Benjamin Gaignard <benjamin.gaignard@linaro.org>, Benjamin Gaignard
-> <benjamin.gaignard@st.com>
->
-> Hardware allow to read the position in scanout buffer so
-> we can use this information to make wait of vblank more accurate.
->
-> Active area bounds (start, end, total height) have already been
-> computed and written in ltdc registers, read them and get the
-> current line position to compute vpos value.
->
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->   drivers/gpu/drm/stm/drv.c  |  2 ++
->   drivers/gpu/drm/stm/ltdc.c | 45
-> +++++++++++++++++++++++++++++++++++++++++++++
->   drivers/gpu/drm/stm/ltdc.h |  5 +++++
->   3 files changed, 52 insertions(+)
->
-> diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
-> index 8698e08313e1..ac53383350e3 100644
-> --- a/drivers/gpu/drm/stm/drv.c
-> +++ b/drivers/gpu/drm/stm/drv.c
-> @@ -72,6 +72,8 @@ static struct drm_driver drv_driver = {
->       .gem_prime_vmap = drm_gem_cma_prime_vmap,
->       .gem_prime_vunmap = drm_gem_cma_prime_vunmap,
->       .gem_prime_mmap = drm_gem_cma_prime_mmap,
-> +    .get_scanout_position = ltdc_crtc_scanoutpos,
-> +    .get_vblank_timestamp = drm_calc_vbltimestamp_from_scanoutpos,
->   };
->    static int drv_load(struct drm_device *ddev)
-> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-> index d997a6014d6c..05b714673042 100644
-> --- a/drivers/gpu/drm/stm/ltdc.c
-> +++ b/drivers/gpu/drm/stm/ltdc.c
-> @@ -148,6 +148,8 @@
->   #define IER_TERRIE    BIT(2)        /* Transfer ERRor Interrupt 
-> Enable */
->   #define IER_RRIE    BIT(3)        /* Register Reload Interrupt 
-> enable */
->   +#define CPSR_CYPOS    GENMASK(15, 0)    /* Current Y position */
-> +
->   #define ISR_LIF        BIT(0)        /* Line Interrupt Flag */
->   #define ISR_FUIF    BIT(1)        /* Fifo Underrun Interrupt Flag */
->   #define ISR_TERRIF    BIT(2)        /* Transfer ERRor Interrupt Flag */
-> @@ -622,6 +624,49 @@ static void ltdc_crtc_disable_vblank(struct
-> drm_crtc *crtc)
->       reg_clear(ldev->regs, LTDC_IER, IER_LIE);
->   }
->   +bool ltdc_crtc_scanoutpos(struct drm_device *ddev, unsigned int pipe,
-> +              bool in_vblank_irq, int *vpos, int *hpos,
-> +              ktime_t *stime, ktime_t *etime,
-> +              const struct drm_display_mode *mode)
-> +{
-> +    struct ltdc_device *ldev = ddev->dev_private;
-> +    int line, vactive_start, vactive_end, vtotal;
-> +
-> +    if (stime)
-> +        *stime = ktime_get();
-> +
-> +    /* The active area starts after vsync + front porch and ends
-> +     * at vsync + front porc + display size.
-> +     * The total height also include back porch.
-> +     * We have 3 possible cases to handle:
-> +     * - line < vactive_start: vpos = line - vactive_start and will be
-> +     * negative
-> +     * - vactive_start < line < vactive_end: vpos = line - vactive_start
-> +     * and will be positive
-> +     * - line > vactive_end: vpos = line - vtotal - vactive_start
-> +     * and will negative
-> +     *
-> +     * Computation for the two first cases are identical so we can
-> +     * simplify the code and only test if line > vactive_end
-> +     */
-> +    line = reg_read(ldev->regs, LTDC_CPSR) & CPSR_CYPOS;
-> +    vactive_start = reg_read(ldev->regs, LTDC_BPCR) & BPCR_AVBP;
-> +    vactive_end = reg_read(ldev->regs, LTDC_AWCR) & AWCR_AAH;
-> +    vtotal = reg_read(ldev->regs, LTDC_TWCR) & TWCR_TOTALH;
-> +
-> +    if (line > vactive_end)
-> +        *vpos = line - vtotal - vactive_start;
-> +    else
-> +        *vpos = line - vactive_start;
-> +
-> +    *hpos = 0;
-> +
-> +    if (etime)
-> +        *etime = ktime_get();
-> +
-> +    return true;
-> +}
-> +
->   static const struct drm_crtc_funcs ltdc_crtc_funcs = {
->       .destroy = drm_crtc_cleanup,
->       .set_config = drm_atomic_helper_set_config,
-> diff --git a/drivers/gpu/drm/stm/ltdc.h b/drivers/gpu/drm/stm/ltdc.h
-> index 1e16d6afb0d2..b8c5cc41e17a 100644
-> --- a/drivers/gpu/drm/stm/ltdc.h
-> +++ b/drivers/gpu/drm/stm/ltdc.h
-> @@ -37,6 +37,11 @@ struct ltdc_device {
->       struct fps_info plane_fpsi[LTDC_MAX_LAYER];
->   };
->   +bool ltdc_crtc_scanoutpos(struct drm_device *dev, unsigned int pipe,
-> +              bool in_vblank_irq, int *vpos, int *hpos,
-> +              ktime_t *stime, ktime_t *etime,
-> +              const struct drm_display_mode *mode);
-> +
->   int ltdc_load(struct drm_device *ddev);
->   void ltdc_unload(struct drm_device *ddev);
->   -- 2.15.0
->
+Fixes: 608567aac3206ae8 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Untested due to lack of hardware.
+---
+ drivers/thermal/da9062-thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/thermal/da9062-thermal.c b/drivers/thermal/da9062-thermal.c
+index dd8dd947b7f0737c..01b0cb9944577851 100644
+--- a/drivers/thermal/da9062-thermal.c
++++ b/drivers/thermal/da9062-thermal.c
+@@ -106,7 +106,7 @@ static void da9062_thermal_poll_on(struct work_struct *work)
+ 					   THERMAL_EVENT_UNSPECIFIED);
+ 
+ 		delay = msecs_to_jiffies(thermal->zone->passive_delay);
+-		schedule_delayed_work(&thermal->work, delay);
++		queue_delayed_work(system_freezable_wq, &thermal->work, delay);
+ 		return;
+ 	}
+ 
+@@ -125,7 +125,7 @@ static irqreturn_t da9062_thermal_irq_handler(int irq, void *data)
+ 	struct da9062_thermal *thermal = data;
+ 
+ 	disable_irq_nosync(thermal->irq);
+-	schedule_delayed_work(&thermal->work, 0);
++	queue_delayed_work(system_freezable_wq, &thermal->work, 0);
+ 
+ 	return IRQ_HANDLED;
+ }
 -- 
-Yannick Fertré | TINA: 166 7152 | Tel: +33 244027152 | Mobile: +33 620600270
-Microcontrollers and Digital ICs Group | Microcontrolleurs Division
+2.17.1
+
