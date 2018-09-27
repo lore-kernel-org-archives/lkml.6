@@ -2,143 +2,130 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE8AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B30C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B2012159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F1BA2159D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:54:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X10WO7A7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B2012159D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y/YUEE/Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1BA2159D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbeI1DNE (ORCPT
+        id S1728496AbeI1DOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:13:04 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41982 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbeI1DND (ORCPT
+        Thu, 27 Sep 2018 23:14:10 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40318 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeI1DOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:13:03 -0400
-Received: by mail-ot1-f66.google.com with SMTP id e18-v6so3929771oti.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:52:55 -0700 (PDT)
+        Thu, 27 Sep 2018 23:14:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id s5-v6so2722003pfj.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5cQOptbLf3Q2CYqwnObZNKV+hFP0ddGzeW8BrA7m10s=;
-        b=X10WO7A77E63RvnAKvvmLMU/KAbEKjjN71+c9KQo4P9bYGoeY58HtIL90DtKvKIZTo
-         o9PYHvMNzZvigWcLTOiOER73ueRr724XYN9E5Sdy+71jXes4ElmrhTQFPuVXDSfCKa+3
-         Ka3ZbLG+aqMvZwvbN9rovaNECPG5C/3rNYfrQ/S4WXAE9HLK/TWLu/LEVfZn04XxZ+zv
-         nkkIwOGJbMeZ6ZC388sfv2YQ6sCzB9pApFfo7tLe21voneG3fJ+gejs7TRdwGXM66pVg
-         AuWwIJyNupiHJHrXSrjI9os+7ijO0UaXl1zseFRi5TRMzmHg6ARSR5k8/2qboCHVXV5P
-         iVtg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iw08QegY6zdolsBrbHlGz1udJm+xOd7z3VpmwWRDxH4=;
+        b=Y/YUEE/YO5E8mvG8IjmdxWKspeKVkLZsq2IbiK/j3JQXJP4gLYJReOgVakIWot6Kly
+         yaWYXWHcZ/wNTGr8HTlQmLh3wMyI9/NLyyTkD+JUTm34jkO3LyUpZe3M3b/vMRsDdAxk
+         IJ079KFEIbu11cbi/1peHT4bgfplCx4/Ldg6QpGdVeGT/tGvd3+Ni5I6dscKtqkOiTuM
+         Xc8YbbwHUNpEFdjELoQEK5/4aNMLeCYLErhUSzfoFKBa5w6a8oTR2RL42nb5V/M1fbvY
+         PjRd9dIBEr2Rs76ANlbtVhMDwcs5oxju5pUgR4vjPLhRyuA5nHQMrA0GsvrLRQdNSsn7
+         ApgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5cQOptbLf3Q2CYqwnObZNKV+hFP0ddGzeW8BrA7m10s=;
-        b=QGVA7FIN1ausK+evDvDfDyqxQ55IahNfPdsDkbqubMk4Yy++lHgGm+g+f+hPu3RP+k
-         Jc91aPr9G62jWtOIx1tx5gTSyeSvWxZSVcPFWuX26QwqFp4ZgRJijuZmJrSPq4tnv2H2
-         4vWPPKj9WrC4lzoOlF+PKEIoaH3pKTa8u+7VffgY84cdWrd6LPQ6wYvtmiCv8dB0v9pl
-         SX55688kmABiqTMQ4b8WQgTpZOe3OFFEy4a6JqWGw8KPWKupzUAC2wAGDUK9S+AWSyzF
-         g1gsfa6YiXoZC2/osJspF81tOymxCB1kfLm5kqfdBN/8KqgkTujyrZ7liEQ34hDP/hw5
-         wSEQ==
-X-Gm-Message-State: ABuFfohk1r8aQjtMaq6qbZ/jIS3hxNPDhCwYaDPc0yfw1MIG6fFxhbbO
-        VXcH7NqKxOoedAoNUpwM91vQkBCi
-X-Google-Smtp-Source: ACcGV638qKaZ++2iSAABiBuTX563bvywpdhri+EeFT78YulNxfkNym4phfPAWkyXWoNhAU8cq2ZUbg==
-X-Received: by 2002:a9d:3437:: with SMTP id v52-v6mr8413951otb.231.1538081574804;
-        Thu, 27 Sep 2018 13:52:54 -0700 (PDT)
-Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm1674099otd.21.2018.09.27.13.52.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 13:52:54 -0700 (PDT)
-Subject: Re: [PATCH] staging: rtl8188eu: Avoid null pointer arithmetic
-To:     Aymen Qader <qader.aymen@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20180927170408.4495-1-qader.aymen@gmail.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <96968145-e727-56ac-1a74-8458e479b7bf@lwfinger.net>
-Date:   Thu, 27 Sep 2018 15:52:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iw08QegY6zdolsBrbHlGz1udJm+xOd7z3VpmwWRDxH4=;
+        b=AnpC2ctxq3N90cOynRyskY/fvQ8Ca7FKZGX39dKBv+UG4r7J0IO9xq5foGOifbCrRe
+         kUPG8jKgX/cScU1eukJzldGTmkOrte8RiTwBPLklTTGaOJUkUFNz/vYNSonn4aShV1z4
+         WHkR4b7pf0tJlP8uWq6DYXNefh6GjpTj2YMuLdCaNj7zg1IDD0bU0Ruva87eteszSAgw
+         O1115fDq9ZY7EhtAevZI1vPBMYd7fboh254P86iR5/GtW3T7FpFUY7SgsmFa/pHCHsMn
+         zXNCRnCcUQszo8ozo9jLyaqbz7KlOEHXoGDIx2hi8kp0OKYluqusYOAOTqLyMHO459x7
+         yAHQ==
+X-Gm-Message-State: ABuFfogEIQf4sIfwG0E6aZqUAf1V+jIQC2x6HyQUKEWwB9b0P8PMxBcK
+        4A/qKGYqsfTXmzVxVkNFEeBdjX91lT1nGCQPIo8s2A==
+X-Google-Smtp-Source: ACcGV60Izt78Jh1tbHQJOkNLllF46+qreZYREiu+iY52K4YpH48vS8Gx35ZCBUHj9GiVTT9s/Jggp1GB4L1RCBf5kow=
+X-Received: by 2002:a17:902:6e01:: with SMTP id u1-v6mr13080549plk.13.1538081639682;
+ Thu, 27 Sep 2018 13:53:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180927170408.4495-1-qader.aymen@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180924195716.30848-1-natechancellor@gmail.com> <20180927204352.19569-1-natechancellor@gmail.com>
+In-Reply-To: <20180927204352.19569-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 27 Sep 2018 13:53:48 -0700
+Message-ID: <CAKwvOdncohhariVufRF=S1aZ9H9UJZhksBMGtM+FaU5xmT06JQ@mail.gmail.com>
+Subject: Re: [PATCH v2] IB/mlx4: Avoid implicit enumerated type conversion
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/18 12:04 PM, Aymen Qader wrote:
-> Avoid null pointer arithmetic in rtw_mlme_ext.c by skipping other field
-> checks if the information element pointer is null.
-> 
-> Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
+On Thu, Sep 27, 2018 at 1:44 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns when one enumerated type is implicitly converted to another.
+>
+> drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> type 'enum ib_qp_create_flags' [-Wenum-conversion]
+>                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+>                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
+>
+> drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> type 'enum ib_qp_create_flags' [-Wenum-conversion]
+>                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+>                                                     ~ ^~~~~~~~~~~~~~~~~
+>
+> The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+> type ib_qp_create_flags. Make that clear to Clang by changing the
+> create_flags type to int.
+>
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
->   drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-> index 834053a0ae9d..8a3a71456cd0 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-> @@ -2971,8 +2971,10 @@ static unsigned int OnAssocReq(struct adapter *padapter,
->   	/*  checking SSID */
->   	p = rtw_get_ie(pframe + WLAN_HDR_A3_LEN + ie_offset, _SSID_IE_, &ie_len,
->   		pkt_len - WLAN_HDR_A3_LEN - ie_offset);
-> -	if (!p)
-> +	if (!p) {
->   		status = _STATS_FAILURE_;
-> +		goto OnAssocReqFail;
-> +	}
->   
->   	if (ie_len == 0) { /*  broadcast ssid, however it is not allowed in assocreq */
->   		status = _STATS_FAILURE_;
+>
+> v1 -> v2:
+>
+> * Use int instead of u32 since enums are restricted to this range, as
+>   suggested by Nick.
 
-I do not think this patch avoids any pointer arithmetic. If p is NULL, then 
-ie_len will be zero and the branch with the memcmp() call, where the pointer 
-arithmetic is done, will be skipped.
+Thank you for making this change.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-That said, it is better to bail out with the first failure condition. I do not 
-require the following, but the code would be even simpler if you test p and 
-ie_len==0 in a single if statement and eliminate some code as in
-
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c 
-b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index 1115050077e4..71722cec84a0 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -2982,11 +2982,10 @@ static unsigned int OnAssocReq(struct adapter *padapter,
-         /*  checking SSID */
-         p = rtw_get_ie(pframe + WLAN_HDR_A3_LEN + ie_offset, _SSID_IE_, &ie_len,
-                 pkt_len - WLAN_HDR_A3_LEN - ie_offset);
--       if (!p)
--               status = _STATS_FAILURE_;
-
--       if (ie_len == 0) { /*  broadcast ssid, however it is not allowed in 
-assocreq */
-+       if (!p || ie_len == 0) { /*  broadcast ssid, however it is not allowed 
-in assocreq */
-                 status = _STATS_FAILURE_;
-+               goto OnAssocReqFail;
-         } else {
-                 /*  check if ssid match */
-                 if (memcmp((void *)(p+2), cur->Ssid.Ssid, cur->Ssid.SsidLength))
+>
+>  include/rdma/ib_verbs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+> index 0d822a9db300..e5ec04e844cd 100644
+> --- a/include/rdma/ib_verbs.h
+> +++ b/include/rdma/ib_verbs.h
+> @@ -1151,7 +1151,7 @@ struct ib_qp_init_attr {
+>         struct ib_qp_cap        cap;
+>         enum ib_sig_type        sq_sig_type;
+>         enum ib_qp_type         qp_type;
+> -       enum ib_qp_create_flags create_flags;
+> +       int                     create_flags;
+>
+>         /*
+>          * Only needed for special QP types, or when using the RW API.
+> --
+> 2.19.0
+>
 
 
-ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
-
+-- 
 Thanks,
-
-Larry
-
+~Nick Desaulniers
