@@ -2,135 +2,96 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C384C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F0DC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 337B421571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8918B21571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:12:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MiHY2I6p";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HUwv2Th0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337B421571
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=yahoo.ca header.i=@yahoo.ca header.b="UuuAsBUd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8918B21571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=yahoo.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbeI1DbH (ORCPT
+        id S1728016AbeI1Dcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:31:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54916 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeI1DbH (ORCPT
+        Thu, 27 Sep 2018 23:32:47 -0400
+Received: from sonic309-21.consmr.mail.gq1.yahoo.com ([98.137.65.147]:37556
+        "EHLO sonic309-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727340AbeI1Dcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:31:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D5488609A8; Thu, 27 Sep 2018 21:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538082653;
-        bh=U1f7Qo7jJFn2XoIFfYq9zZn4KCmjZdEBrJuyDk/ikOI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=MiHY2I6ps8gl+dYXQwASXCgbQcvel/pp73ZfBOfdUbjXipC5ubX7wxfJeRmBGGgKB
-         ggxMz7/WEXb21cUQ4lBcWgtQ719VgxCH0XT0DKHuJtuIIeP4zbMk71v2vDGSDMivn0
-         K/SS9YafoxFLPV/PrSMeFaGEepB+SLtmGWiU7whc=
-Received: from [10.226.60.82] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rruigrok@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D05C60128;
-        Thu, 27 Sep 2018 21:10:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538082652;
-        bh=U1f7Qo7jJFn2XoIFfYq9zZn4KCmjZdEBrJuyDk/ikOI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HUwv2Th05UqM4OBwQaHG1yPgWOkqGPfUhIl5vXlCCYJhea4XOlofJEt63jstijp1A
-         E+Qsg2ShATUmTpB1/PoQ6yy28xiwHocgdSwCSAipSH8B/TxmVrjoJHufIp7nCSEUeM
-         kdZwlU7gsAP9O0ZJfYc4Tm3b9RMs0d/4HTNf/Ezc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D05C60128
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rruigrok@codeaurora.org
-Subject: Re: [PATCH 00/10] GICv3 support for kexec/kdump on EFI systems
-To:     Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-References: <20180921195954.21574-1-marc.zyngier@arm.com>
-From:   Richard Ruigrok <rruigrok@codeaurora.org>
-Message-ID: <44ac1fad-8df4-4738-0f25-8a7a2de8f6df@codeaurora.org>
-Date:   Thu, 27 Sep 2018 15:10:50 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 23:32:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1538082753; bh=keDMkEhzcD51A892wLdsvfwC5PK0PU9UdcNVrUpnll4=; h=To:From:In-Reply-To:Cc:References:Subject:Date:From:Subject; b=UuuAsBUds/E5NlDdLbxpi5d68SrrVBevYBND10zR+ikF2sCzGgs18QTWJJSVjTzW4J1T2UmDKk2QWJ98e0t1cnLHXi9P8gjfOZlbZepBGURD59xLG4z8yeUEctaE36JbETAE2I+veMRtm0WLoxNQ2jbBIo9FcOrYEu8Lp91eurmrVkn5mI7ER/P8IspCYZ0P9TbONIZ7ah0YblzlAXLEf3IqmqST4/kU3t0evXO0BlzlxFaYYyyFFEQggMMNAAiBfZvW20qqQfSQ2yDmv4eSyGxCt0yvGXvaIxUE41CagLf7xHSK702U4/jMIuoLsT/f1vLb6zLCI5BOFB7oXSSbFA==
+X-YMail-OSG: mz815SkVM1mVVVMjRd2X5Iq_ZJQLvQVHbYRedlEGy4IcDNjgUyOVRemfXDl_2sA
+ Ad8rRbVQPzrDTykgI4URVIbGfPIbyGwbY1s7RmTd92tDp_fxZF3nO.CtUVrgKd58OIKUh4LAOV_C
+ 4Z3zkUAoMcVufnuloAjJkXz9oqKPtLZlN22kKMlOY_OPZsCWkx4bgul6hDpV0V2jhhBkmlnfdjOw
+ P7O_Ftplw9JX2vqqT6q702mRLVNN987LTvPr0zf0flF.jOU9eNyIjZwaZWshUieO3XEzYOZATg6s
+ 40M2bJy8UQIW8lp5uGvmL4PHe_xi9EhaCnFM8TD9KnvLIONtB7ZppevyTsR1CP_pPjLAOMI0K8xg
+ xX7prmApzeLpt0m8Cbb.aLnndyidUc.xXAoTYFHhXFgWX2J8aEEO.hyI8z14.Cnhr76M9x2YMUgI
+ 28YjIA5aFQyf99rKTUV0iCsYyAXf8pe35XaBAFyHQaaippGtltnlXq04p0tNgh0eNuNrs4vcNvgj
+ XJ17tlw8xumJx8sKSHTtmpQUxiwdp9O04mLJRqJWhHOQuaeWzk8pkgPdGgUR3j.2g4SjCbTq7RQt
+ Q1olFiVlvtDf.vhegdk9eq7SUztIXQQ5W6RNpFJ8WYaR75BHQ7TzYO9xGweYojI261tnDBtuCdlC
+ pHThq6jvZsO0JWer59q4aUCxjawysNklPNjnoPjdjlFLYd5cwcRRY9Jh7jWvwvf35uC8KRiXWGLV
+ 7p_yz4oHK85dpa94w2HLSa98UGuS1_Esm7S08wOXJZc7WiL8.ASqKZwDqoU.Wy5NjYaKNIfbMfjk
+ MguAZqE9IK5xc0zU_JJp2AOzLDfwzZniynOwmTs5BHWWHkY6C0Av.QVlQvFT7zyte7Dehv2Lo3MW
+ 1RBk.96AK.0q7jcLbnZhrKgYRA23Vc2huApeo9toLkqZQB9wnMeNVAQua_UjvnglVU3NrIHPFUiq
+ 0DnuRUsWlDPx23UAp5NpwfM8PHdgKgf9ommIYXxVQHJ7SOIMg1KqQKfcu7dXwSUsCq54SPsUEThT
+ lKAzeyC2B
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Thu, 27 Sep 2018 21:12:33 +0000
+Received: from pink.alxu.ca (EHLO localhost) ([198.98.62.56])
+          by smtp430.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 4a3511c8987175a4c5587e660d0d6381;
+          Thu, 27 Sep 2018 21:12:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180921195954.21574-1-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+To:     Dan Streetman <ddstreet@ieee.org>
+From:   Alex Xu <alex_y_xu@yahoo.ca>
+In-Reply-To: <CALZtONA9r6=gnK-5a++tjaReqEnRzrBb3hzYMTFNXZ13z+UOWQ@mail.gmail.com>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1538079759.qxp8zh3nwh.astroid@alex-archsus.none>
+ <CALZtONA9r6=gnK-5a++tjaReqEnRzrBb3hzYMTFNXZ13z+UOWQ@mail.gmail.com>
+Message-ID: <153808275043.724.15980761008814866300@pink.alxu.ca>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] mm: fix z3fold warnings on CONFIG_SMP=n
+Date:   Thu, 27 Sep 2018 21:12:30 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc
+Quoting Dan Streetman (2018-09-27 20:41:21)
+> On Thu, Sep 27, 2018 at 4:27 PM Alex Xu (Hello71) <alex_y_xu@yahoo.ca> wr=
+ote:
+> >
+> > Spinlocks are always lockable on UP systems, even if they were just
+> > locked.
+> =
 
-On 9/21/2018 1:59 PM, Marc Zyngier wrote:
-> The GICv3 architecture has the remarkable feature that once LPI tables
-> have been assigned to redistributors and that LPI delivery is enabled,
-> there is no guarantee that LPIs can be turned off (and most
-> implementations do not allow it), nor can it be reprogrammed to use
-> other tables.
->
-> This is a bit of a problem for kexec, where the secondary kernel
-> completely looses track of the previous allocations. If the secondary
-> kernel doesn't allocate the tables exactly the same way, no LPIs will
-> be delivered by the GIC (which continues to use the old tables), and
-> memory previously allocated for the pending tables will be slowly
-> corrupted, one bit at a time.
->
-> The workaround for this is based on a series[1] by Ard Biesheuvel,
-> which adds the required infrastructure for memory reservations to be
-> passed from one kernel to another using an EFI table.
->
-> This infrastructure is then used to register the allocation of GIC
-> tables with EFI, and allow the GIC driver to safely reuse the existing
-> programming if it detects that the tables have been correctly
-> registered. On non-EFI systems, there is not much we can do.
->
-> This has been tested on a TX2 system both as a host and a guest. I'd
-> welcome additional testing of different HW. For convenience, I've
-> stashed a branch containing the whole thing at [2].
-I tested [2] from the 4.19-rc4 set which included this series and [1].
-Tested kexec on Centriq system with ITS support (46 core).  On-board was a MLX CX5 NIC, verified MSIs are active in /proc/interrupts.
-Prior to this we used a workaround from Shanker to reuse the same tables in the kexec'ed kernel.
-Let me know if further testing is needed, and thanks for adding this support.
-> [1] https://marc.info/?l=linux-efi&m=153754757208163&w=2
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/gicv3-kdump
->
-> Marc Zyngier (10):
->   irqchip/gic-v3-its: Change initialization ordering for LPIs
->   irqchip/gic-v3-its: Consolidate LPI_PENDBASE_SZ usage
->   irqchip/gic-v3-its: Split property table clearing from allocation
->   irqchip/gic-v3-its: Move pending table allocation to init time
->   irqchip/gic-v3-its: Keep track of property table's PA and VA
->   irqchip/gic-v3-its: Allow use of pre-programmed LPI tables
->   irqchip/gic-v3-its: Use pre-programmed redistributor tables with kdump
->     kernels
->   irqchip/gic-v3-its: Check that all RDs have the same property table
->   irqchip/gic-v3-its: Register LPI tables with EFI config table
->   irqchip/gic-v3-its: Allow use of LPI tables in reserved memory
->
->  drivers/irqchip/irq-gic-v3-its.c   | 249 ++++++++++++++++++++++-------
->  drivers/irqchip/irq-gic-v3.c       |  20 ++-
->  include/linux/irqchip/arm-gic-v3.h |   4 +-
->  3 files changed, 208 insertions(+), 65 deletions(-)
->
+> i think it would be much better to just use either
+> assert_spin_locked() or just spin_is_locked(), instead of an #ifdef.
+> =
 
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
 
+I wrote a longer response and then learned about the WARN_ON_SMP macro,
+so I'll just use that instead.
+
+Original response below:
+
+I thought about using assert_spin_locked, but I wanted to keep the
+existing behavior, and it seems to make sense to try to lock the page if
+we forgot to lock it earlier? Maybe not though; I don't understand this
+code completely. I did write a version of z3fold_page_ensure_locked with
+"if (assert_spin_locked(...))" but not only did that look even worse, it
+doesn't even work, because assert_spin_locked is a statement on UP
+systems, not an expression. It might be worth adding a
+ensure_spin_locked function that does that though...
+
+spin_is_locked currently still always returns 0 "on CONFIG_SMP=3Dn builds
+with CONFIG_DEBUG_SPINLOCK=3Dn", so that would just return us to the same
+problem of checking CONFIG_SMP.
