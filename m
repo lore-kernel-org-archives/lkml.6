@@ -2,135 +2,146 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F14C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC54C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799F920838
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 111E720838
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:27:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZw3VcjU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799F920838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GBXWaozF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111E720838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeI0Nnp (ORCPT
+        id S1727200AbeI0Nol (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:43:45 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34804 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbeI0Nnp (ORCPT
+        Thu, 27 Sep 2018 09:44:41 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45004 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbeI0Nok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:43:45 -0400
-Received: by mail-qk1-f194.google.com with SMTP id 80-v6so999401qkj.1;
-        Thu, 27 Sep 2018 00:26:54 -0700 (PDT)
+        Thu, 27 Sep 2018 09:44:40 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g2-v6so1246827pgu.11
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 00:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QIjr7lA69Q6T8Q3M0NSjP0c34DQtTrjB+YLR9/BpnLo=;
-        b=nZw3VcjUVRX49lo3HpsIAjUG2uOgAxI3V2SvTt1nO7ah1p9eFkVhG9UzFqEP4PsnQm
-         0QJ5vtjehvcvKwXf47mhwiJlYHccKzV0x5Gz4QP+upPC+a07X77xr8woHB9h1mS42RUV
-         xOWDlSa/M93TnD8pkGFtjsX06OHrBZCZfJLzgCA3t2/jYD9IQqiXhe9ceOD3/SB+Xpft
-         E1KfN34ZWzpmfdg04FE93KrEsjl37T3y8BDgkkfg0ySfIiitIc+CnUwNS2JnrKWojf4Q
-         8hgbjd10fPe5rD0j4dAgrIddrUQYvsk1//cESHYiCoFLNI6Qkxyh1EHmWDRLnlvflMKs
-         6w3Q==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=4VmbNGK4/Krdl0b5VErXgThoZu7vAXm7F8ofWNw+h+Y=;
+        b=GBXWaozFl12GA1q1cUTlGwVVR+P0Bb8rD8e8VxrtYN36gA3qiFLOgYiO/JVNs2yMPI
+         riJ4mt5JHP2UxRFqFGo2rJSzUkvbsTO3aL0VTLwbm1NPFGoWANNv6aVH+bvGFtwhtcDp
+         nUVEh8RdqvoBYUYA/KEC7suEcSxCJdyevAYnc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QIjr7lA69Q6T8Q3M0NSjP0c34DQtTrjB+YLR9/BpnLo=;
-        b=I132AihTUAB7WsiEv0RWWibCSkTtBKrHk7zHxNuWHzuAslGxSLWuAzO1YDT/F5lVhI
-         2Zw/tkYh/h13x5RSZzjHscBWh7bQ2FP6VQUviXPEGj1cGqlqLW+Blrh9Ch2Py2eXaBoe
-         8mrjpQPEKlqKTSFA1qjB8LxNz9DZ6Zwo18MUCxnMA8ky4BSvBxAmRoidp8LYbnOUpmmV
-         NR5F5sUXPYz+rqK585DRlYJDjZzV+VdQ70eX19fInRWqFRK6Oq810vagD++OJD2lIbCD
-         IZf+aZJS8znGBUtp171te6Bv5izmr18fVROPaPY2s2CDJwzz1gtRfRHRkiueczukUaTK
-         /P9Q==
-X-Gm-Message-State: ABuFfogkBrXD5WPDJ+uB3uSIDVKoXN+lauz9063+ToDmksXozzBasjSi
-        MzEzeNZTYHA3U2bPsqYqkrUyDfwICuLzYIemTBc=
-X-Google-Smtp-Source: ACcGV63Uxlli77PgssZYqLpsTAEjexFrCRGLSgNaX84MNEvVKGWqGCcsXSum3CYepwAX3z1jY9+xdN/9LwL0YlYDx1c=
-X-Received: by 2002:a37:4712:: with SMTP id u18-v6mr7016515qka.301.1538033213589;
- Thu, 27 Sep 2018 00:26:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
- <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
- <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
-In-Reply-To: <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 27 Sep 2018 10:26:42 +0300
-Message-ID: <CAHp75VcQ0SviZ6vsn_5inn5oZxxj-5ZQq5bC+bXPxuF8KOa_Rg@mail.gmail.com>
-Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
- to _CRS?
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dtor@google.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4VmbNGK4/Krdl0b5VErXgThoZu7vAXm7F8ofWNw+h+Y=;
+        b=KrD1x8JIvv70SR5X7GZsiJENV33Z0M0X6D9HbHL8TA0WBzZxyArehlZxTOHuHozTZO
+         yhzoceBkHIISBKxM3/01eRSPm2CNa0PHoaKKnX8x2esQcRp6aMm5/Mo1Fw9wTqFu9wKw
+         YLDbVV0aaVZecCeUI/OUhvfGahutAdBdV0f5yurE3vCQ238vZmuWTwbqtVzupmgJ2GlU
+         XsY3jz9qyV+T6dgwig6xDFiI2fmmxfGpfFCif4PmybpImpVomVdh/yxhze8xv0y/8zNn
+         JoCkpnz5ofLGkJLYIK+KH6umBvxyQbIj9JiPiE48PgccigKPmpaWDvj1xZZDG0Wn0JA9
+         A99w==
+X-Gm-Message-State: ABuFfoir6p1qXnpVJuoXXyCstvuBEhSj6Tnpaj3X5D1RjPgnCPx2MdS+
+        GxRaAeeP3RGI11dF7/5h7KCwYg==
+X-Google-Smtp-Source: ACcGV61KPgGBcSimqyzqYx3UME18t3abL3+TYfTnpzG4XbIvrBikZN5jy+XuanYgEs2RRDWc4WrLaw==
+X-Received: by 2002:a62:7788:: with SMTP id s130-v6mr9859304pfc.189.1538033269467;
+        Thu, 27 Sep 2018 00:27:49 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm1835018pfo.135.2018.09.27.00.27.44
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 27 Sep 2018 00:27:48 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
+        baolin.wang@linaro.org, broonie@kernel.org, ctatlor97@gmail.com,
+        linus.walleij@linaro.org
+Subject: [PATCH v3 1/4] power: supply: core: Introduce one property to present the battery internal resistance
+Date:   Thu, 27 Sep 2018 15:26:54 +0800
+Message-Id: <2787f18a0366576959557d05112a069dca982269.1538033078.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 10:26 PM Rajat Jain <rajatja@google.com> wrote:
-> On Wed, Sep 26, 2018 at 1:42 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Wed, Sep 26, 2018 at 10:49 AM Mika Westerberg
-> > <mika.westerberg@linux.intel.com> wrote:
+The internal resistance of a battery is not a constant in its life cycle,
+this varies over the age of the battery or temperature and so on. But we
+just want use one constant battery internal resistance to estimate the
+battery capacity. Thus this patch introduces one property to present
+the battery factory internal resistance for battery information.
 
-> > > Or you can use con_id=<actual string> everywhere and supply
-> > > acpi_dev_add_driver_gpios() where needed to cover cases where BIOS does
-> > > not provide _DSD.
->
-> This sounds like a good idea and I'd like to do this. I have some
-> questions though:
->
-> 1) If the BIOS does provide a _DSD entry for "cd-gpio", and
-> additionally driver also uses devm_acpi_dev_add_driver_gpios() to add
-> one more entry for the same string "cd-gpio", which one will (should?)
-> actually be returned by the gpiolib? The one in BIOS or the one that
-> was added by the driver?
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v2:
+ - Rename the property.
+ - Improve the commit message.
 
-Of course the one that BIOS provides. This hardcoded mapping tables is
-a fallback for *old* BIOSes which do not have _DSD.
+Changes from v1:
+ - New patch in v2.
+---
+ .../devicetree/bindings/power/supply/battery.txt   |    2 ++
+ drivers/power/supply/power_supply_core.c           |    3 +++
+ include/linux/power_supply.h                       |    1 +
+ 3 files changed, 6 insertions(+)
 
-> 2) Related, I'm trying to understand how can a driver use
-> devm_acpi_dev_add_driver_gpios(), for *only* the case where the BIOS
-> does not have a _DSD (Or should it really care)? Does the driver need
-> to check for _DSD using some other ACPI call?
-
-The magic happens internally in ACPI core.
-Whenever one calls gpiod_get() with a name on ACPI-enabled platform,
-_DSD would be checked first.
-
-> > See also Documentation/acpi/gpio-properties.txt for
-> > > more information.
-
-> > > In case of SDHCI I think the correct way is to stick using _CRS lookup
-> > > only because there typically is just one GpioInt() and I have not seen a
-> > > single BIOS yet where they implement _DSD for this besides yours. If
-> > > there is not way to change the BIOS implementation then I guess we just
-> > > need to amend the driver to call acpi_dev_add_driver_gpios().
->
-> Since we shouldn't discourage a BIOS that is trying to do the right
-> thing by exposing the details in _DST, I think it would be preferable
-> if we can solve this in the kernel.
-
-Patches are welcome, I think.
-
-Btw, is there any existing hardware on the market with such BIOS?
-
+diff --git a/Documentation/devicetree/bindings/power/supply/battery.txt b/Documentation/devicetree/bindings/power/supply/battery.txt
+index f4d3b4a..938d027 100644
+--- a/Documentation/devicetree/bindings/power/supply/battery.txt
++++ b/Documentation/devicetree/bindings/power/supply/battery.txt
+@@ -22,6 +22,7 @@ Optional Properties:
+  - charge-term-current-microamp: current for charge termination phase
+  - constant-charge-current-max-microamp: maximum constant input current
+  - constant-charge-voltage-max-microvolt: maximum constant input voltage
++ - factory-internal-resistance-micro-ohms: battery factory internal resistance
+ 
+ Battery properties are named, where possible, for the corresponding
+ elements in enum power_supply_property, defined in
+@@ -42,6 +43,7 @@ Example:
+ 		charge-term-current-microamp = <128000>;
+ 		constant-charge-current-max-microamp = <900000>;
+ 		constant-charge-voltage-max-microvolt = <4200000>;
++		factory-internal-resistance-micro-ohms = <250000>;
+ 	};
+ 
+ 	charger: charger@11 {
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index e853618..307e0995 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -579,6 +579,7 @@ int power_supply_get_battery_info(struct power_supply *psy,
+ 	info->charge_term_current_ua         = -EINVAL;
+ 	info->constant_charge_current_max_ua = -EINVAL;
+ 	info->constant_charge_voltage_max_uv = -EINVAL;
++	info->factory_internal_resistance_uohm  = -EINVAL;
+ 
+ 	if (!psy->of_node) {
+ 		dev_warn(&psy->dev, "%s currently only supports devicetree\n",
+@@ -616,6 +617,8 @@ int power_supply_get_battery_info(struct power_supply *psy,
+ 			     &info->constant_charge_current_max_ua);
+ 	of_property_read_u32(battery_np, "constant_charge_voltage_max_microvolt",
+ 			     &info->constant_charge_voltage_max_uv);
++	of_property_read_u32(battery_np, "factory-internal-resistance-micro-ohms",
++			     &info->factory_internal_resistance_uohm);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index f807691..d089566 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -326,6 +326,7 @@ struct power_supply_battery_info {
+ 	int charge_term_current_ua;	    /* microAmps */
+ 	int constant_charge_current_max_ua; /* microAmps */
+ 	int constant_charge_voltage_max_uv; /* microVolts */
++	int factory_internal_resistance_uohm;   /* microOhms */
+ };
+ 
+ extern struct atomic_notifier_head power_supply_notifier;
 -- 
-With Best Regards,
-Andy Shevchenko
+1.7.9.5
+
