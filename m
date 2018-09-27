@@ -2,38 +2,38 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388F5C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BACC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D583821570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D583821570
+	by mail.kernel.org (Postfix) with ESMTP id C29012156D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:44:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C29012156D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeI0NAx (ORCPT
+        id S1727280AbeI0NBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:00:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:20773 "EHLO
+        Thu, 27 Sep 2018 09:01:23 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:22509 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726962AbeI0NAx (ORCPT
+        with ESMTP id S1726590AbeI0NBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:00:53 -0400
-X-UUID: 6c00a2aee8ce4d25ace91573a1e1ad06-20180927
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Thu, 27 Sep 2018 09:01:23 -0400
+X-UUID: 3f7edf433a1c4cd18b7216497062ab97-20180927
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <houlong.wei@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 400905900; Thu, 27 Sep 2018 14:44:05 +0800
+        with ESMTP id 1984051002; Thu, 27 Sep 2018 14:44:35 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 27 Sep 2018 14:44:04 +0800
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 27 Sep 2018 14:44:33 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 27 Sep 2018 14:44:03 +0800
+ Transport; Thu, 27 Sep 2018 14:44:32 +0800
 From:   Houlong Wei <houlong.wei@mediatek.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -57,60 +57,57 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Houlong Wei <houlong.wei@mediatek.com>,
         HS Liao <hs.liao@mediatek.com>, <ginny.chen@mediatek.com>,
         <enzhu.wang@mediatek.com>
-Subject: [PATCH v24 0/2] MediaTek MT8173 CMDQ support
-Date:   Thu, 27 Sep 2018 14:43:37 +0800
-Message-ID: <1538030619-25829-1-git-send-email-houlong.wei@mediatek.com>
+Subject: [PATCH v24 1/2] arm64: dts: mt8173: Add GCE node
+Date:   Thu, 27 Sep 2018 14:43:38 +0800
+Message-ID: <1538030619-25829-2-git-send-email-houlong.wei@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1538030619-25829-1-git-send-email-houlong.wei@mediatek.com>
+References: <1538030619-25829-1-git-send-email-houlong.wei@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 90037FB4E63C9667218576C5E639CF596C1CDF44D317E07327DDDC050302E5202000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch adds the device node of the GCE hardware for CMDQ module.
 
-This is Mediatek MT8173 Command Queue(CMDQ) driver. The CMDQ is used
-to help write registers with critical time limitation, such as
-updating display configuration during the vblank. It controls Global
-Command Engine (GCE) hardware to achieve this requirement.
+Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+Signed-off-by: HS Liao <hs.liao@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Changes since v23:
- -rebase on v4.19-rc1
- -revise return value of cmdq_mbox_create()
- -revise cmdq_pkt_create()
- -add MODULE_LICENSE() for mtk-cmdq-helper.c
- -adjust functions order in mtk-cmdq.h
-Changes since v22:
- -remove properties 'timeout' and 'thread-num' from device tree
- -move timer from CMDQ driver to CMDQ helper
- -move dma unmap from CMDQ driver to CMDQ helper
- -config thread number in CMDQ match table
- -remove reallocate mechanism and let client specify the cmdq buffer size
- -let client specify the timeout time
-Changes since v21:
- -rebase on v4.18-rc1
- -remove subsys code and event id definition from mtk-cmdq-helper.c
- -add mt8173-gce.h to define the subsys code and envent id
-Changes since v20:
- -rebase on v4.15-rc1
- -move dma_map_single outside of spinlock
-Changes since v19:
- -rebase to v4.10-rc2
-
-Houlong Wei (2):
-  arm64: dts: mt8173: Add GCE node
-  soc: mediatek: Add Mediatek CMDQ helper
-
- arch/arm64/boot/dts/mediatek/mt8173.dtsi |   10 +
- drivers/soc/mediatek/Kconfig             |   12 ++
- drivers/soc/mediatek/Makefile            |    1 +
- drivers/soc/mediatek/mtk-cmdq-helper.c   |  292 ++++++++++++++++++++++++++++++
- include/linux/soc/mediatek/mtk-cmdq.h    |  133 ++++++++++++++
- 5 files changed, 448 insertions(+)
- create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
- create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
-
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index abd2f15..412ffd4 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -18,6 +18,7 @@
+ #include <dt-bindings/phy/phy.h>
+ #include <dt-bindings/power/mt8173-power.h>
+ #include <dt-bindings/reset/mt8173-resets.h>
++#include <dt-bindings/gce/mt8173-gce.h>
+ #include "mt8173-pinfunc.h"
+ 
+ / {
+@@ -521,6 +522,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		gce: mailbox@10212000 {
++			compatible = "mediatek,mt8173-gce";
++			reg = <0 0x10212000 0 0x1000>;
++			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_GCE>;
++			clock-names = "gce";
++			#mbox-cells = <3>;
++		};
++
+ 		mipi_tx0: mipi-dphy@10215000 {
+ 			compatible = "mediatek,mt8173-mipi-tx";
+ 			reg = <0 0x10215000 0 0x1000>;
 -- 
 1.7.9.5
+
