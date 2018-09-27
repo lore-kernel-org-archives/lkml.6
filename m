@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCE3C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502E1C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE882152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:18:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE882152F
+	by mail.kernel.org (Postfix) with ESMTP id 142792152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:18:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142792152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbeI0PgI (ORCPT
+        id S1729008AbeI0PgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:36:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56162 "EHLO
+        Thu, 27 Sep 2018 11:36:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbeI0PgH (ORCPT
+        with ESMTP id S1727216AbeI0PgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:36:07 -0400
+        Thu, 27 Sep 2018 11:36:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 455D81113;
-        Thu, 27 Sep 2018 09:18:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B764A1117;
+        Thu, 27 Sep 2018 09:18:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fred Veldini <fred.veldini@gmail.com>,
-        Deshu Wen <dwen@sierrawireless.com>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 06/64] qmi_wwan: set DTR for modems in forced USB2 mode
-Date:   Thu, 27 Sep 2018 11:03:23 +0200
-Message-Id: <20180927090250.641356105@linuxfoundation.org>
+Subject: [PATCH 4.14 07/64] udp4: fix IP_CMSG_CHECKSUM for connected sockets
+Date:   Thu, 27 Sep 2018 11:03:24 +0200
+Message-Id: <20180927090250.745213921@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -53,55 +51,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Bj�rn Mork" <bjorn@mork.no>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 922005c7f50e7f4b2a6dbc182e9c575b4f92396b ]
+[ Upstream commit 2b5a921740a55c00223a797d075b9c77c42cb171 ]
 
-Recent firmware revisions have added the ability to force
-these modems to USB2 mode, hiding their SuperSpeed
-capabilities from the host.  The driver has been using the
-SuperSpeed capability, as shown by the bcdUSB field of the
-device descriptor, to detect the need to enable the DTR
-quirk.  This method fails when the modems are forced to
-USB2 mode by the modem firmware.
+commit 2abb7cdc0dc8 ("udp: Add support for doing checksum
+unnecessary conversion") left out the early demux path for
+connected sockets. As a result IP_CMSG_CHECKSUM gives wrong
+values for such socket when GRO is not enabled/available.
 
-Fix by unconditionally enabling the DTR quirk for the
-affected device IDs.
+This change addresses the issue by moving the csum conversion to a
+common helper and using such helper in both the default and the
+early demux rx path.
 
-Reported-by: Fred Veldini <fred.veldini@gmail.com>
-Reported-by: Deshu Wen <dwen@sierrawireless.com>
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Reported-by: Fred Veldini <fred.veldini@gmail.com>
-Reported-by: Deshu Wen <dwen@sierrawireless.com>
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
+Fixes: 2abb7cdc0dc8 ("udp: Add support for doing checksum unnecessary conversion")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ net/ipv4/udp.c |   49 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 26 insertions(+), 23 deletions(-)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1205,13 +1205,13 @@ static const struct usb_device_id produc
- 	{QMI_FIXED_INTF(0x1199, 0x9061, 8)},	/* Sierra Wireless Modem */
- 	{QMI_FIXED_INTF(0x1199, 0x9063, 8)},	/* Sierra Wireless EM7305 */
- 	{QMI_FIXED_INTF(0x1199, 0x9063, 10)},	/* Sierra Wireless EM7305 */
--	{QMI_FIXED_INTF(0x1199, 0x9071, 8)},	/* Sierra Wireless MC74xx */
--	{QMI_FIXED_INTF(0x1199, 0x9071, 10)},	/* Sierra Wireless MC74xx */
--	{QMI_FIXED_INTF(0x1199, 0x9079, 8)},	/* Sierra Wireless EM74xx */
--	{QMI_FIXED_INTF(0x1199, 0x9079, 10)},	/* Sierra Wireless EM74xx */
--	{QMI_FIXED_INTF(0x1199, 0x907b, 8)},	/* Sierra Wireless EM74xx */
--	{QMI_FIXED_INTF(0x1199, 0x907b, 10)},	/* Sierra Wireless EM74xx */
--	{QMI_FIXED_INTF(0x1199, 0x9091, 8)},	/* Sierra Wireless EM7565 */
-+	{QMI_QUIRK_SET_DTR(0x1199, 0x9071, 8)},	/* Sierra Wireless MC74xx */
-+	{QMI_QUIRK_SET_DTR(0x1199, 0x9071, 10)},/* Sierra Wireless MC74xx */
-+	{QMI_QUIRK_SET_DTR(0x1199, 0x9079, 8)},	/* Sierra Wireless EM74xx */
-+	{QMI_QUIRK_SET_DTR(0x1199, 0x9079, 10)},/* Sierra Wireless EM74xx */
-+	{QMI_QUIRK_SET_DTR(0x1199, 0x907b, 8)},	/* Sierra Wireless EM74xx */
-+	{QMI_QUIRK_SET_DTR(0x1199, 0x907b, 10)},/* Sierra Wireless EM74xx */
-+	{QMI_QUIRK_SET_DTR(0x1199, 0x9091, 8)},	/* Sierra Wireless EM7565 */
- 	{QMI_FIXED_INTF(0x1bbb, 0x011e, 4)},	/* Telekom Speedstick LTE II (Alcatel One Touch L100V LTE) */
- 	{QMI_FIXED_INTF(0x1bbb, 0x0203, 2)},	/* Alcatel L800MA */
- 	{QMI_FIXED_INTF(0x2357, 0x0201, 4)},	/* TP-LINK HSUPA Modem MA180 */
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -2049,6 +2049,28 @@ static inline int udp4_csum_init(struct
+ 							 inet_compute_pseudo);
+ }
+ 
++/* wrapper for udp_queue_rcv_skb tacking care of csum conversion and
++ * return code conversion for ip layer consumption
++ */
++static int udp_unicast_rcv_skb(struct sock *sk, struct sk_buff *skb,
++			       struct udphdr *uh)
++{
++	int ret;
++
++	if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
++		skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
++					 inet_compute_pseudo);
++
++	ret = udp_queue_rcv_skb(sk, skb);
++
++	/* a return value > 0 means to resubmit the input, but
++	 * it wants the return to be -protocol, or 0
++	 */
++	if (ret > 0)
++		return -ret;
++	return 0;
++}
++
+ /*
+  *	All we need to do is get the socket, and then do a checksum.
+  */
+@@ -2095,14 +2117,9 @@ int __udp4_lib_rcv(struct sk_buff *skb,
+ 		if (unlikely(sk->sk_rx_dst != dst))
+ 			udp_sk_rx_dst_set(sk, dst);
+ 
+-		ret = udp_queue_rcv_skb(sk, skb);
++		ret = udp_unicast_rcv_skb(sk, skb, uh);
+ 		sock_put(sk);
+-		/* a return value > 0 means to resubmit the input, but
+-		 * it wants the return to be -protocol, or 0
+-		 */
+-		if (ret > 0)
+-			return -ret;
+-		return 0;
++		return ret;
+ 	}
+ 
+ 	if (rt->rt_flags & (RTCF_BROADCAST|RTCF_MULTICAST))
+@@ -2110,22 +2127,8 @@ int __udp4_lib_rcv(struct sk_buff *skb,
+ 						saddr, daddr, udptable, proto);
+ 
+ 	sk = __udp4_lib_lookup_skb(skb, uh->source, uh->dest, udptable);
+-	if (sk) {
+-		int ret;
+-
+-		if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
+-			skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
+-						 inet_compute_pseudo);
+-
+-		ret = udp_queue_rcv_skb(sk, skb);
+-
+-		/* a return value > 0 means to resubmit the input, but
+-		 * it wants the return to be -protocol, or 0
+-		 */
+-		if (ret > 0)
+-			return -ret;
+-		return 0;
+-	}
++	if (sk)
++		return udp_unicast_rcv_skb(sk, skb, uh);
+ 
+ 	if (!xfrm4_policy_check(NULL, XFRM_POLICY_IN, skb))
+ 		goto drop;
 
 
