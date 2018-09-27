@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB63C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE8FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A56B2152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:24:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A56B2152F
+	by mail.kernel.org (Postfix) with ESMTP id 8F30A2152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:24:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F30A2152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbeI0Plj (ORCPT
+        id S1728802AbeI0Plq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:41:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56662 "EHLO
+        Thu, 27 Sep 2018 11:41:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbeI0Plj (ORCPT
+        with ESMTP id S1727154AbeI0Plp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:41:39 -0400
+        Thu, 27 Sep 2018 11:41:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7CC9E1113;
-        Thu, 27 Sep 2018 09:24:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D7E41113;
+        Thu, 27 Sep 2018 09:24:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.14 56/64] ext4: fix online resizing for bigalloc file systems with a 1k block size
-Date:   Thu, 27 Sep 2018 11:04:13 +0200
-Message-Id: <20180927090257.632455561@linuxfoundation.org>
+        stable@vger.kernel.org, Li Dongyang <dongyangli@ddn.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>
+Subject: [PATCH 4.14 57/64] ext4: dont mark mmp buffer head dirty
+Date:   Thu, 27 Sep 2018 11:04:14 +0200
+Message-Id: <20180927090257.784993430@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -50,41 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Li Dongyang <dongyangli@ddn.com>
 
-commit 5f8c10936fab2b69a487400f2872902e597dd320 upstream.
+commit fe18d649891d813964d3aaeebad873f281627fbc upstream.
 
-An online resize of a file system with the bigalloc feature enabled
-and a 1k block size would be refused since ext4_resize_begin() did not
-understand s_first_data_block is 0 for all bigalloc file systems, even
-when the block size is 1k.
+Marking mmp bh dirty before writing it will make writeback
+pick up mmp block later and submit a write, we don't want the
+duplicate write as kmmpd thread should have full control of
+reading and writing the mmp block.
+Another reason is we will also have random I/O error on
+the writeback request when blk integrity is enabled, because
+kmmpd could modify the content of the mmp block(e.g. setting
+new seq and time) while the mmp block is under I/O requested
+by writeback.
 
+Signed-off-by: Li Dongyang <dongyangli@ddn.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ext4/mmp.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -19,6 +19,7 @@
- 
- int ext4_resize_begin(struct super_block *sb)
- {
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	int ret = 0;
- 
- 	if (!capable(CAP_SYS_RESOURCE))
-@@ -29,7 +30,7 @@ int ext4_resize_begin(struct super_block
-          * because the user tools have no way of handling this.  Probably a
-          * bad time to do it anyways.
-          */
--	if (EXT4_SB(sb)->s_sbh->b_blocknr !=
-+	if (EXT4_B2C(sbi, sbi->s_sbh->b_blocknr) !=
- 	    le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block)) {
- 		ext4_warning(sb, "won't resize using backup superblock at %llu",
- 			(unsigned long long)EXT4_SB(sb)->s_sbh->b_blocknr);
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -49,7 +49,6 @@ static int write_mmp_block(struct super_
+ 	 */
+ 	sb_start_write(sb);
+ 	ext4_mmp_csum_set(sb, mmp);
+-	mark_buffer_dirty(bh);
+ 	lock_buffer(bh);
+ 	bh->b_end_io = end_buffer_write_sync;
+ 	get_bh(bh);
 
 
