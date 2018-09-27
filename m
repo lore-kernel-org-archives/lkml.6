@@ -2,155 +2,243 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE78C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED1EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA9621570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 155BD21570
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="hsWkxJmE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA9621570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CTudQxlz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155BD21570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeI0PIl (ORCPT
+        id S1727410AbeI0PIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:08:41 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38684 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727097AbeI0PIk (ORCPT
+        Thu, 27 Sep 2018 11:08:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38781 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727362AbeI0PIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:08:40 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x17-v6so1410937pfh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:51:31 -0700 (PDT)
+        Thu, 27 Sep 2018 11:08:15 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j8-v6so1663574wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iBc/SOI345QfGxvKdfvkTT+7P+THgElx/Kz0O2jep8E=;
-        b=hsWkxJmEc8nb065d+Md/1f9dww/VL5fh1JqJomdQUpOoTfXdw8CjKpdT3ItZbrhu0n
-         nGoxqbRlOwOrKunZOnKOL9nG60bX+8OJYrZ4Hh/bR4SAUR6Q9jCJpMXODkpzgJ7UgnBR
-         mEsiK9SS1c9ifkWWh8ZVeygcWP1zAOMWI0RRw6naR1i+kk28pSKwZNQKTWcrVELTYdeT
-         KXxxh9vSHyQn9oEf3+5leCcB0ekZiFIluovUj1y3iykGiCq4FYc27kjxnq68HdayvWJP
-         UhUsanhIAI7mRZAoJbHT5BWUliBeV3Hvq17bMqWhTh9eobhWWGkldM7JA/ac1Z5eoVz8
-         gGhw==
+        bh=8qG3i7EOfW75+1ul/qMJed+W8vBlnWG4DFjga9+cTRI=;
+        b=CTudQxlzyl1XsS+Y4b5DeSKYBr5h0qMtnEAEWbqW3aHZsDDutmDbVGk0frhXrwe1Ia
+         zQJEgZvV7TL7KSq/VgT14zQFbM8tni0q3Ku3OI9UkL/bkiNtWpdDyfptBlFFVMHn+W26
+         VwtF2/bUqNkonFF2yk7reykD+QR+JdIDlqXjo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iBc/SOI345QfGxvKdfvkTT+7P+THgElx/Kz0O2jep8E=;
-        b=sJN2OWkrRUmx/iT7SZJwCy2rB1T6y29dN9qYCLkjlxnC+fHGtFNdOmvRVL7y3IW86B
-         MjeIIwVkQ8NnX2Tzhhns+X15u4a7ehO68H4bCmqpifRyMY5DH7PFQy5s1whPet7OYlAK
-         s5mF+kD5/A0G8TkbWKyUOyf40l4qY16bsvmXwXvQd0nJqf4V3UtlCjLnTUYPrCEUa+IG
-         l1mCksfgoJjXYtka/fUozIh2qulFgPnsvFIaalUX2ypDMMi/GSpPh8NRXPtKLViPZbSL
-         sZqx8lHmQKlVpefEnQFRo0MfTbsymUKPtZJpg/vVnIYBS39+e86cTfytLQL04Ijux5Je
-         zlUg==
-X-Gm-Message-State: ABuFfogOPSP9jDEJzESZRSvd6nkZ7LxQFmUjFpa1/o7y8Dw/bg8XsLoT
-        jjCGpvSQAQZjuRi0o0N7lAS8Zg==
-X-Google-Smtp-Source: ACcGV61Y+SYRLeTsHN4EGaEMW0VH5vRV/hZ2Zf2ZBJrIJGEHULr4x1cU6xd69C2UtZVoHbigoaCNCw==
-X-Received: by 2002:a63:574c:: with SMTP id h12-v6mr9215162pgm.423.1538038291225;
-        Thu, 27 Sep 2018 01:51:31 -0700 (PDT)
-Received: from localhost.localdomain (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
-        by smtp.gmail.com with ESMTPSA id b64-v6sm2330188pfg.66.2018.09.27.01.51.28
+        bh=8qG3i7EOfW75+1ul/qMJed+W8vBlnWG4DFjga9+cTRI=;
+        b=NC44PWp+5TPfeHrnClip6UqB3+yOtBVRDEifSinNwLiOn2XA8pgV4smS7vEK6XvcQX
+         cF37CCNzqUrvBxum3Q3ggkCpk1YDDVvSqgZ37QnudHPavipCFMdmEWmqx4YQzqx16MsU
+         +CtLbAG6rzI7jojfiVD6pkbktaTSlmk1gWtHEonkb1HlSMlO0QxYrj3hd5RIqKdSGbb1
+         sxf63EWmsYB9aaM8lAk5fpoqdKpjr+KK+rd9BpBiTAaXdGExjdBXsHtjtaomn3SWWBVt
+         4kQ4XnSD3LKPj84JkexAI4WTjxnqbOzLZQ8XR4zNRen2Tv07mLYNt1xKsq7DuWFo0og6
+         TTUA==
+X-Gm-Message-State: ABuFfogMIePGbzq6zTNsK8pSQnnHR2/9rF7YZN5U2ywdnS4eSXFrrbVi
+        oPHoyWIrFuZxf8dNHVifXhqNgXoB0ok=
+X-Google-Smtp-Source: ACcGV62Mb11ea8WdxnDlE9pZA3dzvfHLsyT5g8SgZ5Z7kXtGNkQZTod3aYHL4ZgzZmPtqzaNfECktg==
+X-Received: by 2002:adf:fb0e:: with SMTP id c14-v6mr7970479wrr.117.1538038264841;
+        Thu, 27 Sep 2018 01:51:04 -0700 (PDT)
+Received: from rev03.home ([2a01:cb1d:112:6f00:546e:3c44:5966:2f5e])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm1304055wrd.74.2018.09.27.01.51.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 01:51:30 -0700 (PDT)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@endlessm.com, Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: [PATCH] platform/x86: asus-wmi: Simplify the keyboard brightness updating process
-Date:   Thu, 27 Sep 2018 16:50:09 +0800
-Message-Id: <20180927085009.4190-1-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180816084104.434-1-jian-hong@endlessm.com>
-References: <20180816084104.434-1-jian-hong@endlessm.com>
+        Thu, 27 Sep 2018 01:51:04 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ivan Hu <ivan.hu@canonical.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Robinson <pbrobinson@redhat.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 06/11] efi: Make efi_rts_work accessible to efi page fault handler
+Date:   Thu, 27 Sep 2018 10:50:33 +0200
+Message-Id: <20180927085039.8391-7-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
+References: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original asus-wmi queues a work which calls the ACPI/WMI methods to
-update the keyboard LED brightness.  Similar drivers - acer-wmi,
-dell-wmi-led just call the ACPI/WMI methods directly without workqueues.
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-This patch simplifies the keyboard brightness updating process which
-calls the kbd_led_update function directly without workqueue in
-asus-wmi.
+After the kernel has booted, if any accesses by firmware causes a page
+fault, the efi page fault handler would freeze efi_rts_wq and schedules
+a new process. To do this, the efi page fault handler needs
+efi_rts_work. Hence, make it accessible.
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+There will be no race conditions in accessing this structure, because
+all the calls to efi runtime services are already serialized.
+
+Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
+Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
+Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/platform/x86/asus-wmi.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/firmware/efi/runtime-wrappers.c | 53 +++++--------------------
+ include/linux/efi.h                     | 36 +++++++++++++++++
+ 2 files changed, 45 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 2d6e272315a8..9441cce636e6 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -239,7 +239,6 @@ struct asus_wmi {
- 	int lightbar_led_wk;
- 	struct workqueue_struct *led_workqueue;
- 	struct work_struct tpd_led_work;
--	struct work_struct kbd_led_work;
- 	struct work_struct wlan_led_work;
- 	struct work_struct lightbar_led_work;
+diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+index aa66cbf23512..b18b2d864c2c 100644
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -45,39 +45,7 @@
+ #define __efi_call_virt(f, args...) \
+ 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
  
-@@ -456,12 +455,9 @@ static enum led_brightness tpd_led_get(struct led_classdev *led_cdev)
- 	return read_tpd_led_state(asus);
- }
+-/* efi_runtime_service() function identifiers */
+-enum efi_rts_ids {
+-	GET_TIME,
+-	SET_TIME,
+-	GET_WAKEUP_TIME,
+-	SET_WAKEUP_TIME,
+-	GET_VARIABLE,
+-	GET_NEXT_VARIABLE,
+-	SET_VARIABLE,
+-	QUERY_VARIABLE_INFO,
+-	GET_NEXT_HIGH_MONO_COUNT,
+-	UPDATE_CAPSULE,
+-	QUERY_CAPSULE_CAPS,
+-};
+-
+-/*
+- * efi_runtime_work:	Details of EFI Runtime Service work
+- * @arg<1-5>:		EFI Runtime Service function arguments
+- * @status:		Status of executing EFI Runtime Service
+- * @efi_rts_id:		EFI Runtime Service function identifier
+- * @efi_rts_comp:	Struct used for handling completions
+- */
+-struct efi_runtime_work {
+-	void *arg1;
+-	void *arg2;
+-	void *arg3;
+-	void *arg4;
+-	void *arg5;
+-	efi_status_t status;
+-	struct work_struct work;
+-	enum efi_rts_ids efi_rts_id;
+-	struct completion efi_rts_comp;
+-};
++struct efi_runtime_work efi_rts_work;
  
--static void kbd_led_update(struct work_struct *work)
-+static void kbd_led_update(struct asus_wmi *asus)
+ /*
+  * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
+@@ -91,7 +59,6 @@ struct efi_runtime_work {
+  */
+ #define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
+ ({									\
+-	struct efi_runtime_work efi_rts_work;				\
+ 	efi_rts_work.status = EFI_ABORTED;				\
+ 									\
+ 	init_completion(&efi_rts_work.efi_rts_comp);			\
+@@ -184,18 +151,16 @@ static DEFINE_SEMAPHORE(efi_runtime_lock);
+  */
+ static void efi_call_rts(struct work_struct *work)
  {
- 	int ctrl_param = 0;
--	struct asus_wmi *asus;
--
--	asus = container_of(work, struct asus_wmi, kbd_led_work);
+-	struct efi_runtime_work *efi_rts_work;
+ 	void *arg1, *arg2, *arg3, *arg4, *arg5;
+ 	efi_status_t status = EFI_NOT_FOUND;
  
- 	/*
- 	 * bits 0-2: level
-@@ -516,7 +512,7 @@ static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
- 		value = 0;
+-	efi_rts_work = container_of(work, struct efi_runtime_work, work);
+-	arg1 = efi_rts_work->arg1;
+-	arg2 = efi_rts_work->arg2;
+-	arg3 = efi_rts_work->arg3;
+-	arg4 = efi_rts_work->arg4;
+-	arg5 = efi_rts_work->arg5;
++	arg1 = efi_rts_work.arg1;
++	arg2 = efi_rts_work.arg2;
++	arg3 = efi_rts_work.arg3;
++	arg4 = efi_rts_work.arg4;
++	arg5 = efi_rts_work.arg5;
  
- 	asus->kbd_led_wk = value;
--	queue_work(asus->led_workqueue, &asus->kbd_led_work);
-+	kbd_led_update(asus);
- }
- 
- static void kbd_led_set(struct led_classdev *led_cdev,
-@@ -671,8 +667,6 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
- 
- 	led_val = kbd_led_read(asus, NULL, NULL);
- 	if (led_val >= 0) {
--		INIT_WORK(&asus->kbd_led_work, kbd_led_update);
--
- 		asus->kbd_led_wk = led_val;
- 		asus->kbd_led.name = "asus::kbd_backlight";
- 		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
-@@ -2310,7 +2304,7 @@ static int asus_hotk_resume(struct device *device)
- 	struct asus_wmi *asus = dev_get_drvdata(device);
- 
- 	if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
--		queue_work(asus->led_workqueue, &asus->kbd_led_work);
-+		kbd_led_update(asus);
- 
- 	return 0;
- }
-@@ -2346,7 +2340,7 @@ static int asus_hotk_restore(struct device *device)
- 		rfkill_set_sw_state(asus->uwb.rfkill, bl);
+-	switch (efi_rts_work->efi_rts_id) {
++	switch (efi_rts_work.efi_rts_id) {
+ 	case GET_TIME:
+ 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
+ 				       (efi_time_cap_t *)arg2);
+@@ -253,8 +218,8 @@ static void efi_call_rts(struct work_struct *work)
+ 		 */
+ 		pr_err("Requested executing invalid EFI Runtime Service.\n");
  	}
- 	if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
--		queue_work(asus->led_workqueue, &asus->kbd_led_work);
-+		kbd_led_update(asus);
- 
- 	return 0;
+-	efi_rts_work->status = status;
+-	complete(&efi_rts_work->efi_rts_comp);
++	efi_rts_work.status = status;
++	complete(&efi_rts_work.efi_rts_comp);
  }
+ 
+ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 22e4de9d3700..a929d2bf41fa 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1662,6 +1662,42 @@ struct linux_efi_tpm_eventlog {
+ 
+ extern int efi_tpm_eventlog_init(void);
+ 
++/* efi_runtime_service() function identifiers */
++enum efi_rts_ids {
++	GET_TIME,
++	SET_TIME,
++	GET_WAKEUP_TIME,
++	SET_WAKEUP_TIME,
++	GET_VARIABLE,
++	GET_NEXT_VARIABLE,
++	SET_VARIABLE,
++	QUERY_VARIABLE_INFO,
++	GET_NEXT_HIGH_MONO_COUNT,
++	UPDATE_CAPSULE,
++	QUERY_CAPSULE_CAPS,
++};
++
++/*
++ * efi_runtime_work:	Details of EFI Runtime Service work
++ * @arg<1-5>:		EFI Runtime Service function arguments
++ * @status:		Status of executing EFI Runtime Service
++ * @efi_rts_id:		EFI Runtime Service function identifier
++ * @efi_rts_comp:	Struct used for handling completions
++ */
++struct efi_runtime_work {
++	void *arg1;
++	void *arg2;
++	void *arg3;
++	void *arg4;
++	void *arg5;
++	efi_status_t status;
++	struct work_struct work;
++	enum efi_rts_ids efi_rts_id;
++	struct completion efi_rts_comp;
++};
++
++extern struct efi_runtime_work efi_rts_work;
++
+ /* Workqueue to queue EFI Runtime Services */
+ extern struct workqueue_struct *efi_rts_wq;
+ 
 -- 
-2.11.0
+2.18.0
 
