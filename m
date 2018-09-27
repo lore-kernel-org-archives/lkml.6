@@ -2,103 +2,260 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0D6C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A16EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442872150D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 442872150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E6CA92150D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:27:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6CA92150D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbeI0PoN (ORCPT
+        id S1729053AbeI0Pnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:44:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56890 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727505AbeI0PoM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:44:12 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D1471113;
-        Thu, 27 Sep 2018 09:26:51 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Khoruzhick <vasilykh@arista.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 24/44] neighbour: confirm neigh entries when ARP packet is received
-Date:   Thu, 27 Sep 2018 11:04:13 +0200
-Message-Id: <20180927090121.255085864@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
-References: <20180927090117.997362691@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 27 Sep 2018 11:43:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39066 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727606AbeI0Pno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:43:44 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2D325308FC50;
+        Thu, 27 Sep 2018 09:26:24 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-205.ams2.redhat.com [10.36.116.205])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F196A2010D95;
+        Thu, 27 Sep 2018 09:26:18 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
+        David Hildenbrand <david@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        John Allen <jallen@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mathieu Malaterre <malat@debian.org>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+Subject: [PATCH v3 2/6] mm/memory_hotplug: make add_memory() take the device_hotplug_lock
+Date:   Thu, 27 Sep 2018 11:25:50 +0200
+Message-Id: <20180927092554.13567-3-david@redhat.com>
+In-Reply-To: <20180927092554.13567-1-david@redhat.com>
+References: <20180927092554.13567-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 27 Sep 2018 09:26:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+add_memory() currently does not take the device_hotplug_lock, however
+is aleady called under the lock from
+	arch/powerpc/platforms/pseries/hotplug-memory.c
+	drivers/acpi/acpi_memhotplug.c
+to synchronize against CPU hot-remove and similar.
 
-------------------
+In general, we should hold the device_hotplug_lock when adding memory
+to synchronize against online/offline request (e.g. from user space) -
+which already resulted in lock inversions due to device_lock() and
+mem_hotplug_lock - see 30467e0b3be ("mm, hotplug: fix concurrent memory
+hot-add deadlock"). add_memory()/add_memory_resource() will create memory
+block devices, so this really feels like the right thing to do.
 
-From: Vasily Khoruzhick <vasilykh@arista.com>
+Holding the device_hotplug_lock makes sure that a memory block device
+can really only be accessed (e.g. via .online/.state) from user space,
+once the memory has been fully added to the system.
 
-[ Upstream commit f0e0d04413fcce9bc76388839099aee93cd0d33b ]
+The lock is not held yet in
+	drivers/xen/balloon.c
+	arch/powerpc/platforms/powernv/memtrace.c
+	drivers/s390/char/sclp_cmd.c
+	drivers/hv/hv_balloon.c
+So, let's either use the locked variants or take the lock.
 
-Update 'confirmed' timestamp when ARP packet is received. It shouldn't
-affect locktime logic and anyway entry can be confirmed by any higher-layer
-protocol. Thus it makes sense to confirm it when ARP packet is received.
+Don't export add_memory_resource(), as it once was exported to be used
+by XEN, which is never built as a module. If somebody requires it, we
+also have to export a locked variant (as device_hotplug_lock is never
+exported).
 
-Fixes: 77d7123342dc ("neighbour: update neigh timestamps iff update is effective")
-Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Cc: John Allen <jallen@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Mathieu Malaterre <malat@debian.org>
+Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Cc: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- net/core/neighbour.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ .../platforms/pseries/hotplug-memory.c        |  2 +-
+ drivers/acpi/acpi_memhotplug.c                |  2 +-
+ drivers/base/memory.c                         |  9 ++++++--
+ drivers/xen/balloon.c                         |  3 +++
+ include/linux/memory_hotplug.h                |  1 +
+ mm/memory_hotplug.c                           | 22 ++++++++++++++++---
+ 6 files changed, 32 insertions(+), 7 deletions(-)
 
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -1138,6 +1138,12 @@ int neigh_update(struct neighbour *neigh
- 		lladdr = neigh->ha;
- 	}
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index dd0264c43f3e..d26a771d985e 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -673,7 +673,7 @@ static int dlpar_add_lmb(struct drmem_lmb *lmb)
+ 	nid = memory_add_physaddr_to_nid(lmb->base_addr);
  
-+	/* Update confirmed timestamp for neighbour entry after we
-+	 * received ARP packet even if it doesn't change IP to MAC binding.
-+	 */
-+	if (new & NUD_CONNECTED)
-+		neigh->confirmed = jiffies;
+ 	/* Add the memory */
+-	rc = add_memory(nid, lmb->base_addr, block_sz);
++	rc = __add_memory(nid, lmb->base_addr, block_sz);
+ 	if (rc) {
+ 		invalidate_lmb_associativity_index(lmb);
+ 		return rc;
+diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
+index 811148415993..8fe0960ea572 100644
+--- a/drivers/acpi/acpi_memhotplug.c
++++ b/drivers/acpi/acpi_memhotplug.c
+@@ -228,7 +228,7 @@ static int acpi_memory_enable_device(struct acpi_memory_device *mem_device)
+ 		if (node < 0)
+ 			node = memory_add_physaddr_to_nid(info->start_addr);
+ 
+-		result = add_memory(node, info->start_addr, info->length);
++		result = __add_memory(node, info->start_addr, info->length);
+ 
+ 		/*
+ 		 * If the memory block has been used by the kernel, add_memory()
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 817320c7c4c1..40cac122ec73 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -519,15 +519,20 @@ memory_probe_store(struct device *dev, struct device_attribute *attr,
+ 	if (phys_addr & ((pages_per_block << PAGE_SHIFT) - 1))
+ 		return -EINVAL;
+ 
++	ret = lock_device_hotplug_sysfs();
++	if (ret)
++		goto out;
 +
- 	/* If entry was valid and address is not changed,
- 	   do not change entry state, if new one is STALE.
- 	 */
-@@ -1159,15 +1165,12 @@ int neigh_update(struct neighbour *neigh
- 		}
- 	}
+ 	nid = memory_add_physaddr_to_nid(phys_addr);
+-	ret = add_memory(nid, phys_addr,
+-			 MIN_MEMORY_BLOCK_SIZE * sections_per_block);
++	ret = __add_memory(nid, phys_addr,
++			   MIN_MEMORY_BLOCK_SIZE * sections_per_block);
  
--	/* Update timestamps only once we know we will make a change to the
-+	/* Update timestamp only once we know we will make a change to the
- 	 * neighbour entry. Otherwise we risk to move the locktime window with
- 	 * noop updates and ignore relevant ARP updates.
- 	 */
--	if (new != old || lladdr != neigh->ha) {
--		if (new & NUD_CONNECTED)
--			neigh->confirmed = jiffies;
-+	if (new != old || lladdr != neigh->ha)
- 		neigh->updated = jiffies;
--	}
+ 	if (ret)
+ 		goto out;
  
- 	if (new != old) {
- 		neigh_del_timer(neigh);
-
+ 	ret = count;
+ out:
++	unlock_device_hotplug();
+ 	return ret;
+ }
+ 
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index a3f5cbfcd4a1..fdfc64f5acea 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -395,7 +395,10 @@ static enum bp_state reserve_additional_memory(void)
+ 	 * callers drop the mutex before trying again.
+ 	 */
+ 	mutex_unlock(&balloon_mutex);
++	/* add_memory_resource() requires the device_hotplug lock */
++	lock_device_hotplug();
+ 	rc = add_memory_resource(nid, resource, memhp_auto_online);
++	unlock_device_hotplug();
+ 	mutex_lock(&balloon_mutex);
+ 
+ 	if (rc) {
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 1f096852f479..ffd9cd10fcf3 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -324,6 +324,7 @@ static inline void __remove_memory(int nid, u64 start, u64 size) {}
+ extern void __ref free_area_init_core_hotplug(int nid);
+ extern int walk_memory_range(unsigned long start_pfn, unsigned long end_pfn,
+ 		void *arg, int (*func)(struct memory_block *, void *));
++extern int __add_memory(int nid, u64 start, u64 size);
+ extern int add_memory(int nid, u64 start, u64 size);
+ extern int add_memory_resource(int nid, struct resource *resource, bool online);
+ extern int arch_add_memory(int nid, u64 start, u64 size,
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index f6dbd5d8fffd..affb03e0dfef 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1090,7 +1090,12 @@ static int online_memory_block(struct memory_block *mem, void *arg)
+ 	return device_online(&mem->dev);
+ }
+ 
+-/* we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG */
++/*
++ * NOTE: The caller must call lock_device_hotplug() to serialize hotplug
++ * and online/offline operations (triggered e.g. by sysfs).
++ *
++ * we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG
++ */
+ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ {
+ 	u64 start, size;
+@@ -1159,9 +1164,9 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+ 	mem_hotplug_done();
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(add_memory_resource);
+ 
+-int __ref add_memory(int nid, u64 start, u64 size)
++/* requires device_hotplug_lock, see add_memory_resource() */
++int __ref __add_memory(int nid, u64 start, u64 size)
+ {
+ 	struct resource *res;
+ 	int ret;
+@@ -1175,6 +1180,17 @@ int __ref add_memory(int nid, u64 start, u64 size)
+ 		release_memory_resource(res);
+ 	return ret;
+ }
++
++int add_memory(int nid, u64 start, u64 size)
++{
++	int rc;
++
++	lock_device_hotplug();
++	rc = __add_memory(nid, start, size);
++	unlock_device_hotplug();
++
++	return rc;
++}
+ EXPORT_SYMBOL_GPL(add_memory);
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+-- 
+2.17.1
 
