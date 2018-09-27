@@ -2,138 +2,95 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DF5C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4B7C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B842B2156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B842B2156B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D94932156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:58:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kOy+R7SE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D94932156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeI0POX (ORCPT
+        id S1727259AbeI0PPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:14:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53066 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726929AbeI0POX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:14:23 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A2DE3792C0;
-        Thu, 27 Sep 2018 08:57:12 +0000 (UTC)
-Received: from ovpn-112-72.ams2.redhat.com (ovpn-112-72.ams2.redhat.com [10.36.112.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EEF160D62;
-        Thu, 27 Sep 2018 08:57:06 +0000 (UTC)
-Message-ID: <1538038625.19334.2.camel@redhat.com>
-Subject: Re: [PATCH] hv_netvsc: Make sure out channel is fully opened on send
-From:   Mohammed Gamal <mgamal@redhat.com>
-Reply-To: mgamal@redhat.com
-To:     Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc:     KY Srinivasan <kys@microsoft.com>, vkuznets <vkuznets@redhat.com>,
-        "otubo@redhat.com" <otubo@redhat.com>, cavery <cavery@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
-Date:   Thu, 27 Sep 2018 10:57:05 +0200
-In-Reply-To: <BN6PR21MB01612C60B5421AF2BB09742CCA150@BN6PR21MB0161.namprd21.prod.outlook.com>
-References: <1537979659-26979-1-git-send-email-mgamal@redhat.com>
-         <BN6PR21MB01612C60B5421AF2BB09742CCA150@BN6PR21MB0161.namprd21.prod.outlook.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 27 Sep 2018 08:57:12 +0000 (UTC)
+        Thu, 27 Sep 2018 11:15:11 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33340 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbeI0PPL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:15:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+BRfyV9aNXSYEyDJJvoECUI4q4Uo7wUNNPWAYXh314I=; b=kOy+R7SEchBQ7hz7m4ti2B+/y
+        V2oCWtAhJCzGstPVOMvHGLa+u4w+dhZiXPiYTSCFt888l5eAVMO1C3OnHdAEmAYIW3Kk0eqIfT8Wb
+        FRTPr6YBdqBc37aMc5Zr3AVMWRPw2HS5QZreiTUKYWt3sBubsvqCjNBQl9wirsXcCZSp3LTSF66zt
+        AcnBAm9tF5fDwKZJVVCr/Di9+7ZglEucOFbcFAkn2U7ED/kx810bcRObSIa1CrzEwsoi7vlV1DwuP
+        WqLx1NLZtBfWYpo088CTTfxTOEVzVwK9QMGTiVAW1Kolc33rUF93psLLvNeq2h8GPJzJty8+4v9NE
+        M0Z1OFlEQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5S72-0005n8-9d; Thu, 27 Sep 2018 08:57:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0F64B202C1A0F; Thu, 27 Sep 2018 10:57:28 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 10:57:28 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     will.deacon@arm.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, longman@redhat.com,
+        tglx@linutronix.de
+Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
+Message-ID: <20180927085728.GF5254@hirez.programming.kicks-ass.net>
+References: <20180926110117.405325143@infradead.org>
+ <20180926111307.513429499@infradead.org>
+ <20180926205208.GA4864@andrea>
+ <20180927071747.GD5254@hirez.programming.kicks-ass.net>
+ <20180927074748.GA7939@andrea>
+ <20180927075935.GA4889@hirez.programming.kicks-ass.net>
+ <20180927081314.GA8285@andrea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927081314.GA8285@andrea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-26 at 17:13 +0000, Haiyang Zhang wrote:
-> > -----Original Message-----
-> > From: Mohammed Gamal <mgamal@redhat.com>
-> > Sent: Wednesday, September 26, 2018 12:34 PM
-> > To: Stephen Hemminger <sthemmin@microsoft.com>; netdev@vger.kernel.
-> > org
-> > Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
-> > <haiyangz@microsoft.com>; vkuznets <vkuznets@redhat.com>;
-> > otubo@redhat.com; cavery <cavery@redhat.com>; linux-
-> > kernel@vger.kernel.org; devel@linuxdriverproject.org; Mohammed
-> > Gamal
-> > <mgamal@redhat.com>
-> > Subject: [PATCH] hv_netvsc: Make sure out channel is fully opened
-> > on send
+On Thu, Sep 27, 2018 at 10:13:15AM +0200, Andrea Parri wrote:
+> On Thu, Sep 27, 2018 at 09:59:35AM +0200, Peter Zijlstra wrote:
+> > On Thu, Sep 27, 2018 at 09:47:48AM +0200, Andrea Parri wrote:
+> > > > LKMM in particular does _NOT_ deal with mixed sized atomics _at_all_.
+> > > 
+> > > True, but it is nothing conceptually new to deal with: there're Cat
+> > > models that handle mixed-size accesses, just give it time.
 > > 
-> > Dring high network traffic changes to network interface parameters
-> > such as
-> > number of channels or MTU can cause a kernel panic with a NULL
-> > pointer
-> > dereference. This is due to netvsc_device_remove() being called and
-> > deallocating the channel ring buffers, which can then be accessed
-> > by
-> > netvsc_send_pkt() before they're allocated on calling
-> > netvsc_device_add()
-> > 
-> > The patch fixes this problem by checking the channel state and
-> > returning
-> > ENODEV if not yet opened. We also move the call to
-> > hv_ringbuf_avail_percent()
-> > which may access the uninitialized ring buffer.
-> > 
-> > Signed-off-by: Mohammed Gamal <mgamal@redhat.com>
-> > ---
-> >  drivers/net/hyperv/netvsc.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/hyperv/netvsc.c
-> > b/drivers/net/hyperv/netvsc.c index
-> > fe01e14..75f1b31 100644
-> > --- a/drivers/net/hyperv/netvsc.c
-> > +++ b/drivers/net/hyperv/netvsc.c
-> > @@ -825,7 +825,12 @@ static inline int netvsc_send_pkt(
-> >  	struct netdev_queue *txq = netdev_get_tx_queue(ndev,
-> > packet->q_idx);
-> >  	u64 req_id;
-> >  	int ret;
-> > -	u32 ring_avail =
-> > hv_get_avail_to_write_percent(&out_channel-
-> > > outbound);
-> > 
-> > +	u32 ring_avail;
-> > +
-> > +	if (out_channel->state != CHANNEL_OPENED_STATE)
-> > +		return -ENODEV;
-> > +
-> > +	ring_avail = hv_get_avail_to_write_percent(&out_channel-
-> > >outbound);
+> > Sure, but until that time I must not rely on (and thus not use) LKMM for
+> > qspinlock things.
 > 
-> When you reproducing the NULL ptr panic, does your kernel include the
-> following patch?
-> hv_netvsc: common detach logic
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c
-> ommit/?id=7b2ee50c0cd513a176a26a71f2989facdd75bfea
-> 
-Yes it is included. And the commit did reduce the occurrence of this
-race condition, but it still nevertheless occurs albeit rarely.
+> This is way too generic to be agreed ;D
 
-> We call netif_tx_disable(ndev) and netif_device_detach(ndev) before
-> doing the changes 
-> on MTU or #channels. So there should be no call to start_xmit() when
-> channel is not ready.
+Only if you know that thing well enough to know why it gives a certain
+answer, and thus don't already need it.
+
+If you need it to help you with something; it can't because it doesn't
+do the mixed size thing.
+
+> > So while your argument about coherence might be true -- I'll have to
+> > think about it; litmus tests are out the window.
 > 
-> If you see the check for CHANNEL_OPENED_STATE is still necessary on
-> upstream kernel (including 
-> the patch " common detach logic "), we should debug further on the
-> code and find out the 
-> root cause.
-> 
-> Thanks,
-> - Haiyang
-> 
+> You trimmed the litmus test I gave you.
+
+Because of not wanting to reverse engineer the argument from the litmus
+test. But yes, I think I see your point, the earlier trylock will load
+the new value and our later load cannot be earlier than that.
