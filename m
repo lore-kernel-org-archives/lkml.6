@@ -2,178 +2,185 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0C4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 810C1C004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A6C1216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39CD22168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KZ7X4bM/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6C1216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JI0T5Q3j";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fTagY7NZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CD22168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbeI0W6g (ORCPT
+        id S1728243AbeI0XAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:58:36 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44630 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbeI0W6f (ORCPT
+        Thu, 27 Sep 2018 19:00:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47996 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727338AbeI0XAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:58:35 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 36-v6so3164721oth.11
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W+NSFHXC1p7u5iKRZ3HUB2PYuPEIC+MQP01YmK7YI6w=;
-        b=KZ7X4bM/YsPzjj35WqOrg2UGCcJ4bckA/Y4vHxEKNxSdRx/XcW5qTohQifYPa/gBJt
-         DdrlJDiioYy6DHBq6D9lXk0VIKTLa8uEqWwoVYaeVLY8A8ByxkfsyFwBnG8J/2dE0Vzw
-         34FP9Q4BJ8O4tWpXUy3F2PDPvBigCMBw6AWlXlFkaL72dOBDMbWh8W+/1/OoglJbHI1s
-         MIpAm6YSy2Xp9fF4V6313h3Yjghc+9p96FGI29m+uSsCDdkWkfW99uyCDeOO+smK6E+s
-         0vnEsSjGX1xINcs+Z9hJ3SbDRO1jPj/n8efAnVcdv/wFmvH+FwAMSi7+MSIdgf+rcm5C
-         WV0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W+NSFHXC1p7u5iKRZ3HUB2PYuPEIC+MQP01YmK7YI6w=;
-        b=hVMGAi9XrqMIJVIOX4NaMn+/ccfq0MtRl1W21z7757jE4bJ4vtkMDvLn3oIAhDoShO
-         xrCc8OIBivGHdIZQShALUvBEbROstAObbgf4jkoeUDncU+gSlZtHLk4i7mLHcV9n7vsY
-         JaemmY0G+T8NmkIuTJOX2DArb/4j4tGyPOPYq8UUYGvQ1LJj7xFcZo7hEoey2w9twDUC
-         rQn7qVIC1rg38XTHt5IQ8T835w7fbUlGkdojts3thGV1DNQZGY8hzc90akm6AeE8oU82
-         4B5R7efthOcsodoPdIEv9bZ5vJKkyR2gBU8mn5GgBtlC7erFSNaBCkrRjs/QhXTu+cKC
-         Tvfw==
-X-Gm-Message-State: ABuFfoj1q1844c0RBf0DMu7i0I3cp22wY0AyKh/X/7wEAwib5Ev/Ic1g
-        uGEHq8iEstEn4TewUo210nN9arWGJ7+VvUsNLmLQpg==
-X-Google-Smtp-Source: ACcGV61QNnJiluT64xkUX685JOGbFehISM7FM2VJe+Jex2+3MJ9tVmebgUtYHZ19XCziDEvFETLb8nJPhkqWx+EYL6c=
-X-Received: by 2002:a9d:4716:: with SMTP id a22-v6mr7853743otf.242.1538066369286;
- Thu, 27 Sep 2018 09:39:29 -0700 (PDT)
+        Thu, 27 Sep 2018 19:00:18 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 72BE1605FF; Thu, 27 Sep 2018 16:41:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538066471;
+        bh=8lHHPy2z1uiGwv+/qmUouiS8IzTdiybfQfffdZkv088=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JI0T5Q3jkFVUWhEEPJ9Rc3ztAHVJ7HGrNFTGaCFu2TOosqVbvJ9qlvoAdgFyNnDuA
+         JTKNdWSlIjwVB9BUsBG5SntYLRyE4oGGeRbRK+KB4LLp/CXBCK1qIJBSCUMGBtxHCx
+         iP00dnZg4cJIk64BGEYmy58FQ+6RGqQtjlIc0llY=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 6CF8960275;
+        Thu, 27 Sep 2018 16:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538066470;
+        bh=8lHHPy2z1uiGwv+/qmUouiS8IzTdiybfQfffdZkv088=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fTagY7NZOyfvU5G/r2lmWoUNDXEOF4PE54Odp6R4yY86YqtPY4vs89LrK/KB8QhhJ
+         18lwSxQGmzbSU9z5LMFddZrgpy5pSvz80ZiMoxt64jbhmGH0xAk4wk4PikohiiORpq
+         8+29N+opLosw//MLJXgwp9iadqX1XyyMIERzFo88=
 MIME-Version: 1.0
-References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-6-tycho@tycho.ws>
-In-Reply-To: <20180927151119.9989-6-tycho@tycho.ws>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 27 Sep 2018 18:39:02 +0200
-Message-ID: <CAG48ez2vJJQm8-Rdz4b=cvBQn2Ws-9wazVuVUXQFYqMMZh64YA@mail.gmail.com>
-Subject: Re: [PATCH v7 5/6] seccomp: add a way to pass FDs via a notification fd
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        suda.akihiro@lab.ntt.co.jp, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 27 Sep 2018 22:11:10 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Andy Shevchenko Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v4 1/2] Bluetooth: Add device_get_bd_address()
+In-Reply-To: <20180927004810.124185-2-mka@chromium.org>
+References: <20180927004810.124185-1-mka@chromium.org>
+ <20180927004810.124185-2-mka@chromium.org>
+Message-ID: <b28c34475e447cc29a139f9121b3c1d9@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 5:11 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> This patch adds a way to insert FDs into the tracee's process (also
-> close/overwrite fds for the tracee). This functionality is necessary to
-> mock things like socketpair() or dup2() or similar, but since it depends on
-> external (vfs) patches, I've left it as a separate patch as before so the
-> core functionality can still be merged while we argue about this. Except
-> this time it doesn't add any ugliness to the API :)
-[...]
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index 17685803a2af..07a05ad59731 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -41,6 +41,8 @@
->  #include <linux/tracehook.h>
->  #include <linux/uaccess.h>
->  #include <linux/anon_inodes.h>
-> +#include <linux/fdtable.h>
-> +#include <net/cls_cgroup.h>
->
->  enum notify_state {
->         SECCOMP_NOTIFY_INIT,
-> @@ -1684,6 +1686,56 @@ static long seccomp_notify_id_valid(struct seccomp_filter *filter,
->         return ret;
+Hi Matthias,
+
+On 2018-09-27 06:18, Matthias Kaehlcke wrote:
+> Provide an API for Bluetooth drivers to retrieve the Bluetooth Device
+> address (BD_ADDR) for a device. If the firmware node of the device
+> has a property 'local-bd-address' the BD address is read from this
+> property.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> Changes in v4:
+> - move code from driver/base/property.c to net/bluetooth/lib.c
+> - undo move of bdaddr_t declaration
+> - merge fwnode_get_bd_address() into device_get_bd_address(). as of now
+>   the function is not needed, it can be created later if necessary
+> - minor improvements suggested by Sakari
+> - updated commit message
+> - added 'Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>' tag
+> 
+> Changes in v3:
+> - move definition of bdaddr_t to types.h to avoid include of
+>   bluetooth.h from property.h
+> - add stubs for the new functions
+> 
+> Changes in v2:
+> - use bdaddr_t instead of byte pointer + len
+> - use EXPORT_SYMBOL_GPL for the new functions instead of EXPORT_SYMBOL
+> - put new functions inside #if IS_ENABLED(CONFIG_BT)
+> - some new line juggling in property.h
+> - added 'Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>' tag
+> ---
+>  include/net/bluetooth/bluetooth.h |  2 ++
+>  net/bluetooth/lib.c               | 34 +++++++++++++++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+> 
+> diff --git a/include/net/bluetooth/bluetooth.h
+> b/include/net/bluetooth/bluetooth.h
+> index ec9d6bc65855..6c4cecfda816 100644
+> --- a/include/net/bluetooth/bluetooth.h
+> +++ b/include/net/bluetooth/bluetooth.h
+> @@ -413,4 +413,6 @@ void mgmt_exit(void);
+> 
+>  void bt_sock_reclassify_lock(struct sock *sk, int proto);
+> 
+> +int device_get_bd_address(struct device *dev, bdaddr_t *bd_addr);
+> +
+>  #endif /* __BLUETOOTH_H */
+> diff --git a/net/bluetooth/lib.c b/net/bluetooth/lib.c
+> index 63e65d9b4b24..78a58ea586c6 100644
+> --- a/net/bluetooth/lib.c
+> +++ b/net/bluetooth/lib.c
+> @@ -26,7 +26,10 @@
+> 
+>  #define pr_fmt(fmt) "Bluetooth: " fmt
+> 
+> +#include <linux/etherdevice.h>
+>  #include <linux/export.h>
+> +#include <linux/fwnode.h>
+> +#include <linux/property.h>
+> 
+>  #include <net/bluetooth/bluetooth.h>
+> 
+> @@ -198,3 +201,34 @@ void bt_err_ratelimited(const char *format, ...)
+>  	va_end(args);
 >  }
->
-> +static long seccomp_notify_put_fd(struct seccomp_filter *filter,
-> +                                 unsigned long arg)
+>  EXPORT_SYMBOL(bt_err_ratelimited);
+> +
+> +/**
+> + * device_get_bd_address - Get the Bluetooth Device Address (BD_ADDR) 
+> for a
+> + *                         given device
+> + * @dev:	Pointer to the device
+> + * @bd_addr:	Pointer to struct to store the BD address in
+> + *
+> + * Search the firmware node of the device for 'local-bd-address'.
+> + *
+> + * All-zero BD addresses are rejected, because those could be 
+> properties
+> + * that exist in the firmware tables, but were not updated by the 
+> firmware. For
+> + * example, the DTS could define 'local-bd-address', with zero BD 
+> addresses.
+> + */
+> +int device_get_bd_address(struct device *dev, bdaddr_t *bd_addr)
 > +{
-> +       struct seccomp_notif_put_fd req;
-> +       void __user *buf = (void __user *)arg;
-> +       struct seccomp_knotif *knotif = NULL;
-> +       long ret;
+> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
+> +	bdaddr_t ba;
+> +	int ret;
 > +
-> +       if (copy_from_user(&req, buf, sizeof(req)))
-> +               return -EFAULT;
+> +	ret = fwnode_property_read_u8_array(fwnode, "local-bd-address",
+> +					    (u8 *)&ba, sizeof(ba));
+> +	if (ret < 0)
+> +		return ret;
+> +	if (is_zero_ether_addr((u8 *)&ba))
+> +		return -ENODATA;
 > +
-> +       if (req.fd < 0 && req.to_replace < 0)
-> +               return -EINVAL;
+> +	*bd_addr = ba;
 > +
-> +       ret = mutex_lock_interruptible(&filter->notify_lock);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       ret = -ENOENT;
-> +       list_for_each_entry(knotif, &filter->notif->notifications, list) {
-> +               struct file *file = NULL;
-> +
-> +               if (knotif->id != req.id)
-> +                       continue;
-> +
-> +               if (req.fd >= 0)
-> +                       file = fget(req.fd);
-
-So here we take a reference on `file`.
-
-> +               if (req.to_replace >= 0) {
-> +                       ret = replace_fd_task(knotif->task, req.to_replace,
-> +                                             file, req.fd_flags);
-
-Then here we try to place the file in knotif->task's file descriptor
-table. This can either fail (e.g. due to exceeded rlimit), in which
-case nothing happens, or it can do do_dup2(), which first takes an
-extra reference to the file, then places it in the task's fd table.
-
-Either way, afterwards, we still hold a reference to the file.
-
-> +               } else {
-> +                       unsigned long max_files;
-> +
-> +                       max_files = task_rlimit(knotif->task, RLIMIT_NOFILE);
-> +                       ret = __alloc_fd(knotif->task->files, 0, max_files,
-> +                                        req.fd_flags);
-> +                       if (ret < 0)
-> +                               break;
-
-If we bail out here, we still hold a reference to `file`.
-
-Suggestion: Change this to "if (ret >= 0) {" and make the following
-code conditional instead of breaking.
-
-> +                       __fd_install(knotif->task->files, ret, file);
-
-But if we reach this point, __fd_install() consumes the file pointer,
-so `file` is a dangling pointer now.
-
-Suggestion: Add "break;" here.
-
-> +               }
-
-Suggestion: Add "if (file != NULL) fput(file);" here.
-
-> +               break;
-> +       }
-> +
-> +       mutex_unlock(&filter->notify_lock);
-> +       return ret;
+> +	return 0;
 > +}
+> +EXPORT_SYMBOL_GPL(device_get_bd_address);
+
+Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+
+-- 
+Regards
+Balakrishna.
