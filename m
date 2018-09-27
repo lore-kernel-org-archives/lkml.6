@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D14C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91229C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694AA2156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694AA2156B
+	by mail.kernel.org (Postfix) with ESMTP id 44AA92152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44AA92152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbeI0PkP (ORCPT
+        id S1728627AbeI0PkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:40:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56530 "EHLO
+        Thu, 27 Sep 2018 11:40:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56542 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeI0PkO (ORCPT
+        with ESMTP id S1727583AbeI0PkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:40:14 -0400
+        Thu, 27 Sep 2018 11:40:17 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E23C5111C;
-        Thu, 27 Sep 2018 09:22:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 32897111C;
+        Thu, 27 Sep 2018 09:22:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 32/64] Revert "PCI: Add ACS quirk for Intel 300 series"
-Date:   Thu, 27 Sep 2018 11:03:49 +0200
-Message-Id: <20180927090254.722159338@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Behmer <jbehmer@google.com>,
+        Vaibhav Nagarnaik <vnagarnaik@google.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 33/64] ring-buffer: Allow for rescheduling when removing pages
+Date:   Thu, 27 Sep 2018 11:03:50 +0200
+Message-Id: <20180927090254.814422280@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -52,50 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Vaibhav Nagarnaik <vnagarnaik@google.com>
 
-commit 50ca031b51106b1b46162d4e9ecccb7edc95682f upstream.
+commit 83f365554e47997ec68dc4eca3f5dce525cd15c3 upstream.
 
-This reverts f154a718e6cc ("PCI: Add ACS quirk for Intel 300 series").
+When reducing ring buffer size, pages are removed by scheduling a work
+item on each CPU for the corresponding CPU ring buffer. After the pages
+are removed from ring buffer linked list, the pages are free()d in a
+tight loop. The loop does not give up CPU until all pages are removed.
+In a worst case behavior, when lot of pages are to be freed, it can
+cause system stall.
 
-It turns out that erratum "PCH PCIe* Controller Root Port (ACSCTLR) Appear
-As Read Only" has been fixed in 300 series chipsets, even though the
-datasheet [1] claims otherwise.  To make ACS work properly on 300 series
-root ports, revert the faulty commit.
+After the pages are removed from the list, the free() can happen while
+the work is rescheduled. Call cond_resched() in the loop to prevent the
+system hangup.
 
-[1] https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/300-series-c240-series-chipset-pch-spec-update.pdf
+Link: http://lkml.kernel.org/r/20180907223129.71994-1-vnagarnaik@google.com
 
-Fixes: f154a718e6cc ("PCI: Add ACS quirk for Intel 300 series")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org	# v4.18+
+Cc: stable@vger.kernel.org
+Fixes: 83f40318dab00 ("ring-buffer: Make removal of ring buffer pages atomic")
+Reported-by: Jason Behmer <jbehmer@google.com>
+Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |    6 ------
- 1 file changed, 6 deletions(-)
+ kernel/trace/ring_buffer.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4388,11 +4388,6 @@ static int pci_quirk_qcom_rp_acs(struct
-  *
-  * 0x9d10-0x9d1b PCI Express Root port #{1-12}
-  *
-- * The 300 series chipset suffers from the same bug so include those root
-- * ports here as well.
-- *
-- * 0xa32c-0xa343 PCI Express Root port #{0-24}
-- *
-  * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
-  * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
-  * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
-@@ -4410,7 +4405,6 @@ static bool pci_quirk_intel_spt_pch_acs_
- 	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
- 	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
- 	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
--	case 0xa32c ... 0xa343:				/* 300 series */
- 		return true;
- 	}
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1479,6 +1479,8 @@ rb_remove_pages(struct ring_buffer_per_c
+ 	tmp_iter_page = first_page;
+ 
+ 	do {
++		cond_resched();
++
+ 		to_remove_page = tmp_iter_page;
+ 		rb_inc_page(cpu_buffer, &tmp_iter_page);
  
 
 
