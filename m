@@ -2,157 +2,119 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4B7C004D5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D00C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3562156D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:44:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3562156D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B4362156E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:46:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B4362156E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbeI0OBY (ORCPT
+        id S1727187AbeI0ODL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 10:01:24 -0400
-Received: from mx.socionext.com ([202.248.49.38]:38036 "EHLO mx.socionext.com"
+        Thu, 27 Sep 2018 10:03:11 -0400
+Received: from gate.crashing.org ([63.228.1.57]:50041 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726659AbeI0OBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 10:01:23 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 27 Sep 2018 16:44:28 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 7BEB46006C;
-        Thu, 27 Sep 2018 16:44:28 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 27 Sep 2018 16:44:28 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id B78134039A;
-        Thu, 27 Sep 2018 16:44:27 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 796EA120BA0;
-        Thu, 27 Sep 2018 16:44:27 +0900 (JST)
-Date:   Thu, 27 Sep 2018 16:44:26 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: Re: [PATCH v2 2/2] PCI: controller: dwc: add UniPhier PCIe host controller support
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <20180926213135.A4B4.4A936039@socionext.com>
-References: <b869b273-e681-0b8c-52f5-6e02f9de5485@synopsys.com> <20180926213135.A4B4.4A936039@socionext.com>
-Message-Id: <20180927164426.ECD6.4A936039@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+        id S1726688AbeI0ODL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 10:03:11 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w8R7jRht016721;
+        Thu, 27 Sep 2018 02:45:27 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id w8R7jPMR016712;
+        Thu, 27 Sep 2018 02:45:25 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 27 Sep 2018 02:45:25 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] powerpc/32: add stack protector support
+Message-ID: <20180927074525.GQ23155@gate.crashing.org>
+References: <d6c43ab708bf9ae1266c745fece457ed2da43d7c.1537961921.git.christophe.leroy@c-s.fr> <20180926191615.GO23155@gate.crashing.org> <220fbef8-429c-9485-d10e-c1eaa989918d@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <220fbef8-429c-9485-d10e-c1eaa989918d@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo, Gustavo,
-
-On Wed, 26 Sep 2018 21:31:36 +0900 <hayashi.kunihiko@socionext.com> wrote:
-
-> Hi Lorenzo, Gustavo,
+On Thu, Sep 27, 2018 at 08:20:00AM +0200, Christophe LEROY wrote:
+> Le 26/09/2018 à 21:16, Segher Boessenkool a écrit :
+> >On Wed, Sep 26, 2018 at 11:40:38AM +0000, Christophe Leroy wrote:
+> >>+static __always_inline void boot_init_stack_canary(void)
+> >>+{
+> >>+	unsigned long canary;
+> >>+
+> >>+	/* Try to get a semi random initial value. */
+> >>+	get_random_bytes(&canary, sizeof(canary));
+> >>+	canary ^= mftb();
+> >>+	canary ^= LINUX_VERSION_CODE;
+> >>+
+> >>+	current->stack_canary = canary;
+> >>+}
+> >
+> >I still think you should wait until there is entropy available.  You
+> >haven't answered my questions about that (or I didn't see them): what
+> >does the kernel do in other similar cases?
+> >
+> >Looks great otherwise!
 > 
-> Thank you for reviewing.
+> What do you mean by 'other similar cases' ? All arches have similar 
+> boot_init_stack_canary().
+
+Yes, those, and other things that want entropy early.
+
+> x86 uses rdtsc() which is equivalent to our 
+> mftb(). Most arches xor it with LINUX_VERSION_CODE.
 > 
-> On Tue, 25 Sep 2018 18:53:01 +0100
-> Gustavo Pimentel <gustavo.pimentel@synopsys.com> wrote:
+> The issue is that it is called very early in start_kernel(), however 
+> they try to set some entropy anyway:
 > 
-> > On 25/09/2018 17:14, Lorenzo Pieralisi wrote:
-> > > [+Gustavo, please have a look at INTX/MSI management]
-> > > 
-> > > On Thu, Sep 06, 2018 at 06:40:32PM +0900, Kunihiko Hayashi wrote:
-> > >> This introduces specific glue layer for UniPhier platform to support
-> > >> PCIe host controller that is based on the DesignWare PCIe core, and
-> > >> this driver supports Root Complex (host) mode.
-> > > 
-> > > Please read this thread and apply it to next versions:
-> > > 
-> > > https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D150905742808166-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=H8UNDDUGQnQnqfWr4CBios689dJcjxu4qeTTRGulLmU&s=CgcXc_2LThyOpW-4bCriJNo9H1lzROEdy_cG9p-Y5hU&e=
+> 	boot_cpu_init();
+> 	page_address_init();
+> 	pr_notice("%s", linux_banner);
+> 	setup_arch(&command_line);
+> 	/*
+> 	 * Set up the the initial canary and entropy after arch
+> 	 * and after adding latent and command line entropy.
+> 	 */
+> 	add_latent_entropy();
+> 	add_device_randomness(command_line, strlen(command_line));
+> 	boot_init_stack_canary();
 > 
-> I also found this thread in previous linux-pci, and I think it's helpful for me.
-> I'll check it carefully.
+> Apparently, it is too early for calling wait_for_random_bytes(), see below.
 
-[snip]
+Hrm.  Too early to call wait_event_interruptible?  From there it went
+into schedule(), which blew up.  Well you say we have only one context
+at this point, so that is not too surprising then :-)
 
-> > >> +	ret = devm_request_irq(dev, pp->irq, uniphier_pcie_irq_handler,
-> > >> +			       IRQF_SHARED, "pcie", priv);
-> > > 
-> > > This is wrong, you should set-up a chained IRQ for INTX.
-> > > 
-> > > I *think* that
-> > > 
-> > > ks_pcie_setup_interrupts()
-> > > 
-> > > is a good example to start with but I wonder whether it is worth
-> > > generalizing the INTX approach to designware as a whole as it was
-> > > done for MSIs.
-> > > 
-> > > Thoughts ?
-> > 
-> > From what I understood this is for legacy IRQ, right?
-> 
-> Yes. For legacy IRQ.
-> 
-> > Like you (Lorenzo) said there is 2 drivers (pci-keystone-dw.c and pci-dra7xx.c)
-> > that uses it and can be use as a template for handling this type of interrupts.
-> > 
-> > We can try to pass some kind of generic INTX function to the DesignWare host
-> > library to handling this, but this will require some help from keystone and
-> > dra7xx maintainers, since my setup doesn't have legacy IRQ HW support.
-> 
-> Now I think it's difficult to make a template for INTX function,
-> and at first, I'll try to re-write this part with reference to pci-keystone-dw.c.
+> However this is the canary for initial startup only. Only idle() still 
+> uses this canary once the system is running. A new canary is set for any 
+> new forked task.
 
-I understand that there are 2 types of interrupt and the drivers.
+Ah, that makes things a lot better!  Do those new tasks get a canary
+from something with sufficient entropy though?
 
-One like pci-keystone-dw.c is:
+> Maybe should the idle canary be updated later once there is more entropy 
 
- - there are 4 interrupts for legacy,
- - invoke handlers for each interrupt, and handle the interrupt,
- - call irq_set_chained_handler_and_data() to make a chain of the interrupts
-  when initializing
+That is tricky to do, but sure, if you can, that should help.
 
-The other like pci-dra7xx.c is:
+> ? Today there is a new call to boot_init_stack_canary() in 
+> cpu_startup_entry(), but it is enclosed inside #ifdef CONFIG_X86.
 
- - there is 1 IRQ for legacy as a parent,
- - check an interrupt factor register, and handle the interrupt correspond
-   to the factor,
- - call request_irq() for the parent IRQ and irq_domain_add_linear() for
-   the factor when initializing
-
-The pcie-uniphier.c is the same type as the latter (like pci-dra7xx.c).
-
-However, in pci-dra7xx.c, MSI and legacy IRQ share the same interrupt number,
-so the same handler is called and the handler divides these IRQs.
-(found in dra7xx_pcie_msi_irq_handler())
-
-In pcie-uniphier.c, MSI and legacy IRQ are independent.
-Therefore it's necessary to prepare the handler for the legacy IRQ.
-
-I think that it's difficult to apply the way of pci-keystone-dw.c,
-and uniphier_pcie_irq_handler() and calling devm_request_irq() are still necessary
-to handle legacy IRQ.
-
-Thank you,
-
----
-Best Regards,
-Kunihiko Hayashi
+It needs to know the details of how ssp works on each platform.
 
 
+Segher
