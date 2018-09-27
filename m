@@ -2,140 +2,81 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41707C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF994C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD7C216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:41:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4qMOu54"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD7C216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A330121547
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:41:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A330121547
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeI0U7m (ORCPT
+        id S1728062AbeI0U7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:59:42 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41260 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727435AbeI0U7l (ORCPT
+        Thu, 27 Sep 2018 16:59:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52146 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbeI0U7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:59:41 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j15-v6so2901845wrt.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 07:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JXFw4Cc/SAxkOPPa6TJI9fGx0DGhFSOcOugeqnkYz7M=;
-        b=k4qMOu54+7yVCr8W0IezrXvJuIfS06MYb4AI3by1E2Fi9hJR5tTbc7jcSGgzpeY9Zj
-         F96skEihZiYGf2g3vlYi0ngXd/JPiPftXD5k1pN0w80FDiODSWWDIBLVW0QFo6VMGASa
-         2iBm/KKvNybBAeMZBjHCKbGubTrO4BtkYEHn6QzBisIPxkc+1He1WqNp7Z3NBOWLBOXP
-         0LpZmRWYNjcrFipbsjELAWvAxp/uJy0LgaZgHxT5xefKawOUwt6Z3WlhEHkvXYzVe4LE
-         JUphlqs06Z+dlNy/nQwjcuWxW+RZQsljjD98KcGWXFQijUjs8DESJ1pR/XFbvXLu5QaS
-         9iTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JXFw4Cc/SAxkOPPa6TJI9fGx0DGhFSOcOugeqnkYz7M=;
-        b=hNhzclVBelOYmU35rawGNGdma9idS7NNMgcWSSNe6TZevwCXgECb7kTMJNKAbC5Z9y
-         ZdiHcgi+rGu+qcT3HUSGjj3LVtKZKUSuWILRQ/H5sFPYYygxaYPhbe5zKIzoEETbx1yU
-         LPdxjipe4lW8FFadeIM3GMsmUpifVE2ybcym8eD+KoMy+GHIkQw1HjpNRGWVCvXlTIvp
-         xt4JRBVDlhXxIGL4n24IhddwyzjymASLq1uRBJ7C2DxiwXTY2iaP1O931lYBa7TGR2S3
-         KSfMj6H7dZLF2ddwzChuB2kBhmT7Zb4CpMsv3Ddcv0dnM7pxWTxa1mqvSFCbh9YHMz9M
-         86Ng==
-X-Gm-Message-State: ABuFfoi2ctDAh3IA13yZpJf/EI9Wdoi1+yGjTjUQ7UhJiXsSPsOYHzYP
-        rUGqe7NSn0qIU2wdJ7CpYE7nXYyKdSLSglfaUBvPFYyy
-X-Google-Smtp-Source: ACcGV612HFLwluLBc0DkpEP0GNlVZ7ZKP5JW5ewVwEvOVOYcfRTnStb/BUBrlvVE2ctD0ws2OyiVoURSM7mpsWDF4yE=
-X-Received: by 2002:adf:eb87:: with SMTP id t7-v6mr9291723wrn.123.1538059265583;
- Thu, 27 Sep 2018 07:41:05 -0700 (PDT)
+        Thu, 27 Sep 2018 16:59:52 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g5XTd-0005NL-EC; Thu, 27 Sep 2018 16:41:13 +0200
+Date:   Thu, 27 Sep 2018 16:41:12 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     John Stultz <john.stultz@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
+In-Reply-To: <alpine.DEB.2.21.1809181731570.7302@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1809271638110.8118@nanos.tec.linutronix.de>
+References: <20180914125006.349747096@linutronix.de> <20180914125118.909646643@linutronix.de> <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com> <CALAqxLUv9Rd_eA7u9gZNFvTNrT1Z67RpHLozdeNC0W2yZm=Heg@mail.gmail.com>
+ <alpine.DEB.2.21.1809180948570.3558@nanos.tec.linutronix.de> <20180918083055.GJ24106@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1809181050020.4167@nanos.tec.linutronix.de> <alpine.DEB.2.21.1809181204460.4167@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809181237140.4167@nanos.tec.linutronix.de> <20180918124800.GL24106@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1809181515170.6950@nanos.tec.linutronix.de> <alpine.DEB.2.21.1809181731570.7302@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20180921210106.24310-1-natechancellor@gmail.com>
-In-Reply-To: <20180921210106.24310-1-natechancellor@gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 27 Sep 2018 10:40:52 -0400
-Message-ID: <CADnq5_P1uq=k4V9A_H+kewbaKtO6tnXXE_DBcuK-Q3tpuYJNow@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/powerplay: Change id parameter type in pp_atomfwctrl_get_clk_information_by_clkid
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Rex Zhu <rex.zhu@amd.com>, "Quan, Evan" <evan.quan@amd.com>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied.  thanks!
+On Tue, 18 Sep 2018, Thomas Gleixner wrote:
+> On Tue, 18 Sep 2018, Thomas Gleixner wrote:
+> > So if the TSC on CPU1 is slightly behind the TSC on CPU0 then now1 can be
+> > smaller than cycle_last. The TSC sync stuff does not catch the small delta
+> > for unknown raisins. I'll go and find that machine and test that again.
+> 
+> Of course it does not trigger anymore. We accumulated code between the
+> point in timekeeping_advance() where the TSC is read and the update of the
+> VDSO data.
+> 
+> I'll might have to get an 2.6ish kernel booted on that machine and try with
+> that again. /me shudders
 
-Alex
-On Sat, Sep 22, 2018 at 2:29 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang generates warnings when one enumerated type is implicitly
-> converted to another.
->
-> drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppatomfwctrl.c:532:57:
-> warning: implicit conversion from enumeration type 'enum
-> atom_smu11_syspll0_clock_id' to different enumeration type 'BIOS_CLKID'
->       (aka 'enum atom_smu9_syspll0_clock_id') [-Wenum-conversion]
->         if (!pp_atomfwctrl_get_clk_information_by_clkid(hwmgr,
-> SMU11_SYSPLL0_SOCCLK_ID, &frequency))
->
-> In this case, that is expected behavior. To make that clear to Clang
-> without explicitly casting these values, change id's type to uint8_t
-> in pp_atomfwctrl_get_clk_information_by_clkid so no conversion happens.
->
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c | 3 ++-
->  drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c
-> index d27c1c9df286..4588bddf8b33 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c
-> @@ -488,7 +488,8 @@ int pp_atomfwctrl_get_gpio_information(struct pp_hwmgr *hwmgr,
->         return 0;
->  }
->
-> -int pp_atomfwctrl_get_clk_information_by_clkid(struct pp_hwmgr *hwmgr, BIOS_CLKID id, uint32_t *frequency)
-> +int pp_atomfwctrl_get_clk_information_by_clkid(struct pp_hwmgr *hwmgr,
-> +                                              uint8_t id, uint32_t *frequency)
->  {
->         struct amdgpu_device *adev = hwmgr->adev;
->         struct atom_get_smu_clock_info_parameters_v3_1   parameters;
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h
-> index 22e21668c93a..fe9e8ceef50e 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h
-> @@ -236,7 +236,7 @@ int pp_atomfwctrl_get_vbios_bootup_values(struct pp_hwmgr *hwmgr,
->  int pp_atomfwctrl_get_smc_dpm_information(struct pp_hwmgr *hwmgr,
->                         struct pp_atomfwctrl_smc_dpm_parameters *param);
->  int pp_atomfwctrl_get_clk_information_by_clkid(struct pp_hwmgr *hwmgr,
-> -                                       BIOS_CLKID id, uint32_t *frequency);
-> +                                       uint8_t id, uint32_t *frequency);
->
->  #endif
->
-> --
-> 2.19.0
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Actually it does happen, because the TSC is very slowly drifting apart due
+to SMI wreckage trying to hide itself. It just takes a very long time.
+
+Thanks,
+
+	tglx
+
+
