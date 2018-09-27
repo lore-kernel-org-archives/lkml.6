@@ -2,155 +2,179 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFDDC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 405DFECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED63215EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED63215EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id EFF882150D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="HgC372y+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF882150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbeI0SIe (ORCPT
+        id S1728028AbeI0SIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:08:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39306 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727163AbeI0SId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:08:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D50E2B078;
-        Thu, 27 Sep 2018 11:50:35 +0000 (UTC)
-Subject: Re: [v2 PATCH 1/2 -mm] mm: mremap: dwongrade mmap_sem to read when
- shrinking
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        kirill@shutemov.name, willy@infradead.org,
-        ldufour@linux.vnet.ibm.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSFWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmNvbT7CwZcEEwEKAEECGwMFCwkIBwMFFQoJCAsFFgIDAQAC
- HgECF4ACGQEWIQSpQNQ0mSwujpkQPVAiT6fnzIKmZAUCWi/zTwUJBbOLuQAKCRAiT6fnzIKm
- ZIpED/4jRN/6LKZZIT4R2xoou0nJkBGVA3nfb+mUMgi3uwn/zC+o6jjc3ShmP0LQ0cdeuSt/
- t2ytstnuARTFVqZT4/IYzZgBsLM8ODFY5vGfPw00tsZMIfFuVPQX3xs0XgLEHw7/1ZCVyJVr
- mTzYmV3JruwhMdUvIzwoZ/LXjPiEx1MRdUQYHAWwUfsl8lUZeu2QShL3KubR1eH6lUWN2M7t
- VcokLsnGg4LTajZzZfq2NqCKEQMY3JkAmOu/ooPTrfHCJYMF/5dpi8YF1CkQF/PVbnYbPUuh
- dRM0m3NzPtn5DdyfFltJ7fobGR039+zoCo6dFF9fPltwcyLlt1gaItfX5yNbOjX3aJSHY2Vc
- A5T+XAVC2sCwj0lHvgGDz/dTsMM9Ob/6rRJANlJPRWGYk3WVWnbgW8UejCWtn1FkiY/L/4qJ
- UsqkId8NkkVdVAenCcHQmOGjRQYTpe6Cf4aQ4HGNDeWEm3H8Uq9vmHhXXcPLkxBLRbGDSHyq
- vUBVaK+dAwAsXn/5PlGxw1cWtur1ep7RDgG3vVQDhIOpAXAg6HULjcbWpBEFaoH720oyGmO5
- kV+yHciYO3nPzz/CZJzP5Ki7Q1zqBb/U6gib2at5Ycvews+vTueYO+rOb9sfD8BFTK386LUK
- uce7E38owtgo/V2GV4LMWqVOy1xtCB6OAUfnGDU2EM7ATQRbGTU1AQgAn0H6UrFiWcovkh6E
- XVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQLa1PQDUi6j00ChlcR66g9/V0sPIcSutacPKf
- dKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMhFmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCT
- sTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sfbAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZO
- rIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq+aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahK
- tQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4njQARAQABwsF8BBgBCgAmFiEEqUDUNJksLo6Z
- ED1QIk+n58yCpmQFAlsZNTUCGwwFCQPCZwAACgkQIk+n58yCpmQ83g/9Frg1sRMdGPn98zV+
- O2eC3h0p5f/oxxQ8MhG5znwHoW4JDG2TuxfcQuz7X7Dd5JWscjlw4VFJ2DD+IrDAGLHwPhCr
- RyfKalnrbYokvbClM9EuU1oUuh7k+Sg5ECNXEsamW9AiWGCaKWNDdHre3Lf4xl+RJWxghOVW
- RiUdpLA/a3yDvJNVr6rxkDHQ1P24ZZz/VKDyP+6g8aty2aWEU0YFNjI+rqYZb2OppDx6fdma
- YnLDcIfDFnkVlDmpznnGCyEqLLyMS3GH52AH13zMT9L9QYgT303+r6QQpKBIxAwn8Jg8dAlV
- OLhgeHXKr+pOQdFf6iu2sXlUR4MkO/5KWM1K0jFR2ug8Pb3aKOhowVMBT64G0TXhQ/kX4tZ2
- ZF0QZLUCHU3Cigvbu4AWWVMNDEOGD/4sn9OoHxm6J04jLUHFUpFKDcjab4NRNWoHLsuLGjve
- Gdbr2RKO2oJ5qZj81K7os0/5vTAA4qHDP2EETAQcunTn6aPlkUnJ8aw6I1Rwyg7/XsU7gQHF
- IM/cUMuWWm7OUUPtJeR8loxZiZciU7SMvN1/B9ycPMFs/A6EEzyG+2zKryWry8k7G/pcPrFx
- O2PkDPy3YmN1RfpIX2HEmnCEFTTCsKgYORangFu/qOcXvM83N+2viXxG4mjLAMiIml1o2lKV
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <8c04afa9-45c2-be18-c084-058add73c978@suse.cz>
-Date:   Thu, 27 Sep 2018 13:50:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 27 Sep 2018 14:08:37 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38684 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbeI0SIg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 14:08:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x17-v6so1745834pfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 04:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6C6BP6wiV8DJwbrf/SCB3GLbXtKIBEXPAdIqWbI2Ah8=;
+        b=HgC372y+kMaun1ZZVCzPtqSaWFcWehMBcy6Wts57qWNG9meCOWyewTXAdo1UMfqfGd
+         gYjFX7STgWMNC0k2C1j406ttK6xzj06CfZw+zI9I6Z/4OYq+nbXwsq5orGHDLU2O04lr
+         aP7K1gVWupGdkMmOsm5Rrcx7N5P3iNyPUQJOI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6C6BP6wiV8DJwbrf/SCB3GLbXtKIBEXPAdIqWbI2Ah8=;
+        b=kaunJU9gYxX43D0eA6AQIlpOP1UQT+jcwtN+ELGG0Xilpp5Liq3CpcDxhuxdH0Uigp
+         2eQNXaqXTPxWSk/B4cp2p7+zBlUd0fS9E25Om8zXADJImy3ZjcigjYbDc7TfgAXGcefV
+         BfKlZdgemSeSdG1ATTaKaJ5RD5rtQsttUHJhlpKxi0M9WVEqW/YkGS83c85SI48WplyJ
+         hyHEE4X0hHPSMjHlaYEfPZX7pFoHpmFqd4pjce1Gdi45h6dyIgj/xOOGg351Dg91Smvf
+         tvcYsQEsIs/KbU2sccsEDp7mcqzMR+zoEWXlh3ZixkSzgYLA/WHiPjNVVpe0xBTqBrzU
+         xTYg==
+X-Gm-Message-State: ABuFfogCyuripX+BC5txk6TLvugrXejs/VFweO0yRJtho54GA5MnjtV9
+        snlO5o5Ff9QiQqJJGuuaOVUOhg==
+X-Google-Smtp-Source: ACcGV60D6xtfzA51/uFAMqT7wDVlXMs8ytHcFDGD5s+a+4rsxfBymBWkqlQjUrJ+fW+qzTywbPb5WQ==
+X-Received: by 2002:a17:902:286a:: with SMTP id e97-v6mr10787981plb.340.1538049040132;
+        Thu, 27 Sep 2018 04:50:40 -0700 (PDT)
+Received: from localhost.localdomain ([183.82.230.83])
+        by smtp.gmail.com with ESMTPSA id v36-v6sm3744872pgn.85.2018.09.27.04.50.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 04:50:39 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 12/12] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+Date:   Thu, 27 Sep 2018 17:18:50 +0530
+Message-Id: <20180927114850.24565-13-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/18 8:10 PM, Yang Shi wrote:
-> Subject: [v2 PATCH 1/2 -mm] mm: mremap: dwongrade mmap_sem to read
-when shrinking
+This patch add support for Bananapi S070WV20-CT16 DSI panel to
+BPI-M64 board.
 
-"downgrade" in the subject
+DSI panel connected via board DSI port with,
+- DC1SW as AVDD supply
+- DCDC1 as DVDD supply
+- PD6 gpio for reset pin
+- PD5 gpio for backlight enable pin
+- PD7 gpio for backlight vdd supply
 
-> Other than munmap, mremap might be used to shrink memory mapping too.
-> So, it may hold write mmap_sem for long time when shrinking large
-> mapping, as what commit ("mm: mmap: zap pages with read mmap_sem in
-> munmap") described.
-> 
-> The mremap() will not manipulate vmas anymore after __do_munmap() call for
-> the mapping shrink use case, so it is safe to downgrade to read mmap_sem.
-> 
-> So, the same optimization, which downgrades mmap_sem to read for zapping
-> pages, is also feasible and reasonable to this case.
-> 
-> The period of holding exclusive mmap_sem for shrinking large mapping
-> would be reduced significantly with this optimization.
-> 
-> MREMAP_FIXED and MREMAP_MAYMOVE are more complicated to adopt this
-> optimization since they need manipulate vmas after do_munmap(),
-> downgrading mmap_sem may create race window.
-> 
-> Simple mapping shrink is the low hanging fruit, and it may cover the
-> most cases of unmap with munmap together.
-> 
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-Looks fine,
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-Nit:
-
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2687,8 +2687,8 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
->   * work.  This now handles partial unmappings.
->   * Jeremy Fitzhardinge <jeremy@goop.org>
->   */
-> -static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
-> -		       struct list_head *uf, bool downgrade)
-> +int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
-> +		struct list_head *uf, bool downgrade)
->  {
->  	unsigned long end;
->  	struct vm_area_struct *vma, *prev, *last;
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 5c2e185..8f1ec2b 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -525,6 +525,7 @@ static int vma_expandable(struct vm_area_struct *vma, unsigned long delta)
->  	unsigned long ret = -EINVAL;
->  	unsigned long charged = 0;
->  	bool locked = false;
-> +	bool downgrade = false;
-
-Maybe "downgraded" is more accurate here, or even "downgraded_mmap_sem".
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index ef1c90401bb2..c0be949be68d 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -45,6 +45,7 @@
+ #include "sun50i-a64.dtsi"
+ 
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pwm/pwm.h>
+ 
+ / {
+ 	model = "BananaPi-M64";
+@@ -56,6 +57,24 @@
+ 		serial1 = &uart1;
+ 	};
+ 
++	vdd_bl: regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "bl-3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* PD7 */
++		enable-active-high;
++	};
++
++	backlight_dsi: backlight-dsi {
++		compatible = "pwm-backlight";
++		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
++		brightness-levels = <0 10 20 30 40 50 60 70 80 90 100>;
++		default-brightness-level = <2>;
++		enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /* PD5 */
++		power-supply = <&vdd_bl>;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+@@ -101,6 +120,23 @@
+ 	status = "okay";
+ };
+ 
++&dphy {
++	status = "okay";
++};
++
++&dsi {
++	status = "okay";
++
++	panel@0 {
++		compatible = "bananapi,s070wv20-ct16-dsi";
++		reg = <0>;
++		avdd-supply = <&reg_dc1sw>;
++		dvdd-supply = <&reg_dldo1>;
++		reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
++		backlight = <&backlight_dsi>;
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -193,6 +229,12 @@
+ 	status = "okay";
+ };
+ 
++&r_pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&r_pwm_pin>;
++	status = "okay";
++};
++
+ &r_rsb {
+ 	status = "okay";
+ 
+-- 
+2.18.0.321.gffc6fa0e3
 
