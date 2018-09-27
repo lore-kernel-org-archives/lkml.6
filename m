@@ -2,170 +2,174 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312D7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A90C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5DB2215F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:16:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5DB2215F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AD74021708
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:18:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD74021708
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbeI1Ag0 (ORCPT
+        id S1728541AbeI1Aht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:36:26 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34913 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbeI1AgZ (ORCPT
+        Thu, 27 Sep 2018 20:37:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51712 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728488AbeI1Ahs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:36:25 -0400
-Received: by mail-ot1-f67.google.com with SMTP id j9-v6so3526768otl.2;
-        Thu, 27 Sep 2018 11:16:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HbqgzRDsFoHfh/PD5bSwuxuZlxkzFwExWkWx2uZClDU=;
-        b=UO3H/hRWmP2k2CL8MkfcjtFP3D+Xrvi31HPsaWCoaQmMRE1YkdHrmxRPaUGonyQGjg
-         3kS1dVU9CFpQ243ep5PA5kfcC8aprgHSOr1FPDkI6gV+OIiwmhzMbhj2Q1DQxQU9ralp
-         2PyT8HhS9NfLbTffRf8fRFOk6iJY4Ot8MKL6l4QEJea8N3kdNZlPG2Ot91XxBxfP7lDJ
-         3NPHPvF2GIyWDNXUiS/GhO5X8z3HRYUbjP6mHbd5oTcrKz9O2i4UG+A4wgEEMbYXNpyX
-         xKXSL/nhuWDSYXnd+mJMV+3J2cm5e+NqrbbDPS+m3EOSsqnByQIgyhnVp6x3czhV9Ivm
-         3CAA==
-X-Gm-Message-State: ABuFfoh2oCo45mvIw7hijLHvY05h8qN8VEo6CnAuP5I+qJNL+uT4HX7D
-        yz6uWjjr/4lRRfPxkcK+VA==
-X-Google-Smtp-Source: ACcGV60x3yc8KkcnfxwmYo8pnapDjepkbAzfOVvEbSCI/2jtKnD20pfDRMMWHyDicFkInjRhb73Yag==
-X-Received: by 2002:a9d:171c:: with SMTP id i28-v6mr7349444ota.359.1538072214712;
-        Thu, 27 Sep 2018 11:16:54 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r18-v6sm991104otc.24.2018.09.27.11.16.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:16:53 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 13:16:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd@lists.infradead.org, Liang Yang <liang.yang@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: nand: meson: add Amlogic NAND
- controller driver
-Message-ID: <20180927181653.GA22153@bogus>
-References: <1537433449-65213-1-git-send-email-jianxin.pan@amlogic.com>
- <1537433449-65213-2-git-send-email-jianxin.pan@amlogic.com>
+        Thu, 27 Sep 2018 20:37:48 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8RIELi7087663
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:18:17 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ms2dn5ayh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:18:17 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 27 Sep 2018 14:18:15 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Sep 2018 14:18:08 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8RII7gI27656416
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Sep 2018 18:18:07 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9439EB2066;
+        Thu, 27 Sep 2018 14:16:25 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CA8DB206B;
+        Thu, 27 Sep 2018 14:16:25 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.131.147])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Sep 2018 14:16:25 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 5599116C1B35; Thu, 27 Sep 2018 11:18:06 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 11:18:06 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     shuah kh <shuah.kh@samsung.com>, rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        stable <stable@vger.kernel.org>, shuah <shuah@kernel.org>
+Subject: Re: [PATCH] rseq/selftests: fix parametrized test with -fpie
+Reply-To: paulmck@linux.ibm.com
+References: <20180918135328.32034-1-mathieu.desnoyers@efficios.com>
+ <1367962117.10271.1537897176578.JavaMail.zimbra@efficios.com>
+ <CGME20180927132250epcas4p3d0775cc258f6112d27bdad359fc6e416@epcas4p3.samsung.com>
+ <20180927092235.77282e35@vmware.local.home>
+ <a7bae2ff-1f4d-dbfc-43f8-e7a89f319abb@samsung.com>
+ <44897232.11546.1538071328396.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537433449-65213-2-git-send-email-jianxin.pan@amlogic.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <44897232.11546.1538071328396.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18092718-0052-0000-0000-000003389248
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009782; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01094502; UDB=6.00565782; IPR=6.00874538;
+ MB=3.00023532; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-27 18:18:15
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092718-0053-0000-0000-00005E382474
+Message-Id: <20180927181806.GI4222@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809270168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 04:50:48PM +0800, Jianxin Pan wrote:
-> From: Liang Yang <liang.yang@amlogic.com>
+On Thu, Sep 27, 2018 at 02:02:08PM -0400, Mathieu Desnoyers wrote:
+> ----- On Sep 27, 2018, at 9:58 AM, Shuah Khan shuah.kh@samsung.com wrote:
 > 
-> Add Amlogic NAND controller dt-bindings for Meson SoC,
-> Current this driver support GXBB/GXL/AXG platform.
+> > On 09/27/2018 07:22 AM, Steven Rostedt wrote:
+> >> On Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
+> >> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> >> 
+> >>> ----- On Sep 18, 2018, at 9:53 AM, Mathieu Desnoyers
+> >>> mathieu.desnoyers@efficios.com wrote:
+> >>>
+> >>>> On x86-64, the parametrized selftest code for rseq crashes with a
+> >>>> segmentation fault when compiled with -fpie. This happens when the
+> >>>> param_test binary is loaded at an address beyond 32-bit on x86-64.
+> >>>>
+> >>>> The issue is caused by use of a 32-bit register to hold the address
+> >>>> of the loop counter variable.
+> >>>>
+> >>>> Fix this by using a 64-bit register to calculate the address of the
+> >>>> loop counter variables as an offset from rip.
+> >>>
+> >>> Should this fix go through tip or the selftests tree ?
+> >>>
+> >> 
+> >> I usually have changes like this pulled through Shuah's tree with an
+> >> ack from the maintainer of the code that it tests.
+> >> 
+> >> -- Steve
+> >> 
+> > 
+> > Right that is what I prefer. I usually wait for an Ack. I can pull this
+> > in.
 > 
-> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  .../devicetree/bindings/mtd/amlogic,meson-nand.txt | 60 ++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+> I am maintainer of the code that it tests as well, so being both author
+> of the selftest patch and giving an ack to it seems a bit silly. :) Other
+> rseq co-maintainers could weight in though: Peter, Paul, and Boqun.
+
+Here you go!  ;-)
+
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+
+> Thanks,
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-> new file mode 100644
-> index 0000000..803df2a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
-> @@ -0,0 +1,60 @@
-> +Amlogic NAND Flash Controller (NFC) for GXBB/GXL/AXG family SoCs
-> +
-> +This file documents the properties in addition to those available in
-> +the MTD NAND bindings.
-> +
-> +Required properties:
-> +- compatible : contains one of:
-> +  - "amlogic,meson-gxl-nfc"
-> +  - "amlogic,meson-axg-nfc"
-> +- clocks     :
-> +	A list of phandle + clock-specifier pairs for the clocks listed
-> +	in clock-names.
-> +
-> +- clock-names: Should contain the following:
-> +	"core" - NFC module gate clock
-> +	"device" - device clock from eMMC sub clock controller
-> +
-> +- amlogic,mmc-syscon	: Required for NAND clocks, it's shared with SD/eMMC
-> +				controller port C
-> +
-> +Optional children nodes:
-> +Children nodes represent the available nand chips.
-> +
-> +Other properties:
-> +see Documentation/devicetree/bindings/mtd/nand.txt for generic bindings.
-> +
-> +Example demonstrate on AXG SoC:
-> +
-> +	sd_emmc_c_clkc: mmc@7000 {
-> +		compatible = "amlogic,meson-axg-mmc-clkc", "syscon";
-> +		reg = <0x0 0x7000 0x0 0x800>;
-> +		status = "okay";
-> +	};
-> +
-> +	nand: nfc@7800 {
-
-nand-controller@7800
-
-> +		compatible = "amlogic,meson-axg-nfc";
-> +		reg = <0x0 0x7800 0x0 0x100>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
-> +		status = "disabled";
-> +
-> +		clocks = <&clkc CLKID_SD_EMMC_C>,
-> +			<&sd_emmc_c_clkc CLKID_MMC_DIV>;
-> +		clock-names = "core", "device";
-> +		amlogic,mmc-syscon = <&sd_emmc_c_clkc>;
-> +
-> +		status = "okay";
-
-Don't show status in examples, plus you have it twice.
-
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&nand_pins>;
-> +
-> +		nand@0 {
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +
-> +			nand-on-flash-bbt;
-> +		};
-> +	};
+> Mathieu
+> 
+> > 
+> > thanks,
+> > -- Shuah
+> > 
+> > --
+> > Shuah Khan
+> > Sr. Linux Kernel Developer
+> > Open Source Innovation Group
+> > Samsung Research America(Silicon Valley)
+> > shuah.kh@samsung.com
+> 
 > -- 
-> 1.9.1
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> http://www.efficios.com
 > 
+
