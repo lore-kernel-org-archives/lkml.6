@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5BFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FA5C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97EEB215E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97EEB215E5
+	by mail.kernel.org (Postfix) with ESMTP id 54E6D21547
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E6D21547
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeI0R7G (ORCPT
+        id S1727567AbeI0R7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:59:06 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:56307 "EHLO
+        Thu, 27 Sep 2018 13:59:09 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:31671 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727292AbeI0R7F (ORCPT
+        by vger.kernel.org with ESMTP id S1727292AbeI0R7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:59:05 -0400
+        Thu, 27 Sep 2018 13:59:08 -0400
 Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8RBcwoZ012768;
-        Thu, 27 Sep 2018 13:40:17 +0200
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8RBcwWf012774;
+        Thu, 27 Sep 2018 13:40:19 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mrj4mby68-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mrj4mby6c-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 27 Sep 2018 13:40:17 +0200
+        Thu, 27 Sep 2018 13:40:19 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6A10431;
-        Thu, 27 Sep 2018 11:40:16 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A383F3A;
+        Thu, 27 Sep 2018 11:40:18 +0000 (GMT)
 Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 449502986;
-        Thu, 27 Sep 2018 11:40:16 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 822112988;
+        Thu, 27 Sep 2018 11:40:18 +0000 (GMT)
 Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
  (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep
- 2018 13:40:16 +0200
+ 2018 13:40:18 +0200
 Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep 2018 13:40:15 +0200
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep 2018 13:40:17 +0200
 From:   Amelie Delaunay <amelie.delaunay@st.com>
 To:     Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -53,9 +53,9 @@ CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v3 3/7] dt-bindings: pinctrl: document the STMFX pinctrl bindings
-Date:   Thu, 27 Sep 2018 13:40:00 +0200
-Message-ID: <1538048404-9041-4-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH v3 5/7] ARM: dts: stm32: add STMFX support on stm32746g-eval
+Date:   Thu, 27 Sep 2018 13:40:02 +0200
+Message-ID: <1538048404-9041-6-git-send-email-amelie.delaunay@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
 References: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
@@ -69,139 +69,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the
-STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander.
+This patch adds support for STMicroelectronics Multi-Function eXpander
+(STMFX) on stm32746g-eval. It is connected on i2c1.
 
 Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 116 +++++++++++++++++++++
- 1 file changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
+ arch/arm/boot/dts/stm32746g-eval.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
-new file mode 100644
-index 0000000..c1b4c18
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
-@@ -0,0 +1,116 @@
-+STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander bindings
-+
-+ST Multi-Function eXpander (STMFX) offers up to 24 GPIOs expansion.
-+Please refer to ../mfd/stmfx.txt for STMFX Core bindings.
-+
-+Required properties:
-+- compatible: should be "st,stmfx-0300-pinctrl".
-+- #gpio-cells: should be <2>, the first cell is the GPIO number and the second
-+  cell is the gpio flags in accordance with <dt-bindings/gpio/gpio.h>.
-+- gpio-controller: marks the device as a GPIO controller.
-+- #interrupt-cells: should be <2>, the first cell is the GPIO number and the
-+  second cell is the interrupt flags in accordance with
-+  <dt-bindings/interrupt-controller/irq.h>.
-+- interrupt-controller: marks the device as an interrupt controller.
-+- gpio-ranges: specifies the mapping between gpio controller and pin
-+  controller pins. Check "Concerning gpio-ranges property" below.
-+Please refer to ../gpio/gpio.txt.
-+
-+Please refer to pinctrl-bindings.txt for pin configuration.
-+
-+Required properties for pin configuration sub-nodes:
-+- pins: list of pins to which the configuration applies.
-+
-+Optional properties for pin configuration sub-nodes (pinconf-generic ones):
-+- bias-disable: disable any bias on the pin.
-+- bias-pull-up: the pin will be pulled up.
-+- bias-pull-pin-default: use the pin-default pull state.
-+- bias-pull-down: the pin will be pulled down.
-+- drive-open-drain: the pin will be driven with open drain.
-+- drive-push-pull: the pin will be driven actively high and low.
-+- output-high: the pin will be configured as an output driving high level.
-+- output-low: the pin will be configured as an output driving low level.
-+
-+Note that STMFX pins[15:0] are called "gpio[15:0]", and STMFX pins[23:16] are
-+called "agpio[7:0]". Example, to refer to pin 18 of STMFX, use "agpio2".
-+
-+Concerning gpio-ranges property:
-+- if all STMFX pins[24:0] are available (no other STMFX function in use), you
-+  should use gpio-ranges = <&stmfx_pinctrl 0 0 24>;
-+- if agpio[3:0] are not available (STMFX Touchscreen function in use), you
-+  should use gpio-ranges = <&stmfx_pinctrl 0 0 16>, <&stmfx_pinctrl 20 20 4>;
-+- if agpio[7:4] are not available (STMFX IDD function in use), you
-+  should use gpio-ranges = <&stmfx_pinctrl 0 0 20>;
-+
-+
-+Example:
+diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
+index 8c081ea..203faf0 100644
+--- a/arch/arm/boot/dts/stm32746g-eval.dts
++++ b/arch/arm/boot/dts/stm32746g-eval.dts
+@@ -44,6 +44,7 @@
+ #include "stm32f746.dtsi"
+ #include "stm32f746-pinctrl.dtsi"
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "STMicroelectronics STM32746g-EVAL board";
+@@ -114,6 +115,22 @@
+ 	i2c-scl-rising-time-ns = <185>;
+ 	i2c-scl-falling-time-ns = <20>;
+ 	status = "okay";
 +
 +	stmfx: stmfx@42 {
-+		...
++		compatible = "st,stmfx-0300";
++		reg = <0x42>;
++		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
++		interrupt-parent = <&gpioi>;
 +
 +		stmfx_pinctrl: stmfx-pin-controller {
 +			compatible = "st,stmfx-0300-pinctrl";
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
 +			gpio-controller;
++			#gpio-cells = <2>;
 +			interrupt-controller;
++			#interrupt-cells = <2>;
 +			gpio-ranges = <&stmfx_pinctrl 0 0 24>;
-+
-+			joystick_pins: joystick {
-+				pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
-+				drive-push-pull;
-+				bias-pull-up;
-+			};
 +		};
 +	};
-+
-+Example of STMFX GPIO consumers:
-+
-+	joystick {
-+		compatible = "gpio-keys";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-0 = <&joystick_pins>;
-+		pinctrl-names = "default";
-+		button-0 {
-+			label = "JoySel";
-+			linux,code = <KEY_ENTER>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <0 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-1 {
-+			label = "JoyDown";
-+			linux,code = <KEY_DOWN>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <1 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-2 {
-+			label = "JoyLeft";
-+			linux,code = <KEY_LEFT>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <2 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-3 {
-+			label = "JoyRight";
-+			linux,code = <KEY_RIGHT>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <3 IRQ_TYPE_EDGE_RISING>;
-+		};
-+		button-4 {
-+			label = "JoyUp";
-+			linux,code = <KEY_UP>;
-+			interrupt-parent = <&stmfx_pinctrl>;
-+			interrupts = <4 IRQ_TYPE_EDGE_RISING>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		orange {
-+			gpios = <&stmfx_pinctrl 17 1>;
-+		};
-+
-+		blue {
-+			gpios = <&stmfx_pinctrl 19 1>;
-+		};
-+	}
+ };
+ 
+ &rtc {
 -- 
 2.7.4
 
