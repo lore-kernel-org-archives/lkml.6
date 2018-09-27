@@ -2,195 +2,148 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA59BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D99C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44BCF2168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:00:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44BCF2168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 70E192172E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:01:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="L5dA4XKH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E192172E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeI1AUI (ORCPT
+        id S1728779AbeI1AUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:20:08 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38142 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbeI1AUI (ORCPT
+        Thu, 27 Sep 2018 20:20:35 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41385 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727621AbeI1AUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:20:08 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id gi0g1y0013XaVaC01i0gmj; Thu, 27 Sep 2018 20:00:40 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g5aad-0004Xp-UD; Thu, 27 Sep 2018 20:00:39 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g5aad-0006PU-SD; Thu, 27 Sep 2018 20:00:39 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] reset: Exclusive resets must be dedicated to a single hardware block
-Date:   Thu, 27 Sep 2018 20:00:38 +0200
-Message-Id: <20180927180038.24599-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Thu, 27 Sep 2018 20:20:34 -0400
+Received: by mail-ed1-f67.google.com with SMTP id f38-v6so5853822edd.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=n3ktsnD+yok69VnSyFU16j3H/ZpzQu/cKDfNwOD/jjk=;
+        b=L5dA4XKHOBofkJGfn7HJJ0rWi9hwX9VEEFFI7x4t3uOi/2od+dyrKXvcNcTEHfU4lM
+         9uwJINri+LNat5XPBR8nycrwDOoQYypcGV3OWnoCPCRWSJymvP69Jy3V0ohpotVOfMZs
+         3J5okCT4UPjVmr9XXMd8s6LomVUuujkfYwepo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=n3ktsnD+yok69VnSyFU16j3H/ZpzQu/cKDfNwOD/jjk=;
+        b=f8ZKvcxFtAN3Mp5PzEyrCZs5mxyBiYwvq3TAeg0zmZKVniI4MIHFY2btt1Q1MGPy6Y
+         Dpx7XcD/Anj1KBYzv0NJcgUkcfk5S0ArM/+tdntxCD6nBeFFiPpJRvdKqCE8dT+kI4SG
+         sEnrCBhbPSvFQyflcBXDgM/07koaNOSRXdOqT9p9FUYMmA1/acgl7bMz0nLhnlMhbtBv
+         SePx2xn8kN8P3IG4yyeh2VbbM3STo2d97WC2GAq05ea25IiQG5VI8ktzmTiMybtvRON3
+         kITzPMLGYpNlsg8S6Q0UfVNme1Gc2VzJ0SIhyCofL8zH1KhsUCV1f7EihfbrEHr/mEaY
+         0MVw==
+X-Gm-Message-State: ABuFfogf3cDfxH/eNVV8iaJULENsVemTCvh0GK87jVB8maTho6MfYM4l
+        j5Uz6FbJp0upDoNC/MAlmjQWKw==
+X-Google-Smtp-Source: ACcGV63/06WDcQTH/E5gdbU5nBN2Ff+ZqrTks/w/q3QcwMddkQ7PHJQwP2Kc3uqO7hjXYzPvO8IQTA==
+X-Received: by 2002:a50:aed4:: with SMTP id f20-v6mr19231643edd.271.1538071266964;
+        Thu, 27 Sep 2018 11:01:06 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id k5-v6sm209554eja.44.2018.09.27.11.01.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 11:01:05 -0700 (PDT)
+Subject: Re: [PATCH v4 1/3] dt-bindings: thermal: Add binding document for SR
+ thermal
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     daniel.lezcano@linaro.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+References: <1538062603-7490-1-git-send-email-srinath.mannam@broadcom.com>
+ <1538062603-7490-2-git-send-email-srinath.mannam@broadcom.com>
+ <20180927172758.GA17761@bogus>
+ <b1099893-f704-8ca6-a945-2711d6945a0f@gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <f20afabc-e712-8f35-8dd6-d42b9a0131f0@broadcom.com>
+Date:   Thu, 27 Sep 2018 11:00:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <b1099893-f704-8ca6-a945-2711d6945a0f@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some SoCs multiple hardware blocks may share a reset control.
-The reset control API for shared resets will only assert such a reset
-when the drivers for all hardware blocks agree.
-The exclusive reset control API still allows to assert such a reset, but
-that impacts all other hardware blocks sharing the reset.
 
-While the kernel doc comments clearly state that the API for shared
-resets applies to reset controls which are shared between hardware
-blocks, the exact meaning of exclusive resets is not documented.
-Fix the semantic ambiguity with respect to exclusive access vs.
-exclusive reset lines by:
-  1. Clarifying that exclusive resets really are intended for use with
-     reset controls which are dedicated to a single hardware block,
-  2. Ensuring that obtaining an exclusive reset control will fail if the
-     reset is shared by multiple hardware blocks, for both DT-based and
-     lookup-based reset controls.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is v2 of "[RFC] reset: Add support for dedicated reset controls":
-  - Fix wrong variable in __reset_is_dedicated() loop,
-  - Add missing of_node_put() in __of_reset_is_dedicated(),
-  - Document that exclusive reset controls imply they are dedicated to a
-    single hardware block,
-  - Drop new dedicated flag and new API reset_control_get_dedicated(),
-    as exclusive already implies dedicated,
-  - Rename {__of_,}reset_is_dedicated() to {__of_,}reset_is_exclusive(),
-  - Reword description.
-
-Note: Exclusive lookup-based reset controls were not tested.
----
- drivers/reset/core.c  | 58 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/reset.h |  5 +++-
- 2 files changed, 62 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 225e34c56b94a2e3..2f5b61226c7964eb 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -459,6 +459,38 @@ static void __reset_control_put_internal(struct reset_control *rstc)
- 	kref_put(&rstc->refcnt, __reset_control_release);
- }
- 
-+static bool __of_reset_is_exclusive(const struct device_node *node,
-+				    const struct of_phandle_args args)
-+{
-+	struct of_phandle_args args2;
-+	struct device_node *node2;
-+	int index, ret;
-+	bool eq;
-+
-+	for_each_node_with_property(node2, "resets") {
-+		if (node == node2)
-+			continue;
-+
-+		for (index = 0; ; index++) {
-+			ret = of_parse_phandle_with_args(node2, "resets",
-+							 "#reset-cells", index,
-+							 &args2);
-+			if (ret)
-+				break;
-+
-+			eq = (args2.np == args.np &&
-+			      args2.args_count == args.args_count &&
-+			      !memcmp(args2.args, args.args,
-+				      args.args_count * sizeof(args.args[0])));
-+			of_node_put(args2.np);
-+			if (eq)
-+				return false;
-+		}
-+	}
-+
-+	return true;
-+}
-+
- struct reset_control *__of_reset_control_get(struct device_node *node,
- 				     const char *id, int index, bool shared,
- 				     bool optional)
-@@ -514,6 +546,11 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- 		return ERR_PTR(rstc_id);
- 	}
- 
-+	if (!shared && !__of_reset_is_exclusive(node, args)) {
-+		mutex_unlock(&reset_list_mutex);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	/* reset_list_mutex also protects the rcdev's reset_control list */
- 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
- 
-@@ -541,6 +578,22 @@ __reset_controller_by_name(const char *name)
- 	return NULL;
- }
- 
-+static bool __reset_is_exclusive(const struct reset_control_lookup *lookup)
-+{
-+	const struct reset_control_lookup *lookup2;
-+
-+	list_for_each_entry(lookup2, &reset_lookup_list, list) {
-+		if (lookup2 == lookup)
-+			continue;
-+
-+		if (lookup2->provider == lookup->provider &&
-+		    lookup2->index == lookup->index)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static struct reset_control *
- __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 				bool shared, bool optional)
-@@ -562,6 +615,11 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 		if ((!con_id && !lookup->con_id) ||
- 		    ((con_id && lookup->con_id) &&
- 		     !strcmp(con_id, lookup->con_id))) {
-+			if (!shared && !__reset_is_exclusive(lookup)) {
-+				mutex_unlock(&reset_lookup_mutex);
-+				return ERR_PTR(-EINVAL);
-+			}
-+
- 			mutex_lock(&reset_list_mutex);
- 			rcdev = __reset_controller_by_name(lookup->provider);
- 			if (!rcdev) {
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 29af6d6b2f4b8103..5881d2594761e48f 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -116,8 +116,11 @@ static inline int device_reset_optional(struct device *dev)
-  * @id: reset line name
-  *
-  * Returns a struct reset_control or IS_ERR() condition containing errno.
-- * If this function is called more than once for the same reset_control it will
-+ * If this function is called more than once for the same reset control it will
-  * return -EBUSY.
-+ * This function is intended for use with reset controls which are dedicated
-+ * to a single hardware block.  If called for a reset control shared among
-+ * multiple hardware blocks, it will return -EINVAL.
-  *
-  * See reset_control_get_shared for details on shared references to
-  * reset-controls.
--- 
-2.17.1
+On 18-09-27 10:31 AM, Florian Fainelli wrote:
+> On 09/27/2018 10:27 AM, Rob Herring wrote:
+>> On Thu, Sep 27, 2018 at 09:06:41PM +0530, Srinath Mannam wrote:
+>>> From: Pramod Kumar <pramod.kumar@broadcom.com>
+>>>
+>>> Add binding document for supported thermal implementation
+>>> in Stingray.
+>>>
+>>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+>>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>>> ---
+>>>   .../bindings/thermal/brcm,sr-thermal.txt           | 25 ++++++++++++++++++++++
+>>>   1 file changed, 25 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+>>> new file mode 100644
+>>> index 0000000..717617b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+>>> @@ -0,0 +1,25 @@
+>>> +* Broadcom Stingray Thermal
+>>> +
+>>> +This binding describes thermal sensors that is part of Stingray SoCs.
+>>> +
+>>> +Required properties:
+>>> +- compatible : Must be "brcm,sr-thermal"
+>>> +- reg : memory where tmon data will be available.
+>>> +- brcm,tmon-mask: A one cell bit mask of valid TMON sources.
+>>> +                  Each bit represents single TMON source.
+>>> +- brcm,max-crit-temp: Maximum supported critical temperature.
+>> We already have a defined binding for setting trip points.
+> Indeed, and if you have multiple TMONs, they would in premise possibly
+> each have a different critical trip point.
+Which may be a good reason to go back to our original bindings which 
+were generic and had each sensor in its own node?
+>>> +
+>>> +Example:
+>>> +	tmons {
+>>> +		compatible = "simple-bus";
+>>> +		#address-cells = <1>;
+>>> +		#size-cells = <1>;
+>>> +		ranges = <0x0 0x0 0x8f100000 0x100>;
+>>> +
+>>> +		tmon: thermal@0 {
+>>> +			compatible = "brcm,sr-thermal";
+>>> +			reg = <0 0x40>;
+>>> +			brcm,tmon-mask = <0x3f>;
+>>> +			brcm,max-crit-temp = <105000>;
+>>> +		};
+>>> +	};
+>>> -- 
+>>> 2.7.4
+>>>
+>
 
