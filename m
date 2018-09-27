@@ -2,134 +2,243 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8868C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC7AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BA62152C
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 524C62152C
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:51:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="B6EWdkZc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BA62152C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BprosDKG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524C62152C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeI0KGw (ORCPT
+        id S1727108AbeI0KH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 06:06:52 -0400
-Received: from mail-pu1apc01on0133.outbound.protection.outlook.com ([104.47.126.133]:32445
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726659AbeI0KFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 06:05:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UMMdkAvpobM9yPpwcOIrH9VoI6bK3mTFqa/ckguBWJY=;
- b=B6EWdkZc5IulZjpdDYS/VrIQudgCnlbwG052znkwdrZSorDEmNGTfKlhmW31T5/9LKtjV3+/V8wzCk8yIyc9yqVCirPDgmALqHGcnHLcFYp+vL8mp/mxOQNwb8OICaJ9BMM1OCOqG2zvfrGgKo+eYMKbxFfD7IsvGvyU7bJkmqY=
-Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM (52.133.156.18) by
- HK0P153MB0177.APCP153.PROD.OUTLOOK.COM (52.133.210.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Thu, 27 Sep 2018 03:49:11 +0000
-Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
- ([fe80::8584:ad93:130a:6267]) by HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
- ([fe80::8584:ad93:130a:6267%3]) with mapi id 15.20.1207.011; Thu, 27 Sep 2018
- 03:49:11 +0000
-From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
-CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>,
-        Jork Loeser <Jork.Loeser@microsoft.com>
-Subject: [PATCH V3 4/13] KVM/MMU: Flush tlb directly in the
- kvm_handle_hva_range()
-Thread-Topic: [PATCH V3 4/13] KVM/MMU: Flush tlb directly in the
- kvm_handle_hva_range()
-Thread-Index: AQHUVhUMM7vZmqB5P0uFL9SQiBZyBA==
-Date:   Thu, 27 Sep 2018 03:49:10 +0000
-Message-ID: <20180927034829.2230-5-Tianyu.Lan@microsoft.com>
-References: <20180927034829.2230-1-Tianyu.Lan@microsoft.com>
-In-Reply-To: <20180927034829.2230-1-Tianyu.Lan@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tianyu.Lan@microsoft.com; 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK0P153MB0177;6:JM2Em5DUdYqs/oTXQCg+ioVBgvawgHNigZNrhVrfqV9veqfNMF1WUTBBzGdm3+6kXZkxU2GjOHCO8/EOe1sBBWxJC8PHyxy+XdfoBrd3CxC2IQMujmoN9euMefwnTqzp3v4/MBFxpK0BRbrHgbZwJqJYT1XdVtm9Nx5wpPuxPhtWACe1GnFbIsa6her4KvskPb9jZhVyc9zmw7WAnRxyfzQqXPeoS72IKKiMEBBvNv8bZMVR7gSupHMQTjqJJWJTbMsZLDlWqzZbB8iC2JgZVA6K31nSEU/y3WW3XAEUmAjTPeU97r79nvArpQB6s1tVdfmcam2Z0iR1FnSutYTB0887VgAxxGRYV51ywoxOpmak+l3oyJwvpsliS6Bf+CluwBX7uS5s2xs6wi6uh/R4v5P9zP8xbglCXEfuHNYrj6Zq+wsFLH9oeq7srbyGX89LigvHTv6VSqnlDAGrE8tXSg==;5:kJ8NIg4inEL1pMKy4tiurmMc4WVP/mzKO8ATPoBORB5UdV73HKeTlZKl09S0xcWILbXtNeGNO5Flf7mNyX+Lo+bEisAFznr/O4mkfv7NSxlVoA4DhHieD9qfCSUlQtrMdyFem8gtymDornRIqG3STaMTZqPqH/fnG0K+4vomljA=;7:6E09DFNpZYIJGUfcEUHBYMhItsre2e1btb8kpFTQcjv5ZjrppYG/f93+90gGzzsQPqsWyiB9o88KtZQ72CsQV4KbrriLGMZQ5IpSq8JeV3HK5eXjwYfv2oy3x7UU+MqDrWyDKFLgztvdSiLz1xJJ9vgo5ateWQvJJs385N7KK0q3V+EUzpVfveFYxM3636O7qCbw38PDLLxmONtUpgcghsrW1ignFsmxQTn+y3uz1p3iu/meYcaUI1g4xXUd/xmw
-x-ms-office365-filtering-correlation-id: 2ae8cd92-67c1-43d7-9937-08d6242c2f56
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HK0P153MB0177;
-x-ms-traffictypediagnostic: HK0P153MB0177:
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <HK0P153MB0177093FF2FB1270EB8707D192140@HK0P153MB0177.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:HK0P153MB0177;BCL:0;PCL:0;RULEID:;SRVR:HK0P153MB0177;
-x-forefront-prvs: 0808323E97
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(396003)(346002)(39860400002)(366004)(199004)(189003)(105586002)(99286004)(10290500003)(486006)(478600001)(68736007)(106356001)(14454004)(72206003)(81156014)(6486002)(8676002)(6506007)(1671002)(81166006)(6512007)(2900100001)(2906002)(6436002)(76176011)(8936002)(10090500001)(3846002)(6116002)(54906003)(36756003)(316002)(59246006)(102836004)(26005)(1076002)(5660300001)(5250100002)(109986005)(107886003)(11346002)(446003)(2616005)(4326008)(25786009)(476003)(22452003)(7416002)(53936002)(86612001)(86362001)(71190400001)(71200400001)(66066001)(7736002)(256004)(305945005)(34290500001)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0177;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: E8j2nNw0D/ZRA3qBszlyLJrBCkpTCtXwdrCU8pC/NQXZmMy/A9neOm6c9DTjOsSEb430iQOYHdYjc1m/shANdGpnzdBckQUtyP5/WGhZZiMrceEg01dYCNu6+TqZ3o93yHfPITUzgYM9NwCR9nKn/TKPy4ot9Kid6P9vGDn+5HwMkyO5p34Q49vn5IBBNpODgJRbrCK4zrlnjaOh/E8NUUnX17d39y8PjMl5PlMyVZ3CIOZ3am8Vt7aOQQgYWQsDxfAdSGHu5F28jKxlET0b9ccPyKkT0QX+WIil1S8GX/p+mAvUYFaVbFbzhIEmvIgMi5b9wSs72BwJsoa/AKwMzDmL3xbU8ajxJ+enqyg/mCg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 27 Sep 2018 06:07:57 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:37870 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbeI0KH5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 06:07:57 -0400
+Received: by mail-yw1-f65.google.com with SMTP id y14-v6so529003ywa.4;
+        Wed, 26 Sep 2018 20:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vPlnEKAjelnvqQsd+l+tKGOsoD5S4l5Zlwky2nsi8vQ=;
+        b=BprosDKGYjY6BOl1a53QTcrp5r3Xt/cB4JrmcjY9r2PIY8t/i3eNIPLUHt8e1VYGt8
+         fl1EON5bXYtUBuR5krygY9ACWYZmNAyPCdvz8BhvdkHsLt+j9coQVF8DOO9lXszSZLEp
+         mvwH9KyjZ2OqL5rIESalU2RGlCf+kjnEU89gWw9YHrprXVGNv15Somt5KKmMFlDCyOY7
+         Zqt1GTqIX/dR32BOoka9YCVct/vlJUIT52d5P0R0MtUQQ1gVccQqG3RFU9PXxwVqiR1S
+         2FeFbG0vHk+MIuaVLVEdhDjkuJPNp4rRPDjAnRuHFQuaMnoLEkxmUPGftNyZiytHdzuN
+         m40g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vPlnEKAjelnvqQsd+l+tKGOsoD5S4l5Zlwky2nsi8vQ=;
+        b=acRHIaj1csGgueUwKYQhaQFwrozg0CkdoLryXAMEPSvJWAkj9EySqT0mhevcCbqYpS
+         p7RekKjkfsveaohcrh+Zs95vQxBx1cyTHBrrTT5HLcccQ5VzELxWGnfslYCPYEj657e1
+         WdOyghp0ngQdYndflQdUOLibznKKEDz/2t1fgzvQ2Hyz3QghA6fMoLwaOpE814Z1e0Ws
+         biLKX/lgZi3jWzXe0WjqJeex6wGnnRqPJYmCpwD0WQZXsma42JzKcNm/x+QAWboJJ7h3
+         RwOwYTqOAUusIT/GUgs/CZ6hSRRzWpkK6Lf3pYqHzf6Y77HaIbBXF+arsw06klilsrqr
+         mYWg==
+X-Gm-Message-State: ABuFfohZgX+6oVgSQz/3oKrB4b8fhd3ZdDbT3QdLieJB5fKynmiSNfQs
+        5Kok0/vV/A7x3VOGpJEj32VuEjQqPbQRZFrvPX9OTQ==
+X-Google-Smtp-Source: ACcGV63DFHQDt3PKWjp3+tCtayaL6HPgvc+oMrMZpIiM14UmqR1jt0Nqe4q0+ci0UPQ5IRJmdM4HGBdVah0pPtTPIp8=
+X-Received: by 2002:a81:6554:: with SMTP id z81-v6mr4716481ywb.34.1538020308516;
+ Wed, 26 Sep 2018 20:51:48 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ae8cd92-67c1-43d7-9937-08d6242c2f56
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2018 03:49:10.6436
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0177
-To:     unlisted-recipients:; (no To-header on input)
+References: <00000000000074e10d0576cc48f1@google.com> <CAOQ4uxik7QbQVBQbaPWCxPG90HuJK=T0yckoyfe5NjLHhg898Q@mail.gmail.com>
+In-Reply-To: <CAOQ4uxik7QbQVBQbaPWCxPG90HuJK=T0yckoyfe5NjLHhg898Q@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 27 Sep 2018 06:51:37 +0300
+Message-ID: <CAOQ4uxhuJ5r-7M0ngL-rnpMubtGJmuj7YQEHEwWKLj+nUuUpaA@mail.gmail.com>
+Subject: Re: possible deadlock in ovl_write_iter
+To:     syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to flush tlb directly in the kvm_handle_hva_range()
-when range flush is available.
+[CC: fsdevel]
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/kvm/mmu.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index d10d8423e8d6..877edae0401f 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -1888,6 +1888,13 @@ static int kvm_handle_hva_range(struct kvm *kvm,
- 						 &iterator)
- 				ret |=3D handler(kvm, iterator.rmap, memslot,
- 					       iterator.gfn, iterator.level, data);
-+
-+			if (ret && kvm_available_flush_tlb_with_range()) {
-+				kvm_flush_remote_tlbs_with_address(kvm,
-+						gfn_start,
-+						gfn_end - gfn_start);
-+				ret =3D 0;
-+			}
- 		}
- 	}
-=20
---=20
-2.14.4
+On Thu, Sep 27, 2018 at 6:48 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Wed, Sep 26, 2018 at 11:44 PM syzbot
+> <syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    a38523185b40 erge tag 'libnvdimm-fixes-4.19-rc6' of git://..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=178f63fa400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=dfb440e26f0a6f6f
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=695726bc473f9c36a4b6
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+695726bc473f9c36a4b6@syzkaller.appspotmail.com
+> >
+> > Process accounting resumed
+> >
+> > ======================================================
+> > WARNING: possible circular locking dependency detected
+> > 4.19.0-rc5+ #32 Not tainted
+> > ------------------------------------------------------
+> > overlayfs: option "workdir=./file1\" is useless in a non-upper mount, ignore
+> > syz-executor1/7265 is trying to acquire lock:
+> > 00000000fec87ddb (&ovl_i_mutex_key[depth]){+.+.}, at: inode_lock
+> > include/linux/fs.h:738 [inline]
+> > 00000000fec87ddb (&ovl_i_mutex_key[depth]){+.+.}, at:
+> > ovl_write_iter+0x151/0xb00 fs/overlayfs/file.c:231
+> >
+> > but task is already holding lock:
+> > 00000000998db2f0 (&acct->lock#2){+.+.}, at: acct_get kernel/acct.c:161
+> > [inline]
+> > 00000000998db2f0 (&acct->lock#2){+.+.}, at: slow_acct_process
+> > kernel/acct.c:577 [inline]
+> > 00000000998db2f0 (&acct->lock#2){+.+.}, at: acct_process+0x48b/0x875
+> > kernel/acct.c:605
+> >
+> > which lock already depends on the new lock.
+> >
+> >
+> > the existing dependency chain (in reverse order) is:
+> >
+> > -> #2 (&acct->lock#2){+.+.}:
+> > overlayfs: at least 2 lowerdir are needed while upperdir nonexistent
+> >         __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+> >         __mutex_lock+0x166/0x1700 kernel/locking/mutex.c:1072
+> > kobject: 'kvm' (00000000bb4f2ec2): kobject_uevent_env
+> >         mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+> >         acct_pin_kill+0x26/0x100 kernel/acct.c:173
+> >         pin_kill+0x29d/0xab0 fs/fs_pin.c:50
+> > kobject: 'kvm' (00000000bb4f2ec2): fill_kobj_path: path
+> > = '/devices/virtual/misc/kvm'
+> >         acct_on+0x64a/0x8c0 kernel/acct.c:254
+> >         __do_sys_acct kernel/acct.c:286 [inline]
+> >         __se_sys_acct kernel/acct.c:273 [inline]
+> >         __x64_sys_acct+0xc2/0x1f0 kernel/acct.c:273
+> >         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > -> #1 (sb_writers#3){.+.+}:
+> >         percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
+> > [inline]
+> >         percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+> >         __sb_start_write+0x214/0x370 fs/super.c:1387
+> >         sb_start_write include/linux/fs.h:1566 [inline]
+> >         mnt_want_write+0x3f/0xc0 fs/namespace.c:360
+> >         ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+> >         ovl_setattr+0x10b/0xaf0 fs/overlayfs/inode.c:30
+> >         notify_change+0xbde/0x1110 fs/attr.c:334
+> >         do_truncate+0x1bd/0x2d0 fs/open.c:63
+> >         handle_truncate fs/namei.c:3008 [inline]
+> >         do_last fs/namei.c:3424 [inline]
+> >         path_openat+0x3762/0x5160 fs/namei.c:3534
+> >         do_filp_open+0x255/0x380 fs/namei.c:3564
+> > kobject: 'loop4' (0000000088f052bf): kobject_uevent_env
+> >         do_sys_open+0x568/0x700 fs/open.c:1063
+> >         ksys_open include/linux/syscalls.h:1276 [inline]
+> >         __do_sys_creat fs/open.c:1121 [inline]
+> >         __se_sys_creat fs/open.c:1119 [inline]
+> >         __x64_sys_creat+0x61/0x80 fs/open.c:1119
+> >         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > kobject: 'loop4' (0000000088f052bf): fill_kobj_path: path
+> > = '/devices/virtual/block/loop4'
+> >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > -> #0
+> > kobject: 'kvm' (00000000bb4f2ec2): kobject_uevent_env
+> >   (&ovl_i_mutex_key[depth]){+.+.}:
+> >         lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
+> >         down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+> >         inode_lock include/linux/fs.h:738 [inline]
+> >         ovl_write_iter+0x151/0xb00 fs/overlayfs/file.c:231
+> > kobject: 'kvm' (00000000bb4f2ec2): fill_kobj_path: path
+> > = '/devices/virtual/misc/kvm'
+> >         call_write_iter include/linux/fs.h:1808 [inline]
+> >         new_sync_write fs/read_write.c:474 [inline]
+> >         __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+> >         __kernel_write+0x10c/0x370 fs/read_write.c:506
+> >         do_acct_process+0x1144/0x1660 kernel/acct.c:520
+> >         slow_acct_process kernel/acct.c:579 [inline]
+> >         acct_process+0x6b1/0x875 kernel/acct.c:605
+> >         do_exit+0x1aaf/0x2610 kernel/exit.c:857
+> >         do_group_exit+0x177/0x440 kernel/exit.c:970
+> >         get_signal+0x8b0/0x1980 kernel/signal.c:2513
+> >         do_signal+0x9c/0x21e0 arch/x86/kernel/signal.c:816
+> >         exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
+> >         prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+> >         syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+> >         do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+> >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > other info that might help us debug this:
+> >
+> > Chain exists of:
+> >    &ovl_i_mutex_key[depth] --> sb_writers#3 --> &acct->lock#2
+> >
+>
+> I am not sure this is the root cause, but there seems to be a locking order
+> violation in code that replaces accounting file.
+> If new file is on the same fs as old file, acct_pin_kill(old) will skip writing
+> the file, because sb_writers is still already taken by acct_on().
+> If new file is not on same fs as old file, this ordering violation creates
+> an unneeded dependency between new_sb_writers and old_sb_writers,
+> which may be later reported as possible deadlock.
+>
+> This could result in an actual deadlock if accounting file is replaced
+> from file in overlayfs over "real fs" to file in "real fs".
+> acct_on() takes freeze protection on "real fs" and tries to write to
+> overlayfs file. overlayfs is not freeze protected so do_acct_process()
+> can carry on with __kernel_write() to overlayfs file, which SHOULD
+> take "real fs" freeze protection and deadlock.
+> Ironically (or not) it doesn't deadlock because of a bug fixed with
+> 898cc19d8af2 ovl: fix freeze protection bypass in ovl_write_iter()
+> which is not upstream yet, so wasn't in the kernel that syzbot tested.
+>
+> Following untested patch should fix the alleged deadlock.
+>
+> Miklos,
+>
+> If you feel confident about this patch I can re-post it for you to add
+> to next. Otherwise, as I didn't see Al around to comment on the patch,
+> I will try to reproduce the deadlock.
+>
+> Thanks,
+> Amir.
+> ---
+>
+> diff --git a/kernel/acct.c b/kernel/acct.c
+> index addf7732fb56..c09355a7ae46 100644
+> --- a/kernel/acct.c
+> +++ b/kernel/acct.c
+> @@ -251,8 +251,8 @@ static int acct_on(struct filename *pathname)
+>         rcu_read_lock();
+>         old = xchg(&ns->bacct, &acct->pin);
+>         mutex_unlock(&acct->lock);
+> -       pin_kill(old);
+>         mnt_drop_write(mnt);
+> +       pin_kill(old);
+>         mntput(mnt);
+>         return 0;
+>  }
