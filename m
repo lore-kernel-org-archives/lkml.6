@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9798BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D92C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD8221580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BD8221580
+	by mail.kernel.org (Postfix) with ESMTP id 6BBA72156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BBA72156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeI0PYb (ORCPT
+        id S1727462AbeI0PYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:24:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54720 "EHLO
+        Thu, 27 Sep 2018 11:24:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54730 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeI0PYa (ORCPT
+        with ESMTP id S1726944AbeI0PYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:24:30 -0400
+        Thu, 27 Sep 2018 11:24:35 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2BD2810C7;
-        Thu, 27 Sep 2018 09:07:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B9B210C8;
+        Thu, 27 Sep 2018 09:07:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Willy Tarreau <w@1wt.eu>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 03/88] net/appletalk: fix minor pointer leak to userspace in SIOCFINDIPDDPRT
-Date:   Thu, 27 Sep 2018 11:02:44 +0200
-Message-Id: <20180927090301.011776079@linuxfoundation.org>
+Subject: [PATCH 4.18 04/88] net: hp100: fix always-true check for link up state
+Date:   Thu, 27 Sep 2018 11:02:45 +0200
+Message-Id: <20180927090301.125462485@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,40 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willy Tarreau <w@1wt.eu>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 9824dfae5741275473a23a7ed5756c7b6efacc9d ]
+[ Upstream commit a7f38002fb69b44f8fc622ecb838665d0b8666af ]
 
-Fields ->dev and ->next of struct ipddp_route may be copied to
-userspace on the SIOCFINDIPDDPRT ioctl. This is only accessible
-to CAP_NET_ADMIN though. Let's manually copy the relevant fields
-instead of using memcpy().
+The operation ~(p100_inb(VG_LAN_CFG_1) & HP100_LINK_UP) returns a value
+that is always non-zero and hence the wait for the link to drop always
+terminates prematurely.  Fix this by using a logical not operator instead
+of a bitwise complement.  This issue has been in the driver since
+pre-2.6.12-rc2.
 
-BugLink: http://blog.infosectcbr.com.au/2018/09/linux-kernel-infoleaks.html
-Cc: Jann Horn <jannh@google.com>
-Signed-off-by: Willy Tarreau <w@1wt.eu>
+Detected by CoverityScan, CID#114157 ("Logical vs. bitwise operator")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/appletalk/ipddp.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hp/hp100.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/appletalk/ipddp.c
-+++ b/drivers/net/appletalk/ipddp.c
-@@ -283,8 +283,12 @@ static int ipddp_ioctl(struct net_device
-                 case SIOCFINDIPDDPRT:
- 			spin_lock_bh(&ipddp_route_lock);
- 			rp = __ipddp_find_route(&rcp);
--			if (rp)
--				memcpy(&rcp2, rp, sizeof(rcp2));
-+			if (rp) {
-+				memset(&rcp2, 0, sizeof(rcp2));
-+				rcp2.ip    = rp->ip;
-+				rcp2.at    = rp->at;
-+				rcp2.flags = rp->flags;
-+			}
- 			spin_unlock_bh(&ipddp_route_lock);
- 
- 			if (rp) {
+--- a/drivers/net/ethernet/hp/hp100.c
++++ b/drivers/net/ethernet/hp/hp100.c
+@@ -2634,7 +2634,7 @@ static int hp100_login_to_vg_hub(struct
+ 		/* Wait for link to drop */
+ 		time = jiffies + (HZ / 10);
+ 		do {
+-			if (~(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
++			if (!(hp100_inb(VG_LAN_CFG_1) & HP100_LINK_UP_ST))
+ 				break;
+ 			if (!in_interrupt())
+ 				schedule_timeout_interruptible(1);
 
 
