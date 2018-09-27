@@ -3,206 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9892C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8451CC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A29F2152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:48:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A29F2152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 2A8142156D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:50:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A8142156D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeI0IEB (ORCPT
+        id S1727204AbeI0IGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 04:04:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40318 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726653AbeI0IEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 04:04:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5AA71AFAF;
-        Thu, 27 Sep 2018 01:48:10 +0000 (UTC)
-Subject: Re: [PATCH] split if-condition code in bch_cache_set_alloc
-To:     Dongbo Cao <cdbdyx@163.com>
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180926090032.1881-1-cdbdyx@163.com>
-From:   Coly Li <colyli@suse.de>
-Message-ID: <f8dbc1eb-61ce-dbd3-4f01-0752e27e5edc@suse.de>
-Date:   Thu, 27 Sep 2018 09:48:03 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180926090032.1881-1-cdbdyx@163.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 27 Sep 2018 04:06:25 -0400
+Received: from gate.crashing.org ([63.228.1.57]:33193 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726477AbeI0IGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 04:06:25 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w8R1oEgP008244;
+        Wed, 26 Sep 2018 20:50:15 -0500
+Message-ID: <985079efc3296ac45de1e6344d7916c42fc7cbdd.camel@kernel.crashing.org>
+Subject: Re: [PATCH 5/5] dma-direct: always allow dma mask <= physiscal
+ memory size
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 27 Sep 2018 11:50:14 +1000
+In-Reply-To: <20180920185247.20037-6-hch@lst.de>
+References: <20180920185247.20037-1-hch@lst.de>
+         <20180920185247.20037-6-hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-09-20 at 20:52 +0200, Christoph Hellwig wrote:
+> This way an architecture with less than 4G of RAM can support dma_mask
+> smaller than 32-bit without a ZONE_DMA.  Apparently that is a common
+> case on powerpc.
 
-On 9/26/18 5:00 PM, Dongbo Cao wrote:
-> rebase my local code and commit it again.
->
-> Signed-off-by: Dongbo Cao <cdbdyx@163.com>
-
-Hi Dongbo,
-
-
-The above commit log does not explain why you make this change (it might 
-belong to changelog). Could you please to make it to be more informative ?
-
-Thanks.
-
-Coly Li
-
+Anything that uses a b43 wifi adapter which has a 31-bit limitation
+actually :-)
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   drivers/md/bcache/super.c | 114 +++++++++++++++++++++++++++++++-------
->   1 file changed, 93 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index a2cc354c..03099c4c 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1691,10 +1691,13 @@ void bch_cache_set_unregister(struct cache_set *c)
->   struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->   {
->   	int iter_size;
-> -	struct cache_set *c = kzalloc(sizeof(struct cache_set), GFP_KERNEL);
-> +	const char *err = NULL;
->   
-> -	if (!c)
-> -		return NULL;
-> +	struct cache_set *c = kzalloc(sizeof(struct cache_set), GFP_KERNEL);
-> +	if (!c) {
-> +		err = "cache_set alloc failed";
-> +		goto err_cache_set_alloc;
-> +	}
->   
->   	__module_get(THIS_MODULE);
->   	closure_init(&c->cl, NULL);
-> @@ -1750,22 +1753,65 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->   	iter_size = (sb->bucket_size / sb->block_size + 1) *
->   		sizeof(struct btree_iter_set);
->   
-> -	if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
-> -	    mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
-> -	    mempool_init_kmalloc_pool(&c->bio_meta, 2,
-> -				sizeof(struct bbio) + sizeof(struct bio_vec) *
-> -				bucket_pages(c)) ||
-> -	    mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
-> -	    bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
-> -			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
-> -	    !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
-> -	    !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
-> -						WQ_MEM_RECLAIM, 0)) ||
-> -	    bch_journal_alloc(c) ||
-> -	    bch_btree_cache_alloc(c) ||
-> -	    bch_open_buckets_alloc(c) ||
-> -	    bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
-> -		goto err;
-> +	c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL);
-> +	if (!c->devices) {
-> +		err = "c->devices alloc failed";
-> +		goto err_devices_alloc;
-> +	}
+>  kernel/dma/direct.c | 28 ++++++++++++++++------------
+>  1 file changed, 16 insertions(+), 12 deletions(-)
+> 
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 64466b7ef67b..d1e103c6b107 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -4,6 +4,7 @@
+>   *
+>   * DMA operations that map physical memory directly without using an IOMMU.
+>   */
+> +#include <linux/bootmem.h> /* for max_pfn */
+>  #include <linux/export.h>
+>  #include <linux/mm.h>
+>  #include <linux/dma-direct.h>
+> @@ -283,21 +284,24 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+>  	return nents;
+>  }
+>  
+> +/*
+> + * Because 32-bit DMA masks are so common we expect every architecture to be
+> + * able to satisfy them - either by not supporting more physical memory, or by
+> + * providing a ZONE_DMA32.  If neither is the case, the architecture needs to
+> + * use an IOMMU instead of the direct mapping.
+> + */
+>  int dma_direct_supported(struct device *dev, u64 mask)
+>  {
+> -#ifdef CONFIG_ZONE_DMA
+> -	if (mask < phys_to_dma(dev, DMA_BIT_MASK(ARCH_ZONE_DMA_BITS)))
+> -		return 0;
+> -#else
+> -	/*
+> -	 * Because 32-bit DMA masks are so common we expect every architecture
+> -	 * to be able to satisfy them - either by not supporting more physical
+> -	 * memory, or by providing a ZONE_DMA32.  If neither is the case, the
+> -	 * architecture needs to use an IOMMU instead of the direct mapping.
+> -	 */
+> -	if (mask < phys_to_dma(dev, DMA_BIT_MASK(32)))
+> +	u64 min_mask;
 > +
-> +	if (mempool_init_slab_pool(&c->search, 32, bch_search_cache)) {
-> +		err = "c->search alloc failed";
-> +		goto err_search_alloc;
-> +	}
+> +	if (IS_ENABLED(CONFIG_ZONE_DMA))
+> +		min_mask = DMA_BIT_MASK(ARCH_ZONE_DMA_BITS);
+> +	else
+> +		min_mask = min_t(u64, DMA_BIT_MASK(32),
+> +				 (max_pfn - 1) << PAGE_SHIFT);
 > +
-> +	if (mempool_init_kmalloc_pool(&c->bio_meta, 2, sizeof(struct bbio)
-> +				+ sizeof(struct bio_vec) * bucket_pages(c))) {
-> +		err = "c->bio_meta alloc failed";
-> +		goto err_bio_meta_alloc;
-> +	}
-> +
-> +	if (mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size)) {
-> +		err = "c->fill_iter alloc failed";
-> +		goto err_fill_iter_alloc;
-> +	}
-> +
-> +	if (bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
-> +				BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER)) {
-> +		err = "c->bio_split init failed";
-> +		goto err_bio_split_init;
-> +	}
-> +
-> +	c->uuids = alloc_bucket_pages(GFP_KERNEL, c);
-> +	if (!c->uuids) {
-> +		err = "c->uuids alloc failed";
-> +		goto err_uuids_alloc;
-> +	}
-> +
-> +	c->moving_gc_wq = alloc_workqueue("bcache_gc", WQ_MEM_RECLAIM, 0);
-> +	if (!c->moving_gc_wq) {
-> +		err = "c->moving_gc_wq alloc failed";
-> +		goto err_moving_gc_wq_alloc;
-> +	}
-> +
-> +	if (bch_journal_alloc(c)) {
-> +		err = "bch_journal_alloc failed";
-> +		goto err_bch_journal_alloc;
-> +	}
-> +
-> +	if (bch_btree_cache_alloc(c)) {
-> +		err = "bch_btree_cache_alloc failed";
-> +		goto err_bch_btree_cache_alloc;
-> +	}
-> +
-> +	if (bch_open_buckets_alloc(c)) {
-> +		err = "bch_open_buckets_alloc failed";
-> +		goto err_bch_open_buckets_alloc;
-> +	}
-> +
-> +	if (bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages))) {
-> +		err = "bch_bset_sort_state_init failed";
-> +		goto err_bch_bset_sort_state_init;
-> +	}
->   
->   	c->congested_read_threshold_us	= 2000;
->   	c->congested_write_threshold_us	= 20000;
-> @@ -1773,8 +1819,34 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
->   	WARN_ON(test_and_clear_bit(CACHE_SET_IO_DISABLE, &c->flags));
->   
->   	return c;
-> -err:
-> -	bch_cache_set_unregister(c);
-> +
-> +err_bch_bset_sort_state_init:
-> +	bch_open_buckets_free(c);
-> +err_bch_open_buckets_alloc:
-> +	bch_btree_cache_free(c);
-> +err_bch_btree_cache_alloc:
-> +	bch_journal_free(c);
-> +err_bch_journal_alloc:
-> +	destroy_workqueue(c->moving_gc_wq);
-> +err_moving_gc_wq_alloc:
-> +	free_pages((unsigned long) c->uuids, ilog2(bucket_pages(c)));
-> +err_uuids_alloc:
-> +	bioset_exit(&c->bio_split);
-> +err_bio_split_init:
-> +	mempool_exit(&c->fill_iter);
-> +err_fill_iter_alloc:
-> +	mempool_exit(&c->bio_meta);
-> +err_bio_meta_alloc:
-> +	mempool_exit(&c->search);
-> +err_search_alloc:
-> +	kfree(c->devices);
-> +err_devices_alloc:
-> +	bch_cache_accounting_destroy(&c->accounting);
-> +	kfree(c);
-> +	module_put(THIS_MODULE);
-> +err_cache_set_alloc:
-> +	if (err)
-> +		pr_notice("error cache set %s: %s", c->sb.set_uuid, err);
->   	return NULL;
->   }
->   
+> +	if (mask >= phys_to_dma(dev, min_mask))
+>  		return 0;
+
+nitpick ... to be completely "correct", I would have written
+
+	if (IS_ENABLED(CONFIG_ZONE_DMA))
+		min_mask = DMA_BIT_MASK(ARCH_ZONE_DMA_BITS);
+	else
+		min_mask = DMA_BIT_MASK(32);
+
+	min_mask = min_t(u64, min_mask,	(max_pfn - 1) << PAGE_SHIFT);
+
+In "theory" it's also ok to have a mask < ZONE_DMA_BITS as long as it's
+big enough to fit all memory :-)
+	
+> -#endif
+>  	return 1;
+>  }
+>  
+
