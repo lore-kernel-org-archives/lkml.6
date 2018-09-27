@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59C4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B86C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DD9C21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD9C21582
+	by mail.kernel.org (Postfix) with ESMTP id ABCFC21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCFC21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbeI0P0W (ORCPT
+        id S1728241AbeI0P01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:26:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55024 "EHLO
+        Thu, 27 Sep 2018 11:26:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55030 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbeI0P0V (ORCPT
+        with ESMTP id S1727020AbeI0P01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:26:21 -0400
+        Thu, 27 Sep 2018 11:26:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D4AE10A4;
-        Thu, 27 Sep 2018 09:09:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15C2310A4;
+        Thu, 27 Sep 2018 09:09:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Dmitry V. Levin" <ldv@altlinux.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.18 29/88] ASoC: uapi: fix sound/skl-tplg-interface.h userspace compilation errors
-Date:   Thu, 27 Sep 2018 11:03:10 +0200
-Message-Id: <20180927090304.107865594@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.18 30/88] ALSA: bebob: fix memory leak for M-Audio FW1814 and ProjectMix I/O at error path
+Date:   Thu, 27 Sep 2018 11:03:11 +0200
+Message-Id: <20180927090304.224730028@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,265 +51,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry V. Levin <ldv@altlinux.org>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit fb504caae7ef85be159743bd4b08ecde269ba55f upstream.
+commit b1fbebd4164b3d170ad916dcd692cf843c9c065d upstream.
 
-Include <linux/types.h> and consistently use types it provides
-to fix the following sound/skl-tplg-interface.h userspace compilation errors:
+After allocating model-dependent data for M-Audio FW1814 and ProjectMix
+I/O, ALSA bebob driver has memory leak at error path.
 
-/usr/include/sound/skl-tplg-interface.h:146:2: error: unknown type name 'u32'
-  u32 set_params:2;
-/usr/include/sound/skl-tplg-interface.h:147:2: error: unknown type name 'u32'
-  u32 rsvd:30;
-/usr/include/sound/skl-tplg-interface.h:148:2: error: unknown type name 'u32'
-  u32 param_id;
-/usr/include/sound/skl-tplg-interface.h:149:2: error: unknown type name 'u32'
-  u32 max;
-/usr/include/sound/skl-tplg-interface.h:166:2: error: unknown type name 'u16'
-  u16 module_id;
-/usr/include/sound/skl-tplg-interface.h:167:2: error: unknown type name 'u16'
-  u16 instance_id;
-/usr/include/sound/skl-tplg-interface.h:171:2: error: unknown type name 'u32'
-  u32 channels;
-/usr/include/sound/skl-tplg-interface.h:172:2: error: unknown type name 'u32'
-  u32 freq;
-/usr/include/sound/skl-tplg-interface.h:173:2: error: unknown type name 'u32'
-  u32 bit_depth;
-/usr/include/sound/skl-tplg-interface.h:174:2: error: unknown type name 'u32'
-  u32 valid_bit_depth;
-/usr/include/sound/skl-tplg-interface.h:175:2: error: unknown type name 'u32'
-  u32 ch_cfg;
-/usr/include/sound/skl-tplg-interface.h:176:2: error: unknown type name 'u32'
-  u32 interleaving_style;
-/usr/include/sound/skl-tplg-interface.h:177:2: error: unknown type name 'u32'
-  u32 sample_type;
-/usr/include/sound/skl-tplg-interface.h:178:2: error: unknown type name 'u32'
-  u32 ch_map;
-/usr/include/sound/skl-tplg-interface.h:182:2: error: unknown type name 'u32'
-  u32 set_params:2;
-/usr/include/sound/skl-tplg-interface.h:183:2: error: unknown type name 'u32'
-  u32 rsvd:30;
-/usr/include/sound/skl-tplg-interface.h:184:2: error: unknown type name 'u32'
-  u32 param_id;
-/usr/include/sound/skl-tplg-interface.h:185:2: error: unknown type name 'u32'
-  u32 caps_size;
-/usr/include/sound/skl-tplg-interface.h:186:2: error: unknown type name 'u32'
-  u32 caps[HDA_SST_CFG_MAX];
-/usr/include/sound/skl-tplg-interface.h:190:2: error: unknown type name 'u8'
-  u8 pipe_id;
-/usr/include/sound/skl-tplg-interface.h:191:2: error: unknown type name 'u8'
-  u8 pipe_priority;
-/usr/include/sound/skl-tplg-interface.h:192:2: error: unknown type name 'u16'
-  u16 conn_type:4;
-/usr/include/sound/skl-tplg-interface.h:193:2: error: unknown type name 'u16'
-  u16 rsvd:4;
-/usr/include/sound/skl-tplg-interface.h:194:2: error: unknown type name 'u16'
-  u16 memory_pages:8;
-/usr/include/sound/skl-tplg-interface.h:200:2: error: unknown type name 'u16'
-  u16 module_id;
-/usr/include/sound/skl-tplg-interface.h:201:2: error: unknown type name 'u16'
-  u16 instance_id;
-/usr/include/sound/skl-tplg-interface.h:202:2: error: unknown type name 'u32'
-  u32 max_mcps;
-/usr/include/sound/skl-tplg-interface.h:203:2: error: unknown type name 'u32'
-  u32 mem_pages;
-/usr/include/sound/skl-tplg-interface.h:204:2: error: unknown type name 'u32'
-  u32 obs;
-/usr/include/sound/skl-tplg-interface.h:205:2: error: unknown type name 'u32'
-  u32 ibs;
-/usr/include/sound/skl-tplg-interface.h:206:2: error: unknown type name 'u32'
-  u32 vbus_id;
-/usr/include/sound/skl-tplg-interface.h:208:2: error: unknown type name 'u32'
-  u32 max_in_queue:8;
-/usr/include/sound/skl-tplg-interface.h:209:2: error: unknown type name 'u32'
-  u32 max_out_queue:8;
-/usr/include/sound/skl-tplg-interface.h:210:2: error: unknown type name 'u32'
-  u32 time_slot:8;
-/usr/include/sound/skl-tplg-interface.h:211:2: error: unknown type name 'u32'
-  u32 core_id:4;
-/usr/include/sound/skl-tplg-interface.h:212:2: error: unknown type name 'u32'
-  u32 rsvd1:4;
-/usr/include/sound/skl-tplg-interface.h:214:2: error: unknown type name 'u32'
-  u32 module_type:8;
-/usr/include/sound/skl-tplg-interface.h:215:2: error: unknown type name 'u32'
-  u32 conn_type:4;
-/usr/include/sound/skl-tplg-interface.h:216:2: error: unknown type name 'u32'
-  u32 dev_type:4;
-/usr/include/sound/skl-tplg-interface.h:217:2: error: unknown type name 'u32'
-  u32 hw_conn_type:4;
-/usr/include/sound/skl-tplg-interface.h:218:2: error: unknown type name 'u32'
-  u32 rsvd2:12;
-/usr/include/sound/skl-tplg-interface.h:220:2: error: unknown type name 'u32'
-  u32 params_fixup:8;
-/usr/include/sound/skl-tplg-interface.h:221:2: error: unknown type name 'u32'
-  u32 converter:8;
-/usr/include/sound/skl-tplg-interface.h:222:2: error: unknown type name 'u32'
-  u32 input_pin_type:1;
-/usr/include/sound/skl-tplg-interface.h:223:2: error: unknown type name 'u32'
-  u32 output_pin_type:1;
-/usr/include/sound/skl-tplg-interface.h:224:2: error: unknown type name 'u32'
-  u32 is_dynamic_in_pin:1;
-/usr/include/sound/skl-tplg-interface.h:225:2: error: unknown type name 'u32'
-  u32 is_dynamic_out_pin:1;
-/usr/include/sound/skl-tplg-interface.h:226:2: error: unknown type name 'u32'
-  u32 is_loadable:1;
-/usr/include/sound/skl-tplg-interface.h:227:2: error: unknown type name 'u32'
-  u32 rsvd3:11;
+This commit releases the allocated data at the error path.
 
-Fixes: 0c24fdc00244 ("ASoC: topology: Move skl-tplg-interface.h to uapi")
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: <stable@vger.kernel.org> # v4.18
+Fixes: 04a2c73c97eb('ALSA: bebob: delayed registration of sound card')
+Cc: <stable@vger.kernel.org> # v4.7+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/sound/skl-tplg-interface.h |  106 ++++++++++++++++----------------
- 1 file changed, 54 insertions(+), 52 deletions(-)
+ sound/firewire/bebob/bebob.c        |    2 ++
+ sound/firewire/bebob/bebob_maudio.c |    4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/include/uapi/sound/skl-tplg-interface.h
-+++ b/include/uapi/sound/skl-tplg-interface.h
-@@ -10,6 +10,8 @@
- #ifndef __HDA_TPLG_INTERFACE_H__
- #define __HDA_TPLG_INTERFACE_H__
- 
-+#include <linux/types.h>
-+
- /*
-  * Default types range from 0~12. type can range from 0 to 0xff
-  * SST types start at higher to avoid any overlapping in future
-@@ -143,10 +145,10 @@ enum skl_module_param_type {
- };
- 
- struct skl_dfw_algo_data {
--	u32 set_params:2;
--	u32 rsvd:30;
--	u32 param_id;
--	u32 max;
-+	__u32 set_params:2;
-+	__u32 rsvd:30;
-+	__u32 param_id;
-+	__u32 max;
- 	char params[0];
- } __packed;
- 
-@@ -163,68 +165,68 @@ enum skl_tuple_type {
- /* v4 configuration data */
- 
- struct skl_dfw_v4_module_pin {
--	u16 module_id;
--	u16 instance_id;
-+	__u16 module_id;
-+	__u16 instance_id;
- } __packed;
- 
- struct skl_dfw_v4_module_fmt {
--	u32 channels;
--	u32 freq;
--	u32 bit_depth;
--	u32 valid_bit_depth;
--	u32 ch_cfg;
--	u32 interleaving_style;
--	u32 sample_type;
--	u32 ch_map;
-+	__u32 channels;
-+	__u32 freq;
-+	__u32 bit_depth;
-+	__u32 valid_bit_depth;
-+	__u32 ch_cfg;
-+	__u32 interleaving_style;
-+	__u32 sample_type;
-+	__u32 ch_map;
- } __packed;
- 
- struct skl_dfw_v4_module_caps {
--	u32 set_params:2;
--	u32 rsvd:30;
--	u32 param_id;
--	u32 caps_size;
--	u32 caps[HDA_SST_CFG_MAX];
-+	__u32 set_params:2;
-+	__u32 rsvd:30;
-+	__u32 param_id;
-+	__u32 caps_size;
-+	__u32 caps[HDA_SST_CFG_MAX];
- } __packed;
- 
- struct skl_dfw_v4_pipe {
--	u8 pipe_id;
--	u8 pipe_priority;
--	u16 conn_type:4;
--	u16 rsvd:4;
--	u16 memory_pages:8;
-+	__u8 pipe_id;
-+	__u8 pipe_priority;
-+	__u16 conn_type:4;
-+	__u16 rsvd:4;
-+	__u16 memory_pages:8;
- } __packed;
- 
- struct skl_dfw_v4_module {
- 	char uuid[SKL_UUID_STR_SZ];
- 
--	u16 module_id;
--	u16 instance_id;
--	u32 max_mcps;
--	u32 mem_pages;
--	u32 obs;
--	u32 ibs;
--	u32 vbus_id;
--
--	u32 max_in_queue:8;
--	u32 max_out_queue:8;
--	u32 time_slot:8;
--	u32 core_id:4;
--	u32 rsvd1:4;
--
--	u32 module_type:8;
--	u32 conn_type:4;
--	u32 dev_type:4;
--	u32 hw_conn_type:4;
--	u32 rsvd2:12;
--
--	u32 params_fixup:8;
--	u32 converter:8;
--	u32 input_pin_type:1;
--	u32 output_pin_type:1;
--	u32 is_dynamic_in_pin:1;
--	u32 is_dynamic_out_pin:1;
--	u32 is_loadable:1;
--	u32 rsvd3:11;
-+	__u16 module_id;
-+	__u16 instance_id;
-+	__u32 max_mcps;
-+	__u32 mem_pages;
-+	__u32 obs;
-+	__u32 ibs;
-+	__u32 vbus_id;
-+
-+	__u32 max_in_queue:8;
-+	__u32 max_out_queue:8;
-+	__u32 time_slot:8;
-+	__u32 core_id:4;
-+	__u32 rsvd1:4;
-+
-+	__u32 module_type:8;
-+	__u32 conn_type:4;
-+	__u32 dev_type:4;
-+	__u32 hw_conn_type:4;
-+	__u32 rsvd2:12;
-+
-+	__u32 params_fixup:8;
-+	__u32 converter:8;
-+	__u32 input_pin_type:1;
-+	__u32 output_pin_type:1;
-+	__u32 is_dynamic_in_pin:1;
-+	__u32 is_dynamic_out_pin:1;
-+	__u32 is_loadable:1;
-+	__u32 rsvd3:11;
- 
- 	struct skl_dfw_v4_pipe pipe;
- 	struct skl_dfw_v4_module_fmt in_fmt[MAX_IN_QUEUE];
+--- a/sound/firewire/bebob/bebob.c
++++ b/sound/firewire/bebob/bebob.c
+@@ -263,6 +263,8 @@ do_registration(struct work_struct *work
+ error:
+ 	mutex_unlock(&devices_mutex);
+ 	snd_bebob_stream_destroy_duplex(bebob);
++	kfree(bebob->maudio_special_quirk);
++	bebob->maudio_special_quirk = NULL;
+ 	snd_card_free(bebob->card);
+ 	dev_info(&bebob->unit->device,
+ 		 "Sound card registration failed: %d\n", err);
+--- a/sound/firewire/bebob/bebob_maudio.c
++++ b/sound/firewire/bebob/bebob_maudio.c
+@@ -290,10 +290,6 @@ snd_bebob_maudio_special_discover(struct
+ 		bebob->midi_output_ports = 2;
+ 	}
+ end:
+-	if (err < 0) {
+-		kfree(params);
+-		bebob->maudio_special_quirk = NULL;
+-	}
+ 	mutex_unlock(&bebob->mutex);
+ 	return err;
+ }
 
 
