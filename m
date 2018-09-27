@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DE7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5F0C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0702159B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0702159B
+	by mail.kernel.org (Postfix) with ESMTP id 10D4C215E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D4C215E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbeI0P0F (ORCPT
+        id S1728196AbeI0P0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:26:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54994 "EHLO
+        Thu, 27 Sep 2018 11:26:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55004 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbeI0P0E (ORCPT
+        with ESMTP id S1727020AbeI0P0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:26:04 -0400
+        Thu, 27 Sep 2018 11:26:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F026410A4;
-        Thu, 27 Sep 2018 09:08:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA98B10A4;
+        Thu, 27 Sep 2018 09:08:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>,
+        stable@vger.kernel.org, Jiada Wang <jiada_wang@mentor.com>,
+        Timo Wischer <twischer@de.adit-jv.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.18 27/88] ASoC: tas6424: Save last fault register even when clear
-Date:   Thu, 27 Sep 2018 11:03:08 +0200
-Message-Id: <20180927090303.827448741@linuxfoundation.org>
+Subject: [PATCH 4.18 28/88] ASoC: rsnd: fixup not to call clk_get/set under non-atomic
+Date:   Thu, 27 Sep 2018 11:03:09 +0200
+Message-Id: <20180927090303.991331000@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -51,63 +54,198 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew F. Davis <afd@ti.com>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-commit d40e3e9e44db4b3c8777f3b515ba6097ba26e3b2 upstream.
+commit 4d230d12710646788af581ba0155d83ab48b955c upstream.
 
-When there is no fault bit set in a fault register we skip the fault
-reporting section for that register. This also skips over saving that
-registers value. We save the value so we will not double report an
-error, but if an error clears then returns we will also not report it
-as we did not save the all cleared register value. Fix this by saving
-the fault register value in the all clear path.
+Clocking operations clk_get/set_rate, are non-atomic,
+they shouldn't be called in soc_pcm_trigger() which is atomic.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Following issue was found due to execution of clk_get_rate() causes
+sleep in soc_pcm_trigger(), which shouldn't be blocked.
+
+We can reproduce this issue by following
+	> enable CONFIG_DEBUG_ATOMIC_SLEEP=y
+	> compile, and boot
+	> mount -t debugfs none /sys/kernel/debug
+	> while true; do cat /sys/kernel/debug/clk/clk_summary > /dev/null; done &
+	> while true; do aplay xxx; done
+
+This patch adds support to .prepare callback, and moves non-atomic
+clocking operations to it. As .prepare is non-atomic, it is always
+called before trigger_start/trigger_stop.
+
+	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:620
+	in_atomic(): 1, irqs_disabled(): 128, pid: 2242, name: aplay
+	INFO: lockdep is turned off.
+	irq event stamp: 5964
+	hardirqs last enabled at (5963): [<ffff200008e59e40>] mutex_lock_nested+0x6e8/0x6f0
+	hardirqs last disabled at (5964): [<ffff200008e623f0>] _raw_spin_lock_irqsave+0x24/0x68
+	softirqs last enabled at (5502): [<ffff200008081838>] __do_softirq+0x560/0x10c0
+	softirqs last disabled at (5495): [<ffff2000080c2e78>] irq_exit+0x160/0x25c
+	Preemption disabled at:[ 62.904063] [<ffff200008be4d48>] snd_pcm_stream_lock+0xb4/0xc0
+	CPU: 2 PID: 2242 Comm: aplay Tainted: G B C 4.9.54+ #186
+	Hardware name: Renesas Salvator-X board based on r8a7795 (DT)
+	Call trace:
+	[<ffff20000808fe48>] dump_backtrace+0x0/0x37c
+	[<ffff2000080901d8>] show_stack+0x14/0x1c
+	[<ffff2000086f4458>] dump_stack+0xfc/0x154
+	[<ffff2000081134a0>] ___might_sleep+0x57c/0x58c
+	[<ffff2000081136b8>] __might_sleep+0x208/0x21c
+	[<ffff200008e5980c>] mutex_lock_nested+0xb4/0x6f0
+	[<ffff2000087cac74>] clk_prepare_lock+0xb0/0x184
+	[<ffff2000087cb094>] clk_core_get_rate+0x14/0x54
+	[<ffff2000087cb0f4>] clk_get_rate+0x20/0x34
+	[<ffff20000113aa00>] rsnd_adg_ssi_clk_try_start+0x158/0x4f8 [snd_soc_rcar]
+	[<ffff20000113da00>] rsnd_ssi_init+0x668/0x7a0 [snd_soc_rcar]
+	[<ffff200001133ff4>] rsnd_soc_dai_trigger+0x4bc/0xcf8 [snd_soc_rcar]
+	[<ffff200008c1af24>] soc_pcm_trigger+0x2a4/0x2d4
+
+Fixes: e7d850dd10f4 ("ASoC: rsnd: use mod base common method on SSI-parent")
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+[Kuninori: tidyup for upstream]
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/tas6424.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ sound/soc/sh/rcar/core.c |   11 +++++++++++
+ sound/soc/sh/rcar/rsnd.h |    7 +++++++
+ sound/soc/sh/rcar/ssi.c  |   16 ++++++++++------
+ 3 files changed, 28 insertions(+), 6 deletions(-)
 
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -424,8 +424,10 @@ static void tas6424_fault_check_work(str
- 	       TAS6424_FAULT_PVDD_UV |
- 	       TAS6424_FAULT_VBAT_UV;
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -953,12 +953,23 @@ static void rsnd_soc_dai_shutdown(struct
+ 	rsnd_dai_stream_quit(io);
+ }
  
--	if (reg)
-+	if (!reg) {
-+		tas6424->last_fault1 = reg;
- 		goto check_global_fault2_reg;
-+	}
++static int rsnd_soc_dai_prepare(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	struct rsnd_priv *priv = rsnd_dai_to_priv(dai);
++	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
++	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
++
++	return rsnd_dai_call(prepare, io, priv);
++}
++
+ static const struct snd_soc_dai_ops rsnd_soc_dai_ops = {
+ 	.startup	= rsnd_soc_dai_startup,
+ 	.shutdown	= rsnd_soc_dai_shutdown,
+ 	.trigger	= rsnd_soc_dai_trigger,
+ 	.set_fmt	= rsnd_soc_dai_set_fmt,
+ 	.set_tdm_slot	= rsnd_soc_set_dai_tdm_slot,
++	.prepare	= rsnd_soc_dai_prepare,
+ };
  
- 	/*
- 	 * Only flag errors once for a given occurrence. This is needed as
-@@ -461,8 +463,10 @@ check_global_fault2_reg:
- 	       TAS6424_FAULT_OTSD_CH3 |
- 	       TAS6424_FAULT_OTSD_CH4;
+ void rsnd_parse_connect_common(struct rsnd_dai *rdai,
+--- a/sound/soc/sh/rcar/rsnd.h
++++ b/sound/soc/sh/rcar/rsnd.h
+@@ -283,6 +283,9 @@ struct rsnd_mod_ops {
+ 	int (*nolock_stop)(struct rsnd_mod *mod,
+ 		    struct rsnd_dai_stream *io,
+ 		    struct rsnd_priv *priv);
++	int (*prepare)(struct rsnd_mod *mod,
++		       struct rsnd_dai_stream *io,
++		       struct rsnd_priv *priv);
+ };
  
--	if (!reg)
-+	if (!reg) {
-+		tas6424->last_fault2 = reg;
- 		goto check_warn_reg;
-+	}
+ struct rsnd_dai_stream;
+@@ -312,6 +315,7 @@ struct rsnd_mod {
+  * H	0: fallback
+  * H	0: hw_params
+  * H	0: pointer
++ * H	0: prepare
+  */
+ #define __rsnd_mod_shift_nolock_start	0
+ #define __rsnd_mod_shift_nolock_stop	0
+@@ -326,6 +330,7 @@ struct rsnd_mod {
+ #define __rsnd_mod_shift_fallback	28 /* always called */
+ #define __rsnd_mod_shift_hw_params	28 /* always called */
+ #define __rsnd_mod_shift_pointer	28 /* always called */
++#define __rsnd_mod_shift_prepare	28 /* always called */
  
- 	if ((reg & TAS6424_FAULT_OTSD) && !(tas6424->last_fault2 & TAS6424_FAULT_OTSD))
- 		dev_crit(dev, "experienced a global overtemp shutdown\n");
-@@ -497,8 +501,10 @@ check_warn_reg:
- 	       TAS6424_WARN_VDD_OTW_CH3 |
- 	       TAS6424_WARN_VDD_OTW_CH4;
+ #define __rsnd_mod_add_probe		0
+ #define __rsnd_mod_add_remove		0
+@@ -340,6 +345,7 @@ struct rsnd_mod {
+ #define __rsnd_mod_add_fallback		0
+ #define __rsnd_mod_add_hw_params	0
+ #define __rsnd_mod_add_pointer		0
++#define __rsnd_mod_add_prepare		0
  
--	if (!reg)
-+	if (!reg) {
-+		tas6424->last_warn = reg;
- 		goto out;
-+	}
+ #define __rsnd_mod_call_probe		0
+ #define __rsnd_mod_call_remove		0
+@@ -354,6 +360,7 @@ struct rsnd_mod {
+ #define __rsnd_mod_call_pointer		0
+ #define __rsnd_mod_call_nolock_start	0
+ #define __rsnd_mod_call_nolock_stop	1
++#define __rsnd_mod_call_prepare		0
  
- 	if ((reg & TAS6424_WARN_VDD_UV) && !(tas6424->last_warn & TAS6424_WARN_VDD_UV))
- 		dev_warn(dev, "experienced a VDD under voltage condition\n");
+ #define rsnd_mod_to_priv(mod)	((mod)->priv)
+ #define rsnd_mod_name(mod)	((mod)->ops->name)
+--- a/sound/soc/sh/rcar/ssi.c
++++ b/sound/soc/sh/rcar/ssi.c
+@@ -286,7 +286,7 @@ static int rsnd_ssi_master_clk_start(str
+ 	if (rsnd_ssi_is_multi_slave(mod, io))
+ 		return 0;
+ 
+-	if (ssi->usrcnt > 1) {
++	if (ssi->rate) {
+ 		if (ssi->rate != rate) {
+ 			dev_err(dev, "SSI parent/child should use same rate\n");
+ 			return -EINVAL;
+@@ -431,7 +431,6 @@ static int rsnd_ssi_init(struct rsnd_mod
+ 			 struct rsnd_priv *priv)
+ {
+ 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
+-	int ret;
+ 
+ 	if (!rsnd_ssi_is_run_mods(mod, io))
+ 		return 0;
+@@ -440,10 +439,6 @@ static int rsnd_ssi_init(struct rsnd_mod
+ 
+ 	rsnd_mod_power_on(mod);
+ 
+-	ret = rsnd_ssi_master_clk_start(mod, io);
+-	if (ret < 0)
+-		return ret;
+-
+ 	rsnd_ssi_config_init(mod, io);
+ 
+ 	rsnd_ssi_register_setup(mod);
+@@ -846,6 +841,13 @@ static int rsnd_ssi_pio_pointer(struct r
+ 	return 0;
+ }
+ 
++static int rsnd_ssi_prepare(struct rsnd_mod *mod,
++			    struct rsnd_dai_stream *io,
++			    struct rsnd_priv *priv)
++{
++	return rsnd_ssi_master_clk_start(mod, io);
++}
++
+ static struct rsnd_mod_ops rsnd_ssi_pio_ops = {
+ 	.name	= SSI_NAME,
+ 	.probe	= rsnd_ssi_common_probe,
+@@ -858,6 +860,7 @@ static struct rsnd_mod_ops rsnd_ssi_pio_
+ 	.pointer = rsnd_ssi_pio_pointer,
+ 	.pcm_new = rsnd_ssi_pcm_new,
+ 	.hw_params = rsnd_ssi_hw_params,
++	.prepare = rsnd_ssi_prepare,
+ };
+ 
+ static int rsnd_ssi_dma_probe(struct rsnd_mod *mod,
+@@ -934,6 +937,7 @@ static struct rsnd_mod_ops rsnd_ssi_dma_
+ 	.pcm_new = rsnd_ssi_pcm_new,
+ 	.fallback = rsnd_ssi_fallback,
+ 	.hw_params = rsnd_ssi_hw_params,
++	.prepare = rsnd_ssi_prepare,
+ };
+ 
+ int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod)
 
 
