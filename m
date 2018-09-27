@@ -6,98 +6,84 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D628C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF65C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:51:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5AC221533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:51:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5AC221533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 72B6E21533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:51:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B6E21533
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeI0UJc (ORCPT
+        id S1727706AbeI0UKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:09:32 -0400
-Received: from mga07.intel.com ([134.134.136.100]:4917 "EHLO mga07.intel.com"
+        Thu, 27 Sep 2018 16:10:00 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51910 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbeI0UJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:09:32 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 06:51:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
-   d="scan'208";a="93846913"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.69])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Sep 2018 06:51:00 -0700
-Date:   Thu, 27 Sep 2018 16:50:59 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Safford <david.safford@ge.com>
-Subject: Re: [PATCH v2, RESEND 0/3] tpm: retrieve digest size of unknown
- algorithms from TPM
-Message-ID: <20180927135059.GD8242@linux.intel.com>
-References: <20180917093820.20500-1-roberto.sassu@huawei.com>
- <1537972840.3459.6.camel@linux.ibm.com>
- <1537985014.3459.24.camel@linux.ibm.com>
- <8bbff5b1-f4ba-4e38-57fc-05d9ddabea5c@huawei.com>
+        id S1727240AbeI0UKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 16:10:00 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 6L82x237XJqj; Thu, 27 Sep 2018 15:51:37 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC7FB00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:fb00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E96D11EC0104;
+        Thu, 27 Sep 2018 15:51:36 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 15:51:39 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        David Wang <davidwang@zhaoxin.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>, He Chen <he.chen@linux.intel.com>,
+        Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Piotr Luc <Piotr.Luc@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v14 04/19] x86/cpufeatures: Add SGX feature bits
+Message-ID: <20180927135139.GB19687@zn.tnic>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-5-jarkko.sakkinen@linux.intel.com>
+ <20180925164854.GF23986@zn.tnic>
+ <20180926111139.GA12037@linux.intel.com>
+ <20180926113617.GD5584@zn.tnic>
+ <20180927131642.GE5436@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8bbff5b1-f4ba-4e38-57fc-05d9ddabea5c@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180927131642.GE5436@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 08:50:14AM +0200, Roberto Sassu wrote:
-> On 9/26/2018 8:03 PM, Mimi Zohar wrote:
-> > On Wed, 2018-09-26 at 10:40 -0400, Mimi Zohar wrote:
-> > > On Mon, 2018-09-17 at 11:38 +0200, Roberto Sassu wrote:
-> > > > Resending to maintainer with correct mailing lists in CC.
-> > > > 
-> > > > The TPM driver currently relies on the crypto subsystem to determine the
-> > > > digest size of supported TPM algorithms. In the future, TPM vendors might
-> > > > implement new algorithms in their chips, and those algorithms might not
-> > > > be supported by the crypto subsystem.
-> > > > 
-> > > > Usually, vendors provide patches for the new hardware, and likely
-> > > > the crypto subsystem will be updated before the new algorithm is
-> > > > introduced. However, old kernels might be updated later, after patches
-> > > > are included in the mainline kernel. This would leave the opportunity
-> > > > for attackers to misuse PCRs, as PCR banks with an unknown algorithm
-> > > > are not extended.
-> > > > 
-> > > > This patch set provides a long term solution for this issue. If a TPM
-> > > > algorithm is not known by the crypto subsystem, the TPM driver retrieves
-> > > > the digest size from the TPM with a PCR read. All the PCR banks are
-> > > > extended, even if the algorithm is not yet supported by the crypto
-> > > > subsystem.
-> > > 
-> > > Other than checking the digest size before copying the pcrread buffer,
-> > > the patches look good.  Please add my Ack on all 3 patches.
-> > > 
-> > > (New address) Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> > 
-> > I've reviewed, and am currently running with these patches.
-> > 
-> > Even if the IMA changes were in a separate patch, we wouldn't be able
-> > to break up the patch set anyway.  Jarkko, I'd appreciate your
-> > carrying the entire patch set.
-> > 
-> > Roberto, a similar change needs to be made for tpm_pcr_extend.  Are
-> > you planning on posting those changes as well?
-> 
-> Yes, I was planning to send the patch after this patch set is accepted.
-> 
-> Roberto
+On Thu, Sep 27, 2018 at 04:16:42PM +0300, Jarkko Sakkinen wrote:
+> Still kind of leaves me puzzled about the situation :-) Why this wasn't
+> used for example to replace detect_vmx_virtcap()?
 
-Mimi, I can carry it yes.
+I don't understand - detect_vmx_virtcap() is setting X86_FEATURE bits
+based on MSR settings. get_scattered_cpuid_leaf() is regenerating a
+CPUID leaf from the scattered bits.
 
-/Jarkko
+Looks like apples and oranges to me...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
