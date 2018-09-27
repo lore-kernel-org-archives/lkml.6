@@ -2,85 +2,110 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76727C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE4CC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A00A21710
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:32:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A00A21710
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E84E921710
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E84E921710
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbeI1Bwb (ORCPT
+        id S1728717AbeI1Bwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:52:31 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46358 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbeI1Bwb (ORCPT
+        Thu, 27 Sep 2018 21:52:47 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:59492 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728582AbeI1Bwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:52:31 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k64-v6so3189482oia.13;
-        Thu, 27 Sep 2018 12:32:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tnSYaK0DUOE5vwk8CXbgIKk4JjzqMvOiW++MdLQZSJ0=;
-        b=NS4cGzTBsCdIZIfUuy2SbK8dPibTJhuK9BD6bCvY5N8E2yTv87yjkSG/IC5/bB9Tp2
-         vrAMCP1b/kdkj4Etmn6ZzlwnctKRpDe02nDecc4MFHTbeb4rZ9zJwz8g0NW3O5oO5xON
-         ZM0hL/4I8EVyCOk9Bco8Nq+GhaYyWxh+bH8gIkJRShPIIfGWVu5tKyKHH0IIhP+7NQgV
-         mlTKlqGreKCi3lB1Uog5uKQcUBMgoE5dPGHPq3SQ+AHp5s0bYC+KuBZlPHNDShbloWxD
-         Vj1RgjCtcOIKKX6w4+CpzLFUtPzoA67A2JCiLi0LBSVE3rTwk1Z7EDhbmOy00GW706UE
-         6ioQ==
-X-Gm-Message-State: ABuFfoiz2JnlQIanfW+EDAHQ0SiYLdNuA77LUnfCsHN+bCnwL668zN/W
-        wZzkq/WHxRf16dG3/0JSmGEQYJaRMxEu
-X-Google-Smtp-Source: ACcGV60TmkVwBvyfbPHx9Z793dhCXq0b3Vp8Jkc/cxewLDo4IcxfS1BazWHaS0g8+C4aXg8fqpt/zg==
-X-Received: by 2002:aca:dad7:: with SMTP id r206-v6mr4054236oig.271.1538076761491;
-        Thu, 27 Sep 2018 12:32:41 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s25-v6sm1130411ote.35.2018.09.27.12.32.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 12:32:40 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 14:32:40 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc:     sudeep.holla@arm.com, oss@buserror.net,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
-        udit.kumar@nxp.com, linux@armlinux.org.uk,
-        Vabhav Sharma <vabhav.sharma@nxp.com>, V.Sethi@nxp.com
-Subject: Re: [PATCH v3 1/6] dt-bindings: arm64: add compatible for LX2160A
-Message-ID: <20180927193240.GA29253@bogus>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
- <1537747741-6245-2-git-send-email-vabhav.sharma@nxp.com>
+        Thu, 27 Sep 2018 21:52:47 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id AA20B634C7E;
+        Thu, 27 Sep 2018 22:32:56 +0300 (EEST)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1g5c1w-0000Eq-Fr; Thu, 27 Sep 2018 22:32:56 +0300
+Date:   Thu, 27 Sep 2018 22:32:56 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 5/7] [media] ad5820: Add support for acpi autoload
+Message-ID: <20180927193256.z3n5eaqroomrv62i@valkosipuli.retiisi.org.uk>
+References: <20180920204751.29117-1-ricardo.ribalda@gmail.com>
+ <20180920204751.29117-5-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537747741-6245-2-git-send-email-vabhav.sharma@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180920204751.29117-5-ricardo.ribalda@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 05:38:56 +0530, Vabhav Sharma wrote:
-> Add compatible for LX2160A SoC,QDS and RDB board
-> 
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.txt | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
+Hi Ricardo,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Thu, Sep 20, 2018 at 10:47:49PM +0200, Ricardo Ribalda Delgado wrote:
+> Allow module autoloading of ad5820 ACPI devices.
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>  drivers/media/i2c/ad5820.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
+> index e461d36201a4..5d1185e7f78d 100644
+> --- a/drivers/media/i2c/ad5820.c
+> +++ b/drivers/media/i2c/ad5820.c
+> @@ -22,6 +22,7 @@
+>   * General Public License for more details.
+>   */
+>  
+> +#include <linux/acpi.h>
+>  #include <linux/errno.h>
+>  #include <linux/i2c.h>
+>  #include <linux/kernel.h>
+> @@ -380,6 +381,15 @@ static const struct of_device_id ad5820_of_table[] = {
+>  MODULE_DEVICE_TABLE(of, ad5820_of_table);
+>  #endif
+>  
+> +#ifdef CONFIG_ACPI
+> +static const struct acpi_device_id ad5820_acpi_ids[] = {
+> +	{ "AD5820" },
+
+This is not a valid ACPI _HID. Is there a need to add ACPI support for the
+chip this way?
+
+> +	{ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(acpi, ad5820_acpi_ids);
+> +#endif
+> +
+>  static SIMPLE_DEV_PM_OPS(ad5820_pm, ad5820_suspend, ad5820_resume);
+>  
+>  static struct i2c_driver ad5820_i2c_driver = {
+> @@ -387,6 +397,7 @@ static struct i2c_driver ad5820_i2c_driver = {
+>  		.name	= AD5820_NAME,
+>  		.pm	= &ad5820_pm,
+>  		.of_match_table = of_match_ptr(ad5820_of_table),
+> +		.acpi_match_table = ACPI_PTR(ad5820_acpi_ids),
+>  	},
+>  	.probe		= ad5820_probe,
+>  	.remove		= ad5820_remove,
+
+-- 
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
