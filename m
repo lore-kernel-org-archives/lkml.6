@@ -2,193 +2,277 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3A3C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB5DC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5709921580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:16:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5709921580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C096221580
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:17:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C096221580
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeI0ReG (ORCPT
+        id S1727514AbeI0RfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:34:06 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38094 "EHLO inva020.nxp.com"
+        Thu, 27 Sep 2018 13:35:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36558 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbeI0ReG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:34:06 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8034E1A0023;
-        Thu, 27 Sep 2018 13:16:17 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E2C1D1A00A1;
-        Thu, 27 Sep 2018 13:16:12 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 49C0D402DB;
-        Thu, 27 Sep 2018 19:16:07 +0800 (SGT)
-From:   Yangbo Lu <yangbo.lu@nxp.com>
-To:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [PATCH 1/2] net: dpaa2: move DPAA2 PTP driver out of staging/
-Date:   Thu, 27 Sep 2018 19:12:27 +0800
-Message-Id: <20180927111228.46118-1-yangbo.lu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727090AbeI0RfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 13:35:17 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3B279309179F;
+        Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BAFB3091384;
+        Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 11642181A12E;
+        Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 07:17:30 -0400 (EDT)
+From:   Vladis Dronov <vdronov@redhat.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+d3402c47f680ff24b29c@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Message-ID: <1439650590.16502818.1538047050900.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CACT4Y+a8_4=dmZavdmZjPOraqYAtjBB228TjurbwLKSgJ9+J7Q@mail.gmail.com>
+References: <000000000000565ab805768bf006@google.com> <125732064.15444205.1537718529926.JavaMail.zimbra@redhat.com> <CACT4Y+Z1G_QMG_PQu_ZwHsyhwyh_DBOG4mX9n=va08w3Z7j02Q@mail.gmail.com> <1040580049.15456466.1537740558279.JavaMail.zimbra@redhat.com> <CAG_fn=WwmJONmipmqdZkNj8K0Z-ZRmEiCvG4qt_fHknGYQe5Cg@mail.gmail.com> <CACT4Y+a8_4=dmZavdmZjPOraqYAtjBB228TjurbwLKSgJ9+J7Q@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in memcmp (2)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.40.5.28, 10.4.195.16]
+Thread-Topic: KMSAN: uninit-value in memcmp (2)
+Thread-Index: mEownoKM9RqC+IXDKx3Xkk2onzKxJA==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to move DPAA2 PTP driver out of staging/
-since the dpaa2-eth had been moved out.
+Hello, Dmirty,
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
----
- drivers/net/ethernet/freescale/Kconfig             |    9 +--------
- drivers/net/ethernet/freescale/dpaa2/Kconfig       |   15 +++++++++++++++
- drivers/net/ethernet/freescale/dpaa2/Makefile      |    6 ++++--
- .../ethernet/freescale/dpaa2}/dprtc-cmd.h          |    0
- .../rtc => net/ethernet/freescale/dpaa2}/dprtc.c   |    0
- .../rtc => net/ethernet/freescale/dpaa2}/dprtc.h   |    0
- .../rtc => net/ethernet/freescale/dpaa2}/rtc.c     |    0
- .../rtc => net/ethernet/freescale/dpaa2}/rtc.h     |    0
- drivers/staging/fsl-dpaa2/Kconfig                  |    8 --------
- drivers/staging/fsl-dpaa2/Makefile                 |    1 -
- drivers/staging/fsl-dpaa2/rtc/Makefile             |    7 -------
- 11 files changed, 20 insertions(+), 26 deletions(-)
- create mode 100644 drivers/net/ethernet/freescale/dpaa2/Kconfig
- rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/dprtc-cmd.h (100%)
- rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/dprtc.c (100%)
- rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/dprtc.h (100%)
- rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/rtc.c (100%)
- rename drivers/{staging/fsl-dpaa2/rtc => net/ethernet/freescale/dpaa2}/rtc.h (100%)
- delete mode 100644 drivers/staging/fsl-dpaa2/rtc/Makefile
+Thank you for the explanation of how syzkaller/syzbot works in this and
+other emails. I understand that is it a complicated task to determine
+and categorize bugs based on just crash dump and messages, and syzkaller
+does a great job of doing so.
 
-diff --git a/drivers/net/ethernet/freescale/Kconfig b/drivers/net/ethernet/freescale/Kconfig
-index 7a30276..d3a62bc 100644
---- a/drivers/net/ethernet/freescale/Kconfig
-+++ b/drivers/net/ethernet/freescale/Kconfig
-@@ -96,13 +96,6 @@ config GIANFAR
- 	  on the 8540.
- 
- source "drivers/net/ethernet/freescale/dpaa/Kconfig"
--
--config FSL_DPAA2_ETH
--	tristate "Freescale DPAA2 Ethernet"
--	depends on FSL_MC_BUS && FSL_MC_DPIO
--	depends on NETDEVICES && ETHERNET
--	---help---
--	  Ethernet driver for Freescale DPAA2 SoCs, using the
--	  Freescale MC bus driver
-+source "drivers/net/ethernet/freescale/dpaa2/Kconfig"
- 
- endif # NET_VENDOR_FREESCALE
-diff --git a/drivers/net/ethernet/freescale/dpaa2/Kconfig b/drivers/net/ethernet/freescale/dpaa2/Kconfig
-new file mode 100644
-index 0000000..44c5c3a
---- /dev/null
-+++ b/drivers/net/ethernet/freescale/dpaa2/Kconfig
-@@ -0,0 +1,15 @@
-+config FSL_DPAA2_ETH
-+	tristate "Freescale DPAA2 Ethernet"
-+	depends on FSL_MC_BUS && FSL_MC_DPIO
-+	depends on NETDEVICES && ETHERNET
-+	help
-+	  Ethernet driver for Freescale DPAA2 SoCs, using the
-+	  Freescale MC bus driver
-+
-+config FSL_DPAA2_PTP_CLOCK
-+	tristate "Freescale DPAA2 PTP Clock"
-+	depends on FSL_DPAA2_ETH && POSIX_TIMERS
-+	select PTP_1588_CLOCK
-+	help
-+	  This driver adds support for using the DPAA2 1588 timer module
-+	  as a PTP clock.
-diff --git a/drivers/net/ethernet/freescale/dpaa2/Makefile b/drivers/net/ethernet/freescale/dpaa2/Makefile
-index 9315ecd..312e37f 100644
---- a/drivers/net/ethernet/freescale/dpaa2/Makefile
-+++ b/drivers/net/ethernet/freescale/dpaa2/Makefile
-@@ -3,9 +3,11 @@
- # Makefile for the Freescale DPAA2 Ethernet controller
- #
- 
--obj-$(CONFIG_FSL_DPAA2_ETH) += fsl-dpaa2-eth.o
-+obj-$(CONFIG_FSL_DPAA2_ETH)		+= fsl-dpaa2-eth.o
-+obj-$(CONFIG_FSL_DPAA2_PTP_CLOCK)	+= fsl-dpaa2-rtc.o
- 
--fsl-dpaa2-eth-objs    := dpaa2-eth.o dpaa2-ethtool.o dpni.o
-+fsl-dpaa2-eth-objs	:= dpaa2-eth.o dpaa2-ethtool.o dpni.o
-+fsl-dpaa2-rtc-objs	:= rtc.o dprtc.o
- 
- # Needed by the tracing framework
- CFLAGS_dpaa2-eth.o := -I$(src)
-diff --git a/drivers/staging/fsl-dpaa2/rtc/dprtc-cmd.h b/drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
-similarity index 100%
-rename from drivers/staging/fsl-dpaa2/rtc/dprtc-cmd.h
-rename to drivers/net/ethernet/freescale/dpaa2/dprtc-cmd.h
-diff --git a/drivers/staging/fsl-dpaa2/rtc/dprtc.c b/drivers/net/ethernet/freescale/dpaa2/dprtc.c
-similarity index 100%
-rename from drivers/staging/fsl-dpaa2/rtc/dprtc.c
-rename to drivers/net/ethernet/freescale/dpaa2/dprtc.c
-diff --git a/drivers/staging/fsl-dpaa2/rtc/dprtc.h b/drivers/net/ethernet/freescale/dpaa2/dprtc.h
-similarity index 100%
-rename from drivers/staging/fsl-dpaa2/rtc/dprtc.h
-rename to drivers/net/ethernet/freescale/dpaa2/dprtc.h
-diff --git a/drivers/staging/fsl-dpaa2/rtc/rtc.c b/drivers/net/ethernet/freescale/dpaa2/rtc.c
-similarity index 100%
-rename from drivers/staging/fsl-dpaa2/rtc/rtc.c
-rename to drivers/net/ethernet/freescale/dpaa2/rtc.c
-diff --git a/drivers/staging/fsl-dpaa2/rtc/rtc.h b/drivers/net/ethernet/freescale/dpaa2/rtc.h
-similarity index 100%
-rename from drivers/staging/fsl-dpaa2/rtc/rtc.h
-rename to drivers/net/ethernet/freescale/dpaa2/rtc.h
-diff --git a/drivers/staging/fsl-dpaa2/Kconfig b/drivers/staging/fsl-dpaa2/Kconfig
-index 59aaae7..991e154 100644
---- a/drivers/staging/fsl-dpaa2/Kconfig
-+++ b/drivers/staging/fsl-dpaa2/Kconfig
-@@ -16,11 +16,3 @@ config FSL_DPAA2_ETHSW
- 	---help---
- 	Driver for Freescale DPAA2 Ethernet Switch. Select
- 	BRIDGE to have support for bridge tools.
--
--config FSL_DPAA2_PTP_CLOCK
--	tristate "Freescale DPAA2 PTP Clock"
--	depends on FSL_DPAA2_ETH && POSIX_TIMERS
--	select PTP_1588_CLOCK
--	help
--	  This driver adds support for using the DPAA2 1588 timer module
--	  as a PTP clock.
-diff --git a/drivers/staging/fsl-dpaa2/Makefile b/drivers/staging/fsl-dpaa2/Makefile
-index 464f242..c92ab98 100644
---- a/drivers/staging/fsl-dpaa2/Makefile
-+++ b/drivers/staging/fsl-dpaa2/Makefile
-@@ -3,4 +3,3 @@
- #
- 
- obj-$(CONFIG_FSL_DPAA2_ETHSW)		+= ethsw/
--obj-$(CONFIG_FSL_DPAA2_PTP_CLOCK)	+= rtc/
-diff --git a/drivers/staging/fsl-dpaa2/rtc/Makefile b/drivers/staging/fsl-dpaa2/rtc/Makefile
-deleted file mode 100644
-index 5468da0..0000000
---- a/drivers/staging/fsl-dpaa2/rtc/Makefile
-+++ /dev/null
-@@ -1,7 +0,0 @@
--#
--# Makefile for the Freescale DPAA2 PTP clock
--#
--
--obj-$(CONFIG_FSL_DPAA2_PTP_CLOCK) += dpaa2-rtc.o
--
--dpaa2-rtc-objs := rtc.o dprtc.o
--- 
-1.7.1
+> Re __hw_addr_add_ex bug, as Alex noted the crash was detected _after_
+> the fixing commit went in. So it's something new and different and
+> can't be fixed by the older commit.
 
+Indeed, you're right, there is another issue with tun/tap devices which
+leads to this bug. I've posted a patch (https://lkml.org/lkml/2018/9/26/416)
+to fix it.
+
+I hope I did not do much damage, reporting previous fix as a fix for this bug,
+as syzkaller will probably create another "KMSAN: uninit-value in <...>"
+report.
+
+Best regards,
+Vladis Dronov | Red Hat, Inc. | Product Security Engineer
+
+----- Original Message -----
+> From: "Dmitry Vyukov" <dvyukov@google.com>
+> To: "Alexander Potapenko" <glider@google.com>
+> Cc: "Vladis Dronov" <vdronov@redhat.com>, "syzbot" <syzbot+d3402c47f680ff24b29c@syzkaller.appspotmail.com>,
+> "syzkaller-bugs" <syzkaller-bugs@googlegroups.com>, "David Miller" <davem@davemloft.net>, "Eric Dumazet"
+> <edumazet@google.com>, "LKML" <linux-kernel@vger.kernel.org>, "Networking" <netdev@vger.kernel.org>, "sunlianwen"
+> <sunlw.fnst@cn.fujitsu.com>
+> Sent: Monday, September 24, 2018 11:39:08 AM
+> Subject: Re: KMSAN: uninit-value in memcmp (2)
+> 
+> On Mon, Sep 24, 2018 at 8:53 AM, Alexander Potapenko <glider@google.com>
+> wrote:
+> > On Mon, Sep 24, 2018 at 12:09 AM Vladis Dronov <vdronov@redhat.com> wrote:
+> >>
+> >> Hello, Dmirty,
+> >>
+> >> Thank you for the reply. Can we please, discuss this further?
+> > Hi Vladis,
+> >> > You can see on dashboard that the last crash
+> >> > for the second version (2) happened just few days ago. So this is a
+> >> > different bug.
+> > FWIW I've just double-checked that the reproducer provided by
+> > syzkaller in the original message still triggers the report from the
+> > original message in the latest KMSAN tree (which already contains the
+> > __hw_addr_add_ex() fix from April).
+> >> Well... yes and no. When I was looking at this bug (bug?id=088efeac32fd) I
+> >> was looking
+> >> at the report at "2018/05/09 18:55"
+> >> (https://syzkaller.appspot.com/text?tag=CrashReport&x=141b707b800000),
+> >> since it was the only report with a reproducer. This was my error.
+> >>
+> >> The error and the call trace in this report are:
+> >>
+> >> >>>
+> >> BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
+> >> CPU: 0 PID: 38 Comm: kworker/0:1 Not tainted 4.17.0-rc3+ #88
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> Google 01/01/2011
+> >> Workqueue: ipv6_addrconf addrconf_dad_work
+> >> Call Trace:
+> >>  __dump_stack lib/dump_stack.c:77 [inline]
+> >>  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+> >>  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+> >>  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+> >>  memcmp+0x119/0x180 lib/string.c:861
+> >>  __hw_addr_add_ex net/core/dev_addr_lists.c:61 [inline]
+> >>  __dev_mc_add+0x1fc/0x900 net/core/dev_addr_lists.c:670
+> >>  dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
+> >>  igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
+> >>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
+> >>  addrconf_join_solict net/ipv6/addrconf.c:2103 [inline]
+> >>  addrconf_dad_begin net/ipv6/addrconf.c:3853 [inline]
+> >>  addrconf_dad_work+0x462/0x2a20 net/ipv6/addrconf.c:3979
+> >>  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+> >>  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
+> >>  kthread+0x539/0x720 kernel/kthread.c:239
+> >>  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
+> >>
+> >> Local variable description: ----buf@igmp6_group_added
+> >> Variable was created at:
+> >>  igmp6_group_added+0x4a/0xa00 net/ipv6/mcast.c:650
+> >>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
+> >> <<<
+> >>
+> >> It is the same like in bug?id=3887c0d99aecb27d085180c5222d245d08a30806
+> >> which, after some more test, made me believe these bugs are duplicate
+> >> and are fixed by the same commit.
+> >>
+> >> But let's look at another report at "2018/09/12 21:00"
+> >> (https://syzkaller.appspot.com/text?tag=CrashReport&x=14f99b71400000)
+> >> at the bug (bug?id=088efeac32fd), the one you've mentioned as
+> >> "the last crash for the second version (2) happened just few days ago".
+> >>
+> >> Its error and the call trace are completely different:
+> >>
+> >> >>>
+> >> BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
+> >> CPU: 0 PID: 6107 Comm: syz-executor4 Not tainted 4.19.0-rc3+ #45
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> Google 01/01/2011
+> >> Call Trace:
+> >>  __dump_stack lib/dump_stack.c:77 [inline]
+> >>  dump_stack+0x14b/0x190 lib/dump_stack.c:113
+> >>  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+> >>  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+> >>  memcmp+0x11d/0x180 lib/string.c:863
+> >>  dev_uc_add_excl+0x165/0x7b0 net/core/dev_addr_lists.c:464
+> >>  ndo_dflt_fdb_add net/core/rtnetlink.c:3463 [inline]
+> >>  rtnl_fdb_add+0x1081/0x1270 net/core/rtnetlink.c:3558
+> >>  rtnetlink_rcv_msg+0xa0b/0x1530 net/core/rtnetlink.c:4715
+> >>  netlink_rcv_skb+0x36e/0x5f0 net/netlink/af_netlink.c:2454
+> >>  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4733
+> >>  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+> >>  netlink_unicast+0x1638/0x1720 net/netlink/af_netlink.c:1343
+> >>  netlink_sendmsg+0x1205/0x1290 net/netlink/af_netlink.c:1908
+> >>  sock_sendmsg_nosec net/socket.c:621 [inline]
+> >>  sock_sendmsg net/socket.c:631 [inline]
+> >> ...
+> >> Uninit was created at:
+> >> ...
+> >>  slab_post_alloc_hook mm/slab.h:446 [inline]
+> >>  slab_alloc_node mm/slub.c:2718 [inline]
+> >>  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4351
+> >>  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+> >>  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
+> >>  alloc_skb include/linux/skbuff.h:996 [inline]
+> >>  netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
+> >>  netlink_sendmsg+0xb49/0x1290 net/netlink/af_netlink.c:1883
+> >>  sock_sendmsg_nosec net/socket.c:621 [inline]
+> >>  sock_sendmsg net/socket.c:631 [inline]
+> >>  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+> >> <<<
+> >>
+> >> This is a different bug. How come these 2 different reports for 2
+> >> different
+> >> bugs have ended in the same syzkaller report (bug?id=088efeac32fd) ?
+> >
+> > I suspect this is because syzbot used the top stack frame as the
+> > report signature.
+> > There's a mechanism to ignore frames like memcmp() in the reports, not
+> > sure why didn't it work in this case (maybe it just wasn't in place at
+> > the time the report happened).
+> >> One bug is fixed by the "net: fix uninit-value in __hw_addr_add_ex()"
+> >> commit,
+> >> the second one is not, but they are still in the same syzkaller report.
+> >>
+> >> This was the reason of my confusion. I'm not sure how to fix this. If it
+> >> is possible,
+> >> probably we need to cancel/revoke "#syz fix: net: fix uninit-value in
+> >> __hw_addr_add_ex()"
+> >> for this syzkaller report (bug?id=088efeac32fd). And then "split" it into
+> >> 2 or
+> >> more different reports, but I'm not sure if this is possible.
+> >>
+> >> Probably, syzkaller needs to look deeper into the KMSAN reports to
+> >> differentiate
+> >> KMSAN errors happening because of different reasons.
+> >>
+> >> > On Sun, Sep 23, 2018 at 6:02 PM, Vladis Dronov <vdronov@redhat.com>
+> >> > wrote:
+> >> > > #syz fix: net: fix uninit-value in __hw_addr_add_ex()
+> >> >
+> >> > Hi Vladis,
+> >> >
+> >> > This can be fixed with "net: fix uninit-value in __hw_addr_add_ex()".
+> >> > That commit landed in April, syzbot waited till the commit reached all
+> >> > tested trees, and then closed the bug.
+> >> > But the similar bug continued to happen, so syzbot created second
+> >> > version of this bug (2). You can see on dashboard that the last crash
+> >> > for the second version (2) happened just few days ago. So this is a
+> >> > different bug.
+> 
+> 
+> Precisely discriminating bugs (root causes) bases on crash text is
+> generally undecidable problem, even for humans. We even can have
+> literally equal crash texts, which are still different bugs. And we
+> can have significantly differently looking crash texts, which are
+> actually caused by the same root cause. syzbot extracts some
+> "identity" string for each crash and than uses that string to
+> discriminate crashes and sort them into bins. This identity string is
+> what you see in email subject and bug title on dashboard. This method
+> can have both false positives and false negatives, but works
+> reasonably well in most cases and looks like the best practical
+> option.
+> 
+> For this exact instance (memcmp) we actually improved the analysis
+> logic recently:
+> https://github.com/google/syzkaller/commit/0e29942f77715486995d996f80f82742812d75a2#diff-abe1515f011fad2659ff218f9eea9ae1
+> But this crash was analyzed and reported before the change. So if this
+> crash happens again it should be reported as "in __hw_addr_add_ex"
+> now.
+> 
+> Re __hw_addr_add_ex bug, as Alex noted the crash was detected _after_
+> the fixing commit went in. So it's something new and different and
+> can't be fixed by the older commit.
+> 
+> There are no general, single guideline as to what to do when several
+> different bugs glued together into a single bug. Fixing at least one
+> of them (any) in the context of the bug is good, fixing both is good
+> too. When/if a bug is closed, new occurrences of similar crashes (the
+> same identity string) will lead to creation of a new bug. So if we fix
+> only one and close the bug, eventually the second one will lead to a
+> new bug (won't be lost), now dedicated to this second crash.
+> 
+> Now syzbot thinks that this bug is fixed/closed:
+> https://syzkaller.appspot.com/bug?extid=d3402c47f680ff24b29c
+> There is specifically no "undo" functionality, because it's inherently
+> racy with creation of a new version of this bugs by new crashes. So if
+> of these crashes will happen again, syzbot will open new bugs (now
+> with better discriminated titles). We can wait for that. Or we can
+> submit new fixes without waiting for new syzbot bugs (adding
+> Reported-by to new commits referencing this bug should not do any
+> harm).
+> 
+> Hope this clarifies things a bit.
+> 
+> Thanks
