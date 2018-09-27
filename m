@@ -2,176 +2,124 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB88C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FFEC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90245206B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:05:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+qEQKI7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90245206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 8CFA0216FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:05:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CFA0216FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbeI0WYK (ORCPT
+        id S1728451AbeI0WYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:24:10 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37040 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbeI0WYJ (ORCPT
+        Thu, 27 Sep 2018 18:24:20 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45286 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727541AbeI0WYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:24:09 -0400
-Received: by mail-pg1-f195.google.com with SMTP id c10-v6so2300169pgq.4;
-        Thu, 27 Sep 2018 09:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kxhM6P1q7B1Pqh4UixRKhCOxhTru1MCiwAqmDiNMfqA=;
-        b=E+qEQKI7eU2q91kuqh74rtzlPRB359CyNKEBSdyiqSdyf5PWoTdFI3cN7sziubiSX/
-         NHeMd4JudNdTn/rjGDedaEkhPeHJKnbnrBnaC3WqlAgZMqHaTQnQCwI3/RcFwxESHHBG
-         HPjTGHyPVTzvwFMqLsKIED6VxtLfBr0BL+m6buO7+5UocPPLDN3/CPXaa7Nj5F47KS2O
-         rYrH7MaSWUcVZSsQCwIeQTr3AYa9joFXKsX0sV1FN4HR/aoisnZ03IqVhBxkuLze6PQ8
-         aJ85BlvovyfiQLuRcn9wr/k8Ji9I82qKZIETk2HdZ85Rox8DyeDlxDozCjRfglX6xas0
-         qftQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kxhM6P1q7B1Pqh4UixRKhCOxhTru1MCiwAqmDiNMfqA=;
-        b=snLIPhHT6KNR61DZ1mn9h3nIW9mMm9pTNoai7P0SKbwzp2iHxguaiw1FrO9AViZ/Mq
-         owxSMjZ7mJGygjm+02h4WcAmp+QRVPMgsUPwg9TvlnKDgES+ywrvoA65MKmntne1eFOQ
-         ULacLqmbfY7EdLyNm1yd/z1c7D88aWpcu6HFljkuUmhTvMXqot3B2gpvCKKQ37ClMYHM
-         pXIunYDqcmktl1HduunWC6aSuW0mzb9R2HaggnGyTCkVCTYPYg/GH1+FAwCVEo+tyUm4
-         tUm6DNR1+E3NKMH6SUZnWpTS7vE5tljw9QqmFW78/lUNgB/IjgOQpjtOvKfX3iFILQbr
-         eJLQ==
-X-Gm-Message-State: ABuFfogfnBOzSk1C94eTuy9wPxQRd+nnDOOVkVm+tTtNyXf/ALEtcYcn
-        WGkJvRh8dedUrzSU269Xrck=
-X-Google-Smtp-Source: ACcGV6023fxl3jPjN53Q5EgbxZ4pG9tS26umS4zgUHVIh91WC3KW2OheXNxboruG8i5cmr5XzcN1zg==
-X-Received: by 2002:a17:902:28a8:: with SMTP id f37-v6mr11710916plb.264.1538064312070;
-        Thu, 27 Sep 2018 09:05:12 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id t22-v6sm6342903pfk.141.2018.09.27.09.05.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 09:05:10 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 09:05:09 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     jdelvare@suse.com, corbet@lwn.net, afd@ti.com,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: ina3221: Add enable sysfs nodes
-Message-ID: <20180927160509.GA18064@roeck-us.net>
-References: <20180926064245.4091-1-nicoleotsuka@gmail.com>
- <20180926064245.4091-3-nicoleotsuka@gmail.com>
- <0cfe55e1-10d8-ac1f-8b6e-73777074a219@roeck-us.net>
- <20180926180243.GA6329@Asurada-Nvidia.nvidia.com>
- <20180926195817.GA19695@roeck-us.net>
- <20180926202519.GB10595@Asurada-Nvidia.nvidia.com>
- <20180926204455.GA17035@roeck-us.net>
- <20180926215504.GC10595@Asurada-Nvidia.nvidia.com>
+        Thu, 27 Sep 2018 18:24:20 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T9aPzPi_1538064298;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T9aPzPi_1538064298)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 28 Sep 2018 00:05:01 +0800
+Subject: Re: [v2 PATCH 1/2 -mm] mm: mremap: dwongrade mmap_sem to read when
+ shrinking
+To:     Vlastimil Babka <vbabka@suse.cz>, mhocko@kernel.org,
+        kirill@shutemov.name, willy@infradead.org,
+        ldufour@linux.vnet.ibm.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
+ <8c04afa9-45c2-be18-c084-058add73c978@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <60c0544d-917f-89e1-2806-80c1beb830a0@linux.alibaba.com>
+Date:   Thu, 27 Sep 2018 09:04:55 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926215504.GC10595@Asurada-Nvidia.nvidia.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <8c04afa9-45c2-be18-c084-058add73c978@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolin,
 
-On Wed, Sep 26, 2018 at 02:55:06PM -0700, Nicolin Chen wrote:
-> On Wed, Sep 26, 2018 at 01:44:55PM -0700, Guenter Roeck wrote:
-> > On Wed, Sep 26, 2018 at 01:25:20PM -0700, Nicolin Chen wrote:
-> > > Hello,
-> > > 
-> > > On Wed, Sep 26, 2018 at 12:58:17PM -0700, Guenter Roeck wrote:
-> > > > On Wed, Sep 26, 2018 at 11:02:44AM -0700, Nicolin Chen wrote:
-> > > > > On Wed, Sep 26, 2018 at 06:06:32AM -0700, Guenter Roeck wrote:
-> > > > > > On 09/25/2018 11:42 PM, Nicolin Chen wrote:
-> > > > > > > The inX_enable interface allows user space to enable or disable
-> > > > > > > the corresponding channel. Meanwhile, according to hwmon ABI, a
-> > > > > > > disabled channel/sensor should return -ENODATA as a read result.
-> > > > > > > 
-> > > > > > > However, there're configurable nodes sharing the same __show()
-> > > > > > > functions. So this change also adds to check if the attribute is
-> > > > > > > read-only to make sure it's not reading a configuration but the
-> > > > > > > sensor data.
-> > > > >  
-> > > > > > One necessary high level change I don't see below: With this change,
-> > > > > > we should no longer drop a channel entirely if it is disabled from
-> > > > > > devicetree. All channels should be visible but report -ENODATA if
-> > > > > > disabled. In other words, it should be possible for the 'enable' flag
-> > > > > > to override settings in DT.
-> > > > > 
-> > > > > Hmm...I don't feel so convinced here. The status in DT binding isn't
-> > > > > exactly a setting but a physical status: if a hardware design leaves
-> > > > > a channel to be disconnected, I don't really see a point in enabling
-> > > > > it in the runtime. Or maybe you can shed some light on it?
-> > > > > 
-> > > > 
-> > > > You are making an assumption from your use case. It might as well be that
-> > > > some or all channels are disabled in DT by default to conserve power,
-> > > > not because they are disconnected.
-> > > 
-> > > I think I probably should update my DT binding somehow to say it
-> > > explicitly that the property should be only used in cases of the
-> > > physical disconnections, although I feel the current binding "no
-> > > input source" already has the same meaning.
-> > > 
-> > > In my opinion, disabling channels in DT to save power isn't very
-> > > plausible, because it sounds more likely a user decision, while,
-> > > as we know, DT merely describes the hardware design.
-> > > 
-> > 
-> > I try to avoid making such assumptions. All I know is that I'll have
-> > to deal with the fallout if a single person wants to use the property
-> > differently.
-> 
-> I can understand your point (or pain lol). But I believe in such
-> a case, DT maintainers should reject such a DT change. Let's say
-> if this kinda "default setting" in DT is allowable, other things
-> such as having a default mode setting between polling or one-shot
-> modes, and as default critical current settings would be able to
-> put into DT. But we know that these would be rejected as a reason
-> of "not being hardware design but a user decision".
-> 
-> > This is similar to disabling an entire subsystem in DT
-> > because it isn't used in a specific system - say, a SPI or I2C bus
-> > which has nothing connected on some shipping hardware, even though
-> > the board has a connector for it. Your argument is that one shall
-> > not use the status property do disable loading the driver, and that
-> > one must not remove a set of properties for unused hardware either.
-> > That doesn't sound very realistic to me.
-> 
-> SPI/I2C is a good example comparing to my case. And you do make
-> a point. In that case, I think DT overlay is designed for it --
-> one shall overlay the status property from "disable" (defined in
-> the DTS of the shipping hardware -- the main board) to "okay" in
-> the overlay DTS where a connection actually happens.
-> 
-> And even in this case, it makes sense to me to disable both the
-> status and the driver of SPI/I2C for the main board. Otherwise,
-> memory could be wasted for standalone main board users at those
-> unused SPI/I2C buses -- and the memory might be larger than one
-> could expect depending on where drivers allocate data buffers.
-> 
-> > Point is that I don't _know_ how this is going to be used, so I'd
-> > rather keep it flexible.
-> 
-> Well, taking one step back, I am okay to follow your way if you
-> are really firm about it. Just please give me a more reply and
-> I will merge this change to that v5, dropping the is_visible().
 
-Quite obviously we are not converging. Given that, I think it
-would be better to shelve the new attributes for now and to wait
-for an actual user who actually needs the new attributes.
+On 9/27/18 4:50 AM, Vlastimil Babka wrote:
+> On 9/26/18 8:10 PM, Yang Shi wrote:
+>> Subject: [v2 PATCH 1/2 -mm] mm: mremap: dwongrade mmap_sem to read
+> when shrinking
+>
+> "downgrade" in the subject
+
+Will fix in the next version.
 
 Thanks,
-Guenter
+Yang
+
+>
+>> Other than munmap, mremap might be used to shrink memory mapping too.
+>> So, it may hold write mmap_sem for long time when shrinking large
+>> mapping, as what commit ("mm: mmap: zap pages with read mmap_sem in
+>> munmap") described.
+>>
+>> The mremap() will not manipulate vmas anymore after __do_munmap() call for
+>> the mapping shrink use case, so it is safe to downgrade to read mmap_sem.
+>>
+>> So, the same optimization, which downgrades mmap_sem to read for zapping
+>> pages, is also feasible and reasonable to this case.
+>>
+>> The period of holding exclusive mmap_sem for shrinking large mapping
+>> would be reduced significantly with this optimization.
+>>
+>> MREMAP_FIXED and MREMAP_MAYMOVE are more complicated to adopt this
+>> optimization since they need manipulate vmas after do_munmap(),
+>> downgrading mmap_sem may create race window.
+>>
+>> Simple mapping shrink is the low hanging fruit, and it may cover the
+>> most cases of unmap with munmap together.
+>>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Looks fine,
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+>
+> Nit:
+>
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -2687,8 +2687,8 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>>    * work.  This now handles partial unmappings.
+>>    * Jeremy Fitzhardinge <jeremy@goop.org>
+>>    */
+>> -static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>> -		       struct list_head *uf, bool downgrade)
+>> +int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>> +		struct list_head *uf, bool downgrade)
+>>   {
+>>   	unsigned long end;
+>>   	struct vm_area_struct *vma, *prev, *last;
+>> diff --git a/mm/mremap.c b/mm/mremap.c
+>> index 5c2e185..8f1ec2b 100644
+>> --- a/mm/mremap.c
+>> +++ b/mm/mremap.c
+>> @@ -525,6 +525,7 @@ static int vma_expandable(struct vm_area_struct *vma, unsigned long delta)
+>>   	unsigned long ret = -EINVAL;
+>>   	unsigned long charged = 0;
+>>   	bool locked = false;
+>> +	bool downgrade = false;
+> Maybe "downgraded" is more accurate here, or even "downgraded_mmap_sem".
+
