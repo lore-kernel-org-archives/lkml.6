@@ -2,91 +2,144 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8839EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2242BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD31215E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:41:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD31215E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C76CD215E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76CD215E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbeI1BBV (ORCPT
+        id S1728596AbeI1BBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:01:21 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37057 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbeI1BBV (ORCPT
+        Thu, 27 Sep 2018 21:01:47 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:59943 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbeI1BBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:01:21 -0400
-Received: by mail-oi1-f196.google.com with SMTP id e17-v6so2200447oib.4;
-        Thu, 27 Sep 2018 11:41:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hed8RYzjJfUODh0Htzkg07eyIXwRSP5IwZH2p1T0Itc=;
-        b=J4Bo9fyc7fE4izReMzgd8yn+L6Z0WWlMEFo/9crj2IfN9wFBBZRqdyNOt4fcdzaWAd
-         BxdscVsM3f0cJw47SpQw5HcxaY+qo5WSVjOGvoSK92LhMs2IYDzIYAc8ApMJMN6eOqBm
-         2PIzN5hfBiAZlVvvW1mye4vJgJX/qxolLOuZthAbVBt0/Sz0doxt9oE1U+15uWGQWa3s
-         22QjFH5hYG6V3Pn3m4CTHfSjkhAWQQPxHYB3HwyB+IzG/oOqsMS4ObqpQu84ZLUcXUBR
-         s6k2vQ60ZW2gljq+eldgTiizjKROyyanvKrxwX66uYzP9Lrzp4Iy7JBCweLGXm981oss
-         qvHA==
-X-Gm-Message-State: ABuFfojZPiNnJ4WNHwLlUin5rbkdvpbQlh9VpSF1QLa3qzUqLDV/PDc8
-        rY+sQGHGnxJxnY83q/eUiiFybb/dy+Ca
-X-Google-Smtp-Source: ACcGV62IykZTAsYnegdu51GNt3Fcl0RZ5nHZJVlYcq0vtMfOxZsL9KvDIZOljdhw40iXmPIhwPMg1g==
-X-Received: by 2002:aca:c42:: with SMTP id i2-v6mr4046529oiy.219.1538073704276;
-        Thu, 27 Sep 2018 11:41:44 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l49-v6sm1035835otd.60.2018.09.27.11.41.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:41:43 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 13:41:43 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/20] dt-bindings: memory: tegra: Squash tegra20-gart
- into tegra20-mc
-Message-ID: <20180927184143.GA24866@bogus>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-7-digetx@gmail.com>
+        Thu, 27 Sep 2018 21:01:46 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5bEm-00005T-Sw; Thu, 27 Sep 2018 12:42:08 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5bEl-0003a3-ER; Thu, 27 Sep 2018 12:42:08 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch@vger.kernel.org (open list:GENERIC INCLUDE/ASM HEADER FILES),
+        linux-kernel@vger.kernel.org (open list)
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+        <20180925130845.9962-9-jarkko.sakkinen@linux.intel.com>
+Date:   Thu, 27 Sep 2018 20:41:48 +0200
+In-Reply-To: <20180925130845.9962-9-jarkko.sakkinen@linux.intel.com> (Jarkko
+        Sakkinen's message of "Tue, 25 Sep 2018 16:06:45 +0300")
+Message-ID: <87in2qpytv.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924004153.8232-7-digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-XM-SPF: eid=1g5bEl-0003a3-ER;;;mid=<87in2qpytv.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19kV+2kuKa9xKfhj4/4O5sif/vv7FEdn3c=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v14 08/19] signal: x86/sgx: Add SIGSEGV siginfo code for SGX EPCM fault
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 03:41:39 +0300, Dmitry Osipenko wrote:
-> Splitting GART and Memory Controller wasn't a good decision that was made
-> back in the day. Given that the GART driver wasn't ever been used by
-> anything in the kernel, we decided that it will be better to correct the
-> mistakes of the past and merge two bindings into a single one. As a result
-> there is a DT ABI change for the Memory Controller that allows not to
-> break newer kernels using older DT and not to break older kernels using
-> newer DT, that is done by changing the 'compatible' of the node to
-> 'tegra20-mc-gart' and adding a new-required clock property. The new clock
-> property also puts the tegra20-mc binding in line with the bindings of the
-> later Tegra generations.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  .../bindings/iommu/nvidia,tegra20-gart.txt    | 14 ----------
->  .../memory-controllers/nvidia,tegra20-mc.txt  | 27 +++++++++++++------
->  2 files changed, 19 insertions(+), 22 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-> 
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> The SGX Enclave Page Cache Map (EPCM) is a hardware-managed table
+> that enforces accesses to an enclave's EPC page in addition to the
+> software-managed kernel page tables, i.e. the effective permissions
+> for an EPC page are a logical AND of the kernel's page tables and
+> the corresponding EPCM entry.  The primary purpose of the EPCM is
+> to prevent a malcious or compromised kernel from attacking an enclave
+> by modifying the enclave's page tables.  The EPCM entires for an
+> enclave are populated when the enclave is built and verified, using
+> metadata provided by the enclave that is included in the measurement
+> used to verify the enclave.
+>
+> In normal operation of a properly functioning, non-malicious kernel
+> (and enclave), the EPCM permissions will never trigger a fault, i.e.
+> the kernel may make the permissions for an EPC page more restrictive,
+> e.g. mark it not-present to swap out the EPC page, but the kernel will
+> never make its permissions less restrictive.
+>
+> But, there is a legitimate scenario in which the kernel's page tables
+> can become less restrictive than the EPCM: on current hardware all
+> enclaves are destroyed (by hardware) on a transition to S3 or lower
+> sleep states, i.e. all EPCM entries are invalid (not-present) after
+> the system resumes from its sleep state.
+>
+> Unfortunately, on CPUs that support only SGX1, EPCM violations result
+> in a #GP.  The upside of the #GP is that no kernel changes are needed
+> to deal with the EPCM being blasted away by hardware, e.g. userspace
+> gets a SIGSEGV, assumes the EPCM was lost and restarts its enclave
+> and everyone is happy.  The downside is that userspace has to assume
+> the SIGSEGV was because the EPC was lost (or possibly do some leg work
+> to rule out other causes).
+>
+> In SGX2, the oddity of delivering a #GP due to what are inherently
+> paging related violations is remedied.  CPUs that support SGX2 deliver
+> EPCM violations as #PFs with a new SGX error code bit set.  So, now
+> that hardware provides us with a way to unequivocally determine that
+> a fault was due to a EPCM violation, define a signfo code for SIGSEGV
+> so that the information can be passed onto userspace.
+>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  include/uapi/asm-generic/siginfo.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
+> index 80e2a7227205..fdd898e2325b 100644
+> --- a/include/uapi/asm-generic/siginfo.h
+> +++ b/include/uapi/asm-generic/siginfo.h
+> @@ -225,7 +225,11 @@ typedef struct siginfo {
+>  #else
+>  # define SEGV_PKUERR	4	/* failed protection key checks */
+>  #endif
+> +#ifdef __x86_64__
+> +#define SEGV_SGXERR	5	/* SGX Enclave Page Cache Map fault */
+> +#else
+>  #define SEGV_ACCADI	5	/* ADI not enabled for mapped object */
+> +#endif
+
+Don't do this crazy ifdef thing.  si_codes are not supposed to be per
+architecture.  There are a few historical bugs but with a 32bit space
+it is just stupid to add #ifdefs.
+
+Just set.
+#define SEGV_SGXERR 8 and increase NSIGSEGV
+
+Anything else is just asking for trouble.  Especially when you want to
+get SGX working on itaninum.
+
+>  #define SEGV_ADIDERR	6	/* Disrupting MCD error */
+>  #define SEGV_ADIPERR	7	/* Precise MCD exception */
+>  #define NSIGSEGV	7
+
+Eric
