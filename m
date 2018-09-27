@@ -2,174 +2,100 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F13C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CD0C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFFDE206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:05:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18E3C2170E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:05:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ATQKR6Vn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFDE206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lL0J6uM8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E3C2170E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbeI1FZ6 (ORCPT
+        id S1728499AbeI1F0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 01:25:58 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:52923 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeI1FZ5 (ORCPT
+        Fri, 28 Sep 2018 01:26:30 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42913 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeI1F0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 01:25:57 -0400
-Received: by mail-it1-f194.google.com with SMTP id 134-v6so562838itz.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 16:05:17 -0700 (PDT)
+        Fri, 28 Sep 2018 01:26:30 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i4-v6so2387082pgq.9;
+        Thu, 27 Sep 2018 16:05:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EGPQKS9QAFsXKRvVZGbetCzzPksevUpCvkfR7rrWeW8=;
-        b=ATQKR6VnPyCVoqS9yz4vtyoApwEntOu68/67lS4jXTsw8PoPYHz4XIjnDFMCcx6SSg
-         k1EUpPmDPzXbtHQ+pvGkbSl1rxCrVD/Lg4JjQIcZRB0ilQ17F5aiwC0bSLSnCl1FltYh
-         enbPSzj0xgiLM8r4iCmiPNl82yZHGkFbLlDzAgaxjjW8t5x+CQZnoa0N7t4TraA3KqJI
-         VpXkbshJnChKVwqgtpmVeNwuGR+yE1RS/HqWdoVAQ3rwDJ473jpRJggL6Ln9ZxPJuICv
-         GVRjjpuFMhT7Sr6GkymaZ1167qYnruytDeyBVOo1UDlLn5hwncixFTaur5fiZvcxtwPf
-         uJsQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tfu2f76bV5h6bowHMTyrbi68eq6mCD5tR1b1Cx2VVRI=;
+        b=lL0J6uM8wHHXDEimgiW5Zopi+XeqkRlpZofZ8bprQOsu7veGXYGKn9UisukTX14MCZ
+         ZpTLXsCZY5+u0VSSMNg8u71EOcSyWo7nJ9dbEzriHtgw+Pr4PYVYvMSj+SVpmAEkzJ3o
+         bsXpFf3kvNytbz2aYOzE5qIRA+e/TdqVsMZCrcQOTj8pGl9UoLHPc+H7nPha+hjcRqgQ
+         XRZesJ0WaZgUwnxLrdqMJmLIYAXDzNTT0rGS2wb6+LpLLAdhuDv0qAHZS46yU6snBgR3
+         0dYqefDMf685KA353jmNXz2KiyCexg5q2Ldl1qne9SMaY2YGnh27A0WC7v6rHUS6vl+R
+         g65Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EGPQKS9QAFsXKRvVZGbetCzzPksevUpCvkfR7rrWeW8=;
-        b=QYw+0G5+KNIfWXFrgsoaZcHDlWiDJcb8n5JhhQAZ6JwaqQ1P/2LuM3q71plgn3rRG0
-         dp/T6mcxcePFYe6Xulb3J3maNqMu4+JrQ2zAe+O4EDjVHros1HxzNN0SSGl3RJn0sbCY
-         msEh4s/D45UWCXU5YWZvhxhusg7S1bzDaufWc6eYKVfQkc5OOicrnx19VeUuPVn5DUB1
-         5/y59ntD2aIOB2VKy+EVSll04xDNidAd1Jh6PQth8RAv6R/77tqvNjyGzoT0FTBk81im
-         l9Hugv1m2zE8J1/uIKxaPdhW2KEdKYU47iWvp3GUS7MYFn8wjrjZf3Yj8FYXKsYzjNwf
-         pH5g==
-X-Gm-Message-State: ABuFfoj2I3fvSPqKBqdz1IzP63LuFnE6pVXTTNsNaYntMW0tlt79Vkc3
-        VhDJK2qS7xqQtsW2RcWk4KesnA==
-X-Google-Smtp-Source: ACcGV63e0V7CwAvk/TzQ9Q+GXYuS7cGW80anCP79Wv8cZqP3rC/sZCFXeQjHLgPrw1AKV7Pj/EVR0Q==
-X-Received: by 2002:a24:2487:: with SMTP id f129-v6mr571824ita.51.1538089516862;
-        Thu, 27 Sep 2018 16:05:16 -0700 (PDT)
-Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id o201-v6sm211331ito.41.2018.09.27.16.05.15
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tfu2f76bV5h6bowHMTyrbi68eq6mCD5tR1b1Cx2VVRI=;
+        b=dxbYpmgJ/85Ld4sKniO/tljnAqcj2b7pcmY/sgMfRRCN9Bt4/y6he0S/LZO48HRSH6
+         bMtBahlHgswZxX0uiYFuAk1B8EXA7xWMLb0x/ybqjps6CpcvJUz0D87+9F9+YlhYTxXv
+         9XjonIYXo3C9BcWNDvKJCOYmZMV51wfwSmHN7Tsixge9SzxeGU6lz8rGZE9X9PkJd1xk
+         cF+ka4DUYohip0J/IOEYbQbfoDXQVzQk/4iVDTOnAIYk2YHV4jl3a7zE5IeEMiB3IJ1Z
+         LvYyn8I1ZZOkSX+XWz5nLgjwNhNy/9rti5QwXMVpCz9drAyLIEBSFbpTxKLvOkc8ZZQC
+         TZiA==
+X-Gm-Message-State: ABuFfoiTQAbIJlAdvAbbahAnAZ18EgqU7gp/IxdkKPDjVaBDWyoKfcMA
+        aso5+IUNKBY7bx9FB1GYEE/Qt0q2
+X-Google-Smtp-Source: ACcGV63WTZXT8asr9e5v0FOFyhdwzgyfEp1sGGcqdIm+0Ke64ItmwzwL88Ow7hWFAxKb4Z+VzVM+tA==
+X-Received: by 2002:a63:cd4c:: with SMTP id a12-v6mr12330559pgj.15.1538089550061;
+        Thu, 27 Sep 2018 16:05:50 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id m15-v6sm5089994pfk.149.2018.09.27.16.05.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 16:05:15 -0700 (PDT)
-From:   Yu Zhao <yuzhao@google.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
-Subject: [PATCH] cfg80211: fix use-after-free in reg_process_hint()
-Date:   Thu, 27 Sep 2018 17:05:04 -0600
-Message-Id: <20180927230504.214931-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Thu, 27 Sep 2018 16:05:49 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 16:05:48 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/28] 4.4.159-stable review
+Message-ID: <20180927230548.GA29261@roeck-us.net>
+References: <20180927090637.687829444@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927090637.687829444@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-reg_process_hint_country_ie() can free regulatory_request and return
-REG_REQ_ALREADY_SET. We shouldn't use regulatory_request after it's
-called. KASAN error was observed when this happens.
+On Thu, Sep 27, 2018 at 11:06:24AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.159 release.
+> There are 28 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Sep 29 09:06:27 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-BUG: KASAN: use-after-free in reg_process_hint+0x839/0x8aa [cfg80211]
-Read of size 4 at addr ffff8800c430d434 by task kworker/1:3/89
-<snipped>
-Workqueue: events reg_todo [cfg80211]
-Call Trace:
- dump_stack+0xc1/0x10c
- ? _atomic_dec_and_lock+0x1ad/0x1ad
- ? _raw_spin_lock_irqsave+0xa0/0xd2
- print_address_description+0x86/0x26f
- ? reg_process_hint+0x839/0x8aa [cfg80211]
- kasan_report+0x241/0x29b
- reg_process_hint+0x839/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- ? worker_detach_from_pool+0x1b5/0x1b5
- ? _raw_spin_unlock_irq+0x65/0xdd
- ? _raw_spin_unlock_irqrestore+0xf3/0xf3
- worker_thread+0x5dd/0x841
- ? kthread_parkme+0x1d/0x1d
- kthread+0x270/0x285
- ? pr_cont_work+0xe3/0xe3
- ? rcu_read_unlock_sched_notrace+0xca/0xca
- ret_from_fork+0x22/0x40
+Build results:
+	total: 151 pass: 151 fail: 0
+Qemu test results:
+	total: 284 pass: 283 fail: 1
+Failed tests: 
+	powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
 
-Allocated by task 2718:
- set_track+0x63/0xfa
- __kmalloc+0x119/0x1ac
- regulatory_hint_country_ie+0x38/0x329 [cfg80211]
- __cfg80211_connect_result+0x854/0xadd [cfg80211]
- cfg80211_rx_assoc_resp+0x3bc/0x4f0 [cfg80211]
-smsc95xx v1.0.6
- ieee80211_sta_rx_queued_mgmt+0x1803/0x7ed5 [mac80211]
- ieee80211_iface_work+0x411/0x696 [mac80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
+Details are available at https://kerneltests.org/builders/.
 
-Freed by task 89:
- set_track+0x63/0xfa
- kasan_slab_free+0x6a/0x87
- kfree+0xdc/0x470
- reg_process_hint+0x31e/0x8aa [cfg80211]
- reg_todo+0x204/0x5b9 [cfg80211]
- process_one_work+0x55f/0x8d0
- worker_thread+0x5dd/0x841
- kthread+0x270/0x285
- ret_from_fork+0x22/0x40
-<snipped>
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- net/wireless/reg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 765dedb12361..24cfa2776f50 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -2661,11 +2661,12 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- {
- 	struct wiphy *wiphy = NULL;
- 	enum reg_request_treatment treatment;
-+	enum nl80211_reg_initiator initiator = reg_request->initiator;
- 
- 	if (reg_request->wiphy_idx != WIPHY_IDX_INVALID)
- 		wiphy = wiphy_idx_to_wiphy(reg_request->wiphy_idx);
- 
--	switch (reg_request->initiator) {
-+	switch (initiator) {
- 	case NL80211_REGDOM_SET_BY_CORE:
- 		treatment = reg_process_hint_core(reg_request);
- 		break;
-@@ -2683,7 +2684,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 		treatment = reg_process_hint_country_ie(wiphy, reg_request);
- 		break;
- 	default:
--		WARN(1, "invalid initiator %d\n", reg_request->initiator);
-+		WARN(1, "invalid initiator %d\n", initiator);
- 		goto out_free;
- 	}
- 
-@@ -2698,7 +2699,7 @@ static void reg_process_hint(struct regulatory_request *reg_request)
- 	 */
- 	if (treatment == REG_REQ_ALREADY_SET && wiphy &&
- 	    wiphy->regulatory_flags & REGULATORY_STRICT_REG) {
--		wiphy_update_regulatory(wiphy, reg_request->initiator);
-+		wiphy_update_regulatory(wiphy, initiator);
- 		wiphy_all_share_dfs_chan_state(wiphy);
- 		reg_check_channels();
- 	}
--- 
-2.19.0.605.g01d371f741-goog
-
+Guenter
