@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5EAC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E0AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B04216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B04216FE
+	by mail.kernel.org (Postfix) with ESMTP id 3137D216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3137D216FE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbeI1C5X (ORCPT
+        id S1728457AbeI1C6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:57:23 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42283 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeI1C5X (ORCPT
+        Thu, 27 Sep 2018 22:58:02 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43756 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeI1C6C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:57:23 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w81-v6so1696492oiw.9;
-        Thu, 27 Sep 2018 13:37:17 -0700 (PDT)
+        Thu, 27 Sep 2018 22:58:02 -0400
+Received: by mail-oi1-f196.google.com with SMTP id s69-v6so3371531oie.10;
+        Thu, 27 Sep 2018 13:37:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cf0+7Yp4KoIx4DGERHsWqP/XVQWTN0lHmTCyv+/Kt74=;
-        b=Iizaa3KNIU/mJP93UXA/q8kgxOogWd/g83QmPs6oBt14wsUC1i6PCUcib/OrfFzZdm
-         ccu474BR3g0rJpxOSJBZX/egy0W2ptYEv+iKhq5uvHXTugHr2sPdUvndg9kspLFwB0c+
-         tD3lzplX+CJ34O7JazGXiFSr5zujDIx+NCvNXw03vIJaNTz4rM7VZEYqoggozYxDOQMF
-         OzHK6+VdoKGwt+ZAbJbKlQO81IqGT5fruXPCqn/VWRg7JCCpjFOz0+aGxL13ml/zvldm
-         PT2VcmTwRg7W0vVMiaeY+3wFBZlt8q9K3guftKNHVHNBLpkBoOSEU27qrgIlL0ZQdui3
-         GMMw==
-X-Gm-Message-State: ABuFfogp0obEeGeN5idjeWkU8HeeFyTKjYlFmz8WdpU+WkPO738D1YmJ
-        KsIWJ1GW/lOaQ8XeyztODCmUcgMtwHA=
-X-Google-Smtp-Source: ACcGV619z9fT1WAgJFzEDRV7NysMulQTtSOFfCGxr2kDKVSKEweTGG3P9tNHwb1XFaAmcIhC+noVtQ==
-X-Received: by 2002:aca:49c8:: with SMTP id w191-v6mr3914806oia.114.1538080637430;
-        Thu, 27 Sep 2018 13:37:17 -0700 (PDT)
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com. [209.85.210.42])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm1634187otd.21.2018.09.27.13.37.16
+        bh=REIDTKJMCaXMb9FL8bU8sBNjF0dmEAbYJU4840gj/DU=;
+        b=OKWgdbRgXR6zJv7S3BP5aKvyDIiIm8v39J2FwHNSs4nioMml7JMPFpNbi2LNpSq05i
+         SpUKkgfvTAz0JufWJJLw9k3Pxsh6lm5V3yHhembL6WLRxMKxRvbsMd5J4f/HAj729oFS
+         hJGhKGlMTDMn9dqj7HL5Qp+IYsE7lFQIrXjVL/PAwkPefci/womVhM/U6bASs79VPvF6
+         yhQ3IGxKFKBMU7pR2MHoIkvbEPwe7VZQJWp8+RpmUS+roSngCWVD/09C0+XO9XD8tp92
+         ndezrlmNDQqm/KNwoDDNqMfQBkWkbEwyx1q5whib1I+HGJLVMRuDwv1ehkctO23hd89S
+         Ft9g==
+X-Gm-Message-State: ABuFfojZuEh7ah5Yg3H4z5SYhyDSnmXSUR8nfN/yy3XAvu9dwVQ6Mdzv
+        Z0/Y63DR1O/Z4qQEUk3ClKFFFrXlCd4=
+X-Google-Smtp-Source: ACcGV609ZIZbHM8eI48wr1jISbd8LH/nrEf5xVkGTAT3lrTcvqGz9s6/EHuP6jxmsVXLtw+0HNr8Bw==
+X-Received: by 2002:aca:f084:: with SMTP id o126-v6mr3892016oih.21.1538080676245;
+        Thu, 27 Sep 2018 13:37:56 -0700 (PDT)
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
+        by smtp.gmail.com with ESMTPSA id v55-v6sm22298oti.50.2018.09.27.13.37.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 13:37:17 -0700 (PDT)
-Received: by mail-ot1-f42.google.com with SMTP id q4-v6so3862619otf.13;
-        Thu, 27 Sep 2018 13:37:16 -0700 (PDT)
-X-Received: by 2002:a9d:3c1d:: with SMTP id q29-v6mr8216060otc.158.1538080636585;
- Thu, 27 Sep 2018 13:37:16 -0700 (PDT)
+        Thu, 27 Sep 2018 13:37:56 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id e17-v6so2511939oib.4;
+        Thu, 27 Sep 2018 13:37:55 -0700 (PDT)
+X-Received: by 2002:aca:508f:: with SMTP id e137-v6mr3940963oib.73.1538080675659;
+ Thu, 27 Sep 2018 13:37:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180926132247.10971-1-laurentiu.tudor@nxp.com> <20180926132247.10971-6-laurentiu.tudor@nxp.com>
-In-Reply-To: <20180926132247.10971-6-laurentiu.tudor@nxp.com>
+References: <20180926132247.10971-1-laurentiu.tudor@nxp.com> <20180926132247.10971-7-laurentiu.tudor@nxp.com>
+In-Reply-To: <20180926132247.10971-7-laurentiu.tudor@nxp.com>
 From:   Li Yang <leoyang.li@nxp.com>
-Date:   Thu, 27 Sep 2018 15:37:05 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQCAs61R-2bLQDEO2ooDMHeVt2jJq8nh4rUNZk3jhDwGA@mail.gmail.com>
-Message-ID: <CADRPPNQCAs61R-2bLQDEO2ooDMHeVt2jJq8nh4rUNZk3jhDwGA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/22] soc/fsl/qbman: add APIs to retrieve the probing status
+Date:   Thu, 27 Sep 2018 15:37:44 -0500
+X-Gmail-Original-Message-ID: <CADRPPNQEQs5j-AYk1VSL7GHWHemVuxDsTM05S2zth-idJOyoBw@mail.gmail.com>
+Message-ID: <CADRPPNQEQs5j-AYk1VSL7GHWHemVuxDsTM05S2zth-idJOyoBw@mail.gmail.com>
+Subject: Re: [PATCH v2 06/22] soc/fsl/qman_portals: defer probe after qman's probe
 To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
 Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
@@ -77,149 +77,91 @@ On Wed, Sep 26, 2018 at 8:26 AM <laurentiu.tudor@nxp.com> wrote:
 >
 > From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 >
-> Add a couple of new APIs to check the probing status of qman and bman:
->  'int bman_is_probed()' and 'int qman_is_probed()'.
-> They return the following values.
->  *  1 if qman/bman were probed correctly
->  *  0 if qman/bman were not yet probed
->  * -1 if probing of qman/bman failed
-> Drivers that use qman/bman driver services are required to use these
-> APIs before calling any functions exported by qman or bman drivers
-> or otherwise they will crash the kernel.
-> The APIs will be used in the following couple of qbman portal patches
-> and later in the series in the dpaa1 ethernet driver.
+> Defer probe of qman portals after qman probing. This fixes the crash
+> below, seen on NXP LS1043A SoCs:
+>
+> Unable to handle kernel NULL pointer dereference at virtual address
+> 0000000000000004
+> Mem abort info:
+>   ESR = 0x96000004
+>   Exception class = DABT (current EL), IL = 32 bits
+>   SET = 0, FnV = 0
+>   EA = 0, S1PTW = 0
+> Data abort info:
+>   ISV = 0, ISS = 0x00000004
+>   CM = 0, WnR = 0
+> [0000000000000004] user address but active_mm is swapper
+> Internal error: Oops: 96000004 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+> 4.18.0-rc1-next-20180622-00200-g986f5c179185 #9
+> Hardware name: LS1043A RDB Board (DT)
+> pstate: 80000005 (Nzcv daif -PAN -UAO)
+> pc : qman_set_sdest+0x74/0xa0
+> lr : qman_portal_probe+0x22c/0x470
+> sp : ffff00000803bbc0
+> x29: ffff00000803bbc0 x28: 0000000000000000
+> x27: ffff0000090c1b88 x26: ffff00000927cb68
+> x25: ffff00000927c000 x24: ffff00000927cb60
+> x23: 0000000000000000 x22: 0000000000000000
+> x21: ffff0000090e9000 x20: ffff800073b5c810
+> x19: ffff800027401298 x18: ffffffffffffffff
+> x17: 0000000000000001 x16: 0000000000000000
+> x15: ffff0000090e96c8 x14: ffff80002740138a
+> x13: ffff0000090f2000 x12: 0000000000000030
+> x11: ffff000008f25000 x10: 0000000000000000
+> x9 : ffff80007bdfd2c0 x8 : 0000000000004000
+> x7 : ffff80007393cc18 x6 : 0040000000000001
+> x5 : 0000000000000000 x4 : ffffffffffffffff
+> x3 : 0000000000000004 x2 : ffff00000927c900
+> x1 : 0000000000000000 x0 : 0000000000000004
+> Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
+> Call trace:
+>  qman_set_sdest+0x74/0xa0
+>  platform_drv_probe+0x50/0xa8
+>  driver_probe_device+0x214/0x2f8
+>  __driver_attach+0xd8/0xe0
+>  bus_for_each_dev+0x68/0xc8
+>  driver_attach+0x20/0x28
+>  bus_add_driver+0x108/0x228
+>  driver_register+0x60/0x110
+>  __platform_driver_register+0x40/0x48
+>  qman_portal_driver_init+0x20/0x84
+>  do_one_initcall+0x58/0x168
+>  kernel_init_freeable+0x184/0x22c
+>  kernel_init+0x10/0x108
+>  ret_from_fork+0x10/0x18
+> Code: f9400443 11001000 927e4800 8b000063 (b9400063)
+> ---[ end trace 4f6d50489ecfb930 ]---
+> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 >
 > Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
 As this is part of a bug fix for v4.19, applied on soc/fsl for fix.
 
 > ---
->  drivers/soc/fsl/qbman/bman_ccsr.c | 11 +++++++++++
->  drivers/soc/fsl/qbman/qman_ccsr.c | 11 +++++++++++
->  include/soc/fsl/bman.h            |  8 ++++++++
->  include/soc/fsl/qman.h            |  8 ++++++++
->  4 files changed, 38 insertions(+)
+>  drivers/soc/fsl/qbman/qman_portal.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >
-> diff --git a/drivers/soc/fsl/qbman/bman_ccsr.c b/drivers/soc/fsl/qbman/bman_ccsr.c
-> index d180da003e4a..b209c79511bb 100644
-> --- a/drivers/soc/fsl/qbman/bman_ccsr.c
-> +++ b/drivers/soc/fsl/qbman/bman_ccsr.c
-> @@ -121,6 +121,7 @@ static void bm_set_memory(u64 ba, u32 size)
->   */
->  static dma_addr_t fbpr_a;
->  static size_t fbpr_sz;
-> +static int __bman_probed;
+> diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
+> index 6d9da3b1b5ad..eef93cab84f1 100644
+> --- a/drivers/soc/fsl/qbman/qman_portal.c
+> +++ b/drivers/soc/fsl/qbman/qman_portal.c
+> @@ -229,6 +229,14 @@ static int qman_portal_probe(struct platform_device *pdev)
+>         int irq, cpu, err;
+>         u32 val;
 >
->  static int bman_fbpr(struct reserved_mem *rmem)
->  {
-> @@ -167,6 +168,12 @@ static irqreturn_t bman_isr(int irq, void *ptr)
->         return IRQ_HANDLED;
->  }
->
-> +int bman_is_probed(void)
-> +{
-> +       return __bman_probed;
-> +}
-> +EXPORT_SYMBOL_GPL(bman_is_probed);
+> +       err = qman_is_probed();
+> +       if (!err)
+> +               return -EPROBE_DEFER;
+> +       if (err < 0) {
+> +               dev_err(&pdev->dev, "failing probe due to qman probe error\n");
+> +               return -ENODEV;
+> +       }
 > +
->  static int fsl_bman_probe(struct platform_device *pdev)
->  {
->         int ret, err_irq;
-> @@ -177,6 +184,8 @@ static int fsl_bman_probe(struct platform_device *pdev)
->         u16 id, bm_pool_cnt;
->         u8 major, minor;
->
-> +       __bman_probed = -1;
-> +
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         if (!res) {
->                 dev_err(dev, "Can't get %pOF property 'IORESOURCE_MEM'\n",
-> @@ -266,6 +275,8 @@ static int fsl_bman_probe(struct platform_device *pdev)
->                 return ret;
->         }
->
-> +       __bman_probed = 1;
-> +
->         return 0;
->  };
->
-> diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
-> index 0cfe79f85a66..383a49dcce68 100644
-> --- a/drivers/soc/fsl/qbman/qman_ccsr.c
-> +++ b/drivers/soc/fsl/qbman/qman_ccsr.c
-> @@ -274,6 +274,7 @@ static const struct qman_error_info_mdata error_mdata[] = {
->  static u32 __iomem *qm_ccsr_start;
->  /* A SDQCR mask comprising all the available/visible pool channels */
->  static u32 qm_pools_sdqcr;
-> +static int __qman_probed;
->
->  static inline u32 qm_ccsr_in(u32 offset)
->  {
-> @@ -689,6 +690,12 @@ static int qman_resource_init(struct device *dev)
->         return 0;
->  }
->
-> +int qman_is_probed(void)
-> +{
-> +       return __qman_probed;
-> +}
-> +EXPORT_SYMBOL_GPL(qman_is_probed);
-> +
->  static int fsl_qman_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> @@ -699,6 +706,8 @@ static int fsl_qman_probe(struct platform_device *pdev)
->         u16 id;
->         u8 major, minor;
->
-> +       __qman_probed = -1;
-> +
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         if (!res) {
->                 dev_err(dev, "Can't get %pOF property 'IORESOURCE_MEM'\n",
-> @@ -845,6 +854,8 @@ static int fsl_qman_probe(struct platform_device *pdev)
->         if (ret)
->                 return ret;
->
-> +       __qman_probed = 1;
-> +
->         return 0;
->  }
->
-> diff --git a/include/soc/fsl/bman.h b/include/soc/fsl/bman.h
-> index eaaf56df4086..5b99cb2ea5ef 100644
-> --- a/include/soc/fsl/bman.h
-> +++ b/include/soc/fsl/bman.h
-> @@ -126,4 +126,12 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num);
->   */
->  int bman_acquire(struct bman_pool *pool, struct bm_buffer *bufs, u8 num);
->
-> +/**
-> + * bman_is_probed - Check if bman is probed
-> + *
-> + * Returns 1 if the bman driver successfully probed, -1 if the bman driver
-> + * failed to probe or 0 if the bman driver did not probed yet.
-> + */
-> +int bman_is_probed(void);
-> +
->  #endif /* __FSL_BMAN_H */
-> diff --git a/include/soc/fsl/qman.h b/include/soc/fsl/qman.h
-> index d4dfefdee6c1..597783b8a3a0 100644
-> --- a/include/soc/fsl/qman.h
-> +++ b/include/soc/fsl/qman.h
-> @@ -1186,4 +1186,12 @@ int qman_alloc_cgrid_range(u32 *result, u32 count);
->   */
->  int qman_release_cgrid(u32 id);
->
-> +/**
-> + * qman_is_probed - Check if qman is probed
-> + *
-> + * Returns 1 if the qman driver successfully probed, -1 if the qman driver
-> + * failed to probe or 0 if the qman driver did not probed yet.
-> + */
-> +int qman_is_probed(void);
-> +
->  #endif /* __FSL_QMAN_H */
+>         pcfg = devm_kmalloc(dev, sizeof(*pcfg), GFP_KERNEL);
+>         if (!pcfg)
+>                 return -ENOMEM;
 > --
 > 2.17.1
 >
