@@ -2,112 +2,149 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584E0C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64261C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D57A21571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:16:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ja9ZEvs1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D57A21571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 16E9821571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:16:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E9821571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeI0VfC (ORCPT
+        id S1728268AbeI0VfT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:35:02 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41590 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbeI0VfC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:35:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j15-v6so3038135wrt.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 08:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sFhsOSSet0cFG+jbwNNmumecwkJ8dJXbZxTzRaPi2/A=;
-        b=Ja9ZEvs1/888JvXBBHG7VYXCLOaPdKiTOJnSyT6E6OeluskaddBCs/qD8nbm4vYTY0
-         GF9wYomFXR9BkEYjbXvpHfigw/+12ks3xZ3bNm2Y4Jt8KMPrUziGpyfT+Pj5Yy2HewS2
-         8LFOimXVXD8OGktTB75dLXQqw1fESVMUyzrLUj2gr6OQWpfVBTaMsXYJ+ctrSnbbb5Fl
-         gUu814jmCpXH0GZ8RQBRaqXrTNLM1K3no+5Vo8OqTFVpX3m5WRVZGBjmMQffu3tEWch6
-         otdmCYDQLJhPmTHAgNw5uK45UDjQN1aSr/N8epewbJAt2rHiir3OnFv01eDmXued+Bgc
-         Ahlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sFhsOSSet0cFG+jbwNNmumecwkJ8dJXbZxTzRaPi2/A=;
-        b=jOn7FzvEE3MZ0SM38bIyaDAlOJMpadLk5pQjiXSOJQhXRHmUApTDv6RiiPyVW6vRwN
-         mpDKqoGqzpdqkK2iZJ/BTquF3I5Ar7Bou+QXUNfW3t0b+EY2zjhY+N0gzD4NgrOqJwzB
-         tvNtZUswNDiNL9EEYZQxuJliDqCDcngoqCjU6AwB0uBmZPg+9OJBtsm9iJNKavbL1siu
-         v5LiOThIaVE38ydPcLks5sgP1S6uC3MMgRAozOObVTxr9V0Qa+iIFKf1wxXg/qkD3Wsx
-         8yDmjaI0vi7vfu+V4XAzuhLPtxk1cKEPSm2Xq7hczCvxnbYW2S8dL64RMDkGwJ+FSZAy
-         ELwg==
-X-Gm-Message-State: ABuFfojZFeU1D6Qkro6xR0bil1avlpGpv27rgC3Sfml9WxgK8xQrke0U
-        wSCuJU12NEfOmJlaQOI+HZE=
-X-Google-Smtp-Source: ACcGV62agyRGn2nizm3mlVI9Gzh4Z7Bg0lPUhJf5waXlhdG+sOYc83VqniJHGsZSMfncH5NchCyrHw==
-X-Received: by 2002:a05:6000:124e:: with SMTP id j14mr959893wrx.315.1538061376741;
-        Thu, 27 Sep 2018 08:16:16 -0700 (PDT)
-Received: from localhost.co.uk ([2a01:388:3ce:110::1:5])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm2536592wmi.37.2018.09.27.08.16.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 08:16:15 -0700 (PDT)
-From:   Aymen Qader <qader.aymen@gmail.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Aymen Qader <qader.aymen@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] staging: ks7010: Add null pointer check for skb
-Date:   Thu, 27 Sep 2018 16:16:13 +0100
-Message-Id: <20180927151614.25470-1-qader.aymen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 27 Sep 2018 17:35:19 -0400
+Received: from mga11.intel.com ([192.55.52.93]:20715 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727282AbeI0VfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 17:35:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 08:16:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
+   d="scan'208";a="87162568"
+Received: from unknown (HELO [10.7.198.153]) ([10.7.198.153])
+  by orsmga003.jf.intel.com with ESMTP; 27 Sep 2018 08:16:33 -0700
+Subject: Re: [RFC workqueue/driver-core PATCH 2/5] async: Add support for
+ queueing on specific NUMA node
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Brown, Len" <len.brown@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        jiangshanlai@gmail.com, Pavel Machek <pavel@ucw.cz>,
+        zwisler@kernel.org
+References: <20180926214433.13512.30289.stgit@localhost.localdomain>
+ <20180926215143.13512.56522.stgit@localhost.localdomain>
+ <CAPcyv4iJOYiM+rHsM4GPifKNJ=X+AtV2MgWTn+f7u0VBzXb2og@mail.gmail.com>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <d16cabf9-28f7-31e2-c43d-027738185518@linux.intel.com>
+Date:   Thu, 27 Sep 2018 08:16:33 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <CAPcyv4iJOYiM+rHsM4GPifKNJ=X+AtV2MgWTn+f7u0VBzXb2og@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a null pointer check for the socket buffer in ks_hostif.c to avoid a
-possible null pointer deference, and remove a later now-redundant null
-pointer check.
 
-Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
----
-v2: Remove redundant pointer check
-v3: Style fix
 
- drivers/staging/ks7010/ks_hostif.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+On 9/26/2018 5:31 PM, Dan Williams wrote:
+> On Wed, Sep 26, 2018 at 2:51 PM Alexander Duyck
+> <alexander.h.duyck@linux.intel.com> wrote:
+>>
+>> This patch introduces four new variants of the async_schedule_ functions
+>> that allow scheduling on a specific NUMA node.
+>>
+>> The first two functions are async_schedule_near and
+>> async_schedule_near_domain which end up mapping to async_schedule and
+>> async_schedule_domain but provide NUMA node specific functionality. They
+>> replace the original functions which were moved to inline function
+>> definitions that call the new functions while passing NUMA_NO_NODE.
+>>
+>> The second two functions are async_schedule_dev and
+>> async_schedule_dev_domain which provide NUMA specific functionality when
+>> passing a device as the data member and that device has a NUMA node other
+>> than NUMA_NO_NODE.
+>>
+>> The main motivation behind this is to address the need to be able to
+>> schedule device specific init work on specific NUMA nodes in order to
+>> improve performance of memory initialization.
+>>
+>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> [..]
+>>   /**
+>> - * async_schedule - schedule a function for asynchronous execution
+>> + * async_schedule_near - schedule a function for asynchronous execution
+>>    * @func: function to execute asynchronously
+>>    * @data: data pointer to pass to the function
+>> + * @node: NUMA node that we want to schedule this on or close to
+>>    *
+>>    * Returns an async_cookie_t that may be used for checkpointing later.
+>>    * Note: This function may be called from atomic or non-atomic contexts.
+>>    */
+>> -async_cookie_t async_schedule(async_func_t func, void *data)
+>> +async_cookie_t async_schedule_near(async_func_t func, void *data, int node)
+>>   {
+>> -       return __async_schedule(func, data, &async_dfl_domain);
+>> +       return async_schedule_near_domain(func, data, node, &async_dfl_domain);
+>>   }
+>> -EXPORT_SYMBOL_GPL(async_schedule);
+>> +EXPORT_SYMBOL_GPL(async_schedule_near);
+> 
+> Looks good to me. The _near() suffix makes it clear that we're doing a
+> best effort hint to the work placement compared to the strict
+> expectations of _on routines.
+> 
+>>
+>>   /**
+>> - * async_schedule_domain - schedule a function for asynchronous execution within a certain domain
+>> + * async_schedule_dev_domain - schedule a function for asynchronous execution within a certain domain
+>>    * @func: function to execute asynchronously
+>> - * @data: data pointer to pass to the function
+>> + * @dev: device that we are scheduling this work for
+>>    * @domain: the domain
+>>    *
+>> - * Returns an async_cookie_t that may be used for checkpointing later.
+>> - * @domain may be used in the async_synchronize_*_domain() functions to
+>> - * wait within a certain synchronization domain rather than globally.  A
+>> - * synchronization domain is specified via @domain.  Note: This function
+>> - * may be called from atomic or non-atomic contexts.
+>> + * Device specific version of async_schedule_near_domain that provides some
+>> + * NUMA awareness based on the device node.
+>> + */
+>> +async_cookie_t async_schedule_dev_domain(async_func_t func, struct device *dev,
+>> +                                        struct async_domain *domain)
+>> +{
+>> +       return async_schedule_near_domain(func, dev, dev_to_node(dev), domain);
+>> +}
+>> +EXPORT_SYMBOL_GPL(async_schedule_dev_domain);
+> 
+> This seems unnecessary and restrictive. Callers may want to pass
+> something other than dev as the parameter to the async function, and
+> dev_to_node() is not on onerous burden to place on callers.
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 0e554e3359b5..95b6c7557e84 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1011,6 +1011,11 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 	size_t size;
- 	int ret;
- 
-+	if (!skb) {
-+		ret = -ENOMEM;
-+		goto err_kfree;
-+	}
-+
- 	skb_len = skb->len;
- 	if (skb_len > ETH_FRAME_LEN) {
- 		netdev_err(priv->net_dev, "bad length skb_len=%d\n", skb_len);
-@@ -1023,7 +1028,6 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 	    priv->wpa.mic_failure.stop) {
- 		if (netif_queue_stopped(priv->net_dev))
- 			netif_wake_queue(priv->net_dev);
--		if (skb)
- 			dev_kfree_skb(skb);
- 
- 		return 0;
--- 
-2.17.1
 
+That is what async_schedule_near_domain is for, they can call that. The 
+"dev" versions of the calls as just supposed to be helpers since one of 
+the most common parameters to the async_schedule calls is a device, so I 
+thought I would just put together a function that takes care of all this 
+for us so I could drop an argument and avoid having to use dev_to_node 
+everywhere.
