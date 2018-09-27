@@ -2,164 +2,155 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB77C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFDDC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FD222150D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="WLVWLLQQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD222150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 9ED63215EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED63215EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeI0SI3 (ORCPT
+        id S1727979AbeI0SIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:08:29 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32794 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727480AbeI0SI3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:08:29 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so1765446pfn.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 04:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tfYvWgBOL9KLxKgh81paM4/HEEsFVAXddPhrkTRK4m4=;
-        b=WLVWLLQQWLh29BTr9C1A1fM+2yK2UYk9O8Kx+MaERrVagFOV79Tqc5YvGG370di43+
-         qDu74xBytE9S/UGlWlvXruypco0h99d/o1RvmrvXYsJrXfV8TsIubuAbO8unR6YRvAOo
-         RwjXOO22+xDXJu41cirOEFRoEPu+gKRe8YGyw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tfYvWgBOL9KLxKgh81paM4/HEEsFVAXddPhrkTRK4m4=;
-        b=V2/EoqaQXBTA5EhMxeL9S6PqyERhPiIxnjKSayTIfVeqbBPpD6+/PX1ETgtAlMF+0L
-         xH0tv5xuhW40rWEKuqAsnch4rFdQoOvMOng0Gc8fyHCDaeKYOr9GRXRoWR5/fLFH/1LB
-         JOY0q6T0AjbmrZcMsk47/8xHItPS/j4CCz7QIfCHySfGxXfBEqp1JoKc2FTpJuO5xIKJ
-         1AymZoWU0VkIUeSrpuAmUk7TiJ7zvYFez2/0RS22RR4CZy1orOXJYZVTQ0RElKPBiOws
-         4ioh6lQDnODdGr0I0P1Q4uZyOvrT7N4TiRFydoSMwRS7RqOYZv3IQPUhMdAIDsz2zcMq
-         re5Q==
-X-Gm-Message-State: ABuFfoji8tgoPsyrnUv2jsdu8JewG3RsdEO0CmGDQxHZ5CNO4G1sy1WK
-        Eu83veteaAgwOHrxivct8zXBvRZn3OM=
-X-Google-Smtp-Source: ACcGV60XWE8GqZkNX5B6LCUsEK9TyGpBphVhjIg8BXSyegRg+BCr9G4I1ZnDXPO/FgSJiiWqxhRbJQ==
-X-Received: by 2002:a17:902:748a:: with SMTP id h10-v6mr6798178pll.192.1538049033779;
-        Thu, 27 Sep 2018 04:50:33 -0700 (PDT)
-Received: from localhost.localdomain ([183.82.230.83])
-        by smtp.gmail.com with ESMTPSA id v36-v6sm3744872pgn.85.2018.09.27.04.50.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 04:50:33 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 11/12] arm64: dts: allwinner: a64: Add DSI pipeline
-Date:   Thu, 27 Sep 2018 17:18:49 +0530
-Message-Id: <20180927114850.24565-12-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+        Thu, 27 Sep 2018 14:08:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39306 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727163AbeI0SId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 14:08:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D50E2B078;
+        Thu, 27 Sep 2018 11:50:35 +0000 (UTC)
+Subject: Re: [v2 PATCH 1/2 -mm] mm: mremap: dwongrade mmap_sem to read when
+ shrinking
+To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
+        kirill@shutemov.name, willy@infradead.org,
+        ldufour@linux.vnet.ibm.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <8c04afa9-45c2-be18-c084-058add73c978@suse.cz>
+Date:   Thu, 27 Sep 2018 13:50:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A64 has a MIPI-DSI block which is similar to A31
-without mod clock.
+On 9/26/18 8:10 PM, Yang Shi wrote:
+> Subject: [v2 PATCH 1/2 -mm] mm: mremap: dwongrade mmap_sem to read
+when shrinking
 
-So, add dsi node with A64 compatible, dphy node with
-A31 compatible and finally connect dsi to tcon0 to
-make proper DSI pipeline.
+"downgrade" in the subject
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+> Other than munmap, mremap might be used to shrink memory mapping too.
+> So, it may hold write mmap_sem for long time when shrinking large
+> mapping, as what commit ("mm: mmap: zap pages with read mmap_sem in
+> munmap") described.
+> 
+> The mremap() will not manipulate vmas anymore after __do_munmap() call for
+> the mapping shrink use case, so it is safe to downgrade to read mmap_sem.
+> 
+> So, the same optimization, which downgrades mmap_sem to read for zapping
+> pages, is also feasible and reasonable to this case.
+> 
+> The period of holding exclusive mmap_sem for shrinking large mapping
+> would be reduced significantly with this optimization.
+> 
+> MREMAP_FIXED and MREMAP_MAYMOVE are more complicated to adopt this
+> optimization since they need manipulate vmas after do_munmap(),
+> downgrading mmap_sem may create race window.
+> 
+> Simple mapping shrink is the low hanging fruit, and it may cover the
+> most cases of unmap with munmap together.
+> 
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index f3a66f888205..308eedc53150 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -320,6 +320,11 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <1>;
-+
-+					tcon0_out_dsi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&dsi_in_tcon0>;
-+					};
- 				};
- 			};
- 		};
-@@ -818,6 +823,45 @@
- 			#interrupt-cells = <3>;
- 		};
- 
-+
-+		dsi: dsi@1ca0000 {
-+			compatible = "allwinner,sun50i-a64-mipi-dsi";
-+			reg = <0x01ca0000 0x1000>;
-+			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_MIPI_DSI>;
-+			clock-names = "bus";
-+			resets = <&ccu RST_BUS_MIPI_DSI>;
-+			phys = <&dphy>;
-+			phy-names = "dphy";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					dsi_in_tcon0: endpoint {
-+						remote-endpoint = <&tcon0_out_dsi>;
-+					};
-+				};
-+			};
-+		};
-+
-+		dphy: d-phy@1ca1000 {
-+			compatible = "allwinner,sun6i-a31-mipi-dphy";
-+			reg = <0x01ca1000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MIPI_DSI>,
-+				 <&ccu CLK_DSI_DPHY>;
-+			clock-names = "bus", "mod";
-+			resets = <&ccu RST_BUS_MIPI_DSI>;
-+			status = "disabled";
-+			#phy-cells = <0>;
-+		};
-+
- 		pwm: pwm@1c21400 {
- 			compatible = "allwinner,sun50i-a64-pwm",
- 				     "allwinner,sun5i-a13-pwm";
--- 
-2.18.0.321.gffc6fa0e3
+Looks fine,
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Nit:
+
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2687,8 +2687,8 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>   * work.  This now handles partial unmappings.
+>   * Jeremy Fitzhardinge <jeremy@goop.org>
+>   */
+> -static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> -		       struct list_head *uf, bool downgrade)
+> +int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> +		struct list_head *uf, bool downgrade)
+>  {
+>  	unsigned long end;
+>  	struct vm_area_struct *vma, *prev, *last;
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 5c2e185..8f1ec2b 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -525,6 +525,7 @@ static int vma_expandable(struct vm_area_struct *vma, unsigned long delta)
+>  	unsigned long ret = -EINVAL;
+>  	unsigned long charged = 0;
+>  	bool locked = false;
+> +	bool downgrade = false;
+
+Maybe "downgraded" is more accurate here, or even "downgraded_mmap_sem".
 
