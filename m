@@ -2,197 +2,247 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C09C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56560C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D56221708
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qK7+JR+6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D56221708
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1456C216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1456C216FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbeI1BH1 (ORCPT
+        id S1728676AbeI1BHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:07:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbeI1BH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:07:27 -0400
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C253216FA;
-        Thu, 27 Sep 2018 18:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538074068;
-        bh=qK+g5b8wlVD+j560k6eqPnajqBjjNpA3lzLw3dY+z0g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qK7+JR+6XB1dZAAwzI5H7oL6UcSGoiTxosfdX/l6jXkKVBmPGE/CJZw5HqFcgzLBu
-         AUSLggzNH8OguCEBns1lz3umuhgpw556LwAgsmd2JND9OTHaR7w+vdIz8lXZq6XCP1
-         +Fi6qtif95V9Sn9FI5g/gDb4OK1F5zTbyLNA9EuA=
-Date:   Thu, 27 Sep 2018 13:47:46 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Suganath Prabu S <suganath-prabu.subramani@broadcom.com>,
-        linux-scsi@vger.kernel.org, linux-pci@vger.kernel.org,
-        andy.shevchenko@gmail.com, Sathya.Prakash@broadcom.com,
-        sreekanth.reddy@broadcom.com, linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>
-Subject: Re: [PATCH v4 1/6] mpt3sas: Introduce
- mpt3sas_base_pci_device_is_available
-Message-ID: <20180927184746.GM28024@bhelgaas-glaptop.roam.corp.google.com>
-References: <1537935759-14754-1-git-send-email-suganath-prabu.subramani@broadcom.com>
- <1537935759-14754-2-git-send-email-suganath-prabu.subramani@broadcom.com>
- <20180926213241.GI28024@bhelgaas-glaptop.roam.corp.google.com>
- <20180927070327.wvl5glb4c7gtjoa3@wunner.de>
+        Thu, 27 Sep 2018 21:07:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57469 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeI1BHk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 21:07:40 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIlTl6129388
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 27 Sep 2018 11:47:29 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIlTMD129385;
+        Thu, 27 Sep 2018 11:47:29 -0700
+Date:   Thu, 27 Sep 2018 11:47:29 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-91ee8f5c1f50a1f4096c178a93a8da46ce3f6cc8@git.kernel.org>
+Cc:     dave.hansen@intel.com, peterz@infradead.org, bin.yang@intel.com,
+        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, mark.gross@intel.com
+Reply-To: dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+          mark.gross@intel.com, mingo@kernel.org, hpa@zytor.com,
+          peterz@infradead.org, tglx@linutronix.de, bin.yang@intel.com
+In-Reply-To: <20180917143545.995734490@linutronix.de>
+References: <20180917143545.995734490@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/cpa: Allow range check for static protections
+Git-Commit-ID: 91ee8f5c1f50a1f4096c178a93a8da46ce3f6cc8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180927070327.wvl5glb4c7gtjoa3@wunner.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Ben, Russell, Sam, Oliver in case they have pertinent experience from
-powerpc error handling; thread begins at
-https://lore.kernel.org/linux-pci/1537935759-14754-1-git-send-email-suganath-prabu.subramani@broadcom.com/]
+Commit-ID:  91ee8f5c1f50a1f4096c178a93a8da46ce3f6cc8
+Gitweb:     https://git.kernel.org/tip/91ee8f5c1f50a1f4096c178a93a8da46ce3f6cc8
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 17 Sep 2018 16:29:10 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 27 Sep 2018 20:39:37 +0200
 
-On Thu, Sep 27, 2018 at 09:03:27AM +0200, Lukas Wunner wrote:
-> On Wed, Sep 26, 2018 at 04:32:41PM -0500, Bjorn Helgaas wrote:
-> > On Wed, Sep 26, 2018 at 09:52:34AM +0530, Suganath Prabu S wrote:
-> > > @@ -6853,6 +6872,13 @@ mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
-> > >  
-> > >  	ioc->pending_io_count = 0;
-> > >  
-> > > +	if (!mpt3sas_base_pci_device_is_available(ioc)) {
-> > > +		pr_err(MPT3SAS_FMT
-> > > +		    "%s: pci error recovery reset or pci device unplug occurred\n",
-> > > +		    ioc->name, __func__);
-> > > +		return;
-> > > +	}
-> > > +
-> > >  	ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
-> > 
-> > This is a good example of why I don't like pci_device_is_present(): it
-> > is fundamentally racy and gives a false sense of security.  Here we
-> > *think* we're making the code safer, but in fact we could have this
-> > sequence:
-> > 
-> >   mpt3sas_base_pci_device_is_available()    # returns true
-> >   # device is removed
-> >   ioc_state = mpt3sas_base_get_iocstate()
-> > 
-> > In this case the readl() inside mpt3sas_base_get_iocstate() will
-> > probably return 0xffffffff data, and we assume that's valid and
-> > continue on our merry way, pretending that "ioc_state" makes sense
-> > when it really doesn't.
-> 
-> The function does the following:
-> 
-> 	ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
-> 	if ((ioc_state & MPI2_IOC_STATE_MASK) != MPI2_IOC_STATE_OPERATIONAL)
-> 		return;
-> 
-> where MPI2_IOC_STATE_MASK is 0xF0000000 and MPI2_IOC_STATE_OPERATIONAL
-> is 0x20000000.  If the device is removed after the call to
-> mpt3sas_base_pci_device_is_available(), the result of the bitwise "and"
-> operation would be 0xF0000000, which is unequal to 0x20000000.
-> Hence this looks safe.
+x86/mm/cpa: Allow range check for static protections
 
-I agree this particular case is technically safe, but figuring that
-out requires an unreasonable amount of analysis.  And there's no hint
-in the code that we need to be concerned about whether the readl()
-returns valid data, so the need for the analysis won't even occur to
-most readers.
+Checking static protections only page by page is slow especially for huge
+pages. To allow quick checks over a complete range, add the ability to do
+that.
 
-I don't feel good about encouraging this style of adding an explicit
-test for whether the device is available, followed by a completely
-implicit test that accidentally happens to correctly handle a device
-that was removed after the explicit test.
+Make the checks inclusive so the ranges can be directly used for debug output
+later.
 
-If we instead added a test for ~0 after the readl(), we would avoid
-the race and give the reader a clue that *any* read from the device
-can potentially fail without advance warning.
+No functional change.
 
-> I agree that pci_device_is_present() (and the pci_dev_is_disconnected()
-> it calls) must be used judiciously, but here it seems to have been done
-> correctly.
-> 
-> One thing to be aware of is that a return value of "true" from
-> pci_dev_is_disconnected() is definitive and can be trusted.
-> On the other hand a return value of "false" is more like a fuzzy
-> "likely not disconnected, but can't give any guarantees".
-> So the boolean return value is kind of the problem here.
-> Boolean logic doesn't really fit these "definitive if true,
-> not definitive if false" semantics.
-> 
-> However being able to get the definitive answer in the disconnected
-> case is valuable:  pciehp is the only entity that can determine
-> surprise removal authoritatively and unambiguously (albeit with
-> a latency).  All the other tools that we have at our disposal don't
-> have that quality:  E.g. checking the Vendor ID is ambiguous because
-> it returns a valid value if a device was quickly replaced with another
-> one.  Also, all ones may be returned in the case of an Uncorrectable
-> Error, but the device may revert to valid responses if the error can
-> be recovered.  (Please correct me if I'm wrong.)
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Bin Yang <bin.yang@intel.com>
+Cc: Mark Gross <mark.gross@intel.com>
+Link: https://lkml.kernel.org/r/20180917143545.995734490@linutronix.de
 
-I think everything you said above is true, but I'm not yet convinced
-that it's being applied usefully in mpt3sas.
+---
+ arch/x86/mm/pageattr.c | 69 ++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 44 insertions(+), 25 deletions(-)
 
-  bool pci_dev_is_disconnected(pdev)       # "true" is definitive
-  {
-    return test_bit(PCI_DEV_DISCONNECTED, &dev->priv_flags);
-  }
-
-  bool pci_device_is_present(pdev)         # "false" is definitive
-  {
-    if (pci_dev_is_disconnected(pdev))
-      return false;
-    return pci_bus_read_dev_vendor_id(...);
-  }
-
-  mpt3sas_base_pci_device_is_available(ioc)  # "false" is definitive
-  {
-    return !ioc->pci_error_recovery && pci_device_is_present(ioc->pdev);
-  }
-
-  mpt3sas_wait_for_commands_to_complete(...)
-  {
-    ...
- +  if (!mpt3sas_base_pci_device_is_available(ioc))
- +    return;
-
-    # In the definitive case, we returned above.  If we get here, we
-    # think the device *might* be present.  The readl() inside
-    # mpt3sas_base_get_iocstate() might fail (returning ~0 data).
-    # It happens that (~0 & MPI2_IOC_STATE_MASK) != MPI2_IOC_STATE_OPERATIONAL
-    # so we will return below if the device was removed after the
-    # check above.
-
-    ioc_state = mpt3sas_base_get_iocstate(ioc, 0);
-    if ((ioc_state & MPI2_IOC_STATE_MASK) != MPI2_IOC_STATE_OPERATIONAL)
-      return;
-    ...
-
-
-I think this code is unreasonably complicated.  The multiple layers
-and negations make it very difficult to figure out what's definitive.
-
-I'm not sure how mpt3sas benefits from adding
-mpt3sas_base_pci_device_is_available() here, other than the fact that
-it avoids an MMIO read to the device in most cases.  I think it would
-be simpler and better to make mpt3sas_base_get_iocstate() smarter
-about handling ~0 values from the readl().
-
-Bjorn
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 9731aeeebe71..61ff27848452 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -286,22 +286,29 @@ static void cpa_flush_array(unsigned long *start, int numpages, int cache,
+ 	}
+ }
+ 
++static bool overlaps(unsigned long r1_start, unsigned long r1_end,
++		     unsigned long r2_start, unsigned long r2_end)
++{
++	return (r1_start <= r2_end && r1_end >= r2_start) ||
++		(r2_start <= r1_end && r2_end >= r1_start);
++}
++
+ #ifdef CONFIG_PCI_BIOS
+ /*
+  * The BIOS area between 640k and 1Mb needs to be executable for PCI BIOS
+  * based config access (CONFIG_PCI_GOBIOS) support.
+  */
+ #define BIOS_PFN	PFN_DOWN(BIOS_BEGIN)
+-#define BIOS_PFN_END	PFN_DOWN(BIOS_END)
++#define BIOS_PFN_END	PFN_DOWN(BIOS_END - 1)
+ 
+-static pgprotval_t protect_pci_bios(unsigned long pfn)
++static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
+ {
+-	if (pcibios_enabled && within(pfn, BIOS_PFN, BIOS_PFN_END))
++	if (pcibios_enabled && overlaps(spfn, epfn, BIOS_PFN, BIOS_PFN_END))
+ 		return _PAGE_NX;
+ 	return 0;
+ }
+ #else
+-static pgprotval_t protect_pci_bios(unsigned long pfn)
++static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
+ {
+ 	return 0;
+ }
+@@ -312,12 +319,17 @@ static pgprotval_t protect_pci_bios(unsigned long pfn)
+  * aliases.  This also includes __ro_after_init, so do not enforce until
+  * kernel_set_to_readonly is true.
+  */
+-static pgprotval_t protect_rodata(unsigned long pfn)
++static pgprotval_t protect_rodata(unsigned long spfn, unsigned long epfn)
+ {
+-	unsigned long start_pfn = __pa_symbol(__start_rodata) >> PAGE_SHIFT;
+-	unsigned long end_pfn = __pa_symbol(__end_rodata) >> PAGE_SHIFT;
++	unsigned long epfn_ro, spfn_ro = PFN_DOWN(__pa_symbol(__start_rodata));
++
++	/*
++	 * Note: __end_rodata is at page aligned and not inclusive, so
++	 * subtract 1 to get the last enforced PFN in the rodata area.
++	 */
++	epfn_ro = PFN_DOWN(__pa_symbol(__end_rodata)) - 1;
+ 
+-	if (kernel_set_to_readonly && within(pfn, start_pfn, end_pfn))
++	if (kernel_set_to_readonly && overlaps(spfn, epfn, spfn_ro, epfn_ro))
+ 		return _PAGE_RW;
+ 	return 0;
+ }
+@@ -330,9 +342,12 @@ static pgprotval_t protect_rodata(unsigned long pfn)
+  *
+  * This does not cover __inittext since that is gone after boot.
+  */
+-static pgprotval_t protect_kernel_text(unsigned long address)
++static pgprotval_t protect_kernel_text(unsigned long start, unsigned long end)
+ {
+-	if (within(address, (unsigned long)_text, (unsigned long)_etext))
++	unsigned long t_end = (unsigned long)_etext - 1;
++	unsigned long t_start = (unsigned long)_text;
++
++	if (overlaps(start, end, t_start, t_end))
+ 		return _PAGE_NX;
+ 	return 0;
+ }
+@@ -347,13 +362,14 @@ static pgprotval_t protect_kernel_text(unsigned long address)
+  * This will preserve the large page mappings for kernel text/data at no
+  * extra cost.
+  */
+-static pgprotval_t protect_kernel_text_ro(unsigned long address)
++static pgprotval_t protect_kernel_text_ro(unsigned long start,
++					  unsigned long end)
+ {
+-	unsigned long end = (unsigned long)__end_rodata_hpage_align;
+-	unsigned long start = (unsigned long)_text;
++	unsigned long t_end = (unsigned long)__end_rodata_hpage_align - 1;
++	unsigned long t_start = (unsigned long)_text;
+ 	unsigned int level;
+ 
+-	if (!kernel_set_to_readonly || !within(address, start, end))
++	if (!kernel_set_to_readonly || !overlaps(start, end, t_start, t_end))
+ 		return 0;
+ 	/*
+ 	 * Don't enforce the !RW mapping for the kernel text mapping, if
+@@ -367,12 +383,13 @@ static pgprotval_t protect_kernel_text_ro(unsigned long address)
+ 	 * so the protections for kernel text and identity mappings have to
+ 	 * be the same.
+ 	 */
+-	if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
++	if (lookup_address(start, &level) && (level != PG_LEVEL_4K))
+ 		return _PAGE_RW;
+ 	return 0;
+ }
+ #else
+-static pgprotval_t protect_kernel_text_ro(unsigned long address)
++static pgprotval_t protect_kernel_text_ro(unsigned long start,
++					  unsigned long end)
+ {
+ 	return 0;
+ }
+@@ -384,18 +401,20 @@ static pgprotval_t protect_kernel_text_ro(unsigned long address)
+  * right (again, ioremap() on BIOS memory is not uncommon) so this function
+  * checks and fixes these known static required protection bits.
+  */
+-static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
+-					  unsigned long pfn)
++static inline pgprot_t static_protections(pgprot_t prot, unsigned long start,
++					  unsigned long pfn, unsigned long npg)
+ {
+ 	pgprotval_t forbidden;
++	unsigned long end;
+ 
+ 	/* Operate on the virtual address */
+-	forbidden  = protect_kernel_text(address);
+-	forbidden |= protect_kernel_text_ro(address);
++	end = start + npg * PAGE_SIZE - 1;
++	forbidden  = protect_kernel_text(start, end);
++	forbidden |= protect_kernel_text_ro(start, end);
+ 
+ 	/* Check the PFN directly */
+-	forbidden |= protect_pci_bios(pfn);
+-	forbidden |= protect_rodata(pfn);
++	forbidden |= protect_pci_bios(pfn, pfn + npg - 1);
++	forbidden |= protect_rodata(pfn, pfn + npg - 1);
+ 
+ 	return __pgprot(pgprot_val(prot) & ~forbidden);
+ }
+@@ -667,10 +686,10 @@ static int __should_split_large_page(pte_t *kpte, unsigned long address,
+ 	 * in it results in a different pgprot than the first one of the
+ 	 * requested range. If yes, then the page needs to be split.
+ 	 */
+-	new_prot = static_protections(req_prot, address, pfn);
++	new_prot = static_protections(req_prot, address, pfn, 1);
+ 	pfn = old_pfn;
+ 	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
+-		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
++		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1);
+ 
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+ 			return 1;
+@@ -1280,7 +1299,7 @@ repeat:
+ 		pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
+ 		pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
+ 
+-		new_prot = static_protections(new_prot, address, pfn);
++		new_prot = static_protections(new_prot, address, pfn, 1);
+ 
+ 		new_prot = pgprot_clear_protnone_bits(new_prot);
+ 
