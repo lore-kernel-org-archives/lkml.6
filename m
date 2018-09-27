@@ -2,150 +2,96 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FCFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DF9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 162E22152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aaathats3as.com header.i=@aaathats3as.com header.b="0BZoGq5a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162E22152F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aaathats3as.com
+	by mail.kernel.org (Postfix) with ESMTP id 2870E2152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2870E2152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbeI0PkG (ORCPT
+        id S1728437AbeI0PkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:40:06 -0400
-Received: from cock.li ([185.100.85.212]:50044 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727212AbeI0PkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 27 Sep 2018 11:40:05 -0400
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaathats3as.com;
-        s=mail; t=1538040162;
-        bh=1pm4y+bwewZkwnTMD11H/MPXWMI+t7VoASrMbW2MTLA=;
-        h=Date:From:To:Subject:From;
-        b=0BZoGq5aC+m5YQa+dP+xsmPPvPh1XUR555r6O+A7l/AYpqArFpdnAomRnNwONTSmm
-         fABQPCt/MBX6tomJQpwOBUVNSRXxeVicyxBXa71Ey8SCm5oWrnlbkzvjZpudb08HN/
-         FK+chZV3zr228dGUWVy/j1HED43VBkh+9G7byxYx/AJq8alhzh/pirip2h6dkaYZEG
-         MghNEGVXSEnruEgU5+ZpmR+FFF3Lhh91SBX2ZYVN9Hf5MundlH0cELuVEZgWfBw4nV
-         V/hux4uCtK47OmCjH44x/tDe5ei5rswWMz4hmjfoObqiu9z34b5adcwpJSzjc1+SUQ
-         n4RV9hmgvRiJA==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 27 Sep 2018 09:22:34 +0000
-From:   gratuitouslicensesarerevocable@aaathats3as.com
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56524 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbeI0PkF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:40:05 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1DDC51113;
+        Thu, 27 Sep 2018 09:22:44 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Subject: (Response to SFConservancy) Under US copyright, permission regarding
- a GPL version 2 licensed work is revocable by the grantor.
-Message-ID: <4b582ea3f93cb72a093023b6584335ba@aaathats3as.com>
-X-Sender: gratuitouslicensesarerevocable@aaathats3as.com
-User-Agent: Roundcube Webmail/1.3.6
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Kirill Kapranov <kirill.kapranov@compulab.co.il>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 31/64] spi: fix IDR collision on systems with both fixed and dynamic SPI bus numbers
+Date:   Thu, 27 Sep 2018 11:03:48 +0200
+Message-Id: <20180927090254.569426729@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
+References: <20180927090249.801943776@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The software freedom conservancy has tendered its response:
-http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
-http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-""
-"The GPLv2 have several provisions that, when taken together, can be 
-construed as an irrevocable license from each contributor. "
-""
+From: Kirill Kapranov <kirill.kapranov@compulab.co.il>
 
-It cites:
+commit 1a4327fbf4554d5b78d75b19a13d40d6de220159 upstream.
 
+On systems where some controllers get a dynamic ID assigned and some have
+a fixed number (e.g. from ACPI tables), the current implementation might
+run into an IDR collision: in case of a fixed bus number is gotten by a
+driver (but not marked busy in IDR tree) and a driver with dynamic bus
+number gets the same ID and predictably fails.
 
-           " That license granted to downstream is irrevocable, again 
-provided that the downstream user complies with the license terms: 
-"[P]arties who have received copies, or rights, from you under this 
-License will not have their licenses terminated so long as such parties 
-remain in full compliance" (GPLv2§4). "
+Fix this by means of checking-in fixed IDsin IDR as far as dynamic ones
+at the moment of the controller registration.
 
-However this is disingenuous
+Fixes: 9b61e302210e (spi: Pick spi bus number from Linux idr or spi alias)
+Signed-off-by: Kirill Kapranov <kirill.kapranov@compulab.co.il>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The full text of section 4 is as follows:
+---
+ drivers/spi/spi.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-""
-   4. You may not copy, modify, sublicense, or distribute the Program
-except as expressly provided under this License.  Any attempt
-otherwise to copy, modify, sublicense or distribute the Program is
-void, and will automatically terminate your rights under this License.
-However, parties who have received copies, or rights, from you under
-this License will not have their licenses terminated so long as such
-parties remain in full compliance.
-""
-
-
-
-The "You" in section 4 is speaking of the licensee regarding 
-sub-licensees, it is not speaking to the licensor/copyright-holder.
-
-IE: if the licensee loses his license, through operation of the 
-automatic-revocation provisions, the sub-licensees do not also lose 
-their licenses.
-
-IE: The language is disclaiming a chain topography for license 
-distribution, and instead substituting a hub-and-spoke topography (all 
-licenses originating from the copyright holder, not the 
-previous-in-line)
-
-GPLv3 added a no-rescission clause for a reason: the reason being to 
-attempt to create an estoppel defense for the licensees against the 
-licensor. You will notice that Eben Moglen never speaks on these issues. 
-(He preumably is aware of the weaknesses vis a vis the US copyright 
-regime.)
-
-Section 6 further clarifies the hub-and-spoke model:
-""
-    6. Each time you redistribute the Program (or any work based on the
-Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
-these terms and conditions.  You may not impose any further
-restrictions on the recipients' exercise of the rights granted herein.
-You are not responsible for enforcing compliance by third parties to
-this License.
-""
-
-The memorandum posted then goes on to a discussion of estoppel, 
-detrimental reliance, etc; noting that users may have relied on the 
-software and their licenses may be estopped from being revoked from said 
-users since doing so might cause them unanticipated loss. This is 
-speaking of already published, existent, versions of the program used by 
-end users.
-
-The memorandum seems to ignore what happens to "upstream" once said 
-project  receives a revocation notice. Thought it may be possible that 
-users of a published piece of software may have defenses to license 
-revocation, the same is not true regarding the rescinded property 
-vis-a-vis future prospective versions of the software nor of future 
-prospective licensees of said software.
-
-That is: once the grant to use the code in question is rescinded, future 
-versions of the software may not use that code. Current users of the 
-software may be-able to raise an estoppel / detrimental reliance defense 
-regarding the current published software, however the programmers 
-working on the next version of said software cannot continue to use the 
-property in future versions of the software (such would be a copyright 
-violation once the gratuitous license is rescinded by the grantor).
-
-Additionally, prospective-licensees, once the grant was rescinded and 
-such was published, would have no same-such estoppel defense (not being 
-user-licensees at the time of revocation).
-
-(Ignoring this eventuality in the published memorandum, is, of-course, 
-by design.)
-(Now, to note: the free-software movement is focused on the freedom of 
-the user, not the progenitors of the software, so one could certainly 
-say that ignoring some developer-focused analysis is consistent with 
-their prerogative...)
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2135,6 +2135,15 @@ int spi_register_controller(struct spi_c
+ 		if (WARN(id < 0, "couldn't get idr"))
+ 			return id;
+ 		ctlr->bus_num = id;
++	} else {
++		/* devices with a fixed bus num must check-in with the num */
++		mutex_lock(&board_lock);
++		id = idr_alloc(&spi_master_idr, ctlr, ctlr->bus_num,
++			ctlr->bus_num + 1, GFP_KERNEL);
++		mutex_unlock(&board_lock);
++		if (WARN(id < 0, "couldn't get idr"))
++			return id == -ENOSPC ? -EBUSY : id;
++		ctlr->bus_num = id;
+ 	}
+ 	INIT_LIST_HEAD(&ctlr->queue);
+ 	spin_lock_init(&ctlr->queue_lock);
 
 
