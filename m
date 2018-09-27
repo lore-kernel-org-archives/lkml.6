@@ -2,247 +2,156 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76057C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D18AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5ED02156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:05:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8uIHwNt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ED02156B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BF45221564
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:20:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF45221564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbeI0MWZ (ORCPT
+        id S1726947AbeI0Mgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 08:22:25 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:41158 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeI0MWZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 08:22:25 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d14-v6so620211ybs.8;
-        Wed, 26 Sep 2018 23:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5cNTDyOuPCpdmB+arHevyKSC5CH9Q9RdQMPjBGXeEQ4=;
-        b=b8uIHwNtc4upM3p9Ir3yTbem9BaFFny3aRMNUtNRGvB8HQR95XeggtvnLzuwdsHx1Y
-         kyN7n06LTMmvefoHUlhHY62r5J5STLMpNFGHQi6qKarW4DiOb0GqJ3ije/482fDAWBz+
-         OV6oiHaDbGDvC8ngc+5siPyKmj75LJ6hkYjrCgGz5cG5bqBjmJdKv/AXHpq7L1XheiDG
-         qIsl26VkTs7+Va+q7tF+vHoSRSxBSwKNcT6DnH61WKd37iWKdXzv+WA3AlPMDP3DZkvn
-         ZF9vx8SnmMfYPNJXTncZTrqfSrJ8hbucbVI5KPvtjuu0ND0sDx8S24caHeF0/H/2x1Q3
-         ydzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5cNTDyOuPCpdmB+arHevyKSC5CH9Q9RdQMPjBGXeEQ4=;
-        b=TVGzVD6DvCv7xgK7yQHe+YN+UpFIlH5atoWj+JggBHchNL0F15AZYS3BA5+Nu3CFyT
-         COurMxsUgzW7UXyrtBS1nS6wB8sEI4NBBCtnV8CrVVXfmHpt8WHQQDKBTu54VwyUsU+k
-         6RyGdtwWSdm8lCytNfPCvq8WtdUIC/KjUG31CaCzB21vPWI9CoxQkXz5ywL/wC6/pPtf
-         uXbYIo67kCQWO9y3gJbcQDsjaSUpH+TsE1glUeJypvZv5k9SdR2vSvgK1U6NRn30+4Po
-         OjpL/BGAFRjLj//NuWyNXNiO+Kp7VXYH/TFtB+kb2cXFyiegIUZZ21kxpFB64LRHn6r9
-         egFA==
-X-Gm-Message-State: ABuFfojsmJ0xrjgYVnCGCJ5FatXzEsSeSZJ0DO/kaAODkPMRTJ7dof2Y
-        UJnpK5jjanVrvrIVoKqPfxAv1upWslGX4YqnoFs=
-X-Google-Smtp-Source: ACcGV62HLULArYXLegPiwk2wGzKOrQl2R1HZ+V+pSsbHYt+bVeWVnZqBYvDnorrAkVCZFaJt3oT8yyF/Hrds5BNeSDE=
-X-Received: by 2002:a5b:b51:: with SMTP id b17-v6mr5038119ybr.397.1538028351142;
- Wed, 26 Sep 2018 23:05:51 -0700 (PDT)
+        Thu, 27 Sep 2018 08:36:38 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:13183 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726659AbeI0Mgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 08:36:37 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42LPmc3cLqz9ttCH;
+        Thu, 27 Sep 2018 08:20:00 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id azRfGlaEeVVI; Thu, 27 Sep 2018 08:20:00 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42LPmc2s45z9ttC3;
+        Thu, 27 Sep 2018 08:20:00 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2701A8B86C;
+        Thu, 27 Sep 2018 08:20:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id WM_ztUJgWrdu; Thu, 27 Sep 2018 08:20:01 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 732EE8B75A;
+        Thu, 27 Sep 2018 08:20:00 +0200 (CEST)
+Subject: Re: [PATCH v4 1/2] powerpc/32: add stack protector support
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <d6c43ab708bf9ae1266c745fece457ed2da43d7c.1537961921.git.christophe.leroy@c-s.fr>
+ <20180926191615.GO23155@gate.crashing.org>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <220fbef8-429c-9485-d10e-c1eaa989918d@c-s.fr>
+Date:   Thu, 27 Sep 2018 08:20:00 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <00000000000044cbf80576baaecd@google.com> <CAJfpegsxLtDZqOpK68kGZU+qeEpA5gmAw-uigUKZorexU5i8BA@mail.gmail.com>
-In-Reply-To: <CAJfpegsxLtDZqOpK68kGZU+qeEpA5gmAw-uigUKZorexU5i8BA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 27 Sep 2018 09:05:39 +0300
-Message-ID: <CAOQ4uxi7LjOVssduYEfbNnYd7ZbwB+hikd+P03_qPFHZeF_Phg@mail.gmail.com>
-Subject: Re: possible deadlock in path_openat
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180926191615.GO23155@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 7:33 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> [Cc linux-unionfs]
->
-> On Wed, Sep 26, 2018 at 1:44 AM, syzbot
-> <syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com> wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    2dd68cc7fd8c Merge gitolite.kernel.org:/pub/scm/linux/kern..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=111a60e6400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=22a62640793a83c9
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=a55ccfc8a853d3cff213
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> >
-> > Unfortunately, I don't have any reproducer for this crash yet.
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com
-> >
-> > ntfs: (device loop1): ntfs_fill_super(): Unable to determine device size.
-> > team0 (unregistering): Port device team_slave_1 removed
-> > kobject: 'team_slave_1' (000000001c55f79f): kobject_uevent_env
-> >
-> > ======================================================
-> > WARNING: possible circular locking dependency detected
-> > kobject: 'team_slave_1' (000000001c55f79f): kobject_uevent_env:
-> > uevent_suppress caused the event to drop!
-> > 4.19.0-rc5+ #253 Not tainted
-> > ------------------------------------------------------
-> > syz-executor1/545 is trying to acquire lock:
-> > 00000000b04209e4 (&ovl_i_mutex_dir_key[depth]){++++}, at: inode_lock_shared
-> > include/linux/fs.h:748 [inline]
-> > 00000000b04209e4 (&ovl_i_mutex_dir_key[depth]){++++}, at: do_last
-> > fs/namei.c:3323 [inline]
-> > 00000000b04209e4 (&ovl_i_mutex_dir_key[depth]){++++}, at:
-> > path_openat+0x250d/0x5160 fs/namei.c:3534
-> > kobject: 'rx-0' (00000000ca3546e9): kobject_cleanup, parent 000000004d034f96
-> >
-> > but task is already holding lock:
-> > 0000000044500cca (&sig->cred_guard_mutex){+.+.}, at:
-> > prepare_bprm_creds+0x53/0x120 fs/exec.c:1404
-> >
-> > which lock already depends on the new lock.
-> >
-> >
-> > the existing dependency chain (in reverse order) is:
-> >
-> > -> #3 (&sig->cred_guard_mutex){+.+.}:
-> >        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-> >        __mutex_lock+0x166/0x1700 kernel/locking/mutex.c:1072
-> > kobject: 'rx-0' (00000000ca3546e9): auto cleanup 'remove' event
-> >        mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:1102
-> >        lock_trace+0x4c/0xe0 fs/proc/base.c:384
-> >        proc_pid_stack+0x196/0x3b0 fs/proc/base.c:420
-> >        proc_single_show+0x101/0x190 fs/proc/base.c:723
-> >        seq_read+0x4af/0x1150 fs/seq_file.c:229
-> >        do_loop_readv_writev fs/read_write.c:700 [inline]
-> >        do_iter_read+0x4a3/0x650 fs/read_write.c:924
-> > kobject: 'rx-0' (00000000ca3546e9): kobject_uevent_env
-> >        vfs_readv+0x175/0x1c0 fs/read_write.c:986
-> >        do_preadv+0x1cc/0x280 fs/read_write.c:1070
-> >        __do_sys_preadv fs/read_write.c:1120 [inline]
-> >        __se_sys_preadv fs/read_write.c:1115 [inline]
-> >        __x64_sys_preadv+0x9a/0xf0 fs/read_write.c:1115
-> >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > kobject: 'rx-0' (00000000ca3546e9): kobject_uevent_env: uevent_suppress
-> > caused the event to drop!
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > -> #2 (&p->lock){+.+.}:
-> >        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-> >        __mutex_lock+0x166/0x1700 kernel/locking/mutex.c:1072
-> >        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-> >        seq_read+0x71/0x1150 fs/seq_file.c:161
-> >        do_loop_readv_writev fs/read_write.c:700 [inline]
-> >        do_iter_read+0x4a3/0x650 fs/read_write.c:924
-> >        vfs_readv+0x175/0x1c0 fs/read_write.c:986
-> > kobject: 'rx-0' (00000000ca3546e9): auto cleanup kobject_del
-> >        kernel_readv fs/splice.c:362 [inline]
-> >        default_file_splice_read+0x53c/0xb20 fs/splice.c:417
-> >        do_splice_to+0x12e/0x190 fs/splice.c:881
-> >        splice_direct_to_actor+0x270/0x8f0 fs/splice.c:953
-> >        do_splice_direct+0x2d4/0x420 fs/splice.c:1062
-> >        do_sendfile+0x62a/0xe20 fs/read_write.c:1440
-> >        __do_sys_sendfile64 fs/read_write.c:1495 [inline]
-> >        __se_sys_sendfile64 fs/read_write.c:1487 [inline]
-> >        __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1487
-> >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > kobject: 'rx-0' (00000000ca3546e9): calling ktype release
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > -> #1 (sb_writers#5){.+.+}:
-> >        percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
-> > [inline]
-> >        percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
-> >        __sb_start_write+0x214/0x370 fs/super.c:1387
-> >        sb_start_write include/linux/fs.h:1566 [inline]
-> >        mnt_want_write+0x3f/0xc0 fs/namespace.c:360
-> >        ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
-> > kobject: 'rx-0': free name
-> >        ovl_create_object+0x142/0x3a0 fs/overlayfs/dir.c:596
-> >        ovl_create+0x2b/0x30 fs/overlayfs/dir.c:627
-> >        lookup_open+0x1319/0x1b90 fs/namei.c:3234
-> >        do_last fs/namei.c:3324 [inline]
-> >        path_openat+0x15e7/0x5160 fs/namei.c:3534
-> >        do_filp_open+0x255/0x380 fs/namei.c:3564
-> >        do_sys_open+0x568/0x700 fs/open.c:1063
-> >        ksys_open include/linux/syscalls.h:1276 [inline]
-> >        __do_sys_creat fs/open.c:1121 [inline]
-> >        __se_sys_creat fs/open.c:1119 [inline]
-> >        __x64_sys_creat+0x61/0x80 fs/open.c:1119
-> > kobject: 'tx-0' (000000006100c4d9): kobject_cleanup, parent 000000004d034f96
-> >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > -> #0 (&ovl_i_mutex_dir_key[depth]){++++}:
-> >        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
-> >        down_read+0xb0/0x1d0 kernel/locking/rwsem.c:24
-> >        inode_lock_shared include/linux/fs.h:748 [inline]
-> >        do_last fs/namei.c:3323 [inline]
-> >        path_openat+0x250d/0x5160 fs/namei.c:3534
-> > kobject: 'tx-0' (000000006100c4d9): auto cleanup 'remove' event
-> >        do_filp_open+0x255/0x380 fs/namei.c:3564
-> >        do_open_execat+0x221/0x8e0 fs/exec.c:853
-> >        __do_execve_file.isra.33+0x173f/0x2540 fs/exec.c:1755
-> >        do_execveat_common fs/exec.c:1866 [inline]
-> >        do_execve fs/exec.c:1883 [inline]
-> >        __do_sys_execve fs/exec.c:1964 [inline]
-> >        __se_sys_execve fs/exec.c:1959 [inline]
-> >        __x64_sys_execve+0x8f/0xc0 fs/exec.c:1959
-> >        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> > kobject: 'tx-0' (000000006100c4d9): kobject_uevent_env
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > other info that might help us debug this:
-> >
-> > Chain exists of:
-> >   &ovl_i_mutex_dir_key[depth] --> &p->lock --> &sig->cred_guard_mutex
-> >
 
-So this is interesting... if there is a file in overlayfs lower layer with
-the f_op read = seq_read then &p->lock in the chain above could be
-takes after ovl locks and that is in reveres order to the order of locks
-in execve on an overlayfs file.
 
-On the one hand, it is possible (not sure if desirable) to use filesystems
-with seq_file like debugfs as overlay lower fs, but on the other hand,
-it is not possible to copy up a debugfs file with its original content
-because (at least for most files I looked) the inode size is reported as 0.
+Le 26/09/2018 à 21:16, Segher Boessenkool a écrit :
+> On Wed, Sep 26, 2018 at 11:40:38AM +0000, Christophe Leroy wrote:
+>> +static __always_inline void boot_init_stack_canary(void)
+>> +{
+>> +	unsigned long canary;
+>> +
+>> +	/* Try to get a semi random initial value. */
+>> +	get_random_bytes(&canary, sizeof(canary));
+>> +	canary ^= mftb();
+>> +	canary ^= LINUX_VERSION_CODE;
+>> +
+>> +	current->stack_canary = canary;
+>> +}
+> 
+> I still think you should wait until there is entropy available.  You
+> haven't answered my questions about that (or I didn't see them): what
+> does the kernel do in other similar cases?
+> 
+> Looks great otherwise!
+> 
 
-Also, from v4.19-rc1, with stacked f_op, ovl_read_iter() calls vfs_iter_read(),
-so overlayfs is no longer tolerant to underlying files that implement f_op read
-(and not read_iter), thus, it is no longer possible to read lower debugfs files.
+What do you mean by 'other similar cases' ? All arches have similar 
+boot_init_stack_canary(). x86 uses rdtsc() which is equivalent to our 
+mftb(). Most arches xor it with LINUX_VERSION_CODE.
 
-That said, if there are files in lower layer that user seq_read f_op and have
-non zero inode size, the deadlock reported above might be possible.
+The issue is that it is called very early in start_kernel(), however 
+they try to set some entropy anyway:
 
-Miklos,
+	boot_cpu_init();
+	page_address_init();
+	pr_notice("%s", linux_banner);
+	setup_arch(&command_line);
+	/*
+	 * Set up the the initial canary and entropy after arch
+	 * and after adding latent and command line entropy.
+	 */
+	add_latent_entropy();
+	add_device_randomness(command_line, strlen(command_line));
+	boot_init_stack_canary();
 
-What do you recon we should do?
-Blacklist debugfs just like procfs was blacklisted from fs stacking?
-Improve the heuristics of ovl_dentry_weird() to cover debugfs and friends?
+Apparently, it is too early for calling wait_for_random_bytes(), see below.
 
-Should we fix ovl_read_iter() to allow reading from lower without
-read_iter f_op?
-Or should we deny copy up of lower files without read_iter f_op?
-Neither?
+However this is the canary for initial startup only. Only idle() still 
+uses this canary once the system is running. A new canary is set for any 
+new forked task.
 
-Amir.
+Maybe should the idle canary be updated later once there is more entropy 
+? Today there is a new call to boot_init_stack_canary() in 
+cpu_startup_entry(), but it is enclosed inside #ifdef CONFIG_X86.
+
+[    0.000000] Unable to handle kernel paging request for data at 
+address 0x00000200
+[    0.000000] Faulting instruction address: 0xc0048e2c
+[    0.000000] Oops: Kernel access of bad area, sig: 11 [#1]
+[    0.000000] BE PREEMPT CMPC885
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 
+4.19.0-rc4-s3k-dev-00498-g439f9fbadb38-dirty #6
+[    0.000000] NIP:  c0048e2c LR: c05cf9ec CTR: c0018a68
+[    0.000000] REGS: c07e9e40 TRAP: 0300   Not tainted 
+(4.19.0-rc4-s3k-dev-00498-g439f9fbadb38-dirty)
+[    0.000000] MSR:  00001032 <ME,IR,DR,RI>  CR: 28044222  XER: 00000000
+[    0.000000] DAR: 00000200 DSISR: c0000000
+[    0.000000] GPR00: c05cf9ec c07e9ef0 c078c560 00000000 00000000 
+00000001 c080a405 626f6f74
+[    0.000000] GPR08: 00001032 c07e8000 00000000 00000004 28044222 
+100c82b6 00000000 07ff9580
+[    0.000000] GPR16: 00000000 07ffb94c 00000000 00000000 00000000 
+00000000 00000000 00000000
+[    0.000000] GPR24: 00000000 07ff9580 c05cfb3c 00000000 c0790000 
+c07e8000 c0797740 00000000
+[    0.000000] NIP [c0048e2c] __schedule_bug+0x24/0x78
+[    0.000000] LR [c05cf9ec] __schedule+0x4f4/0x614
+[    0.000000] Call Trace:
+[    0.000000] [c07e9ef0] [07ffb94c] 0x7ffb94c (unreliable)
+[    0.000000] [c07e9f00] [c05cf9ec] __schedule+0x4f4/0x614
+[    0.000000] [c07e9f50] [c05cfb3c] schedule+0x30/0x5c
+[    0.000000] [c07e9f70] [c02bf15c] wait_for_random_bytes.part.4+0xa0/0xa8
+[    0.000000] [c07e9fb0] [c06fc9c8] start_kernel+0x98/0x46c
+[    0.000000] [c07e9ff0] [c00022cc] start_here+0x44/0x98
+[    0.000000] Instruction dump:
+[    0.000000] 419eff30 4bffff8c 4bfd6619 3d20c081 81298154 2f890000 
+4cbe0020 9421fff0
+[    0.000000] 7c0802a6 90010014 7c641b78 54290024 <80a40200> 80c90008 
+3c60c06a 388402fc
+[    0.000000] random: get_random_bytes called from 
+print_oops_end_marker+0x34/0x6c with crng_init=0
+[    0.000000] ---[ end trace 343b232a5e00519e ]---
+
+Christophe
