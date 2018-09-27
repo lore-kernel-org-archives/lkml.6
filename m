@@ -2,129 +2,148 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7FEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE49ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 267382150D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 267382150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FAB421533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FAB421533
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbeI0PoE (ORCPT
+        id S1729177AbeI0PoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 27 Sep 2018 11:44:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56880 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729164AbeI0PoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 27 Sep 2018 11:44:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35404 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727625AbeI0PoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:44:03 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 939AAA6E04;
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 972401113;
         Thu, 27 Sep 2018 09:26:43 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-205.ams2.redhat.com [10.36.116.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D8C62015AD1;
-        Thu, 27 Sep 2018 09:26:41 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
-        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
-        David Hildenbrand <david@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3 6/6] memory-hotplug.txt: Add some details about locking internals
-Date:   Thu, 27 Sep 2018 11:25:54 +0200
-Message-Id: <20180927092554.13567-7-david@redhat.com>
-In-Reply-To: <20180927092554.13567-1-david@redhat.com>
-References: <20180927092554.13567-1-david@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 27 Sep 2018 09:26:43 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 23/44] udp4: fix IP_CMSG_CHECKSUM for connected sockets
+Date:   Thu, 27 Sep 2018 11:04:12 +0200
+Message-Id: <20180927090121.158006866@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
+References: <20180927090117.997362691@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's document the magic a bit, especially why device_hotplug_lock is
-required when adding/removing memory and how it all play together with
-requests to online/offline memory from user space.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+------------------
+
+From: Paolo Abeni <pabeni@redhat.com>
+
+[ Upstream commit 2b5a921740a55c00223a797d075b9c77c42cb171 ]
+
+commit 2abb7cdc0dc8 ("udp: Add support for doing checksum
+unnecessary conversion") left out the early demux path for
+connected sockets. As a result IP_CMSG_CHECKSUM gives wrong
+values for such socket when GRO is not enabled/available.
+
+This change addresses the issue by moving the csum conversion to a
+common helper and using such helper in both the default and the
+early demux rx path.
+
+Fixes: 2abb7cdc0dc8 ("udp: Add support for doing checksum unnecessary conversion")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/memory-hotplug.txt | 42 +++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ net/ipv4/udp.c |   49 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 26 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/memory-hotplug.txt b/Documentation/memory-hotplug.txt
-index 7f49ebf3ddb2..ce4faa5530fa 100644
---- a/Documentation/memory-hotplug.txt
-+++ b/Documentation/memory-hotplug.txt
-@@ -3,7 +3,7 @@ Memory Hotplug
- ==============
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -1730,6 +1730,28 @@ static inline int udp4_csum_init(struct
+ 							 inet_compute_pseudo);
+ }
  
- :Created:							Jul 28 2007
--:Updated: Add description of notifier of memory hotplug:	Oct 11 2007
-+:Updated: Add some details about locking internals:		Aug 20 2018
++/* wrapper for udp_queue_rcv_skb tacking care of csum conversion and
++ * return code conversion for ip layer consumption
++ */
++static int udp_unicast_rcv_skb(struct sock *sk, struct sk_buff *skb,
++			       struct udphdr *uh)
++{
++	int ret;
++
++	if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
++		skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
++					 inet_compute_pseudo);
++
++	ret = udp_queue_rcv_skb(sk, skb);
++
++	/* a return value > 0 means to resubmit the input, but
++	 * it wants the return to be -protocol, or 0
++	 */
++	if (ret > 0)
++		return -ret;
++	return 0;
++}
++
+ /*
+  *	All we need to do is get the socket, and then do a checksum.
+  */
+@@ -1776,14 +1798,9 @@ int __udp4_lib_rcv(struct sk_buff *skb,
+ 		if (unlikely(sk->sk_rx_dst != dst))
+ 			udp_sk_rx_dst_set(sk, dst);
  
- This document is about memory hotplug including how-to-use and current status.
- Because Memory Hotplug is still under development, contents of this text will
-@@ -495,6 +495,46 @@ further processing of the notification queue.
+-		ret = udp_queue_rcv_skb(sk, skb);
++		ret = udp_unicast_rcv_skb(sk, skb, uh);
+ 		sock_put(sk);
+-		/* a return value > 0 means to resubmit the input, but
+-		 * it wants the return to be -protocol, or 0
+-		 */
+-		if (ret > 0)
+-			return -ret;
+-		return 0;
++		return ret;
+ 	}
  
- NOTIFY_STOP stops further processing of the notification queue.
+ 	if (rt->rt_flags & (RTCF_BROADCAST|RTCF_MULTICAST))
+@@ -1791,22 +1808,8 @@ int __udp4_lib_rcv(struct sk_buff *skb,
+ 						saddr, daddr, udptable, proto);
  
-+
-+Locking Internals
-+=================
-+
-+When adding/removing memory that uses memory block devices (i.e. ordinary RAM),
-+the device_hotplug_lock should be held to:
-+
-+- synchronize against online/offline requests (e.g. via sysfs). This way, memory
-+  block devices can only be accessed (.online/.state attributes) by user
-+  space once memory has been fully added. And when removing memory, we
-+  know nobody is in critical sections.
-+- synchronize against CPU hotplug and similar (e.g. relevant for ACPI and PPC)
-+
-+Especially, there is a possible lock inversion that is avoided using
-+device_hotplug_lock when adding memory and user space tries to online that
-+memory faster than expected:
-+
-+- device_online() will first take the device_lock(), followed by
-+  mem_hotplug_lock
-+- add_memory_resource() will first take the mem_hotplug_lock, followed by
-+  the device_lock() (while creating the devices, during bus_add_device()).
-+
-+As the device is visible to user space before taking the device_lock(), this
-+can result in a lock inversion.
-+
-+onlining/offlining of memory should be done via device_online()/
-+device_offline() - to make sure it is properly synchronized to actions
-+via sysfs. Holding device_hotplug_lock is advised (to e.g. protect online_type)
-+
-+When adding/removing/onlining/offlining memory or adding/removing
-+heterogeneous/device memory, we should always hold the mem_hotplug_lock in
-+write mode to serialise memory hotplug (e.g. access to global/zone
-+variables).
-+
-+In addition, mem_hotplug_lock (in contrast to device_hotplug_lock) in read
-+mode allows for a quite efficient get_online_mems/put_online_mems
-+implementation, so code accessing memory can protect from that memory
-+vanishing.
-+
-+
- Future Work
- ===========
+ 	sk = __udp4_lib_lookup_skb(skb, uh->source, uh->dest, udptable);
+-	if (sk) {
+-		int ret;
+-
+-		if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
+-			skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
+-						 inet_compute_pseudo);
+-
+-		ret = udp_queue_rcv_skb(sk, skb);
+-
+-		/* a return value > 0 means to resubmit the input, but
+-		 * it wants the return to be -protocol, or 0
+-		 */
+-		if (ret > 0)
+-			return -ret;
+-		return 0;
+-	}
++	if (sk)
++		return udp_unicast_rcv_skb(sk, skb, uh);
  
--- 
-2.17.1
+ 	if (!xfrm4_policy_check(NULL, XFRM_POLICY_IN, skb))
+ 		goto drop;
+
 
