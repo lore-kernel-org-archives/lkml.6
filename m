@@ -2,106 +2,205 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81733C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3321AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E0E12170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47CF216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:59:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tbnUTo2+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E0E12170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XF3HPeMV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47CF216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbeI1ESs (ORCPT
+        id S1726505AbeI1EUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:18:48 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39602 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbeI1ESs (ORCPT
+        Fri, 28 Sep 2018 00:20:21 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41168 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbeI1EUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:18:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j8-v6so2824803pff.6;
-        Thu, 27 Sep 2018 14:58:24 -0700 (PDT)
+        Fri, 28 Sep 2018 00:20:21 -0400
+Received: by mail-yw1-f65.google.com with SMTP id q129-v6so1761046ywg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:59:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=woCOGF1WAteMc6XeSYh/WKxOlaMmubUoV3H9Lr/yZlU=;
-        b=tbnUTo2+hAkYIR/GLXLeOfwfoPVsfEXoy+kdlsZGO/ZSc8UoHH0bP1VjqMNsDzNgGs
-         InTLuVzGLfuyH/1dNXDGBeQUKNgFh3jTzLpVHMtfK6XpdARDh3+PcE2JoNd3bI3ta1wv
-         YjiqXoFkrDmaHNflHzWoiZ98ItbcxefDm8s45ZZ19RdgNznDEDr4qDdB71VDzmqjsTly
-         HfpBAgN3rrqFCdQin1u2cmQKa+wGiXACD6E7tlN6t3psE+H8asZO1wUjGx+75Gi0qJ5m
-         gKe/8kiIbMLVtNQP3GQHP9izFOponxEatAZ8RQe35MBVGbW2wra4m91503m0NaYwFdKY
-         YslQ==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uKm4Kn+b+pUCf8ULPQsruKbGWiHJza1ikJkZfOlwobQ=;
+        b=XF3HPeMVgP8PNaMXVJ8HixzH1ow8UT6HJfhdWKXHrtecCs2f8i+MtFBfekJZHmx59U
+         v687oQvZb/YrcFQJWXz2yL7lpqRknPYjbkm6TpYdzp6cJ8Ijzyrbt8nAW7wu5/MohoHl
+         amSgfzlOUt4C7kXCDr0+Dx0RkXY3mBbdYkPds=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=woCOGF1WAteMc6XeSYh/WKxOlaMmubUoV3H9Lr/yZlU=;
-        b=dUa2WgmEV14tO3rOZ/HbGVLEHCYMOQVsrqCQ1qd8C2Yf/sjXyRUWlfYHs1UXnxgFm6
-         ZVUMCLYHyo+4MKwW4j0TnH3NvlmL+J33IsYedUUWmDM5MHa5NjjIqA5S0NKGPpb9m9Jh
-         NkSxxyONDdPFSCjeP8YIMIZOe2sqrelwfaLEAYBDs8SVF2/vtEunNZgnc5+vWBNQQKRY
-         E5zIJVYDMyDKipARft/ZRlXn8B7OI0TBXoxRkfhoKvjyaupjvDlM2pJK5IuZ4uJbRBYy
-         hAhHMPwFUcT41KwdUWSIq8fUKzDGpDv7H5SmdyxfIXbpRKNzF979MYn28VStwxLuFQdB
-         +eug==
-X-Gm-Message-State: ABuFfoiCwJabjGyHtG5o5uC3PdIpkGAKPf4ZtY70me0VpDUxgOqjo0oE
-        Ztp1icyjGZnu/M2KEckV44s=
-X-Google-Smtp-Source: ACcGV62HJTeHtVpjSa5a7Oy+L+GxW7v55brhtHGposmGyc0rVC1dXiriK5hc7uCZcBlr/sZbVY/MIg==
-X-Received: by 2002:a62:5950:: with SMTP id n77-v6mr9041400pfb.0.1538085504487;
-        Thu, 27 Sep 2018 14:58:24 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id u79-v6sm6399057pfd.117.2018.09.27.14.58.23
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uKm4Kn+b+pUCf8ULPQsruKbGWiHJza1ikJkZfOlwobQ=;
+        b=NRNj9TftAI7za9MyYujkFXbf7CubcGtbSjVvarBh4XbQZrFxQ5JEFUsF/Tr+QGtf6o
+         qXMA/xrEgyH17wm5T0RlD5DE1nCxaxVePdW8CgtSPzYg5ZExLNd/Hww+JeNL0/3NKNOT
+         K7aS6v2uZ+w6YIh9NeKqSvQoH0hXJ7YSykAJRq1PxEDdEmHHpUFrTqPV4lkjbx37FRSF
+         nenidxGsHaraAkgaW8v/cBme+XhfusdgRH4QCqiAe35j6tKrnDn/EU2MX9I9yKbQJ2yb
+         i6lHteiV4dmqagJkXckMdnMk4teTpv/L2ycavIVfcdASA9bUIBjokf9wNAcGE099pqI3
+         htVA==
+X-Gm-Message-State: ABuFfoiuLl1LrpP4tpwjerBJttEM28B6pOTvH2ZSR4jfBEd5kJmC7dOr
+        nZ788ppogqnbyEK/M3L9uVNN0uf1Z2I=
+X-Google-Smtp-Source: ACcGV62b0R66HWZ5HYmSYyL8d8zL0x49CCNuKqmagAL9g9WpPGl/9SniFnTNmAlAgPjnJGlU4fFCdQ==
+X-Received: by 2002:a81:8302:: with SMTP id t2-v6mr6725518ywf.428.1538085596194;
+        Thu, 27 Sep 2018 14:59:56 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id u143-v6sm4091027ywc.28.2018.09.27.14.59.54
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 14:58:23 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 14:58:23 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/44] 4.9.130-stable review
-Message-ID: <20180927215823.GC9198@roeck-us.net>
-References: <20180927090117.997362691@linuxfoundation.org>
+        Thu, 27 Sep 2018 14:59:54 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id j131-v6so1745026ywc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:59:54 -0700 (PDT)
+X-Received: by 2002:a81:98d7:: with SMTP id p206-v6mr6850445ywg.353.1538085594006;
+ Thu, 27 Sep 2018 14:59:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 14:59:53
+ -0700 (PDT)
+In-Reply-To: <20180927151119.9989-5-tycho@tycho.ws>
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-5-tycho@tycho.ws>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 27 Sep 2018 14:59:53 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLOe0izpGoB8c-hAeH2SzA51dF1BuMcXbk-d=QwqfjxxQ@mail.gmail.com>
+Message-ID: <CAGXu5jLOe0izpGoB8c-hAeH2SzA51dF1BuMcXbk-d=QwqfjxxQ@mail.gmail.com>
+Subject: Re: [PATCH v7 4/6] files: add a replace_fd_files() function
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 11:03:49AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.130 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Sep 29 09:00:54 UTC 2018.
-> Anything received after that time might be too late.
-> 
+On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> Similar to fd_install/__fd_install, we want to be able to replace an fd of
+> an arbitrary struct files_struct, not just current's. We'll use this in the
+> next patch to implement the seccomp ioctl that allows inserting fds into a
+> stopped process' context.
+>
+> v7: new in v7
+>
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: Alexander Viro <viro@zeniv.linux.org.uk>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Eric W. Biederman <ebiederm@xmission.com>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Christian Brauner <christian.brauner@ubuntu.com>
+> CC: Tyler Hicks <tyhicks@canonical.com>
+> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> ---
+>  fs/file.c            | 22 +++++++++++++++-------
+>  include/linux/file.h |  8 ++++++++
+>  2 files changed, 23 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/file.c b/fs/file.c
+> index 7ffd6e9d103d..3b3c5aadaadb 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -850,24 +850,32 @@ __releases(&files->file_lock)
+>  }
+>
+>  int replace_fd(unsigned fd, struct file *file, unsigned flags)
+> +{
+> +       return replace_fd_task(current, fd, file, flags);
+> +}
+> +
+> +/*
+> + * Same warning as __alloc_fd()/__fd_install() here.
+> + */
+> +int replace_fd_task(struct task_struct *task, unsigned fd,
+> +                   struct file *file, unsigned flags)
+>  {
+>         int err;
+> -       struct files_struct *files = current->files;
 
-Build results:
-	total: 151 pass: 151 fail: 0
-Qemu test results:
-	total: 308 pass: 306 fail: 2
-Failed tests: 
-	powerpc:g3beige:ppc_book3s_defconfig:nosmp:ide:rootfs
-	i386:pc:EPYC:defconfig:smp:efi32:scsi[MEGASAS]:rootfs
+Same feedback as Jann: on a purely "smaller diff" note, this could
+just be s/current/task/ here and all the other s/files/task->files/
+would go away...
 
-powerpc:g3beige is the known problem. Patch should be available upstream
-in the near future.
+>
+>         if (!file)
+> -               return __close_fd(files, fd);
+> +               return __close_fd(task->files, fd);
+>
+> -       if (fd >= rlimit(RLIMIT_NOFILE))
+> +       if (fd >= task_rlimit(task, RLIMIT_NOFILE))
+>                 return -EBADF;
+>
+> -       spin_lock(&files->file_lock);
+> -       err = expand_files(files, fd);
+> +       spin_lock(&task->files->file_lock);
+> +       err = expand_files(task->files, fd);
+>         if (unlikely(err < 0))
+>                 goto out_unlock;
+> -       return do_dup2(files, file, fd, flags);
+> +       return do_dup2(task->files, file, fd, flags);
+>
+>  out_unlock:
+> -       spin_unlock(&files->file_lock);
+> +       spin_unlock(&task->files->file_lock);
+>         return err;
+>  }
+>
+> diff --git a/include/linux/file.h b/include/linux/file.h
+> index 6b2fb032416c..f94277fee038 100644
+> --- a/include/linux/file.h
+> +++ b/include/linux/file.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/posix_types.h>
+>
+>  struct file;
+> +struct task_struct;
+>
+>  extern void fput(struct file *);
+>
+> @@ -79,6 +80,13 @@ static inline void fdput_pos(struct fd f)
+>
+>  extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
+>  extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
+> +/*
+> + * Warning! This is only safe if you know the owner of the files_struct is
+> + * stopped outside syscall context. It's a very bad idea to use this unless you
+> + * have similar guarantees in your code.
+> + */
+> +extern int replace_fd_task(struct task_struct *task, unsigned fd,
+> +                          struct file *file, unsigned flags);
 
-The i386 failure is spurious.
+Perhaps call this __replace_fd() to indicate the "please don't use
+this unless you're very sure"ness of it?
 
-Details are available at https://kerneltests.org/builders/.
+>  extern void set_close_on_exec(unsigned int fd, int flag);
+>  extern bool get_close_on_exec(unsigned int fd);
+>  extern int get_unused_fd_flags(unsigned flags);
+> --
+> 2.17.1
+>
 
-Guenter
+If I can get an Ack from Al, that would be very nice. :)
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
