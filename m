@@ -2,130 +2,108 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B30C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56753C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F1BA2159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9F62170E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:54:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y/YUEE/Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1BA2159D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9ui6lWH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9F62170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbeI1DOK (ORCPT
+        id S1728568AbeI1DOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:14:10 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40318 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeI1DOK (ORCPT
+        Thu, 27 Sep 2018 23:14:23 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45581 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeI1DOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:14:10 -0400
-Received: by mail-pf1-f194.google.com with SMTP id s5-v6so2722003pfj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:54:00 -0700 (PDT)
+        Thu, 27 Sep 2018 23:14:22 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t70-v6so2780545pgd.12;
+        Thu, 27 Sep 2018 13:54:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iw08QegY6zdolsBrbHlGz1udJm+xOd7z3VpmwWRDxH4=;
-        b=Y/YUEE/YO5E8mvG8IjmdxWKspeKVkLZsq2IbiK/j3JQXJP4gLYJReOgVakIWot6Kly
-         yaWYXWHcZ/wNTGr8HTlQmLh3wMyI9/NLyyTkD+JUTm34jkO3LyUpZe3M3b/vMRsDdAxk
-         IJ079KFEIbu11cbi/1peHT4bgfplCx4/Ldg6QpGdVeGT/tGvd3+Ni5I6dscKtqkOiTuM
-         Xc8YbbwHUNpEFdjELoQEK5/4aNMLeCYLErhUSzfoFKBa5w6a8oTR2RL42nb5V/M1fbvY
-         PjRd9dIBEr2Rs76ANlbtVhMDwcs5oxju5pUgR4vjPLhRyuA5nHQMrA0GsvrLRQdNSsn7
-         ApgA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=P5Rd6p4jsWq71kIYji+uUh3Ej9u3ymYB/pmbVBVe4B8=;
+        b=k9ui6lWHO29wsCotFyQzm/FOCWsi3RT4kWyxF2cUYiTdi7Pn7B9ZM/WYS+VAr7YOdd
+         TWCE/1Wun6GrktzZ8z5JInpWuJVsIA/UKZ1uokjhSA8a/UkDg85lggLAVjiMjxnQKhoF
+         RFPqttjzCUHJlOhlQ9dxSygT7Ok9HFOJXbGA6iDePWwvzCY9MXjCJ3WVXzb5/uHRNM/2
+         GBSlzYyvhIqsEh88/pq2HoqGjCAA963MoztWCEx+Nccv2aFSS1tqaBDkBAWW3ZYEQyuE
+         e3GrpMV0aVCZ60hp0S6xwyW2fYlvlwRsy3sZabeM9jQqQV0TqsC1jW1G+PT6fSAL6gF3
+         ZOVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iw08QegY6zdolsBrbHlGz1udJm+xOd7z3VpmwWRDxH4=;
-        b=AnpC2ctxq3N90cOynRyskY/fvQ8Ca7FKZGX39dKBv+UG4r7J0IO9xq5foGOifbCrRe
-         kUPG8jKgX/cScU1eukJzldGTmkOrte8RiTwBPLklTTGaOJUkUFNz/vYNSonn4aShV1z4
-         WHkR4b7pf0tJlP8uWq6DYXNefh6GjpTj2YMuLdCaNj7zg1IDD0bU0Ruva87eteszSAgw
-         O1115fDq9ZY7EhtAevZI1vPBMYd7fboh254P86iR5/GtW3T7FpFUY7SgsmFa/pHCHsMn
-         zXNCRnCcUQszo8ozo9jLyaqbz7KlOEHXoGDIx2hi8kp0OKYluqusYOAOTqLyMHO459x7
-         yAHQ==
-X-Gm-Message-State: ABuFfogEIQf4sIfwG0E6aZqUAf1V+jIQC2x6HyQUKEWwB9b0P8PMxBcK
-        4A/qKGYqsfTXmzVxVkNFEeBdjX91lT1nGCQPIo8s2A==
-X-Google-Smtp-Source: ACcGV60Izt78Jh1tbHQJOkNLllF46+qreZYREiu+iY52K4YpH48vS8Gx35ZCBUHj9GiVTT9s/Jggp1GB4L1RCBf5kow=
-X-Received: by 2002:a17:902:6e01:: with SMTP id u1-v6mr13080549plk.13.1538081639682;
- Thu, 27 Sep 2018 13:53:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180924195716.30848-1-natechancellor@gmail.com> <20180927204352.19569-1-natechancellor@gmail.com>
-In-Reply-To: <20180927204352.19569-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 27 Sep 2018 13:53:48 -0700
-Message-ID: <CAKwvOdncohhariVufRF=S1aZ9H9UJZhksBMGtM+FaU5xmT06JQ@mail.gmail.com>
-Subject: Re: [PATCH v2] IB/mlx4: Avoid implicit enumerated type conversion
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=P5Rd6p4jsWq71kIYji+uUh3Ej9u3ymYB/pmbVBVe4B8=;
+        b=KDDq7/yU1On8Zxvy1h1uPWo+t8VghPKMYoKYsPX+OqXhd2lvf9vHSHpG6Hd1J8N7Kg
+         L2NTFm0UnzLESVFw080AZIhhGN35IZntW2l3w4EbrPJcH86VjxEn8aJiG/JZ6Plr93bI
+         JrRd34iImvKqLhsK5nwQdxdSgfEaq7W5PH3Dl+vXPfeF0/hUqjNbru5t4Je9pwscvB8V
+         8yme3EUzTt9eB55SiwL6KCbCqrUjFxyt5QiuYknd/iNez1j/hQAOGrJGp4ds8+zJoBwo
+         J5CM+seRjRXXrKBroL4+gkTVbRx+MEem4AlM8preZCdwF20IVZ8owmUNf0witVqxD4d6
+         mpQQ==
+X-Gm-Message-State: ABuFfogQuo9kVQfTxUu9V8FB+6zItQAIYhs1EVMZW29M+toUg13aSn1X
+        1M8pjfBZuuPmvosu65EzqgA=
+X-Google-Smtp-Source: ACcGV63cCOorHzjrLaW2jkb+Td+UeZUQt8rQNsmapPat3dM13RxDtwOSM/Qbs1ZNBiNnxPDRqaxaTw==
+X-Received: by 2002:a17:902:aa83:: with SMTP id d3-v6mr12709715plr.242.1538081653120;
+        Thu, 27 Sep 2018 13:54:13 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id v26-v6sm4354101pfe.57.2018.09.27.13.54.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 13:54:12 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net
+Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH v7 0/2] Add an initial DT binding doc for ina3221
+Date:   Thu, 27 Sep 2018 13:54:04 -0700
+Message-Id: <20180927205406.21932-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 1:44 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns when one enumerated type is implicitly converted to another.
->
-> drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
-> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> type 'enum ib_qp_create_flags' [-Wenum-conversion]
->                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
->                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
->
-> drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
-> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> type 'enum ib_qp_create_flags' [-Wenum-conversion]
->                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
->                                                     ~ ^~~~~~~~~~~~~~~~~
->
-> The type mlx4_ib_qp_flags explicitly provides supplemental values to the
-> type ib_qp_create_flags. Make that clear to Clang by changing the
-> create_flags type to int.
->
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> v1 -> v2:
->
-> * Use int instead of u32 since enums are restricted to this range, as
->   suggested by Nick.
+This series adds a initial DT binding doc for ina3221. It defines
+a child node to describe the input source of each ina3221 channel.
+Then it changes the driver to handle the information properly.
 
-Thank you for making this change.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Changelog
+v6->v7:
+ * Refined the example in the binding doc (PATCH-1)
+v5->v6:
+ * Removed status property and merged examples (PATCH-1)
+ * Added in[123]_enable sysfs nodes (PATCH-2)
+v4->v5:
+ * Changed two property names of child node (PATCH-1)
+ * Changed the driver accordingly and simplified is_visible (PATCH-2)
+v3->v4:
+ * Fixed one place in child DT node bindings (PATCH-1)
+ * Changed the driver accordingly and added is_visible (PATCH-2)
+v2->v3:
+ * Fixed two places in DT bindings (PATCH-1)
+v1->v2:
+ * Redefined DT bindings (detail in PATCH-1)
+ * Changed the driver code accordingly (detail in PATCH-2)
 
->
->  include/rdma/ib_verbs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-> index 0d822a9db300..e5ec04e844cd 100644
-> --- a/include/rdma/ib_verbs.h
-> +++ b/include/rdma/ib_verbs.h
-> @@ -1151,7 +1151,7 @@ struct ib_qp_init_attr {
->         struct ib_qp_cap        cap;
->         enum ib_sig_type        sq_sig_type;
->         enum ib_qp_type         qp_type;
-> -       enum ib_qp_create_flags create_flags;
-> +       int                     create_flags;
->
->         /*
->          * Only needed for special QP types, or when using the RW API.
-> --
-> 2.19.0
->
+Nicolin Chen (2):
+  dt-bindings: hwmon: Add ina3221 documentation
+  hwmon: ina3221: Read channel input source info from DT
 
+ .../devicetree/bindings/hwmon/ina3221.txt     |  44 ++++
+ Documentation/hwmon/ina3221                   |   2 +
+ drivers/hwmon/ina3221.c                       | 237 ++++++++++++++++--
+ 3 files changed, 269 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.txt
 
 -- 
-Thanks,
-~Nick Desaulniers
+2.17.1
+
