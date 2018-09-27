@@ -2,105 +2,136 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BD2C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D00BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F31DB2168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:32:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F31DB2168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id E3C9E2168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:33:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="cQZd29Mu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C9E2168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbeI0SvC (ORCPT
+        id S1727402AbeI0SvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:51:02 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56089 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727112AbeI0SvB (ORCPT
+        Thu, 27 Sep 2018 14:51:22 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:42274 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbeI0SvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:51:01 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 206-v6so5726616wmb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 05:32:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q4lOJ+jQdw/aWG0FNaahs6A9lQWldhauNd3wgwiV1ug=;
-        b=YIi3F/XfTEK2maDHVW6EbZlYKIoeET6wjzP1ICqtkviQh7H3hcMUOQICh5g0dfKVA8
-         Y0jwBJpW/AevHyNN8X0aorrNrrMXYlWfh8kRbiozmvcZD7eR5fB0Ra/X5PGMZ8sw4Cg2
-         ZPSTJ5eOZ0fnTGYru9uRn01Vqy4Hf3zLk/TLWM82RGvkyA2vVQPMcoho2mX/9HYeivHh
-         l9+7tN2RjLQ1DpfZJMWz70zfFo14YCxj+0o9cegLkMLxZkB3TDC1TKhJDcCda93NyeSz
-         RCB1a9YsfqxbX2sNSIFnoLwcwADb0uYIjWBZQjoV8XvDPbtq3FIlxWWfcitjpZj3tQzn
-         GXCg==
-X-Gm-Message-State: ABuFfoidSQ7JK4vpxNlK9Fr1s6tdXwZFVB4M0bTRRFMBpz/0/a4QMLY2
-        /qTLT34L8d6hUVL58lLh7CE=
-X-Google-Smtp-Source: ACcGV600bcs5X1VmEMzHZkh8Z847Zc+wIHZtUZ/fhWRA1YvpJSH2C35SAC0WXOXPOL6/XWlkbwg2qA==
-X-Received: by 2002:a1c:9295:: with SMTP id u143-v6mr1967680wmd.126.1538051575507;
-        Thu, 27 Sep 2018 05:32:55 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm2082587wrt.9.2018.09.27.05.32.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 05:32:54 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 2B78312561B; Thu, 27 Sep 2018 14:32:54 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 14:32:54 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pavel.tatashin@microsoft.com,
-        dave.jiang@intel.com, dave.hansen@intel.com, jglisse@redhat.com,
-        rppt@linux.vnet.ibm.com, dan.j.williams@intel.com,
-        logang@deltatee.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-Message-ID: <20180927123254.GB20378@techadventures.net>
-References: <20180925200551.3576.18755.stgit@localhost.localdomain>
- <20180925202053.3576.66039.stgit@localhost.localdomain>
- <20180926075540.GD6278@dhcp22.suse.cz>
- <6f87a5d7-05e2-00f4-8568-bb3521869cea@linux.intel.com>
+        Thu, 27 Sep 2018 14:51:21 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 87C8C10C0E7C;
+        Thu, 27 Sep 2018 05:33:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1538051597; bh=K+WGFKCMtrdeWAaZpgDxlPbahKxaBHZdCHyZWS66D8I=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=cQZd29MueqyK2SmVt0XnxQjrW8U5aW6ETCkfhFJDwTR0gC7qzh6gTeHY2PlY3M0hf
+         deiPfTp//U8h9q9BAIRIbxjpJgNum5V7ACQC6Yvy7nIsrH85V2ghEH1mk3Q1UAF7Pi
+         8Qp88D+7bxgoVdPZGbIBxWcUdcdV0NcxqKRJJHJtMssYLFRz8XF1y7cUI2WH40aVki
+         BuhhXGROh8tILwuICw9CKlhryt3Y6EmcrMIZEU0IcDDD8AKCTz0kbFjdBcTEHygMi6
+         eVZtmxUwPuTW8UP4BwZyKF3JotB8SX0guGv81irioJAWTkZEPp6dKXZdLSgXOn5u4W
+         Zu4oCLePPPtIQ==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 4919C3223;
+        Thu, 27 Sep 2018 05:33:17 -0700 (PDT)
+Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Thu, 27 Sep 2018 05:33:17 -0700
+Received: from AM04WEMBXB.internal.synopsys.com ([fe80::1006:bcdd:1b7:579b])
+ by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu,
+ 27 Sep 2018 16:33:13 +0400
+From:   Artur Petrosyan <arthur.petrosyan@synopsys.com>
+To:     John Stultz <john.stultz@linaro.org>,
+        Artur Petrosyan <arthur.petrosyan@synopsys.com>
+CC:     Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        John Youn <John.Youn@synopsys.com>,
+        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Topic: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Index: AQHT7ws4O+8B/axYs0CeMD+6l4m0jQ==
+Date:   Thu, 27 Sep 2018 12:33:13 +0000
+Message-ID: <3AD91E696667BF4BA728303C178E8A63532ACAE6@am04wembxb.internal.synopsys.com>
+References: <1526690943-8211-1-git-send-email-john.stultz@linaro.org>
+ <410670D7E743164D87FA6160E7907A5601313531E1@am04wembxa.internal.synopsys.com>
+ <CALAqxLVZXs97sryfPaGY5Gq50-FZROgaBADNXXadcyiNhP3EPQ@mail.gmail.com>
+ <410670D7E743164D87FA6160E7907A560131356C4E@am04wembxa.internal.synopsys.com>
+ <CALAqxLU3sWrgPjFqZ2vK0m8wVThtE1hDsbNq9zRC7ritzyNHmQ@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AAF6D@am04wembxb.internal.synopsys.com>
+ <CALAqxLXKOG8fxtrDaRLDGhJUfD1-4qc5QU60+ZmB3+9LsW69Lg@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AB36A@am04wembxb.internal.synopsys.com>
+ <CALAqxLXy0YXNLwFQEUZxSsjFKC9boVcGkt+50XwmVfwKCcqsEw@mail.gmail.com>
+ <3AD91E696667BF4BA728303C178E8A63532AB5E5@am04wembxb.internal.synopsys.com>
+ <CALAqxLW=jT+oUASGKxcFghfHZEU7LtFJBiBBkmMM1oarKjSBKw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.104.49]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f87a5d7-05e2-00f4-8568-bb3521869cea@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 11:25:37AM -0700, Alexander Duyck wrote:
-> With that said I am open to suggestions if you still feel like I need to
-> follow this up with some additional work. I just want to avoid introducing
-> any regressions in regards to functionality or performance.
-
-Hi Alexander,
-
-the problem I see is that devm/hmm is using some of the memory-hotplug 
-features, but their paths are becoming more and more diverged with changes
-like this, and that is sometimes a problem when we need to change
-something in the generic memory-hotplug code.
-
-E.g: I am trying to fix two issues in the memory-hotplug where we can
-access steal pages if we hot-remove memory before online it.
-That was not so difficult to fix, but I really struggled with the exceptions
-that HMM/devm represent in this regard, for instance, regarding the resources.
-
-The RFCv2 can be found here [1] https://patchwork.kernel.org/patch/10569083/
-And the initial discussion with Jerome Glisse can be found here [2].
-
-So it would be great to stick to the memory-hotplug path as much as possible,
-otherwise when a problem arises, we need to think how we can workaround
-HMM/devm.
-
-[1] https://patchwork.kernel.org/patch/10569083/
-[2] https://patchwork.kernel.org/patch/10558725/
-
--- 
-Oscar Salvador
-SUSE L3
+Hi John,=0A=
+=0A=
+On 9/25/2018 21:59, John Stultz wrote:=0A=
+> On Tue, Sep 25, 2018 at 3:04 AM, Artur Petrosyan=0A=
+> <arthur.petrosyan@synopsys.com> wrote:=0A=
+>> Just a clarification by this commit "[PATCH] usb: dwc2: Fix HiKey=0A=
+>> regression caused by power_down feature"=0A=
+>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__marc.info_-3Fl-3D=
+linux-2Dusb-26m-3D152669095513248-26w-3D2&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWq=
+B0tg&r=3D9hPBFKCJ_nBjJhGVrrlYOeOQjP_HlVzYqrC_D7niMJI&m=3D0lMkv7adFVwkzyaUzD=
+6-pUG0iwg4fd6b1-aHQgbqvSI&s=3Dm8SZvo3J_Za08sMbo-S9EkhoA06YnzEN-SRm-uTPnbg&e=
+=3D=0A=
+>>=0A=
+>> the power_down is disabled setting "p->power_down =3D false;" in=0A=
+>> "dwc2_set_his_params" function.=0A=
+>>=0A=
+>> Could you please clarify that the testes done for those 3 patches were=
+=0A=
+>> done enabling "p->power_down =3D true;" in "dwc2_set_his_params" functio=
+n.=0A=
+> =0A=
+> So if I remove the "power_down =3D true" initialization, USB does not=0A=
+> seem to function.=0A=
+> =0A=
+> If I boot w/ the gadget port removed, the USB host ports do work, but=0A=
+> plugging in the gadget cable results in a bunch of:=0A=
+>     dwc2 f72c0000.usb: Waiting for Host Mode, Mode=3DPeripheral=0A=
+> messages.=0A=
+> =0A=
+> If I boot w/ the gadget port plugged in, USB gadget mode doesn't seem=0A=
+> to function at all, and when I remove the gadget cable nothing=0A=
+> happens, it doesn't switch to host mode.=0A=
+> =0A=
+> thanks=0A=
+> -john=0A=
+> =0A=
+=0A=
+We would like to buy the HiKey board to perform testes.=0A=
+We found this HiKey LeMaker to have USB 2.0 ports=0A=
+https://www.ebay.com/itm/HiKey-LeMaker-version-2GB-Kirin-620-SoC-8-core-ARM=
+-Cortex-A53-CPU-ARM-Mali-450/263958047308?hash=3Ditem3d75202a4c:g:aGsAAOSwO=
+kxbqqot=0A=
+on ebay.=0A=
+=0A=
+Could you please confirm that it is the right board to test the issues =0A=
+you mention.=0A=
+=0A=
+Regards,=0A=
+Artur=0A=
