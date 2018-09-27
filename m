@@ -2,162 +2,245 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D85AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0543C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF59F215E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:16:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZ0bX+Jw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF59F215E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 831D2215EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:17:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831D2215EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeI0Sew (ORCPT
+        id S1727472AbeI0SfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:34:52 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51498 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbeI0Sew (ORCPT
+        Thu, 27 Sep 2018 14:35:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727393AbeI0SfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:34:52 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y25-v6so5667160wmi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 05:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7alBIzHR4wHS1wGxHG9SAa0enh5zZp0UrDSbML+ciE4=;
-        b=LZ0bX+JwaC46M7lowrQadJp0g0eYVOVDPhUIHtDPymbBJBKmEjSCXPsgz4byi+IgXW
-         sMxg/QCy+Zv+rxZc9NVvs3LmQtSXwwK0tDdVEpJ0eYu3nmdKwYWfPGwn70+0rPPyTg9P
-         wvpKv3mqbIcI00zDpaBZd6AeQuQaZZKf/1mLi6kpOhYGzd3X8TWLcxRoa2lbu73aLAkY
-         p4h7Hf44aryRU9elVsI7s4i3PepiM9rfez26WoEsz+INAwB3j3I6IYVzrVNSFSBv9ouD
-         Q8MRxk7ytnQOllLdb/HszkyJH5D1IBMaQ7FEXrMOUHaxA6fLiRlo1K2yIwradN5qR8v/
-         vo3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7alBIzHR4wHS1wGxHG9SAa0enh5zZp0UrDSbML+ciE4=;
-        b=hX7HZ74Q///G0TjlJj+n1Y7TSYxlICf4Kt0cGMGMFVnBTp/FNKwnmQpCeVxxWu+YoJ
-         9xKXjlDMAYnRE6dfpJzzhgpk1GpM9bWjnKBdD1615UWr1xfFYrpDYMCYzunoZfclTanp
-         G+Z6WY1NlAl/doVcUlfgnKIM4+uAoTcxnvNDFVp0ucIqG+vWOB9Y2rLoI1tu/y594MMp
-         ba5nDSNKjbzZQtd/snqB0lCQC/kQIPhiDqfhIN5wfoc7hNkHeX3h2yMIjdgGnVrM5KnU
-         Ug5oyBznhtYItqAS3+bdbx3i1Jw2RBtx1CT40KWKVttjAO2W2TkPDqKNY4AjBDzkiojW
-         wPAw==
-X-Gm-Message-State: ABuFfojy48B8N0nVqI1I339zRyVm0Zt2RYCvPiN9ozMDE4CSxpIx30tp
-        gNeiBIW7ypLDJwq2NobIVeDePR2G
-X-Google-Smtp-Source: ACcGV63UYJQhKtc3hr8IiqtRqkXueoBuD+rRtBqxvvGskmvAfzJB661IXbr2UG2rqT3mNuxMFelVQg==
-X-Received: by 2002:a1c:1745:: with SMTP id 66-v6mr7651586wmx.38.1538050609900;
-        Thu, 27 Sep 2018 05:16:49 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id h18-v6sm1580803wrb.82.2018.09.27.05.16.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 05:16:49 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: remove get_right_chnl_for_iqk()
-Date:   Thu, 27 Sep 2018 14:16:40 +0200
-Message-Id: <20180927121640.1580-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
+        Thu, 27 Sep 2018 14:35:10 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8RCGPnd012308
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 08:17:08 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mrwh14xm1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 08:17:08 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 27 Sep 2018 13:17:05 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Sep 2018 13:17:01 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8RCH0nW60358864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Sep 2018 12:17:00 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7B5311C04C;
+        Thu, 27 Sep 2018 15:16:40 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CD3D111C050;
+        Thu, 27 Sep 2018 15:16:39 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.85.160])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Sep 2018 15:16:39 +0100 (BST)
+Subject: Re: [PATCH v4 3/6] ima: refactor ima_init_policy()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com
+Date:   Thu, 27 Sep 2018 08:16:48 -0400
+In-Reply-To: <20180926122210.14642-4-nayna@linux.vnet.ibm.com>
+References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+         <20180926122210.14642-4-nayna@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18092712-0028-0000-0000-000002FF523C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092712-0029-0000-0000-000023B970EB
+Message-Id: <1538050608.3459.83.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809270122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function get_right_chnl_for_iqk() only returns non zero values for
-channels > 14. According to the TODO, code valid only for 5 GHz should
-be removed.
+On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
+> This patch removes the code duplication in ima_init_policy() by defining
+> a new function named add_rules().
 
-- find and remove remaining code valid only for 5 GHz. Most of the obvious
-  ones have been removed, but things like channel > 14 still exist.
+Thanks!  The patch looks good, but let's expand on this just a bit.
 
-Remove get_right_chnl_for_iqk() and the variable chn_index that is
-used to save the return value. Replace the uses of chn_index with zero.
+Rules can be added to the initial IMA policy, the custom policy or
+both, based on a mask (IMA_DEFAULT_POLICY, IMA_CUSTOM_POLICY).
 
-Remove the now unused define ODM_TARGET_CHNL_NUM_2G_5G.
+Mimi
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/phy.c     | 27 +++----------------------
- drivers/staging/rtl8188eu/include/phy.h |  1 -
- 2 files changed, 3 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/staging/rtl8188eu/hal/phy.c b/drivers/staging/rtl8188eu/hal/phy.c
-index 3c7cf8720df8..482d48e003b7 100644
---- a/drivers/staging/rtl8188eu/hal/phy.c
-+++ b/drivers/staging/rtl8188eu/hal/phy.c
-@@ -298,25 +298,6 @@ void rtw_hal_set_chan(struct adapter *adapt, u8 channel)
- 
- #define ODM_TXPWRTRACK_MAX_IDX_88E  6
- 
--static u8 get_right_chnl_for_iqk(u8 chnl)
--{
--	u8 place;
--	u8 channel_all[ODM_TARGET_CHNL_NUM_2G_5G] = {
--		36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64,
--		100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122,
--		124, 126, 128, 130, 132, 134, 136, 138, 140, 149, 151, 153,
--		155, 157, 159, 161, 163, 165
--	};
--
--	if (chnl > 14) {
--		for (place = 0; place < sizeof(channel_all); place++) {
--			if (channel_all[place] == chnl)
--				return ++place;
--		}
--	}
--	return 0;
--}
--
- void rtl88eu_dm_txpower_track_adjust(struct odm_dm_struct *dm_odm, u8 type,
- 				     u8 *direction, u32 *out_write_val)
- {
-@@ -1215,7 +1196,7 @@ void rtl88eu_phy_iq_calibrate(struct adapter *adapt, bool recovery)
- {
- 	struct odm_dm_struct *dm_odm = &adapt->HalData->odmpriv;
- 	s32 result[4][8];
--	u8 i, final, chn_index;
-+	u8 i, final;
- 	bool pathaok, pathbok;
- 	s32 reg_e94, reg_e9c, reg_ea4, reg_eb4, reg_ebc, reg_ec4;
- 	bool is12simular, is13simular, is23simular;
-@@ -1324,12 +1305,10 @@ void rtl88eu_phy_iq_calibrate(struct adapter *adapt, bool recovery)
- 				       (reg_ec4 == 0));
- 	}
- 
--	chn_index = get_right_chnl_for_iqk(adapt->HalData->CurrentChannel);
--
- 	if (final < 4) {
- 		for (i = 0; i < IQK_Matrix_REG_NUM; i++)
--			dm_odm->RFCalibrateInfo.IQKMatrixRegSetting[chn_index].Value[0][i] = result[final][i];
--		dm_odm->RFCalibrateInfo.IQKMatrixRegSetting[chn_index].bIQKDone = true;
-+			dm_odm->RFCalibrateInfo.IQKMatrixRegSetting[0].Value[0][i] = result[final][i];
-+		dm_odm->RFCalibrateInfo.IQKMatrixRegSetting[0].bIQKDone = true;
- 	}
- 
- 	save_adda_registers(adapt, iqk_bb_reg_92c,
-diff --git a/drivers/staging/rtl8188eu/include/phy.h b/drivers/staging/rtl8188eu/include/phy.h
-index e99ac3910787..40901d6dcaf5 100644
---- a/drivers/staging/rtl8188eu/include/phy.h
-+++ b/drivers/staging/rtl8188eu/include/phy.h
-@@ -4,7 +4,6 @@
- #define IQK_DELAY_TIME_88E	    10
- #define index_mapping_NUM_88E	    15
- #define AVG_THERMAL_NUM_88E	    4
--#define ODM_TARGET_CHNL_NUM_2G_5G   59
- 
- bool rtl88eu_phy_mac_config(struct adapter *adapt);
- bool rtl88eu_phy_rf_config(struct adapter *adapt);
--- 
-2.19.0
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 98 +++++++++++++++++++++----------------
+>  1 file changed, 57 insertions(+), 41 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 8c9499867c91..d5b327320d3a 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -58,6 +58,8 @@ enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
+>  
+>  enum policy_types { ORIGINAL_TCB = 1, DEFAULT_TCB };
+>  
+> +enum policy_rule_list { IMA_DEFAULT_POLICY = 1, IMA_CUSTOM_POLICY };
+> +
+>  struct ima_rule_entry {
+>  	struct list_head list;
+>  	int action;
+> @@ -473,6 +475,33 @@ static int ima_appraise_flag(enum ima_hooks func)
+>  	return 0;
+>  }
+>  
+> +static void add_rules(struct ima_rule_entry *entries, int count,
+> +		      enum policy_rule_list file)
+> +{
+> +	int i = 0;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		struct ima_rule_entry *entry;
+> +
+> +		if (file & IMA_DEFAULT_POLICY)
+> +			list_add_tail(&entries[i].list, &ima_default_rules);
+> +
+> +		if (file & IMA_CUSTOM_POLICY) {
+> +			entry = kmemdup(&entries[i], sizeof(*entry),
+> +					GFP_KERNEL);
+> +			if (!entry)
+> +				continue;
+> +
+> +			INIT_LIST_HEAD(&entry->list);
+> +			list_add_tail(&entry->list, &ima_policy_rules);
+> +		}
+> +		if (entries[i].action == APPRAISE)
+> +			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+> +		if (entries[i].func == POLICY_CHECK)
+> +			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+> +	}
+> +}
+> +
+>  /**
+>   * ima_init_policy - initialize the default measure rules.
+>   *
+> @@ -481,28 +510,23 @@ static int ima_appraise_flag(enum ima_hooks func)
+>   */
+>  void __init ima_init_policy(void)
+>  {
+> -	int i, measure_entries, appraise_entries, secure_boot_entries;
+> -
+> -	/* if !ima_policy set entries = 0 so we load NO default rules */
+> -	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
+> -	appraise_entries = ima_use_appraise_tcb ?
+> -			 ARRAY_SIZE(default_appraise_rules) : 0;
+> -	secure_boot_entries = ima_use_secure_boot ?
+> -			ARRAY_SIZE(secure_boot_rules) : 0;
+> +	int build_appraise_entries;
+>  
+> -	for (i = 0; i < measure_entries; i++)
+> -		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
+> +	/* if !ima_policy, we load NO default rules */
+> +	if (ima_policy)
+> +		add_rules(dont_measure_rules, ARRAY_SIZE(dont_measure_rules),
+> +			  IMA_DEFAULT_POLICY);
+>  
+>  	switch (ima_policy) {
+>  	case ORIGINAL_TCB:
+> -		for (i = 0; i < ARRAY_SIZE(original_measurement_rules); i++)
+> -			list_add_tail(&original_measurement_rules[i].list,
+> -				      &ima_default_rules);
+> +		add_rules(original_measurement_rules,
+> +			  ARRAY_SIZE(original_measurement_rules),
+> +			  IMA_DEFAULT_POLICY);
+>  		break;
+>  	case DEFAULT_TCB:
+> -		for (i = 0; i < ARRAY_SIZE(default_measurement_rules); i++)
+> -			list_add_tail(&default_measurement_rules[i].list,
+> -				      &ima_default_rules);
+> +		add_rules(default_measurement_rules,
+> +			  ARRAY_SIZE(default_measurement_rules),
+> +			  IMA_DEFAULT_POLICY);
+>  	default:
+>  		break;
+>  	}
+> @@ -511,38 +535,30 @@ void __init ima_init_policy(void)
+>  	 * Insert the builtin "secure_boot" policy rules requiring file
+>  	 * signatures, prior to any other appraise rules.
+>  	 */
+> -	for (i = 0; i < secure_boot_entries; i++) {
+> -		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
+> -		temp_ima_appraise |=
+> -		    ima_appraise_flag(secure_boot_rules[i].func);
+> -	}
+> +	if (ima_use_secure_boot)
+> +		add_rules(secure_boot_rules, ARRAY_SIZE(secure_boot_rules),
+> +			  IMA_DEFAULT_POLICY);
+>  
+>  	/*
+>  	 * Insert the build time appraise rules requiring file signatures
+>  	 * for both the initial and custom policies, prior to other appraise
+> -	 * rules.
+> +	 * rules. As the secure boot rules includes all of the build time
+> +	 * rules, include either one or the other set of rules, but not both.
+>  	 */
+> -	for (i = 0; i < ARRAY_SIZE(build_appraise_rules); i++) {
+> -		struct ima_rule_entry *entry;
+> -
+> -		if (!secure_boot_entries)
+> -			list_add_tail(&build_appraise_rules[i].list,
+> -				      &ima_default_rules);
+> -
+> -		entry = kmemdup(&build_appraise_rules[i], sizeof(*entry),
+> -				GFP_KERNEL);
+> -		if (entry)
+> -			list_add_tail(&entry->list, &ima_policy_rules);
+> -		build_ima_appraise |=
+> -			ima_appraise_flag(build_appraise_rules[i].func);
+> +	build_appraise_entries = ARRAY_SIZE(build_appraise_rules);
+> +	if (build_appraise_entries) {
+> +		if (ima_use_secure_boot)
+> +			add_rules(build_appraise_rules, build_appraise_entries,
+> +				  IMA_CUSTOM_POLICY);
+> +		else
+> +			add_rules(build_appraise_rules, build_appraise_entries,
+> +				  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
+>  	}
+>  
+> -	for (i = 0; i < appraise_entries; i++) {
+> -		list_add_tail(&default_appraise_rules[i].list,
+> -			      &ima_default_rules);
+> -		if (default_appraise_rules[i].func == POLICY_CHECK)
+> -			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+> -	}
+> +	if (ima_use_appraise_tcb)
+> +		add_rules(default_appraise_rules,
+> +			  ARRAY_SIZE(default_appraise_rules),
+> +			  IMA_DEFAULT_POLICY);
+>  
+>  	ima_rules = &ima_default_rules;
+>  	ima_update_policy_flag();
 
