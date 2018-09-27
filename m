@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE03BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E05F0C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A642156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A642156B
+	by mail.kernel.org (Postfix) with ESMTP id 966882152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966882152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbeI0Pji (ORCPT
+        id S1728016AbeI0Pjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:39:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56360 "EHLO
+        Thu, 27 Sep 2018 11:39:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56396 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbeI0Pji (ORCPT
+        with ESMTP id S1727460AbeI0Pjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:39:38 -0400
+        Thu, 27 Sep 2018 11:39:43 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15B471113;
-        Thu, 27 Sep 2018 09:22:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 559C71113;
+        Thu, 27 Sep 2018 09:22:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rex Zhu <Rex.Zhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.14 48/64] drm/amdgpu: add new polaris pci id
-Date:   Thu, 27 Sep 2018 11:04:05 +0200
-Message-Id: <20180927090256.711348060@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 4.14 49/64] drm/atomic: Use drm_drv_uses_atomic_modeset() for debugfs creation
+Date:   Thu, 27 Sep 2018 11:04:06 +0200
+Message-Id: <20180927090256.844688689@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -51,54 +52,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 30f3984ede683b98a4e8096e200df78bf0609b4f upstream.
+commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
 
-Add new pci id.
+As pointed out by Daniel Vetter, we should be usinng
+drm_drv_uses_atomic_modeset() for determining whether or not we want to
+make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
+the former isn't an accurate representation of whether or not the driver
+is actually using atomic modesetting internally (even though it might
+not be exposing atomic capabilities).
 
-Reviewed-by: Rex Zhu <Rex.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc: stable@vger.kernel.org
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c |   14 ++++++++------
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c |    1 +
- 2 files changed, 9 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_atomic.c  |    2 +-
+ drivers/gpu/drm/drm_debugfs.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-@@ -715,12 +715,14 @@ static int amdgpu_cgs_get_firmware_info(
- 				break;
- 			case CHIP_POLARIS10:
- 				if (type == CGS_UCODE_ID_SMU) {
--					if ((adev->pdev->device == 0x67df) &&
--					    ((adev->pdev->revision == 0xe0) ||
--					     (adev->pdev->revision == 0xe3) ||
--					     (adev->pdev->revision == 0xe4) ||
--					     (adev->pdev->revision == 0xe5) ||
--					     (adev->pdev->revision == 0xe7) ||
-+					if (((adev->pdev->device == 0x67df) &&
-+					     ((adev->pdev->revision == 0xe0) ||
-+					      (adev->pdev->revision == 0xe3) ||
-+					      (adev->pdev->revision == 0xe4) ||
-+					      (adev->pdev->revision == 0xe5) ||
-+					      (adev->pdev->revision == 0xe7) ||
-+					      (adev->pdev->revision == 0xef))) ||
-+					    ((adev->pdev->device == 0x6fdf) &&
- 					     (adev->pdev->revision == 0xef))) {
- 						info->is_kicker = true;
- 						strcpy(fw_name, "amdgpu/polaris10_k_smc.bin");
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -500,6 +500,7 @@ static const struct pci_device_id pciidl
- 	{0x1002, 0x67CA, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_POLARIS10},
- 	{0x1002, 0x67CC, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_POLARIS10},
- 	{0x1002, 0x67CF, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_POLARIS10},
-+	{0x1002, 0x6FDF, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_POLARIS10},
- 	/* Polaris12 */
- 	{0x1002, 0x6980, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_POLARIS12},
- 	{0x1002, 0x6981, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_POLARIS12},
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -1748,7 +1748,7 @@ static void __drm_state_dump(struct drm_
+ 	struct drm_connector *connector;
+ 	struct drm_connector_list_iter conn_iter;
+ 
+-	if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
++	if (!drm_drv_uses_atomic_modeset(dev))
+ 		return;
+ 
+ 	list_for_each_entry(plane, &config->plane_list, head) {
+--- a/drivers/gpu/drm/drm_debugfs.c
++++ b/drivers/gpu/drm/drm_debugfs.c
+@@ -150,7 +150,7 @@ int drm_debugfs_init(struct drm_minor *m
+ 		return ret;
+ 	}
+ 
+-	if (drm_core_check_feature(dev, DRIVER_ATOMIC)) {
++	if (drm_drv_uses_atomic_modeset(dev)) {
+ 		ret = drm_atomic_debugfs_init(minor);
+ 		if (ret) {
+ 			DRM_ERROR("Failed to create atomic debugfs files\n");
 
 
