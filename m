@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29162C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CCBC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19172152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19172152F
+	by mail.kernel.org (Postfix) with ESMTP id A9DB52152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DB52152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeI0Pdt (ORCPT
+        id S1728830AbeI0Pd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:33:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55890 "EHLO
+        Thu, 27 Sep 2018 11:33:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55904 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbeI0Pds (ORCPT
+        with ESMTP id S1727240AbeI0Pdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:33:48 -0400
+        Thu, 27 Sep 2018 11:33:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7DF11120;
-        Thu, 27 Sep 2018 09:16:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 964151117;
+        Thu, 27 Sep 2018 09:16:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Taht <dave.taht@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
+        Davide Caratti <dcaratti@redhat.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 01/64] gso_segment: Reset skb->mac_len after modifying network header
-Date:   Thu, 27 Sep 2018 11:03:18 +0200
-Message-Id: <20180927090250.001345435@linuxfoundation.org>
+Subject: [PATCH 4.14 10/64] net/sched: act_sample: fix NULL dereference in the data path
+Date:   Thu, 27 Sep 2018 11:03:27 +0200
+Message-Id: <20180927090251.129330583@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -52,55 +53,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Toke Høiland-Jørgensen" <toke@toke.dk>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit c56cae23c6b167acc68043c683c4573b80cbcc2c ]
+[ Upstream commit 34043d250f51368f214aed7f54c2dc29c819a8c7 ]
 
-When splitting a GSO segment that consists of encapsulated packets, the
-skb->mac_len of the segments can end up being set wrong, causing packet
-drops in particular when using act_mirred and ifb interfaces in
-combination with a qdisc that splits GSO packets.
+Matteo reported the following splat, testing the datapath of TC 'sample':
 
-This happens because at the time skb_segment() is called, network_header
-will point to the inner header, throwing off the calculation in
-skb_reset_mac_len(). The network_header is subsequently adjust by the
-outer IP gso_segment handlers, but they don't set the mac_len.
+ BUG: KASAN: null-ptr-deref in tcf_sample_act+0xc4/0x310
+ Read of size 8 at addr 0000000000000000 by task nc/433
 
-Fix this by adding skb_reset_mac_len() calls to both the IPv4 and IPv6
-gso_segment handlers, after they modify the network_header.
+ CPU: 0 PID: 433 Comm: nc Not tainted 4.19.0-rc3-kvm #17
+ Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS ?-20180531_142017-buildhw-08.phx2.fedoraproject.org-1.fc28 04/01/2014
+ Call Trace:
+  kasan_report.cold.6+0x6c/0x2fa
+  tcf_sample_act+0xc4/0x310
+  ? dev_hard_start_xmit+0x117/0x180
+  tcf_action_exec+0xa3/0x160
+  tcf_classify+0xdd/0x1d0
+  htb_enqueue+0x18e/0x6b0
+  ? deref_stack_reg+0x7a/0xb0
+  ? htb_delete+0x4b0/0x4b0
+  ? unwind_next_frame+0x819/0x8f0
+  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  __dev_queue_xmit+0x722/0xca0
+  ? unwind_get_return_address_ptr+0x50/0x50
+  ? netdev_pick_tx+0xe0/0xe0
+  ? save_stack+0x8c/0xb0
+  ? kasan_kmalloc+0xbe/0xd0
+  ? __kmalloc_track_caller+0xe4/0x1c0
+  ? __kmalloc_reserve.isra.45+0x24/0x70
+  ? __alloc_skb+0xdd/0x2e0
+  ? sk_stream_alloc_skb+0x91/0x3b0
+  ? tcp_sendmsg_locked+0x71b/0x15a0
+  ? tcp_sendmsg+0x22/0x40
+  ? __sys_sendto+0x1b0/0x250
+  ? __x64_sys_sendto+0x6f/0x80
+  ? do_syscall_64+0x5d/0x150
+  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ? __sys_sendto+0x1b0/0x250
+  ? __x64_sys_sendto+0x6f/0x80
+  ? do_syscall_64+0x5d/0x150
+  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ip_finish_output2+0x495/0x590
+  ? ip_copy_metadata+0x2e0/0x2e0
+  ? skb_gso_validate_network_len+0x6f/0x110
+  ? ip_finish_output+0x174/0x280
+  __tcp_transmit_skb+0xb17/0x12b0
+  ? __tcp_select_window+0x380/0x380
+  tcp_write_xmit+0x913/0x1de0
+  ? __sk_mem_schedule+0x50/0x80
+  tcp_sendmsg_locked+0x49d/0x15a0
+  ? tcp_rcv_established+0x8da/0xa30
+  ? tcp_set_state+0x220/0x220
+  ? clear_user+0x1f/0x50
+  ? iov_iter_zero+0x1ae/0x590
+  ? __fget_light+0xa0/0xe0
+  tcp_sendmsg+0x22/0x40
+  __sys_sendto+0x1b0/0x250
+  ? __ia32_sys_getpeername+0x40/0x40
+  ? _copy_to_user+0x58/0x70
+  ? poll_select_copy_remaining+0x176/0x200
+  ? __pollwait+0x1c0/0x1c0
+  ? ktime_get_ts64+0x11f/0x140
+  ? kern_select+0x108/0x150
+  ? core_sys_select+0x360/0x360
+  ? vfs_read+0x127/0x150
+  ? kernel_write+0x90/0x90
+  __x64_sys_sendto+0x6f/0x80
+  do_syscall_64+0x5d/0x150
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ RIP: 0033:0x7fefef2b129d
+ Code: ff ff ff ff eb b6 0f 1f 80 00 00 00 00 48 8d 05 51 37 0c 00 41 89 ca 8b 00 85 c0 75 20 45 31 c9 45 31 c0 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 6b f3 c3 66 0f 1f 84 00 00 00 00 00 41 56 41
+ RSP: 002b:00007fff2f5350c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+ RAX: ffffffffffffffda RBX: 000056118d60c120 RCX: 00007fefef2b129d
+ RDX: 0000000000002000 RSI: 000056118d629320 RDI: 0000000000000003
+ RBP: 000056118d530370 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000002000
+ R13: 000056118d5c2a10 R14: 000056118d5c2a10 R15: 000056118d5303b8
 
-Many thanks to Eric Dumazet for his help in identifying the cause of
-the bug.
+tcf_sample_act() tried to update its per-cpu stats, but tcf_sample_init()
+forgot to allocate them, because tcf_idr_create() was called with a wrong
+value of 'cpustats'. Setting it to true proved to fix the reported crash.
 
-Acked-by: Dave Taht <dave.taht@gmail.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@toke.dk>
+Reported-by: Matteo Croce <mcroce@redhat.com>
+Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
+Fixes: 5c5670fae430 ("net/sched: Introduce sample tc action")
+Tested-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/af_inet.c     |    1 +
- net/ipv6/ip6_offload.c |    1 +
- 2 files changed, 2 insertions(+)
+ net/sched/act_sample.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/af_inet.c
-+++ b/net/ipv4/af_inet.c
-@@ -1307,6 +1307,7 @@ struct sk_buff *inet_gso_segment(struct
- 		if (encap)
- 			skb_reset_inner_headers(skb);
- 		skb->network_header = (u8 *)iph - skb->head;
-+		skb_reset_mac_len(skb);
- 	} while ((skb = skb->next));
+--- a/net/sched/act_sample.c
++++ b/net/sched/act_sample.c
+@@ -64,7 +64,7 @@ static int tcf_sample_init(struct net *n
  
- out:
---- a/net/ipv6/ip6_offload.c
-+++ b/net/ipv6/ip6_offload.c
-@@ -113,6 +113,7 @@ static struct sk_buff *ipv6_gso_segment(
- 			payload_len = skb->len - nhoff - sizeof(*ipv6h);
- 		ipv6h->payload_len = htons(payload_len);
- 		skb->network_header = (u8 *)ipv6h - skb->head;
-+		skb_reset_mac_len(skb);
- 
- 		if (udpfrag) {
- 			int err = ip6_find_1stfragopt(skb, &prevhdr);
+ 	if (!exists) {
+ 		ret = tcf_idr_create(tn, parm->index, est, a,
+-				     &act_sample_ops, bind, false);
++				     &act_sample_ops, bind, true);
+ 		if (ret)
+ 			return ret;
+ 		ret = ACT_P_CREATED;
 
 
