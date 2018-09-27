@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130B1C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035C9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B992152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:19:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B992152F
+	by mail.kernel.org (Postfix) with ESMTP id BB5C72152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:19:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5C72152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbeI0PhI (ORCPT
+        id S1728897AbeI0PhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:37:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56254 "EHLO
+        Thu, 27 Sep 2018 11:37:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56266 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbeI0PhI (ORCPT
+        with ESMTP id S1727439AbeI0PhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:37:08 -0400
+        Thu, 27 Sep 2018 11:37:15 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F27D5110D;
-        Thu, 27 Sep 2018 09:19:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8717C110D;
+        Thu, 27 Sep 2018 09:19:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
-        Mike Christie <mchristi@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 38/64] scsi: target: iscsi: Use bin2hex instead of a re-implementation
-Date:   Thu, 27 Sep 2018 11:03:55 +0200
-Message-Id: <20180927090255.440423665@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Koen Vandeputte <koen.vandeputte@ncentric.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 39/64] Revert "ubifs: xattr: Dont operate on deleted inodes"
+Date:   Thu, 27 Sep 2018 11:03:56 +0200
+Message-Id: <20180927090255.591958407@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -52,63 +53,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Pelletier <plr.vincent@gmail.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 8c39e2699f8acb2e29782a834e56306da24937fe upstream.
+commit f061c1cc404a618858a77aea233fde0aeaad2f2d upstream.
 
-Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This reverts commit 11a6fc3dc743e22fb50f2196ec55bee5140d3c52.
+UBIFS wants to assert that xattr operations are only issued on files
+with positive link count. The said patch made this operations return
+-ENOENT for unlinked files such that the asserts will no longer trigger.
+This was wrong since xattr operations are perfectly fine on unlinked
+files.
+Instead the assertions need to be fixed/removed.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 11a6fc3dc743 ("ubifs: xattr: Don't operate on deleted inodes")
+Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Tested-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/iscsi/iscsi_target_auth.c |   15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ fs/ubifs/xattr.c |   24 ------------------------
+ 1 file changed, 24 deletions(-)
 
---- a/drivers/target/iscsi/iscsi_target_auth.c
-+++ b/drivers/target/iscsi/iscsi_target_auth.c
-@@ -26,15 +26,6 @@
- #include "iscsi_target_nego.h"
- #include "iscsi_target_auth.h"
+--- a/fs/ubifs/xattr.c
++++ b/fs/ubifs/xattr.c
+@@ -152,12 +152,6 @@ static int create_xattr(struct ubifs_inf
+ 	ui->data_len = size;
  
--static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
--{
--	int i;
+ 	mutex_lock(&host_ui->ui_mutex);
 -
--	for (i = 0; i < src_len; i++) {
--		sprintf(&dst[i*2], "%02x", (int) src[i] & 0xff);
+-	if (!host->i_nlink) {
+-		err = -ENOENT;
+-		goto out_noent;
 -	}
--}
 -
- static int chap_gen_challenge(
- 	struct iscsi_conn *conn,
- 	int caller,
-@@ -50,7 +41,7 @@ static int chap_gen_challenge(
- 	ret = get_random_bytes_wait(chap->challenge, CHAP_CHALLENGE_LENGTH);
- 	if (unlikely(ret))
- 		return ret;
--	chap_binaryhex_to_asciihex(challenge_asciihex, chap->challenge,
-+	bin2hex(challenge_asciihex, chap->challenge,
- 				CHAP_CHALLENGE_LENGTH);
- 	/*
- 	 * Set CHAP_C, and copy the generated challenge into c_str.
-@@ -289,7 +280,7 @@ static int chap_server_compute_md5(
- 		goto out;
- 	}
+ 	host->i_ctime = current_time(host);
+ 	host_ui->xattr_cnt += 1;
+ 	host_ui->xattr_size += CALC_DENT_SIZE(fname_len(nm));
+@@ -189,7 +183,6 @@ out_cancel:
+ 	host_ui->xattr_size -= CALC_XATTR_BYTES(size);
+ 	host_ui->xattr_names -= fname_len(nm);
+ 	host_ui->flags &= ~UBIFS_CRYPT_FL;
+-out_noent:
+ 	mutex_unlock(&host_ui->ui_mutex);
+ out_free:
+ 	make_bad_inode(inode);
+@@ -241,12 +234,6 @@ static int change_xattr(struct ubifs_inf
+ 	mutex_unlock(&ui->ui_mutex);
  
--	chap_binaryhex_to_asciihex(response, server_digest, MD5_SIGNATURE_SIZE);
-+	bin2hex(response, server_digest, MD5_SIGNATURE_SIZE);
- 	pr_debug("[server] MD5 Server Digest: %s\n", response);
+ 	mutex_lock(&host_ui->ui_mutex);
+-
+-	if (!host->i_nlink) {
+-		err = -ENOENT;
+-		goto out_noent;
+-	}
+-
+ 	host->i_ctime = current_time(host);
+ 	host_ui->xattr_size -= CALC_XATTR_BYTES(old_size);
+ 	host_ui->xattr_size += CALC_XATTR_BYTES(size);
+@@ -268,7 +255,6 @@ static int change_xattr(struct ubifs_inf
+ out_cancel:
+ 	host_ui->xattr_size -= CALC_XATTR_BYTES(size);
+ 	host_ui->xattr_size += CALC_XATTR_BYTES(old_size);
+-out_noent:
+ 	mutex_unlock(&host_ui->ui_mutex);
+ 	make_bad_inode(inode);
+ out_free:
+@@ -497,12 +483,6 @@ static int remove_xattr(struct ubifs_inf
+ 		return err;
  
- 	if (memcmp(server_digest, client_digest, MD5_SIGNATURE_SIZE) != 0) {
-@@ -411,7 +402,7 @@ static int chap_server_compute_md5(
- 	/*
- 	 * Convert response from binary hex to ascii hext.
- 	 */
--	chap_binaryhex_to_asciihex(response, digest, MD5_SIGNATURE_SIZE);
-+	bin2hex(response, digest, MD5_SIGNATURE_SIZE);
- 	*nr_out_len += sprintf(nr_out_ptr + *nr_out_len, "CHAP_R=0x%s",
- 			response);
- 	*nr_out_len += 1;
+ 	mutex_lock(&host_ui->ui_mutex);
+-
+-	if (!host->i_nlink) {
+-		err = -ENOENT;
+-		goto out_noent;
+-	}
+-
+ 	host->i_ctime = current_time(host);
+ 	host_ui->xattr_cnt -= 1;
+ 	host_ui->xattr_size -= CALC_DENT_SIZE(fname_len(nm));
+@@ -522,7 +502,6 @@ out_cancel:
+ 	host_ui->xattr_size += CALC_DENT_SIZE(fname_len(nm));
+ 	host_ui->xattr_size += CALC_XATTR_BYTES(ui->data_len);
+ 	host_ui->xattr_names += fname_len(nm);
+-out_noent:
+ 	mutex_unlock(&host_ui->ui_mutex);
+ 	ubifs_release_budget(c, &req);
+ 	make_bad_inode(inode);
+@@ -562,9 +541,6 @@ static int ubifs_xattr_remove(struct ino
+ 
+ 	ubifs_assert(inode_is_locked(host));
+ 
+-	if (!host->i_nlink)
+-		return -ENOENT;
+-
+ 	if (fname_len(&nm) > UBIFS_MAX_NLEN)
+ 		return -ENAMETOOLONG;
+ 
 
 
