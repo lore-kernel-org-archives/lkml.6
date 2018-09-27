@@ -2,139 +2,158 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DD3C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FDCC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BEB21566
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8618221566
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:08:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Spfm3enk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BEB21566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k8ij4LGx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8618221566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeI0HVp (ORCPT
+        id S1727149AbeI0HXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 03:21:45 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44447 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbeI0HVp (ORCPT
+        Thu, 27 Sep 2018 03:23:46 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42030 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbeI0HXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 03:21:45 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so735469ljq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 18:06:06 -0700 (PDT)
+        Thu, 27 Sep 2018 03:23:46 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b11-v6so715686wru.9;
+        Wed, 26 Sep 2018 18:08:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Qo3KTwYzRtgPpcDcBg/6w1ZcTq4c4fAivvrUz2SB7ZY=;
-        b=Spfm3enk2talgjPgG+zBl/rpBM9BtQY01gRjb4HP5CBaZJ7JsCVCQ0o8rqhOLzKG5S
-         oacYoS0XimPTRWkDdvzfXPUXCV8DkIycqBg6FpEYK29PGsUHpICkxhZ7N2LUeggz/UYm
-         GLPuQcrJSF//galzzUUKFzxBG2Iyb30Tl3III=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eBDq8VDkFISLSvSWtCk4k/FO1Y2UjS2zHoeNYPpRWMQ=;
+        b=k8ij4LGxmMaSNsNgyQiVof3yJkf43EAefVERY+ybvZWgmVLFrEdhAx60F1rdDLcCNj
+         5iWo9zC5+0lj8bphxr1kmMY8+WVlfgHg/7fweePKeiLx7yHny1agey7K7MVRXDJwgHCP
+         0sMEB+Vt3c6S2fuYbTmJipoRNk3XaUoSMjzjDdC9kKMOyRlx7YF41siQinmYrnmtbqx9
+         9i/yMVkqbr7mKM2bcQrqiIjTAUMYeBteYw1VuSN/Hep5YP/imjDydf0TlquHJ/rj6cW+
+         KLEqH6rO1WPt4SCoEMiJd21yco6yGfggBn8NbtGDJ71GLMPcZ4GKxzK+hxHR7MjBH9Ng
+         t9eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Qo3KTwYzRtgPpcDcBg/6w1ZcTq4c4fAivvrUz2SB7ZY=;
-        b=Ih1nQ9ffsFHAqsHlp49Oz8fBU7Q8/JjCUpbWhLMH37OnaabPqcCleSG/5srsrr1LXX
-         DetZe8oRe3epL7ciz4xZHoDIjt3jWFfucTnotTFPvrJ38y5ArrOE68r/wKD0gh4w1NE9
-         Hd5WKrX44mGN1SLuY0dgLDIGB3f9W/lVngBRU8sJqfbMR+ebIcUGyT+q9zCNQM8TMwlo
-         dYlbcG9Ro9ImRjmM42KYgL6iuwJsXdB7vkRt6PBBn8NkIpCYw1YS6ryv5qqkYJsfNRQq
-         w90a9A/EplI0HWt52WdNUz8sVjGnsMPXqOg4Lj23RRBlOQQH9kPF/Dy9wk7Y8DmKLsCZ
-         zk0A==
-X-Gm-Message-State: ABuFfoiKDpAqXQfEQI1I0u5D7jSnJXEk+ZwZ/5s9GPZQLpjmit0UhL13
-        +Pwu/v5mg2GxJUpUNaSZz4FPyxvyG/bzS0+/oH7U1A==
-X-Google-Smtp-Source: ACcGV61TM+bCcJUnpBOsMpUBZvsw18oW8aSdyLNH0J5eqpdVCvfFqFvTzmqpNvQcPJ7gnInBGCaChQHmGGLBJX4c82Y=
-X-Received: by 2002:a2e:9d7:: with SMTP id 206-v6mr5754419ljj.127.1538010365807;
- Wed, 26 Sep 2018 18:06:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eBDq8VDkFISLSvSWtCk4k/FO1Y2UjS2zHoeNYPpRWMQ=;
+        b=O5WpB+0/vFDHHweVIOPo0o1UhZNhPLDvl5dGWKuL9AF8KHviwdDOQwglvaL9MVT+Vo
+         c56XhvLkPz2U/ADI0phDHgn6DvjeScJLvGW87hGe3vY6vFgf9a+q0ceGIdb3v4FfieSc
+         5NqgjPpalFRltVTSelu9ncp0vM571s7nCVZphMSvR+ET7QqrgTAvGRFFXxZMDqlBAflU
+         e95Ot9NNyof5AZrWN5O98512R+oFD0MxTwwTD0uOQiOFF+prhREwrE0tddJtBdxrY5uJ
+         VDC2Xd8o0GCrO47WTqXLylZI0uIOrj19pavmW4y/7XCP4X6zNd8Za0MkDE9oScSGVTV8
+         9EOQ==
+X-Gm-Message-State: ABuFfoj2dtYBToxpOutJWLTJMolIy/eIEZSbFrUcVRdHKRr3FBa/8G7J
+        aqXEPkNRADk3l/eKWdSxoumfj3i8VAoSHw==
+X-Google-Smtp-Source: ACcGV61meMW0IZHTCoL1ipujtCpNcvcwZtZWlhbyPTH2UkPh9zRKz0amfWqPy/lwt2hJVLZko7s5sA==
+X-Received: by 2002:adf:8324:: with SMTP id 33-v6mr6857614wrd.130.1538010486055;
+        Wed, 26 Sep 2018 18:08:06 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id d4-v6sm386776wrw.70.2018.09.26.18.08.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 18:08:05 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 18:08:03 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>, dledford@redhat.com,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+Message-ID: <20180927010803.GA7640@flashbox>
+References: <20180924195716.30848-1-natechancellor@gmail.com>
+ <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
+ <20180924222737.GA26973@flashbox>
+ <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
+ <20180925023722.GA32600@ziepe.ca>
 MIME-Version: 1.0
-Received: by 2002:a2e:95d7:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 18:06:05
- -0700 (PDT)
-In-Reply-To: <20180926124510.2ewnaw3jyzm3qkbm@earth.universe>
-References: <358665e3f4f9ec105dc2f8a2dc6dd98dbe761fae.1537930252.git.baolin.wang@linaro.org>
- <CACRpkdY3YsXsJy0OwGYLuB+x32hbkAHum4w5KQTCGoi-OXt-QA@mail.gmail.com>
- <CAMz4ku+H5Z_W5rE0b3GDz2E0YSZshEerufZ41yeh_E5omD6KLA@mail.gmail.com> <20180926124510.2ewnaw3jyzm3qkbm@earth.universe>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 27 Sep 2018 09:06:05 +0800
-Message-ID: <CAMz4kuLt4ReL=fAY9kAnTQpoq3nY-7NU7S91QsWC03JeF+H=vw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] power: supply: core: Introduce one property to
- present the battery internal resistance
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        yuanjiang.yu@unisoc.com, Mark Brown <broonie@kernel.org>,
-        Craig Tatlor <ctatlor97@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925023722.GA32600@ziepe.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 September 2018 at 20:45, Sebastian Reichel <sre@kernel.org> wrote:
-> Hi,
->
-> On Wed, Sep 26, 2018 at 04:30:39PM +0800, Baolin Wang wrote:
->> Hi Linus,
->>
->> On 26 September 2018 at 16:00, Linus Walleij <linus.walleij@linaro.org> wrote:
->> > On Wed, Sep 26, 2018 at 4:59 AM Baolin Wang <baolin.wang@linaro.org> wrote:
->> >
->> >> Introduce one property to present the battery internal resistance for battery
->> >> information.
->> >>
->> >> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> >> ---
->> >> Changes from v1:
->> >>  - New patch in v2.
->> >
->> > I'm a bit confused by the physics in this patch.
->> >
->> > The internal resistance of a battery is not a constant in its life cycle,
->> > this varies over the age of the battery, and the reason I thing is
->> > chemical residuals accumulating on the anode and cathode inside
->> > the battery and the energy storage medium aging. (Plus/minus my
->> > ignorance about how batteries actually work.)
->>
->> Yes, you are right. The internal resistance can be affected by
->> temperature or battery age or other factors. But our solution just
->> uses one constant internal resistance to calculate OCV value to look
->> up the capacity table when system boots on, in this case we do not
->> need one more accuracy OCV, since we will calculate the battery
->> capacity in future. So we just introduce one estimation constant
->> internal resistance.
->>
->> >
->> > AFAIK the fact that the internal resistance varies is of high
->> > importance for people developing algorithms of battery capacity
->> > and longevity. Such that some (hardware) capacity monitors go
->> > to great lengths to measure with high precision the current
->> > internal resistance of the battery for their algorithms.
->> >
->> > Sorry for making things more complex, but should it be named
->> > "factory-internal-resistance-micro-ohms" or
->> > "typical-internal-resistance-micro-ohms"?
->>
->> I am fine with this change. If Sebastian also agree with this change,
->> I will fix. Thanks for your reviewing and comments.
->
-> Ack.
->
-> FWIW for proper battery status you need to collect battery specific
-> statistics, that is the reason fuel gauge chip providers recommend to
-> combine the chip with the battery cells into a "smart battery".
+On Mon, Sep 24, 2018 at 08:37:22PM -0600, Jason Gunthorpe wrote:
+> On Mon, Sep 24, 2018 at 03:29:38PM -0700, Nick Desaulniers wrote:
+> > On Mon, Sep 24, 2018 at 3:27 PM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > On Mon, Sep 24, 2018 at 03:24:36PM -0700, Nick Desaulniers wrote:
+> > > > On Mon, Sep 24, 2018 at 12:57 PM Nathan Chancellor
+> > > > <natechancellor@gmail.com> wrote:
+> > > > >
+> > > > > Clang warns when one enumerated type is implicitly converted to another.
+> > > > >
+> > > > > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+> > > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> > > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+> > > > >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
+> > > > >
+> > > > > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+> > > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> > > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+> > > > >                                                     ~ ^~~~~~~~~~~~~~~~~
+> > > > >
+> > > > > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+> > > > > type ib_qp_create_flags. Make that clear to Clang by changing the
+> > > > > create_flags type to u32.
+> > > > >
+> > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > >  include/rdma/ib_verbs.h | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+> > > > > index e463d3007a35..f6f4d9e3c8ed 100644
+> > > > > +++ b/include/rdma/ib_verbs.h
+> > > > > @@ -1149,7 +1149,7 @@ struct ib_qp_init_attr {
+> > > > >         struct ib_qp_cap        cap;
+> > > > >         enum ib_sig_type        sq_sig_type;
+> > > > >         enum ib_qp_type         qp_type;
+> > > > > -       enum ib_qp_create_flags create_flags;
+> > > > > +       u32                     create_flags;
+> > > >
+> > > > I think it might be better to just have explicit casts at the
+> > > > assignment.  What do the maintainers think?
+> > > >
+> > >
+> > > That's fine with me, I tend to explicitly cast if it is only one
+> > > location but it certainly makes sense in this case as well. I'll
+> > > wait for the maintainers to weigh in before sending a v2.
+> > 
+> > Yeah, I mean my opinion on this might seem arbitrary, but based on the
+> > pattern and the comment in ib_qp_create_flags, those enum values are
+> > reserved to be "subclassed" in a sense, so they should always be in
+> > sync or this code will have bigger problems.
+> 
+> One should not use an 'enum' type name for bitfield storage, as once
+> you start or'ing things together the values no longer fall on the
+> enum. Some compilers and tools even give warnings in this case, ie
+> 
+>    enum x foo = X_A | X_B;
+> 
+> Is an assignment from 'int' to an 'enum x' with an implicit cast.
+> 
+> For this reason, usually bitfield enum declarations should be
+> anonymous.
+> 
+> Jason
 
-OK. I will rename it as "factory-internal-resistance-micro-ohms" in
-next version. Thanks.
+Hi Jason,
 
--- 
-Baolin Wang
-Best Regards
+I apologize for not understanding but how should I adjust my patch so
+that it is acceptable? Do you want the explicit casts like Nick
+suggested?
+
+Thanks for the comments,
+Nathan
