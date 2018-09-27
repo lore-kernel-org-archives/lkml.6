@@ -2,111 +2,143 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 930D6C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E861EC004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4E221708
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3CA42168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Kwsygxng"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4E221708
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="QjkdlCgJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3CA42168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeI0WpL (ORCPT
+        id S1728410AbeI0Wpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:45:11 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55236 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbeI0WpL (ORCPT
+        Thu, 27 Sep 2018 18:45:47 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45131 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbeI0Wpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:45:11 -0400
-Received: by mail-it1-f195.google.com with SMTP id f14-v6so8631268ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:26:08 -0700 (PDT)
+        Thu, 27 Sep 2018 18:45:47 -0400
+Received: by mail-io1-f66.google.com with SMTP id e12-v6so2318019iok.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O8LnUUrAhYG5Iw5hY02ZjY7QLJyyRorA8PV6hMJ99Sc=;
-        b=KwsygxngLTefjMwXLcHnuP/JwvpZCR8fKKXf1dOC0jCLxtUYtWQqaKecvYsArhXSEg
-         oDJYTyhhFqKW7MAlw8NUvDGyslGrSWR/awBxLRyIto6mwugHkoJB3tkRhAQp3e9nVYVQ
-         bS26eIbi9uwBC6NEDnpwHx9PYU1dyblJcMNmglk6+c+eDACYne5zTq4o+fCFCjfXKahg
-         l7gBD7pZv4Ry7n0yYe75o6n4ro5QnQVLShnmINXj9LGvFDlE1QnTFdf13Jls5j/2NwP9
-         tbv4Anq4N+60ZEMBMMBTSqfhhDu2yrfeugdwChllDO2yEhSiSLTkpRREKJvjgcJb2+FE
-         DMcA==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w9hSiC8g54IX3RJR+iMR9+AIUkN0OY+U1tp3s7puVQc=;
+        b=QjkdlCgJdx4RgxSnd4IBF9TCLlx15K6CP17BovV3U4xnUDqgAkiNz1vU4KOaB0lscv
+         jQkV5+k+4G2Yk2/rdGBuacuVO9YESIiS+eLZR4DO+HDZxAtOi+VPVrnrELx2zPvU1nC7
+         1zZpoWFHLRX9SWE9+NKRowoxvJqbh2Rxjhvks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O8LnUUrAhYG5Iw5hY02ZjY7QLJyyRorA8PV6hMJ99Sc=;
-        b=hWnNLQc0XlCL4Gm64UHO/Ppw7/UoPYzv0ID90c4OPZr/fX0TpdxE1J8yLlU2JxriI6
-         TEGF5AXbg7F1/5ZC1kRFHUuws8aSW6HzGyeA0AfGbndvV4HCfG+LUNnhGTbY3x7khB3L
-         uTSjzvMnbiwWXXdW1zRzbAbBVPvz+aSuNAAHPBgSqw7O6xzSAXGSzVuoKXzVLO4az+R7
-         fW/DXskUA1UAwrZUNdnzT28TH5YlqdTDSMjPwLL7ezkmvfPVTTX3fl8HrL5OImthzS3+
-         PVDhAz8Bc0wwTtC2oF5/b0Z1FbsoYvrS7Vimver8Q/lcZ/74YMje5tHUI1VtYWtbj4X7
-         xPeA==
-X-Gm-Message-State: ABuFfohi/9yxeTwrpoDZfdpFPHoTcJfIz06yXaNV76BpkLGXyLU/dLAR
-        ISJg9oPst7FZ1Gqg1D8HTXewIA==
-X-Google-Smtp-Source: ACcGV60PhwFjFQunoN/BKfwuhOhn/ce4aqyAAQo7lq4MJppngS/oUH9x4sWtGl30a85IVuZ7NVB2Mg==
-X-Received: by 2002:a02:b184:: with SMTP id t4-v6mr10721390jah.120.1538065568039;
-        Thu, 27 Sep 2018 09:26:08 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id k9-v6sm784843iop.1.2018.09.27.09.26.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 09:26:06 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g5Z77-0008L9-At; Thu, 27 Sep 2018 10:26:05 -0600
-Date:   Thu, 27 Sep 2018 10:26:05 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Matan Barak <matanb@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
-        Huy Nguyen <huyn@mellanox.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/ucontext: fix building with CONFIG_MMU=n
-Message-ID: <20180927162605.GB28301@ziepe.ca>
-References: <20180927101017.990471-1-arnd@arndb.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w9hSiC8g54IX3RJR+iMR9+AIUkN0OY+U1tp3s7puVQc=;
+        b=b+lOQ5utZdIPqVzB+DiG73R79eH+GdtE+BHJC1QtQzxDMPt+BBJLGsOTneGGf58Nb6
+         Hwj7BZc8lZDbIecENYLBTMHPQJDgn88QYN4950tXj6muu2MeTjqmOeQJNHMslTduZdlE
+         JuJCWu052Z/e1FxE2RS8euscvvlRt3b2Brearw9Ux/kxS+KFKARTRsY0z/hRHlJUNlhx
+         kGSHepiLVPuIbckSCExtwnCK8VsD/zPunIR7F+QbIxP4iTv2MRqmMJegJUzVumkkeynY
+         DuTNIEO511WFDcWe2/UYL2ZWlWBGwtyen1n3O49vOAzSvL2xsw4kfdiLH12MrueSfRGj
+         Q7/A==
+X-Gm-Message-State: ABuFfogL9xqV9o4ESFrnZPrd9JQjHp6XRUcyxW8qgUIFTUeEv1Kr3h3r
+        luBK5OsxxiExxaxYVp//Mgoc+RWYnj3+7ZGxwTsVew==
+X-Google-Smtp-Source: ACcGV62+o7mCNMpe+GL/yo18S2xAjJ7K8jR0nZqh+3wOI0neK7sus0F3j7hJye1+rdEYCT23gvXSrbvQIdAr9D5BF1E=
+X-Received: by 2002:a6b:5104:: with SMTP id f4-v6mr9330998iob.114.1538065604192;
+ Thu, 27 Sep 2018 09:26:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927101017.990471-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
+ <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com> <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com>
+In-Reply-To: <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 27 Sep 2018 21:56:32 +0530
+Message-ID: <CAMty3ZAsF=uSJqj2L9ZS8N3CqcSUPzFSdtH8WtZPTg3m-K8COQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable
+ missing DSI bus clock
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 12:10:03PM +0200, Arnd Bergmann wrote:
-> The zap_vma_ptes() is declared but not defined on NOMMU kernels,
-> causing a link error for the newly added uverbs code:
-> 
-> drivers/infiniband/core/uverbs_main.o: In function `uverbs_user_mmap_disassociate':
-> uverbs_main.c:(.text+0x114c): undefined reference to `zap_vma_ptes'
-> drivers/infiniband/core/uverbs_main.o: In function `rdma_umap_open':
-> uverbs_main.c:(.text+0x53c): undefined reference to `zap_vma_ptes'
+On Thu, Sep 27, 2018 at 7:47 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> On Thu, Sep 27, 2018 at 9:44 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >
+> > On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > >
+> > > > DSI bus_clk is already available in sun6i_dsi but missed to
+> > > > get the clk and process for enable/disable.
+> > > >
+> > > > This patch add support for it.
+> > > >
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > ---
+> > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > index 8e9c76febca2..156b371243c6 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+> > > >                 return PTR_ERR(dsi->reset);
+> > > >         }
+> > > >
+> > > > +       dsi->bus_clk = devm_clk_get(dev, "bus");
+> > > > +       if (IS_ERR(dsi->bus_clk)) {
+> > > > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
+> > > > +               return PTR_ERR(dsi->bus_clk);
+> > > > +       }
+> > > > +
+> > >
+> > > The DSI driver uses devm_regmap_init_mmio_clk, which enables the
+> > > clock behind the scenes when regmap access needs it enabled.
+> > >
+> > > Did you have any issues without this patch?
+> >
+> > I'm unable to read register values via devmem, I see all 0's for all
+> > dsi reg space.
+>
+> Well that is to be expected given how mmio with clk regmap works.
+> Did you encounter any other problems besides this?
 
-I'm a bit surprised by this - the code is not new, it just got moved
-out of the drivers, and I don't see any protections there against
-CONFIG_MMU ??
- 
-> To fix this, we can either make uverbs depend on CONFIG_MMU, or try
-> to build it anyway. Since this is the only compile-time dependency,
-> I decided to allow building it with an extra compile-time check for
-> CONFIG_MMU before calling the one function.
+no
 
-Hrm. So this code doesn't work at all on NOMMU, it relies on
-remap_pfn_range, which always fails on those kernels, 
+>
+> FYI you can dump regmap contents using /sys/kernel/debug/regmap/*/registers
 
-Due to this of this the entirety of INFINIBAND_USER_ACCESS is broken.
-
-I think a kconfig change is the better way to go?
-
-Jason
+Thanks, but ccu not using regmap I believe so can't see bus enabled
+bit set via devmap
+# devmem 0x01C20060
+0x33800000
