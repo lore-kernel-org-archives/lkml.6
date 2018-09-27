@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 177D9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FBFC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE0BB216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:04:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0BB216FE
+	by mail.kernel.org (Postfix) with ESMTP id E70AE216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:04:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70AE216FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbeI0WXA (ORCPT
+        id S1728297AbeI0WXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:23:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38183 "EHLO
+        Thu, 27 Sep 2018 18:23:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56691 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbeI0WW7 (ORCPT
+        with ESMTP id S1727437AbeI0WXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:22:59 -0400
+        Thu, 27 Sep 2018 18:23:31 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RG382r083537
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RG3dEQ083588
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 09:03:08 -0700
+        Thu, 27 Sep 2018 09:03:39 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RG38FB083534;
-        Thu, 27 Sep 2018 09:03:08 -0700
-Date:   Thu, 27 Sep 2018 09:03:08 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RG3dwU083585;
+        Thu, 27 Sep 2018 09:03:39 -0700
+Date:   Thu, 27 Sep 2018 09:03:39 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Ard Biesheuvel <tipbot@zytor.com>
-Message-ID: <tip-9fc0f798ab8a6c042d811e45086260eb59be45c1@git.kernel.org>
-Cc:     tglx@linutronix.de, will.deacon@arm.com, keescook@chromium.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        catalin.marinas@arm.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        peterz@infradead.org, ard.biesheuvel@linaro.org, hpa@zytor.com,
-        mingo@kernel.org, jeyu@kernel.org
-Reply-To: peterz@infradead.org, ard.biesheuvel@linaro.org,
-          mingo@kernel.org, hpa@zytor.com, jeyu@kernel.org,
-          rostedt@goodmis.org, arnd@arndb.de, catalin.marinas@arm.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          will.deacon@arm.com, schwidefsky@de.ibm.com,
-          heiko.carstens@de.ibm.com, keescook@chromium.org
-In-Reply-To: <20180919065144.25010-6-ard.biesheuvel@linaro.org>
-References: <20180919065144.25010-6-ard.biesheuvel@linaro.org>
+Message-ID: <tip-b34006c4258c9c86597b6b7123d6a9a3513d6cd7@git.kernel.org>
+Cc:     heiko.carstens@de.ibm.com, ard.biesheuvel@linaro.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, rostedt@goodmis.org, jeyu@kernel.org,
+        keescook@chromium.org, catalin.marinas@arm.com,
+        schwidefsky@de.ibm.com, arnd@arndb.de, will.deacon@arm.com,
+        mingo@kernel.org, hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          rostedt@goodmis.org, heiko.carstens@de.ibm.com,
+          peterz@infradead.org, ard.biesheuvel@linaro.org,
+          catalin.marinas@arm.com, schwidefsky@de.ibm.com, arnd@arndb.de,
+          will.deacon@arm.com, hpa@zytor.com, mingo@kernel.org,
+          jeyu@kernel.org, keescook@chromium.org
+In-Reply-To: <20180919065144.25010-7-ard.biesheuvel@linaro.org>
+References: <20180919065144.25010-7-ard.biesheuvel@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/core] x86/jump_label: Switch to jump_entry accessors
-Git-Commit-ID: 9fc0f798ab8a6c042d811e45086260eb59be45c1
+Subject: [tip:core/core] x86/jump_table: Use relative references
+Git-Commit-ID: b34006c4258c9c86597b6b7123d6a9a3513d6cd7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,22 +64,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9fc0f798ab8a6c042d811e45086260eb59be45c1
-Gitweb:     https://git.kernel.org/tip/9fc0f798ab8a6c042d811e45086260eb59be45c1
+Commit-ID:  b34006c4258c9c86597b6b7123d6a9a3513d6cd7
+Gitweb:     https://git.kernel.org/tip/b34006c4258c9c86597b6b7123d6a9a3513d6cd7
 Author:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-AuthorDate: Tue, 18 Sep 2018 23:51:40 -0700
+AuthorDate: Tue, 18 Sep 2018 23:51:41 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 27 Sep 2018 17:56:48 +0200
 
-x86/jump_label: Switch to jump_entry accessors
+x86/jump_table: Use relative references
 
-In preparation of switching x86 to use place-relative references for
-the code, target and key members of struct jump_entry, replace direct
-references to the struct members with invocations of the new accessors.
-This will allow us to make the switch by modifying the accessors only.
-
-This incorporates a cleanup of __jump_label_transform() proposed by
-Peter.
+Similar to the arm64 case, 64-bit x86 can benefit from using relative
+references rather than absolute ones when emitting struct jump_entry
+instances. Not only does this reduce the memory footprint of the entries
+themselves by 33%, it also removes the need for carrying relocation
+metadata on relocatable builds (i.e., for KASLR) which saves a fair
+chunk of .init space as well (although the savings are not as dramatic
+as on arm64)
 
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -94,106 +94,102 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: Jessica Yu <jeyu@kernel.org>
-Link: https://lkml.kernel.org/r/20180919065144.25010-6-ard.biesheuvel@linaro.org
+Link: https://lkml.kernel.org/r/20180919065144.25010-7-ard.biesheuvel@linaro.org
 
 ---
- arch/x86/kernel/jump_label.c | 62 ++++++++++++++++++--------------------------
- 1 file changed, 25 insertions(+), 37 deletions(-)
+ arch/x86/Kconfig                  |  1 +
+ arch/x86/include/asm/jump_label.h | 24 ++++++++----------------
+ tools/objtool/special.c           |  4 ++--
+ 3 files changed, 11 insertions(+), 18 deletions(-)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index eeea935e9bb5..aac0c1f7e354 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -42,55 +42,40 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 					 void *(*poker)(void *, const void *, size_t),
- 					 int init)
- {
--	union jump_code_union code;
-+	union jump_code_union jmp;
- 	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
- 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
-+	const void *expect, *code;
-+	int line;
-+
-+	jmp.jump = 0xe9;
-+	jmp.offset = jump_entry_target(entry) -
-+		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1a0be022f91d..603f374f871d 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -119,6 +119,7 @@ config X86
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select HAVE_ARCH_HUGE_VMAP		if X86_64 || X86_PAE
+ 	select HAVE_ARCH_JUMP_LABEL
++	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+ 	select HAVE_ARCH_KASAN			if X86_64
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_MMAP_RND_BITS		if MMU
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index 8c0de4282659..21efc9d07ed9 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -37,7 +37,8 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+ 		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
++		".long 1b - ., %l[l_yes] - . \n\t"
++		_ASM_PTR "%c0 + %c1 - .\n\t"
+ 		".popsection \n\t"
+ 		: :  "i" (key), "i" (branch) : : l_yes);
  
- 	if (early_boot_irqs_disabled)
- 		poker = text_poke_early;
+@@ -53,7 +54,8 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
+ 		"2:\n\t"
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
++		".long 1b - ., %l[l_yes] - . \n\t"
++		_ASM_PTR "%c0 + %c1 - .\n\t"
+ 		".popsection \n\t"
+ 		: :  "i" (key), "i" (branch) : : l_yes);
  
- 	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
--			/*
--			 * Jump label is enabled for the first time.
--			 * So we expect a default_nop...
--			 */
--			if (unlikely(memcmp((void *)entry->code, default_nop, 5)
--				     != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = default_nop; line = __LINE__;
- 		} else {
--			/*
--			 * ...otherwise expect an ideal_nop. Otherwise
--			 * something went horribly wrong.
--			 */
--			if (unlikely(memcmp((void *)entry->code, ideal_nop, 5)
--				     != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = ideal_nop; line = __LINE__;
- 		}
- 
--		code.jump = 0xe9;
--		code.offset = entry->target -
--				(entry->code + JUMP_LABEL_NOP_SIZE);
-+		code = &jmp.code;
- 	} else {
--		/*
--		 * We are disabling this jump label. If it is not what
--		 * we think it is, then something must have gone wrong.
--		 * If this is the first initialization call, then we
--		 * are converting the default nop to the ideal nop.
--		 */
- 		if (init) {
--			if (unlikely(memcmp((void *)entry->code, default_nop, 5) != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = default_nop; line = __LINE__;
- 		} else {
--			code.jump = 0xe9;
--			code.offset = entry->target -
--				(entry->code + JUMP_LABEL_NOP_SIZE);
--			if (unlikely(memcmp((void *)entry->code, &code, 5) != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = &jmp.code; line = __LINE__;
- 		}
--		memcpy(&code, ideal_nops[NOP_ATOMIC5], JUMP_LABEL_NOP_SIZE);
-+
-+		code = ideal_nop;
- 	}
- 
-+	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
-+		bug_at((void *)jump_entry_code(entry), line);
-+
- 	/*
- 	 * Make text_poke_bp() a default fallback poker.
- 	 *
-@@ -99,11 +84,14 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	 * always nop being the 'currently valid' instruction
- 	 *
- 	 */
--	if (poker)
--		(*poker)((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE);
--	else
--		text_poke_bp((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE,
--			     (void *)entry->code + JUMP_LABEL_NOP_SIZE);
-+	if (poker) {
-+		(*poker)((void *)jump_entry_code(entry), code,
-+			 JUMP_LABEL_NOP_SIZE);
-+		return;
-+	}
-+
-+	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE,
-+		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+@@ -62,18 +64,6 @@ l_yes:
+ 	return true;
  }
  
- void arch_jump_label_transform(struct jump_entry *entry,
+-#ifdef CONFIG_X86_64
+-typedef u64 jump_label_t;
+-#else
+-typedef u32 jump_label_t;
+-#endif
+-
+-struct jump_entry {
+-	jump_label_t code;
+-	jump_label_t target;
+-	jump_label_t key;
+-};
+-
+ #else	/* __ASSEMBLY__ */
+ 
+ .macro STATIC_JUMP_IF_TRUE target, key, def
+@@ -88,7 +78,8 @@ struct jump_entry {
+ 	.endif
+ 	.pushsection __jump_table, "aw"
+ 	_ASM_ALIGN
+-	_ASM_PTR	.Lstatic_jump_\@, \target, \key
++	.long		.Lstatic_jump_\@ - ., \target - .
++	_ASM_PTR	\key - .
+ 	.popsection
+ .endm
+ 
+@@ -104,7 +95,8 @@ struct jump_entry {
+ 	.endif
+ 	.pushsection __jump_table, "aw"
+ 	_ASM_ALIGN
+-	_ASM_PTR	.Lstatic_jump_\@, \target, \key + 1
++	.long		.Lstatic_jump_\@ - ., \target - .
++	_ASM_PTR	\key + 1 - .
+ 	.popsection
+ .endm
+ 
+diff --git a/tools/objtool/special.c b/tools/objtool/special.c
+index 84f001d52322..50af4e1274b3 100644
+--- a/tools/objtool/special.c
++++ b/tools/objtool/special.c
+@@ -30,9 +30,9 @@
+ #define EX_ORIG_OFFSET		0
+ #define EX_NEW_OFFSET		4
+ 
+-#define JUMP_ENTRY_SIZE		24
++#define JUMP_ENTRY_SIZE		16
+ #define JUMP_ORIG_OFFSET	0
+-#define JUMP_NEW_OFFSET		8
++#define JUMP_NEW_OFFSET		4
+ 
+ #define ALT_ENTRY_SIZE		13
+ #define ALT_ORIG_OFFSET		0
