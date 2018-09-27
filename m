@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A9BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E014C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E980A216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFA5D216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:28:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NyPbJ3Tw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E980A216C4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMwBU7+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFA5D216C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbeI1Bro (ORCPT
+        id S1728621AbeI1Brr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:47:44 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46900 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728401AbeI1Brn (ORCPT
+        Thu, 27 Sep 2018 21:47:47 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41286 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728401AbeI1Brq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:47:43 -0400
-Received: by mail-pg1-f194.google.com with SMTP id b129-v6so2636046pga.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:27:54 -0700 (PDT)
+        Thu, 27 Sep 2018 21:47:46 -0400
+Received: by mail-pf1-f195.google.com with SMTP id m77-v6so2585552pfi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:27:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=idS9CWU81VVg7Wphz/MpSwKUtfQ6rlPXr/UIS8hVWNw=;
-        b=NyPbJ3Twf18IBYzjZI8Kd/LHWSRv1QcMlXt8kDJJWhUdcXpp8XK0WI4oAunAadQv06
-         Hd4Wt8qOZJLcg/2Y0R6gG/q6l/en3v087KKMB10uY/DBcYSrSM0kXgW6jy74Y25Zil6c
-         0UOpmaLsVnaot/UZu2TsafnFCWX5WSCa27HAYrlPuLdS2mI5hek/R0MuqbylvhfipSTE
-         40kZm4mhscsJdG4GpgVzzoJtcetCHhmdUiqMmHnIofFWYrMBQ6gislhThNFTja3PXt99
-         FngPdTOQZSqgwaFSxaDtwROT2KOsZLUah+9QtAQ4XRupi+aojhZsI5Kn/oWHuydnffui
-         hmpQ==
+        bh=BGoSejrBEFtVHbBL0BYK36ryiXzv88p81h8++1Dth7E=;
+        b=OMwBU7+uS3Q2jD69NvKxs8pumvEgjNDPHQCG8WCX+bIPXcTQqJZKKb39B7vzSYvKTn
+         wktA+XUkcCiqrbfQuUNMblzYwRHAYLFTHRe8Q+IQqkSiDCdB2YOuiA++pMUF8hfbHP1Q
+         yQiF+qOwTKUDoIBzbzy8FYfDHQFGfy+TjJJbmY7PvxrbHSZC5YAp8esngwgO5bjodkru
+         2VkKRIR7Q75PnswDoTnvMVk5TnZE6sE4V1PSxPrcQ3iWNr53S+hifmLnUHvuxg3JdHGF
+         oBISpmGYs+mUoZV/FjJzpb0IihE19hD2jaTGR7O2tOpodhxCqGCw3n3o8EYjQV0MylUb
+         KgyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=idS9CWU81VVg7Wphz/MpSwKUtfQ6rlPXr/UIS8hVWNw=;
-        b=EwNxuAT8JX2LlPIMKTeDOhJO15uL7ZoT8JzCdeSNTJSoMxUi68ZKzyyHS0JyX1oGia
-         e6PxGDso043HLLNjAs2fXToq7SjL32RyEIvvpyf9pPu2R1fMpW/cm0neQx2aSe/p1+gv
-         PLtRhBs8yzi9NCYx6N8rpmlW4XaJULiWkatLWoHxXRJSwPyO+9Uy7aNvH8oV220Qd7vR
-         ygkQrsKMl2nh9+NrvS/GJTEEWiwcqNcNaYwm3h1F8KaxYtvQpco+pGiXcd+ZORR+sZKp
-         FRV5R+gcC0Wj3Zl2jkEloJch11n+rgwc7+UUgH0I3yV5y3mrRuUQ9wTY1W6iAtGpj3lB
-         YjTQ==
-X-Gm-Message-State: ABuFfoj3zeY3uWm5Ax11z0VGq8cuOz5TTVhhONdXpf5x7gV+9xpGsE+m
-        nv4EPFmTenfnuoTDmEaL4LU=
-X-Google-Smtp-Source: ACcGV60y5iSZ28H1BZ9safitCo7nBVyNkd4r06V9q2WyA2BZvSRMQuec+V432jX7UdJWuR7X4Poneg==
-X-Received: by 2002:a63:a0d:: with SMTP id 13-v6mr11955274pgk.318.1538076473735;
-        Thu, 27 Sep 2018 12:27:53 -0700 (PDT)
+        bh=BGoSejrBEFtVHbBL0BYK36ryiXzv88p81h8++1Dth7E=;
+        b=Uvt+1fhxyjUK2Uyu2aXBQpzUu1z56SOhK9f0z27XtdowBFESmwYsYFnAn0hYbPv/l/
+         QuHDNxXXMGzQjbGtf4bLXAJ1GLVSBuRc6b1jZRfs2WRCaK++8tUF1SYNRAYi/kfi8zZY
+         K8Db9Fe/iXnaVA397ggu6ihe8iMze3ANQg5/y09ywlwJgRPCAuHdtdVWR3HPG3OqeWxp
+         YVDeXJ38mdg8wlUSHJ9W4l/9EM/+0O5qpkxwMrxL/4sOwPZxnz1ANNo0XXmUQuThUH7u
+         50z92ZiCG9BG1w60p07pNigg6nF9OpOKtng0lAReF97AnXEgXCRU1wyvLqmD84lOnDir
+         E9pQ==
+X-Gm-Message-State: ABuFfog+luyb/oJjLIpzxZBjR6UxtQrqyKGPwfbO/L3jp9SI9EYRGImg
+        miVLJN/+rzgoBX3a9esppKg=
+X-Google-Smtp-Source: ACcGV62L/rFYWIyyL2JeyRobD/AQ0X8ikN3rzpbMH/hdmqdWxh5LoxpPBBTeVj/pWEEzF5AQ9nqRnA==
+X-Received: by 2002:a63:5558:: with SMTP id f24-v6mr11791116pgm.37.1538076477816;
+        Thu, 27 Sep 2018 12:27:57 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm8531502pfc.17.2018.09.27.12.27.51
+        by smtp.gmail.com with ESMTPSA id q2-v6sm8531502pfc.17.2018.09.27.12.27.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 12:27:52 -0700 (PDT)
+        Thu, 27 Sep 2018 12:27:56 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -70,9 +70,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         ARCHITECTURE), Rob Herring <robh@kernel.org>,
         Doug Berger <opendmb@gmail.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/3] firmware/psci: Fix cpu_resume entry points with THUMB2_KERNEL
-Date:   Thu, 27 Sep 2018 12:27:09 -0700
-Message-Id: <20180927192711.26455-2-f.fainelli@gmail.com>
+Subject: [PATCH 3/3] soc: bcm: brcmstb: Fix re-entry point with a THUMB2_KERNEL
+Date:   Thu, 27 Sep 2018 12:27:11 -0700
+Message-Id: <20180927192711.26455-4-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180927192711.26455-1-f.fainelli@gmail.com>
 References: <20180927192711.26455-1-f.fainelli@gmail.com>
@@ -81,57 +81,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When THUMB2_KERNEL is enabled, we would be failing to resume from an
-idle or system suspend call where the reentry point is set to
-cpu_resume() because that function is in Thumb2. Utilize
-cpu_resume_arm() for ARM 32-bit kernels which takes care of the mode
-switching for us.
+When the kernel is built with CONFIG_THUMB2_KERNEL we would set the
+kernel's resume entry point to be a function that is already built as
+Thumb-2 code while the boot agent doing the resume is in ARM mode, so
+this does not work. There is a header label defined: cpu_resume_arm
+which we can use to do the switching for us.
 
-Fixes: 8b6f2499ac45 ("ARM: 8511/1: ARM64: kernel: PSCI: move PSCI idle management code to drivers/firmware")
-Fixes: faf7ec4a92c0 ("drivers: firmware: psci: add system suspend support")
+Fixes: 0b741b8234c8 ("soc: bcm: brcmstb: Add support for S2/S3/S5 suspend states (ARM)")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/firmware/psci.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/soc/bcm/brcmstb/pm/pm-arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index c80ec1d03274..f8b154384483 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -400,9 +400,14 @@ int psci_cpu_init_idle(unsigned int cpu)
- static int psci_suspend_finisher(unsigned long index)
+diff --git a/drivers/soc/bcm/brcmstb/pm/pm-arm.c b/drivers/soc/bcm/brcmstb/pm/pm-arm.c
+index a5577dd5eb08..8ee06347447c 100644
+--- a/drivers/soc/bcm/brcmstb/pm/pm-arm.c
++++ b/drivers/soc/bcm/brcmstb/pm/pm-arm.c
+@@ -404,7 +404,7 @@ noinline int brcmstb_pm_s3_finish(void)
  {
- 	u32 *state = __this_cpu_read(psci_power_state);
-+	unsigned long reentry;
+ 	struct brcmstb_s3_params *params = ctrl.s3_params;
+ 	dma_addr_t params_pa = ctrl.s3_params_pa;
+-	phys_addr_t reentry = virt_to_phys(&cpu_resume);
++	phys_addr_t reentry = virt_to_phys(&cpu_resume_arm);
+ 	enum bsp_initiate_command cmd;
+ 	u32 flags;
  
--	return psci_ops.cpu_suspend(state[index - 1],
--				    __pa_symbol(cpu_resume));
-+#ifdef CONFIG_ARM
-+	reentry = __pa_symbol(cpu_resume_arm);
-+#else
-+	reentry = __pa_symbol(cpu_resume);
-+#endif
-+	return psci_ops.cpu_suspend(state[index - 1], reentry);
- }
- 
- int psci_cpu_suspend_enter(unsigned long index)
-@@ -437,8 +442,15 @@ CPUIDLE_METHOD_OF_DECLARE(psci, "psci", &psci_cpuidle_ops);
- 
- static int psci_system_suspend(unsigned long unused)
- {
-+	unsigned long reentry;
-+
-+#ifdef CONFIG_ARM
-+	reentry = __pa_symbol(cpu_resume_arm);
-+#else
-+	reentry = __pa_symbol(cpu_resume);
-+#endif
- 	return invoke_psci_fn(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND),
--			      __pa_symbol(cpu_resume), 0, 0);
-+			      reentry, 0, 0);
- }
- 
- static int psci_system_suspend_enter(suspend_state_t state)
 -- 
 2.17.1
 
