@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DF2C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93A3C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66AA7216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:46:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66AA7216FA
+	by mail.kernel.org (Postfix) with ESMTP id 74534216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74534216FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbeI1BGU (ORCPT
+        id S1728581AbeI1BGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:06:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60617 "EHLO
+        Thu, 27 Sep 2018 21:06:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:32877 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbeI1BGU (ORCPT
+        with ESMTP id S1727621AbeI1BGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:06:20 -0400
+        Thu, 27 Sep 2018 21:06:40 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIjqCZ129250
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIkOoa129282
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 11:45:52 -0700
+        Thu, 27 Sep 2018 11:46:24 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIjqsp129247;
-        Thu, 27 Sep 2018 11:45:52 -0700
-Date:   Thu, 27 Sep 2018 11:45:52 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIkN5a129279;
+        Thu, 27 Sep 2018 11:46:23 -0700
+Date:   Thu, 27 Sep 2018 11:46:23 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-2a25dc7c79c92c6cba45c6218c49395173be80bf@git.kernel.org>
-Cc:     bin.yang@intel.com, peterz@infradead.org, mark.gross@intel.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, rong.a.chen@intel.com, mingo@kernel.org,
-        hpa@zytor.com
-Reply-To: rong.a.chen@intel.com, mingo@kernel.org, hpa@zytor.com,
-          bin.yang@intel.com, peterz@infradead.org, mark.gross@intel.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          dave.hansen@intel.com
-In-Reply-To: <20180917143545.731701535@linutronix.de>
-References: <20180917143545.731701535@linutronix.de>
+Message-ID: <tip-8679de0959e65ee7f78db6405a8d23e61665751d@git.kernel.org>
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        tglx@linutronix.de, mark.gross@intel.com, bin.yang@intel.com,
+        peterz@infradead.org, dave.hansen@intel.com
+Reply-To: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, dave.hansen@intel.com,
+          peterz@infradead.org, bin.yang@intel.com, mark.gross@intel.com
+In-Reply-To: <20180917143545.830507216@linutronix.de>
+References: <20180917143545.830507216@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/init32: Mark text and rodata RO in one go
-Git-Commit-ID: 2a25dc7c79c92c6cba45c6218c49395173be80bf
+Subject: [tip:x86/mm] x86/mm/cpa: Split, rename and clean up
+ try_preserve_large_page()
+Git-Commit-ID: 8679de0959e65ee7f78db6405a8d23e61665751d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,83 +59,252 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2a25dc7c79c92c6cba45c6218c49395173be80bf
-Gitweb:     https://git.kernel.org/tip/2a25dc7c79c92c6cba45c6218c49395173be80bf
+Commit-ID:  8679de0959e65ee7f78db6405a8d23e61665751d
+Gitweb:     https://git.kernel.org/tip/8679de0959e65ee7f78db6405a8d23e61665751d
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 17 Sep 2018 16:29:07 +0200
+AuthorDate: Mon, 17 Sep 2018 16:29:08 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 27 Sep 2018 20:39:37 +0200
 
-x86/mm/init32: Mark text and rodata RO in one go
+x86/mm/cpa: Split, rename and clean up try_preserve_large_page()
 
-The sequence of marking text and rodata read-only in 32bit init is:
+Avoid the extra variable and gotos by splitting the function into the
+actual algorithm and a callable function which contains the lock
+protection.
 
-  set_ro(text);
-  kernel_set_to_readonly = 1;
-  set_ro(rodata);
+Rename it to should_split_large_page() while at it so the return values make
+actually sense.
 
-When kernel_set_to_readonly is 1 it enables the protection mechanism in CPA
-for the read only regions. With the upcoming checks for existing mappings
-this consequently triggers the warning about an existing mapping being
-incorrect vs. static protections because rodata has not been converted yet.
+Clean up the code flow, comments and general whitespace damage while at it. No
+functional change.
 
-There is no technical reason to split the two, so just combine the RO
-protection to convert text and rodata in one go.
-
-Convert the printks to pr_info while at it.
-
-Reported-by: kernel test robot <rong.a.chen@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Dave Hansen <dave.hansen@intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Bin Yang <bin.yang@intel.com>
 Cc: Mark Gross <mark.gross@intel.com>
-Link: https://lkml.kernel.org/r/20180917143545.731701535@linutronix.de
+Link: https://lkml.kernel.org/r/20180917143545.830507216@linutronix.de
 
 ---
- arch/x86/mm/init_32.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+ arch/x86/mm/pageattr.c | 121 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 60 insertions(+), 61 deletions(-)
 
-diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-index 979e0a02cbe1..142c7d9f89cc 100644
---- a/arch/x86/mm/init_32.c
-+++ b/arch/x86/mm/init_32.c
-@@ -923,34 +923,19 @@ static void mark_nxdata_nx(void)
- void mark_rodata_ro(void)
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 51a5a69ecac9..36f5d711ddbe 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -421,18 +421,18 @@ pte_t *lookup_address_in_pgd(pgd_t *pgd, unsigned long address,
+  */
+ pte_t *lookup_address(unsigned long address, unsigned int *level)
  {
- 	unsigned long start = PFN_ALIGN(_text);
--	unsigned long size = PFN_ALIGN(_etext) - start;
-+	unsigned long size = (unsigned long)__end_rodata - start;
+-        return lookup_address_in_pgd(pgd_offset_k(address), address, level);
++	return lookup_address_in_pgd(pgd_offset_k(address), address, level);
+ }
+ EXPORT_SYMBOL_GPL(lookup_address);
  
- 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
--	printk(KERN_INFO "Write protecting the kernel text: %luk\n",
-+	pr_info("Write protecting kernel text and read-only data: %luk\n",
- 		size >> 10);
+ static pte_t *_lookup_address_cpa(struct cpa_data *cpa, unsigned long address,
+ 				  unsigned int *level)
+ {
+-        if (cpa->pgd)
++	if (cpa->pgd)
+ 		return lookup_address_in_pgd(cpa->pgd + pgd_index(address),
+ 					       address, level);
  
- 	kernel_set_to_readonly = 1;
+-        return lookup_address(address, level);
++	return lookup_address(address, level);
+ }
  
- #ifdef CONFIG_CPA_DEBUG
--	printk(KERN_INFO "Testing CPA: Reverting %lx-%lx\n",
--		start, start+size);
--	set_pages_rw(virt_to_page(start), size>>PAGE_SHIFT);
+ /*
+@@ -549,27 +549,22 @@ static pgprot_t pgprot_clear_protnone_bits(pgprot_t prot)
+ 	return prot;
+ }
+ 
+-static int
+-try_preserve_large_page(pte_t *kpte, unsigned long address,
+-			struct cpa_data *cpa)
++static int __should_split_large_page(pte_t *kpte, unsigned long address,
++				     struct cpa_data *cpa)
+ {
+-	unsigned long nextpage_addr, numpages, pmask, psize, addr, pfn, old_pfn;
+-	pte_t new_pte, old_pte, *tmp;
++	unsigned long numpages, pmask, psize, lpaddr, addr, pfn, old_pfn;
+ 	pgprot_t old_prot, new_prot, req_prot;
+-	int i, do_split = 1;
++	pte_t new_pte, old_pte, *tmp;
+ 	enum pg_level level;
++	int i;
+ 
+-	if (cpa->force_split)
+-		return 1;
 -
--	printk(KERN_INFO "Testing CPA: write protecting again\n");
--	set_pages_ro(virt_to_page(start), size>>PAGE_SHIFT);
--#endif
--
--	start += size;
--	size = (unsigned long)__end_rodata - start;
--	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
--	printk(KERN_INFO "Write protecting the kernel read-only data: %luk\n",
--		size >> 10);
--
--#ifdef CONFIG_CPA_DEBUG
--	printk(KERN_INFO "Testing CPA: undo %lx-%lx\n", start, start + size);
-+	pr_info("Testing CPA: Reverting %lx-%lx\n", start, start + size);
- 	set_pages_rw(virt_to_page(start), size >> PAGE_SHIFT);
+-	spin_lock(&pgd_lock);
+ 	/*
+ 	 * Check for races, another CPU might have split this page
+ 	 * up already:
+ 	 */
+ 	tmp = _lookup_address_cpa(cpa, address, &level);
+ 	if (tmp != kpte)
+-		goto out_unlock;
++		return 1;
  
--	printk(KERN_INFO "Testing CPA: write protecting again\n");
-+	pr_info("Testing CPA: write protecting again\n");
- 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
- #endif
- 	mark_nxdata_nx();
+ 	switch (level) {
+ 	case PG_LEVEL_2M:
+@@ -581,8 +576,7 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
+ 		old_pfn = pud_pfn(*(pud_t *)kpte);
+ 		break;
+ 	default:
+-		do_split = -EINVAL;
+-		goto out_unlock;
++		return -EINVAL;
+ 	}
+ 
+ 	psize = page_level_size(level);
+@@ -592,8 +586,8 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
+ 	 * Calculate the number of pages, which fit into this large
+ 	 * page starting at address:
+ 	 */
+-	nextpage_addr = (address + psize) & pmask;
+-	numpages = (nextpage_addr - address) >> PAGE_SHIFT;
++	lpaddr = (address + psize) & pmask;
++	numpages = (lpaddr - address) >> PAGE_SHIFT;
+ 	if (numpages < cpa->numpages)
+ 		cpa->numpages = numpages;
+ 
+@@ -620,57 +614,62 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
+ 		pgprot_val(req_prot) |= _PAGE_PSE;
+ 
+ 	/*
+-	 * old_pfn points to the large page base pfn. So we need
+-	 * to add the offset of the virtual address:
++	 * old_pfn points to the large page base pfn. So we need to add the
++	 * offset of the virtual address:
+ 	 */
+ 	pfn = old_pfn + ((address & (psize - 1)) >> PAGE_SHIFT);
+ 	cpa->pfn = pfn;
+ 
+-	new_prot = static_protections(req_prot, address, pfn);
++	/*
++	 * Calculate the large page base address and the number of 4K pages
++	 * in the large page
++	 */
++	lpaddr = address & pmask;
++	numpages = psize >> PAGE_SHIFT;
+ 
+ 	/*
+-	 * We need to check the full range, whether
+-	 * static_protection() requires a different pgprot for one of
+-	 * the pages in the range we try to preserve:
++	 * Make sure that the requested pgprot does not violate the static
++	 * protections. Check the full large page whether one of the pages
++	 * in it results in a different pgprot than the first one of the
++	 * requested range. If yes, then the page needs to be split.
+ 	 */
+-	addr = address & pmask;
++	new_prot = static_protections(req_prot, address, pfn);
+ 	pfn = old_pfn;
+-	for (i = 0; i < (psize >> PAGE_SHIFT); i++, addr += PAGE_SIZE, pfn++) {
++	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
+ 		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
+ 
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+-			goto out_unlock;
++			return 1;
+ 	}
+ 
+-	/*
+-	 * If there are no changes, return. maxpages has been updated
+-	 * above:
+-	 */
+-	if (pgprot_val(new_prot) == pgprot_val(old_prot)) {
+-		do_split = 0;
+-		goto out_unlock;
+-	}
++	/* If there are no changes, return. */
++	if (pgprot_val(new_prot) == pgprot_val(old_prot))
++		return 0;
+ 
+ 	/*
+-	 * We need to change the attributes. Check, whether we can
+-	 * change the large page in one go. We request a split, when
+-	 * the address is not aligned and the number of pages is
+-	 * smaller than the number of pages in the large page. Note
+-	 * that we limited the number of possible pages already to
+-	 * the number of pages in the large page.
++	 * Verify that the address is aligned and the number of pages
++	 * covers the full page.
+ 	 */
+-	if (address == (address & pmask) && cpa->numpages == (psize >> PAGE_SHIFT)) {
+-		/*
+-		 * The address is aligned and the number of pages
+-		 * covers the full page.
+-		 */
+-		new_pte = pfn_pte(old_pfn, new_prot);
+-		__set_pmd_pte(kpte, address, new_pte);
+-		cpa->flags |= CPA_FLUSHTLB;
+-		do_split = 0;
+-	}
++	if (address != lpaddr || cpa->numpages != numpages)
++		return 1;
++
++	/* All checks passed. Update the large page mapping. */
++	new_pte = pfn_pte(old_pfn, new_prot);
++	__set_pmd_pte(kpte, address, new_pte);
++	cpa->flags |= CPA_FLUSHTLB;
++	return 0;
++}
++
++static int should_split_large_page(pte_t *kpte, unsigned long address,
++				   struct cpa_data *cpa)
++{
++	int do_split;
++
++	if (cpa->force_split)
++		return 1;
+ 
+-out_unlock:
++	spin_lock(&pgd_lock);
++	do_split = __should_split_large_page(kpte, address, cpa);
+ 	spin_unlock(&pgd_lock);
+ 
+ 	return do_split;
+@@ -1273,7 +1272,7 @@ repeat:
+ 	 * Check, whether we can keep the large page intact
+ 	 * and just change the pte:
+ 	 */
+-	do_split = try_preserve_large_page(kpte, address, cpa);
++	do_split = should_split_large_page(kpte, address, cpa);
+ 	/*
+ 	 * When the range fits into the existing large page,
+ 	 * return. cp->numpages and cpa->tlbflush have been updated in
+@@ -1288,23 +1287,23 @@ repeat:
+ 	err = split_large_page(cpa, kpte, address);
+ 	if (!err) {
+ 		/*
+-	 	 * Do a global flush tlb after splitting the large page
+-	 	 * and before we do the actual change page attribute in the PTE.
+-	 	 *
+-	 	 * With out this, we violate the TLB application note, that says
+-	 	 * "The TLBs may contain both ordinary and large-page
++		 * Do a global flush tlb after splitting the large page
++		 * and before we do the actual change page attribute in the PTE.
++		 *
++		 * With out this, we violate the TLB application note, that says
++		 * "The TLBs may contain both ordinary and large-page
+ 		 *  translations for a 4-KByte range of linear addresses. This
+ 		 *  may occur if software modifies the paging structures so that
+ 		 *  the page size used for the address range changes. If the two
+ 		 *  translations differ with respect to page frame or attributes
+ 		 *  (e.g., permissions), processor behavior is undefined and may
+ 		 *  be implementation-specific."
+-	 	 *
+-	 	 * We do this global tlb flush inside the cpa_lock, so that we
++		 *
++		 * We do this global tlb flush inside the cpa_lock, so that we
+ 		 * don't allow any other cpu, with stale tlb entries change the
+ 		 * page attribute in parallel, that also falls into the
+ 		 * just split large page entry.
+-	 	 */
++		 */
+ 		flush_tlb_all();
+ 		goto repeat;
+ 	}
