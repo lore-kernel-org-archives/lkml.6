@@ -2,101 +2,106 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2ECAC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FACBC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76B73216E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:25:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76B73216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id CDE74216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r6XhF5MV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE74216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbeI1Bp3 (ORCPT
+        id S1728481AbeI1Brk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:45:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47775 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728101AbeI1Bp3 (ORCPT
+        Thu, 27 Sep 2018 21:47:40 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42078 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727587AbeI1Brk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:45:29 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RJPTk3139494
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 12:25:29 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RJPT2w139490;
-        Thu, 27 Sep 2018 12:25:29 -0700
-Date:   Thu, 27 Sep 2018 12:25:29 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for YueHaibing <tipbot@zytor.com>
-Message-ID: <tip-5140a6f471137205687428b0b8f12f7187bffd18@git.kernel.org>
-Cc:     yuehaibing@huawei.com, sthemmin@microsoft.com,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        kernel-janitors@vger.kernel.org, mikelley@microsoft.com,
-        haiyangz@microsoft.com, kys@microsoft.com, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com
-Reply-To: devel@linuxdriverproject.org, kernel-janitors@vger.kernel.org,
-          linux-kernel@vger.kernel.org, sthemmin@microsoft.com,
-          yuehaibing@huawei.com, tglx@linutronix.de, hpa@zytor.com,
-          mingo@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-          mikelley@microsoft.com
-In-Reply-To: <1537690822-97455-1-git-send-email-yuehaibing@huawei.com>
-References: <1537690822-97455-1-git-send-email-yuehaibing@huawei.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/hyperv] x86/hyperv: Remove unused include
-Git-Commit-ID: 5140a6f471137205687428b0b8f12f7187bffd18
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Thu, 27 Sep 2018 21:47:40 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i4-v6so2052746pgq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=3GCyOHWIpD7IB326Tq5Whn5QBKsp9/pOp1wUxjWkEUs=;
+        b=r6XhF5MVSU0FAwczVIaqCFdapvujaZdJw7BrJu9edAIefeadvnyVj6srdZDksMQgvF
+         ft7KypMi3DLc1qZmGdluou12U6XcJEQ4gfymRmsbv+47kiXh96J9hwu4RcvCR+p4TLCj
+         hJJBC0Z3i12DIZCxmCkWWqgXplYMIv2dboy4tV3G7toXcP5GRdlfrDgzsWp6oHuGI88E
+         GKMlXgDdcWXhFE73rcBXpMPwVqGLkosiNleiUStN5D5ABjUZTi9ZiDbAoadBbvjFa4Pz
+         GxSj8OuQOaNiUrspsLPMnR93O95/SuwVV+H0ncLDyxjNc6XErlWrxn0pW1KGupFWpBq5
+         /UqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3GCyOHWIpD7IB326Tq5Whn5QBKsp9/pOp1wUxjWkEUs=;
+        b=gJbxOKKeIDOP5itBtkbOBnDkJuh6IaOLzoNh+FcX4tba2ZRPgXWSZVzi3P6emr7UMA
+         mOdyavobEr8AUgP4d+PUkdecF2O/LIGMB4+XXrvqn88JZZZmZPzIF91ccvkGNx0UOpVf
+         pQeFP4Qwhp8gGZ/LYB0k8d9cuR71gW7i5lAGlLteR7+ElavphPLeShkflcRmXKg5KkJU
+         yhT2Vi0i7yK6voXofzqPdSNVmpPcY2y8uetR/FdGizSdSw2/iXsxqMY7gXeI6UxmqEIz
+         9T8NmXNXlZ1irFkIJSYFxT4/o+yIQ0A2SEdk2LMC0kWSze2s2OYD1JNyWiOPF1tE5MgJ
+         hS6A==
+X-Gm-Message-State: ABuFfoi2TsMKTlbKWTkb8cYpmzKKNMR1BCfIebjkPOYEru6a3l17O1UT
+        5ew5fVePdue51fJZs73WYv4=
+X-Google-Smtp-Source: ACcGV610+dRgUHWYiSEcMHYUT2FfAldTgNTp2pGveA/msUeHg34DweRmkqelSCyiBUe0Gka+pHVBSg==
+X-Received: by 2002:a63:91:: with SMTP id 139-v6mr2430628pga.389.1538076471845;
+        Thu, 27 Sep 2018 12:27:51 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id q2-v6sm8531502pfc.17.2018.09.27.12.27.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 12:27:50 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com (maintainer:BROADCOM BCM7XXX ARM
+        ARCHITECTURE), Rob Herring <robh@kernel.org>,
+        Doug Berger <opendmb@gmail.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/3] ARM/PSCI: Fix THUMB2_KERNEL entry points
+Date:   Thu, 27 Sep 2018 12:27:08 -0700
+Message-Id: <20180927192711.26455-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5140a6f471137205687428b0b8f12f7187bffd18
-Gitweb:     https://git.kernel.org/tip/5140a6f471137205687428b0b8f12f7187bffd18
-Author:     YueHaibing <yuehaibing@huawei.com>
-AuthorDate: Sun, 23 Sep 2018 08:20:22 +0000
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 27 Sep 2018 21:21:00 +0200
+Hi all,
 
-x86/hyperv: Remove unused include
+While playing with THUMB2_KERNEL on ARCH_BRCMSTB, several issues came up
+which are addressed by these 3 patches.
 
-Remove including <linux/version.h>. It's not needed.
+The THUMB() assembler macro is a no-op unless CONFIG_THUMB2_KERNEL so
+using it unconditionally for CONFIG_ARM should not cause a problem
+AFAICT.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <devel@linuxdriverproject.org>
-Cc: <kernel-janitors@vger.kernel.org>
-Link: https://lkml.kernel.org/r/1537690822-97455-1-git-send-email-yuehaibing@huawei.com
+Those patches can all be independently picked up by their respective
+maintainers and don't depent on one another.
 
----
- arch/x86/hyperv/hv_apic.c | 1 -
- 1 file changed, 1 deletion(-)
+Thank you!
 
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index 2c43e3055948..8eb6fbee8e13 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -20,7 +20,6 @@
-  */
- 
- #include <linux/types.h>
--#include <linux/version.h>
- #include <linux/vmalloc.h>
- #include <linux/mm.h>
- #include <linux/clockchips.h>
+Florian Fainelli (3):
+  firmware/psci: Fix cpu_resume entry points with THUMB2_KERNEL
+  ARM: psci: Fix secondary core boot with THUMB2_KERNEL
+  soc: bcm: brcmstb: Fix re-entry point with a THUMB2_KERNEL
+
+ arch/arm/kernel/psci_smp.c          |  4 ++--
+ drivers/firmware/psci.c             | 18 +++++++++++++++---
+ drivers/soc/bcm/brcmstb/pm/pm-arm.c |  2 +-
+ 3 files changed, 18 insertions(+), 6 deletions(-)
+
+-- 
+2.17.1
+
