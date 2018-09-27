@@ -2,150 +2,142 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E052C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D67C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBFC21571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:23:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CBFC21571
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B234D21571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:25:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B234D21571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbeI0VmX (ORCPT
+        id S1727867AbeI0Vnx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:42:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55372 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727270AbeI0VmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:42:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 682EAAFC2;
-        Thu, 27 Sep 2018 15:23:34 +0000 (UTC)
-Subject: Re: [PATCH] bcache: add separate workqueue for journal_write to avoid
- deadlock
-To:     guoju <fangguoju@gmail.com>
-References: <1538055919-5757-1-git-send-email-fangguoju@gmail.com>
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Coly Li <colyli@suse.de>
-Message-ID: <bda92f58-d321-d4db-c73f-0ceecbfd9c38@suse.de>
-Date:   Thu, 27 Sep 2018 23:23:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 27 Sep 2018 17:43:53 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43268 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbeI0Vnx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 17:43:53 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g5Y9X-00025s-NQ; Thu, 27 Sep 2018 15:24:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Maxim Levitsky <maximlevitsky@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][mtd-next] mtd: rawnand: fix spelling mistake "card_registred" -> "card_registered"
+Date:   Thu, 27 Sep 2018 16:24:31 +0100
+Message-Id: <20180927152431.6031-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <1538055919-5757-1-git-send-email-fangguoju@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-On 9/27/18 9:45 PM, guoju wrote:
-> After write SSD completed, bcache schedule journal_write work to
-> system_wq, that is a public workqueue in system, without WQ_MEM_RECLAIM
-> flag. system_wq is also a bound wq, and there may be no idle kworker on
-> current processor. Creating a new kworker may unfortunately need to
-> reclaim memory first, by shrinking cache and slab used by vfs, which
-> depends on bcache device. That's a deadlock.
->
-> This patch create a new workqueue for journal_write with WQ_MEM_RECLAIM
-> flag. It's rescuer thread will work to avoid the deadlock.
->
-> Signed-off-by: guoju <fangguoju@gmail.com>
+Trivial fix to spelling mistake struct field name, rename it.
 
-Nice catch, this fix is quite important. I will try to submit to Jens ASAP.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/nand/raw/r852.c | 14 +++++++-------
+ drivers/mtd/nand/raw/r852.h |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-Thanks.
+diff --git a/drivers/mtd/nand/raw/r852.c b/drivers/mtd/nand/raw/r852.c
+index b08aa0a5a074..39be65b35ac2 100644
+--- a/drivers/mtd/nand/raw/r852.c
++++ b/drivers/mtd/nand/raw/r852.c
+@@ -637,7 +637,7 @@ static int r852_register_nand_device(struct r852_device *dev)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(dev->chip);
+ 
+-	WARN_ON(dev->card_registred);
++	WARN_ON(dev->card_registered);
+ 
+ 	mtd->dev.parent = &dev->pci_dev->dev;
+ 
+@@ -654,7 +654,7 @@ static int r852_register_nand_device(struct r852_device *dev)
+ 		goto error3;
+ 	}
+ 
+-	dev->card_registred = 1;
++	dev->card_registered = 1;
+ 	return 0;
+ error3:
+ 	nand_release(dev->chip);
+@@ -672,13 +672,13 @@ static void r852_unregister_nand_device(struct r852_device *dev)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(dev->chip);
+ 
+-	if (!dev->card_registred)
++	if (!dev->card_registered)
+ 		return;
+ 
+ 	device_remove_file(&mtd->dev, &dev_attr_media_type);
+ 	nand_release(dev->chip);
+ 	r852_engine_disable(dev);
+-	dev->card_registred = 0;
++	dev->card_registered = 0;
+ }
+ 
+ /* Card state updater */
+@@ -692,7 +692,7 @@ static void r852_card_detect_work(struct work_struct *work)
+ 	dev->card_unstable = 0;
+ 
+ 	/* False alarm */
+-	if (dev->card_detected == dev->card_registred)
++	if (dev->card_detected == dev->card_registered)
+ 		goto exit;
+ 
+ 	/* Read media properties */
+@@ -1033,7 +1033,7 @@ static int r852_resume(struct device *device)
+ 
+ 
+ 	/* If card status changed, just do the work */
+-	if (dev->card_detected != dev->card_registred) {
++	if (dev->card_detected != dev->card_registered) {
+ 		dbg("card was %s during low power state",
+ 			dev->card_detected ? "added" : "removed");
+ 
+@@ -1043,7 +1043,7 @@ static int r852_resume(struct device *device)
+ 	}
+ 
+ 	/* Otherwise, initialize the card */
+-	if (dev->card_registred) {
++	if (dev->card_registered) {
+ 		r852_engine_enable(dev);
+ 		dev->chip->select_chip(dev->chip, 0);
+ 		nand_reset_op(dev->chip);
+diff --git a/drivers/mtd/nand/raw/r852.h b/drivers/mtd/nand/raw/r852.h
+index 1eed2fc2fa42..bc67f5bf67e8 100644
+--- a/drivers/mtd/nand/raw/r852.h
++++ b/drivers/mtd/nand/raw/r852.h
+@@ -129,7 +129,7 @@ struct r852_device {
+ 	/* card status area */
+ 	struct delayed_work card_detect_work;
+ 	struct workqueue_struct *card_workqueue;
+-	int card_registred;		/* card registered with mtd */
++	int card_registered;		/* card registered with mtd */
+ 	int card_detected;		/* card detected in slot */
+ 	int card_unstable;		/* whenever the card is inserted,
+ 					   is not known yet */
+-- 
+2.17.1
 
-Coly Li
-
-> ---
->   drivers/md/bcache/bcache.h  | 1 +
->   drivers/md/bcache/journal.c | 6 +++---
->   drivers/md/bcache/super.c   | 8 ++++++++
->   3 files changed, 12 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 83504dd..954dad2 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -965,6 +965,7 @@ bool bch_alloc_sectors(struct cache_set *c, struct bkey *k,
->   void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
->   
->   extern struct workqueue_struct *bcache_wq;
-> +extern struct workqueue_struct *bch_journal_wq;
->   extern struct mutex bch_register_lock;
->   extern struct list_head bch_cache_sets;
->   
-> diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-> index 6116bbf..522c742 100644
-> --- a/drivers/md/bcache/journal.c
-> +++ b/drivers/md/bcache/journal.c
-> @@ -485,7 +485,7 @@ static void do_journal_discard(struct cache *ca)
->   
->   		closure_get(&ca->set->cl);
->   		INIT_WORK(&ja->discard_work, journal_discard_work);
-> -		schedule_work(&ja->discard_work);
-> +		queue_work(bch_journal_wq, &ja->discard_work);
->   	}
->   }
->   
-> @@ -592,7 +592,7 @@ static void journal_write_done(struct closure *cl)
->   		: &j->w[0];
->   
->   	__closure_wake_up(&w->wait);
-> -	continue_at_nobarrier(cl, journal_write, system_wq);
-> +	continue_at_nobarrier(cl, journal_write, bch_journal_wq);
->   }
->   
->   static void journal_write_unlock(struct closure *cl)
-> @@ -627,7 +627,7 @@ static void journal_write_unlocked(struct closure *cl)
->   		spin_unlock(&c->journal.lock);
->   
->   		btree_flush_write(c);
-> -		continue_at(cl, journal_write, system_wq);
-> +		continue_at(cl, journal_write, bch_journal_wq);
->   		return;
->   	}
->   
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 3ede144..64715a8 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -47,6 +47,7 @@
->   static DEFINE_IDA(bcache_device_idx);
->   static wait_queue_head_t unregister_wait;
->   struct workqueue_struct *bcache_wq;
-> +struct workqueue_struct *bch_journal_wq;
->   
->   #define BTREE_MAX_PAGES		(256 * 1024 / PAGE_SIZE)
->   /* limitation of partitions number on single bcache device */
-> @@ -2344,6 +2345,9 @@ static void bcache_exit(void)
->   		kobject_put(bcache_kobj);
->   	if (bcache_wq)
->   		destroy_workqueue(bcache_wq);
-> +	if (bch_journal_wq)
-> +		destroy_workqueue(bch_journal_wq);
-> +
->   	if (bcache_major)
->   		unregister_blkdev(bcache_major, "bcache");
->   	unregister_reboot_notifier(&reboot);
-> @@ -2373,6 +2377,10 @@ static int __init bcache_init(void)
->   	if (!bcache_wq)
->   		goto err;
->   
-> +	bch_journal_wq = alloc_workqueue("bch_journal", WQ_MEM_RECLAIM, 0);
-> +	if (!bch_journal_wq)
-> +		goto err;
-> +
->   	bcache_kobj = kobject_create_and_add("bcache", fs_kobj);
->   	if (!bcache_kobj)
->   		goto err;
