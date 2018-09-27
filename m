@@ -2,130 +2,107 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9AEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08D6C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BE7216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:43:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BE7216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 89F79216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:46:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="03kPgimj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F79216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeI1CDp (ORCPT
+        id S1727486AbeI1CFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:03:45 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:50820 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbeI1CDp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:03:45 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g5cCJ-0004mD-2v; Thu, 27 Sep 2018 13:43:39 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g5cCG-0001ja-UY; Thu, 27 Sep 2018 13:43:38 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org (open list:X86 MM)
-References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
-        <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
-Date:   Thu, 27 Sep 2018 21:43:15 +0200
-In-Reply-To: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> (Jarkko
-        Sakkinen's message of "Tue, 25 Sep 2018 16:06:46 +0300")
-Message-ID: <87zhw2ohf0.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 27 Sep 2018 22:05:52 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:47691 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727266AbeI1CFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 22:05:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=HM4RfbVqLG7eGdMrF3z0jTsB70HILxkQnF+vjA2TZqc=;
+        b=03kPgimjH+5zdF6KqnUEJWOHUWNhg64n7by+LvoRw8kZ3CZEyGrQ9nLKoyybaGO0SatoErDI0EWEoplCVKVFvOhZ1xrCp+ddwYhb1FWNk5/U/+xktCZKzlc9l2zlnUNYo2az13cKeWvD893JEpnUmEcxj9x82ZhuZQmj46aKxy4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g5cEQ-0000Wh-6B; Thu, 27 Sep 2018 21:45:50 +0200
+Date:   Thu, 27 Sep 2018 21:45:50 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Yuiko Oshino <yuiko.oshino@microchip.com>
+Cc:     davem@davemloft.net, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, f.fainelli@gmail.com,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        m.felsch@pengutronix.de, Markus.Niebel@tqs.de,
+        netdev@vger.kernel.org, UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH v2 net-next 2/2] dt-bindings: net: add support for
+ Microchip KSZ9131 Ethernet PHY
+Message-ID: <20180927194550.GL12979@lunn.ch>
+References: <1538079415-6260-1-git-send-email-yuiko.oshino@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1g5cCG-0001ja-UY;;;mid=<87zhw2ohf0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+xE+Rd+QqQGLxya5kt+TXMDzgj14CRP48=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538079415-6260-1-git-send-email-yuiko.oshino@microchip.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
-
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
->
-> Signal SIGSEGV(SEGV_SGXERR) for all faults with PF_SGX set in the
-> error code.  The PF_SGX bit is set if and only if the #PF is detected
-> by the Enclave Page Cache Map (EPCM), which is consulted only after
-> an access walks the kernel's page tables, i.e.:
->
->   a. the access was allowed by the kernel
->   b. the kernel's tables have become less restrictive than the EPCM
->   c. the kernel cannot fixup the cause of the fault
->
-> Noteably, (b) implies that either the kernel has botched the EPC
-> mappings or the EPCM has been invalidated due to a power event.  In
-> either case, userspace needs to be alerted so that it can take
-> appropriate action, e.g. restart the enclave.  This is reinforced
-> by (c) as the kernel doesn't really have any other reasonable option,
-> e.g. we could kill the task or panic, but neither is warranted.
->
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Thu, Sep 27, 2018 at 04:16:55PM -0400, Yuiko Oshino wrote:
+> Add support for Microchip Technology KSZ9131 10/100/1000 Ethernet PHY
+> 
+> Signed-off-by: Yuiko Oshino <yuiko.oshino@microchip.com>
 > ---
->  arch/x86/mm/fault.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 85d20516b2f3..3fb2b2838d6c 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -960,10 +960,13 @@ static noinline void
->  bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
->  		      unsigned long address, struct vm_area_struct *vma)
->  {
-> +	int si_code = SEGV_ACCERR;
+>  .../devicetree/bindings/net/micrel-ksz90x1.txt     | 29 +++++++++++++++++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/micrel-ksz90x1.txt b/Documentation/devicetree/bindings/net/micrel-ksz90x1.txt
+> index e22d8cf..d23d14a 100644
+> --- a/Documentation/devicetree/bindings/net/micrel-ksz90x1.txt
+> +++ b/Documentation/devicetree/bindings/net/micrel-ksz90x1.txt
+> @@ -1,4 +1,4 @@
+> -Micrel KSZ9021/KSZ9031 Gigabit Ethernet PHY
+> +Micrel/Microchip KSZ9021/KSZ9031/KSZ9131 Gigabit Ethernet PHY
+>  
+>  Some boards require special tuning values, particularly when it comes
+>  to clock delays. You can specify clock delay values in the PHY OF
+> @@ -64,6 +64,33 @@ KSZ9031:
+>          Attention: The link partner must be configurable as slave otherwise
+>          no link will be established.
+>  
+> +KSZ9131:
 > +
->  	if (bad_area_access_from_pkeys(error_code, vma))
-> -		__bad_area(regs, error_code, address, vma, SEGV_PKUERR);
-> -	else
-> -		__bad_area(regs, error_code, address, vma, SEGV_ACCERR);
-> +		si_code = SEGV_PKUERR;
-> +	else if (unlikely(error_code & X86_PF_SGX))
-> +		si_code = SEGV_SGXERR;
-> +	__bad_area(regs, error_code, address, vma, si_code);
->  }
+> +  All skew control options are specified in picoseconds. The minimum
+> +  value is 0, and the maximum is property-dependent. The increment
+> +  step is 100ps. The default value is the neutral setting, so setting
+> +  rxc-skew-ps=<0> actually results in -700 picoseconds adjustment.
 
-This conflicts with a cleanup in this area I have sitting in linux-next.
-It isn't in the x86 tree but you can find my siginfo tree at:
+We also have:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git siginfo-next
+KSZ9021:
 
-In my tree bad area no longer takes a vma parameter.
+  All skew control options are specified in picoseconds. The minimum
+  value is 0, the maximum value is 3000, and it is incremented by 200ps
+  steps.
 
-If you are going to make changes to the fault handling code this cycle
-please let's figure out how to build it on top of my clean ups.
+and
 
-Thank you,
-Eric Biederman
+KSZ9031:
 
+  All skew control options are specified in picoseconds. The minimum
+  value is 0, and the maximum is property-dependent. The increment
+  step is 60ps. The default value is the neutral setting, so setting
+  rxc-skew-ps=<0> actually results in -900 picoseconds adjustment.
 
+So this is the third meaning of 0.
+
+How about making 0 mean 0. Have the range being -700 to 1800 and -700
+to 800? KSZ9031 and KSZ9131 then use the same meaning of 0, with 0
+actually meaning 0!
+
+   Andrew
