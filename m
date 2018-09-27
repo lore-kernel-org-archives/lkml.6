@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782D8C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6186FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4D22156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4D22156B
+	by mail.kernel.org (Postfix) with ESMTP id 1A0FA2152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A0FA2152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbeI0PeK (ORCPT
+        id S1728852AbeI0PeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:34:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55926 "EHLO
+        Thu, 27 Sep 2018 11:34:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbeI0PeJ (ORCPT
+        with ESMTP id S1727417AbeI0PeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:34:09 -0400
+        Thu, 27 Sep 2018 11:34:16 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D42B11117;
-        Thu, 27 Sep 2018 09:16:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 019A01117;
+        Thu, 27 Sep 2018 09:16:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 13/64] tls: clear key material from kernel memory when do_tls_setsockopt_conf fails
-Date:   Thu, 27 Sep 2018 11:03:30 +0200
-Message-Id: <20180927090251.494538988@linuxfoundation.org>
+        stable@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
+        Allen Pais <allen.pais@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kevin Deus <kdeus@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.14 14/64] NFC: Fix possible memory corruption when handling SHDLC I-Frame commands
+Date:   Thu, 27 Sep 2018 11:03:31 +0200
+Message-Id: <20180927090251.655067908@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -51,29 +55,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Suren Baghdasaryan <surenb@google.com>
 
-[ Upstream commit c844eb46b7d43c2cf760169df5ae1d5b033af338 ]
+commit 674d9de02aa7d521ebdf66c3958758bdd9c64e11 upstream.
 
-Fixes: 3c4d7559159b ("tls: kernel TLS support")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+When handling SHDLC I-Frame commands "pipe" field used for indexing
+into an array should be checked before usage. If left unchecked it
+might access memory outside of the array of size NFC_HCI_MAX_PIPES(127).
+
+Malformed NFC HCI frames could be injected by a malicious NFC device
+communicating with the device being attacked (remote attack vector),
+or even by an attacker with physical access to the I2C bus such that
+they could influence the data transfers on that bus (local attack vector).
+skb->data is controlled by the attacker and has only been sanitized in
+the most trivial ways (CRC check), therefore we can consider the
+create_info struct and all of its members to tainted. 'create_info->pipe'
+with max value of 255 (uint8) is used to take an offset of the
+hdev->pipes array of 127 elements which can lead to OOB write.
+
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Allen Pais <allen.pais@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Suggested-by: Kevin Deus <kdeus@google.com>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/tls/tls_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -425,7 +425,7 @@ static int do_tls_setsockopt_tx(struct s
- 	goto out;
+---
+ net/nfc/hci/core.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+--- a/net/nfc/hci/core.c
++++ b/net/nfc/hci/core.c
+@@ -209,6 +209,11 @@ void nfc_hci_cmd_received(struct nfc_hci
+ 		}
+ 		create_info = (struct hci_create_pipe_resp *)skb->data;
  
- err_crypto_info:
--	memset(crypto_info, 0, sizeof(*crypto_info));
-+	memzero_explicit(crypto_info, sizeof(union tls_crypto_context));
- out:
- 	return rc;
- }
++		if (create_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		/* Save the new created pipe and bind with local gate,
+ 		 * the description for skb->data[3] is destination gate id
+ 		 * but since we received this cmd from host controller, we
+@@ -232,6 +237,11 @@ void nfc_hci_cmd_received(struct nfc_hci
+ 		}
+ 		delete_info = (struct hci_delete_pipe_noti *)skb->data;
+ 
++		if (delete_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		hdev->pipes[delete_info->pipe].gate = NFC_HCI_INVALID_GATE;
+ 		hdev->pipes[delete_info->pipe].dest_host = NFC_HCI_INVALID_HOST;
+ 		break;
 
 
