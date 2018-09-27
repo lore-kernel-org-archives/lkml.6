@@ -2,82 +2,162 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7772CC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FB3C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 071DF216E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:11:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 071DF216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ACD12216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:13:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EXmPOlp4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD12216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbeI1CbB (ORCPT
+        id S1727483AbeI1Cdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:31:01 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:34917 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbeI1CbB (ORCPT
+        Thu, 27 Sep 2018 22:33:43 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41796 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeI1Cdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:31:01 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 4A76EC077C;
-        Thu, 27 Sep 2018 20:11:02 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id i7RI9G3-ZpUA; Thu, 27 Sep 2018 20:11:02 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id A6E13C0571;
-        Thu, 27 Sep 2018 20:10:46 +0000 (UTC)
-Subject: Re: [PATCH 4.14 00/64] 4.14.73-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180927090249.801943776@linuxfoundation.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <45496584-59a6-07db-9f28-86e2f9404057@kernel.org>
-Date:   Thu, 27 Sep 2018 14:10:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 22:33:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z3-v6so2730688pgv.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:13:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0FyQQ0NIMmZRmXd3FKKb/KpeS4oS4M0hqPJWwC3h+jA=;
+        b=EXmPOlp4Rhf3wQPE996j0Jw6wNMx+8qgt5rKZfzfMO2ikoRxma9sk/CZH4T51DWfZy
+         TlgTEgXC16Gr5IOFlHOHS8QOMAvTDrajnuTXaqSsDMGhenyFFRShjff1svX9YvOrbxgx
+         kB0gTuN+G+7sS4ztlmUvwdazf4DtRSogOES8LAbMsecFSAlqbBa3jS6oYE+W5vA0qw3R
+         12wWtw6tS3UB9AmksiuxAXFlxm9Zs3BOhtiZL9e/eLo+eFzFm14vYNEZ55B3q31AO6fo
+         MV+IodnsACh+Nz+1qV0XCttg5p8E6uDIwCScu4W6G7/syOwMuLmd3mHM9B2Kq8PjFv9a
+         hRUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0FyQQ0NIMmZRmXd3FKKb/KpeS4oS4M0hqPJWwC3h+jA=;
+        b=iJO8Bk99AE9V+NmuGBeSE/y+SM2x8714lCBZGywUWrH2Pqtp6tFarwlQpIRswKVcdR
+         Z5BWhIyOF+7j0tIk3YgDPSIvYJQVX9yIQC7NjDL7Q4XKxfOhgSZ8vR72qWz5dZvVUyfi
+         Ft/2nlIoPmvbaiILPbjS8NLYYmGgu5vmOQzXxpHivZJT1CKuTxIHNEetYIPOlsPAAkhX
+         v7U/nFTPFT3Li3qidd4ekFP2oryrftpyybtdek54+3XbIUHRDpVABM62PBDz/NjyoFqq
+         1LKRFMZAMlHoDOV8rp9c8RmBQ4uL8Yq01B8Bi/nNXda7wIek3c17VJwdQ8UPozqVDxk5
+         5sJw==
+X-Gm-Message-State: ABuFfogdI5+1Ys8PpA3Q4zDwPdcL8/yBu1C4bwiRmfxj3/O47TqJJTPz
+        lTGb9VRqxpGS159EweNo0FYq32arPQ2WQguSOFbe6w==
+X-Google-Smtp-Source: ACcGV63B8lnzeLroic/Kwdpul4uXhaLvop5SR2GBIUfGKg5qinCM1FCAa2nT6s2BjsRZgqS5xZjWIMfUyuSQ58z6Tqg=
+X-Received: by 2002:a17:902:6e01:: with SMTP id u1-v6mr12946652plk.13.1538079222924;
+ Thu, 27 Sep 2018 13:13:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180924195716.30848-1-natechancellor@gmail.com>
+ <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
+ <20180924222737.GA26973@flashbox> <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
+ <20180925023722.GA32600@ziepe.ca> <20180927010803.GA7640@flashbox> <20180927044826.GC24889@ziepe.ca>
+In-Reply-To: <20180927044826.GC24889@ziepe.ca>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 27 Sep 2018 13:13:31 -0700
+Message-ID: <CAKwvOdnmg2XY6K-8jTna3EKR1Nx04gOm6ZoywUwQO_CSANR_jg@mail.gmail.com>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+To:     jgg@ziepe.ca
+Cc:     Nathan Chancellor <natechancellor@gmail.com>, dledford@redhat.com,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/27/2018 03:03 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.73 release.
-> There are 64 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Sep 29 09:02:21 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.73-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Wed, Sep 26, 2018 at 9:48 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Wed, Sep 26, 2018 at 06:08:03PM -0700, Nathan Chancellor wrote:
+> > On Mon, Sep 24, 2018 at 08:37:22PM -0600, Jason Gunthorpe wrote:
+> > > On Mon, Sep 24, 2018 at 03:29:38PM -0700, Nick Desaulniers wrote:
+> > > > On Mon, Sep 24, 2018 at 3:27 PM Nathan Chancellor
+> > > > <natechancellor@gmail.com> wrote:
+> > > > >
+> > > > > On Mon, Sep 24, 2018 at 03:24:36PM -0700, Nick Desaulniers wrote:
+> > > > > > On Mon, Sep 24, 2018 at 12:57 PM Nathan Chancellor
+> > > > > > <natechancellor@gmail.com> wrote:
+> > > > > > >
+> > > > > > > Clang warns when one enumerated type is implicitly converted to another.
+> > > > > > >
+> > > > > > > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+> > > > > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > > > > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> > > > > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+> > > > > > >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
+> > > > > > >
+> > > > > > > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+> > > > > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > > > > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> > > > > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+> > > > > > >                                                     ~ ^~~~~~~~~~~~~~~~~
+> > > > > > >
+> > > > > > > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+> > > > > > > type ib_qp_create_flags. Make that clear to Clang by changing the
+> > > > > > > create_flags type to u32.
+> > > > > > >
+> > > > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > > > >  include/rdma/ib_verbs.h | 2 +-
+> > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > > >
+> > > > > > > diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+> > > > > > > index e463d3007a35..f6f4d9e3c8ed 100644
+> > > > > > > +++ b/include/rdma/ib_verbs.h
+> > > > > > > @@ -1149,7 +1149,7 @@ struct ib_qp_init_attr {
+> > > > > > >         struct ib_qp_cap        cap;
+> > > > > > >         enum ib_sig_type        sq_sig_type;
+> > > > > > >         enum ib_qp_type         qp_type;
+> > > > > > > -       enum ib_qp_create_flags create_flags;
+> > > > > > > +       u32                     create_flags;
+> > > > > >
+> > > > > > I think it might be better to just have explicit casts at the
+> > > > > > assignment.  What do the maintainers think?
+> > > > > >
+> > > > >
+> > > > > That's fine with me, I tend to explicitly cast if it is only one
+> > > > > location but it certainly makes sense in this case as well. I'll
+> > > > > wait for the maintainers to weigh in before sending a v2.
+> > > >
+> > > > Yeah, I mean my opinion on this might seem arbitrary, but based on the
+> > > > pattern and the comment in ib_qp_create_flags, those enum values are
+> > > > reserved to be "subclassed" in a sense, so they should always be in
+> > > > sync or this code will have bigger problems.
+> > >
+> > > One should not use an 'enum' type name for bitfield storage, as once
+> > > you start or'ing things together the values no longer fall on the
+> > > enum. Some compilers and tools even give warnings in this case, ie
+> > >
+> > >    enum x foo = X_A | X_B;
+> > >
+> > > Is an assignment from 'int' to an 'enum x' with an implicit cast.
+> > >
+> > > For this reason, usually bitfield enum declarations should be
+> > > anonymous.
+> > >
+> > > Jason
+> >
+> > Hi Jason,
+> >
+> > I apologize for not understanding but how should I adjust my patch so
+> > that it is acceptable? Do you want the explicit casts like Nick
+> > suggested?
+>
+> No, I think your original patch is fine, I was waiting to see if you
+> or Nick disagreed with my assessment on bitfields..
 
-Compiled and booted on my test system. No dmesg regressions.
+It wasn't clear to me whether you were ack'ing or nack'ing the patch.
+If we don't change the patch to explicit casts, shouldn't the change
+be to make create_flags an int? (note: signedness)
 
-thanks,
--- Shuah
-
+-- 
+Thanks,
+~Nick Desaulniers
