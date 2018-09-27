@@ -2,86 +2,125 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D759C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036E7C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5CE32159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:52:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CE32159D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 925E32159D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 925E32159D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeI0RJ5 (ORCPT
+        id S1727240AbeI0RLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:09:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59277 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726820AbeI0RJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:09:57 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6D405A281FE97;
-        Thu, 27 Sep 2018 18:52:13 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 27 Sep 2018 18:52:06 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
+        Thu, 27 Sep 2018 13:11:46 -0400
+Received: from mga05.intel.com ([192.55.52.43]:35226 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727057AbeI0RLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 13:11:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 03:54:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
+   d="scan'208";a="93767418"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 27 Sep 2018 03:54:02 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 27 Sep 2018 13:54:01 +0300
+Date:   Thu, 27 Sep 2018 13:54:01 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] VMCI: remove set but not used variable 'cid'
-Date:   Thu, 27 Sep 2018 11:01:19 +0000
-Message-ID: <1538046079-137795-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        support.opensource@diasemi.com
+Subject: Re: [PATCH 2/2] usb: typec: fusb302: Resolve fixed power role
+ contract setup
+Message-ID: <20180927105401.GO11965@kuha.fi.intel.com>
+References: <cover.1537975081.git.Adam.Thomson.Opensource@diasemi.com>
+ <383410593681e2fed025a4b538ea0840ff370a9a.1537975081.git.Adam.Thomson.Opensource@diasemi.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <383410593681e2fed025a4b538ea0840ff370a9a.1537975081.git.Adam.Thomson.Opensource@diasemi.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Wed, Sep 26, 2018 at 04:23:52PM +0100, Adam Thomson wrote:
+> When the controller is configured for a fixed power role (Source
+> only or Sink only), attach does not proceed within the TCPM state
+> machine as there is no CC event generated by this driver to update
+> the CC line status.
+> 
+> To rectify this, when CC is configured as Source or Sink we now
+> make use of the hardware's automatic fixed Source or Sink
+> toggling mechanism, which detects attaches in the same way as for
+> DRP toggling. In this way the result of toggling is handled in the
+> same way by the 'fusb302_handle_togdone()' function, and CC events
+> are generated as expected for TCPM allowing a contract to be
+> established.
+> 
+> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 
-drivers/misc/vmw_vmci/vmci_host.c: In function 'vmci_host_do_alloc_queuepair':
-drivers/misc/vmw_vmci/vmci_host.c:450:6: warning:
- variable 'cid' set but not used [-Wunused-but-set-variable]
-  u32 cid;
-      ^
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/misc/vmw_vmci/vmci_host.c | 3 ---
- 1 file changed, 3 deletions(-)
+> ---
+>  drivers/usb/typec/tcpm/fusb302.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+> index fd851d8..43b64d9 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -679,6 +679,7 @@ static int tcpm_set_cc(struct tcpc_dev *dev, enum typec_cc_status cc)
+>  	int ret = 0;
+>  	bool pull_up, pull_down;
+>  	u8 rd_mda;
+> +	enum toggling_mode mode;
+>  
+>  	mutex_lock(&chip->lock);
+>  	switch (cc) {
+> @@ -764,6 +765,29 @@ static int tcpm_set_cc(struct tcpc_dev *dev, enum typec_cc_status cc)
+>  		chip->intr_comp_chng = false;
+>  	}
+>  	fusb302_log(chip, "cc := %s", typec_cc_status_name[cc]);
+> +
+> +	/* Enable detection for fixed SNK or SRC only roles */
+> +	switch (cc) {
+> +	case TYPEC_CC_RD:
+> +		mode = TOGGLING_MODE_SNK;
+> +		break;
+> +	case TYPEC_CC_RP_DEF:
+> +	case TYPEC_CC_RP_1_5:
+> +	case TYPEC_CC_RP_3_0:
+> +		mode = TOGGLING_MODE_SRC;
+> +		break;
+> +	default:
+> +		mode = TOGGLING_MODE_OFF;
+> +		break;
+> +	}
+> +
+> +	if (mode != TOGGLING_MODE_OFF) {
+> +		ret = fusb302_set_toggling(chip, mode);
+> +		if (ret < 0)
+> +			fusb302_log(chip,
+> +				    "cannot set fixed role toggling mode, ret=%d",
+> +				    ret);
+> +	}
+>  done:
+>  	mutex_unlock(&chip->lock);
+>  
+> -- 
+> 1.9.1
 
-diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
-index be732e5..edfffc9 100644
---- a/drivers/misc/vmw_vmci/vmci_host.c
-+++ b/drivers/misc/vmw_vmci/vmci_host.c
-@@ -447,15 +447,12 @@ static int vmci_host_do_alloc_queuepair(struct vmci_host_dev *vmci_host_dev,
- 	struct vmci_handle handle;
- 	int vmci_status;
- 	int __user *retptr;
--	u32 cid;
- 
- 	if (vmci_host_dev->ct_type != VMCIOBJ_CONTEXT) {
- 		vmci_ioctl_err("only valid for contexts\n");
- 		return -EINVAL;
- 	}
- 
--	cid = vmci_ctx_get_id(vmci_host_dev->context);
--
- 	if (vmci_host_dev->user_version < VMCI_VERSION_NOVMVM) {
- 		struct vmci_qp_alloc_info_vmvm alloc_info;
- 		struct vmci_qp_alloc_info_vmvm __user *info = uptr;
-
-
-
+-- 
+heikki
