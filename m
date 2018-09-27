@@ -2,143 +2,114 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B978FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23556C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B210216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC31216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="PN5GSPNg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B210216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=eikelenboom.it
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sryG2n3C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC31216FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbeI1Cxu (ORCPT
+        id S1728089AbeI1Cxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:53:50 -0400
-Received: from server.eikelenboom.it ([91.121.65.215]:59386 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbeI1Cxt (ORCPT
+        Thu, 27 Sep 2018 22:53:53 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37251 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727265AbeI1Cxw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:53:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=uBpjsAyPkqDWWizMSZSE7E4tXvlXtOBWhRYVIxu1IPw=; b=PN5GSPNgPg0FHCIqURxhT7p8P2
-        Yu+6uYETYqvJADbqcQiSAUd/DDHD6iAXkaCCmi6Cor3eRUXJc5mdmNVYCjXNYqURIKjpcR1kccJHf
-        d2hFnAEP9YMiZfzHZ7UjcepFmRvOUKAJiseuCGIBOYk/3R9Gejzgvx2p69nkvSek6Cas=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:51568 helo=[172.16.1.49])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1g5cyh-0006wP-NI; Thu, 27 Sep 2018 22:33:39 +0200
-Subject: Re: [Xen-devel] [PATCH] xen/blkfront: When purging persistent grants,
- keep them in the buffer
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, Juergen Gross <jgross@suse.com>,
-        konrad.wilk@oracle.com, roger.pau@citrix.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
- <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
- <5bd1a695-50c6-e79f-38dd-c980fc2138ad@kernel.dk>
- <00030538-e1ce-28ad-3548-8e3b07083b05@eikelenboom.it>
- <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
- <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <4f53cd6f-0a73-ccdc-c816-1225aebd8d58@eikelenboom.it>
-Date:   Thu, 27 Sep 2018 22:33:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 22:53:52 -0400
+Received: by mail-qt1-f194.google.com with SMTP id n6-v6so4312352qtl.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XeIyob3e+k3Lc5ztFb3Djiyfr8ggM4MacXhRFEsvkkA=;
+        b=sryG2n3CWA31tKWbRXfdvI77Q8UY63bmgwq1TyDGDz48alGDJlQAGkkcc5wK6GkG6X
+         Uok0FFrmxXjZSj4pQkJsllMvxae2QUuTsWgmt0GCGkVwnc4Oc8u6lVSHhsrf+P78qr/l
+         C88GmeNYUBCbqY+F2xTG/Sn4A5i0erXOhsFrrYcBlS5qTTmGZik5dvn6sE6mo3p7BHaa
+         d1G5dFpBX8xFvc06fK+IRiF4yMy9NE2ckdLjFbfzodqwPaQZUGnlVNECficDQ2JxwxqJ
+         E7Ot7z1/jj575hgazluBAQEVIsbGBWW6cJtfMLlB+cv4CkzsmM0+Bf9e8PIAkHmgbIV9
+         nylg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XeIyob3e+k3Lc5ztFb3Djiyfr8ggM4MacXhRFEsvkkA=;
+        b=V9Z3TEY9o38MOlwIOaAlF7hfM9nlX0iNgJieNF6XHkP4exZXSxXPrdNYsmqTT0/ErY
+         2EGHACFnOnOMgUd1nMFomc8dyRICaiqQu1aShGitwULC3DApbKcjnHeaUOW0U/X6+vrG
+         8fSlDsx0U8Wezb18o/Z9Lis7BVHlbg67P7qoKy9O4fJkGtRFhAx2EGhUB6zwTY9a0d0n
+         nN8g5e8k7YMzVI/gvXjnkaPwq0c3CEoI+FozE1ETbRZCMlgzBb7o33yLObHm7kfx9D83
+         g4610rJzGoZnvrXYLrQcfTicqC5VbHyjxEBRKtEU9A+icmRC0t4RcGhYSSj9u/WGcvUB
+         rzCg==
+X-Gm-Message-State: ABuFfogZfHPtqK92iocA0CwDBC0uMM6kadOabfns199lti1dfk7zfjyB
+        bjOH1MmU9b6vUl9t6z/Ftg==
+X-Google-Smtp-Source: ACcGV62L0+UteccsE7SbJnFxDdExoCe4Zr/+WCHhLJABKg6ROTRBTbK7wQhclByNg74G7SJiE+zW+A==
+X-Received: by 2002:a0c:9691:: with SMTP id a17-v6mr9534621qvd.30.1538080427373;
+        Thu, 27 Sep 2018 13:33:47 -0700 (PDT)
+Received: from centos7.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id v187-v6sm1649374qka.73.2018.09.27.13.33.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 13:33:46 -0700 (PDT)
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Baoquan He <bhe@redhat.com>
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Add a kernel parameter to change the padding size for KASLR
+Date:   Thu, 27 Sep 2018 16:31:43 -0400
+Message-Id: <20180927203146.12201-1-msys.mizuma@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/09/18 21:06, Boris Ostrovsky wrote:
-> On 9/27/18 2:56 PM, Jens Axboe wrote:
->> On 9/27/18 12:52 PM, Sander Eikelenboom wrote:
->>> On 27/09/18 16:26, Jens Axboe wrote:
->>>> On 9/27/18 1:12 AM, Juergen Gross wrote:
->>>>> On 22/09/18 21:55, Boris Ostrovsky wrote:
->>>>>> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->>>>>> added support for purging persistent grants when they are not in use. As
->>>>>> part of the purge, the grants were removed from the grant buffer, This
->>>>>> eventually causes the buffer to become empty, with BUG_ON triggered in
->>>>>> get_free_grant(). This can be observed even on an idle system, within
->>>>>> 20-30 minutes.
->>>>>>
->>>>>> We should keep the grants in the buffer when purging, and only free the
->>>>>> grant ref.
->>>>>>
->>>>>> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>>>> Reviewed-by: Juergen Gross <jgross@suse.com>
->>>> Since Konrad is out, I'm going to queue this up for 4.19.
->>>>
->>> Hi Boris/Juergen.
->>>
->>> Last week i tested a linux-4.19-rc4 kernel with xen-next and this patch from Boris pulled on top. 
->>> Unfortunately it made a VM hang (probably because it's rootFS is shuffled from under it's feet 
-> 
-> What do you mean by "rootFS is shuffled from under it's feet " ?
+This patch series are adding an kernel parameter to change
+the padding size used for KASLR. It is useful for memory hotplug
+capable system. User can adjust the padding size to use it.
 
-Assumption that block-front getting borked and either a kernel crash or rootfs becoming mounted readonly. Didn't (try) to check though.
+It is better if the padding size is calculated automatically,
+however, ACPI SRAT is not available at the KASLR initialization
+time. So, I add a message for user to tell the suitable padding
+size. User can set it on next reboot.
 
->>> and it gave these in dom0 dmesg:
->>>
->>> [ 9251.696090] xen-blkback: requesting a grant already in use
->>> [ 9251.705861] xen-blkback: trying to add a gref that's already in the tree
->>> [ 9251.715781] xen-blkback: requesting a grant already in use
->>> [ 9251.725756] xen-blkback: trying to add a gref that's already in the tree
->>> [ 9251.735698] xen-blkback: requesting a grant already in use
->>> [ 9251.745573] xen-blkback: trying to add a gref that's already in the tree
->>>
->>> The VM was a HVM with 4 vcpu's and 2 phy disks:
->>> xen-blkback: backend/vbd/14/768: using 4 queues, protocol 1 (x86_64-abi) persistent grants
->>> xen-blkback: backend/vbd/14/832: using 4 queues, protocol 1 (x86_64-abi) persistent grants
->>>
->>>
->>> Currently i have been running 4.19-rc5 with xen-next on top and commit
->>> a46b53672b2c reverted, for a couple of days. That seems to run stable
->>> for me (since it's a small box so i'm not hit by what a46b53672b2c
->>> tried to fix.
->>>
->>> If you can come up with a debug patch i can give that a spin tomorrow
->>> evening or in the weekend, so we are hopefully still in time for the
->>> 4.19 release.
->> At this late in the game, might make more sense to simply revert the
->> buggy commit.  Especially since what is currently out there doesn't fix
->> the issue for you.
-Don't know if Boris or Juergen have a hunch about the issue, if not perhaps a revert is the best. 
+This patch series don't change the current default padding size.
 
-> If decision is to revert then I think the whole series needs to be
-> reverted.
-> 
-> -boris
-> 
+Change log from v3:
+ - Add a warning message if the padding size for KASLR is not enough.
+   And it says the suitable padding size to user.
 
-For Boris and Juergen:
-Would it make sense to have an "xen-next" branch in the xen-tip tree that is:
-- based on the previous stable kernel
-- and has the for-linus branches for the upcoming kernel release on top;
-- and has the pathes for net(-next) and block changes on top (since these don't go via the tree but only via mailing-list patches);
-  (which are scattered, difficult to track and use for automated testing)
-- and dependency patches for the above if necessary to be able to build.
+Change log from v2:
+ - Simplify the description. As Baoquan said, this is similar SGI UV issue,
+   but a little different. Remove SGI UV description.
 
-So there is one branch that can be used to test ALL pending kernel related Xen patches and which could be used in OSStest without as
-many potential false alarms as linux-next will have ?
+Masayoshi Mizuma (3):
+  x86/mm: Add an option to change the padding used for the physical
+    memory mapping
+  ACPI / NUMA: Add warning message if the padding size for KASLR is not
+    enough
+  docs: kernel-parameters.txt: document rand_mem_physical_padding
+    parameter
 
---
-Sander
+ Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
+ arch/x86/include/asm/setup.h                    |  2 ++
+ arch/x86/mm/kaslr.c                             | 17 ++++++++++++++++-
+ drivers/acpi/numa.c                             | 14 ++++++++++++++
+ 4 files changed, 39 insertions(+), 1 deletion(-)
+
+-- 
+2.18.0
+
