@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C6AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4610FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5942152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C5942152F
+	by mail.kernel.org (Postfix) with ESMTP id 034182152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034182152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeI0Pjt (ORCPT
+        id S1728250AbeI0Pjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:39:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56498 "EHLO
+        Thu, 27 Sep 2018 11:39:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56502 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbeI0Pjs (ORCPT
+        with ESMTP id S1727057AbeI0Pjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:39:48 -0400
+        Thu, 27 Sep 2018 11:39:54 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2CD601072;
-        Thu, 27 Sep 2018 09:22:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67A981113;
+        Thu, 27 Sep 2018 09:22:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alan Cox <alan@linux.intel.com>
-Subject: [PATCH 4.14 50/64] tty: vt_ioctl: fix potential Spectre v1
-Date:   Thu, 27 Sep 2018 11:04:07 +0200
-Message-Id: <20180927090256.998011927@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 29/64] xen/netfront: dont bug in case of too many frags
+Date:   Thu, 27 Sep 2018 11:03:46 +0200
+Message-Id: <20180927090254.267128774@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -52,54 +51,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit e97267cb4d1ee01ca0929638ec0fcbb0904f903d upstream.
+commit ad4f15dc2c70b1de5e0a64d27335962fbc9cf71c upstream.
 
-vsa.console is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Commit 57f230ab04d291 ("xen/netfront: raise max number of slots in
+xennet_get_responses()") raised the max number of allowed slots by one.
+This seems to be problematic in some configurations with netback using
+a larger MAX_SKB_FRAGS value (e.g. old Linux kernel with MAX_SKB_FRAGS
+defined as 18 instead of nowadays 17).
 
-This issue was detected with the help of Smatch:
+Instead of BUG_ON() in this case just fall back to retransmission.
 
-drivers/tty/vt/vt_ioctl.c:711 vt_ioctl() warn: potential spectre issue
-'vc_cons' [r]
-
-Fix this by sanitizing vsa.console before using it to index vc_cons
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
+Fixes: 57f230ab04d291 ("xen/netfront: raise max number of slots in xennet_get_responses()")
 Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Alan Cox <alan@linux.intel.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt_ioctl.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/xen-netfront.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/vt/vt_ioctl.c
-+++ b/drivers/tty/vt/vt_ioctl.c
-@@ -32,6 +32,8 @@
- #include <asm/io.h>
- #include <linux/uaccess.h>
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -907,7 +907,11 @@ static RING_IDX xennet_fill_frags(struct
+ 			BUG_ON(pull_to <= skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+-		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
++		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
++			queue->rx.rsp_cons = ++cons;
++			kfree_skb(nskb);
++			return ~0U;
++		}
  
-+#include <linux/nospec.h>
-+
- #include <linux/kbd_kern.h>
- #include <linux/vt_kern.h>
- #include <linux/kbd_diacr.h>
-@@ -700,6 +702,8 @@ int vt_ioctl(struct tty_struct *tty,
- 		if (vsa.console == 0 || vsa.console > MAX_NR_CONSOLES)
- 			ret = -ENXIO;
- 		else {
-+			vsa.console = array_index_nospec(vsa.console,
-+							 MAX_NR_CONSOLES + 1);
- 			vsa.console--;
- 			console_lock();
- 			ret = vc_allocate(vsa.console);
+ 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
+ 				skb_frag_page(nfrag),
+@@ -1044,6 +1048,8 @@ err:
+ 		skb->len += rx->status;
+ 
+ 		i = xennet_fill_frags(queue, skb, &tmpq);
++		if (unlikely(i == ~0U))
++			goto err;
+ 
+ 		if (rx->flags & XEN_NETRXF_csum_blank)
+ 			skb->ip_summed = CHECKSUM_PARTIAL;
 
 
