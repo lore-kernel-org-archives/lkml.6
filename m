@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663C4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92009C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B26020836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:12:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B26020836
+	by mail.kernel.org (Postfix) with ESMTP id 5017B20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:13:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5017B20836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbeI0PaI (ORCPT
+        id S1728458AbeI0PaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:30:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55402 "EHLO
+        Thu, 27 Sep 2018 11:30:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728276AbeI0PaH (ORCPT
+        with ESMTP id S1727634AbeI0PaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:30:07 -0400
+        Thu, 27 Sep 2018 11:30:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7770111D;
-        Thu, 27 Sep 2018 09:12:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BEF61120;
+        Thu, 27 Sep 2018 09:13:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>
-Subject: [PATCH 4.18 43/88] platform/x86: alienware-wmi: Correct a memory leak
-Date:   Thu, 27 Sep 2018 11:03:24 +0200
-Message-Id: <20180927090306.010176810@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 44/88] xen/netfront: dont bug in case of too many frags
+Date:   Thu, 27 Sep 2018 11:03:25 +0200
+Message-Id: <20180927090306.164812304@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,30 +51,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mario Limonciello <mario.limonciello@dell.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit ff0e9f26288d2daee4950f42b37a3d3d30d36ec1 upstream.
+commit ad4f15dc2c70b1de5e0a64d27335962fbc9cf71c upstream.
 
-An ACPI buffer that was allocated was not being freed after use.
+Commit 57f230ab04d291 ("xen/netfront: raise max number of slots in
+xennet_get_responses()") raised the max number of allowed slots by one.
+This seems to be problematic in some configurations with netback using
+a larger MAX_SKB_FRAGS value (e.g. old Linux kernel with MAX_SKB_FRAGS
+defined as 18 instead of nowadays 17).
 
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+Instead of BUG_ON() in this case just fall back to retransmission.
+
+Fixes: 57f230ab04d291 ("xen/netfront: raise max number of slots in xennet_get_responses()")
 Cc: stable@vger.kernel.org
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/alienware-wmi.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/xen-netfront.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/platform/x86/alienware-wmi.c
-+++ b/drivers/platform/x86/alienware-wmi.c
-@@ -536,6 +536,7 @@ static acpi_status alienware_wmax_comman
- 		if (obj && obj->type == ACPI_TYPE_INTEGER)
- 			*out_data = (u32) obj->integer.value;
- 	}
-+	kfree(output.pointer);
- 	return status;
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -907,7 +907,11 @@ static RING_IDX xennet_fill_frags(struct
+ 			BUG_ON(pull_to <= skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+-		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
++		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
++			queue->rx.rsp_cons = ++cons;
++			kfree_skb(nskb);
++			return ~0U;
++		}
  
- }
+ 		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags,
+ 				skb_frag_page(nfrag),
+@@ -1044,6 +1048,8 @@ err:
+ 		skb->len += rx->status;
+ 
+ 		i = xennet_fill_frags(queue, skb, &tmpq);
++		if (unlikely(i == ~0U))
++			goto err;
+ 
+ 		if (rx->flags & XEN_NETRXF_csum_blank)
+ 			skb->ip_summed = CHECKSUM_PARTIAL;
 
 
