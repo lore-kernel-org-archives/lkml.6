@@ -2,102 +2,269 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99B0C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBDFC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AAB8216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="P+lnyYD+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AAB8216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 62B1621708
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B1621708
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbeI1BGn (ORCPT
+        id S1728626AbeI1BHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:06:43 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37033 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728586AbeI1BGn (ORCPT
+        Thu, 27 Sep 2018 21:07:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58539 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeI1BHP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:06:43 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x26-v6so2529276pfn.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T8gGTefPliVXuB3MK0oV0l1+/Y8rrKEEYTUbzCEqKSo=;
-        b=P+lnyYD+zP37fltMY+MH51bNITdkTdKOIZMK0IPiAJhMiSwPnMs/zhjXm9JifB9b1W
-         wLg4HE0HAjAOQYJiSI16oA0eH7pHW6k8G2y3dxwiO61n935Z3dHYtzfDH5vUxbEEmj/W
-         O5JjRtHOVGEBvbCX5ctprLd7QRNu+YVchAPUNrZcZAz6fwT1Iu6nHOpjFbtPk0Znvcgt
-         RDvwRyjupjdMUWmZVxrJk6bKUuOJHA+8w5F7evEgRTEoLaxESyiU2cgERPgMng1CUCJI
-         JNrW2cE4fO+5DCXfuiZ6qz6v3LQiupWf/fzYvd2usoNdS680PUnpG4Z3fRRM9ngvh/1Y
-         tlGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T8gGTefPliVXuB3MK0oV0l1+/Y8rrKEEYTUbzCEqKSo=;
-        b=PYwhqNKgYulnkebH/AUDqpJdKHEubxAUsh5sgcNEmxHH+jdVOWtAINIe+7rI0vc7Kb
-         OC3bAEAn1o17xIRpef48T0luHXuumb5yc7AJfjFfFuX7739TtlSVunb/Cj3/cvYY/RHf
-         17mqfaFGQLouUbriqSEixmcaF7qPFDtSoF39FmIhzKTZuNO0OGR/Z7Vvhu7QSdtt1GoA
-         LTZknzpjnrJB/ca2Pse6y/ZU9JXkTYkbo8xlSKyZdSBh8SuzvU/CpYNzzDyjWrcWXUBK
-         o59duK4DNOHZDfB+L/H/2wK9O+KsF92mXFKApTuyipt+KCQ4KpL9UUBK1bwqkyv+flx3
-         WWNw==
-X-Gm-Message-State: ABuFfohvSeZE1A2jzbUjk2K7yrRBfp+CxNkkqwLbg8XpykaFCh/SuvRF
-        hThKLuPoYMHcH0pseAEGsOloJ9n1gwo=
-X-Google-Smtp-Source: ACcGV60fAtqrIukR4ErbrTxtK8YDaqNYogDNrpBusrEU/q2A+APnKBjUlrgsZ2FEfXxp72166bKuzA==
-X-Received: by 2002:aa7:881a:: with SMTP id c26-v6mr12728116pfo.82.1538074025590;
-        Thu, 27 Sep 2018 11:47:05 -0700 (PDT)
-Received: from vader ([2620:10d:c090:200::5:3e64])
-        by smtp.gmail.com with ESMTPSA id t85-v6sm5561876pfi.73.2018.09.27.11.47.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:47:05 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 11:47:04 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     dsterba@suse.com, jbacik@fb.com, clm@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: list usage cleanup
-Message-ID: <20180927184704.GA29754@vader>
-References: <1537950945-5627-1-git-send-email-zhongjiang@huawei.com>
+        Thu, 27 Sep 2018 21:07:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIkt1c129336
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 27 Sep 2018 11:46:55 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIktDH129333;
+        Thu, 27 Sep 2018 11:46:55 -0700
+Date:   Thu, 27 Sep 2018 11:46:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-afd7969a99e072e6aa0d88511176d4d2f3009fd9@git.kernel.org>
+Cc:     tglx@linutronix.de, mark.gross@intel.com, peterz@infradead.org,
+        dave.hansen@intel.com, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, bin.yang@intel.com
+Reply-To: bin.yang@intel.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, hpa@zytor.com, dave.hansen@intel.com,
+          peterz@infradead.org, mark.gross@intel.com, tglx@linutronix.de
+In-Reply-To: <20180917143545.913005317@linutronix.de>
+References: <20180917143545.913005317@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/cpa: Rework static_protections()
+Git-Commit-ID: afd7969a99e072e6aa0d88511176d4d2f3009fd9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <1537950945-5627-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 04:35:45PM +0800, zhong jiang wrote:
-> Trival cleanup, list_move_tail will implement the same function that
-> list_del() + list_add_tail() will do. hence just replace them.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  fs/btrfs/send.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> index 094cc144..d87f416 100644
-> --- a/fs/btrfs/send.c
-> +++ b/fs/btrfs/send.c
-> @@ -2075,8 +2075,7 @@ static struct name_cache_entry *name_cache_search(struct send_ctx *sctx,
->   */
->  static void name_cache_used(struct send_ctx *sctx, struct name_cache_entry *nce)
->  {
-> -	list_del(&nce->list);
-> -	list_add_tail(&nce->list, &sctx->name_cache_list);
-> +	list_move_tail(&nce->list, &sctx->name_cache_list);
->  }
+Commit-ID:  afd7969a99e072e6aa0d88511176d4d2f3009fd9
+Gitweb:     https://git.kernel.org/tip/afd7969a99e072e6aa0d88511176d4d2f3009fd9
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 17 Sep 2018 16:29:09 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 27 Sep 2018 20:39:37 +0200
 
-At that point do we even need such a trivial helper, considering that
-this is only called in one place?
+x86/mm/cpa: Rework static_protections()
+
+static_protections() is pretty unreadable. Split it up into separate checks
+for each protection area.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Bin Yang <bin.yang@intel.com>
+Cc: Mark Gross <mark.gross@intel.com>
+Link: https://lkml.kernel.org/r/20180917143545.913005317@linutronix.de
+
+---
+ arch/x86/mm/pageattr.c | 162 ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 98 insertions(+), 64 deletions(-)
+
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 36f5d711ddbe..9731aeeebe71 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -286,84 +286,118 @@ static void cpa_flush_array(unsigned long *start, int numpages, int cache,
+ 	}
+ }
+ 
++#ifdef CONFIG_PCI_BIOS
+ /*
+- * Certain areas of memory on x86 require very specific protection flags,
+- * for example the BIOS area or kernel text. Callers don't always get this
+- * right (again, ioremap() on BIOS memory is not uncommon) so this function
+- * checks and fixes these known static required protection bits.
++ * The BIOS area between 640k and 1Mb needs to be executable for PCI BIOS
++ * based config access (CONFIG_PCI_GOBIOS) support.
+  */
+-static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
+-				   unsigned long pfn)
+-{
+-	pgprot_t forbidden = __pgprot(0);
++#define BIOS_PFN	PFN_DOWN(BIOS_BEGIN)
++#define BIOS_PFN_END	PFN_DOWN(BIOS_END)
+ 
+-	/*
+-	 * The BIOS area between 640k and 1Mb needs to be executable for
+-	 * PCI BIOS based config access (CONFIG_PCI_GOBIOS) support.
+-	 */
+-#ifdef CONFIG_PCI_BIOS
+-	if (pcibios_enabled && within(pfn, BIOS_BEGIN >> PAGE_SHIFT, BIOS_END >> PAGE_SHIFT))
+-		pgprot_val(forbidden) |= _PAGE_NX;
++static pgprotval_t protect_pci_bios(unsigned long pfn)
++{
++	if (pcibios_enabled && within(pfn, BIOS_PFN, BIOS_PFN_END))
++		return _PAGE_NX;
++	return 0;
++}
++#else
++static pgprotval_t protect_pci_bios(unsigned long pfn)
++{
++	return 0;
++}
+ #endif
+ 
+-	/*
+-	 * The kernel text needs to be executable for obvious reasons
+-	 * Does not cover __inittext since that is gone later on. On
+-	 * 64bit we do not enforce !NX on the low mapping
+-	 */
+-	if (within(address, (unsigned long)_text, (unsigned long)_etext))
+-		pgprot_val(forbidden) |= _PAGE_NX;
++/*
++ * The .rodata section needs to be read-only. Using the pfn catches all
++ * aliases.  This also includes __ro_after_init, so do not enforce until
++ * kernel_set_to_readonly is true.
++ */
++static pgprotval_t protect_rodata(unsigned long pfn)
++{
++	unsigned long start_pfn = __pa_symbol(__start_rodata) >> PAGE_SHIFT;
++	unsigned long end_pfn = __pa_symbol(__end_rodata) >> PAGE_SHIFT;
+ 
+-	/*
+-	 * The .rodata section needs to be read-only. Using the pfn
+-	 * catches all aliases.  This also includes __ro_after_init,
+-	 * so do not enforce until kernel_set_to_readonly is true.
+-	 */
+-	if (kernel_set_to_readonly &&
+-	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
+-		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
+-		pgprot_val(forbidden) |= _PAGE_RW;
++	if (kernel_set_to_readonly && within(pfn, start_pfn, end_pfn))
++		return _PAGE_RW;
++	return 0;
++}
++
++/*
++ * Protect kernel text against becoming non executable by forbidding
++ * _PAGE_NX.  This protects only the high kernel mapping (_text -> _etext)
++ * out of which the kernel actually executes.  Do not protect the low
++ * mapping.
++ *
++ * This does not cover __inittext since that is gone after boot.
++ */
++static pgprotval_t protect_kernel_text(unsigned long address)
++{
++	if (within(address, (unsigned long)_text, (unsigned long)_etext))
++		return _PAGE_NX;
++	return 0;
++}
+ 
+ #if defined(CONFIG_X86_64)
++/*
++ * Once the kernel maps the text as RO (kernel_set_to_readonly is set),
++ * kernel text mappings for the large page aligned text, rodata sections
++ * will be always read-only. For the kernel identity mappings covering the
++ * holes caused by this alignment can be anything that user asks.
++ *
++ * This will preserve the large page mappings for kernel text/data at no
++ * extra cost.
++ */
++static pgprotval_t protect_kernel_text_ro(unsigned long address)
++{
++	unsigned long end = (unsigned long)__end_rodata_hpage_align;
++	unsigned long start = (unsigned long)_text;
++	unsigned int level;
++
++	if (!kernel_set_to_readonly || !within(address, start, end))
++		return 0;
+ 	/*
+-	 * Once the kernel maps the text as RO (kernel_set_to_readonly is set),
+-	 * kernel text mappings for the large page aligned text, rodata sections
+-	 * will be always read-only. For the kernel identity mappings covering
+-	 * the holes caused by this alignment can be anything that user asks.
++	 * Don't enforce the !RW mapping for the kernel text mapping, if
++	 * the current mapping is already using small page mapping.  No
++	 * need to work hard to preserve large page mappings in this case.
+ 	 *
+-	 * This will preserve the large page mappings for kernel text/data
+-	 * at no extra cost.
++	 * This also fixes the Linux Xen paravirt guest boot failure caused
++	 * by unexpected read-only mappings for kernel identity
++	 * mappings. In this paravirt guest case, the kernel text mapping
++	 * and the kernel identity mapping share the same page-table pages,
++	 * so the protections for kernel text and identity mappings have to
++	 * be the same.
+ 	 */
+-	if (kernel_set_to_readonly &&
+-	    within(address, (unsigned long)_text,
+-		   (unsigned long)__end_rodata_hpage_align)) {
+-		unsigned int level;
+-
+-		/*
+-		 * Don't enforce the !RW mapping for the kernel text mapping,
+-		 * if the current mapping is already using small page mapping.
+-		 * No need to work hard to preserve large page mappings in this
+-		 * case.
+-		 *
+-		 * This also fixes the Linux Xen paravirt guest boot failure
+-		 * (because of unexpected read-only mappings for kernel identity
+-		 * mappings). In this paravirt guest case, the kernel text
+-		 * mapping and the kernel identity mapping share the same
+-		 * page-table pages. Thus we can't really use different
+-		 * protections for the kernel text and identity mappings. Also,
+-		 * these shared mappings are made of small page mappings.
+-		 * Thus this don't enforce !RW mapping for small page kernel
+-		 * text mapping logic will help Linux Xen parvirt guest boot
+-		 * as well.
+-		 */
+-		if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
+-			pgprot_val(forbidden) |= _PAGE_RW;
+-	}
++	if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
++		return _PAGE_RW;
++	return 0;
++}
++#else
++static pgprotval_t protect_kernel_text_ro(unsigned long address)
++{
++	return 0;
++}
+ #endif
+ 
+-	prot = __pgprot(pgprot_val(prot) & ~pgprot_val(forbidden));
++/*
++ * Certain areas of memory on x86 require very specific protection flags,
++ * for example the BIOS area or kernel text. Callers don't always get this
++ * right (again, ioremap() on BIOS memory is not uncommon) so this function
++ * checks and fixes these known static required protection bits.
++ */
++static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
++					  unsigned long pfn)
++{
++	pgprotval_t forbidden;
++
++	/* Operate on the virtual address */
++	forbidden  = protect_kernel_text(address);
++	forbidden |= protect_kernel_text_ro(address);
+ 
+-	return prot;
++	/* Check the PFN directly */
++	forbidden |= protect_pci_bios(pfn);
++	forbidden |= protect_rodata(pfn);
++
++	return __pgprot(pgprot_val(prot) & ~forbidden);
+ }
+ 
+ /*
