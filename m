@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED1EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EF5C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 155BD21570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD222157C
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:52:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CTudQxlz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155BD21570
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NXYpuvfj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD222157C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbeI0PIR (ORCPT
+        id S1727281AbeI0PIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:08:17 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38781 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbeI0PIP (ORCPT
+        Thu, 27 Sep 2018 11:08:09 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34548 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbeI0PII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:08:15 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j8-v6so1663574wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:51:05 -0700 (PDT)
+        Thu, 27 Sep 2018 11:08:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z4-v6so286808wrb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8qG3i7EOfW75+1ul/qMJed+W8vBlnWG4DFjga9+cTRI=;
-        b=CTudQxlzyl1XsS+Y4b5DeSKYBr5h0qMtnEAEWbqW3aHZsDDutmDbVGk0frhXrwe1Ia
-         zQJEgZvV7TL7KSq/VgT14zQFbM8tni0q3Ku3OI9UkL/bkiNtWpdDyfptBlFFVMHn+W26
-         VwtF2/bUqNkonFF2yk7reykD+QR+JdIDlqXjo=
+        bh=ffkuDpNBfwdcvOz+/QFFGB2qN+kuprFwPCetGXqXDvo=;
+        b=NXYpuvfjVfvGDfKvcFzsqhfoZxbZh6uUyiF4tlEMs6UaniHzdsbXtC8B5wk1uDhj98
+         TQHp0JQrnCffiOTjDSjABSrHPhxtkbX93pvOd/liNxZtzbGLFivKuWpNnyo+XOLWfaWL
+         fjc7qvSq5h98gKpG/Db2iG1jt+xScVrAfOFBo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8qG3i7EOfW75+1ul/qMJed+W8vBlnWG4DFjga9+cTRI=;
-        b=NC44PWp+5TPfeHrnClip6UqB3+yOtBVRDEifSinNwLiOn2XA8pgV4smS7vEK6XvcQX
-         cF37CCNzqUrvBxum3Q3ggkCpk1YDDVvSqgZ37QnudHPavipCFMdmEWmqx4YQzqx16MsU
-         +CtLbAG6rzI7jojfiVD6pkbktaTSlmk1gWtHEonkb1HlSMlO0QxYrj3hd5RIqKdSGbb1
-         sxf63EWmsYB9aaM8lAk5fpoqdKpjr+KK+rd9BpBiTAaXdGExjdBXsHtjtaomn3SWWBVt
-         4kQ4XnSD3LKPj84JkexAI4WTjxnqbOzLZQ8XR4zNRen2Tv07mLYNt1xKsq7DuWFo0og6
-         TTUA==
-X-Gm-Message-State: ABuFfogMIePGbzq6zTNsK8pSQnnHR2/9rF7YZN5U2ywdnS4eSXFrrbVi
-        oPHoyWIrFuZxf8dNHVifXhqNgXoB0ok=
-X-Google-Smtp-Source: ACcGV62Mb11ea8WdxnDlE9pZA3dzvfHLsyT5g8SgZ5Z7kXtGNkQZTod3aYHL4ZgzZmPtqzaNfECktg==
-X-Received: by 2002:adf:fb0e:: with SMTP id c14-v6mr7970479wrr.117.1538038264841;
-        Thu, 27 Sep 2018 01:51:04 -0700 (PDT)
+        bh=ffkuDpNBfwdcvOz+/QFFGB2qN+kuprFwPCetGXqXDvo=;
+        b=Ed79JRI+9Eqroa0SPVZKJ/2mpaPi/uemGIJo1dxRGwiHJMLaOo9a7gthilUBGrg2RR
+         cxql1IJDnehJaQIB3nlO1S591IK8nQOTaMgogkDwOLiPo6nwB5MxNFDvunrjBUoZZ7WS
+         vM4R5KiZ0VTYLNT9iCsWLaiNONatawvF7HrUY5VA91MVHi/Q9qrCl0KDO5xwBNBi54fk
+         QaLMTtiXQJ5tuPVU2F6/mBrvPjVr93JhINp1vaiQ7fk0P8lze1C3zJAZACJSQP7lK3zK
+         QbGbumC26pDAqP0uS3gO5f1CnRR87pgfjl4AuchVl5q1Ql6hHPKS11jgxtxlJNaTW4u5
+         DZxQ==
+X-Gm-Message-State: ABuFfogcPawbxZroVfAGFgQpYNoc+jQABJ7w8b7eVJaUfC3WyJ5EScPd
+        Dt41Be/79BxqstvkusRJg4lmYXWEx1M=
+X-Google-Smtp-Source: ACcGV62fQwn6btLZXgIuPYAgAUUjT1D+Ga3c/TBRXnnbKg3s+ye5sxFlTPQ+MLjlb8p/ndYwiyCsnQ==
+X-Received: by 2002:adf:9244:: with SMTP id 62-v6mr757724wrj.130.1538038257358;
+        Thu, 27 Sep 2018 01:50:57 -0700 (PDT)
 Received: from rev03.home ([2a01:cb1d:112:6f00:546e:3c44:5966:2f5e])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm1304055wrd.74.2018.09.27.01.51.03
+        by smtp.gmail.com with ESMTPSA id p11-v6sm1304055wrd.74.2018.09.27.01.50.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 01:51:04 -0700 (PDT)
+        Thu, 27 Sep 2018 01:50:56 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -72,9 +72,9 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 06/11] efi: Make efi_rts_work accessible to efi page fault handler
-Date:   Thu, 27 Sep 2018 10:50:33 +0200
-Message-Id: <20180927085039.8391-7-ard.biesheuvel@linaro.org>
+Subject: [PATCH 01/11] efi: honour memory reservations passed via a linux specific config table
+Date:   Thu, 27 Sep 2018 10:50:28 +0200
+Message-Id: <20180927085039.8391-2-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
 References: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
@@ -83,162 +83,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+In order to allow the OS to reserve memory persistently across a
+kexec, introduce a Linux-specific UEFI configuration table that
+points to the head of a linked list in memory, allowing each kernel
+to add list items describing memory regions that the next kernel
+should treat as reserved.
 
-After the kernel has booted, if any accesses by firmware causes a page
-fault, the efi page fault handler would freeze efi_rts_wq and schedules
-a new process. To do this, the efi page fault handler needs
-efi_rts_work. Hence, make it accessible.
+This is useful, e.g., for GICv3 based ARM systems that cannot disable
+DMA access to the LPI tables, forcing them to reuse the same memory
+region again after a kexec reboot.
 
-There will be no race conditions in accessing this structure, because
-all the calls to efi runtime services are already serialized.
-
-Tested-by: Bhupesh Sharma <bhsharma@redhat.com>
-Suggested-by: Matt Fleming <matt@codeblueprint.co.uk>
-Based-on-code-from: Ricardo Neri <ricardo.neri@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Tested-by: Jeremy Linton <jeremy.linton@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/runtime-wrappers.c | 53 +++++--------------------
- include/linux/efi.h                     | 36 +++++++++++++++++
- 2 files changed, 45 insertions(+), 44 deletions(-)
+ drivers/firmware/efi/efi.c | 27 ++++++++++++++++++++++++++-
+ include/linux/efi.h        |  8 ++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index aa66cbf23512..b18b2d864c2c 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -45,39 +45,7 @@
- #define __efi_call_virt(f, args...) \
- 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 2a29dd9c986d..688132ac8a0a 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -52,7 +52,8 @@ struct efi __read_mostly efi = {
+ 	.properties_table	= EFI_INVALID_TABLE_ADDR,
+ 	.mem_attr_table		= EFI_INVALID_TABLE_ADDR,
+ 	.rng_seed		= EFI_INVALID_TABLE_ADDR,
+-	.tpm_log		= EFI_INVALID_TABLE_ADDR
++	.tpm_log		= EFI_INVALID_TABLE_ADDR,
++	.mem_reserve		= EFI_INVALID_TABLE_ADDR,
+ };
+ EXPORT_SYMBOL(efi);
  
--/* efi_runtime_service() function identifiers */
--enum efi_rts_ids {
--	GET_TIME,
--	SET_TIME,
--	GET_WAKEUP_TIME,
--	SET_WAKEUP_TIME,
--	GET_VARIABLE,
--	GET_NEXT_VARIABLE,
--	SET_VARIABLE,
--	QUERY_VARIABLE_INFO,
--	GET_NEXT_HIGH_MONO_COUNT,
--	UPDATE_CAPSULE,
--	QUERY_CAPSULE_CAPS,
--};
--
--/*
-- * efi_runtime_work:	Details of EFI Runtime Service work
-- * @arg<1-5>:		EFI Runtime Service function arguments
-- * @status:		Status of executing EFI Runtime Service
-- * @efi_rts_id:		EFI Runtime Service function identifier
-- * @efi_rts_comp:	Struct used for handling completions
-- */
--struct efi_runtime_work {
--	void *arg1;
--	void *arg2;
--	void *arg3;
--	void *arg4;
--	void *arg5;
--	efi_status_t status;
--	struct work_struct work;
--	enum efi_rts_ids efi_rts_id;
--	struct completion efi_rts_comp;
--};
-+struct efi_runtime_work efi_rts_work;
+@@ -484,6 +485,7 @@ static __initdata efi_config_table_type_t common_tables[] = {
+ 	{EFI_MEMORY_ATTRIBUTES_TABLE_GUID, "MEMATTR", &efi.mem_attr_table},
+ 	{LINUX_EFI_RANDOM_SEED_TABLE_GUID, "RNG", &efi.rng_seed},
+ 	{LINUX_EFI_TPM_EVENT_LOG_GUID, "TPMEventLog", &efi.tpm_log},
++	{LINUX_EFI_MEMRESERVE_TABLE_GUID, "MEMRESERVE", &efi.mem_reserve},
+ 	{NULL_GUID, NULL, NULL},
+ };
  
- /*
-  * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
-@@ -91,7 +59,6 @@ struct efi_runtime_work {
-  */
- #define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
- ({									\
--	struct efi_runtime_work efi_rts_work;				\
- 	efi_rts_work.status = EFI_ABORTED;				\
- 									\
- 	init_completion(&efi_rts_work.efi_rts_comp);			\
-@@ -184,18 +151,16 @@ static DEFINE_SEMAPHORE(efi_runtime_lock);
-  */
- static void efi_call_rts(struct work_struct *work)
- {
--	struct efi_runtime_work *efi_rts_work;
- 	void *arg1, *arg2, *arg3, *arg4, *arg5;
- 	efi_status_t status = EFI_NOT_FOUND;
- 
--	efi_rts_work = container_of(work, struct efi_runtime_work, work);
--	arg1 = efi_rts_work->arg1;
--	arg2 = efi_rts_work->arg2;
--	arg3 = efi_rts_work->arg3;
--	arg4 = efi_rts_work->arg4;
--	arg5 = efi_rts_work->arg5;
-+	arg1 = efi_rts_work.arg1;
-+	arg2 = efi_rts_work.arg2;
-+	arg3 = efi_rts_work.arg3;
-+	arg4 = efi_rts_work.arg4;
-+	arg5 = efi_rts_work.arg5;
- 
--	switch (efi_rts_work->efi_rts_id) {
-+	switch (efi_rts_work.efi_rts_id) {
- 	case GET_TIME:
- 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
- 				       (efi_time_cap_t *)arg2);
-@@ -253,8 +218,8 @@ static void efi_call_rts(struct work_struct *work)
- 		 */
- 		pr_err("Requested executing invalid EFI Runtime Service.\n");
+@@ -591,6 +593,29 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
+ 		early_memunmap(tbl, sizeof(*tbl));
  	}
--	efi_rts_work->status = status;
--	complete(&efi_rts_work->efi_rts_comp);
-+	efi_rts_work.status = status;
-+	complete(&efi_rts_work.efi_rts_comp);
+ 
++	if (efi.mem_reserve != EFI_INVALID_TABLE_ADDR) {
++		unsigned long prsv = efi.mem_reserve;
++
++		while (prsv) {
++			struct linux_efi_memreserve *rsv;
++
++			/* reserve the entry itself */
++			memblock_reserve(prsv, sizeof(*rsv));
++
++			rsv = early_memremap(prsv, sizeof(*rsv));
++			if (rsv == NULL) {
++				pr_err("Could not map UEFI memreserve entry!\n");
++				return -ENOMEM;
++			}
++
++			if (rsv->size)
++				memblock_reserve(rsv->base, rsv->size);
++
++			prsv = rsv->next;
++			early_memunmap(rsv, sizeof(*rsv));
++		}
++	}
++
+ 	return 0;
  }
  
- static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
 diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 22e4de9d3700..a929d2bf41fa 100644
+index 401e4b254e30..a5cb580472c5 100644
 --- a/include/linux/efi.h
 +++ b/include/linux/efi.h
-@@ -1662,6 +1662,42 @@ struct linux_efi_tpm_eventlog {
+@@ -672,6 +672,7 @@ void efi_native_runtime_setup(void);
+ #define LINUX_EFI_LOADER_ENTRY_GUID		EFI_GUID(0x4a67b082, 0x0a4c, 0x41cf,  0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f)
+ #define LINUX_EFI_RANDOM_SEED_TABLE_GUID	EFI_GUID(0x1ce1e5bc, 0x7ceb, 0x42f2,  0x81, 0xe5, 0x8a, 0xad, 0xf1, 0x80, 0xf5, 0x7b)
+ #define LINUX_EFI_TPM_EVENT_LOG_GUID		EFI_GUID(0xb7799cb0, 0xeca2, 0x4943,  0x96, 0x67, 0x1f, 0xae, 0x07, 0xb7, 0x47, 0xfa)
++#define LINUX_EFI_MEMRESERVE_TABLE_GUID		EFI_GUID(0x888eb0c6, 0x8ede, 0x4ff5,  0xa8, 0xf0, 0x9a, 0xee, 0x5c, 0xb9, 0x77, 0xc2)
  
- extern int efi_tpm_eventlog_init(void);
- 
-+/* efi_runtime_service() function identifiers */
-+enum efi_rts_ids {
-+	GET_TIME,
-+	SET_TIME,
-+	GET_WAKEUP_TIME,
-+	SET_WAKEUP_TIME,
-+	GET_VARIABLE,
-+	GET_NEXT_VARIABLE,
-+	SET_VARIABLE,
-+	QUERY_VARIABLE_INFO,
-+	GET_NEXT_HIGH_MONO_COUNT,
-+	UPDATE_CAPSULE,
-+	QUERY_CAPSULE_CAPS,
-+};
-+
-+/*
-+ * efi_runtime_work:	Details of EFI Runtime Service work
-+ * @arg<1-5>:		EFI Runtime Service function arguments
-+ * @status:		Status of executing EFI Runtime Service
-+ * @efi_rts_id:		EFI Runtime Service function identifier
-+ * @efi_rts_comp:	Struct used for handling completions
-+ */
-+struct efi_runtime_work {
-+	void *arg1;
-+	void *arg2;
-+	void *arg3;
-+	void *arg4;
-+	void *arg5;
-+	efi_status_t status;
-+	struct work_struct work;
-+	enum efi_rts_ids efi_rts_id;
-+	struct completion efi_rts_comp;
-+};
-+
-+extern struct efi_runtime_work efi_rts_work;
-+
+ typedef struct {
+ 	efi_guid_t guid;
+@@ -957,6 +958,7 @@ extern struct efi {
+ 	unsigned long mem_attr_table;	/* memory attributes table */
+ 	unsigned long rng_seed;		/* UEFI firmware random seed */
+ 	unsigned long tpm_log;		/* TPM2 Event Log table */
++	unsigned long mem_reserve;	/* Linux EFI memreserve table */
+ 	efi_get_time_t *get_time;
+ 	efi_set_time_t *set_time;
+ 	efi_get_wakeup_time_t *get_wakeup_time;
+@@ -1662,4 +1664,10 @@ extern int efi_tpm_eventlog_init(void);
  /* Workqueue to queue EFI Runtime Services */
  extern struct workqueue_struct *efi_rts_wq;
  
++struct linux_efi_memreserve {
++	phys_addr_t	next;
++	phys_addr_t	base;
++	phys_addr_t	size;
++};
++
+ #endif /* _LINUX_EFI_H */
 -- 
 2.18.0
 
