@@ -2,105 +2,85 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CACAC04E87
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76727C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD8421710
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:31:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="exa2LU5m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD8421710
+	by mail.kernel.org (Postfix) with ESMTP id 2A00A21710
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A00A21710
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728586AbeI1Bvp (ORCPT
+        id S1728673AbeI1Bwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:51:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728505AbeI1Bvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:51:45 -0400
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2270421708;
-        Thu, 27 Sep 2018 19:31:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538076715;
-        bh=ym4OWNzHRLkPbA1kxTcVwHUWoP9wAjcFzK1y7wGSkaI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=exa2LU5m+2uJKrS+WixjgIqI670YNTNeCihjdEzNUdnuTAyZIqrN36sOr+WSWugJs
-         RfXGUzwm/xV5/gg1IUp3Fgl3wK/wWNul5eeX8qhwDKN3/2+qDzFKjhSPoisuX5sv+X
-         tOOaKyacot+D0XRdcuwNDhnE/qGy4imG2gBgNSew=
-Date:   Thu, 27 Sep 2018 14:31:54 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Peter Anemone <peter.anemone@gmail.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>
-Subject: [GIT PULL] PCI fixes for v4.19
-Message-ID: <20180927193154.GA30598@bhelgaas-glaptop.roam.corp.google.com>
+        Thu, 27 Sep 2018 21:52:31 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:46358 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbeI1Bwb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 21:52:31 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k64-v6so3189482oia.13;
+        Thu, 27 Sep 2018 12:32:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tnSYaK0DUOE5vwk8CXbgIKk4JjzqMvOiW++MdLQZSJ0=;
+        b=NS4cGzTBsCdIZIfUuy2SbK8dPibTJhuK9BD6bCvY5N8E2yTv87yjkSG/IC5/bB9Tp2
+         vrAMCP1b/kdkj4Etmn6ZzlwnctKRpDe02nDecc4MFHTbeb4rZ9zJwz8g0NW3O5oO5xON
+         ZM0hL/4I8EVyCOk9Bco8Nq+GhaYyWxh+bH8gIkJRShPIIfGWVu5tKyKHH0IIhP+7NQgV
+         mlTKlqGreKCi3lB1Uog5uKQcUBMgoE5dPGHPq3SQ+AHp5s0bYC+KuBZlPHNDShbloWxD
+         Vj1RgjCtcOIKKX6w4+CpzLFUtPzoA67A2JCiLi0LBSVE3rTwk1Z7EDhbmOy00GW706UE
+         6ioQ==
+X-Gm-Message-State: ABuFfoiz2JnlQIanfW+EDAHQ0SiYLdNuA77LUnfCsHN+bCnwL668zN/W
+        wZzkq/WHxRf16dG3/0JSmGEQYJaRMxEu
+X-Google-Smtp-Source: ACcGV60TmkVwBvyfbPHx9Z793dhCXq0b3Vp8Jkc/cxewLDo4IcxfS1BazWHaS0g8+C4aXg8fqpt/zg==
+X-Received: by 2002:aca:dad7:: with SMTP id r206-v6mr4054236oig.271.1538076761491;
+        Thu, 27 Sep 2018 12:32:41 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s25-v6sm1130411ote.35.2018.09.27.12.32.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 12:32:40 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 14:32:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Vabhav Sharma <vabhav.sharma@nxp.com>
+Cc:     sudeep.holla@arm.com, oss@buserror.net,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
+        udit.kumar@nxp.com, linux@armlinux.org.uk,
+        Vabhav Sharma <vabhav.sharma@nxp.com>, V.Sethi@nxp.com
+Subject: Re: [PATCH v3 1/6] dt-bindings: arm64: add compatible for LX2160A
+Message-ID: <20180927193240.GA29253@bogus>
+References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+ <1537747741-6245-2-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1537747741-6245-2-git-send-email-vabhav.sharma@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
+On Mon, 24 Sep 2018 05:38:56 +0530, Vabhav Sharma wrote:
+> Add compatible for LX2160A SoC,QDS and RDB board
+> 
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.txt | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
 
-  - Fix ACPI hotplug issue that causes black screen crash at boot (Mika
-    Westerberg)
-
-  - Fix DesignWare "scheduling while atomic" issues (Jisheng Zhang)
-
-  - Add PPC contacts to MAINTAINERS for PCI core error handling (Bjorn
-    Helgaas)
-
-  - Sort Mobiveil MAINTAINERS entry (Lorenzo Pieralisi)
-
-
-The following changes since commit 7876320f88802b22d4e2daf7eb027dd14175a0f8:
-
-  Linux 4.19-rc4 (2018-09-16 11:52:37 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.19-fixes-2
-
-for you to fetch changes up to f188b99f0b2d33794b4af8a225f95d1e968c0a3f:
-
-  ACPI / hotplug / PCI: Don't scan for non-hotplug bridges if slot is not bridge (2018-09-26 15:39:28 -0500)
-
-----------------------------------------------------------------
-pci-v4.19-fixes-2
-
-----------------------------------------------------------------
-Bjorn Helgaas (1):
-      MAINTAINERS: Update PPC contacts for PCI core error handling
-
-Jisheng Zhang (1):
-      PCI: dwc: Fix scheduling while atomic issues
-
-Lorenzo Pieralisi (1):
-      MAINTAINERS: Move mobiveil PCI driver entry where it belongs
-
-Mika Westerberg (1):
-      ACPI / hotplug / PCI: Don't scan for non-hotplug bridges if slot is not bridge
-
- MAINTAINERS                                  | 20 +++++++++++++-------
- drivers/pci/controller/dwc/pcie-designware.c |  8 ++++----
- drivers/pci/controller/dwc/pcie-designware.h |  3 +--
- drivers/pci/hotplug/acpiphp_glue.c           | 11 ++++++-----
- 4 files changed, 24 insertions(+), 18 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
