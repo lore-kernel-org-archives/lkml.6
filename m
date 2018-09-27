@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F502C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFC5C004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0002083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFA842083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="czK6pVUp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0002083A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezRi1WUl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA842083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbeI0XO7 (ORCPT
+        id S1728754AbeI0XPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:14:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52588 "EHLO mail.kernel.org"
+        Thu, 27 Sep 2018 19:15:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728370AbeI0XO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:14:58 -0400
+        id S1728370AbeI0XPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:15:01 -0400
 Received: from localhost.localdomain (unknown [178.38.103.27])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23C302083A;
-        Thu, 27 Sep 2018 16:55:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B3732159D;
+        Thu, 27 Sep 2018 16:55:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538067347;
-        bh=yb6KgSQawuy/XE7M041/X4ZEjZEn/aBCCdjRxuJpQm8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=czK6pVUpAg94qZdE7QQukAZg+zbcKZGW8gEXNO6mHWQDMZ6QXVUAD3ncaqwxXkbRL
-         4RTx8loykC3cSIhHsk1vvF0kdkHvTNNhg1HSPZ2QMvoyZQL6j4rJc03D/JiXf0t3A8
-         65cVLKMHHIvzpRnYSjolZAzjSlIXIsbyJxSBEVtA=
+        s=default; t=1538067350;
+        bh=8gI/SgpsgjsUFhX+yQtrlo4/7WhiSzio1urkBbuVEOY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ezRi1WUlEpNKEdAeSe/CrFddisZXPMIvdfiY/rvTlhcfP7Ja0a/KefdQi74JX40Ti
+         5olK+ZR1p7HBKnRFYYNcg6MSJE+ns6WEVdzc+rVqqeLy6WxjcPC9Q70w84c+n32ChC
+         945VImefcEjmroS8zkr6hX0ZpqxDjK/b2qrdL3e4=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Lee Jones <lee.jones@linaro.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
@@ -47,18 +47,21 @@ To:     Lee Jones <lee.jones@linaro.org>,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Inki Dae <inki.dae@samsung.com>
-Subject: [RESEND v2 1/2] backlight: Remove s6e63m0 driver
-Date:   Thu, 27 Sep 2018 18:55:40 +0200
-Message-Id: <20180927165541.11903-1-krzk@kernel.org>
+Subject: [RESEND v2 2/2] backlight: Remove ld9040 driver
+Date:   Thu, 27 Sep 2018 18:55:41 +0200
+Message-Id: <20180927165541.11903-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180927165541.11903-1-krzk@kernel.org>
+References: <20180927165541.11903-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver for S6E63M0 AMOLED LCD panel is not used.  It does not
-support DeviceTree and respective possible users (S5Pv210 Aquila and
-Goni boards) are DeviceTree-only.
+The driver for LD9040 AMOLED LCD panel was superseded with DRM driver
+panel-samsung-ld9040.c.  It does not support DeviceTree and respective
+possible user (Exynos4210 Universal C210) is DeviceTree-only and uses
+DRM version of driver.
 
 Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>
@@ -70,95 +73,59 @@ Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 ---
 
 Changes since v1:
-1. Remove sysfs ABI documentation file.
-2. Add Jingoo's and Daniel's acks.
+1. Add Jingoo's and Daniel's acks.
 ---
- .../ABI/testing/sysfs-class-lcd-s6e63m0       |  27 -
- drivers/video/backlight/Kconfig               |   8 -
- drivers/video/backlight/Makefile              |   1 -
- drivers/video/backlight/s6e63m0.c             | 857 ------------------
- drivers/video/backlight/s6e63m0_gamma.h       | 266 ------
- 5 files changed, 1159 deletions(-)
- delete mode 100644 Documentation/ABI/testing/sysfs-class-lcd-s6e63m0
- delete mode 100644 drivers/video/backlight/s6e63m0.c
- delete mode 100644 drivers/video/backlight/s6e63m0_gamma.h
+ drivers/video/backlight/Kconfig        |   8 -
+ drivers/video/backlight/Makefile       |   1 -
+ drivers/video/backlight/ld9040.c       | 811 -------------------------
+ drivers/video/backlight/ld9040_gamma.h | 202 ------
+ 4 files changed, 1022 deletions(-)
+ delete mode 100644 drivers/video/backlight/ld9040.c
+ delete mode 100644 drivers/video/backlight/ld9040_gamma.h
 
-diff --git a/Documentation/ABI/testing/sysfs-class-lcd-s6e63m0 b/Documentation/ABI/testing/sysfs-class-lcd-s6e63m0
-deleted file mode 100644
-index ae0a2d3dcc07..000000000000
---- a/Documentation/ABI/testing/sysfs-class-lcd-s6e63m0
-+++ /dev/null
-@@ -1,27 +0,0 @@
--sysfs interface for the S6E63M0 AMOLED LCD panel driver
---------------------------------------------------------
--
--What:		/sys/class/lcd/<lcd>/gamma_mode
--Date:		May, 2010
--KernelVersion:	v2.6.35
--Contact:	dri-devel@lists.freedesktop.org
--Description:
--		(RW) Read or write the gamma mode. Following three modes are
--		supported:
--		0 - gamma value 2.2,
--		1 - gamma value 1.9 and
--		2 - gamma value 1.7.
--
--
--What:		/sys/class/lcd/<lcd>/gamma_table
--Date:		May, 2010
--KernelVersion:	v2.6.35
--Contact:	dri-devel@lists.freedesktop.org
--Description:
--		(RO) Displays the size of the gamma table i.e. the number of
--		gamma modes available.
--
--This is a backlight lcd driver. These interfaces are an extension to the API
--documented in Documentation/ABI/testing/sysfs-class-lcd and in
--Documentation/ABI/stable/sysfs-class-backlight (under
--/sys/class/backlight/<backlight>/).
 diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-index 2919e2334052..2373c3cec0c3 100644
+index 2373c3cec0c3..71ee978c848f 100644
 --- a/drivers/video/backlight/Kconfig
 +++ b/drivers/video/backlight/Kconfig
 @@ -111,14 +111,6 @@ config LCD_HP700
  	  If you have an HP Jornada 700 series handheld (710/720/728)
  	  say Y to enable LCD control driver.
  
--config LCD_S6E63M0
--	tristate "S6E63M0 AMOLED LCD Driver"
+-config LCD_LD9040
+-	tristate "LD9040 AMOLED LCD Driver"
 -	depends on SPI && BACKLIGHT_CLASS_DEVICE
 -	default n
 -	help
--	  If you have an S6E63M0 LCD Panel, say Y to enable its
--	  LCD control driver.
+-	  If you have an LD9040 Panel, say Y to enable its
+-	  control driver.
 -
- config LCD_LD9040
- 	tristate "LD9040 AMOLED LCD Driver"
+ config LCD_AMS369FG06
+ 	tristate "AMS369FG06 AMOLED LCD Driver"
  	depends on SPI && BACKLIGHT_CLASS_DEVICE
 diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
-index 0dcc2c745c03..c7a46392a76f 100644
+index c7a46392a76f..63c507c07437 100644
 --- a/drivers/video/backlight/Makefile
 +++ b/drivers/video/backlight/Makefile
-@@ -15,7 +15,6 @@ obj-$(CONFIG_LCD_LMS501KF03)		+= lms501kf03.o
+@@ -9,7 +9,6 @@ obj-$(CONFIG_LCD_HX8357)		+= hx8357.o
+ obj-$(CONFIG_LCD_ILI922X)		+= ili922x.o
+ obj-$(CONFIG_LCD_ILI9320)		+= ili9320.o
+ obj-$(CONFIG_LCD_L4F00242T03)		+= l4f00242t03.o
+-obj-$(CONFIG_LCD_LD9040)		+= ld9040.o
+ obj-$(CONFIG_LCD_LMS283GF05)		+= lms283gf05.o
+ obj-$(CONFIG_LCD_LMS501KF03)		+= lms501kf03.o
  obj-$(CONFIG_LCD_LTV350QV)		+= ltv350qv.o
- obj-$(CONFIG_LCD_OTM3225A)		+= otm3225a.o
- obj-$(CONFIG_LCD_PLATFORM)		+= platform_lcd.o
--obj-$(CONFIG_LCD_S6E63M0)		+= s6e63m0.o
- obj-$(CONFIG_LCD_TDO24M)		+= tdo24m.o
- obj-$(CONFIG_LCD_TOSA)			+= tosa_lcd.o
- obj-$(CONFIG_LCD_VGG2432A4)		+= vgg2432a4.o
-diff --git a/drivers/video/backlight/s6e63m0.c b/drivers/video/backlight/s6e63m0.c
+diff --git a/drivers/video/backlight/ld9040.c b/drivers/video/backlight/ld9040.c
 deleted file mode 100644
-index 3c4a22a3063a..000000000000
---- a/drivers/video/backlight/s6e63m0.c
+index 677f8abba27c..000000000000
+--- a/drivers/video/backlight/ld9040.c
 +++ /dev/null
-@@ -1,857 +0,0 @@
+@@ -1,811 +0,0 @@
 -/*
-- * S6E63M0 AMOLED LCD panel driver.
+- * ld9040 AMOLED LCD panel driver.
 - *
-- * Author: InKi Dae  <inki.dae@samsung.com>
-- *
-- * Derived from drivers/video/omap/lcd-apollon.c
+- * Copyright (c) 2011 Samsung Electronics
+- * Author: Donghwa Lee  <dh09.lee@samsung.com>
+- * Derived from drivers/video/backlight/s6e63m0.c
 - *
 - * This program is free software; you can redistribute it and/or modify it
 - * under the terms of the GNU General Public License as published by the
@@ -175,10 +142,11 @@ index 3c4a22a3063a..000000000000
 -#include <linux/kernel.h>
 -#include <linux/lcd.h>
 -#include <linux/module.h>
+-#include <linux/regulator/consumer.h>
 -#include <linux/spi/spi.h>
 -#include <linux/wait.h>
 -
--#include "s6e63m0_gamma.h"
+-#include "ld9040_gamma.h"
 -
 -#define SLEEPMSEC		0x1000
 -#define ENDDEF			0x2000
@@ -187,329 +155,397 @@ index 3c4a22a3063a..000000000000
 -#define DATA_ONLY		0xFF
 -
 -#define MIN_BRIGHTNESS		0
--#define MAX_BRIGHTNESS		10
+-#define MAX_BRIGHTNESS		24
 -
--struct s6e63m0 {
+-struct ld9040 {
 -	struct device			*dev;
 -	struct spi_device		*spi;
 -	unsigned int			power;
 -	unsigned int			current_brightness;
--	unsigned int			gamma_mode;
--	unsigned int			gamma_table_count;
+-
 -	struct lcd_device		*ld;
 -	struct backlight_device		*bd;
 -	struct lcd_platform_data	*lcd_pd;
+-
+-	struct mutex			lock;
+-	bool  enabled;
 -};
 -
--static const unsigned short seq_panel_condition_set[] = {
--	0xF8, 0x01,
--	DATA_ONLY, 0x27,
--	DATA_ONLY, 0x27,
--	DATA_ONLY, 0x07,
--	DATA_ONLY, 0x07,
--	DATA_ONLY, 0x54,
--	DATA_ONLY, 0x9f,
--	DATA_ONLY, 0x63,
--	DATA_ONLY, 0x86,
--	DATA_ONLY, 0x1a,
--	DATA_ONLY, 0x33,
--	DATA_ONLY, 0x0d,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--
--	ENDDEF, 0x0000
+-static struct regulator_bulk_data supplies[] = {
+-	{ .supply = "vdd3", },
+-	{ .supply = "vci", },
 -};
 -
--static const unsigned short seq_display_condition_set[] = {
--	0xf2, 0x02,
--	DATA_ONLY, 0x03,
--	DATA_ONLY, 0x1c,
--	DATA_ONLY, 0x10,
--	DATA_ONLY, 0x10,
+-static void ld9040_regulator_enable(struct ld9040 *lcd)
+-{
+-	int ret = 0;
+-	struct lcd_platform_data *pd = NULL;
 -
--	0xf7, 0x03,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
+-	pd = lcd->lcd_pd;
+-	mutex_lock(&lcd->lock);
+-	if (!lcd->enabled) {
+-		ret = regulator_bulk_enable(ARRAY_SIZE(supplies), supplies);
+-		if (ret)
+-			goto out;
 -
--	ENDDEF, 0x0000
+-		lcd->enabled = true;
+-	}
+-	msleep(pd->power_on_delay);
+-out:
+-	mutex_unlock(&lcd->lock);
+-}
+-
+-static void ld9040_regulator_disable(struct ld9040 *lcd)
+-{
+-	int ret = 0;
+-
+-	mutex_lock(&lcd->lock);
+-	if (lcd->enabled) {
+-		ret = regulator_bulk_disable(ARRAY_SIZE(supplies), supplies);
+-		if (ret)
+-			goto out;
+-
+-		lcd->enabled = false;
+-	}
+-out:
+-	mutex_unlock(&lcd->lock);
+-}
+-
+-static const unsigned short seq_swreset[] = {
+-	0x01, COMMAND_ONLY,
+-	ENDDEF, 0x00
 -};
 -
--static const unsigned short seq_gamma_setting[] = {
--	0xfa, 0x00,
--	DATA_ONLY, 0x18,
--	DATA_ONLY, 0x08,
--	DATA_ONLY, 0x24,
--	DATA_ONLY, 0x64,
--	DATA_ONLY, 0x56,
--	DATA_ONLY, 0x33,
--	DATA_ONLY, 0xb6,
--	DATA_ONLY, 0xba,
--	DATA_ONLY, 0xa8,
--	DATA_ONLY, 0xac,
--	DATA_ONLY, 0xb1,
--	DATA_ONLY, 0x9d,
--	DATA_ONLY, 0xc1,
--	DATA_ONLY, 0xc1,
--	DATA_ONLY, 0xb7,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x9c,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x9f,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0xd6,
+-static const unsigned short seq_user_setting[] = {
+-	0xF0, 0x5A,
 -
--	0xfa, 0x01,
--
--	ENDDEF, 0x0000
--};
--
--static const unsigned short seq_etc_condition_set[] = {
--	0xf6, 0x00,
--	DATA_ONLY, 0x8c,
--	DATA_ONLY, 0x07,
--
--	0xb3, 0xc,
--
--	0xb5, 0x2c,
--	DATA_ONLY, 0x12,
--	DATA_ONLY, 0x0c,
--	DATA_ONLY, 0x0a,
--	DATA_ONLY, 0x10,
--	DATA_ONLY, 0x0e,
--	DATA_ONLY, 0x17,
--	DATA_ONLY, 0x13,
--	DATA_ONLY, 0x1f,
--	DATA_ONLY, 0x1a,
--	DATA_ONLY, 0x2a,
--	DATA_ONLY, 0x24,
--	DATA_ONLY, 0x1f,
--	DATA_ONLY, 0x1b,
--	DATA_ONLY, 0x1a,
--	DATA_ONLY, 0x17,
--
--	DATA_ONLY, 0x2b,
--	DATA_ONLY, 0x26,
--	DATA_ONLY, 0x22,
--	DATA_ONLY, 0x20,
--	DATA_ONLY, 0x3a,
--	DATA_ONLY, 0x34,
--	DATA_ONLY, 0x30,
--	DATA_ONLY, 0x2c,
--	DATA_ONLY, 0x29,
--	DATA_ONLY, 0x26,
--	DATA_ONLY, 0x25,
--	DATA_ONLY, 0x23,
--	DATA_ONLY, 0x21,
--	DATA_ONLY, 0x20,
--	DATA_ONLY, 0x1e,
--	DATA_ONLY, 0x1e,
--
--	0xb6, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x11,
--	DATA_ONLY, 0x22,
--	DATA_ONLY, 0x33,
--	DATA_ONLY, 0x44,
--	DATA_ONLY, 0x44,
--	DATA_ONLY, 0x44,
--
--	DATA_ONLY, 0x55,
--	DATA_ONLY, 0x55,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--
--	0xb7, 0x2c,
--	DATA_ONLY, 0x12,
--	DATA_ONLY, 0x0c,
--	DATA_ONLY, 0x0a,
--	DATA_ONLY, 0x10,
--	DATA_ONLY, 0x0e,
--	DATA_ONLY, 0x17,
--	DATA_ONLY, 0x13,
--	DATA_ONLY, 0x1f,
--	DATA_ONLY, 0x1a,
--	DATA_ONLY, 0x2a,
--	DATA_ONLY, 0x24,
--	DATA_ONLY, 0x1f,
--	DATA_ONLY, 0x1b,
--	DATA_ONLY, 0x1a,
--	DATA_ONLY, 0x17,
--
--	DATA_ONLY, 0x2b,
--	DATA_ONLY, 0x26,
--	DATA_ONLY, 0x22,
--	DATA_ONLY, 0x20,
--	DATA_ONLY, 0x3a,
--	DATA_ONLY, 0x34,
--	DATA_ONLY, 0x30,
--	DATA_ONLY, 0x2c,
--	DATA_ONLY, 0x29,
--	DATA_ONLY, 0x26,
--	DATA_ONLY, 0x25,
--	DATA_ONLY, 0x23,
--	DATA_ONLY, 0x21,
--	DATA_ONLY, 0x20,
--	DATA_ONLY, 0x1e,
--	DATA_ONLY, 0x1e,
--
--	0xb8, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x11,
--	DATA_ONLY, 0x22,
--	DATA_ONLY, 0x33,
--	DATA_ONLY, 0x44,
--	DATA_ONLY, 0x44,
--	DATA_ONLY, 0x44,
--
--	DATA_ONLY, 0x55,
--	DATA_ONLY, 0x55,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--
--	0xb9, 0x2c,
--	DATA_ONLY, 0x12,
--	DATA_ONLY, 0x0c,
--	DATA_ONLY, 0x0a,
--	DATA_ONLY, 0x10,
--	DATA_ONLY, 0x0e,
--	DATA_ONLY, 0x17,
--	DATA_ONLY, 0x13,
--	DATA_ONLY, 0x1f,
--	DATA_ONLY, 0x1a,
--	DATA_ONLY, 0x2a,
--	DATA_ONLY, 0x24,
--	DATA_ONLY, 0x1f,
--	DATA_ONLY, 0x1b,
--	DATA_ONLY, 0x1a,
--	DATA_ONLY, 0x17,
--
--	DATA_ONLY, 0x2b,
--	DATA_ONLY, 0x26,
--	DATA_ONLY, 0x22,
--	DATA_ONLY, 0x20,
--	DATA_ONLY, 0x3a,
--	DATA_ONLY, 0x34,
--	DATA_ONLY, 0x30,
--	DATA_ONLY, 0x2c,
--	DATA_ONLY, 0x29,
--	DATA_ONLY, 0x26,
--	DATA_ONLY, 0x25,
--	DATA_ONLY, 0x23,
--	DATA_ONLY, 0x21,
--	DATA_ONLY, 0x20,
--	DATA_ONLY, 0x1e,
--	DATA_ONLY, 0x1e,
--
--	0xba, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x11,
--	DATA_ONLY, 0x22,
--	DATA_ONLY, 0x33,
--	DATA_ONLY, 0x44,
--	DATA_ONLY, 0x44,
--	DATA_ONLY, 0x44,
--
--	DATA_ONLY, 0x55,
--	DATA_ONLY, 0x55,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--	DATA_ONLY, 0x66,
--
--	0xc1, 0x4d,
--	DATA_ONLY, 0x96,
--	DATA_ONLY, 0x1d,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x01,
--	DATA_ONLY, 0xdf,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x03,
--	DATA_ONLY, 0x1f,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x00,
--	DATA_ONLY, 0x03,
--	DATA_ONLY, 0x06,
--	DATA_ONLY, 0x09,
--	DATA_ONLY, 0x0d,
--	DATA_ONLY, 0x0f,
--	DATA_ONLY, 0x12,
--	DATA_ONLY, 0x15,
--	DATA_ONLY, 0x18,
--
--	0xb2, 0x10,
--	DATA_ONLY, 0x10,
--	DATA_ONLY, 0x0b,
--	DATA_ONLY, 0x05,
--
--	ENDDEF, 0x0000
--};
--
--static const unsigned short seq_acl_on[] = {
--	/* ACL on */
--	0xc0, 0x01,
--
--	ENDDEF, 0x0000
--};
--
--static const unsigned short seq_acl_off[] = {
--	/* ACL off */
--	0xc0, 0x00,
--
--	ENDDEF, 0x0000
+-	DATA_ONLY, 0x5A,
+-	ENDDEF, 0x00
 -};
 -
 -static const unsigned short seq_elvss_on[] = {
--	/* ELVSS on */
--	0xb1, 0x0b,
+-	0xB1, 0x0D,
 -
--	ENDDEF, 0x0000
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x16,
+-	ENDDEF, 0x00
 -};
 -
--static const unsigned short seq_elvss_off[] = {
--	/* ELVSS off */
--	0xb1, 0x0a,
+-static const unsigned short seq_gtcon[] = {
+-	0xF7, 0x09,
 -
--	ENDDEF, 0x0000
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	ENDDEF, 0x00
 -};
 -
--static const unsigned short seq_stand_by_off[] = {
+-static const unsigned short seq_panel_condition[] = {
+-	0xF8, 0x05,
+-
+-	DATA_ONLY, 0x65,
+-	DATA_ONLY, 0x96,
+-	DATA_ONLY, 0x71,
+-	DATA_ONLY, 0x7D,
+-	DATA_ONLY, 0x19,
+-	DATA_ONLY, 0x3B,
+-	DATA_ONLY, 0x0D,
+-	DATA_ONLY, 0x19,
+-	DATA_ONLY, 0x7E,
+-	DATA_ONLY, 0x0D,
+-	DATA_ONLY, 0xE2,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x7E,
+-	DATA_ONLY, 0x7D,
+-	DATA_ONLY, 0x07,
+-	DATA_ONLY, 0x07,
+-	DATA_ONLY, 0x20,
+-	DATA_ONLY, 0x20,
+-	DATA_ONLY, 0x20,
+-	DATA_ONLY, 0x02,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_gamma_set1[] = {
+-	0xF9, 0x00,
+-
+-	DATA_ONLY, 0xA7,
+-	DATA_ONLY, 0xB4,
+-	DATA_ONLY, 0xAE,
+-	DATA_ONLY, 0xBF,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x91,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0xB2,
+-	DATA_ONLY, 0xB4,
+-	DATA_ONLY, 0xAA,
+-	DATA_ONLY, 0xBB,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0xAC,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0xB3,
+-	DATA_ONLY, 0xB1,
+-	DATA_ONLY, 0xAA,
+-	DATA_ONLY, 0xBC,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0xB3,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_gamma_ctrl[] = {
+-	0xFB, 0x02,
+-
+-	DATA_ONLY, 0x5A,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_gamma_start[] = {
+-	0xF9, COMMAND_ONLY,
+-
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_apon[] = {
+-	0xF3, 0x00,
+-
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x0A,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_display_ctrl[] = {
+-	0xF2, 0x02,
+-
+-	DATA_ONLY, 0x08,
+-	DATA_ONLY, 0x08,
+-	DATA_ONLY, 0x10,
+-	DATA_ONLY, 0x10,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_manual_pwr[] = {
+-	0xB0, 0x04,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_pwr_ctrl[] = {
+-	0xF4, 0x0A,
+-
+-	DATA_ONLY, 0x87,
+-	DATA_ONLY, 0x25,
+-	DATA_ONLY, 0x6A,
+-	DATA_ONLY, 0x44,
+-	DATA_ONLY, 0x02,
+-	DATA_ONLY, 0x88,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_sleep_out[] = {
 -	0x11, COMMAND_ONLY,
--
--	ENDDEF, 0x0000
+-	ENDDEF, 0x00
 -};
 -
--static const unsigned short seq_stand_by_on[] = {
+-static const unsigned short seq_sleep_in[] = {
 -	0x10, COMMAND_ONLY,
--
--	ENDDEF, 0x0000
+-	ENDDEF, 0x00
 -};
 -
 -static const unsigned short seq_display_on[] = {
 -	0x29, COMMAND_ONLY,
--
--	ENDDEF, 0x0000
+-	ENDDEF, 0x00
 -};
 -
+-static const unsigned short seq_display_off[] = {
+-	0x28, COMMAND_ONLY,
+-	ENDDEF, 0x00
+-};
 -
--static int s6e63m0_spi_write_byte(struct s6e63m0 *lcd, int addr, int data)
+-static const unsigned short seq_vci1_1st_en[] = {
+-	0xF3, 0x10,
+-
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vl1_en[] = {
+-	0xF3, 0x11,
+-
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vl2_en[] = {
+-	0xF3, 0x13,
+-
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vci1_2nd_en[] = {
+-	0xF3, 0x33,
+-
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vl3_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vreg1_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0x01,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vgh_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0x11,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vgl_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0x31,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x02,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vmos_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xB1,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vint_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xF1,
+-	/* DATA_ONLY, 0x71,	VMOS/VBL/VBH not used */
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	/* DATA_ONLY, 0x02,	VMOS/VBL/VBH not used */
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vbh_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xF9,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_vbl_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xFD,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_gam_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xFF,
+-	/* DATA_ONLY, 0x73,	VMOS/VBL/VBH not used */
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	/* DATA_ONLY, 0x02,	VMOS/VBL/VBH not used */
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_sd_amp_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xFF,
+-	/* DATA_ONLY, 0x73,	VMOS/VBL/VBH not used */
+-	DATA_ONLY, 0x80,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	/* DATA_ONLY, 0x02,	VMOS/VBL/VBH not used */
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_gls_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xFF,
+-	/* DATA_ONLY, 0x73,	VMOS/VBL/VBH not used */
+-	DATA_ONLY, 0x81,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	/* DATA_ONLY, 0x02,	VMOS/VBL/VBH not used */
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_els_en[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xFF,
+-	/* DATA_ONLY, 0x73,	VMOS/VBL/VBH not used */
+-	DATA_ONLY, 0x83,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	/* DATA_ONLY, 0x02,	VMOS/VBL/VBH not used */
+-	ENDDEF, 0x00
+-};
+-
+-static const unsigned short seq_el_on[] = {
+-	0xF3, 0x37,
+-
+-	DATA_ONLY, 0xFF,
+-	/* DATA_ONLY, 0x73,	VMOS/VBL/VBH not used */
+-	DATA_ONLY, 0x87,
+-	DATA_ONLY, 0x00,
+-	DATA_ONLY, 0x03,
+-	/* DATA_ONLY, 0x02,	VMOS/VBL/VBH not used */
+-	ENDDEF, 0x00
+-};
+-
+-static int ld9040_spi_write_byte(struct ld9040 *lcd, int addr, int data)
 -{
 -	u16 buf[1];
 -	struct spi_message msg;
@@ -527,27 +563,27 @@ index 3c4a22a3063a..000000000000
 -	return spi_sync(lcd->spi, &msg);
 -}
 -
--static int s6e63m0_spi_write(struct s6e63m0 *lcd, unsigned char address,
+-static int ld9040_spi_write(struct ld9040 *lcd, unsigned char address,
 -	unsigned char command)
 -{
 -	int ret = 0;
 -
 -	if (address != DATA_ONLY)
--		ret = s6e63m0_spi_write_byte(lcd, 0x0, address);
+-		ret = ld9040_spi_write_byte(lcd, 0x0, address);
 -	if (command != COMMAND_ONLY)
--		ret = s6e63m0_spi_write_byte(lcd, 0x1, command);
+-		ret = ld9040_spi_write_byte(lcd, 0x1, command);
 -
 -	return ret;
 -}
 -
--static int s6e63m0_panel_send_sequence(struct s6e63m0 *lcd,
+-static int ld9040_panel_send_sequence(struct ld9040 *lcd,
 -	const unsigned short *wbuf)
 -{
 -	int ret = 0, i = 0;
 -
 -	while ((wbuf[i] & DEFMASK) != ENDDEF) {
 -		if ((wbuf[i] & DEFMASK) != SLEEPMSEC) {
--			ret = s6e63m0_spi_write(lcd, wbuf[i], wbuf[i+1]);
+-			ret = ld9040_spi_write(lcd, wbuf[i], wbuf[i+1]);
 -			if (ret)
 -				break;
 -		} else {
@@ -559,20 +595,20 @@ index 3c4a22a3063a..000000000000
 -	return ret;
 -}
 -
--static int _s6e63m0_gamma_ctl(struct s6e63m0 *lcd, const unsigned int *gamma)
+-static int _ld9040_gamma_ctl(struct ld9040 *lcd, const unsigned int *gamma)
 -{
 -	unsigned int i = 0;
 -	int ret = 0;
 -
--	/* disable gamma table updating. */
--	ret = s6e63m0_spi_write(lcd, 0xfa, 0x00);
+-	/* start gamma table updating. */
+-	ret = ld9040_panel_send_sequence(lcd, seq_gamma_start);
 -	if (ret) {
 -		dev_err(lcd->dev, "failed to disable gamma table updating.\n");
 -		goto gamma_err;
 -	}
 -
 -	for (i = 0 ; i < GAMMA_TABLE_COUNT; i++) {
--		ret = s6e63m0_spi_write(lcd, DATA_ONLY, gamma[i]);
+-		ret = ld9040_spi_write(lcd, DATA_ONLY, gamma[i]);
 -		if (ret) {
 -			dev_err(lcd->dev, "failed to set gamma table.\n");
 -			goto gamma_err;
@@ -580,7 +616,7 @@ index 3c4a22a3063a..000000000000
 -	}
 -
 -	/* update gamma table. */
--	ret = s6e63m0_spi_write(lcd, 0xfa, 0x01);
+-	ret = ld9040_panel_send_sequence(lcd, seq_gamma_ctrl);
 -	if (ret)
 -		dev_err(lcd->dev, "failed to update gamma table.\n");
 -
@@ -588,30 +624,30 @@ index 3c4a22a3063a..000000000000
 -	return ret;
 -}
 -
--static int s6e63m0_gamma_ctl(struct s6e63m0 *lcd, int gamma)
+-static int ld9040_gamma_ctl(struct ld9040 *lcd, int gamma)
 -{
--	int ret = 0;
--
--	ret = _s6e63m0_gamma_ctl(lcd, gamma_table.gamma_22_table[gamma]);
--
--	return ret;
+-	return _ld9040_gamma_ctl(lcd, gamma_table.gamma_22_table[gamma]);
 -}
 -
--
--static int s6e63m0_ldi_init(struct s6e63m0 *lcd)
+-static int ld9040_ldi_init(struct ld9040 *lcd)
 -{
 -	int ret, i;
--	const unsigned short *init_seq[] = {
--		seq_panel_condition_set,
--		seq_display_condition_set,
--		seq_gamma_setting,
--		seq_etc_condition_set,
--		seq_acl_on,
+-	static const unsigned short *init_seq[] = {
+-		seq_user_setting,
+-		seq_panel_condition,
+-		seq_display_ctrl,
+-		seq_manual_pwr,
 -		seq_elvss_on,
+-		seq_gtcon,
+-		seq_gamma_set1,
+-		seq_gamma_ctrl,
+-		seq_sleep_out,
 -	};
 -
 -	for (i = 0; i < ARRAY_SIZE(init_seq); i++) {
--		ret = s6e63m0_panel_send_sequence(lcd, init_seq[i]);
+-		ret = ld9040_panel_send_sequence(lcd, init_seq[i]);
+-		/* workaround: minimum delay time for transferring CMD */
+-		usleep_range(300, 310);
 -		if (ret)
 -			break;
 -	}
@@ -619,53 +655,35 @@ index 3c4a22a3063a..000000000000
 -	return ret;
 -}
 -
--static int s6e63m0_ldi_enable(struct s6e63m0 *lcd)
+-static int ld9040_ldi_enable(struct ld9040 *lcd)
 -{
--	int ret = 0, i;
--	const unsigned short *enable_seq[] = {
--		seq_stand_by_off,
--		seq_display_on,
--	};
--
--	for (i = 0; i < ARRAY_SIZE(enable_seq); i++) {
--		ret = s6e63m0_panel_send_sequence(lcd, enable_seq[i]);
--		if (ret)
--			break;
--	}
--
--	return ret;
+-	return ld9040_panel_send_sequence(lcd, seq_display_on);
 -}
 -
--static int s6e63m0_ldi_disable(struct s6e63m0 *lcd)
+-static int ld9040_ldi_disable(struct ld9040 *lcd)
 -{
 -	int ret;
 -
--	ret = s6e63m0_panel_send_sequence(lcd, seq_stand_by_on);
+-	ret = ld9040_panel_send_sequence(lcd, seq_display_off);
+-	ret = ld9040_panel_send_sequence(lcd, seq_sleep_in);
 -
 -	return ret;
 -}
 -
--static int s6e63m0_power_is_on(int power)
+-static int ld9040_power_is_on(int power)
 -{
 -	return power <= FB_BLANK_NORMAL;
 -}
 -
--static int s6e63m0_power_on(struct s6e63m0 *lcd)
+-static int ld9040_power_on(struct ld9040 *lcd)
 -{
 -	int ret = 0;
 -	struct lcd_platform_data *pd;
--	struct backlight_device *bd;
 -
 -	pd = lcd->lcd_pd;
--	bd = lcd->bd;
 -
--	if (!pd->power_on) {
--		dev_err(lcd->dev, "power_on is NULL.\n");
--		return -EINVAL;
--	}
--
--	pd->power_on(lcd->ld, 1);
--	msleep(pd->power_on_delay);
+-	/* lcd power on */
+-	ld9040_regulator_enable(lcd);
 -
 -	if (!pd->reset) {
 -		dev_err(lcd->dev, "reset is NULL.\n");
@@ -675,36 +693,29 @@ index 3c4a22a3063a..000000000000
 -	pd->reset(lcd->ld);
 -	msleep(pd->reset_delay);
 -
--	ret = s6e63m0_ldi_init(lcd);
+-	ret = ld9040_ldi_init(lcd);
 -	if (ret) {
 -		dev_err(lcd->dev, "failed to initialize ldi.\n");
 -		return ret;
 -	}
 -
--	ret = s6e63m0_ldi_enable(lcd);
+-	ret = ld9040_ldi_enable(lcd);
 -	if (ret) {
 -		dev_err(lcd->dev, "failed to enable ldi.\n");
--		return ret;
--	}
--
--	/* set brightness to current value after power on or resume. */
--	ret = s6e63m0_gamma_ctl(lcd, bd->props.brightness);
--	if (ret) {
--		dev_err(lcd->dev, "lcd gamma setting failed.\n");
 -		return ret;
 -	}
 -
 -	return 0;
 -}
 -
--static int s6e63m0_power_off(struct s6e63m0 *lcd)
+-static int ld9040_power_off(struct ld9040 *lcd)
 -{
 -	int ret;
 -	struct lcd_platform_data *pd;
 -
 -	pd = lcd->lcd_pd;
 -
--	ret = s6e63m0_ldi_disable(lcd);
+-	ret = ld9040_ldi_disable(lcd);
 -	if (ret) {
 -		dev_err(lcd->dev, "lcd setting failed.\n");
 -		return -EIO;
@@ -712,19 +723,20 @@ index 3c4a22a3063a..000000000000
 -
 -	msleep(pd->power_off_delay);
 -
--	pd->power_on(lcd->ld, 0);
+-	/* lcd power off */
+-	ld9040_regulator_disable(lcd);
 -
 -	return 0;
 -}
 -
--static int s6e63m0_power(struct s6e63m0 *lcd, int power)
+-static int ld9040_power(struct ld9040 *lcd, int power)
 -{
 -	int ret = 0;
 -
--	if (s6e63m0_power_is_on(power) && !s6e63m0_power_is_on(lcd->power))
--		ret = s6e63m0_power_on(lcd);
--	else if (!s6e63m0_power_is_on(power) && s6e63m0_power_is_on(lcd->power))
--		ret = s6e63m0_power_off(lcd);
+-	if (ld9040_power_is_on(power) && !ld9040_power_is_on(lcd->power))
+-		ret = ld9040_power_on(lcd);
+-	else if (!ld9040_power_is_on(power) && ld9040_power_is_on(lcd->power))
+-		ret = ld9040_power_off(lcd);
 -
 -	if (!ret)
 -		lcd->power = power;
@@ -732,9 +744,9 @@ index 3c4a22a3063a..000000000000
 -	return ret;
 -}
 -
--static int s6e63m0_set_power(struct lcd_device *ld, int power)
+-static int ld9040_set_power(struct lcd_device *ld, int power)
 -{
--	struct s6e63m0 *lcd = lcd_get_data(ld);
+-	struct ld9040 *lcd = lcd_get_data(ld);
 -
 -	if (power != FB_BLANK_UNBLANK && power != FB_BLANK_POWERDOWN &&
 -		power != FB_BLANK_NORMAL) {
@@ -742,20 +754,20 @@ index 3c4a22a3063a..000000000000
 -		return -EINVAL;
 -	}
 -
--	return s6e63m0_power(lcd, power);
+-	return ld9040_power(lcd, power);
 -}
 -
--static int s6e63m0_get_power(struct lcd_device *ld)
+-static int ld9040_get_power(struct lcd_device *ld)
 -{
--	struct s6e63m0 *lcd = lcd_get_data(ld);
+-	struct ld9040 *lcd = lcd_get_data(ld);
 -
 -	return lcd->power;
 -}
 -
--static int s6e63m0_set_brightness(struct backlight_device *bd)
+-static int ld9040_set_brightness(struct backlight_device *bd)
 -{
 -	int ret = 0, brightness = bd->props.brightness;
--	struct s6e63m0 *lcd = bl_get_data(bd);
+-	struct ld9040 *lcd = bl_get_data(bd);
 -
 -	if (brightness < MIN_BRIGHTNESS ||
 -		brightness > bd->props.max_brightness) {
@@ -764,7 +776,7 @@ index 3c4a22a3063a..000000000000
 -		return -EINVAL;
 -	}
 -
--	ret = s6e63m0_gamma_ctl(lcd, bd->props.brightness);
+-	ret = ld9040_gamma_ctl(lcd, bd->props.brightness);
 -	if (ret) {
 -		dev_err(&bd->dev, "lcd brightness setting failed.\n");
 -		return -EIO;
@@ -773,106 +785,28 @@ index 3c4a22a3063a..000000000000
 -	return ret;
 -}
 -
--static struct lcd_ops s6e63m0_lcd_ops = {
--	.set_power = s6e63m0_set_power,
--	.get_power = s6e63m0_get_power,
+-static struct lcd_ops ld9040_lcd_ops = {
+-	.set_power = ld9040_set_power,
+-	.get_power = ld9040_get_power,
 -};
 -
--static const struct backlight_ops s6e63m0_backlight_ops  = {
--	.update_status = s6e63m0_set_brightness,
+-static const struct backlight_ops ld9040_backlight_ops  = {
+-	.update_status = ld9040_set_brightness,
 -};
 -
--static ssize_t s6e63m0_sysfs_show_gamma_mode(struct device *dev,
--				      struct device_attribute *attr, char *buf)
--{
--	struct s6e63m0 *lcd = dev_get_drvdata(dev);
--	char temp[10];
--
--	switch (lcd->gamma_mode) {
--	case 0:
--		sprintf(temp, "2.2 mode\n");
--		strcat(buf, temp);
--		break;
--	case 1:
--		sprintf(temp, "1.9 mode\n");
--		strcat(buf, temp);
--		break;
--	case 2:
--		sprintf(temp, "1.7 mode\n");
--		strcat(buf, temp);
--		break;
--	default:
--		dev_info(dev, "gamma mode could be 0:2.2, 1:1.9 or 2:1.7)n");
--		break;
--	}
--
--	return strlen(buf);
--}
--
--static ssize_t s6e63m0_sysfs_store_gamma_mode(struct device *dev,
--				       struct device_attribute *attr,
--				       const char *buf, size_t len)
--{
--	struct s6e63m0 *lcd = dev_get_drvdata(dev);
--	struct backlight_device *bd = NULL;
--	int brightness, rc;
--
--	rc = kstrtouint(buf, 0, &lcd->gamma_mode);
--	if (rc < 0)
--		return rc;
--
--	bd = lcd->bd;
--
--	brightness = bd->props.brightness;
--
--	switch (lcd->gamma_mode) {
--	case 0:
--		_s6e63m0_gamma_ctl(lcd, gamma_table.gamma_22_table[brightness]);
--		break;
--	case 1:
--		_s6e63m0_gamma_ctl(lcd, gamma_table.gamma_19_table[brightness]);
--		break;
--	case 2:
--		_s6e63m0_gamma_ctl(lcd, gamma_table.gamma_17_table[brightness]);
--		break;
--	default:
--		dev_info(dev, "gamma mode could be 0:2.2, 1:1.9 or 2:1.7\n");
--		_s6e63m0_gamma_ctl(lcd, gamma_table.gamma_22_table[brightness]);
--		break;
--	}
--	return len;
--}
--
--static DEVICE_ATTR(gamma_mode, 0644,
--		s6e63m0_sysfs_show_gamma_mode, s6e63m0_sysfs_store_gamma_mode);
--
--static ssize_t s6e63m0_sysfs_show_gamma_table(struct device *dev,
--				      struct device_attribute *attr, char *buf)
--{
--	struct s6e63m0 *lcd = dev_get_drvdata(dev);
--	char temp[3];
--
--	sprintf(temp, "%u\n", lcd->gamma_table_count);
--	strcpy(buf, temp);
--
--	return strlen(buf);
--}
--static DEVICE_ATTR(gamma_table, 0444,
--		s6e63m0_sysfs_show_gamma_table, NULL);
--
--static int s6e63m0_probe(struct spi_device *spi)
+-static int ld9040_probe(struct spi_device *spi)
 -{
 -	int ret = 0;
--	struct s6e63m0 *lcd = NULL;
+-	struct ld9040 *lcd = NULL;
 -	struct lcd_device *ld = NULL;
 -	struct backlight_device *bd = NULL;
 -	struct backlight_properties props;
 -
--	lcd = devm_kzalloc(&spi->dev, sizeof(struct s6e63m0), GFP_KERNEL);
+-	lcd = devm_kzalloc(&spi->dev, sizeof(struct ld9040), GFP_KERNEL);
 -	if (!lcd)
 -		return -ENOMEM;
 -
--	/* s6e63m0 lcd panel uses 3-wire 9bits SPI Mode. */
+-	/* ld9040 lcd panel uses 3-wire 9bits SPI Mode. */
 -	spi->bits_per_word = 9;
 -
 -	ret = spi_setup(spi);
@@ -890,8 +824,16 @@ index 3c4a22a3063a..000000000000
 -		return -EINVAL;
 -	}
 -
--	ld = devm_lcd_device_register(&spi->dev, "s6e63m0", &spi->dev, lcd,
--				&s6e63m0_lcd_ops);
+-	mutex_init(&lcd->lock);
+-
+-	ret = devm_regulator_bulk_get(lcd->dev, ARRAY_SIZE(supplies), supplies);
+-	if (ret) {
+-		dev_err(lcd->dev, "Failed to get regulators: %d\n", ret);
+-		return ret;
+-	}
+-
+-	ld = devm_lcd_device_register(&spi->dev, "ld9040", &spi->dev, lcd,
+-					&ld9040_lcd_ops);
 -	if (IS_ERR(ld))
 -		return PTR_ERR(ld);
 -
@@ -901,29 +843,13 @@ index 3c4a22a3063a..000000000000
 -	props.type = BACKLIGHT_RAW;
 -	props.max_brightness = MAX_BRIGHTNESS;
 -
--	bd = devm_backlight_device_register(&spi->dev, "s6e63m0bl-bl",
--					&spi->dev, lcd, &s6e63m0_backlight_ops,
--					&props);
+-	bd = devm_backlight_device_register(&spi->dev, "ld9040-bl", &spi->dev,
+-					lcd, &ld9040_backlight_ops, &props);
 -	if (IS_ERR(bd))
 -		return PTR_ERR(bd);
 -
 -	bd->props.brightness = MAX_BRIGHTNESS;
 -	lcd->bd = bd;
--
--	/*
--	 * it gets gamma table count available so it gets user
--	 * know that.
--	 */
--	lcd->gamma_table_count =
--	    sizeof(gamma_table) / (MAX_GAMMA_LEVEL * sizeof(int *));
--
--	ret = device_create_file(&(spi->dev), &dev_attr_gamma_mode);
--	if (ret < 0)
--		dev_err(&(spi->dev), "failed to add sysfs entries\n");
--
--	ret = device_create_file(&(spi->dev), &dev_attr_gamma_table);
--	if (ret < 0)
--		dev_err(&(spi->dev), "failed to add sysfs entries\n");
 -
 -	/*
 -	 * if lcd panel was on from bootloader like u-boot then
@@ -937,33 +863,29 @@ index 3c4a22a3063a..000000000000
 -		 */
 -		lcd->power = FB_BLANK_POWERDOWN;
 -
--		s6e63m0_power(lcd, FB_BLANK_UNBLANK);
+-		ld9040_power(lcd, FB_BLANK_UNBLANK);
 -	} else {
 -		lcd->power = FB_BLANK_UNBLANK;
 -	}
 -
 -	spi_set_drvdata(spi, lcd);
 -
--	dev_info(&spi->dev, "s6e63m0 panel driver has been probed.\n");
--
+-	dev_info(&spi->dev, "ld9040 panel driver has been probed.\n");
 -	return 0;
 -}
 -
--static int s6e63m0_remove(struct spi_device *spi)
+-static int ld9040_remove(struct spi_device *spi)
 -{
--	struct s6e63m0 *lcd = spi_get_drvdata(spi);
+-	struct ld9040 *lcd = spi_get_drvdata(spi);
 -
--	s6e63m0_power(lcd, FB_BLANK_POWERDOWN);
--	device_remove_file(&spi->dev, &dev_attr_gamma_table);
--	device_remove_file(&spi->dev, &dev_attr_gamma_mode);
--
+-	ld9040_power(lcd, FB_BLANK_POWERDOWN);
 -	return 0;
 -}
 -
 -#ifdef CONFIG_PM_SLEEP
--static int s6e63m0_suspend(struct device *dev)
+-static int ld9040_suspend(struct device *dev)
 -{
--	struct s6e63m0 *lcd = dev_get_drvdata(dev);
+-	struct ld9040 *lcd = dev_get_drvdata(dev);
 -
 -	dev_dbg(dev, "lcd->power = %d\n", lcd->power);
 -
@@ -971,317 +893,252 @@ index 3c4a22a3063a..000000000000
 -	 * when lcd panel is suspend, lcd panel becomes off
 -	 * regardless of status.
 -	 */
--	return s6e63m0_power(lcd, FB_BLANK_POWERDOWN);
+-	return ld9040_power(lcd, FB_BLANK_POWERDOWN);
 -}
 -
--static int s6e63m0_resume(struct device *dev)
+-static int ld9040_resume(struct device *dev)
 -{
--	struct s6e63m0 *lcd = dev_get_drvdata(dev);
+-	struct ld9040 *lcd = dev_get_drvdata(dev);
 -
 -	lcd->power = FB_BLANK_POWERDOWN;
 -
--	return s6e63m0_power(lcd, FB_BLANK_UNBLANK);
+-	return ld9040_power(lcd, FB_BLANK_UNBLANK);
 -}
 -#endif
 -
--static SIMPLE_DEV_PM_OPS(s6e63m0_pm_ops, s6e63m0_suspend, s6e63m0_resume);
+-static SIMPLE_DEV_PM_OPS(ld9040_pm_ops, ld9040_suspend, ld9040_resume);
 -
 -/* Power down all displays on reboot, poweroff or halt. */
--static void s6e63m0_shutdown(struct spi_device *spi)
+-static void ld9040_shutdown(struct spi_device *spi)
 -{
--	struct s6e63m0 *lcd = spi_get_drvdata(spi);
+-	struct ld9040 *lcd = spi_get_drvdata(spi);
 -
--	s6e63m0_power(lcd, FB_BLANK_POWERDOWN);
+-	ld9040_power(lcd, FB_BLANK_POWERDOWN);
 -}
 -
--static struct spi_driver s6e63m0_driver = {
+-static struct spi_driver ld9040_driver = {
 -	.driver = {
--		.name	= "s6e63m0",
--		.pm	= &s6e63m0_pm_ops,
+-		.name	= "ld9040",
+-		.pm	= &ld9040_pm_ops,
 -	},
--	.probe		= s6e63m0_probe,
--	.remove		= s6e63m0_remove,
--	.shutdown	= s6e63m0_shutdown,
+-	.probe		= ld9040_probe,
+-	.remove		= ld9040_remove,
+-	.shutdown	= ld9040_shutdown,
 -};
 -
--module_spi_driver(s6e63m0_driver);
+-module_spi_driver(ld9040_driver);
 -
--MODULE_AUTHOR("InKi Dae <inki.dae@samsung.com>");
--MODULE_DESCRIPTION("S6E63M0 LCD Driver");
+-MODULE_AUTHOR("Donghwa Lee <dh09.lee@samsung.com>");
+-MODULE_DESCRIPTION("ld9040 LCD Driver");
 -MODULE_LICENSE("GPL");
--
-diff --git a/drivers/video/backlight/s6e63m0_gamma.h b/drivers/video/backlight/s6e63m0_gamma.h
+diff --git a/drivers/video/backlight/ld9040_gamma.h b/drivers/video/backlight/ld9040_gamma.h
 deleted file mode 100644
-index 2c44bdb0696b..000000000000
---- a/drivers/video/backlight/s6e63m0_gamma.h
+index c5e586d97385..000000000000
+--- a/drivers/video/backlight/ld9040_gamma.h
 +++ /dev/null
-@@ -1,266 +0,0 @@
--/* linux/drivers/video/samsung/s6e63m0_brightness.h
-- *
+@@ -1,202 +0,0 @@
+-/*
 - * Gamma level definitions.
 - *
-- * Copyright (c) 2009 Samsung Electronics
+- * Copyright (c) 2011 Samsung Electronics
 - * InKi Dae <inki.dae@samsung.com>
+- * Donghwa Lee <dh09.lee@samsung.com>
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--#ifndef _S6E63M0_BRIGHTNESS_H
--#define _S6E63M0_BRIGHTNESS_H
+-#ifndef _LD9040_BRIGHTNESS_H
+-#define _LD9040_BRIGHTNESS_H
 -
--#define MAX_GAMMA_LEVEL		11
+-#define MAX_GAMMA_LEVEL		25
 -#define GAMMA_TABLE_COUNT	21
 -
 -/* gamma value: 2.2 */
--static const unsigned int s6e63m0_22_300[] = {
--	0x18, 0x08, 0x24, 0x5f, 0x50, 0x2d, 0xB6,
--	0xB9, 0xA7, 0xAd, 0xB1, 0x9f, 0xbe, 0xC0,
--	0xB5, 0x00, 0xa0, 0x00, 0xa4, 0x00, 0xdb
+-static const unsigned int ld9040_22_300[] = {
+-	0x00, 0xa7, 0xb4, 0xae, 0xbf, 0x00, 0x91,
+-	0x00, 0xb2, 0xb4, 0xaa, 0xbb, 0x00, 0xac,
+-	0x00, 0xb3, 0xb1, 0xaa, 0xbc, 0x00, 0xb3
 -};
 -
--static const unsigned int s6e63m0_22_280[] = {
--	0x18, 0x08, 0x24, 0x64, 0x56, 0x33, 0xB6,
--	0xBA, 0xA8, 0xAC, 0xB1, 0x9D, 0xC1, 0xC1,
--	0xB7, 0x00, 0x9C, 0x00, 0x9F, 0x00, 0xD6
+-static const unsigned int ld9040_22_290[] = {
+-	0x00, 0xa9, 0xb7, 0xae, 0xbd, 0x00, 0x89,
+-	0x00, 0xb7, 0xb6, 0xa8, 0xba, 0x00, 0xa4,
+-	0x00, 0xb1, 0xb4, 0xaa, 0xbb, 0x00, 0xaa
 -};
 -
--static const unsigned int s6e63m0_22_260[] = {
--	0x18, 0x08, 0x24, 0x66, 0x58, 0x34, 0xB6,
--	0xBA, 0xA7, 0xAF, 0xB3, 0xA0, 0xC1, 0xC2,
--	0xB7, 0x00, 0x97, 0x00, 0x9A, 0x00, 0xD1
--
+-static const unsigned int ld9040_22_280[] = {
+-	0x00, 0xa9, 0xb6, 0xad, 0xbf, 0x00, 0x86,
+-	0x00, 0xb8, 0xb5, 0xa8, 0xbc, 0x00, 0xa0,
+-	0x00, 0xb3, 0xb3, 0xa9, 0xbc, 0x00, 0xa7
 -};
 -
--static const unsigned int s6e63m0_22_240[] = {
--	0x18, 0x08, 0x24, 0x62, 0x54, 0x30, 0xB9,
--	0xBB, 0xA9, 0xB0, 0xB3, 0xA1, 0xC1, 0xC3,
--	0xB7, 0x00, 0x91, 0x00, 0x95, 0x00, 0xDA
+-static const unsigned int ld9040_22_270[] = {
+-	0x00, 0xa8, 0xb8, 0xae, 0xbe, 0x00, 0x84,
+-	0x00, 0xb9, 0xb7, 0xa8, 0xbc, 0x00, 0x9d,
+-	0x00, 0xb2, 0xb5, 0xaa, 0xbc, 0x00, 0xa4
 -
 -};
--static const unsigned int s6e63m0_22_220[] = {
--	0x18, 0x08, 0x24, 0x63, 0x53, 0x31, 0xB8,
--	0xBC, 0xA9, 0xB0, 0xB5, 0xA2, 0xC4, 0xC4,
--	0xB8, 0x00, 0x8B, 0x00, 0x8E, 0x00, 0xC2
+-static const unsigned int ld9040_22_260[] = {
+-	0x00, 0xa4, 0xb8, 0xb0, 0xbf, 0x00, 0x80,
+-	0x00, 0xb8, 0xb6, 0xaa, 0xbc, 0x00, 0x9a,
+-	0x00, 0xb0, 0xb5, 0xab, 0xbd, 0x00, 0xa0
 -};
 -
--static const unsigned int s6e63m0_22_200[] = {
--	0x18, 0x08, 0x24, 0x66, 0x55, 0x34, 0xBA,
--	0xBD, 0xAB, 0xB1, 0xB5, 0xA3, 0xC5, 0xC6,
--	0xB9, 0x00, 0x85, 0x00, 0x88, 0x00, 0xBA
+-static const unsigned int ld9040_22_250[] = {
+-	0x00, 0xa4, 0xb9, 0xaf, 0xc1, 0x00, 0x7d,
+-	0x00, 0xb9, 0xb6, 0xaa, 0xbb, 0x00, 0x97,
+-	0x00, 0xb1, 0xb5, 0xaa, 0xbf, 0x00, 0x9d
 -};
 -
--static const unsigned int s6e63m0_22_170[] = {
--	0x18, 0x08, 0x24, 0x69, 0x54, 0x37, 0xBB,
--	0xBE, 0xAC, 0xB4, 0xB7, 0xA6, 0xC7, 0xC8,
--	0xBC, 0x00, 0x7B, 0x00, 0x7E, 0x00, 0xAB
+-static const unsigned int ld9040_22_240[] = {
+-	0x00, 0xa2, 0xb9, 0xaf, 0xc2, 0x00, 0x7a,
+-	0x00, 0xb9, 0xb7, 0xaa, 0xbd, 0x00, 0x94,
+-	0x00, 0xb0, 0xb5, 0xab, 0xbf, 0x00, 0x9a
 -};
 -
--static const unsigned int s6e63m0_22_140[] = {
--	0x18, 0x08, 0x24, 0x6C, 0x54, 0x3A, 0xBC,
--	0xBF, 0xAC, 0xB7, 0xBB, 0xA9, 0xC9, 0xC9,
--	0xBE, 0x00, 0x71, 0x00, 0x73, 0x00, 0x9E
+-static const unsigned int ld9040_22_230[] = {
+-	0x00, 0xa0, 0xb9, 0xaf, 0xc3, 0x00, 0x77,
+-	0x00, 0xb9, 0xb7, 0xab, 0xbe, 0x00, 0x90,
+-	0x00, 0xb0, 0xb6, 0xab, 0xbf, 0x00, 0x97
 -};
 -
--static const unsigned int s6e63m0_22_110[] = {
--	0x18, 0x08, 0x24, 0x70, 0x51, 0x3E, 0xBF,
--	0xC1, 0xAF, 0xB9, 0xBC, 0xAB, 0xCC, 0xCC,
--	0xC2, 0x00, 0x65, 0x00, 0x67, 0x00, 0x8D
+-static const unsigned int ld9040_22_220[] = {
+-	0x00, 0x9e, 0xba, 0xb0, 0xc2, 0x00, 0x75,
+-	0x00, 0xb9, 0xb8, 0xab, 0xbe, 0x00, 0x8e,
+-	0x00, 0xb0, 0xb6, 0xac, 0xbf, 0x00, 0x94
 -};
 -
--static const unsigned int s6e63m0_22_90[] = {
--	0x18, 0x08, 0x24, 0x73, 0x4A, 0x3D, 0xC0,
--	0xC2, 0xB1, 0xBB, 0xBE, 0xAC, 0xCE, 0xCF,
--	0xC5, 0x00, 0x5D, 0x00, 0x5E, 0x00, 0x82
+-static const unsigned int ld9040_22_210[] = {
+-	0x00, 0x9c, 0xb9, 0xb0, 0xc4, 0x00, 0x72,
+-	0x00, 0xb8, 0xb8, 0xac, 0xbf, 0x00, 0x8a,
+-	0x00, 0xb0, 0xb6, 0xac, 0xc0, 0x00, 0x91
 -};
 -
--static const unsigned int s6e63m0_22_30[] = {
--	0x18, 0x08, 0x24, 0x78, 0xEC, 0x3D, 0xC8,
--	0xC2, 0xB6, 0xC4, 0xC7, 0xB6, 0xD5, 0xD7,
--	0xCC, 0x00, 0x39, 0x00, 0x36, 0x00, 0x51
+-static const unsigned int ld9040_22_200[] = {
+-	0x00, 0x9a, 0xba, 0xb1, 0xc4, 0x00, 0x6f,
+-	0x00, 0xb8, 0xb8, 0xad, 0xc0, 0x00, 0x86,
+-	0x00, 0xb0, 0xb7, 0xad, 0xc0, 0x00, 0x8d
 -};
 -
--/* gamma value: 1.9 */
--static const unsigned int s6e63m0_19_300[] = {
--	0x18, 0x08, 0x24, 0x61, 0x5F, 0x39, 0xBA,
--	0xBD, 0xAD, 0xB1, 0xB6, 0xA5, 0xC4, 0xC5,
--	0xBC, 0x00, 0xA0, 0x00, 0xA4, 0x00, 0xDB
+-static const unsigned int ld9040_22_190[] = {
+-	0x00, 0x97, 0xba, 0xb2, 0xc5, 0x00, 0x6c,
+-	0x00, 0xb8, 0xb8, 0xae, 0xc1, 0x00, 0x82,
+-	0x00, 0xb0, 0xb6, 0xae, 0xc2, 0x00, 0x89
 -};
 -
--static const unsigned int s6e63m0_19_280[] = {
--	0x18, 0x08, 0x24, 0x61, 0x60, 0x39, 0xBB,
--	0xBE, 0xAD, 0xB2, 0xB6, 0xA6, 0xC5, 0xC7,
--	0xBD, 0x00, 0x9B, 0x00, 0x9E, 0x00, 0xD5
+-static const unsigned int ld9040_22_180[] = {
+-	0x00, 0x93, 0xba, 0xb3, 0xc5, 0x00, 0x69,
+-	0x00, 0xb8, 0xb9, 0xae, 0xc1, 0x00, 0x7f,
+-	0x00, 0xb0, 0xb6, 0xae, 0xc3, 0x00, 0x85
 -};
 -
--static const unsigned int s6e63m0_19_260[] = {
--	0x18, 0x08, 0x24, 0x63, 0x61, 0x3B, 0xBA,
--	0xBE, 0xAC, 0xB3, 0xB8, 0xA7, 0xC6, 0xC8,
--	0xBD, 0x00, 0x96, 0x00, 0x98, 0x00, 0xCF
+-static const unsigned int ld9040_22_170[] = {
+-	0x00, 0x8b, 0xb9, 0xb3, 0xc7, 0x00, 0x65,
+-	0x00, 0xb7, 0xb8, 0xaf, 0xc3, 0x00, 0x7a,
+-	0x00, 0x80, 0xb6, 0xae, 0xc4, 0x00, 0x81
 -};
 -
--static const unsigned int s6e63m0_19_240[] = {
--	0x18, 0x08, 0x24, 0x67, 0x64, 0x3F, 0xBB,
--	0xBE, 0xAD, 0xB3, 0xB9, 0xA7, 0xC8, 0xC9,
--	0xBE, 0x00, 0x90, 0x00, 0x92, 0x00, 0xC8
+-static const unsigned int ld9040_22_160[] = {
+-	0x00, 0x89, 0xba, 0xb3, 0xc8, 0x00, 0x62,
+-	0x00, 0xb6, 0xba, 0xaf, 0xc3, 0x00, 0x76,
+-	0x00, 0xaf, 0xb7, 0xae, 0xc4, 0x00, 0x7e
 -};
 -
--static const unsigned int s6e63m0_19_220[] = {
--	0x18, 0x08, 0x24, 0x68, 0x64, 0x40, 0xBC,
--	0xBF, 0xAF, 0xB4, 0xBA, 0xA9, 0xC8, 0xCA,
--	0xBE, 0x00, 0x8B, 0x00, 0x8C, 0x00, 0xC0
+-static const unsigned int ld9040_22_150[] = {
+-	0x00, 0x82, 0xba, 0xb4, 0xc7, 0x00, 0x5f,
+-	0x00, 0xb5, 0xba, 0xb0, 0xc3, 0x00, 0x72,
+-	0x00, 0xae, 0xb8, 0xb0, 0xc3, 0x00, 0x7a
 -};
 -
--static const unsigned int s6e63m0_19_200[] = {
--	0x18, 0x08, 0x24, 0x68, 0x64, 0x3F, 0xBE,
--	0xC0, 0xB0, 0xB6, 0xBB, 0xAB, 0xC8, 0xCB,
--	0xBF, 0x00, 0x85, 0x00, 0x86, 0x00, 0xB8
+-static const unsigned int ld9040_22_140[] = {
+-	0x00, 0x7b, 0xbb, 0xb4, 0xc8, 0x00, 0x5b,
+-	0x00, 0xb5, 0xba, 0xb1, 0xc4, 0x00, 0x6e,
+-	0x00, 0xae, 0xb9, 0xb0, 0xc5, 0x00, 0x75
 -};
 -
--static const unsigned int s6e63m0_19_170[] = {
--	0x18, 0x08, 0x24, 0x69, 0x64, 0x40, 0xBF,
--	0xC1, 0xB0, 0xB9, 0xBE, 0xAD, 0xCB, 0xCD,
--	0xC2, 0x00, 0x7A, 0x00, 0x7B, 0x00, 0xAA
+-static const unsigned int ld9040_22_130[] = {
+-	0x00, 0x71, 0xbb, 0xb5, 0xc8, 0x00, 0x57,
+-	0x00, 0xb5, 0xbb, 0xb0, 0xc5, 0x00, 0x6a,
+-	0x00, 0xae, 0xb9, 0xb1, 0xc6, 0x00, 0x70
 -};
 -
--static const unsigned int s6e63m0_19_140[] = {
--	0x18, 0x08, 0x24, 0x6E, 0x65, 0x45, 0xC0,
--	0xC3, 0xB2, 0xBA, 0xBE, 0xAE, 0xCD, 0xD0,
--	0xC4, 0x00, 0x70, 0x00, 0x70, 0x00, 0x9C
+-static const unsigned int ld9040_22_120[] = {
+-	0x00, 0x47, 0xba, 0xb6, 0xca, 0x00, 0x53,
+-	0x00, 0xb5, 0xbb, 0xb3, 0xc6, 0x00, 0x65,
+-	0x00, 0xae, 0xb8, 0xb3, 0xc7, 0x00, 0x6c
 -};
 -
--static const unsigned int s6e63m0_19_110[] = {
--	0x18, 0x08, 0x24, 0x6F, 0x65, 0x46, 0xC2,
--	0xC4, 0xB3, 0xBF, 0xC2, 0xB2, 0xCF, 0xD1,
--	0xC6, 0x00, 0x64, 0x00, 0x64, 0x00, 0x8D
+-static const unsigned int ld9040_22_110[] = {
+-	0x00, 0x13, 0xbb, 0xb7, 0xca, 0x00, 0x4f,
+-	0x00, 0xb4, 0xbb, 0xb3, 0xc7, 0x00, 0x60,
+-	0x00, 0xad, 0xb8, 0xb4, 0xc7, 0x00, 0x67
 -};
 -
--static const unsigned int s6e63m0_19_90[] = {
--	0x18, 0x08, 0x24, 0x74, 0x60, 0x4A, 0xC3,
--	0xC6, 0xB5, 0xBF, 0xC3, 0xB2, 0xD2, 0xD3,
--	0xC8, 0x00, 0x5B, 0x00, 0x5B, 0x00, 0x81
+-static const unsigned int ld9040_22_100[] = {
+-	0x00, 0x13, 0xba, 0xb8, 0xcb, 0x00, 0x4b,
+-	0x00, 0xb3, 0xbc, 0xb4, 0xc7, 0x00, 0x5c,
+-	0x00, 0xac, 0xb8, 0xb4, 0xc8, 0x00, 0x62
 -};
 -
--static const unsigned int s6e63m0_19_30[] = {
--	0x18, 0x08, 0x24, 0x84, 0x45, 0x4F, 0xCA,
--	0xCB, 0xBC, 0xC9, 0xCB, 0xBC, 0xDA, 0xDA,
--	0xD0, 0x00, 0x35, 0x00, 0x34, 0x00, 0x4E
+-static const unsigned int ld9040_22_90[] = {
+-	0x00, 0x13, 0xb9, 0xb8, 0xcd, 0x00, 0x46,
+-	0x00, 0xb1, 0xbc, 0xb5, 0xc8, 0x00, 0x56,
+-	0x00, 0xaa, 0xb8, 0xb4, 0xc9, 0x00, 0x5d
 -};
 -
--/* gamma value: 1.7 */
--static const unsigned int s6e63m0_17_300[] = {
--	0x18, 0x08, 0x24, 0x70, 0x70, 0x4F, 0xBF,
--	0xC2, 0xB2, 0xB8, 0xBC, 0xAC, 0xCB, 0xCD,
--	0xC3, 0x00, 0xA0, 0x00, 0xA4, 0x00, 0xDB
+-static const unsigned int ld9040_22_80[] = {
+-	0x00, 0x13, 0xba, 0xb9, 0xcd, 0x00, 0x41,
+-	0x00, 0xb0, 0xbe, 0xb5, 0xc9, 0x00, 0x51,
+-	0x00, 0xa9, 0xb9, 0xb5, 0xca, 0x00, 0x57
 -};
 -
--static const unsigned int s6e63m0_17_280[] = {
--	0x18, 0x08, 0x24, 0x71, 0x71, 0x50, 0xBF,
--	0xC2, 0xB2, 0xBA, 0xBE, 0xAE, 0xCB, 0xCD,
--	0xC3, 0x00, 0x9C, 0x00, 0x9F, 0x00, 0xD6
+-static const unsigned int ld9040_22_70[] = {
+-	0x00, 0x13, 0xb9, 0xb9, 0xd0, 0x00, 0x3c,
+-	0x00, 0xaf, 0xbf, 0xb6, 0xcb, 0x00, 0x4b,
+-	0x00, 0xa8, 0xb9, 0xb5, 0xcc, 0x00, 0x52
 -};
 -
--static const unsigned int s6e63m0_17_260[] = {
--	0x18, 0x08, 0x24, 0x72, 0x72, 0x50, 0xC0,
--	0xC3, 0xB4, 0xB9, 0xBE, 0xAE, 0xCC, 0xCF,
--	0xC4, 0x00, 0x97, 0x00, 0x9A, 0x00, 0xD1
+-static const unsigned int ld9040_22_50[] = {
+-	0x00, 0x13, 0xb2, 0xba, 0xd2, 0x00, 0x30,
+-	0x00, 0xaf, 0xc0, 0xb8, 0xcd, 0x00, 0x3d,
+-	0x00, 0xa8, 0xb8, 0xb7, 0xcd, 0x00, 0x44
 -};
 -
--static const unsigned int s6e63m0_17_240[] = {
--	0x18, 0x08, 0x24, 0x71, 0x72, 0x4F, 0xC2,
--	0xC4, 0xB5, 0xBB, 0xBF, 0xB0, 0xCC, 0xCF,
--	0xC3, 0x00, 0x91, 0x00, 0x95, 0x00, 0xCA
--};
--
--static const unsigned int s6e63m0_17_220[] = {
--	0x18, 0x08, 0x24, 0x71, 0x73, 0x4F, 0xC2,
--	0xC5, 0xB5, 0xBD, 0xC0, 0xB2, 0xCD, 0xD1,
--	0xC5, 0x00, 0x8B, 0x00, 0x8E, 0x00, 0xC2
--};
--
--static const unsigned int s6e63m0_17_200[] = {
--	0x18, 0x08, 0x24, 0x72, 0x75, 0x51, 0xC2,
--	0xC6, 0xB5, 0xBF, 0xC1, 0xB3, 0xCE, 0xD1,
--	0xC6, 0x00, 0x85, 0x00, 0x88, 0x00, 0xBA
--};
--
--static const unsigned int s6e63m0_17_170[] = {
--	0x18, 0x08, 0x24, 0x75, 0x77, 0x54, 0xC3,
--	0xC7, 0xB7, 0xC0, 0xC3, 0xB4, 0xD1, 0xD3,
--	0xC9, 0x00, 0x7B, 0x00, 0x7E, 0x00, 0xAB
--};
--
--static const unsigned int s6e63m0_17_140[] = {
--	0x18, 0x08, 0x24, 0x7B, 0x77, 0x58, 0xC3,
--	0xC8, 0xB8, 0xC2, 0xC6, 0xB6, 0xD3, 0xD4,
--	0xCA, 0x00, 0x71, 0x00, 0x73, 0x00, 0x9E
--};
--
--static const unsigned int s6e63m0_17_110[] = {
--	0x18, 0x08, 0x24, 0x81, 0x7B, 0x5D, 0xC6,
--	0xCA, 0xBB, 0xC3, 0xC7, 0xB8, 0xD6, 0xD8,
--	0xCD, 0x00, 0x65, 0x00, 0x67, 0x00, 0x8D
--};
--
--static const unsigned int s6e63m0_17_90[] = {
--	0x18, 0x08, 0x24, 0x82, 0x7A, 0x5B, 0xC8,
--	0xCB, 0xBD, 0xC5, 0xCA, 0xBA, 0xD6, 0xD8,
--	0xCE, 0x00, 0x5D, 0x00, 0x5E, 0x00, 0x82
--};
--
--static const unsigned int s6e63m0_17_30[] = {
--	0x18, 0x08, 0x24, 0x8F, 0x73, 0x63, 0xD1,
--	0xD0, 0xC5, 0xCC, 0xD1, 0xC2, 0xDE, 0xE0,
--	0xD6, 0x00, 0x39, 0x00, 0x36, 0x00, 0x51
--};
--
--struct s6e63m0_gamma {
+-struct ld9040_gamma {
 -	unsigned int *gamma_22_table[MAX_GAMMA_LEVEL];
--	unsigned int *gamma_19_table[MAX_GAMMA_LEVEL];
--	unsigned int *gamma_17_table[MAX_GAMMA_LEVEL];
 -};
 -
--static struct s6e63m0_gamma gamma_table = {
--	.gamma_22_table[0] = (unsigned int *)&s6e63m0_22_30,
--	.gamma_22_table[1] = (unsigned int *)&s6e63m0_22_90,
--	.gamma_22_table[2] = (unsigned int *)&s6e63m0_22_110,
--	.gamma_22_table[3] = (unsigned int *)&s6e63m0_22_140,
--	.gamma_22_table[4] = (unsigned int *)&s6e63m0_22_170,
--	.gamma_22_table[5] = (unsigned int *)&s6e63m0_22_200,
--	.gamma_22_table[6] = (unsigned int *)&s6e63m0_22_220,
--	.gamma_22_table[7] = (unsigned int *)&s6e63m0_22_240,
--	.gamma_22_table[8] = (unsigned int *)&s6e63m0_22_260,
--	.gamma_22_table[9] = (unsigned int *)&s6e63m0_22_280,
--	.gamma_22_table[10] = (unsigned int *)&s6e63m0_22_300,
--
--	.gamma_19_table[0] = (unsigned int *)&s6e63m0_19_30,
--	.gamma_19_table[1] = (unsigned int *)&s6e63m0_19_90,
--	.gamma_19_table[2] = (unsigned int *)&s6e63m0_19_110,
--	.gamma_19_table[3] = (unsigned int *)&s6e63m0_19_140,
--	.gamma_19_table[4] = (unsigned int *)&s6e63m0_19_170,
--	.gamma_19_table[5] = (unsigned int *)&s6e63m0_19_200,
--	.gamma_19_table[6] = (unsigned int *)&s6e63m0_19_220,
--	.gamma_19_table[7] = (unsigned int *)&s6e63m0_19_240,
--	.gamma_19_table[8] = (unsigned int *)&s6e63m0_19_260,
--	.gamma_19_table[9] = (unsigned int *)&s6e63m0_19_280,
--	.gamma_19_table[10] = (unsigned int *)&s6e63m0_19_300,
--
--	.gamma_17_table[0] = (unsigned int *)&s6e63m0_17_30,
--	.gamma_17_table[1] = (unsigned int *)&s6e63m0_17_90,
--	.gamma_17_table[2] = (unsigned int *)&s6e63m0_17_110,
--	.gamma_17_table[3] = (unsigned int *)&s6e63m0_17_140,
--	.gamma_17_table[4] = (unsigned int *)&s6e63m0_17_170,
--	.gamma_17_table[5] = (unsigned int *)&s6e63m0_17_200,
--	.gamma_17_table[6] = (unsigned int *)&s6e63m0_17_220,
--	.gamma_17_table[7] = (unsigned int *)&s6e63m0_17_240,
--	.gamma_17_table[8] = (unsigned int *)&s6e63m0_17_260,
--	.gamma_17_table[9] = (unsigned int *)&s6e63m0_17_280,
--	.gamma_17_table[10] = (unsigned int *)&s6e63m0_17_300,
+-static struct ld9040_gamma gamma_table = {
+-	.gamma_22_table[0] = (unsigned int *)&ld9040_22_50,
+-	.gamma_22_table[1] = (unsigned int *)&ld9040_22_70,
+-	.gamma_22_table[2] = (unsigned int *)&ld9040_22_80,
+-	.gamma_22_table[3] = (unsigned int *)&ld9040_22_90,
+-	.gamma_22_table[4] = (unsigned int *)&ld9040_22_100,
+-	.gamma_22_table[5] = (unsigned int *)&ld9040_22_110,
+-	.gamma_22_table[6] = (unsigned int *)&ld9040_22_120,
+-	.gamma_22_table[7] = (unsigned int *)&ld9040_22_130,
+-	.gamma_22_table[8] = (unsigned int *)&ld9040_22_140,
+-	.gamma_22_table[9] = (unsigned int *)&ld9040_22_150,
+-	.gamma_22_table[10] = (unsigned int *)&ld9040_22_160,
+-	.gamma_22_table[11] = (unsigned int *)&ld9040_22_170,
+-	.gamma_22_table[12] = (unsigned int *)&ld9040_22_180,
+-	.gamma_22_table[13] = (unsigned int *)&ld9040_22_190,
+-	.gamma_22_table[14] = (unsigned int *)&ld9040_22_200,
+-	.gamma_22_table[15] = (unsigned int *)&ld9040_22_210,
+-	.gamma_22_table[16] = (unsigned int *)&ld9040_22_220,
+-	.gamma_22_table[17] = (unsigned int *)&ld9040_22_230,
+-	.gamma_22_table[18] = (unsigned int *)&ld9040_22_240,
+-	.gamma_22_table[19] = (unsigned int *)&ld9040_22_250,
+-	.gamma_22_table[20] = (unsigned int *)&ld9040_22_260,
+-	.gamma_22_table[21] = (unsigned int *)&ld9040_22_270,
+-	.gamma_22_table[22] = (unsigned int *)&ld9040_22_280,
+-	.gamma_22_table[23] = (unsigned int *)&ld9040_22_290,
+-	.gamma_22_table[24] = (unsigned int *)&ld9040_22_300,
 -};
 -
 -#endif
--
 -- 
 2.17.1
 
