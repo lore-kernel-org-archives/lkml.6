@@ -2,179 +2,166 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E946EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FCFC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99935216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:34:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F58E216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oPPTbFef"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99935216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVtRSz5X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F58E216FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbeI1Cyd (ORCPT
+        id S1728554AbeI1CzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:54:33 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42947 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbeI1Cyd (ORCPT
+        Thu, 27 Sep 2018 22:55:09 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37460 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbeI1CzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:54:33 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l9-v6so2680189pff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:34:28 -0700 (PDT)
+        Thu, 27 Sep 2018 22:55:09 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u12-v6so4039591wrr.4;
+        Thu, 27 Sep 2018 13:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fzP0SCHNefleytqhr8i61IkjqrEe7aWu5vzjf0fqhzQ=;
-        b=oPPTbFefc2IT+lsvPohsztZ8FLRxP+oohgG2IjAfsyihGUF7gPvrWdrFW9ATB2o0kJ
-         BuHWTSsLW+Oqvhlo7P79tDRteb1zQ7mtVO42rW9fn7uJE7Sw6OQ6Dlqj4HMF1SUTJnOt
-         RIUo+A+6AsYIfor3J2ua72JDgmsDTiD+lunyBXUiUAcj9vq0ZpJJNHMs/GHNgTv26+mS
-         lye0rRTtAmaKzbH5jz8FAs7MY0PkpKDG7Q3fZ5tMqLBdIKoZVt9lf5TNXzGqgvK/WuD3
-         iBjRlTEpKKr+I6RISbrv2GZpbAg6ot6zX4UTVBNbHDC79AiV5MJbgZwSoBR5k7P/rQnJ
-         7pgg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ytHOpUSnGJXSrWPcgZKRJSJ0o7STDb4obx/MyLkkEMo=;
+        b=MVtRSz5XuOTy92fd6YVNhAOueZSbuNfWhFeb6hsb7RFczWBYHnu8d9v90rjVRukdxO
+         hpqhsi6ZaoB2UdxIW1OFvZDv7ecygs+2BBfgPAXPnmvR7+EAUmtFiO46h7xuxWmnYYRD
+         hg0uTZM5gBJNAYxdRKMkTlfaJBQ1qg2UxfnbPg0vY11a2jr7L5K1Y/T+ZyYiwFYNTwkp
+         th8Vv1qlTiPeLvKzeJd2Z5lqWe41ejpYEXrlUTsIqdD16vA4oPi/iNljFz37StKUfrCl
+         WKNV5YC/DM6rzTl8Sx3i40UsDS+6PaGMkzyrJ42ZuIWUVTdZKP8mFqAUA8gwbxqNQREz
+         0akg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fzP0SCHNefleytqhr8i61IkjqrEe7aWu5vzjf0fqhzQ=;
-        b=MqQs7EHKgvSvMiQWHx9gXy5gDuClTbDN3OUeRuVejbqCg+VgW4F41C3KW6cWvLKh4/
-         JRdaWM41Lo4+RYdeQotZopgymjHAk11T12HgJ1z5GGLVhL/U7Ozz+W20HvM3ynpSAN59
-         yILcIiOyVNsDPOWuqKbyGWVo+ExRm4vfUZCsEyYl6LxoixEcTnuOfQTLhJxG/RETY5Yc
-         8fAv3YfxvaCtWuHAy7EVshHQGvw+vjzO/Cq90ZFWyNEhnO+uvDGerN6Nwwgy+rB+OgDZ
-         o9tVMOFc17a+DoIC4kt1CFE4Onz8gQHmancdsQEfEx01gmdaaWrlATdY2vLW7BXXNZ9h
-         M0UQ==
-X-Gm-Message-State: ABuFfog3ko/+7fzwZcUE3kEWkXPkquRgvqPFu8UxPsWqJdsPsX52LpL2
-        T+vY0eIyDKmUvpw7/6cHmIlgnv+nZOt2C2OLurT6PA==
-X-Google-Smtp-Source: ACcGV63bhOpqhE+63/CyxVp1zH2P8mMNVFpp7bSoQ8BPPd9rb5VYSy97FLBxQxpwtXu5gym2J2uqp2loNm5rJsekEDA=
-X-Received: by 2002:a17:902:b611:: with SMTP id b17-v6mr12686708pls.217.1538080467557;
- Thu, 27 Sep 2018 13:34:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180924195716.30848-1-natechancellor@gmail.com>
- <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
- <20180924222737.GA26973@flashbox> <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
- <20180925023722.GA32600@ziepe.ca> <20180927010803.GA7640@flashbox>
- <20180927044826.GC24889@ziepe.ca> <CAKwvOdnmg2XY6K-8jTna3EKR1Nx04gOm6ZoywUwQO_CSANR_jg@mail.gmail.com>
- <20180927202849.GA11120@flashbox>
-In-Reply-To: <20180927202849.GA11120@flashbox>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 27 Sep 2018 13:34:16 -0700
-Message-ID: <CAKwvOdnMOcdKPNHwKbcsg8rJX3_hDTgY752Nb4hgMC2D4p5aRg@mail.gmail.com>
-Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     jgg@ziepe.ca, dledford@redhat.com, linux-rdma@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ytHOpUSnGJXSrWPcgZKRJSJ0o7STDb4obx/MyLkkEMo=;
+        b=sGnL9lSE6Em9io9xSxKCGBW0BznljwuwyvIaOMfzkv9wqXE0FEnMu5VgWuakVE5e0f
+         anmz+R7Y7qTjCnr69ikSZKDhUOj6dbBgdFyBo6A9T3SK6AiIVedMx2IgYqUq1CTlKa4C
+         KRq2GrDRbitarvRI41nd+ex/F31CeiGWgn7u2QcQzYGB9gf8w97nGERxYqgPVOZIjtJI
+         pgv7fQBE10e6jIrOleoQRX6YTY1dLUz6+AWKFfKhw1N6zuukiUdPCVs7tfYlFQ1edNUC
+         8gmjJRfHjH/+nPdWesedqOzeUnlVkP6R2wWhW1MkQeyS2M+1/jz+3YBqUQnkQB6Kcx5p
+         Eu9A==
+X-Gm-Message-State: ABuFfoiUGwkF4gNR3FWlQLFLkG632orupa5fyYicQsItjcnWqyJL8DVa
+        6wf4GcrVHDByx5DBAHyMCMI=
+X-Google-Smtp-Source: ACcGV62vdMxLYJ3zJt8ei8FbtYKh7wwiHXYFBLDcPpmJzLSb7ijYWH4SjTDr5Dw8Lo/NuHG+VG2R0g==
+X-Received: by 2002:a5d:4706:: with SMTP id y6-v6mr1758719wrq.256.1538080502805;
+        Thu, 27 Sep 2018 13:35:02 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id k7-v6sm53709wmf.41.2018.09.27.13.35.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 13:35:02 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 13:35:00 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Michal.Kalderon@cavium.com, Ariel.Elior@cavium.com,
+        dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] RDMA/qedr: Explicitly cast pkt->tx_dest to
+ qed_ll2_tx_dest
+Message-ID: <20180927203500.GA12450@flashbox>
+References: <20180927011820.13608-1-natechancellor@gmail.com>
+ <CAKwvOd=Oe1AAbQKcR+6K7LtZGne+-=3zREs_xVMnEbXBZJDJTQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOd=Oe1AAbQKcR+6K7LtZGne+-=3zREs_xVMnEbXBZJDJTQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 1:28 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Thu, Sep 27, 2018 at 01:13:31PM -0700, Nick Desaulniers wrote:
-> > On Wed, Sep 26, 2018 at 9:48 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > >
-> > > On Wed, Sep 26, 2018 at 06:08:03PM -0700, Nathan Chancellor wrote:
-> > > > On Mon, Sep 24, 2018 at 08:37:22PM -0600, Jason Gunthorpe wrote:
-> > > > > On Mon, Sep 24, 2018 at 03:29:38PM -0700, Nick Desaulniers wrote:
-> > > > > > On Mon, Sep 24, 2018 at 3:27 PM Nathan Chancellor
-> > > > > > <natechancellor@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, Sep 24, 2018 at 03:24:36PM -0700, Nick Desaulniers wrote:
-> > > > > > > > On Mon, Sep 24, 2018 at 12:57 PM Nathan Chancellor
-> > > > > > > > <natechancellor@gmail.com> wrote:
-> > > > > > > > >
-> > > > > > > > > Clang warns when one enumerated type is implicitly converted to another.
-> > > > > > > > >
-> > > > > > > > > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
-> > > > > > > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> > > > > > > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
-> > > > > > > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
-> > > > > > > > >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
-> > > > > > > > >
-> > > > > > > > > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
-> > > > > > > > > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> > > > > > > > > type 'enum ib_qp_create_flags' [-Wenum-conversion]
-> > > > > > > > >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
-> > > > > > > > >                                                     ~ ^~~~~~~~~~~~~~~~~
-> > > > > > > > >
-> > > > > > > > > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
-> > > > > > > > > type ib_qp_create_flags. Make that clear to Clang by changing the
-> > > > > > > > > create_flags type to u32.
-> > > > > > > > >
-> > > > > > > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > > > > > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > > > > > > >  include/rdma/ib_verbs.h | 2 +-
-> > > > > > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > > > >
-> > > > > > > > > diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-> > > > > > > > > index e463d3007a35..f6f4d9e3c8ed 100644
-> > > > > > > > > +++ b/include/rdma/ib_verbs.h
-> > > > > > > > > @@ -1149,7 +1149,7 @@ struct ib_qp_init_attr {
-> > > > > > > > >         struct ib_qp_cap        cap;
-> > > > > > > > >         enum ib_sig_type        sq_sig_type;
-> > > > > > > > >         enum ib_qp_type         qp_type;
-> > > > > > > > > -       enum ib_qp_create_flags create_flags;
-> > > > > > > > > +       u32                     create_flags;
-> > > > > > > >
-> > > > > > > > I think it might be better to just have explicit casts at the
-> > > > > > > > assignment.  What do the maintainers think?
-> > > > > > > >
-> > > > > > >
-> > > > > > > That's fine with me, I tend to explicitly cast if it is only one
-> > > > > > > location but it certainly makes sense in this case as well. I'll
-> > > > > > > wait for the maintainers to weigh in before sending a v2.
-> > > > > >
-> > > > > > Yeah, I mean my opinion on this might seem arbitrary, but based on the
-> > > > > > pattern and the comment in ib_qp_create_flags, those enum values are
-> > > > > > reserved to be "subclassed" in a sense, so they should always be in
-> > > > > > sync or this code will have bigger problems.
-> > > > >
-> > > > > One should not use an 'enum' type name for bitfield storage, as once
-> > > > > you start or'ing things together the values no longer fall on the
-> > > > > enum. Some compilers and tools even give warnings in this case, ie
-> > > > >
-> > > > >    enum x foo = X_A | X_B;
-> > > > >
-> > > > > Is an assignment from 'int' to an 'enum x' with an implicit cast.
-> > > > >
-> > > > > For this reason, usually bitfield enum declarations should be
-> > > > > anonymous.
-> > > > >
-> > > > > Jason
-> > > >
-> > > > Hi Jason,
-> > > >
-> > > > I apologize for not understanding but how should I adjust my patch so
-> > > > that it is acceptable? Do you want the explicit casts like Nick
-> > > > suggested?
-> > >
-> > > No, I think your original patch is fine, I was waiting to see if you
-> > > or Nick disagreed with my assessment on bitfields..
+On Thu, Sep 27, 2018 at 01:28:12PM -0700, Nick Desaulniers wrote:
+> On Wed, Sep 26, 2018 at 6:18 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
 > >
-> > It wasn't clear to me whether you were ack'ing or nack'ing the patch.
-> > If we don't change the patch to explicit casts, shouldn't the change
-> > be to make create_flags an int? (note: signedness)
+> > Clang warns when one enumerated type is explicitly converted to another.
 > >
+> > drivers/infiniband/hw/qedr/qedr_roce_cm.c:198:28: warning: implicit
+> > conversion from enumeration type 'enum qed_roce_ll2_tx_dest' to
+> > different enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
+> >         ll2_tx_pkt.tx_dest = pkt->tx_dest;
+> >                            ~ ~~~~~^~~~~~~
+> > 1 warning generated.
+> >
+> > Avoid this warning by explicitly casting pkt->tx_dest to
+> > qed_112_tx_dest, which has the expected values from the
+> > type qed_roce_ll2_tx_dest.
+> 
+> But these enums are different lengths, which is problematic for this
+> patch.  Is this code broken, or that it's ok for ll2_tx_pkt.tx_dest to
+> have a value that's not a valid enumeration value for enum
+> qed_ll2_tx_dest? (QED_LL2_TX_DEST_MAX 's value (3) is outside the
+> enumeration values of enum qed_roce_ll2_tx_dest).
+> 
+> include/linux/qed/qed_rdma_if.h:
+>  42 enum qed_roce_ll2_tx_dest {
+>  43         /* Light L2 TX Destination to the Network */
+>  44         QED_ROCE_LL2_TX_DEST_NW,
+>  45
+>  46         /* Light L2 TX Destination to the Loopback */
+>  47         QED_ROCE_LL2_TX_DEST_LB,
+>  48         QED_ROCE_LL2_TX_DEST_MAX
+>  49 };
+> 
+> include/linux/qed/qed_ll2_if.h:
+>  64 enum qed_ll2_tx_dest {
+>  65         QED_LL2_TX_DEST_NW, /* Light L2 TX Destination to the
+> Network */
+>  66         QED_LL2_TX_DEST_LB, /* Light L2 TX Destination to the
+> Loopback */
+>  67         QED_LL2_TX_DEST_DROP, /* Light L2 Drop the TX packet */
+>  68         QED_LL2_TX_DEST_MAX
+>  69 };
+> 
+> Maybe the maintainers can clarify?
+> 
+
+My assumption was that if QED_ROCE_LL2_TX_DEST_MAX was used that the
+packet would be dropped.
+
+Turns out that QED_ROCE_LL2_TX_DEST_MAX isn't actually used anywhere in
+the tree. I suppose that qed_roce_ll2_tx_dest could just be removed and
+all other instances of those values could be converted to
+qed_ll2_tx_dest like the rxe patch. I'll test this now and send a patch
+along if it works out.
+
+Nathan
+
+> >
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/infiniband/hw/qedr/qedr_roce_cm.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/infiniband/hw/qedr/qedr_roce_cm.c b/drivers/infiniband/hw/qedr/qedr_roce_cm.c
+> > index 85578887421b..147e0d69003d 100644
+> > --- a/drivers/infiniband/hw/qedr/qedr_roce_cm.c
+> > +++ b/drivers/infiniband/hw/qedr/qedr_roce_cm.c
+> > @@ -195,7 +195,7 @@ static int qedr_ll2_post_tx(struct qedr_dev *dev,
+> >
+> >         ll2_tx_pkt.num_of_bds = 1 /* hdr */  + pkt->n_seg;
+> >         ll2_tx_pkt.vlan = 0;
+> > -       ll2_tx_pkt.tx_dest = pkt->tx_dest;
+> > +       ll2_tx_pkt.tx_dest = (enum qed_ll2_tx_dest)pkt->tx_dest;
+> >         ll2_tx_pkt.qed_roce_flavor = roce_flavor;
+> >         ll2_tx_pkt.first_frag = pkt->header.baddr;
+> >         ll2_tx_pkt.first_frag_len = pkt->header.len;
 > > --
-> > Thanks,
-> > ~Nick Desaulniers
->
-> Neither ib_qp_create_flags nor mlx4_ib_qp_flags have negative values, is
-> signedness necessary?
-
-enums are by default restricted to the range of ints.  It's not right
-to tie these "anonymous enums" to a specific width and signedness
-other than int.
-
--- 
-Thanks,
-~Nick Desaulniers
+> > 2.19.0
+> >
+> 
+> 
+> -- 
+> Thanks,
+> ~Nick Desaulniers
