@@ -2,125 +2,100 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728D9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BFCC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 281922156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 281922156B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DBD12156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:13:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="FK0Ucavr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DBD12156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbeI0O31 (ORCPT
+        id S1727258AbeI0OaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 10:29:27 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:41688 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726760AbeI0O30 (ORCPT
+        Thu, 27 Sep 2018 10:30:23 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40237 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeI0OaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 10:29:26 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07442137|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03307;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=20;RT=20;SR=0;TI=SMTPD_---.CwTEhM2_1538035902;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwTEhM2_1538035902)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Thu, 27 Sep 2018 16:11:42 +0800
-Date:   Thu, 27 Sep 2018 16:11:42 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
+        Thu, 27 Sep 2018 10:30:23 -0400
+Received: by mail-ed1-f66.google.com with SMTP id j62-v6so4214294edd.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pekQ5WX6k8csmXLYb5a3CSizRD09mcOqT4091Kime8c=;
+        b=FK0UcavrMBDz5r/T21/i7zwcbLrNVoXbj1rGkihBbOMFNYo6I7qbq94Jq9EZZxfafY
+         D0ri+ve6vlXNdE0oXtzjCLBJlmyimjUAjoPM2S8ZYrBSK6rgsoYKKjPUicZ+cBTJcvcn
+         MKAYkamolqrgQqs0B8Arl6C2vobzv3fUliH1E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pekQ5WX6k8csmXLYb5a3CSizRD09mcOqT4091Kime8c=;
+        b=WhG1ecIXg4e4TUE7UuFWH2hhi5z69fRaUtCoIj7J7zdTrJou42cMLhiw7yZ10zu90l
+         3uUOFxAG/6w8JB5Y2SPaYyffoZFeJ/G2ipJdzBLkm3ClAGQdIfE0Z28ZebbdQEK08hTv
+         4X3wCkAVSiZXd1bNme4zInKhH6FGYz69jXRqa5p/lkbT/naGM8vjGCStbUaRjWLiNqgz
+         /VStrqaQujWlKOnxmK3E63kQ2TnkmfmD2wfZ/2BfVXDNvFL7FPFu0X9QTvoHimZziwWg
+         wbqYJlNt9up+qWaa23HW9VOYyyIS5MUmvQtPkfCikKzPBb4JVc4T0ld0XtY9prSA0neG
+         6X6g==
+X-Gm-Message-State: ABuFfog5+elCqkyl7L4DDOtMXk4glcfdAZyYaj3xB8M7PzIniK1Q6jLF
+        +6PwoLVZfRjisaGSJtI4fV3teA==
+X-Google-Smtp-Source: ACcGV60iayI95zMGdho4uQDIAI3vIzC9Mab+HZSY6gEDmuqM6Ck0j25hKzv5Sy++VXiX80U17SvcKA==
+X-Received: by 2002:a05:6402:6d8:: with SMTP id n24mr15716539edy.99.1538036001321;
+        Thu, 27 Sep 2018 01:13:21 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id w23sm437624edv.30.2018.09.27.01.13.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 01:13:20 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 10:13:15 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        green.hu@gmail.com, palmer@sifive.com
-Subject: Re: [PATCH V5 06/30] csky: Cache and TLB routines
-Message-ID: <20180927081138.GA308@guoren>
-References: <cover.1537789736.git.ren_guo@c-sky.com>
- <7cd7abcd2acf5c61435589338ff80a75a13173ca.1537789737.git.ren_guo@c-sky.com>
- <20180925072407.GA6999@hirez.programming.kicks-ass.net>
- <20180927052737.GA28407@guoren>
- <20180927070859.GC5254@hirez.programming.kicks-ass.net>
+Cc:     will.deacon@arm.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, longman@redhat.com,
+        tglx@linutronix.de
+Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
+Message-ID: <20180927081314.GA8285@andrea>
+References: <20180926110117.405325143@infradead.org>
+ <20180926111307.513429499@infradead.org>
+ <20180926205208.GA4864@andrea>
+ <20180927071747.GD5254@hirez.programming.kicks-ass.net>
+ <20180927074748.GA7939@andrea>
+ <20180927075935.GA4889@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927070859.GC5254@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180927075935.GA4889@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 09:08:59AM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 27, 2018 at 01:27:38PM +0800, Guo Ren wrote:
-> > On Tue, Sep 25, 2018 at 09:24:07AM +0200, Peter Zijlstra wrote:
-> > > On Mon, Sep 24, 2018 at 10:36:22PM +0800, Guo Ren wrote:
-> > > > diff --git a/arch/csky/abiv1/inc/abi/cacheflush.h b/arch/csky/abiv1/inc/abi/cacheflush.h
-> > > > new file mode 100644
-> > > > index 0000000..f0de49c
-> > > > --- /dev/null
-> > > > +++ b/arch/csky/abiv1/inc/abi/cacheflush.h
-> 
-> > > > +#define flush_cache_range(mm,start,end)	cache_wbinv_range(start, end)
-> > >                              ^^^ should be vma
-> > Yes, I'll change it to:
-> > #define flush_cache_range(mm,start,end)	cache_wbinv_all()
+On Thu, Sep 27, 2018 at 09:59:35AM +0200, Peter Zijlstra wrote:
+> On Thu, Sep 27, 2018 at 09:47:48AM +0200, Andrea Parri wrote:
+> > > LKMM in particular does _NOT_ deal with mixed sized atomics _at_all_.
 > > 
-> > I'll improve it later after test.
+> > True, but it is nothing conceptually new to deal with: there're Cat
+> > models that handle mixed-size accesses, just give it time.
 > 
-> That's not what I meant; I meant you need something like:
-> 
-> #define flush_cache_range(vma, start, end) cache_wbinv_range(start, end)
-If you remove the tlb_start_vma in my tlb.h, I want to use cache_wbinv_all() is
-more safe. And I'll improve it in future.
+> Sure, but until that time I must not rely on (and thus not use) LKMM for
+> qspinlock things.
 
-My cache_wbinv_range(start, end) won't care vma->mm's asid and they just use current
-asid in mmu reg. If current_mm != vma->mm, then flush_cache_range will be broken.
-Perhaps, I need improve flush_cache_range first ...
+This is way too generic to be agreed ;D
+
 
 > 
-> The first argument is a vma, not an mm.
-Yes, vma! My fault :-P
+> So while your argument about coherence might be true -- I'll have to
+> think about it; litmus tests are out the window.
 
-> > > Also, I'll be shortly removing this:
-> > > 
-> > >   https://lkml.kernel.org/r/20180913092812.071989585@infradead.org
-> > Ok, I'll follow the rules.
-> 
-> 
-> > > > diff --git a/arch/csky/abiv2/inc/abi/cacheflush.h b/arch/csky/abiv2/inc/abi/cacheflush.h
-> > > > new file mode 100644
-> > > > index 0000000..756beb7
-> > > > --- /dev/null
-> > > > +++ b/arch/csky/abiv2/inc/abi/cacheflush.h
-> > > > @@ -0,0 +1,40 @@
-> 
-> > > > +#define flush_cache_range(vma, start, end)	do { } while (0)
-> > >                              ^^^ like here..
-> > #define flush_cache_range(vma, start, end) \
-> > 	do { \
-> > 		if (vma->vm_flags & VM_EXEC) \
-> > 			icache_inv_all(); \
-> > 	}
-> > 
-> > Hmm ?
-> > 
-> 
-> For v2, which IIUC is PIPT (as opposed to v1 which is VIPT), what you
-> had was correct.
-I'll improve icache_inv_all() with flush_range() in future.
+You trimmed the litmus test I gave you.
 
-> 
-> I was merely pointing out that the flush_cache_range() definition was
-> inconsitent between v1 and v2; v1 using @mm and v2 using @vma for the
-> first argument.
-Must be vma, you are right. And I know it's a vma in mind, but fault in
-code. Thx for your review.
-
-Best Regards
- Guo Ren
+  Andrea
