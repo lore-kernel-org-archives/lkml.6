@@ -2,116 +2,130 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29125C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9AEC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA5A8216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:43:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Vv4eeVDQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5A8216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 79BE7216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:43:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BE7216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbeI1CDM (ORCPT
+        id S1727519AbeI1CDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:03:12 -0400
-Received: from mail-sn1nam02on0117.outbound.protection.outlook.com ([104.47.36.117]:63000
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727266AbeI1CDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:03:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4mEnHpqjxromCa7EQ6VkJ1/aWsEmYPnCPJuEGJy6n4I=;
- b=Vv4eeVDQJ9WpPzVgSQfD15rbGKlYXDPnNfv7OACN7DeFa1HjAh+/7Jqq9PYBVq09d7T2zFgqOouTVlPNqhXLI1TLiD29KJUt5oXQi5tY2mCh/d/VH9Y2dBSYfm6lL4NWRyNaIO40n9pK9dCIURDZp6UfNEexmsJDa2a+65Fyk/A=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Thu, 27 Sep 2018 19:43:19 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.011; Thu, 27 Sep 2018
- 19:43:18 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     Lukas Wunner <lukas@wunner.de>
-CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.14 87/87] PCI: Whitelist Thunderbolt ports for
- runtime D3
-Thread-Topic: [PATCH AUTOSEL 4.14 87/87] PCI: Whitelist Thunderbolt ports for
- runtime D3
-Thread-Index: AQHUTjL8aFGgHYst30uDQLUO80aa4KT0I6GAgBB0pAA=
-Date:   Thu, 27 Sep 2018 19:43:18 +0000
-Message-ID: <20180927194316.GB9157@sasha-vm>
-References: <20180917030220.245686-1-alexander.levin@microsoft.com>
- <20180917030220.245686-87-alexander.levin@microsoft.com>
- <20180917082539.pikwd2n27ah6xy35@wunner.de>
-In-Reply-To: <20180917082539.pikwd2n27ah6xy35@wunner.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:OGdddXXbb3Bkm8sRO2C+A9BJxm3NbFn92jDYcG7+EA37L5OSSEbHdKcpBVjBy/LdxvUQjuVsx/czxqXwOiSHc+xAydiiHNbqcp3DanVDrgqjXixgegqhWfp8asnI3afJ8IrqDgBbwc5M0CVQB68rr5QCSK2tuaE0Q5gywJM9Ei8o/z4faay+AjGtYv1fK5AjzJzGEwE+dXNAATXskgG13U934e9ENxaRFKOcGQqd0Yfy/5UsGSAGkXXahZyCKguw92waz56VR1ABBsI0tleNnWSpnsLfnSwbx3WAT3F3vSJOfXdSGtakE0xSgyuviCit7P1xvPSDt1heTtoqDacc9L72+EDDGEoSmxdMt2bZ87meqw/ngRDEXPwWl54FGySTJZpr4jklguNSIyMc0MQrhBhA9pFm1oYDWthvC4UO/EqWEV8N91bxXZVJ9erzSxOek+uH1wQdlvEeQihqoqzPaQ==;5:5041NjKSxpSlbVWgRVbr2KTrC+AZ06n6VpXJtLzR3j5VqVwrbtV5DXU/dXAsdk0t4CoGyDRfZ1fDo25jGW5O/+7gRCOrKNBYiGxrnE5hpTSY/etErIJKbhuqu6cKVpPKIOmUabe0bFs8JKTOYvL1rcq4/OwiB/ka6DPdm88f9a8=;7:TzUcCUwl3jqN09ne9s48XM2o+kRj7rZqRPGu4YGT2LXxS1O/7FQxrt0CkBYQwgoULAxsBBAYqSX5ulj0dxVqhZKvbIf4Z8b9585CRXwhLYQlMMCrKlkUtLaYGHySAkTfmfDj2B4r2/NGqPDF/Nt8beoDv/vNuHqRW/FGPFWQppDn8Ln3yLeRxFcHirkACdcF5W5CjUlyqbPQ9PQxQ3eKr2ck+zv5DQN9q02SC02d0y8M9wa4SADnnQ0unt2CNFHx
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 8ba4777b-61c3-46c9-daa0-08d624b179bf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0773;
-x-ms-traffictypediagnostic: CY4PR21MB0773:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0773F4165BD7917E84E57F34FB140@CY4PR21MB0773.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0773;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0773;
-x-forefront-prvs: 0808323E97
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(136003)(396003)(366004)(39860400002)(346002)(189003)(199004)(217873002)(316002)(6436002)(68736007)(9686003)(6512007)(186003)(53936002)(54906003)(102836004)(81166006)(81156014)(8936002)(25786009)(10090500001)(5250100002)(34290500001)(1076002)(71190400001)(2906002)(6116002)(3846002)(14444005)(256004)(97736004)(71200400001)(2900100001)(11346002)(476003)(105586002)(106356001)(33656002)(39060400002)(14454004)(6916009)(6246003)(508600001)(10290500003)(72206003)(33896004)(5660300001)(6486002)(4326008)(99286004)(229853002)(86362001)(6506007)(446003)(66066001)(305945005)(7736002)(86612001)(26005)(76176011)(8676002)(486006)(22452003)(33716001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Kbua6TP3kepXnyFyQYQ8LX+x0Gi1HYDYMiNyNoUfzSvTuyqqFH3Ae8IpvpCcmUa2To7KI0wS1tRd9T79+8GFCyu/MilKGUqCldXtQY8X361e54LrYk5m5FnNZCiye64/FveWzjfJnA36WCq8JbHKuWPKSGYT2gtIpgEt7HzvrqLScy6uPMo1MdNNABuMCNUz3+wQ1ONXhnDo4liCvKaZ6OSqtGObiFrq89Sqfk2OyoyVEL1QPTEAFXWVLJ106RUnSj/PKH9vTrNnZk/CQzfPTWsZzvOhdYGl67zrggt/Keapa3gJLZtbtWUWyKcaU2x/IgnJ2dvUjUd4Pud69ukPV+1u6usI3NxrBF+QbIZRU4E=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <358ACED3B3D95C4DA504C4C3F3446BB0@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 27 Sep 2018 22:03:45 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:50820 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbeI1CDp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 22:03:45 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5cCJ-0004mD-2v; Thu, 27 Sep 2018 13:43:39 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5cCG-0001ja-UY; Thu, 27 Sep 2018 13:43:38 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org (open list:X86 MM)
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+        <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+Date:   Thu, 27 Sep 2018 21:43:15 +0200
+In-Reply-To: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com> (Jarkko
+        Sakkinen's message of "Tue, 25 Sep 2018 16:06:46 +0300")
+Message-ID: <87zhw2ohf0.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ba4777b-61c3-46c9-daa0-08d624b179bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2018 19:43:18.9070
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0773
+Content-Type: text/plain
+X-XM-SPF: eid=1g5cCG-0001ja-UY;;;mid=<87zhw2ohf0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+xE+Rd+QqQGLxya5kt+TXMDzgj14CRP48=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs w/ PF_SGX
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 10:25:39AM +0200, Lukas Wunner wrote:
->Hi Sasha,
->
->On Mon, Sep 17, 2018 at 03:03:19AM +0000, Sasha Levin wrote:
->> From: Lukas Wunner <lukas@wunner.de>
->>
->> [ Upstream commit 47a8e237ed443c174f8f73402755c458c56eb611 ]
->>
->> Thunderbolt controllers can be runtime suspended to D3cold to save ~1.5W=
-.
->> This requires that runtime D3 is allowed on its PCIe ports, so whitelist
->> them.
->
->This commit was at the end of a series with 30+ patches and depends on
->all the preceding patches.  It cannot be backported on its own I'm afraid,
->hence should be removed from the 4.14 and 4.18 stable queue.
+Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
 
-I'll remove it, thanks!=
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+>
+> Signal SIGSEGV(SEGV_SGXERR) for all faults with PF_SGX set in the
+> error code.  The PF_SGX bit is set if and only if the #PF is detected
+> by the Enclave Page Cache Map (EPCM), which is consulted only after
+> an access walks the kernel's page tables, i.e.:
+>
+>   a. the access was allowed by the kernel
+>   b. the kernel's tables have become less restrictive than the EPCM
+>   c. the kernel cannot fixup the cause of the fault
+>
+> Noteably, (b) implies that either the kernel has botched the EPC
+> mappings or the EPCM has been invalidated due to a power event.  In
+> either case, userspace needs to be alerted so that it can take
+> appropriate action, e.g. restart the enclave.  This is reinforced
+> by (c) as the kernel doesn't really have any other reasonable option,
+> e.g. we could kill the task or panic, but neither is warranted.
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/mm/fault.c | 20 +++++++++++++++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 85d20516b2f3..3fb2b2838d6c 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -960,10 +960,13 @@ static noinline void
+>  bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
+>  		      unsigned long address, struct vm_area_struct *vma)
+>  {
+> +	int si_code = SEGV_ACCERR;
+> +
+>  	if (bad_area_access_from_pkeys(error_code, vma))
+> -		__bad_area(regs, error_code, address, vma, SEGV_PKUERR);
+> -	else
+> -		__bad_area(regs, error_code, address, vma, SEGV_ACCERR);
+> +		si_code = SEGV_PKUERR;
+> +	else if (unlikely(error_code & X86_PF_SGX))
+> +		si_code = SEGV_SGXERR;
+> +	__bad_area(regs, error_code, address, vma, si_code);
+>  }
+
+This conflicts with a cleanup in this area I have sitting in linux-next.
+It isn't in the x86 tree but you can find my siginfo tree at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git siginfo-next
+
+In my tree bad area no longer takes a vma parameter.
+
+If you are going to make changes to the fault handling code this cycle
+please let's figure out how to build it on top of my clean ups.
+
+Thank you,
+Eric Biederman
+
+
