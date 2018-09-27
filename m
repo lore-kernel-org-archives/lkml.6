@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3392DC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54ED4C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C54215E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C54215E5
+	by mail.kernel.org (Postfix) with ESMTP id DA0D1215E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA0D1215E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbeI0R7R (ORCPT
+        id S1727706AbeI0R7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:59:17 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16663 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727340AbeI0R7Q (ORCPT
+        Thu, 27 Sep 2018 13:59:20 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35886 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727163AbeI0R7T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:59:16 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8RBXvcb003809;
-        Thu, 27 Sep 2018 13:40:16 +0200
+        Thu, 27 Sep 2018 13:59:19 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8RBd0P8013493;
+        Thu, 27 Sep 2018 13:40:18 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mqd47qxpb-1
+        by mx07-00178001.pphosted.com with ESMTP id 2mnb6xtheu-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 27 Sep 2018 13:40:16 +0200
+        Thu, 27 Sep 2018 13:40:18 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 65C6034;
-        Thu, 27 Sep 2018 11:40:15 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 38CAC2986;
-        Thu, 27 Sep 2018 11:40:15 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep
- 2018 13:40:15 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A203431;
+        Thu, 27 Sep 2018 11:40:17 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6729E2986;
+        Thu, 27 Sep 2018 11:40:17 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep
+ 2018 13:40:17 +0200
 Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep 2018 13:40:14 +0200
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep 2018 13:40:16 +0200
 From:   Amelie Delaunay <amelie.delaunay@st.com>
 To:     Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -53,9 +53,9 @@ CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v3 2/7] mfd: Add ST Multi-Function eXpander (STMFX) core driver
-Date:   Thu, 27 Sep 2018 13:39:59 +0200
-Message-ID: <1538048404-9041-3-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH v3 4/7] pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
+Date:   Thu, 27 Sep 2018 13:40:01 +0200
+Message-ID: <1538048404-9041-5-git-send-email-amelie.delaunay@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
 References: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
@@ -69,663 +69,852 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STMicroelectronics Multi-Function eXpander (STMFX) is a slave controller
-using I2C for communication with the main MCU. Main features are:
-- 16 fast GPIOs individually configurable in input/output
-- 8 alternate GPIOs individually configurable in input/output when other
-STMFX functions are not used
-- Main MCU IDD measurement
-- Resistive touchscreen controller
+This patch adds pinctrl/GPIO driver for STMicroelectronics
+Multi-Function eXpander (STMFX) GPIO expander.
+STMFX is an I2C slave controller, offering up to 24 GPIOs.
+The driver relies on generic pin config interface to configure the GPIOs.
 
 Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/mfd/Kconfig       |  14 ++
- drivers/mfd/Makefile      |   2 +-
- drivers/mfd/stmfx.c       | 626 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/stmfx.h |  27 ++
- 4 files changed, 668 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mfd/stmfx.c
- create mode 100644 include/linux/mfd/stmfx.h
+ drivers/pinctrl/Kconfig         |  12 +
+ drivers/pinctrl/Makefile        |   1 +
+ drivers/pinctrl/pinctrl-stmfx.c | 821 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 834 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-stmfx.c
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f3a5f8d..8c41342 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1862,6 +1862,20 @@ config MFD_STM32_TIMERS
- 	  for PWM and IIO Timer. This driver allow to share the
- 	  registers between the others drivers.
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index e86752b..bbd3908 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -244,6 +244,18 @@ config PINCTRL_ST
+ 	select PINCONF
+ 	select GPIOLIB_IRQCHIP
  
-+config MFD_STMFX
-+	tristate "Support for STMicroelectronics Multi-Function eXpander (STMFX)"
-+	depends on I2C
-+	depends on OF || COMPILE_TEST
-+	select MFD_CORE
-+	select REGMAP_I2C
++config PINCTRL_STMFX
++	tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
++	select GENERIC_PINCONF
++	select GPIOLIB_IRQCHIP
++	select MFD_STMFX
 +	help
-+	  Support for the STMicroelectronics Multi-Function eXpander.
++	  Driver for STMicroelectronics Multi-Function eXpander (STMFX)
++	  GPIO expander.
++	  This provides a GPIO interface supporting inputs and outputs,
++	  and configuring push-pull, open-drain, and can also be used as
++	  interrupt-controller.
 +
-+	  This driver provides common support for accessing the device,
-+	  additional drivers must be enabled in order to use the functionality
-+	  of the device.
-+
-+
- menu "Multimedia Capabilities Port drivers"
- 	depends on ARCH_SA1100
- 
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 5856a94..282323b 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -240,4 +240,4 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
- obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
- obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
- obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
--
-+obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
-diff --git a/drivers/mfd/stmfx.c b/drivers/mfd/stmfx.c
+ config PINCTRL_U300
+ 	bool "U300 pin controller driver"
+ 	depends on ARCH_U300
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 46ef9bd..9abcaa59 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -38,6 +38,7 @@ obj-$(CONFIG_PINCTRL_LANTIQ)	+= pinctrl-lantiq.o
+ obj-$(CONFIG_PINCTRL_LPC18XX)	+= pinctrl-lpc18xx.o
+ obj-$(CONFIG_PINCTRL_TB10X)	+= pinctrl-tb10x.o
+ obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
++obj-$(CONFIG_PINCTRL_STMFX) 	+= pinctrl-stmfx.o
+ obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
+ obj-$(CONFIG_PINCTRL_INGENIC)	+= pinctrl-ingenic.o
+ obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
+diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
 new file mode 100644
-index 0000000..cfd4fca
+index 0000000..e253ed1
 --- /dev/null
-+++ b/drivers/mfd/stmfx.c
-@@ -0,0 +1,626 @@
++++ b/drivers/pinctrl/pinctrl-stmfx.c
+@@ -0,0 +1,821 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Driver for STMicroelectronics Multi-Function eXpander (STMFX) core
++ * Driver for STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander
 + *
 + * Copyright (C) 2018 STMicroelectronics
 + * Author(s): Amelie Delaunay <amelie.delaunay@st.com>.
 + */
-+#include <linux/bitfield.h>
-+#include <linux/i2c.h>
++#include <linux/gpio/driver.h>
 +#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/mfd/core.h>
 +#include <linux/mfd/stmfx.h>
 +#include <linux/module.h>
-+#include <linux/regulator/consumer.h>
++#include <linux/platform_device.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinmux.h>
 +
-+/* General */
-+#define STMFX_REG_CHIP_ID		0x00 /* R */
-+#define STMFX_REG_FW_VERSION_MSB	0x01 /* R */
-+#define STMFX_REG_FW_VERSION_LSB	0x02 /* R */
-+#define STMFX_REG_SYS_CTRL		0x40 /* RW */
-+/* IRQ output management */
-+#define STMFX_REG_IRQ_OUT_PIN		0x41 /* RW */
-+#define STMFX_REG_IRQ_SRC_EN		0x42 /* RW */
-+#define STMFX_REG_IRQ_PENDING		0x08 /* R */
-+#define STMFX_REG_IRQ_ACK		0x44 /* RW */
-+/* GPIO management */
-+#define STMFX_REG_IRQ_GPI_PENDING1	0x0C /* R */
-+#define STMFX_REG_IRQ_GPI_PENDING2	0x0D /* R */
-+#define STMFX_REG_IRQ_GPI_PENDING3	0x0E /* R */
-+#define STMFX_REG_GPIO_STATE1		0x10 /* R */
-+#define STMFX_REG_GPIO_STATE2		0x11 /* R */
-+#define STMFX_REG_GPIO_STATE3		0x12 /* R */
-+#define STMFX_REG_IRQ_GPI_SRC1		0x48 /* RW */
-+#define STMFX_REG_IRQ_GPI_SRC2		0x49 /* RW */
-+#define STMFX_REG_IRQ_GPI_SRC3		0x4A /* RW */
-+#define STMFX_REG_GPO_SET1		0x6C /* RW */
-+#define STMFX_REG_GPO_SET2		0x6D /* RW */
-+#define STMFX_REG_GPO_SET3		0x6E /* RW */
-+#define STMFX_REG_GPO_CLR1		0x70 /* RW */
-+#define STMFX_REG_GPO_CLR2		0x71 /* RW */
-+#define STMFX_REG_GPO_CLR3		0x72 /* RW */
++#include "core.h"
++#include "pinctrl-utils.h"
 +
-+#define STMFX_REG_MAX			0xB0
++/* GPIOs expander */
++/* GPIO_STATE1 0x10, GPIO_STATE2 0x11, GPIO_STATE3 0x12 */
++#define STMFX_REG_GPIO_STATE		0x10 /* R */
++/* GPIO_DIR1 0x60, GPIO_DIR2 0x61, GPIO_DIR3 0x63 */
++#define STMFX_REG_GPIO_DIR		0x60 /* RW */
++/* GPIO_TYPE1 0x64, GPIO_TYPE2 0x65, GPIO_TYPE3 0x66 */
++#define STMFX_REG_GPIO_TYPE		0x64 /* RW */
++/* GPIO_PUPD1 0x68, GPIO_PUPD2 0x69, GPIO_PUPD3 0x6A */
++#define STMFX_REG_GPIO_PUPD		0x68 /* RW */
++/* GPO_SET1 0x6C, GPO_SET2 0x6D, GPO_SET3 0x6E */
++#define STMFX_REG_GPO_SET		0x6C /* RW */
++/* GPO_CLR1 0x70, GPO_CLR2 0x71, GPO_CLR3 0x72 */
++#define STMFX_REG_GPO_CLR		0x70 /* RW */
++/* IRQ_GPI_SRC1 0x48, IRQ_GPI_SRC2 0x49, IRQ_GPI_SRC3 0x4A */
++#define STMFX_REG_IRQ_GPI_SRC		0x48 /* RW */
++/* IRQ_GPI_EVT1 0x4C, IRQ_GPI_EVT2 0x4D, IRQ_GPI_EVT3 0x4E */
++#define STMFX_REG_IRQ_GPI_EVT		0x4C /* RW */
++/* IRQ_GPI_TYPE1 0x50, IRQ_GPI_TYPE2 0x51, IRQ_GPI_TYPE3 0x52 */
++#define STMFX_REG_IRQ_GPI_TYPE		0x50 /* RW */
++/* IRQ_GPI_PENDING1 0x0C, IRQ_GPI_PENDING2 0x0D, IRQ_GPI_PENDING3 0x0E*/
++#define STMFX_REG_IRQ_GPI_PENDING	0x0C /* R */
++/* IRQ_GPI_ACK1 0x54, IRQ_GPI_ACK2 0x55, IRQ_GPI_ACK3 0x56 */
++#define STMFX_REG_IRQ_GPI_ACK		0x54 /* RW */
 +
-+/* MFX boot time is around 10ms, so after reset, we have to wait this delay */
-+#define STMFX_BOOT_TIME_MS 10
++/* STMFX_REG_IRQ_PENDING bitfields */
++#define STMFX_REG_IRQ_PENDING_GPIO	BIT(0)
 +
-+/* STMFX_REG_CHIP_ID bitfields */
-+#define STMFX_REG_CHIP_ID_MASK		GENMASK(7, 0)
++#define NR_GPIO_REGS			3
++#define NR_GPIOS_PER_REG		8
++#define get_reg(offset)			((offset) / NR_GPIOS_PER_REG)
++#define get_shift(offset)		((offset) % NR_GPIOS_PER_REG)
++#define get_mask(offset)		(BIT(get_shift(offset)))
 +
-+/* STMFX_REG_SYS_CTRL bitfields */
-+#define STMFX_REG_SYS_CTRL_GPIO_EN	BIT(0)
-+#define STMFX_REG_SYS_CTRL_TS_EN	BIT(1)
-+#define STMFX_REG_SYS_CTRL_IDD_EN	BIT(2)
-+#define STMFX_REG_SYS_CTRL_ALTGPIO_EN	BIT(3)
-+#define STMFX_REG_SYS_CTRL_SWRST	BIT(7)
-+
-+/* STMFX_REG_IRQ_OUT_PIN bitfields */
-+#define STMFX_REG_IRQ_OUT_PIN_TYPE	BIT(0) /* 0-OD 1-PP */
-+#define STMFX_REG_IRQ_OUT_PIN_POL	BIT(1) /* 0-active LOW 1-active HIGH */
-+
-+/* STMFX_REG_IRQ_(SRC_EN/PENDING/ACK) bit shift */
-+enum stmfx_irqs {
-+	STMFX_REG_IRQ_SRC_EN_GPIO = 0,
-+	STMFX_REG_IRQ_SRC_EN_IDD,
-+	STMFX_REG_IRQ_SRC_EN_ERROR,
-+	STMFX_REG_IRQ_SRC_EN_TS_DET,
-+	STMFX_REG_IRQ_SRC_EN_TS_NE,
-+	STMFX_REG_IRQ_SRC_EN_TS_TH,
-+	STMFX_REG_IRQ_SRC_EN_TS_FULL,
-+	STMFX_REG_IRQ_SRC_EN_TS_OVF,
-+	STMFX_REG_IRQ_SRC_MAX,
++/*
++ * STMFX pinctrl can have up to 24 pins if STMFX other functions are not used.
++ * Pins availability is managed thanks to gpio-ranges property.
++ */
++static const struct pinctrl_pin_desc stmfx_pins[] = {
++	PINCTRL_PIN(0, "gpio0"),
++	PINCTRL_PIN(1, "gpio1"),
++	PINCTRL_PIN(2, "gpio2"),
++	PINCTRL_PIN(3, "gpio3"),
++	PINCTRL_PIN(4, "gpio4"),
++	PINCTRL_PIN(5, "gpio5"),
++	PINCTRL_PIN(6, "gpio6"),
++	PINCTRL_PIN(7, "gpio7"),
++	PINCTRL_PIN(8, "gpio8"),
++	PINCTRL_PIN(9, "gpio9"),
++	PINCTRL_PIN(10, "gpio10"),
++	PINCTRL_PIN(11, "gpio11"),
++	PINCTRL_PIN(12, "gpio12"),
++	PINCTRL_PIN(13, "gpio13"),
++	PINCTRL_PIN(14, "gpio14"),
++	PINCTRL_PIN(15, "gpio15"),
++	PINCTRL_PIN(16, "agpio0"),
++	PINCTRL_PIN(17, "agpio1"),
++	PINCTRL_PIN(18, "agpio2"),
++	PINCTRL_PIN(19, "agpio3"),
++	PINCTRL_PIN(20, "agpio4"),
++	PINCTRL_PIN(21, "agpio5"),
++	PINCTRL_PIN(22, "agpio6"),
++	PINCTRL_PIN(23, "agpio7"),
 +};
 +
-+/**
-+ * struct stmfx_ddata - STMFX MFD private structure
-+ * @stmfx:		state holder with device for logs and register map
-+ * @vdd:		STMFX power supply
-+ * @irq_domain:		IRQ domain
-+ * @lock:		IRQ bus lock
-+ * @irq_src:		cache of IRQ_SRC_EN register for bus_lock
-+ * @bkp_sysctrl:	backup of SYS_CTRL register for suspend/resume
-+ * @bkp_irqoutpin:	backup of IRQ_OUT_PIN register for suspend/resume
-+ */
-+struct stmfx_ddata {
++struct stmfx_pinctrl {
++	struct device *dev;
 +	struct stmfx *stmfx;
-+	struct regulator *vdd;
-+	struct irq_domain *irq_domain;
++	struct pinctrl_dev *pctl_dev;
++	struct pinctrl_desc pctl_desc;
++	struct gpio_chip gpio_chip;
++	struct irq_chip irq_chip;
 +	struct mutex lock; /* IRQ bus lock */
-+	u8 irq_src;
++	unsigned long gpio_valid_mask;
++	/* Cache of IRQ_GPI_* registers for bus_lock */
++	u8 irq_gpi_src[NR_GPIO_REGS];
++	u8 irq_gpi_type[NR_GPIO_REGS];
++	u8 irq_gpi_evt[NR_GPIO_REGS];
++	u8 irq_toggle_edge[NR_GPIO_REGS];
 +#ifdef CONFIG_PM
-+	u8 bkp_sysctrl;
-+	u8 bkp_irqoutpin;
++	/* Backup of GPIO_* registers for suspend/resume */
++	u8 bkp_gpio_state[NR_GPIO_REGS];
++	u8 bkp_gpio_dir[NR_GPIO_REGS];
++	u8 bkp_gpio_type[NR_GPIO_REGS];
++	u8 bkp_gpio_pupd[NR_GPIO_REGS];
 +#endif
 +};
 +
-+static u8 stmfx_func_to_mask(u32 func)
++static int stmfx_gpio_get(struct gpio_chip *gc, unsigned int offset)
 +{
-+	u8 mask = 0;
-+
-+	if (func & STMFX_FUNC_GPIO)
-+		mask |= STMFX_REG_SYS_CTRL_GPIO_EN;
-+
-+	if ((func & STMFX_FUNC_ALTGPIO_LOW) || (func & STMFX_FUNC_ALTGPIO_HIGH))
-+		mask |= STMFX_REG_SYS_CTRL_ALTGPIO_EN;
-+
-+	if (func & STMFX_FUNC_TS)
-+		mask |= STMFX_REG_SYS_CTRL_TS_EN;
-+
-+	if (func & STMFX_FUNC_IDD)
-+		mask |= STMFX_REG_SYS_CTRL_IDD_EN;
-+
-+	return mask;
-+}
-+
-+int stmfx_function_enable(struct stmfx *stmfx, u32 func)
-+{
-+	u32 sys_ctrl;
-+	u8 mask;
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
++	u32 reg = STMFX_REG_GPIO_STATE + get_reg(offset);
++	u32 mask = get_mask(offset);
++	u32 value;
 +	int ret;
 +
-+	ret = regmap_read(stmfx->map, STMFX_REG_SYS_CTRL, &sys_ctrl);
++	ret = regmap_read(pctl->stmfx->map, reg, &value);
++
++	return ret ? ret : !!(value & mask);
++}
++
++static void stmfx_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
++{
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
++	u32 reg = value ? STMFX_REG_GPO_SET : STMFX_REG_GPO_CLR;
++	u32 mask = get_mask(offset);
++
++	regmap_write_bits(pctl->stmfx->map, reg + get_reg(offset),
++			  mask, mask);
++}
++
++static int stmfx_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
++{
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
++	u32 reg = STMFX_REG_GPIO_DIR + get_reg(offset);
++	u32 mask = get_mask(offset);
++	u32 val;
++	int ret;
++
++	ret = regmap_read(pctl->stmfx->map, reg, &val);
++	/*
++	 * On stmfx, gpio pins direction is (0)input, (1)output.
++	 * .get_direction returns 0=out, 1=in
++	 */
++
++	return ret ? ret : !(val & mask);
++}
++
++static int stmfx_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
++{
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
++	u32 reg = STMFX_REG_GPIO_DIR + get_reg(offset);
++	u32 mask = get_mask(offset);
++
++	return regmap_write_bits(pctl->stmfx->map, reg, mask, 0);
++}
++
++static int stmfx_gpio_direction_output(struct gpio_chip *gc,
++				       unsigned int offset, int value)
++{
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
++	u32 reg = STMFX_REG_GPIO_DIR + get_reg(offset);
++	u32 mask = get_mask(offset);
++
++	stmfx_gpio_set(gc, offset, value);
++
++	return regmap_write_bits(pctl->stmfx->map, reg, mask, mask);
++}
++
++static int stmfx_pinconf_get_pupd(struct stmfx_pinctrl *pctl,
++				  unsigned int offset)
++{
++	u32 reg = STMFX_REG_GPIO_PUPD + get_reg(offset);
++	u32 pupd, mask = get_mask(offset);
++	int ret;
++
++	ret = regmap_read(pctl->stmfx->map, reg, &pupd);
 +	if (ret)
 +		return ret;
 +
-+	/*
-+	 * IDD and TS have priority in STMFX FW, so if IDD and TS are enabled,
-+	 * ALTGPIO function is disabled by STMFX FW. If IDD or TS is enabled,
-+	 * the number of aGPIO available decreases. To avoid GPIO management
-+	 * disturbance, abort IDD or TS function enable in this case.
-+	 */
-+	if (((func & STMFX_FUNC_IDD) || (func & STMFX_FUNC_TS)) &&
-+	    (sys_ctrl & STMFX_REG_SYS_CTRL_ALTGPIO_EN)) {
-+		dev_err(stmfx->dev, "ALTGPIO function already enabled\n");
-+		return -EBUSY;
-+	}
-+
-+	/* If TS is enabled, aGPIO[3:0] cannot be used */
-+	if ((func & STMFX_FUNC_ALTGPIO_LOW) &&
-+	    (sys_ctrl & STMFX_REG_SYS_CTRL_TS_EN)) {
-+		dev_err(stmfx->dev, "TS in use, aGPIO[3:0] unavailable\n");
-+		return -EBUSY;
-+	}
-+
-+	/* If IDD is enabled, aGPIO[7:4] cannot be used */
-+	if ((func & STMFX_FUNC_ALTGPIO_HIGH) &&
-+	    (sys_ctrl & STMFX_REG_SYS_CTRL_IDD_EN)) {
-+		dev_err(stmfx->dev, "IDD in use, aGPIO[7:4] unavailable\n");
-+		return -EBUSY;
-+	}
-+
-+	mask = stmfx_func_to_mask(func);
-+
-+	return regmap_update_bits(stmfx->map, STMFX_REG_SYS_CTRL, mask, mask);
-+}
-+EXPORT_SYMBOL_GPL(stmfx_function_enable);
-+
-+int stmfx_function_disable(struct stmfx *stmfx, u32 func)
-+{
-+	u8 mask = stmfx_func_to_mask(func);
-+
-+	return regmap_update_bits(stmfx->map, STMFX_REG_SYS_CTRL, mask, 0);
-+}
-+EXPORT_SYMBOL_GPL(stmfx_function_disable);
-+
-+static void stmfx_irq_bus_lock(struct irq_data *data)
-+{
-+	struct stmfx_ddata *ddata = irq_data_get_irq_chip_data(data);
-+
-+	mutex_lock(&ddata->lock);
++	return !!(pupd & mask);
 +}
 +
-+static void stmfx_irq_bus_sync_unlock(struct irq_data *data)
++static int stmfx_pinconf_set_pupd(struct stmfx_pinctrl *pctl,
++				  unsigned int offset, u32 pupd)
 +{
-+	struct stmfx_ddata *ddata = irq_data_get_irq_chip_data(data);
++	u32 reg = STMFX_REG_GPIO_PUPD + get_reg(offset);
++	u32 mask = get_mask(offset);
 +
-+	regmap_write(ddata->stmfx->map, STMFX_REG_IRQ_SRC_EN, ddata->irq_src);
-+
-+	mutex_unlock(&ddata->lock);
++	return regmap_write_bits(pctl->stmfx->map, reg, mask, pupd ? mask : 0);
 +}
 +
-+static void stmfx_irq_mask(struct irq_data *data)
++static int stmfx_pinconf_get_type(struct stmfx_pinctrl *pctl,
++				  unsigned int offset)
 +{
-+	struct stmfx_ddata *ddata = irq_data_get_irq_chip_data(data);
-+
-+	ddata->irq_src &= ~BIT(data->hwirq % 8);
-+}
-+
-+static void stmfx_irq_unmask(struct irq_data *data)
-+{
-+	struct stmfx_ddata *ddata = irq_data_get_irq_chip_data(data);
-+
-+	ddata->irq_src |= BIT(data->hwirq % 8);
-+}
-+
-+static struct irq_chip stmfx_irq_chip = {
-+	.name			= "stmfx-core",
-+	.irq_bus_lock		= stmfx_irq_bus_lock,
-+	.irq_bus_sync_unlock	= stmfx_irq_bus_sync_unlock,
-+	.irq_mask		= stmfx_irq_mask,
-+	.irq_unmask		= stmfx_irq_unmask,
-+};
-+
-+static irqreturn_t stmfx_irq_handler(int irq, void *data)
-+{
-+	struct stmfx_ddata *ddata = data;
-+	unsigned long n, pending;
-+	u32 ack;
++	u32 reg = STMFX_REG_GPIO_TYPE + get_reg(offset);
++	u32 type, mask = get_mask(offset);
 +	int ret;
 +
-+	ret = regmap_read(ddata->stmfx->map, STMFX_REG_IRQ_PENDING,
-+			  (u32 *)&pending);
++	ret = regmap_read(pctl->stmfx->map, reg, &type);
++	if (ret)
++		return ret;
++
++	return !!(type & mask);
++}
++
++static int stmfx_pinconf_set_type(struct stmfx_pinctrl *pctl,
++				  unsigned int offset, u32 type)
++{
++	u32 reg = STMFX_REG_GPIO_TYPE + get_reg(offset);
++	u32 mask = get_mask(offset);
++
++	return regmap_write_bits(pctl->stmfx->map, reg, mask, type ? mask : 0);
++}
++
++static int stmfx_pinconf_get(struct pinctrl_dev *pctldev,
++			     unsigned int pin, unsigned long *config)
++{
++	struct stmfx_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
++	u32 param = pinconf_to_config_param(*config);
++	struct pinctrl_gpio_range *range;
++	u32 dir, type, pupd;
++	u32 arg = 0;
++	int ret;
++
++	range = pinctrl_find_gpio_range_from_pin_nolock(pctldev, pin);
++	if (!range)
++		return -EINVAL;
++
++	dir = stmfx_gpio_get_direction(&pctl->gpio_chip, pin);
++	if (dir < 0)
++		return dir;
++	type = stmfx_pinconf_get_type(pctl, pin);
++	if (type < 0)
++		return type;
++	pupd = stmfx_pinconf_get_pupd(pctl, pin);
++	if (pupd < 0)
++		return pupd;
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		if ((!dir && (!type || !pupd)) || (dir && !type))
++			arg = 1;
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		if (dir && type && !pupd)
++			arg = 1;
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		if (type && pupd)
++			arg = 1;
++		break;
++	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++		if ((!dir && type) || (dir && !type))
++			arg = 1;
++		break;
++	case PIN_CONFIG_DRIVE_PUSH_PULL:
++		if ((!dir && !type) || (dir && type))
++			arg = 1;
++		break;
++	case PIN_CONFIG_OUTPUT:
++		if (dir)
++			return -EINVAL;
++
++		ret = stmfx_gpio_get(&pctl->gpio_chip, pin);
++		if (ret < 0)
++			return ret;
++
++		arg = ret;
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	*config = pinconf_to_config_packed(param, arg);
++
++	return 0;
++}
++
++static int stmfx_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
++			     unsigned long *configs, unsigned int num_configs)
++{
++	struct stmfx_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
++	struct pinctrl_gpio_range *range;
++	enum pin_config_param param;
++	u32 arg;
++	int dir, i, ret;
++
++	range = pinctrl_find_gpio_range_from_pin_nolock(pctldev, pin);
++	if (!range) {
++		dev_err(pctldev->dev, "pin %d is not available\n", pin);
++		return -EINVAL;
++	}
++
++	dir = stmfx_gpio_get_direction(&pctl->gpio_chip, pin);
++	if (dir < 0)
++		return dir;
++
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_PULL_PIN_DEFAULT:
++		case PIN_CONFIG_BIAS_DISABLE:
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			ret = stmfx_pinconf_set_pupd(pctl, pin, 0);
++			if (ret)
++				return ret;
++			break;
++		case PIN_CONFIG_BIAS_PULL_UP:
++			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
++			if (ret)
++				return ret;
++			break;
++		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++			if (!dir)
++				ret = stmfx_pinconf_set_type(pctl, pin, 1);
++			else
++				ret = stmfx_pinconf_set_type(pctl, pin, 0);
++			if (ret)
++				return ret;
++			break;
++		case PIN_CONFIG_DRIVE_PUSH_PULL:
++			if (!dir)
++				ret = stmfx_pinconf_set_type(pctl, pin, 0);
++			else
++				ret = stmfx_pinconf_set_type(pctl, pin, 1);
++			if (ret)
++				return ret;
++			break;
++		case PIN_CONFIG_OUTPUT:
++			ret = stmfx_gpio_direction_output(&pctl->gpio_chip,
++							  pin, arg);
++			if (ret)
++				return ret;
++			break;
++		default:
++			return -ENOTSUPP;
++		}
++	}
++
++	return 0;
++}
++
++static void stmfx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
++				   struct seq_file *s, unsigned int offset)
++{
++	struct stmfx_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
++	struct pinctrl_gpio_range *range;
++	int dir, type, pupd, val;
++
++	range = pinctrl_find_gpio_range_from_pin_nolock(pctldev, offset);
++	if (!range)
++		return;
++
++	dir = stmfx_gpio_get_direction(&pctl->gpio_chip, offset);
++	if (dir < 0)
++		return;
++	type = stmfx_pinconf_get_type(pctl, offset);
++	if (type < 0)
++		return;
++	pupd = stmfx_pinconf_get_pupd(pctl, offset);
++	if (pupd < 0)
++		return;
++	val = stmfx_gpio_get(&pctl->gpio_chip, offset);
++	if (val < 0)
++		return;
++
++	if (!dir) {
++		seq_printf(s, "output %s ", val ? "high" : "low");
++		if (type)
++			seq_printf(s, "open drain %s internal pull-up ",
++				   pupd ? "with" : "without");
++		else
++			seq_puts(s, "push pull no pull ");
++	} else {
++		seq_printf(s, "input %s ", val ? "high" : "low");
++		if (type)
++			seq_printf(s, "with internal pull-%s ",
++				   pupd ? "up" : "down");
++		else
++			seq_printf(s, "%s ", pupd ? "floating" : "analog");
++	}
++}
++
++static const struct pinconf_ops stmfx_pinconf_ops = {
++	.pin_config_get		= stmfx_pinconf_get,
++	.pin_config_set		= stmfx_pinconf_set,
++	.pin_config_dbg_show	= stmfx_pinconf_dbg_show,
++};
++
++static int stmfx_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	return 0;
++}
++
++static const char *stmfx_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
++						unsigned int selector)
++{
++	return NULL;
++}
++
++static int stmfx_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
++					unsigned int selector,
++					const unsigned int **pins,
++					unsigned int *num_pins)
++{
++	return -ENOTSUPP;
++}
++
++static const struct pinctrl_ops stmfx_pinctrl_ops = {
++	.get_groups_count = stmfx_pinctrl_get_groups_count,
++	.get_group_name = stmfx_pinctrl_get_group_name,
++	.get_group_pins = stmfx_pinctrl_get_group_pins,
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
++	.dt_free_map = pinctrl_utils_free_map,
++};
++
++static void stmfx_pinctrl_irq_mask(struct irq_data *data)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
++	u32 reg = get_reg(data->hwirq);
++	u32 mask = get_mask(data->hwirq);
++
++	pctl->irq_gpi_src[reg] &= ~mask;
++}
++
++static void stmfx_pinctrl_irq_unmask(struct irq_data *data)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
++	u32 reg = get_reg(data->hwirq);
++	u32 mask = get_mask(data->hwirq);
++
++	pctl->irq_gpi_src[reg] |= mask;
++}
++
++static int stmfx_pinctrl_irq_set_type(struct irq_data *data, unsigned int type)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
++	u32 reg = get_reg(data->hwirq);
++	u32 mask = get_mask(data->hwirq);
++
++	if (type & IRQ_TYPE_NONE)
++		return -EINVAL;
++
++	if (type & IRQ_TYPE_EDGE_BOTH) {
++		pctl->irq_gpi_evt[reg] |= mask;
++		irq_set_handler_locked(data, handle_edge_irq);
++	} else {
++		pctl->irq_gpi_evt[reg] &= ~mask;
++		irq_set_handler_locked(data, handle_level_irq);
++	}
++
++	if ((type & IRQ_TYPE_EDGE_RISING) || (type & IRQ_TYPE_LEVEL_HIGH))
++		pctl->irq_gpi_type[reg] |= mask;
++	else
++		pctl->irq_gpi_type[reg] &= ~mask;
++
++	/*
++	 * In case of (type & IRQ_TYPE_EDGE_BOTH), we need to know current
++	 * GPIO value to set the right edge trigger. But in atomic context
++	 * here we can't access registers over I2C. That's why (type &
++	 * IRQ_TYPE_EDGE_BOTH) will be managed in .irq_sync_unlock.
++	 */
++
++	if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH)
++		pctl->irq_toggle_edge[reg] |= mask;
++	else
++		pctl->irq_toggle_edge[reg] &= mask;
++
++	return 0;
++}
++
++static void stmfx_pinctrl_irq_bus_lock(struct irq_data *data)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
++
++	mutex_lock(&pctl->lock);
++}
++
++static void stmfx_pinctrl_irq_bus_sync_unlock(struct irq_data *data)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
++	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
++	u32 reg = get_reg(data->hwirq);
++	u32 mask = get_mask(data->hwirq);
++
++	/*
++	 * In case of IRQ_TYPE_EDGE_BOTH), read the current GPIO value
++	 * (this couldn't be done in .irq_set_type because of atomic context)
++	 * to set the right irq trigger type.
++	 */
++	if (pctl->irq_toggle_edge[reg] & mask) {
++		if (stmfx_gpio_get(gpio_chip, data->hwirq))
++			pctl->irq_gpi_type[reg] &= ~mask;
++		else
++			pctl->irq_gpi_type[reg] |= mask;
++	}
++
++	regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_EVT,
++			  pctl->irq_gpi_evt, NR_GPIO_REGS);
++	regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_TYPE,
++			  pctl->irq_gpi_type, NR_GPIO_REGS);
++	regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_SRC,
++			  pctl->irq_gpi_src, NR_GPIO_REGS);
++
++	mutex_unlock(&pctl->lock);
++}
++
++static void stmfx_pinctrl_irq_toggle_trigger(struct stmfx_pinctrl *pctl,
++					     unsigned int offset)
++{
++	u32 reg = get_reg(offset);
++	u32 mask = get_mask(offset);
++	int val;
++
++	if (!(pctl->irq_toggle_edge[reg] & mask))
++		return;
++
++	val = stmfx_gpio_get(&pctl->gpio_chip, offset);
++	if (val < 0)
++		return;
++
++	if (val) {
++		pctl->irq_gpi_type[reg] &= mask;
++		regmap_write_bits(pctl->stmfx->map,
++				  STMFX_REG_IRQ_GPI_TYPE + reg,
++				  mask, 0);
++
++	} else {
++		pctl->irq_gpi_type[reg] |= mask;
++		regmap_write_bits(pctl->stmfx->map,
++				  STMFX_REG_IRQ_GPI_TYPE + reg,
++				  mask, mask);
++	}
++}
++
++static irqreturn_t stmfx_pinctrl_irq_thread_fn(int irq, void *dev_id)
++{
++	struct stmfx_pinctrl *pctl = (struct stmfx_pinctrl *)dev_id;
++	struct gpio_chip *gc = &pctl->gpio_chip;
++	u8 pending[NR_GPIO_REGS];
++	unsigned long n, status;
++	int ret;
++
++	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_IRQ_GPI_PENDING,
++			       &pending, NR_GPIO_REGS);
 +	if (ret)
 +		return IRQ_NONE;
 +
-+	/*
-+	 * There is no ACK for GPIO, MFX_REG_IRQ_PENDING_GPIO is a logical OR
-+	 * of MFX_REG_IRQ_GPI _PENDING1/_PENDING2/_PENDING3
-+	 */
-+	ack = pending & ~BIT(STMFX_REG_IRQ_SRC_EN_GPIO);
-+	if (ack) {
-+		ret = regmap_write(ddata->stmfx->map, STMFX_REG_IRQ_ACK, ack);
-+		if (ret)
-+			return IRQ_NONE;
-+	}
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_ACK,
++				pending, NR_GPIO_REGS);
++	if (ret)
++		return IRQ_NONE;
 +
-+	for_each_set_bit(n, &pending, STMFX_REG_IRQ_SRC_MAX)
-+		handle_nested_irq(irq_find_mapping(ddata->irq_domain, n));
++	status = *(unsigned long *)pending;
++	for_each_set_bit(n, &status, gc->ngpio) {
++		handle_nested_irq(irq_find_mapping(gc->irq.domain, n));
++		stmfx_pinctrl_irq_toggle_trigger(pctl, n);
++	}
 +
 +	return IRQ_HANDLED;
 +}
 +
-+static int stmfx_irq_map(struct irq_domain *d, unsigned int virq,
-+			 irq_hw_number_t hwirq)
++static int stmfx_pinctrl_gpio_function_enable(struct stmfx_pinctrl *pctl)
 +{
-+	irq_set_chip_data(virq, d->host_data);
-+	irq_set_chip_and_handler(virq, &stmfx_irq_chip, handle_simple_irq);
-+	irq_set_nested_thread(virq, 1);
-+	irq_set_noprobe(virq);
++	struct pinctrl_gpio_range *gpio_range;
++	struct pinctrl_dev *pctl_dev = pctl->pctl_dev;
++	u32 func = STMFX_FUNC_GPIO;
 +
-+	return 0;
++	pctl->gpio_valid_mask = GENMASK(15, 0);
++
++	gpio_range = pinctrl_find_gpio_range_from_pin(pctl_dev, 16);
++	if (gpio_range) {
++		func |= STMFX_FUNC_ALTGPIO_LOW;
++		pctl->gpio_valid_mask |= GENMASK(19, 16);
++	}
++
++	gpio_range = pinctrl_find_gpio_range_from_pin(pctl_dev, 20);
++	if (gpio_range) {
++		func |= STMFX_FUNC_ALTGPIO_HIGH;
++		pctl->gpio_valid_mask |= GENMASK(23, 20);
++	}
++
++	return stmfx_function_enable(pctl->stmfx, func);
 +}
 +
-+static void stmfx_irq_unmap(struct irq_domain *d, unsigned int virq)
++static int stmfx_pinctrl_probe(struct platform_device *pdev)
 +{
-+	irq_set_chip_and_handler(virq, NULL, NULL);
-+	irq_set_chip_data(virq, NULL);
-+}
++	struct stmfx *stmfx = dev_get_platdata(&pdev->dev);
++	struct device_node *np = pdev->dev.of_node;
++	struct stmfx_pinctrl *pctl;
++	u32 n;
++	int irq, ret;
 +
-+static const struct irq_domain_ops stmfx_irq_ops = {
-+	.map	= stmfx_irq_map,
-+	.unmap	= stmfx_irq_unmap,
-+};
++	pctl = devm_kzalloc(stmfx->dev, sizeof(*pctl), GFP_KERNEL);
++	if (!pctl)
++		return -ENOMEM;
 +
-+static void stmfx_irq_exit(struct stmfx_ddata *ddata)
-+{
-+	int hwirq;
++	platform_set_drvdata(pdev, pctl);
 +
-+	for (hwirq = 0; hwirq < STMFX_REG_IRQ_SRC_MAX; hwirq++)
-+		irq_dispose_mapping(irq_find_mapping(ddata->irq_domain, hwirq));
-+	irq_domain_remove(ddata->irq_domain);
-+}
++	pctl->dev = &pdev->dev;
++	pctl->stmfx = stmfx;
 +
-+static int stmfx_irq_init(struct stmfx_ddata *ddata, int irq)
-+{
-+	struct device *dev = ddata->stmfx->dev;
-+	u32 irqoutpin = 0, irqtrigger;
-+	int ret;
-+
-+	ddata->irq_domain = irq_domain_add_simple(dev->of_node,
-+						  STMFX_REG_IRQ_SRC_MAX, 0,
-+						  &stmfx_irq_ops, ddata);
-+	if (!ddata->irq_domain) {
-+		dev_err(dev, "failed to create irq domain\n");
++	if (!of_find_property(np, "gpio-ranges", NULL)) {
++		dev_err(pctl->dev, "missing required gpio-ranges property\n");
 +		return -EINVAL;
 +	}
 +
-+	if (!of_property_read_bool(dev->of_node, "drive-open-drain"))
-+		irqoutpin |= STMFX_REG_IRQ_OUT_PIN_TYPE;
++	irq = platform_get_irq(pdev, 0);
++	if (irq <= 0) {
++		dev_err(pctl->dev, "failed to get irq\n");
++		return -ENXIO;
++	}
 +
-+	irqtrigger = irq_get_trigger_type(irq);
-+	if ((irqtrigger & IRQ_TYPE_EDGE_RISING) ||
-+	    (irqtrigger & IRQ_TYPE_LEVEL_HIGH))
-+		irqoutpin |= STMFX_REG_IRQ_OUT_PIN_POL;
++	mutex_init(&pctl->lock);
 +
-+	ret = regmap_write(ddata->stmfx->map, STMFX_REG_IRQ_OUT_PIN, irqoutpin);
++	/* Register pin controller */
++	pctl->pctl_desc.name = "stmfx-pinctrl";
++	pctl->pctl_desc.pctlops = &stmfx_pinctrl_ops;
++	pctl->pctl_desc.confops = &stmfx_pinconf_ops;
++	pctl->pctl_desc.pins = stmfx_pins;
++	pctl->pctl_desc.npins = ARRAY_SIZE(stmfx_pins);
++	pctl->pctl_desc.owner = THIS_MODULE;
++
++	ret = devm_pinctrl_register_and_init(pctl->dev, &pctl->pctl_desc,
++					     pctl, &pctl->pctl_dev);
++	if (ret) {
++		dev_err(pctl->dev, "pinctrl registration failed\n");
++		return ret;
++	}
++
++	ret = pinctrl_enable(pctl->pctl_dev);
++	if (ret) {
++		dev_err(pctl->dev, "pinctrl enable failed\n");
++		return ret;
++	}
++
++	/* Register gpio controller */
++	pctl->gpio_chip.label = "stmfx-gpio";
++	pctl->gpio_chip.parent = pctl->dev;
++	pctl->gpio_chip.get_direction = stmfx_gpio_get_direction;
++	pctl->gpio_chip.direction_input = stmfx_gpio_direction_input;
++	pctl->gpio_chip.direction_output = stmfx_gpio_direction_output;
++	pctl->gpio_chip.get = stmfx_gpio_get;
++	pctl->gpio_chip.set = stmfx_gpio_set;
++	pctl->gpio_chip.set_config = gpiochip_generic_config;
++	pctl->gpio_chip.base = -1;
++	pctl->gpio_chip.ngpio = pctl->pctl_desc.npins;
++	pctl->gpio_chip.can_sleep = true;
++	pctl->gpio_chip.of_node = np;
++	pctl->gpio_chip.need_valid_mask = true;
++
++	ret = devm_gpiochip_add_data(pctl->dev, &pctl->gpio_chip, pctl);
++	if (ret) {
++		dev_err(pctl->dev, "gpio_chip registration failed\n");
++		return ret;
++	}
++
++	ret = stmfx_pinctrl_gpio_function_enable(pctl);
 +	if (ret)
 +		return ret;
 +
-+	ret = devm_request_threaded_irq(dev, irq, NULL, stmfx_irq_handler,
-+					irqtrigger | IRQF_ONESHOT,
-+					"stmfx", ddata);
-+	if (ret)
-+		stmfx_irq_exit(ddata);
++	pctl->irq_chip.name = dev_name(pctl->dev);
++	pctl->irq_chip.irq_mask = stmfx_pinctrl_irq_mask;
++	pctl->irq_chip.irq_unmask = stmfx_pinctrl_irq_unmask;
++	pctl->irq_chip.irq_set_type = stmfx_pinctrl_irq_set_type;
++	pctl->irq_chip.irq_bus_lock = stmfx_pinctrl_irq_bus_lock;
++	pctl->irq_chip.irq_bus_sync_unlock = stmfx_pinctrl_irq_bus_sync_unlock;
++	for_each_clear_bit(n, &pctl->gpio_valid_mask, pctl->gpio_chip.ngpio)
++		clear_bit(n, pctl->gpio_chip.valid_mask);
 +
-+	return ret;
-+}
-+
-+static int stmfx_chip_reset(struct stmfx_ddata *ddata)
-+{
-+	int ret;
-+
-+	ret = regmap_write(ddata->stmfx->map, STMFX_REG_SYS_CTRL,
-+			   STMFX_REG_SYS_CTRL_SWRST);
-+	if (ret)
++	ret = gpiochip_irqchip_add_nested(&pctl->gpio_chip, &pctl->irq_chip,
++					  0, handle_bad_irq, IRQ_TYPE_NONE);
++	if (ret) {
++		dev_err(pctl->dev, "cannot add irqchip to gpiochip\n");
 +		return ret;
-+
-+	msleep(STMFX_BOOT_TIME_MS);
-+
-+	return ret;
-+}
-+
-+static int stmfx_chip_init(struct stmfx_ddata *ddata, struct i2c_client *client)
-+{
-+	u32 id;
-+	u8 version[2];
-+	int ret;
-+
-+	ddata->vdd = devm_regulator_get_optional(&client->dev, "vdd");
-+	if (IS_ERR(ddata->vdd)) {
-+		ret = PTR_ERR(ddata->vdd);
-+		if (ret != -ENODEV) {
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(&client->dev,
-+					"no vdd regulator found:%d\n", ret);
-+			return ret;
-+		}
 +	}
 +
-+	if (!IS_ERR(ddata->vdd)) {
-+		ret = regulator_enable(ddata->vdd);
-+		if (ret) {
-+			dev_err(&client->dev, "vdd enable failed: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	ret = regmap_read(ddata->stmfx->map, STMFX_REG_CHIP_ID, &id);
++	ret = devm_request_threaded_irq(pctl->dev, irq, NULL,
++					stmfx_pinctrl_irq_thread_fn,
++					IRQF_ONESHOT,
++					pctl->irq_chip.name, pctl);
 +	if (ret) {
-+		dev_err(&client->dev, "error reading chip id: %d\n", ret);
-+		goto err;
++		dev_err(pctl->dev, "cannot request irq%d\n", irq);
++		return ret;
 +	}
 +
-+	/*
-+	 * Check that ID is the complement of the I2C address:
-+	 * STMFX I2C address follows the 7-bit format (MSB), that's why
-+	 * client->addr is shifted.
-+	 *
-+	 * STMFX_I2C_ADDR|       STMFX         |        Linux
-+	 *   input pin   | I2C device address  | I2C device address
-+	 *---------------------------------------------------------
-+	 *       0       | b: 1000 010x h:0x84 |       0x42
-+	 *       1       | b: 1000 011x h:0x86 |       0x43
-+	 */
-+	if (FIELD_GET(STMFX_REG_CHIP_ID_MASK, ~id) != (client->addr << 1)) {
-+		dev_err(&client->dev, "unknown chip id: %#x\n", id);
-+		ret = -EINVAL;
-+		goto err;
-+	}
++	gpiochip_set_nested_irqchip(&pctl->gpio_chip, &pctl->irq_chip, irq);
 +
-+	ret = regmap_bulk_read(ddata->stmfx->map, STMFX_REG_FW_VERSION_MSB,
-+			       version, ARRAY_SIZE(version));
-+	if (ret) {
-+		dev_err(&client->dev, "error reading fw version: %d\n", ret);
-+		goto err;
-+	}
-+
-+	dev_info(&client->dev, "STMFX id: %#x, fw version: %x.%02x\n",
-+		 id, version[0], version[1]);
-+
-+	return stmfx_chip_reset(ddata);
-+
-+err:
-+	if (!IS_ERR(ddata->vdd))
-+		return regulator_disable(ddata->vdd);
-+
-+	return ret;
-+}
-+
-+static int stmfx_chip_exit(struct stmfx_ddata *ddata)
-+{
-+	regmap_write(ddata->stmfx->map, STMFX_REG_IRQ_SRC_EN, 0);
-+	regmap_write(ddata->stmfx->map, STMFX_REG_SYS_CTRL, 0);
-+
-+	if (!IS_ERR(ddata->vdd))
-+		return regulator_disable(ddata->vdd);
++	dev_info(pctl->dev,
++		 "%ld GPIOs available\n", hweight_long(pctl->gpio_valid_mask));
 +
 +	return 0;
 +}
 +
-+static const struct resource stmfx_pinctrl_resources[] = {
-+	DEFINE_RES_IRQ(STMFX_REG_IRQ_SRC_EN_GPIO),
-+};
-+
-+static struct mfd_cell stmfx_cells[] = {
-+	{
-+		.of_compatible = "st,stmfx-0300-pinctrl",
-+		.name = "stmfx-pinctrl",
-+		.resources = stmfx_pinctrl_resources,
-+		.num_resources = ARRAY_SIZE(stmfx_pinctrl_resources),
-+	}
-+};
-+
-+static bool stmfx_reg_volatile(struct device *dev, unsigned int reg)
++static int stmfx_pinctrl_remove(struct platform_device *pdev)
 +{
-+	switch (reg) {
-+	case STMFX_REG_SYS_CTRL:
-+	case STMFX_REG_IRQ_SRC_EN:
-+	case STMFX_REG_IRQ_PENDING:
-+	case STMFX_REG_IRQ_GPI_PENDING1:
-+	case STMFX_REG_IRQ_GPI_PENDING2:
-+	case STMFX_REG_IRQ_GPI_PENDING3:
-+	case STMFX_REG_GPIO_STATE1:
-+	case STMFX_REG_GPIO_STATE2:
-+	case STMFX_REG_GPIO_STATE3:
-+	case STMFX_REG_IRQ_GPI_SRC1:
-+	case STMFX_REG_IRQ_GPI_SRC2:
-+	case STMFX_REG_IRQ_GPI_SRC3:
-+	case STMFX_REG_GPO_SET1:
-+	case STMFX_REG_GPO_SET2:
-+	case STMFX_REG_GPO_SET3:
-+	case STMFX_REG_GPO_CLR1:
-+	case STMFX_REG_GPO_CLR2:
-+	case STMFX_REG_GPO_CLR3:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
++	struct stmfx *stmfx = dev_get_platdata(&pdev->dev);
 +
-+static bool stmfx_reg_writeable(struct device *dev, unsigned int reg)
-+{
-+	return (reg >= STMFX_REG_SYS_CTRL);
-+}
-+
-+static const struct regmap_config stmfx_regmap_config = {
-+	.reg_bits	= 8,
-+	.reg_stride	= 1,
-+	.val_bits	= 8,
-+	.max_register	= STMFX_REG_MAX,
-+	.volatile_reg	= stmfx_reg_volatile,
-+	.writeable_reg	= stmfx_reg_writeable,
-+	.cache_type	= REGCACHE_RBTREE,
-+};
-+
-+static int stmfx_probe(struct i2c_client *client,
-+		       const struct i2c_device_id *id)
-+{
-+	struct device *dev = &client->dev;
-+	struct stmfx_ddata *ddata;
-+	int i, ret;
-+
-+	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-+	if (!ddata)
-+		return -ENOMEM;
-+	/* State holder */
-+	ddata->stmfx = devm_kzalloc(dev, sizeof(*ddata->stmfx), GFP_KERNEL);
-+	if (!ddata->stmfx)
-+		return -ENOMEM;
-+
-+	i2c_set_clientdata(client, ddata);
-+
-+	ddata->stmfx->dev = dev;
-+
-+	ddata->stmfx->map = devm_regmap_init_i2c(client, &stmfx_regmap_config);
-+	if (IS_ERR(ddata->stmfx->map)) {
-+		ret = PTR_ERR(ddata->stmfx->map);
-+		dev_err(dev, "failed to allocate register map: %d\n", ret);
-+		return ret;
-+	}
-+
-+	mutex_init(&ddata->lock);
-+
-+	ret = stmfx_chip_init(ddata, client);
-+	if (ret) {
-+		if (ret == -ETIMEDOUT)
-+			return -EPROBE_DEFER;
-+		return ret;
-+	}
-+
-+	if (client->irq < 0) {
-+		dev_err(dev, "failed to get irq: %d\n", client->irq);
-+		ret = client->irq;
-+		goto err_chip_exit;
-+	}
-+
-+	ret = stmfx_irq_init(ddata, client->irq);
-+	if (ret)
-+		goto err_chip_exit;
-+
-+	for (i = 0; i < ARRAY_SIZE(stmfx_cells); i++) {
-+		stmfx_cells[i].platform_data = ddata->stmfx;
-+		stmfx_cells[i].pdata_size = sizeof(struct stmfx);
-+	}
-+
-+	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-+				   stmfx_cells, ARRAY_SIZE(stmfx_cells), NULL,
-+				   0, ddata->irq_domain);
-+	if (ret)
-+		goto err_irq_exit;
-+
-+	return 0;
-+
-+err_irq_exit:
-+	stmfx_irq_exit(ddata);
-+err_chip_exit:
-+	stmfx_chip_exit(ddata);
-+
-+	return ret;
-+}
-+
-+static int stmfx_remove(struct i2c_client *client)
-+{
-+	struct stmfx_ddata *ddata = i2c_get_clientdata(client);
-+
-+	stmfx_irq_exit(ddata);
-+
-+	return stmfx_chip_exit(ddata);
++	return stmfx_function_disable(stmfx,
++				      STMFX_FUNC_GPIO |
++				      STMFX_FUNC_ALTGPIO_LOW |
++				      STMFX_FUNC_ALTGPIO_HIGH);
 +}
 +
 +#ifdef CONFIG_PM_SLEEP
-+static int stmfx_backup_regs(struct stmfx_ddata *ddata)
++static int stmfx_pinctrl_backup_regs(struct stmfx_pinctrl *pctl)
 +{
 +	int ret;
 +
-+	ret = regmap_raw_read(ddata->stmfx->map, STMFX_REG_SYS_CTRL,
-+			      &ddata->bkp_sysctrl, sizeof(ddata->bkp_sysctrl));
++	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_STATE,
++			       &pctl->bkp_gpio_state, NR_GPIO_REGS);
 +	if (ret)
 +		return ret;
-+	ret = regmap_raw_read(ddata->stmfx->map, STMFX_REG_IRQ_OUT_PIN,
-+			      &ddata->bkp_irqoutpin,
-+			      sizeof(ddata->bkp_irqoutpin));
++	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_DIR,
++			       &pctl->bkp_gpio_dir, NR_GPIO_REGS);
++	if (ret)
++		return ret;
++	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_TYPE,
++			       &pctl->bkp_gpio_type, NR_GPIO_REGS);
++	if (ret)
++		return ret;
++	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_PUPD,
++			       &pctl->bkp_gpio_pupd, NR_GPIO_REGS);
 +	if (ret)
 +		return ret;
 +
 +	return 0;
 +}
 +
-+static int stmfx_restore_regs(struct stmfx_ddata *ddata)
++static int stmfx_pinctrl_restore_regs(struct stmfx_pinctrl *pctl)
 +{
 +	int ret;
 +
-+	ret = regmap_raw_write(ddata->stmfx->map, STMFX_REG_SYS_CTRL,
-+			       &ddata->bkp_sysctrl, sizeof(ddata->bkp_sysctrl));
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPIO_DIR,
++				pctl->bkp_gpio_dir, NR_GPIO_REGS);
 +	if (ret)
 +		return ret;
-+	ret = regmap_raw_write(ddata->stmfx->map, STMFX_REG_IRQ_OUT_PIN,
-+			       &ddata->bkp_irqoutpin,
-+			       sizeof(ddata->bkp_irqoutpin));
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPIO_TYPE,
++				pctl->bkp_gpio_type, NR_GPIO_REGS);
 +	if (ret)
 +		return ret;
-+	ret = regmap_raw_write(ddata->stmfx->map, STMFX_REG_IRQ_SRC_EN,
-+			       &ddata->irq_src, sizeof(ddata->irq_src));
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPIO_PUPD,
++				pctl->bkp_gpio_pupd, NR_GPIO_REGS);
++	if (ret)
++		return ret;
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPO_SET,
++				pctl->bkp_gpio_state, NR_GPIO_REGS);
++	if (ret)
++		return ret;
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_EVT,
++				pctl->irq_gpi_evt, NR_GPIO_REGS);
++	if (ret)
++		return ret;
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_TYPE,
++				pctl->irq_gpi_type, NR_GPIO_REGS);
++	if (ret)
++		return ret;
++	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_SRC,
++				pctl->irq_gpi_src, NR_GPIO_REGS);
 +	if (ret)
 +		return ret;
 +
 +	return 0;
 +}
 +
-+static int stmfx_suspend(struct device *dev)
++static int stmfx_pinctrl_suspend(struct device *dev)
 +{
-+	struct stmfx_ddata *ddata = dev_get_drvdata(dev);
++	struct stmfx_pinctrl *pctl = dev_get_drvdata(dev);
 +	int ret;
 +
-+	ret = stmfx_backup_regs(ddata);
++	ret = stmfx_pinctrl_backup_regs(pctl);
 +	if (ret) {
-+		dev_err(ddata->stmfx->dev, "registers backup failure\n");
++		dev_err(pctl->dev, "registers backup failure\n");
 +		return ret;
-+	}
-+
-+	if (!IS_ERR(ddata->vdd)) {
-+		ret = regulator_disable(ddata->vdd);
-+		if (ret)
-+			return ret;
 +	}
 +
 +	return 0;
 +}
 +
-+static int stmfx_resume(struct device *dev)
++static int stmfx_pinctrl_resume(struct device *dev)
 +{
-+	struct stmfx_ddata *ddata = dev_get_drvdata(dev);
++	struct stmfx_pinctrl *pctl = dev_get_drvdata(dev);
 +	int ret;
 +
-+	if (!IS_ERR(ddata->vdd)) {
-+		ret = regulator_enable(ddata->vdd);
-+		if (ret) {
-+			dev_err(ddata->stmfx->dev,
-+				"vdd enable failed: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	ret = stmfx_restore_regs(ddata);
++	ret = stmfx_pinctrl_restore_regs(pctl);
 +	if (ret) {
-+		dev_err(ddata->stmfx->dev, "registers restoration failure\n");
++		dev_err(pctl->dev, "registers restoration failure\n");
 +		return ret;
 +	}
 +
@@ -733,61 +922,29 @@ index 0000000..cfd4fca
 +}
 +#endif
 +
-+static SIMPLE_DEV_PM_OPS(stmfx_dev_pm_ops, stmfx_suspend, stmfx_resume);
++static SIMPLE_DEV_PM_OPS(stmfx_pinctrl_dev_pm_ops,
++			 stmfx_pinctrl_suspend, stmfx_pinctrl_resume);
 +
-+static const struct of_device_id stmfx_of_match[] = {
-+	{ .compatible = "st,stmfx-0300", },
++static const struct of_device_id stmfx_pinctrl_of_match[] = {
++	{ .compatible = "st,stmfx-0300-pinctrl", },
 +	{},
 +};
-+MODULE_DEVICE_TABLE(of, stmfx_of_match);
++MODULE_DEVICE_TABLE(of, stmfx_pinctrl_of_match);
 +
-+static struct i2c_driver stmfx_driver = {
++static struct platform_driver stmfx_pinctrl_driver = {
 +	.driver = {
-+		.name = "stmfx-core",
-+		.of_match_table = of_match_ptr(stmfx_of_match),
-+		.pm = &stmfx_dev_pm_ops,
++		.name = "stmfx-pinctrl",
++		.of_match_table = stmfx_pinctrl_of_match,
++		.pm = &stmfx_pinctrl_dev_pm_ops,
 +	},
-+	.probe = stmfx_probe,
-+	.remove = stmfx_remove,
++	.probe = stmfx_pinctrl_probe,
++	.remove = stmfx_pinctrl_remove,
 +};
-+module_i2c_driver(stmfx_driver);
++module_platform_driver(stmfx_pinctrl_driver);
 +
-+MODULE_DESCRIPTION("STMFX core driver");
++MODULE_DESCRIPTION("STMFX pinctrl/GPIO driver");
 +MODULE_AUTHOR("Amelie Delaunay <amelie.delaunay@st.com>");
 +MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/stmfx.h b/include/linux/mfd/stmfx.h
-new file mode 100644
-index 0000000..35c3d42
---- /dev/null
-+++ b/include/linux/mfd/stmfx.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 STMicroelectronics
-+ * Author(s): Amelie Delaunay <amelie.delaunay@st.com>.
-+ */
-+
-+#ifndef MFD_STMFX_H
-+#define MFX_STMFX_H
-+
-+#include <linux/regmap.h>
-+
-+enum stmfx_functions {
-+	STMFX_FUNC_GPIO		= BIT(0), /* GPIO[15:0] */
-+	STMFX_FUNC_ALTGPIO_LOW	= BIT(1), /* aGPIO[3:0] */
-+	STMFX_FUNC_ALTGPIO_HIGH = BIT(2), /* aGPIO[7:4] */
-+	STMFX_FUNC_TS		= BIT(3),
-+	STMFX_FUNC_IDD		= BIT(4),
-+};
-+
-+struct stmfx {
-+	struct device *dev;
-+	struct regmap *map;
-+};
-+
-+int stmfx_function_enable(struct stmfx *stmfx, u32 func);
-+int stmfx_function_disable(struct stmfx *stmfx, u32 func);
-+#endif
 -- 
 2.7.4
 
