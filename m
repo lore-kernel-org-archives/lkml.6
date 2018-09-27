@@ -6,35 +6,42 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F38BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF78C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F06720836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F06720836
+	by mail.kernel.org (Postfix) with ESMTP id 1826320836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1826320836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbeI0P2k (ORCPT
+        id S1728532AbeI0P2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:28:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55250 "EHLO
+        Thu, 27 Sep 2018 11:28:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55260 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727131AbeI0P2j (ORCPT
+        with ESMTP id S1727020AbeI0P2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:28:39 -0400
+        Thu, 27 Sep 2018 11:28:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6654A111D;
-        Thu, 27 Sep 2018 09:11:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7EAF81120;
+        Thu, 27 Sep 2018 09:11:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.18 54/88] bpf/verifier: disallow pointer subtraction
-Date:   Thu, 27 Sep 2018 11:03:35 +0200
-Message-Id: <20180927090307.374675294@linuxfoundation.org>
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        David Howells <dhowells@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.18 55/88] Revert "uapi/linux/keyctl.h: dont use C++ reserved keyword as a struct member name"
+Date:   Thu, 27 Sep 2018 11:03:36 +0200
+Message-Id: <20180927090307.452564735@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,34 +59,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexei Starovoitov <ast@kernel.org>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-commit dd066823db2ac4e22f721ec85190817b58059a54 upstream.
+commit 8c0f9f5b309d627182d5da72a69246f58bde1026 upstream.
 
-Subtraction of pointers was accidentally allowed for unpriv programs
-by commit 82abbf8d2fc4. Revert that part of commit.
+This changes UAPI, breaking iwd and libell:
 
-Fixes: 82abbf8d2fc4 ("bpf: do not allow root to mangle valid pointers")
-Reported-by: Jann Horn <jannh@google.com>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+  ell/key.c: In function 'kernel_dh_compute':
+  ell/key.c:205:38: error: 'struct keyctl_dh_params' has no member named 'private'; did you mean 'dh_private'?
+    struct keyctl_dh_params params = { .private = private,
+                                        ^~~~~~~
+                                        dh_private
+
+This reverts commit 8a2336e549d385bb0b46880435b411df8d8200e8.
+
+Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name")
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Randy Dunlap <rdunlap@infradead.org>
+cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+cc: Stephan Mueller <smueller@chronox.de>
+cc: James Morris <jmorris@namei.org>
+cc: "Serge E. Hallyn" <serge@hallyn.com>
+cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+cc: Andrew Morton <akpm@linux-foundation.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: <stable@vger.kernel.org>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/verifier.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/uapi/linux/keyctl.h |    2 +-
+ security/keys/dh.c          |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -3132,7 +3132,7 @@ static int adjust_reg_min_max_vals(struc
- 				 * an arbitrary scalar. Disallow all math except
- 				 * pointer subtraction
- 				 */
--				if (opcode == BPF_SUB){
-+				if (opcode == BPF_SUB && env->allow_ptr_leaks) {
- 					mark_reg_unknown(env, regs, insn->dst_reg);
- 					return 0;
- 				}
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,7 @@
+ 
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 dh_private;
++	__s32 private;
+ 	__s32 prime;
+ 	__s32 base;
+ };
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -300,7 +300,7 @@ long __keyctl_dh_compute(struct keyctl_d
+ 	}
+ 	dh_inputs.g_size = dlen;
+ 
+-	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
++	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret = dlen;
+ 		goto out2;
 
 
