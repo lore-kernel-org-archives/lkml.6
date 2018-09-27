@@ -2,114 +2,142 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFBDC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFEAC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAC921733
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:51:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAC921733
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F49B215E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:57:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UR52nlSX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F49B215E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeI1GMO (ORCPT
+        id S1727093AbeI1GSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 02:12:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47042 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726067AbeI1GMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 02:12:14 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E165B86647;
-        Thu, 27 Sep 2018 23:51:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 19A682010D58;
-        Thu, 27 Sep 2018 23:51:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] keys: Fix the use of the C++ keyword "private" in
- uapi/linux/keyctl.h
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable@vger.kernel.org, dhowells@redhat.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        lkundrak@v3.sk, rdunlap@infradead.org, linux-kernel@vger.kernel.org
-Date:   Fri, 28 Sep 2018 00:51:20 +0100
-Message-ID: <153809228025.23030.6619415372705612845.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Fri, 28 Sep 2018 02:18:40 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44009 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbeI1GSk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 02:18:40 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z14-v6so4403783wrs.10;
+        Thu, 27 Sep 2018 16:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=SN+JYmJRqYokRoD2ZgX9a7MU1MsQLO/fU4W70YYMQV8=;
+        b=UR52nlSXceCiiZT+WWYZ8xTIemuxiT4AC6YezGcHljuPvtfkOlLemWJIblixc+BpPc
+         GDoLfslUrdX/9M7jQ3VOBpxKwClRpc12IbDLXl1j8vjMKDqd7E7kY07G/FhVbKNDYirc
+         5PYsxpIY/GRUMPVc8Kdm7hkSTp4ACcmbZamI1kvcFhfjd4QVHcna6LG0b4JHTxOi9Phs
+         5nXVb2/KrckckpZqhf7CjO08HRWjxUzlLaSfx1NiybkgnMMKc0jdh+NbgDlPAujA8JMb
+         lKzrWMOID54mcaTSl3TQcii9xVheXlOYN0ksHVTnAro95Nfn8QwcWx2BMCLi6eS9mcxf
+         zYLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SN+JYmJRqYokRoD2ZgX9a7MU1MsQLO/fU4W70YYMQV8=;
+        b=ioDXoBwUjU03QqiJRYu238lc7/LAd3ZVloErJg697kRGiIAAkIA78CkYKWKXvcuwfG
+         33+fotkwZUJHt4NAPETqVRJ/6nXVJOIjGPhqFvYghT5oCZWlConzZ0PwZoIk7phr6PO8
+         nHqPKUwQBAPiO5cQW4tqVrfSfhbD+7wHk7KswZSwYZmpazWgxlLTs/OdQ4acguFnGvcv
+         rtU347Ey2Ebay2qW7n9CcSNbWZ+hIZJzNYskLHUqdLHxnadYY97UFqkODTEZmuZeApte
+         m6tF7kGJYJa8X+KxrXpK1ysavuiBBr3mJZqYAotxU4amvk6FzSUyxxnc5dlibhrItO1J
+         gapQ==
+X-Gm-Message-State: ABuFfogGzplXws/GUAiHp6wzC7ra+WcdeJjk2uBYNDnahtjwDnm0T1Tb
+        7+xYwvvpuOtwtH/cX2hnuP0=
+X-Google-Smtp-Source: ACcGV60kaHwyUQYovqNXNx7Y77ImqnAiFmmMMR0g0xhkTOXELZF9RDMNGnusxi4VgUHX3Kr7NqB43w==
+X-Received: by 2002:adf:8567:: with SMTP id 94-v6mr10797806wrh.223.1538092667288;
+        Thu, 27 Sep 2018 16:57:47 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id v10-v6sm3332687wrp.0.2018.09.27.16.57.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 16:57:46 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH v2] scsi: bfa: Avoid implicit enum conversion in bfad_im_post_vendor_event
+Date:   Thu, 27 Sep 2018 16:56:52 -0700
+Message-Id: <20180927235651.27151-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180926045435.9213-1-natechancellor@gmail.com>
+References: <20180926045435.9213-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 27 Sep 2018 23:51:24 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The keyctl_dh_params struct in uapi/linux/keyctl.h contains the symbol
-"private" which means that the header file will cause compilation failure
-if #included in to a C++ program.  Further, the patch that added the same
-struct to the keyutils package named the symbol "priv", not "private".
+Clang warns when one enumerated type is implicitly converted to another.
 
-The previous attempt to fix this (commit 8a2336e549d3) did so by simply
-renaming the kernel's copy of the field to dh_private, but this then breaks
-existing userspace and as such has been reverted (commit 8c0f9f5b309d).
+drivers/scsi/bfa/bfa_fcs_lport.c:379:26: warning: implicit conversion
+from enumeration type 'enum bfa_lport_aen_event' to different
+enumeration type 'enum bfa_ioc_aen_event' [-Wenum-conversion]
+                                  BFA_AEN_CAT_LPORT, event);
+                                                     ^~~~~
 
-[And note, to those who think that wrapping the struct in extern "C" {}
- will work: it won't; that only changes how symbol names are presented to
- the assembler and linker.].
+The root cause of these warnings is the bfad_im_post_vendor_event
+function, which expects a value from enum bfa_ioc_aen_event but there
+are multiple instances of values from enums bfa_port_aen_event,
+bfa_audit_aen_event, and bfa_lport_aen_event being used in this
+function.
 
-Instead, insert an anonymous union around the "private" member and add a
-second member in there with the name "priv" to match the one in the
-keyutils package.  The "private" member is then wrapped in !__cplusplus
-cpp-conditionals to hide it from C++.
+Given that this doesn't appear to be a problem since cat helps with
+differentiating the events, just change evt's type to int so that no
+conversion needs to happen and Clang won't warn. Update aen_type's type
+in bfa_aen_entry_s as members that hold enumerated types should be int.
 
-Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
-Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Randy Dunlap <rdunlap@infradead.org>
-cc: Lubomir Rintel <lkundrak@v3.sk>
-cc: James Morris <jmorris@namei.org>
-cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-cc: Stephan Mueller <smueller@chronox.de>
-cc: Andrew Morton <akpm@linux-foundation.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: stable@vger.kernel.org
+Link: https://github.com/ClangBuiltLinux/linux/issues/147
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
 
- include/uapi/linux/keyctl.h |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+v1 -> v2:
 
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index 7b8c9e19bad1..0f3cb13db8e9 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -65,7 +65,12 @@
+* Update aen_type's type in bfa_aen_entry_s to match evt
+
+ drivers/scsi/bfa/bfa_defs_svc.h | 2 +-
+ drivers/scsi/bfa/bfad_im.h      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/bfa/bfa_defs_svc.h b/drivers/scsi/bfa/bfa_defs_svc.h
+index 3d0c96a5c873..c19c26e0e405 100644
+--- a/drivers/scsi/bfa/bfa_defs_svc.h
++++ b/drivers/scsi/bfa/bfa_defs_svc.h
+@@ -1453,7 +1453,7 @@ union bfa_aen_data_u {
+ struct bfa_aen_entry_s {
+ 	struct list_head	qe;
+ 	enum bfa_aen_category   aen_category;
+-	u32                     aen_type;
++	int                     aen_type;
+ 	union bfa_aen_data_u    aen_data;
+ 	u64			aen_tv_sec;
+ 	u64			aen_tv_usec;
+diff --git a/drivers/scsi/bfa/bfad_im.h b/drivers/scsi/bfa/bfad_im.h
+index e61ed8dad0b4..bd4ac187fd8e 100644
+--- a/drivers/scsi/bfa/bfad_im.h
++++ b/drivers/scsi/bfa/bfad_im.h
+@@ -143,7 +143,7 @@ struct bfad_im_s {
+ static inline void bfad_im_post_vendor_event(struct bfa_aen_entry_s *entry,
+ 					     struct bfad_s *drv, int cnt,
+ 					     enum bfa_aen_category cat,
+-					     enum bfa_ioc_aen_event evt)
++					     int evt)
+ {
+ 	struct timespec64 ts;
  
- /* keyctl structures */
- struct keyctl_dh_params {
--	__s32 private;
-+	union {
-+#ifndef __cplusplus
-+		__s32 private;
-+#endif
-+		__s32 priv;
-+	};
- 	__s32 prime;
- 	__s32 base;
- };
+-- 
+2.19.0
 
