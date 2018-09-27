@@ -2,166 +2,84 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E0AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8BAC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3137D216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3137D216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id CDF7F216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:38:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0I5o72P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF7F216FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbeI1C6C (ORCPT
+        id S1728449AbeI1C7D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:58:02 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43756 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeI1C6C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:58:02 -0400
-Received: by mail-oi1-f196.google.com with SMTP id s69-v6so3371531oie.10;
-        Thu, 27 Sep 2018 13:37:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=REIDTKJMCaXMb9FL8bU8sBNjF0dmEAbYJU4840gj/DU=;
-        b=OKWgdbRgXR6zJv7S3BP5aKvyDIiIm8v39J2FwHNSs4nioMml7JMPFpNbi2LNpSq05i
-         SpUKkgfvTAz0JufWJJLw9k3Pxsh6lm5V3yHhembL6WLRxMKxRvbsMd5J4f/HAj729oFS
-         hJGhKGlMTDMn9dqj7HL5Qp+IYsE7lFQIrXjVL/PAwkPefci/womVhM/U6bASs79VPvF6
-         yhQ3IGxKFKBMU7pR2MHoIkvbEPwe7VZQJWp8+RpmUS+roSngCWVD/09C0+XO9XD8tp92
-         ndezrlmNDQqm/KNwoDDNqMfQBkWkbEwyx1q5whib1I+HGJLVMRuDwv1ehkctO23hd89S
-         Ft9g==
-X-Gm-Message-State: ABuFfojZuEh7ah5Yg3H4z5SYhyDSnmXSUR8nfN/yy3XAvu9dwVQ6Mdzv
-        Z0/Y63DR1O/Z4qQEUk3ClKFFFrXlCd4=
-X-Google-Smtp-Source: ACcGV609ZIZbHM8eI48wr1jISbd8LH/nrEf5xVkGTAT3lrTcvqGz9s6/EHuP6jxmsVXLtw+0HNr8Bw==
-X-Received: by 2002:aca:f084:: with SMTP id o126-v6mr3892016oih.21.1538080676245;
-        Thu, 27 Sep 2018 13:37:56 -0700 (PDT)
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
-        by smtp.gmail.com with ESMTPSA id v55-v6sm22298oti.50.2018.09.27.13.37.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 13:37:56 -0700 (PDT)
-Received: by mail-oi1-f169.google.com with SMTP id e17-v6so2511939oib.4;
-        Thu, 27 Sep 2018 13:37:55 -0700 (PDT)
-X-Received: by 2002:aca:508f:: with SMTP id e137-v6mr3940963oib.73.1538080675659;
- Thu, 27 Sep 2018 13:37:55 -0700 (PDT)
+        Thu, 27 Sep 2018 22:59:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45262 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727295AbeI1C7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 22:59:03 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4755921712;
+        Thu, 27 Sep 2018 20:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538080737;
+        bh=i2DBqlCtCOaQ5XkZkSYwE/IujQn9YGBFT3Esxu2iC+U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=s0I5o72P8Vm7Ahrpi5uZw6H+AZhHhAOwd+j5KPjtV7FVxjwsMBTzC2GnyjSr9Zi71
+         pOd5WJNayPTLFBHbneHcWvg73IP7KPJvWBrS/OCkm0Ah5z7PHRSQoRZ0sFLiRPmkkd
+         tQif7O16lx8fu8cOgzi+mdPdslgWsdBTfCATmOlI=
+Received: by mail-qt1-f178.google.com with SMTP id z14-v6so4348870qtn.2;
+        Thu, 27 Sep 2018 13:38:57 -0700 (PDT)
+X-Gm-Message-State: ABuFfojJUruyxd+HmLtZhRt4Vd40q4x9ozMT1s2zQnsF4ZTgvzDbVNom
+        r2017FWXne9fZuXyXsW7bsE815Ek43ynjEiUpQ==
+X-Google-Smtp-Source: ACcGV63ebic0D+NJWKC3us72jqbp2UaZUMhjlXRR9rSyAr7ZO1y0Zhbri4EvDfZxyeT4yBxk20TCxJmJJsl3+5X5F+g=
+X-Received: by 2002:aed:2905:: with SMTP id s5-v6mr6850435qtd.101.1538080736373;
+ Thu, 27 Sep 2018 13:38:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180926132247.10971-1-laurentiu.tudor@nxp.com> <20180926132247.10971-7-laurentiu.tudor@nxp.com>
-In-Reply-To: <20180926132247.10971-7-laurentiu.tudor@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Thu, 27 Sep 2018 15:37:44 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQEQs5j-AYk1VSL7GHWHemVuxDsTM05S2zth-idJOyoBw@mail.gmail.com>
-Message-ID: <CADRPPNQEQs5j-AYk1VSL7GHWHemVuxDsTM05S2zth-idJOyoBw@mail.gmail.com>
-Subject: Re: [PATCH v2 06/22] soc/fsl/qman_portals: defer probe after qman's probe
-To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Roy Pledge <roy.pledge@nxp.com>, madalin.bucur@nxp.com,
-        David Miller <davem@davemloft.net>,
-        Shawn Guo <shawnguo@kernel.org>, robin.murphy@arm.com,
-        bharat.bhushan@nxp.com
+References: <20180927194910.18464-1-nicoleotsuka@gmail.com> <20180927194910.18464-2-nicoleotsuka@gmail.com>
+In-Reply-To: <20180927194910.18464-2-nicoleotsuka@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 27 Sep 2018 15:38:44 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLcuJyjHFzW7-p4HAZq3g5tGAo0wT8f5ZT_KYWV5X5+5A@mail.gmail.com>
+Message-ID: <CAL_JsqLcuJyjHFzW7-p4HAZq3g5tGAo0wT8f5ZT_KYWV5X5+5A@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: hwmon: Add ina3221 documentation
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Andrew F. Davis" <afd@ti.com>,
+        Linux HWMON List <linux-hwmon@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 8:26 AM <laurentiu.tudor@nxp.com> wrote:
+On Thu, Sep 27, 2018 at 2:49 PM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
 >
-> From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> Texas Instruments INA3221 is a triple-channel shunt and bus
+> voltage monitor. This patch adds a DT binding doc for it.
 >
-> Defer probe of qman portals after qman probing. This fixes the crash
-> below, seen on NXP LS1043A SoCs:
->
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 0000000000000004
-> Mem abort info:
->   ESR = 0x96000004
->   Exception class = DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
-> Data abort info:
->   ISV = 0, ISS = 0x00000004
->   CM = 0, WnR = 0
-> [0000000000000004] user address but active_mm is swapper
-> Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-> 4.18.0-rc1-next-20180622-00200-g986f5c179185 #9
-> Hardware name: LS1043A RDB Board (DT)
-> pstate: 80000005 (Nzcv daif -PAN -UAO)
-> pc : qman_set_sdest+0x74/0xa0
-> lr : qman_portal_probe+0x22c/0x470
-> sp : ffff00000803bbc0
-> x29: ffff00000803bbc0 x28: 0000000000000000
-> x27: ffff0000090c1b88 x26: ffff00000927cb68
-> x25: ffff00000927c000 x24: ffff00000927cb60
-> x23: 0000000000000000 x22: 0000000000000000
-> x21: ffff0000090e9000 x20: ffff800073b5c810
-> x19: ffff800027401298 x18: ffffffffffffffff
-> x17: 0000000000000001 x16: 0000000000000000
-> x15: ffff0000090e96c8 x14: ffff80002740138a
-> x13: ffff0000090f2000 x12: 0000000000000030
-> x11: ffff000008f25000 x10: 0000000000000000
-> x9 : ffff80007bdfd2c0 x8 : 0000000000004000
-> x7 : ffff80007393cc18 x6 : 0040000000000001
-> x5 : 0000000000000000 x4 : ffffffffffffffff
-> x3 : 0000000000000004 x2 : ffff00000927c900
-> x1 : 0000000000000000 x0 : 0000000000000004
-> Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
-> Call trace:
->  qman_set_sdest+0x74/0xa0
->  platform_drv_probe+0x50/0xa8
->  driver_probe_device+0x214/0x2f8
->  __driver_attach+0xd8/0xe0
->  bus_for_each_dev+0x68/0xc8
->  driver_attach+0x20/0x28
->  bus_add_driver+0x108/0x228
->  driver_register+0x60/0x110
->  __platform_driver_register+0x40/0x48
->  qman_portal_driver_init+0x20/0x84
->  do_one_initcall+0x58/0x168
->  kernel_init_freeable+0x184/0x22c
->  kernel_init+0x10/0x108
->  ret_from_fork+0x10/0x18
-> Code: f9400443 11001000 927e4800 8b000063 (b9400063)
-> ---[ end trace 4f6d50489ecfb930 ]---
-> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->
-> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-
-As this is part of a bug fix for v4.19, applied on soc/fsl for fix.
-
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 > ---
->  drivers/soc/fsl/qbman/qman_portal.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
-> index 6d9da3b1b5ad..eef93cab84f1 100644
-> --- a/drivers/soc/fsl/qbman/qman_portal.c
-> +++ b/drivers/soc/fsl/qbman/qman_portal.c
-> @@ -229,6 +229,14 @@ static int qman_portal_probe(struct platform_device *pdev)
->         int irq, cpu, err;
->         u32 val;
->
-> +       err = qman_is_probed();
-> +       if (!err)
-> +               return -EPROBE_DEFER;
-> +       if (err < 0) {
-> +               dev_err(&pdev->dev, "failing probe due to qman probe error\n");
-> +               return -ENODEV;
-> +       }
-> +
->         pcfg = devm_kmalloc(dev, sizeof(*pcfg), GFP_KERNEL);
->         if (!pcfg)
->                 return -ENOMEM;
-> --
-> 2.17.1
->
+> Changelog
+> v5->v6:
+>  * Removed status property as no need to explicitly list it.
+>  * Combined all examples into a complete one.
+
+Sorry, I meant combine the parent and child nodes into one. Showing 3
+children is perfectly fine as the device has 3 channels.
+
+Rob
