@@ -2,89 +2,100 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BCFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3101C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD6B2170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:50:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LdlLl9KT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD6B2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 7189721731
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7189721731
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbeI1GKs (ORCPT
+        id S1728377AbeI1GLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 02:10:48 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51606 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbeI1GKs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 02:10:48 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8RNnQsF056728;
-        Thu, 27 Sep 2018 23:49:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=25h3/Mc6zIN0w+9x7KnX2xYtk344xgmpLLwffA32AGA=;
- b=LdlLl9KTQgcrYkVrihFb8sPXEGbjWlzq49z6VfRGwWeNx0IIt0gC4+CYs23nknjw942N
- SOlQrQ3Vpuz7hp7Rcy7y3Bh3Hgi5qGR4ExYhl3UMnFqU9ZziyynGGt1j60GJf/tFObFO
- lCSuSiQmlUawf/u4ed1HwZ9goOtkRu4dLbvm0EqXTSlqpPxLn3an+FknkBwvAOvNt9eB
- 3Hjgk7acz+MsJGzd5f+V+Of5xPSexIypf5f4AHb2mgtNjiiomB01d5ylqCuuhk5qOoGY
- bM3bB3NYQSv5fkvho+AyY742pTetmdZw6t5OWgqxFVy9gn4dEnZdnNogM3bNXrQn48V0 Lw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2mnd5tw2yu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 23:49:52 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8RNnpWv032521
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 23:49:51 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8RNnoH4016439;
-        Thu, 27 Sep 2018 23:49:50 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Sep 2018 16:49:50 -0700
-To:     Masanari Iida <standby24x7@gmail.com>
-Cc:     qla2xxx-upstream@qlogic.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
-        himanshu.madhani@cavium.com, giridhar.malavali@cavium.com,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: qla2xxx: Fix comment in MODULE_PARM_DESC in qla2xxx
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180911094811.12681-1-standby24x7@gmail.com>
-Date:   Thu, 27 Sep 2018 19:49:47 -0400
-In-Reply-To: <20180911094811.12681-1-standby24x7@gmail.com> (Masanari Iida's
-        message of "Tue, 11 Sep 2018 18:48:11 +0900")
-Message-ID: <yq1tvmabiw4.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 28 Sep 2018 02:11:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725957AbeI1GLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 02:11:17 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5E2223082134;
+        Thu, 27 Sep 2018 23:50:28 +0000 (UTC)
+Received: from redhat.com (ovpn-123-154.rdu2.redhat.com [10.10.123.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 796C1600C1;
+        Thu, 27 Sep 2018 23:50:24 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 19:50:24 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     stefanha@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sergei.shtylyov@cogentembedded.com
+Subject: Re: [PATCH net V2] vhost-vsock: fix use after free
+Message-ID: <20180927194734-mutt-send-email-mst@kernel.org>
+References: <20180927122204.4188-1-jasowang@redhat.com>
+ <20180927123539-mutt-send-email-mst@kernel.org>
+ <588ed28b-7e4b-9dc8-92ce-d75692836c9e@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=714
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809270222
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <588ed28b-7e4b-9dc8-92ce-d75692836c9e@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 27 Sep 2018 23:50:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 28, 2018 at 07:37:37AM +0800, Jason Wang wrote:
+> 
+> 
+> On 2018年09月28日 01:04, Michael S. Tsirkin wrote:
+> > On Thu, Sep 27, 2018 at 08:22:04PM +0800, Jason Wang wrote:
+> > > The access of vsock is not protected by vhost_vsock_lock. This may
+> > > lead to use after free since vhost_vsock_dev_release() may free the
+> > > pointer at the same time.
+> > > 
+> > > Fix this by holding the lock during the access.
+> > > 
+> > > Reported-by:syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com
+> > > Fixes: 16320f363ae1 ("vhost-vsock: add pkt cancel capability")
+> > > Fixes: 433fc58e6bf2 ("VSOCK: Introduce vhost_vsock.ko")
+> > > Cc: Stefan Hajnoczi<stefanha@redhat.com>
+> > > Signed-off-by: Jason Wang<jasowang@redhat.com>
+> > Wow is that really the best we can do?
+> 
+> For net/stable, probably yes.
+> 
+> >   A global lock on a data path
+> > operation?
+> 
+> It's already there,
 
-Masanari,
+&vhost_vsock_lock? were is it takes on data path?
 
-> Default value of ql2xasynctmfenable for qla2xxx driver was set to 1 in
-> commit 043dc1d7e8501.  But comment in MODULE_PARAM_DESC was not
-> modified.
+> and the patch only increase the critical section.
+> 
+> >   Granted use after free is nasty but Stefan said he sees
+> > a way to fix it using a per socket refcount. He's on vacation
+> > until Oct 4 though ...
+> > 
+> 
+> Stefan has acked the pacth, so I think it's ok? We can do optimization for
+> -next on top.
+> 
+> Thanks
 
-Applied to 4.20/scsi-queue. Thank you!
+
+Well on high SMP serializing can drop performance as much as x100 so I'm
+not sure it's appropriate - seems to fix a bug but can introduce a
+regression. Let's see how does a proper fix look first?
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+MST
