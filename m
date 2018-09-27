@@ -2,671 +2,159 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F517C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41442C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F7942157C
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:50:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F7942157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EBA892157C
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqhomcFg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA892157C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbeI0PIG (ORCPT
+        id S1727244AbeI0PII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:08:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:59096 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbeI0PIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:08:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACEF77A9;
-        Thu, 27 Sep 2018 01:50:56 -0700 (PDT)
-Received: from [10.37.10.73] (unknown [10.37.10.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49B543F5B3;
+        Thu, 27 Sep 2018 11:08:08 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36225 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbeI0PIH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:08:07 -0400
+Received: by mail-wm1-f68.google.com with SMTP id n23-v6so1177152wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KVG4d54MN+QvRtt8dG/HSGTrOOhSH49LKqSlAtKzsJs=;
+        b=aqhomcFgPubda4vykvLbba4jRIuP7TDtbfG00MtUpw22EMvMyHuBvd7GJIUSZtNrFn
+         yQ35jBQdl/IesAJMiv6cy0VyzikWUyqXQ2EDQhj6gyiqL368gBVENhHmAGZwcBUI0Zs2
+         BUieAodZIUvahZ1MV4sEabbeAwCvuL8Zkye28=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KVG4d54MN+QvRtt8dG/HSGTrOOhSH49LKqSlAtKzsJs=;
+        b=OmkmtfzG21wgr/wEx70e8OwXbSciCwUE1+K8Agwhu3qD/nf8WsWrRygmeslkfr9YAe
+         sBBdYl3yKqcoTuH2dv0aTzcf16GM63Ks9+St8zOHOGwC3FoQJXi4wyyDfsgZ8Qkr+kLA
+         EdPipTnclAnofxVE0IlFsP41PQGd+Wes+J+HJl1gb7W+GAiKgcMlrAQuOXkDPA+nzw47
+         GbBOfzWICB95mLc0qd2H6VshfPgbPjf4G2z1l/Zq47tVb2MCqZ9tF8AjFfT4vnSxhtog
+         mTFh5RkByU46aIQmwTFwb0OixPe/xa7m42kq6vQH5PNZwLeTXHfKJyrnB3g00uQIsUxt
+         618Q==
+X-Gm-Message-State: ABuFfohLreMsAsb7ZvVFQtLg+S0P7yoIPBlJAfqRXDvMWD66Xj0ZYoWw
+        0jk8wgsFcfn0E51gx+op9IB4qYNZqnA=
+X-Google-Smtp-Source: ACcGV60EngvrA17LYWzjIUq/nHzG6OSwMRl4uzn+NvC1wTyCBDDBGbQgVcAVUyF7fjBn2lLrQwtUWg==
+X-Received: by 2002:a1c:f4e:: with SMTP id 75-v6mr4300007wmp.79.1538038255840;
+        Thu, 27 Sep 2018 01:50:55 -0700 (PDT)
+Received: from rev03.home ([2a01:cb1d:112:6f00:546e:3c44:5966:2f5e])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm1304055wrd.74.2018.09.27.01.50.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 27 Sep 2018 01:50:54 -0700 (PDT)
-Subject: Re: [PATCH v2 04/11] arm64: dts: sc9836/sc9860: Update coresight
- bindings for hardware ports
-To:     linux-arm-kernel@lists.infradead.org,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-Cc:     mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        frowand.list@gmail.com, coresight@lists.linaro.org,
-        leo.yan@linaro.org, orsonzhai@gmail.com, zhang.lyra@gmail.com
-References: <20180912135352.19722-1-suzuki.poulose@arm.com>
- <20180912135352.19722-5-suzuki.poulose@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <ccc61e1b-768c-2a6d-3ff5-95b72bc58a6f@arm.com>
-Date:   Thu, 27 Sep 2018 09:51:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180912135352.19722-5-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Ivan Hu <ivan.hu@canonical.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Robinson <pbrobinson@redhat.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Stefan Agner <stefan@agner.ch>
+Subject: [GIT PULL 00/11] EFI updates for v4.20
+Date:   Thu, 27 Sep 2018 10:50:27 +0200
+Message-Id: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+To: Chunyan Zhang
+Thomas, Ingo,
 
-Chunyan Zhang,
+Please pull/cherry-pick the below. Note that the first three patches will
+be depended upon by an irqchip series that Marc Zyngier has sent out last
+week, and that targets the next release as well. So please advise how to
+proceed with that: we could simply apply those patches first and use the
+resulting commit in tip.git as a stable branch, I suppose, but I'll let
+Marc chime in in case he has any other ideas.
 
-On 09/12/2018 02:53 PM, Suzuki K Poulose wrote:
-> Switch to the new coresight bindings for hw ports
-> 
+Thanks,
+Ard. 
 
-How can we push this patch ? Do you generally send the spreadtrum
-specific changes to ARM soc folks ? Or would you like me to post
-this directly to ARM soc folks ?
+[0] https://lore.kernel.org/lkml/20180921195954.21574-1-marc.zyngier@arm.com/
 
-Suzuki
+The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
 
-> Cc: orsonzhai@gmail.com
-> Cc: zhang.lyra@gmail.com
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   arch/arm64/boot/dts/sprd/sc9836.dtsi |  82 +++++-----
->   arch/arm64/boot/dts/sprd/sc9860.dtsi | 215 ++++++++++++++-------------
->   2 files changed, 153 insertions(+), 144 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/sprd/sc9836.dtsi b/arch/arm64/boot/dts/sprd/sc9836.dtsi
-> index 63894c456969..4bcdbb709c01 100644
-> --- a/arch/arm64/boot/dts/sprd/sc9836.dtsi
-> +++ b/arch/arm64/boot/dts/sprd/sc9836.dtsi
-> @@ -50,10 +50,11 @@
->   		reg = <0 0x10003000 0 0x1000>;
->   		clocks = <&clk26mhz>;
->   		clock-names = "apb_pclk";
-> -		port {
-> -			etf_in: endpoint {
-> -				slave-mode;
-> -				remote-endpoint = <&funnel_out_port0>;
-> +		in-ports {
-> +			port {
-> +				etf_in: endpoint {
-> +					remote-endpoint = <&funnel_out_port0>;
-> +				};
->   			};
->   		};
->   	};
-> @@ -63,55 +64,50 @@
->   		reg = <0 0x10001000 0 0x1000>;
->   		clocks = <&clk26mhz>;
->   		clock-names = "apb_pclk";
-> -		ports {
-> +
-> +		out-ports {
-> +			port {
-> +				funnel_out_port0: endpoint {
-> +					remote-endpoint = <&etf_in>;
-> +				};
-> +			};
-> +		};
-> +
-> +		in-ports {
->   			#address-cells = <1>;
->   			#size-cells = <0>;
->   
-> -			/* funnel output port */
->   			port@0 {
-> -				reg = <0>;
-> -				funnel_out_port0: endpoint {
-> -					remote-endpoint = <&etf_in>;
-> -				};
-> -			};
-> -
-> -			/* funnel input port 0-4 */
-> -			port@1 {
->   				reg = <0>;
->   				funnel_in_port0: endpoint {
-> -					slave-mode;
->   					remote-endpoint = <&etm0_out>;
->   				};
->   			};
->   
-> -			port@2 {
-> +			port@1 {
->   				reg = <1>;
->   				funnel_in_port1: endpoint {
-> -					slave-mode;
->   					remote-endpoint = <&etm1_out>;
->   				};
->   			};
->   
-> -			port@3 {
-> +			port@2 {
->   				reg = <2>;
->   				funnel_in_port2: endpoint {
-> -					slave-mode;
->   					remote-endpoint = <&etm2_out>;
->   				};
->   			};
->   
-> -			port@4 {
-> +			port@3 {
->   				reg = <3>;
->   				funnel_in_port3: endpoint {
-> -					slave-mode;
->   					remote-endpoint = <&etm3_out>;
->   				};
->   			};
->   
-> -			port@5 {
-> +			port@4 {
->   				reg = <4>;
->   				funnel_in_port4: endpoint {
-> -					slave-mode;
->   					remote-endpoint = <&stm_out>;
->   				};
->   			};
-> @@ -126,9 +122,11 @@
->   		cpu = <&cpu0>;
->   		clocks = <&clk26mhz>;
->   		clock-names = "apb_pclk";
-> -		port {
-> -			etm0_out: endpoint {
-> -				remote-endpoint = <&funnel_in_port0>;
-> +		out-ports {
-> +			port {
-> +				etm0_out: endpoint {
-> +					remote-endpoint = <&funnel_in_port0>;
-> +				};
->   			};
->   		};
->   	};
-> @@ -140,9 +138,11 @@
->   		cpu = <&cpu1>;
->   		clocks = <&clk26mhz>;
->   		clock-names = "apb_pclk";
-> -		port {
-> -			etm1_out: endpoint {
-> -				remote-endpoint = <&funnel_in_port1>;
-> +		out-ports {
-> +			port {
-> +				etm1_out: endpoint {
-> +					remote-endpoint = <&funnel_in_port1>;
-> +				};
->   			};
->   		};
->   	};
-> @@ -154,9 +154,11 @@
->   		cpu = <&cpu2>;
->   		clocks = <&clk26mhz>;
->   		clock-names = "apb_pclk";
-> -		port {
-> -			etm2_out: endpoint {
-> -				remote-endpoint = <&funnel_in_port2>;
-> +		out-ports {
-> +			port {
-> +				etm2_out: endpoint {
-> +					remote-endpoint = <&funnel_in_port2>;
-> +				};
->   			};
->   		};
->   	};
-> @@ -168,9 +170,11 @@
->   		cpu = <&cpu3>;
->   		clocks = <&clk26mhz>;
->   		clock-names = "apb_pclk";
-> -		port {
-> -			etm3_out: endpoint {
-> -				remote-endpoint = <&funnel_in_port3>;
-> +		out-ports {
-> +			port {
-> +				etm3_out: endpoint {
-> +					remote-endpoint = <&funnel_in_port3>;
-> +				};
->   			};
->   		};
->   	};
-> @@ -182,9 +186,11 @@
->   		reg-names = "stm-base", "stm-stimulus-base";
->   		clocks = <&clk26mhz>;
->   		clock-names = "apb_pclk";
-> -		port {
-> -			stm_out: endpoint {
-> -				remote-endpoint = <&funnel_in_port4>;
-> +		out-ports {
-> +			port {
-> +				stm_out: endpoint {
-> +					remote-endpoint = <&funnel_in_port4>;
-> +				};
->   			};
->   		};
->   	};
-> diff --git a/arch/arm64/boot/dts/sprd/sc9860.dtsi b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-> index 48f5928ed45c..5f57bf055cde 100644
-> --- a/arch/arm64/boot/dts/sprd/sc9860.dtsi
-> +++ b/arch/arm64/boot/dts/sprd/sc9860.dtsi
-> @@ -304,30 +304,29 @@
->   			reg = <0 0x10001000 0 0x1000>;
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->   					soc_funnel_out_port: endpoint {
->   						remote-endpoint = <&etb_in>;
->   					};
->   				};
-> +			};
->   
-> -				port@1 {
-> +			in-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
->   					reg = <0>;
->   					soc_funnel_in_port0: endpoint {
-> -						slave-mode;
->   						remote-endpoint =
->   						<&main_funnel_out_port>;
->   					};
->   				};
->   
-> -				port@2 {
-> +				port@4 {
->   					reg = <4>;
->   					soc_funnel_in_port1: endpoint {
-> -						slave-mode;
->   						remote-endpoint =
->   							<&stm_out_port>;
->   					};
-> @@ -340,11 +339,12 @@
->   			reg = <0 0x10003000 0 0x1000>;
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
-> -			port {
-> -				etb_in: endpoint {
-> -					slave-mode;
-> -					remote-endpoint =
-> -						<&soc_funnel_out_port>;
-> +			out-ports {
-> +				port {
-> +					etb_in: endpoint {
-> +						remote-endpoint =
-> +							<&soc_funnel_out_port>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -356,10 +356,12 @@
->   			reg-names = "stm-base", "stm-stimulus-base";
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
-> -			port {
-> -				stm_out_port: endpoint {
-> -					remote-endpoint =
-> -						<&soc_funnel_in_port1>;
-> +			out-ports {
-> +				port {
-> +					stm_out_port: endpoint {
-> +						remote-endpoint =
-> +							<&soc_funnel_in_port1>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -369,38 +371,36 @@
->   			reg = <0 0x11001000 0 0x1000>;
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->   					cluster0_funnel_out_port: endpoint {
->   						remote-endpoint =
->   							<&cluster0_etf_in>;
->   					};
->   				};
-> +			};
->   
-> -				port@1 {
-> +			in-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
->   					reg = <0>;
->   					cluster0_funnel_in_port0: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm0_out>;
->   					};
->   				};
->   
-> -				port@2 {
-> +				port@1 {
->   					reg = <1>;
->   					cluster0_funnel_in_port1: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm1_out>;
->   					};
->   				};
->   
-> -				port@3 {
-> +				port@2 {
->   					reg = <2>;
->   					cluster0_funnel_in_port2: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm2_out>;
->   					};
->   				};
-> @@ -408,7 +408,6 @@
->   				port@4 {
->   					reg = <4>;
->   					cluster0_funnel_in_port3: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm3_out>;
->   					};
->   				};
-> @@ -420,46 +419,43 @@
->   			reg = <0 0x11002000 0 0x1000>;
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->   					cluster1_funnel_out_port: endpoint {
->   						remote-endpoint =
->   							<&cluster1_etf_in>;
->   					};
->   				};
-> +			};
->   
-> -				port@1 {
-> +			in-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
->   					reg = <0>;
->   					cluster1_funnel_in_port0: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm4_out>;
->   					};
->   				};
->   
-> -				port@2 {
-> +				port@1 {
->   					reg = <1>;
->   					cluster1_funnel_in_port1: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm5_out>;
->   					};
->   				};
->   
-> -				port@3 {
-> +				port@2 {
->   					reg = <2>;
->   					cluster1_funnel_in_port2: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm6_out>;
->   					};
->   				};
->   
-> -				port@4 {
-> +				port@3 {
->   					reg = <3>;
->   					cluster1_funnel_in_port3: endpoint {
-> -						slave-mode;
->   						remote-endpoint = <&etm7_out>;
->   					};
->   				};
-> @@ -472,22 +468,18 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->   					cluster0_etf_out: endpoint {
->   						remote-endpoint =
->   						<&main_funnel_in_port0>;
->   					};
->   				};
-> +			};
->   
-> -				port@1 {
-> -					reg = <0>;
-> +			in-ports {
-> +				port {
->   					cluster0_etf_in: endpoint {
-> -						slave-mode;
->   						remote-endpoint =
->   						<&cluster0_funnel_out_port>;
->   					};
-> @@ -501,22 +493,18 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->   					cluster1_etf_out: endpoint {
->   						remote-endpoint =
->   						<&main_funnel_in_port1>;
->   					};
->   				};
-> +			};
->   
-> -				port@1 {
-> -					reg = <0>;
-> +			in-ports {
-> +				port {
->   					cluster1_etf_in: endpoint {
-> -						slave-mode;
->   						remote-endpoint =
->   						<&cluster1_funnel_out_port>;
->   					};
-> @@ -530,31 +518,30 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->   					main_funnel_out_port: endpoint {
->   						remote-endpoint =
->   							<&soc_funnel_in_port0>;
->   					};
->   				};
-> +			};
->   
-> -				port@1 {
-> +			in-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
->   					reg = <0>;
->   					main_funnel_in_port0: endpoint {
-> -						slave-mode;
->   						remote-endpoint =
->   							<&cluster0_etf_out>;
->   					};
->   				};
->   
-> -				port@2 {
-> +				port@1 {
->   					reg = <1>;
->   					main_funnel_in_port1: endpoint {
-> -						slave-mode;
->   						remote-endpoint =
->   							<&cluster1_etf_out>;
->   					};
-> @@ -569,10 +556,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm0_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster0_funnel_in_port0>;
-> +			out-ports {
-> +				port {
-> +					etm0_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster0_funnel_in_port0>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -584,10 +573,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm1_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster0_funnel_in_port1>;
-> +			out-ports {
-> +				port {
-> +					etm1_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster0_funnel_in_port1>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -599,10 +590,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm2_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster0_funnel_in_port2>;
-> +			out-ports {
-> +				port {
-> +					etm2_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster0_funnel_in_port2>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -614,10 +607,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm3_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster0_funnel_in_port3>;
-> +			out-ports {
-> +				port {
-> +					etm3_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster0_funnel_in_port3>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -629,10 +624,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm4_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster1_funnel_in_port0>;
-> +			out-ports {
-> +				port {
-> +					etm4_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster1_funnel_in_port0>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -644,10 +641,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm5_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster1_funnel_in_port1>;
-> +			out-ports {
-> +				port {
-> +					etm5_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster1_funnel_in_port1>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -659,10 +658,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm6_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster1_funnel_in_port2>;
-> +			out-ports {
-> +				port {
-> +					etm6_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster1_funnel_in_port2>;
-> +					};
->   				};
->   			};
->   		};
-> @@ -674,10 +675,12 @@
->   			clocks = <&ext_26m>;
->   			clock-names = "apb_pclk";
->   
-> -			port {
-> -				etm7_out: endpoint {
-> -					remote-endpoint =
-> -						<&cluster1_funnel_in_port3>;
-> +			out-ports {
-> +				port {
-> +					etm7_out: endpoint {
-> +						remote-endpoint =
-> +							<&cluster1_funnel_in_port3>;
-> +					};
->   				};
->   			};
->   		};
-> 
+  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-next
+
+for you to fetch changes up to 9c1442a9d039a1a3302fa93e9a11001c5f23b624:
+
+  x86: boot: Fix EFI stub alignment (2018-09-26 12:15:01 +0200)
+
+----------------------------------------------------------------
+EFI updates for v4.20:
+- Add support for enlisting the help of the EFI firmware to create memory
+  reservations that persist across kexec.
+- Add page fault handling to the runtime services support code on x86 so
+  we can gracefully recover from buggy EFI firmware.
+- Fix command line handling on x86 for the boot path that omits the stub's
+  PE/COFF entry point.
+- Other assorted fixes.
+
+----------------------------------------------------------------
+Aaron Ma (1):
+      efi/x86: earlyprintk - Add 64bit efi fb address support
+
+Alistair Strachan (1):
+      efi/libstub: arm: support building with clang
+
+Ard Biesheuvel (3):
+      efi: honour memory reservations passed via a linux specific config table
+      efi/arm: libstub: add a root memreserve config table
+      efi: add API to reserve memory persistently across kexec reboot
+
+Ben Hutchings (1):
+      x86: boot: Fix EFI stub alignment
+
+Hans de Goede (1):
+      efi/x86: Call efi_parse_options() from efi_main()
+
+Ivan Hu (1):
+      efi/efi_test: add exporting ResetSystem runtime service
+
+Sai Praneeth (2):
+      efi: Make efi_rts_work accessible to efi page fault handler
+      efi/x86: Handle page faults occurring while running EFI runtime services
+
+Sebastian Andrzej Siewior (1):
+      efi/x86: drop task_lock() from efi_switch_mm()
+
+ arch/x86/boot/compressed/eboot.c        | 10 +++++
+ arch/x86/boot/tools/build.c             |  7 +++
+ arch/x86/include/asm/efi.h              |  1 +
+ arch/x86/mm/fault.c                     |  9 ++++
+ arch/x86/platform/efi/early_printk.c    |  8 +++-
+ arch/x86/platform/efi/efi_64.c          | 10 ++---
+ arch/x86/platform/efi/quirks.c          | 78 +++++++++++++++++++++++++++++++++
+ drivers/firmware/efi/efi.c              | 59 ++++++++++++++++++++++++-
+ drivers/firmware/efi/libstub/Makefile   |  3 +-
+ drivers/firmware/efi/libstub/arm-stub.c | 27 ++++++++++++
+ drivers/firmware/efi/runtime-wrappers.c | 61 +++++++-------------------
+ drivers/firmware/efi/test/efi_test.c    | 27 ++++++++++++
+ drivers/firmware/efi/test/efi_test.h    | 10 +++++
+ include/linux/efi.h                     | 51 +++++++++++++++++++++
+ 14 files changed, 307 insertions(+), 54 deletions(-)
