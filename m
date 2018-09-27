@@ -2,169 +2,97 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E32A7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB15C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AEF52170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:35:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iMrIYMIf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AEF52170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id D6EDB215F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:36:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6EDB215F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeI1D4B (ORCPT
+        id S1728523AbeI1D42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:56:01 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:52921 "EHLO frisell.zx2c4.com"
+        Thu, 27 Sep 2018 23:56:28 -0400
+Received: from mga02.intel.com ([134.134.136.20]:2906 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbeI1D4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:56:01 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0da977a0;
-        Thu, 27 Sep 2018 21:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
-        :cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to; s=mail; bh=BejqcjSPoa3NwQuoc3ysgXYnCPk=; b=iMrIYMI
-        fpD984xCMvLS6vh4ihdntKNi9a2tSexQ0IQ7AqOYGNn42H49b1FhQAgVmvCcM6on
-        QFeDzIre0G8D98+A4Ou0Gp0qC+X8MJzeXL3JUVXHrdHw5JUMkDnBU10zDQc45bcO
-        LjeYdLi7F4mCsKKNIq+iz1xswuqelXkgYH2/A3TdVXFLFIR2IRM4fkAxm+DZ19H1
-        6YLHXrL5P32KEW2ZV6g4KJ5dkrZ7/nLsGobNvVY/4eINL3GV92Ra05siZI6Eap0t
-        dYlhM/QzhL/EYYDE1aqNQdrH5FRPrBy48YU+jsqX1cYJi8xY539Myt69utBUPx3N
-        9y5UJMVlKxQ+sCw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3b2b6331 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Thu, 27 Sep 2018 21:16:58 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 23:35:39 +0200
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
-Message-ID: <20180927213537.GA27576@zx2c4.com>
-References: <20180925145622.29959-1-Jason@zx2c4.com>
- <20180927182944.GA22921@gmail.com>
+        id S1728372AbeI1D42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 23:56:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 14:36:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,312,1534834800"; 
+   d="scan'208";a="78009680"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.151]) ([10.7.153.151])
+  by orsmga006.jf.intel.com with ESMTP; 27 Sep 2018 14:35:53 -0700
+Subject: Re: [PATCH i2c-next v3 1/3] dt-bindings: i2c: aspeed: Add 'timeout'
+ property as an optional property
+To:     Rob Herring <robh@kernel.org>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20180926215842.23125-1-jae.hyun.yoo@linux.intel.com>
+ <20180926215842.23125-2-jae.hyun.yoo@linux.intel.com>
+ <20180927205610.GA29022@bogus>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <c045aceb-80e4-4f9f-7ff2-c30172f04b3e@linux.intel.com>
+Date:   Thu, 27 Sep 2018 14:35:52 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180927182944.GA22921@gmail.com>
+In-Reply-To: <20180927205610.GA29022@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hi Rob,
 
-On Thu, Sep 27, 2018 at 8:29 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> Why is Herbert Xu's existing crypto tree being circumvented, especially for
-> future patches (the initial merge isn't quite as important as that's a one-time
-> event)?  I like being able to check out cryptodev to test upcoming crypto
-> patches.  And currently, changes to APIs, algorithms, tests, and implementations
-> all go through cryptodev, which is convenient for crypto developers.
->
-> Apparently, you're proposing that someone adding a new algorithm will now have
-> to submit the API portion to one maintainer (Herbert Xu) and the implementation
-> portion to another maintainer (you), and they'll go through separate git trees.
-> That's inconvenient for developers, and it seems that in practice you and
-> Herbert will be stepping on each other's toes a lot.
->
-> Can you please reach some kind of sane agreement with Herbert so that the
-> development process isn't fractured into two?  Perhaps you could review patches,
-> but Herbert could still apply them?
+On 9/27/2018 1:56 PM, Rob Herring wrote:
+> On Wed, Sep 26, 2018 at 02:58:40PM -0700, Jae Hyun Yoo wrote:
+>> This commit adds 'aspeed,timeout' property as an optional property
+>> which can be used for setting 'timeout' value of
+>> 'struct i2c_adapter'. With this patch, the timeout value can be
+>> set through an I2C_TIMEOUT ioctl on cdev, or through this optional
+>> DT property.
+> 
+> Isn't controlling this from userspace or relying on a default
+> sufficient?  I can't see this needing to be highly tuned for each
+> platform.
+> 
 
-I think you're overthinking it a bit. Zinc will have a few software
-implementations of primitives that are useful in cases where it's nice to call
-the primitive directly. Think: various usages of sha2, siphash, the wireguard
-suite (what this patchset includes), other things in lib/, etc. In so much as
-this winds up duplicating things within the crypto API, I'll work with Herbert
-to build one on top of the other -- as I've done in the two commits in this
-series. But beyond that, think of the two initiatives as orthogonal. I'm
-working on curating a few primitives that are maximally useful throughout
-the kernel for various uses, and doing so in a way that I think brings
-about a certain quality. Meanwhile the crypto API is amassing a huge
-collection of primitives for some things, and that will continue to exist,
-and Herbert will continue to maintain that. I expect for the crossover
-to be fairly isolated and manageable, without too much foreseeable tree-
-conflicts and such. Therefore, Samuel Neves and I plan to maintain the
-codebase we've spent quite some time writing, and maintain our own tree for
-it, which we'll be submitting through Greg. In other words, this is not
-a matter of "circumvention" or "stepping on toes", but rather separate
-efforts. I'm quite certain to the extent they overlap we'll be able to work
-out fairly easily.
+It can be controlled using an ioctl command on an I2C cdev from
+userspace if CONFIG_I2C_CHARDEV is enabled. A couple of I2C drivers use
+their own specific default value for it but in general the common
+default value (1 second) which is set by i2c core is sufficient.
+But it still needs to be tuned for specific cases based on attached
+devices' characteristic, on packet length, on bus speed and on etc.
+Specifically in Aspeed I2C driver for BMC, it should be tuned
+to support multi-master use cases properly, and it needs a device tree
+property to apply this timeout value from the probing time of the
+module.
 
-Either way, I'll take your suggestion and reach out to Herbert, since at
-least a discussion between the two of us sounds like it could be productive.
+> However, if we do have a property, it should be common.
+> 
 
-> I'm also wondering about the criteria for making additions and changes to
-> "Zinc".  You mentioned before that one of the "advantages" of Zinc is that it
-> doesn't include "cipher modes from 90s cryptographers" -- what does that mean
-> exactly?  You've also indicated before that you don't want people modifying the
-> Poly1305 implementations as they are too error-prone.  Useful contributions
-> could be blocked or discouraged in the future. Can you please elaborate on
-> your criteria for contributions to Zinc?
->
-> Also, will you allow algorithms that aren't up to modern security standards but
-> are needed for compatibility reasons, e.g. MD5, SHA-1, and DES?  There are
-> existing standards, APIs, and data formats that use these "legacy" algorithms;
-> so implementations of them are often still needed, whether we like it or not.
->
-> And does it matter who designed the algorithms, e.g. do algorithms from Daniel
-> Bernstein get effectively a free pass, while algorithms from certain countries,
-> governments, or organizations are not allowed?  E.g. wireless driver developers
-> may need the SM4 block cipher (which is now supported by the crypto API) as it's
-> specified in a Chinese wireless standard.  Will you allow SM4 in Zinc?  Or will
-> people have to submit some algorithms to Herbert and some to you due to
-> disagreements about what algorithms should be included?
+Okay, I'll change it to 'timeout'.
 
-Similarly here, I think you're over-politicizing everything. Stable address
-generation for IPv6 uses SHA1 -- see net/ipv6/addrconf.c:3203 -- do you think
-that this should use, say, the SM3 chinese hash function instead? No, of
-course not, for a variety of interesting reasons. Rather, it should use some
-simple hash function that's fast in software that we have available in Zinc.
-On the other hand, it seems like parts of the kernel that have pretty high-
-levels of cipher agility -- such as dmcrypt, ipsec, wifi apparently, and
-so on -- will continue to use dynamic-dispatch system like the crypto API,
-since that's what it was made to do and is effective at doing. And so, your
-example of SM4 seems to fit perfectly into what the crypto API is well-suited
-for, and it would fit naturally in there.
-
-In other words, the "political criteria" for what we add to lib/zinc/ will
-mostly be the same as for the rest of lib/: are there things using it that
-benefit from it being there in a direct and obvious way, and does the
-implementation meet certain quality standards.
-
-> to change them yourself, e.g. when you added the part that converts the
-> accumulator from base 26 to base 32.  I worry there may be double standards
-> here
-
-We do actually appreciate your concern here. However, there's a lot more that
-went into that short patch than meets the eye:
-
-  - It matches exactly what Andy Polyakov's code is doing for the exact
-    same reason, so this isn't something that's actually "new". (There
-    are paths inside his implementation that branch from the vector code
-    to the scalar code.)
-  - It has been discussed at length with Andy, including what kinds of
-    proofs we'll need if we want to chop it down further (to remove that
-    final reduction), and why we both don't want to do that yet, and so
-    we go with the full carrying for the avoidance of risk.
-  - We've proved its correctness with Z3, actually using an even looser
-    constraint on digit size than what Andy mentioned to us, thus resulting
-    in a stronger proof result. So we're certain this isn't rubbish.
-  - There's been some considerable computing power sunk into fuzzing it.
-
-There's no doubt about it, we've done our due-diligence here. This is in
-fact the kind of efforts we require of submissions. You could fault us for
-not detailing this in "the commit message" -- except as this is still a
-patch series, we're putting improvements into the 00/XX change log, instead
-of adding fixes and additions on top of the series. Of course in the ordinary
-course of kernel development, this would exist instead as a standalone commit.
-If you have a better idea of how this kind of thing can be communicated, and
-where precisely, in the pre-merge process, I'd be interested in hearing
-suggestions.
-
-Thanks,
-Jason
+Thanks a lot,
+Jae
