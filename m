@@ -2,181 +2,106 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BBEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81ED8C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC29C215EB
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:20:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC29C215EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F905215EB
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:21:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F905215EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeI0Tir (ORCPT
+        id S1727574AbeI0Tj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 15:38:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40470 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727318AbeI0Tiq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 15:38:46 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8RDHc0Z033952
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:20:31 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mryxm87ra-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:20:30 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 27 Sep 2018 14:20:29 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Sep 2018 14:20:25 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8RDKOAC65011842
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 27 Sep 2018 13:20:24 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 583EB42041;
-        Thu, 27 Sep 2018 16:20:07 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 754594204B;
-        Thu, 27 Sep 2018 16:20:06 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.85.160])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Sep 2018 16:20:06 +0100 (BST)
-Subject: Re: [PATCH v4 5/6] ima: add support for external setting of
- ima_appraise
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com
-Date:   Thu, 27 Sep 2018 09:20:12 -0400
-In-Reply-To: <20180926122210.14642-6-nayna@linux.vnet.ibm.com>
-References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
-         <20180926122210.14642-6-nayna@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092713-0016-0000-0000-0000020B56DA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092713-0017-0000-0000-000032627D19
-Message-Id: <1538054412.3459.105.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809270131
+        Thu, 27 Sep 2018 15:39:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57210 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727199AbeI0Tj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 15:39:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 84B58AEDC;
+        Thu, 27 Sep 2018 13:21:11 +0000 (UTC)
+Subject: Re: [v2 PATCH 2/2 -mm] mm: brk: dwongrade mmap_sem to read when
+ shrinking
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1537985434-22655-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180927125025.xnvoh2btdq5kjmai@kshutemo-mobl1>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <3ba966a4-abf9-1363-3e82-41fe73bc0919@suse.cz>
+Date:   Thu, 27 Sep 2018 15:21:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180927125025.xnvoh2btdq5kjmai@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nayna,
-
-On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
-> The "ima_appraise" mode defaults to enforcing, unless configured to allow
-> the boot command line "ima_appraise" option. This patch explicitly sets the
-> "ima_appraise" mode for the arch specific policy setting.
-
-Eventually this patch might be needed if/when we need to differentiate
-between different secure boot modes.
-
-Only if CONFIG_IMA_APPRAISE_BOOTPARAM is enabled, can the IMA appraise
-mode be modified on the boot command line.  Instead of this patch, how
-about making the ability to change the IMA appraise mode also
-dependent on CONFIG_IMA_ARCH_POLICY not being enabled?
-
-Mimi
-
+On 9/27/18 2:50 PM, Kirill A. Shutemov wrote:
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index 017bcfa..0d2fae1 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -193,9 +193,11 @@ static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long
+>>  	unsigned long retval;
+>>  	unsigned long newbrk, oldbrk;
+>>  	struct mm_struct *mm = current->mm;
+>> +	unsigned long origbrk = mm->brk;
 > 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
-> ---
->  security/integrity/ima/ima.h          |  5 +++++
->  security/integrity/ima/ima_appraise.c | 11 +++++++++--
->  security/integrity/ima/ima_policy.c   |  5 ++++-
->  3 files changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 588e4813370c..6e5fa7c42809 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -248,6 +248,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
->  				 int xattr_len);
->  int ima_read_xattr(struct dentry *dentry,
->  		   struct evm_ima_xattr_data **xattr_value);
-> +void set_ima_appraise(char *str);
->  
->  #else
->  static inline int ima_appraise_measurement(enum ima_hooks func,
-> @@ -290,6 +291,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
->  	return 0;
->  }
->  
-> +static inline void set_ima_appraise(char *str)
-> +{
-> +}
-> +
->  #endif /* CONFIG_IMA_APPRAISE */
->  
->  /* LSM based policy rules require audit */
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 8bd7a0733e51..e061613bcb87 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -18,15 +18,22 @@
->  
->  #include "ima.h"
->  
-> -static int __init default_appraise_setup(char *str)
-> +void set_ima_appraise(char *str)
->  {
-> -#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
->  	if (strncmp(str, "off", 3) == 0)
->  		ima_appraise = 0;
->  	else if (strncmp(str, "log", 3) == 0)
->  		ima_appraise = IMA_APPRAISE_LOG;
->  	else if (strncmp(str, "fix", 3) == 0)
->  		ima_appraise = IMA_APPRAISE_FIX;
-> +	else if (strncmp(str, "enforce", 7) == 0)
-> +		ima_appraise = IMA_APPRAISE_ENFORCE;
-> +}
-> +
-> +static int __init default_appraise_setup(char *str)
-> +{
-> +#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-> +	set_ima_appraise(str);
->  #endif
->  	return 1;
->  }
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 5fb4b0c123a3..410fee31b162 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -585,9 +585,12 @@ void __init ima_init_policy(void)
->  	arch_entries = ima_init_arch_policy();
->  	if (!arch_entries)
->  		pr_info("No architecture policies found\n");
-> -	else
-> +	else {
->  		add_rules(arch_policy_entry, arch_entries,
->  			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
-> +		if (temp_ima_appraise)
-> +			set_ima_appraise("enforce");
-> +	}
->  
->  	/*
->  	 * Insert the builtin "secure_boot" policy rules requiring file
+> Is it safe to read mm->brk outside the lock?
 
+Good catch! I guess not, parallel brk()'s could then race.
