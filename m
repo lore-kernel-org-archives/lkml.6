@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A621BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CD2C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C0A20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C0A20836
+	by mail.kernel.org (Postfix) with ESMTP id A95E42159B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95E42159B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbeI0P2w (ORCPT
+        id S1728552AbeI0P25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:28:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55280 "EHLO
+        Thu, 27 Sep 2018 11:28:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbeI0P2v (ORCPT
+        with ESMTP id S1727562AbeI0P25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:28:51 -0400
+        Thu, 27 Sep 2018 11:28:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B617810A4;
-        Thu, 27 Sep 2018 09:11:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6B2710A4;
+        Thu, 27 Sep 2018 09:11:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 38/88] ALSA: oxfw: fix memory leak of discovered stream formats at error path
-Date:   Thu, 27 Sep 2018 11:03:19 +0200
-Message-Id: <20180927090305.295755978@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
+        Mike Christie <mchristi@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.18 56/88] scsi: target: iscsi: Use hex2bin instead of a re-implementation
+Date:   Thu, 27 Sep 2018 11:03:37 +0200
+Message-Id: <20180927090307.567575986@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -51,47 +52,181 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Vincent Pelletier <plr.vincent@gmail.com>
 
-commit 1064bc685d359f549f91c2d5f111965a9284f328 upstream.
+commit 1816494330a83f2a064499d8ed2797045641f92c upstream.
 
-After finishing discover of stream formats, ALSA OXFW driver has memory
-leak of allocated memory object at error path.
+This change has the following effects, in order of descreasing importance:
 
-This commit releases the memory object at the error path.
+1) Prevent a stack buffer overflow
 
-Fixes: 6c29230e2a5f ('ALSA: oxfw: delayed registration of sound card')
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+2) Do not append an unnecessary NULL to an anyway binary buffer, which
+   is writing one byte past client_digest when caller is:
+   chap_string_to_hex(client_digest, chap_r, strlen(chap_r));
+
+The latter was found by KASAN (see below) when input value hes expected size
+(32 hex chars), and further analysis revealed a stack buffer overflow can
+happen when network-received value is longer, allowing an unauthenticated
+remote attacker to smash up to 17 bytes after destination buffer (16 bytes
+attacker-controlled and one null).  As switching to hex2bin requires
+specifying destination buffer length, and does not internally append any null,
+it solves both issues.
+
+This addresses CVE-2018-14633.
+
+Beyond this:
+
+- Validate received value length and check hex2bin accepted the input, to log
+  this rejection reason instead of just failing authentication.
+
+- Only log received CHAP_R and CHAP_C values once they passed sanity checks.
+
+==================================================================
+BUG: KASAN: stack-out-of-bounds in chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
+Write of size 1 at addr ffff8801090ef7c8 by task kworker/0:0/1021
+
+CPU: 0 PID: 1021 Comm: kworker/0:0 Tainted: G           O      4.17.8kasan.sess.connops+ #2
+Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 05/19/2014
+Workqueue: events iscsi_target_do_login_rx [iscsi_target_mod]
+Call Trace:
+ dump_stack+0x71/0xac
+ print_address_description+0x65/0x22e
+ ? chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
+ kasan_report.cold.6+0x241/0x2fd
+ chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
+ chap_server_compute_md5.isra.2+0x2cb/0x860 [iscsi_target_mod]
+ ? chap_binaryhex_to_asciihex.constprop.5+0x50/0x50 [iscsi_target_mod]
+ ? ftrace_caller_op_ptr+0xe/0xe
+ ? __orc_find+0x6f/0xc0
+ ? unwind_next_frame+0x231/0x850
+ ? kthread+0x1a0/0x1c0
+ ? ret_from_fork+0x35/0x40
+ ? ret_from_fork+0x35/0x40
+ ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? deref_stack_reg+0xd0/0xd0
+ ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? is_module_text_address+0xa/0x11
+ ? kernel_text_address+0x4c/0x110
+ ? __save_stack_trace+0x82/0x100
+ ? ret_from_fork+0x35/0x40
+ ? save_stack+0x8c/0xb0
+ ? 0xffffffffc1660000
+ ? iscsi_target_do_login+0x155/0x8d0 [iscsi_target_mod]
+ ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? process_one_work+0x35c/0x640
+ ? worker_thread+0x66/0x5d0
+ ? kthread+0x1a0/0x1c0
+ ? ret_from_fork+0x35/0x40
+ ? iscsi_update_param_value+0x80/0x80 [iscsi_target_mod]
+ ? iscsit_release_cmd+0x170/0x170 [iscsi_target_mod]
+ chap_main_loop+0x172/0x570 [iscsi_target_mod]
+ ? chap_server_compute_md5.isra.2+0x860/0x860 [iscsi_target_mod]
+ ? rx_data+0xd6/0x120 [iscsi_target_mod]
+ ? iscsit_print_session_params+0xd0/0xd0 [iscsi_target_mod]
+ ? cyc2ns_read_begin.part.2+0x90/0x90
+ ? _raw_spin_lock_irqsave+0x25/0x50
+ ? memcmp+0x45/0x70
+ iscsi_target_do_login+0x875/0x8d0 [iscsi_target_mod]
+ ? iscsi_target_check_first_request.isra.5+0x1a0/0x1a0 [iscsi_target_mod]
+ ? del_timer+0xe0/0xe0
+ ? memset+0x1f/0x40
+ ? flush_sigqueue+0x29/0xd0
+ iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? iscsi_target_nego_release+0x80/0x80 [iscsi_target_mod]
+ ? iscsi_target_restore_sock_callbacks+0x130/0x130 [iscsi_target_mod]
+ process_one_work+0x35c/0x640
+ worker_thread+0x66/0x5d0
+ ? flush_rcu_work+0x40/0x40
+ kthread+0x1a0/0x1c0
+ ? kthread_bind+0x30/0x30
+ ret_from_fork+0x35/0x40
+
+The buggy address belongs to the page:
+page:ffffea0004243bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x17fffc000000000()
+raw: 017fffc000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffea0004243c20 ffffea0004243ba0 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8801090ef680: f2 f2 f2 f2 f2 f2 f2 01 f2 f2 f2 f2 f2 f2 f2 00
+ ffff8801090ef700: f2 f2 f2 f2 f2 f2 f2 00 02 f2 f2 f2 f2 f2 f2 00
+>ffff8801090ef780: 00 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f2 f2 f2 f2 00
+                                              ^
+ ffff8801090ef800: 00 f2 f2 f2 f2 f2 f2 00 00 00 00 02 f2 f2 f2 f2
+ ffff8801090ef880: f2 f2 f2 00 00 00 00 00 00 00 00 f2 f2 f2 f2 00
+==================================================================
+
+Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/oxfw/oxfw.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/target/iscsi/iscsi_target_auth.c |   30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
---- a/sound/firewire/oxfw/oxfw.c
-+++ b/sound/firewire/oxfw/oxfw.c
-@@ -207,6 +207,7 @@ static int detect_quirks(struct snd_oxfw
- static void do_registration(struct work_struct *work)
- {
- 	struct snd_oxfw *oxfw = container_of(work, struct snd_oxfw, dwork.work);
-+	int i;
- 	int err;
+--- a/drivers/target/iscsi/iscsi_target_auth.c
++++ b/drivers/target/iscsi/iscsi_target_auth.c
+@@ -26,18 +26,6 @@
+ #include "iscsi_target_nego.h"
+ #include "iscsi_target_auth.h"
  
- 	if (oxfw->registered)
-@@ -269,6 +270,12 @@ error:
- 	snd_oxfw_stream_destroy_simplex(oxfw, &oxfw->rx_stream);
- 	if (oxfw->has_output)
- 		snd_oxfw_stream_destroy_simplex(oxfw, &oxfw->tx_stream);
-+	for (i = 0; i < SND_OXFW_STREAM_FORMAT_ENTRIES; ++i) {
-+		kfree(oxfw->tx_stream_formats[i]);
-+		oxfw->tx_stream_formats[i] = NULL;
-+		kfree(oxfw->rx_stream_formats[i]);
-+		oxfw->rx_stream_formats[i] = NULL;
+-static int chap_string_to_hex(unsigned char *dst, unsigned char *src, int len)
+-{
+-	int j = DIV_ROUND_UP(len, 2), rc;
+-
+-	rc = hex2bin(dst, src, j);
+-	if (rc < 0)
+-		pr_debug("CHAP string contains non hex digit symbols\n");
+-
+-	dst[j] = '\0';
+-	return j;
+-}
+-
+ static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
+ {
+ 	int i;
+@@ -248,9 +236,16 @@ static int chap_server_compute_md5(
+ 		pr_err("Could not find CHAP_R.\n");
+ 		goto out;
+ 	}
++	if (strlen(chap_r) != MD5_SIGNATURE_SIZE * 2) {
++		pr_err("Malformed CHAP_R\n");
++		goto out;
 +	}
- 	snd_card_free(oxfw->card);
- 	kfree(oxfw->spec);
- 	oxfw->spec = NULL;
++	if (hex2bin(client_digest, chap_r, MD5_SIGNATURE_SIZE) < 0) {
++		pr_err("Malformed CHAP_R\n");
++		goto out;
++	}
+ 
+ 	pr_debug("[server] Got CHAP_R=%s\n", chap_r);
+-	chap_string_to_hex(client_digest, chap_r, strlen(chap_r));
+ 
+ 	tfm = crypto_alloc_shash("md5", 0, 0);
+ 	if (IS_ERR(tfm)) {
+@@ -349,9 +344,7 @@ static int chap_server_compute_md5(
+ 		pr_err("Could not find CHAP_C.\n");
+ 		goto out;
+ 	}
+-	pr_debug("[server] Got CHAP_C=%s\n", challenge);
+-	challenge_len = chap_string_to_hex(challenge_binhex, challenge,
+-				strlen(challenge));
++	challenge_len = DIV_ROUND_UP(strlen(challenge), 2);
+ 	if (!challenge_len) {
+ 		pr_err("Unable to convert incoming challenge\n");
+ 		goto out;
+@@ -360,6 +353,11 @@ static int chap_server_compute_md5(
+ 		pr_err("CHAP_C exceeds maximum binary size of 1024 bytes\n");
+ 		goto out;
+ 	}
++	if (hex2bin(challenge_binhex, challenge, challenge_len) < 0) {
++		pr_err("Malformed CHAP_C\n");
++		goto out;
++	}
++	pr_debug("[server] Got CHAP_C=%s\n", challenge);
+ 	/*
+ 	 * During mutual authentication, the CHAP_C generated by the
+ 	 * initiator must not match the original CHAP_C generated by
 
 
