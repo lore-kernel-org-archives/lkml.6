@@ -2,186 +2,141 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9226C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2D5C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41420215F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:05:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ABCE215F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:07:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gAkcJasU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41420215F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mS6yY4Qf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ABCE215F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbeI1BYu (ORCPT
+        id S1728410AbeI1B0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:24:50 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35050 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727731AbeI1BYu (ORCPT
+        Thu, 27 Sep 2018 21:26:55 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37159 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727404AbeI1B0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:24:50 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8RJ4MgD054608;
-        Thu, 27 Sep 2018 19:04:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=opKOXR1ODeRPTF90An2CfmDqY0lfMXjyNr7bDPPZxg8=;
- b=gAkcJasUWCyZ2Vf5ZZ3TkA5yK8ZmQTbsVxzYQjVVU1zy/tC8XJfY/risXk3YAolkhuNy
- EXEMvTJi//aqRiU1lqF5I2Kr5XiKgRL/ChCarb31ePKtavwdmHwZ0dD7zUIAom9YI/Ft
- 7DccDInQY6s4p877qb04Tx4bJm1Z0fFRtudM96s8WjgAcrn22t616jMp3mUO0zoyLCNM
- jR905pqSrC/ntCCN4Uw2Fl21Lpxsdt7C2+pu4bl67jDRw2XIcIjRx/jFIg2GVOOnz5C4
- 8lCoJBxR+3tnXtI/euDC2TiOjnJBTbal7JKtOqtmbeS9dwmmD+LNfv7llPr1aPHe2npN 0A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2mndppv1f1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 19:04:53 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8RJ4lq6001290
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 19:04:48 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8RJ4l3A001236;
-        Thu, 27 Sep 2018 19:04:47 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Sep 2018 12:04:46 -0700
-Subject: Re: [Xen-devel] [PATCH] xen/blkfront: When purging persistent grants,
- keep them in the buffer
-To:     Jens Axboe <axboe@kernel.dk>,
-        Sander Eikelenboom <linux@eikelenboom.it>,
-        Juergen Gross <jgross@suse.com>, konrad.wilk@oracle.com,
-        roger.pau@citrix.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
- <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
- <5bd1a695-50c6-e79f-38dd-c980fc2138ad@kernel.dk>
- <00030538-e1ce-28ad-3548-8e3b07083b05@eikelenboom.it>
- <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+        Thu, 27 Sep 2018 21:26:55 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u12-v6so3799285wrr.4;
+        Thu, 27 Sep 2018 12:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9OB8nt5MW0fTK6C64eP4f/FNxkt9laP2yrv+Zcm+y4w=;
+        b=mS6yY4QffUGmg1szGlptCeErI7CpDyw1ti0PEOuQFdmebmMNmSTy3FXz6ZgqPaokN1
+         R4QivsAT2yFIxbggXPrApnwrSeXKAezBYZfkFWNH0zMlnyNL0PZ3A6FXSh5dSlJSyNc9
+         TUpT+EAjowLicOHHVWI3bhpVCBc6HUq3V+7cGxQMqf3u/vonBzG8GhckalywrCOvSuJs
+         dOhOb3E+Ro5QAK2rRqGTx8CDtxIjIdRhECdHHa6yoZ1BneMycJfVBoxXcLi83BBLlL1R
+         O7+yJ7HoWUFQ5YZwe5bjha66idTf0+xlHf9tNUjytDBSU4G28/AXb7+lDxrBgJJaovyC
+         8qaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=9OB8nt5MW0fTK6C64eP4f/FNxkt9laP2yrv+Zcm+y4w=;
+        b=l179rp3GPClvByBPJT3+uAHVj5/BmhooygjimIfiUSj2FDvjrjOeUgDYcyfjy5xJpC
+         jgyE+Gy9Ht33uyc2tKUkdsxrcKxIlRwLyy2JoCAnvBGNaB0YhtS+yZutaudLcUSdNZP7
+         di56CTteEqoFgOe5fQ7P1asPeZ6BxH9dC8xAZFC9gRmXa6LqDAyiWBXpvCN/HedC4lnR
+         HBUS8K4dxVYJUbIX2lmbuPnsZaBdbaW8GZpOJgFJKTGATw63ueeBPTTsHqaIXm20q+EM
+         K17EeBa8Row+6Pun3FmapwLhIudNtgz8cHFZ2fdJ0KlJqyETSx41THMuzrD8LwXXQYYz
+         DK5w==
+X-Gm-Message-State: ABuFfohlXb+HJY3j3pSj/FXA8F6+wlTtsNicOG8W21NN+rL9PLiXLtmI
+        XZuMKGeLLv8U6aZBGYeHStc3QmHM
+X-Google-Smtp-Source: ACcGV61/VlUa7uzWEjA77eqVWrA/xGlaJJW7/vj9GGeS9ARzeIfCPc5CIB3tvBFNv7K5NvsyrQ3a0w==
+X-Received: by 2002:a5d:608b:: with SMTP id w11-v6mr10384292wrt.193.1538075230378;
+        Thu, 27 Sep 2018 12:07:10 -0700 (PDT)
+Received: from [10.67.50.87] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id y12-v6sm2001874wrq.33.2018.09.27.12.07.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 12:07:09 -0700 (PDT)
+Subject: Re: [PATCH net-next] net: dsa: b53: Fix build with B53_SRAB enabled
+ and B53_SERDES=m
+To:     Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180927100244.692546-1-arnd@arndb.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
-Date:   Thu, 27 Sep 2018 15:06:14 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <c0af4a4c-6656-e014-a4bb-0bacfbe1d468@gmail.com>
+Date:   Thu, 27 Sep 2018 12:07:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
+In-Reply-To: <20180927100244.692546-1-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809270177
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/18 2:56 PM, Jens Axboe wrote:
-> On 9/27/18 12:52 PM, Sander Eikelenboom wrote:
->> On 27/09/18 16:26, Jens Axboe wrote:
->>> On 9/27/18 1:12 AM, Juergen Gross wrote:
->>>> On 22/09/18 21:55, Boris Ostrovsky wrote:
->>>>> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->>>>> added support for purging persistent grants when they are not in use. As
->>>>> part of the purge, the grants were removed from the grant buffer, This
->>>>> eventually causes the buffer to become empty, with BUG_ON triggered in
->>>>> get_free_grant(). This can be observed even on an idle system, within
->>>>> 20-30 minutes.
->>>>>
->>>>> We should keep the grants in the buffer when purging, and only free the
->>>>> grant ref.
->>>>>
->>>>> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>>> Reviewed-by: Juergen Gross <jgross@suse.com>
->>> Since Konrad is out, I'm going to queue this up for 4.19.
->>>
->> Hi Boris/Juergen.
->>
->> Last week i tested a linux-4.19-rc4 kernel with xen-next and this patch from Boris pulled on top. 
->> Unfortunately it made a VM hang (probably because it's rootFS is shuffled from under it's feet 
+On 09/27/2018 03:02 AM, Arnd Bergmann wrote:
+> When B53_SERDES is a loadable module, a built-in srab driver still
+> cannot reach it, so the previous fix is incomplete:
+> 
+> b53_srab.c:(.text+0x3f4): undefined reference to `b53_serdes_init'
+> drivers/net/dsa/b53/b53_srab.o:(.rodata+0xe64): undefined reference to `b53_serdes_link_state'
+> drivers/net/dsa/b53/b53_srab.o:(.rodata+0xe74): undefined reference to `b53_serdes_link_set'
+> drivers/net/dsa/b53/b53_srab.o:(.rodata+0xe88): undefined reference to `b53_serdes_an_restart'
+> drivers/net/dsa/b53/b53_srab.o:(.rodata+0xea0): undefined reference to `b53_serdes_phylink_validate'
+> drivers/net/dsa/b53/b53_srab.o:(.rodata+0xea4): undefined reference to `b53_serdes_config'
+> 
+> Add a Kconfig dependency that forces srab to also be a module
+> in this case, but allow it to be built-in when serdes is
+> disabled or built-in.
+> 
+> Fixes: 7a8c7f5c30f9 ("net: dsa: b53: Fix build with B53_SRAB enabled and not B53_SERDES")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-What do you mean by "rootFS is shuffled from under it's feet " ?
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 
->> and it gave these in dom0 dmesg:
->>
->> [ 9251.696090] xen-blkback: requesting a grant already in use
->> [ 9251.705861] xen-blkback: trying to add a gref that's already in the tree
->> [ 9251.715781] xen-blkback: requesting a grant already in use
->> [ 9251.725756] xen-blkback: trying to add a gref that's already in the tree
->> [ 9251.735698] xen-blkback: requesting a grant already in use
->> [ 9251.745573] xen-blkback: trying to add a gref that's already in the tree
->>
->> The VM was a HVM with 4 vcpu's and 2 phy disks:
->> xen-blkback: backend/vbd/14/768: using 4 queues, protocol 1 (x86_64-abi) persistent grants
->> xen-blkback: backend/vbd/14/832: using 4 queues, protocol 1 (x86_64-abi) persistent grants
->>
->>
->> Currently i have been running 4.19-rc5 with xen-next on top and commit
->> a46b53672b2c reverted, for a couple of days. That seems to run stable
->> for me (since it's a small box so i'm not hit by what a46b53672b2c
->> tried to fix.
->>
->> If you can come up with a debug patch i can give that a spin tomorrow
->> evening or in the weekend, so we are hopefully still in time for the
->> 4.19 release.
-> At this late in the game, might make more sense to simply revert the
-> buggy commit.  Especially since what is currently out there doesn't fix
-> the issue for you.
-
-If decision is to revert then I think the whole series needs to be
-reverted.
-
--boris
-
+Thanks!
+-- 
+Florian
