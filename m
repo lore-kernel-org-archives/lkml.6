@@ -2,83 +2,86 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E305EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D759C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81EE921571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:51:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81EE921571
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id E5CE32159D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CE32159D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbeI0RJc convert rfc822-to-8bit (ORCPT
+        id S1727398AbeI0RJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:09:32 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45060 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbeI0RJc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:09:32 -0400
-Received: by mail-ed1-f66.google.com with SMTP id h6-v6so3139283eds.12;
-        Thu, 27 Sep 2018 03:51:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cgrd5DvhR+UrykmaohhiorrLYEVOq9JmpukxipJGfCA=;
-        b=KvXbYe+K/E6GmC4XTxH61cyFcQevwDTuORPwikxYX/rg6w12HzfeRohQkQs8spPILT
-         CAO4XVL5yY5Csvov+bUxkBsIfZMSyXR80xsK/BxEAX0BqKjLf2JEwzKgQ03TZszRoXFN
-         6H/axlziBJ1fEGOTIQPs1QF9YBrfbMLS4fOnBwrQI3rt3gCmF39yBoAVmhlr5+mdOm6H
-         hjMLdpp84TjLzs+xiMyoJ/i56JSiSdVVxfyvlnox8BnpCrDx5ykcTW88SOkyw4+P0Or8
-         Aq/+eUDedcn6k/aactnkxtrJKx62e2qtElxBzmCPbrQHsH6OSye0ZVtC55vltQEieJhg
-         ef7g==
-X-Gm-Message-State: ABuFfojn3YQVQL28r4yl2fl9NZlhCkThaboWKxGAc/2HjkecakA0SElt
-        rsZLBUwEmoYERfoN0gPpj1QJytY7
-X-Google-Smtp-Source: ACcGV61yWWQdcOIjK3JCOFN/AqdEN+2u2CR+cIjwkt6YlaZYkkPUADZEFEo5bQ2yC/gkaXJpVZoK1Q==
-X-Received: by 2002:a50:b128:: with SMTP id k37-v6mr17164689edd.183.1538045509661;
-        Thu, 27 Sep 2018 03:51:49 -0700 (PDT)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id e25-v6sm943864edd.35.2018.09.27.03.51.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 03:51:48 -0700 (PDT)
-Received: by mail-wr1-f42.google.com with SMTP id j15-v6so2049948wrt.8;
-        Thu, 27 Sep 2018 03:51:48 -0700 (PDT)
-X-Received: by 2002:a5d:6b01:: with SMTP id v1-v6mr8232353wrw.208.1538045508358;
- Thu, 27 Sep 2018 03:51:48 -0700 (PDT)
+        Thu, 27 Sep 2018 13:09:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59277 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726820AbeI0RJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 13:09:57 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6D405A281FE97;
+        Thu, 27 Sep 2018 18:52:13 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 27 Sep 2018 18:52:06 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        zhong jiang <zhongjiang@huawei.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] VMCI: remove set but not used variable 'cid'
+Date:   Thu, 27 Sep 2018 11:01:19 +0000
+Message-ID: <1538046079-137795-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20180926170545.ogcmt36ff7jmqxkl@flea> <20180926194824.8832-1-rodrigo@tjader.xyz>
-In-Reply-To: <20180926194824.8832-1-rodrigo@tjader.xyz>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 27 Sep 2018 18:51:35 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67iwJ--dc6V6Vb0fukd4x_2RbCv5wOnHMUYxpZOJvL-YQ@mail.gmail.com>
-Message-ID: <CAGb2v67iwJ--dc6V6Vb0fukd4x_2RbCv5wOnHMUYxpZOJvL-YQ@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: allwinner: a64-olinuxino: set the PHY TX delay
-To:     rodrigo@tjader.xyz
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 3:49 AM Rodrigo Exterckötter Tjäder
-<rodrigo@tjader.xyz> wrote:
->
-> The PHY found on the A64-OLinuXino requires a TX delay in order to
-> operate properly. Olimex uses a 600ps second delay in their BSP, and
-> that has been found to work, so let's use that value in the current
-> DT.
->
-> Signed-off-by: Rodrigo Exterckötter Tjäder <rodrigo@tjader.xyz>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Applied for 4.20. Thanks.
+drivers/misc/vmw_vmci/vmci_host.c: In function 'vmci_host_do_alloc_queuepair':
+drivers/misc/vmw_vmci/vmci_host.c:450:6: warning:
+ variable 'cid' set but not used [-Wunused-but-set-variable]
+  u32 cid;
+      ^
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/misc/vmw_vmci/vmci_host.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
+index be732e5..edfffc9 100644
+--- a/drivers/misc/vmw_vmci/vmci_host.c
++++ b/drivers/misc/vmw_vmci/vmci_host.c
+@@ -447,15 +447,12 @@ static int vmci_host_do_alloc_queuepair(struct vmci_host_dev *vmci_host_dev,
+ 	struct vmci_handle handle;
+ 	int vmci_status;
+ 	int __user *retptr;
+-	u32 cid;
+ 
+ 	if (vmci_host_dev->ct_type != VMCIOBJ_CONTEXT) {
+ 		vmci_ioctl_err("only valid for contexts\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	cid = vmci_ctx_get_id(vmci_host_dev->context);
+-
+ 	if (vmci_host_dev->user_version < VMCI_VERSION_NOVMVM) {
+ 		struct vmci_qp_alloc_info_vmvm alloc_info;
+ 		struct vmci_qp_alloc_info_vmvm __user *info = uptr;
+
+
+
