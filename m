@@ -2,103 +2,111 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6129C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D64C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6340F2152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7B132152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="eZF3rdt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6340F2152F
+	dkim=pass (1024-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="MrUCPwAT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7B132152F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=globallogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbeI0XOp (ORCPT
+        id S1728724AbeI0XO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:14:45 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38693 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbeI0XOo (ORCPT
+        Thu, 27 Sep 2018 19:14:57 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45021 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728370AbeI0XO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:14:44 -0400
-Received: by mail-lf1-f65.google.com with SMTP id g89-v6so2737759lfl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:55:33 -0700 (PDT)
+        Thu, 27 Sep 2018 19:14:56 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q127-v6so3078499ljq.11
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:55:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=globallogic.com; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=jIQCx/pZEBHGO0iRLLbR8qjBss0/jgBaBqZvoVB58Rk=;
-        b=eZF3rdt9TzMJKFMzx2gYgQzaSX93alAwGDPSyLWBgVEGOvC6v3r0LICFrlbPy7KIxX
-         fCzpCPenxkGLuUc3I0R62jagvW7X1xj14NPS8VjqoMKq+14mRdupRFBKZo5nwNN+kOVx
-         KxEDxvfFBjuf4pYH+bp91YvupVxJZR1cXhnas=
+        bh=65Hiwf+yG7FM4i05S9P3LUNjj/AxV+zziJA3y9TDGi8=;
+        b=MrUCPwATQhVptqIRkyU/E4heJtC1u/6mqA4nolICv4O5x6hwLzI02e7BfxplxTO+lN
+         62HYCXjkbxPSiVCGsykjbFdSzSXGwebN0kDWGC+YzA4HwwqUL4qscwoX/gkOskSCUSV5
+         F+EfCQyLM29OlFxMyzJyz9RCagwau1cQv7i5I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jIQCx/pZEBHGO0iRLLbR8qjBss0/jgBaBqZvoVB58Rk=;
-        b=PFd9g5B7RLHbyhgt5dip+4/k1FECOTGkOxaNmluj2NgISx573Xa6XwtRhlf74ciVpm
-         fRg6gwTQreS2okpkQMtf5hLRsgJkLgWku+F1tW6B48QyXWadxaoFFv4xx84LTGLlbjIP
-         /54oUBMatQF0sqGjTTunzDjsf0puc3liIGoIwhiwa4z2R02//+RvS8aBBqvzsEIDhtIP
-         Nc2Qpn4N6XLHPkQEf4McozUU87xaOewAvh9bCDlJmRfmhH8fd9qJSC+CIud/ScHGlVIU
-         tabnifFvrta0d2g+v4DEyQn2t35aK/iV4TpJEAD3Vlq7RldJqEVlyEWH4I8h9QlnlQmI
-         XGVg==
-X-Gm-Message-State: ABuFfoguXYcI+x4sXAjEuvOFjhgRwl59aSBuqLzAajdBUb60ivkPVzU3
-        Dhu5UtKQ40bmqpVuJFqJy3b4qQ==
-X-Google-Smtp-Source: ACcGV63XySk+RAQOdV73uAiYRcvDnr/Cy2IIJfvUdj/BQ0fHvpnoFwqulxl2lIewYR+eIpraRpVfsg==
-X-Received: by 2002:a19:18e3:: with SMTP id 96-v6mr8385155lfy.133.1538067332961;
-        Thu, 27 Sep 2018 09:55:32 -0700 (PDT)
+        bh=65Hiwf+yG7FM4i05S9P3LUNjj/AxV+zziJA3y9TDGi8=;
+        b=lKjh9RBz33NPbSLOZye2QwftlUZ6kYcpOjMzUCtgawUF6cvpKt87V3a0aKlFG/4pYL
+         wGJkmtlrxfKCOr5HMQ2+od9nSjDIhxYe2aAX+LjdFOYIdk3e2a8xjBDgmWw0YQaCf1yE
+         8UuZSMuJVYRDzRPr+Wem4C5ZAiOqSU2D/oHbUVWNSq6WPtH4qcV6aiSihbC33NMZdC4+
+         JmVZvsswL7i+9VJd7fGmivoiu3yOVoCUY4E+9Xh/HXNfK+8T1z8OoH9zmRKOmJFfcbrY
+         qwGOMkDJzVu4n2A/Yiz9/dCq9EUNSuw1YT6OBpdEoWO5kIRj44YOv+zdcXyXv8Ef3aWa
+         Qrog==
+X-Gm-Message-State: ABuFfohZPffJA83l/Wsgh3Ft6s5Jad09o/NKl3kWZzyJ4An1pydusZY2
+        F7R+6tGkSqxzE7cws1WAXuFMpw==
+X-Google-Smtp-Source: ACcGV60kiMIPDvN33f36F0+Nb6JAMLVEUkN+PMKZsjXOKwq7n+7JGAiiLiBXzxRW7qF6k29sv/2vwQ==
+X-Received: by 2002:a2e:8050:: with SMTP id p16-v6mr1276355ljg.178.1538067345174;
+        Thu, 27 Sep 2018 09:55:45 -0700 (PDT)
 Received: from kbp1-lhp-f55466.synapse.com ([195.238.92.77])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm507508lja.25.2018.09.27.09.55.31
+        by smtp.gmail.com with ESMTPSA id e41-v6sm545997lji.37.2018.09.27.09.55.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 27 Sep 2018 09:55:32 -0700 (PDT)
+        Thu, 27 Sep 2018 09:55:44 -0700 (PDT)
 From:   Maksym Kokhan <maksym.kokhan@globallogic.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
 Cc:     Daniel Walker <dwalker@fifo99.com>,
         Daniel Walker <danielwa@cisco.com>,
         Andrii Bordunov <aborduno@cisco.com>,
-        Ruslan Bilovol <rbilovol@cisco.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] drivers: of: ifdef out cmdline section
-Date:   Thu, 27 Sep 2018 19:55:27 +0300
-Message-Id: <1538067327-5785-1-git-send-email-maksym.kokhan@globallogic.com>
+        Ruslan Bilovol <rbilovol@cisco.com>, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/8] efi: modify EFI stub code for arm/arm64
+Date:   Thu, 27 Sep 2018 19:55:39 +0300
+Message-Id: <1538067339-5826-1-git-send-email-maksym.kokhan@globallogic.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Walker <danielwa@cisco.com>
-
-It looks like there's some seepage of cmdline stuff into
-the generic device tree code. This conflicts with the
-generic cmdline implementation so I remove it in the case
-when that's enabled.
+Original EFI stub code parses command line, using old configs: CMDLINE,
+CMDLINE_EXTEND and CMDLINE_FORCE. New generic builtin command line use
+new configs: CMDLINE_PREPEND, CMDLINE_APPEND and CMDLINE_OVERRIDE, which
+depend on CMDLINE_BOOL.
 
 Cc: Daniel Walker <dwalker@fifo99.com>
 Cc: Daniel Walker <danielwa@cisco.com>
-Signed-off-by: Daniel Walker <danielwa@cisco.com>
 Signed-off-by: Maksym Kokhan <maksym.kokhan@globallogic.com>
 ---
- drivers/of/fdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/efi/libstub/arm-stub.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 800ad25..74b85ad 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -1096,7 +1096,7 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
- 	 * managed to set the command line, unless CONFIG_CMDLINE_FORCE
- 	 * is set in which case we override whatever was found earlier.
- 	 */
--#ifdef CONFIG_CMDLINE
-+#if defined(CONFIG_CMDLINE) && !defined(CONFIG_GENERIC_CMDLINE)
- #if defined(CONFIG_CMDLINE_EXTEND)
- 	strlcat(data, " ", COMMAND_LINE_SIZE);
- 	strlcat(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
+diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
+index 6920033..40396e1 100644
+--- a/drivers/firmware/efi/libstub/arm-stub.c
++++ b/drivers/firmware/efi/libstub/arm-stub.c
+@@ -146,12 +146,12 @@ unsigned long efi_entry(void *handle, efi_system_table_t *sys_table,
+ 		goto fail;
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) ||
+-	    IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
+-	    cmdline_size == 0)
+-		efi_parse_options(CONFIG_CMDLINE);
++	#if IS_ENABLED(CONFIG_CMDLINE_BOOL)
++		efi_parse_options(CONFIG_CMDLINE_PREPEND);
++		efi_parse_options(CONFIG_CMDLINE_APPEND);
++	#endif
+ 
+-	if (!IS_ENABLED(CONFIG_CMDLINE_FORCE) && cmdline_size > 0)
++	if (!IS_ENABLED(CONFIG_CMDLINE_OVERRIDE) && cmdline_size > 0)
+ 		efi_parse_options(cmdline_ptr);
+ 
+ 	pr_efi(sys_table, "Booting Linux Kernel...\n");
 -- 
 2.7.4
 
