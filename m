@@ -2,97 +2,167 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE93C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E846C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA2E216FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:02:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA2E216FC
+	by mail.kernel.org (Postfix) with ESMTP id C1D1A21547
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:02:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D1A21547
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeI0WVB (ORCPT
+        id S1728189AbeI0WVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:21:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50314 "EHLO mx1.redhat.com"
+        Thu, 27 Sep 2018 18:21:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:17692 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727270AbeI0WVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:21:01 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        id S1727270AbeI0WVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 18:21:11 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A33F300295C;
-        Thu, 27 Sep 2018 16:02:05 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B848308AA13;
+        Thu, 27 Sep 2018 16:02:16 +0000 (UTC)
 Received: from krava (ovpn-116-113.ams2.redhat.com [10.36.116.113])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 78EA220155E2;
-        Thu, 27 Sep 2018 16:02:00 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 18:01:58 +0200
+        by smtp.corp.redhat.com (Postfix) with SMTP id A1B49600C7;
+        Thu, 27 Sep 2018 16:02:11 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 18:02:10 +0200
 From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+To:     John Garry <john.garry@huawei.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        kernel-team@lge.com
-Subject: Re: [PATCH 47/48] perf record: Spread maps for --threads option
-Message-ID: <20180927160158.GE6916@krava>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <20180913125450.21342-48-jolsa@kernel.org>
- <20180917114048.GF18395@sejong>
- <20180923194432.GH30923@krava>
- <20180924142254.GB4640@kernel.org>
- <20180926062317.GA8610@krava>
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: perf segmentation fault from NULL dereference
+Message-ID: <20180927160210.GF6916@krava>
+References: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180926062317.GA8610@krava>
+In-Reply-To: <712b7c31-f681-7737-71e7-c028b8d2bba5@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 27 Sep 2018 16:02:05 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 27 Sep 2018 16:02:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 08:23:17AM +0200, Jiri Olsa wrote:
-
-SNIP
-
-> > I agree with Namhyung, with a slight difference: perhaps we should set
-> > perf_event_attr.mmap on one of the events of the per-cpu mmap, that way
-> > we don't need that dummy event, right?
+On Tue, Sep 25, 2018 at 04:53:40PM +0100, John Garry wrote:
+> Hi,
 > 
-> currently it's all based on having tracking data separated
-> in single file which is read/processed first, so when we
-> read the sample data files, we can read them separately,
-> because we have the tracking data ready
+> I am seeing this perf crash on my arm64-based system:
 > 
-> >  
-> > > with the *_time API, we should be able to properly read the
-> > > tracking data separately for each cpu
-> > 
-> > That may end up making the *_time API not needed (assuming the kernel
-> > keeps the per-cpu mmap events in order, barring that, using the
-> > ordered_events in batches, prior to consuming the events) and would help
-> > with things like 'perf top' and 'perf trace', that want to consume
-> > events right away.
+> root@localhost:~# ./perf_debug_ record -e armv8_pmuv3_0/br_mis_pred/ sleep 1
+> perf: Segmentation fault
+> Obtained 9 stack frames.
+> ./perf_debug_() [0x4c5ef8]
+> [0xffff82ba267c]
+> ./perf_debug_() [0x4bc5a8]
+> ./perf_debug_() [0x419550]
+> ./perf_debug_() [0x41a928]
+> ./perf_debug_() [0x472f58]
+> ./perf_debug_() [0x473210]
+> ./perf_debug_() [0x4070f4]
+> /lib/aarch64-linux-gnu/libc.so.6(__libc_start_main+0xe0) [0xffff8294c8a0]
+> Segmentation fault (core dumped)
 > 
-> if we dont want to use *_by_time API, we need to find a way
-> to sort evevrything out before we start processing.. and that
-> seems too costly to me
+> I find 'cycles' event is fine.
+> 
+> I bisected the issue to here:
+> commit bfd8f72c2778f5bd63dc9eb6d23bd7a0d99cff6d (HEAD, refs/bisect/bad)
+> Author: Andi Kleen <ak@linux.intel.com>
+> Date:   Fri Nov 17 13:42:58 2017 -0800
+> 
+>     perf record: Synthesize unit/scale/... in event update
+> 
+>     Move the code to synthesize event updates for scale/unit/cpus to a
+>     common utility file, and use it both from stat and record.
+> 
+>     This allows to access scale and other extra qualifiers from perf script.
+> 
+>     Signed-off-by: Andi Kleen <ak@linux.intel.com>
+>     Acked-by: Jiri Olsa <jolsa@kernel.org>
+>     Link:
+> http://lkml.kernel.org/r/20171117214300.32746-2-andi@firstfloor.org
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> I am suspicious that this is a real issue, as this patch has been in
+> mainline for some time...
+> 
+> This simple change fixes the issue me:
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index 91e6d9c..f4fd826 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -3576,7 +3576,7 @@ int perf_event__process_feature(struct perf_tool
+> *tool,
+>      int max, err;
+>      u16 type;
+> 
+> -    if (!evsel->own_cpus)
+> +    if (!evsel->own_cpus || !(evsel->attr.read_format & PERF_FORMAT_ID)) //
+> roundabout check for !evsel->id
+>          return 0;
+> 
+>      ev = cpu_map_data__alloc(evsel->own_cpus, &size, &type, &max);
+> 
+> It turns out that evsel->id is NULL on a call to
+> perf_event__process_feature(), which upsets this code:
+> 
+>     ev->header.type = PERF_RECORD_EVENT_UPDATE;
+>     ev->header.size = (u16)size;
+>     ev->type = PERF_EVENT_UPDATE__CPUS;
+>     ev->id   = evsel->id[0];
+> 
+> Please me let me know if a valid issue so we can get a fix in.
 
-actualy we might try to read all the streams at simultaneously
-and sort the samples on the fly with some reasonable sorting
-window time frame.. this way we could have just single file
-for thread and would skip the *by_time api, hopefuly :-\
+yea, I can see how we can get here with event having
+its own CPUs, and we allocate the id array later at
+the time we map the event
 
-I'll try to prepare something
+I wonder instead of skipping on this feature, we should
+allocate the id array, like below
 
+I did not test that.. need to find the server having event
+with its own cpus.. also need to make sure evsel->cpus is
+the way to go in here
+
+thanks,
 jirka
+
+
+---
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 1ec1d9bc2d63..fb2a0dab3978 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -29,6 +29,7 @@
+ #include "symbol.h"
+ #include "debug.h"
+ #include "cpumap.h"
++#include "thread_map.h"
+ #include "pmu.h"
+ #include "vdso.h"
+ #include "strbuf.h"
+@@ -3579,6 +3580,11 @@ perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
+	if (!evsel->own_cpus)
+		return 0;
+ 
++	if (!evsel->id ||
++	    perf_evsel__alloc_id(evsel, cpu_map__nr(evsel->cpus),
++				 thread_map__nr(evsel->threads)))
++		return -ENOMEM;
++
+	ev = cpu_map_data__alloc(evsel->own_cpus, &size, &type, &max);
+	if (!ev)
+		return -ENOMEM;
