@@ -2,156 +2,146 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B19C04E87
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE8DC004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877AD2152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:56:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877AD2152F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 660422152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:56:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="Tr5QfC4u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660422152F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=globallogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbeI0XNl (ORCPT
+        id S1728594AbeI0XQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:13:41 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:58394 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727437AbeI0XNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:13:41 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g5ZYZ-0003fA-Mt; Thu, 27 Sep 2018 10:54:28 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g5ZYU-0001Oi-G0; Thu, 27 Sep 2018 10:54:22 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 27 Sep 2018 10:54:17 -0600
-Message-Id: <20180927165420.5290-11-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180927165420.5290-1-logang@deltatee.com>
-References: <20180927165420.5290-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v8 10/13] nvme-pci: Add support for P2P memory in requests
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        Thu, 27 Sep 2018 19:16:06 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40569 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728152AbeI0XQF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:16:05 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r83-v6so3102374ljr.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=globallogic.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ftajp3MRZ0PhsPnNocPMO/7ah4Nv3Xl7uHwrfu4Kndc=;
+        b=Tr5QfC4ulzLivT/RK6l9+szS4DC34X0yNF40LAwMEddez8neCYlpVfTFImS5MUem0I
+         NEoiJWx4ZrsyGlgkd4e1058sqTfFtkrKShKuy6ou0DPu1HPRASOpI8VL3+FE1O6AR1Wh
+         qSAvWrGNYwmaM+6NnwqrKJC6MtcDfAOq+EMt0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ftajp3MRZ0PhsPnNocPMO/7ah4Nv3Xl7uHwrfu4Kndc=;
+        b=X62qMtyRuoaPRITInppuWxv4SqF+wVbnzrjRD9PeXXhhcv5DS51gcd4bvOCjS7uxw2
+         EM9lZ2PyjqTDYD4OA4tgEi2Mh0A71JlquDkeNd4afdarMj4/BIptZGm/JB+dNdDcrxWF
+         t6HtoqEfAlOi/5pDCNd5POZmBpjvwpr0UAEgv1/9paCp+LSpdB4DkwBi4/szmHT6WmhY
+         ihY5KXZpCTpzMvJ3nrOUbZoeOb3XOWvJceDN0UvCl2tKy7ExX8lThz/t5aA4rpn9BTrJ
+         vI+8N23bp3FC6TIWs6pc/yEZYheCajBEdmOyRV9RnNY0ghNlRnGvDUlSTi946Lh3N+DU
+         otuQ==
+X-Gm-Message-State: ABuFfoiM++AupZMPsMfVsg94sxP28A8dtLcmaItpSsoQflIbqmeLiO6o
+        tDq+bj01vMPEOBVca8Yw24Vkug==
+X-Google-Smtp-Source: ACcGV61CFRLfuQnVjytuyfdLK7Dqawg1KXozpeQknNt/GMK8V5QHWU3pMO57V3qUzqNHtxVMJajRQA==
+X-Received: by 2002:a2e:2942:: with SMTP id u63-v6mr8258880lje.28.1538067413445;
+        Thu, 27 Sep 2018 09:56:53 -0700 (PDT)
+Received: from kbp1-lhp-f55466.synapse.com ([195.238.92.77])
+        by smtp.gmail.com with ESMTPSA id i9-v6sm388653ljg.43.2018.09.27.09.56.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 27 Sep 2018 09:56:52 -0700 (PDT)
+From:   Maksym Kokhan <maksym.kokhan@globallogic.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Daniel Walker <dwalker@fifo99.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Andrii Bordunov <aborduno@cisco.com>,
+        Ruslan Bilovol <rbilovol@cisco.com>,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: [PATCH 6/8] arm64: convert to generic builtin command line
+Date:   Thu, 27 Sep 2018 19:56:48 +0300
+Message-Id: <1538067408-5967-1-git-send-email-maksym.kokhan@globallogic.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For P2P requests, we must use the pci_p2pmem_map_sg() function
-instead of the dma_map_sg functions.
+From: Daniel Walker <danielwa@cisco.com>
 
-With that, we can then indicate PCI_P2P support in the request queue.
-For this, we create an NVME_F_PCI_P2P flag which tells the core to
-set QUEUE_FLAG_PCI_P2P in the request queue.
+This updates the arm64 code to use the CONFIG_GENERIC_CMDLINE
+option.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: Daniel Walker <dwalker@fifo99.com>
+Cc: Daniel Walker <danielwa@cisco.com>
+Signed-off-by: Daniel Walker <danielwa@cisco.com>
+Signed-off-by: Maksym Kokhan <maksym.kokhan@globallogic.com>
 ---
- drivers/nvme/host/core.c |  4 ++++
- drivers/nvme/host/nvme.h |  1 +
- drivers/nvme/host/pci.c  | 17 +++++++++++++----
- 3 files changed, 18 insertions(+), 4 deletions(-)
+ arch/arm64/Kconfig        | 17 +----------------
+ arch/arm64/kernel/setup.c |  3 +++
+ 2 files changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index dd8ec1dd9219..6033ce2fd3e9 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3051,7 +3051,11 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 	ns->queue = blk_mq_init_queue(ctrl->tagset);
- 	if (IS_ERR(ns->queue))
- 		goto out_free_ns;
-+
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, ns->queue);
-+	if (ctrl->ops->flags & NVME_F_PCI_P2PDMA)
-+		blk_queue_flag_set(QUEUE_FLAG_PCI_P2PDMA, ns->queue);
-+
- 	ns->queue->queuedata = ns;
- 	ns->ctrl = ctrl;
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 1b1a0e9..e596414 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -166,6 +166,7 @@ config ARM64
+ 	select SWIOTLB
+ 	select SYSCTL_EXCEPTION_TRACE
+ 	select THREAD_INFO_IN_TASK
++	select GENERIC_CMDLINE
+ 	help
+ 	  ARM 64-bit (AArch64) Linux support.
  
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index bb4a2003c097..4030743c90aa 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -343,6 +343,7 @@ struct nvme_ctrl_ops {
- 	unsigned int flags;
- #define NVME_F_FABRICS			(1 << 0)
- #define NVME_F_METADATA_SUPPORTED	(1 << 1)
-+#define NVME_F_PCI_P2PDMA		(1 << 2)
- 	int (*reg_read32)(struct nvme_ctrl *ctrl, u32 off, u32 *val);
- 	int (*reg_write32)(struct nvme_ctrl *ctrl, u32 off, u32 val);
- 	int (*reg_read64)(struct nvme_ctrl *ctrl, u32 off, u64 *val);
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index f434706a04e8..0d6c41bc2b35 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -745,8 +745,13 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
- 		goto out;
+@@ -1231,22 +1232,6 @@ config ARM64_ACPI_PARKING_PROTOCOL
+ 	  protocol even if the corresponding data is present in the ACPI
+ 	  MADT table.
  
- 	ret = BLK_STS_RESOURCE;
--	nr_mapped = dma_map_sg_attrs(dev->dev, iod->sg, iod->nents, dma_dir,
--			DMA_ATTR_NO_WARN);
+-config CMDLINE
+-	string "Default kernel command string"
+-	default ""
+-	help
+-	  Provide a set of default command-line options at build time by
+-	  entering them here. As a minimum, you should specify the the
+-	  root device (e.g. root=/dev/nfs).
+-
+-config CMDLINE_FORCE
+-	bool "Always use the default kernel command string"
+-	help
+-	  Always use the default kernel command string, even if the boot
+-	  loader passes other arguments to the kernel.
+-	  This is useful if you cannot or don't want to change the
+-	  command-line options your boot loader passes to the kernel.
+-
+ config EFI_STUB
+ 	bool
+ 
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index 5b4fac4..33b929b 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -42,6 +42,7 @@
+ #include <linux/psci.h>
+ #include <linux/sched/task.h>
+ #include <linux/mm.h>
++#include <linux/cmdline.h>
+ 
+ #include <asm/acpi.h>
+ #include <asm/fixmap.h>
+@@ -295,6 +296,8 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	setup_machine_fdt(__fdt_pointer);
+ 
++	cmdline_add_builtin(boot_command_line, NULL, COMMAND_LINE_SIZE);
 +
-+	if (is_pci_p2pdma_page(sg_page(iod->sg)))
-+		nr_mapped = pci_p2pdma_map_sg(dev->dev, iod->sg, iod->nents,
-+					  dma_dir);
-+	else
-+		nr_mapped = dma_map_sg_attrs(dev->dev, iod->sg, iod->nents,
-+					     dma_dir,  DMA_ATTR_NO_WARN);
- 	if (!nr_mapped)
- 		goto out;
+ 	parse_early_param();
  
-@@ -788,7 +793,10 @@ static void nvme_unmap_data(struct nvme_dev *dev, struct request *req)
- 			DMA_TO_DEVICE : DMA_FROM_DEVICE;
- 
- 	if (iod->nents) {
--		dma_unmap_sg(dev->dev, iod->sg, iod->nents, dma_dir);
-+		/* P2PDMA requests do not need to be unmapped */
-+		if (!is_pci_p2pdma_page(sg_page(iod->sg)))
-+			dma_unmap_sg(dev->dev, iod->sg, iod->nents, dma_dir);
-+
- 		if (blk_integrity_rq(req))
- 			dma_unmap_sg(dev->dev, &iod->meta_sg, 1, dma_dir);
- 	}
-@@ -2400,7 +2408,8 @@ static int nvme_pci_get_address(struct nvme_ctrl *ctrl, char *buf, int size)
- static const struct nvme_ctrl_ops nvme_pci_ctrl_ops = {
- 	.name			= "pcie",
- 	.module			= THIS_MODULE,
--	.flags			= NVME_F_METADATA_SUPPORTED,
-+	.flags			= NVME_F_METADATA_SUPPORTED |
-+				  NVME_F_PCI_P2PDMA,
- 	.reg_read32		= nvme_pci_reg_read32,
- 	.reg_write32		= nvme_pci_reg_write32,
- 	.reg_read64		= nvme_pci_reg_read64,
+ 	/*
 -- 
-2.19.0
+2.7.4
 
