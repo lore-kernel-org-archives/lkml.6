@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E2BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0131ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8873216B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8873216B7
+	by mail.kernel.org (Postfix) with ESMTP id A2B3821582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B3821582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbeI0P0z (ORCPT
+        id S1728330AbeI0P1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:26:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55074 "EHLO
+        Thu, 27 Sep 2018 11:27:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbeI0P0z (ORCPT
+        with ESMTP id S1727634AbeI0P1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:26:55 -0400
+        Thu, 27 Sep 2018 11:27:00 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F04C91116;
-        Thu, 27 Sep 2018 09:09:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0647710A4;
+        Thu, 27 Sep 2018 09:09:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 35/88] ALSA: firewire-tascam: fix memory leak of private data
-Date:   Thu, 27 Sep 2018 11:03:16 +0200
-Message-Id: <20180927090304.844935692@linuxfoundation.org>
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 12/88] udp6: add missing checks on edumux packet processing
+Date:   Thu, 27 Sep 2018 11:02:53 +0200
+Message-Id: <20180927090302.018546413@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -51,36 +53,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 8d28277c065a974873c6781d44b7bcdcd8fb4e8a upstream.
+[ Upstream commit eb63f2964dbe36f26deac77d3016791675821ded ]
 
-Although private data of sound card instance is usually allocated in the
-tail of the instance, drivers in ALSA firewire stack allocate the private
-data before allocating the instance. In this case, the private data
-should be released explicitly at .private_free callback of the instance.
+Currently the UDPv6 early demux rx code path lacks some mandatory
+checks, already implemented into the normal RX code path - namely
+the checksum conversion and no_check6_rx check.
 
-This commit fixes memory leak following to the above design.
+Similar to the previous commit, we move the common processing to
+an UDPv6 specific helper and call it from both edemux code path
+and normal code path. In respect to the UDPv4, we need to add an
+explicit check for non zero csum according to no_check6_rx value.
 
-Fixes: b610386c8afb ('ALSA: firewire-tascam: deleyed registration of sound card')
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Suggested-by: Xin Long <lucien.xin@gmail.com>
+Fixes: c9f2c1ae123a ("udp6: fix socket leak on early demux")
+Fixes: 2abb7cdc0dc8 ("udp: Add support for doing checksum unnecessary conversion")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/firewire/tascam/tascam.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv6/udp.c |   65 ++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 37 insertions(+), 28 deletions(-)
 
---- a/sound/firewire/tascam/tascam.c
-+++ b/sound/firewire/tascam/tascam.c
-@@ -93,6 +93,7 @@ static void tscm_free(struct snd_tscm *t
- 	fw_unit_put(tscm->unit);
- 
- 	mutex_destroy(&tscm->mutex);
-+	kfree(tscm);
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -748,6 +748,28 @@ static void udp6_sk_rx_dst_set(struct so
+ 	}
  }
  
- static void tscm_card_free(struct snd_card *card)
++/* wrapper for udp_queue_rcv_skb tacking care of csum conversion and
++ * return code conversion for ip layer consumption
++ */
++static int udp6_unicast_rcv_skb(struct sock *sk, struct sk_buff *skb,
++				struct udphdr *uh)
++{
++	int ret;
++
++	if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
++		skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
++					 ip6_compute_pseudo);
++
++	ret = udpv6_queue_rcv_skb(sk, skb);
++
++	/* a return value > 0 means to resubmit the input, but
++	 * it wants the return to be -protocol, or 0
++	 */
++	if (ret > 0)
++		return -ret;
++	return 0;
++}
++
+ int __udp6_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
+ 		   int proto)
+ {
+@@ -799,13 +821,14 @@ int __udp6_lib_rcv(struct sk_buff *skb,
+ 		if (unlikely(sk->sk_rx_dst != dst))
+ 			udp6_sk_rx_dst_set(sk, dst);
+ 
+-		ret = udpv6_queue_rcv_skb(sk, skb);
+-		sock_put(sk);
++		if (!uh->check && !udp_sk(sk)->no_check6_rx) {
++			sock_put(sk);
++			goto report_csum_error;
++		}
+ 
+-		/* a return value > 0 means to resubmit the input */
+-		if (ret > 0)
+-			return ret;
+-		return 0;
++		ret = udp6_unicast_rcv_skb(sk, skb, uh);
++		sock_put(sk);
++		return ret;
+ 	}
+ 
+ 	/*
+@@ -818,30 +841,13 @@ int __udp6_lib_rcv(struct sk_buff *skb,
+ 	/* Unicast */
+ 	sk = __udp6_lib_lookup_skb(skb, uh->source, uh->dest, udptable);
+ 	if (sk) {
+-		int ret;
+-
+-		if (!uh->check && !udp_sk(sk)->no_check6_rx) {
+-			udp6_csum_zero_error(skb);
+-			goto csum_error;
+-		}
+-
+-		if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
+-			skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
+-						 ip6_compute_pseudo);
+-
+-		ret = udpv6_queue_rcv_skb(sk, skb);
+-
+-		/* a return value > 0 means to resubmit the input */
+-		if (ret > 0)
+-			return ret;
+-
+-		return 0;
++		if (!uh->check && !udp_sk(sk)->no_check6_rx)
++			goto report_csum_error;
++		return udp6_unicast_rcv_skb(sk, skb, uh);
+ 	}
+ 
+-	if (!uh->check) {
+-		udp6_csum_zero_error(skb);
+-		goto csum_error;
+-	}
++	if (!uh->check)
++		goto report_csum_error;
+ 
+ 	if (!xfrm6_policy_check(NULL, XFRM_POLICY_IN, skb))
+ 		goto discard;
+@@ -862,6 +868,9 @@ short_packet:
+ 			    ulen, skb->len,
+ 			    daddr, ntohs(uh->dest));
+ 	goto discard;
++
++report_csum_error:
++	udp6_csum_zero_error(skb);
+ csum_error:
+ 	__UDP6_INC_STATS(net, UDP_MIB_CSUMERRORS, proto == IPPROTO_UDPLITE);
+ discard:
 
 
