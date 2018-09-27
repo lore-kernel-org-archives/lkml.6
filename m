@@ -2,150 +2,79 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EF6C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A7EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C550D216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:16:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="cGaGCGh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C550D216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 7C2DD216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:17:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2DD216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbeI1Bg0 (ORCPT
+        id S1728568AbeI1BhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:36:26 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39327 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeI1Bg0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:36:26 -0400
-Received: by mail-it1-f194.google.com with SMTP id w200-v6so8931405itc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y7XyKk9XLOkf12MWbaIgW8YVLeZ7s7+cFFZIXPFRhq4=;
-        b=cGaGCGh0/D+ujPnrr2xq45qKWDhJMmeUwUD6iSEUhEuLBVWCCoZjl4/mpdSEdP+xyI
-         Q0hcZjwcAxEa82uQ04MlHgXO6YT5O+Sq6RocS0OrH80co++ruTUICLGF3hmVsddqkUct
-         kQKY8C3TKh1Y4L+9Yv0HaVFh9e4pnDwZ56yFPlbMZHecQymKp1/GN4M42s1xQWRFYO0H
-         nEOSPqnkbunGrH4wPLkarHDZx4Ch81SyebiLdtm5mj0HdJdKLu4LXzeogfdcNS+Lzs4t
-         LhNKpd9NdIn2MLhRDxG8siTI5rqpX366RPp1jq5KUi9k+X+K0gaPQcYGA7AI00nkKEnu
-         IC7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y7XyKk9XLOkf12MWbaIgW8YVLeZ7s7+cFFZIXPFRhq4=;
-        b=ONx8LrlguiN7YykM56aPHm+uGMMTVOFnVdeeGRNmxGj66ytafrooQtYUyJEJ6O9TGc
-         1LytPfAgapvbmwNAITRCKsySkBU/afAi/Ahdvr5ZELEAG7zLbZHXEsmuGbDNE3OU47Cf
-         8Iev5RbmC+MfFFfLME0fPGA+rurYBv7AslUW3vX6lNSTiXV8QMX86G+emU7noVxnhj2Q
-         QIvyO8tM1JdS1VRc2P/K7CP/LS6X/m3SD2wwxn76kgWm16xd//jy/37VYubxfjlpjpJa
-         XFbR9mXSWcTzEBCCceYhSOwo1SCjjToke4GXAorNIQLhmycp1JnrloD6exDLyu66mwIX
-         1EUQ==
-X-Gm-Message-State: ABuFfoj54/xOwxdukOJG8WeT9Yqk4RhTc2Iz+cmspyBN+UJRPSEdeMWt
-        NZVlICaCt2lrlNe/gwt2Q3zN6AzLnmk=
-X-Google-Smtp-Source: ACcGV61rZA2qt6sdbbdrNiXKpIvyhk0mBoHAkx4Qw1cP2V3M3THYsKfdBAzsqR0hzy5Y9Of6hZo/0g==
-X-Received: by 2002:a24:ccd4:: with SMTP id x203-v6mr30164itf.150.1538075799466;
-        Thu, 27 Sep 2018 12:16:39 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c081:1132::1008? ([2620:10d:c090:180::1:3bbb])
-        by smtp.gmail.com with ESMTPSA id h16-v6sm1459153iti.14.2018.09.27.12.16.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 12:16:38 -0700 (PDT)
-Subject: Re: [Xen-devel] [PATCH] xen/blkfront: When purging persistent grants,
- keep them in the buffer
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Sander Eikelenboom <linux@eikelenboom.it>,
-        Juergen Gross <jgross@suse.com>, konrad.wilk@oracle.com,
-        roger.pau@citrix.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
- <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
- <5bd1a695-50c6-e79f-38dd-c980fc2138ad@kernel.dk>
- <00030538-e1ce-28ad-3548-8e3b07083b05@eikelenboom.it>
- <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
- <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fd0e7293-310c-a15c-dc98-2743c4504632@kernel.dk>
-Date:   Thu, 27 Sep 2018 13:16:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 27 Sep 2018 21:37:07 -0400
+Received: from mga17.intel.com ([192.55.52.151]:38331 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727760AbeI1BhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 21:37:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 12:17:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
+   d="scan'208";a="90082086"
+Received: from cschaufl-mobl.amr.corp.intel.com ([10.251.154.97])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Sep 2018 12:17:21 -0700
+From:   Casey Schaufler <casey.schaufler@intel.com>
+To:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
+        casey.schaufler@intel.com, dave.hansen@intel.com,
+        deneen.t.dock@intel.com, kristen@linux.intel.com,
+        arjan@linux.intel.com
+Subject: [PATCH 6/5] capability: Repair sidechannel test in ptrace
+Date:   Thu, 27 Sep 2018 12:17:20 -0700
+Message-Id: <20180927191720.9480-1-casey.schaufler@intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180824224117.3356-1-casey.schaufler@intel.com>
+References: <20180824224117.3356-1-casey.schaufler@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/18 1:06 PM, Boris Ostrovsky wrote:
-> On 9/27/18 2:56 PM, Jens Axboe wrote:
->> On 9/27/18 12:52 PM, Sander Eikelenboom wrote:
->>> On 27/09/18 16:26, Jens Axboe wrote:
->>>> On 9/27/18 1:12 AM, Juergen Gross wrote:
->>>>> On 22/09/18 21:55, Boris Ostrovsky wrote:
->>>>>> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->>>>>> added support for purging persistent grants when they are not in use. As
->>>>>> part of the purge, the grants were removed from the grant buffer, This
->>>>>> eventually causes the buffer to become empty, with BUG_ON triggered in
->>>>>> get_free_grant(). This can be observed even on an idle system, within
->>>>>> 20-30 minutes.
->>>>>>
->>>>>> We should keep the grants in the buffer when purging, and only free the
->>>>>> grant ref.
->>>>>>
->>>>>> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
->>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>>>> Reviewed-by: Juergen Gross <jgross@suse.com>
->>>> Since Konrad is out, I'm going to queue this up for 4.19.
->>>>
->>> Hi Boris/Juergen.
->>>
->>> Last week i tested a linux-4.19-rc4 kernel with xen-next and this patch from Boris pulled on top. 
->>> Unfortunately it made a VM hang (probably because it's rootFS is shuffled from under it's feet 
-> 
-> What do you mean by "rootFS is shuffled from under it's feet " ?
-> 
->>> and it gave these in dom0 dmesg:
->>>
->>> [ 9251.696090] xen-blkback: requesting a grant already in use
->>> [ 9251.705861] xen-blkback: trying to add a gref that's already in the tree
->>> [ 9251.715781] xen-blkback: requesting a grant already in use
->>> [ 9251.725756] xen-blkback: trying to add a gref that's already in the tree
->>> [ 9251.735698] xen-blkback: requesting a grant already in use
->>> [ 9251.745573] xen-blkback: trying to add a gref that's already in the tree
->>>
->>> The VM was a HVM with 4 vcpu's and 2 phy disks:
->>> xen-blkback: backend/vbd/14/768: using 4 queues, protocol 1 (x86_64-abi) persistent grants
->>> xen-blkback: backend/vbd/14/832: using 4 queues, protocol 1 (x86_64-abi) persistent grants
->>>
->>>
->>> Currently i have been running 4.19-rc5 with xen-next on top and commit
->>> a46b53672b2c reverted, for a couple of days. That seems to run stable
->>> for me (since it's a small box so i'm not hit by what a46b53672b2c
->>> tried to fix.
->>>
->>> If you can come up with a debug patch i can give that a spin tomorrow
->>> evening or in the weekend, so we are hopefully still in time for the
->>> 4.19 release.
->> At this late in the game, might make more sense to simply revert the
->> buggy commit.  Especially since what is currently out there doesn't fix
->> the issue for you.
-> 
-> If decision is to revert then I think the whole series needs to be
-> reverted.
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-Yes, definitely.
+The PTRACE_MODE_SCHED check erroniously returns 0 in
+all cases. It should be returning -EPERM. This fixes
+the logic to correct that error.
 
+Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+---
+ security/commoncap.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index e77457110d05..70a7e3d19c16 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -152,9 +152,8 @@ int cap_ptrace_access_check(struct task_struct *child, unsigned int mode)
+ 	if (cred->user_ns == child_cred->user_ns &&
+ 	    cap_issubset(child_cred->cap_permitted, *caller_caps))
+ 		goto out;
+-	if (mode & PTRACE_MODE_SCHED)
+-		goto out;
+-	if (ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
++	if (!(mode & PTRACE_MODE_SCHED) &&
++	    ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
+ 		goto out;
+ 	ret = -EPERM;
+ out:
 -- 
-Jens Axboe
+2.17.1
 
