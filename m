@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC1CC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED68C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9E4A2152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:20:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9E4A2152F
+	by mail.kernel.org (Postfix) with ESMTP id C0F722156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:20:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F722156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbeI0PhU (ORCPT
+        id S1729068AbeI0Ph0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:37:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56274 "EHLO
+        Thu, 27 Sep 2018 11:37:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56288 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728360AbeI0PhU (ORCPT
+        with ESMTP id S1728728AbeI0PhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:37:20 -0400
+        Thu, 27 Sep 2018 11:37:25 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 025DE110D;
-        Thu, 27 Sep 2018 09:20:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D22661117;
+        Thu, 27 Sep 2018 09:20:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.14 40/64] ocfs2: fix ocfs2 read block panic
-Date:   Thu, 27 Sep 2018 11:03:57 +0200
-Message-Id: <20180927090255.690496051@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>, Ben Skeggs <bskeggs@redhat.com>
+Subject: [PATCH 4.14 41/64] drm/nouveau: Fix deadlocks in nouveau_connector_detect()
+Date:   Thu, 27 Sep 2018 11:03:58 +0200
+Message-Id: <20180927090255.821416917@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -55,87 +53,206 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 234b69e3e089d850a98e7b3145bd00e9b52b1111 upstream.
+commit 3e1a12754d4df5804bfca5dedf09d2ba291bdc2a upstream.
 
-While reading block, it is possible that io error return due to underlying
-storage issue, in this case, BH_NeedsValidate was left in the buffer head.
-Then when reading the very block next time, if it was already linked into
-journal, that will trigger the following panic.
+When we disable hotplugging on the GPU, we need to be able to
+synchronize with each connector's hotplug interrupt handler before the
+interrupt is finally disabled. This can be a problem however, since
+nouveau_connector_detect() currently grabs a runtime power reference
+when handling connector probing. This will deadlock the runtime suspend
+handler like so:
 
-[203748.702517] kernel BUG at fs/ocfs2/buffer_head_io.c:342!
-[203748.702533] invalid opcode: 0000 [#1] SMP
-[203748.702561] Modules linked in: ocfs2 ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc dm_switch dm_queue_length dm_multipath bonding be2iscsi iscsi_boot_sysfs bnx2i cnic uio cxgb4i iw_cxgb4 cxgb4 cxgb3i libcxgbi iw_cxgb3 cxgb3 mdio ib_iser rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi ipmi_devintf iTCO_wdt iTCO_vendor_support dcdbas ipmi_ssif i2c_core ipmi_si ipmi_msghandler acpi_pad pcspkr sb_edac edac_core lpc_ich mfd_core shpchp sg tg3 ptp pps_core ext4 jbd2 mbcache2 sr_mod cdrom sd_mod ahci libahci megaraid_sas wmi dm_mirror dm_region_hash dm_log dm_mod
-[203748.703024] CPU: 7 PID: 38369 Comm: touch Not tainted 4.1.12-124.18.6.el6uek.x86_64 #2
-[203748.703045] Hardware name: Dell Inc. PowerEdge R620/0PXXHP, BIOS 2.5.2 01/28/2015
-[203748.703067] task: ffff880768139c00 ti: ffff88006ff48000 task.ti: ffff88006ff48000
-[203748.703088] RIP: 0010:[<ffffffffa05e9f09>]  [<ffffffffa05e9f09>] ocfs2_read_blocks+0x669/0x7f0 [ocfs2]
-[203748.703130] RSP: 0018:ffff88006ff4b818  EFLAGS: 00010206
-[203748.703389] RAX: 0000000008620029 RBX: ffff88006ff4b910 RCX: 0000000000000000
-[203748.703885] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 00000000023079fe
-[203748.704382] RBP: ffff88006ff4b8d8 R08: 0000000000000000 R09: ffff8807578c25b0
-[203748.704877] R10: 000000000f637376 R11: 000000003030322e R12: 0000000000000000
-[203748.705373] R13: ffff88006ff4b910 R14: ffff880732fe38f0 R15: 0000000000000000
-[203748.705871] FS:  00007f401992c700(0000) GS:ffff880bfebc0000(0000) knlGS:0000000000000000
-[203748.706370] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[203748.706627] CR2: 00007f4019252440 CR3: 00000000a621e000 CR4: 0000000000060670
-[203748.707124] Stack:
-[203748.707371]  ffff88006ff4b828 ffffffffa0609f52 ffff88006ff4b838 0000000000000001
-[203748.707885]  0000000000000000 0000000000000000 ffff880bf67c3800 ffffffffa05eca00
-[203748.708399]  00000000023079ff ffffffff81c58b80 0000000000000000 0000000000000000
-[203748.708915] Call Trace:
-[203748.709175]  [<ffffffffa0609f52>] ? ocfs2_inode_cache_io_unlock+0x12/0x20 [ocfs2]
-[203748.709680]  [<ffffffffa05eca00>] ? ocfs2_empty_dir_filldir+0x80/0x80 [ocfs2]
-[203748.710185]  [<ffffffffa05ec0cb>] ocfs2_read_dir_block_direct+0x3b/0x200 [ocfs2]
-[203748.710691]  [<ffffffffa05f0fbf>] ocfs2_prepare_dx_dir_for_insert.isra.57+0x19f/0xf60 [ocfs2]
-[203748.711204]  [<ffffffffa065660f>] ? ocfs2_metadata_cache_io_unlock+0x1f/0x30 [ocfs2]
-[203748.711716]  [<ffffffffa05f4f3a>] ocfs2_prepare_dir_for_insert+0x13a/0x890 [ocfs2]
-[203748.712227]  [<ffffffffa05f442e>] ? ocfs2_check_dir_for_entry+0x8e/0x140 [ocfs2]
-[203748.712737]  [<ffffffffa061b2f2>] ocfs2_mknod+0x4b2/0x1370 [ocfs2]
-[203748.713003]  [<ffffffffa061c385>] ocfs2_create+0x65/0x170 [ocfs2]
-[203748.713263]  [<ffffffff8121714b>] vfs_create+0xdb/0x150
-[203748.713518]  [<ffffffff8121b225>] do_last+0x815/0x1210
-[203748.713772]  [<ffffffff812192e9>] ? path_init+0xb9/0x450
-[203748.714123]  [<ffffffff8121bca0>] path_openat+0x80/0x600
-[203748.714378]  [<ffffffff811bcd45>] ? handle_pte_fault+0xd15/0x1620
-[203748.714634]  [<ffffffff8121d7ba>] do_filp_open+0x3a/0xb0
-[203748.714888]  [<ffffffff8122a767>] ? __alloc_fd+0xa7/0x130
-[203748.715143]  [<ffffffff81209ffc>] do_sys_open+0x12c/0x220
-[203748.715403]  [<ffffffff81026ddb>] ? syscall_trace_enter_phase1+0x11b/0x180
-[203748.715668]  [<ffffffff816f0c9f>] ? system_call_after_swapgs+0xe9/0x190
-[203748.715928]  [<ffffffff8120a10e>] SyS_open+0x1e/0x20
-[203748.716184]  [<ffffffff816f0d5e>] system_call_fastpath+0x18/0xd7
-[203748.716440] Code: 00 00 48 8b 7b 08 48 83 c3 10 45 89 f8 44 89 e1 44 89 f2 4c 89 ee e8 07 06 11 e1 48 8b 03 48 85 c0 75 df 8b 5d c8 e9 4d fa ff ff <0f> 0b 48 8b 7d a0 e8 dc c6 06 00 48 b8 00 00 00 00 00 00 00 10
-[203748.717505] RIP  [<ffffffffa05e9f09>] ocfs2_read_blocks+0x669/0x7f0 [ocfs2]
-[203748.717775]  RSP <ffff88006ff4b818>
+[  861.480896] INFO: task kworker/0:2:61 blocked for more than 120 seconds.
+[  861.483290]       Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
+[  861.485158] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  861.486332] kworker/0:2     D    0    61      2 0x80000000
+[  861.487044] Workqueue: events nouveau_display_hpd_work [nouveau]
+[  861.487737] Call Trace:
+[  861.488394]  __schedule+0x322/0xaf0
+[  861.489070]  schedule+0x33/0x90
+[  861.489744]  rpm_resume+0x19c/0x850
+[  861.490392]  ? finish_wait+0x90/0x90
+[  861.491068]  __pm_runtime_resume+0x4e/0x90
+[  861.491753]  nouveau_display_hpd_work+0x22/0x60 [nouveau]
+[  861.492416]  process_one_work+0x231/0x620
+[  861.493068]  worker_thread+0x44/0x3a0
+[  861.493722]  kthread+0x12b/0x150
+[  861.494342]  ? wq_pool_ids_show+0x140/0x140
+[  861.494991]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  861.495648]  ret_from_fork+0x3a/0x50
+[  861.496304] INFO: task kworker/6:2:320 blocked for more than 120 seconds.
+[  861.496968]       Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
+[  861.497654] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  861.498341] kworker/6:2     D    0   320      2 0x80000080
+[  861.499045] Workqueue: pm pm_runtime_work
+[  861.499739] Call Trace:
+[  861.500428]  __schedule+0x322/0xaf0
+[  861.501134]  ? wait_for_completion+0x104/0x190
+[  861.501851]  schedule+0x33/0x90
+[  861.502564]  schedule_timeout+0x3a5/0x590
+[  861.503284]  ? mark_held_locks+0x58/0x80
+[  861.503988]  ? _raw_spin_unlock_irq+0x2c/0x40
+[  861.504710]  ? wait_for_completion+0x104/0x190
+[  861.505417]  ? trace_hardirqs_on_caller+0xf4/0x190
+[  861.506136]  ? wait_for_completion+0x104/0x190
+[  861.506845]  wait_for_completion+0x12c/0x190
+[  861.507555]  ? wake_up_q+0x80/0x80
+[  861.508268]  flush_work+0x1c9/0x280
+[  861.508990]  ? flush_workqueue_prep_pwqs+0x1b0/0x1b0
+[  861.509735]  nvif_notify_put+0xb1/0xc0 [nouveau]
+[  861.510482]  nouveau_display_fini+0xbd/0x170 [nouveau]
+[  861.511241]  nouveau_display_suspend+0x67/0x120 [nouveau]
+[  861.511969]  nouveau_do_suspend+0x5e/0x2d0 [nouveau]
+[  861.512715]  nouveau_pmops_runtime_suspend+0x47/0xb0 [nouveau]
+[  861.513435]  pci_pm_runtime_suspend+0x6b/0x180
+[  861.514165]  ? pci_has_legacy_pm_support+0x70/0x70
+[  861.514897]  __rpm_callback+0x7a/0x1d0
+[  861.515618]  ? pci_has_legacy_pm_support+0x70/0x70
+[  861.516313]  rpm_callback+0x24/0x80
+[  861.517027]  ? pci_has_legacy_pm_support+0x70/0x70
+[  861.517741]  rpm_suspend+0x142/0x6b0
+[  861.518449]  pm_runtime_work+0x97/0xc0
+[  861.519144]  process_one_work+0x231/0x620
+[  861.519831]  worker_thread+0x44/0x3a0
+[  861.520522]  kthread+0x12b/0x150
+[  861.521220]  ? wq_pool_ids_show+0x140/0x140
+[  861.521925]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  861.522622]  ret_from_fork+0x3a/0x50
+[  861.523299] INFO: task kworker/6:0:1329 blocked for more than 120 seconds.
+[  861.523977]       Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
+[  861.524644] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  861.525349] kworker/6:0     D    0  1329      2 0x80000000
+[  861.526073] Workqueue: events nvif_notify_work [nouveau]
+[  861.526751] Call Trace:
+[  861.527411]  __schedule+0x322/0xaf0
+[  861.528089]  schedule+0x33/0x90
+[  861.528758]  rpm_resume+0x19c/0x850
+[  861.529399]  ? finish_wait+0x90/0x90
+[  861.530073]  __pm_runtime_resume+0x4e/0x90
+[  861.530798]  nouveau_connector_detect+0x7e/0x510 [nouveau]
+[  861.531459]  ? ww_mutex_lock+0x47/0x80
+[  861.532097]  ? ww_mutex_lock+0x47/0x80
+[  861.532819]  ? drm_modeset_lock+0x88/0x130 [drm]
+[  861.533481]  drm_helper_probe_detect_ctx+0xa0/0x100 [drm_kms_helper]
+[  861.534127]  drm_helper_hpd_irq_event+0xa4/0x120 [drm_kms_helper]
+[  861.534940]  nouveau_connector_hotplug+0x98/0x120 [nouveau]
+[  861.535556]  nvif_notify_work+0x2d/0xb0 [nouveau]
+[  861.536221]  process_one_work+0x231/0x620
+[  861.536994]  worker_thread+0x44/0x3a0
+[  861.537757]  kthread+0x12b/0x150
+[  861.538463]  ? wq_pool_ids_show+0x140/0x140
+[  861.539102]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  861.539815]  ret_from_fork+0x3a/0x50
+[  861.540521]
+               Showing all locks held in the system:
+[  861.541696] 2 locks held by kworker/0:2/61:
+[  861.542406]  #0: 000000002dbf8af5 ((wq_completion)"events"){+.+.}, at: process_one_work+0x1b3/0x620
+[  861.543071]  #1: 0000000076868126 ((work_completion)(&drm->hpd_work)){+.+.}, at: process_one_work+0x1b3/0x620
+[  861.543814] 1 lock held by khungtaskd/64:
+[  861.544535]  #0: 0000000059db4b53 (rcu_read_lock){....}, at: debug_show_all_locks+0x23/0x185
+[  861.545160] 3 locks held by kworker/6:2/320:
+[  861.545896]  #0: 00000000d9e1bc59 ((wq_completion)"pm"){+.+.}, at: process_one_work+0x1b3/0x620
+[  861.546702]  #1: 00000000c9f92d84 ((work_completion)(&dev->power.work)){+.+.}, at: process_one_work+0x1b3/0x620
+[  861.547443]  #2: 000000004afc5de1 (drm_connector_list_iter){.+.+}, at: nouveau_display_fini+0x96/0x170 [nouveau]
+[  861.548146] 1 lock held by dmesg/983:
+[  861.548889] 2 locks held by zsh/1250:
+[  861.549605]  #0: 00000000348e3cf6 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+[  861.550393]  #1: 000000007009a7a8 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xc1/0x870
+[  861.551122] 6 locks held by kworker/6:0/1329:
+[  861.551957]  #0: 000000002dbf8af5 ((wq_completion)"events"){+.+.}, at: process_one_work+0x1b3/0x620
+[  861.552765]  #1: 00000000ddb499ad ((work_completion)(&notify->work)#2){+.+.}, at: process_one_work+0x1b3/0x620
+[  861.553582]  #2: 000000006e013cbe (&dev->mode_config.mutex){+.+.}, at: drm_helper_hpd_irq_event+0x6c/0x120 [drm_kms_helper]
+[  861.554357]  #3: 000000004afc5de1 (drm_connector_list_iter){.+.+}, at: drm_helper_hpd_irq_event+0x78/0x120 [drm_kms_helper]
+[  861.555227]  #4: 0000000044f294d9 (crtc_ww_class_acquire){+.+.}, at: drm_helper_probe_detect_ctx+0x3d/0x100 [drm_kms_helper]
+[  861.556133]  #5: 00000000db193642 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_lock+0x4b/0x130 [drm]
 
-Joesph ever reported a similar panic.
-Link: https://oss.oracle.com/pipermail/ocfs2-devel/2013-May/008931.html
+[  861.557864] =============================================
 
-Link: http://lkml.kernel.org/r/20180912063207.29484-1-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+[  861.559507] NMI backtrace for cpu 2
+[  861.560363] CPU: 2 PID: 64 Comm: khungtaskd Tainted: G           O      4.18.0-rc6Lyude-Test+ #1
+[  861.561197] Hardware name: LENOVO 20EQS64N0B/20EQS64N0B, BIOS N1EET78W (1.51 ) 05/18/2018
+[  861.561948] Call Trace:
+[  861.562757]  dump_stack+0x8e/0xd3
+[  861.563516]  nmi_cpu_backtrace.cold.3+0x14/0x5a
+[  861.564269]  ? lapic_can_unplug_cpu.cold.27+0x42/0x42
+[  861.565029]  nmi_trigger_cpumask_backtrace+0xa1/0xae
+[  861.565789]  arch_trigger_cpumask_backtrace+0x19/0x20
+[  861.566558]  watchdog+0x316/0x580
+[  861.567355]  kthread+0x12b/0x150
+[  861.568114]  ? reset_hung_task_detector+0x20/0x20
+[  861.568863]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  861.569598]  ret_from_fork+0x3a/0x50
+[  861.570370] Sending NMI from CPU 2 to CPUs 0-1,3-7:
+[  861.571426] NMI backtrace for cpu 6 skipped: idling at intel_idle+0x7f/0x120
+[  861.571429] NMI backtrace for cpu 7 skipped: idling at intel_idle+0x7f/0x120
+[  861.571432] NMI backtrace for cpu 3 skipped: idling at intel_idle+0x7f/0x120
+[  861.571464] NMI backtrace for cpu 5 skipped: idling at intel_idle+0x7f/0x120
+[  861.571467] NMI backtrace for cpu 0 skipped: idling at intel_idle+0x7f/0x120
+[  861.571469] NMI backtrace for cpu 4 skipped: idling at intel_idle+0x7f/0x120
+[  861.571472] NMI backtrace for cpu 1 skipped: idling at intel_idle+0x7f/0x120
+[  861.572428] Kernel panic - not syncing: hung_task: blocked tasks
+
+So: fix this by making it so that normal hotplug handling /only/ happens
+so long as the GPU is currently awake without any pending runtime PM
+requests. In the event that a hotplug occurs while the device is
+suspending or resuming, we can simply defer our response until the GPU
+is fully runtime resumed again.
+
+Changes since v4:
+- Use a new trick I came up with using pm_runtime_get() instead of the
+  hackish junk we had before
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Karol Herbst <kherbst@redhat.com>
+Acked-by: Daniel Vetter <daniel@ffwll.ch>
+Cc: stable@vger.kernel.org
+Cc: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/buffer_head_io.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/nouveau/nouveau_connector.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -342,6 +342,7 @@ int ocfs2_read_blocks(struct ocfs2_cachi
- 				 * for this bh as it's not marked locally
- 				 * uptodate. */
- 				status = -EIO;
-+				clear_buffer_needs_validate(bh);
- 				put_bh(bh);
- 				bhs[i] = NULL;
- 				continue;
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -1120,6 +1120,26 @@ nouveau_connector_hotplug(struct nvif_no
+ 	const struct nvif_notify_conn_rep_v0 *rep = notify->data;
+ 	const char *name = connector->name;
+ 	struct nouveau_encoder *nv_encoder;
++	int ret;
++
++	ret = pm_runtime_get(drm->dev->dev);
++	if (ret == 0) {
++		/* We can't block here if there's a pending PM request
++		 * running, as we'll deadlock nouveau_display_fini() when it
++		 * calls nvif_put() on our nvif_notify struct. So, simply
++		 * defer the hotplug event until the device finishes resuming
++		 */
++		NV_DEBUG(drm, "Deferring HPD on %s until runtime resume\n",
++			 name);
++		schedule_work(&drm->hpd_work);
++
++		pm_runtime_put_noidle(drm->dev->dev);
++		return NVIF_NOTIFY_KEEP;
++	} else if (ret != 1 && ret != -EACCES) {
++		NV_WARN(drm, "HPD on %s dropped due to RPM failure: %d\n",
++			name, ret);
++		return NVIF_NOTIFY_DROP;
++	}
+ 
+ 	if (rep->mask & NVIF_NOTIFY_CONN_V0_IRQ) {
+ 		NV_DEBUG(drm, "service %s\n", name);
+@@ -1137,6 +1157,8 @@ nouveau_connector_hotplug(struct nvif_no
+ 		drm_helper_hpd_irq_event(connector->dev);
+ 	}
+ 
++	pm_runtime_mark_last_busy(drm->dev->dev);
++	pm_runtime_put_autosuspend(drm->dev->dev);
+ 	return NVIF_NOTIFY_KEEP;
+ }
+ 
 
 
