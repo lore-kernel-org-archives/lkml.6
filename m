@@ -2,56 +2,59 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8347EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38302C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F20216F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F20216F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=applied-asynchrony.com
+	by mail.kernel.org (Postfix) with ESMTP id D6D43216F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:19:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFenbdpv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D43216F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeI0Ug6 (ORCPT
+        id S1727675AbeI0UiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:36:58 -0400
-Received: from mail02.iobjects.de ([188.40.134.68]:49286 "EHLO
-        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbeI0Ug6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:36:58 -0400
-Received: from tux.wizards.de (p3EE2F45F.dip0.t-ipconnect.de [62.226.244.95])
-        by mail02.iobjects.de (Postfix) with ESMTPSA id E6798416531F;
-        Thu, 27 Sep 2018 16:18:26 +0200 (CEST)
-Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
-        by tux.wizards.de (Postfix) with ESMTP id 99E33F0162C;
-        Thu, 27 Sep 2018 16:18:26 +0200 (CEST)
-Subject: Re: [PATCH 4.18 74/88] drm/atomic: Use drm_drv_uses_atomic_modeset()
- for debugfs creation
-To:     Sean Paul <sean@poorly.run>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lyude Paul <lyude@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>
-References: <20180927090300.631426620@linuxfoundation.org>
- <20180927090309.614592493@linuxfoundation.org>
- <42cbbf9c-3076-0c49-36c2-b6fd09628694@applied-asynchrony.com>
- <20180927123706.GA23563@kroah.com>
- <f54355c2-4eeb-9b7a-3964-57ca465dae17@applied-asynchrony.com>
- <c3afb9a2-1cd6-b5b9-83ac-eed92fbc066e@applied-asynchrony.com>
- <20180927140527.GV72545@art_vandelay>
-From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Organization: Applied Asynchrony, Inc.
-Message-ID: <0614233b-8934-336b-d509-90973cd8d69c@applied-asynchrony.com>
-Date:   Thu, 27 Sep 2018 16:18:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 16:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727335AbeI0UiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 16:38:17 -0400
+Received: from [192.168.1.75] (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 061AC215E4;
+        Thu, 27 Sep 2018 14:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538057987;
+        bh=4h/9fxHAFiMIjsTrxx7NJb/w4Dp11sM9untbuGNsUMY=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=qFenbdpvWPEN53TLoiuHl4Mw1tpjr9TMu+ab9rcBrXHwkGBfvehhJbDdI4ZDqvIjc
+         Cg+aiqWoExjxHrBljpg9NyMDosH/vBvbxFbfue5MYEXMFdbDQqkXqHP2SmOPLzooFU
+         xin2m+fV80HbplzT6WzBmhQPOkkLF76gbyBWjsCI=
+Subject: Re: [PATCH v2] gpiolib: Show correct direction from the beginning
+To:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        linux-gpio@vger.kernel.org
+References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+ <20180921103604.13361-2-ricardo.ribalda@gmail.com>
+ <153803107307.119890.10052910965015646333@swboyd.mtv.corp.google.com>
+ <ffe11a8c-368b-8c74-54a7-a088c3997032@kernel.org>
+ <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
+From:   Timur Tabi <timur@kernel.org>
+Message-ID: <c9c24958-a020-a6b4-5ee4-51356bf345a5@kernel.org>
+Date:   Thu, 27 Sep 2018 09:19:45 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180927140527.GV72545@art_vandelay>
+In-Reply-To: <3e07cab8-0f3e-7474-8f6d-e6bb16e8f998@codeaurora.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -60,72 +63,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/27/18 16:05, Sean Paul wrote:
-> On Thu, Sep 27, 2018 at 03:53:26PM +0200, Holger Hoffstätte wrote:
->> On 09/27/18 15:26, Holger Hoffstätte wrote:
->>> On 09/27/18 14:37, Greg Kroah-Hartman wrote:
->>>> On Thu, Sep 27, 2018 at 12:43:33PM +0200, Holger Hoffstätte wrote:
->>>>> On 09/27/18 11:03, Greg Kroah-Hartman wrote:
->>>>>> 4.18-stable review patch.  If anyone has any objections, please let me know.
->>>>>>
->>>>>> ------------------
->>>>>>
->>>>>> From: Lyude Paul <lyude@redhat.com>
->>>>>>
->>>>>> commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
->>>>>>
->>>>>> As pointed out by Daniel Vetter, we should be usinng
->>>>>> drm_drv_uses_atomic_modeset() for determining whether or not we want to
->>>>>> make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
->>>>>> the former isn't an accurate representation of whether or not the driver
->>>>>> is actually using atomic modesetting internally (even though it might
->>>>>> not be exposing atomic capabilities).
->>>>>>
->>>>>> Signed-off-by: Lyude Paul <lyude@redhat.com>
->>>>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
->>>>>> Cc: stable@vger.kernel.org
->>>>>> Reviewed-by: Sean Paul <seanpaul@chromium.org>
->>>>>> Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
->>>>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>
->>>>> This patch breaks switching the console to high resolution during boot on my
->>>>> workstation with a Radeon card; it worked fine with 4.18.10 and reverting it
->>>>> fixes the problem:
->>>>
->>>> Is 4.19-rc5 also a problem?
->>>>
->>>
->>> No, 4.19-rc5 with the same config works fine and properly switches the
->>> console during boot.
->>>
->>> Interestingly another machine with i915 chip seemed to work fine with this
->>> patch included (rebooted that one first), so it might well be related to
->>> different motherboard/chipset or the Radeon card (an admittedly old, but
->>> otherwise completely functional fanless r600).
->>>
->>> I'll try to find more clues, but for now that's all I got.
->>
->> Looking at mainline include/drm I see several recent movements and cleanups
->> related to drm_drv_uses_atomic_modeset(), moving it out of drmP.h and into
->> drm, changes to atomic modesetting and such, all part of the 4.19 merge
->> window. I'm reasonably sure some relatred changes went missing here wrt.
->> this patch.
+On 9/27/18 9:04 AM, Jeffrey Hugo wrote:
 > 
-> Hey all,
-> Thanks for testing, Holger.
-> 
-> This was fixed with https://patchwork.freedesktop.org/patch/250350/ which is not
-> Cc stable.
+> I guess its lucky I saw this then.
 
-That's what I just looked at, it's in mainline as well. I briefly considered
-backporting that fix manually, but was not sure why radeon is apparently not
-a "modesetting driver" and figured I'd rather wait for someone who understands
-drm better than me.
-
-> I think it'd be best to just drop the initial patch from stable, it
-> doesn't need to go back afaict.
-
-Agreed - using 4.18.11 just fine right now without it. :)
-
-cheers,
-Holger
+Did you not get this email: 
+https://lore.kernel.org/patchwork/patch/989545/#1173771
