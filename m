@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 608BAC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD14C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C03D20666
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C03D20666
+	by mail.kernel.org (Postfix) with ESMTP id 3039721582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3039721582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeI0P1b (ORCPT
+        id S1728409AbeI0P1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:27:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55128 "EHLO
+        Thu, 27 Sep 2018 11:27:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbeI0P1b (ORCPT
+        with ESMTP id S1727084AbeI0P1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:27:31 -0400
+        Thu, 27 Sep 2018 11:27:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D25010A4;
-        Thu, 27 Sep 2018 09:10:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1909C1117;
+        Thu, 27 Sep 2018 09:10:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Seth Forshee <seth.forshee@canonical.com>,
+        Siwei Liu <loseweigh@gmail.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 17/88] tls: fix currently broken MSG_PEEK behavior
-Date:   Thu, 27 Sep 2018 11:02:58 +0200
-Message-Id: <20180927090302.567599412@linuxfoundation.org>
+Subject: [PATCH 4.18 18/88] bnxt_en: Fix VF mac address regression.
+Date:   Thu, 27 Sep 2018 11:02:59 +0200
+Message-Id: <20180927090302.671630720@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -51,88 +53,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 50c6b58a814d86a93c0f6964570f839632854044 ]
+[ Upstream commit 28ea334bd1657f3c43485b4a8592672fc6835fac ]
 
-In kTLS MSG_PEEK behavior is currently failing, strace example:
+The recent commit to always forward the VF MAC address to the PF for
+approval may not work if the PF driver or the firmware is older.  This
+will cause the VF driver to fail during probe:
 
-  [pid  2430] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3
-  [pid  2430] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 4
-  [pid  2430] bind(4, {sa_family=AF_INET, sin_port=htons(0), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-  [pid  2430] listen(4, 10)               = 0
-  [pid  2430] getsockname(4, {sa_family=AF_INET, sin_port=htons(38855), sin_addr=inet_addr("0.0.0.0")}, [16]) = 0
-  [pid  2430] connect(3, {sa_family=AF_INET, sin_port=htons(38855), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-  [pid  2430] setsockopt(3, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0
-  [pid  2430] setsockopt(3, 0x11a /* SOL_?? */, 1, "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 40) = 0
-  [pid  2430] accept(4, {sa_family=AF_INET, sin_port=htons(49636), sin_addr=inet_addr("127.0.0.1")}, [16]) = 5
-  [pid  2430] setsockopt(5, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0
-  [pid  2430] setsockopt(5, 0x11a /* SOL_?? */, 2, "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 40) = 0
-  [pid  2430] close(4)                    = 0
-  [pid  2430] sendto(3, "test_read_peek", 14, 0, NULL, 0) = 14
-  [pid  2430] sendto(3, "_mult_recs\0", 11, 0, NULL, 0) = 11
-  [pid  2430] recvfrom(5, "test_read_peektest_read_peektest"..., 64, MSG_PEEK, NULL, NULL) = 64
+  bnxt_en 0000:00:03.0 (unnamed net_device) (uninitialized): hwrm req_type 0xf seq id 0x5 error 0xffff
+  bnxt_en 0000:00:03.0 (unnamed net_device) (uninitialized): VF MAC address 00:00:17:02:05:d0 not approved by the PF
+  bnxt_en 0000:00:03.0: Unable to initialize mac address.
+  bnxt_en: probe of 0000:00:03.0 failed with error -99
 
-As can be seen from strace, there are two TLS records sent,
-i) 'test_read_peek' and ii) '_mult_recs\0' where we end up
-peeking 'test_read_peektest_read_peektest'. This is clearly
-wrong, and what happens is that given peek cannot call into
-tls_sw_advance_skb() to unpause strparser and proceed with
-the next skb, we end up looping over the current one, copying
-the 'test_read_peek' over and over into the user provided
-buffer.
+We fix it by treating the error as fatal only if the VF MAC address is
+locally generated by the VF.
 
-Here, we can only peek into the currently held skb (current,
-full TLS record) as otherwise we would end up having to hold
-all the original skb(s) (depending on the peek depth) in a
-separate queue when unpausing strparser to process next
-records, minimally intrusive is to return only up to the
-current record's size (which likely was what c46234ebb4d1
-("tls: RX path for ktls") originally intended as well). Thus,
-after patch we properly peek the first record:
-
-  [pid  2046] wait4(2075,  <unfinished ...>
-  [pid  2075] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3
-  [pid  2075] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 4
-  [pid  2075] bind(4, {sa_family=AF_INET, sin_port=htons(0), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-  [pid  2075] listen(4, 10)               = 0
-  [pid  2075] getsockname(4, {sa_family=AF_INET, sin_port=htons(55115), sin_addr=inet_addr("0.0.0.0")}, [16]) = 0
-  [pid  2075] connect(3, {sa_family=AF_INET, sin_port=htons(55115), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-  [pid  2075] setsockopt(3, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0
-  [pid  2075] setsockopt(3, 0x11a /* SOL_?? */, 1, "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 40) = 0
-  [pid  2075] accept(4, {sa_family=AF_INET, sin_port=htons(45732), sin_addr=inet_addr("127.0.0.1")}, [16]) = 5
-  [pid  2075] setsockopt(5, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0
-  [pid  2075] setsockopt(5, 0x11a /* SOL_?? */, 2, "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 40) = 0
-  [pid  2075] close(4)                    = 0
-  [pid  2075] sendto(3, "test_read_peek", 14, 0, NULL, 0) = 14
-  [pid  2075] sendto(3, "_mult_recs\0", 11, 0, NULL, 0) = 11
-  [pid  2075] recvfrom(5, "test_read_peek", 64, MSG_PEEK, NULL, NULL) = 14
-
-Fixes: c46234ebb4d1 ("tls: RX path for ktls")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 707e7e966026 ("bnxt_en: Always forward VF MAC address to the PF.")
+Reported-by: Seth Forshee <seth.forshee@canonical.com>
+Reported-by: Siwei Liu <loseweigh@gmail.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tls/tls_sw.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c       |    9 +++++++--
+ drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c |    9 +++++----
+ drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.h |    2 +-
+ 3 files changed, 13 insertions(+), 7 deletions(-)
 
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -872,7 +872,15 @@ fallback_to_reg_recv:
- 				if (control != TLS_RECORD_TYPE_DATA)
- 					goto recv_end;
- 			}
-+		} else {
-+			/* MSG_PEEK right now cannot look beyond current skb
-+			 * from strparser, meaning we cannot advance skb here
-+			 * and thus unpause strparser since we'd loose original
-+			 * one.
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -7888,7 +7888,7 @@ static int bnxt_change_mac_addr(struct n
+ 	if (ether_addr_equal(addr->sa_data, dev->dev_addr))
+ 		return 0;
+ 
+-	rc = bnxt_approve_mac(bp, addr->sa_data);
++	rc = bnxt_approve_mac(bp, addr->sa_data, true);
+ 	if (rc)
+ 		return rc;
+ 
+@@ -8683,14 +8683,19 @@ static int bnxt_init_mac_addr(struct bnx
+ 	} else {
+ #ifdef CONFIG_BNXT_SRIOV
+ 		struct bnxt_vf_info *vf = &bp->vf;
++		bool strict_approval = true;
+ 
+ 		if (is_valid_ether_addr(vf->mac_addr)) {
+ 			/* overwrite netdev dev_addr with admin VF MAC */
+ 			memcpy(bp->dev->dev_addr, vf->mac_addr, ETH_ALEN);
++			/* Older PF driver or firmware may not approve this
++			 * correctly.
 +			 */
-+			break;
++			strict_approval = false;
+ 		} else {
+ 			eth_hw_addr_random(bp->dev);
  		}
-+
- 		/* If we have a new message from strparser, continue now. */
- 		if (copied >= target && !ctx->recv_pkt)
- 			break;
+-		rc = bnxt_approve_mac(bp, bp->dev->dev_addr);
++		rc = bnxt_approve_mac(bp, bp->dev->dev_addr, strict_approval);
+ #endif
+ 	}
+ 	return rc;
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c
+@@ -1095,7 +1095,7 @@ update_vf_mac_exit:
+ 	mutex_unlock(&bp->hwrm_cmd_lock);
+ }
+ 
+-int bnxt_approve_mac(struct bnxt *bp, u8 *mac)
++int bnxt_approve_mac(struct bnxt *bp, u8 *mac, bool strict)
+ {
+ 	struct hwrm_func_vf_cfg_input req = {0};
+ 	int rc = 0;
+@@ -1113,12 +1113,13 @@ int bnxt_approve_mac(struct bnxt *bp, u8
+ 	memcpy(req.dflt_mac_addr, mac, ETH_ALEN);
+ 	rc = hwrm_send_message(bp, &req, sizeof(req), HWRM_CMD_TIMEOUT);
+ mac_done:
+-	if (rc) {
++	if (rc && strict) {
+ 		rc = -EADDRNOTAVAIL;
+ 		netdev_warn(bp->dev, "VF MAC address %pM not approved by the PF\n",
+ 			    mac);
++		return rc;
+ 	}
+-	return rc;
++	return 0;
+ }
+ #else
+ 
+@@ -1135,7 +1136,7 @@ void bnxt_update_vf_mac(struct bnxt *bp)
+ {
+ }
+ 
+-int bnxt_approve_mac(struct bnxt *bp, u8 *mac)
++int bnxt_approve_mac(struct bnxt *bp, u8 *mac, bool strict)
+ {
+ 	return 0;
+ }
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.h
+@@ -39,5 +39,5 @@ int bnxt_sriov_configure(struct pci_dev
+ void bnxt_sriov_disable(struct bnxt *);
+ void bnxt_hwrm_exec_fwd_req(struct bnxt *);
+ void bnxt_update_vf_mac(struct bnxt *);
+-int bnxt_approve_mac(struct bnxt *, u8 *);
++int bnxt_approve_mac(struct bnxt *, u8 *, bool);
+ #endif
 
 
