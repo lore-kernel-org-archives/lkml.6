@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0FDC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 431FBC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DAB521582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DAB521582
+	by mail.kernel.org (Postfix) with ESMTP id 0187D20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0187D20836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbeI0Pbo (ORCPT
+        id S1728290AbeI0Pbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:31:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55518 "EHLO
+        Thu, 27 Sep 2018 11:31:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55528 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeI0Pbn (ORCPT
+        with ESMTP id S1727576AbeI0Pbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:31:43 -0400
+        Thu, 27 Sep 2018 11:31:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C2A421117;
-        Thu, 27 Sep 2018 09:14:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC4591117;
+        Thu, 27 Sep 2018 09:14:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         Wen Xu <wen.xu@gatech.edu>
-Subject: [PATCH 4.18 77/88] ext4: avoid divide by zero fault when deleting corrupted inline directories
-Date:   Thu, 27 Sep 2018 11:03:58 +0200
-Message-Id: <20180927090309.968088055@linuxfoundation.org>
+Subject: [PATCH 4.18 78/88] ext4: avoid arithemetic overflow that can trigger a BUG
+Date:   Thu, 27 Sep 2018 11:03:59 +0200
+Message-Id: <20180927090310.091349330@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -53,21 +53,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 4d982e25d0bdc83d8c64e66fdeca0b89240b3b85 upstream.
+commit bcd8e91f98c156f4b1ebcfacae675f9cfd962441 upstream.
 
-A specially crafted file system can trick empty_inline_dir() into
-reading past the last valid entry in a inline directory, and then run
-into the end of xattr marker. This will trigger a divide by zero
-fault.  Fix this by using the size of the inline directory instead of
-dir->i_size.
+A maliciously crafted file system can cause an overflow when the
+results of a 64-bit calculation is stored into a 32-bit length
+parameter.
 
-Also clean up error reporting in __ext4_check_dir_entry so that the
-message is clearer and more understandable --- and avoids the division
-by zero trap if the size passed in is zero.  (I'm not sure why we
-coded it that way in the first place; printing offset % size is
-actually more confusing and less useful.)
-
-https://bugzilla.kernel.org/show_bug.cgi?id=200933
+https://bugzilla.kernel.org/show_bug.cgi?id=200623
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Reported-by: Wen Xu <wen.xu@gatech.edu>
@@ -75,68 +67,42 @@ Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/dir.c    |   20 +++++++++-----------
- fs/ext4/inline.c |    4 +++-
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ fs/ext4/ext4.h  |    3 +++
+ fs/ext4/inode.c |    8 ++++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -76,7 +76,7 @@ int __ext4_check_dir_entry(const char *f
- 	else if (unlikely(rlen < EXT4_DIR_REC_LEN(de->name_len)))
- 		error_msg = "rec_len is too small for name_len";
- 	else if (unlikely(((char *) de - buf) + rlen > size))
--		error_msg = "directory entry across range";
-+		error_msg = "directory entry overrun";
- 	else if (unlikely(le32_to_cpu(de->inode) >
- 			le32_to_cpu(EXT4_SB(dir->i_sb)->s_es->s_inodes_count)))
- 		error_msg = "inode out of bounds";
-@@ -85,18 +85,16 @@ int __ext4_check_dir_entry(const char *f
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -675,6 +675,9 @@ enum {
+ /* Max physical block we can address w/o extents */
+ #define EXT4_MAX_BLOCK_FILE_PHYS	0xFFFFFFFF
  
- 	if (filp)
- 		ext4_error_file(filp, function, line, bh->b_blocknr,
--				"bad entry in directory: %s - offset=%u(%u), "
--				"inode=%u, rec_len=%d, name_len=%d",
--				error_msg, (unsigned) (offset % size),
--				offset, le32_to_cpu(de->inode),
--				rlen, de->name_len);
-+				"bad entry in directory: %s - offset=%u, "
-+				"inode=%u, rec_len=%d, name_len=%d, size=%d",
-+				error_msg, offset, le32_to_cpu(de->inode),
-+				rlen, de->name_len, size);
- 	else
- 		ext4_error_inode(dir, function, line, bh->b_blocknr,
--				"bad entry in directory: %s - offset=%u(%u), "
--				"inode=%u, rec_len=%d, name_len=%d",
--				error_msg, (unsigned) (offset % size),
--				offset, le32_to_cpu(de->inode),
--				rlen, de->name_len);
-+				"bad entry in directory: %s - offset=%u, "
-+				"inode=%u, rec_len=%d, name_len=%d, size=%d",
-+				 error_msg, offset, le32_to_cpu(de->inode),
-+				 rlen, de->name_len, size);
- 
- 	return 1;
- }
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1753,6 +1753,7 @@ bool empty_inline_dir(struct inode *dir,
++/* Max logical block we can support */
++#define EXT4_MAX_LOGICAL_BLOCK		0xFFFFFFFF
++
+ /*
+  * Structure of an inode on the disk
+  */
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3412,12 +3412,16 @@ static int ext4_iomap_begin(struct inode
  {
- 	int err, inline_size;
- 	struct ext4_iloc iloc;
-+	size_t inline_len;
- 	void *inline_pos;
- 	unsigned int offset;
- 	struct ext4_dir_entry_2 *de;
-@@ -1780,8 +1781,9 @@ bool empty_inline_dir(struct inode *dir,
- 		goto out;
- 	}
+ 	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+ 	unsigned int blkbits = inode->i_blkbits;
+-	unsigned long first_block = offset >> blkbits;
+-	unsigned long last_block = (offset + length - 1) >> blkbits;
++	unsigned long first_block, last_block;
+ 	struct ext4_map_blocks map;
+ 	bool delalloc = false;
+ 	int ret;
  
-+	inline_len = ext4_get_inline_size(dir);
- 	offset = EXT4_INLINE_DOTDOT_SIZE;
--	while (offset < dir->i_size) {
-+	while (offset < inline_len) {
- 		de = ext4_get_inline_entry(dir, &iloc, offset,
- 					   &inline_pos, &inline_size);
- 		if (ext4_check_dir_entry(dir, NULL, de,
++	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
++		return -EINVAL;
++	first_block = offset >> blkbits;
++	last_block = min_t(loff_t, (offset + length - 1) >> blkbits,
++			   EXT4_MAX_LOGICAL_BLOCK);
+ 
+ 	if (flags & IOMAP_REPORT) {
+ 		if (ext4_has_inline_data(inode)) {
 
 
