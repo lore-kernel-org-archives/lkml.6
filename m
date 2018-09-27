@@ -2,81 +2,130 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65C2C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C8BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57ED3216E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57ED3216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 7CC6B216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:33:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fDrU2mfX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC6B216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbeI0Vvl (ORCPT
+        id S1728269AbeI0VwP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:51:41 -0400
-Received: from verein.lst.de ([213.95.11.211]:45948 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727262AbeI0Vvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:51:41 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 8B80768B02; Thu, 27 Sep 2018 17:32:52 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 17:32:52 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 4/5] dma-direct: implement complete bus_dma_mask
- handling
-Message-ID: <20180927153252.GE10566@lst.de>
-References: <20180920185247.20037-1-hch@lst.de> <20180920185247.20037-5-hch@lst.de> <a7626d1b-4dd8-abc4-0ab0-21ab7e5d1a4c@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7626d1b-4dd8-abc4-0ab0-21ab7e5d1a4c@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Thu, 27 Sep 2018 17:52:15 -0400
+Received: from mail-vs1-f74.google.com ([209.85.217.74]:33061 "EHLO
+        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727676AbeI0VwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 17:52:14 -0400
+Received: by mail-vs1-f74.google.com with SMTP id d17-v6so1060139vsc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 08:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=YD6ZM+HnTsOtlUk/16jXhScztnyHopHZs+PHDuwfBRA=;
+        b=fDrU2mfXAiU/l5hZeI/7fp/5bLFJiasObZws8Ir326GyeFaLTzyMMKAFkLbbLjw+JE
+         +6gb5LX0WKcGN9lQeZ05Qd57YxeLOHs0Ib9kI6VuH5NKvuZbKLPpLbU0e88Tud2fzC7m
+         bLH1y7aaiJSRYzTPjODAhCUtKEreodNi30KLM0XyBPy+xyBgxNcC5gs6qnOiFT+hcpg/
+         vvt6ymSYI+JB4xscxGXB/M8PaPpsjh5rO4PJKSqJfpxM+KMtIoEFOF7J8jGTnMjp9rWJ
+         Sj82zqFObqpawadB53irfL7e2Q+UaQNYF4CazOXRc5b/21bOFYT8eztvESmEsMBkycnQ
+         r7jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=YD6ZM+HnTsOtlUk/16jXhScztnyHopHZs+PHDuwfBRA=;
+        b=KNmaTyHC7HrOtsQcjNt2PwYeOxAXitO+G/Uhs6oHlSroQK6LmKt4+RET1Dubr4tqvS
+         P/2z4hiNj1kCVRcGToTQvC824HaA2A6qINETzUq/FLtKv9PH2vNhCbddVU88d48WgdxG
+         xfZpwEZE1NmXQb84/AYqzBQzd6YGgsJkGoR5rVHnn/YQ+1DW06gx887v5DcAguEdZN5W
+         xBFwKiXANd5TkTGKtgm0D5Mwbnz3NzYcXckgar2Uan9t55yhs4gy6RDYSOWIYuyPy91F
+         hvAsVa9RG/gxeZ68kXVwEC/BiJ1ruJaqmULc2iILerAe0Cw0mtlzPb74ufB0GYyOu8rW
+         7tzA==
+X-Gm-Message-State: ABuFfoghiFxxlTwB6a0KUvbpRA+U0U7+4PRSC09GB3ULSExdAVrlqnZk
+        rG6DAkWOJ/o8g0qsybcqtkhHYMloRw==
+X-Google-Smtp-Source: ACcGV63IVoUugxs+B31IDjqaFMOeFcVNxtrgRFyiaE5zSCRf4q4LpTLQpKegopxq1ylOC5xQs+JQJHrCdw==
+X-Received: by 2002:a67:4195:: with SMTP id x21-v6mr6037087vsf.25.1538062405281;
+ Thu, 27 Sep 2018 08:33:25 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 17:33:16 +0200
+Message-Id: <20180927153316.200286-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+Subject: [PATCH resend] proc: restrict kernel stack dumps to root
+From:   Jann Horn <jannh@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>, jannh@google.com
+Cc:     Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ken Chen <kenchen@google.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Security Officers <security@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 03:58:04PM +0100, Robin Murphy wrote:
->>   }
->>   #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
->>   diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
->> index 3c404e33d946..64466b7ef67b 100644
->> --- a/kernel/dma/direct.c
->> +++ b/kernel/dma/direct.c
->> @@ -43,10 +43,11 @@ check_addr(struct device *dev, dma_addr_t dma_addr, size_t size,
->>   			return false;
->>   		}
->>   -		if (*dev->dma_mask >= DMA_BIT_MASK(32)) {
->> +		if (*dev->dma_mask >= DMA_BIT_MASK(32) || dev->bus_dma_mask) {
->
-> Hmm... say *dev->dma_mask is 31 bits and dev->bus_dma_mask is 40 bits due 
-> to a global DT property, we'll now scream where we didn't before even 
-> though the bus mask is almost certainly irrelevant - is that desirable?
+Restrict the ability to inspect kernel stacks of arbitrary tasks to root
+in order to prevent a local attacker from exploiting racy stack unwinding
+to leak kernel task stack contents.
+See the added comment for a longer rationale.
 
-This is just the reporting in the error case - we'll only hit this
-IFF dma_capable already returned false.  But if you don't want a message
-here we can probably drop this hunk.
+There don't seem to be any users of this userspace API that can't
+gracefully bail out if reading from the file fails. Therefore, I believe
+that this change is unlikely to break things.
+In the case that this patch does end up needing a revert, the next-best
+solution might be to fake a single-entry stack based on wchan.
 
->> @@ -65,12 +66,18 @@ u64 dma_direct_get_required_mask(struct device *dev)
->>   {
->>   	u64 max_dma = phys_to_dma_direct(dev, (max_pfn - 1) << PAGE_SHIFT);
->>   +	if (dev->bus_dma_mask && dev->bus_dma_mask < max_dma)
->> +		max_dma = dev->bus_dma_mask;
->
-> Again, I think we could just do another min_not_zero() here. A device wired 
-> to address only one single page of RAM isn't a realistic prospect (and we 
-> could just flip the -1 and the shift in the max_dma calculation if we 
-> *really* wanted to support such things).
+Fixes: 2ec220e27f50 ("proc: add /proc/*/stack")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Resending because I forgot to send this to akpm the first time.
 
-This just seemed more readable to me than min_not_zero, but if others
-prefer min_not_zero I can switch.
+ fs/proc/base.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ccf86f16d9f0..7e9f07bf260d 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -407,6 +407,20 @@ static int proc_pid_stack(struct seq_file *m, struct pid_namespace *ns,
+ 	unsigned long *entries;
+ 	int err;
+ 
++	/*
++	 * The ability to racily run the kernel stack unwinder on a running task
++	 * and then observe the unwinder output is scary; while it is useful for
++	 * debugging kernel issues, it can also allow an attacker to leak kernel
++	 * stack contents.
++	 * Doing this in a manner that is at least safe from races would require
++	 * some work to ensure that the remote task can not be scheduled; and
++	 * even then, this would still expose the unwinder as local attack
++	 * surface.
++	 * Therefore, this interface is restricted to root.
++	 */
++	if (!file_ns_capable(m->file, &init_user_ns, CAP_SYS_ADMIN))
++		return -EACCES;
++
+ 	entries = kmalloc_array(MAX_STACK_TRACE_DEPTH, sizeof(*entries),
+ 				GFP_KERNEL);
+ 	if (!entries)
+-- 
+2.19.0.rc2.392.g5ba43deb5a-goog
+
