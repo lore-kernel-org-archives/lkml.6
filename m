@@ -2,112 +2,110 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6A0C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39960C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8CFD216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4EF2216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:44:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k/INWqYm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8CFD216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMxkhYZ3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4EF2216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeI1FDL (ORCPT
+        id S1727269AbeI1FEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 01:03:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37509 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbeI1FDL (ORCPT
+        Fri, 28 Sep 2018 01:04:51 -0400
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:36652 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbeI1FEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 01:03:11 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x26-v6so2890727pfn.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 15:42:36 -0700 (PDT)
+        Fri, 28 Sep 2018 01:04:51 -0400
+Received: by mail-oi1-f169.google.com with SMTP id p125-v6so3682053oic.3;
+        Thu, 27 Sep 2018 15:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2lLEi+m7iTYand9+DA/CRXb4bxxLn/neQsM8Qpm26J0=;
-        b=k/INWqYmnr/j7hkASBl82dUqvlmDjcMO0x4udkiV0kIgsz+HGl72LiFzkwF+8LDroD
-         FR/vRIKTPv46gC6Ew6uLGb6aqTpS70eLx6lgHzY3UFQwzxgqC0845YRsgONtCzaS9jqb
-         P/pqiWvdSiDWkUhEeOlM0Cy3RyDpvb8qXwNTeBnNRmaDRW0K+Bp6+uVmIzBsJufi+/Il
-         2Yh0Y/SJafDUY2jwQRKSiD2lTHBjm8J1/P1w5GzNqwjmAuWYEt2besjlva9xOODIHWuS
-         YBbbSJHwfjwxhiOSeWeSawfARjX2YAEWySpC9SrBrsWqAEDN5ZHNpOzTV137zX8CQWkC
-         oUQA==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=mVYNWuSjXdto/oU4h1FJrju/sv68BvjIZEJMVZP3A0k=;
+        b=OMxkhYZ3c92tmN5yekixo+RuhECvU8ifP88vNZLv1RJJMpz3NE4GBol5w08KiVNMqp
+         71aUfpwW8KLHfa2wRZjfC1LEYNcMdCSnQoZnmlZfa6XL+ZViG7JKj9Uz6T54+yVdxl6w
+         XEdVTBxsbp8UBns9toxn9MhLwsb4rWqTTiKrZye0/8KPIcQzBkV/yZnm7q+/mDeELqrZ
+         Q4XlpvAhg0DwDFNOXTObFUzA895rE1ANcldcbsETp1y9+H3RqZE9dmhKQqlx/ZJ9DZeh
+         DOIpIJKT7WpYRGY+5s+SonGUroujs3gE5oAh/YYjQ0GsZ970hw+PV5zZdLvjv5wBOzIf
+         tRBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2lLEi+m7iTYand9+DA/CRXb4bxxLn/neQsM8Qpm26J0=;
-        b=VkqxvpjSNusM6TiBHTRmGWGRsEoaYbLQ1IQuomYqsNyL4zGwB8D60MZC3d7rD6IATk
-         4z53zyofrJj6hux6m+yshhN2h/5lan42fBEykU8BFehqMGGNzCCmi7R9c6yaNDK337Sx
-         xvYa/MRI5xr+5ZidfCuci1ezk7CGlCQnAyi2peALyzVseZdXvJtFSgg1JWdBTd/ITNxC
-         7bke/oPIdVkc2q7TsRsFHpjGJ1YcNvDQ1ohkzu0QaDoMQHtWfha0rjjz0+FEGn34pDvt
-         /23eLDDCYTR+3r0/B+Df4gBiUrS0gkRdXah20MyCHxIui9cDLiAjFDyIvkbJAC2dGelL
-         U+kA==
-X-Gm-Message-State: ABuFfogQH3I8M/ooni6Yv0EmwI/ioV0SYYAych2PCy6cn3Oa0ooqkVTM
-        IpEo3dkqpyL7MtLps8kUZnaXUHkFzC24wPtK1moT3Q==
-X-Google-Smtp-Source: ACcGV62Hy+lHk/yC+v2y7gM8zUVu+fws2I4+mj5sx9KBEBxrItMXUvU8LmFFYkccHRpK6SwBcDTshhD5jGDw0wJkOks=
-X-Received: by 2002:a63:1921:: with SMTP id z33-v6mr12502331pgl.302.1538088155842;
- Thu, 27 Sep 2018 15:42:35 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=mVYNWuSjXdto/oU4h1FJrju/sv68BvjIZEJMVZP3A0k=;
+        b=baKZFPRe97snd9Zm2w4XKVZgf9ONH9syOMqDeTwL91Y12TxZlD4EjH59evsz0w/xK9
+         xcgT2p5AEl1PiJtjYjyz2M42bpC7bhzabOZB27/zomIKYFPVEIRyMebX3q7eHC7FZYux
+         Hr6yjhLH2Pp61wVLxYL8V2BEqarMrOe91x1YngnvdEUioeQrusR6qGIRJnw/r377ViMp
+         Ez55SOy/GuO6mKYXnLFircRspDRHq0TLcWbbYqzKHn7ggwXDmtLv9H/vXGpxP2dJ1/TK
+         MJghcmRgOgSKHRJDzLopdKycr6Vid6XNmXUUl6H4ozrlkXbWldO++u89RbLJMdKuCIU8
+         MENw==
+X-Gm-Message-State: ABuFfohhDuAtZIbrX8lxEeQc1Sb+FoAXxWrgTc7mRMlVEuP/63bF5bgR
+        3GRH6bBl9SO9wVfxkDzLFuBGLWLsGY2Rsnpxrk2uDAqn
+X-Google-Smtp-Source: ACcGV61FAPJDu9SYTp69WuGHLYDXGlDwBenZ+23ZTIZF7ycf6wVtrDqNU3LbGSg/fb5bNTq6JiLqWfejxF7V56ZMDis=
+X-Received: by 2002:aca:6c4f:: with SMTP id h76-v6mr4429243oic.214.1538088255411;
+ Thu, 27 Sep 2018 15:44:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180924195716.30848-1-natechancellor@gmail.com>
- <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
- <20180924222737.GA26973@flashbox> <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
- <20180925023722.GA32600@ziepe.ca> <20180927010803.GA7640@flashbox>
- <20180927044826.GC24889@ziepe.ca> <CAKwvOdnmg2XY6K-8jTna3EKR1Nx04gOm6ZoywUwQO_CSANR_jg@mail.gmail.com>
- <20180927202849.GA11120@flashbox> <CAKwvOdnMOcdKPNHwKbcsg8rJX3_hDTgY752Nb4hgMC2D4p5aRg@mail.gmail.com>
- <20180927222821.GC28301@ziepe.ca> <1538087622.226558.8.camel@acm.org>
-In-Reply-To: <1538087622.226558.8.camel@acm.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 27 Sep 2018 15:42:24 -0700
-Message-ID: <CAKwvOd=qNZsfSFJUFZqBbSYt4T_T7TudohzhTqpigvDAHek78A@mail.gmail.com>
-Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
-To:     bvanassche@acm.org
-Cc:     jgg@ziepe.ca, Nathan Chancellor <natechancellor@gmail.com>,
-        dledford@redhat.com, linux-rdma@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+From:   Ulf Magnusson <ulfalizer@gmail.com>
+Date:   Fri, 28 Sep 2018 00:44:04 +0200
+Message-ID: <CAFkk2KQ-sC=bAd9fCkOVPNmZn8m+EZfpZtirE+J5VpvW120sxQ@mail.gmail.com>
+Subject: [ANNOUNCE] Kconfiglib menuconfig and documentation generation updates
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 3:33 PM Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On Thu, 2018-09-27 at 16:28 -0600, Jason Gunthorpe wrote:
-> > On Thu, Sep 27, 2018 at 01:34:16PM -0700, Nick Desaulniers wrote:
-> >
-> > > > Neither ib_qp_create_flags nor mlx4_ib_qp_flags have negative values, is
-> > > > signedness necessary?
-> > >
-> > > enums are by default restricted to the range of ints.
-> >
-> > That's not quite right, the compiler sizes the enum to be able to fit
-> > the largest value contained within, today that is int, but if we added
-> > 1<<31, then it would become larger.
->
-> Hi Jason,
->
-> Are you perhaps confusing C and C++? For C++, an enumeration whose underlying
-> type is not fixed, the underlying type is an integral type that can represent
-> all the enumerator values defined in the enumeration. For C however I think
-> that enumeration values are restricted to what fits in an int.
->
-> Bart.
->
+Hello,
 
-To quote the sacred texts (ANSIIISO9899-1990):
+Here's two small Kconfiglib (https://github.com/ulfalizer/kconfiglib) updates.
 
-6.5.2.2 Enumeration specifiers
-The expression that defines the value of an enumeration constant shall
-be an integral constant
-expression that has a value representable as an int.
--- 
-Thanks,
-~Nick Desaulniers
+First, I've made it a lot easier to try out the menuconfig implementation on
+the kernel. This will work now, in the kernel root:
+
+  $ git clone https://github.com/ulfalizer/Kconfiglib.git
+  $ git am Kconfiglib/makefile.patch
+  $ make kmenuconfig
+
+Here's an animation that demonstrates various menuconfig features:
+https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/menuconfig.gif
+
+Secondly, there's now a handy cross-referenced documentation generation script
+available.
+
+Example documentation output (warning: heavy page, lots of symbols):
+https://docs.zephyrproject.org/latest/reference/kconfig/index.html
+
+The script that generates the documentation:
+https://github.com/zephyrproject-rtos/zephyr/blob/master/doc/scripts/genrest.py
+
+The recently added Kconfig preprocessor has been implemented for a while now,
+along with an extension that allows preprocessor functions to be defined in
+Python.
+
+I've also fixed some broken/incomplete behavior from the C tools, like not
+being able to add symbols to choices by giving them a name and defining them in
+multiple locations (though I think projects sometimes overdo multiple
+definitions :). This is actually just a menuconfig hack that aggregates the
+menu nodes from all choice definition locations when you enter a choice.
+
+Zephyr and several smaller projects now use Kconfiglib exclusively.
+
+Feedback appreciated!
+
+Cheers,
+Ulf
