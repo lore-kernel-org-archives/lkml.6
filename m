@@ -2,226 +2,91 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C73C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E315FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06F821582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06F821582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 937AF21533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 937AF21533
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729038AbeI0Pnj (ORCPT
+        id S1729089AbeI0Pnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:43:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53684 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727363AbeI0Pnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:43:39 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 96D7E30820C2;
-        Thu, 27 Sep 2018 09:26:18 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-205.ams2.redhat.com [10.36.116.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D32E2015C02;
-        Thu, 27 Sep 2018 09:26:04 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
-        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
-        David Hildenbrand <david@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        John Allen <jallen@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH v3 1/6] mm/memory_hotplug: make remove_memory() take the device_hotplug_lock
-Date:   Thu, 27 Sep 2018 11:25:49 +0200
-Message-Id: <20180927092554.13567-2-david@redhat.com>
-In-Reply-To: <20180927092554.13567-1-david@redhat.com>
-References: <20180927092554.13567-1-david@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 27 Sep 2018 09:26:19 +0000 (UTC)
+        Thu, 27 Sep 2018 11:43:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56854 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728028AbeI0Pnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:43:45 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76157111C;
+        Thu, 27 Sep 2018 09:26:24 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 20/44] ipv6: fix possible use-after-free in ip6_xmit()
+Date:   Thu, 27 Sep 2018 11:04:09 +0200
+Message-Id: <20180927090120.708707870@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
+References: <20180927090117.997362691@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-remove_memory() is exported right now but requires the
-device_hotplug_lock, which is not exported. So let's provide a variant
-that takes the lock and only export that one.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-The lock is already held in
-	arch/powerpc/platforms/pseries/hotplug-memory.c
-	drivers/acpi/acpi_memhotplug.c
-	arch/powerpc/platforms/powernv/memtrace.c
+------------------
 
-Apart from that, there are not other users in the tree.
+From: Eric Dumazet <edumazet@google.com>
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Rashmica Gupta <rashmica.g@gmail.com>
-Cc: Michael Neuling <mikey@neuling.org>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Cc: John Allen <jallen@linux.vnet.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
-Cc: Mathieu Malaterre <malat@debian.org>
-Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+[ Upstream commit bbd6528d28c1b8e80832b3b018ec402b6f5c3215 ]
+
+In the unlikely case ip6_xmit() has to call skb_realloc_headroom(),
+we need to call skb_set_owner_w() before consuming original skb,
+otherwise we risk a use-after-free.
+
+Bring IPv6 in line with what we do in IPv4 to fix this.
+
+Fixes: 1da177e4c3f41 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/memtrace.c       | 2 +-
- arch/powerpc/platforms/pseries/hotplug-memory.c | 6 +++---
- drivers/acpi/acpi_memhotplug.c                  | 2 +-
- include/linux/memory_hotplug.h                  | 3 ++-
- mm/memory_hotplug.c                             | 9 ++++++++-
- 5 files changed, 15 insertions(+), 7 deletions(-)
+ net/ipv6/ip6_output.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
-index a29fdf8a2e56..773623f6bfb1 100644
---- a/arch/powerpc/platforms/powernv/memtrace.c
-+++ b/arch/powerpc/platforms/powernv/memtrace.c
-@@ -121,7 +121,7 @@ static u64 memtrace_alloc_node(u32 nid, u64 size)
- 			lock_device_hotplug();
- 			end_pfn = base_pfn + nr_pages;
- 			for (pfn = base_pfn; pfn < end_pfn; pfn += bytes>> PAGE_SHIFT) {
--				remove_memory(nid, pfn << PAGE_SHIFT, bytes);
-+				__remove_memory(nid, pfn << PAGE_SHIFT, bytes);
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -201,12 +201,10 @@ int ip6_xmit(const struct sock *sk, stru
+ 				kfree_skb(skb);
+ 				return -ENOBUFS;
  			}
- 			unlock_device_hotplug();
- 			return base_pfn << PAGE_SHIFT;
-diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-index 9a15d39995e5..dd0264c43f3e 100644
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -305,7 +305,7 @@ static int pseries_remove_memblock(unsigned long base, unsigned int memblock_siz
- 	nid = memory_add_physaddr_to_nid(base);
- 
- 	for (i = 0; i < sections_per_block; i++) {
--		remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
-+		__remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
- 		base += MIN_MEMORY_BLOCK_SIZE;
- 	}
- 
-@@ -394,7 +394,7 @@ static int dlpar_remove_lmb(struct drmem_lmb *lmb)
- 	block_sz = pseries_memory_block_size();
- 	nid = memory_add_physaddr_to_nid(lmb->base_addr);
- 
--	remove_memory(nid, lmb->base_addr, block_sz);
-+	__remove_memory(nid, lmb->base_addr, block_sz);
- 
- 	/* Update memory regions for memory remove */
- 	memblock_remove(lmb->base_addr, block_sz);
-@@ -681,7 +681,7 @@ static int dlpar_add_lmb(struct drmem_lmb *lmb)
- 
- 	rc = dlpar_online_lmb(lmb);
- 	if (rc) {
--		remove_memory(nid, lmb->base_addr, block_sz);
-+		__remove_memory(nid, lmb->base_addr, block_sz);
- 		invalidate_lmb_associativity_index(lmb);
- 	} else {
- 		lmb->flags |= DRCONF_MEM_ASSIGNED;
-diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
-index 6b0d3ef7309c..811148415993 100644
---- a/drivers/acpi/acpi_memhotplug.c
-+++ b/drivers/acpi/acpi_memhotplug.c
-@@ -282,7 +282,7 @@ static void acpi_memory_remove_memory(struct acpi_memory_device *mem_device)
- 			nid = memory_add_physaddr_to_nid(info->start_addr);
- 
- 		acpi_unbind_memory_blocks(info);
--		remove_memory(nid, info->start_addr, info->length);
-+		__remove_memory(nid, info->start_addr, info->length);
- 		list_del(&info->list);
- 		kfree(info);
- 	}
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 34a28227068d..1f096852f479 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -301,6 +301,7 @@ extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
- extern void try_offline_node(int nid);
- extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
- extern void remove_memory(int nid, u64 start, u64 size);
-+extern void __remove_memory(int nid, u64 start, u64 size);
- 
- #else
- static inline bool is_mem_section_removable(unsigned long pfn,
-@@ -317,6 +318,7 @@ static inline int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
- }
- 
- static inline void remove_memory(int nid, u64 start, u64 size) {}
-+static inline void __remove_memory(int nid, u64 start, u64 size) {}
- #endif /* CONFIG_MEMORY_HOTREMOVE */
- 
- extern void __ref free_area_init_core_hotplug(int nid);
-@@ -330,7 +332,6 @@ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
- 		unsigned long nr_pages, struct vmem_altmap *altmap);
- extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
- extern bool is_memblock_offlined(struct memory_block *mem);
--extern void remove_memory(int nid, u64 start, u64 size);
- extern int sparse_add_one_section(struct pglist_data *pgdat,
- 		unsigned long start_pfn, struct vmem_altmap *altmap);
- extern void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 2698664bfd54..f6dbd5d8fffd 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1839,7 +1839,7 @@ EXPORT_SYMBOL(try_offline_node);
-  * and online/offline operations before this call, as required by
-  * try_offline_node().
-  */
--void __ref remove_memory(int nid, u64 start, u64 size)
-+void __ref __remove_memory(int nid, u64 start, u64 size)
- {
- 	int ret;
- 
-@@ -1868,5 +1868,12 @@ void __ref remove_memory(int nid, u64 start, u64 size)
- 
- 	mem_hotplug_done();
- }
-+
-+void remove_memory(int nid, u64 start, u64 size)
-+{
-+	lock_device_hotplug();
-+	__remove_memory(nid, start, size);
-+	unlock_device_hotplug();
-+}
- EXPORT_SYMBOL_GPL(remove_memory);
- #endif /* CONFIG_MEMORY_HOTREMOVE */
--- 
-2.17.1
++			if (skb->sk)
++				skb_set_owner_w(skb2, skb->sk);
+ 			consume_skb(skb);
+ 			skb = skb2;
+-			/* skb_set_owner_w() changes sk->sk_wmem_alloc atomically,
+-			 * it is safe to call in our context (socket lock not held)
+-			 */
+-			skb_set_owner_w(skb, (struct sock *)sk);
+ 		}
+ 		if (opt->opt_flen)
+ 			ipv6_push_frag_opts(skb, opt, &proto);
+
 
