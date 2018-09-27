@@ -2,97 +2,146 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78299C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D403C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE6521570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:52:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE6521570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 2898321570
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2898321570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbeI0LJD (ORCPT
+        id S1726820AbeI0LJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:09:03 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:57862 "EHLO mail.skyhub.de"
+        Thu, 27 Sep 2018 07:09:26 -0400
+Received: from mga01.intel.com ([192.55.52.88]:8126 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbeI0LJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:09:03 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2EZ77Vu4IZiC; Thu, 27 Sep 2018 06:52:43 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC7FB00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:fb00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A90CB1EC0104;
-        Thu, 27 Sep 2018 06:52:43 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 06:52:44 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Russ Anderson <rja@hpe.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Justin Ernst <justin.ernst@hpe.com>, russ.anderson@hpe.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aristeu Rozanski Filho <arozansk@redhat.com>
-Subject: Re: [PATCH] Raise maximum number of memory controllers
-Message-ID: <20180927045244.GA30912@zn.tnic>
-References: <20180925152659.GE23986@zn.tnic>
- <20180925175023.GA16725@agluck-desk>
- <20180925180458.GG23986@zn.tnic>
- <20180926093510.GA5584@zn.tnic>
- <20180926152752.GG5584@zn.tnic>
- <20180926130340.6b22918b@coco.lan>
- <20180926161749.GI5584@zn.tnic>
- <20180926181035.GA1132@agluck-desk>
- <20180926182317.patqjso7nzw2oxiz@hpe.com>
- <20180926230257.GA5666@agluck-desk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180926230257.GA5666@agluck-desk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726653AbeI0LJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 07:09:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 21:53:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,309,1534834800"; 
+   d="scan'208";a="260600884"
+Received: from mint-dev.iind.intel.com ([10.223.25.164])
+  by orsmga005.jf.intel.com with ESMTP; 26 Sep 2018 21:51:55 -0700
+From:   Ramalingam C <ramalingam.c@intel.com>
+To:     intel-gfx-trybot@lists.freedesktop.org
+Cc:     Ramalingam C <ramalingam.c@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 06/39] component: alloc component_match without any comp to match
+Date:   Thu, 27 Sep 2018 10:19:02 +0530
+Message-Id: <1538023775-19286-7-git-send-email-ramalingam.c@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1538023775-19286-1-git-send-email-ramalingam.c@intel.com>
+References: <1538023775-19286-1-git-send-email-ramalingam.c@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 04:02:57PM -0700, Luck, Tony wrote:
-> We don't have stats, nor control of power on a per memory controller
-> or per dimm basis. So all these files are just noise.
+If all the components associated to a component master is not added
+to the component framework due to the HW capability or Kconfig
+selection, component_match will be NULL at
+component_master_add_with_match().
 
-Yeah, and also, looking at your previous mail, stuff like:
+To avoid this, component_match_alloc() is added to the framework,
+to allcoate the struct component_match with zero associated components.
+Hence component master can be added with a component_match with zero
+associated components.
 
-/sys/bus/mc6/devices/dimm0
-/sys/bus/mc4/devices/dimm0
+This helps the component master bind call to get triggered,
+even if no component is registered for that particular master.
 
-doesn't make any sense: why is mc* directly under bus? It should be
-under ...bus/edac/mc/...
+This is meant for big PCI device drivers where small/optional
+features are external components, and based on usecases different
+combination of components are build as entire driver.
 
-We'll have to clean it up carefully, when there's time.
+In such PCI device driver Load, if we use the component master for
+waiting for few  components(features) availability, only if they are
+supported by the underlying HW, then we need to allocate memory for
+component_match using the API introduced in this change before
+the call to component_master_add_with_match.
 
-> But ... we are at -rc5. Not sure that we'll figure out, write, test & debug
-> the proper solution in the next 3-4 weeks. So perhaps we should apply
-> 
-> -#define EDAC_MAX_MCS   16
-> +#define EDAC_MAX_MCS   64
-> 
-> as a temporary band-aid to get HPE's 32-socket machine running while
-> we work on the proper fix?
+v2:
+  No Change.
 
-Yeah, after sleeping on it I see it the same way - band-aid it now and
-clean it up properly later.
+Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
+Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
+ include/linux/component.h |  2 ++
+ 2 files changed, 32 insertions(+)
 
-Thx.
-
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index 8946dfee4768..007fb738263a 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -312,6 +312,36 @@ static int component_match_realloc(struct device *dev,
+ }
+ 
+ /*
++ * Allocate the match without any component_match_array elements.
++ *
++ * This function is useful when the component master might end up
++ * registering itself without any matching components.
++ */
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr)
++{
++	struct component_match *match = *matchptr;
++
++	if (IS_ERR(match))
++		return;
++
++	if (match)
++		return;
++
++	match = devres_alloc(devm_component_match_release,
++			     sizeof(*match), GFP_KERNEL);
++	if (!match) {
++		*matchptr = ERR_PTR(-ENOMEM);
++		return;
++	}
++
++	devres_add(master, match);
++
++	*matchptr = match;
++}
++EXPORT_SYMBOL(component_match_alloc);
++
++/*
+  * Add a component to be matched, with a release function.
+  *
+  * The match array is first created or extended if necessary.
+diff --git a/include/linux/component.h b/include/linux/component.h
+index e71fbbbc74e2..3f6b420a58f8 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
+ 	struct component_match **matchptr,
+ 	void (*release)(struct device *, void *),
+ 	int (*compare)(struct device *, void *), void *compare_data);
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr);
+ 
+ static inline void component_match_add(struct device *master,
+ 	struct component_match **matchptr,
 -- 
-Regards/Gruss,
-    Boris.
+2.7.4
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
