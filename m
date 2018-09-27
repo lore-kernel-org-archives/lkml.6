@@ -2,115 +2,100 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025DFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20989C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC2C121566
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:04:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2C121566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id D061721582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:04:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nng9vfb1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D061721582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbeI0XXq (ORCPT
+        id S1728596AbeI0XYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:23:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52321 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728381AbeI0XXq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:23:46 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RH4O4T101729
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 10:04:24 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RH4OPk101724;
-        Thu, 27 Sep 2018 10:04:24 -0700
-Date:   Thu, 27 Sep 2018 10:04:24 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Pu Wen <tipbot@zytor.com>
-Message-ID: <tip-b7a5cb4f220e78490735b2b984ad29b7d8e612a9@git.kernel.org>
-Cc:     hpa@zytor.com, puwen@hygon.cn, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, bp@suse.de, mingo@kernel.org
-Reply-To: hpa@zytor.com, puwen@hygon.cn, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, bp@suse.de, mingo@kernel.org
-In-Reply-To: <487d8078708baedaf63eb00a82251e228b58f1c2.1537885177.git.puwen@hygon.cn>
-References: <487d8078708baedaf63eb00a82251e228b58f1c2.1537885177.git.puwen@hygon.cn>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/amd_nb: Check vendor in AMD-only functions
-Git-Commit-ID: b7a5cb4f220e78490735b2b984ad29b7d8e612a9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Thu, 27 Sep 2018 19:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727767AbeI0XYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:24:00 -0400
+Received: from localhost.localdomain (unknown [178.38.103.27])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 355AE21564;
+        Thu, 27 Sep 2018 17:04:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538067887;
+        bh=iTEQoqo6Kp+c2VPx9OCpMFIitifui7n3tLhcvyrhke8=;
+        h=From:To:Subject:Date:From;
+        b=nng9vfb1zSPZkowHNHvNAOSCVoNBr2ufb4Xn3rKaZ3nfV+cLJ4DGppIt4iyFn3HXc
+         9mqnMhyCngumjhkxpluh/vfX/TtGZkThtD/1jlmbF6C4G7DnVJHGKZ7srYGHuLR147
+         dNu6m0Ev7tdwA4/Tyh3YYZPztK3/BxxfJDSJEb50=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [RESEND] dt-bindings: thermal: samsung: Add SPDX license identifier
+Date:   Thu, 27 Sep 2018 19:04:40 +0200
+Message-Id: <20180927170440.12985-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b7a5cb4f220e78490735b2b984ad29b7d8e612a9
-Gitweb:     https://git.kernel.org/tip/b7a5cb4f220e78490735b2b984ad29b7d8e612a9
-Author:     Pu Wen <puwen@hygon.cn>
-AuthorDate: Tue, 25 Sep 2018 22:45:01 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 27 Sep 2018 18:28:58 +0200
+Replace GPL license statement with SPDX license identifier (GPL-2.0+).
 
-x86/amd_nb: Check vendor in AMD-only functions
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Exit early in functions which are meant to run on AMD only but which get
-run on different vendor (VMs, etc).
-
- [ bp: rewrite commit message. ]
-
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: bhelgaas@google.com
-Cc: tglx@linutronix.de
-Cc: mingo@redhat.com
-Cc: hpa@zytor.com
-Cc: x86@kernel.org
-Cc: thomas.lendacky@amd.com
-Cc: helgaas@kernel.org
-Link: https://lkml.kernel.org/r/487d8078708baedaf63eb00a82251e228b58f1c2.1537885177.git.puwen@hygon.cn
 ---
- arch/x86/include/asm/amd_nb.h | 3 +++
- arch/x86/kernel/amd_nb.c      | 4 ++++
- 2 files changed, 7 insertions(+)
 
-diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
-index fddb6d26239f..1ae4e5791afa 100644
---- a/arch/x86/include/asm/amd_nb.h
-+++ b/arch/x86/include/asm/amd_nb.h
-@@ -103,6 +103,9 @@ static inline u16 amd_pci_dev_to_node_id(struct pci_dev *pdev)
+We postponed this patch because in previous discussion [1] Bartlomiej
+expressed willingness to change the license... which did not happen
+since July 2018.  In such case let's take this.
+
+[1] https://patchwork.kernel.org/patch/10533191/
+---
+ include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
+index 0646500bca69..642e4e7f4084 100644
+--- a/include/dt-bindings/thermal/thermal_exynos.h
++++ b/include/dt-bindings/thermal/thermal_exynos.h
+@@ -1,19 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * thermal_exynos.h - Samsung EXYNOS TMU device tree definitions
+  *
+  *  Copyright (C) 2014 Samsung Electronics
+  *  Lukasz Majewski <l.majewski@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
  
- static inline bool amd_gart_present(void)
- {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
-+		return false;
-+
- 	/* GART present only on Fam15h, upto model 0fh */
- 	if (boot_cpu_data.x86 == 0xf || boot_cpu_data.x86 == 0x10 ||
- 	    (boot_cpu_data.x86 == 0x15 && boot_cpu_data.x86_model < 0x10))
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index b481b95bd8f6..b51c6b183a35 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -264,6 +264,10 @@ bool __init early_is_amd_nb(u32 device)
- 	const struct pci_device_id *id;
- 	u32 vendor = device & 0xffff;
- 
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
-+		return false;
-+
- 	device >>= 16;
- 	for (id = amd_nb_misc_ids; id->vendor; id++)
- 		if (vendor == id->vendor && device == id->device)
+ #ifndef _EXYNOS_THERMAL_TMU_DT_H
+-- 
+2.17.1
+
