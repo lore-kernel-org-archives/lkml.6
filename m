@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5EEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E096C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CF92156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:20:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CF92156B
+	by mail.kernel.org (Postfix) with ESMTP id 242132152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:22:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242132152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeI0PiI (ORCPT
+        id S1727341AbeI0PjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:38:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56326 "EHLO
+        Thu, 27 Sep 2018 11:39:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56336 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbeI0PiH (ORCPT
+        with ESMTP id S1727084AbeI0PjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:38:07 -0400
+        Thu, 27 Sep 2018 11:39:17 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D4DF111C;
-        Thu, 27 Sep 2018 09:20:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9A11111C;
+        Thu, 27 Sep 2018 09:21:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.14 45/64] drm/nouveau/drm/nouveau: Prevent handling ACPI HPD events too early
-Date:   Thu, 27 Sep 2018 11:04:02 +0200
-Message-Id: <20180927090256.329414826@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>
+Subject: [PATCH 4.14 28/64] platform/x86: alienware-wmi: Correct a memory leak
+Date:   Thu, 27 Sep 2018 11:03:45 +0200
+Message-Id: <20180927090254.164436987@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -52,122 +52,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Mario Limonciello <mario.limonciello@dell.com>
 
-commit 79e765ad665da4b8aa7e9c878bd2fef837f6fea5 upstream.
+commit ff0e9f26288d2daee4950f42b37a3d3d30d36ec1 upstream.
 
-On most systems with ACPI hotplugging support, it seems that we always
-receive a hotplug event once we re-enable EC interrupts even if the GPU
-hasn't even been resumed yet.
+An ACPI buffer that was allocated was not being freed after use.
 
-This can cause problems since even though we schedule hpd_work to handle
-connector reprobing for us, hpd_work synchronizes on
-pm_runtime_get_sync() to wait until the device is ready to perform
-reprobing. Since runtime suspend/resume callbacks are disabled before
-the PM core calls ->suspend(), any calls to pm_runtime_get_sync() during
-this period will grab a runtime PM ref and return immediately with
--EACCES. Because we schedule hpd_work from our ACPI HPD handler, and
-hpd_work synchronizes on pm_runtime_get_sync(), this causes us to launch
-a connector reprobe immediately even if the GPU isn't actually resumed
-just yet. This causes various warnings in dmesg and occasionally, also
-prevents some displays connected to the dedicated GPU from coming back
-up after suspend. Example:
-
-usb 1-4: USB disconnect, device number 14
-usb 1-4.1: USB disconnect, device number 15
-WARNING: CPU: 0 PID: 838 at drivers/gpu/drm/nouveau/include/nvkm/subdev/i2c.h:170 nouveau_dp_detect+0x17e/0x370 [nouveau]
-CPU: 0 PID: 838 Comm: kworker/0:6 Not tainted 4.17.14-201.Lyude.bz1477182.V3.fc28.x86_64 #1
-Hardware name: LENOVO 20EQS64N00/20EQS64N00, BIOS N1EET77W (1.50 ) 03/28/2018
-Workqueue: events nouveau_display_hpd_work [nouveau]
-RIP: 0010:nouveau_dp_detect+0x17e/0x370 [nouveau]
-RSP: 0018:ffffa15143933cf0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff8cb4f656c400 RCX: 0000000000000000
-RDX: ffffa1514500e4e4 RSI: ffffa1514500e4e4 RDI: 0000000001009002
-RBP: ffff8cb4f4a8a800 R08: ffffa15143933cfd R09: ffffa15143933cfc
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8cb4fb57a000
-R13: ffff8cb4fb57a000 R14: ffff8cb4f4a8f800 R15: ffff8cb4f656c418
-FS:  0000000000000000(0000) GS:ffff8cb51f400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f78ec938000 CR3: 000000073720a003 CR4: 00000000003606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- ? _cond_resched+0x15/0x30
- nouveau_connector_detect+0x2ce/0x520 [nouveau]
- ? _cond_resched+0x15/0x30
- ? ww_mutex_lock+0x12/0x40
- drm_helper_probe_detect_ctx+0x8b/0xe0 [drm_kms_helper]
- drm_helper_hpd_irq_event+0xa8/0x120 [drm_kms_helper]
- nouveau_display_hpd_work+0x2a/0x60 [nouveau]
- process_one_work+0x187/0x340
- worker_thread+0x2e/0x380
- ? pwq_unbound_release_workfn+0xd0/0xd0
- kthread+0x112/0x130
- ? kthread_create_worker_on_cpu+0x70/0x70
- ret_from_fork+0x35/0x40
-Code: 4c 8d 44 24 0d b9 00 05 00 00 48 89 ef ba 09 00 00 00 be 01 00 00 00 e8 e1 09 f8 ff 85 c0 0f 85 b2 01 00 00 80 7c 24 0c 03 74 02 <0f> 0b 48 89 ef e8 b8 07 f8 ff f6 05 51 1b c8 ff 02 0f 84 72 ff
----[ end trace 55d811b38fc8e71a ]---
-
-So, to fix this we attempt to grab a runtime PM reference in the ACPI
-handler itself asynchronously. If the GPU is already awake (it will have
-normal hotplugging at this point) or runtime PM callbacks are currently
-disabled on the device, we drop our reference without updating the
-autosuspend delay. We only schedule connector reprobes when we
-successfully managed to queue up a resume request with our asynchronous
-PM ref.
-
-This also has the added benefit of preventing redundant connector
-reprobes from ACPI while the GPU is runtime resumed!
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
 Cc: stable@vger.kernel.org
-Cc: Karol Herbst <kherbst@redhat.com>
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1477182#c41
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nouveau_display.c |   26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+ drivers/platform/x86/alienware-wmi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -378,15 +378,29 @@ nouveau_display_acpi_ntfy(struct notifie
- {
- 	struct nouveau_drm *drm = container_of(nb, typeof(*drm), acpi_nb);
- 	struct acpi_bus_event *info = data;
-+	int ret;
+--- a/drivers/platform/x86/alienware-wmi.c
++++ b/drivers/platform/x86/alienware-wmi.c
+@@ -519,6 +519,7 @@ static acpi_status alienware_wmax_comman
+ 		if (obj && obj->type == ACPI_TYPE_INTEGER)
+ 			*out_data = (u32) obj->integer.value;
+ 	}
++	kfree(output.pointer);
+ 	return status;
  
- 	if (!strcmp(info->device_class, ACPI_VIDEO_CLASS)) {
- 		if (info->type == ACPI_VIDEO_NOTIFY_PROBE) {
--			/*
--			 * This may be the only indication we receive of a
--			 * connector hotplug on a runtime suspended GPU,
--			 * schedule hpd_work to check.
--			 */
--			schedule_work(&drm->hpd_work);
-+			ret = pm_runtime_get(drm->dev->dev);
-+			if (ret == 1 || ret == -EACCES) {
-+				/* If the GPU is already awake, or in a state
-+				 * where we can't wake it up, it can handle
-+				 * it's own hotplug events.
-+				 */
-+				pm_runtime_put_autosuspend(drm->dev->dev);
-+			} else if (ret == 0) {
-+				/* This may be the only indication we receive
-+				 * of a connector hotplug on a runtime
-+				 * suspended GPU, schedule hpd_work to check.
-+				 */
-+				NV_DEBUG(drm, "ACPI requested connector reprobe\n");
-+				schedule_work(&drm->hpd_work);
-+				pm_runtime_put_noidle(drm->dev->dev);
-+			} else {
-+				NV_WARN(drm, "Dropped ACPI reprobe event due to RPM error: %d\n",
-+					ret);
-+			}
- 
- 			/* acpi-video should not generate keypresses for this */
- 			return NOTIFY_BAD;
+ }
 
 
