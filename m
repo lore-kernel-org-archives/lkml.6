@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE5FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80830C004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE81921570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 364E82159D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MvJ+Bt0I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE81921570
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGgdhQcj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364E82159D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbeI0PIN (ORCPT
+        id S1727388AbeI0PIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:08:13 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36238 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbeI0PIM (ORCPT
+        Thu, 27 Sep 2018 11:08:14 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40374 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727342AbeI0PIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:08:12 -0400
-Received: by mail-wm1-f66.google.com with SMTP id n23-v6so1177485wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:51:02 -0700 (PDT)
+        Thu, 27 Sep 2018 11:08:13 -0400
+Received: by mail-wm1-f65.google.com with SMTP id o2-v6so5067806wmh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VxRTYSwbB2m9KxrX9xxpY79O1ZkMCQToVtuc67/7tNk=;
-        b=MvJ+Bt0IuUYpPBLf2pOUOmlZ0MQuENxD1uRruMePcdsJmL8hGYmL6UneFZ/CsBNYVh
-         NYde3rKDpTTKsXN0rDQwX77izbJfu87TsLs0/bivhuzH+Ob5J3hJRRGw3Mh6nLKfeVxp
-         YtW7B/XsTPc/BGZ7Xey9v5ZvZgSawN3GWVH/4=
+        bh=e0MW/cO/rHunfkzsEHUdpPLgA85W8krihEUCPuzlC88=;
+        b=bGgdhQcjPRB3zwnlm4BsD6QNoc7DoaayYxqXj3tpGnCxA4BFot+1qmklGZkf8vt0f8
+         FUZ9h7MlEKozRybDDRiH5Rnowhy8H+LwMW+SzPKg/XYkL7G9rdxHf+zLGAVgk60moYnt
+         RHe5qMGqHcSGij07vTPWKQB2USWjUmIc+avkc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VxRTYSwbB2m9KxrX9xxpY79O1ZkMCQToVtuc67/7tNk=;
-        b=ocrHoGnAkZDbmLuORsVRyYiqB5Ut/sOKiEPkCpoiiqRU841jgmh+AGzew/7UapnuZk
-         Pd985wjx047y/TBW/U16KiW/Jc+jVtWYVyUxXyhZBC+XWUKPBwALP4bayu+yEo9PG4hy
-         /z5omiMU/MftZEv7wY2Py9bMHkNmaA3BBSJNv0F87NKWow+z1+Tn56rr679mxVJH+7A/
-         4wvQzo8jsRM5Fi07a57agbwE/fBgE5mSjfhOpiW5exESrrmOYyLJ1HTUn3VhsSwHS0aK
-         yyn2BDnvXCthmnS80+A7ZJ8EBcr8qSOSPj/pJUN0SU3Cq132Sg4nEtKdFztXRpl5RF6/
-         zfQw==
-X-Gm-Message-State: ABuFfoiwBr7LsQkBWqJ2eLrw7sFRsA/kU37Ez9/q4Qb+5LYr546/MJQ2
-        OqBJe7rC0lb64PgvJ6XTYNi5YLbzKQM=
-X-Google-Smtp-Source: ACcGV61Xxs9dqEbb25NXJMqezsOXKV1L1v/V4yfG7o46f5E5LQwvPGwCr5gLTlKXO/wT5O+RGhJJSw==
-X-Received: by 2002:a1c:5505:: with SMTP id j5-v6mr1031824wmb.146.1538038261852;
-        Thu, 27 Sep 2018 01:51:01 -0700 (PDT)
+        bh=e0MW/cO/rHunfkzsEHUdpPLgA85W8krihEUCPuzlC88=;
+        b=Ii6XiSS8nDQAlnG1cI4c/aknaebrN35MW1ZM0QOMXO4MncumC67Bxdiwc8xaj5hd/D
+         9dFF4aGs3Q0tbaclLTV8Af56GEbfIhv535w9f7NfVbRydX0dG1Zp/NPmla2UUmPvEQNq
+         DLzO9ar25N63RbQVAlMC5RNBOXSqTtE/4lkFq/ayUV1ntABMyQT5YPagsdJhTMuZ8P3H
+         Q1nm8Qf08rcSvxT01evpaRwdc1DwrjkWqnVrMF1iToZrJHk581ek0ImQfyKtxXU6smDS
+         Et4D9Tsd8ke4B4tdvrK1AdmkyP5r3e10KcdaCbP7IgrU8zCZyRUjAiwJNgVBQq+3fBM9
+         jaeg==
+X-Gm-Message-State: ABuFfogbKAGEYcTLZam/WCU8DpgY81kKg3VYNIE5bY4p2n8/TSi3OzQ6
+        kv8+AoE8i+fSRo2SSG507tSKlT6Rtlw=
+X-Google-Smtp-Source: ACcGV62jSvhSRrwmqWqlvZ79NLv4A68iBfD6wiyVfmP6sNsATEFuqdcMjaXcE5mFAfeLuK85/CRMAw==
+X-Received: by 2002:a1c:4d09:: with SMTP id o9-v6mr6766505wmh.134.1538038263329;
+        Thu, 27 Sep 2018 01:51:03 -0700 (PDT)
 Received: from rev03.home ([2a01:cb1d:112:6f00:546e:3c44:5966:2f5e])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm1304055wrd.74.2018.09.27.01.51.00
+        by smtp.gmail.com with ESMTPSA id p11-v6sm1304055wrd.74.2018.09.27.01.51.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 01:51:01 -0700 (PDT)
+        Thu, 27 Sep 2018 01:51:02 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -72,9 +72,9 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 04/11] efi/libstub: arm: support building with clang
-Date:   Thu, 27 Sep 2018 10:50:31 +0200
-Message-Id: <20180927085039.8391-5-ard.biesheuvel@linaro.org>
+Subject: [PATCH 05/11] efi/efi_test: add exporting ResetSystem runtime service
+Date:   Thu, 27 Sep 2018 10:50:32 +0200
+Message-Id: <20180927085039.8391-6-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
 References: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
@@ -83,38 +83,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alistair Strachan <astrachan@google.com>
+From: Ivan Hu <ivan.hu@canonical.com>
 
-When building with CONFIG_EFI and CONFIG_EFI_STUB on ARM, the libstub
-Makefile would use -mno-single-pic-base without checking it was
-supported by the compiler. As the ARM (32-bit) clang backend does not
-support this flag, the build would fail.
+Add exporting the UEFI runtime service ResetSystem for upper application or test
+tools to use.
 
-This changes the Makefile to check the compiler's support for
--mno-single-pic-base before using it, similar to c1c386681bd7 ("ARM:
-8767/1: add support for building ARM kernel with clang").
-
-Signed-off-by: Alistair Strachan <astrachan@google.com>
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Ivan Hu <ivan.hu@canonical.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/libstub/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/firmware/efi/test/efi_test.c | 27 +++++++++++++++++++++++++++
+ drivers/firmware/efi/test/efi_test.h | 10 ++++++++++
+ 2 files changed, 37 insertions(+)
 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index 14c40a7750d1..c51627660dbb 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -16,7 +16,8 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
- cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie \
- 				   $(DISABLE_STACKLEAK_PLUGIN)
- cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
--				   -fno-builtin -fpic -mno-single-pic-base
-+				   -fno-builtin -fpic \
-+				   $(call cc-option,-mno-single-pic-base)
+diff --git a/drivers/firmware/efi/test/efi_test.c b/drivers/firmware/efi/test/efi_test.c
+index 41c48a1e8baa..769640940c9f 100644
+--- a/drivers/firmware/efi/test/efi_test.c
++++ b/drivers/firmware/efi/test/efi_test.c
+@@ -542,6 +542,30 @@ static long efi_runtime_get_nexthighmonocount(unsigned long arg)
+ 	return 0;
+ }
  
- cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
++static long efi_runtime_reset_system(unsigned long arg)
++{
++	struct efi_resetsystem __user *resetsystem_user;
++	struct efi_resetsystem resetsystem;
++	void *data = NULL;
++
++	resetsystem_user = (struct efi_resetsystem __user *)arg;
++	if (copy_from_user(&resetsystem, resetsystem_user,
++						sizeof(resetsystem)))
++		return -EFAULT;
++	if (resetsystem.data_size != 0) {
++		data = memdup_user((void *)resetsystem.data,
++						resetsystem.data_size);
++		if (IS_ERR(data))
++			return PTR_ERR(data);
++	}
++
++	efi.reset_system(resetsystem.reset_type, resetsystem.status,
++				resetsystem.data_size, (efi_char16_t *)data);
++
++	kfree(data);
++	return 0;
++}
++
+ static long efi_runtime_query_variableinfo(unsigned long arg)
+ {
+ 	struct efi_queryvariableinfo __user *queryvariableinfo_user;
+@@ -682,6 +706,9 @@ static long efi_test_ioctl(struct file *file, unsigned int cmd,
  
+ 	case EFI_RUNTIME_QUERY_CAPSULECAPABILITIES:
+ 		return efi_runtime_query_capsulecaps(arg);
++
++	case EFI_RUNTIME_RESET_SYSTEM:
++		return efi_runtime_reset_system(arg);
+ 	}
+ 
+ 	return -ENOTTY;
+diff --git a/drivers/firmware/efi/test/efi_test.h b/drivers/firmware/efi/test/efi_test.h
+index 9812c6a02b40..5f4818bf112f 100644
+--- a/drivers/firmware/efi/test/efi_test.h
++++ b/drivers/firmware/efi/test/efi_test.h
+@@ -81,6 +81,13 @@ struct efi_querycapsulecapabilities {
+ 	efi_status_t		*status;
+ } __packed;
+ 
++struct efi_resetsystem {
++	int			reset_type;
++	efi_status_t		status;
++	unsigned long		data_size;
++	efi_char16_t		*data;
++} __packed;
++
+ #define EFI_RUNTIME_GET_VARIABLE \
+ 	_IOWR('p', 0x01, struct efi_getvariable)
+ #define EFI_RUNTIME_SET_VARIABLE \
+@@ -108,4 +115,7 @@ struct efi_querycapsulecapabilities {
+ #define EFI_RUNTIME_QUERY_CAPSULECAPABILITIES \
+ 	_IOR('p', 0x0A, struct efi_querycapsulecapabilities)
+ 
++#define EFI_RUNTIME_RESET_SYSTEM \
++	_IOW('p', 0x0B, struct efi_resetsystem)
++
+ #endif /* _DRIVERS_FIRMWARE_EFI_TEST_H_ */
 -- 
 2.18.0
 
