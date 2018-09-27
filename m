@@ -2,149 +2,116 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64261C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB4AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16E9821571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:16:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E9821571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 27D5621571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:19:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="h951CBQg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D5621571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728268AbeI0VfT (ORCPT
+        id S1727700AbeI0ViX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:35:19 -0400
-Received: from mga11.intel.com ([192.55.52.93]:20715 "EHLO mga11.intel.com"
+        Thu, 27 Sep 2018 17:38:23 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:53713 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727282AbeI0VfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:35:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 08:16:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
-   d="scan'208";a="87162568"
-Received: from unknown (HELO [10.7.198.153]) ([10.7.198.153])
-  by orsmga003.jf.intel.com with ESMTP; 27 Sep 2018 08:16:33 -0700
-Subject: Re: [RFC workqueue/driver-core PATCH 2/5] async: Add support for
- queueing on specific NUMA node
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Brown, Len" <len.brown@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        jiangshanlai@gmail.com, Pavel Machek <pavel@ucw.cz>,
-        zwisler@kernel.org
-References: <20180926214433.13512.30289.stgit@localhost.localdomain>
- <20180926215143.13512.56522.stgit@localhost.localdomain>
- <CAPcyv4iJOYiM+rHsM4GPifKNJ=X+AtV2MgWTn+f7u0VBzXb2og@mail.gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <d16cabf9-28f7-31e2-c43d-027738185518@linux.intel.com>
-Date:   Thu, 27 Sep 2018 08:16:33 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1727212AbeI0ViX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 17:38:23 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c4a546ee;
+        Thu, 27 Sep 2018 15:00:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type:content-transfer-encoding; s=mail; bh=iLnXO5fKnraQ
+        ngk0pcl0LLQQ7Dw=; b=h951CBQgdTG1Qz1B1v05Kw8da0/imuUTbCtTjmuQsvpL
+        Fer3u31q8/iJ6MLTdlCNefFvMaRPgr8ydW4ikyBblmub8StDLRQoTOCbqdS5gZs1
+        4ZEpBy5Y3fSv9GuFvBBUueMUBua7hP2sAeTAvDeinvUWJE61WiMvlc5njROaq2VS
+        ek6QsLxcpMwRB0j3I4I6GJ+ppGOyIUaULGOmDuEfNQ63qsrYNtLSuphUyGNAUq5o
+        9NU6nUS0AVNVYMWNQ0yMwMoaET07l6MDD71YnIc1zgACpUNGINLbIEz7Tr4i+7W9
+        KHjrPsUYlHKUuftQhCrr1CiI0XszUJplr5BO0opRBw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 964dab80 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Thu, 27 Sep 2018 15:00:52 +0000 (UTC)
+Received: by mail-ot1-f46.google.com with SMTP id h26-v6so2900838otl.9;
+        Thu, 27 Sep 2018 08:19:33 -0700 (PDT)
+X-Gm-Message-State: ABuFfohnBOYWeQcLX2jc5O0Z5+F+URxUDGe0PLBSuAYeI+9zXlfAv+Bv
+        BvhjANfaSk8piJ2dWJEJZEXQJheoxY+sEQ54p8U=
+X-Google-Smtp-Source: ACcGV60NFHi4hnOAy0ejGJPdEr5llf3SakWSwNYVyGmstRzJBqsu5Hmin78iwZ1ywUmVF7NXK35DNpNxvgh1LZQYDF4=
+X-Received: by 2002:a9d:309d:: with SMTP id s29-v6mr7603737otc.144.1538061572188;
+ Thu, 27 Sep 2018 08:19:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iJOYiM+rHsM4GPifKNJ=X+AtV2MgWTn+f7u0VBzXb2og@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
+ <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
+ <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
+ <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com>
+ <CAHmME9pbRabkGjNh-65S9qBNNS1GLJSwZ_tTM507S_Ezr1=QLg@mail.gmail.com>
+ <CAHmME9ru=kJO8QiW+uNNgt5NgFVZzRsQ4tNSgo+f+KfHs3fAKQ@mail.gmail.com>
+ <CAKv+Gu-WDt8f9qVjLDRPHL7THS0BjtKHThw2RMfHbWBT8Hs8aQ@mail.gmail.com>
+ <CAHmME9qNn5aRgtbV3bAsz3xW1A49a7RMMkOzGruBUPzLVUxVNg@mail.gmail.com> <CAHmME9rN3-7Mj5JQqt2EFPauG9vjkN5pQn3tPiJY4fPiwksaDA@mail.gmail.com>
+In-Reply-To: <CAHmME9rN3-7Mj5JQqt2EFPauG9vjkN5pQn3tPiJY4fPiwksaDA@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 27 Sep 2018 17:19:20 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pBRu4hC5=Ef62R_nWOi3jTegxvxNrR8qDM+VfO=2t8Tg@mail.gmail.com>
+Message-ID: <CAHmME9pBRu4hC5=Ef62R_nWOi3jTegxvxNrR8qDM+VfO=2t8Tg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hey again Thomas,
 
+On Thu, Sep 27, 2018 at 3:26 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Hi Thomas,
+>
+> I'm trying to optimize this for crypto performance while still taking
+> into account preemption concerns. I'm having a bit of trouble figuring
+> out a way to determine numerically what the upper bounds for this
+> stuff looks like. I'm sure I could pick a pretty sane number that's
+> arguably okay -- and way under the limit -- but I still am interested
+> in determining what that limit actually is. I was hoping there'd be a
+> debugging option called, "warn if preemption is disabled for too
+> long", or something, but I couldn't find anything like that. I'm also
+> not quite sure what the latency limits are, to just compute this with
+> a formula. Essentially what I'm trying to determine is:
+>
+> preempt_disable();
+> asm volatile(".fill N, 1, 0x90;");
+> preempt_enable();
+>
+> What is the maximum value of N for which the above is okay? What
+> technique would you generally use in measuring this?
+>
+> Thanks,
+> Jason
 
-On 9/26/2018 5:31 PM, Dan Williams wrote:
-> On Wed, Sep 26, 2018 at 2:51 PM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
->>
->> This patch introduces four new variants of the async_schedule_ functions
->> that allow scheduling on a specific NUMA node.
->>
->> The first two functions are async_schedule_near and
->> async_schedule_near_domain which end up mapping to async_schedule and
->> async_schedule_domain but provide NUMA node specific functionality. They
->> replace the original functions which were moved to inline function
->> definitions that call the new functions while passing NUMA_NO_NODE.
->>
->> The second two functions are async_schedule_dev and
->> async_schedule_dev_domain which provide NUMA specific functionality when
->> passing a device as the data member and that device has a NUMA node other
->> than NUMA_NO_NODE.
->>
->> The main motivation behind this is to address the need to be able to
->> schedule device specific init work on specific NUMA nodes in order to
->> improve performance of memory initialization.
->>
->> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> [..]
->>   /**
->> - * async_schedule - schedule a function for asynchronous execution
->> + * async_schedule_near - schedule a function for asynchronous execution
->>    * @func: function to execute asynchronously
->>    * @data: data pointer to pass to the function
->> + * @node: NUMA node that we want to schedule this on or close to
->>    *
->>    * Returns an async_cookie_t that may be used for checkpointing later.
->>    * Note: This function may be called from atomic or non-atomic contexts.
->>    */
->> -async_cookie_t async_schedule(async_func_t func, void *data)
->> +async_cookie_t async_schedule_near(async_func_t func, void *data, int node)
->>   {
->> -       return __async_schedule(func, data, &async_dfl_domain);
->> +       return async_schedule_near_domain(func, data, node, &async_dfl_domain);
->>   }
->> -EXPORT_SYMBOL_GPL(async_schedule);
->> +EXPORT_SYMBOL_GPL(async_schedule_near);
-> 
-> Looks good to me. The _near() suffix makes it clear that we're doing a
-> best effort hint to the work placement compared to the strict
-> expectations of _on routines.
-> 
->>
->>   /**
->> - * async_schedule_domain - schedule a function for asynchronous execution within a certain domain
->> + * async_schedule_dev_domain - schedule a function for asynchronous execution within a certain domain
->>    * @func: function to execute asynchronously
->> - * @data: data pointer to pass to the function
->> + * @dev: device that we are scheduling this work for
->>    * @domain: the domain
->>    *
->> - * Returns an async_cookie_t that may be used for checkpointing later.
->> - * @domain may be used in the async_synchronize_*_domain() functions to
->> - * wait within a certain synchronization domain rather than globally.  A
->> - * synchronization domain is specified via @domain.  Note: This function
->> - * may be called from atomic or non-atomic contexts.
->> + * Device specific version of async_schedule_near_domain that provides some
->> + * NUMA awareness based on the device node.
->> + */
->> +async_cookie_t async_schedule_dev_domain(async_func_t func, struct device *dev,
->> +                                        struct async_domain *domain)
->> +{
->> +       return async_schedule_near_domain(func, dev, dev_to_node(dev), domain);
->> +}
->> +EXPORT_SYMBOL_GPL(async_schedule_dev_domain);
-> 
-> This seems unnecessary and restrictive. Callers may want to pass
-> something other than dev as the parameter to the async function, and
-> dev_to_node() is not on onerous burden to place on callers.
+From talking to Peter (now CC'd) on IRC, it sounds like what you're
+mostly interested in is clocktime latency on reasonable hardware, with
+a goal of around ~20=C2=B5s as a maximum upper bound? I don't expect to get
+anywhere near this value at all, but if you can confirm that's a
+decent ballpark, it would make for some interesting calculations.
 
-
-That is what async_schedule_near_domain is for, they can call that. The 
-"dev" versions of the calls as just supposed to be helpers since one of 
-the most common parameters to the async_schedule calls is a device, so I 
-thought I would just put together a function that takes care of all this 
-for us so I could drop an argument and avoid having to use dev_to_node 
-everywhere.
+Regards,
+Jason
