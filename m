@@ -2,167 +2,114 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4938C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94010C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8628C216E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:00:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IbuDU8LM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8628C216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 40B01216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:02:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B01216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbeI1CUd (ORCPT
+        id S1727519AbeI1CWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:20:33 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41234 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeI1CUd (ORCPT
+        Thu, 27 Sep 2018 22:22:50 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40859 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727331AbeI1CWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:20:33 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m15-v6so4164048qtp.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:00:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=reply-to:subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ha2KKFcQ1Rhg9UKS6qS3GC3bMCFbWU6z7FjuCHpxCbM=;
-        b=IbuDU8LMItlf5GOmr9cjkl70rtQO5aPEEOj3US/zYxh2nEEr2b3lrgluV1+pr3G4qh
-         +rvTHI6A+tbMnYQUzZ8485VeXumxT4MvMYXMt7p2bIgC0Pz7qYc1J/IZfDO5hhypJpCb
-         SZ8JjW8yTOO9DpcsIILXC83D2no0Cfx6G5pfA=
+        Thu, 27 Sep 2018 22:22:50 -0400
+Received: by mail-oi1-f193.google.com with SMTP id j68-v6so3297590oib.7;
+        Thu, 27 Sep 2018 13:02:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Ha2KKFcQ1Rhg9UKS6qS3GC3bMCFbWU6z7FjuCHpxCbM=;
-        b=C4WALDCmltd1XKNM5+c/YEiI05XGCZqPfynuwfwk/hdJTXFJrAHeP+WFsbW8FtrhYT
-         IQKVbQbO5vRZMeHf3Nu0qjh6rWzVRfdFaUoyiTPQl64vE6t0nj+VxbKuYtxL/e5Bl89j
-         eQ6pDtzW2KTOLRTT7atml74O0N7Xx7wfAa/fv0gFN+ELLaElt8nVNdZS6VpDwly2jcdJ
-         wTntVdeCftrnUBp05U7rOGFXRRlpSxiVUetll8C17NUeL8XlQsw16yUdGTrble7Qo8tT
-         aKBRxaW9wPqAh64u3C1sV/R5ot7fa0X5gppjYdToa31jalaznGagqxBRglSFPrh1iSKo
-         DoCA==
-X-Gm-Message-State: ABuFfojlEVisY1FuDO/LXpJu4hqKchxnaSQlvOxb5tz/0sKmt8Vyjk7F
-        7fAYQsXrV/GsmwpfHIw/Pu+OAg==
-X-Google-Smtp-Source: ACcGV63iwL8f+L2cSCCMJzK4YriP1ir34d3WlAmN3FC3jzwwaDkyY1kH6y30CFUO+3YsH9Vu4yCB+w==
-X-Received: by 2002:a0c:8563:: with SMTP id n90-v6mr9380819qva.93.1538078436451;
-        Thu, 27 Sep 2018 13:00:36 -0700 (PDT)
-Received: from [192.168.48.13] ([168.194.163.66])
-        by smtp.gmail.com with ESMTPSA id 62-v6sm1865961qkw.72.2018.09.27.13.00.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 13:00:35 -0700 (PDT)
-Reply-To: rafael.tinoco@linaro.org
-Subject: Re: [PATCH 4.18 00/88] 4.18.11-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180927090300.631426620@linuxfoundation.org>
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-Organization: Linaro
-Message-ID: <7285668d-1b00-7546-d928-f95cdbeceeb5@linaro.org>
-Date:   Thu, 27 Sep 2018 17:00:30 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=l9ZTIqwHTp1Z/5i9EkPs17r9W8KQ/GROFb82dM8SLrA=;
+        b=mgNbiLmO0XHsb8Jlzhas7jhOEedxAJjRmGkVIsOaeeufOzkuZhAhqRTiAk03aAK8Uu
+         SZwbqO92wSR+XkTeKXKribP6sqPTss+MdPNYNEFPXGzW6fJWQckWo8lV3EzVcjrLgp+y
+         tcQ4Wz99k8k4FghzG+/oUJAYmFWR7f4fLqYLW0rS/w0ywDHceMtWJreNPuTW94xVHYl9
+         K0y3yELnLAXe0pQe638qbrC5Aea2QgD0MdTEa9vJmXciUn+jcOYWjhH3awRcAGHhk8ql
+         Xp3P5bRnixwprVdz+yf7Y71+FXI1kaIHDU9k4KbPLEQ+YAZwkN0Q/1Mc+EJQtSkETczJ
+         Xoiw==
+X-Gm-Message-State: ABuFfojmjnGbp6elngi1SB745QMRCdakG0a94tTBuS5ew7U30PyEyHTH
+        tsWZb1SHo8Xte12954magQ==
+X-Google-Smtp-Source: ACcGV63e/pUyMYhXxUNL+6/QPqOeu2Zrqb5QgFFIqX9l9ARAffnC5WBAgXmuoudtvrWr6OLFJTlU8Q==
+X-Received: by 2002:aca:4792:: with SMTP id u140-v6mr4240258oia.215.1538078572722;
+        Thu, 27 Sep 2018 13:02:52 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 89-v6sm1124187otr.62.2018.09.27.13.02.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 13:02:51 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 15:02:51 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Akash Gajjar <Akash_Gajjar@mentor.com>
+Cc:     heiko@sntech.de, Deepak_das@mentor.com, Pragnesh_patel@mentor.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Levin Du <djw@t-chip.com.cn>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shohei Maruyama <cheat.sc.linux@outlook.com>,
+        Pierre-Hugues Husson <phh@phh.me>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: dts: rockchip: add initial dts support for
+ Rockpro64
+Message-ID: <20180927200251.GA4060@bogus>
+References: <Akash_Gajjar@mentor.com>
+ <1537943105-21247-1-git-send-email-Akash_Gajjar@mentor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537943105-21247-1-git-send-email-Akash_Gajjar@mentor.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/18 6:02 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.18.11 release.
-> There are 88 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, 26 Sep 2018 11:54:57 +0530, Akash Gajjar wrote:
+> Rockpro64 is a rockchip RK3399 based board from pine64.org.
+> This patch adds basic device node support for Rockpro64 board and make it able
+> to bring up.
 > 
-> Responses should be made by Sat Sep 29 09:02:26 UTC 2018.
-> Anything received after that time might be too late.
+> Peripheral Works
+> - Sdcard
+> - USB 2.0, 3.0
+> - Leds
+> - Ethernet
+> - Debug console
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.18.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.18.y
-> and the diffstat can be found below.
+> Not working:
+> - USB Type-C
 > 
-> thanks,
+> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
+> ---
+> changes for v2
+> - Added support for usb 2.0, 3.0
+> - Added fusb302 node and its regulator support
+> - Cleanup pinctrl node
+> - Remove backlight, pcie, sound codec node inherited from firefly-rk3399 dts
+> changes for v3
+> - Added copyright properly
+> - Typo correction in commit message
 > 
-> greg k-h
+>  Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
+>  arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+>  arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts  | 692 +++++++++++++++++++++
+>  3 files changed, 697 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> 
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.18.11-rc1
-git repo: 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.18.y
-git commit: 85de3234c3f2488b2191a10628720ff56fd65a11
-git describe: v4.18.10-89-g85de3234c3f2
-Test details: 
-https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/build/v4.18.10-89-g85de3234c3f2
-
-
-No regressions (compared to build v4.18.9-231-g183348489d36)
-
-
-Ran 21068 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
+Reviewed-by: Rob Herring <robh@kernel.org>
