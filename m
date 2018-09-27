@@ -2,123 +2,95 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98F5C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 960E5C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 600522168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:38:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600522168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 49F0A2168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F0A2168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbeI0S5C (ORCPT
+        id S1727503AbeI0S6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:57:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48708 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727111AbeI0S5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:57:02 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 047CF307D867;
-        Thu, 27 Sep 2018 12:38:57 +0000 (UTC)
-Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F3BB461168;
-        Thu, 27 Sep 2018 12:38:50 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, brijesh.singh@amd.com,
-        bp@suse.de, kasong@redhat.com, kexec@lists.infradead.org,
-        dyoung@redhat.com, bhe@redhat.com, ghook@redhat.com
-Subject: [PATCH] x86/boot: Fix kexec booting failure after SEV early boot support
-Date:   Thu, 27 Sep 2018 20:38:45 +0800
-Message-Id: <20180927123845.32052-1-kasong@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 27 Sep 2018 12:38:57 +0000 (UTC)
+        Thu, 27 Sep 2018 14:58:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44050 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbeI0S6O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 14:58:14 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D980EFE7;
+        Thu, 27 Sep 2018 12:40:07 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 14:40:05 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Zdenek Kaspar <zkaspar82@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH 4.14 64/64] crypto: x86/aegis,morus - Do not require
+ OSXSAVE for SSE2
+Message-ID: <20180927124005.GB23563@kroah.com>
+References: <20180927090249.801943776@linuxfoundation.org>
+ <20180927090258.591819886@linuxfoundation.org>
+ <CADVatmPQQCaUrMYxP-STbP50HVSr68ngQcYLXcBgX_6B0QZ6Sg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADVatmPQQCaUrMYxP-STbP50HVSr68ngQcYLXcBgX_6B0QZ6Sg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 1958b5fc4010 ("x86/boot: Add early boot support when running
-with SEV active") is causing kexec becomes sometimes unstable even if
-SEV is not active. kexec reboot won't start a second kernel bypassing
-BIOS boot process, instead, the system got reset.
+On Thu, Sep 27, 2018 at 12:30:04PM +0100, Sudip Mukherjee wrote:
+> Hi Greg,
+> 
+> On Thu, Sep 27, 2018 at 10:04 AM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > 4.14-stable review patch.  If anyone has any objections, please let me know.
+> >
+> > ------------------
+> >
+> > From: Ondrej Mosnacek <omosnace@redhat.com>
+> >
+> > commit 24568b47d48ec8c906fd0f589489a08b17e1edca upstream.
+> >
+> > It turns out OSXSAVE needs to be checked only for AVX, not for SSE.
+> > Without this patch the affected modules refuse to load on CPUs with SSE2
+> > but without AVX support.
+> >
+> > Fixes: 877ccce7cbe8 ("crypto: x86/aegis,morus - Fix and simplify CPUID checks")
+> > Cc: <stable@vger.kernel.org> # 4.18
+> > Reported-by: Zdenek Kaspar <zkaspar82@gmail.com>
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> I am confused with this one. I am not seeing this in the "git log"
+> from your 4.14.73-rc1.
+> I also tried to apply this from your queue to v4.14.72 and it did not
+> apply as it could not
+> find some files.
+> 
+> error: arch/x86/crypto/aegis128-aesni-glue.c: No such file or directory
+> error: arch/x86/crypto/aegis128l-aesni-glue.c: No such file or directory
+> error: arch/x86/crypto/aegis256-aesni-glue.c: No such file or directory
+> error: arch/x86/crypto/morus1280-sse2-glue.c: No such file or directory
+> error: arch/x86/crypto/morus640-sse2-glue.c: No such file or directory
+> 
+> Am I missing something?
 
-That's because, in get_sev_encryption_bit function, we are using
-32-bit RIP-relative addressing to read the value of enc_bit, but
-kexec may alloc the early boot up code to a higher location, which
-is beyond 32-bit addressing limit. Some garbage will be read and
-get_sev_encryption_bit will return the wrong value, which leads to
-wrong memory page flag.
+Nope, my fault, it was at the end of my quilt queue and should have been
+deleted.  My scripts didn't catch the error, which is odd.
 
-This patch removes the use of enc_bit, as currently, enc_bit's only
-purpose is to avoid duplicated encryption bit reading, but the overhead
-of reading encryption bit is so tiny, so no need to cache that.
+Now dropped, thanks.
 
-Fixes: 1958b5fc4010 ("x86/boot: Add early boot support when running with SEV active")
-Suggested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Kairui Song <kasong@redhat.com>
----
- arch/x86/boot/compressed/mem_encrypt.S | 19 -------------------
- 1 file changed, 19 deletions(-)
-
-diff --git a/arch/x86/boot/compressed/mem_encrypt.S b/arch/x86/boot/compressed/mem_encrypt.S
-index eaa843a52907..a480356e0ed8 100644
---- a/arch/x86/boot/compressed/mem_encrypt.S
-+++ b/arch/x86/boot/compressed/mem_encrypt.S
-@@ -25,20 +25,6 @@ ENTRY(get_sev_encryption_bit)
- 	push	%ebx
- 	push	%ecx
- 	push	%edx
--	push	%edi
--
--	/*
--	 * RIP-relative addressing is needed to access the encryption bit
--	 * variable. Since we are running in 32-bit mode we need this call/pop
--	 * sequence to get the proper relative addressing.
--	 */
--	call	1f
--1:	popl	%edi
--	subl	$1b, %edi
--
--	movl	enc_bit(%edi), %eax
--	cmpl	$0, %eax
--	jge	.Lsev_exit
- 
- 	/* Check if running under a hypervisor */
- 	movl	$1, %eax
-@@ -69,15 +55,12 @@ ENTRY(get_sev_encryption_bit)
- 
- 	movl	%ebx, %eax
- 	andl	$0x3f, %eax		/* Return the encryption bit location */
--	movl	%eax, enc_bit(%edi)
- 	jmp	.Lsev_exit
- 
- .Lno_sev:
- 	xor	%eax, %eax
--	movl	%eax, enc_bit(%edi)
- 
- .Lsev_exit:
--	pop	%edi
- 	pop	%edx
- 	pop	%ecx
- 	pop	%ebx
-@@ -113,8 +96,6 @@ ENTRY(set_sev_encryption_mask)
- ENDPROC(set_sev_encryption_mask)
- 
- 	.data
--enc_bit:
--	.int	0xffffffff
- 
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- 	.balign	8
--- 
-2.17.1
-
+greg k-h
