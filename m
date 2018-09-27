@@ -2,146 +2,99 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0F6C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F9BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1D2208B3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C8E621564
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 00:47:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWktOBfb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A1D2208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Za6vrniA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8E621564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeI0GuR (ORCPT
+        id S1726605AbeI0HDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 02:50:17 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52120 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbeI0GuR (ORCPT
+        Thu, 27 Sep 2018 03:03:11 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46158 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbeI0HDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 02:50:17 -0400
-Received: by mail-it1-f193.google.com with SMTP id 74-v6so3902378itw.1;
-        Wed, 26 Sep 2018 17:34:44 -0700 (PDT)
+        Thu, 27 Sep 2018 03:03:11 -0400
+Received: by mail-qt1-f194.google.com with SMTP id h22-v6so934290qtr.13
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 17:47:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aCL+Y3Elp9js0tskQ42GEDjYhI0l5SAZZjTRQ2rGzW4=;
-        b=gWktOBfbdrBncdviL20J5F04FWoaz6YrOuZLdcCDBv1a1+de7firBMdo56D5siKbuP
-         knUUB/mvtfUFAgKRLK6W3vSmF/mpPs+gnm6yp5S+r9Ha9FPHQr2nPuRnqXV2poXWKJJ3
-         HIOfbb4fDeKHAeNv1BJcfuUtpb1jGZYjKdkWtTH9UaLxMDvX8nuhR5WKVgZkkOz9BpEd
-         CI7OaIPDPdJciw65l552y88iAqeLkftXzSYBxY3FdNga0rrtQBxT8YIewUygbcNpeekX
-         N1FJ36m7Pb9UOF1rdrmYpWB/Tlp8yZqialQsEs2ivoPFIrl6lxYgw/zD3yJUoC9cbydD
-         y/kA==
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=f/EAkGtAefVaQBgPZAGOkdZhmJzeqi0Qe1D/uQ3y5o4=;
+        b=Za6vrniAldGFa10n74Ejh1qkLtpScETCKd7ahwjXgBbX8LQmrEzb8xG4f2poL7PduZ
+         hyJMqqdARoh63u1t+URyAWkJOrqIirhXBIVsbRH+rxtt1+ko8mejEtLk2iz5Ic/Sc98J
+         SJgl3Q8LBwmqFgXGAJKbPf0Cpa+OEJfOqYTHI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aCL+Y3Elp9js0tskQ42GEDjYhI0l5SAZZjTRQ2rGzW4=;
-        b=bOk2SQIDQa9qg2j0oTCXzJcVx08eoORVxGGHKVN1Cabg9OpQ53YulLZB5TUlws2oPh
-         H0ZGCDfALRwXzvGKulmeW1WYZJypZ6RcuVYGkr/MmdyHnd5QD0QRSNOEKLBWzeRW0Gof
-         XaIOuktmh+J1PhpkWpFij4/66BNSY4QG2aZ2BvS4e4v7gF38Fs/4vLdzf3yXiSDwKNoO
-         j5X1s4wILLQo1bUuxjLn0L0kVujX4GKATy6GaMrrWp5dBvzQ0ymHKQBdz7OJYIiBRpVW
-         nFK+hUdHfodStPW9rTCQBC5aaFsUxQeQmNIfjU3MNCtbjpWQqGlTQBImXg3WzM+E/4jO
-         +KGw==
-X-Gm-Message-State: ABuFfojG1t/W3MrfOM7rpFN6XUWovS/NsciycGaWSP4iVSV9rr1r6Inj
-        qt+t/ZpYtrStzf4H/91sDCq/6cb6M2rckgEEh68=
-X-Google-Smtp-Source: ACcGV60OAZQmP5vY8eqKtSx1NklVALWsgxgzNJor5OtZ8jnmAORXbLTb9Endu8EQp7BjsTC54YL6VZvdYwYvpa0EezA=
-X-Received: by 2002:a02:7a12:: with SMTP id a18-v6mr7812760jac.42.1538008483880;
- Wed, 26 Sep 2018 17:34:43 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f/EAkGtAefVaQBgPZAGOkdZhmJzeqi0Qe1D/uQ3y5o4=;
+        b=ofZFlSLreiuunWNuoqlcMY2PjxNHIR6BnAXv2IcoTH4PQoi6SOWRUtZVz1OLVtsW1s
+         KkvK7vfIVm4HJ2QluBKi0YHa6mfp0m9MZKl03n/570lW7WuZuTgzHdc2dFbSoRHGG/bJ
+         rTHBcnfy4rqd5SvL3xnmKaw9muaX7jmKaPDQrt8NbAnDfGav9WCU4CLAtQXBuH5VPV3j
+         IWHxf/7+KRQ16wFZy5BLYXnGL05ZGyueDZXyXX8MqUQhsXqKEsuK/VyKJ0IXX24b+sQb
+         G/Nd89lbLtqsjeYR5yYYPGy5VR1dE8b6mIHJ11x7t0UgAPRw8CKnKH5U4Aa3OhUZ03ic
+         r37w==
+X-Gm-Message-State: ABuFfog4HPDV7DA2TMlwqGBrL1Qmi0MRjbJaqQBMg7P33fc5OQimFE20
+        7RRzpKuDYGLTICiiwoCMuq2u7Q==
+X-Google-Smtp-Source: ACcGV63lwo8VAWt3YgOCQXRCZMdzGf+QFMDhv7SWP8ydSnF6+IPFz7lCuimE5DefhJpipres38JQzA==
+X-Received: by 2002:aed:3539:: with SMTP id a54-v6mr6474024qte.153.1538009256729;
+        Wed, 26 Sep 2018 17:47:36 -0700 (PDT)
+Received: from puremoods ([185.232.22.59])
+        by smtp.gmail.com with ESMTPSA id f90-v6sm597214qkf.49.2018.09.26.17.47.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Sep 2018 17:47:35 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 20:47:33 -0400
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: linux-mm@ archive on lore.kernel.org (Was: [PATCH 0/2] thp
+ nodereclaim fixes)
+Message-ID: <20180927004733.GA4013@puremoods>
+References: <20180925120326.24392-1-mhocko@kernel.org>
+ <20180926130850.vk6y6zxppn7bkovk@kshutemo-mobl1>
+ <20180926131445.GW6278@dhcp22.suse.cz>
+ <20180926152200.8a3bfb1845de21937914feeb@linux-foundation.org>
+ <20180926230838.GK1750@suse.de>
 MIME-Version: 1.0
-References: <1536927045-23536-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1536927045-23536-4-git-send-email-rppt@linux.vnet.ibm.com>
- <CAKgT0UdP=78RsWHMxFu4PD8a3AhA3eNcG68Z_9aGY0vhOKf7xA@mail.gmail.com> <20180926183152.GA4597@rapoport-lnx>
-In-Reply-To: <20180926183152.GA4597@rapoport-lnx>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Wed, 26 Sep 2018 17:34:32 -0700
-Message-ID: <CAKgT0UcC-GTtyPK9ynvj6r3YFqy8kE40iMJxzPowbNoXGf9iWg@mail.gmail.com>
-Subject: Re: [PATCH 03/30] mm: remove CONFIG_HAVE_MEMBLOCK
-To:     rppt@linux.vnet.ibm.com
-Cc:     linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>, chris@zankel.net,
-        David Miller <davem@davemloft.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, green.hu@gmail.com,
-        Greg KH <gregkh@linuxfoundation.org>, gxt@pku.edu.cn,
-        Ingo Molnar <mingo@redhat.com>, jejb@parisc-linux.org,
-        jonas@southpole.se, Jonathan Corbet <corbet@lwn.net>,
-        lftan@altera.com, msalter@redhat.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        mattst88@gmail.com, mpe@ellerman.id.au,
-        Michal Hocko <mhocko@suse.com>, monstr@monstr.eu,
-        palmer@sifive.com, paul.burton@mips.com, rkuo@codeaurora.org,
-        richard@nod.at, dalias@libc.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        fancer.lancer@gmail.com, Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, vgupta@synopsys.com,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        sparclinux@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180926230838.GK1750@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 11:32 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
->
-> On Wed, Sep 26, 2018 at 09:58:41AM -0700, Alexander Duyck wrote:
-> > On Fri, Sep 14, 2018 at 5:11 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> > >
-> > > All architecures use memblock for early memory management. There is no need
-> > > for the CONFIG_HAVE_MEMBLOCK configuration option.
-> > >
-> > > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> >
-> > <snip>
-> >
-> > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > index 5169205..4ae91fc 100644
-> > > --- a/include/linux/memblock.h
-> > > +++ b/include/linux/memblock.h
-> > > @@ -2,7 +2,6 @@
-> > >  #define _LINUX_MEMBLOCK_H
-> > >  #ifdef __KERNEL__
-> > >
-> > > -#ifdef CONFIG_HAVE_MEMBLOCK
-> > >  /*
-> > >   * Logical memory blocks.
-> > >   *
-> > > @@ -460,7 +459,6 @@ static inline phys_addr_t memblock_alloc(phys_addr_t size, phys_addr_t align)
-> > >  {
-> > >         return 0;
-> > >  }
-> > > -#endif /* CONFIG_HAVE_MEMBLOCK */
-> > >
-> > >  #endif /* __KERNEL__ */
-> >
-> > There was an #else above this section and I believe it and the code
-> > after it needs to be stripped as well.
->
-> Right, I've already sent the fix [1] and it's in mmots.
->
-> [1] https://lkml.org/lkml/2018/9/19/416
->
+On Thu, Sep 27, 2018 at 12:08:38AM +0100, Mel Gorman wrote:
+> > fwiw, I have everything going back to 2001.   For some reason.
+> 
+> This is far better than mine and the only person I think could potentially
+> improve upon the archives is Rik. 2001 would cover the most interesting
+> periods when things like rmap was introduced. Back then the VM was relatively
+> simple and the concepts were generally covered by academic textbooks AFAIK.
 
-Are you sure? The patch you reference appears to be for
-drivers/of/fdt.c, and the bit I pointed out here is in
-include/linux/memblock.h.
+Now you just need to have a point person who would do the requesting and
+archive-providing, per the procedure described on
+https://korg.wiki.kernel.org/userdoc/lore.
 
-- Alex
+-K
