@@ -2,132 +2,148 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DEBC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60D1ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D03C2159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:55:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D03C2159D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5764F206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:55:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="UUw97vf3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5764F206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeI0RMv (ORCPT
+        id S1727435AbeI0RM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:12:51 -0400
-Received: from mga11.intel.com ([192.55.52.93]:49926 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbeI0RMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:12:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 03:55:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
-   d="scan'208";a="93767810"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 27 Sep 2018 03:54:44 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 27 Sep 2018 13:54:43 +0300
-Date:   Thu, 27 Sep 2018 13:54:43 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Thu, 27 Sep 2018 13:12:57 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33229 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726948AbeI0RM4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 13:12:56 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l19-v6so1979297ljb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 03:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e5dSaq6nqL0GUtqykX2UvAZc43uMIT6lNzwgjsWybkU=;
+        b=UUw97vf3XWC6fThzrgdIA965omDm3VsX8HyhKSka/R2ZIHZDQXewVaKmdf7GLZ/Uri
+         SixfNaYwAJb0Atlsu7v0ia5tar7npk1edKAh996xoWcXPtn1APA86DsI6En9hltOB8TP
+         C/kNgGtbPFL6QhYFXxpdKn6lisDKaLW5VKiLA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e5dSaq6nqL0GUtqykX2UvAZc43uMIT6lNzwgjsWybkU=;
+        b=nUOfymwchx5B9a+nBo/eYyzAua6OBPinXX6ztVlm2CAE52+gNloUU11tsWvk2P+8rT
+         YN0H6LW+QX8ha02I5pyHx9raAydWpjX+lPh5iQm2Z1y2kcGORnejhYMqcL3raCq9nhWO
+         cYQq96vi024j2Lnc9QgtxUyOFTsdZXE5Xdc79cYbFmr8ApV8yfzGAjwoSaS+tILP+5rZ
+         IWkWNLYJJMCqB9XaSJzjmusdb1GNmotKZDpOcFx6kz7bPPkjDqDrZKOOqsBJUoF/Joys
+         O0kIfcUTXGHkLoAG+KyBccxviJThIalleLx39aR8Fmp6ZDJwwFdovyC33l+t+7dHSI29
+         fYDQ==
+X-Gm-Message-State: ABuFfohK3YashS4g1K5t9YgqXdBtwjN+kRIs3pmCGgxQ2cmG32Dyn10q
+        xjUUAC7JQzH+HTS9n1WQihkvUQ==
+X-Google-Smtp-Source: ACcGV60DCYdtp7f+qhNFomUqVyjJ/PXFJg9oufxU3BiYrypTIFcbGCrpcerzcOlkA4pVU/DZEmLSrQ==
+X-Received: by 2002:a2e:2c15:: with SMTP id s21-v6mr161813ljs.162.1538045713061;
+        Thu, 27 Sep 2018 03:55:13 -0700 (PDT)
+Received: from [172.16.11.40] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id a15-v6sm357194ljf.92.2018.09.27.03.55.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 03:55:12 -0700 (PDT)
+Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
+To:     Kees Cook <keescook@chromium.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        support.opensource@diasemi.com
-Subject: Re: [PATCH 1/2] usb: typec: fusb302: Correct spelling mistake for
- toggling state
-Message-ID: <20180927105443.GP11965@kuha.fi.intel.com>
-References: <cover.1537975081.git.Adam.Thomson.Opensource@diasemi.com>
- <8ef602efbb7ee84ec86225ae4b9e1d138154e51b.1537975081.git.Adam.Thomson.Opensource@diasemi.com>
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
+ <20180924101150.23349-4-brgl@bgdev.pl>
+ <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <9ad301dc-47ef-cd7d-699d-e51716d1703f@rasmusvillemoes.dk>
+Date:   Thu, 27 Sep 2018 12:55:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ef602efbb7ee84ec86225ae4b9e1d138154e51b.1537975081.git.Adam.Thomson.Opensource@diasemi.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 04:23:51PM +0100, Adam Thomson wrote:
-> There's a typo in the enum name of the 'OFF' state for toggling
-> (TOGGLINE instead of TOGGLING). This commit resolves that trivial
-> spelling inconsistency.
+On 2018-09-27 01:13, Kees Cook wrote:
+> On Mon, Sep 24, 2018 at 3:11 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> Provide a resource managed version of kstrdup_const(). This variant
+>> internally calls devm_kstrdup() on pointers that are outside of
+>> .rodata section and returns the string as is otherwise.
+>>
+>> Also provide a corresponding version of devm_kfree().
+>>
+>> +/**
+>> + * devm_kfree_const - Resource managed conditional kfree
+>> + * @dev: device this memory belongs to
+>> + * @p: memory to free
+>> + *
+>> + * Function calls devm_kfree only if @p is not in .rodata section.
+>> + */
+>> +void devm_kfree_const(struct device *dev, const void *p)
+>> +{
+>> +       if (!is_kernel_rodata((unsigned long)p))
+>> +               devm_kfree(dev, p);
+>> +}
+>> +EXPORT_SYMBOL(devm_kfree_const);
+>> +
+>>  /**
+>>   * devm_kmemdup - Resource-managed kmemdup
+>>   * @dev: Device this memory belongs to
+>> diff --git a/include/linux/device.h b/include/linux/device.h
+>> index 33f7cb271fbb..79ccc6eb0975 100644
+>> --- a/include/linux/device.h
+>> +++ b/include/linux/device.h
+>> @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
+>>         return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+>>  }
+>>  extern void devm_kfree(struct device *dev, const void *p);
+>> +extern void devm_kfree_const(struct device *dev, const void *p);
 > 
-> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+> With devm_kfree and devm_kfree_const both taking "const", how are
+> devm_kstrdup_const() and devm_kfree_const() going to be correctly
+> paired at compile time? (i.e. I wasn't expecting the prototype change
+> to devm_kfree())
 
-Reviewed-by:  Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Just drop devm_kfree_const and teach devm_kfree to ignore
+is_kernel_rodata(). That avoids the 50-100 bytes of overhead for adding
+yet another EXPORT_SYMBOL and makes it easier to port drivers to
+devm_kstrdup_const (and avoids the bugs Kees is worried about). devm
+managed resources are almost never freed explicitly, so that single
+extra comparison in devm_kfree shouldn't matter for performance.
 
-> ---
->  drivers/usb/typec/tcpm/fusb302.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-> index 6e9370a..fd851d8 100644
-> --- a/drivers/usb/typec/tcpm/fusb302.c
-> +++ b/drivers/usb/typec/tcpm/fusb302.c
-> @@ -42,7 +42,7 @@
->  #define T_BC_LVL_DEBOUNCE_DELAY_MS 30
->  
->  enum toggling_mode {
-> -	TOGGLINE_MODE_OFF,
-> +	TOGGLING_MODE_OFF,
->  	TOGGLING_MODE_DRP,
->  	TOGGLING_MODE_SNK,
->  	TOGGLING_MODE_SRC,
-> @@ -594,7 +594,7 @@ static int fusb302_set_toggling(struct fusb302_chip *chip,
->  	chip->intr_comp_chng = false;
->  	/* configure toggling mode: none/snk/src/drp */
->  	switch (mode) {
-> -	case TOGGLINE_MODE_OFF:
-> +	case TOGGLING_MODE_OFF:
->  		ret = fusb302_i2c_mask_write(chip, FUSB_REG_CONTROL2,
->  					     FUSB_REG_CONTROL2_MODE_MASK,
->  					     FUSB_REG_CONTROL2_MODE_NONE);
-> @@ -626,7 +626,7 @@ static int fusb302_set_toggling(struct fusb302_chip *chip,
->  		break;
->  	}
->  
-> -	if (mode == TOGGLINE_MODE_OFF) {
-> +	if (mode == TOGGLING_MODE_OFF) {
->  		/* mask TOGDONE interrupt */
->  		ret = fusb302_i2c_set_bits(chip, FUSB_REG_MASKA,
->  					   FUSB_REG_MASKA_TOGDONE);
-> @@ -702,7 +702,7 @@ static int tcpm_set_cc(struct tcpc_dev *dev, enum typec_cc_status cc)
->  		ret = -EINVAL;
->  		goto done;
->  	}
-> -	ret = fusb302_set_toggling(chip, TOGGLINE_MODE_OFF);
-> +	ret = fusb302_set_toggling(chip, TOGGLING_MODE_OFF);
->  	if (ret < 0) {
->  		fusb302_log(chip, "cannot stop toggling, ret=%d", ret);
->  		goto done;
-> @@ -1292,7 +1292,7 @@ static int fusb302_handle_togdone_snk(struct fusb302_chip *chip,
->  		tcpm_cc_change(chip->tcpm_port);
->  	}
->  	/* turn off toggling */
-> -	ret = fusb302_set_toggling(chip, TOGGLINE_MODE_OFF);
-> +	ret = fusb302_set_toggling(chip, TOGGLING_MODE_OFF);
->  	if (ret < 0) {
->  		fusb302_log(chip,
->  			    "cannot set toggling mode off, ret=%d", ret);
-> @@ -1388,7 +1388,7 @@ static int fusb302_handle_togdone_src(struct fusb302_chip *chip,
->  		tcpm_cc_change(chip->tcpm_port);
->  	}
->  	/* turn off toggling */
-> -	ret = fusb302_set_toggling(chip, TOGGLINE_MODE_OFF);
-> +	ret = fusb302_set_toggling(chip, TOGGLING_MODE_OFF);
->  	if (ret < 0) {
->  		fusb302_log(chip,
->  			    "cannot set toggling mode off, ret=%d", ret);
-> -- 
-> 1.9.1
-
--- 
-heikki
+Rasmus
