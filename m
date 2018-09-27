@@ -2,85 +2,123 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EE1C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98F5C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC5F2168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:37:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC5F2168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 600522168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:38:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600522168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeI0SzP (ORCPT
+        id S1727460AbeI0S5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:55:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43888 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbeI0SzO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:55:14 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD1B4FF0;
-        Thu, 27 Sep 2018 12:37:08 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 14:37:06 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Holger =?iso-8859-1?Q?Hoffst=E4tte?= 
-        <holger@applied-asynchrony.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lyude Paul <lyude@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 4.18 74/88] drm/atomic: Use drm_drv_uses_atomic_modeset()
- for debugfs creation
-Message-ID: <20180927123706.GA23563@kroah.com>
-References: <20180927090300.631426620@linuxfoundation.org>
- <20180927090309.614592493@linuxfoundation.org>
- <42cbbf9c-3076-0c49-36c2-b6fd09628694@applied-asynchrony.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <42cbbf9c-3076-0c49-36c2-b6fd09628694@applied-asynchrony.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 27 Sep 2018 14:57:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48708 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727111AbeI0S5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 14:57:02 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 047CF307D867;
+        Thu, 27 Sep 2018 12:38:57 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F3BB461168;
+        Thu, 27 Sep 2018 12:38:50 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, brijesh.singh@amd.com,
+        bp@suse.de, kasong@redhat.com, kexec@lists.infradead.org,
+        dyoung@redhat.com, bhe@redhat.com, ghook@redhat.com
+Subject: [PATCH] x86/boot: Fix kexec booting failure after SEV early boot support
+Date:   Thu, 27 Sep 2018 20:38:45 +0800
+Message-Id: <20180927123845.32052-1-kasong@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 27 Sep 2018 12:38:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 12:43:33PM +0200, Holger Hoffstätte wrote:
-> On 09/27/18 11:03, Greg Kroah-Hartman wrote:
-> > 4.18-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Lyude Paul <lyude@redhat.com>
-> > 
-> > commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
-> > 
-> > As pointed out by Daniel Vetter, we should be usinng
-> > drm_drv_uses_atomic_modeset() for determining whether or not we want to
-> > make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
-> > the former isn't an accurate representation of whether or not the driver
-> > is actually using atomic modesetting internally (even though it might
-> > not be exposing atomic capabilities).
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Sean Paul <seanpaul@chromium.org>
-> > Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> This patch breaks switching the console to high resolution during boot on my
-> workstation with a Radeon card; it worked fine with 4.18.10 and reverting it
-> fixes the problem:
+Commit 1958b5fc4010 ("x86/boot: Add early boot support when running
+with SEV active") is causing kexec becomes sometimes unstable even if
+SEV is not active. kexec reboot won't start a second kernel bypassing
+BIOS boot process, instead, the system got reset.
 
-Is 4.19-rc5 also a problem?
+That's because, in get_sev_encryption_bit function, we are using
+32-bit RIP-relative addressing to read the value of enc_bit, but
+kexec may alloc the early boot up code to a higher location, which
+is beyond 32-bit addressing limit. Some garbage will be read and
+get_sev_encryption_bit will return the wrong value, which leads to
+wrong memory page flag.
 
-thanks,
+This patch removes the use of enc_bit, as currently, enc_bit's only
+purpose is to avoid duplicated encryption bit reading, but the overhead
+of reading encryption bit is so tiny, so no need to cache that.
 
-greg k-h
+Fixes: 1958b5fc4010 ("x86/boot: Add early boot support when running with SEV active")
+Suggested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Kairui Song <kasong@redhat.com>
+---
+ arch/x86/boot/compressed/mem_encrypt.S | 19 -------------------
+ 1 file changed, 19 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/mem_encrypt.S b/arch/x86/boot/compressed/mem_encrypt.S
+index eaa843a52907..a480356e0ed8 100644
+--- a/arch/x86/boot/compressed/mem_encrypt.S
++++ b/arch/x86/boot/compressed/mem_encrypt.S
+@@ -25,20 +25,6 @@ ENTRY(get_sev_encryption_bit)
+ 	push	%ebx
+ 	push	%ecx
+ 	push	%edx
+-	push	%edi
+-
+-	/*
+-	 * RIP-relative addressing is needed to access the encryption bit
+-	 * variable. Since we are running in 32-bit mode we need this call/pop
+-	 * sequence to get the proper relative addressing.
+-	 */
+-	call	1f
+-1:	popl	%edi
+-	subl	$1b, %edi
+-
+-	movl	enc_bit(%edi), %eax
+-	cmpl	$0, %eax
+-	jge	.Lsev_exit
+ 
+ 	/* Check if running under a hypervisor */
+ 	movl	$1, %eax
+@@ -69,15 +55,12 @@ ENTRY(get_sev_encryption_bit)
+ 
+ 	movl	%ebx, %eax
+ 	andl	$0x3f, %eax		/* Return the encryption bit location */
+-	movl	%eax, enc_bit(%edi)
+ 	jmp	.Lsev_exit
+ 
+ .Lno_sev:
+ 	xor	%eax, %eax
+-	movl	%eax, enc_bit(%edi)
+ 
+ .Lsev_exit:
+-	pop	%edi
+ 	pop	%edx
+ 	pop	%ecx
+ 	pop	%ebx
+@@ -113,8 +96,6 @@ ENTRY(set_sev_encryption_mask)
+ ENDPROC(set_sev_encryption_mask)
+ 
+ 	.data
+-enc_bit:
+-	.int	0xffffffff
+ 
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+ 	.balign	8
+-- 
+2.17.1
+
