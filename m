@@ -2,118 +2,88 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F53BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66320ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA8620836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA8620836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kippendief.biz
+	by mail.kernel.org (Postfix) with ESMTP id 222CD20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 222CD20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbeI0PcL (ORCPT
+        id S1728693AbeI0PcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:32:11 -0400
-Received: from fallback2.virtu.nl ([217.114.100.110]:43075 "EHLO
-        fallback2.virtu.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbeI0PcK (ORCPT
+        Thu, 27 Sep 2018 11:32:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55556 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728669AbeI0PcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:32:10 -0400
-X-Greylist: delayed 355 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Sep 2018 11:32:09 EDT
-Received: from realmta3.virtu.nl (realmta3.virtu.nl [217.114.99.55])
-        by fallback2.virtu.nl (Postfix) with ESMTPS id 35FB228752;
-        Thu, 27 Sep 2018 11:09:00 +0200 (CEST)
-Received: from efgh.nl ([185.76.17.58] helo=carbon.kippendief.biz)
-        by realmta3.virtu.nl with esmtp (Exim 4.80)
-        (envelope-from <jorik@kippendief.biz>)
-        id 1g5Rns-0001u6-EK; Thu, 27 Sep 2018 10:37:49 +0200
-From:   jorik@kippendief.biz
-To:     robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-sunxi@googlegroups.com, jorik@kippendief.biz
-Subject: [PATCH] dts: sun8i-h3: add sy8106a to orange pi plus
-Date:   Thu, 27 Sep 2018 10:36:36 +0200
-Message-Id: <20180927083636.5415-1-jorik@kippendief.biz>
-X-Mailer: git-send-email 2.17.1
-X-Virtu-SpamScore: /
+        Thu, 27 Sep 2018 11:32:11 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9AAC111D;
+        Thu, 27 Sep 2018 09:14:54 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>, Ben Skeggs <bskeggs@redhat.com>
+Subject: [PATCH 4.18 64/88] drm/nouveau: Remove duplicate poll_enable() in pmops_runtime_suspend()
+Date:   Thu, 27 Sep 2018 11:03:45 +0200
+Message-Id: <20180927090308.501518597@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
+References: <20180927090300.631426620@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorik Jonker <jorik@kippendief.biz>
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-The Orange Pi Plus board lacks voltage scaling capabilities in its
-current form. This results in random freezes during boot when cpufreq is
-enabled, probably due to wrong voltages.
+------------------
 
-This patch (a copy/paste of 06139c) does the following things on this
-board:
-- enable r_i2c
-- add sy8106a to the r_i2c bus
-- have the sy8106a regulate VDD of cpu
+From: Lyude Paul <lyude@redhat.com>
 
-I have tested this on two Orange Pi Plus boards, and they run stable
-across a range of voltages (and frequencies).
+commit 611ce855420a6e8b9ff47af5f47431d52c7709f8 upstream.
 
-Signed-off-by: Jorik Jonker <jorik@kippendief.biz>
+Since actual hotplug notifications don't get disabled until
+nouveau_display_fini() is called, all this will do is cause any hotplugs
+that happen between this drm_kms_helper_poll_disable() call and the
+actual hotplug disablement to potentially be dropped if ACPI isn't
+around to help us.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Acked-by: Karol Herbst <kherbst@redhat.com>
+Acked-by: Daniel Vetter <daniel@ffwll.ch>
+Cc: stable@vger.kernel.org
+Cc: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts | 29 ++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/gpu/drm/nouveau/nouveau_drm.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
-index b403e5d78..fd64b5c94 100644
---- a/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-orangepi-plus.dts
-@@ -74,6 +74,10 @@
- 	};
- };
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -835,7 +835,6 @@ nouveau_pmops_runtime_suspend(struct dev
+ 		return -EBUSY;
+ 	}
  
-+&cpu0 {
-+	cpu-supply = <&reg_vdd_cpux>;
-+};
-+
- &ehci3 {
- 	status = "okay";
- };
-@@ -119,6 +123,31 @@
- 	};
- };
- 
-+&r_i2c {
-+	status = "okay";
-+
-+	reg_vdd_cpux: regulator@65 {
-+		compatible = "silergy,sy8106a";
-+		reg = <0x65>;
-+		regulator-name = "vdd-cpux";
-+		silergy,fixed-microvolt = <1200000>;
-+		/*
-+		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
-+		 * however both the Armbian DVFS table and the official one
-+		 * have operating points with voltage under 1.1V, and both
-+		 * DVFS table are known to work properly at the lowest
-+		 * operating point.
-+		 *
-+		 * Use 1.0V as the minimum voltage instead.
-+		 */
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1400000>;
-+		regulator-ramp-delay = <200>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
- &usbphy {
- 	usb3_vbus-supply = <&reg_usb3_vbus>;
- };
--- 
-2.17.1
+-	drm_kms_helper_poll_disable(drm_dev);
+ 	nouveau_switcheroo_optimus_dsm();
+ 	ret = nouveau_do_suspend(drm_dev, true);
+ 	pci_save_state(pdev);
+
 
