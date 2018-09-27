@@ -2,165 +2,164 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9A7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B46C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B44216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:51:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B44216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 2130821580
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:51:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G9Q61Zw7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2130821580
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728411AbeI0VK1 (ORCPT
+        id S1728431AbeI0VK3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:10:27 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:52378 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727212AbeI0VKY (ORCPT
+        Thu, 27 Sep 2018 17:10:29 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32854 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728413AbeI0VK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:10:24 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437733|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.CwbWlvb_1538059848;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwbWlvb_1538059848)
-          by smtp.aliyun-inc.com(10.147.41.158);
-          Thu, 27 Sep 2018 22:50:48 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
-        robh+dt@kernel.org, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        devicetree@vger.kernel.org, green.hu@gmail.com,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V6 10/33] csky: IRQ handling
-Date:   Thu, 27 Sep 2018 22:47:47 +0800
-Message-Id: <fbb4e798d1588e9df2da16818932747430068baf.1538058840.git.ren_guo@c-sky.com>
+        Thu, 27 Sep 2018 17:10:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f10-v6so2986025wrs.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 07:51:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=LqqPzQb5rQKmQSK7Lm4nztokxHt2+EweWXTUlu6+fsA=;
+        b=G9Q61Zw7AvfgvRicmMgoe0AStVH40izkd7SM/8qLl8TRaLFgDpRHnjAPlSV1DMdCKg
+         lSJ4gx/mqrNoVFTQ+unVTgrjq1rf0j1F6byP6YE0jMN/w8ngEny4i40cJT+GSsO3snO5
+         PPx/gZucA4Du4MaqnS8RLiF/t2AgbcyPHIMD8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=LqqPzQb5rQKmQSK7Lm4nztokxHt2+EweWXTUlu6+fsA=;
+        b=BHRNDykXriWsQYpgSCAr7Z6Pj3S4RdzQ+2EaNG2p8GXHSKulney4dYWgV6KaObVmma
+         dh3ZwrK0RvHavg6LfMkGQnkjlYR194k0xB8DvpT65HHBr5qNaV8krQU1IKjz7b3E4+YU
+         QaKPrmiNnmoBFqI4O4Gebz+18PYKqIC43qiFxPq/JzVOUKUC3G7xsI+Xj7uwVZ3wAdsm
+         e0vObkKXG3L9G1JQCA3bRtT3YosVIUd03p/5rX9Uri14kLw8RzDV2dnfMcFiHlgMaShN
+         WV41GPOfP8zJPTAOI+Zg0mfiJbwPy+ZsTtgYZPtb0KV3g54DjxeXkwQLFsPQrH/jgwjV
+         y0gA==
+X-Gm-Message-State: ABuFfoipSgJ74pVfroxStzvFyiMmVgXFZCTbITT+PiszePLhO4stpX0Z
+        Kz+ctJonAPS0nmXCgjAh5zuUBg==
+X-Google-Smtp-Source: ACcGV61nkJsXQrtq+1tFBSBPJQu8hmPkaDLT7xWt8w1vX1rgs4BCKfblKTcOYXCIrpRWk+v8yQnFog==
+X-Received: by 2002:adf:ef0a:: with SMTP id e10-v6mr948078wro.292.1538059909962;
+        Thu, 27 Sep 2018 07:51:49 -0700 (PDT)
+Received: from localhost.localdomain (30.216.136.77.rev.sfr.net. [77.136.216.30])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm2398023wrd.74.2018.09.27.07.51.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 27 Sep 2018 07:51:49 -0700 (PDT)
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     tglx@linutronix.de
+Cc:     mingo@kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-kernel@vger.kernel.org (open list:CLOCKSOURCE, CLOCKEVENT DRIVERS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip
+        (AT91) SoC support)
+Subject: [PATCH] clocksource/drivers/timer-atmel-pit: Properly handle error cases
+Date:   Thu, 27 Sep 2018 16:51:35 +0200
+Message-Id: <1538059895-10049-1-git-send-email-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1538058840.git.ren_guo@c-sky.com>
-References: <cover.1538058840.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1538058840.git.ren_guo@c-sky.com>
-References: <cover.1538058840.git.ren_guo@c-sky.com>
+In-Reply-To: <ea561d6f-22f8-b1f7-a063-d559900a9004@linaro.org>
+References: <ea561d6f-22f8-b1f7-a063-d559900a9004@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds IRQ handling files.
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+The smatch utility reports a possible leak:
+
+smatch warnings:
+drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init() warn: possible memory leak of 'data'
+
+Ensure data is freed before exiting with an error.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- arch/csky/include/asm/irq.h      |  9 ++++++++
- arch/csky/include/asm/irqflags.h | 50 ++++++++++++++++++++++++++++++++++++++++
- arch/csky/kernel/irq.c           | 22 ++++++++++++++++++
- 3 files changed, 81 insertions(+)
- create mode 100644 arch/csky/include/asm/irq.h
- create mode 100644 arch/csky/include/asm/irqflags.h
- create mode 100644 arch/csky/kernel/irq.c
+ drivers/clocksource/timer-atmel-pit.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/arch/csky/include/asm/irq.h b/arch/csky/include/asm/irq.h
-new file mode 100644
-index 0000000..970ef4f
---- /dev/null
-+++ b/arch/csky/include/asm/irq.h
-@@ -0,0 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+diff --git a/drivers/clocksource/timer-atmel-pit.c b/drivers/clocksource/timer-atmel-pit.c
+index ec8a437..2fab18f 100644
+--- a/drivers/clocksource/timer-atmel-pit.c
++++ b/drivers/clocksource/timer-atmel-pit.c
+@@ -180,26 +180,29 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 	data->base = of_iomap(node, 0);
+ 	if (!data->base) {
+ 		pr_err("Could not map PIT address\n");
+-		return -ENXIO;
++		ret = -ENXIO;
++		goto exit;
+ 	}
+ 
+ 	data->mck = of_clk_get(node, 0);
+ 	if (IS_ERR(data->mck)) {
+ 		pr_err("Unable to get mck clk\n");
+-		return PTR_ERR(data->mck);
++		ret = PTR_ERR(data->mck);
++		goto exit;
+ 	}
+ 
+ 	ret = clk_prepare_enable(data->mck);
+ 	if (ret) {
+ 		pr_err("Unable to enable mck\n");
+-		return ret;
++		goto exit;
+ 	}
+ 
+ 	/* Get the interrupts property */
+ 	data->irq = irq_of_parse_and_map(node, 0);
+ 	if (!data->irq) {
+ 		pr_err("Unable to get IRQ from DT\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto exit;
+ 	}
+ 
+ 	/*
+@@ -227,7 +230,7 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 	ret = clocksource_register_hz(&data->clksrc, pit_rate);
+ 	if (ret) {
+ 		pr_err("Failed to register clocksource\n");
+-		return ret;
++		goto exit;
+ 	}
+ 
+ 	/* Set up irq handler */
+@@ -236,7 +239,8 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 			  "at91_tick", data);
+ 	if (ret) {
+ 		pr_err("Unable to setup IRQ\n");
+-		return ret;
++		clocksource_unregister(&data->clksrc);
++		goto exit;
+ 	}
+ 
+ 	/* Set up and register clockevents */
+@@ -254,6 +258,10 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
+ 	clockevents_register_device(&data->clkevt);
+ 
+ 	return 0;
 +
-+#ifndef __ASM_CSKY_IRQ_H
-+#define __ASM_CSKY_IRQ_H
-+
-+#include <asm-generic/irq.h>
-+
-+#endif /* __ASM_CSKY_IRQ_H */
-diff --git a/arch/csky/include/asm/irqflags.h b/arch/csky/include/asm/irqflags.h
-new file mode 100644
-index 0000000..a4fd2dd
---- /dev/null
-+++ b/arch/csky/include/asm/irqflags.h
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#ifndef __ASM_CSKY_IRQFLAGS_H
-+#define __ASM_CSKY_IRQFLAGS_H
-+#include <abi/reg_ops.h>
-+
-+static inline unsigned long arch_local_irq_save(void)
-+{
-+	unsigned long flags;
-+
-+	flags = mfcr("psr");
-+	asm volatile("psrclr ie\n":::"memory");
-+	return flags;
-+}
-+#define arch_local_irq_save arch_local_irq_save
-+
-+static inline void arch_local_irq_enable(void)
-+{
-+	asm volatile("psrset ee, ie\n":::"memory");
-+}
-+#define arch_local_irq_enable arch_local_irq_enable
-+
-+static inline void arch_local_irq_disable(void)
-+{
-+	asm volatile("psrclr ie\n":::"memory");
-+}
-+#define arch_local_irq_disable arch_local_irq_disable
-+
-+static inline unsigned long arch_local_save_flags(void)
-+{
-+	return mfcr("psr");
-+}
-+#define arch_local_save_flags arch_local_save_flags
-+
-+static inline void arch_local_irq_restore(unsigned long flags)
-+{
-+	mtcr("psr", flags);
-+}
-+#define arch_local_irq_restore arch_local_irq_restore
-+
-+static inline int arch_irqs_disabled_flags(unsigned long flags)
-+{
-+	return !(flags & (1<<6));
-+}
-+#define arch_irqs_disabled_flags arch_irqs_disabled_flags
-+
-+#include <asm-generic/irqflags.h>
-+
-+#endif /* __ASM_CSKY_IRQFLAGS_H */
-diff --git a/arch/csky/kernel/irq.c b/arch/csky/kernel/irq.c
-new file mode 100644
-index 0000000..03a1930
---- /dev/null
-+++ b/arch/csky/kernel/irq.c
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip.h>
-+#include <asm/traps.h>
-+#include <asm/smp.h>
-+
-+void __init init_IRQ(void)
-+{
-+	irqchip_init();
-+#ifdef CONFIG_SMP
-+	setup_smp_ipi();
-+#endif
-+}
-+
-+asmlinkage void __irq_entry csky_do_IRQ(struct pt_regs *regs)
-+{
-+	handle_arch_irq(regs);
-+}
++exit:
++	kfree(data);
++	return ret;
+ }
+ TIMER_OF_DECLARE(at91sam926x_pit, "atmel,at91sam9260-pit",
+ 		       at91sam926x_pit_dt_init);
 -- 
 2.7.4
 
