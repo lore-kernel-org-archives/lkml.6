@@ -2,147 +2,170 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A15C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E1DC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C542156E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:19:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aaathats3as.com header.i=@aaathats3as.com header.b="keAGzBJ5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C542156E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aaathats3as.com
+	by mail.kernel.org (Postfix) with ESMTP id 160F920836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:20:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160F920836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbeI0Nfs (ORCPT
+        id S1727187AbeI0Ngt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:35:48 -0400
-Received: from cock.li ([185.100.85.212]:40742 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbeI0Nfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:35:48 -0400
+        Thu, 27 Sep 2018 09:36:49 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:40557 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbeI0Ngt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:36:49 -0400
+Received: by mail-vk1-f193.google.com with SMTP id q184-v6so356459vke.7;
+        Thu, 27 Sep 2018 00:19:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fGbK97kn1V4/k5zlF4nqGbeKtif2TJRk193lLKKgwXQ=;
+        b=fXqEGuEAuzfk8wDLCVKxwrNm+XQZrysru5Gb9rtPl8Jw8lVMTJqAAROZoFLAn+SQ6X
+         K00boFQTTeRO+N4WsgZUJFapd66+my94IFBKcIQai+hkQstHsvf9nICqWBsSZnn32Hyb
+         ktXYiJYeJ1e2BG6px+Wg5drcgZ8C7SeZSjAmqpEQ/pMwKpi2t53lJ1aOcwBXPIJoHgXZ
+         X+TIN+rvRkgeTLca4g91PoH0dETw47tbtbHyCpuEjcVZa+KV00KiRbVkg75nPQ6fCNuT
+         bWAqbRVvxbXqAufRKHZNs9kEmBw7QWkXVrgF8ctkxwQKIdTq4EI2Y9FhPbEICL/mkTzs
+         f2iA==
+X-Gm-Message-State: ABuFfohi7s1dYLI2lJGvtSD/kOVseBWFDLkNWNzxqLGaCKeNl05NNPcn
+        +Vmo/uTAuQzo//RzREQD5BIFp5dIad99IQXmcoY=
+X-Google-Smtp-Source: ACcGV62i50VzQiPjOctHlv0BhvypgGuWU28947nsG1fJ3Me8eUVQ7MRi879353HQkQ1UMsGTkBgn92ww3W33cS/VDfw=
+X-Received: by 2002:a1f:92c4:: with SMTP id u187-v6mr2979694vkd.72.1538032798931;
+ Thu, 27 Sep 2018 00:19:58 -0700 (PDT)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaathats3as.com;
-        s=mail; t=1538032735;
-        bh=1pm4y+bwewZkwnTMD11H/MPXWMI+t7VoASrMbW2MTLA=;
-        h=Date:From:To:Subject:From;
-        b=keAGzBJ52tL1rJOsNrJFrR9XCL1Byphrp52a0RgLRFO5uGSrhSkUjN3USS87sJpJA
-         xmSDens1IvdKC9GGvLKMK9qbZgPiP66T1cD1L6r8NfnxG9EeJjl1zMOZ4PlE4WZr6W
-         LMUpUJC/cbKxSQbfeaP9P1+JCyf12lrb1b8zL1d28mFoItbG9I+0tQGPzfC2zOw37B
-         1BfFxI92z6aOpTpFPC+j7swjvGM1w1oIKRC1jAGrHz6uUB+3foWqWKbOAEtp0HUkzw
-         5wQCMkLu4fJJUkP4SMw4qN4h/KGIpDjHEhcuRQRcyCHQ+GD1dmuAZZgSNf26D6lly1
-         w6HtjyK7V7imA==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 27 Sep 2018 07:18:55 +0000
-From:   viewedforward@aaathats3as.com
-To:     dng@lists.dyne.org, linux-kernel@vger.kernel.org
-Subject: The software freedom conservancy has tendered its response:
-Message-ID: <debc527823030cf26e46692efc4a41e3@aaathats3as.com>
-X-Sender: viewedforward@aaathats3as.com
-User-Agent: Roundcube Webmail/1.3.6
+References: <b1772d99d4e8b788448cde0fc5c7dccb1f63b507.1537443710.git.michal.simek@xilinx.com>
+ <CAMuHMdW5zze-KJhK=diR-WKbhO_vsMV2b7WuLHmcT2FtRD4J7Q@mail.gmail.com> <d27b381e-f091-91dc-cffe-27789583f949@xilinx.com>
+In-Reply-To: <d27b381e-f091-91dc-cffe-27789583f949@xilinx.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 27 Sep 2018 09:19:46 +0200
+Message-ID: <CAMuHMdW4H6pjpijU2SX1Z=1Ld7CbBnTtFVwp3gac9toQc4iGpg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v3 1/2] of: base: Introduce of_alias_get_alias_list()
+ to check alias IDs
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The software freedom conservancy has tendered its response:
-http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
-http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
+Hi Michal,
 
+On Wed, Sep 26, 2018 at 1:01 PM Michal Simek <michal.simek@xilinx.com> wrote:
+> On 24.9.2018 09:41, Geert Uytterhoeven wrote:
+> > On Thu, Sep 20, 2018 at 1:42 PM Michal Simek <michal.simek@xilinx.com> wrote:
+> >> The function travels the lookup table to record alias ids for the given
+> >> device match structures and alias stem.
+> >> This function will be used by serial drivers to check if requested alias
+> >> is allocated or free to use.
+> >>
+> >> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > I know this has already been applied, it just drew my attention.
+> >
+> >> --- a/drivers/of/base.c
+> >> +++ b/drivers/of/base.c
+> >> @@ -16,6 +16,7 @@
+> >>
+> >>  #define pr_fmt(fmt)    "OF: " fmt
+> >>
+> >> +#include <linux/bitmap.h>
+> >>  #include <linux/console.h>
+> >>  #include <linux/ctype.h>
+> >>  #include <linux/cpu.h>
+> >> @@ -1943,6 +1944,57 @@ int of_alias_get_id(struct device_node *np, const char *stem)
+> >>  EXPORT_SYMBOL_GPL(of_alias_get_id);
+> >>
+> >>  /**
+> >> + * of_alias_get_alias_list - Get alias list for the given device driver
+> >> + * @matches:   Array of OF device match structures to search in
+> >> + * @stem:      Alias stem of the given device_node
+> >> + * @bitmap:    Bitmap field pointer
+> >> + * @nbits:     Maximum number of alias ID which can be recorded it bitmap
+> >
+> > IDs
+> >
+> >> + *
+> >> + * The function travels the lookup table to record alias ids for the given
+> >> + * device match structures and alias stem.
+> >> + *
+> >> + * Return:     0 or -ENOSYS when !CONFIG_OF
+> >> + */
+> >> +int of_alias_get_alias_list(const struct of_device_id *matches,
+> >> +                            const char *stem, unsigned long *bitmap,
+> >> +                            unsigned int nbits)
+> >> +{
+> >> +       struct alias_prop *app;
+> >> +
+> >> +       /* Zero bitmap field to make sure that all the time it is clean */
+> >> +       bitmap_zero(bitmap, nbits);
+> >> +
+> >> +       mutex_lock(&of_mutex);
+> >> +       pr_debug("%s: Looking for stem: %s\n", __func__, stem);
+> >> +       list_for_each_entry(app, &aliases_lookup, link) {
+> >> +               pr_debug("%s: stem: %s, id: %d\n",
+> >> +                        __func__, app->stem, app->id);
+> >> +
+> >> +               if (strcmp(app->stem, stem) != 0) {
+> >> +                       pr_debug("%s: stem comparison doesn't passed %s\n",
+> >
+> > didn't pass?
+> >
+> >> +                                __func__, app->stem);
+> >> +                       continue;
+> >> +               }
+> >> +
+> >> +               if (app->id >= nbits) {
+> >> +                       pr_debug("%s: ID %d greater then bitmap field %d\n",
+> >
+> > than
+> > %u for unsigned int
+>
+> I won't fix this now because this can be done together with one change
+> described below.
+>
+> >
+> >> +                               __func__, app->id, nbits);
+> >> +                       continue;
+> >
+> > Shouldn't this return an error, if of_match_node() below would have matched?
+>
+> IIRC Above check is for "serial" name.
+> This one is for getting XX number from alias "serialXX".
+> And below is checking compatible string.
+>
+> You are calling this function from uartps with 32 lines limit and there
+> is serial33 alias poiting to uartlite (for example) then you don't want
+> to break this call for that.
+>
+> What can be done is that compatible string is checked first and if this
+> passed then ids are check and error can be returned or bit sets.
 
-""
-"The GPLv2 have several provisions that, when taken together, can be 
-construed as an irrevocable license from each contributor. "
-""
+That's what I meant: currently any serialN with N >= nbits is ignored, even
+if the alias applies to the driver that called the function.
 
-It cites:
+Gr{oetje,eeting}s,
 
+                        Geert
 
-           " That license granted to downstream is irrevocable, again 
-provided that the downstream user complies with the license terms: 
-"[P]arties who have received copies, or rights, from you under this 
-License will not have their licenses terminated so long as such parties 
-remain in full compliance" (GPLv2§4). "
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-However this is disingenuous
-
-The full text of section 4 is as follows:
-
-""
-   4. You may not copy, modify, sublicense, or distribute the Program
-except as expressly provided under this License.  Any attempt
-otherwise to copy, modify, sublicense or distribute the Program is
-void, and will automatically terminate your rights under this License.
-However, parties who have received copies, or rights, from you under
-this License will not have their licenses terminated so long as such
-parties remain in full compliance.
-""
-
-
-
-The "You" in section 4 is speaking of the licensee regarding 
-sub-licensees, it is not speaking to the licensor/copyright-holder.
-
-IE: if the licensee loses his license, through operation of the 
-automatic-revocation provisions, the sub-licensees do not also lose 
-their licenses.
-
-IE: The language is disclaiming a chain topography for license 
-distribution, and instead substituting a hub-and-spoke topography (all 
-licenses originating from the copyright holder, not the 
-previous-in-line)
-
-GPLv3 added a no-rescission clause for a reason: the reason being to 
-attempt to create an estoppel defense for the licensees against the 
-licensor. You will notice that Eben Moglen never speaks on these issues. 
-(He preumably is aware of the weaknesses vis a vis the US copyright 
-regime.)
-
-Section 6 further clarifies the hub-and-spoke model:
-""
-    6. Each time you redistribute the Program (or any work based on the
-Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
-these terms and conditions.  You may not impose any further
-restrictions on the recipients' exercise of the rights granted herein.
-You are not responsible for enforcing compliance by third parties to
-this License.
-""
-
-The memorandum posted then goes on to a discussion of estoppel, 
-detrimental reliance, etc; noting that users may have relied on the 
-software and their licenses may be estopped from being revoked from said 
-users since doing so might cause them unanticipated loss. This is 
-speaking of already published, existent, versions of the program used by 
-end users.
-
-The memorandum seems to ignore what happens to "upstream" once said 
-project  receives a revocation notice. Thought it may be possible that 
-users of a published piece of software may have defenses to license 
-revocation, the same is not true regarding the rescinded property 
-vis-a-vis future prospective versions of the software nor of future 
-prospective licensees of said software.
-
-That is: once the grant to use the code in question is rescinded, future 
-versions of the software may not use that code. Current users of the 
-software may be-able to raise an estoppel / detrimental reliance defense 
-regarding the current published software, however the programmers 
-working on the next version of said software cannot continue to use the 
-property in future versions of the software (such would be a copyright 
-violation once the gratuitous license is rescinded by the grantor).
-
-Additionally, prospective-licensees, once the grant was rescinded and 
-such was published, would have no same-such estoppel defense (not being 
-user-licensees at the time of revocation).
-
-(Ignoring this eventuality in the published memorandum, is, of-course, 
-by design.)
-(Now, to note: the free-software movement is focused on the freedom of 
-the user, not the progenitors of the software, so one could certainly 
-say that ignoring some developer-focused analysis is consistent with 
-their prerogative...)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
