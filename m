@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BDEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6530C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDBC21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDBC21533
+	by mail.kernel.org (Postfix) with ESMTP id 74A7921533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A7921533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbeI0Pvr (ORCPT
+        id S1729235AbeI0Pvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:51:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57352 "EHLO
+        Thu, 27 Sep 2018 11:51:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57362 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbeI0Pvr (ORCPT
+        with ESMTP id S1727240AbeI0Pvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:51:47 -0400
+        Thu, 27 Sep 2018 11:51:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81B761133;
-        Thu, 27 Sep 2018 09:34:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B891E1133;
+        Thu, 27 Sep 2018 09:34:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.4 28/28] iw_cxgb4: only allow 1 flush on user qps
-Date:   Thu, 27 Sep 2018 11:06:52 +0200
-Message-Id: <20180927090638.843710822@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
+        <sebastien.szymanski@armadeus.com>, Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 03/28] ASoC: cs4265: fix MMTLR Data switch control
+Date:   Thu, 27 Sep 2018 11:06:27 +0200
+Message-Id: <20180927090637.826511450@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090637.687829444@linuxfoundation.org>
 References: <20180927090637.687829444@linuxfoundation.org>
@@ -51,57 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve Wise <swise@opengridcomputing.com>
+From: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
 
-commit 308aa2b8f7b7db3332a7d41099fd37851fb793b2 upstream.
+commit 90a3b7f8aba3011badacd6d8121e03aa24ac79d1 upstream.
 
-Once the qp has been flushed, it cannot be flushed again.  The user qp
-flush logic wasn't enforcing it however.  The bug can cause
-touch-after-free crashes like:
+The MMTLR bit is in the CS4265_SPDIF_CTL2 register at address 0x12 bit 0
+and not at address 0x0 bit 1. Fix this.
 
-Unable to handle kernel paging request for data at address 0x000001ec
-Faulting instruction address: 0xc008000016069100
-Oops: Kernel access of bad area, sig: 11 [#1]
-...
-NIP [c008000016069100] flush_qp+0x80/0x480 [iw_cxgb4]
-LR [c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-Call Trace:
-[c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-[c00800001606e868] c4iw_ib_modify_qp+0x118/0x200 [iw_cxgb4]
-[c0080000119eae80] ib_security_modify_qp+0xd0/0x3d0 [ib_core]
-[c0080000119c4e24] ib_modify_qp+0xc4/0x2c0 [ib_core]
-[c008000011df0284] iwcm_modify_qp_err+0x44/0x70 [iw_cm]
-[c008000011df0fec] destroy_cm_id+0xcc/0x370 [iw_cm]
-[c008000011ed4358] rdma_destroy_id+0x3c8/0x520 [rdma_cm]
-[c0080000134b0540] ucma_close+0x90/0x1b0 [rdma_ucm]
-[c000000000444da4] __fput+0xe4/0x2f0
-
-So fix flush_qp() to only flush the wq once.
-
+Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/infiniband/hw/cxgb4/qp.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/codecs/cs4265.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1183,6 +1183,12 @@ static void flush_qp(struct c4iw_qp *qhp
- 
- 	t4_set_wq_in_error(&qhp->wq);
- 	if (qhp->ibqp.uobject) {
-+
-+		/* for user qps, qhp->wq.flushed is protected by qhp->mutex */
-+		if (qhp->wq.flushed)
-+			return;
-+
-+		qhp->wq.flushed = 1;
- 		t4_set_cq_in_error(&rchp->cq);
- 		spin_lock_irqsave(&rchp->comp_handler_lock, flag);
- 		(*rchp->ibcq.comp_handler)(&rchp->ibcq, rchp->ibcq.cq_context);
+--- a/sound/soc/codecs/cs4265.c
++++ b/sound/soc/codecs/cs4265.c
+@@ -157,8 +157,8 @@ static const struct snd_kcontrol_new cs4
+ 	SOC_SINGLE("Validity Bit Control Switch", CS4265_SPDIF_CTL2,
+ 				3, 1, 0),
+ 	SOC_ENUM("SPDIF Mono/Stereo", spdif_mono_stereo_enum),
+-	SOC_SINGLE("MMTLR Data Switch", 0,
+-				1, 1, 0),
++	SOC_SINGLE("MMTLR Data Switch", CS4265_SPDIF_CTL2,
++				0, 1, 0),
+ 	SOC_ENUM("Mono Channel Select", spdif_mono_select_enum),
+ 	SND_SOC_BYTES("C Data Buffer", CS4265_C_DATA_BUFF, 24),
+ };
 
 
