@@ -2,120 +2,190 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B0FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03396C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD69F216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:52:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3459216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:52:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZ/QS8NJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD69F216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="mrRBUhg2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3459216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727713AbeI0UKb (ORCPT
+        id S1727725AbeI0ULE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:10:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727270AbeI0UKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:10:31 -0400
-Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B47BD216F4;
-        Thu, 27 Sep 2018 13:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538056329;
-        bh=ZTjIOce9fIZkTRnVhWaodp4d072TpCfNU7Scdq6snNs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PZ/QS8NJzCDoKFda+qZEgIJ2E51FPZRuFVCgEwbEwUAI9OkltTnDBYl+x9yN8ZC+e
-         RBYK4PlH0bs6IPIk9FlX90r7W07mwHTRdE3scHTBuACi8O+4OIiN/22nYTjJQkqz0B
-         DLVJEHE49hiZ4XAWJloDHVDYZAakyde66vbHr6+A=
-Subject: Re: [PATCH] clocksource: dw_apb: add reset control
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        Marek Vasut <marex@denx.de>
-References: <1537195934-26035-1-git-send-email-dinguyen@kernel.org>
- <b99e898f-176f-b587-0d8e-eea18550f3da@linaro.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f21a4616-9ba5-f5c4-e294-976b8e88a27d@kernel.org>
-Date:   Thu, 27 Sep 2018 08:52:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 16:11:04 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59760 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727270AbeI0ULD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 16:11:03 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w8RDiA5l018927
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 06:52:40 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=Yvo0Hdwf7rOZj7He1kTlcXIGqnc0dhTbCmnkInG2boY=;
+ b=mrRBUhg2RSA7a7XcIrz/L2TEPtBkhhCBC6wbYjZDHzBA3uVRSxsf/KATg84TWweTZQzP
+ eX1eKnacdxmx+nAr02ddkWYfEjHycrMsWjnDR9NUOzWORIxAnoWIAb+SoaNGeAXPuWfZ
+ MmJv8lW15fC4zs5d0HcglYy9JLxKgY4+2qg= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2mry1qr9fq-3
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 06:52:40 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.13) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep
+ 2018 06:52:38 -0700
+Received: by devvm1658.frc1.facebook.com (Postfix, from userid 119756)  id
+ 5F46B10F94A0; Thu, 27 Sep 2018 06:52:30 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Dan Schatzberg <dschatzberg@fb.com>
+Smtp-Origin-Hostname: devvm1658.frc1.facebook.com
+To:     Miklos Szeredi <miklos@szeredi.hu>
+CC:     <tj@kernel.org>, <kernel-team@fb.com>,
+        Dan Schatzberg <dschatzberg@fb.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Smtp-Origin-Cluster: frc1c23
+Subject: [PATCH] fuse: enable caching of symlinks
+Date:   Thu, 27 Sep 2018 06:52:10 -0700
+Message-ID: <20180927135211.31641-1-dschatzberg@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <b99e898f-176f-b587-0d8e-eea18550f3da@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+FUSE file reads are cached in the page cache, but symlink reads are
+not. This patch enables FUSE READLINK operations to be cached which
+can improve performance of some FUSE workloads.
 
+In particular, I'm working on a FUSE filesystem for access to source
+code and discovered that about a 10% improvement to build times is
+achieved with this patch (there are a lot of symlinks in the source
+tree).
 
-On 09/26/2018 10:21 AM, Daniel Lezcano wrote:
-> On 17/09/2018 16:52, Dinh Nguyen wrote:
->> Add code to retrieve the reset property for the dw-apb timers.
-> 
-> The patch does more than that. Can you explain why the assert/deassert ?
+Please provide feedback, I'm looking to flesh this out more.
 
-Can I update the commit message to this?
+Signed-off-by: Dan Schatzberg <dschatzberg@fb.com>
+---
+ fs/fuse/dir.c | 70 +++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 43 insertions(+), 27 deletions(-)
 
-Add code to retrieve the reset property from the dw-apb timers and if
-the property is available, the safe operation is to assert the timer
-into reset, and followed by a deassert of the timer reset(brings the
-timer out of reset).
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 0979609d6eba..3c0a81ef5bca 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1398,38 +1398,46 @@ static int fuse_readdir(struct file *file, struct dir_context *ctx)
+ 	return err;
+ }
+ 
+-static const char *fuse_get_link(struct dentry *dentry,
+-				 struct inode *inode,
+-				 struct delayed_call *done)
++static int fuse_symlink_readpage(struct file *file, struct page *page)
+ {
++	struct inode *inode = page->mapping->host;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+-	FUSE_ARGS(args);
+-	char *link;
+-	ssize_t ret;
+-
+-	if (!dentry)
+-		return ERR_PTR(-ECHILD);
++	struct fuse_req *req;
++	int err;
++	size_t num_read;
+ 
+-	link = kmalloc(PAGE_SIZE, GFP_KERNEL);
+-	if (!link)
+-		return ERR_PTR(-ENOMEM);
++	err = -EIO;
++	if (is_bad_inode(inode))
++		goto out;
+ 
+-	args.in.h.opcode = FUSE_READLINK;
+-	args.in.h.nodeid = get_node_id(inode);
+-	args.out.argvar = 1;
+-	args.out.numargs = 1;
+-	args.out.args[0].size = PAGE_SIZE - 1;
+-	args.out.args[0].value = link;
+-	ret = fuse_simple_request(fc, &args);
+-	if (ret < 0) {
+-		kfree(link);
+-		link = ERR_PTR(ret);
+-	} else {
+-		link[ret] = '\0';
+-		set_delayed_call(done, kfree_link, link);
++	req = fuse_get_req(fc, 1);
++	if (IS_ERR(req)) {
++		err = PTR_ERR(req);
++		goto out;
+ 	}
++
++	req->out.page_zeroing = 1;
++	req->out.argpages = 1;
++	req->num_pages = 1;
++	req->pages[0] = page;
++	req->page_descs[0].length = PAGE_SIZE - 1;
++	req->in.h.opcode = FUSE_READLINK;
++	req->in.h.nodeid = get_node_id(inode);
++	req->out.argvar = 1;
++	req->out.numargs = 1;
++	req->out.args[0].size = PAGE_SIZE - 1;
++	fuse_request_send(fc, req);
++	num_read = req->out.args[0].size;
++	err = req->out.h.error;
++
++	if (!err)
++		SetPageUptodate(page);
++
++	fuse_put_request(fc, req);
+ 	fuse_invalidate_atime(inode);
+-	return link;
++out:
++	unlock_page(page);
++	return err;
+ }
+ 
+ static int fuse_dir_open(struct inode *inode, struct file *file)
+@@ -1855,7 +1863,7 @@ static const struct inode_operations fuse_common_inode_operations = {
+ 
+ static const struct inode_operations fuse_symlink_inode_operations = {
+ 	.setattr	= fuse_setattr,
+-	.get_link	= fuse_get_link,
++	.get_link	= page_get_link,
+ 	.getattr	= fuse_getattr,
+ 	.listxattr	= fuse_listxattr,
+ };
+@@ -1871,7 +1879,15 @@ void fuse_init_dir(struct inode *inode)
+ 	inode->i_fop = &fuse_dir_operations;
+ }
+ 
++static const struct address_space_operations fuse_symlink_aops = {
++	.readpage       = fuse_symlink_readpage,
++};
++
+ void fuse_init_symlink(struct inode *inode)
+ {
+ 	inode->i_op = &fuse_symlink_inode_operations;
++	inode->i_data.a_ops = &fuse_symlink_aops;
++	mapping_set_gfp_mask(inode->i_mapping,
++			mapping_gfp_constraint(inode->i_mapping,
++					~(__GFP_FS | __GFP_HIGHMEM)));
+ }
+-- 
+2.17.1
 
-This patch is needed for systems where the bootloader has left the timer
-not used in reset.
-
-Dinh
