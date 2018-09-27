@@ -2,124 +2,117 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA26C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5BAC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A19262156E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:30:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C94Ha9mg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A19262156E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A8FFF2156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:38:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FFF2156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbeI0NrR (ORCPT
+        id S1727026AbeI0NzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:47:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51158 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbeI0NrQ (ORCPT
+        Thu, 27 Sep 2018 09:55:25 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:45916 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbeI0NzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:47:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=m9MVQbR/JWpYgSlTVBv4mPTLo5xSZapF3twV2vdOXZs=; b=C94Ha9mg3DaBnb14pgVpbeqql
-        /AeLMNFOKnDbwFcVBz8jF+BoA+UHSN/yerUsZtYFqQEmQIWskIv2SBvVQV5C6/9MMqo61ez3TJ2eR
-        DKq6GmP8cEl9NNwdv/aBJIH21nyRZhE9upjlIZLezhwpmYiNyDRhFJZaEKFHyNl9YI3cuc+I8TLVC
-        WOD9QCnGdy9WCvnVM4wAs+ESQbqolSb+C4eQewAe0n7WE70vQC/Zq3i+WmPrVKPw4gCGnApoQTJ6r
-        R+xzioLBCqTuk0Kyxs2VbYOhVrpvcwB5YXY747Pb2RIwiqMoTqzRP5UNtabodL4pjm99kBQAOzRDN
-        qNPDCyXyw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5QkT-0004WK-Ex; Thu, 27 Sep 2018 07:30:21 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 116F620696FC8; Thu, 27 Sep 2018 09:29:52 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 09:29:52 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     will.deacon@arm.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
-        tglx@linutronix.de
-Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
-Message-ID: <20180927072952.GB7455@hirez.programming.kicks-ass.net>
-References: <20180926110117.405325143@infradead.org>
- <20180926111307.513429499@infradead.org>
- <396f7363-0f28-0fdb-7a48-ae16b0c8e82f@redhat.com>
- <20180926175418.GB5254@hirez.programming.kicks-ass.net>
+        Thu, 27 Sep 2018 09:55:24 -0400
+Received: by mail-vk1-f193.google.com with SMTP id l123-v6so357218vkl.12;
+        Thu, 27 Sep 2018 00:38:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ErjOew8XqkXQrrZ+N2D9s0jEiUY1HPJdLELT/zZQHcc=;
+        b=GuyPK8fAJRbOWfaSPh3txoQRkdrC+hYEutttDJpj+0DEmolAlG/h9wApJsCFRs+fb9
+         1MwsjcwpfAgkVbsX5BFCZ6N/GnID107HvPqJxsrF4LKd3TeXDPj4NFoKFHRUdN3Qum27
+         34iEQWSZSkbxnBP9qHgzaTeFu8cU6q6z0PqDd5OxiTxwryak14s7ZHvMyEzx2EYg92xq
+         lIa6yMubzPtVDp/Wkhn9DLjkaJGhSYKclnEn5X1ffkHUcN56+pkMYT62mLKmGl6YtprZ
+         k1VcR5O1LoHSaRQq6bt+oCvHOgJKH8XDB0EwEEfxR2NBCkmduFbG+rHl/G42NJowz5cM
+         V5ww==
+X-Gm-Message-State: ABuFfohhi6KcsgMCsR9Bb8lgXzgz4XDzQgJcRQSk22O0zcuk8XahlYR3
+        IXfzGdFD2o2CvUEd/I+/FGl+dQnfVgAaUYCvNBU=
+X-Google-Smtp-Source: ACcGV63Esp93NnoOiC/Wuu8c2SBX0VY4ZaOJ6upsOcO+9eL/i7SQ4P7zz2C39aXPgp43dD2/Y5UY9F1haNZy7gmqUMw=
+X-Received: by 2002:a1f:92c4:: with SMTP id u187-v6mr2999369vkd.72.1538033911197;
+ Thu, 27 Sep 2018 00:38:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926175418.GB5254@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180830125404.21192-1-geert+renesas@glider.be>
+In-Reply-To: <20180830125404.21192-1-geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 27 Sep 2018 09:38:19 +0200
+Message-ID: <CAMuHMdWdByKxivbQwWL9yF9_r8XObnZuXEZvf_9ZWKYYLWr1bQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] serial: sh-sci: Fix earlycon on Renesas ARM platforms
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        uli+renesas@fpond.eu,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 07:54:18PM +0200, Peter Zijlstra wrote:
-> On Wed, Sep 26, 2018 at 12:30:36PM -0400, Waiman Long wrote:
-> > On 09/26/2018 07:01 AM, Peter Zijlstra wrote:
-> > > On x86 we cannot do fetch_or with a single instruction and end up
-> > > using a cmpxchg loop, this reduces determinism. Replace the fetch_or
-> > > with a very tricky composite xchg8 + load.
-> > >
-> > > The basic idea is that we use xchg8 to test-and-set the pending bit
-> > > (when it is a byte) and then a load to fetch the whole word. Using
-> > > two instructions of course opens a window we previously did not have.
-> > > In particular the ordering between pending and tail is of interrest,
-> > > because that is where the split happens.
-> > >
-> > > The claim is that if we order them, it all works out just fine. There
-> > > are two specific cases where the pending,tail state changes:
-> > >
-> > >  - when the 3rd lock(er) comes in and finds pending set, it'll queue
-> > >    and set tail; since we set tail while pending is set, the ordering
-> > >    is split is not important (and not fundamentally different form
-> > >    fetch_or). [*]
-> > 
-> > The split can cause some changes in behavior. The 3rd locker observes
-> > the pending bit and set tail. The split load of the 2nd locker may make
-> > it observe the tail and backout of the pending loop. As a result, the
-> > 2nd locker will acquire the lock after the third locker in this case.
-> > That won't happen with the original code.
-> > 
-> > I am not saying this is a problem. It is just something we should take
-> > note on.
-> 
-> Right, good one. Yes that can happen.
+Hi Greg,
 
-I think I remember why I 'discounted' that scenario; the same can happen
-with the fetch_or() but in a timing scenario.
+On Thu, Aug 30, 2018 at 2:54 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Due to an unfortunate oversight, commit 2d4dd0da45401c7a ("serial: sh-sci:
+> Allow for compressed SCIF address") broke earlycon on all Renesas ARM
+> platforms using a SCIF port for the serial console (R-Car, RZ/A1, RZ/G1,
+> RZ/G2 SoCs), due to an incorrect value of port->regshift.
+>
+> This patch series fixes that by reverting that commit, and a (reverse)
+> dependency.
+>
+> Earlycon for RZ/A2 (which is a new platform) will be fixed later in a
+> separate patch.
+>
+> Thanks for applying!
+>
+> Geert Uytterhoeven (2):
+>   Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
+>   Revert "serial: sh-sci: Allow for compressed SCIF address"
+>
+>  drivers/tty/serial/sh-sci.c | 56 +++++++++++++++++++++++++++----------
+>  include/linux/serial_sci.h  |  1 +
+>  2 files changed, 42 insertions(+), 15 deletions(-)
 
-Consider:
+These are now in tty-next:
 
-  CPU 0		CPU 1		CPU 2		CPU 3
+    10c63443b74d1ef5 Revert "serial: sh-sci: Remove SCIx_RZ_SCIFA_REGTYPE"
+    a1c2fd7e1098ea49 Revert "serial: sh-sci: Allow for compressed SCIF address"
 
-  lock (->0,0,1)
-		lock
-		  trylock (fail)
-		  tas-pending (->0,1,1)
-		  wait-!locked
-				lock
-				  trylock (fail)
-				  tas-pending (fail)
-  unlock (->0,1,0)
-		  acquire (->0,0,1)
-						lock
-						  trylock (fail)
-				  (A) xchg-tail
-						  tas-pending -> (x,1,1)
-				  (B) xchg-tail
+Can you please include them in v4.19-rc6, as they fix a regression introduced
+in v4.19-rc1?
 
-And then, depending on A/B x is either 0 or !0.
+In addition:
 
-So the ordering of the concurrent lock attempts is always (obviously)
-subject to timing, the split xchg-load thing just makes it 'worse'.
+    3d8b43ad9c0cf023 serial: sh-sci: Add earlycon for R7S9210
+
+(also in tty-next) enables earlycon on RZ/A2 again, as it was disabled
+by the two
+reverts above.
+
+Thanks a lot!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
