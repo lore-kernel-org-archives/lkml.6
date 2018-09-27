@@ -2,207 +2,387 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD63FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEE5C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B70C2168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:18:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6ExIyHF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B70C2168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AFA3C216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:18:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA3C216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeI0WhA (ORCPT
+        id S1728229AbeI0WhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:37:00 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44017 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbeI0WhA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:37:00 -0400
-Received: by mail-ed1-f66.google.com with SMTP id u23so5558818edx.10;
-        Thu, 27 Sep 2018 09:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ygLPWlyqsHE7tgr59AQ+wPR9gH3fljP4+btgjnHnWXQ=;
-        b=g6ExIyHFXW0pBAyGyrjVLQNXJdQ+jV3+OffyUpWuEDu9weHrMGZG1+YPShGkCoqo3U
-         feb4rbI4bqXDKd6JyEGMDsPhs0mRw4NQmAcieruU1wbWMv0QuFnrFv6I/LTnOOwBYNQF
-         GVFmimfXk9SfVNYEaCHIVeoTgxPRcmPG3rd1yNmts2LeCI81VNpWPIncFD5rRRdQfVdK
-         sgBa3x2PpuTgBPmdM22QBvgXl05hnZZkwwu4SafUBTp+Ko/RTdfM+5cvrD4uMr4Z2a7I
-         vWYf6FBQnX86By1loniU8rBY7X/cZy0JU3tCM4Un2XDyQ2VuQDrVxPvrExccjKCWjW8T
-         iF6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ygLPWlyqsHE7tgr59AQ+wPR9gH3fljP4+btgjnHnWXQ=;
-        b=mWnFJO9zDTWW4orRfmy7DbVJ9WtQJttfX5RJ8likbPAPU9CmC9vBHQPfTkPIhueqA6
-         7FHJHaoJd20dPvkBuQ3/HgerkhGbQtS9lVvc0KygrfaLZS7NCpKqaYFeKzKUEggckg4O
-         oPug6d01X5G0huVwC9SaKNt1GP270M0D3wevVxMg93OGNe7rKfKegS+B6Xfvh4KUk6u7
-         /kJMVuickIBF3H8Zs2qKLnDrjNGai4gVHETC3O6Wei2RXJIou8zVlALVg/axA3UxSu9B
-         f5HI3I+X85EujQ3XfA+Sup4uvn7yDWOafE0TBxTrqTH9mOdzp23d/wdlZ0EXrMiDk+BX
-         D1Qg==
-X-Gm-Message-State: ABuFfohpLJ9w5KtBbdDiiq5vBxVG7HOkLLXhRqjij9xyj+Xg4dgnFwKp
-        eHMVLcHMRzUhNLA4S2cNDqu1l0gX2IBePKmbgLclJg==
-X-Google-Smtp-Source: ACcGV62um5WCwAq5Nswo3am3BT9ke0Hglc/M6t0PO5q7EJweJN/C7nug0sWdgCzG7JMu2cuvdf6+ngqxx5ocGrNQ2IE=
-X-Received: by 2002:a50:b704:: with SMTP id g4-v6mr19561809ede.139.1538065077759;
- Thu, 27 Sep 2018 09:17:57 -0700 (PDT)
+        Thu, 27 Sep 2018 18:37:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37002 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727282AbeI0WhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 18:37:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A19E7A9;
+        Thu, 27 Sep 2018 09:18:19 -0700 (PDT)
+Received: from [10.4.13.92] (e112298-lin.emea.arm.com [10.4.13.92])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 792283F5B3;
+        Thu, 27 Sep 2018 09:18:16 -0700 (PDT)
+Subject: Re: [PATCH v2 7/7] arm64: uprobes - ARM32 instruction probing
+To:     Maciej Slodczyk <m.slodczyk2@partner.samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux@armlinux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, b.zolnierkie@samsung.com,
+        m.szyprowski@samsung.com, k.lewandowsk@samsung.com
+References: <1537963925-25313-1-git-send-email-m.slodczyk2@partner.samsung.com>
+ <CGME20180926121218eucas1p1b20a88cfec17c6403a35e4f23de96ade@eucas1p1.samsung.com>
+ <1537963925-25313-8-git-send-email-m.slodczyk2@partner.samsung.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <918e1f6e-ab89-cae9-fb9c-9402f79bf1b4@arm.com>
+Date:   Thu, 27 Sep 2018 17:18:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <153736009982.24033.13696245431713246950.stgit@localhost.localdomain>
- <CANn89iJ1UnwLFv5+AwXgeb1BUhYg8UJYTJLtiipavJee+2SWxQ@mail.gmail.com>
- <2fdf2bd7-1cc4-a1e1-15c2-e2badfcd4d59@virtuozzo.com> <CANn89iK8X5cW3=YnNRrKo=BVCFJkJ0D22YY_eJFLyGCX+5SxsQ@mail.gmail.com>
- <84d38f11-2133-9d34-e468-d2ef16715f49@virtuozzo.com>
-In-Reply-To: <84d38f11-2133-9d34-e468-d2ef16715f49@virtuozzo.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Thu, 27 Sep 2018 12:17:21 -0400
-Message-ID: <CAF=yD-+u0MoSsg2gmaAiXVP+rLQ3pfyaCgwBwAEnPpCBwf8xbg@mail.gmail.com>
-Subject: Re: [RFC] net;sched: Try to find idle cpu for RPS to handle packets
-To:     ktkhai@virtuozzo.com
-Cc:     Eric Dumazet <edumazet@google.com>, peterz@infradead.org,
-        David Miller <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Tom Herbert <tom@quantonium.net>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1537963925-25313-8-git-send-email-m.slodczyk2@partner.samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 12:02 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On 19.09.2018 18:49, Eric Dumazet wrote:
-> > On Wed, Sep 19, 2018 at 8:41 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >>
-> >> On 19.09.2018 17:55, Eric Dumazet wrote:
-> >>> On Wed, Sep 19, 2018 at 5:29 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >>>>
-> >>>> Many workloads have polling mode of work. The application
-> >>>> checks for incomming packets from time to time, but it also
-> >>>> has a work to do, when there is no packets. This RFC
-> >>>> tries to develop an idea to queue RPS packets on idle
-> >>>> CPU in the the L3 domain of the consumer, so backlog
-> >>>> processing of the packets and the application can execute
-> >>>> in parallel.
-> >>>>
-> >>>> We require this in case of network cards does not
-> >>>> have enough RX queues to cover all online CPUs (this seems
-> >>>> to be the most cards), and  get_rps_cpu() actually chooses
-> >>>> remote cpu, and SMP interrupt is sent. Here we may try
-> >>>> our best, and to find idle CPU nearly the consumer's CPU.
-> >>>> Note, that in case of consumer works in poll mode and it
-> >>>> does not waits for incomming packets, its CPU will be not
-> >>>> idle, while CPU of a sleeping consumer may be idle. So,
-> >>>> not polling consumers will still be able to have skb
-> >>>> handled on its CPU.
-> >>>>
-> >>>> In case of network card has many queues, the device
-> >>>> interrupts will come on consumer's CPU, and this patch
-> >>>> won't try to find idle cpu for them.
-> >>>>
-> >>>> I've tried simple netperf test for this:
-> >>>> netserver -p 1234
-> >>>> netperf -L 127.0.0.1 -p 1234 -l 100
-> >>>>
-> >>>> Before:
-> >>>>  87380  16384  16384    100.00   60323.56
-> >>>>  87380  16384  16384    100.00   60388.46
-> >>>>  87380  16384  16384    100.00   60217.68
-> >>>>  87380  16384  16384    100.00   57995.41
-> >>>>  87380  16384  16384    100.00   60659.00
-> >>>>
-> >>>> After:
-> >>>>  87380  16384  16384    100.00   64569.09
-> >>>>  87380  16384  16384    100.00   64569.25
-> >>>>  87380  16384  16384    100.00   64691.63
-> >>>>  87380  16384  16384    100.00   64930.14
-> >>>>  87380  16384  16384    100.00   62670.15
-> >>>>
-> >>>> The difference between best runs is +7%,
-> >>>> the worst runs differ +8%.
-> >>>>
-> >>>> What do you think about following somehow in this way?
-> >>>
-> >>> Hi Kirill
-> >>>
-> >>> In my experience, scheduler has a poor view of softirq processing
-> >>> happening on various cpus.
-> >>> A cpu spending 90% of its cycles processing IRQ might be considered 'idle'
-> >>
-> >> Yes, in case of there is softirq on top of irq_exit(), the cpu is not
-> >> considered as busy. But after MAX_SOFTIRQ_TIME (=2ms), ksoftirqd are
-> >> waken up to execute the work in process context, and the processor is
-> >> considered as !idle. 2ms is 2 timer ticks in case of HZ=1000. So, we
-> >> don't restart softirq in case of it was executed for more then 2ms.
-> >>
-> >
-> > That's the theory, but reality is very different unfortunately.
-> >
-> > If RFS/RPS is setup properly, we really do not hit MAX_SOFTIRQ_TIME condition
-> > unless in some synthetic benchmarks maybe.
-> >
-> >> The similar way, single net_rx_action() can't be executed longer
-> >> than 2ms.
-> >>
-> >> Having 90% load in softirq (called on top of irq_exit()) should be
-> >> very unlikely situation, when there are too many interrupts with small
-> >> amount of work, which related softirq calls are doing for each of them.
-> >> I think it had be a problem even in plain napi case, since it would
-> >> worked not like expected.
-> >>
-> >> But anyway. You worry, that during handling of next portion of skbs,
-> >> we find that previous portion of skbs already woken ksoftirqd, and
-> >> we don't see this cpu as idle? Yeah, then we'll try to change cpu,
-> >> and this is not what we want. We want to continue use the cpu, where
-> >> previous portion was handler. Hm, not so fast I'll answer, but certainly,
-> >> this may be handled somehow in more creative way.
-> >>
-> >>> So please run a real workload (it is _very_ uncommon anyone set up RPS
-> >>> on lo interface !)
-> >>>
-> >>> Like 400 or more concurrent netperf -t TCP_RR on a 10Gbit NIC.
-> >>
-> >> Yeah, it's just a simulation of a single irq nic. I'll try on something
-> >> more real hardware.
-> >
-> > Also my concern is that you might have results that are tied to a particular
-> > version of process scheduling, platform, workload...
-> >
-> > One month later, a small change in process scheduler,
-> > and very different results.
->
-> Maybe, but especially that function logic has not changed for a long time.
-> 10 years at least. The only change is Peter adds idle core searching
-> functionality recently.
->
-> > This is why I believe this new feature must be controllable, via a new
-> > tunable (like RPS/RFS are controllable per rx queue)
+Hi Maciej,
 
-Agreed. For RFS we can have different heuristics, but they
-should be configurable.
+On 26/09/18 13:12, Maciej Slodczyk wrote:
+> Detect what kind of instruction is being probed and depending on the
+> result:
+> - if an A64 instruction handle it the old way, using existing A64
+> instructions probing code,
+> - if an A32 instruction decode it and handle using the new code, moved
+> from 32 bit arm kernel tree.
+> 
+> Signed-off-by: Maciej Slodczyk <m.slodczyk2@partner.samsung.com>
+> ---
+>   arch/arm64/kernel/debug-monitors.c |   8 +++
+>   arch/arm64/kernel/probes/uprobes.c | 111 ++++++++++++++++++++++++++++++++++---
+>   lib/probes/arm/actions-arm.c       |  35 ++++++++----
+>   lib/probes/arm/decode-arm.c        |  16 +++++-
+>   4 files changed, 148 insertions(+), 22 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
+> index 06ca574..ee10c0b 100644
+> --- a/arch/arm64/kernel/debug-monitors.c
+> +++ b/arch/arm64/kernel/debug-monitors.c
+> @@ -366,6 +366,14 @@ int aarch32_break_handler(struct pt_regs *regs)
+>   	if (!bp)
+>   		return -EFAULT;
+>   
+> +	/*
+> +	 * Since bp != false, a sofware breakpoint instruction is being handled.
+> +	 * If in user mode (compat_user_mode() few lines above),
+> +	 * try to handle it by an uprobe handler, if registered.
+> +	 */
+> +	if (!brk_handler((unsigned long)pc, BRK64_ESR_UPROBES, regs))
+> +		return 0;
+> +
+>   	send_user_sigtrap(TRAP_BRKPT);
+>   	return 0;
+>   }
+> diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
+> index e7b8912..872c8ec 100644
+> --- a/arch/arm64/kernel/probes/uprobes.c
+> +++ b/arch/arm64/kernel/probes/uprobes.c
+> @@ -11,9 +11,49 @@
+>   #include <asm/cacheflush.h>
+>   
+>   #include "decode-insn.h"
+> +#include "decode.h"
+> +#include "decode-arm.h"
+> +#include <../../../arm/include/asm/opcodes.h>
 
-Please also make clear in your patch that this changes RFS, not
-RPS.
+I'm almost positive this is frowned upon. I don't see any headers from 
+arch/arm every being included in arch/arm64.
 
-For RPS, selection should not silently change to select a CPU
-outside the configured rps_cpus set. I don't think that that should
-ever be relaxed, even with a new knob, as it makes reasoning
-about RPS configuration that much harder.
+>   
+>   #define UPROBE_INV_FAULT_CODE	UINT_MAX
+>   
+> +uprobe_opcode_t get_swbp_insn(void)
+> +{
+> +	if (is_compat_task())
+> +		return AARCH32_BREAK_ARM;
+> +	else
+> +		return UPROBE_SWBP_INSN;
+> +}
+> +
+> +bool is_swbp_insn(uprobe_opcode_t *insn)
+> +{
+> +	return ((__mem_to_opcode_arm(*insn) & 0x0fffffff) ==
+> +				(AARCH32_BREAK_ARM & 0x0fffffff)) ||
+> +				*insn == UPROBE_SWBP_INSN;
+> +}
+> +
+> +int set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm,
+> +	     unsigned long vaddr)
+> +{
+> +	if (auprobe->arch == UPROBE_AARCH32)
+> +		return uprobe_write_opcode(auprobe, mm, vaddr,
+> +				__opcode_to_mem_arm(auprobe->bp_insn));
+> +	else
+> +		return uprobe_write_opcode(auprobe, mm, vaddr,
+> +				UPROBE_SWBP_INSN);
+> +}
+> +
+> +int set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
+> +		unsigned long vaddr)
+> +{
+> +	if (auprobe->arch == UPROBE_AARCH32)
+> +		return uprobe_write_opcode(auprobe, mm, vaddr,
+> +				auprobe->orig_insn);
+> +	else
+> +		return uprobe_write_opcode(auprobe, mm, vaddr,
+> +				*(uprobe_opcode_t *)&auprobe->insn);
+> +}
+> +
+>   void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+>   		void *src, unsigned long len)
+>   {
+> @@ -38,16 +78,44 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>   		unsigned long addr)
+>   {
+>   	probes_opcode_t insn;
+> +	enum probes_insn retval;
+> +	unsigned int bpinsn;
+>   
+> -	/* TODO: Currently we do not support AARCH32 instruction probing */
+> -	if (mm->context.flags & MMCF_AARCH32)
+> -		return -ENOTSUPP;
+> -	else if (!IS_ALIGNED(addr, AARCH64_INSN_SIZE))
+> +	insn = *(probes_opcode_t *)(&auprobe->insn[0]);
+> +
+> +	if (!IS_ALIGNED(addr, AARCH64_INSN_SIZE))
+>   		return -EINVAL;
+>   
+> -	insn = *(probes_opcode_t *)(&auprobe->insn[0]);
+> +	/* check if AARCH32 */
+> +	if (is_compat_task()) {
+> +
+> +		/* Thumb is not supported yet */
+> +		if (addr & 0x3)
+> +			return -EINVAL;
 
-RFS already ignores rps_cpus, so using a different heuristic there
-is easier.
+-ENOTSUPP?
 
-I have thought about experimenting with biasing towards a core affine
-with the numa node of the rx softirq cpu. In other words, ignoring
-RFS if the request is remote. With the assumption (correct or not)
-that wake affinity would pull the thread to the same node, load
-permitting. But I have zero data for that.
+Cheers,
+
+Julien
+
+> +
+> +		retval = arm_probes_decode_insn(insn, &auprobe->api, false,
+> +					     uprobes_probes_actions, NULL);
+> +		auprobe->arch = UPROBE_AARCH32;
+> +
+> +		/*
+> +		 * original instruction could have been modified
+> +		 * when preparing for xol on AArch32
+> +		 */
+> +		auprobe->orig_insn = insn;
+> +
+> +		bpinsn = AARCH32_BREAK_ARM & 0x0fffffff;
+> +		if (insn >= 0xe0000000) /* Unconditional instruction */
+> +			bpinsn |= 0xe0000000;
+> +		else /* Copy condition from insn */
+> +			bpinsn |= insn & 0xf0000000;
+> +
+> +		auprobe->bp_insn = bpinsn;
+> +	} else {
+> +		retval = arm64_probes_decode_insn(insn, &auprobe->api);
+> +		auprobe->arch = UPROBE_AARCH64;
+> +	}
+>   
+> -	switch (arm64_probes_decode_insn(insn, &auprobe->api)) {
+> +	switch (retval) {
+>   	case INSN_REJECTED:
+>   		return -EINVAL;
+>   
+> @@ -66,6 +134,9 @@ int arch_uprobe_pre_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>   {
+>   	struct uprobe_task *utask = current->utask;
+>   
+> +	if (auprobe->prehandler)
+> +		auprobe->prehandler(auprobe, &utask->autask, regs);
+> +
+>   	/* Initialize with an invalid fault code to detect if ol insn trapped */
+>   	current->thread.fault_code = UPROBE_INV_FAULT_CODE;
+>   
+> @@ -88,6 +159,9 @@ int arch_uprobe_post_xol(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>   
+>   	user_disable_single_step(current);
+>   
+> +	if (auprobe->posthandler)
+> +		auprobe->posthandler(auprobe, &utask->autask, regs);
+> +
+>   	return 0;
+>   }
+>   bool arch_uprobe_xol_was_trapped(struct task_struct *t)
+> @@ -103,10 +177,24 @@ bool arch_uprobe_xol_was_trapped(struct task_struct *t)
+>   	return false;
+>   }
+>   
+> +bool arch_uprobe_ignore(struct arch_uprobe *auprobe, struct pt_regs *regs)
+> +{
+> +	probes_opcode_t insn = *(probes_opcode_t *)(&auprobe->insn[0]);
+> +	pstate_check_t *check = (*aarch32_opcode_cond_checks[insn >> 28]);
+> +
+> +	if (auprobe->arch == UPROBE_AARCH64)
+> +		return false;
+> +
+> +	if (!check(regs->pstate & 0xffffffff)) {
+> +		instruction_pointer_set(regs, instruction_pointer(regs) + 4);
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+>   bool arch_uprobe_skip_sstep(struct arch_uprobe *auprobe, struct pt_regs *regs)
+>   {
+>   	probes_opcode_t insn;
+> -	unsigned long addr;
+>   
+>   	if (!auprobe->simulate)
+>   		return false;
+> @@ -154,9 +242,14 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
+>   {
+>   	unsigned long orig_ret_vaddr;
+>   
+> -	orig_ret_vaddr = procedure_link_pointer(regs);
+>   	/* Replace the return addr with trampoline addr */
+> -	procedure_link_pointer_set(regs, trampoline_vaddr);
+> +	if (is_compat_task()) {
+> +		orig_ret_vaddr = link_register(regs);
+> +		link_register_set(regs, trampoline_vaddr);
+> +	} else {
+> +		orig_ret_vaddr = procedure_link_pointer(regs);
+> +		procedure_link_pointer_set(regs, trampoline_vaddr);
+> +	}
+>   
+>   	return orig_ret_vaddr;
+>   }
+> diff --git a/lib/probes/arm/actions-arm.c b/lib/probes/arm/actions-arm.c
+> index 2393573..cee1496 100644
+> --- a/lib/probes/arm/actions-arm.c
+> +++ b/lib/probes/arm/actions-arm.c
+> @@ -15,10 +15,7 @@
+>   
+>   #include "decode.h"
+>   #include "decode-arm.h"
+> -
+> -#ifdef CONFIG_ARM64
+>   #include <../../../arm/include/asm/opcodes.h>
+> -#endif /* CONFIG_ARM64  */
+>   
+>   static int uprobes_substitute_pc(unsigned long *pinsn, u32 oregs)
+>   {
+> @@ -75,8 +72,13 @@ static void uprobe_set_pc(struct arch_uprobe *auprobe,
+>   {
+>   	u32 pcreg = auprobe->pcreg;
+>   
+> -	autask->backup = pt_regs_read_reg(regs, pcreg);
+> -	pt_regs_write_reg(regs, pcreg, instruction_pointer(regs) + 8);
+> +	if (pcreg == 15) {
+> +		autask->backup = instruction_pointer(regs);
+> +		instruction_pointer_set(regs, instruction_pointer(regs) + 8);
+> +	} else {
+> +		autask->backup = pt_regs_read_reg(regs, pcreg);
+> +		pt_regs_write_reg(regs, pcreg, instruction_pointer(regs) + 8);
+> +	}
+>   }
+>   
+>   static void uprobe_unset_pc(struct arch_uprobe *auprobe,
+> @@ -84,7 +86,10 @@ static void uprobe_unset_pc(struct arch_uprobe *auprobe,
+>   			    struct pt_regs *regs)
+>   {
+>   	/* PC will be taken care of by common code */
+> -	pt_regs_write_reg(regs, auprobe->pcreg, autask->backup);
+> +	if (auprobe->pcreg == 15)
+> +		instruction_pointer_set(regs, autask->backup);
+> +	else
+> +		pt_regs_write_reg(regs, auprobe->pcreg, autask->backup);
+>   }
+>   
+>   static void uprobe_aluwrite_pc(struct arch_uprobe *auprobe,
+> @@ -93,8 +98,13 @@ static void uprobe_aluwrite_pc(struct arch_uprobe *auprobe,
+>   {
+>   	u32 pcreg = auprobe->pcreg;
+>   
+> -	alu_write_pc(pt_regs_read_reg(regs, pcreg), regs);
+> -	pt_regs_write_reg(regs, pcreg, autask->backup);
+> +	if (pcreg == 15) {
+> +		alu_write_pc(instruction_pointer(regs), regs);
+> +		instruction_pointer_set(regs, autask->backup);
+> +	} else {
+> +		alu_write_pc(pt_regs_read_reg(regs, pcreg), regs);
+> +		pt_regs_write_reg(regs, pcreg, autask->backup);
+> +	}
+>   }
+>   
+>   static void uprobe_write_pc(struct arch_uprobe *auprobe,
+> @@ -103,8 +113,13 @@ static void uprobe_write_pc(struct arch_uprobe *auprobe,
+>   {
+>   	u32 pcreg = auprobe->pcreg;
+>   
+> -	load_write_pc(pt_regs_read_reg(regs, pcreg), regs);
+> -	pt_regs_write_reg(regs, pcreg, autask->backup);
+> +	if (pcreg == 15) {
+> +		load_write_pc(instruction_pointer(regs), regs);
+> +		instruction_pointer_set(regs, autask->backup);
+> +	} else {
+> +		load_write_pc(pt_regs_read_reg(regs, pcreg), regs);
+> +		pt_regs_write_reg(regs, pcreg, autask->backup);
+> +	}
+>   }
+>   
+>   enum probes_insn
+> diff --git a/lib/probes/arm/decode-arm.c b/lib/probes/arm/decode-arm.c
+> index 36eb939..2f2a810 100644
+> --- a/lib/probes/arm/decode-arm.c
+> +++ b/lib/probes/arm/decode-arm.c
+> @@ -87,11 +87,18 @@ void __kprobes simulate_blx2bx(probes_opcode_t insn,
+>   		struct arch_probes_insn *asi, struct pt_regs *regs)
+>   {
+>   	int rm = insn & 0xf;
+> -	long rmv = pt_regs_read_reg(regs, rm);
+> +	long rmv;
+>   	long cpsr;
+>   
+> +	if (rm == 15)
+> +		rmv = (long) instruction_pointer(regs);
+> +	else
+> +		rmv = pt_regs_read_reg(regs, rm);
+> +
+>   	if (insn & (1 << 5))
+> -		link_register_set(regs, (long) instruction_pointer(regs));
+> +		link_register_set(regs,
+> +				(long) instruction_pointer(regs)
+> +					+ ARM_COMPAT_LR_OFFSET);
+>   
+>   	instruction_pointer_set(regs, rmv & ~0x1);
+>   	cpsr = state_register(regs) & ~PSR_T_BIT;
+> @@ -108,7 +115,10 @@ void __kprobes simulate_mrs(probes_opcode_t insn,
+>   	int rd = (insn >> 12) & 0xf;
+>   	unsigned long mask = 0xf8ff03df; /* Mask out execution state */
+>   
+> -	pt_regs_write_reg(regs, rd, state_register(regs) & mask);
+> +	if (rd == 15)
+> +		instruction_pointer_set(regs, state_register(regs) & mask);
+> +	else
+> +		pt_regs_write_reg(regs, rd, state_register(regs) & mask);
+>   }
+>   
+>   void __kprobes simulate_mov_ipsp(probes_opcode_t insn,
+> 
+
+-- 
+Julien Thierry
