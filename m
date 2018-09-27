@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396C8C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED9EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B4920836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B4920836
+	by mail.kernel.org (Postfix) with ESMTP id C68B521582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68B521582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbeI0P23 (ORCPT
+        id S1728515AbeI0P2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:28:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55224 "EHLO
+        Thu, 27 Sep 2018 11:28:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55238 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727355AbeI0P22 (ORCPT
+        with ESMTP id S1727285AbeI0P2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:28:28 -0400
+        Thu, 27 Sep 2018 11:28:33 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 798761117;
-        Thu, 27 Sep 2018 09:11:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8BC1111D;
+        Thu, 27 Sep 2018 09:11:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        syzbot <syzkaller@googlegroups.com>, NeilBrown <neilb@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.18 52/88] mm: shmem.c: Correctly annotate new inodes for lockdep
-Date:   Thu, 27 Sep 2018 11:03:33 +0200
-Message-Id: <20180927090307.154675829@linuxfoundation.org>
+        stable@vger.kernel.org, Rafael Tinoco <rafael.tinoco@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 53/88] Revert "rpmsg: core: add support to power domains for devices"
+Date:   Thu, 27 Sep 2018 11:03:34 +0200
+Message-Id: <20180927090307.257805682@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -56,128 +53,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Fernandes (Google) <joel@joelfernandes.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit b45d71fb89ab8adfe727b9d0ee188ed58582a647 upstream.
+This reverts commit e5d9ae0077a5cf336d298002959dc0c8dcfe7b89 which is
+commit fe782affd0f440a4e60e2cc81b8f2eccb2923113 upstream
 
-Directories and inodes don't necessarily need to be in the same lockdep
-class.  For ex, hugetlbfs splits them out too to prevent false positives
-in lockdep.  Annotate correctly after new inode creation.  If its a
-directory inode, it will be put into a different class.
+Rafael reports that this patch causes problems:
+	> -rc2 looks good. There is a problem on dragonboard during boot that was
+	> introduced in v4.14.71 that I didn't notice last week. We'll bisect it
+	> and report back later this week. dragonboard on the other branches (4.9,
+	> 4.18, mainline) looks fine.
 
-This should fix a lockdep splat reported by syzbot:
+	As Dan pointed out, during validation, we have bisected this issue on
+	a dragonboard 410c (can't find root device) to the following commit
+	for v4.14:
 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 4.18.0-rc8-next-20180810+ #36 Not tainted
-> ------------------------------------------------------
-> syz-executor900/4483 is trying to acquire lock:
-> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
-> include/linux/fs.h:765 [inline]
-> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
-> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
->
-> but task is already holding lock:
-> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
-> drivers/staging/android/ashmem.c:448
->
-> which lock already depends on the new lock.
->
-> -> #2 (ashmem_mutex){+.+.}:
->        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
->        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
->        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
->        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
->        call_mmap include/linux/fs.h:1844 [inline]
->        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
->        do_mmap+0xa10/0x1220 mm/mmap.c:1535
->        do_mmap_pgoff include/linux/mm.h:2298 [inline]
->        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
->        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
->        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
->        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
->        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> -> #1 (&mm->mmap_sem){++++}:
->        __might_fault+0x155/0x1e0 mm/memory.c:4568
->        _copy_to_user+0x30/0x110 lib/usercopy.c:25
->        copy_to_user include/linux/uaccess.h:155 [inline]
->        filldir+0x1ea/0x3a0 fs/readdir.c:196
->        dir_emit_dot include/linux/fs.h:3464 [inline]
->        dir_emit_dots include/linux/fs.h:3475 [inline]
->        dcache_readdir+0x13a/0x620 fs/libfs.c:193
->        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
->        __do_sys_getdents fs/readdir.c:231 [inline]
->        __se_sys_getdents fs/readdir.c:212 [inline]
->        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
->        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
->        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
->        inode_lock include/linux/fs.h:765 [inline]
->        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
->        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
->        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
->        vfs_ioctl fs/ioctl.c:46 [inline]
->        file_ioctl fs/ioctl.c:501 [inline]
->        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
->        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
->        __do_sys_ioctl fs/ioctl.c:709 [inline]
->        __se_sys_ioctl fs/ioctl.c:707 [inline]
->        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> other info that might help us debug this:
->
-> Chain exists of:
->   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
->
->  Possible unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(ashmem_mutex);
->                                lock(&mm->mmap_sem);
->                                lock(ashmem_mutex);
->   lock(&sb->s_type->i_mutex_key#9);
->
->  *** DEADLOCK ***
->
-> 1 lock held by syz-executor900/4483:
->  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
-> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
+	[1ed3a9307230] rpmsg: core: add support to power domains for devices
 
-Link: http://lkml.kernel.org/r/20180821231835.166639-1-joel@joelfernandes.org
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Suggested-by: NeilBrown <neilb@suse.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+	There is an on-going discussion on "[PATCH] rpmsg: core: add support
+	to power domains for devices" about this patch having other
+	dependencies and breaking something else on v4.14 as well.
+
+so drop it.
+
+Reported-by: Rafael Tinoco <rafael.tinoco@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/shmem.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rpmsg/rpmsg_core.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2226,6 +2226,8 @@ static struct inode *shmem_get_inode(str
- 			mpol_shared_policy_init(&info->policy, NULL);
- 			break;
- 		}
-+
-+		lockdep_annotate_inode_mutex_key(inode);
- 	} else
- 		shmem_free_inode(sb);
- 	return inode;
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -15,7 +15,6 @@
+ #include <linux/module.h>
+ #include <linux/rpmsg.h>
+ #include <linux/of_device.h>
+-#include <linux/pm_domain.h>
+ #include <linux/slab.h>
+ 
+ #include "rpmsg_internal.h"
+@@ -450,10 +449,6 @@ static int rpmsg_dev_probe(struct device
+ 	struct rpmsg_endpoint *ept = NULL;
+ 	int err;
+ 
+-	err = dev_pm_domain_attach(dev, true);
+-	if (err)
+-		goto out;
+-
+ 	if (rpdrv->callback) {
+ 		strncpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+ 		chinfo.src = rpdev->src;
+@@ -495,8 +490,6 @@ static int rpmsg_dev_remove(struct devic
+ 
+ 	rpdrv->remove(rpdev);
+ 
+-	dev_pm_domain_detach(dev, true);
+-
+ 	if (rpdev->ept)
+ 		rpmsg_destroy_ept(rpdev->ept);
+ 
 
 
