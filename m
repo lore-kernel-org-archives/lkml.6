@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8FFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390D9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 764A021547
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:08:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B6C21547
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:08:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsH/2Hnf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764A021547
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sBM6gONP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B6C21547
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeI0U0j (ORCPT
+        id S1728120AbeI0U0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:26:39 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38050 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbeI0U0j (ORCPT
+        Thu, 27 Sep 2018 16:26:45 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40080 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727175AbeI0U0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:26:39 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x17-v6so2014031pfh.5;
-        Thu, 27 Sep 2018 07:08:12 -0700 (PDT)
+        Thu, 27 Sep 2018 16:26:44 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n31-v6so2052036pgm.7;
+        Thu, 27 Sep 2018 07:08:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=c1F8GZeVe3Dvm5Q3L+hg9E5AyBz63OwEgf2hcnNqH5s=;
-        b=SsH/2HnfYLftA7AVG2ZTQqV3swa86Gfz7yNsvxWa+ffxdZlA7aWs0kFHHEEWq93oCD
-         M+i77QDzO1gu4CWwWNaawn27fY13idQLGhcpEr5QcGrtEmdUU0aqWjS9Ru8i4d2RK8dQ
-         S34Uqo9zAoswdZdOtE8/Nn93MITsPZoLTihP2zIXOMXjpvHeftxqSUtJBCtTrKI+EZYM
-         fvxvMy6+gVjl3ftNuLrkWiEivxRKMHe2NIctwr4ZHSELEUh9LKsPe2lA2vfDmkOnRLKc
-         bKuSZAdnNns0W84xi4Hq03ytfn9OSPXqCQrMnMjVxJRTb9dqOw1WgjcVdJO+p29Fwbyp
-         HeOg==
+        bh=dm5u6qPz+qiZpTpZ61emFhPT0rUFtszstfeRwzbhEkA=;
+        b=sBM6gONPhL9orDFgpy61GZi2yX4j9GGmubWlmxzHwXXe5pMiya2SU6iCVMzZQmWJTi
+         Avc6BKdyVXjAbOXjW6D8kasrqiraUEdloYZsWoKCT05/jfyqMJK5WO6n0eimV32ZIdjd
+         0ApqMHGl5dqTonOcm5uqrCt4B3xhygwKGX0D6roJaBgmvUnQdpzFNLh4fmAN0JG2+GLD
+         FfTcn6XEDJsfebxjRzD6Ud0a1RnHN8DD/l7ZAvT2y6/hjDc7rwIHblS9GmYVPT1GRM9K
+         FQ7IAcOX+dSm0qZuzReEth/N1tYBbEfKk4Hls0izkj29bO3Sa+p5veGejSqiI7E6jv5o
+         q4Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=c1F8GZeVe3Dvm5Q3L+hg9E5AyBz63OwEgf2hcnNqH5s=;
-        b=K1cxzzC9/UL0+NuJ37dXauhHM6pL5G4QYBfK60G4DMbnNofCJ119XBP41pI6zwqBYw
-         kr8s+/k1bLEnkM8dECmiVqe2+SZN9KkeTy29vF6cqWQzuwPvEOwSCVtav11zqYjv0QZP
-         b1cmkDNLqieMoN7tOxxcRkQZAfdTA8chCQSa9DKLfz3EfFQiSF5HDnY98M1hx6cU63GC
-         Y7CPgxTA4rqqVI0rT0EpuPiY93ZnbHdNC3ikIm1kPMuY7ceV9yKKru8h0RvJUfE489Wm
-         TKTyu+TL/CRPIxznLgjzoxGm/BNYxMjC79JW/whlBCN8QjTQ6EZF5VX4VZB5djZYfL1p
-         sy3A==
-X-Gm-Message-State: ABuFfogUD+voJKIwn7vnkrJYgTVNXHoA2owHKkFlmAKmLd0YEXlQdRoG
-        /MWC8rIVShgl+jje6UzKkBY=
-X-Google-Smtp-Source: ACcGV60E8v1/+E54XDmohRQueADQ5Cim1gdow0wASDs3vPzs1AcVs9QTI0Qo1CPfhOE3koQvx+bFgw==
-X-Received: by 2002:a63:4860:: with SMTP id x32-v6mr10507892pgk.375.1538057292156;
-        Thu, 27 Sep 2018 07:08:12 -0700 (PDT)
+        bh=dm5u6qPz+qiZpTpZ61emFhPT0rUFtszstfeRwzbhEkA=;
+        b=VBVNhbYfvCrinHFibNYjhu/Kx4pGEw0W1hTlsBRApmncdJ5rIihKwpqHlrWvTXKPAt
+         AFwtMPauXHEd8TkcbIKp68abrxHE7ZXui4bQcR2M5+URo71mSEsIUstJ9LnxE+Jg3udp
+         k1AzLnkBVngmVIHUcR5s10FhWygzisD2jS+hyUY9JYQWwi8kwbBTKrE1Y2NtKASqqt5I
+         XC11dIQBxG20bq8tUdbu0cm8J7edD6EpdFIsssVZwJAS0y/GQ3DISmDMcuRSdIt8/d/q
+         kCU8HZD4YYnE2lfFPV6xLz/ih9K65K4ibk5/Dy/NNW4AUdRd1imgKMP1bbH8fRpLqeOA
+         JRsA==
+X-Gm-Message-State: ABuFfois5iSL5uHmCpGez23B4EV73vGfgR4xV8W8n2a/8sgjJcKuiAwd
+        usbL346tz+YkY5w55hRIhbk=
+X-Google-Smtp-Source: ACcGV60xno8+5LYUOszDggyYIlNC1emmONi3NNrF9QOKLg5S6gFR9Xteutvatv3s7kKnGmw1NWbcxg==
+X-Received: by 2002:a63:4443:: with SMTP id t3-v6mr10517247pgk.102.1538057296243;
+        Thu, 27 Sep 2018 07:08:16 -0700 (PDT)
 Received: from localhost.localdomain ([103.51.74.185])
-        by smtp.gmail.com with ESMTPSA id r205-v6sm4259763pgr.11.2018.09.27.07.08.08
+        by smtp.gmail.com with ESMTPSA id r205-v6sm4259763pgr.11.2018.09.27.07.08.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 07:08:11 -0700 (PDT)
+        Thu, 27 Sep 2018 07:08:15 -0700 (PDT)
 From:   Anand Moon <linux.amoon@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -69,9 +69,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org
-Subject: [PATCHv5 4/6] ARM: dts: exynos: Add pin configuration for SD write protect on Odroid XU3/XU4
-Date:   Thu, 27 Sep 2018 14:07:36 +0000
-Message-Id: <20180927140738.1006-5-linux.amoon@gmail.com>
+Subject: [PATCHv5 5/6] ARM: dts: exynos: update maximum frequency for emmc to 200MHz
+Date:   Thu, 27 Sep 2018 14:07:37 +0000
+Message-Id: <20180927140738.1006-6-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180927140738.1006-1-linux.amoon@gmail.com>
 References: <20180927140738.1006-1-linux.amoon@gmail.com>
@@ -80,55 +80,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add SD card write-protect pin configuration to be sure that it will be
-properly pulled down to indicate write access.
+Set the max-frequency to 200MHz for optimal performace of eMMC.
 
-Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
-Changes since v4:
-1. Remove cd-gpios and wp-gpios leaving only WP pin configuration (after
-   Marek Szyprowski feedback).
-2. Pull pin down.
-3. change the subject and commit message.
-Sorry Krzysztof if I have copied your commit message to describe the
-changes.
----
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi     | 7 +++++++
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+eMMC
 
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index dda8ca2d2324..b82af7c89654 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -289,6 +289,13 @@
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
- 		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
- 	};
-+
-+	sd2_wp: sd2-wp {
-+		samsung,pins = "gpc4-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
-+	};
+root@odroid:~# sudo cat /sys/kernel/debug/mmc0/ios
+clock:          200000000 Hz
+actual clock:   200000000 Hz
+vdd:            7 (1.65 - 1.95 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      3 (8 bits)
+timing spec:    10 (mmc HS400)
+signal voltage: 1 (1.80 V)
+driver type:    0 (driver type B)
+---
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+index e522edb2bb82..1f2d3987dde1 100644
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
+@@ -392,6 +392,7 @@
+ 	cap-mmc-highspeed;
+ 	mmc-hs200-1_8v;
+ 	mmc-hs400-1_8v;
++	max-frequency = <200000000>;
+ 	vmmc-supply = <&ldo18_reg>;
+ 	vqmmc-supply = <&ldo3_reg>;
  };
- 
- &pinctrl_2 {
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index a80b6c045154..54811960e322 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -498,7 +498,7 @@
- 	samsung,dw-mshc-sdr-timing = <0 4>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_wp &sd2_bus1 &sd2_bus4>;
- 	bus-width = <4>;
- 	cap-sd-highspeed;
- 	max-frequency = <200000000>;
 -- 
 2.17.1
 
