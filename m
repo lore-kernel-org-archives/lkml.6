@@ -3,40 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13617C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890D0C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD87521580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD87521580
+	by mail.kernel.org (Postfix) with ESMTP id 45A7F2152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A7F2152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbeI0Pek (ORCPT
+        id S1728690AbeI0Pep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:34:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55974 "EHLO
+        Thu, 27 Sep 2018 11:34:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56038 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbeI0Pej (ORCPT
+        with ESMTP id S1726944AbeI0Peo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:34:39 -0400
+        Thu, 27 Sep 2018 11:34:44 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6FD3111D;
-        Thu, 27 Sep 2018 09:17:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63391110D;
+        Thu, 27 Sep 2018 09:17:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiada Wang <jiada_wang@mentor.com>,
-        Timo Wischer <twischer@de.adit-jv.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 17/64] ASoC: rsnd: fixup not to call clk_get/set under non-atomic
-Date:   Thu, 27 Sep 2018 11:03:34 +0200
-Message-Id: <20180927090252.138084022@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 18/64] ALSA: bebob: fix memory leak for M-Audio FW1814 and ProjectMix I/O at error path
+Date:   Thu, 27 Sep 2018 11:03:35 +0200
+Message-Id: <20180927090252.295710742@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -54,198 +51,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiada Wang <jiada_wang@mentor.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 4d230d12710646788af581ba0155d83ab48b955c upstream.
+commit b1fbebd4164b3d170ad916dcd692cf843c9c065d upstream.
 
-Clocking operations clk_get/set_rate, are non-atomic,
-they shouldn't be called in soc_pcm_trigger() which is atomic.
+After allocating model-dependent data for M-Audio FW1814 and ProjectMix
+I/O, ALSA bebob driver has memory leak at error path.
 
-Following issue was found due to execution of clk_get_rate() causes
-sleep in soc_pcm_trigger(), which shouldn't be blocked.
+This commit releases the allocated data at the error path.
 
-We can reproduce this issue by following
-	> enable CONFIG_DEBUG_ATOMIC_SLEEP=y
-	> compile, and boot
-	> mount -t debugfs none /sys/kernel/debug
-	> while true; do cat /sys/kernel/debug/clk/clk_summary > /dev/null; done &
-	> while true; do aplay xxx; done
-
-This patch adds support to .prepare callback, and moves non-atomic
-clocking operations to it. As .prepare is non-atomic, it is always
-called before trigger_start/trigger_stop.
-
-	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:620
-	in_atomic(): 1, irqs_disabled(): 128, pid: 2242, name: aplay
-	INFO: lockdep is turned off.
-	irq event stamp: 5964
-	hardirqs last enabled at (5963): [<ffff200008e59e40>] mutex_lock_nested+0x6e8/0x6f0
-	hardirqs last disabled at (5964): [<ffff200008e623f0>] _raw_spin_lock_irqsave+0x24/0x68
-	softirqs last enabled at (5502): [<ffff200008081838>] __do_softirq+0x560/0x10c0
-	softirqs last disabled at (5495): [<ffff2000080c2e78>] irq_exit+0x160/0x25c
-	Preemption disabled at:[ 62.904063] [<ffff200008be4d48>] snd_pcm_stream_lock+0xb4/0xc0
-	CPU: 2 PID: 2242 Comm: aplay Tainted: G B C 4.9.54+ #186
-	Hardware name: Renesas Salvator-X board based on r8a7795 (DT)
-	Call trace:
-	[<ffff20000808fe48>] dump_backtrace+0x0/0x37c
-	[<ffff2000080901d8>] show_stack+0x14/0x1c
-	[<ffff2000086f4458>] dump_stack+0xfc/0x154
-	[<ffff2000081134a0>] ___might_sleep+0x57c/0x58c
-	[<ffff2000081136b8>] __might_sleep+0x208/0x21c
-	[<ffff200008e5980c>] mutex_lock_nested+0xb4/0x6f0
-	[<ffff2000087cac74>] clk_prepare_lock+0xb0/0x184
-	[<ffff2000087cb094>] clk_core_get_rate+0x14/0x54
-	[<ffff2000087cb0f4>] clk_get_rate+0x20/0x34
-	[<ffff20000113aa00>] rsnd_adg_ssi_clk_try_start+0x158/0x4f8 [snd_soc_rcar]
-	[<ffff20000113da00>] rsnd_ssi_init+0x668/0x7a0 [snd_soc_rcar]
-	[<ffff200001133ff4>] rsnd_soc_dai_trigger+0x4bc/0xcf8 [snd_soc_rcar]
-	[<ffff200008c1af24>] soc_pcm_trigger+0x2a4/0x2d4
-
-Fixes: e7d850dd10f4 ("ASoC: rsnd: use mod base common method on SSI-parent")
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
-[Kuninori: tidyup for upstream]
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Fixes: 04a2c73c97eb('ALSA: bebob: delayed registration of sound card')
+Cc: <stable@vger.kernel.org> # v4.7+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/sh/rcar/core.c |   11 +++++++++++
- sound/soc/sh/rcar/rsnd.h |    7 +++++++
- sound/soc/sh/rcar/ssi.c  |   16 ++++++++++------
- 3 files changed, 28 insertions(+), 6 deletions(-)
+ sound/firewire/bebob/bebob.c        |    2 ++
+ sound/firewire/bebob/bebob_maudio.c |    4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/sound/soc/sh/rcar/core.c
-+++ b/sound/soc/sh/rcar/core.c
-@@ -925,12 +925,23 @@ static void rsnd_soc_dai_shutdown(struct
- 	rsnd_dai_call(nolock_stop, io, priv);
+--- a/sound/firewire/bebob/bebob.c
++++ b/sound/firewire/bebob/bebob.c
+@@ -263,6 +263,8 @@ do_registration(struct work_struct *work
+ error:
+ 	mutex_unlock(&devices_mutex);
+ 	snd_bebob_stream_destroy_duplex(bebob);
++	kfree(bebob->maudio_special_quirk);
++	bebob->maudio_special_quirk = NULL;
+ 	snd_card_free(bebob->card);
+ 	dev_info(&bebob->unit->device,
+ 		 "Sound card registration failed: %d\n", err);
+--- a/sound/firewire/bebob/bebob_maudio.c
++++ b/sound/firewire/bebob/bebob_maudio.c
+@@ -290,10 +290,6 @@ snd_bebob_maudio_special_discover(struct
+ 		bebob->midi_output_ports = 2;
+ 	}
+ end:
+-	if (err < 0) {
+-		kfree(params);
+-		bebob->maudio_special_quirk = NULL;
+-	}
+ 	mutex_unlock(&bebob->mutex);
+ 	return err;
  }
- 
-+static int rsnd_soc_dai_prepare(struct snd_pcm_substream *substream,
-+				struct snd_soc_dai *dai)
-+{
-+	struct rsnd_priv *priv = rsnd_dai_to_priv(dai);
-+	struct rsnd_dai *rdai = rsnd_dai_to_rdai(dai);
-+	struct rsnd_dai_stream *io = rsnd_rdai_to_io(rdai, substream);
-+
-+	return rsnd_dai_call(prepare, io, priv);
-+}
-+
- static const struct snd_soc_dai_ops rsnd_soc_dai_ops = {
- 	.startup	= rsnd_soc_dai_startup,
- 	.shutdown	= rsnd_soc_dai_shutdown,
- 	.trigger	= rsnd_soc_dai_trigger,
- 	.set_fmt	= rsnd_soc_dai_set_fmt,
- 	.set_tdm_slot	= rsnd_soc_set_dai_tdm_slot,
-+	.prepare	= rsnd_soc_dai_prepare,
- };
- 
- void rsnd_parse_connect_common(struct rsnd_dai *rdai,
---- a/sound/soc/sh/rcar/rsnd.h
-+++ b/sound/soc/sh/rcar/rsnd.h
-@@ -283,6 +283,9 @@ struct rsnd_mod_ops {
- 	int (*nolock_stop)(struct rsnd_mod *mod,
- 		    struct rsnd_dai_stream *io,
- 		    struct rsnd_priv *priv);
-+	int (*prepare)(struct rsnd_mod *mod,
-+		       struct rsnd_dai_stream *io,
-+		       struct rsnd_priv *priv);
- };
- 
- struct rsnd_dai_stream;
-@@ -312,6 +315,7 @@ struct rsnd_mod {
-  * H	0: fallback
-  * H	0: hw_params
-  * H	0: pointer
-+ * H	0: prepare
-  */
- #define __rsnd_mod_shift_nolock_start	0
- #define __rsnd_mod_shift_nolock_stop	0
-@@ -326,6 +330,7 @@ struct rsnd_mod {
- #define __rsnd_mod_shift_fallback	28 /* always called */
- #define __rsnd_mod_shift_hw_params	28 /* always called */
- #define __rsnd_mod_shift_pointer	28 /* always called */
-+#define __rsnd_mod_shift_prepare	28 /* always called */
- 
- #define __rsnd_mod_add_probe		0
- #define __rsnd_mod_add_remove		0
-@@ -340,6 +345,7 @@ struct rsnd_mod {
- #define __rsnd_mod_add_fallback		0
- #define __rsnd_mod_add_hw_params	0
- #define __rsnd_mod_add_pointer		0
-+#define __rsnd_mod_add_prepare		0
- 
- #define __rsnd_mod_call_probe		0
- #define __rsnd_mod_call_remove		0
-@@ -354,6 +360,7 @@ struct rsnd_mod {
- #define __rsnd_mod_call_pointer		0
- #define __rsnd_mod_call_nolock_start	0
- #define __rsnd_mod_call_nolock_stop	1
-+#define __rsnd_mod_call_prepare		0
- 
- #define rsnd_mod_to_priv(mod) ((mod)->priv)
- #define rsnd_mod_id(mod) ((mod) ? (mod)->id : -1)
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -280,7 +280,7 @@ static int rsnd_ssi_master_clk_start(str
- 	if (rsnd_ssi_is_multi_slave(mod, io))
- 		return 0;
- 
--	if (ssi->usrcnt > 1) {
-+	if (ssi->rate) {
- 		if (ssi->rate != rate) {
- 			dev_err(dev, "SSI parent/child should use same rate\n");
- 			return -EINVAL;
-@@ -482,7 +482,6 @@ static int rsnd_ssi_init(struct rsnd_mod
- 			 struct rsnd_priv *priv)
- {
- 	struct rsnd_ssi *ssi = rsnd_mod_to_ssi(mod);
--	int ret;
- 
- 	if (!rsnd_ssi_is_run_mods(mod, io))
- 		return 0;
-@@ -493,10 +492,6 @@ static int rsnd_ssi_init(struct rsnd_mod
- 
- 	rsnd_mod_power_on(mod);
- 
--	ret = rsnd_ssi_master_clk_start(mod, io);
--	if (ret < 0)
--		return ret;
--
- 	rsnd_ssi_config_init(mod, io);
- 
- 	rsnd_ssi_register_setup(mod);
-@@ -847,6 +842,13 @@ static int rsnd_ssi_pointer(struct rsnd_
- 	return 0;
- }
- 
-+static int rsnd_ssi_prepare(struct rsnd_mod *mod,
-+			    struct rsnd_dai_stream *io,
-+			    struct rsnd_priv *priv)
-+{
-+	return rsnd_ssi_master_clk_start(mod, io);
-+}
-+
- static struct rsnd_mod_ops rsnd_ssi_pio_ops = {
- 	.name	= SSI_NAME,
- 	.probe	= rsnd_ssi_common_probe,
-@@ -859,6 +861,7 @@ static struct rsnd_mod_ops rsnd_ssi_pio_
- 	.pointer= rsnd_ssi_pointer,
- 	.pcm_new = rsnd_ssi_pcm_new,
- 	.hw_params = rsnd_ssi_hw_params,
-+	.prepare = rsnd_ssi_prepare,
- };
- 
- static int rsnd_ssi_dma_probe(struct rsnd_mod *mod,
-@@ -935,6 +938,7 @@ static struct rsnd_mod_ops rsnd_ssi_dma_
- 	.pcm_new = rsnd_ssi_pcm_new,
- 	.fallback = rsnd_ssi_fallback,
- 	.hw_params = rsnd_ssi_hw_params,
-+	.prepare = rsnd_ssi_prepare,
- };
- 
- int rsnd_ssi_is_dma_mode(struct rsnd_mod *mod)
 
 
