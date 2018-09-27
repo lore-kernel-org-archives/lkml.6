@@ -2,104 +2,95 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F829C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44350C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4AD820666
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:50:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4AD820666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EDAF420666
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 06:50:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDAF420666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbeI0NG6 (ORCPT
+        id S1727266AbeI0NHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:06:58 -0400
-Received: from mga14.intel.com ([192.55.52.115]:60416 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbeI0NG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:06:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 23:50:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,309,1534834800"; 
-   d="scan'208";a="95202105"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga002.jf.intel.com with ESMTP; 26 Sep 2018 23:50:03 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id ECCD9209BC; Thu, 27 Sep 2018 09:50:02 +0300 (EEST)
-Date:   Thu, 27 Sep 2018 09:50:02 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v4 1/2] Bluetooth: Add device_get_bd_address()
-Message-ID: <20180927065002.3yzxg6xquapldaqz@paasikivi.fi.intel.com>
-References: <20180927004810.124185-1-mka@chromium.org>
- <20180927004810.124185-2-mka@chromium.org>
+        Thu, 27 Sep 2018 09:07:06 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2087 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726760AbeI0NHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:07:06 -0400
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 455FCB8FD94D1;
+        Thu, 27 Sep 2018 07:50:19 +0100 (IST)
+Received: from [10.204.65.145] (10.204.65.145) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 27 Sep
+ 2018 07:50:19 +0100
+Subject: Re: [PATCH v2, RESEND 0/3] tpm: retrieve digest size of unknown
+ algorithms from TPM
+To:     Mimi Zohar <zohar@linux.ibm.com>, <jarkko.sakkinen@linux.intel.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        David Safford <david.safford@ge.com>
+References: <20180917093820.20500-1-roberto.sassu@huawei.com>
+ <1537972840.3459.6.camel@linux.ibm.com>
+ <1537985014.3459.24.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <8bbff5b1-f4ba-4e38-57fc-05d9ddabea5c@huawei.com>
+Date:   Thu, 27 Sep 2018 08:50:14 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927004810.124185-2-mka@chromium.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1537985014.3459.24.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.145]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 05:48:09PM -0700, Matthias Kaehlcke wrote:
-> Provide an API for Bluetooth drivers to retrieve the Bluetooth Device
-> address (BD_ADDR) for a device. If the firmware node of the device
-> has a property 'local-bd-address' the BD address is read from this
-> property.
+On 9/26/2018 8:03 PM, Mimi Zohar wrote:
+> On Wed, 2018-09-26 at 10:40 -0400, Mimi Zohar wrote:
+>> On Mon, 2018-09-17 at 11:38 +0200, Roberto Sassu wrote:
+>>> Resending to maintainer with correct mailing lists in CC.
+>>>
+>>> The TPM driver currently relies on the crypto subsystem to determine the
+>>> digest size of supported TPM algorithms. In the future, TPM vendors might
+>>> implement new algorithms in their chips, and those algorithms might not
+>>> be supported by the crypto subsystem.
+>>>
+>>> Usually, vendors provide patches for the new hardware, and likely
+>>> the crypto subsystem will be updated before the new algorithm is
+>>> introduced. However, old kernels might be updated later, after patches
+>>> are included in the mainline kernel. This would leave the opportunity
+>>> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+>>> are not extended.
+>>>
+>>> This patch set provides a long term solution for this issue. If a TPM
+>>> algorithm is not known by the crypto subsystem, the TPM driver retrieves
+>>> the digest size from the TPM with a PCR read. All the PCR banks are
+>>> extended, even if the algorithm is not yet supported by the crypto
+>>> subsystem.
+>>
+>> Other than checking the digest size before copying the pcrread buffer,
+>> the patches look good.  Please add my Ack on all 3 patches.
+>>
+>> (New address) Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
-> Changes in v4:
-> - move code from driver/base/property.c to net/bluetooth/lib.c
-> - undo move of bdaddr_t declaration
-> - merge fwnode_get_bd_address() into device_get_bd_address(). as of now
->   the function is not needed, it can be created later if necessary
-> - minor improvements suggested by Sakari
-> - updated commit message
-> - added 'Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>' tag
+> I've reviewed, and am currently running with these patches.
 > 
-> Changes in v3:
-> - move definition of bdaddr_t to types.h to avoid include of
->   bluetooth.h from property.h
-> - add stubs for the new functions
+> Even if the IMA changes were in a separate patch, we wouldn't be able
+> to break up the patch set anyway.  Jarkko, I'd appreciate your
+> carrying the entire patch set.
 > 
-> Changes in v2:
-> - use bdaddr_t instead of byte pointer + len
-> - use EXPORT_SYMBOL_GPL for the new functions instead of EXPORT_SYMBOL
-> - put new functions inside #if IS_ENABLED(CONFIG_BT)
-> - some new line juggling in property.h
-> - added 'Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>' tag
-> ---
->  include/net/bluetooth/bluetooth.h |  2 ++
->  net/bluetooth/lib.c               | 34 +++++++++++++++++++++++++++++++
+> Roberto, a similar change needs to be made for tpm_pcr_extend.  Are
+> you planning on posting those changes as well?
 
-Yeah, this seems like a better place for this stuff indeed.
+Yes, I was planning to send the patch after this patch set is accepted.
 
-Thanks!
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Roberto
