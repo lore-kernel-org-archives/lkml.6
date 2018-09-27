@@ -2,137 +2,170 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCBFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F7BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B63421580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:43:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B63421580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4433B21580
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:47:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bnNAMTz1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4433B21580
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeI0PAb (ORCPT
+        id S1727020AbeI0PEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:00:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48948 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbeI0PAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:00:31 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D77DA308403E;
-        Thu, 27 Sep 2018 08:43:24 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-198.pek2.redhat.com [10.72.12.198])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AB39D308BDB9;
-        Thu, 27 Sep 2018 08:43:13 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     stefanha@redhat.com, mst@redhat.com
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jason Wang <jasowang@redhat.com>
-Subject: [PATCH net] vhost-vsock: fix use after free
-Date:   Thu, 27 Sep 2018 16:43:01 +0800
-Message-Id: <20180927084301.573-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 27 Sep 2018 08:43:24 +0000 (UTC)
+        Thu, 27 Sep 2018 11:04:10 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39605 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726817AbeI0PEK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:04:10 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s14-v6so1644103wrw.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SS501q2nk0JCjtwSzoLBddA6AbzxIwH+VUFgrD9LafA=;
+        b=bnNAMTz1QvrfZisIbyM8X8zBfJo2mV7S3ql8qqCj376iLZrc7iISLsIyP4bLxjNtMe
+         nIhUD+gs019qwtZv1YPzu3wQ5PgVPCrk+bIFVlsSNNycSIpeYRIJiavOGt3KQS32JGjA
+         6r5cKzmK06Q8rMaAFBbw6Ya2YOfgh2BNgsYtHzLhnDAj0xlUzXvmSn9C0xyEexyaJazo
+         vFQAXTLerhcNDtWyMWqi1yVn+xFhvaYw07ubzC/KRklYyyUolnFCKkhTElZxHbY+TFFE
+         oHlUySalxGoP5ndDr/ofnScjS6O9B5oSBCmJPDUjEjVuBtkWvaUz41HRgkPQtW/Wv42U
+         /n4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SS501q2nk0JCjtwSzoLBddA6AbzxIwH+VUFgrD9LafA=;
+        b=jlfBxANWzEz+fT0g+ziqhB9jW7XO2bkbHO2JtZb6uvkhVRdp6/eaADombs/kZNn/Fb
+         Naw423GNGaGv88FZL6gaeATNZTddCZaPE/l49VzOxXhx+V7fn50Kby4l01vH8j8o7Vvi
+         KmHKPdxJZIrX9EHbTH89JqFRa2o+53GDJSszajV6RNzTKW6hGBMbzhYm4gyLrY2mPLW9
+         k+r1vuLMOwGxHuLAx3jWXWugnHPV2yQSLPkqK8UA++yePeRGNSelIiIX5bV2lf7GZs0r
+         dLyGc/CdtwWS/VcHUwZOzwyDnCYymd+NdJdRtbqartOtYdfC3dAUE/Ix3dz5DPXFJMLR
+         qzUQ==
+X-Gm-Message-State: ABuFfojoUhBOB88YMgC3XH51+1EoCc43QO4SIUszDErTCio2bNyMlMPE
+        PAQL7SxuTrcGe4YOWNIpFSEUn9CXFB2CktbZkFcS3g==
+X-Google-Smtp-Source: ACcGV63h0mZZGsG/N2NPxHFlenXXbZLAcWYOvqdk7gpAACmQ2iFVulFMaYHd5+klItU1hFvd6OSw2nhss2ev9oSTmUc=
+X-Received: by 2002:adf:fdca:: with SMTP id i10-v6mr8327518wrs.276.1538038020902;
+ Thu, 27 Sep 2018 01:47:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180911150938.3844-1-mjourdan@baylibre.com> <9c33c57e-2ce2-8752-b851-f85c03a7d761@xs4all.nl>
+ <CAMO6nay7u4nMZcND6+g-GJAFsFcGrp_GDKBhVjeXVzpjF0ND4Q@mail.gmail.com> <8b8af340-8bd7-092a-4203-fd01fd0cc5c6@xs4all.nl>
+In-Reply-To: <8b8af340-8bd7-092a-4203-fd01fd0cc5c6@xs4all.nl>
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+Date:   Thu, 27 Sep 2018 10:46:49 +0200
+Message-ID: <CAMO6naxf_+HiRf8fEs65NP+c1OLMvPSs71SKxwWg-zZO+mSiyw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Add Amlogic video decoder driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The access of vsock is not protected by vhost_vsock_lock. This may
-lead use after free since vhost_vsock_dev_release() may free the
-pointer at the same time.
+Le ven. 21 sept. 2018 =C3=A0 12:51, Hans Verkuil <hverkuil@xs4all.nl> a =C3=
+=A9crit :
+>
+> On 09/17/18 18:36, Maxime Jourdan wrote:
+> > 2018-09-17 16:51 GMT+02:00 Hans Verkuil <hverkuil@xs4all.nl>:
+> >> On 09/11/2018 05:09 PM, Maxime Jourdan wrote:
+> >>>  - Moved the single instance check (returning -EBUSY) to start/stop s=
+treaming
+> >>>  The check was previously in queue_setup but there was no great locat=
+ion to
+> >>>  clear it except for .close().
+> >>
+> >> Actually, you can clear it by called VIDIOC_REQBUFS with count set to =
+0. That
+> >> freed all buffers and clears this.
+> >>
+> >> Now, the difference between queue_setup and start/stop streaming is th=
+at if you
+> >> do this in queue_setup you'll know early on that the device is busy. I=
+t is
+> >> reasonable to assume that you only allocate buffers when you also want=
+ to start
+> >> streaming, so that it a good place to know this quickly.
+> >>
+> >> Whereas with start_streaming you won't know until you call STREAMON, o=
+r even later
+> >> if you start streaming with no buffers queued, since start_streaming w=
+on't
+> >> be called until you have at least 'min_buffers_needed' buffers queued =
+(1 for this
+> >> driver). So in that case EBUSY won't be returned until the first VIDIO=
+C_QBUF.
+> >>
+> >> My preference is to check this in queue_setup, but it is up to you to =
+decide.
+> >> Just be aware of the difference between the two options.
+> >>
+> >> Regards,
+> >>
+> >>         Hans
+> >
+> > I could for instance keep track of which queue(s) have been called
+> > with queue_setup, catch calls to VIDIOC_REQBUFS with count set to 0,
+> > and clear the current session once both queues have been reset ?
+>
+> I see your point, this is rather awkward. The real problem here is that
+> we don't have a 'queue_free' callback. If we'd had that this would be
+> a lot easier.
+>
+> In any case, I am dropping my objections to doing this in start/stop_stre=
+aming.
 
-Fix this by holding the lock during the acess.
+Ack.
 
-Reported-by: syzbot+e3e074963495f92a89ed@syzkaller.appspotmail.com
-Fixes: 16320f363ae1 ("vhost-vsock: add pkt cancel capability")
-Fixes: 433fc58e6bf2 ("VSOCK: Introduce vhost_vsock.ko")
-Cc: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
-- The patch is needed for -stable.
----
- drivers/vhost/vsock.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+> > You leverage another issue with min_buffers_needed. It's indeed set to
+> > 1 but this value is wrong for the CAPTURE queue. The problem is that
+> > this value changes depending on the codec and the amount of CAPTURE
+> > buffers requested by userspace.
+> > Ultimately I want it set to the total amount of CAPTURE buffers,
+> > because the hardware needs the full buffer list before starting a
+> > decode job.
+> > Am I free to change this queue parameter later, or is m2m_queue_init
+> > the only place to do it ?
+>
+> It has to be set before the VIDIOC_STREAMON. After that you cannot
+> change it anymore.
+>
+> But I don't think this is all that relevant, since this is something
+> that the job_ready() callback should take care of. min_buffers_needed
+> is really for hardware where the DMA engine cannot start unless that
+> many buffers are queued. But in that case the DMA runs continuously
+> capturing video, whereas here these are jobs and the DMA is only
+> started when you can actually execute a job.
 
-diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-index 34bc3ab40c6d..7d0b292867fd 100644
---- a/drivers/vhost/vsock.c
-+++ b/drivers/vhost/vsock.c
-@@ -210,21 +210,27 @@ vhost_transport_send_pkt(struct virtio_vsock_pkt *pkt)
- 	struct vhost_vsock *vsock;
- 	int len = pkt->len;
- 
-+	spin_lock_bh(&vhost_vsock_lock);
-+
- 	/* Find the vhost_vsock according to guest context id  */
--	vsock = vhost_vsock_get(le64_to_cpu(pkt->hdr.dst_cid));
-+	vsock = __vhost_vsock_get(le64_to_cpu(pkt->hdr.dst_cid));
- 	if (!vsock) {
- 		virtio_transport_free_pkt(pkt);
-+		spin_unlock_bh(&vhost_vsock_lock);
- 		return -ENODEV;
- 	}
- 
- 	if (pkt->reply)
- 		atomic_inc(&vsock->queued_replies);
- 
--	spin_lock_bh(&vsock->send_pkt_list_lock);
-+	spin_lock(&vsock->send_pkt_list_lock);
- 	list_add_tail(&pkt->list, &vsock->send_pkt_list);
--	spin_unlock_bh(&vsock->send_pkt_list_lock);
-+	spin_unlock(&vsock->send_pkt_list_lock);
- 
- 	vhost_work_queue(&vsock->dev, &vsock->send_pkt_work);
-+
-+	spin_unlock_bh(&vhost_vsock_lock);
-+
- 	return len;
- }
- 
-@@ -236,18 +242,22 @@ vhost_transport_cancel_pkt(struct vsock_sock *vsk)
- 	int cnt = 0;
- 	LIST_HEAD(freeme);
- 
-+	spin_lock_bh(&vhost_vsock_lock);
-+
- 	/* Find the vhost_vsock according to guest context id  */
--	vsock = vhost_vsock_get(vsk->remote_addr.svm_cid);
--	if (!vsock)
-+	vsock = __vhost_vsock_get(vsk->remote_addr.svm_cid);
-+	if (!vsock) {
-+		spin_unlock_bh(&vhost_vsock_lock);
- 		return -ENODEV;
-+	}
- 
--	spin_lock_bh(&vsock->send_pkt_list_lock);
-+	spin_lock(&vsock->send_pkt_list_lock);
- 	list_for_each_entry_safe(pkt, n, &vsock->send_pkt_list, list) {
- 		if (pkt->vsk != vsk)
- 			continue;
- 		list_move(&pkt->list, &freeme);
- 	}
--	spin_unlock_bh(&vsock->send_pkt_list_lock);
-+	spin_unlock(&vsock->send_pkt_list_lock);
- 
- 	list_for_each_entry_safe(pkt, n, &freeme, list) {
- 		if (pkt->reply)
-@@ -265,6 +275,8 @@ vhost_transport_cancel_pkt(struct vsock_sock *vsk)
- 			vhost_poll_queue(&tx_vq->poll);
- 	}
- 
-+	spin_unlock_bh(&vhost_vsock_lock);
-+
- 	return 0;
- }
- 
--- 
-2.17.1
+After doing some testing, overriding min_buffers_needed in queue_setup
+is what works best for me.
 
+When doing the initialization in start_streaming, the complete buffer
+list needs to be configured in HW. The firmware can then choose any
+buffer from this list during decoding later on.
+
+I do this initialization by iterating with v4l2_m2m_for_each_dst_buf,
+which requires all CAPTURE buffers to be queued in.
+
+Cheers,
+Maxime
+
+> Regards,
+>
+>         Hans
