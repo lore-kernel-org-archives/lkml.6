@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2622AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 252E1C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9B42156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9B42156B
+	by mail.kernel.org (Postfix) with ESMTP id DD8032152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD8032152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbeI0PfD (ORCPT
+        id S1728917AbeI0PfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:35:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56082 "EHLO
+        Thu, 27 Sep 2018 11:35:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbeI0PfD (ORCPT
+        with ESMTP id S1727272AbeI0PfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:35:03 -0400
+        Thu, 27 Sep 2018 11:35:06 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F52C110D;
-        Thu, 27 Sep 2018 09:17:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAEAD1112;
+        Thu, 27 Sep 2018 09:17:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
-        Jann Horn <jannh@google.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 20/64] ALSA: emu10k1: fix possible info leak to userspace on SNDRV_EMU10K1_IOCTL_INFO
-Date:   Thu, 27 Sep 2018 11:03:37 +0200
-Message-Id: <20180927090252.811487335@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 21/64] ALSA: fireface: fix memory leak in ff400_switch_fetching_mode()
+Date:   Thu, 27 Sep 2018 11:03:38 +0200
+Message-Id: <20180927090252.954632600@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -51,37 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willy Tarreau <w@1wt.eu>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 49434c6c575d2008c0abbc93e615019f39e01252 upstream.
+commit 36f3a6e02c143a7e9e4e143e416371f67bc1fae6 upstream.
 
-snd_emu10k1_fx8010_ioctl(SNDRV_EMU10K1_IOCTL_INFO) allocates
-memory using kmalloc() and partially fills it by calling
-snd_emu10k1_fx8010_info() before returning the resulting
-structure to userspace, leaving uninitialized holes. Let's
-just use kzalloc() here.
+An allocated memory forgets to be released.
 
-BugLink: http://blog.infosectcbr.com.au/2018/09/linux-kernel-infoleaks.html
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Cc: Jann Horn <jannh@google.com>
-Cc: <stable@vger.kernel.org>
+Fixes: 76fdb3a9e13 ('ALSA: fireface: add support for Fireface 400')
+Cc: <stable@vger.kernel.org> # 4.12+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/emu10k1/emufx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/firewire/fireface/ff-protocol-ff400.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/sound/pci/emu10k1/emufx.c
-+++ b/sound/pci/emu10k1/emufx.c
-@@ -2547,7 +2547,7 @@ static int snd_emu10k1_fx8010_ioctl(stru
- 		emu->support_tlv = 1;
- 		return put_user(SNDRV_EMU10K1_VERSION, (int __user *)argp);
- 	case SNDRV_EMU10K1_IOCTL_INFO:
--		info = kmalloc(sizeof(*info), GFP_KERNEL);
-+		info = kzalloc(sizeof(*info), GFP_KERNEL);
- 		if (!info)
- 			return -ENOMEM;
- 		snd_emu10k1_fx8010_info(emu, info);
+--- a/sound/firewire/fireface/ff-protocol-ff400.c
++++ b/sound/firewire/fireface/ff-protocol-ff400.c
+@@ -146,6 +146,7 @@ static int ff400_switch_fetching_mode(st
+ {
+ 	__le32 *reg;
+ 	int i;
++	int err;
+ 
+ 	reg = kzalloc(sizeof(__le32) * 18, GFP_KERNEL);
+ 	if (reg == NULL)
+@@ -163,9 +164,11 @@ static int ff400_switch_fetching_mode(st
+ 			reg[i] = cpu_to_le32(0x00000001);
+ 	}
+ 
+-	return snd_fw_transaction(ff->unit, TCODE_WRITE_BLOCK_REQUEST,
+-				  FF400_FETCH_PCM_FRAMES, reg,
+-				  sizeof(__le32) * 18, 0);
++	err = snd_fw_transaction(ff->unit, TCODE_WRITE_BLOCK_REQUEST,
++				 FF400_FETCH_PCM_FRAMES, reg,
++				 sizeof(__le32) * 18, 0);
++	kfree(reg);
++	return err;
+ }
+ 
+ static void ff400_dump_sync_status(struct snd_ff *ff,
 
 
