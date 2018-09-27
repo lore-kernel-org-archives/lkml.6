@@ -2,102 +2,107 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9844EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CC4C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB29216F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:41:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB29216F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=archlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 1DA83216F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:43:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fn3s7O/a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA83216F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbeI0T7p (ORCPT
+        id S1727520AbeI0UB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 15:59:45 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45577 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbeI0T7p (ORCPT
+        Thu, 27 Sep 2018 16:01:26 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40918 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727175AbeI0UB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 15:59:45 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x16-v6so2413051ljd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 06:41:25 -0700 (PDT)
+        Thu, 27 Sep 2018 16:01:26 -0400
+Received: by mail-it1-f194.google.com with SMTP id h23-v6so7677399ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 06:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=fF7YeV8DRJQ6wodqB/cmX5YbHihGdvbx+v71/YD/rmk=;
+        b=Fn3s7O/aukSgl1ZknW6081HPpwGW7J1pFmruZ0ftj1k1VC4D6lhxhcKY3e+aZSfLYz
+         +ncik3+flfww+QtKBKDhHZZfYEPt95clJ4lykei8rMGlEnAOiyw21tBHXpTT6ioeBfx0
+         sHIE0r2C8CYwSvCmMsH+78fgTFmmAQojqSdtsHeA5cWXpiEd+t60Db3vniWz7h6BZz7l
+         dTVsuQHCtThSUfeJMu/BaTTZO6i0GDFAupV9YqOHyp2BoryV3mjrhwHdAs0wzYNaJ68l
+         CNkhJvOOn7Z3k7YSv6j3QlVdf+aHDAHSLRjuE44btPB+ShKTVYg6J5L5JXULYB9p+z1B
+         6LHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ntkNKkKJwIDMWVsmG3RqQ/G/MNKrYxExVLVwnPO9oNY=;
-        b=OfJr6xS/5Htnv8BKmEPXCIZ/MMF/hv+e8TzvrMzHOfD6AxygEjzGlD3GLHXCie4vr3
-         inzzNXXRSj/pgh2zje/mXdHoBcggohuKOSOm+MXh1jonnKbmKyF2P7ak6c+/zHk/UZmY
-         ddRvL+1El3TXl6nMpSJmy2MDGvvmDctdNV/CQhmk54uHg3p77hHZ+YNjz+0FzDwG/5TH
-         FCLzSRUN/k+1ArKwoNWY2cDuiofx+nr4qilVFk4ppBHNRl4tN1UwXmFXDO/BlxesimjR
-         Y5sKT+jzB1tf1tw/B+TBbLtDKfb/gjCtGUPIvGSAFJ7pXE8pRwPRuUZ3sDDsmj0gLWU7
-         Zu9A==
-X-Gm-Message-State: ABuFfohDtRgnFXxEo6BiWC9A53KQ9bZhJ4wJJO7ri19ncvvT/ELQnfOO
-        VpaMK9I8payVbQmNuv1fxO77g8RV
-X-Google-Smtp-Source: ACcGV61X9g9nQqz3ZxUMeOsxZEm1Mt3dvSDNjugIQ/JYl3gvVJw2B8Chp4kwqXFGIaeb8A4l2ajgiw==
-X-Received: by 2002:a2e:5b17:: with SMTP id p23-v6mr7804162ljb.91.1538055684448;
-        Thu, 27 Sep 2018 06:41:24 -0700 (PDT)
-Received: from afr_pc.appeartv.lan ([195.159.183.42])
-        by smtp.gmail.com with ESMTPSA id x139-v6sm451878lfd.53.2018.09.27.06.41.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 06:41:23 -0700 (PDT)
-From:   xyproto@archlinux.org
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Alexander=20F=2E=20R=C3=B8dseth?= <xyproto@archlinux.org>
-Subject: [PATCH] Reduce boot header size with 1 byte
-Date:   Thu, 27 Sep 2018 15:41:17 +0200
-Message-Id: <20180927134117.15371-1-xyproto@archlinux.org>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=fF7YeV8DRJQ6wodqB/cmX5YbHihGdvbx+v71/YD/rmk=;
+        b=mErZozUhDKfAx5v/vWn0WLrVgfOWGZ64H4ArLaFDyx7b1XsFZvdHDuRi43A/gOUS0w
+         T2wtHSdufUG5pLLtZ8qCyq1oj2gbhpTEnPgQkhEF/UN02enM/b006wiAt8e0W+uv47Qg
+         W/bmFhOBrFAnDzuouCngVTKB5JK+DAFNDKnxfsckY+1Rm6gQodA0JoVmxe7uIcmGr6hD
+         qF5PHbp1ymLzPlDVBtmDki8enSz4uGG2t4ExxLyAjbVE1MsuWHVZ99B1oBIFz6rzj+zG
+         hJrqeKrsXRSfeNagy5FJ7V1oZpLEOboQxNehKssibLjWE04pMfdXT5AUnZlXJ55AqAqM
+         dnIA==
+X-Gm-Message-State: ABuFfojnBK68FYaO0+cGjVGKa0WVcz//cLoixxZLXM4gKNG/hBnotF9P
+        lgu56PBwnW959RWYcQSwUC9Oae+Z/G8l0pPV8T+hyg==
+X-Google-Smtp-Source: ACcGV60tnolufpG3gK+PG/nPDvbHXHcoJXqhaTYblsAjDYyKyfC7ZUBL8O0FKADKunHCltPnm6Hj2jA+N02uhc3V9Jc=
+X-Received: by 2002:a24:e187:: with SMTP id n129-v6mr9125036ith.47.1538055786722;
+ Thu, 27 Sep 2018 06:43:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 06:42:45
+ -0700 (PDT)
+In-Reply-To: <10a02f06-2e6c-e70b-2766-012a835d3a57@gmail.com>
+References: <00000000000084e2450576c817cc@google.com> <CAM_iQpXxzR3GP4wK7z+wW_0-vC9cuyiwnrCYqx+NpBgDvBXLcg@mail.gmail.com>
+ <7fcb1c03-6976-9b34-601d-5f50b74c5b0a@gmail.com> <CAM_iQpX4sKSPFXgEjU-be=he=91+=3Bm9KvP3CMciA9zi2b-6g@mail.gmail.com>
+ <CACT4Y+YbfOYDHJjeK-88wQDg2oSF3fqsaWBhkDwnDr+KUsLnDA@mail.gmail.com>
+ <CACT4Y+YbQbZ7XTPK1HLvPiR9rmSm7Cz0H2LJAFfYfAta1Y3CiQ@mail.gmail.com>
+ <de41f26b-efe6-9985-cf38-169c18791cd6@gmail.com> <CACT4Y+ZvoVsL_BjBWr7QPnXOPGXqkqKfo-NQcox7vaAFPWVUVg@mail.gmail.com>
+ <10a02f06-2e6c-e70b-2766-012a835d3a57@gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 27 Sep 2018 15:42:45 +0200
+Message-ID: <CACT4Y+Z24_ak+42mUGxMWBcBdXFYXFGKomPe0QzFUX+YSSkV+Q@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in tcf_block_find
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        syzbot+37b8770e6d5a8220a039@syzkaller.appspotmail.com,
+        David Miller <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander F. Rødseth <xyproto@archlinux.org>
+On Thu, Sep 27, 2018 at 3:24 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> On 09/27/2018 06:02 AM, Dmitry Vyukov wrote:
+>
+>> I am not suggesting to commit this. This is just a hack for debugging.
+>> It in fact lead to some warnings, but still allowed me to reproduce
+>> the bug reliably.
+>>
+>
+> Had you got more meaningful stack traces ?
+>
+> (Showing which context was actually doing the dst_release())
 
-Only ah needs to be set to 0 before calling interrupt 0x16 for waiting
-for a keypress.
+nope... I just handed off the instructions to Wei since she said she
+can't reproduce it.
 
-This patch changes the line that uses xor so that it only zeroes "ah" instead of "ax".
-This saves a byte.
 
-Signed-off-by: Alexander F. Rødseth <xyproto@archlinux.org>
----
- arch/x86/boot/header.S | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 850b8762e889..905cb96f43d4 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -71,14 +71,15 @@ msg_loop:
- 	jmp	msg_loop
- 
- bs_die:
--	# Allow the user to press a key, then reboot
--	xorw	%ax, %ax
-+	# Allow the user to press a key
-+	xorb	%ah, %ah
- 	int	$0x16
-+
-+	# Boostrap by reading sector 1, head 0, track 0 from drive
- 	int	$0x19
- 
--	# int 0x19 should never return.  In case it does anyway,
--	# invoke the BIOS reset code...
--	ljmp	$0xf000,$0xfff0
-+	# If boostrap somehow did not work, invoke the BIOS reset code
-+	ljmp	$0xf000, $0xfff0
- 
- #ifdef CONFIG_EFI_STUB
- 	.org	0x3c
--- 
-2.19.0
-
+>>>> +                               dst_destroy_rcu(&dst->rcu_head);
+>>>> +                       }
+>>>> +               }
+>>>>         }
+>>>>  }
+>
+> Thanks.
