@@ -2,225 +2,132 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14DDC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C00C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60CB221570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A4F321570
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:55:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yNcrUJJH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60CB221570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FzEl5dva"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A4F321570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbeI0PKc (ORCPT
+        id S1727142AbeI0PMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:10:32 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39010 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeI0PKb (ORCPT
+        Thu, 27 Sep 2018 11:12:19 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37212 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726929AbeI0PMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:10:31 -0400
-Received: by mail-it1-f195.google.com with SMTP id w200-v6so6668339itc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:53:21 -0700 (PDT)
+        Thu, 27 Sep 2018 11:12:19 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y26-v6so4503070wma.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:55:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=LN82kBLMbUwOGlu9+EOQTrB7Wt/hDKp4rCdGDeOv1hU=;
-        b=yNcrUJJHTaZ69VBCpoNwoiH7e9mHAURHrwy4i+D0moCXLsSJygObO49oOZodtqIt1G
-         37xQmjfSiO7uSJBuR+RwJLCfbmfFswUZuAfDKiKhNpt4S4iCxCN0IAFu2+8hw9vbo4hv
-         WvctYUI3K1svuObW/1o84HURnZsjFYZ77DR7pYhGClNU3ZxKSvrQmIXMC+oOP0slmxYf
-         RDrnsiSLv//JGlendXJBPh4o4GJ6DyUDodpo3LJD1HFwfdjCOR7GgWhlCIQfCurjeqp8
-         7BZz7/4i915fplPapGKBdz9uYcD4fuOpgo75En6pW/rXA0/JwmCtBdYlH1jwYeH+UOAf
-         mr9A==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eUk0z8ZdckYYa4kt9vBmH2ukEWjJziVzYyyHiKkuZHM=;
+        b=FzEl5dvaZFVtaEhwfyNofb8gmhzCHmQ8maXcZl689342bQrbrsRlAGrp8OWukSY6AG
+         z2zCGdv35PuxfhmizQrWPRwqArfcV/9q2ETWULjZKThBfm4RSwZi2NYdCxJWkifJiDfq
+         kLWT8jF+oXS4vDhR7vv83BFhN3yHuKjiZdEH8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LN82kBLMbUwOGlu9+EOQTrB7Wt/hDKp4rCdGDeOv1hU=;
-        b=FZJPKIc7hiFHjrRmXHGlFCGfRX3s2jPZpHjWDPJKfHBR+67hNl54zbb95PV85PMcPp
-         CG92Cw1rH0NITsgfY6XEFUvLciy+GQYzKOOBXaIUXkB3gm4Kg8njkeJuPFgUsPovRvTy
-         GUpEz5EQIUTEmd7LYdpHwH5eY0gpzQAHyl/3JrrVosBlkT5SizQd1ABau5sJ4az//7lT
-         VNDGoemAdVDL+AfxmbbdJQqD5lVRTRh1+jfrHR5VwEhMBQtCQivJ+5IFzFLCmFJlZwbK
-         MlGKE0uILPVeK1GZiEpsR/4HtkkGPWRt4AVQDFun3VJRKSIERXC4Q98GF8n6YlITN0Wc
-         hdTA==
-X-Gm-Message-State: ABuFfojKCWeYjemJDvxzKdAqajN3W320rVR8brmvqAqWT5b/LMM87/Vf
-        RN7hd5F9axLqq/hBGbjbwId1WoWp/D29QTWbDu+W8g==
-X-Google-Smtp-Source: ACcGV60iCLhThrzzBUtuF9GNUPiCRpucvcXy5ZPaWX/f351Dz7XjcRH/rgmEphqSR6Pkv1mmhM0yqgNzT5o+sPu0ueQ=
-X-Received: by 2002:a02:943:: with SMTP id f64-v6mr9038771jad.31.1538038400916;
- Thu, 27 Sep 2018 01:53:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180924101150.23349-1-brgl@bgdev.pl> <20180924101150.23349-4-brgl@bgdev.pl>
- <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com>
-In-Reply-To: <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 27 Sep 2018 10:53:09 +0200
-Message-ID: <CAMRc=McNoV6JA=ON71LByVn7e+mMDQW2-YrSMBOPDML2k=Z4bQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eUk0z8ZdckYYa4kt9vBmH2ukEWjJziVzYyyHiKkuZHM=;
+        b=YBmxnqDopdOiEY9YRFZ5NW6GGrYTWhjJnDDWAsnl+fOHkFrNDELEbkWiUc3ef/sKmr
+         EaQ0McLQITPEkesSmFsvacV+a1LkI52ZT/ifHWsWrOGr0fy3AjGsZ0U3brmxL1KvmUdr
+         w3ofu8TbYPmJVFAs0Fsrt7lOUTg5wlVc6CAB+CuB3evz5RdYJrLPQRpTmdElyeAdLdSB
+         xqaul+pdMdh1YwSklTrLUxXvpvq1GDjHs+5nGT9HMsoiG6S5MEIByzaM/F9NtQSMm8L3
+         qzwCriDdzARCQwQYHMmQmaOsHWxUTwcMtEK7Bn2B8VYOb5HijHO5UjKH/gto8YstRH7B
+         ytvw==
+X-Gm-Message-State: ABuFfoglHjbuirvvSrNF+8uQHwYqHITHnXmlNkO7I3c2eLnp1pP5R1t3
+        cTIerQ4FFh8u4czFKLaKn3iY0Q==
+X-Google-Smtp-Source: ACcGV62uIw4LMv7aadBeE82LC01HqtAu+CJfi9MPqM2AxRsdxKW3DqvfSljnZ1xcHrWMswXNQNr1jw==
+X-Received: by 2002:a1c:848c:: with SMTP id g134-v6mr4433714wmd.129.1538038506928;
+        Thu, 27 Sep 2018 01:55:06 -0700 (PDT)
+Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id t14-v6sm1331954wmi.35.2018.09.27.01.55.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 01:55:06 -0700 (PDT)
+Subject: Re: [PATCH V2 03/27] mmc: mmci: convert dma_setup callback to return
+ an int
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
+ <1537523181-14578-4-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFqnN0gg9WsbNPQcodqUXJmFEzMM+ST36s6oEZ2OPoONug@mail.gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <55622e1c-190f-6903-ab04-16089264f277@linaro.org>
+Date:   Thu, 27 Sep 2018 09:55:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFqnN0gg9WsbNPQcodqUXJmFEzMM+ST36s6oEZ2OPoONug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 27 wrz 2018 o 01:20 Kees Cook <keescook@chromium.org> napisa=C5=82(a)=
-:
->
-> On Mon, Sep 24, 2018 at 3:11 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrot=
-e:
-> > Provide a resource managed version of kstrdup_const(). This variant
-> > internally calls devm_kstrdup() on pointers that are outside of
-> > .rodata section and returns the string as is otherwise.
-> >
-> > Also provide a corresponding version of devm_kfree().
-> >
-> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
-> >  include/linux/device.h |  3 +++
-> >  2 files changed, 41 insertions(+)
-> >
-> > diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> > index 438c91a43508..48185d57bc5b 100644
-> > --- a/drivers/base/devres.c
-> > +++ b/drivers/base/devres.c
-> > @@ -11,6 +11,8 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/percpu.h>
-> >
-> > +#include <asm/sections.h>
-> > +
-> >  #include "base.h"
-> >
-> >  struct devres_node {
-> > @@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char =
-*s, gfp_t gfp)
-> >  }
-> >  EXPORT_SYMBOL_GPL(devm_kstrdup);
-> >
-> > +/**
-> > + * devm_kstrdup_const - resource managed conditional string duplicatio=
-n
-> > + * @dev: device for which to duplicate the string
-> > + * @s: the string to duplicate
-> > + * @gfp: the GFP mask used in the kmalloc() call when allocating memor=
-y
-> > + *
-> > + * Strings allocated by devm_kstrdup_const will be automatically freed=
- when
-> > + * the associated device is detached.
-> > + *
-> > + * RETURNS:
-> > + * Source string if it is in .rodata section otherwise it falls back t=
-o
-> > + * devm_kstrdup.
-> > + */
-> > +const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_=
-t gfp)
-> > +{
-> > +       if (is_kernel_rodata((unsigned long)s))
-> > +               return s;
-> > +
-> > +       return devm_kstrdup(dev, s, gfp);
-> > +}
-> > +EXPORT_SYMBOL(devm_kstrdup_const);
-> > +
-> >  /**
-> >   * devm_kvasprintf - Allocate resource managed space and format a stri=
-ng
-> >   *                  into that.
-> > @@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
-> >  }
-> >  EXPORT_SYMBOL_GPL(devm_kfree);
-> >
-> > +/**
-> > + * devm_kfree_const - Resource managed conditional kfree
-> > + * @dev: device this memory belongs to
-> > + * @p: memory to free
-> > + *
-> > + * Function calls devm_kfree only if @p is not in .rodata section.
-> > + */
-> > +void devm_kfree_const(struct device *dev, const void *p)
-> > +{
-> > +       if (!is_kernel_rodata((unsigned long)p))
-> > +               devm_kfree(dev, p);
-> > +}
-> > +EXPORT_SYMBOL(devm_kfree_const);
-> > +
-> >  /**
-> >   * devm_kmemdup - Resource-managed kmemdup
-> >   * @dev: Device this memory belongs to
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 33f7cb271fbb..79ccc6eb0975 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *de=
-v,
-> >         return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
-> >  }
-> >  extern void devm_kfree(struct device *dev, const void *p);
-> > +extern void devm_kfree_const(struct device *dev, const void *p);
->
-> With devm_kfree and devm_kfree_const both taking "const", how are
-> devm_kstrdup_const() and devm_kfree_const() going to be correctly
-> paired at compile time? (i.e. I wasn't expecting the prototype change
-> to devm_kfree())
->
+Thanks for looping me!
 
-I guess the same as with kfree() and kfree_const() which both take
-const void * as argument - it's up to users to only use
-devm_kfree_const() on resources allocated with devm_kstrdup_const().
+On 24/09/18 15:28, Ulf Hansson wrote:
+>>   /* Initialize the dml hardware connected to SD Card controller */
+>> -static void qcom_dma_setup(struct mmci_host *host)
+>> +static int qcom_dma_setup(struct mmci_host *host)
+>>   {
+>>          u32 config;
+>>          void __iomem *base;
+>> @@ -131,7 +131,7 @@ static void qcom_dma_setup(struct mmci_host *host)
+>>
+>>          if (producer_id < 0 || consumer_id < 0) {
+>>                  host->variant->qcom_dml = false;
+> It seems like the existing code is an attempt to fallback to use pio
+> mode. However, I doubt it works as is.
 
-Bart
+If I remember it correctly, Yes, that was the intent. we should still be 
+able to use the pio mode if the dma setup fails.
 
-> -Kees
->
-> >  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp=
-) __malloc;
-> > +extern const char *devm_kstrdup_const(struct device *dev,
-> > +                                     const char *s, gfp_t gfp);
-> >  extern void *devm_kmemdup(struct device *dev, const void *src, size_t =
-len,
-> >                           gfp_t gfp);
-> >
-> > --
-> > 2.18.0
-> >
->
->
->
-> --
-> Kees Cook
-> Pixel Security
+I believe pio mode should work, Last time when I tried (3-4 years back) 
+it did work!
+
+> 
+>> -               return;
+>> +               return -EINVAL;
+> My point is, if you return an error code here, it means that the error
+> code becomes propagated and ->probe() will fail.
+That would be very bad!, We should report it and may be just continue 
+with pio mode.
+
+> 
+> Ideally, we should be able fall back to pio mode when dma doesn't
+> work. I have looped in Srinivas who implemented the qcom dml support,
+> let's see if he can explains the intent with the code.
+> 
+> I also volunteer to help out running some tests on the 410c platform,
+I think you meant IFC6410.. DB410c uses sdhci.
+
+
+--srini
+> however allow me a day or two to do that.
+> 
