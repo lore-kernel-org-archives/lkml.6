@@ -3,88 +3,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7501C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96133C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80893216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:22:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80893216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 56227216F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:23:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56227216F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeI0TlD (ORCPT
+        id S1727674AbeI0TlR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 15:41:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49064 "EHLO mail.kernel.org"
+        Thu, 27 Sep 2018 15:41:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:34572 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727326AbeI0TlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 15:41:03 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 510D7215EB;
-        Thu, 27 Sep 2018 13:22:42 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 09:22:35 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
+        id S1727262AbeI0TlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 15:41:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD5FC18A;
+        Thu, 27 Sep 2018 06:23:01 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6FBE3F5B7;
+        Thu, 27 Sep 2018 06:22:52 -0700 (PDT)
+Subject: Re: [PATCH] sched/fair: vruntime should normalize when switching from
+ fair
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Steve Muckle <smuckle@google.com>,
+        Miguel de Dios <migueldedios@google.com>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH] rseq/selftests: fix parametrized test with -fpie
-Message-ID: <20180927092235.77282e35@vmware.local.home>
-In-Reply-To: <1367962117.10271.1537897176578.JavaMail.zimbra@efficios.com>
-References: <20180918135328.32034-1-mathieu.desnoyers@efficios.com>
-        <1367962117.10271.1537897176578.JavaMail.zimbra@efficios.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Todd Kjos <tkjos@google.com>, Paul Turner <pjt@google.com>,
+        quentin.perret@arm.com, Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Chris.Redpath@arm.com, Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        John Dias <joaodias@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+References: <20180817182728.76129-1-smuckle@google.com>
+ <dcd2fa21-7fef-d648-017d-9d42d11793e0@google.com>
+ <20180824093227.GN24124@hirez.programming.kicks-ass.net>
+ <20180824094742.GJ24142@hirez.programming.kicks-ass.net>
+ <ae94fb88-646b-1d82-b61d-103792965dbf@google.com>
+ <20180827111458.GB24124@hirez.programming.kicks-ass.net>
+ <2ed346fa-dbe8-4928-928b-a34338b2d8c9@arm.com>
+ <CANRm+CwEKf9bBj3zBQAL2nYjdt-zymz1xg7=PRcFz6DUOjLVJg@mail.gmail.com>
+ <62134bba-b6bd-ba16-a49b-e4887c326559@arm.com>
+ <CANRm+CzasXnjUtA_Xkm27=YDArc-gcpLmpSHv1cAqxihfocxRw@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <fab279dd-0f6c-af7a-5a06-d26e77afad6a@arm.com>
+Date:   Thu, 27 Sep 2018 15:22:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CANRm+CzasXnjUtA_Xkm27=YDArc-gcpLmpSHv1cAqxihfocxRw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-
-> ----- On Sep 18, 2018, at 9:53 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+On 09/27/2018 03:19 AM, Wanpeng Li wrote:
+> On Thu, 27 Sep 2018 at 06:38, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> Hi,
+>>
+>> On 09/26/2018 11:50 AM, Wanpeng Li wrote:
+>>> Hi Dietmar,
+>>> On Tue, 28 Aug 2018 at 22:55, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>>>
+>>>> On 08/27/2018 12:14 PM, Peter Zijlstra wrote:
+>>>>> On Fri, Aug 24, 2018 at 02:24:48PM -0700, Steve Muckle wrote:
+>>>>>> On 08/24/2018 02:47 AM, Peter Zijlstra wrote:
+>>>>>>>>> On 08/17/2018 11:27 AM, Steve Muckle wrote:
+>>
+>> [...]
+>>
+>>>>>>>>>> - later, when the prio is deboosted and the task is moved back
+>>>>>>>>>>        to the fair class, the fair rq's min_vruntime is added to
+>>>>>>>>>>        the task's vruntime, even though it wasn't subtracted earlier.
+>>>
+>>> Could you point out when the fair rq's min_vruntime is added to the
+>>> task's vruntime in your *later* scenario? attach_task_cfs_rq will not
+>>> do that the same reason as detach_task_cfs_rq. fair task's
+>>> sched_remote_wakeup is false which results in vruntime will not be
+>>> renormalized in enqueue_entity.
+>>
+>> The cfs_rq->min_vruntime is still added to the se->vruntime in
+>> enqueue_task_fair().
 > 
-> > On x86-64, the parametrized selftest code for rseq crashes with a
-> > segmentation fault when compiled with -fpie. This happens when the
-> > param_test binary is loaded at an address beyond 32-bit on x86-64.
-> > 
-> > The issue is caused by use of a 32-bit register to hold the address
-> > of the loop counter variable.
-> > 
-> > Fix this by using a 64-bit register to calculate the address of the
-> > loop counter variables as an offset from rip.  
-> 
-> Should this fix go through tip or the selftests tree ?
-> 
+> I understand what your patch done,
 
-I usually have changes like this pulled through Shuah's tree with an
-ack from the maintainer of the code that it tests.
+It's not my patch ;-) I just helped to find out under which 
+circumstances this issue can happen.
 
--- Steve
+> On your CPU4:
+> scheduler_ipi()
+>   -> sched_ttwu_pending()
+>        -> ttwu_do_activate()    => p->sched_remote_wakeup should be
+> false, so ENQUEUE_WAKEUP is set, ENQUEUE_MIGRATED is not
+>             -> ttwu_activate()
+>                  -> activate_task()
+>                       -> enqueue_task()
+>                            -> enqueue_task_fair()
+>                                 -> enqueue_entity()
+>                                      bool renorm = !(flags &
+> ENQUEUE_WAKEUP) || (flags & ENQUEUE_MIGRATE)
+> so renorm is false in enqueue_entity(), why you mentioned that the
+> cfs_rq->min_vruntime is still added to the se->vruntime in
+> enqueue_task_fair()?
+
+Maybe this is a misunderstanding on my side but didn't you asked me to 
+'... Could you point out when the fair rq's min_vruntime is added to the 
+task's vruntime in your *later* scenario? ...'
