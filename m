@@ -2,79 +2,147 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11161C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A15C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C584020836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:18:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C584020836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=BitWizard.nl
+	by mail.kernel.org (Postfix) with ESMTP id B5C542156E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:19:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aaathats3as.com header.i=@aaathats3as.com header.b="keAGzBJ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C542156E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aaathats3as.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeI0Nf0 (ORCPT
+        id S1727163AbeI0Nfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:35:26 -0400
-Received: from cust-95-128-94-82.breedbanddelft.nl ([95.128.94.82]:41638 "EHLO
-        cust-95-128-94-82.breedbanddelft.nl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726669AbeI0Nf0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:35:26 -0400
-Received: by abra2.bitwizard.nl (Postfix, from userid 1000)
-        id 6D42813F784; Thu, 27 Sep 2018 09:18:36 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 09:18:36 +0200
-From:   Rogier Wolff <R.E.Wolff@BitWizard.nl>
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jeff Layton <jlayton@redhat.com>,
-        =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: POSIX violation by writeback error
-Message-ID: <20180927071836.GU16802@BitWizard.nl>
-References: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
- <486f6105fd4076c1af67dae7fdfe6826019f7ff4.camel@redhat.com>
- <20180925003044.239531c7@alans-desktop>
- <0662a4c5d2e164d651a6a116d06da380f317100f.camel@redhat.com>
- <20180925154627.GC2933@thunk.org>
- <23cd68a665d27216415dc79367ffc3bee1b60b86.camel@redhat.com>
- <20180925223054.GH2933@thunk.org>
- <20180926191055.6fc1514f@alans-desktop>
+        Thu, 27 Sep 2018 09:35:48 -0400
+Received: from cock.li ([185.100.85.212]:40742 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726669AbeI0Nfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:35:48 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926191055.6fc1514f@alans-desktop>
-Organization: BitWizard B.V.
-User-Agent: Mutt/1.5.21 (2010-09-15)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaathats3as.com;
+        s=mail; t=1538032735;
+        bh=1pm4y+bwewZkwnTMD11H/MPXWMI+t7VoASrMbW2MTLA=;
+        h=Date:From:To:Subject:From;
+        b=keAGzBJ52tL1rJOsNrJFrR9XCL1Byphrp52a0RgLRFO5uGSrhSkUjN3USS87sJpJA
+         xmSDens1IvdKC9GGvLKMK9qbZgPiP66T1cD1L6r8NfnxG9EeJjl1zMOZ4PlE4WZr6W
+         LMUpUJC/cbKxSQbfeaP9P1+JCyf12lrb1b8zL1d28mFoItbG9I+0tQGPzfC2zOw37B
+         1BfFxI92z6aOpTpFPC+j7swjvGM1w1oIKRC1jAGrHz6uUB+3foWqWKbOAEtp0HUkzw
+         5wQCMkLu4fJJUkP4SMw4qN4h/KGIpDjHEhcuRQRcyCHQ+GD1dmuAZZgSNf26D6lly1
+         w6HtjyK7V7imA==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Thu, 27 Sep 2018 07:18:55 +0000
+From:   viewedforward@aaathats3as.com
+To:     dng@lists.dyne.org, linux-kernel@vger.kernel.org
+Subject: The software freedom conservancy has tendered its response:
+Message-ID: <debc527823030cf26e46692efc4a41e3@aaathats3as.com>
+X-Sender: viewedforward@aaathats3as.com
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 07:10:55PM +0100, Alan Cox wrote:
-> > And I think that's fine.  The only way we can make any guarantees is
-> > if we do what Alan suggested, which is to imply that a read on a dirty
-> > page *block* until the the page is successfully written back.  This
-> > would destroy performance.
-> 
-> In almost all cases you don't care so you wouldn't use it. In those cases
-> where it might matter it's almost always the case that a reader won't
-> consume it before it hits the media.
+The software freedom conservancy has tendered its response:
+http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
+http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
 
-Wait! Source code builds (*) nowadays are quite fast because
-everything happens without hitting the disk. This means my compile has
-finished linking the executable by the time the kernel starts thinking
-about writing the objects to disk.
 
-	Roger. 
+""
+"The GPLv2 have several provisions that, when taken together, can be 
+construed as an irrevocable license from each contributor. "
+""
 
-(*) Of projects smaller than the Linux kernel. 
+It cites:
 
--- 
-** R.E.Wolff@BitWizard.nl ** http://www.BitWizard.nl/ ** +31-15-2600998 **
-**    Delftechpark 26 2628 XH  Delft, The Netherlands. KVK: 27239233    **
-*-- BitWizard writes Linux device drivers for any device you may have! --*
-The plan was simple, like my brother-in-law Phil. But unlike
-Phil, this plan just might work.
+
+           " That license granted to downstream is irrevocable, again 
+provided that the downstream user complies with the license terms: 
+"[P]arties who have received copies, or rights, from you under this 
+License will not have their licenses terminated so long as such parties 
+remain in full compliance" (GPLv2§4). "
+
+However this is disingenuous
+
+The full text of section 4 is as follows:
+
+""
+   4. You may not copy, modify, sublicense, or distribute the Program
+except as expressly provided under this License.  Any attempt
+otherwise to copy, modify, sublicense or distribute the Program is
+void, and will automatically terminate your rights under this License.
+However, parties who have received copies, or rights, from you under
+this License will not have their licenses terminated so long as such
+parties remain in full compliance.
+""
+
+
+
+The "You" in section 4 is speaking of the licensee regarding 
+sub-licensees, it is not speaking to the licensor/copyright-holder.
+
+IE: if the licensee loses his license, through operation of the 
+automatic-revocation provisions, the sub-licensees do not also lose 
+their licenses.
+
+IE: The language is disclaiming a chain topography for license 
+distribution, and instead substituting a hub-and-spoke topography (all 
+licenses originating from the copyright holder, not the 
+previous-in-line)
+
+GPLv3 added a no-rescission clause for a reason: the reason being to 
+attempt to create an estoppel defense for the licensees against the 
+licensor. You will notice that Eben Moglen never speaks on these issues. 
+(He preumably is aware of the weaknesses vis a vis the US copyright 
+regime.)
+
+Section 6 further clarifies the hub-and-spoke model:
+""
+    6. Each time you redistribute the Program (or any work based on the
+Program), the recipient automatically receives a license from the
+original licensor to copy, distribute or modify the Program subject to
+these terms and conditions.  You may not impose any further
+restrictions on the recipients' exercise of the rights granted herein.
+You are not responsible for enforcing compliance by third parties to
+this License.
+""
+
+The memorandum posted then goes on to a discussion of estoppel, 
+detrimental reliance, etc; noting that users may have relied on the 
+software and their licenses may be estopped from being revoked from said 
+users since doing so might cause them unanticipated loss. This is 
+speaking of already published, existent, versions of the program used by 
+end users.
+
+The memorandum seems to ignore what happens to "upstream" once said 
+project  receives a revocation notice. Thought it may be possible that 
+users of a published piece of software may have defenses to license 
+revocation, the same is not true regarding the rescinded property 
+vis-a-vis future prospective versions of the software nor of future 
+prospective licensees of said software.
+
+That is: once the grant to use the code in question is rescinded, future 
+versions of the software may not use that code. Current users of the 
+software may be-able to raise an estoppel / detrimental reliance defense 
+regarding the current published software, however the programmers 
+working on the next version of said software cannot continue to use the 
+property in future versions of the software (such would be a copyright 
+violation once the gratuitous license is rescinded by the grantor).
+
+Additionally, prospective-licensees, once the grant was rescinded and 
+such was published, would have no same-such estoppel defense (not being 
+user-licensees at the time of revocation).
+
+(Ignoring this eventuality in the published memorandum, is, of-course, 
+by design.)
+(Now, to note: the free-software movement is focused on the freedom of 
+the user, not the progenitors of the software, so one could certainly 
+say that ignoring some developer-focused analysis is consistent with 
+their prerogative...)
