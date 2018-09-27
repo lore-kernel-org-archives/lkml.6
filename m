@@ -2,141 +2,113 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF6FC04E87
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE69C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEEB021564
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:07:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEEB021564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id D4A8C21564
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:07:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A8C21564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbeI0X0g (ORCPT
+        id S1728761AbeI0X0o convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:26:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41999 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbeI0X0g (ORCPT
+        Thu, 27 Sep 2018 19:26:44 -0400
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:49957 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728505AbeI0X0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:26:36 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RH7DI5102241
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 10:07:13 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RH7DVU102238;
-        Thu, 27 Sep 2018 10:07:13 -0700
-Date:   Thu, 27 Sep 2018 10:07:13 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Pu Wen <tipbot@zytor.com>
-Message-ID: <tip-b8f4abb652146ddde04ab6e2a80e8cde27ff4470@git.kernel.org>
-Cc:     hpa@zytor.com, bp@suse.de, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, puwen@hygon.cn
-Reply-To: bp@suse.de, hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, puwen@hygon.cn
-In-Reply-To: <654dd12876149fba9561698eaf9fc15d030301f8.1537533369.git.puwen@hygon.cn>
-References: <654dd12876149fba9561698eaf9fc15d030301f8.1537533369.git.puwen@hygon.cn>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/kvm: Add Hygon Dhyana support to KVM
-Git-Commit-ID: b8f4abb652146ddde04ab6e2a80e8cde27ff4470
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 27 Sep 2018 19:26:44 -0400
+X-Greylist: delayed 445 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Sep 2018 19:26:43 EDT
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.85)
+          with esmtps (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1g5Ze1-0037nk-DM>; Thu, 27 Sep 2018 19:00:05 +0200
+Received: from z92e7.pia.fu-berlin.de ([87.77.146.231] helo=[10.146.231.3])
+          by inpost2.zedat.fu-berlin.de (Exim 4.85)
+          with esmtpsa (TLSv1.2:AES128-SHA:128)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1g5Ze0-001IwI-Qx>; Thu, 27 Sep 2018 19:00:05 +0200
+Subject: Re: [PATCH] ata: add Amiga Gayle PATA controller driver
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Tejun Heo <tj@kernel.org>, Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-kernel@vger.kernel.org
+References: <CGME20180212134949epcas2p37f0bdae15608340bc21dbb2358db8df3@epcas2p3.samsung.com>
+ <19df19ad-47e8-1f17-6b7f-39365cd0d4df@physik.fu-berlin.de>
+ <4c590675-71dc-d7f1-b40f-3b0ee124082a@physik.fu-berlin.de>
+ <2435240.vCYXG2Zeag@amdc3058>
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <08866634-04fb-e8fe-08bf-003d6a982b5a@physik.fu-berlin.de>
+Date:   Thu, 27 Sep 2018 19:00:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <2435240.vCYXG2Zeag@amdc3058>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: 87.77.146.231
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b8f4abb652146ddde04ab6e2a80e8cde27ff4470
-Gitweb:     https://git.kernel.org/tip/b8f4abb652146ddde04ab6e2a80e8cde27ff4470
-Author:     Pu Wen <puwen@hygon.cn>
-AuthorDate: Sun, 23 Sep 2018 17:36:31 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 27 Sep 2018 18:28:59 +0200
+Hi Bartlomiej!
 
-x86/kvm: Add Hygon Dhyana support to KVM
+Any chance you had a chance working on the libata port of the Buddha
+driver? The Amiga 4000 here is equipped with a Buddha and I'm happy
+to help testing the driver:
 
-The Hygon Dhyana CPU has the SVM feature as AMD family 17h does.
-So enable the KVM infrastructure support to it.
+root@elgar:~> lszorro
+00: Phase 5 Digital Products CyberSCSI/Blizzard 1220
+01: Village Tronic Ariadne Ethernet Card
+02: individual Computers X-Surf 100 Z-II/ZIII Ethernet
+03: individual Computers Buddha IDE Controller
+04: Phase 5 Digital Products CyberVision 64
+root@elgar:~>
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Cc: tglx@linutronix.de
-Cc: mingo@redhat.com
-Cc: hpa@zytor.com
-Cc: x86@kernel.org
-Cc: thomas.lendacky@amd.com
-Cc: kvm@vger.kernel.org
-Link: https://lkml.kernel.org/r/654dd12876149fba9561698eaf9fc15d030301f8.1537533369.git.puwen@hygon.cn
----
- arch/x86/include/asm/kvm_emulate.h |  4 ++++
- arch/x86/include/asm/virtext.h     |  5 +++--
- arch/x86/kvm/emulate.c             | 11 ++++++++++-
- 3 files changed, 17 insertions(+), 3 deletions(-)
+Adrian
 
-diff --git a/arch/x86/include/asm/kvm_emulate.h b/arch/x86/include/asm/kvm_emulate.h
-index 0f82cd91cd3c..93c4bf598fb0 100644
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -364,6 +364,10 @@ struct x86_emulate_ctxt {
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_ecx 0x21726574
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_edx 0x74656273
- 
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ebx 0x6f677948
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ecx 0x656e6975
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_edx 0x6e65476e
-+
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ebx 0x756e6547
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ecx 0x6c65746e
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_edx 0x49656e69
-diff --git a/arch/x86/include/asm/virtext.h b/arch/x86/include/asm/virtext.h
-index 0116b2ee9e64..e05e0d309244 100644
---- a/arch/x86/include/asm/virtext.h
-+++ b/arch/x86/include/asm/virtext.h
-@@ -83,9 +83,10 @@ static inline void cpu_emergency_vmxoff(void)
-  */
- static inline int cpu_has_svm(const char **msg)
- {
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON) {
- 		if (msg)
--			*msg = "not amd";
-+			*msg = "not amd or hygon";
- 		return 0;
- 	}
- 
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 106482da6388..34edf198708f 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -2711,7 +2711,16 @@ static bool em_syscall_is_enabled(struct x86_emulate_ctxt *ctxt)
- 	    edx == X86EMUL_CPUID_VENDOR_AMDisbetterI_edx)
- 		return true;
- 
--	/* default: (not Intel, not AMD), apply Intel's stricter rules... */
-+	/* Hygon ("HygonGenuine") */
-+	if (ebx == X86EMUL_CPUID_VENDOR_HygonGenuine_ebx &&
-+	    ecx == X86EMUL_CPUID_VENDOR_HygonGenuine_ecx &&
-+	    edx == X86EMUL_CPUID_VENDOR_HygonGenuine_edx)
-+		return true;
-+
-+	/*
-+	 * default: (not Intel, not AMD, not Hygon), apply Intel's
-+	 * stricter rules...
-+	 */
- 	return false;
- }
- 
+On 3/1/18 11:52 AM, Bartlomiej Zolnierkiewicz wrote:
+> On Thursday, March 01, 2018 10:55:48 AM John Paul Adrian Glaubitz wrote:
+>> Hello!
+> 
+> Hi,
+> 
+>> On 02/18/2018 05:18 PM, John Paul Adrian Glaubitz wrote:
+>>> Is there any progress on this? Is it just the SDPX headers now that
+>>> are missing?
+>>
+>> Would it be okay if re-send the patch with the SPDX headers added?
+>>
+>> Or can we get the patch merged, then I'll send a patch to add the
+>> SPDX headers?
+> 
+> I'll post updated version later today, sorry for the delay (I've been
+> busy with other things and the patch is not v4.16 material anyway).
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-m68k" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+
