@@ -2,176 +2,105 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2282BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627D1C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF0D2172A
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:08:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEgffWSP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF0D2172A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 230EE2172A
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:09:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 230EE2172A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbeI1F25 (ORCPT
+        id S1728432AbeI1F3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 01:28:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43538 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeI1F24 (ORCPT
+        Fri, 28 Sep 2018 01:29:43 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33777 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbeI1F3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 01:28:56 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j26-v6so2903480pfi.10;
-        Thu, 27 Sep 2018 16:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NFu6zxSuoolFFDIUMKLRrnHWCMxchV5f82Kp8PXbhW0=;
-        b=MEgffWSPV6m1KtG+xhSt93DbgvJKy32Xl2xU3woQEU3Qpr6pqh3FDYFnm0XDEfXKU8
-         LSqNdYR4IgCk18XBYW+8r2eZdffEUewd3j8cU0xoswcsfFFBDZ93coyoj4rgOvMJs/ae
-         STz25hlVpOF50ww5bwHYIvQWK61Tb/bMgdOYyhst/4guYL12FjWyIXOExx88LFQRpzRT
-         zfa+Sw5g04Z3VIkNK+qJVXWB/FujHTcXmS1up1nLFlTGvbYWlOrXrtNzuMk7ZEjnt5YP
-         vDkkLZj0fTaQJkzhkAomj+oWA9yrAtDcNtN50uw9LKmFOIpsQnFBEWuRK9DA+aWQK1e+
-         XLlA==
+        Fri, 28 Sep 2018 01:29:43 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so2944715pfn.0;
+        Thu, 27 Sep 2018 16:09:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NFu6zxSuoolFFDIUMKLRrnHWCMxchV5f82Kp8PXbhW0=;
-        b=BtHxaL+YV12i3dcdsfkyUHBki2RT0aWWH1cN1PN4WBjOjELnCZPpJTEjIvSFUG8zVD
-         o5brUlx3kH35x5XiIejLOt3eqi5HyDZYBkMUyBkhSh5MvN81x1wNE3/V3LY27nD9TFSp
-         Qs/bzR47q0e27yHg/IT05qP3BLWgfjHQzmbNhNYPSVecZCxTBIR/cxx3qyoMdj9YCJqa
-         LSJxmHCTRE//wJDTSqfMAXlNRv5hB/9mzOaOCBWmJzSNjwAhgsN+jVmtU+pMTklwnisp
-         aikD2tcVeeYQfdNF4cZ+up5BX+bdla/rcnD+lBjnQ/0lU2+r//JsBmmnZEXDhAm2q9Ad
-         efoQ==
-X-Gm-Message-State: ABuFfoiYJTPErk/lNMTaPwmZ93z5PhDcvV5lPdgabEZVsSVRcGO9wELg
-        QKDv6h++CFGez0bpVlYl7jY=
-X-Google-Smtp-Source: ACcGV62VZkH8yAixK/ooIhKBBZXwD2DbXUxCqz3CYVENI+LD+xTXhki0e2UthzjYvUD6RxuNfYv4Dg==
-X-Received: by 2002:a63:1b0b:: with SMTP id b11-v6mr3015879pgb.66.1538089694874;
-        Thu, 27 Sep 2018 16:08:14 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id i186-v6sm4294429pge.80.2018.09.27.16.08.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 16:08:14 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 16:08:13 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Flavio Leitner <fbl@redhat.com>
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: check if the socket netns is correct.
-Message-ID: <20180927230813.GB29261@roeck-us.net>
-References: <20180927204629.GA4680@roeck-us.net>
- <20180927225824.GT2702@plex.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927225824.GT2702@plex.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cxmQn1GVXysO8fPNDcHZ6uxAsuchFdxvy6uUiAUqhtg=;
+        b=NiSg7Ji1kIgRNkgV5iz1vAejT7EM1gR0UiVoQ2ruFyUy1e2Bfm9DWoXU0KT+MkgAJT
+         S69eqWML7xIQzNcyHLWFr4Nv1Bd6O8iIJuiLadJBEWeasy6HOeV9knmdtNoctpNrHqAs
+         pke9UYP9/yFWSnAMWkb9HqJ8oLLr1wbntbfoAGjAmEJ7r1VqsHpCxJ5WzaWOMEx9UweD
+         thr5ODfh4MGAdlGDjgRnyMDar44PWtfQiW+Lfrf69bimmO0GMbxQ/7dFRiMSqZa2NswC
+         2gQ+yX7OHwyrstcgPtbGTIhm4j6XTYe1ga2RUj3RgSdru2HXrYxBu7BXqILimYW+CGW6
+         gnZw==
+X-Gm-Message-State: ABuFfojN3+c5fPXQ/GIgWc+PQUFX23ni6bfH0CztwQvYuDl5D8KZwctK
+        fTZyMzsk2sgd0CCV3HCb81A=
+X-Google-Smtp-Source: ACcGV60nC/9bW6/ABYqSmg9tJ27dXqqziDGJT7Vfce41RdgeYJeMFtZrNTx+1AR0rtk2gOPNk6Chew==
+X-Received: by 2002:a63:29c6:: with SMTP id p189-v6mr4095530pgp.188.1538089741608;
+        Thu, 27 Sep 2018 16:09:01 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id b3-v6sm4372001pgm.74.2018.09.27.16.09.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 16:09:00 -0700 (PDT)
+Message-ID: <1538089739.226558.10.camel@acm.org>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>, dledford@redhat.com,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 27 Sep 2018 16:08:59 -0700
+In-Reply-To: <20180927225823.GD28301@ziepe.ca>
+References: <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
+         <20180925023722.GA32600@ziepe.ca> <20180927010803.GA7640@flashbox>
+         <20180927044826.GC24889@ziepe.ca>
+         <CAKwvOdnmg2XY6K-8jTna3EKR1Nx04gOm6ZoywUwQO_CSANR_jg@mail.gmail.com>
+         <20180927202849.GA11120@flashbox>
+         <CAKwvOdnMOcdKPNHwKbcsg8rJX3_hDTgY752Nb4hgMC2D4p5aRg@mail.gmail.com>
+         <20180927222821.GC28301@ziepe.ca> <1538087622.226558.8.camel@acm.org>
+         <CAKwvOd=qNZsfSFJUFZqBbSYt4T_T7TudohzhTqpigvDAHek78A@mail.gmail.com>
+         <20180927225823.GD28301@ziepe.ca>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 07:58:24PM -0300, Flavio Leitner wrote:
-> On Thu, Sep 27, 2018 at 01:46:29PM -0700, Guenter Roeck wrote:
-> > Hi Flavio,
-> > 
-> > On Wed, Jun 27, 2018 at 10:34:25AM -0300, Flavio Leitner wrote:
-> > > Netfilter assumes that if the socket is present in the skb, then
-> > > it can be used because that reference is cleaned up while the skb
-> > > is crossing netns.
-> > > 
-> > > We want to change that to preserve the socket reference in a future
-> > > patch, so this is a preparation updating netfilter to check if the
-> > > socket netns matches before use it.
-> > > 
-> > > Signed-off-by: Flavio Leitner <fbl@redhat.com>
-> > > Acked-by: Florian Westphal <fw@strlen.de>
-> > > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > > ---
-> > ...
-> > > --- a/net/netfilter/xt_socket.c
-> > > +++ b/net/netfilter/xt_socket.c
-> > > @@ -56,8 +56,12 @@ socket_match(const struct sk_buff *skb, struct xt_action_param *par,
-> > >  	struct sk_buff *pskb = (struct sk_buff *)skb;
-> > >  	struct sock *sk = skb->sk;
-> > >  
-> > > +	if (!net_eq(xt_net(par), sock_net(sk)))
-> > > +		sk = NULL;
-> > > +
-> > 
-> > I am having trouble with this code. With CONFIG_NET_NS enabled, it crashes
-> > for me in read_pnet() because sk is NULL.
-> > 
-> > >  	if (!sk)
-> > >  		sk = nf_sk_lookup_slow_v4(xt_net(par), skb, xt_in(par));
-> > 
-> > The old code seems to suggest that sk == NULL was possible.
-> > 
-> > I see the problem with the Chrome OS kernel rebased to v4.19-rc5, so I
-> > can not guarantee that this really an upstream problem. The change seems
-> > odd, though. Are you sure that it is not (or, rather, no longer) necessary
-> > to check if sk == NULL before dereferencing it in sock_net() ?
-> 
-> Oops, it is necessary but if it's not and the netns doesn't match, we need
-> do the lookup. So, could you check if this fixes the problem for you?
-> 
-> From a5f927e7f1368d753f87cb978d630d786d5adb62 Mon Sep 17 00:00:00 2001
-> From: Flavio Leitner <fbl@redhat.com>
-> Date: Thu, 27 Sep 2018 19:36:28 -0300
-> Subject: [PATCH] xt_socket: check sk before checking for netns.
-> 
-> Only check for the network namespace if the socket is available.
-> 
-> Fixes: f564650106a6 ("netfilter: check if the socket netns is correct.")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Flavio Leitner <fbl@redhat.com>
+On Thu, 2018-09-27 at 16:58 -0600, Jason Gunthorpe wrote:
++AD4 Anyhow, the standard is hard to read in this area, but reality is
++AD4 this:
++AD4 
++AD4 +ACM-include +ADw-stdio.h+AD4
++AD4 
++AD4 enum a
++AD4 +AHs
++AD4 	A1 +AD0 1,
++AD4 	A2 +AD0 1ULL+ADwAPA-40,
++AD4 +AH0AOw
++AD4 
++AD4 int main(int argc, const char +ACo-argv+AFsAXQ)
++AD4 +AHs
++AD4 	printf(+ACIAJQ-zu+AFw-n+ACI, sizeof(enum a))+ADs
++AD4 	return 0+ADs
++AD4 +AH0
++AD4 
++AD4 +ACQ gcc -Wall -std+AD0-c11 test.c +ACYAJg ./a.out
++AD4 8
++AD4 
++AD4 I forget if this a common compiler extension, unclear standard, or was
++AD4 formally revised in C11 or what, but it is the real world the Linux
++AD4 kernel lives in.
++AD4 
++AD4 It is even more confusing if you wonder what types A1 and A2 are+ACE
 
-This fixes the problem for me.
+What's unfortunate is that gcc and sparse have different opinions about how
+to compile the above code. Even if gcc supports enumeration constants that
+exceed what fits in an int, sparse does not AFAIK.
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Bart.
 
-Thanks,
-Guenter
-
-> ---
->  net/netfilter/xt_socket.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/netfilter/xt_socket.c b/net/netfilter/xt_socket.c
-> index 0472f3472842..ada144e5645b 100644
-> --- a/net/netfilter/xt_socket.c
-> +++ b/net/netfilter/xt_socket.c
-> @@ -56,7 +56,7 @@ socket_match(const struct sk_buff *skb, struct xt_action_param *par,
->  	struct sk_buff *pskb = (struct sk_buff *)skb;
->  	struct sock *sk = skb->sk;
->  
-> -	if (!net_eq(xt_net(par), sock_net(sk)))
-> +	if (sk && !net_eq(xt_net(par), sock_net(sk)))
->  		sk = NULL;
->  
->  	if (!sk)
-> @@ -117,7 +117,7 @@ socket_mt6_v1_v2_v3(const struct sk_buff *skb, struct xt_action_param *par)
->  	struct sk_buff *pskb = (struct sk_buff *)skb;
->  	struct sock *sk = skb->sk;
->  
-> -	if (!net_eq(xt_net(par), sock_net(sk)))
-> +	if (sk && !net_eq(xt_net(par), sock_net(sk)))
->  		sk = NULL;
->  
->  	if (!sk)
-> -- 
-> 2.14.4
-> 
