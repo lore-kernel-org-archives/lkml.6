@@ -2,186 +2,111 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52946C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209BDC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2ECA216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:06:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2ECA216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id CC744216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:07:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3O3JdOU0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC744216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeI0WZu (ORCPT
+        id S1728250AbeI0W03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:25:50 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:39319 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727334AbeI0WZu (ORCPT
+        Thu, 27 Sep 2018 18:26:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38804 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbeI0W02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:25:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04390;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T9a2PuZ_1538064392;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T9a2PuZ_1538064392)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 28 Sep 2018 00:06:34 +0800
-Subject: Re: [v2 PATCH 2/2 -mm] mm: brk: dwongrade mmap_sem to read when
- shrinking
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        vbabka@suse.cz, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
- <1537985434-22655-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180927125025.xnvoh2btdq5kjmai@kshutemo-mobl1>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <d5443d11-7422-6b5b-f6a9-db09311bc827@linux.alibaba.com>
-Date:   Thu, 27 Sep 2018 09:06:29 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 27 Sep 2018 18:26:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=E96MNFcFy+7043YMSx0fhWNFynk52K/oUh5k2l6uvEw=; b=3O3JdOU0TAjOSlS4Ko4jyoYiMh
+        As7PSH2RGuB4mzEExi3AFuHiWgbZidOoBpaiKy1WNu1eSQBqjd00hKqrW2eb9zKkPpLn+qug1Oren
+        7zZ5LKVjX0nuFvUeOoh9zlHawBVw3Ec9BKLJ7O3uYSMrDPOk7BAegy/Ndq2ywTu06jUv1LwhJBiBg
+        PssWOUWBwxLnW7+AbERon8mKjPaIgjBM2anYLiOHxTNaJ744RBOU7paJZe/mSlNKzLzwCgPTGw9Rl
+        wBLHaNy1Elu/TqM/8YxJa26yTGUd2H+s8GfzHUbGOrbEdqM1+A8Apic44pVd2fQZVAUWCRphL6f/y
+        RQd4o5rA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=vortex.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5Yon-00086n-CF; Thu, 27 Sep 2018 16:07:29 +0000
+Subject: Re: [PATCH] Reduce boot header size with 1 byte
+To:     xyproto@archlinux.org, linux-kernel@vger.kernel.org
+References: <20180927134117.15371-1-xyproto@archlinux.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <52c315b1-e151-d728-9743-47e3189df8c9@infradead.org>
+Date:   Thu, 27 Sep 2018 09:07:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180927125025.xnvoh2btdq5kjmai@kshutemo-mobl1>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180927134117.15371-1-xyproto@archlinux.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9/27/18 6:41 AM, xyproto@archlinux.org wrote:
+> From: Alexander F. Rødseth <xyproto@archlinux.org>
+> 
+> Only ah needs to be set to 0 before calling interrupt 0x16 for waiting
+> for a keypress.
+> 
+> This patch changes the line that uses xor so that it only zeroes "ah" instead of "ax".
+> This saves a byte.
+> 
+> Signed-off-by: Alexander F. Rødseth <xyproto@archlinux.org>
+
+Hi,
+
+You should Cc: the X86 maintainers on this patch.
+Otherwise it will just be lost in the ether.
+
+thanks.
+
+> ---
+>  arch/x86/boot/header.S | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+> index 850b8762e889..905cb96f43d4 100644
+> --- a/arch/x86/boot/header.S
+> +++ b/arch/x86/boot/header.S
+> @@ -71,14 +71,15 @@ msg_loop:
+>  	jmp	msg_loop
+>  
+>  bs_die:
+> -	# Allow the user to press a key, then reboot
+> -	xorw	%ax, %ax
+> +	# Allow the user to press a key
+> +	xorb	%ah, %ah
+>  	int	$0x16
+> +
+> +	# Boostrap by reading sector 1, head 0, track 0 from drive
+>  	int	$0x19
+>  
+> -	# int 0x19 should never return.  In case it does anyway,
+> -	# invoke the BIOS reset code...
+> -	ljmp	$0xf000,$0xfff0
+> +	# If boostrap somehow did not work, invoke the BIOS reset code
+> +	ljmp	$0xf000, $0xfff0
+>  
+>  #ifdef CONFIG_EFI_STUB
+>  	.org	0x3c
+> 
 
 
-On 9/27/18 5:50 AM, Kirill A. Shutemov wrote:
-> On Thu, Sep 27, 2018 at 02:10:34AM +0800, Yang Shi wrote:
->> brk might be used to shinrk memory mapping too other than munmap().
-> s/shinrk/shrink/
->
->> So, it may hold write mmap_sem for long time when shrinking large
->> mapping, as what commit ("mm: mmap: zap pages with read mmap_sem in
->> munmap") described.
->>
->> The brk() will not manipulate vmas anymore after __do_munmap() call for
->> the mapping shrink use case. But, it may set mm->brk after
->> __do_munmap(), which needs hold write mmap_sem.
->>
->> However, a simple trick can workaround this by setting mm->brk before
->> __do_munmap(). Then restore the original value if __do_munmap() fails.
->> With this trick, it is safe to downgrade to read mmap_sem.
->>
->> So, the same optimization, which downgrades mmap_sem to read for
->> zapping pages, is also feasible and reasonable to this case.
->>
->> The period of holding exclusive mmap_sem for shrinking large mapping
->> would be reduced significantly with this optimization.
->>
->> Cc: Michal Hocko <mhocko@kernel.org>
->> Cc: Kirill A. Shutemov <kirill@shutemov.name>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->> ---
->> v2: Rephrase the commit per Michal
->>
->>   mm/mmap.c | 40 ++++++++++++++++++++++++++++++----------
->>   1 file changed, 30 insertions(+), 10 deletions(-)
->>
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index 017bcfa..0d2fae1 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -193,9 +193,11 @@ static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long
->>   	unsigned long retval;
->>   	unsigned long newbrk, oldbrk;
->>   	struct mm_struct *mm = current->mm;
->> +	unsigned long origbrk = mm->brk;
-> Is it safe to read mm->brk outside the lock?
-
-Aha, thanks for catching this. It can be moved inside down_write().
-
-Will solve in the next version.
-
-Thanks,
-Yang
-
->
->>   	struct vm_area_struct *next;
->>   	unsigned long min_brk;
->>   	bool populate;
->> +	bool downgrade = false;
-> Again,
->
-> s/downgrade/downgraded/ ?
->
->>   	LIST_HEAD(uf);
->>   
->>   	if (down_write_killable(&mm->mmap_sem))
->> @@ -229,14 +231,29 @@ static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long
->>   
->>   	newbrk = PAGE_ALIGN(brk);
->>   	oldbrk = PAGE_ALIGN(mm->brk);
->> -	if (oldbrk == newbrk)
->> -		goto set_brk;
->> +	if (oldbrk == newbrk) {
->> +		mm->brk = brk;
->> +		goto success;
->> +	}
->>   
->> -	/* Always allow shrinking brk. */
->> +	/*
->> +	 * Always allow shrinking brk.
->> +	 * __do_munmap() may downgrade mmap_sem to read.
->> +	 */
->>   	if (brk <= mm->brk) {
->> -		if (!do_munmap(mm, newbrk, oldbrk-newbrk, &uf))
->> -			goto set_brk;
->> -		goto out;
->> +		/*
->> +		 * mm->brk need to be protected by write mmap_sem, update it
->> +		 * before downgrading mmap_sem.
->> +		 * When __do_munmap fail, it will be restored from origbrk.
->> +		 */
->> +		mm->brk = brk;
->> +		retval = __do_munmap(mm, newbrk, oldbrk-newbrk, &uf, true);
->> +		if (retval < 0) {
->> +			mm->brk = origbrk;
->> +			goto out;
->> +		} else if (retval == 1)
->> +			downgrade = true;
->> +		goto success;
->>   	}
->>   
->>   	/* Check against existing mmap mappings. */
->> @@ -247,18 +264,21 @@ static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long
->>   	/* Ok, looks good - let it rip. */
->>   	if (do_brk_flags(oldbrk, newbrk-oldbrk, 0, &uf) < 0)
->>   		goto out;
->> -
->> -set_brk:
->>   	mm->brk = brk;
->> +
->> +success:
->>   	populate = newbrk > oldbrk && (mm->def_flags & VM_LOCKED) != 0;
->> -	up_write(&mm->mmap_sem);
->> +	if (downgrade)
->> +		up_read(&mm->mmap_sem);
->> +	else
->> +		up_write(&mm->mmap_sem);
->>   	userfaultfd_unmap_complete(mm, &uf);
->>   	if (populate)
->>   		mm_populate(oldbrk, newbrk - oldbrk);
->>   	return brk;
->>   
->>   out:
->> -	retval = mm->brk;
->> +	retval = origbrk;
->>   	up_write(&mm->mmap_sem);
->>   	return retval;
->>   }
->> -- 
->> 1.8.3.1
->>
-
+-- 
+~Randy
