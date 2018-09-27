@@ -2,272 +2,263 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F22AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8629C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 250762156D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A35E2156D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:53:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJOniD2P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250762156D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="P/ssP6i5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A35E2156D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbeI0OKA (ORCPT
+        id S1727297AbeI0OKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 10:10:00 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38283 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbeI0OJ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 10:09:59 -0400
-Received: by mail-ed1-f68.google.com with SMTP id x8-v6so4182111eds.5;
-        Thu, 27 Sep 2018 00:53:02 -0700 (PDT)
+        Thu, 27 Sep 2018 10:10:41 -0400
+Received: from mail-sn1nam02on0059.outbound.protection.outlook.com ([104.47.36.59]:42448
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726708AbeI0OKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 10:10:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LI8PXdDDVmehR+0BPZ/5/vkxTrnjhp9MHlO0hn9PT2c=;
-        b=tJOniD2PTwR1lPX/vT14Bg4y3b9ZB7jfQj3b90Nsxgip+m5aUP6IkaKi7HAg3xpcVU
-         Cr2dKJ5cau+LjdpY9nLAnjFNElofaltxfK61nQYjumE+ALIV4MM0bjwpCYR1RooYfp6o
-         VDbK5gRe3XJ9hcUV/Xdub67y7z989IOwo0qEGCU4bDJBFoR8bolag06edIvXSzQ+NvqM
-         Cg0p1UuP0dszMRraCh8MW2+pINvkwevtxYqh3Em8GeHh6v0Xji9ApRRZF3ZFdHHe/FHv
-         rQ1u9gnYA+lEbZVWphN0HmzfBybN46IwoHOeg/fdiI6OXUfRn3ckDQSEBxFjqXIn9pS7
-         3loQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=LI8PXdDDVmehR+0BPZ/5/vkxTrnjhp9MHlO0hn9PT2c=;
-        b=TY6HvxNesuCDT/Wf4JmeMf0EqiWJguAsFlVcxFbFq32e9mtJr8tiXTmX0kxS8dfNzi
-         5kSeoWJci9aKF+xm6skCUl8EQap7QQuqVxS8xvPizuR6gF736h7cz0/zVRjoZG4jAMuS
-         Fln9/Qim3u94TFLaK7V9an7K3FCuVbs/i8OS57bAWEYM3wc9nMdK2VHT+WzyWhDd/tgh
-         o0ZcWAqZTqHVmNHOHOqu3qx+9taIur/sfC6F54JxJjB4TlBGgsLd+Kw8EpAtJcfjm/Uo
-         dkRPmvtRRcC3aRoTYWs6gaIJKAUJ2YTPMMmm2dvCAPLaLaWvrSfMw9PP5pxT4Q79moRo
-         LqGQ==
-X-Gm-Message-State: ABuFfogLdqqIt2CUB3pEXhphFvW4sEDEPmeK4CDmv8vsTIPNPTT6qT4t
-        Ml33Htt8DaCIinsazLIhoA8=
-X-Google-Smtp-Source: ACcGV60v4XQNV4AvsRrzyqWK+GmJ/gzKfz13XAZGZ5M2RyNtXJoVRlFs7A/5jL8q/I931mAPoMEurQ==
-X-Received: by 2002:a50:e68c:: with SMTP id z12-v6mr14471726edm.275.1538034781735;
-        Thu, 27 Sep 2018 00:53:01 -0700 (PDT)
-Received: from ziggy.stardust ([93.176.144.101])
-        by smtp.gmail.com with ESMTPSA id b9-v6sm1060530edk.62.2018.09.27.00.52.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 00:53:00 -0700 (PDT)
-Subject: Re: [PATCH v23 4/4] soc: mediatek: Add Mediatek CMDQ helper
-To:     houlong wei <houlong.wei@mediatek.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
-        =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= 
-        <Bibby.Hsieh@mediatek.com>,
-        =?UTF-8?B?WVQgU2hlbiAo5rKI5bKz6ZyGKQ==?= <Yt.Shen@mediatek.com>,
-        =?UTF-8?B?RGFveXVhbiBIdWFuZyAo6buD6YGT5Y6fKQ==?= 
-        <Daoyuan.Huang@mediatek.com>,
-        =?UTF-8?B?SmlhZ3VhbmcgWmhhbmcgKOW8oOWKoOW5vyk=?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        =?UTF-8?B?RGVubmlzLVlDIEhzaWVoICjorJ3lroflk7Ip?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        =?UTF-8?B?TW9uaWNhIFdhbmcgKOeOi+Wtn+Wptyk=?= 
-        <monica.wang@mediatek.com>,
-        =?UTF-8?B?SHMgTGlhbyAo5buW5a6P56WlKQ==?= <Hs.Liao@mediatek.com>,
-        =?UTF-8?B?R2lubnkgQ2hlbiAo6Zmz5rK75YKRKQ==?= 
-        <ginny.chen@mediatek.com>,
-        =?UTF-8?B?RW56aHUgV2FuZyAo546L5oGp5p+xKQ==?= 
-        <enzhu.wang@mediatek.com>
-References: <1532482002-11164-1-git-send-email-houlong.wei@mediatek.com>
- <1532482002-11164-5-git-send-email-houlong.wei@mediatek.com>
- <ca12e8ab-e3d1-1cf0-8fe9-756d57bd5a3a@gmail.com>
- <1538013431.17514.31.camel@mhfsdcap03>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <3773f620-e135-578d-5307-08483436f4c2@gmail.com>
-Date:   Thu, 27 Sep 2018 09:50:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KUvASUtQOHJ0NkQSLmOB3EG/TvXNHkd81zI33/daFpw=;
+ b=P/ssP6i5CPO/1x6tCDOxYvjc9TIQt1QwBdXx8jntGOf0qEt6JEnNhLzqO4W0BsP/LVvF+AK110xnW6LB0Q7I5osBgxB9AEfN6NU+8UzzBAkLCzinx1lcY/STLMoQOsxPHOWG02J30/nbz78F+ApJJXR3hGc3YgFo89OzT7hQHes=
+Received: from MWHPR02CA0009.namprd02.prod.outlook.com (2603:10b6:300:4b::19)
+ by BL0PR02MB4754.namprd02.prod.outlook.com (2603:10b6:208:5d::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1164.25; Thu, 27 Sep
+ 2018 07:23:11 +0000
+Received: from BL2NAM02FT008.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::201) by MWHPR02CA0009.outlook.office365.com
+ (2603:10b6:300:4b::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1164.22 via Frontend
+ Transport; Thu, 27 Sep 2018 07:23:10 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ smtp.mailfrom=xilinx.com; linux-m68k.org; dkim=none (message not signed)
+ header.d=none;linux-m68k.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ BL2NAM02FT008.mail.protection.outlook.com (10.152.76.162) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1185.13
+ via Frontend Transport; Thu, 27 Sep 2018 07:23:09 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:53128 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1g5Qdh-0005tZ-61; Thu, 27 Sep 2018 00:23:09 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1g5Qdc-0000Uq-2I; Thu, 27 Sep 2018 00:23:04 -0700
+Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8R7MwWE008694;
+        Thu, 27 Sep 2018 00:22:58 -0700
+Received: from [172.30.17.111]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1g5QdV-0000TK-Ng; Thu, 27 Sep 2018 00:22:57 -0700
+Subject: Re: [RESEND PATCH v3 1/2] of: base: Introduce
+ of_alias_get_alias_list() to check alias IDs
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <michal.simek@xilinx.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <b1772d99d4e8b788448cde0fc5c7dccb1f63b507.1537443710.git.michal.simek@xilinx.com>
+ <CAMuHMdW5zze-KJhK=diR-WKbhO_vsMV2b7WuLHmcT2FtRD4J7Q@mail.gmail.com>
+ <d27b381e-f091-91dc-cffe-27789583f949@xilinx.com>
+ <CAMuHMdW4H6pjpijU2SX1Z=1Ld7CbBnTtFVwp3gac9toQc4iGpg@mail.gmail.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <56c81d1a-e2f8-067e-4908-686cd83d478c@xilinx.com>
+Date:   Thu, 27 Sep 2018 09:22:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1538013431.17514.31.camel@mhfsdcap03>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMuHMdW4H6pjpijU2SX1Z=1Ld7CbBnTtFVwp3gac9toQc4iGpg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(346002)(376002)(2980300002)(438002)(189003)(199004)(34290500001)(336012)(11346002)(26005)(77096007)(53546011)(446003)(2906002)(2616005)(486006)(476003)(126002)(14444005)(44832011)(93886005)(65806001)(36756003)(47776003)(65956001)(356003)(186003)(31686004)(426003)(217873002)(36386004)(31696002)(63266004)(106466001)(4326008)(9786002)(316002)(230700001)(5660300001)(54906003)(39060400002)(110136005)(8936002)(58126008)(81166006)(8676002)(81156014)(106002)(6246003)(2486003)(65826007)(23676004)(229853002)(50466002)(76176011)(64126003)(305945005)(478600001)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR02MB4754;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT008;1:eb+R/uGI/3WrKo5n9AqoHqX+SHGHqSJZohUKEDy2M4YVssFgkep3eNLCeghHL1zWnqmIwfDM0IOHJ2doM8NiXXQIZh9NYLh/06qkFYthhmTKE5M3dqyLlMfcFFIi7ar8
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d058b46c-0c33-4901-aa00-08d6244a13f1
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534165)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BL0PR02MB4754;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4754;3:VcbWLaOiauju1Z8BDn74/6njVdHY0hLJf9z0Z6zNn2fMawbCZDWwSfNkcg0g9XZ7c2w/PqHROUQuA2GYSiE9s/Rnt7HGqrY4S0hihTQRtuACV0YrtiLALZBtGNGpK3dXhpx5bvvbzOHQa6TAAdjLmJn3pLaX1NoJIGc2cgNUPCpbA+DubPGHs0oQ+6TEVLF2oywuDXjb0L041IoauEk6erD5s8JfQvJGziFhlLIyC5cl7ZwHTnQEZdOKsAIHn0iwERwjwHAPyL99g3MuibeNxkzfXXunH8VAC58kriB3oSrEsY64xXsW8nQhDJRYKSmqF5GBSI6dEp8TLtulJMF4FOC6pG76ynQruFKD+Lx8YUI=;25:C+iezZEEX9LgzwnzODqiJ54OI+6o3ky8/lOjg4KiMC6bnU5FRUDROETaJad/I3qidZ7l2DwesIWJvm/crw5UY5uM9tziZlCzgHs0wc+AP3m871eRAzKADKu6ixPMgyy/TSlvXqzd6rK3OYH7TYLwEzYvIA8+eGqCPgoWXkBx1JQVQJVYyznxUkct8lMyBXF62G+9O0GG1er1F5wd2jhqb22Dv/4/bwPAoHtewuHZYsRMOtDyJIdewrTkx8Tw8fuiTqi1CuZ83RM4hB4P83gPoVlJdXp5CWfpSwPdA4eg1Aj1MuIQtxLdQ7s3LcdiM2lkn1WGDOCj4SiFFk4zyzo9ag==
+X-MS-TrafficTypeDiagnostic: BL0PR02MB4754:
+X-LD-Processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4754;31:BYsXhgfGfe+JowUHKn4Ag4owGA2dcBRwZcb3QDzvT4xns5w8X2JPoD2KkjtW8kS5JhxQZD5JsmYaVmKVEBhvj8vBsJMjHGq+pfUbH3TlKB8js84ihWJWklPN9tNvDoSN6PsR9/lfTco98Gk7vMs8kMnSlqSfaHha5xxwRcTuN/K3HSfohi57Zx8fcC+rStZFT6Qysf/6PzQaDwvK2m8Wndf8PYFTS09Sy6WNuWFC1HE=;20:tqraejO6nS4FPP1ZLWmJXdZEr/zF5lJq+X1Jry/IzVKyMVWBXbDyvX1bytQzmLVzKuV3SHIFHHdQnR7+wbrgJuNhmJkCxwDGFAVpmBuLKSSDfOK9lxMcd73iXIH6b5lWz9DjGDeoUmLVhGO/RcNW3Dh/CTrmR+mMhjpvgWbhqyQbhbGcMyJ+52525irbfpf+tvlRy/3d6dj0NBAXDV15JTFf4ybCgIpz8I/QT2dWCXiU8HEDJ8mihK1HKasZvVdYvqbCy7TiUwe/q6D9tMS/uP2J9+1LDHibkjy4iOYfcNko4nzjiJy1Nf82xV59v4VKpjWCmOHcWh9ubLvoF608ECFeXmOXOC/4lvTy0wJPermHW/QD5l1RR72KI7EX4hX0/Q2MtW4xP70T8ZXNYbzkQh+ZiWU6OQDBYYUMeW367GElFzx6g785XZiSGKM4Ot0Q1mTUQ2UOzfXgv7QA1xcZDX+zvk8DuOQFWiTNG0wCOniY7kev0dH48Pf7e/SnW+vb
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BL0PR02MB4754C14524FFB4AB41F5F0E4C6140@BL0PR02MB4754.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051);SRVR:BL0PR02MB4754;BCL:0;PCL:0;RULEID:;SRVR:BL0PR02MB4754;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4754;4:3MTMq2ZMIgv8pSk6YDAKf0AH8GBnPDJbVa0w2iNwDF9xZCB9Azk5RnYqrsfAM4CJAnQha7yDDu36l8zkqPKMSnc0rWnjY7W4gVe1WeISTlciYWH82yYdyDAEEa3xsTmw3dYRmDgZOVY74fOp9lCjtR7q3AbNVpf/TvWuDXxp/icG1fIqMJ/DK9rpEBb6vOxBo8wskDQIyn9B3n92noS6wkL+LLpuvK61tmA/UcqmwS48fye1B0oV2ba7MYp32dndYYMzcYrl2+Vu0LIMcJbm1SZtuMVyk74yXMo7paMc1IVsJZCFXQFEz7tgVtIxl20c
+X-Forefront-PRVS: 0808323E97
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTDBQUjAyTUI0NzU0OzIzOnkzWEU1U2crSEYwODVoT3VtMkV2Vit0bVZW?=
+ =?utf-8?B?Sy93bjZmd3RudjJzMGRCaUR0NGZ3V3BJdGkyYm5wc0lYbDlWeGY4dWVYSHJW?=
+ =?utf-8?B?SmlJMmJYamxTUlJmamgxUXhhVTFaeGpBc0xyWTJFd29PNVpneUR3aVBFVnhV?=
+ =?utf-8?B?ZXZwQWpiWkZOWFBBQzFXS0lPekk1eUVHK2ZvNkpscDY5SFZ2MkplUDFXMzh4?=
+ =?utf-8?B?UDRaY2ZodFhDdUE2MXcwVHlldFFjSWZUNEFDVGRYZW9mcW4vNXozTUU4VnU0?=
+ =?utf-8?B?ekJiM09ld1NMbGVKMVI0NUM2T3c5azZvSlVMdi9vd0hscDhOYk9zcThEam1j?=
+ =?utf-8?B?MWJZNWJqb0RNdUN5MHdIZDdkNWRGYW9VMjY4UlVnSE8xdmFwQVdma0E2YXdo?=
+ =?utf-8?B?dEVzSkJNY0UxY0FSays4SmZ2bHd4TmUyNE91WmFmMU41RHBUME5Jazdsck5P?=
+ =?utf-8?B?VmhLalN1aklCYWpDNERnMTN6ZnFDYmZ2aTgzZmRwYzBhcEYzQ1FscDVuNzFx?=
+ =?utf-8?B?eElJbUtjTE1EeExlSlNqNzJiTHRadStYbEFhYmFTalRiRWc0MWdzVjVLYkpX?=
+ =?utf-8?B?OGtEUWh1US9sczhwWTVkM3NhWCsrd2VlcC95RnZ2Rm5HVE01Nk4yTmFGRFhE?=
+ =?utf-8?B?VDBoK1RuZW9nRytKUXpSSVZYOGVqS0piVlR6SnRlWCtzMHMwMk5qOHN6cjlR?=
+ =?utf-8?B?WUUrMUtuVFl3REJSV25laWY0eWZRVFVZY0hTZnpOMUJ2ajZyVUcyMkNsb2Qv?=
+ =?utf-8?B?K0JnVUxxZjlwUks5dTlIQUhIL3A2akhsVjJZKzdqdTNjQ3Z6V2NaQ1Q2L05z?=
+ =?utf-8?B?NkEvRnBFbUN1M3BNSVpneXk1Qm0yZmlvMElkYXh4Vk9Nd25DcHh4clRBSktT?=
+ =?utf-8?B?RWNMaUdJeUFPSGhVWVRheXA0SituMHd1YTUydG9KSXZFMXZweHZVUFB5RXV5?=
+ =?utf-8?B?dWZGbVltVXlhTTZFdytvSWFISFJWMXVXeDBvc3c3YmVpQ2d6ZmFlRnJUZVI1?=
+ =?utf-8?B?dmpsU0dPMERIVTlhcW5lNTg1bTVrN2xHcHM4ajNsU1Y5T0RUOU01T003NlM5?=
+ =?utf-8?B?QXJSeUVMVVpLamlGUTNXYUsrdjhSYmNvZlJpcmVNQ3U5Y2sxRFFYbzN4N3Zq?=
+ =?utf-8?B?dGNvS2dJOC9CZksvWEJjOGFMcGthbHRyR1krMTJkWVQ3R1ZWallRbmFzdFA4?=
+ =?utf-8?B?QkpVNXI5a05nNVR1QlY0ZGtQaS9uUGhyeHRzR3N0VjE0ZDdLMUQ0RmRMeklQ?=
+ =?utf-8?B?LytDQjN2M3daZFhVaWVjUTUxTWxsY0VPcXZXME5yMW1kMEsxN09mZHQxOW5s?=
+ =?utf-8?B?M0lJa0xPTDVVTHRpSGY3RmU4SE40bFJKdG5aendJWUREdm9XNGZPWFBlQW94?=
+ =?utf-8?B?NUJYdnhvUEw3Z0J1NzJ0ZmJQRU9vQXd3VWlEY3cxT0gvUGx5bDhUNDFMdTg1?=
+ =?utf-8?B?cHJJZmpHWmRSdFpBZm1SeVZ3WlkrRk5oTnQvenB1S1dhdUJRdXd2RnlLTHdQ?=
+ =?utf-8?B?K3o2K3VTOENTalp3NXBSMlVHSzJqWnBpdDM5RktTckRzbEFjMGZPTzFUZ2h3?=
+ =?utf-8?B?NkRFc0RYZ2puS20yK3U4VDRWUzJvZi9ZbnJxb0xiTHRlSlpVOVdrRmQ5ZFFV?=
+ =?utf-8?B?ZDRiUmdRbUoyMkkwVlNiTEIyRU1MNmRRTDJ3LzdUWnBhYTljQ3Npa1UrUTNk?=
+ =?utf-8?B?OWV2bCt2MkZ5T05jK01EOTVOOG5PdGxJckJWY3pYN3orSTU1SVd5ZUd6Kzc3?=
+ =?utf-8?B?bmVzRnc1VUxDZVZ1dEZhb3FnT3ovUXQ3UE1YMUN1QkpMcERteGJhUEF2N2xS?=
+ =?utf-8?B?dCtjdFF5S0ZVZ0p6bUduSVBJdnVFTkRTOGFhdnBQRUMzYVZyNnh6dWk1K0N2?=
+ =?utf-8?Q?jzsF4+Eco57UgmEI/Tj+RsDnbyjLSxyZ?=
+X-Microsoft-Antispam-Message-Info: jQ3oQ5CPrmKLhVbiRv6dRH0mPe+98hIgsnIUQOGVGLoIOYaPjqlmKzBMdIt8hGvMEq1tvzfmRdlQdK5oNs1TUkjPAz4YwJ52JYD4nQz1AnwtXjfM8Q6CqOwVkLH2TP1MV9W6vIiwRbnNAgVA0AqjiC76vlWd9phZP2BoV4iF+pHMoyTNasGnYjP/J1gZd2RoKTkYtmwCQPsycF007Hwgp+OWakNck8UmD33JqMtQTSShn+D96NiVh2D4/Xn44i/nUpRWQwwUdmbloKA+jTf1ZZEFEUHu3R0NzPxcrr9wJ79ZE+eXxa33ROvO9k63GF/ByA/eb5MBESOkAfrWNy66N3Jt4mmg4QWomC13GMKkkQQ=
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4754;6:DlsQ13Y/x+urZ6AdAHSOJGJ+3HZCVYXo0ioo+prfML6YyfTCH+YYxd+Xb7SjOgEUQHSkfsXT4bjb5IAfRa/TLhxhMYj3RBK11TsKv7oGX7r4bgaq2tXcgt06+VqVP71Ynx2aNx0hHuSIvASPdRp/EeAI3bMs5cqFR5rFas9OBfA2Btjt2d4SJcZ225qfdU68OXb4RDyvXBVTVLBV9F81ymYsVRJSkxShkJVjLEIR2XlhakkCLVO0hL5YcdtwzGeV360vJO/q3FGeSireybVMjB9djvPS9wAVkOpzso2Nkl4EAz1kfrfTXs1fWL/tiDZ8CJGhM4ITzzECbeQ9M6WEOHWqNdDn8exrmKM0nWrBB+2PA1gd4IvqTqu9XPYg+116sCNnvdRJVb98lXpH8vRjIyARP3c4QdaU8JvejiuS19pxj1od1JDB3EpFCNWqPaHyBcMNWE5cUvSwbti9DdHCIg==;5:JBdra0hdtEuhzittQKN9t66kjI6pHbfNmlxGU7/ocwATm25PxQXzrNnMrcoC9Rhz9z1vknHyZu+MwOT9VMhSrwkyLVeyVvglBut3g7sFsHWAjixoeUGg5cepYMM/Fp+G/peMQfY1th+EEBLUYfcKHAE4xtECiZ3yY9PiusoOdqY=;7:PEXO+2BVJLiJAW/yocb1YH2B3gy7Wmdt0aKiygY01sqHNzppXIwQPKZVRG191YcCOGI56gc7LCqepuZ3KxHbYk4qsehn6U1DM3HDxCKLtHDJJA8Bp59bqbIjVuvI/2ZYIIo1qPKP71kZP/S+akiikvoioqM9RMvK4R0lgZofTeu3CSdBHPxoCQ/oju7kCeMavHqa4fzWA8J2y3m3cZQQQNZS1br7m+ps4+RDTOuAC/JygA+H+YauXBcYb0fy4CAs
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2018 07:23:09.7788
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d058b46c-0c33-4901-aa00-08d6244a13f1
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB4754
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 27/09/2018 03:57, houlong wei wrote:
-[...]
->>> +	}
->>> +
->>> +	return client;
->>> +}
->>> +EXPORT_SYMBOL(cmdq_mbox_create);
->>> +
->>> +void cmdq_mbox_destroy(struct cmdq_client *client)
->>> +{
->>> +	if (client->timeout_ms != CMDQ_NO_TIMEOUT) {
->>> +		spin_lock(&client->lock);
->>> +		del_timer_sync(&client->timer);
->>> +		spin_unlock(&client->lock);
->>> +	}
->>> +	mbox_free_channel(client->chan);
->>> +	kfree(client);
->>> +}
->>> +EXPORT_SYMBOL(cmdq_mbox_destroy);
->>> +
->>> +int cmdq_pkt_create(struct cmdq_client *client, struct cmdq_pkt **pkt_ptr,
->>> +		    size_t size)
+On 27.9.2018 09:19, Geert Uytterhoeven wrote:
+> Hi Michal,
+> 
+> On Wed, Sep 26, 2018 at 1:01 PM Michal Simek <michal.simek@xilinx.com> wrote:
+>> On 24.9.2018 09:41, Geert Uytterhoeven wrote:
+>>> On Thu, Sep 20, 2018 at 1:42 PM Michal Simek <michal.simek@xilinx.com> wrote:
+>>>> The function travels the lookup table to record alias ids for the given
+>>>> device match structures and alias stem.
+>>>> This function will be used by serial drivers to check if requested alias
+>>>> is allocated or free to use.
+>>>>
+>>>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+>>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>>
+>>> I know this has already been applied, it just drew my attention.
+>>>
+>>>> --- a/drivers/of/base.c
+>>>> +++ b/drivers/of/base.c
+>>>> @@ -16,6 +16,7 @@
+>>>>
+>>>>  #define pr_fmt(fmt)    "OF: " fmt
+>>>>
+>>>> +#include <linux/bitmap.h>
+>>>>  #include <linux/console.h>
+>>>>  #include <linux/ctype.h>
+>>>>  #include <linux/cpu.h>
+>>>> @@ -1943,6 +1944,57 @@ int of_alias_get_id(struct device_node *np, const char *stem)
+>>>>  EXPORT_SYMBOL_GPL(of_alias_get_id);
+>>>>
+>>>>  /**
+>>>> + * of_alias_get_alias_list - Get alias list for the given device driver
+>>>> + * @matches:   Array of OF device match structures to search in
+>>>> + * @stem:      Alias stem of the given device_node
+>>>> + * @bitmap:    Bitmap field pointer
+>>>> + * @nbits:     Maximum number of alias ID which can be recorded it bitmap
+>>>
+>>> IDs
+>>>
+>>>> + *
+>>>> + * The function travels the lookup table to record alias ids for the given
+>>>> + * device match structures and alias stem.
+>>>> + *
+>>>> + * Return:     0 or -ENOSYS when !CONFIG_OF
+>>>> + */
+>>>> +int of_alias_get_alias_list(const struct of_device_id *matches,
+>>>> +                            const char *stem, unsigned long *bitmap,
+>>>> +                            unsigned int nbits)
+>>>> +{
+>>>> +       struct alias_prop *app;
+>>>> +
+>>>> +       /* Zero bitmap field to make sure that all the time it is clean */
+>>>> +       bitmap_zero(bitmap, nbits);
+>>>> +
+>>>> +       mutex_lock(&of_mutex);
+>>>> +       pr_debug("%s: Looking for stem: %s\n", __func__, stem);
+>>>> +       list_for_each_entry(app, &aliases_lookup, link) {
+>>>> +               pr_debug("%s: stem: %s, id: %d\n",
+>>>> +                        __func__, app->stem, app->id);
+>>>> +
+>>>> +               if (strcmp(app->stem, stem) != 0) {
+>>>> +                       pr_debug("%s: stem comparison doesn't passed %s\n",
+>>>
+>>> didn't pass?
+>>>
+>>>> +                                __func__, app->stem);
+>>>> +                       continue;
+>>>> +               }
+>>>> +
+>>>> +               if (app->id >= nbits) {
+>>>> +                       pr_debug("%s: ID %d greater then bitmap field %d\n",
+>>>
+>>> than
+>>> %u for unsigned int
 >>
->> I suppose you are not returning the allocated cmdq_pkt to avoid checks for
->> IS_ERR() logic in the consumer of this API. Am I correct?
->> Do we really need a pointer to a pointer here? Can't we just use a struct
->> cmdq_pkt *pkt as argument? That would make things easier.
-> 
-> Do you mean we change the argument 'struct cmdq_pkt **pkt_ptr' to
-> 'struct cmdq_pkt *pkt', and the consumer allocate a struct cmdq_pkt
-> *pkt, then pass pkt as argument of this API?
-> If yes, the consumer still need to check the return value of this API.
-> For the current implementation, the consumer doesn't need check
-> IS_ERR(*pkt_ptr) if the return value equals to 0.
-> 
-> Since the consumer has to check the return value of this API once, to
-> make it simpler, I shall change the prototype to 
-> 'struct cmdq_pkt *cmdq_pkt_create(struct cmdq_client *client, size_t
-> size)' and change its implementation.
-> 
-
-Exactly that's what I proposed. Sorry for not explaining myself :)
-
+>> I won't fix this now because this can be done together with one change
+>> described below.
 >>
->>> +{
->>> +	struct cmdq_pkt *pkt;
->>> +	struct device *dev;
->>> +	dma_addr_t dma_addr;
->>> +
->>> +	pkt = kzalloc(sizeof(*pkt), GFP_KERNEL);
->>> +	if (!pkt)
->>> +		return -ENOMEM;
->>> +	pkt->va_base = kzalloc(size, GFP_KERNEL);
->>> +	if (!pkt->va_base) {
->>> +		kfree(pkt);
->>> +		return -ENOMEM;
->>> +	}
->>> +	pkt->buf_size = size;
->>> +	pkt->cl = (void *)client;
->>> +
->>> +	dev = client->chan->mbox->dev;
->>> +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->buf_size,
->>> +		DMA_TO_DEVICE);
->>> +	if (dma_mapping_error(dev, dma_addr)) {
->>> +		dev_err(dev, "dma map failed, size=%u\n", (u32)(u64)size);
->>> +		kfree(pkt->va_base);
->>> +		kfree(pkt);
->>> +		return -ENOMEM;
->>> +	}
->>> +
->>> +	pkt->pa_base = dma_addr;
->>> +	*pkt_ptr = pkt;
->>> +
->>> +	return 0;
->>> +}
->>> +EXPORT_SYMBOL(cmdq_pkt_create);
->>> +
->>> +void cmdq_pkt_destroy(struct cmdq_pkt *pkt)
->>> +{
->>> +	struct cmdq_client *client = (struct cmdq_client *)pkt->cl;
->>> +
->>> +	dma_unmap_single(client->chan->mbox->dev, pkt->pa_base, pkt->buf_size,
->>> +			 DMA_TO_DEVICE);
->>> +	kfree(pkt->va_base);
->>> +	kfree(pkt);
->>> +}
->>> +EXPORT_SYMBOL(cmdq_pkt_destroy);
->>> +
->>> +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
->>> +				   u32 arg_a, u32 arg_b)
->>> +{
->>> +	u64 *cmd_ptr;
->>> +
->>> +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
->>> +		pkt->cmd_buf_size += CMDQ_INST_SIZE;
+>>>
+>>>> +                               __func__, app->id, nbits);
+>>>> +                       continue;
+>>>
+>>> Shouldn't this return an error, if of_match_node() below would have matched?
 >>
->> Why do we update the cmd_buf_size here?
+>> IIRC Above check is for "serial" name.
+>> This one is for getting XX number from alias "serialXX".
+>> And below is checking compatible string.
+>>
+>> You are calling this function from uartps with 32 lines limit and there
+>> is serial33 alias poiting to uartlite (for example) then you don't want
+>> to break this call for that.
+>>
+>> What can be done is that compatible string is checked first and if this
+>> passed then ids are check and error can be returned or bit sets.
 > 
-> Because in developing phase of consumer driver, the consumer has to know
-> the real command buffer size after adding command failure. Then the
-> consumer will increase the size and run the cmdq flow (cmdq_pkt_create,
-> cmdq_pkt_write/wfe...) again. Finally, the consumer get the real size
-> and fix it.
-> 
+> That's what I meant: currently any serialN with N >= nbits is ignored, even
+> if the alias applies to the driver that called the function.
 
-But the consumer should know the size it needs for it's buffer and if not it
-should be able to decide on it's own how much space it needs. If he get's a
--ENOMEM he implicitly knows that he has to increase the buf_size. Now the size
-depends on how many command he has pending and wasn't able to write to the cmdq_pkt.
+ok. Let me create a patch and check compatible string first and then
+setup bit or fail if N >= nbits.
 
-Regards,
-Matthias
+Thanks,
+Michal
