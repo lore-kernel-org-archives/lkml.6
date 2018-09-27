@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F753C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1845CC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543A521566
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A6B2156D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:40:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqSt14mH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 543A521566
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tza4NE0h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A6B2156D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeI0Hzy (ORCPT
+        id S1727284AbeI0H4P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 03:55:54 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37507 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeI0Hzy (ORCPT
+        Thu, 27 Sep 2018 03:56:15 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43540 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbeI0H4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 03:55:54 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n6-v6so1099911qtl.4;
-        Wed, 26 Sep 2018 18:40:08 -0700 (PDT)
+        Thu, 27 Sep 2018 03:56:14 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l16-v6so1061541qtq.10;
+        Wed, 26 Sep 2018 18:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :content-transfer-encoding:user-agent;
-        bh=Ig8aYG+bq8ur+x3OT7VAaBFbnTbtP5co/zowmafEj4M=;
-        b=bqSt14mH+2i9+zp4UOK7PpyLoG0psKx6j3C4hWCKigxOXBO0lHU+8nztXYaJWAwOq/
-         wPQeVlT5KhXzETwX0egubL5zsDtqL7ZoAOHblp4Hp+840D0xfuAEEhhxLGyou66oJ71T
-         pO0L8PQd4HXNv9uxI9Yj9nc7ZpKt7Xp7fLDRDrGecZfQCqX+KjcmvoznOLmF+qBaG7PO
-         WF4/Fk6CJNuGJs6LjDojt5Eoqn6XbWTmiiVfXLac86u0+OIH993FIEstScFneL1p+2Jv
-         93cBFZEkKrbUcNyqDOIrFEKZG8g8bL6n05EerYC6AL3HUQ/JMFrGWvAkiX+5sHTmArxH
-         zW/w==
+        bh=az4VG2kDleDEIQbELh7WthCOA8Gd6LhdwtP9/ZvOfHo=;
+        b=Tza4NE0h50eH0auHPhztiJ+Hc18T1byxhVMJvrgmR41lBE8Gsz+Yyq3rQ7Fm1WeJle
+         6BEgR6uSENMVaMe/EdYweeoLb2q2ly7FXiBSrVm2O3k2HG0XJwM+wNanBk5J2VqIMMzU
+         0ISvQW+JHh3CzxBqEi8yMN/qDOgr0ebkEhoId+I7KHwuANY2LF8mAloDJ3p4l+pwQJtF
+         d7tcohjY8Lf6vIJxwSp+EYR3ATRgOVEYplhMeS/OimFF/pUnA5Vz/OUvyjBhC/4IJMER
+         4mSgq7rhEddv8Yu2JUABr2fJb5Lj7IDQiIZX6ZEgKP5992UfO8Por5EC7yoa1sFnxZr2
+         EgGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:content-transfer-encoding:user-agent;
-        bh=Ig8aYG+bq8ur+x3OT7VAaBFbnTbtP5co/zowmafEj4M=;
-        b=Xynor3n0ZJR5AYQwZ36+EoGV/9SYQ4muzdkOiviltolQL5C1IWku7rM3VIsYfDU/MF
-         1p+Pvk23eStq2m3V5S1jrjzd9rJTfIUboEnyqj2JssMFfuiPsi1e2iyxuGri8Ec5Y7Xu
-         Bfg863/Uos6Zba+U54Mc7hopxoTz3xOvpcFOh05fHiOI3qYKI4hTOHv6qIoGOww2KraM
-         OroQbDPl6mARzIKFGJeS4ZQVxLj9s7xKee9Ujy4oVhe4aijbbyb2WIR3qfLEAaiZP5/1
-         fk5feOMCYfqnC84RYxiBQFAK2X/suWR0rty5OeQhSash4TuaUgy/O9kzeRGJ1FAAlHIy
-         X+Qg==
-X-Gm-Message-State: ABuFfoj78lnTcXqm3D9nl5DPs3J6NTeUX+bNeIWUGvjVS3WT3FVt2nAa
-        EY1OvUqHtJO31ZcxDFz9Rwo=
-X-Google-Smtp-Source: ACcGV6309DusnbuhHD0Ny9IZZB55hmhLj9RQMOGISG6Fye8zX2V/LyUnTxIvzv840osoQU7cweW7Ww==
-X-Received: by 2002:a0c:d2d3:: with SMTP id x19-v6mr6536821qvh.104.1538012407962;
-        Wed, 26 Sep 2018 18:40:07 -0700 (PDT)
+        bh=az4VG2kDleDEIQbELh7WthCOA8Gd6LhdwtP9/ZvOfHo=;
+        b=uKPhu0WDlbHGvJ/kxGoqb63+htaEv5r2ra/JNTD8cpk4SH4k+XRlVYKNb5zNmR6Fwr
+         EnzIQmoYfsxuUuunOJQKpQrBXlabyt38R14QI4Gsaw9Zn0ngDxIZdGTxB1Cr9yGhySsQ
+         V1EBtVE9aQJA2SiUZStSPXczDDkE+GiyL1r/IZBgnYMaEjZCb1F7qlWzKl9VVWBBJOtA
+         tuYhaRlMYnuIXvKSsSEuBFI2ufWxs1yNy0oHr+C8+FRU2cle2ow3aLnaSpfqV9XHQQ6H
+         gy/1DqhyPtiUm1q5hPP/vNzR5RBpTGfzbsD+t8CgHCxEPfCyRerBwkywP8PMp4E22FdC
+         nlbw==
+X-Gm-Message-State: ABuFfoitayanSTzwLUocW6anTIqKZbKNOrFQech0IBk8m9rdCp7QZG2I
+        NQu/TFBwWkv5m1rYds6qDO8=
+X-Google-Smtp-Source: ACcGV60ZCmvvTLVdxyo92oRKYJ8V2Bh8kTpd1D9LF4pjui2+sHZERtQvn6MCnlk1mVOnrKrfRQkCFQ==
+X-Received: by 2002:a0c:e80e:: with SMTP id y14-v6mr6394038qvn.23.1538012428501;
+        Wed, 26 Sep 2018 18:40:28 -0700 (PDT)
 Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id w5-v6sm454871qkw.69.2018.09.26.18.39.59
+        by smtp.gmail.com with ESMTPSA id 8-v6sm488422qtv.38.2018.09.26.18.40.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 18:40:07 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 22:39:56 -0300
+        Wed, 26 Sep 2018 18:40:28 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 22:40:14 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH v2 1/7] drivers: dio: Avoids building driver if CONFIG_DIO is
- disabled
-Message-ID: <20180927013956.GA8956@WindFlash>
+Subject: [PATCH v2 2/7] drivers: nubus: Avoids building driver if
+ CONFIG_NUBUS is disabled
+Message-ID: <20180927014014.GA8972@WindFlash>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -86,25 +86,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoids building driver if 'make drivers/dio/' is called and
-CONFIG_DIO is disabled.
+Avoids building driver if 'make drivers/nubus/' is called and
+CONFIG_NUBUS is disabled.
+Avoids building proc.o if CONFIG_PROC_FS is enabled but
+CONFIG_NUBUS is disabled.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/dio/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nubus/Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dio/Makefile b/drivers/dio/Makefile
-index ae92d17083f2..f5cffe232448 100644
---- a/drivers/dio/Makefile
-+++ b/drivers/dio/Makefile
-@@ -2,4 +2,4 @@
- # Makefile for the linux kernel.
+diff --git a/drivers/nubus/Makefile b/drivers/nubus/Makefile
+index 6d063cde39d1..1daa51217e95 100644
+--- a/drivers/nubus/Makefile
++++ b/drivers/nubus/Makefile
+@@ -2,6 +2,7 @@
+ # Makefile for the nubus specific drivers.
  #
  
--obj-y := dio.o dio-driver.o dio-sysfs.o
-+obj-$(CONFIG_DIO) := dio.o dio-driver.o dio-sysfs.o
-\ No newline at end of file
+-obj-y := nubus.o bus.o
++obj-$(CONFIG_NUBUS) := nubus_all.o
++nubus_all-y += bus.o nubus.o
+ 
+-obj-$(CONFIG_PROC_FS) += proc.o
++nubus_all-$(CONFIG_PROC_FS) += proc.o
 -- 
 2.19.0
 
