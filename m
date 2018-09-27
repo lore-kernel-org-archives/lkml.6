@@ -2,136 +2,130 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88145C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EE8C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21E37215E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:12:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHrcZrWk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E37215E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0936621655
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0936621655
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeI0SaE (ORCPT
+        id S1727338AbeI0ScE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:30:04 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:42803 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbeI0SaE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:30:04 -0400
-Received: by mail-io1-f66.google.com with SMTP id n18-v6so1757425ioa.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 05:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=D4mBad6E1sIK2FZdk/IK9lKP3Hi+wSC3OqnFd1c2cUk=;
-        b=hHrcZrWkxb4Hgt5sJZWcPU7D5Mb86mEbmrGMAud1qNUU939E511s5kzoZYbY6JlFGI
-         0xsLge9hxR+BidA7HSncQ4aRppXrropaRMg8SPT3anzPkaTXnXcBYAtYEafodcTL0r/H
-         cc1LQExxSYNS3HunV+p+rWXMy4X9UUgGGFun0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=D4mBad6E1sIK2FZdk/IK9lKP3Hi+wSC3OqnFd1c2cUk=;
-        b=rxuxdHB5LR1wBGxIdkMRkwfDnC7uNVztxKJWc8hxDPC3+bv30U5Zfom4jXzhzDgWdn
-         JiPVXbGwItTquHFBgO3xw8by4UYUoE3p+iRaend/cNQNSc/rxkKLmBD64IwbeC0BMn4Z
-         NjDTBE5AmDUJezLCPbmE4fzTpyKcze4orUFYMnft48pdyPQ7wOA2rQWX+yMqn7QcErEy
-         wiTPiiQtKkxOaQRzaX20Ka2zX2OzJISkHE4QQgj7b3zr3zhUu6cRLrzWBXdCgIPHKfSR
-         sCV4WQpu/sp165jSa9y8KyXDd8lasc3k8bxyXKuJ+FQsE6sa3Eja/15gBziHcOUdfmQE
-         VjxA==
-X-Gm-Message-State: ABuFfoj+oczzFqnIxoiQhby68Ft1alI8l3gCiOhsCkFJUj/798MjB3r9
-        9FOzwuZHweOQLnBSsXEwyLCLudbkVAf7wUp0P4RHPA==
-X-Google-Smtp-Source: ACcGV63G59a95znnwXzSUiUF9FZaUwZecT4Q5zGPI7OJs5y7eh1hWYrQED9Do6lvEPXIa+8n1M8I3P3Fw4E1NQI7qi0=
-X-Received: by 2002:a6b:203:: with SMTP id 3-v6mr8337700ioc.131.1538050324351;
- Thu, 27 Sep 2018 05:12:04 -0700 (PDT)
+        Thu, 27 Sep 2018 14:32:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43992 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727111AbeI0ScE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 14:32:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EE2B5ACC3;
+        Thu, 27 Sep 2018 12:14:01 +0000 (UTC)
+Subject: Re: [v2 PATCH 2/2 -mm] mm: brk: dwongrade mmap_sem to read when
+ shrinking
+To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
+        kirill@shutemov.name, willy@infradead.org,
+        ldufour@linux.vnet.ibm.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1537985434-22655-2-git-send-email-yang.shi@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <33d52132-546f-3c8a-3445-cdbc9068589a@suse.cz>
+Date:   Thu, 27 Sep 2018 14:14:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 05:11:23
- -0700 (PDT)
-In-Reply-To: <20180927014040.GA183684@google.com>
-References: <20180923203924.68452-1-yuzhao@google.com> <CAPDyKFqiUO-7O6bgrszuR3YKMkEoPT4976gvDKvUWpYuNp03ag@mail.gmail.com>
- <20180927014040.GA183684@google.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 27 Sep 2018 14:11:23 +0200
-Message-ID: <CAPDyKFoWZwvm9Mb-pwKT0vKxhYJy98njRh_3dXxb7A5FtHmi4Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: add quirk for O2 Micro dev 0x8620 rev 0x01
-To:     Yu Zhao <yuzhao@google.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1537985434-22655-2-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 September 2018 at 03:40, Yu Zhao <yuzhao@google.com> wrote:
-> On Thu, Sep 27, 2018 at 01:48:58AM +0200, Ulf Hansson wrote:
->> On 23 September 2018 at 22:39, Yu Zhao <yuzhao@google.com> wrote:
->> > This device reports SDHCI_CLOCK_INT_STABLE even though it's not
->> > ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
->> > SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
->> > bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
->> > SDHCI_CLOCK_CARD_EN but only observed the first operand).
->> >
->> > mmc1: Timeout waiting for hardware cmd interrupt.
->> > mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
->> > mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
->> > mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
->> > mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
->> > mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
->> > mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
->> > mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
->> > mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
->> > mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
->> > mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
->> > mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
->> > mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
->> > mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
->> > mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
->> > mmc1: sdhci: Host ctl2: 0x00000008
->> > mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
->> > mmc1: sdhci: ============================================
->> >
->> > The problem happens during wakeup from S3. Adding a delay quirk
->> > after power up reliably fixes the problem.
->> >
->> > Signed-off-by: Yu Zhao <yuzhao@google.com>
->>
->> Applied for next, thanks!
->>
->> Kind regards
->> Uffe
->>
->> > ---
->> >  drivers/mmc/host/sdhci-pci-o2micro.c | 2 ++
->> >  1 file changed, 2 insertions(+)
->> >
->> > diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
->> > index 77e9bc4aaee9..3e5ecf7ce101 100644
->> > --- a/drivers/mmc/host/sdhci-pci-o2micro.c
->> > +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
->> > @@ -490,6 +490,8 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
->> >                 pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
->> >                 break;
->> >         case PCI_DEVICE_ID_O2_SEABIRD0:
->> > +               if (chip->pdev->revision == 0x01)
->> > +                       chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
->
-> Hi Uffe,
->
-> I apologize for the missing /* fall through */ here. Could you
-> please add it in case it causes any static checker problem?
-> Or I can send a v2.
+On 9/26/18 8:10 PM, Yang Shi wrote:
 
-I amended the change, no action needed. Thanks!
+Again, "downgrade" in the subject
 
-Kind regards
-Uffe
+> brk might be used to shinrk memory mapping too other than munmap().
+
+                       ^ shrink
+
+> So, it may hold write mmap_sem for long time when shrinking large
+> mapping, as what commit ("mm: mmap: zap pages with read mmap_sem in
+> munmap") described.
+> 
+> The brk() will not manipulate vmas anymore after __do_munmap() call for
+> the mapping shrink use case. But, it may set mm->brk after
+> __do_munmap(), which needs hold write mmap_sem.
+> 
+> However, a simple trick can workaround this by setting mm->brk before
+> __do_munmap(). Then restore the original value if __do_munmap() fails.
+> With this trick, it is safe to downgrade to read mmap_sem.
+> 
+> So, the same optimization, which downgrades mmap_sem to read for
+> zapping pages, is also feasible and reasonable to this case.
+> 
+> The period of holding exclusive mmap_sem for shrinking large mapping
+> would be reduced significantly with this optimization.
+> 
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Same nit for the "bool downgrade" name as for patch 1/2.
+
+Thanks,
+Vlastimil
