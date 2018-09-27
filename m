@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0131ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC95C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B3821582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B3821582
+	by mail.kernel.org (Postfix) with ESMTP id 2E86921582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E86921582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbeI0P1B (ORCPT
+        id S1728347AbeI0P1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:27:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55082 "EHLO
+        Thu, 27 Sep 2018 11:27:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55092 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbeI0P1A (ORCPT
+        with ESMTP id S1727057AbeI0P1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:27:00 -0400
+        Thu, 27 Sep 2018 11:27:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0647710A4;
-        Thu, 27 Sep 2018 09:09:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 94F0D10A4;
+        Thu, 27 Sep 2018 09:09:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
+        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
+        Davide Caratti <dcaratti@redhat.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 12/88] udp6: add missing checks on edumux packet processing
-Date:   Thu, 27 Sep 2018 11:02:53 +0200
-Message-Id: <20180927090302.018546413@linuxfoundation.org>
+Subject: [PATCH 4.18 13/88] net/sched: act_sample: fix NULL dereference in the data path
+Date:   Thu, 27 Sep 2018 11:02:54 +0200
+Message-Id: <20180927090302.128011339@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -53,127 +53,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit eb63f2964dbe36f26deac77d3016791675821ded ]
+[ Upstream commit 34043d250f51368f214aed7f54c2dc29c819a8c7 ]
 
-Currently the UDPv6 early demux rx code path lacks some mandatory
-checks, already implemented into the normal RX code path - namely
-the checksum conversion and no_check6_rx check.
+Matteo reported the following splat, testing the datapath of TC 'sample':
 
-Similar to the previous commit, we move the common processing to
-an UDPv6 specific helper and call it from both edemux code path
-and normal code path. In respect to the UDPv4, we need to add an
-explicit check for non zero csum according to no_check6_rx value.
+ BUG: KASAN: null-ptr-deref in tcf_sample_act+0xc4/0x310
+ Read of size 8 at addr 0000000000000000 by task nc/433
 
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Suggested-by: Xin Long <lucien.xin@gmail.com>
-Fixes: c9f2c1ae123a ("udp6: fix socket leak on early demux")
-Fixes: 2abb7cdc0dc8 ("udp: Add support for doing checksum unnecessary conversion")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+ CPU: 0 PID: 433 Comm: nc Not tainted 4.19.0-rc3-kvm #17
+ Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS ?-20180531_142017-buildhw-08.phx2.fedoraproject.org-1.fc28 04/01/2014
+ Call Trace:
+  kasan_report.cold.6+0x6c/0x2fa
+  tcf_sample_act+0xc4/0x310
+  ? dev_hard_start_xmit+0x117/0x180
+  tcf_action_exec+0xa3/0x160
+  tcf_classify+0xdd/0x1d0
+  htb_enqueue+0x18e/0x6b0
+  ? deref_stack_reg+0x7a/0xb0
+  ? htb_delete+0x4b0/0x4b0
+  ? unwind_next_frame+0x819/0x8f0
+  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  __dev_queue_xmit+0x722/0xca0
+  ? unwind_get_return_address_ptr+0x50/0x50
+  ? netdev_pick_tx+0xe0/0xe0
+  ? save_stack+0x8c/0xb0
+  ? kasan_kmalloc+0xbe/0xd0
+  ? __kmalloc_track_caller+0xe4/0x1c0
+  ? __kmalloc_reserve.isra.45+0x24/0x70
+  ? __alloc_skb+0xdd/0x2e0
+  ? sk_stream_alloc_skb+0x91/0x3b0
+  ? tcp_sendmsg_locked+0x71b/0x15a0
+  ? tcp_sendmsg+0x22/0x40
+  ? __sys_sendto+0x1b0/0x250
+  ? __x64_sys_sendto+0x6f/0x80
+  ? do_syscall_64+0x5d/0x150
+  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ? __sys_sendto+0x1b0/0x250
+  ? __x64_sys_sendto+0x6f/0x80
+  ? do_syscall_64+0x5d/0x150
+  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ip_finish_output2+0x495/0x590
+  ? ip_copy_metadata+0x2e0/0x2e0
+  ? skb_gso_validate_network_len+0x6f/0x110
+  ? ip_finish_output+0x174/0x280
+  __tcp_transmit_skb+0xb17/0x12b0
+  ? __tcp_select_window+0x380/0x380
+  tcp_write_xmit+0x913/0x1de0
+  ? __sk_mem_schedule+0x50/0x80
+  tcp_sendmsg_locked+0x49d/0x15a0
+  ? tcp_rcv_established+0x8da/0xa30
+  ? tcp_set_state+0x220/0x220
+  ? clear_user+0x1f/0x50
+  ? iov_iter_zero+0x1ae/0x590
+  ? __fget_light+0xa0/0xe0
+  tcp_sendmsg+0x22/0x40
+  __sys_sendto+0x1b0/0x250
+  ? __ia32_sys_getpeername+0x40/0x40
+  ? _copy_to_user+0x58/0x70
+  ? poll_select_copy_remaining+0x176/0x200
+  ? __pollwait+0x1c0/0x1c0
+  ? ktime_get_ts64+0x11f/0x140
+  ? kern_select+0x108/0x150
+  ? core_sys_select+0x360/0x360
+  ? vfs_read+0x127/0x150
+  ? kernel_write+0x90/0x90
+  __x64_sys_sendto+0x6f/0x80
+  do_syscall_64+0x5d/0x150
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ RIP: 0033:0x7fefef2b129d
+ Code: ff ff ff ff eb b6 0f 1f 80 00 00 00 00 48 8d 05 51 37 0c 00 41 89 ca 8b 00 85 c0 75 20 45 31 c9 45 31 c0 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 6b f3 c3 66 0f 1f 84 00 00 00 00 00 41 56 41
+ RSP: 002b:00007fff2f5350c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+ RAX: ffffffffffffffda RBX: 000056118d60c120 RCX: 00007fefef2b129d
+ RDX: 0000000000002000 RSI: 000056118d629320 RDI: 0000000000000003
+ RBP: 000056118d530370 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000002000
+ R13: 000056118d5c2a10 R14: 000056118d5c2a10 R15: 000056118d5303b8
+
+tcf_sample_act() tried to update its per-cpu stats, but tcf_sample_init()
+forgot to allocate them, because tcf_idr_create() was called with a wrong
+value of 'cpustats'. Setting it to true proved to fix the reported crash.
+
+Reported-by: Matteo Croce <mcroce@redhat.com>
+Fixes: 65a206c01e8e ("net/sched: Change act_api and act_xxx modules to use IDR")
+Fixes: 5c5670fae430 ("net/sched: Introduce sample tc action")
+Tested-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/udp.c |   65 ++++++++++++++++++++++++++++++++-------------------------
- 1 file changed, 37 insertions(+), 28 deletions(-)
+ net/sched/act_sample.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -748,6 +748,28 @@ static void udp6_sk_rx_dst_set(struct so
- 	}
- }
+--- a/net/sched/act_sample.c
++++ b/net/sched/act_sample.c
+@@ -64,7 +64,7 @@ static int tcf_sample_init(struct net *n
  
-+/* wrapper for udp_queue_rcv_skb tacking care of csum conversion and
-+ * return code conversion for ip layer consumption
-+ */
-+static int udp6_unicast_rcv_skb(struct sock *sk, struct sk_buff *skb,
-+				struct udphdr *uh)
-+{
-+	int ret;
-+
-+	if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
-+		skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
-+					 ip6_compute_pseudo);
-+
-+	ret = udpv6_queue_rcv_skb(sk, skb);
-+
-+	/* a return value > 0 means to resubmit the input, but
-+	 * it wants the return to be -protocol, or 0
-+	 */
-+	if (ret > 0)
-+		return -ret;
-+	return 0;
-+}
-+
- int __udp6_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
- 		   int proto)
- {
-@@ -799,13 +821,14 @@ int __udp6_lib_rcv(struct sk_buff *skb,
- 		if (unlikely(sk->sk_rx_dst != dst))
- 			udp6_sk_rx_dst_set(sk, dst);
- 
--		ret = udpv6_queue_rcv_skb(sk, skb);
--		sock_put(sk);
-+		if (!uh->check && !udp_sk(sk)->no_check6_rx) {
-+			sock_put(sk);
-+			goto report_csum_error;
-+		}
- 
--		/* a return value > 0 means to resubmit the input */
--		if (ret > 0)
--			return ret;
--		return 0;
-+		ret = udp6_unicast_rcv_skb(sk, skb, uh);
-+		sock_put(sk);
-+		return ret;
- 	}
- 
- 	/*
-@@ -818,30 +841,13 @@ int __udp6_lib_rcv(struct sk_buff *skb,
- 	/* Unicast */
- 	sk = __udp6_lib_lookup_skb(skb, uh->source, uh->dest, udptable);
- 	if (sk) {
--		int ret;
--
--		if (!uh->check && !udp_sk(sk)->no_check6_rx) {
--			udp6_csum_zero_error(skb);
--			goto csum_error;
--		}
--
--		if (inet_get_convert_csum(sk) && uh->check && !IS_UDPLITE(sk))
--			skb_checksum_try_convert(skb, IPPROTO_UDP, uh->check,
--						 ip6_compute_pseudo);
--
--		ret = udpv6_queue_rcv_skb(sk, skb);
--
--		/* a return value > 0 means to resubmit the input */
--		if (ret > 0)
--			return ret;
--
--		return 0;
-+		if (!uh->check && !udp_sk(sk)->no_check6_rx)
-+			goto report_csum_error;
-+		return udp6_unicast_rcv_skb(sk, skb, uh);
- 	}
- 
--	if (!uh->check) {
--		udp6_csum_zero_error(skb);
--		goto csum_error;
--	}
-+	if (!uh->check)
-+		goto report_csum_error;
- 
- 	if (!xfrm6_policy_check(NULL, XFRM_POLICY_IN, skb))
- 		goto discard;
-@@ -862,6 +868,9 @@ short_packet:
- 			    ulen, skb->len,
- 			    daddr, ntohs(uh->dest));
- 	goto discard;
-+
-+report_csum_error:
-+	udp6_csum_zero_error(skb);
- csum_error:
- 	__UDP6_INC_STATS(net, UDP_MIB_CSUMERRORS, proto == IPPROTO_UDPLITE);
- discard:
+ 	if (!exists) {
+ 		ret = tcf_idr_create(tn, parm->index, est, a,
+-				     &act_sample_ops, bind, false);
++				     &act_sample_ops, bind, true);
+ 		if (ret)
+ 			return ret;
+ 		ret = ACT_P_CREATED;
 
 
