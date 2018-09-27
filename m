@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004C7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A59C4C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80F321582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80F321582
+	by mail.kernel.org (Postfix) with ESMTP id 5DD9C21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:09:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD9C21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbeI0P0Q (ORCPT
+        id S1728233AbeI0P0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:26:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55014 "EHLO
+        Thu, 27 Sep 2018 11:26:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55024 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbeI0P0Q (ORCPT
+        with ESMTP id S1727020AbeI0P0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:26:16 -0400
+        Thu, 27 Sep 2018 11:26:21 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 02A8610A4;
-        Thu, 27 Sep 2018 09:09:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D4AE10A4;
+        Thu, 27 Sep 2018 09:09:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Khoruzhick <vasilykh@arista.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 11/88] neighbour: confirm neigh entries when ARP packet is received
-Date:   Thu, 27 Sep 2018 11:02:52 +0200
-Message-Id: <20180927090301.886411335@linuxfoundation.org>
+        stable@vger.kernel.org, "Dmitry V. Levin" <ldv@altlinux.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.18 29/88] ASoC: uapi: fix sound/skl-tplg-interface.h userspace compilation errors
+Date:   Thu, 27 Sep 2018 11:03:10 +0200
+Message-Id: <20180927090304.107865594@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -51,54 +52,265 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Khoruzhick <vasilykh@arista.com>
+From: Dmitry V. Levin <ldv@altlinux.org>
 
-[ Upstream commit f0e0d04413fcce9bc76388839099aee93cd0d33b ]
+commit fb504caae7ef85be159743bd4b08ecde269ba55f upstream.
 
-Update 'confirmed' timestamp when ARP packet is received. It shouldn't
-affect locktime logic and anyway entry can be confirmed by any higher-layer
-protocol. Thus it makes sense to confirm it when ARP packet is received.
+Include <linux/types.h> and consistently use types it provides
+to fix the following sound/skl-tplg-interface.h userspace compilation errors:
 
-Fixes: 77d7123342dc ("neighbour: update neigh timestamps iff update is effective")
-Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+/usr/include/sound/skl-tplg-interface.h:146:2: error: unknown type name 'u32'
+  u32 set_params:2;
+/usr/include/sound/skl-tplg-interface.h:147:2: error: unknown type name 'u32'
+  u32 rsvd:30;
+/usr/include/sound/skl-tplg-interface.h:148:2: error: unknown type name 'u32'
+  u32 param_id;
+/usr/include/sound/skl-tplg-interface.h:149:2: error: unknown type name 'u32'
+  u32 max;
+/usr/include/sound/skl-tplg-interface.h:166:2: error: unknown type name 'u16'
+  u16 module_id;
+/usr/include/sound/skl-tplg-interface.h:167:2: error: unknown type name 'u16'
+  u16 instance_id;
+/usr/include/sound/skl-tplg-interface.h:171:2: error: unknown type name 'u32'
+  u32 channels;
+/usr/include/sound/skl-tplg-interface.h:172:2: error: unknown type name 'u32'
+  u32 freq;
+/usr/include/sound/skl-tplg-interface.h:173:2: error: unknown type name 'u32'
+  u32 bit_depth;
+/usr/include/sound/skl-tplg-interface.h:174:2: error: unknown type name 'u32'
+  u32 valid_bit_depth;
+/usr/include/sound/skl-tplg-interface.h:175:2: error: unknown type name 'u32'
+  u32 ch_cfg;
+/usr/include/sound/skl-tplg-interface.h:176:2: error: unknown type name 'u32'
+  u32 interleaving_style;
+/usr/include/sound/skl-tplg-interface.h:177:2: error: unknown type name 'u32'
+  u32 sample_type;
+/usr/include/sound/skl-tplg-interface.h:178:2: error: unknown type name 'u32'
+  u32 ch_map;
+/usr/include/sound/skl-tplg-interface.h:182:2: error: unknown type name 'u32'
+  u32 set_params:2;
+/usr/include/sound/skl-tplg-interface.h:183:2: error: unknown type name 'u32'
+  u32 rsvd:30;
+/usr/include/sound/skl-tplg-interface.h:184:2: error: unknown type name 'u32'
+  u32 param_id;
+/usr/include/sound/skl-tplg-interface.h:185:2: error: unknown type name 'u32'
+  u32 caps_size;
+/usr/include/sound/skl-tplg-interface.h:186:2: error: unknown type name 'u32'
+  u32 caps[HDA_SST_CFG_MAX];
+/usr/include/sound/skl-tplg-interface.h:190:2: error: unknown type name 'u8'
+  u8 pipe_id;
+/usr/include/sound/skl-tplg-interface.h:191:2: error: unknown type name 'u8'
+  u8 pipe_priority;
+/usr/include/sound/skl-tplg-interface.h:192:2: error: unknown type name 'u16'
+  u16 conn_type:4;
+/usr/include/sound/skl-tplg-interface.h:193:2: error: unknown type name 'u16'
+  u16 rsvd:4;
+/usr/include/sound/skl-tplg-interface.h:194:2: error: unknown type name 'u16'
+  u16 memory_pages:8;
+/usr/include/sound/skl-tplg-interface.h:200:2: error: unknown type name 'u16'
+  u16 module_id;
+/usr/include/sound/skl-tplg-interface.h:201:2: error: unknown type name 'u16'
+  u16 instance_id;
+/usr/include/sound/skl-tplg-interface.h:202:2: error: unknown type name 'u32'
+  u32 max_mcps;
+/usr/include/sound/skl-tplg-interface.h:203:2: error: unknown type name 'u32'
+  u32 mem_pages;
+/usr/include/sound/skl-tplg-interface.h:204:2: error: unknown type name 'u32'
+  u32 obs;
+/usr/include/sound/skl-tplg-interface.h:205:2: error: unknown type name 'u32'
+  u32 ibs;
+/usr/include/sound/skl-tplg-interface.h:206:2: error: unknown type name 'u32'
+  u32 vbus_id;
+/usr/include/sound/skl-tplg-interface.h:208:2: error: unknown type name 'u32'
+  u32 max_in_queue:8;
+/usr/include/sound/skl-tplg-interface.h:209:2: error: unknown type name 'u32'
+  u32 max_out_queue:8;
+/usr/include/sound/skl-tplg-interface.h:210:2: error: unknown type name 'u32'
+  u32 time_slot:8;
+/usr/include/sound/skl-tplg-interface.h:211:2: error: unknown type name 'u32'
+  u32 core_id:4;
+/usr/include/sound/skl-tplg-interface.h:212:2: error: unknown type name 'u32'
+  u32 rsvd1:4;
+/usr/include/sound/skl-tplg-interface.h:214:2: error: unknown type name 'u32'
+  u32 module_type:8;
+/usr/include/sound/skl-tplg-interface.h:215:2: error: unknown type name 'u32'
+  u32 conn_type:4;
+/usr/include/sound/skl-tplg-interface.h:216:2: error: unknown type name 'u32'
+  u32 dev_type:4;
+/usr/include/sound/skl-tplg-interface.h:217:2: error: unknown type name 'u32'
+  u32 hw_conn_type:4;
+/usr/include/sound/skl-tplg-interface.h:218:2: error: unknown type name 'u32'
+  u32 rsvd2:12;
+/usr/include/sound/skl-tplg-interface.h:220:2: error: unknown type name 'u32'
+  u32 params_fixup:8;
+/usr/include/sound/skl-tplg-interface.h:221:2: error: unknown type name 'u32'
+  u32 converter:8;
+/usr/include/sound/skl-tplg-interface.h:222:2: error: unknown type name 'u32'
+  u32 input_pin_type:1;
+/usr/include/sound/skl-tplg-interface.h:223:2: error: unknown type name 'u32'
+  u32 output_pin_type:1;
+/usr/include/sound/skl-tplg-interface.h:224:2: error: unknown type name 'u32'
+  u32 is_dynamic_in_pin:1;
+/usr/include/sound/skl-tplg-interface.h:225:2: error: unknown type name 'u32'
+  u32 is_dynamic_out_pin:1;
+/usr/include/sound/skl-tplg-interface.h:226:2: error: unknown type name 'u32'
+  u32 is_loadable:1;
+/usr/include/sound/skl-tplg-interface.h:227:2: error: unknown type name 'u32'
+  u32 rsvd3:11;
+
+Fixes: 0c24fdc00244 ("ASoC: topology: Move skl-tplg-interface.h to uapi")
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: <stable@vger.kernel.org> # v4.18
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/neighbour.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -1179,6 +1179,12 @@ int neigh_update(struct neighbour *neigh
- 		lladdr = neigh->ha;
- 	}
+---
+ include/uapi/sound/skl-tplg-interface.h |  106 ++++++++++++++++----------------
+ 1 file changed, 54 insertions(+), 52 deletions(-)
+
+--- a/include/uapi/sound/skl-tplg-interface.h
++++ b/include/uapi/sound/skl-tplg-interface.h
+@@ -10,6 +10,8 @@
+ #ifndef __HDA_TPLG_INTERFACE_H__
+ #define __HDA_TPLG_INTERFACE_H__
  
-+	/* Update confirmed timestamp for neighbour entry after we
-+	 * received ARP packet even if it doesn't change IP to MAC binding.
-+	 */
-+	if (new & NUD_CONNECTED)
-+		neigh->confirmed = jiffies;
++#include <linux/types.h>
 +
- 	/* If entry was valid and address is not changed,
- 	   do not change entry state, if new one is STALE.
- 	 */
-@@ -1200,15 +1206,12 @@ int neigh_update(struct neighbour *neigh
- 		}
- 	}
+ /*
+  * Default types range from 0~12. type can range from 0 to 0xff
+  * SST types start at higher to avoid any overlapping in future
+@@ -143,10 +145,10 @@ enum skl_module_param_type {
+ };
  
--	/* Update timestamps only once we know we will make a change to the
-+	/* Update timestamp only once we know we will make a change to the
- 	 * neighbour entry. Otherwise we risk to move the locktime window with
- 	 * noop updates and ignore relevant ARP updates.
- 	 */
--	if (new != old || lladdr != neigh->ha) {
--		if (new & NUD_CONNECTED)
--			neigh->confirmed = jiffies;
-+	if (new != old || lladdr != neigh->ha)
- 		neigh->updated = jiffies;
--	}
+ struct skl_dfw_algo_data {
+-	u32 set_params:2;
+-	u32 rsvd:30;
+-	u32 param_id;
+-	u32 max;
++	__u32 set_params:2;
++	__u32 rsvd:30;
++	__u32 param_id;
++	__u32 max;
+ 	char params[0];
+ } __packed;
  
- 	if (new != old) {
- 		neigh_del_timer(neigh);
+@@ -163,68 +165,68 @@ enum skl_tuple_type {
+ /* v4 configuration data */
+ 
+ struct skl_dfw_v4_module_pin {
+-	u16 module_id;
+-	u16 instance_id;
++	__u16 module_id;
++	__u16 instance_id;
+ } __packed;
+ 
+ struct skl_dfw_v4_module_fmt {
+-	u32 channels;
+-	u32 freq;
+-	u32 bit_depth;
+-	u32 valid_bit_depth;
+-	u32 ch_cfg;
+-	u32 interleaving_style;
+-	u32 sample_type;
+-	u32 ch_map;
++	__u32 channels;
++	__u32 freq;
++	__u32 bit_depth;
++	__u32 valid_bit_depth;
++	__u32 ch_cfg;
++	__u32 interleaving_style;
++	__u32 sample_type;
++	__u32 ch_map;
+ } __packed;
+ 
+ struct skl_dfw_v4_module_caps {
+-	u32 set_params:2;
+-	u32 rsvd:30;
+-	u32 param_id;
+-	u32 caps_size;
+-	u32 caps[HDA_SST_CFG_MAX];
++	__u32 set_params:2;
++	__u32 rsvd:30;
++	__u32 param_id;
++	__u32 caps_size;
++	__u32 caps[HDA_SST_CFG_MAX];
+ } __packed;
+ 
+ struct skl_dfw_v4_pipe {
+-	u8 pipe_id;
+-	u8 pipe_priority;
+-	u16 conn_type:4;
+-	u16 rsvd:4;
+-	u16 memory_pages:8;
++	__u8 pipe_id;
++	__u8 pipe_priority;
++	__u16 conn_type:4;
++	__u16 rsvd:4;
++	__u16 memory_pages:8;
+ } __packed;
+ 
+ struct skl_dfw_v4_module {
+ 	char uuid[SKL_UUID_STR_SZ];
+ 
+-	u16 module_id;
+-	u16 instance_id;
+-	u32 max_mcps;
+-	u32 mem_pages;
+-	u32 obs;
+-	u32 ibs;
+-	u32 vbus_id;
+-
+-	u32 max_in_queue:8;
+-	u32 max_out_queue:8;
+-	u32 time_slot:8;
+-	u32 core_id:4;
+-	u32 rsvd1:4;
+-
+-	u32 module_type:8;
+-	u32 conn_type:4;
+-	u32 dev_type:4;
+-	u32 hw_conn_type:4;
+-	u32 rsvd2:12;
+-
+-	u32 params_fixup:8;
+-	u32 converter:8;
+-	u32 input_pin_type:1;
+-	u32 output_pin_type:1;
+-	u32 is_dynamic_in_pin:1;
+-	u32 is_dynamic_out_pin:1;
+-	u32 is_loadable:1;
+-	u32 rsvd3:11;
++	__u16 module_id;
++	__u16 instance_id;
++	__u32 max_mcps;
++	__u32 mem_pages;
++	__u32 obs;
++	__u32 ibs;
++	__u32 vbus_id;
++
++	__u32 max_in_queue:8;
++	__u32 max_out_queue:8;
++	__u32 time_slot:8;
++	__u32 core_id:4;
++	__u32 rsvd1:4;
++
++	__u32 module_type:8;
++	__u32 conn_type:4;
++	__u32 dev_type:4;
++	__u32 hw_conn_type:4;
++	__u32 rsvd2:12;
++
++	__u32 params_fixup:8;
++	__u32 converter:8;
++	__u32 input_pin_type:1;
++	__u32 output_pin_type:1;
++	__u32 is_dynamic_in_pin:1;
++	__u32 is_dynamic_out_pin:1;
++	__u32 is_loadable:1;
++	__u32 rsvd3:11;
+ 
+ 	struct skl_dfw_v4_pipe pipe;
+ 	struct skl_dfw_v4_module_fmt in_fmt[MAX_IN_QUEUE];
 
 
