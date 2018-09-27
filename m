@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC96EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC28C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F0A82152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0A82152F
+	by mail.kernel.org (Postfix) with ESMTP id CA2A82156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:16:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2A82156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbeI0PdZ (ORCPT
+        id S1728789AbeI0Pdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:33:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55792 "EHLO
+        Thu, 27 Sep 2018 11:33:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55844 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbeI0PdZ (ORCPT
+        with ESMTP id S1728279AbeI0Pda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:33:25 -0400
+        Thu, 27 Sep 2018 11:33:30 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E6281117;
-        Thu, 27 Sep 2018 09:16:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDE6F1117;
+        Thu, 27 Sep 2018 09:16:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
         Karol Herbst <kherbst@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>, Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.18 69/88] drm/nouveau/drm/nouveau: Use pm_runtime_get_noresume() in connector_detect()
-Date:   Thu, 27 Sep 2018 11:03:50 +0200
-Message-Id: <20180927090309.094671495@linuxfoundation.org>
+        Ben Skeggs <bskeggs@redhat.com>
+Subject: [PATCH 4.18 70/88] drm/nouveau/drm/nouveau: Prevent handling ACPI HPD events too early
+Date:   Thu, 27 Sep 2018 11:03:51 +0200
+Message-Id: <20180927090309.194728487@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -55,62 +54,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lyude Paul <lyude@redhat.com>
 
-commit 6833fb1ec120bf078e1a527c573a09d4de286224 upstream.
+commit 79e765ad665da4b8aa7e9c878bd2fef837f6fea5 upstream.
 
-It's true we can't resume the device from poll workers in
-nouveau_connector_detect(). We can however, prevent the autosuspend
-timer from elapsing immediately if it hasn't already without risking any
-sort of deadlock with the runtime suspend/resume operations. So do that
-instead of entirely avoiding grabbing a power reference.
+On most systems with ACPI hotplugging support, it seems that we always
+receive a hotplug event once we re-enable EC interrupts even if the GPU
+hasn't even been resumed yet.
+
+This can cause problems since even though we schedule hpd_work to handle
+connector reprobing for us, hpd_work synchronizes on
+pm_runtime_get_sync() to wait until the device is ready to perform
+reprobing. Since runtime suspend/resume callbacks are disabled before
+the PM core calls ->suspend(), any calls to pm_runtime_get_sync() during
+this period will grab a runtime PM ref and return immediately with
+-EACCES. Because we schedule hpd_work from our ACPI HPD handler, and
+hpd_work synchronizes on pm_runtime_get_sync(), this causes us to launch
+a connector reprobe immediately even if the GPU isn't actually resumed
+just yet. This causes various warnings in dmesg and occasionally, also
+prevents some displays connected to the dedicated GPU from coming back
+up after suspend. Example:
+
+usb 1-4: USB disconnect, device number 14
+usb 1-4.1: USB disconnect, device number 15
+WARNING: CPU: 0 PID: 838 at drivers/gpu/drm/nouveau/include/nvkm/subdev/i2c.h:170 nouveau_dp_detect+0x17e/0x370 [nouveau]
+CPU: 0 PID: 838 Comm: kworker/0:6 Not tainted 4.17.14-201.Lyude.bz1477182.V3.fc28.x86_64 #1
+Hardware name: LENOVO 20EQS64N00/20EQS64N00, BIOS N1EET77W (1.50 ) 03/28/2018
+Workqueue: events nouveau_display_hpd_work [nouveau]
+RIP: 0010:nouveau_dp_detect+0x17e/0x370 [nouveau]
+RSP: 0018:ffffa15143933cf0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff8cb4f656c400 RCX: 0000000000000000
+RDX: ffffa1514500e4e4 RSI: ffffa1514500e4e4 RDI: 0000000001009002
+RBP: ffff8cb4f4a8a800 R08: ffffa15143933cfd R09: ffffa15143933cfc
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8cb4fb57a000
+R13: ffff8cb4fb57a000 R14: ffff8cb4f4a8f800 R15: ffff8cb4f656c418
+FS:  0000000000000000(0000) GS:ffff8cb51f400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f78ec938000 CR3: 000000073720a003 CR4: 00000000003606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ? _cond_resched+0x15/0x30
+ nouveau_connector_detect+0x2ce/0x520 [nouveau]
+ ? _cond_resched+0x15/0x30
+ ? ww_mutex_lock+0x12/0x40
+ drm_helper_probe_detect_ctx+0x8b/0xe0 [drm_kms_helper]
+ drm_helper_hpd_irq_event+0xa8/0x120 [drm_kms_helper]
+ nouveau_display_hpd_work+0x2a/0x60 [nouveau]
+ process_one_work+0x187/0x340
+ worker_thread+0x2e/0x380
+ ? pwq_unbound_release_workfn+0xd0/0xd0
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x35/0x40
+Code: 4c 8d 44 24 0d b9 00 05 00 00 48 89 ef ba 09 00 00 00 be 01 00 00 00 e8 e1 09 f8 ff 85 c0 0f 85 b2 01 00 00 80 7c 24 0c 03 74 02 <0f> 0b 48 89 ef e8 b8 07 f8 ff f6 05 51 1b c8 ff 02 0f 84 72 ff
+---[ end trace 55d811b38fc8e71a ]---
+
+So, to fix this we attempt to grab a runtime PM reference in the ACPI
+handler itself asynchronously. If the GPU is already awake (it will have
+normal hotplugging at this point) or runtime PM callbacks are currently
+disabled on the device, we drop our reference without updating the
+autosuspend delay. We only schedule connector reprobes when we
+successfully managed to queue up a resume request with our asynchronous
+PM ref.
+
+This also has the added benefit of preventing redundant connector
+reprobes from ACPI while the GPU is runtime resumed!
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Karol Herbst <kherbst@redhat.com>
-Acked-by: Daniel Vetter <daniel@ffwll.ch>
 Cc: stable@vger.kernel.org
-Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Karol Herbst <kherbst@redhat.com>
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1477182#c41
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c |   20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_display.c |   26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -570,12 +570,16 @@ nouveau_connector_detect(struct drm_conn
- 		nv_connector->edid = NULL;
- 	}
+--- a/drivers/gpu/drm/nouveau/nouveau_display.c
++++ b/drivers/gpu/drm/nouveau/nouveau_display.c
+@@ -377,15 +377,29 @@ nouveau_display_acpi_ntfy(struct notifie
+ {
+ 	struct nouveau_drm *drm = container_of(nb, typeof(*drm), acpi_nb);
+ 	struct acpi_bus_event *info = data;
++	int ret;
  
--	/* Outputs are only polled while runtime active, so acquiring a
--	 * runtime PM ref here is unnecessary (and would deadlock upon
--	 * runtime suspend because it waits for polling to finish).
-+	/* Outputs are only polled while runtime active, so resuming the
-+	 * device here is unnecessary (and would deadlock upon runtime suspend
-+	 * because it waits for polling to finish). We do however, want to
-+	 * prevent the autosuspend timer from elapsing during this operation
-+	 * if possible.
- 	 */
--	if (!drm_kms_helper_is_poll_worker()) {
--		ret = pm_runtime_get_sync(connector->dev->dev);
-+	if (drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_get_noresume(dev->dev);
-+	} else {
-+		ret = pm_runtime_get_sync(dev->dev);
- 		if (ret < 0 && ret != -EACCES)
- 			return conn_status;
- 	}
-@@ -653,10 +657,8 @@ detect_analog:
+ 	if (!strcmp(info->device_class, ACPI_VIDEO_CLASS)) {
+ 		if (info->type == ACPI_VIDEO_NOTIFY_PROBE) {
+-			/*
+-			 * This may be the only indication we receive of a
+-			 * connector hotplug on a runtime suspended GPU,
+-			 * schedule hpd_work to check.
+-			 */
+-			schedule_work(&drm->hpd_work);
++			ret = pm_runtime_get(drm->dev->dev);
++			if (ret == 1 || ret == -EACCES) {
++				/* If the GPU is already awake, or in a state
++				 * where we can't wake it up, it can handle
++				 * it's own hotplug events.
++				 */
++				pm_runtime_put_autosuspend(drm->dev->dev);
++			} else if (ret == 0) {
++				/* This may be the only indication we receive
++				 * of a connector hotplug on a runtime
++				 * suspended GPU, schedule hpd_work to check.
++				 */
++				NV_DEBUG(drm, "ACPI requested connector reprobe\n");
++				schedule_work(&drm->hpd_work);
++				pm_runtime_put_noidle(drm->dev->dev);
++			} else {
++				NV_WARN(drm, "Dropped ACPI reprobe event due to RPM error: %d\n",
++					ret);
++			}
  
-  out:
- 
--	if (!drm_kms_helper_is_poll_worker()) {
--		pm_runtime_mark_last_busy(connector->dev->dev);
--		pm_runtime_put_autosuspend(connector->dev->dev);
--	}
-+	pm_runtime_mark_last_busy(dev->dev);
-+	pm_runtime_put_autosuspend(dev->dev);
- 
- 	return conn_status;
- }
+ 			/* acpi-video should not generate keypresses for this */
+ 			return NOTIFY_BAD;
 
 
