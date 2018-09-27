@@ -2,94 +2,171 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D75C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF95ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5612721533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5612721533
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 94A022150D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A022150D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbeI0PnS (ORCPT
+        id S1729015AbeI0Pn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:43:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56814 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeI0PnS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:43:18 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B50A1133;
-        Thu, 27 Sep 2018 09:25:57 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Behmer <jbehmer@google.com>,
-        Vaibhav Nagarnaik <vnagarnaik@google.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 17/44] ring-buffer: Allow for rescheduling when removing pages
-Date:   Thu, 27 Sep 2018 11:04:06 +0200
-Message-Id: <20180927090120.301391611@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
-References: <20180927090117.997362691@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 27 Sep 2018 11:43:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53618 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727464AbeI0Pn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:43:26 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2A8BE30820D8;
+        Thu, 27 Sep 2018 09:26:04 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-205.ams2.redhat.com [10.36.116.205])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D57820154E7;
+        Thu, 27 Sep 2018 09:25:54 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Allen <jallen@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Len Brown <lenb@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+Subject: [PATCH v3 0/6] mm: online/offline_pages called w.o. mem_hotplug_lock
+Date:   Thu, 27 Sep 2018 11:25:48 +0200
+Message-Id: <20180927092554.13567-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 27 Sep 2018 09:26:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+@Andrew, Only patch #5 changed (see change notes below). Thanks!
 
-------------------
 
-From: Vaibhav Nagarnaik <vnagarnaik@google.com>
+Reading through the code and studying how mem_hotplug_lock is to be used,
+I noticed that there are two places where we can end up calling
+device_online()/device_offline() - online_pages()/offline_pages() without
+the mem_hotplug_lock. And there are other places where we call
+device_online()/device_offline() without the device_hotplug_lock.
 
-commit 83f365554e47997ec68dc4eca3f5dce525cd15c3 upstream.
+While e.g.
+	echo "online" > /sys/devices/system/memory/memory9/state
+is fine, e.g.
+	echo 1 > /sys/devices/system/memory/memory9/online
+Will not take the mem_hotplug_lock. However the device_lock() and
+device_hotplug_lock.
 
-When reducing ring buffer size, pages are removed by scheduling a work
-item on each CPU for the corresponding CPU ring buffer. After the pages
-are removed from ring buffer linked list, the pages are free()d in a
-tight loop. The loop does not give up CPU until all pages are removed.
-In a worst case behavior, when lot of pages are to be freed, it can
-cause system stall.
+E.g. via memory_probe_store(), we can end up calling
+add_memory()->online_pages() without the device_hotplug_lock. So we can
+have concurrent callers in online_pages(). We e.g. touch in online_pages()
+basically unprotected zone->present_pages then.
 
-After the pages are removed from the list, the free() can happen while
-the work is rescheduled. Call cond_resched() in the loop to prevent the
-system hangup.
+Looks like there is a longer history to that (see Patch #2 for details),
+and fixing it to work the way it was intended is not really possible. We
+would e.g. have to take the mem_hotplug_lock in device/base/core.c, which
+sounds wrong.
 
-Link: http://lkml.kernel.org/r/20180907223129.71994-1-vnagarnaik@google.com
+Summary: We had a lock inversion on mem_hotplug_lock and device_lock().
+More details can be found in patch 3 and patch 6.
 
-Cc: stable@vger.kernel.org
-Fixes: 83f40318dab00 ("ring-buffer: Make removal of ring buffer pages atomic")
-Reported-by: Jason Behmer <jbehmer@google.com>
-Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I propose the general rules (documentation added in patch 6):
 
----
- kernel/trace/ring_buffer.c |    2 ++
- 1 file changed, 2 insertions(+)
+1. add_memory/add_memory_resource() must only be called with
+   device_hotplug_lock.
+2. remove_memory() must only be called with device_hotplug_lock. This is
+   already documented and holds for all callers.
+3. device_online()/device_offline() must only be called with
+   device_hotplug_lock. This is already documented and true for now in core
+   code. Other callers (related to memory hotplug) have to be fixed up.
+4. mem_hotplug_lock is taken inside of add_memory/remove_memory/
+   online_pages/offline_pages.
 
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1504,6 +1504,8 @@ rb_remove_pages(struct ring_buffer_per_c
- 	tmp_iter_page = first_page;
- 
- 	do {
-+		cond_resched();
-+
- 		to_remove_page = tmp_iter_page;
- 		rb_inc_page(cpu_buffer, &tmp_iter_page);
- 
+To me, this looks way cleaner than what we have right now (and easier to
+verify). And looking at the documentation of remove_memory, using
+lock_device_hotplug also for add_memory() feels natural.
 
+
+v2 -> v3:
+- Take device_hotplug_lock outside of loop in patch #5
+- Added Ack to patch #5
+
+v1 -> v2:
+- Upstream changes in powerpc/powernv code required modifications to
+  patch #1, #4 and #5.
+- Minor patch description changes.
+- Added more locking details in patch #6.
+- Added rb's
+
+RFCv2 -> v1:
+- Dropped an unnecessary _ref from remove_memory() in patch #1
+- Minor patch description fixes.
+- Added rb's
+
+RFC -> RFCv2:
+- Don't export device_hotplug_lock, provide proper remove_memory/add_memory
+  wrappers.
+- Split up the patches a bit.
+- Try to improve powernv memtrace locking
+- Add some documentation for locking that matches my knowledg
+
+David Hildenbrand (6):
+  mm/memory_hotplug: make remove_memory() take the device_hotplug_lock
+  mm/memory_hotplug: make add_memory() take the device_hotplug_lock
+  mm/memory_hotplug: fix online/offline_pages called w.o.
+    mem_hotplug_lock
+  powerpc/powernv: hold device_hotplug_lock when calling device_online()
+  powerpc/powernv: hold device_hotplug_lock when calling
+    memtrace_offline_pages()
+  memory-hotplug.txt: Add some details about locking internals
+
+ Documentation/memory-hotplug.txt              | 42 ++++++++++++-
+ arch/powerpc/platforms/powernv/memtrace.c     |  8 ++-
+ .../platforms/pseries/hotplug-memory.c        |  8 +--
+ drivers/acpi/acpi_memhotplug.c                |  4 +-
+ drivers/base/memory.c                         | 22 +++----
+ drivers/xen/balloon.c                         |  3 +
+ include/linux/memory_hotplug.h                |  4 +-
+ mm/memory_hotplug.c                           | 59 +++++++++++++++----
+ 8 files changed, 114 insertions(+), 36 deletions(-)
+
+-- 
+2.17.1
 
