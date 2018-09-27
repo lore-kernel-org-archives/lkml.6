@@ -2,187 +2,186 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC61FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9226C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 836E12172C
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:01:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 836E12172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 41420215F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:05:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gAkcJasU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41420215F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbeI1BVj (ORCPT
+        id S1728567AbeI1BYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:21:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39800 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728430AbeI1BVj (ORCPT
+        Thu, 27 Sep 2018 21:24:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35050 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727731AbeI1BYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:21:39 -0400
-Received: from localhost (unknown [89.188.5.116])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E654D1018;
-        Thu, 27 Sep 2018 19:01:55 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 21:01:53 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lyude Paul <lyude@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.14 49/64] drm/atomic: Use drm_drv_uses_atomic_modeset()
- for debugfs creation
-Message-ID: <20180927190153.GC1895@kroah.com>
-References: <20180927090249.801943776@linuxfoundation.org>
- <20180927090256.844688689@linuxfoundation.org>
- <222254a2-b33c-f6d3-8bc0-0069c5c0a55c@nvidia.com>
+        Thu, 27 Sep 2018 21:24:50 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8RJ4MgD054608;
+        Thu, 27 Sep 2018 19:04:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=opKOXR1ODeRPTF90An2CfmDqY0lfMXjyNr7bDPPZxg8=;
+ b=gAkcJasUWCyZ2Vf5ZZ3TkA5yK8ZmQTbsVxzYQjVVU1zy/tC8XJfY/risXk3YAolkhuNy
+ EXEMvTJi//aqRiU1lqF5I2Kr5XiKgRL/ChCarb31ePKtavwdmHwZ0dD7zUIAom9YI/Ft
+ 7DccDInQY6s4p877qb04Tx4bJm1Z0fFRtudM96s8WjgAcrn22t616jMp3mUO0zoyLCNM
+ jR905pqSrC/ntCCN4Uw2Fl21Lpxsdt7C2+pu4bl67jDRw2XIcIjRx/jFIg2GVOOnz5C4
+ 8lCoJBxR+3tnXtI/euDC2TiOjnJBTbal7JKtOqtmbeS9dwmmD+LNfv7llPr1aPHe2npN 0A== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2mndppv1f1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Sep 2018 19:04:53 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8RJ4lq6001290
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Sep 2018 19:04:48 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8RJ4l3A001236;
+        Thu, 27 Sep 2018 19:04:47 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Sep 2018 12:04:46 -0700
+Subject: Re: [Xen-devel] [PATCH] xen/blkfront: When purging persistent grants,
+ keep them in the buffer
+To:     Jens Axboe <axboe@kernel.dk>,
+        Sander Eikelenboom <linux@eikelenboom.it>,
+        Juergen Gross <jgross@suse.com>, konrad.wilk@oracle.com,
+        roger.pau@citrix.com
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
+ <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
+ <5bd1a695-50c6-e79f-38dd-c980fc2138ad@kernel.dk>
+ <00030538-e1ce-28ad-3548-8e3b07083b05@eikelenboom.it>
+ <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
+Date:   Thu, 27 Sep 2018 15:06:14 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <222254a2-b33c-f6d3-8bc0-0069c5c0a55c@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809270177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 07:00:00PM +0100, Jon Hunter wrote:
-> Hi Greg, Lyude,
-> 
-> On 27/09/18 10:04, Greg Kroah-Hartman wrote:
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Lyude Paul <lyude@redhat.com>
-> > 
-> > commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
-> > 
-> > As pointed out by Daniel Vetter, we should be usinng
-> > drm_drv_uses_atomic_modeset() for determining whether or not we want to
-> > make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
-> > the former isn't an accurate representation of whether or not the driver
-> > is actually using atomic modesetting internally (even though it might
-> > not be exposing atomic capabilities).
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Sean Paul <seanpaul@chromium.org>
-> > Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > ---
-> >  drivers/gpu/drm/drm_atomic.c  |    2 +-
-> >  drivers/gpu/drm/drm_debugfs.c |    2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > --- a/drivers/gpu/drm/drm_atomic.c
-> > +++ b/drivers/gpu/drm/drm_atomic.c
-> > @@ -1748,7 +1748,7 @@ static void __drm_state_dump(struct drm_
-> >  	struct drm_connector *connector;
-> >  	struct drm_connector_list_iter conn_iter;
-> >  
-> > -	if (!drm_core_check_feature(dev, DRIVER_ATOMIC))
-> > +	if (!drm_drv_uses_atomic_modeset(dev))
-> >  		return;
-> >  
-> >  	list_for_each_entry(plane, &config->plane_list, head) {
-> > --- a/drivers/gpu/drm/drm_debugfs.c
-> > +++ b/drivers/gpu/drm/drm_debugfs.c
-> > @@ -150,7 +150,7 @@ int drm_debugfs_init(struct drm_minor *m
-> >  		return ret;
-> >  	}
-> >  
-> > -	if (drm_core_check_feature(dev, DRIVER_ATOMIC)) {
-> > +	if (drm_drv_uses_atomic_modeset(dev)) {
-> >  		ret = drm_atomic_debugfs_init(minor);
-> >  		if (ret) {
-> >  			DRM_ERROR("Failed to create atomic debugfs files\n");
-> > 
-> > 
-> 
-> This is causing a boot regression on some Tegra devices. For
-> completeness I have included the stack trace below.
-> 
-> Jon
-> 
-> [    4.115829] Unable to handle kernel NULL pointer dereference at virtual address 00000010
-> [    4.123912] pgd = c0204000
-> [    4.126661] [00000010] *pgd=00000000
-> [    4.130245] Internal error: Oops: 5 [#1] SMP ARM
-> [    4.134857] Modules linked in:
-> [    4.137917] CPU: 0 PID: 28 Comm: kworker/0:1 Not tainted 4.14.73-rc1-g1e2fd38 #1
-> [    4.145301] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-> [    4.151569] Workqueue: events deferred_probe_work_func
-> [    4.156704] task: ee0fae00 task.stack: ee1de000
-> [    4.161235] PC is at drm_debugfs_init+0x88/0x178
-> [    4.165850] LR is at drm_debugfs_create_files+0xf0/0x148
-> [    4.171152] pc : [<c0831ccc>]    lr : [<c0831984>]    psr: 60000113
-> [    4.177410] sp : ee1dfcd0  ip : 00000000  fp : ee1de000
-> [    4.182625] r10: 00000017  r9 : 00000000  r8 : c163a884
-> [    4.187841] r7 : 00000080  r6 : 00000000  r5 : ed12b000  r4 : ed15fe00
-> [    4.194357] r3 : 00000000  r2 : 00000000  r1 : c0831984  r0 : 00000000
-> [    4.200884] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> [    4.208013] Control: 10c5387d  Table: 8020406a  DAC: 00000051
-> [    4.213753] Process kworker/0:1 (pid: 28, stack limit = 0xee1de220)
-> [    4.220011] Stack: (0xee1dfcd0 to 0xee1e0000)
-> [    4.224365] fcc0:                                     00383231 ffffffff 014080c0 c0815a14
-> [    4.232534] fce0: ffffffff 00000000 ffffffff ee452858 00000004 c04591c4 ee452848 00000000
-> [    4.240702] fd00: 00000004 ed15ffc0 c117438c ee655810 c163a778 ed15fe00 c16d7ef4 00000000
-> [    4.248869] fd20: c163a778 c0813ca4 ee0fae00 ed12b000 00000000 00000000 c163a778 c0814268
-> [    4.257036] fd40: c1685a8c ee655810 c163a778 ed12b000 00000000 ed12b000 ee655800 c16d8088
-> [    4.265205] fd60: 00000000 c163a884 00000000 c08643b8 c0864388 ee655810 c16d8084 c07ef578
-> [    4.273372] fd80: c07ef558 c08a2cc4 00000000 ee1dfdc0 c08a2e7c 00000001 c16d8060 00000000
-> [    4.281539] fda0: 00000000 c08a11f8 ee64616c ee64b338 ee655810 ee655810 ee655844 c08a29c4
-> [    4.289707] fdc0: ee655810 00000001 00000000 ee655818 ee655810 c1638c80 ee228010 c08a1fa8
-> [    4.297875] fde0: ee655818 ee655810 00000000 c08a04c8 c0877720 ee407010 00000000 ee213600
-> [    4.306044] fe00: ee655800 ee407010 ee6484c0 ee655810 ee6559b0 ee663810 00000017 c07efb30
-> [    4.314211] fe20: c1638c64 c1638cfc ee655804 ee663c28 ee407010 c07f0058 c0f6044c ee407010
-> [    4.322378] fe40: ee228610 00000000 ee228600 00000000 00000000 c088177c 00000000 ee211ac0
-> [    4.330545] fe60: ee407010 ee228610 ee228610 fffffdfb c163a9e8 00000000 c163a9e8 c08a4914
-> [    4.338713] fe80: c08a48c8 ee228610 c16d8084 c16d8088 00000000 c08a2cc4 00000000 ee1dfed0
-> [    4.346881] fea0: c08a2e7c 00000001 c163b320 c1691be0 c16d8084 c08a11f8 ee0ab66c ee64b438
-> [    4.355049] fec0: ee228610 ee228610 ee228644 c08a29c4 ee228610 00000001 ee0fae00 c163b328
-> [    4.363217] fee0: ee228610 c163b518 c163b304 c08a1fa8 c163b328 ee1cef80 ee228610 c08a2404
-> [    4.371384] ff00: c08a23c0 c163b328 ee1cef80 eef8ac40 ee1de018 eef8dc00 00000000 00000000
-> [    4.379551] ff20: c1684e34 c035ba70 eef8ac40 eef8ac58 ee1de018 ee1cef80 eef8ac40 eef8ac58
-> [    4.387719] ff40: ee1de018 c1684975 ee1cef98 c1502d00 00000008 c035bf90 ee1d501c ee1de000
-> [    4.395887] ff60: 00000000 c1502d00 ee1d501c ee1d5000 00000000 ee1c6d00 ee1d501c ee1cef80
-> [    4.404056] ff80: c035bd68 ee0cbed0 00000000 c03611fc ee1c6d00 c03610d0 00000000 00000000
-> [    4.412235] ffa0: 00000000 00000000 00000000 c03080c8 00000000 00000000 00000000 00000000
-> [    4.420404] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> [    4.428572] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-> [    4.436759] [<c0831ccc>] (drm_debugfs_init) from [<c0813ca4>] (drm_minor_register+0x68/0x110)
-> [    4.445277] [<c0813ca4>] (drm_minor_register) from [<c0814268>] (drm_dev_register+0x8c/0x1cc)
-> [    4.453798] [<c0814268>] (drm_dev_register) from [<c08643b8>] (host1x_drm_probe+0x30/0x54)
-> [    4.462061] [<c08643b8>] (host1x_drm_probe) from [<c07ef578>] (host1x_device_probe+0x20/0x2c)
-> [    4.470583] [<c07ef578>] (host1x_device_probe) from [<c08a2cc4>] (driver_probe_device+0x224/0x2f8)
-> [    4.479536] [<c08a2cc4>] (driver_probe_device) from [<c08a11f8>] (bus_for_each_drv+0x58/0x8c)
-> [    4.488055] [<c08a11f8>] (bus_for_each_drv) from [<c08a29c4>] (__device_attach+0xb0/0x110)
-> [    4.496313] [<c08a29c4>] (__device_attach) from [<c08a1fa8>] (bus_probe_device+0x84/0x8c)
-> [    4.504484] [<c08a1fa8>] (bus_probe_device) from [<c08a04c8>] (device_add+0x3f0/0x570)
-> [    4.512397] [<c08a04c8>] (device_add) from [<c07efb30>] (host1x_subdev_register+0xac/0xd0)
-> [    4.520655] [<c07efb30>] (host1x_subdev_register) from [<c07f0058>] (host1x_client_register+0x10c/0x12c)
-> [    4.530129] [<c07f0058>] (host1x_client_register) from [<c088177c>] (tegra_hdmi_probe+0x1e4/0x2f0)
-> [    4.539080] [<c088177c>] (tegra_hdmi_probe) from [<c08a4914>] (platform_drv_probe+0x4c/0xac)
-> [    4.547511] [<c08a4914>] (platform_drv_probe) from [<c08a2cc4>] (driver_probe_device+0x224/0x2f8)
-> [    4.556375] [<c08a2cc4>] (driver_probe_device) from [<c08a11f8>] (bus_for_each_drv+0x58/0x8c)
-> [    4.564892] [<c08a11f8>] (bus_for_each_drv) from [<c08a29c4>] (__device_attach+0xb0/0x110)
-> [    4.573149] [<c08a29c4>] (__device_attach) from [<c08a1fa8>] (bus_probe_device+0x84/0x8c)
-> [    4.581319] [<c08a1fa8>] (bus_probe_device) from [<c08a2404>] (deferred_probe_work_func+0x44/0x13c)
-> [    4.590361] [<c08a2404>] (deferred_probe_work_func) from [<c035ba70>] (process_one_work+0x14c/0x444)
-> [    4.599486] [<c035ba70>] (process_one_work) from [<c035bf90>] (worker_thread+0x228/0x538)
-> [    4.607658] [<c035bf90>] (worker_thread) from [<c03611fc>] (kthread+0x12c/0x15c)
-> [    4.615049] [<c03611fc>] (kthread) from [<c03080c8>] (ret_from_fork+0x14/0x2c)
-> [    4.622266] Code: ebfffef4 e2506000 1a00001c e5953200 (e5933010) 
-> [    4.628417] ---[ end trace d346994bfc0c1628 ]---
-> 
+On 9/27/18 2:56 PM, Jens Axboe wrote:
+> On 9/27/18 12:52 PM, Sander Eikelenboom wrote:
+>> On 27/09/18 16:26, Jens Axboe wrote:
+>>> On 9/27/18 1:12 AM, Juergen Gross wrote:
+>>>> On 22/09/18 21:55, Boris Ostrovsky wrote:
+>>>>> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
+>>>>> added support for purging persistent grants when they are not in use. As
+>>>>> part of the purge, the grants were removed from the grant buffer, This
+>>>>> eventually causes the buffer to become empty, with BUG_ON triggered in
+>>>>> get_free_grant(). This can be observed even on an idle system, within
+>>>>> 20-30 minutes.
+>>>>>
+>>>>> We should keep the grants in the buffer when purging, and only free the
+>>>>> grant ref.
+>>>>>
+>>>>> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
+>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>> Reviewed-by: Juergen Gross <jgross@suse.com>
+>>> Since Konrad is out, I'm going to queue this up for 4.19.
+>>>
+>> Hi Boris/Juergen.
+>>
+>> Last week i tested a linux-4.19-rc4 kernel with xen-next and this patch from Boris pulled on top. 
+>> Unfortunately it made a VM hang (probably because it's rootFS is shuffled from under it's feet 
 
-Now dropped, thanks.
+What do you mean by "rootFS is shuffled from under it's feet " ?
 
-greg k-h
+>> and it gave these in dom0 dmesg:
+>>
+>> [ 9251.696090] xen-blkback: requesting a grant already in use
+>> [ 9251.705861] xen-blkback: trying to add a gref that's already in the tree
+>> [ 9251.715781] xen-blkback: requesting a grant already in use
+>> [ 9251.725756] xen-blkback: trying to add a gref that's already in the tree
+>> [ 9251.735698] xen-blkback: requesting a grant already in use
+>> [ 9251.745573] xen-blkback: trying to add a gref that's already in the tree
+>>
+>> The VM was a HVM with 4 vcpu's and 2 phy disks:
+>> xen-blkback: backend/vbd/14/768: using 4 queues, protocol 1 (x86_64-abi) persistent grants
+>> xen-blkback: backend/vbd/14/832: using 4 queues, protocol 1 (x86_64-abi) persistent grants
+>>
+>>
+>> Currently i have been running 4.19-rc5 with xen-next on top and commit
+>> a46b53672b2c reverted, for a couple of days. That seems to run stable
+>> for me (since it's a small box so i'm not hit by what a46b53672b2c
+>> tried to fix.
+>>
+>> If you can come up with a debug patch i can give that a spin tomorrow
+>> evening or in the weekend, so we are hopefully still in time for the
+>> 4.19 release.
+> At this late in the game, might make more sense to simply revert the
+> buggy commit.  Especially since what is currently out there doesn't fix
+> the issue for you.
+
+If decision is to revert then I think the whole series needs to be
+reverted.
+
+-boris
+
