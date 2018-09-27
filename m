@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584BEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C37AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D92C216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:48:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D92C216FA
+	by mail.kernel.org (Postfix) with ESMTP id BA1E7216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:49:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1E7216FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbeI1BIL (ORCPT
+        id S1728603AbeI1BIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:08:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37447 "EHLO
+        Thu, 27 Sep 2018 21:08:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51801 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbeI1BIL (ORCPT
+        with ESMTP id S1727622AbeI1BIu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:08:11 -0400
+        Thu, 27 Sep 2018 21:08:50 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIm12g129480
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RImXqp129646
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 11:48:01 -0700
+        Thu, 27 Sep 2018 11:48:33 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIm16Y129477;
-        Thu, 27 Sep 2018 11:48:01 -0700
-Date:   Thu, 27 Sep 2018 11:48:01 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RImXh8129643;
+        Thu, 27 Sep 2018 11:48:33 -0700
+Date:   Thu, 27 Sep 2018 11:48:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-4046460b867f8b041c81c26c09d3bcad6d6e814e@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@kernel.org, mark.gross@intel.com, bin.yang@intel.com,
-        tglx@linutronix.de, hpa@zytor.com, dave.hansen@intel.com
-Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
-          mingo@kernel.org, mark.gross@intel.com, bin.yang@intel.com,
-          tglx@linutronix.de, hpa@zytor.com, dave.hansen@intel.com
-In-Reply-To: <20180917143546.078998733@linutronix.de>
-References: <20180917143546.078998733@linutronix.de>
+Message-ID: <tip-5c280cf6081ff99078e28b51172d78359f194fd9@git.kernel.org>
+Cc:     peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, dave.hansen@intel.com,
+        bin.yang@intel.com, mark.gross@intel.com, hpa@zytor.com,
+        mingo@kernel.org
+Reply-To: tglx@linutronix.de, peterz@infradead.org, bin.yang@intel.com,
+          linux-kernel@vger.kernel.org, dave.hansen@intel.com,
+          hpa@zytor.com, mingo@kernel.org, mark.gross@intel.com
+In-Reply-To: <20180917143546.160867778@linutronix.de>
+References: <20180917143546.160867778@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Add debug mechanism
-Git-Commit-ID: 4046460b867f8b041c81c26c09d3bcad6d6e814e
+Subject: [tip:x86/mm] x86/mm/cpa: Add large page preservation statistics
+Git-Commit-ID: 5c280cf6081ff99078e28b51172d78359f194fd9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,139 +59,206 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4046460b867f8b041c81c26c09d3bcad6d6e814e
-Gitweb:     https://git.kernel.org/tip/4046460b867f8b041c81c26c09d3bcad6d6e814e
+Commit-ID:  5c280cf6081ff99078e28b51172d78359f194fd9
+Gitweb:     https://git.kernel.org/tip/5c280cf6081ff99078e28b51172d78359f194fd9
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 17 Sep 2018 16:29:11 +0200
+AuthorDate: Mon, 17 Sep 2018 16:29:12 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 27 Sep 2018 20:39:38 +0200
 
-x86/mm/cpa: Add debug mechanism
+x86/mm/cpa: Add large page preservation statistics
 
-The whole static protection magic is silently fixing up anything which is
-handed in. That's just wrong. The offending call sites need to be fixed.
+The large page preservation mechanism is just magic and provides no
+information at all. Add optional statistic output in debugfs so the magic can
+be evaluated. Defaults is off.
 
-Add a debug mechanism which emits a warning if a requested mapping needs to be
-fixed up. The DETECT debug mechanism is really not meant to be enabled except
-for developers, so limit the output hard to the protection fixups.
+Output:
+
+ 1G pages checked:                    2
+ 1G pages sameprot:                   0
+ 1G pages preserved:                  0
+ 2M pages checked:                  540
+ 2M pages sameprot:                 466
+ 2M pages preserved:                 47
+ 4K pages checked:               800770
+ 4K pages set-checked:             7668
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Dave Hansen <dave.hansen@intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Bin Yang <bin.yang@intel.com>
 Cc: Mark Gross <mark.gross@intel.com>
-Link: https://lkml.kernel.org/r/20180917143546.078998733@linutronix.de
+Link: https://lkml.kernel.org/r/20180917143546.160867778@linutronix.de
 
 ---
- arch/x86/mm/pageattr.c | 61 ++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 52 insertions(+), 9 deletions(-)
+ arch/x86/Kconfig       |  8 ++++
+ arch/x86/mm/pageattr.c | 99 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 105 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1a0be022f91d..65728bb1182c 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1491,6 +1491,14 @@ config X86_DIRECT_GBPAGES
+ 	  supports them), so don't confuse the user by printing
+ 	  that we have them enabled.
+ 
++config X86_CPA_STATISTICS
++	bool "Enable statistic for Change Page Attribute"
++	depends on DEBUG_FS
++	---help---
++	  Expose statistics about the Change Page Attribute mechanims, which
++	  helps to determine the effectivness of preserving large and huge
++	  page mappings when mapping protections are changed.
++
+ config ARCH_HAS_MEM_ENCRYPT
+ 	def_bool y
+ 
 diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 61ff27848452..1f2519055b30 100644
+index 1f2519055b30..cdf52eb86f3a 100644
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -42,6 +42,13 @@ struct cpa_data {
- 	struct page	**pages;
- };
- 
-+enum cpa_warn {
-+	CPA_PROTECT,
-+	CPA_DETECT,
-+};
-+
-+static const int cpa_warn_level = CPA_PROTECT;
-+
- /*
-  * Serialize cpa() (for !DEBUG_PAGEALLOC which uses large identity mappings)
-  * using cpa_lock. So that we don't allow any other cpu, with stale large tlb
-@@ -395,6 +402,28 @@ static pgprotval_t protect_kernel_text_ro(unsigned long start,
- }
+@@ -101,6 +101,95 @@ void arch_report_meminfo(struct seq_file *m)
+ static inline void split_page_count(int level) { }
  #endif
  
-+static inline bool conflicts(pgprot_t prot, pgprotval_t val)
++#ifdef CONFIG_X86_CPA_STATISTICS
++
++static unsigned long cpa_1g_checked;
++static unsigned long cpa_1g_sameprot;
++static unsigned long cpa_1g_preserved;
++static unsigned long cpa_2m_checked;
++static unsigned long cpa_2m_sameprot;
++static unsigned long cpa_2m_preserved;
++static unsigned long cpa_4k_checked;
++static unsigned long cpa_4k_install;
++
++static inline void cpa_inc_1g_checked(void)
 +{
-+	return (pgprot_val(prot) & ~val) != pgprot_val(prot);
++	cpa_1g_checked++;
 +}
 +
-+static inline void check_conflict(int warnlvl, pgprot_t prot, pgprotval_t val,
-+				  unsigned long start, unsigned long end,
-+				  unsigned long pfn, const char *txt)
++static inline void cpa_inc_2m_checked(void)
 +{
-+	static const char *lvltxt[] = {
-+		[CPA_PROTECT]	= "protect",
-+		[CPA_DETECT]	= "detect",
-+	};
-+
-+	if (warnlvl > cpa_warn_level || !conflicts(prot, val))
-+		return;
-+
-+	pr_warn("CPA %8s %10s: 0x%016lx - 0x%016lx PFN %lx req %016llx prevent %016llx\n",
-+		lvltxt[warnlvl], txt, start, end, pfn, (unsigned long long)pgprot_val(prot),
-+		(unsigned long long)val);
++	cpa_2m_checked++;
 +}
 +
- /*
-  * Certain areas of memory on x86 require very specific protection flags,
-  * for example the BIOS area or kernel text. Callers don't always get this
-@@ -402,19 +431,31 @@ static pgprotval_t protect_kernel_text_ro(unsigned long start,
-  * checks and fixes these known static required protection bits.
-  */
- static inline pgprot_t static_protections(pgprot_t prot, unsigned long start,
--					  unsigned long pfn, unsigned long npg)
-+					  unsigned long pfn, unsigned long npg,
-+					  int warnlvl)
++static inline void cpa_inc_4k_checked(void)
++{
++	cpa_4k_checked++;
++}
++
++static inline void cpa_inc_4k_install(void)
++{
++	cpa_4k_install++;
++}
++
++static inline void cpa_inc_lp_sameprot(int level)
++{
++	if (level == PG_LEVEL_1G)
++		cpa_1g_sameprot++;
++	else
++		cpa_2m_sameprot++;
++}
++
++static inline void cpa_inc_lp_preserved(int level)
++{
++	if (level == PG_LEVEL_1G)
++		cpa_1g_preserved++;
++	else
++		cpa_2m_preserved++;
++}
++
++static int cpastats_show(struct seq_file *m, void *p)
++{
++	seq_printf(m, "1G pages checked:     %16lu\n", cpa_1g_checked);
++	seq_printf(m, "1G pages sameprot:    %16lu\n", cpa_1g_sameprot);
++	seq_printf(m, "1G pages preserved:   %16lu\n", cpa_1g_preserved);
++	seq_printf(m, "2M pages checked:     %16lu\n", cpa_2m_checked);
++	seq_printf(m, "2M pages sameprot:    %16lu\n", cpa_2m_sameprot);
++	seq_printf(m, "2M pages preserved:   %16lu\n", cpa_2m_preserved);
++	seq_printf(m, "4K pages checked:     %16lu\n", cpa_4k_checked);
++	seq_printf(m, "4K pages set-checked: %16lu\n", cpa_4k_install);
++	return 0;
++}
++
++static int cpastats_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, cpastats_show, NULL);
++}
++
++static const struct file_operations cpastats_fops = {
++	.open		= cpastats_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
++static int __init cpa_stats_init(void)
++{
++	debugfs_create_file("cpa_stats", S_IRUSR, arch_debugfs_dir, NULL,
++			    &cpastats_fops);
++	return 0;
++}
++late_initcall(cpa_stats_init);
++#else
++static inline void cpa_inc_1g_checked(void) { }
++static inline void cpa_inc_2m_checked(void) { }
++static inline void cpa_inc_4k_checked(void) { }
++static inline void cpa_inc_4k_install(void) { }
++static inline void cpa_inc_lp_sameprot(int level) { }
++static inline void cpa_inc_lp_preserved(int level) { }
++#endif
++
++
+ static inline int
+ within(unsigned long addr, unsigned long start, unsigned long end)
  {
--	pgprotval_t forbidden;
-+	pgprotval_t forbidden, res;
- 	unsigned long end;
- 
- 	/* Operate on the virtual address */
- 	end = start + npg * PAGE_SIZE - 1;
--	forbidden  = protect_kernel_text(start, end);
--	forbidden |= protect_kernel_text_ro(start, end);
-+
-+	res = protect_kernel_text(start, end);
-+	check_conflict(warnlvl, prot, res, start, end, pfn, "Text NX");
-+	forbidden = res;
-+
-+	res = protect_kernel_text_ro(start, end);
-+	check_conflict(warnlvl, prot, res, start, end, pfn, "Text RO");
-+	forbidden |= res;
- 
- 	/* Check the PFN directly */
--	forbidden |= protect_pci_bios(pfn, pfn + npg - 1);
--	forbidden |= protect_rodata(pfn, pfn + npg - 1);
-+	res = protect_pci_bios(pfn, pfn + npg - 1);
-+	check_conflict(warnlvl, prot, res, start, end, pfn, "PCIBIOS NX");
-+	forbidden |= res;
-+
-+	res = protect_rodata(pfn, pfn + npg - 1);
-+	check_conflict(warnlvl, prot, res, start, end, pfn, "Rodata RO");
-+	forbidden |= res;
- 
- 	return __pgprot(pgprot_val(prot) & ~forbidden);
- }
-@@ -686,10 +727,11 @@ static int __should_split_large_page(pte_t *kpte, unsigned long address,
- 	 * in it results in a different pgprot than the first one of the
- 	 * requested range. If yes, then the page needs to be split.
- 	 */
--	new_prot = static_protections(req_prot, address, pfn, 1);
-+	new_prot = static_protections(req_prot, address, pfn, 1, CPA_DETECT);
- 	pfn = old_pfn;
+@@ -664,10 +753,12 @@ static int __should_split_large_page(pte_t *kpte, unsigned long address,
+ 	case PG_LEVEL_2M:
+ 		old_prot = pmd_pgprot(*(pmd_t *)kpte);
+ 		old_pfn = pmd_pfn(*(pmd_t *)kpte);
++		cpa_inc_2m_checked();
+ 		break;
+ 	case PG_LEVEL_1G:
+ 		old_prot = pud_pgprot(*(pud_t *)kpte);
+ 		old_pfn = pud_pfn(*(pud_t *)kpte);
++		cpa_inc_1g_checked();
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -732,14 +823,16 @@ static int __should_split_large_page(pte_t *kpte, unsigned long address,
  	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
--		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1);
-+		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1,
-+						       CPA_DETECT);
- 
+ 		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1,
+ 						       CPA_DETECT);
+-
++		cpa_inc_4k_checked();
  		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
  			return 1;
-@@ -1299,7 +1341,8 @@ repeat:
+ 	}
+ 
+ 	/* If there are no changes, return. */
+-	if (pgprot_val(new_prot) == pgprot_val(old_prot))
++	if (pgprot_val(new_prot) == pgprot_val(old_prot)) {
++		cpa_inc_lp_sameprot(level);
+ 		return 0;
++	}
+ 
+ 	/*
+ 	 * Verify that the address is aligned and the number of pages
+@@ -752,6 +845,7 @@ static int __should_split_large_page(pte_t *kpte, unsigned long address,
+ 	new_pte = pfn_pte(old_pfn, new_prot);
+ 	__set_pmd_pte(kpte, address, new_pte);
+ 	cpa->flags |= CPA_FLUSHTLB;
++	cpa_inc_lp_preserved(level);
+ 	return 0;
+ }
+ 
+@@ -1341,6 +1435,7 @@ repeat:
  		pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
  		pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
  
--		new_prot = static_protections(new_prot, address, pfn, 1);
-+		new_prot = static_protections(new_prot, address, pfn, 1,
-+					      CPA_PROTECT);
- 
- 		new_prot = pgprot_clear_protnone_bits(new_prot);
++		cpa_inc_4k_install();
+ 		new_prot = static_protections(new_prot, address, pfn, 1,
+ 					      CPA_PROTECT);
  
