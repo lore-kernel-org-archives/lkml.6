@@ -2,139 +2,138 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08864C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71697C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB23E21571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:33:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="S2TusLdE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB23E21571
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 208C7215F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:35:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208C7215F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeI0Xwx (ORCPT
+        id S1728382AbeI0Xyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:52:53 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37679 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbeI0Xwx (ORCPT
+        Thu, 27 Sep 2018 19:54:49 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43489 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727622AbeI0Xys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:52:53 -0400
-Received: by mail-io1-f66.google.com with SMTP id v14-v6so2507213iob.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 10:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=upAJt5JjsEgGTilofDZiD86RdDDV65fhE/GZVLweSb0=;
-        b=S2TusLdE8JZ6ESOnPh0LrIoOmccKHutEZrOh/2aUG64VevNUTYHWw0S0xsLyGWUN7a
-         /77n2nmov7k010m3AAss5fzv5jEp6ICpN81KXilcpzQe5czqsJg2MQPvcH1h8bQy/COP
-         Im8cnFqeRzKwba8QM76ZmCJJ7JHEn8wWvLS6s=
+        Thu, 27 Sep 2018 19:54:48 -0400
+Received: by mail-oi1-f193.google.com with SMTP id s69-v6so2875923oie.10;
+        Thu, 27 Sep 2018 10:35:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=upAJt5JjsEgGTilofDZiD86RdDDV65fhE/GZVLweSb0=;
-        b=mhC0ZaLl3jMOzFclFw8tMCtQjW73s+HFHFJdOL5MBdpoYDKbO+AbqleW7uCC0VWwVY
-         4q79yo4x5MePbbD5RKSJxC289/M4c4c+dXQC57IGwV6Ybw3tVwyFmp1kRPbYicUYNxVP
-         ZhnbRt9BrJKum737977hPjssG3G8V/QJORaTAmmc00l3SoL1xFJV1w+W7vbAUVT+9q5U
-         b6xfQpRDJms/sJue1gR3PXVD9oBjV9E/3hvz34PmsJ7AS5V5v3RA95UClsXEjwXlXODU
-         2chp3fYKGmAcEjht+j8BInjHu84FqeJjEUl7J7ZcQzXO08BFkv0E8S6k5Za/crnMqHeY
-         Y0jw==
-X-Gm-Message-State: ABuFfog5JohQLapqb8138y+HgYbyKE+5yJWONowiNgPrQwJj1zPwGMqK
-        v7TAZTEe3z/Y1Cvc++RxNwUA7ofjv2xKNrvLB+QiLw==
-X-Google-Smtp-Source: ACcGV62KkXKtpm9wv91Zp8lFzxWZLFyntZG0gPQUgEGUPxcD7A5crbOJQxbOKsCEKuGp9iNpx9g0+ojFnqI3GBHywOE=
-X-Received: by 2002:a6b:94c6:: with SMTP id w189-v6mr9927312iod.252.1538069611588;
- Thu, 27 Sep 2018 10:33:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jZd70GJELwHNZNCIL4XjmIsm7lLpANr90XzdeDYRo/8=;
+        b=D0QUL5AMQRj4mWXTgXhfear9NqU5jGa36xTM6RQMX03asWyOA04LAW/RA5JicWry37
+         3GjHU+nXW/T4zPWyr2P8vhCTftDV0l37kQda+SIat0z6EDDhlp2s9mBRkOsURsW60tSJ
+         LBDLv+3gq31rIl8Ho3PmvbPMsMuvUyMSeXK9G1X7ah41LbJIfymmhquOZFPnJKkfmKCs
+         E5rnZVCWquO4YdkJsniBFq8S2Y4TTO84pJFYdJNI7A0jp/LOXgED1eBWXT5FZmE+r6cu
+         RjoWgjLqiOR3DydSBwyCSfc7JOpBee+y5RKXS06JALo/sKxiWFDJbUFMr6blOGDlWt3+
+         0zDg==
+X-Gm-Message-State: ABuFfojAB7JF4U1j5HWdeC52JCYfJvzMgsW/27FFyceeox6tWTfWyT/J
+        uHDAWNSy0KrVs6VykxOx/w==
+X-Google-Smtp-Source: ACcGV60Kze8WYEDzVOw/JNj5Pt9441LoVm4adMxS8sihmKH/CddPAvuz3RM5WGKy21N6a90qKMziBw==
+X-Received: by 2002:aca:4802:: with SMTP id v2-v6mr3578555oia.259.1538069727191;
+        Thu, 27 Sep 2018 10:35:27 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f5-v6sm627315oih.51.2018.09.27.10.35.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 10:35:26 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 12:35:26 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
+        green.hu@gmail.com, palmer@sifive.com
+Subject: Re: [PATCH V5 25/30] dt-bindings: timer: C-SKY Multi-processor timer
+Message-ID: <20180927173526.GA26777@bogus>
+References: <cover.1537789736.git.ren_guo@c-sky.com>
+ <d8f95c8a3be94d29611eccbeac51a3b74e5f570e.1537789737.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-9-jagan@amarulasolutions.com> <20180927171451.7iqt2nt2log5qojf@flea>
-In-Reply-To: <20180927171451.7iqt2nt2log5qojf@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 27 Sep 2018 23:03:19 +0530
-Message-ID: <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
-Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
- start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d8f95c8a3be94d29611eccbeac51a3b74e5f570e.1537789737.git.ren_guo@c-sky.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
-> > Accordingly to BPI-M64-bsp DE DSI code Video start delay
-> > can be computed by subtracting total vertical timing with
-> > front porch timing and with adding 1 delay line for TCON.
->
-> This is what the current code is doing as well.
+On Tue, Sep 25, 2018 at 07:39:28AM +0800, Guo Ren wrote:
+>  - Dt-bingdings doc for C-SKY SMP system setting.
+> 
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  .../devicetree/bindings/timer/csky,mptimer.txt     | 46 ++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/csky,mptimer.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/csky,mptimer.txt b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
+> new file mode 100644
+> index 0000000..1e7e31d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/csky,mptimer.txt
+> @@ -0,0 +1,46 @@
+> +============================
+> +C-SKY Multi-processors Timer
+> +============================
+> +
+> +C-SKY multi-processors timer is designed for C-SKY SMP system and the
+> +regs is accessed by cpu co-processor 4 registers with mtcr/mfcr.
+> +
+> + - PTIM_CTLR "cr<0, 14>" Control reg to start reset timer.
+> + - PTIM_TSR  "cr<1, 14>" Interrupt cleanup status reg.
+> + - PTIM_CCVR "cr<3, 14>" Current counter value reg.
+> + - PTIM_LVR  "cr<6, 14>" Window value reg to triger next event.
+> +
+> +==============================
+> +timer node bindings definition
+> +==============================
+> +
+> +	Description: Describes SMP timer
+> +
+> +	PROPERTIES
+> +
+> +	- compatible
+> +		Usage: required
+> +		Value type: <string>
+> +		Definition: must be "csky,mptimer"
+> +	- clocks
+> +		Usage: required
+> +		Value type: <node>
+> +		Definition: must be input clk node
+> +	- interrupts
+> +		Usage: required
+> +		Value type: <u32>
+> +		Definition: must be timer irq num defined by soc
+> +	- interrupt-parent:
 
-The current code
-return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+Drop this. It is implied and could be in the parent node.
 
-(mode->vsync_end - mode->vdisplay) = front porch + sync
-
-but I'm updating here only front porch.
-
->
-> > This patch simply add the start_delay logic from BPI-M64-bsp,
-> > w/o this new computation, the DSI on A64 encounter vblank time out.
-> >
-> > [CRTC:36:crtc-0] vblank wait timed out
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 9918fdb990ff..217db74c6dc3 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
-> >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
-> >                                          struct drm_display_mode *mode)
-> >  {
-> > -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-> > +     u32 vfp = mode->vsync_start - mode->vdisplay;
-
-let me explain this.
-
-Actual code from Allwinner
-u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-
-So,
-
-=> (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
-=> (front porch + sync + back porch) - (back porch + sync)
-=> front porch + sync + back porch - back porch - sync
-=> front porch
-=> mode->vsync_start - mode->vdisplay
-
-Hope it clear.
+> +		Usage: required
+> +		Value type: <node>
+> +		Definition: must be interrupt controller node
+> +
+> +Examples:
+> +---------
+> +
+> +	timer: timer {
+> +		compatible = "csky,mptimer";
+> +		clocks = <&dummy_apb_clk>;
+> +		interrupts = <16>;
+> +		interrupt-parent = <&intc>;
+> +	};
+> -- 
+> 2.7.4
+> 
