@@ -2,119 +2,82 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B962C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A07DDC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F0B720833
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 477122157C
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:28:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErIh6E4N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0B720833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fQuOeS6b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477122157C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeI0OoN (ORCPT
+        id S1727216AbeI0OpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 10:44:13 -0400
-Received: from mail-yw1-f49.google.com ([209.85.161.49]:43202 "EHLO
-        mail-yw1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbeI0OoM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 10:44:12 -0400
-Received: by mail-yw1-f49.google.com with SMTP id k66-v6so719652ywa.10;
-        Thu, 27 Sep 2018 01:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I0di2wCwN9xA1x+FqtSSlVhpzhb6fEeSlsdksxG6vgI=;
-        b=ErIh6E4NR+JKxu+G1ksC5QaTHpmeKkFwbHhI2dBVmNtKBRmEeq2zOnK076upMr4pF6
-         x7BGojfri5BMuCMwphIem3bhvsEt12amzMp78whjH6HfdhtKUNibr4Nyg5L9ELKLD+zP
-         5E0EcKtx4xOipyzBT8Z4W/vhfLCzWVZmrmDcRkHgZyedvQE1Sg/z5Mu7sCzBFIPvdJpG
-         SOJp/m5aWqdZHPM8dyCiCyjkfZjgl4ofdMHKkURtJ9nOL2xSTIVDrVTySSbqMiuqnjn+
-         qYoVFDv5hIOKk94TIBN9HakmjS0iflcLKe92bq5hl2FsSDBAXzLrvHojA1cQ3g47U2Qx
-         WcyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I0di2wCwN9xA1x+FqtSSlVhpzhb6fEeSlsdksxG6vgI=;
-        b=q5bdXx195EAMP9oL2ISlXY/frmrHEaThnv/7wetbWumCqtgFMG+XfR6FpjkI8ihfKI
-         KBNZCiBLXSzjmtqZw0LGO7cmsNvOaDcksFhxhj9yJGt0g53SdPLTYpV+SWz467k3KkJ0
-         9Q3fM9zYhFPgIan+xlnNQRZh0LhaJwOyZyzufPE6QhdTXMbDe4jWO0Oq51rLS1piZ9Cr
-         x/oXIaZ2ub65bYmcArRnmYABGwqfgEbyhEiJeGpu6NdXS85QHCWrrwEajBs7rbLrt8tv
-         2/1l4n2DI/dkcdrdw2kjZk4SFjkorTWVNhJ8YcyKNmLRttTjzqmUm/TdLh6+c1xoz+G2
-         bSOw==
-X-Gm-Message-State: ABuFfoiuI7r0crTkhP9l2nzorzrFVKCJ2pX4hNy3wSrd05E2bxN5yONc
-        3fM1vWxmx8uN0ipcQ7ZQhqRWUqz0ARO0+yla8Fk=
-X-Google-Smtp-Source: ACcGV63ILynZ0wnKG+SeYMqJ3LqGMPzqfVxhjjVG4hnmSIMS4JiimNm2126fGpH5gxA1SpdQfAbV0nmBoRdhfzO5Bzo=
-X-Received: by 2002:a0d:c947:: with SMTP id l68-v6mr5011032ywd.404.1538036828195;
- Thu, 27 Sep 2018 01:27:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <00000000000044cbf80576baaecd@google.com> <CAJfpegsxLtDZqOpK68kGZU+qeEpA5gmAw-uigUKZorexU5i8BA@mail.gmail.com>
- <CAOQ4uxi7LjOVssduYEfbNnYd7ZbwB+hikd+P03_qPFHZeF_Phg@mail.gmail.com> <CAJfpegvEA4L-3SgoyF-Unt4rNZq6rX86Q4AVQBWBiqaWEqDP8g@mail.gmail.com>
-In-Reply-To: <CAJfpegvEA4L-3SgoyF-Unt4rNZq6rX86Q4AVQBWBiqaWEqDP8g@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 27 Sep 2018 11:26:56 +0300
-Message-ID: <CAOQ4uxjfmE4Bd49kt7+kD7C=8g5ChN80LCOUDf9e3mqG=8Yrag@mail.gmail.com>
-Subject: Re: possible deadlock in path_openat
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     syzbot+a55ccfc8a853d3cff213@syzkaller.appspotmail.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 27 Sep 2018 10:45:15 -0400
+Received: from m12-18.163.com ([220.181.12.18]:56301 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726790AbeI0OpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 10:45:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=NSQpNuvKRZqjq0tiXp
+        AXHUU+vZwnShbuhno79Tm8Cvo=; b=fQuOeS6bAwwcrtV8GYw5oMDLj7KGicFYS/
+        sFoNlvohT/d1r3iTmu3h2pJtrYylH26OBk3UtHHkasgUy+KUI5jrHGQW4FiVgWmT
+        7eEyXpIIuN9uui7rC1V/WMSemvyMfkFezUd1ybKYOOctTlFZ092r8KQcMEkVcbWH
+        BVZsXtvYU=
+Received: from localhost.localdomain (unknown [117.136.0.186])
+        by smtp14 (Coremail) with SMTP id EsCowAA3ixiRlKxbTqRoUw--.50523S4;
+        Thu, 27 Sep 2018 16:28:02 +0800 (CST)
+From:   Dongbo Cao <cdbdyx@163.com>
+To:     colyli@suse.de
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dongbo Cao <cdbdyx@163.com>
+Subject: [PATCH] bug fix in function check_should_bypass
+Date:   Thu, 27 Sep 2018 16:27:49 +0800
+Message-Id: <20180927082749.2243-1-cdbdyx@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: EsCowAA3ixiRlKxbTqRoUw--.50523S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr1UJryDZFyrXr4Utry3XFb_yoWDJFc_u3
+        WfWFZFqrZ5Gr10qry7Zr45X3yF9F18Zr1fWF13tFWF9F9xCw17Wr10gry5AFs3JF4fJF4U
+        C3sFgw1rCrn8KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8mhF7UUUUU==
+X-Originating-IP: [117.136.0.186]
+X-CM-SenderInfo: xfgev5r06rljoofrz/1tbiJQ7O3FUMNGlxNgAAs6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 9:36 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Thu, Sep 27, 2018 at 8:05 AM, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > So this is interesting... if there is a file in overlayfs lower layer with
-> > the f_op read = seq_read then &p->lock in the chain above could be
-> > takes after ovl locks and that is in reveres order to the order of locks
-> > in execve on an overlayfs file.
-> >
-> > On the one hand, it is possible (not sure if desirable) to use filesystems
-> > with seq_file like debugfs as overlay lower fs, but on the other hand,
-> > it is not possible to copy up a debugfs file with its original content
-> > because (at least for most files I looked) the inode size is reported as 0.
-> >
-> > Also, from v4.19-rc1, with stacked f_op, ovl_read_iter() calls vfs_iter_read(),
-> > so overlayfs is no longer tolerant to underlying files that implement f_op read
-> > (and not read_iter), thus, it is no longer possible to read lower debugfs files.
-> >
-> > That said, if there are files in lower layer that user seq_read f_op and have
-> > non zero inode size, the deadlock reported above might be possible.
-> >
-> > Miklos,
-> >
-> > What do you recon we should do?
-> > Blacklist debugfs just like procfs was blacklisted from fs stacking?
-> > Improve the heuristics of ovl_dentry_weird() to cover debugfs and friends?
->
-> I think that's the best plan.  There doesn't seem to be any sense in
-> supporting debugfs and similar weirdness as lower layer, so the best
-> course of action would be to deny at the earilest possible point in
-> time.
->
+bio->bi_iter.bi_sector is the sector index of current request, no need to be aligned.
+instead, bio->bi_iter.bi_size should be aligned to block_bytes-1, not block_size-1.
+and bio_sectors is the number of sectors of current request, also no need to be aligned, just remove it.
 
-OK. I will leave to you to find the Weirdest Common Denominator
-of debugfs and friends.
-But there could also be a filesystem with sporadic special files
-with seq_read (or no read_iter f_op), or maybe our Weird heuristics didn't
-catch the filesystem.
-We might want to block those files from being copied up on the grounds that
-they cannot be read from overlay before copy up anyway.
+Signed-off-by: Dongbo Cao <cdbdyx@163.com>
+---
+ drivers/md/bcache/request.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Amir.
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index 13d3355a..fb3502da 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -398,8 +398,7 @@ static bool check_should_bypass(struct cached_dev *dc, struct bio *bio)
+ 	    !(bio->bi_opf & REQ_PRIO))
+ 		goto skip;
+ 
+-	if (bio->bi_iter.bi_sector & (c->sb.block_size - 1) ||
+-	    bio_sectors(bio) & (c->sb.block_size - 1)) {
++	if (bio->bi_iter.bi_size & (block_bytes(c) - 1)) {
+ 		pr_debug("skipping unaligned io");
+ 		goto skip;
+ 	}
+-- 
+2.17.1
+
+
