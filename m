@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2C9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C703C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5061921533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5061921533
+	by mail.kernel.org (Postfix) with ESMTP id 3760E21533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:30:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3760E21533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbeI0Prg (ORCPT
+        id S1728667AbeI0Prm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:47:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56968 "EHLO
+        Thu, 27 Sep 2018 11:47:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56976 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbeI0Prg (ORCPT
+        with ESMTP id S1726931AbeI0Prl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:47:36 -0400
+        Thu, 27 Sep 2018 11:47:41 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1115B1133;
-        Thu, 27 Sep 2018 09:30:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47FB41120;
+        Thu, 27 Sep 2018 09:30:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Wen Xu <wen.xu@gatech.edu>
-Subject: [PATCH 4.9 32/44] ext4: check to make sure the rename(2)s destination is not freed
-Date:   Thu, 27 Sep 2018 11:04:21 +0200
-Message-Id: <20180927090123.132265860@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 10/44] ALSA: oxfw: fix memory leak for model-dependent data at error path
+Date:   Thu, 27 Sep 2018 11:03:59 +0200
+Message-Id: <20180927090119.331568019@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
 References: <20180927090117.997362691@linuxfoundation.org>
@@ -51,40 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit b50282f3241acee880514212d88b6049fb5039c8 upstream.
+commit ce925f088b979537f22f9e05eb923ef9822ca139 upstream.
 
-If the destination of the rename(2) system call exists, the inode's
-link count (i_nlinks) must be non-zero.  If it is, the inode can end
-up on the orphan list prematurely, leading to all sorts of hilarity,
-including a use-after-free.
+After allocating model-dependent data, ALSA OXFW driver has memory leak
+of the data at error path.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200931
+This commit releases the data at the error path.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Cc: stable@vger.kernel.org
+Fixes: 6c29230e2a5f ('ALSA: oxfw: delayed registration of sound card')
+Cc: <stable@vger.kernel.org> # v4.7+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/namei.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/firewire/oxfw/oxfw.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -3527,6 +3527,12 @@ static int ext4_rename(struct inode *old
- 	int credits;
- 	u8 old_file_type;
- 
-+	if (new.inode && new.inode->i_nlink == 0) {
-+		EXT4_ERROR_INODE(new.inode,
-+				 "target of rename is already freed");
-+		return -EFSCORRUPTED;
-+	}
-+
- 	if ((ext4_test_inode_flag(new_dir, EXT4_INODE_PROJINHERIT)) &&
- 	    (!projid_eq(EXT4_I(new_dir)->i_projid,
- 			EXT4_I(old_dentry->d_inode)->i_projid)))
+--- a/sound/firewire/oxfw/oxfw.c
++++ b/sound/firewire/oxfw/oxfw.c
+@@ -275,6 +275,8 @@ error:
+ 	if (oxfw->has_output)
+ 		snd_oxfw_stream_destroy_simplex(oxfw, &oxfw->tx_stream);
+ 	snd_card_free(oxfw->card);
++	kfree(oxfw->spec);
++	oxfw->spec = NULL;
+ 	dev_info(&oxfw->unit->device,
+ 		 "Sound card registration failed: %d\n", err);
+ }
 
 
