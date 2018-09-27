@@ -2,185 +2,70 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AB2C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A38EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23CD216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:13:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="J0q8q7Ob"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23CD216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	by mail.kernel.org (Postfix) with ESMTP id D0B73216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B73216E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeI1EeI (ORCPT
+        id S1727758AbeI1EeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:34:08 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41325 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbeI1EeI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:34:08 -0400
-Received: by mail-oi1-f195.google.com with SMTP id l197-v6so3594508oib.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 15:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hs7jiu2zfPSrFO/1WCvowokq10I90tP/KPEeXv1dcas=;
-        b=J0q8q7Obrao7GpiDfJ9L848YqRUs7VViDRCdiIXzTpyR2kh8WqdWQbRZWTnNH6kmvb
-         bZwLGZFBcI5uGnVSjIDy26OxSwUyF2SI/EJFM7RjPKt8PXgyc2mdArzgPbDFpqQKAXc/
-         F9+SIGiS69ZCJmKhApAYW472g9T3X/99NomEL+JiFNBWKx9VaclJHotSJQae9CsJWWsU
-         85qOODNJdQM78oNUzyHet1IIMNqXQymollMQESX6ozrrXpZ85NUtTStE47bbY8a8f++N
-         WnInghtJtA7MA7MLKSz3w28pZwLyxrGgUrzpA0Cws1YOTxo2j4e4TgtHjEWmGktbMULE
-         MNtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hs7jiu2zfPSrFO/1WCvowokq10I90tP/KPEeXv1dcas=;
-        b=X71j/h0MqjDDKl6AYghfxurU6+dYxi+7wsAcKnz//kNvxhq20HIx+s/Zky2+aBYlVF
-         tRo0AI0rxNIlPu6BqQyh7HsdvfkZwdGIll/ebzWJBXUPFpiAsRES8TdupNZ7XuJsd7MM
-         GLZmzHd95WPijCQ/Peh8Ztz0BO55oo5QbhHm9/gmSCvDbtbJvxZWY/ouFC9CzBHAM/ys
-         paMTqBkta2lHzMNQ0qzHB0Rlg3KP3ZBz1B8T0uyNf0sfJDrYy3onv4rwj1Q6Ax8kPnTf
-         M3j0S23H4CK+/6f3JbymtGiNZC+ZiIEfuQLW4r1ESaUnjM2bvKedRjVJhX6zGBgdjKA8
-         In/A==
-X-Gm-Message-State: ABuFfogwAlg4EuQ66wma5gN9qNjte5Vtt3TmHESX12Ey5A2E6Yw0fZLI
-        GhekZ5/v2IT5xZrE5hbfP+jfMQ==
-X-Google-Smtp-Source: ACcGV60/HBTIx/FTDg/W8t106pDuZqy29BSMnbMtpFLU+e6fVWSI36NUqf7zubJ1qRqwNfDiK6wBEg==
-X-Received: by 2002:aca:b355:: with SMTP id c82-v6mr4523874oif.9.1538086420142;
-        Thu, 27 Sep 2018 15:13:40 -0700 (PDT)
-Received: from cisco.cisco.com ([128.107.241.175])
-        by smtp.gmail.com with ESMTPSA id s98-v6sm1269023ota.47.2018.09.27.15.13.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 15:13:39 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 16:13:36 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        suda.akihiro@lab.ntt.co.jp, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 5/6] seccomp: add a way to pass FDs via a notification
- fd
-Message-ID: <20180927221336.GC15491@cisco.cisco.com>
-References: <20180927151119.9989-1-tycho@tycho.ws>
- <20180927151119.9989-6-tycho@tycho.ws>
- <CAG48ez2vJJQm8-Rdz4b=cvBQn2Ws-9wazVuVUXQFYqMMZh64YA@mail.gmail.com>
+        Fri, 28 Sep 2018 00:34:14 -0400
+Received: from namei.org ([65.99.196.166]:33474 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725972AbeI1EeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 00:34:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w8RMDWQO011504;
+        Thu, 27 Sep 2018 22:13:32 GMT
+Date:   Fri, 28 Sep 2018 08:13:32 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     LSM <linux-security-module@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Subject: Re: [PATCH v4 04/19] SELinux: Remove cred security blob poisoning
+In-Reply-To: <5360cd42-5827-58af-515c-6e1ded1d9154@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1809280813270.8410@namei.org>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com> <5360cd42-5827-58af-515c-6e1ded1d9154@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2vJJQm8-Rdz4b=cvBQn2Ws-9wazVuVUXQFYqMMZh64YA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 06:39:02PM +0200, Jann Horn wrote:
-> On Thu, Sep 27, 2018 at 5:11 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > This patch adds a way to insert FDs into the tracee's process (also
-> > close/overwrite fds for the tracee). This functionality is necessary to
-> > mock things like socketpair() or dup2() or similar, but since it depends on
-> > external (vfs) patches, I've left it as a separate patch as before so the
-> > core functionality can still be merged while we argue about this. Except
-> > this time it doesn't add any ugliness to the API :)
-> [...]
-> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> > index 17685803a2af..07a05ad59731 100644
-> > --- a/kernel/seccomp.c
-> > +++ b/kernel/seccomp.c
-> > @@ -41,6 +41,8 @@
-> >  #include <linux/tracehook.h>
-> >  #include <linux/uaccess.h>
-> >  #include <linux/anon_inodes.h>
-> > +#include <linux/fdtable.h>
-> > +#include <net/cls_cgroup.h>
-> >
-> >  enum notify_state {
-> >         SECCOMP_NOTIFY_INIT,
-> > @@ -1684,6 +1686,56 @@ static long seccomp_notify_id_valid(struct seccomp_filter *filter,
-> >         return ret;
-> >  }
-> >
-> > +static long seccomp_notify_put_fd(struct seccomp_filter *filter,
-> > +                                 unsigned long arg)
-> > +{
-> > +       struct seccomp_notif_put_fd req;
-> > +       void __user *buf = (void __user *)arg;
-> > +       struct seccomp_knotif *knotif = NULL;
-> > +       long ret;
-> > +
-> > +       if (copy_from_user(&req, buf, sizeof(req)))
-> > +               return -EFAULT;
-> > +
-> > +       if (req.fd < 0 && req.to_replace < 0)
-> > +               return -EINVAL;
-> > +
-> > +       ret = mutex_lock_interruptible(&filter->notify_lock);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       ret = -ENOENT;
-> > +       list_for_each_entry(knotif, &filter->notif->notifications, list) {
-> > +               struct file *file = NULL;
-> > +
-> > +               if (knotif->id != req.id)
-> > +                       continue;
-> > +
-> > +               if (req.fd >= 0)
-> > +                       file = fget(req.fd);
-> 
-> So here we take a reference on `file`.
-> 
-> > +               if (req.to_replace >= 0) {
-> > +                       ret = replace_fd_task(knotif->task, req.to_replace,
-> > +                                             file, req.fd_flags);
-> 
-> Then here we try to place the file in knotif->task's file descriptor
-> table. This can either fail (e.g. due to exceeded rlimit), in which
-> case nothing happens, or it can do do_dup2(), which first takes an
-> extra reference to the file, then places it in the task's fd table.
-> 
-> Either way, afterwards, we still hold a reference to the file.
-> 
-> > +               } else {
-> > +                       unsigned long max_files;
-> > +
-> > +                       max_files = task_rlimit(knotif->task, RLIMIT_NOFILE);
-> > +                       ret = __alloc_fd(knotif->task->files, 0, max_files,
-> > +                                        req.fd_flags);
-> > +                       if (ret < 0)
-> > +                               break;
-> 
-> If we bail out here, we still hold a reference to `file`.
-> 
-> Suggestion: Change this to "if (ret >= 0) {" and make the following
-> code conditional instead of breaking.
-> 
-> > +                       __fd_install(knotif->task->files, ret, file);
-> 
-> But if we reach this point, __fd_install() consumes the file pointer,
-> so `file` is a dangling pointer now.
-> 
-> Suggestion: Add "break;" here.
-> 
-> > +               }
-> 
-> Suggestion: Add "if (file != NULL) fput(file);" here.
+On Fri, 21 Sep 2018, Casey Schaufler wrote:
 
-Ugh, yes, thanks.
+> The SELinux specific credential poisioning only makes sense
+> if SELinux is managing the credentials. As the intent of this
+> patch set is to move the blob management out of the modules
+> and into the infrastructure, the SELinux specific code has
+> to go. The poisioning could be introduced into the infrastructure
+> at some later date.
 
-Tycho
+If it's useful, it should be incorporated into core LSM, otherwise that's 
+a regression for SELinux.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
