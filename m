@@ -2,82 +2,95 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BD7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C447EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E02721571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:12:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cs.utexas.edu header.i=@cs.utexas.edu header.b="GBFXZjBZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E02721571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cs.utexas.edu
+	by mail.kernel.org (Postfix) with ESMTP id 60F11216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60F11216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeI0Vax (ORCPT
+        id S1728049AbeI0VeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:30:53 -0400
-Received: from newman.cs.utexas.edu ([128.83.139.110]:45295 "EHLO
-        newman.cs.utexas.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeI0Vax (ORCPT
+        Thu, 27 Sep 2018 17:34:10 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42692 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbeI0VeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:30:53 -0400
-X-Greylist: delayed 677 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Sep 2018 17:30:52 EDT
-Received: from vyasa.cs.utexas.edu (vyasa.cs.utexas.edu [128.83.130.99])
-        by newman.cs.utexas.edu (8.14.4/8.14.4/Debian-4.1ubuntu1) with ESMTP id w8RF0mlh040798
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Sep 2018 10:00:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cs.utexas.edu;
-        s=default; t=1538060449;
-        bh=4u4JTW4q3QRUDm25erCFoTcYAjnDpOC4BWAK//MFNsk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GBFXZjBZieXDSi+DHpORwy0l+KBfbwTGZc9G74tOnJPd4dPQrivVTuU+43PtCRlJ3
-         wbT7CbKBLExCjGW6Rc/REyufJRJhEcL33g0ldGRG40vh4f517Ev//Mks4nIMYYdERD
-         sp0LN5CTeaVIbg9Fqy61pipc74MNwz9kr0N58dfA=
-Received: (from mihir@localhost)
-        by vyasa.cs.utexas.edu (8.15.2/8.15.2/Submit) id w8RF0mLN011577;
-        Thu, 27 Sep 2018 10:00:48 -0500
-From:   Mihir Mehta <mihir@cs.utexas.edu>
-To:     hirofumi@mail.parknet.co.jp
-Cc:     linux-kernel@vger.kernel.org, Mihir Mehta <mihir@cs.utexas.edu>
-Subject: [PATCH] fat: Expand a slightly out-of-date comment
-Date:   Thu, 27 Sep 2018 10:00:46 -0500
-Message-Id: <20180927150046.11538-1-mihir@cs.utexas.edu>
-X-Mailer: git-send-email 2.19.0
+        Thu, 27 Sep 2018 17:34:10 -0400
+Received: by mail-ot1-f65.google.com with SMTP id h26-v6so2886884otl.9;
+        Thu, 27 Sep 2018 08:15:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SGwwZPm5WLPYDXFV5cdVZJ7voZo5e5hoQb+hDntem7Y=;
+        b=m89lMAgdWWSPCLHQTBep2i+aumrcDEo7lSIiVvJcjWnmslRkYkfofEBr4G+/xM3kGA
+         tGNtUiwma9v8bVuS2oa146ZCDMrKhuBj4XLTl3RXL1A8JUHpBfUNGHV+0wfVRiMwl6u4
+         RuuxxVuC5nxwam3MKiJ+2GgrrWjCz5xxU1G2rMihKckcJYbdU0iFkA8AuydCvH5X61hf
+         NwMpKACPgeQAxMF4OIUSIQ51BKrLf0e3wYscSZYyl7CBX22BWkFK//L1BmusZHpUdNqH
+         qMFRhAOxYZbBkgdeT/C9QTVkdThH7MDFjNYIcKTgjUvkJ7l1orgGhMj1L+kIqsPHE/pt
+         0NhA==
+X-Gm-Message-State: ABuFfojXiLyqt88CW68IfzvPDjt+iwN5a4eADd1Z1oTHM69vrYPqBDV0
+        cnJafWd0TSoy9H2gkUDxZhuQoJvt8w==
+X-Google-Smtp-Source: ACcGV61ZWH3WKzRbd05MtOdnogHcxKTDl5kseE6Cw9w2QB+ROHhooA+dhK1d7iVPUNi0rgmTp39oCg==
+X-Received: by 2002:a9d:454c:: with SMTP id p12-v6mr7139515oti.105.1538061326125;
+        Thu, 27 Sep 2018 08:15:26 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 19-v6sm740736oty.16.2018.09.27.08.15.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 08:15:25 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 10:15:24 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org,
+        openbmc@lists.ozlabs.org,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+Subject: Re: [PATCH v8 07/12] dt-bindings: mfd: Add a document for PECI
+ client MFD
+Message-ID: <20180927151524.GA16798@bogus>
+References: <20180918215124.14003-1-jae.hyun.yoo@linux.intel.com>
+ <20180918215124.14003-8-jae.hyun.yoo@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.3.9 (newman.cs.utexas.edu [128.83.139.110]); Thu, 27 Sep 2018 10:00:49 -0500 (CDT)
-X-Virus-Scanned: clamav-milter 0.98.7 at newman
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918215124.14003-8-jae.hyun.yoo@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The file namei.c seems to have been renamed to namei_msdos.c, so I
-decided to update the comment with the correct name, and expand it a bit
-to tell the reader what to look for.
----
- fs/fat/dir.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue, 18 Sep 2018 14:51:19 -0700, Jae Hyun Yoo wrote:
+> This commit adds a dt-bindings document for PECI client MFD.
+> 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Andrew Jeffery <andrew@aj.id.au>
+> Cc: James Feist <james.feist@linux.intel.com>
+> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+> Cc: Joel Stanley <joel@jms.id.au>
+> Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
+> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> ---
+>  .../bindings/mfd/intel-peci-client.txt        | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/intel-peci-client.txt
+> 
 
-diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-index b833ffe..d954e18 100644
---- a/fs/fat/dir.c
-+++ b/fs/fat/dir.c
-@@ -368,7 +368,8 @@ static int fat_parse_short(struct super_block *sb,
- 	}
- 
- 	memcpy(work, de->name, sizeof(work));
--	/* see namei.c, msdos_format_name */
-+	/* For an explanation of the special treatment of 0x05 in
-+	   filenames, see msdos_format_name in namei_msdos.c */
- 	if (work[0] == 0x05)
- 		work[0] = 0xE5;
- 
--- 
-2.7.4
-
+Reviewed-by: Rob Herring <robh@kernel.org>
