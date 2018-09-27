@@ -2,135 +2,109 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3690EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90530C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5CE121570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CE121570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B97A21570
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:30:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="p78YxPGL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B97A21570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeI0Ior convert rfc822-to-8bit (ORCPT
+        id S1727263AbeI0IqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 04:44:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58960 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbeI0Ior (ORCPT
+        Thu, 27 Sep 2018 04:46:02 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:52044 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbeI0IqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 04:44:47 -0400
-Received: from mail-wm1-f71.google.com ([209.85.128.71])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <chia-lin.kao@canonical.com>)
-        id 1g5M2s-0004wH-79
-        for linux-kernel@vger.kernel.org; Thu, 27 Sep 2018 02:28:50 +0000
-Received: by mail-wm1-f71.google.com with SMTP id a69-v6so3993266wma.7
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 19:28:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MOHsVTItP7K4W+cz+BT1+YHPuQ3I7f97g5h1bFF7Fdo=;
-        b=tgHvcYIQqOfUrEn9fwD1AxX6UErnV/WG7Z7f/do2eD5sze9Za+f0W/8f6OX/ijexn3
-         PGxInUZHznyjqGpSC6q4c7rrpsZQWlinaUgiEhKSMdi56ust4LtR/hnATngcugzK0fqJ
-         OwFHmTbysAJKmOb2ZD860N0sArSNRMO/73Fo503eOEKhDF2BD0P4/E9qnDTFNV8qqJD9
-         SxruyIK6bIoCXcGEpEuupnrM52dUTa+fiH0xLs/c2bFCKCdiXS16TFuOi7TH+SVeIQzZ
-         CHEY9+3gKKPVoG3V/RYeMY8z8wSvUPFVGrKkhkmUf3SZpkscg0/DkBPhByqv5vOp5mv5
-         /tOg==
-X-Gm-Message-State: ABuFfojvzTzGJUwvL2DMsqH/OuHMFeo9StaJ6sgmpVYuBbC8Kt6Od2da
-        zKyhtXTsCb/kD6F4TIIwK4RJ7zrhqk5PN+HM2xyU8vUY/mDE/9Yr6pJCSuPKC42kzN6kqTT7DPk
-        PJ3KeiZQKJu80U6TkkJMohOaOo1KDgQhVjocxLr3365bSCnjNUr06M3EJTA==
-X-Received: by 2002:adf:f7c8:: with SMTP id a8-v6mr7350234wrq.86.1538015329788;
-        Wed, 26 Sep 2018 19:28:49 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV61H2s2YbrteX5WmeuEGgqI8wQBoR+xfdWQJ1vRGlwcBZ7elzjsMD5Ra4oGCK44OA8GrX+FTxMRJGcxZbtwW5Vg=
-X-Received: by 2002:adf:f7c8:: with SMTP id a8-v6mr7350220wrq.86.1538015329421;
- Wed, 26 Sep 2018 19:28:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180920070940.14773-1-acelan.kao@canonical.com> <Pine.LNX.4.44L0.1809201037540.2141-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1809201037540.2141-100000@iolanthe.rowland.org>
-From:   AceLan Kao <acelan.kao@canonical.com>
-Date:   Thu, 27 Sep 2018 10:28:37 +0800
-Message-ID: <CAFv23Q=xUFxwgXZZ_Q6G4CoHx_-Hs5PJRxcrUmcqutV9Ovrg1g@mail.gmail.com>
-Subject: Re: [PATCH] usb: core: disable USB2 LPM when suspending
-To:     stern@rowland.harvard.edu
-Cc:     felipe.balbi@linux.intel.com, Daniel Drake <drake@endlessm.com>,
-        joe@perches.com, mathias.nyman@linux.intel.com,
-        linux-usb@vger.kernel.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Thu, 27 Sep 2018 04:46:02 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180927023003epoutp04820b75dd210b70237243ad74bd80d322~YINxgQfQr1919219192epoutp04Z
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 02:30:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180927023003epoutp04820b75dd210b70237243ad74bd80d322~YINxgQfQr1919219192epoutp04Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538015403;
+        bh=za60Zgc4i8rWpm9TmFc5Xwo1Cgu6xOcLbE0wQNh3qUE=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=p78YxPGLhTwYLNH8hwFvLnTwULct6pDyzj5l97qSOaq7YsOr+EVKs+VQYL7mFYIfU
+         QliaHZWWV4+Ws7najulPiChcu7+BNLnSccrXnt8+Xn5OqWObeZ7/sUysE3A1cNPeKe
+         4kNvO+iBFDxrlH39Yj/gV9z/sQKlDD1yniiqXAjQ=
+Received: from epcpmgr01 (u28.gpu120.samsung.co.kr [203.254.230.28]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180927023003epcas1p215bc29cbab333035f418368676847bf2~YINw-r7Ci0571505715epcas1p2j;
+        Thu, 27 Sep 2018 02:30:03 +0000 (GMT)
+Mime-Version: 1.0
+Subject: RE: [PATCH] PM / devfreq: remove redundant null pointer check
+ before kfree
+Reply-To: myungjoo.ham@samsung.com
+From:   MyungJoo Ham <myungjoo.ham@samsung.com>
+To:     zhong jiang <zhongjiang@huawei.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+CC:     Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <1537535923-46240-1-git-send-email-zhongjiang@huawei.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <529236451.01538015400755.JavaMail.epsvc@epcpmgr01>
+Date:   Thu, 27 Sep 2018 11:25:36 +0900
+X-CMS-MailID: 20180927022536epcms1p7377840ca08dabad3a7f4007630390b80
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20180921133110epcas4p3d2914c21c881e2dfb6a2e2d9708f7a43
+References: <1537535923-46240-1-git-send-email-zhongjiang@huawei.com>
+        <CGME20180921133110epcas4p3d2914c21c881e2dfb6a2e2d9708f7a43@epcms1p7>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alan Stern <stern@rowland.harvard.edu> 於 2018年9月20日 週四 下午10:43寫道：
->
-> On Thu, 20 Sep 2018, AceLan Kao wrote:
->
-> > We found a S5 current leakage issue on Dell DW1820 WiFi/BT combo card
-> > which uses Qualcomm QCA6174 SoC. It also comes with WiFi and BT failure
-> > when encountered current leakage issue.
-> >    1. Power on, both WiFi and BT work.
-> >    2. Power off and found a current leakage issue(consumes ~0.5W)
-> >    3. Power on, no WiFi and BT devices can be found in lspci and lsusb.
-> >    4. Power off, there is no current leakage issue at S5.
-> >    5. continue to 1.
-> >
-> > From Qualcomm's report:
-> > Based on the USB sniffer log, the difference between Linux and Windows
-> > is USB LPM setting(no LPM transaction on Windows) which may leads to
-> > the voltage leakage on Linux S5 state.
-> >
-> > After checked the LPM related code and found, when system is going to
-> > enter S5, it resumes the USB devices from runtime suspend and enables
-> > USB2 LPM, and then it calls usb_dev_poweroff() -> usb_suspend(), and
-> > leave USB2 LPM stays enabled.
->
-> But usb_suspend() -> usb_suspend_both() -> usb_suspend_device() ->
-> generic_suspend() -> usb_port_suspend() ->
-> usb_set_usb2_hardware_lpm(udev, 0).  So why does USB2 LPM stay enabled?
-Right, after checking the normal case, it calls
-usb_set_usb2_hardware_lpm(udev, 0) eventually.
-In the buggy machine, it doesn't reach that part and stops somewhere
-after resume.
-But unfortunately, I can't duplicate the issue after doing some
-experiments anymore, so I can't get more info about that.
-I'll dig further and get back to you when I have any progress.
->
-> > Disable USB2 LPM in usb_suspend() fixes the issue mentioned above,
-> > and try 30 times of s2idle, S3 and S5, the USB devices keep working
-> > well. Disable USB2 LPM seems do no harm to the system.
-> >
-> > Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
-> > ---
-> >  drivers/usb/core/driver.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> > index e76e95f62f76..ac5e60d7104f 100644
-> > --- a/drivers/usb/core/driver.c
-> > +++ b/drivers/usb/core/driver.c
-> > @@ -1463,6 +1463,9 @@ int usb_suspend(struct device *dev, pm_message_t msg)
-> >       struct usb_device       *udev = to_usb_device(dev);
-> >       int r;
-> >
-> > +     if (udev->usb2_hw_lpm_enabled == 1)
-> > +             usb_set_usb2_hardware_lpm(udev, 0);
->
-> At this point the device may still be in runtime suspend.  Is that
-> really okay?
->
-> Alan Stern
->
-> > +
-> >       unbind_no_pm_drivers_interfaces(udev);
-> >
-> >       /* From now on we are sure all drivers support suspend/resume
-> >
->
+=C2=A0
+> kfree has taken the null pointer into account. hence it is safe
+> to remove the redundant null pointer check before kfree.
+>=20
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+> ---
+>  drivers/devfreq/devfreq.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 4c49bb1..c37021d 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -675,8 +675,7 @@ struct devfreq *devfreq_add_device(struct device *dev=
+,
+>  =09device_unregister(&devfreq->dev);
+>  =09devfreq =3D NULL;
+>  err_dev:
+> -=09if (devfreq)
+> -=09=09kfree(devfreq);
+> +=09kfree(devfreq);
+>  err_out:
+>  =09return ERR_PTR(err);
+>  }
+> --=20
+> 1.7.12.4
+
+=C2=A0
+--
+MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
+Autonomous Machine Lab., AI Center,=C2=A0Samsung Research.
+Cell: +82-10-6714-2858
