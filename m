@@ -6,35 +6,46 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12111ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6B8C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F4421580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:15:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F4421580
+	by mail.kernel.org (Postfix) with ESMTP id 1367F2152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:15:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1367F2152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbeI0Pc5 (ORCPT
+        id S1728703AbeI0Pcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:32:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55630 "EHLO
+        Thu, 27 Sep 2018 11:32:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55616 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbeI0Pc4 (ORCPT
+        with ESMTP id S1727706AbeI0Pcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:32:56 -0400
+        Thu, 27 Sep 2018 11:32:53 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 335DD1120;
-        Thu, 27 Sep 2018 09:15:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C534F1117;
+        Thu, 27 Sep 2018 09:15:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Xavier Deguillard <xdeguillard@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.18 87/88] vmw_balloon: include asm/io.h
-Date:   Thu, 27 Sep 2018 11:04:08 +0200
-Message-Id: <20180927090311.178030686@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steve Muckle <smuckle@google.com>,
+        Chris Redpath <Chris.Redpath@arm.com>,
+        John Dias <joaodias@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel de Dios <migueldedios@google.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>, kernel-team@android.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 86/88] sched/fair: Fix vruntime_normalized() for remote non-migration wakeup
+Date:   Thu, 27 Sep 2018 11:04:07 +0200
+Message-Id: <20180927090311.031340865@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,32 +63,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Steve Muckle <smuckle@google.com>
 
-commit a3b92ee6fc171d7c9d9b6b829b7fef169210440c upstream.
+commit d0cdb3ce8834332d918fc9c8ff74f8a169ec9abe upstream.
 
-Fix a build error due to missing virt_to_phys()
+When a task which previously ran on a given CPU is remotely queued to
+wake up on that same CPU, there is a period where the task's state is
+TASK_WAKING and its vruntime is not normalized. This is not accounted
+for in vruntime_normalized() which will cause an error in the task's
+vruntime if it is switched from the fair class during this time.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Fixes: f0a1bf29d821b ("vmw_balloon: fix inflation with batching")
-Cc: stable@vger.kernel.org
-Cc: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+For example if it is boosted to RT priority via rt_mutex_setprio(),
+rq->min_vruntime will not be subtracted from the task's vruntime but
+it will be added again when the task returns to the fair class. The
+task's vruntime will have been erroneously doubled and the effective
+priority of the task will be reduced.
+
+Note this will also lead to inflation of all vruntimes since the doubled
+vruntime value will become the rq's min_vruntime when other tasks leave
+the rq. This leads to repeated doubling of the vruntime and priority
+penalty.
+
+Fix this by recognizing a WAKING task's vruntime as normalized only if
+sched_remote_wakeup is true. This indicates a migration, in which case
+the vruntime would have been normalized in migrate_task_rq_fair().
+
+Based on a similar patch from John Dias <joaodias@google.com>.
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Steve Muckle <smuckle@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Chris Redpath <Chris.Redpath@arm.com>
+Cc: John Dias <joaodias@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel de Dios <migueldedios@google.com>
+Cc: Morten Rasmussen <Morten.Rasmussen@arm.com>
+Cc: Patrick Bellasi <Patrick.Bellasi@arm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Quentin Perret <quentin.perret@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: kernel-team@android.com
+Fixes: b5179ac70de8 ("sched/fair: Prepare to fix fairness problems on migration")
+Link: http://lkml.kernel.org/r/20180831224217.169476-1-smuckle@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/sched/fair.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -45,6 +45,7 @@
- #include <linux/seq_file.h>
- #include <linux/vmw_vmci_defs.h>
- #include <linux/vmw_vmci_api.h>
-+#include <linux/io.h>
- #include <asm/hypervisor.h>
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -10019,7 +10019,8 @@ static inline bool vruntime_normalized(s
+ 	 * - A task which has been woken up by try_to_wake_up() and
+ 	 *   waiting for actually being woken up by sched_ttwu_pending().
+ 	 */
+-	if (!se->sum_exec_runtime || p->state == TASK_WAKING)
++	if (!se->sum_exec_runtime ||
++	    (p->state == TASK_WAKING && p->sched_remote_wakeup))
+ 		return true;
  
- MODULE_AUTHOR("VMware, Inc.");
+ 	return false;
 
 
