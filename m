@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E612BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D24C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8898E216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 806D9216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:37:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dJ1u5Li0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8898E216C4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mfyIp7XR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806D9216C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbeI1E5K (ORCPT
+        id S1727799AbeI1E5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:57:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56626 "EHLO
+        Fri, 28 Sep 2018 00:57:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56656 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbeI1E5J (ORCPT
+        with ESMTP id S1725917AbeI1E5f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:57:09 -0400
+        Fri, 28 Sep 2018 00:57:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zFnABaVYDvLyfzf8K/udk4n4/CG7WFWPFCUf6/Knavs=; b=dJ1u5Li0n0szZwAdJP1KDsbM0H
-        SzJH7bk49GmllRdnAgmyjgLWtqjcne7m8zBM+d59AVatQX1EEys3jtWq2DYLbtJoSWGsDoRDCNBe3
-        eLwiAe5On3Qp9I0GSJd12yNHsi19tjjqZjcJKxli01vIiEmvS0eD4eQm2fb2+s0XJjMUBqJe9Eut+
-        we7dxIyWROp34aEOOc6BVtrJOcQ9NGw7AqlUgNpLYC5hoc0jHbGjBUeGAkJRiADPexBx6zhmGDYMI
-        8EnBzQH6aSeL2KjDQ2F9mh5rXXozqHa/19g+YhGZzq7g3uh60cajk9HvcKR1adSOWBo5/Cflcw5pt
-        H+7Q8w1w==;
+        bh=c4OSNKvB6ZHMxE3XSffoHNgluA3huF89BH1MYp0OMXw=; b=mfyIp7XREycB/8lIkEkAGpFihu
+        +mkYx8DAli/lQdOj/QH81odzinnynpYbbm8l/TF5Bw8JvQJsBJ0M/IxeABdg19ucoOc4cH02QjGzj
+        4XD6qPFG1AUETh/dlj9+NyajkrpWHmWKY4Xb2ccuhM7xGr/wE0qlVLzfrtEUcIx1JwQak8zIcb59w
+        2BboWa1KUeky+EFfE7BN0JGSb9lCZu/TpbPYBRmwG2TE+T8HRh2x9yoLJ2RF2Lh0sdmmAdOiLdAru
+        kz2XjVle5Mq1O34/FtBPcQ6f2YsRA1CKQ8dgYRk0JwhdYYrzw+7wGNEQWMdIL5rWZaWBs8XboAPDL
+        MDtexmig==;
 Received: from [199.255.44.5] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5etH-0002kr-Ci; Thu, 27 Sep 2018 22:36:31 +0000
+        id 1g5etg-0002mK-So; Thu, 27 Sep 2018 22:36:56 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     iommu@lists.linux-foundation.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -48,9 +48,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 1/5] dma-mapping: make the get_required_mask method available unconditionally
-Date:   Thu, 27 Sep 2018 15:35:35 -0700
-Message-Id: <20180927223539.28449-2-hch@lst.de>
+Subject: [PATCH 2/5] dma-direct: add an explicit dma_direct_get_required_mask
+Date:   Thu, 27 Sep 2018 15:35:36 -0700
+Message-Id: <20180927223539.28449-3-hch@lst.de>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927223539.28449-1-hch@lst.de>
 References: <20180927223539.28449-1-hch@lst.de>
@@ -62,249 +62,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This save some duplication for ia64, and makes the interface more
-general.  In the long run we want each dma_map_ops instance to fill this
-out, but this will take a little more prep work.
+This is somewhat modelled after the powerpc version, and differs from
+the legacy fallback in use fls64 instead of pointlessly splitting up the
+address into low and high dwords and in that it takes (__)phys_to_dma
+into account.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org> [powerpc bits]
+Acked-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- arch/ia64/include/asm/dma-mapping.h  |  2 --
- arch/ia64/include/asm/machvec.h      |  7 -------
- arch/ia64/include/asm/machvec_init.h |  1 -
- arch/ia64/include/asm/machvec_sn2.h  |  2 --
- arch/ia64/pci/pci.c                  | 26 --------------------------
- arch/ia64/sn/pci/pci_dma.c           |  4 ++--
- drivers/base/platform.c              | 13 +++++++++++--
- drivers/pci/controller/vmd.c         |  4 ----
- include/linux/dma-mapping.h          |  2 --
- 9 files changed, 13 insertions(+), 48 deletions(-)
+ include/linux/dma-direct.h |  1 +
+ kernel/dma/direct.c        | 22 +++++++++++++++++++---
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/arch/ia64/include/asm/dma-mapping.h b/arch/ia64/include/asm/dma-mapping.h
-index 76e4d6632d68..522745ae67bb 100644
---- a/arch/ia64/include/asm/dma-mapping.h
-+++ b/arch/ia64/include/asm/dma-mapping.h
-@@ -10,8 +10,6 @@
- #include <linux/scatterlist.h>
- #include <linux/dma-debug.h>
+diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+index 86a59ba5a7f3..b79496d8c75b 100644
+--- a/include/linux/dma-direct.h
++++ b/include/linux/dma-direct.h
+@@ -55,6 +55,7 @@ static inline void dma_mark_clean(void *addr, size_t size)
+ }
+ #endif /* CONFIG_ARCH_HAS_DMA_MARK_CLEAN */
  
--#define ARCH_HAS_DMA_GET_REQUIRED_MASK
--
- extern const struct dma_map_ops *dma_ops;
- extern struct ia64_machine_vector ia64_mv;
- extern void set_iommu_machvec(void);
-diff --git a/arch/ia64/include/asm/machvec.h b/arch/ia64/include/asm/machvec.h
-index 267f4f170191..5133739966bc 100644
---- a/arch/ia64/include/asm/machvec.h
-+++ b/arch/ia64/include/asm/machvec.h
-@@ -44,7 +44,6 @@ typedef void ia64_mv_kernel_launch_event_t(void);
- 
- /* DMA-mapping interface: */
- typedef void ia64_mv_dma_init (void);
--typedef u64 ia64_mv_dma_get_required_mask (struct device *);
- typedef const struct dma_map_ops *ia64_mv_dma_get_ops(struct device *);
- 
- /*
-@@ -127,7 +126,6 @@ extern void machvec_tlb_migrate_finish (struct mm_struct *);
- #  define platform_global_tlb_purge	ia64_mv.global_tlb_purge
- #  define platform_tlb_migrate_finish	ia64_mv.tlb_migrate_finish
- #  define platform_dma_init		ia64_mv.dma_init
--#  define platform_dma_get_required_mask ia64_mv.dma_get_required_mask
- #  define platform_dma_get_ops		ia64_mv.dma_get_ops
- #  define platform_irq_to_vector	ia64_mv.irq_to_vector
- #  define platform_local_vector_to_irq	ia64_mv.local_vector_to_irq
-@@ -171,7 +169,6 @@ struct ia64_machine_vector {
- 	ia64_mv_global_tlb_purge_t *global_tlb_purge;
- 	ia64_mv_tlb_migrate_finish_t *tlb_migrate_finish;
- 	ia64_mv_dma_init *dma_init;
--	ia64_mv_dma_get_required_mask *dma_get_required_mask;
- 	ia64_mv_dma_get_ops *dma_get_ops;
- 	ia64_mv_irq_to_vector *irq_to_vector;
- 	ia64_mv_local_vector_to_irq *local_vector_to_irq;
-@@ -211,7 +208,6 @@ struct ia64_machine_vector {
- 	platform_global_tlb_purge,		\
- 	platform_tlb_migrate_finish,		\
- 	platform_dma_init,			\
--	platform_dma_get_required_mask,		\
- 	platform_dma_get_ops,			\
- 	platform_irq_to_vector,			\
- 	platform_local_vector_to_irq,		\
-@@ -286,9 +282,6 @@ extern const struct dma_map_ops *dma_get_ops(struct device *);
- #ifndef platform_dma_get_ops
- # define platform_dma_get_ops		dma_get_ops
- #endif
--#ifndef platform_dma_get_required_mask
--# define  platform_dma_get_required_mask	ia64_dma_get_required_mask
--#endif
- #ifndef platform_irq_to_vector
- # define platform_irq_to_vector		__ia64_irq_to_vector
- #endif
-diff --git a/arch/ia64/include/asm/machvec_init.h b/arch/ia64/include/asm/machvec_init.h
-index 2b32fd06b7c6..2aafb69a3787 100644
---- a/arch/ia64/include/asm/machvec_init.h
-+++ b/arch/ia64/include/asm/machvec_init.h
-@@ -4,7 +4,6 @@
- 
- extern ia64_mv_send_ipi_t ia64_send_ipi;
- extern ia64_mv_global_tlb_purge_t ia64_global_tlb_purge;
--extern ia64_mv_dma_get_required_mask ia64_dma_get_required_mask;
- extern ia64_mv_irq_to_vector __ia64_irq_to_vector;
- extern ia64_mv_local_vector_to_irq __ia64_local_vector_to_irq;
- extern ia64_mv_pci_get_legacy_mem_t ia64_pci_get_legacy_mem;
-diff --git a/arch/ia64/include/asm/machvec_sn2.h b/arch/ia64/include/asm/machvec_sn2.h
-index ece9fa85be88..b5153d300289 100644
---- a/arch/ia64/include/asm/machvec_sn2.h
-+++ b/arch/ia64/include/asm/machvec_sn2.h
-@@ -55,7 +55,6 @@ extern ia64_mv_readb_t __sn_readb_relaxed;
- extern ia64_mv_readw_t __sn_readw_relaxed;
- extern ia64_mv_readl_t __sn_readl_relaxed;
- extern ia64_mv_readq_t __sn_readq_relaxed;
--extern ia64_mv_dma_get_required_mask	sn_dma_get_required_mask;
- extern ia64_mv_dma_init			sn_dma_init;
- extern ia64_mv_migrate_t		sn_migrate;
- extern ia64_mv_kernel_launch_event_t	sn_kernel_launch_event;
-@@ -100,7 +99,6 @@ extern ia64_mv_pci_fixup_bus_t		sn_pci_fixup_bus;
- #define platform_pci_get_legacy_mem	sn_pci_get_legacy_mem
- #define platform_pci_legacy_read	sn_pci_legacy_read
- #define platform_pci_legacy_write	sn_pci_legacy_write
--#define platform_dma_get_required_mask	sn_dma_get_required_mask
- #define platform_dma_init		sn_dma_init
- #define platform_migrate		sn_migrate
- #define platform_kernel_launch_event    sn_kernel_launch_event
-diff --git a/arch/ia64/pci/pci.c b/arch/ia64/pci/pci.c
-index 7ccc64d5fe3e..5d71800df431 100644
---- a/arch/ia64/pci/pci.c
-+++ b/arch/ia64/pci/pci.c
-@@ -568,32 +568,6 @@ static void __init set_pci_dfl_cacheline_size(void)
- 	pci_dfl_cache_line_size = (1 << cci.pcci_line_size) / 4;
++u64 dma_direct_get_required_mask(struct device *dev);
+ void *dma_direct_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+ 		gfp_t gfp, unsigned long attrs);
+ void dma_direct_free(struct device *dev, size_t size, void *cpu_addr,
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index c954f0a6dc62..f32b33cfa331 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -4,6 +4,7 @@
+  *
+  * DMA operations that map physical memory directly without using an IOMMU.
+  */
++#include <linux/bootmem.h> /* for max_pfn */
+ #include <linux/export.h>
+ #include <linux/mm.h>
+ #include <linux/dma-direct.h>
+@@ -53,11 +54,25 @@ check_addr(struct device *dev, dma_addr_t dma_addr, size_t size,
+ 	return true;
  }
  
--u64 ia64_dma_get_required_mask(struct device *dev)
--{
--	u32 low_totalram = ((max_pfn - 1) << PAGE_SHIFT);
--	u32 high_totalram = ((max_pfn - 1) >> (32 - PAGE_SHIFT));
--	u64 mask;
--
--	if (!high_totalram) {
--		/* convert to mask just covering totalram */
--		low_totalram = (1 << (fls(low_totalram) - 1));
--		low_totalram += low_totalram - 1;
--		mask = low_totalram;
--	} else {
--		high_totalram = (1 << (fls(high_totalram) - 1));
--		high_totalram += high_totalram - 1;
--		mask = (((u64)high_totalram) << 32) + 0xffffffff;
--	}
--	return mask;
--}
--EXPORT_SYMBOL_GPL(ia64_dma_get_required_mask);
--
--u64 dma_get_required_mask(struct device *dev)
--{
--	return platform_dma_get_required_mask(dev);
--}
--EXPORT_SYMBOL_GPL(dma_get_required_mask);
--
- static int __init pcibios_init(void)
- {
- 	set_pci_dfl_cacheline_size();
-diff --git a/arch/ia64/sn/pci/pci_dma.c b/arch/ia64/sn/pci/pci_dma.c
-index 74c934a997bb..96eb2567718a 100644
---- a/arch/ia64/sn/pci/pci_dma.c
-+++ b/arch/ia64/sn/pci/pci_dma.c
-@@ -344,11 +344,10 @@ static int sn_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
- 	return 0;
- }
- 
--u64 sn_dma_get_required_mask(struct device *dev)
-+static u64 sn_dma_get_required_mask(struct device *dev)
- {
- 	return DMA_BIT_MASK(64);
- }
--EXPORT_SYMBOL_GPL(sn_dma_get_required_mask);
- 
- char *sn_pci_get_legacy_mem(struct pci_bus *bus)
- {
-@@ -473,6 +472,7 @@ static struct dma_map_ops sn_dma_ops = {
- 	.sync_sg_for_device	= sn_dma_sync_sg_for_device,
- 	.mapping_error		= sn_dma_mapping_error,
- 	.dma_supported		= sn_dma_supported,
-+	.get_required_mask	= sn_dma_get_required_mask,
- };
- 
- void sn_dma_init(void)
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index dff82a3c2caa..cfe22fded980 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1179,8 +1179,7 @@ int __init platform_bus_init(void)
- 	return error;
- }
- 
--#ifndef ARCH_HAS_DMA_GET_REQUIRED_MASK
--u64 dma_get_required_mask(struct device *dev)
-+static u64 dma_default_get_required_mask(struct device *dev)
- {
- 	u32 low_totalram = ((max_pfn - 1) << PAGE_SHIFT);
- 	u32 high_totalram = ((max_pfn - 1) >> (32 - PAGE_SHIFT));
-@@ -1198,6 +1197,16 @@ u64 dma_get_required_mask(struct device *dev)
- 	}
- 	return mask;
- }
-+
-+#ifndef ARCH_HAS_DMA_GET_REQUIRED_MASK
-+u64 dma_get_required_mask(struct device *dev)
++static inline dma_addr_t phys_to_dma_direct(struct device *dev,
++		phys_addr_t phys)
 +{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	if (ops->get_required_mask)
-+		return ops->get_required_mask(dev);
-+	return dma_default_get_required_mask(dev);
++	if (force_dma_unencrypted())
++		return __phys_to_dma(dev, phys);
++	return phys_to_dma(dev, phys);
 +}
- EXPORT_SYMBOL_GPL(dma_get_required_mask);
++
++u64 dma_direct_get_required_mask(struct device *dev)
++{
++	u64 max_dma = phys_to_dma_direct(dev, (max_pfn - 1) << PAGE_SHIFT);
++
++	return (1ULL << (fls64(max_dma) - 1)) * 2 - 1;
++}
++
+ static bool dma_coherent_ok(struct device *dev, phys_addr_t phys, size_t size)
+ {
+-	dma_addr_t addr = force_dma_unencrypted() ?
+-		__phys_to_dma(dev, phys) : phys_to_dma(dev, phys);
+-	return addr + size - 1 <= dev->coherent_dma_mask;
++	return phys_to_dma_direct(dev, phys) + size - 1 <=
++			dev->coherent_dma_mask;
+ }
+ 
+ void *dma_direct_alloc_pages(struct device *dev, size_t size,
+@@ -296,6 +311,7 @@ const struct dma_map_ops dma_direct_ops = {
+ 	.unmap_page		= dma_direct_unmap_page,
+ 	.unmap_sg		= dma_direct_unmap_sg,
  #endif
- 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index fd2dbd7eed7b..f31ed62d518c 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -404,12 +404,10 @@ static int vmd_dma_supported(struct device *dev, u64 mask)
- 	return vmd_dma_ops(dev)->dma_supported(to_vmd_dev(dev), mask);
- }
- 
--#ifdef ARCH_HAS_DMA_GET_REQUIRED_MASK
- static u64 vmd_get_required_mask(struct device *dev)
- {
- 	return vmd_dma_ops(dev)->get_required_mask(to_vmd_dev(dev));
- }
--#endif
- 
- static void vmd_teardown_dma_ops(struct vmd_dev *vmd)
- {
-@@ -450,9 +448,7 @@ static void vmd_setup_dma_ops(struct vmd_dev *vmd)
- 	ASSIGN_VMD_DMA_OPS(source, dest, sync_sg_for_device);
- 	ASSIGN_VMD_DMA_OPS(source, dest, mapping_error);
- 	ASSIGN_VMD_DMA_OPS(source, dest, dma_supported);
--#ifdef ARCH_HAS_DMA_GET_REQUIRED_MASK
- 	ASSIGN_VMD_DMA_OPS(source, dest, get_required_mask);
--#endif
- 	add_dma_domain(domain);
- }
- #undef ASSIGN_VMD_DMA_OPS
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index d23fc45c8208..562af6b45f23 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -130,9 +130,7 @@ struct dma_map_ops {
- 			enum dma_data_direction direction);
- 	int (*mapping_error)(struct device *dev, dma_addr_t dma_addr);
- 	int (*dma_supported)(struct device *dev, u64 mask);
--#ifdef ARCH_HAS_DMA_GET_REQUIRED_MASK
- 	u64 (*get_required_mask)(struct device *dev);
--#endif
- };
- 
- extern const struct dma_map_ops dma_direct_ops;
++	.get_required_mask	= dma_direct_get_required_mask,
+ 	.dma_supported		= dma_direct_supported,
+ 	.mapping_error		= dma_direct_mapping_error,
+ 	.cache_sync		= arch_dma_cache_sync,
 -- 
 2.19.0
 
