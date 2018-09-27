@@ -2,70 +2,73 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF777C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06175C04E87
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80A542168B
+	by mail.kernel.org (Postfix) with ESMTP id B9AF9216FE
 	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="b4IDmz4M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80A542168B
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="ZheSHKsU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9AF9216FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeI1AS5 (ORCPT
+        id S1728560AbeI1ATA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:18:57 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38975 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbeI1AS5 (ORCPT
+        Thu, 27 Sep 2018 20:19:00 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38408 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727599AbeI1AS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:18:57 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h4-v6so5850029edi.6
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 10:59:30 -0700 (PDT)
+        Thu, 27 Sep 2018 20:18:59 -0400
+Received: by mail-ed1-f66.google.com with SMTP id x8-v6so5867658eds.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 10:59:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=KBabLfXMvZ0zVRF1vvLQDVpIyjO9ZMSkPuV3qspR5A8=;
-        b=b4IDmz4M4AmXXjn6AJlRxNR98YYNaA/w7XdP8g9OKXYAQazTR+KgN1tqv/AeVSR9+n
-         ZgzeICGrQGqPrqEvTnZ0wujzybUJh92sQbmOv3wzoaGbpRiPNbru20qBAUkhq3dPOsIo
-         cXOaE4A0KIg51yTzkmVrVMdL9XBty6jEHPtiRDIa9Nr1arEyLN0fPW9c29Z3LTmKYOho
-         1WJq/uLvnHuzYuPFPlqjrpVpDfNSFiRRhYvzEchFkBMvoUrl/HlkaXkhrXKge+X9SKiK
-         r0CqixL/K559lG8SPnw5ZCrzya/kPRwIeVRzzRYBa9MuKBxBGm4TslQ4BzNL8x6Pbqih
-         tP+A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3Gm1dPbYL0xuWI3ULCZGB4Vn02KOLqVYdbubTdPf5ew=;
+        b=ZheSHKsUDX2/1ui/M2Yeg4XuaxwFUUTmEDORywTuVokXhCdLo/yotzId22FYT+VlmK
+         0W6/4zDphgvue2HpAHDwYEPdQNrE2NfQ1tuIdzz6Oh/LExymYMcjCcf9GYHDiKKEhZFJ
+         6wGXNLM2u8lNWKhKiu4Wkz6g3bhWZkqzrjC/G0PAHuT4FR9bx4R2QNSJmYI8qF6LZL3N
+         LtJJe4hff6KkKeD+fTGJFQS7wpVoG33dUB8cc93PJ4tWrO7rUzx4GpN6bisi4yGHxAot
+         vKIhFYNkfqqTzDJNdx8Cn7JV1yMFf4ERWT1euDiQ8vE3QffcnU5GdPMRqyXSqiyW2S6l
+         oi3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KBabLfXMvZ0zVRF1vvLQDVpIyjO9ZMSkPuV3qspR5A8=;
-        b=Pc06nj8Rb8iGK71BIqzqkY9jXpfACQy3PKG+m0KuUIcq0h1gRVUAZ2tOD8le70Gorp
-         1/MfAHLvH9J5NZirjTbrxk5pcT20W+A4y4o/aE3QemjjiB689TmWpF0Q+08VUiJWRYlE
-         iIJK9L5+MP2DJyzXFokJuDZhO4qQWcdT2M0swjRVDwLiaF0lDSJ4HHqV1+yWYA1IIRd/
-         i+jV06Qm1uIKx795xuGfLo763F3f75uNcXEJXatCeCL5We3m2wrdBoNn0Z5SDCCRwT+I
-         faDN47XGKj2Hm5ltpxU3JP+fazOgg+re6TRspQ7Eb2+MF/XEPUyjgds7oOvLoUt8McII
-         klBQ==
-X-Gm-Message-State: ABuFfoibflXGOgZFAbZYCCvIid8HSpHXPgPjUD41Ye51DMV7x4XuONgu
-        cBPZSYwZSQ1nm+7/HgffBjqpPA==
-X-Google-Smtp-Source: ACcGV61YWbwUFT1MHj4cHMYYCVqfZBdyv6MpA3xkxYu0qNBYD6z5CTg8ShjoQN6Qqm9ioVilvxQihQ==
-X-Received: by 2002:a50:a0a6:: with SMTP id 35-v6mr19615497edo.280.1538071169791;
-        Thu, 27 Sep 2018 10:59:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3Gm1dPbYL0xuWI3ULCZGB4Vn02KOLqVYdbubTdPf5ew=;
+        b=I2/jLwgG84IFNIF+Cpydxt3htv4VbSZ5wX0iZ3KFq7nt72AWZZt7EUbtDlbi4VAVIN
+         rYahpEE5iBULLtFdYMqzWewB8QmrMaxTKaxySgOmJtUnSaLKT+6jcDDYd0doLg6L5XWs
+         KORpMf8HIxr8HvWn5Sc3dS9hwtLgHcwP13rIPaHrBxFvHldSLKT6vE8DccJTZ8go+b+1
+         hPWOr4x0HXDdCZ4B+D09LNNwUTS71Hx+Gq74SOPciTpsLcJQ5PfDcVV/sYjqxaDAaTFf
+         IAeH3qm2zCih/BFUAhbPYlAFWKlYv/0c0QFzgCrCh1ch381N0KI07RgfYjlVnMqzq5I5
+         yKiQ==
+X-Gm-Message-State: ABuFfoiJoNixGfvOvX3VStNVPfNT3eunY9zEg7rgmFeMM5XOd/JzYU7j
+        8Ikd56SOJpJwgz3qSj3PGnPKJg==
+X-Google-Smtp-Source: ACcGV631gh+1sj/PQuri3kacPfaUvUYLBDQmVJ7GhLLEdEli06pSzXZJZlmipigegxeMLVdIm8uK6Q==
+X-Received: by 2002:a50:d307:: with SMTP id g7-v6mr7366256edh.221.1538071172070;
+        Thu, 27 Sep 2018 10:59:32 -0700 (PDT)
 Received: from localhost.localdomain (fa-padur-binz.ediscom.de. [212.204.40.18])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm1532606edi.26.2018.09.27.10.59.28
+        by smtp.gmail.com with ESMTPSA id a9-v6sm1532606edi.26.2018.09.27.10.59.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 10:59:28 -0700 (PDT)
+        Thu, 27 Sep 2018 10:59:31 -0700 (PDT)
 From:   Christian Brauner <christian@brauner.io>
 To:     jbenc@redhat.com, davem@davemloft.net, dsahern@gmail.com,
         stephen@networkplumber.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Christian Brauner <christian@brauner.io>
-Subject: [PATCH net-next 0/7] rtnetlink: add RTM_GETADDR2
-Date:   Thu, 27 Sep 2018 19:58:50 +0200
-Message-Id: <20180927175857.3511-1-christian@brauner.io>
+Subject: [PATCH net-next 1/7] rtnetlink: add RTM_GETADDR2
+Date:   Thu, 27 Sep 2018 19:58:51 +0200
+Message-Id: <20180927175857.3511-2-christian@brauner.io>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180927175857.3511-1-christian@brauner.io>
+References: <20180927175857.3511-1-christian@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -110,25 +113,24 @@ Signed-off-by: Christian Brauner <christian@brauner.io>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Benc <jbenc@redhat.com>
 Cc: Stephen Hemminger <stephen@networkplumber.org>
+---
+ include/uapi/linux/rtnetlink.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Christian Brauner (7):
-  rtnetlink: add RTM_GETADDR2
-  ipv4: add RTM_GETADDR2
-  ipv6: add RTM_GETADDR2
-  decnet: add RTM_GETADDR2
-  phonet: add RTM_GETADDR2
-  selinux: add RTM_GETADDR2
-  rtnetlink: enable RTM_GETADDR2
-
- include/uapi/linux/rtnetlink.h |  3 +++
- net/core/rtnetlink.c           |  1 +
- net/decnet/dn_dev.c            | 25 +++++++++++++++++++++++--
- net/ipv4/devinet.c             | 24 +++++++++++++++++++++---
- net/ipv6/addrconf.c            | 30 ++++++++++++++++++++++++------
- net/phonet/pn_netlink.c        | 25 +++++++++++++++++++++++--
- security/selinux/nlmsgtab.c    |  3 ++-
- 7 files changed, 97 insertions(+), 14 deletions(-)
-
+diff --git a/include/uapi/linux/rtnetlink.h b/include/uapi/linux/rtnetlink.h
+index 46399367627f..e167f90c3d7a 100644
+--- a/include/uapi/linux/rtnetlink.h
++++ b/include/uapi/linux/rtnetlink.h
+@@ -157,6 +157,9 @@ enum {
+ 	RTM_GETCHAIN,
+ #define RTM_GETCHAIN RTM_GETCHAIN
+ 
++	RTM_GETADDR2 = 106,
++#define RTM_GETADDR2  RTM_GETADDR2
++
+ 	__RTM_MAX,
+ #define RTM_MAX		(((__RTM_MAX + 3) & ~3) - 1)
+ };
 -- 
 2.17.1
 
