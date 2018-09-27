@@ -2,70 +2,83 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CB9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EF6C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:16:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9AC1215F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:12:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9AC1215F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C550D216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:16:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="cGaGCGh0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C550D216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbeI1Bcm (ORCPT
+        id S1728410AbeI1Bg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:32:42 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:60649 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728500AbeI1Bcl (ORCPT
+        Thu, 27 Sep 2018 21:36:26 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:39327 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727760AbeI1Bg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:32:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 2A5CBC1E08;
-        Thu, 27 Sep 2018 19:12:55 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Wvin8f7mqBzE; Thu, 27 Sep 2018 19:12:55 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id B5777C1E11;
-        Thu, 27 Sep 2018 19:12:12 +0000 (UTC)
-Subject: Re: [PATCH v2] rseq/selftests: fix parametrized test with -fpie
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Fernandes <joelaf@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        linux-kselftest@vger.kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Chris Lameter <cl@linux.com>,
-        Russell King <linux@arm.linux.org.uk>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Paul Turner <pjt@google.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Maurer <bmaurer@fb.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>
-References: <20180927183919.7461-1-mathieu.desnoyers@efficios.com>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <34c0750c-bf39-267c-e1e4-38bbbf77305c@kernel.org>
-Date:   Thu, 27 Sep 2018 13:12:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 21:36:26 -0400
+Received: by mail-it1-f194.google.com with SMTP id w200-v6so8931405itc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y7XyKk9XLOkf12MWbaIgW8YVLeZ7s7+cFFZIXPFRhq4=;
+        b=cGaGCGh0/D+ujPnrr2xq45qKWDhJMmeUwUD6iSEUhEuLBVWCCoZjl4/mpdSEdP+xyI
+         Q0hcZjwcAxEa82uQ04MlHgXO6YT5O+Sq6RocS0OrH80co++ruTUICLGF3hmVsddqkUct
+         kQKY8C3TKh1Y4L+9Yv0HaVFh9e4pnDwZ56yFPlbMZHecQymKp1/GN4M42s1xQWRFYO0H
+         nEOSPqnkbunGrH4wPLkarHDZx4Ch81SyebiLdtm5mj0HdJdKLu4LXzeogfdcNS+Lzs4t
+         LhNKpd9NdIn2MLhRDxG8siTI5rqpX366RPp1jq5KUi9k+X+K0gaPQcYGA7AI00nkKEnu
+         IC7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y7XyKk9XLOkf12MWbaIgW8YVLeZ7s7+cFFZIXPFRhq4=;
+        b=ONx8LrlguiN7YykM56aPHm+uGMMTVOFnVdeeGRNmxGj66ytafrooQtYUyJEJ6O9TGc
+         1LytPfAgapvbmwNAITRCKsySkBU/afAi/Ahdvr5ZELEAG7zLbZHXEsmuGbDNE3OU47Cf
+         8Iev5RbmC+MfFFfLME0fPGA+rurYBv7AslUW3vX6lNSTiXV8QMX86G+emU7noVxnhj2Q
+         QIvyO8tM1JdS1VRc2P/K7CP/LS6X/m3SD2wwxn76kgWm16xd//jy/37VYubxfjlpjpJa
+         XFbR9mXSWcTzEBCCceYhSOwo1SCjjToke4GXAorNIQLhmycp1JnrloD6exDLyu66mwIX
+         1EUQ==
+X-Gm-Message-State: ABuFfoj54/xOwxdukOJG8WeT9Yqk4RhTc2Iz+cmspyBN+UJRPSEdeMWt
+        NZVlICaCt2lrlNe/gwt2Q3zN6AzLnmk=
+X-Google-Smtp-Source: ACcGV61rZA2qt6sdbbdrNiXKpIvyhk0mBoHAkx4Qw1cP2V3M3THYsKfdBAzsqR0hzy5Y9Of6hZo/0g==
+X-Received: by 2002:a24:ccd4:: with SMTP id x203-v6mr30164itf.150.1538075799466;
+        Thu, 27 Sep 2018 12:16:39 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c081:1132::1008? ([2620:10d:c090:180::1:3bbb])
+        by smtp.gmail.com with ESMTPSA id h16-v6sm1459153iti.14.2018.09.27.12.16.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 12:16:38 -0700 (PDT)
+Subject: Re: [Xen-devel] [PATCH] xen/blkfront: When purging persistent grants,
+ keep them in the buffer
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Sander Eikelenboom <linux@eikelenboom.it>,
+        Juergen Gross <jgross@suse.com>, konrad.wilk@oracle.com,
+        roger.pau@citrix.com
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
+ <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
+ <5bd1a695-50c6-e79f-38dd-c980fc2138ad@kernel.dk>
+ <00030538-e1ce-28ad-3548-8e3b07083b05@eikelenboom.it>
+ <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
+ <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fd0e7293-310c-a15c-dc98-2743c4504632@kernel.dk>
+Date:   Thu, 27 Sep 2018 13:16:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180927183919.7461-1-mathieu.desnoyers@efficios.com>
+In-Reply-To: <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,105 +87,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/27/2018 12:39 PM, Mathieu Desnoyers wrote:
-> On x86-64, the parametrized selftest code for rseq crashes with a
-> segmentation fault when compiled with -fpie. This happens when the
-> param_test binary is loaded at an address beyond 32-bit on x86-64.
+On 9/27/18 1:06 PM, Boris Ostrovsky wrote:
+> On 9/27/18 2:56 PM, Jens Axboe wrote:
+>> On 9/27/18 12:52 PM, Sander Eikelenboom wrote:
+>>> On 27/09/18 16:26, Jens Axboe wrote:
+>>>> On 9/27/18 1:12 AM, Juergen Gross wrote:
+>>>>> On 22/09/18 21:55, Boris Ostrovsky wrote:
+>>>>>> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
+>>>>>> added support for purging persistent grants when they are not in use. As
+>>>>>> part of the purge, the grants were removed from the grant buffer, This
+>>>>>> eventually causes the buffer to become empty, with BUG_ON triggered in
+>>>>>> get_free_grant(). This can be observed even on an idle system, within
+>>>>>> 20-30 minutes.
+>>>>>>
+>>>>>> We should keep the grants in the buffer when purging, and only free the
+>>>>>> grant ref.
+>>>>>>
+>>>>>> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
+>>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>>> Reviewed-by: Juergen Gross <jgross@suse.com>
+>>>> Since Konrad is out, I'm going to queue this up for 4.19.
+>>>>
+>>> Hi Boris/Juergen.
+>>>
+>>> Last week i tested a linux-4.19-rc4 kernel with xen-next and this patch from Boris pulled on top. 
+>>> Unfortunately it made a VM hang (probably because it's rootFS is shuffled from under it's feet 
 > 
-> The issue is caused by use of a 32-bit register to hold the address
-> of the loop counter variable.
+> What do you mean by "rootFS is shuffled from under it's feet " ?
 > 
-> Fix this by using a 64-bit register to calculate the address of the
-> loop counter variables as an offset from rip.
+>>> and it gave these in dom0 dmesg:
+>>>
+>>> [ 9251.696090] xen-blkback: requesting a grant already in use
+>>> [ 9251.705861] xen-blkback: trying to add a gref that's already in the tree
+>>> [ 9251.715781] xen-blkback: requesting a grant already in use
+>>> [ 9251.725756] xen-blkback: trying to add a gref that's already in the tree
+>>> [ 9251.735698] xen-blkback: requesting a grant already in use
+>>> [ 9251.745573] xen-blkback: trying to add a gref that's already in the tree
+>>>
+>>> The VM was a HVM with 4 vcpu's and 2 phy disks:
+>>> xen-blkback: backend/vbd/14/768: using 4 queues, protocol 1 (x86_64-abi) persistent grants
+>>> xen-blkback: backend/vbd/14/832: using 4 queues, protocol 1 (x86_64-abi) persistent grants
+>>>
+>>>
+>>> Currently i have been running 4.19-rc5 with xen-next on top and commit
+>>> a46b53672b2c reverted, for a couple of days. That seems to run stable
+>>> for me (since it's a small box so i'm not hit by what a46b53672b2c
+>>> tried to fix.
+>>>
+>>> If you can come up with a debug patch i can give that a spin tomorrow
+>>> evening or in the weekend, so we are hopefully still in time for the
+>>> 4.19 release.
+>> At this late in the game, might make more sense to simply revert the
+>> buggy commit.  Especially since what is currently out there doesn't fix
+>> the issue for you.
 > 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Acked-by: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: <stable@vger.kernel.org> # v4.18
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Dave Watson <davejwatson@fb.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Andi Kleen <andi@firstfloor.org>
-> Cc: linux-kselftest@vger.kernel.org
-> Cc: "H . Peter Anvin" <hpa@zytor.com>
-> Cc: Chris Lameter <cl@linux.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-> Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Paul Turner <pjt@google.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Josh Triplett <josh@joshtriplett.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ben Maurer <bmaurer@fb.com>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> ---
-> Changes since v1:
-> - Update email address for Shuah Khan based on updated MAINTAINERS
->   email address,
-> - Rebase on v4.19-rc5.
-> ---
->  tools/testing/selftests/rseq/param_test.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
-> index 642d4e12abea..eec2663261f2 100644
-> --- a/tools/testing/selftests/rseq/param_test.c
-> +++ b/tools/testing/selftests/rseq/param_test.c
-> @@ -56,15 +56,13 @@ unsigned int yield_mod_cnt, nr_abort;
->  			printf(fmt, ## __VA_ARGS__);	\
->  	} while (0)
->  
-> -#if defined(__x86_64__) || defined(__i386__)
-> +#ifdef __i386__
->  
->  #define INJECT_ASM_REG	"eax"
->  
->  #define RSEQ_INJECT_CLOBBER \
->  	, INJECT_ASM_REG
->  
-> -#ifdef __i386__
-> -
->  #define RSEQ_INJECT_ASM(n) \
->  	"mov asm_loop_cnt_" #n ", %%" INJECT_ASM_REG "\n\t" \
->  	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
-> @@ -76,9 +74,16 @@ unsigned int yield_mod_cnt, nr_abort;
->  
->  #elif defined(__x86_64__)
->  
-> +#define INJECT_ASM_REG_P	"rax"
-> +#define INJECT_ASM_REG		"eax"
-> +
-> +#define RSEQ_INJECT_CLOBBER \
-> +	, INJECT_ASM_REG_P \
-> +	, INJECT_ASM_REG
-> +
->  #define RSEQ_INJECT_ASM(n) \
-> -	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG "\n\t" \
-> -	"mov (%%" INJECT_ASM_REG "), %%" INJECT_ASM_REG "\n\t" \
-> +	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG_P "\n\t" \
-> +	"mov (%%" INJECT_ASM_REG_P "), %%" INJECT_ASM_REG "\n\t" \
->  	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
->  	"jz 333f\n\t" \
->  	"222:\n\t" \
-> @@ -86,10 +91,6 @@ unsigned int yield_mod_cnt, nr_abort;
->  	"jnz 222b\n\t" \
->  	"333:\n\t"
->  
-> -#else
-> -#error "Unsupported architecture"
-> -#endif
-> -
->  #elif defined(__s390__)
->  
->  #define RSEQ_INJECT_INPUT \
-> 
+> If decision is to revert then I think the whole series needs to be
+> reverted.
 
-Applied now to linux-kselftest fixes. I will get this into the next rc
+Yes, definitely.
 
-thanks,
--- Shuah
+-- 
+Jens Axboe
+
