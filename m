@@ -2,118 +2,180 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F66C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EC3C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE2E0216F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE2E0216F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 0183B216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:32:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0183B216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeI0TtG (ORCPT
+        id S1727437AbeI0TuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 15:49:06 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51048 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727199AbeI0TtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 15:49:06 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qWKitO4PWmmh; Thu, 27 Sep 2018 15:30:47 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC7FB00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:fb00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 57D411EC068D;
-        Thu, 27 Sep 2018 15:30:47 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 15:30:50 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Feng Tang <feng.tang@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
-        alan@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] x86/earlyprintk: Don't fail the pciserial device
- with incorrect class code
-Message-ID: <20180927133050.GA19687@zn.tnic>
-References: <20180927124320.13419-1-feng.tang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180927124320.13419-1-feng.tang@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 27 Sep 2018 15:50:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49628 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727199AbeI0TuS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 15:50:18 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8RDOlrW068175
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:32:00 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mrxt7mjgf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:32:00 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 27 Sep 2018 14:31:57 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Sep 2018 14:31:55 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8RDVsnJ1311158
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 27 Sep 2018 13:31:54 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E5D942041;
+        Thu, 27 Sep 2018 16:31:38 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAC5942045;
+        Thu, 27 Sep 2018 16:31:36 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.85.160])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Sep 2018 16:31:36 +0100 (BST)
+Subject: Re: [PATCH v4 6/6] x86/ima: define arch_get_ima_policy() for x86
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com, Eric Richter <erichte@linux.vnet.ibm.com>
+Date:   Thu, 27 Sep 2018 09:31:42 -0400
+In-Reply-To: <20180926122210.14642-7-nayna@linux.vnet.ibm.com>
+References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+         <20180926122210.14642-7-nayna@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18092713-0016-0000-0000-0000020B5857
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092713-0017-0000-0000-000032627EA7
+Message-Id: <1538055102.3459.112.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809270132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 08:43:20PM +0800, Feng Tang wrote:
-> "pciserial" earlyprintk helps much on many modern x86 platforms,
-> but unfortunately there are some platforms whose PCI UART devices
-> have wrong PCI class code, which will be blocked by current check.
+Hi Eric, Nayna,
+
+On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
+> From: Eric Richter <erichte@linux.vnet.ibm.com>
+
+> This patch implements an example arch-specific IMA policy for x86 to
+> enable measurement and appraisal of any kernel image loaded for kexec,
+> when CONFIG_KEXEC_VERIFY_SIG is not enabled.
 > 
-> So loose the class code check by giving a warning message instead.
-> This should be fine, as a developer who can give the accurate
-> BDF should know whether it's a usable UART device.
+> For systems with CONFIG_KEXEC_VERIFY_SIG enabled, only the measurement
+> rule is enabled, not the IMA-appraisal rule.
 
-BDF? No.
+The patch itself looks good, but this patch description explains
+"what" the patch is doing, not "why".  Missing is the motivation for
+the patch.
 
-Please write it out what it means.
+Mimi
 
-> Signed-off-by: Feng Tang <feng.tang@intel.com>
+> 
+> Signed-off-by: Eric Richter <erichte@linux.vnet.ibm.com>
+> - Removed the policy KEXEC_ORIG_KERNEL_CHECK which was defined to
+>   disable the kexec_load syscall.
+> - arch_get_ima_policy() uses arch_ima_get_secureboot() to get secureboot
+>   state
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 > ---
->  arch/x86/kernel/early_printk.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  arch/x86/kernel/ima_arch.c     | 18 ++++++++++++++++++
+>  include/linux/ima.h            |  4 ++++
+>  security/integrity/ima/Kconfig |  8 ++++++++
+>  3 files changed, 30 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
-> index 5e801c8..abe1d08 100644
-> --- a/arch/x86/kernel/early_printk.c
-> +++ b/arch/x86/kernel/early_printk.c
-> @@ -265,7 +265,8 @@ static __init void early_pci_serial_init(char *s)
->  	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
->  	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
->  	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
-> -		return;
-> +		pr_warn("earlyprintk: classcode for pcidev %d:%d:%d shows it's not a UART like device, please check!\n",
-> +			bus, slot, func);
+> diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+> index bb5a88d2b271..245976e49a55 100644
+> --- a/arch/x86/kernel/ima_arch.c
+> +++ b/arch/x86/kernel/ima_arch.c
+> @@ -15,3 +15,21 @@ bool arch_ima_get_secureboot(void)
+>  	else
+>  		return false;
+>  }
+> +
+> +/* arch rules for audit and user mode */
+> +static const char * const sb_arch_rules[] = {
+> +#ifndef CONFIG_KEXEC_VERIFY_SIG
+> +	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+> +#endif /* CONFIG_KEXEC_VERIFY_SIG */
+> +	"measure func=KEXEC_KERNEL_CHECK",
+> +	NULL
+> +};
+> +
+> +#ifdef CONFIG_IMA_ARCH_POLICY
+> +const char * const *arch_get_ima_policy(void)
+> +{
+> +	if (arch_ima_get_secureboot())
+> +		return sb_arch_rules;
+> +	return NULL;
+> +}
+> +#endif
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 350fa957f8a6..dabd3abdf671 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -39,10 +39,14 @@ static inline bool arch_ima_get_secureboot(void)
+>  }
+>  #endif
+>  
+> +#if defined(CONFIG_X86) && defined(CONFIG_IMA_ARCH_POLICY)
+> +extern const char * const *arch_get_ima_policy(void);
+> +#else
+>  static inline const char * const *arch_get_ima_policy(void)
+>  {
+>  	return NULL;
+>  }
+> +#endif
+>  
+>  #else
+>  static inline int ima_bprm_check(struct linux_binprm *bprm)
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 13b446328dda..97609a76aa14 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -157,6 +157,14 @@ config IMA_APPRAISE
+>  	  <http://linux-ima.sourceforge.net>
+>  	  If unsure, say N.
+>  
+> +config IMA_ARCH_POLICY
+> +        bool "Enable loading an IMA architecture specific policy"
+> +        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
+> +        default n
+> +        help
+> +          This option enables loading an IMA architecture specific policy
+> +          based on run time secure boot flags.
+> +
+>  config IMA_APPRAISE_BUILD_POLICY
+>  	bool "IMA build time configured policy rules"
+>  	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
 
-So where did the return statement go?
-
-What are you trying to do here? If the device is still an UART device
-then we don't need the check at all as you're basically overriding it
-and only the class code is wrong.
-
-If so, why do we need the pr_warn at all? What can the user do about the
-class code? Nothing, I'd say. I don't see her "fixing" PCI config space
-so that the device has a correct class code.
-
-But what happens if the user really supplies the wrong BDF? We end up
-poking in PCI config space of *some* device and then the cat might catch
-fire.
-
-So it sounds to me like we need:
-
-earlyprintk=pciserial,force,00:18.1,115200
-
-where "force" allows the function to continue even if the classcode is
-wrong. Or
-
-earlyprintk=pciserial,i_know_what_im_doing,00:18.1,115200
-
-:-)
-
-Also, if you're going to use pr_* variants, convert the file to use
-pr_fmt() - grep the kernel sources for examples.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
