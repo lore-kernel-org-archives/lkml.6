@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBEEC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2E1C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F5C21546
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:32:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F5C21546
+	by mail.kernel.org (Postfix) with ESMTP id 500BE21546
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:32:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 500BE21546
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbeI0PuE (ORCPT
+        id S1729116AbeI0PuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:50:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57170 "EHLO
+        Thu, 27 Sep 2018 11:50:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57186 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727255AbeI0PuE (ORCPT
+        with ESMTP id S1727255AbeI0PuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:50:04 -0400
+        Thu, 27 Sep 2018 11:50:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C2491132;
-        Thu, 27 Sep 2018 09:32:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17D5B1120;
+        Thu, 27 Sep 2018 09:32:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        syzbot <syzkaller@googlegroups.com>, NeilBrown <neilb@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 4.4 10/28] mm: shmem.c: Correctly annotate new inodes for lockdep
-Date:   Thu, 27 Sep 2018 11:06:34 +0200
-Message-Id: <20180927090638.123207704@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Taht <dave.taht@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 11/28] gso_segment: Reset skb->mac_len after modifying network header
+Date:   Thu, 27 Sep 2018 11:06:35 +0200
+Message-Id: <20180927090638.162346987@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090637.687829444@linuxfoundation.org>
 References: <20180927090637.687829444@linuxfoundation.org>
@@ -56,128 +53,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Fernandes (Google) <joel@joelfernandes.org>
+From: "Toke Høiland-Jørgensen" <toke@toke.dk>
 
-commit b45d71fb89ab8adfe727b9d0ee188ed58582a647 upstream.
+[ Upstream commit c56cae23c6b167acc68043c683c4573b80cbcc2c ]
 
-Directories and inodes don't necessarily need to be in the same lockdep
-class.  For ex, hugetlbfs splits them out too to prevent false positives
-in lockdep.  Annotate correctly after new inode creation.  If its a
-directory inode, it will be put into a different class.
+When splitting a GSO segment that consists of encapsulated packets, the
+skb->mac_len of the segments can end up being set wrong, causing packet
+drops in particular when using act_mirred and ifb interfaces in
+combination with a qdisc that splits GSO packets.
 
-This should fix a lockdep splat reported by syzbot:
+This happens because at the time skb_segment() is called, network_header
+will point to the inner header, throwing off the calculation in
+skb_reset_mac_len(). The network_header is subsequently adjust by the
+outer IP gso_segment handlers, but they don't set the mac_len.
 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 4.18.0-rc8-next-20180810+ #36 Not tainted
-> ------------------------------------------------------
-> syz-executor900/4483 is trying to acquire lock:
-> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
-> include/linux/fs.h:765 [inline]
-> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
-> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
->
-> but task is already holding lock:
-> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
-> drivers/staging/android/ashmem.c:448
->
-> which lock already depends on the new lock.
->
-> -> #2 (ashmem_mutex){+.+.}:
->        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
->        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
->        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
->        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
->        call_mmap include/linux/fs.h:1844 [inline]
->        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
->        do_mmap+0xa10/0x1220 mm/mmap.c:1535
->        do_mmap_pgoff include/linux/mm.h:2298 [inline]
->        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
->        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
->        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
->        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
->        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> -> #1 (&mm->mmap_sem){++++}:
->        __might_fault+0x155/0x1e0 mm/memory.c:4568
->        _copy_to_user+0x30/0x110 lib/usercopy.c:25
->        copy_to_user include/linux/uaccess.h:155 [inline]
->        filldir+0x1ea/0x3a0 fs/readdir.c:196
->        dir_emit_dot include/linux/fs.h:3464 [inline]
->        dir_emit_dots include/linux/fs.h:3475 [inline]
->        dcache_readdir+0x13a/0x620 fs/libfs.c:193
->        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
->        __do_sys_getdents fs/readdir.c:231 [inline]
->        __se_sys_getdents fs/readdir.c:212 [inline]
->        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
->        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
->        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
->        inode_lock include/linux/fs.h:765 [inline]
->        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
->        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
->        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
->        vfs_ioctl fs/ioctl.c:46 [inline]
->        file_ioctl fs/ioctl.c:501 [inline]
->        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
->        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
->        __do_sys_ioctl fs/ioctl.c:709 [inline]
->        __se_sys_ioctl fs/ioctl.c:707 [inline]
->        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
->        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->        entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> other info that might help us debug this:
->
-> Chain exists of:
->   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
->
->  Possible unsafe locking scenario:
->
->        CPU0                    CPU1
->        ----                    ----
->   lock(ashmem_mutex);
->                                lock(&mm->mmap_sem);
->                                lock(ashmem_mutex);
->   lock(&sb->s_type->i_mutex_key#9);
->
->  *** DEADLOCK ***
->
-> 1 lock held by syz-executor900/4483:
->  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
-> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
+Fix this by adding skb_reset_mac_len() calls to both the IPv4 and IPv6
+gso_segment handlers, after they modify the network_header.
 
-Link: http://lkml.kernel.org/r/20180821231835.166639-1-joel@joelfernandes.org
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Suggested-by: NeilBrown <neilb@suse.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Many thanks to Eric Dumazet for his help in identifying the cause of
+the bug.
+
+Acked-by: Dave Taht <dave.taht@gmail.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@toke.dk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- mm/shmem.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/af_inet.c     |    1 +
+ net/ipv6/ip6_offload.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1464,6 +1464,8 @@ static struct inode *shmem_get_inode(str
- 			mpol_shared_policy_init(&info->policy, NULL);
- 			break;
- 		}
-+
-+		lockdep_annotate_inode_mutex_key(inode);
- 	} else
- 		shmem_free_inode(sb);
- 	return inode;
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -1280,6 +1280,7 @@ static struct sk_buff *inet_gso_segment(
+ 		if (encap)
+ 			skb_reset_inner_headers(skb);
+ 		skb->network_header = (u8 *)iph - skb->head;
++		skb_reset_mac_len(skb);
+ 	} while ((skb = skb->next));
+ 
+ out:
+--- a/net/ipv6/ip6_offload.c
++++ b/net/ipv6/ip6_offload.c
+@@ -118,6 +118,7 @@ static struct sk_buff *ipv6_gso_segment(
+ 		ipv6h = (struct ipv6hdr *)(skb_mac_header(skb) + nhoff);
+ 		ipv6h->payload_len = htons(skb->len - nhoff - sizeof(*ipv6h));
+ 		skb->network_header = (u8 *)ipv6h - skb->head;
++		skb_reset_mac_len(skb);
+ 
+ 		if (udpfrag) {
+ 			int err = ip6_find_1stfragopt(skb, &prevhdr);
 
 
