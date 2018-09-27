@@ -2,117 +2,117 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDE0C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27799C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 697122154D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF39121533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJX9qPZC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697122154D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3Va39jT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF39121533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeI0Jxl (ORCPT
+        id S1726641AbeI0KBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 05:53:41 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38489 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbeI0Jxk (ORCPT
+        Thu, 27 Sep 2018 06:01:31 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38703 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbeI0KBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 05:53:40 -0400
-Received: by mail-wm1-f66.google.com with SMTP id z16-v6so4382837wmi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Sep 2018 20:37:33 -0700 (PDT)
+        Thu, 27 Sep 2018 06:01:31 -0400
+Received: by mail-ot1-f66.google.com with SMTP id h15-v6so1195414otj.5;
+        Wed, 26 Sep 2018 20:45:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uvpVBSIugyYwOy11C1gq6ha6enLriZdzuMP7PuSA3Qg=;
-        b=gJX9qPZCDBz8tIWOIW2sL4W2GiKymjXaz2r333mgbEDTPMi/+vxJnjiUB/+XW+osay
-         eor+XsncPhReR1cybng+jIdFpyiY/6VSPX8+wT9OjEH03O1f3QJG1QISNeGWgmtr3X2+
-         YxRay3WgZrmlymBqSjdkq8KPh2qtXpyJuRSOpucJOVWEvr328kiS5gklEGzaFkj8fwzr
-         ElHryBTE7P54Qjmpf5YCegKbwGoLukwFahrvl2YogxK33NE7Th3YIbjltl8z+L7Uni7k
-         fR4b3Qtd/Q9iWuXj0JYSCpDQq0I4FnSZ2sLM8V9ZT2c9ApPB5TYGcv88Vs8Kje2GzETn
-         ISaw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1pdKOTtjwQc7c/w8MVBBIEDBfMWOUSfaxgI4aDJgTtI=;
+        b=Z3Va39jTEJjxYePT+Mj23I33j1kamQW3Akb3NXPfu0+4XCzOBPa/MjKFeyj273xLil
+         kBE6big3iUUWdKQmmUGxhNawIcGOy8Uvh0Tq8TRM8g72WqyC8rSj/r56GQ0TExoyDNzi
+         6wg1T8wi2gp7OvHdiKiLaT74Tfeww1J332cROTGzke2/PqhUsyj3LKfCohZLw9KfySg4
+         YazH0NKwh4bZxQExKRt9KF5lcltFqi1SIe2CjhhQT30kpyEmiBSwpp4Aw+IEUdZgrnnR
+         qvUI+JAwx9DhYN4zQuioVqAqVRZAjjQGr6B5anIfyWrPzvbn3QM2T+Kcgmyi27ozM+kr
+         mgkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uvpVBSIugyYwOy11C1gq6ha6enLriZdzuMP7PuSA3Qg=;
-        b=D4N9rhzbV5TNPxHxKe4j0co9o0/qvuv0jCudjTfq4ffElugnZ5Z9P/MbOG8gHw+UIw
-         ++iwId6PfdG+sf1u5B0A4krgj+3cobrPjtZ5yk0s4kGHadORgY/mDmtZ/d9IYBfryRXF
-         FcVezXhuj+R4vcsoMwM9f6FBO8raod3qaA1ljBei0E8sGdOUmjegH4zfwhd5odd5XOt5
-         I2B0cSIkC+UkYan9cdT0i1D57gMtTSU6B1przQjEv88Lq2KL1ur2eomTXUKzBgGP2Pe1
-         F+a1zMUIfmw3DhXNRAAIUZJjxXli5ngTbuvxNwL9zAfDZDWHT3Pts/UiYVSBG101uftE
-         OG+A==
-X-Gm-Message-State: ABuFfog4SjfMSjSr+lATK18lvAUb6wi7uw6uXFpTODUV+PwqtBplfz8T
-        OtaZrZFM8kdI6jV8oS6IWcI=
-X-Google-Smtp-Source: ACcGV62k9uzS6SAek3jidO7yyirSPy0VFLxJh8E3Qk+PM7ZNWbskOqxiSaRG4yUwauxB/LzgXgIFEA==
-X-Received: by 2002:a1c:9f92:: with SMTP id i140-v6mr3817332wme.19.1538019452672;
-        Wed, 26 Sep 2018 20:37:32 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id e127-v6sm1152697wmg.45.2018.09.26.20.37.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 20:37:32 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] mfd: cros_ec: Avoid unneeded internal declaration warning
-Date:   Wed, 26 Sep 2018 20:33:17 -0700
-Message-Id: <20180927033316.9784-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1pdKOTtjwQc7c/w8MVBBIEDBfMWOUSfaxgI4aDJgTtI=;
+        b=rWxUV9mKcMADS48misynoiaxN+vep8YM+LTl3ZPA8vdMJBu1/SdvYjeeab7zsr92/b
+         zk+KJqqpQTb0u3NiT3vdaLI7UtWvTQJRMbKbS2RySmiXjmwI2jVh1tiek4G3y425iObw
+         q32QoIc5s04CGeQPf4vAcY5cVZ6EovrBdnP9jNZGvk+HtUhtsLB9GLc1ZEiwrcWp2H0/
+         x1UrmJKAWdY090/mr3ZrjNNon0FYgOvEzKE0ovgNFNMzL8NFWevCBq2bmKuVcGSrruZ2
+         H+vOUuetidcQ5fPQSsu0qi3Y8m0Kx7fF1egAUYctrMupFMKMYu6b1FXUegl1DPqEcsi7
+         7d1g==
+X-Gm-Message-State: ABuFfogo5Hkc3EFQuQ8v5b6tlfuHERMb7GA+bfrqX8ZkSeaC+fwLhxyB
+        MOEUwYMciBez+i3XqpkfxKRg/W9anYztTquG8L8=
+X-Google-Smtp-Source: ACcGV63X/sbIIZP2MDhA+0+23tUqfE4AHK91m6o1WR0k/lP5atvqVOxlmZkvEPRADBq1xZnim+eqmRmdgvpIeaq9pyA=
+X-Received: by 2002:a9d:1e8a:: with SMTP id n10-v6mr5720691otn.50.1538019924277;
+ Wed, 26 Sep 2018 20:45:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180922075238.884-1-linux.amoon@gmail.com> <20180922075238.884-6-linux.amoon@gmail.com>
+ <20180926190639.GA6461@kozik-lap>
+In-Reply-To: <20180926190639.GA6461@kozik-lap>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Thu, 27 Sep 2018 09:15:11 +0530
+Message-ID: <CANAwSgSPkKL3jaHHSkEhgocKT_Sq4zg3Z=+7d5889ttpnNPHDA@mail.gmail.com>
+Subject: Re: [PATCHv4 4/6] ARM: dts: exynos: Add CD and WP pins to Odroid
+ XU3/XU4 SD card
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+Hi Krzysztof,
+On Thu, 27 Sep 2018 at 00:36, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Sat, Sep 22, 2018 at 07:52:36AM +0000, Anand Moon wrote:
+> > Add the card-detect and write-protect GPIO pins for OdroidXU3/XU4
+> > SD card by adding pinctrl setting for wp-gpio pin and set it to
+> > active low.
+> >
+> > This also removes debug messages:
+> >     dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
+> >     dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
+> >
+> > Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > Fix the commit message and squash it with cd-gpios and wp-gpio
+> > patches into single patch as suggested by Krzysztof.
+>
+> As Marek pointed to my Odroid XU patch, there is no point of adding
+> cd-gpios and wp-gpios properties.
+>
+> Adding pin configuration for wp pin is also not needed. Reset values are
+> working properly. However there might be meaning of adding it just in
+> case - if bootloader decided to touch it...
+>
+> Best regards,
+> Krzysztof
+>
 
-drivers/mfd/cros_ec_dev.c:509:40: warning: variable 'cros_ec_id' is not
-needed and will not be emitted [-Wunneeded-internal-declaration]
-static const struct platform_device_id cros_ec_id[] = {
-                                       ^
-1 warning generated.
+Do I need to send the all the patches again or just resend this as per
+your patch for Odroid XU.
+with dropping the cd-gpios and wp-gpios changes.
 
-Avoid this warning by adding it to the cros_ec_dev_driver definition
-under the id_table member like all other platform drivers.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-I looked at several drivers with platform_device_id defintions and I
-didn't really find any where the definition wasn't then added to the
-platform_driver so I'm not sure if this was just missed in commit
-afbf8ec7c4f9 ("platform/chrome: cros_ec_dev - Add a platform
-device ID table") or if it was an intentional omission. I'm not super
-familiar with the inner workings of platform devices.
-
-Should this commit be undesirable, the warning can be silenced with the
-__used attribute but this seemed like a more proper first commit.
-
- drivers/mfd/cros_ec_dev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 999dac752bcc..8f9d6964173e 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -546,6 +546,7 @@ static struct platform_driver cros_ec_dev_driver = {
- 		.name = DRV_NAME,
- 		.pm = &cros_ec_dev_pm_ops,
- 	},
-+	.id_table = cros_ec_id,
- 	.probe = ec_device_probe,
- 	.remove = ec_device_remove,
- 	.shutdown = ec_device_shutdown,
--- 
-2.19.0
-
+Best Regards
+-Anand
