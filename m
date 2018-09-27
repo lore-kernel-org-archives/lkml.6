@@ -2,262 +2,147 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED65C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00062C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD5321570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:21:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD5321570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 923DA20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:26:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=8chan.co header.i=@8chan.co header.b="WwbT7suy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923DA20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=8chan.co
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbeI0NiE (ORCPT
+        id S1727015AbeI0Nms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:38:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48622 "EHLO mx1.redhat.com"
+        Thu, 27 Sep 2018 09:42:48 -0400
+Received: from cock.li ([185.100.85.212]:44402 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbeI0NiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:38:04 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 390674E33A;
-        Thu, 27 Sep 2018 07:21:15 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-101.pek2.redhat.com [10.72.12.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C3E2B600C7;
-        Thu, 27 Sep 2018 07:20:59 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
+        id S1726719AbeI0Nmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:42:47 -0400
+MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8chan.co; s=mail;
+        t=1538033153; bh=1pm4y+bwewZkwnTMD11H/MPXWMI+t7VoASrMbW2MTLA=;
+        h=Date:From:To:Subject:From;
+        b=WwbT7suyKC/4zk5ztmle0UcOIAYHixkmoKl34PtNiLKPx6Q16nJjNv/4dgkh2iFBM
+         cbqI4LcQ40AUef+yApYVnvxUEs57PqgbaDdEMgqOoT2KqA1aMHzYSh0boX0F6ariKp
+         XRipTRV2Q99sZQc9CmGbBoD5hD1YTQcO5ZbrjmNZmtBhqYmsoNsEtDzIBEskDZz42d
+         DG8UzlHH1K4IJ9KmRZ7mIIWTwgnbIyJtXZbD0baZRXaz/npo+wF2QO3TCMznCTuCDA
+         0gy+KsYsdBc1JQNvKhCW8Q5pW43bvlUHQNVb7pzbHoOQSpn7/yTD2EyMFJdA57gMKn
+         39hqUd9EIPhMg==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Thu, 27 Sep 2018 07:25:53 +0000
+From:   vwdfrwd@8chan.co
 To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        bp@suse.de, brijesh.singh@amd.com, dyoung@redhat.com,
-        bhe@redhat.com, jroedel@suse.de
-Subject: [PATCH v7 RESEND 4/4] kdump/vmcore: support encrypted old memory with SME enabled
-Date:   Thu, 27 Sep 2018 15:19:54 +0800
-Message-Id: <20180927071954.29615-5-lijiang@redhat.com>
-In-Reply-To: <20180927071954.29615-1-lijiang@redhat.com>
-References: <20180927071954.29615-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 27 Sep 2018 07:21:15 +0000 (UTC)
+Subject: The software freedom conservancy has tendered its response
+Message-ID: <f19ab95cd87580eabc2e5072b487bc73@8chan.co>
+X-Sender: vwdfrwd@8chan.co
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kdump kernel, we need to dump the old memory into vmcore file,if SME
-is enabled in the first kernel, we have to remap the old memory with the
-memory encryption mask, which will be automatically decrypted when we
-read from DRAM.
+The software freedom conservancy has tendered its response:
+http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
+http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
 
-For SME kdump, there are two cases that doesn't support:
 
- ----------------------------------------------
-| first-kernel | second-kernel | kdump support |
-|      (mem_encrypt=on|off)    |   (yes|no)    |
-|--------------+---------------+---------------|
-|     on       |     on        |     yes       |
-|     off      |     off       |     yes       |
-|     on       |     off       |     no        |
-|     off      |     on        |     no        |
-|______________|_______________|_______________|
+""
+"The GPLv2 have several provisions that, when taken together, can be 
+construed as an irrevocable license from each contributor. "
+""
 
-1. SME is enabled in the first kernel, but SME is disabled in kdump kernel
-In this case, because the old memory is encrypted, we can't decrypt the
-old memory.
+It cites:
 
-2. SME is disabled in the first kernel, but SME is enabled in kdump kernel
-On the one hand, the old memory is unencrypted, the old memory can be dumped
-as usual, we don't need to enable SME in kdump kernel; On the other hand, it
-will increase the complexity of the code, we will have to consider how to
-pass the SME flag from the first kernel to the kdump kernel, it is really
-too expensive to do this.
 
-This patches are only for SME kdump, the patches don't support SEV kdump.
+           " That license granted to downstream is irrevocable, again 
+provided that the downstream user complies with the license terms: 
+"[P]arties who have received copies, or rights, from you under this 
+License will not have their licenses terminated so long as such parties 
+remain in full compliance" (GPLv2§4). "
 
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- arch/x86/kernel/Makefile             |  1 +
- arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++
- fs/proc/vmcore.c                     | 21 +++++++----
- include/linux/crash_dump.h           | 12 +++++++
- 4 files changed, 81 insertions(+), 6 deletions(-)
- create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
+However this is disingenuous
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 8824d01c0c35..dfbeae0e35ce 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -97,6 +97,7 @@ obj-$(CONFIG_KEXEC_CORE)	+= machine_kexec_$(BITS).o
- obj-$(CONFIG_KEXEC_CORE)	+= relocate_kernel_$(BITS).o crash.o
- obj-$(CONFIG_KEXEC_FILE)	+= kexec-bzimage64.o
- obj-$(CONFIG_CRASH_DUMP)	+= crash_dump_$(BITS).o
-+obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= crash_dump_encrypt.o
- obj-y				+= kprobes/
- obj-$(CONFIG_MODULES)		+= module.o
- obj-$(CONFIG_DOUBLEFAULT)	+= doublefault.o
-diff --git a/arch/x86/kernel/crash_dump_encrypt.c b/arch/x86/kernel/crash_dump_encrypt.c
-new file mode 100644
-index 000000000000..e1b1a577f197
---- /dev/null
-+++ b/arch/x86/kernel/crash_dump_encrypt.c
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *	Memory preserving reboot related code.
-+ *
-+ *	Created by: Lianbo Jiang (lijiang@redhat.com)
-+ *	Copyright (C) RedHat Corporation, 2018. All rights reserved
-+ */
-+
-+#include <linux/errno.h>
-+#include <linux/crash_dump.h>
-+#include <linux/uaccess.h>
-+#include <linux/io.h>
-+
-+/**
-+ * copy_oldmem_page_encrypted - copy one page from "oldmem encrypted"
-+ * @pfn: page frame number to be copied
-+ * @buf: target memory address for the copy; this can be in kernel address
-+ *	space or user address space (see @userbuf)
-+ * @csize: number of bytes to copy
-+ * @offset: offset in bytes into the page (based on pfn) to begin the copy
-+ * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-+ *	otherwise @buf is in kernel address space, use memcpy().
-+ *
-+ * Copy a page from "oldmem encrypted". For this page, there is no pte
-+ * mapped in the current kernel. We stitch up a pte, similar to
-+ * kmap_atomic.
-+ */
-+
-+ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-+		size_t csize, unsigned long offset, int userbuf)
-+{
-+	void  *vaddr;
-+
-+	if (!csize)
-+		return 0;
-+
-+	vaddr = (__force void *)ioremap_encrypted(pfn << PAGE_SHIFT,
-+						  PAGE_SIZE);
-+	if (!vaddr)
-+		return -ENOMEM;
-+
-+	if (userbuf) {
-+		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
-+			iounmap((void __iomem *)vaddr);
-+			return -EFAULT;
-+		}
-+	} else
-+		memcpy(buf, vaddr + offset, csize);
-+
-+	set_iounmap_nonlazy();
-+	iounmap((void __iomem *)vaddr);
-+	return csize;
-+}
-diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index cbde728f8ac6..3065c8bada6a 100644
---- a/fs/proc/vmcore.c
-+++ b/fs/proc/vmcore.c
-@@ -25,6 +25,9 @@
- #include <linux/pagemap.h>
- #include <linux/uaccess.h>
- #include <asm/io.h>
-+#include <linux/io.h>
-+#include <linux/mem_encrypt.h>
-+#include <asm/pgtable.h>
- #include "internal.h"
- 
- /* List representing chunks of contiguous memory areas and their offsets in
-@@ -98,7 +101,8 @@ static int pfn_is_ram(unsigned long pfn)
- 
- /* Reads a page from the oldmem device from given offset. */
- static ssize_t read_from_oldmem(char *buf, size_t count,
--				u64 *ppos, int userbuf)
-+				u64 *ppos, int userbuf,
-+				bool encrypted)
- {
- 	unsigned long pfn, offset;
- 	size_t nr_bytes;
-@@ -120,8 +124,11 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
- 		if (pfn_is_ram(pfn) == 0)
- 			memset(buf, 0, nr_bytes);
- 		else {
--			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
--						offset, userbuf);
-+			tmp = encrypted ? copy_oldmem_page_encrypted(pfn,
-+					    buf, nr_bytes, offset, userbuf)
-+					: copy_oldmem_page(pfn, buf, nr_bytes,
-+							   offset, userbuf);
-+
- 			if (tmp < 0)
- 				return tmp;
- 		}
-@@ -155,7 +162,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
-  */
- ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0);
-+	return read_from_oldmem(buf, count, ppos, 0, false);
- }
- 
- /*
-@@ -163,7 +170,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
-  */
- ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
- {
--	return read_from_oldmem(buf, count, ppos, 0);
-+	return read_from_oldmem(buf, count, ppos, 0, sme_active());
- }
- 
- /*
-@@ -173,6 +180,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 				  unsigned long from, unsigned long pfn,
- 				  unsigned long size, pgprot_t prot)
- {
-+	prot = pgprot_encrypted(prot);
- 	return remap_pfn_range(vma, from, pfn, size, prot);
- }
- 
-@@ -351,7 +359,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
- 					    m->offset + m->size - *fpos,
- 					    buflen);
- 			start = m->paddr + *fpos - m->offset;
--			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
-+			tmp = read_from_oldmem(buffer, tsz, &start, userbuf,
-+						sme_active());
- 			if (tmp < 0)
- 				return tmp;
- 			buflen -= tsz;
-diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-index 3e4ba9d753c8..a7e7be8b0502 100644
---- a/include/linux/crash_dump.h
-+++ b/include/linux/crash_dump.h
-@@ -26,6 +26,18 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
- 
- extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
- 						unsigned long, int);
-+#ifdef CONFIG_AMD_MEM_ENCRYPT
-+extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-+					   size_t csize, unsigned long offset,
-+					   int userbuf);
-+#else
-+static inline
-+ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf, size_t csize,
-+				    unsigned long offset, int userbuf)
-+{
-+	return 0;
-+}
-+#endif
- void vmcore_cleanup(void);
- 
- /* Architecture code defines this if there are other possible ELF
--- 
-2.17.1
+The full text of section 4 is as follows:
+
+""
+   4. You may not copy, modify, sublicense, or distribute the Program
+except as expressly provided under this License.  Any attempt
+otherwise to copy, modify, sublicense or distribute the Program is
+void, and will automatically terminate your rights under this License.
+However, parties who have received copies, or rights, from you under
+this License will not have their licenses terminated so long as such
+parties remain in full compliance.
+""
+
+
+
+The "You" in section 4 is speaking of the licensee regarding 
+sub-licensees, it is not speaking to the licensor/copyright-holder.
+
+IE: if the licensee loses his license, through operation of the 
+automatic-revocation provisions, the sub-licensees do not also lose 
+their licenses.
+
+IE: The language is disclaiming a chain topography for license 
+distribution, and instead substituting a hub-and-spoke topography (all 
+licenses originating from the copyright holder, not the 
+previous-in-line)
+
+GPLv3 added a no-rescission clause for a reason: the reason being to 
+attempt to create an estoppel defense for the licensees against the 
+licensor. You will notice that Eben Moglen never speaks on these issues. 
+(He preumably is aware of the weaknesses vis a vis the US copyright 
+regime.)
+
+Section 6 further clarifies the hub-and-spoke model:
+""
+    6. Each time you redistribute the Program (or any work based on the
+Program), the recipient automatically receives a license from the
+original licensor to copy, distribute or modify the Program subject to
+these terms and conditions.  You may not impose any further
+restrictions on the recipients' exercise of the rights granted herein.
+You are not responsible for enforcing compliance by third parties to
+this License.
+""
+
+The memorandum posted then goes on to a discussion of estoppel, 
+detrimental reliance, etc; noting that users may have relied on the 
+software and their licenses may be estopped from being revoked from said 
+users since doing so might cause them unanticipated loss. This is 
+speaking of already published, existent, versions of the program used by 
+end users.
+
+The memorandum seems to ignore what happens to "upstream" once said 
+project  receives a revocation notice. Thought it may be possible that 
+users of a published piece of software may have defenses to license 
+revocation, the same is not true regarding the rescinded property 
+vis-a-vis future prospective versions of the software nor of future 
+prospective licensees of said software.
+
+That is: once the grant to use the code in question is rescinded, future 
+versions of the software may not use that code. Current users of the 
+software may be-able to raise an estoppel / detrimental reliance defense 
+regarding the current published software, however the programmers 
+working on the next version of said software cannot continue to use the 
+property in future versions of the software (such would be a copyright 
+violation once the gratuitous license is rescinded by the grantor).
+
+Additionally, prospective-licensees, once the grant was rescinded and 
+such was published, would have no same-such estoppel defense (not being 
+user-licensees at the time of revocation).
+
+(Ignoring this eventuality in the published memorandum, is, of-course, 
+by design.)
+(Now, to note: the free-software movement is focused on the freedom of 
+the user, not the progenitors of the software, so one could certainly 
+say that ignoring some developer-focused analysis is consistent with 
+their prerogative...)
 
