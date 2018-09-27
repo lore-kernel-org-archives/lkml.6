@@ -2,55 +2,163 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AA3C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F83C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B552204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:11:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B552204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 6035B204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6035B204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbeI0N1s (ORCPT
+        id S1727111AbeI0N16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:27:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41372 "EHLO mx1.suse.de"
+        Thu, 27 Sep 2018 09:27:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41410 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726669AbeI0N1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:27:48 -0400
+        id S1726669AbeI0N16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:27:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A3FDADBC;
-        Thu, 27 Sep 2018 07:11:01 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 09:10:59 +0200
-From:   Joerg Roedel <jroedel@suse.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sedat Dilek <sedat.dilek@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: Re: Linux 4.19-rc5: Missing iommu fix
-Message-ID: <20180927071059.k6mgp35nkwb472oy@suse.de>
-References: <CA+icZUUdxjVe4p-9aui0cqj_EiHD3O2VZ=dW8HqWf-+9jqnWCA@mail.gmail.com>
- <20180926195917.GB20689@kroah.com>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BCFA0ADBC;
+        Thu, 27 Sep 2018 07:11:08 +0000 (UTC)
+Subject: Re: [PATCH v3] memory_hotplug: Free pages as higher order
+To:     Arun KS <arunks@codeaurora.org>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        boris.ostrovsky@oracle.com, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, mhocko@suse.com, vbabka@suse.cz,
+        iamjoonsoo.kim@lge.com, gregkh@linuxfoundation.org,
+        osalvador@suse.de, malat@debian.org,
+        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
+        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org
+Cc:     vatsa@codeaurora.org, vinmenon@codeaurora.org, getarunks@gmail.com
+References: <1538031530-25489-1-git-send-email-arunks@codeaurora.org>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <36488c0e-6bae-e277-2cdb-32d0dcc40065@suse.com>
+Date:   Thu, 27 Sep 2018 09:11:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926195917.GB20689@kroah.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1538031530-25489-1-git-send-email-arunks@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 09:59:17PM +0200, Greg Kroah-Hartman wrote:
-> Is this all now merged properly?
+On 27/09/18 08:58, Arun KS wrote:
+> When free pages are done with higher order, time spend on
+> coalescing pages by buddy allocator can be reduced. With
+> section size of 256MB, hot add latency of a single section
+> shows improvement from 50-60 ms to less than 1 ms, hence
+> improving the hot add latency by 60%.
+> 
+> Modify external providers of online callback to align with
+> the change.
+> 
+> Signed-off-by: Arun KS <arunks@codeaurora.org>
+> ---
+> Changes since v2:
+> reuse code from __free_pages_boot_core()
+> 
+> Changes since v1:
+> - Removed prefetch()
+> 
+> Changes since RFC:
+> - Rebase.
+> - As suggested by Michal Hocko remove pages_per_block.
+> - Modifed external providers of online_page_callback.
+> 
+> v2: https://lore.kernel.org/patchwork/patch/991363/
+> v1: https://lore.kernel.org/patchwork/patch/989445/
+> RFC: https://lore.kernel.org/patchwork/patch/984754/
+> 
+> ---
+>  drivers/hv/hv_balloon.c        |  6 ++++--
+>  drivers/xen/balloon.c          | 18 ++++++++++++++---
+>  include/linux/memory_hotplug.h |  2 +-
+>  mm/internal.h                  |  1 +
+>  mm/memory_hotplug.c            | 44 ++++++++++++++++++++++++++++++------------
+>  mm/page_alloc.c                |  2 +-
+>  6 files changed, 54 insertions(+), 19 deletions(-)
+>
 
-Yes, the fix for that was in the pull-request I sent recently.
+...
 
-Regards,
+> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+> index e12bb25..010cf4d 100644
+> --- a/drivers/xen/balloon.c
+> +++ b/drivers/xen/balloon.c
+> @@ -390,8 +390,8 @@ static enum bp_state reserve_additional_memory(void)
+>  
+>  	/*
+>  	 * add_memory_resource() will call online_pages() which in its turn
+> -	 * will call xen_online_page() callback causing deadlock if we don't
+> -	 * release balloon_mutex here. Unlocking here is safe because the
+> +	 * will call xen_bring_pgs_online() callback causing deadlock if we
+> +	 * don't release balloon_mutex here. Unlocking here is safe because the
+>  	 * callers drop the mutex before trying again.
+>  	 */
+>  	mutex_unlock(&balloon_mutex);
+> @@ -422,6 +422,18 @@ static void xen_online_page(struct page *page)
+>  	mutex_unlock(&balloon_mutex);
+>  }
+>  
+> +static int xen_bring_pgs_online(struct page *pg, unsigned int order)
+> +{
+> +	unsigned long i, size = (1 << order);
+> +	unsigned long start_pfn = page_to_pfn(pg);
+> +
+> +	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
+> +	for (i = 0; i < size; i++)
+> +		xen_online_page(pfn_to_page(start_pfn + i));
 
-	Joerg
+xen_online_page() isn't very complex and this is the only user.
+
+Why don't you move its body in here and drop the extra function?
+And now you can execute the loop with balloon_mutex held instead of
+taking and releasing it in each iteration of the loop.
+
+
+Juergen
