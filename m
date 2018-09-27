@@ -2,123 +2,178 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8293DC004D5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0C4C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A43A2168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:38:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A43A2168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A6C1216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:39:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KZ7X4bM/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6C1216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbeI0W5g (ORCPT
+        id S1728386AbeI0W6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:57:36 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:58172 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbeI0W5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:57:36 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1g5ZJ7-0003WJ-1O; Thu, 27 Sep 2018 10:38:29 -0600
-To:     Wesley.Sheng@microchip.com, kurt.schwemmer@microsemi.com,
-        bhelgaas@google.com, corbet@lwn.net
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
-References: <DM2PR11MB010585C1D5584683B31CCF5495140@DM2PR11MB0105.namprd11.prod.outlook.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <2164850f-0772-026e-19a0-73747d03aa93@deltatee.com>
-Date:   Thu, 27 Sep 2018 10:38:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 27 Sep 2018 18:58:36 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44630 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbeI0W6f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 18:58:35 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 36-v6so3164721oth.11
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:39:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W+NSFHXC1p7u5iKRZ3HUB2PYuPEIC+MQP01YmK7YI6w=;
+        b=KZ7X4bM/YsPzjj35WqOrg2UGCcJ4bckA/Y4vHxEKNxSdRx/XcW5qTohQifYPa/gBJt
+         DdrlJDiioYy6DHBq6D9lXk0VIKTLa8uEqWwoVYaeVLY8A8ByxkfsyFwBnG8J/2dE0Vzw
+         34FP9Q4BJ8O4tWpXUy3F2PDPvBigCMBw6AWlXlFkaL72dOBDMbWh8W+/1/OoglJbHI1s
+         MIpAm6YSy2Xp9fF4V6313h3Yjghc+9p96FGI29m+uSsCDdkWkfW99uyCDeOO+smK6E+s
+         0vnEsSjGX1xINcs+Z9hJ3SbDRO1jPj/n8efAnVcdv/wFmvH+FwAMSi7+MSIdgf+rcm5C
+         WV0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W+NSFHXC1p7u5iKRZ3HUB2PYuPEIC+MQP01YmK7YI6w=;
+        b=hVMGAi9XrqMIJVIOX4NaMn+/ccfq0MtRl1W21z7757jE4bJ4vtkMDvLn3oIAhDoShO
+         xrCc8OIBivGHdIZQShALUvBEbROstAObbgf4jkoeUDncU+gSlZtHLk4i7mLHcV9n7vsY
+         JaemmY0G+T8NmkIuTJOX2DArb/4j4tGyPOPYq8UUYGvQ1LJj7xFcZo7hEoey2w9twDUC
+         rQn7qVIC1rg38XTHt5IQ8T835w7fbUlGkdojts3thGV1DNQZGY8hzc90akm6AeE8oU82
+         4B5R7efthOcsodoPdIEv9bZ5vJKkyR2gBU8mn5GgBtlC7erFSNaBCkrRjs/QhXTu+cKC
+         Tvfw==
+X-Gm-Message-State: ABuFfoj1q1844c0RBf0DMu7i0I3cp22wY0AyKh/X/7wEAwib5Ev/Ic1g
+        uGEHq8iEstEn4TewUo210nN9arWGJ7+VvUsNLmLQpg==
+X-Google-Smtp-Source: ACcGV61QNnJiluT64xkUX685JOGbFehISM7FM2VJe+Jex2+3MJ9tVmebgUtYHZ19XCziDEvFETLb8nJPhkqWx+EYL6c=
+X-Received: by 2002:a9d:4716:: with SMTP id a22-v6mr7853743otf.242.1538066369286;
+ Thu, 27 Sep 2018 09:39:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <DM2PR11MB010585C1D5584683B31CCF5495140@DM2PR11MB0105.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, corbet@lwn.net, bhelgaas@google.com, kurt.schwemmer@microsemi.com, Wesley.Sheng@microchip.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2] NTB: switchtec_ntb: Update switchtec documentation
- with pre-requisites for NTB
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-6-tycho@tycho.ws>
+In-Reply-To: <20180927151119.9989-6-tycho@tycho.ws>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 27 Sep 2018 18:39:02 +0200
+Message-ID: <CAG48ez2vJJQm8-Rdz4b=cvBQn2Ws-9wazVuVUXQFYqMMZh64YA@mail.gmail.com>
+Subject: Re: [PATCH v7 5/6] seccomp: add a way to pass FDs via a notification fd
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        suda.akihiro@lab.ntt.co.jp, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-09-27 12:36 a.m., Wesley.Sheng@microchip.com wrote:
-> Update switchtec documentation
-> 1.add pre-requisites for NTB driver
-> 2.misc updates
->  change NTB hardware driver name to ntb_hw_switchtec
->  update the description of 2 partitions limit
->  add reference to Linux Documentation/ntb.txt
->  add use of term 'Command ID'
->  add use of term 'Command Return Value'
->  add a missing ')'
-
-You need a better commit message. It needs to describe, in plain
-English, why the maintainers should merge this, not itemize the
-individual changes (that's what the patch body tells us).
-
->  * A write must consist of at least 4 bytes and no more than 1028 bytes.
-> -  The first four bytes will be interpreted as the command to run and
-> -  the remainder will be used as the input data. A write will send the
-> +  The first 4 bytes will be interpreted as the Command ID and the  
-> + remainder will be used as the input data. A write will send the
->    command to the firmware to begin processing.
-
-You still have some broken white space in this patch. Notice the spacing
-before "remainder" compared to the previous line.
-
->  * Each write must be followed by exactly one read. Any double write will
->  @@ -45,9 +45,9 @@ The char device has the following semantics:
->    produce an error.
->  
->  * A read will block until the firmware completes the command and return
-> -  the four bytes of status plus up to 1024 bytes of output data. (The
-> -  length will be specified by the size parameter of the read call --
-> -  reading less than 4 bytes will produce an error.
-> +  the 4-byte Command Return Value plus up to 1024 bytes of output  
-> + data. (The length will be specified by the size parameter of the read  
-> + call -- reading less than 4 bytes will produce an error.)
-
-Here too.
-
->  * The poll call will also be supported for userspace applications that
->    need to do other things while waiting for the command to complete.
-> @@ -83,10 +83,20 @@ The following IOCTLs are also supported by the device:
->  Non-Transparent Bridge (NTB) Driver
->  ===================================
->  
-> -An NTB driver is provided for the switchtec hardware in switchtec_ntb.
-> -Currently, it only supports switches configured with exactly 2 
-> -partitions. It also requires the following configuration settings:
-> +An NTB hardware driver is provided for the Switchtec hardware in 
-> +ntb_hw_switchtec. Currently, it only supports switches configured with 
-> +exactly 2 NT partitions and zero or more non-NT partitions. It also 
-> +requires the following configuration settings:
->  
-> -* Both partitions must be able to access each other's GAS spaces.
-> +* Both NT partitions must be able to access each other's GAS spaces.
->    Thus, the bits in the GAS Access Vector under Management Settings
->    must be set to support this.
-> +* Kernel configuration MUST include support for NTB (CONFIG_NTB needs
-> +  to be set)
+On Thu, Sep 27, 2018 at 5:11 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> This patch adds a way to insert FDs into the tracee's process (also
+> close/overwrite fds for the tracee). This functionality is necessary to
+> mock things like socketpair() or dup2() or similar, but since it depends on
+> external (vfs) patches, I've left it as a separate patch as before so the
+> core functionality can still be merged while we argue about this. Except
+> this time it doesn't add any ugliness to the API :)
+[...]
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index 17685803a2af..07a05ad59731 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -41,6 +41,8 @@
+>  #include <linux/tracehook.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/anon_inodes.h>
+> +#include <linux/fdtable.h>
+> +#include <net/cls_cgroup.h>
+>
+>  enum notify_state {
+>         SECCOMP_NOTIFY_INIT,
+> @@ -1684,6 +1686,56 @@ static long seccomp_notify_id_valid(struct seccomp_filter *filter,
+>         return ret;
+>  }
+>
+> +static long seccomp_notify_put_fd(struct seccomp_filter *filter,
+> +                                 unsigned long arg)
+> +{
+> +       struct seccomp_notif_put_fd req;
+> +       void __user *buf = (void __user *)arg;
+> +       struct seccomp_knotif *knotif = NULL;
+> +       long ret;
 > +
-> +NT EP BAR 2 will be dynamically configured as a Direct Window, and the 
-> +configuration file does not need to configure it explicitly.
+> +       if (copy_from_user(&req, buf, sizeof(req)))
+> +               return -EFAULT;
 > +
-> +Please refer to Documentation/ntb.txt in Linux source tree for an 
-> +overall understanding of the Linux NTB stack. ntb_hw_switchtec works as 
-> +an NTB Hardware Driver in this stack.
-> 
+> +       if (req.fd < 0 && req.to_replace < 0)
+> +               return -EINVAL;
+> +
+> +       ret = mutex_lock_interruptible(&filter->notify_lock);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ret = -ENOENT;
+> +       list_for_each_entry(knotif, &filter->notif->notifications, list) {
+> +               struct file *file = NULL;
+> +
+> +               if (knotif->id != req.id)
+> +                       continue;
+> +
+> +               if (req.fd >= 0)
+> +                       file = fget(req.fd);
+
+So here we take a reference on `file`.
+
+> +               if (req.to_replace >= 0) {
+> +                       ret = replace_fd_task(knotif->task, req.to_replace,
+> +                                             file, req.fd_flags);
+
+Then here we try to place the file in knotif->task's file descriptor
+table. This can either fail (e.g. due to exceeded rlimit), in which
+case nothing happens, or it can do do_dup2(), which first takes an
+extra reference to the file, then places it in the task's fd table.
+
+Either way, afterwards, we still hold a reference to the file.
+
+> +               } else {
+> +                       unsigned long max_files;
+> +
+> +                       max_files = task_rlimit(knotif->task, RLIMIT_NOFILE);
+> +                       ret = __alloc_fd(knotif->task->files, 0, max_files,
+> +                                        req.fd_flags);
+> +                       if (ret < 0)
+> +                               break;
+
+If we bail out here, we still hold a reference to `file`.
+
+Suggestion: Change this to "if (ret >= 0) {" and make the following
+code conditional instead of breaking.
+
+> +                       __fd_install(knotif->task->files, ret, file);
+
+But if we reach this point, __fd_install() consumes the file pointer,
+so `file` is a dangling pointer now.
+
+Suggestion: Add "break;" here.
+
+> +               }
+
+Suggestion: Add "if (file != NULL) fput(file);" here.
+
+> +               break;
+> +       }
+> +
+> +       mutex_unlock(&filter->notify_lock);
+> +       return ret;
+> +}
