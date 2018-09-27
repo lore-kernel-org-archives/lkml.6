@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E014C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8391C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA5D216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AD3F216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:28:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMwBU7+u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFA5D216C4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BreOZlqX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD3F216C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbeI1Brr (ORCPT
+        id S1728684AbeI1Brz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:47:47 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41286 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728401AbeI1Brq (ORCPT
+        Thu, 27 Sep 2018 21:47:55 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44350 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728488AbeI1Bro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:47:46 -0400
-Received: by mail-pf1-f195.google.com with SMTP id m77-v6so2585552pfi.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:27:58 -0700 (PDT)
+        Thu, 27 Sep 2018 21:47:44 -0400
+Received: by mail-pf1-f196.google.com with SMTP id k21-v6so2573052pff.11
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:27:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BGoSejrBEFtVHbBL0BYK36ryiXzv88p81h8++1Dth7E=;
-        b=OMwBU7+uS3Q2jD69NvKxs8pumvEgjNDPHQCG8WCX+bIPXcTQqJZKKb39B7vzSYvKTn
-         wktA+XUkcCiqrbfQuUNMblzYwRHAYLFTHRe8Q+IQqkSiDCdB2YOuiA++pMUF8hfbHP1Q
-         yQiF+qOwTKUDoIBzbzy8FYfDHQFGfy+TjJJbmY7PvxrbHSZC5YAp8esngwgO5bjodkru
-         2VkKRIR7Q75PnswDoTnvMVk5TnZE6sE4V1PSxPrcQ3iWNr53S+hifmLnUHvuxg3JdHGF
-         oBISpmGYs+mUoZV/FjJzpb0IihE19hD2jaTGR7O2tOpodhxCqGCw3n3o8EYjQV0MylUb
-         KgyA==
+        bh=wuh9PQJuORDhEW1Qd/Bh2TINja23GTiwyoguU2JzXEg=;
+        b=BreOZlqXIoivOHZ2ib1XqFRve8Dd/ktNmN5tHceWLVx4Wa7/qZl1KKFkcqIbEeg4XZ
+         yKKaVfAoAPaRiQdLH0z/pnHCIuOMVfqbpvfBD8rp9Ag/AIIUZ/0Gx2i+2FR89jXIGmXD
+         NE9YFKr4ff9IOkFLjKRBeJ7KpbxkYYywtpcJRnDpST9c1eU6JmiEKrj9jIh0+mrPn9Sl
+         /bxLDEDW73BMEAgNYL44wEzymDSO9LRntwBJ2drabw7HexF8FOd0jy8FROmKwc6DpJ1y
+         jAwgoDOJ2uswfFCNCtC+pqs7bqAmqs+l8W/iI/auEuc613YOed2StO7TpkO+Q6KrDW1g
+         Y6gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BGoSejrBEFtVHbBL0BYK36ryiXzv88p81h8++1Dth7E=;
-        b=Uvt+1fhxyjUK2Uyu2aXBQpzUu1z56SOhK9f0z27XtdowBFESmwYsYFnAn0hYbPv/l/
-         QuHDNxXXMGzQjbGtf4bLXAJ1GLVSBuRc6b1jZRfs2WRCaK++8tUF1SYNRAYi/kfi8zZY
-         K8Db9Fe/iXnaVA397ggu6ihe8iMze3ANQg5/y09ywlwJgRPCAuHdtdVWR3HPG3OqeWxp
-         YVDeXJ38mdg8wlUSHJ9W4l/9EM/+0O5qpkxwMrxL/4sOwPZxnz1ANNo0XXmUQuThUH7u
-         50z92ZiCG9BG1w60p07pNigg6nF9OpOKtng0lAReF97AnXEgXCRU1wyvLqmD84lOnDir
-         E9pQ==
-X-Gm-Message-State: ABuFfog+luyb/oJjLIpzxZBjR6UxtQrqyKGPwfbO/L3jp9SI9EYRGImg
-        miVLJN/+rzgoBX3a9esppKg=
-X-Google-Smtp-Source: ACcGV62L/rFYWIyyL2JeyRobD/AQ0X8ikN3rzpbMH/hdmqdWxh5LoxpPBBTeVj/pWEEzF5AQ9nqRnA==
-X-Received: by 2002:a63:5558:: with SMTP id f24-v6mr11791116pgm.37.1538076477816;
-        Thu, 27 Sep 2018 12:27:57 -0700 (PDT)
+        bh=wuh9PQJuORDhEW1Qd/Bh2TINja23GTiwyoguU2JzXEg=;
+        b=ItE5oBaooPNMCkT3JKLrrgpmkk7mt+mdbcw3Dm6xRMseabF8q/0TF3Ldr399T8WwX+
+         9I6ZgDLT2/9gyZwUqzCttsV/vT9Y7Fj2XluFqSv/HlKodDP+qRbPh2lzfdyVuf8dtBHy
+         oWNv+tc8AE5PZJL+M9t3QP4Agd5eHon5zEKlglOeaq9kU7Tg2vTILKi32vWQuIWE61zf
+         6Xk4FzW+vh3rOfACs6ncf12ddtlTE4qpufDfC08k/bmWiy/dk5CvhnB/uOAm1+oBlex0
+         cDA2UQiKRrlS/mttuIDVQtZdJb5onFpSlY5waEhmVuC8maP9m3RpMY97kklI3WDvwAdc
+         sBaQ==
+X-Gm-Message-State: ABuFfojFGcdP2DuTuRloiWyRFPsI4HNKwHKiowugZpN/wRrJAxgKErSo
+        RG6QLutE68Tcu8PCeiCKv+k=
+X-Google-Smtp-Source: ACcGV633b8E5X0PZQju3F1eHG9FSpBW5Bizb8t+FcNwsVHoPWMXcjQxBMhmuo/yWmsqE9gHYb9rR4w==
+X-Received: by 2002:a63:d70c:: with SMTP id d12-v6mr6709685pgg.110.1538076475816;
+        Thu, 27 Sep 2018 12:27:55 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm8531502pfc.17.2018.09.27.12.27.55
+        by smtp.gmail.com with ESMTPSA id q2-v6sm8531502pfc.17.2018.09.27.12.27.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 12:27:56 -0700 (PDT)
+        Thu, 27 Sep 2018 12:27:54 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -70,9 +70,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         ARCHITECTURE), Rob Herring <robh@kernel.org>,
         Doug Berger <opendmb@gmail.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/3] soc: bcm: brcmstb: Fix re-entry point with a THUMB2_KERNEL
-Date:   Thu, 27 Sep 2018 12:27:11 -0700
-Message-Id: <20180927192711.26455-4-f.fainelli@gmail.com>
+Subject: [PATCH 2/3] ARM: psci: Fix secondary core boot with THUMB2_KERNEL
+Date:   Thu, 27 Sep 2018 12:27:10 -0700
+Message-Id: <20180927192711.26455-3-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180927192711.26455-1-f.fainelli@gmail.com>
 References: <20180927192711.26455-1-f.fainelli@gmail.com>
@@ -81,30 +81,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the kernel is built with CONFIG_THUMB2_KERNEL we would set the
-kernel's resume entry point to be a function that is already built as
-Thumb-2 code while the boot agent doing the resume is in ARM mode, so
-this does not work. There is a header label defined: cpu_resume_arm
-which we can use to do the switching for us.
+When THUMB2_KERNEL is enabled, we would be setting the secondary core's
+entry point to secondary_startup() which is already Thumb2 code, utilize
+secondary_startup_arm() which takes care of doing the mode switching for
+us.
 
-Fixes: 0b741b8234c8 ("soc: bcm: brcmstb: Add support for S2/S3/S5 suspend states (ARM)")
+Fixes: 05774088391c ("arm: introduce psci_smp_ops")
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/soc/bcm/brcmstb/pm/pm-arm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kernel/psci_smp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/bcm/brcmstb/pm/pm-arm.c b/drivers/soc/bcm/brcmstb/pm/pm-arm.c
-index a5577dd5eb08..8ee06347447c 100644
---- a/drivers/soc/bcm/brcmstb/pm/pm-arm.c
-+++ b/drivers/soc/bcm/brcmstb/pm/pm-arm.c
-@@ -404,7 +404,7 @@ noinline int brcmstb_pm_s3_finish(void)
+diff --git a/arch/arm/kernel/psci_smp.c b/arch/arm/kernel/psci_smp.c
+index cb3fcaeb2233..547a11b065d2 100644
+--- a/arch/arm/kernel/psci_smp.c
++++ b/arch/arm/kernel/psci_smp.c
+@@ -47,13 +47,13 @@
+  *
+  */
+ 
+-extern void secondary_startup(void);
++extern void secondary_startup_arm(void);
+ 
+ static int psci_boot_secondary(unsigned int cpu, struct task_struct *idle)
  {
- 	struct brcmstb_s3_params *params = ctrl.s3_params;
- 	dma_addr_t params_pa = ctrl.s3_params_pa;
--	phys_addr_t reentry = virt_to_phys(&cpu_resume);
-+	phys_addr_t reentry = virt_to_phys(&cpu_resume_arm);
- 	enum bsp_initiate_command cmd;
- 	u32 flags;
+ 	if (psci_ops.cpu_on)
+ 		return psci_ops.cpu_on(cpu_logical_map(cpu),
+-					virt_to_idmap(&secondary_startup));
++					virt_to_idmap(&secondary_startup_arm));
+ 	return -ENODEV;
+ }
  
 -- 
 2.17.1
