@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55CCC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AB6C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ACA12159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ACA12159D
+	by mail.kernel.org (Postfix) with ESMTP id BC9B921582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9B921582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeI0P1M (ORCPT
+        id S1728379AbeI0P1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:27:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55100 "EHLO
+        Thu, 27 Sep 2018 11:27:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55110 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbeI0P1M (ORCPT
+        with ESMTP id S1727338AbeI0P1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:27:12 -0400
+        Thu, 27 Sep 2018 11:27:17 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C09310A4;
-        Thu, 27 Sep 2018 09:09:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8664110A4;
+        Thu, 27 Sep 2018 09:10:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 14/88] hv_netvsc: fix schedule in RCU context
-Date:   Thu, 27 Sep 2018 11:02:55 +0200
-Message-Id: <20180927090302.216926722@linuxfoundation.org>
+Subject: [PATCH 4.18 15/88] net: dsa: mv88e6xxx: Fix ATU Miss Violation
+Date:   Thu, 27 Sep 2018 11:02:56 +0200
+Message-Id: <20180927090302.318677896@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,106 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 018349d70f28a78d5343b3660cb66e1667005f8a ]
+[ Upstream commit ddca24dfcf1bec608668dd44c45d49397b70f520 ]
 
-When netvsc device is removed it can call reschedule in RCU context.
-This happens because canceling the subchannel setup work could (in theory)
-cause a reschedule when manipulating the timer.
+Fix a cut/paste error and a typo which results in ATU miss violations
+not being reported.
 
-To reproduce, run with lockdep enabled kernel and unbind
-a network device from hv_netvsc (via sysfs).
-
-[  160.682011] WARNING: suspicious RCU usage
-[  160.707466] 4.19.0-rc3-uio+ #2 Not tainted
-[  160.709937] -----------------------------
-[  160.712352] ./include/linux/rcupdate.h:302 Illegal context switch in RCU read-side critical section!
-[  160.723691]
-[  160.723691] other info that might help us debug this:
-[  160.723691]
-[  160.730955]
-[  160.730955] rcu_scheduler_active = 2, debug_locks = 1
-[  160.762813] 5 locks held by rebind-eth.sh/1812:
-[  160.766851]  #0: 000000008befa37a (sb_writers#6){.+.+}, at: vfs_write+0x184/0x1b0
-[  160.773416]  #1: 00000000b097f236 (&of->mutex){+.+.}, at: kernfs_fop_write+0xe2/0x1a0
-[  160.783766]  #2: 0000000041ee6889 (kn->count#3){++++}, at: kernfs_fop_write+0xeb/0x1a0
-[  160.787465]  #3: 0000000056d92a74 (&dev->mutex){....}, at: device_release_driver_internal+0x39/0x250
-[  160.816987]  #4: 0000000030f6031e (rcu_read_lock){....}, at: netvsc_remove+0x1e/0x250 [hv_netvsc]
-[  160.828629]
-[  160.828629] stack backtrace:
-[  160.831966] CPU: 1 PID: 1812 Comm: rebind-eth.sh Not tainted 4.19.0-rc3-uio+ #2
-[  160.832952] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v1.0 11/26/2012
-[  160.832952] Call Trace:
-[  160.832952]  dump_stack+0x85/0xcb
-[  160.832952]  ___might_sleep+0x1a3/0x240
-[  160.832952]  __flush_work+0x57/0x2e0
-[  160.832952]  ? __mutex_lock+0x83/0x990
-[  160.832952]  ? __kernfs_remove+0x24f/0x2e0
-[  160.832952]  ? __kernfs_remove+0x1b2/0x2e0
-[  160.832952]  ? mark_held_locks+0x50/0x80
-[  160.832952]  ? get_work_pool+0x90/0x90
-[  160.832952]  __cancel_work_timer+0x13c/0x1e0
-[  160.832952]  ? netvsc_remove+0x1e/0x250 [hv_netvsc]
-[  160.832952]  ? __lock_is_held+0x55/0x90
-[  160.832952]  netvsc_remove+0x9a/0x250 [hv_netvsc]
-[  160.832952]  vmbus_remove+0x26/0x30
-[  160.832952]  device_release_driver_internal+0x18a/0x250
-[  160.832952]  unbind_store+0xb4/0x180
-[  160.832952]  kernfs_fop_write+0x113/0x1a0
-[  160.832952]  __vfs_write+0x36/0x1a0
-[  160.832952]  ? rcu_read_lock_sched_held+0x6b/0x80
-[  160.832952]  ? rcu_sync_lockdep_assert+0x2e/0x60
-[  160.832952]  ? __sb_start_write+0x141/0x1a0
-[  160.832952]  ? vfs_write+0x184/0x1b0
-[  160.832952]  vfs_write+0xbe/0x1b0
-[  160.832952]  ksys_write+0x55/0xc0
-[  160.832952]  do_syscall_64+0x60/0x1b0
-[  160.832952]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  160.832952] RIP: 0033:0x7fe48f4c8154
-
-Resolve this by getting RTNL earlier. This is safe because the subchannel
-work queue does trylock on RTNL and will detect the race.
-
-Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Fixes: 0977644c5005 ("net: dsa: mv88e6xxx: Decode ATU problem interrupt")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/net/dsa/mv88e6xxx/global1.h     |    2 +-
+ drivers/net/dsa/mv88e6xxx/global1_atu.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2172,17 +2172,15 @@ static int netvsc_remove(struct hv_devic
+--- a/drivers/net/dsa/mv88e6xxx/global1.h
++++ b/drivers/net/dsa/mv88e6xxx/global1.h
+@@ -128,7 +128,7 @@
+ #define MV88E6XXX_G1_ATU_OP_GET_CLR_VIOLATION		0x7000
+ #define MV88E6XXX_G1_ATU_OP_AGE_OUT_VIOLATION		BIT(7)
+ #define MV88E6XXX_G1_ATU_OP_MEMBER_VIOLATION		BIT(6)
+-#define MV88E6XXX_G1_ATU_OP_MISS_VIOLTATION		BIT(5)
++#define MV88E6XXX_G1_ATU_OP_MISS_VIOLATION		BIT(5)
+ #define MV88E6XXX_G1_ATU_OP_FULL_VIOLATION		BIT(4)
  
- 	cancel_delayed_work_sync(&ndev_ctx->dwork);
+ /* Offset 0x0C: ATU Data Register */
+--- a/drivers/net/dsa/mv88e6xxx/global1_atu.c
++++ b/drivers/net/dsa/mv88e6xxx/global1_atu.c
+@@ -349,7 +349,7 @@ static irqreturn_t mv88e6xxx_g1_atu_prob
+ 		chip->ports[entry.portvec].atu_member_violation++;
+ 	}
  
--	rcu_read_lock();
--	nvdev = rcu_dereference(ndev_ctx->nvdev);
--
--	if  (nvdev)
-+	rtnl_lock();
-+	nvdev = rtnl_dereference(ndev_ctx->nvdev);
-+	if (nvdev)
- 		cancel_work_sync(&nvdev->subchan_work);
- 
- 	/*
- 	 * Call to the vsc driver to let it know that the device is being
- 	 * removed. Also blocks mtu and channel changes.
- 	 */
--	rtnl_lock();
- 	vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
- 	if (vf_netdev)
- 		netvsc_unregister_vf(vf_netdev);
-@@ -2194,7 +2192,6 @@ static int netvsc_remove(struct hv_devic
- 	list_del(&ndev_ctx->list);
- 
- 	rtnl_unlock();
--	rcu_read_unlock();
- 
- 	hv_set_drvdata(dev, NULL);
- 
+-	if (val & MV88E6XXX_G1_ATU_OP_MEMBER_VIOLATION) {
++	if (val & MV88E6XXX_G1_ATU_OP_MISS_VIOLATION) {
+ 		dev_err_ratelimited(chip->dev,
+ 				    "ATU miss violation for %pM portvec %x\n",
+ 				    entry.mac, entry.portvec);
 
 
