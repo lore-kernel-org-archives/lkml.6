@@ -2,133 +2,113 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2C9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B30C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 711A32159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:16:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711A32159D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E1E52168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:17:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J4DwZhwT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1E52168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeI0Xfr convert rfc822-to-8bit (ORCPT
+        id S1728474AbeI0Xgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:35:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60795 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727587AbeI0Xfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:35:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D83DC20798; Thu, 27 Sep 2018 19:16:27 +0200 (CEST)
-Received: from localhost (unknown [91.116.141.28])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 91F5C20730;
-        Thu, 27 Sep 2018 19:16:27 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 19:16:27 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 11/12] arm64: dts: allwinner: a64: Add DSI pipeline
-Message-ID: <20180927171627.7svkvflamxrmjgve@flea>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-12-jagan@amarulasolutions.com>
+        Thu, 27 Sep 2018 19:36:39 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41980 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbeI0Xgj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:36:39 -0400
+Received: by mail-io1-f68.google.com with SMTP id q4-v6so2456680iob.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 10:17:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zb6LHi+FvjIQDGgKJlWbS8EePaue+YRWWkZ5bo/1YOE=;
+        b=J4DwZhwTI3XsmynMzOde2gwxzhy0+gTi10rg5dL45kXTusD9SuGkPRkdm29xznEz1N
+         FVLXCvyMk+Nvqke3yD0gYg44TIh4whtLzU9Fqsday5kGyyg3eppdSQy318/HMAMyyuJ7
+         mCkXXRj0HE7JtiKil9fjLMn5vAAnYdfTfYktMFChK97mG4w0H9DzzDCHgDwcCt/tH4q7
+         YWOFXY1HQ5lDz9hZWvfJtHrCKBjZL9Q4WLoPRZfd1WfG0MZTwEx4FnAgJYDDKoCmZDPX
+         4vDqHH4NpodDVJ+GV+7sFy22nWRzY91NVkisxmd6mTH2y5YODY5rVYOVAJBdW/FQ4mcb
+         98tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zb6LHi+FvjIQDGgKJlWbS8EePaue+YRWWkZ5bo/1YOE=;
+        b=aiNes8mbZpRX5hxRS8Gcz6KmDan3dfYHKQG5WYRG0IHWtdwW7I7tPpGXLpEvoiJmIT
+         cFlme3oVaNFUsjNN+GanB9vJbyQ76MwbCfM7PMZi6OkaKqXphr/sjTRFe0PMfDgGz2OY
+         +24zJsPbtVSsd8wYAh2jurJVHnnDWFc/T9LX9yjwTXysv5f5EiktfA6mqCIbkwues56k
+         p2WILIbehBamuJuD3nhFh5t3bE3SlNrV7yT/A9x+RWqgv4nBPo/AFlc9NLht27EkBDEW
+         qSE0O6rMEkzqtfqutOFZWZxh92qOC/x4m7m0Dl87P7QU8nZqW+sodc2JjW5mVzOcGD6G
+         tYow==
+X-Gm-Message-State: ABuFfoj2rd0AtRHnSxr99Z6v/K9Ref4b68FxssZ8xVdYWRmKI/n2Of8J
+        CkdMPHzYFT8hNFnvftkaOQKv6lUnW173E1PBIDV+vQ==
+X-Google-Smtp-Source: ACcGV63hxBMqrvKzNGWJIPjyH6COkey2cfw8gsqjckVsEeITl4NRHYcILgIz5kjsHG151dekgeaSo//Tbuo0lBojdPs=
+X-Received: by 2002:a6b:f316:: with SMTP id m22-v6mr8865087ioh.271.1538068641657;
+ Thu, 27 Sep 2018 10:17:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180927114850.24565-12-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 10:17:01
+ -0700 (PDT)
+In-Reply-To: <010001661bba2bbc-a5074e00-2009-414a-be8c-05c58545c7ec-000000@email.amazonses.com>
+References: <20180927130707.151239-1-dvyukov@gmail.com> <010001661bba2bbc-a5074e00-2009-414a-be8c-05c58545c7ec-000000@email.amazonses.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 27 Sep 2018 19:17:01 +0200
+Message-ID: <CACT4Y+atu0Fz0Bhqn+7qpRowySEVWXV+vwVbBZ5y3Z+NnSpLsQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: don't warn about large allocations for slab
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Dmitry Vyukov <dvyukov@gmail.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 05:18:49PM +0530, Jagan Teki wrote:
-> The A64 has a MIPI-DSI block which is similar to A31
-> without mod clock.
-> 
-> So, add dsi node with A64 compatible, dphy node with
-> A31 compatible and finally connect dsi to tcon0 to
-> make proper DSI pipeline.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> index f3a66f888205..308eedc53150 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> @@ -320,6 +320,11 @@
->  					#address-cells = <1>;
->  					#size-cells = <0>;
->  					reg = <1>;
-> +
-> +					tcon0_out_dsi: endpoint@1 {
-> +						reg = <1>;
-> +						remote-endpoint = <&dsi_in_tcon0>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -818,6 +823,45 @@
->  			#interrupt-cells = <3>;
->  		};
->  
-> +
-> +		dsi: dsi@1ca0000 {
-> +			compatible = "allwinner,sun50i-a64-mipi-dsi";
-> +			reg = <0x01ca0000 0x1000>;
-> +			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_MIPI_DSI>;
-> +			clock-names = "bus";
-> +			resets = <&ccu RST_BUS_MIPI_DSI>;
-> +			phys = <&dphy>;
-> +			phy-names = "dphy";
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0>;
-> +
-> +					dsi_in_tcon0: endpoint {
-> +						remote-endpoint = <&tcon0_out_dsi>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		dphy: d-phy@1ca1000 {
-> +			compatible = "allwinner,sun6i-a31-mipi-dphy";
+On Thu, Sep 27, 2018 at 5:51 PM, Christopher Lameter <cl@linux.com> wrote:
+> On Thu, 27 Sep 2018, Dmitry Vyukov wrote:
+>
+>> From: Dmitry Vyukov <dvyukov@google.com>
+>>
+>> This warning does not seem to be useful. Most of the time it fires when
+>> allocation size depends on syscall arguments. We could add __GFP_NOWARN
+>> to these allocation sites, but having a warning only to suppress it
+>> does not make lots of sense. Moreover, this warnings never fires for
+>> constant-size allocations and never for slub, because there are
+>> additional checks and fallback to kmalloc_large() for large allocations
+>> and kmalloc_large() does not warn. So the warning only fires for
+>> non-constant allocations and only with slab, which is odd to begin with.
+>> The warning leads to episodic unuseful syzbot reports. Remote it.
+>
+> /Remove/
+>
+> If its only for slab then KMALLOC_MAX_CACHE_SIZE and KMALLOC_MAX_SIZE are
+> the same value.
+>
+>> While we are here also fix the check. We should check against
+>> KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE. It all kinda
+>> worked because for slab the constants are the same, and slub always
+>> checks the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().
+>> But if we get there with size > KMALLOC_MAX_CACHE_SIZE anyhow
+>> bad things will happen.
+>
+> Then the WARN_ON is correct just change the constant used. Ensure that
+> SLAB does the same checks as SLUB.
 
-You should add an A64 compatible there.
+Mailed v2 which adds the checks to slab.
 
-Thanks!
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I think the warning is still slightly wrong. It means a bug in slab
+code, it has nothing to do with user-passed flags.
