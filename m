@@ -2,130 +2,80 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EE8C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442C6ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0936621655
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:14:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0936621655
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 03966215E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:14:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03966215E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbeI0ScE (ORCPT
+        id S1727411AbeI0ScI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:32:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43992 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727111AbeI0ScE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:32:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EE2B5ACC3;
-        Thu, 27 Sep 2018 12:14:01 +0000 (UTC)
-Subject: Re: [v2 PATCH 2/2 -mm] mm: brk: dwongrade mmap_sem to read when
- shrinking
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        kirill@shutemov.name, willy@infradead.org,
-        ldufour@linux.vnet.ibm.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
- <1537985434-22655-2-git-send-email-yang.shi@linux.alibaba.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <33d52132-546f-3c8a-3445-cdbc9068589a@suse.cz>
-Date:   Thu, 27 Sep 2018 14:14:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <1537985434-22655-2-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 27 Sep 2018 14:32:08 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:25965 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727111AbeI0ScI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 14:32:08 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-63-qJDPQ7bwPhSZo1HHX5j1uw-1; Thu, 27 Sep 2018 13:14:01 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 27 Sep 2018 13:16:14 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 27 Sep 2018 13:16:14 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Peter Zijlstra' <peterz@infradead.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mingo@kernel.org" <mingo@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "longman@redhat.com" <longman@redhat.com>,
+        "andrea.parri@amarulasolutions.com" 
+        <andrea.parri@amarulasolutions.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: RE: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
+Thread-Topic: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
+Thread-Index: AQHUVYyUJvkbcmqKIk6EOuUB7ALKyaUD9acw
+Date:   Thu, 27 Sep 2018 12:16:14 +0000
+Message-ID: <ec232ce22c1a409180725d5e88a1175a@AcuMS.aculab.com>
+References: <20180926110117.405325143@infradead.org>
+ <20180926111307.513429499@infradead.org>
+In-Reply-To: <20180926111307.513429499@infradead.org>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: qJDPQ7bwPhSZo1HHX5j1uw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/18 8:10 PM, Yang Shi wrote:
+RnJvbTogUGV0ZXIgWmlqbHN0cmENCj4gU2VudDogMjYgU2VwdGVtYmVyIDIwMTggMTI6MDENCj4g
+DQo+IE9uIHg4NiB3ZSBjYW5ub3QgZG8gZmV0Y2hfb3Igd2l0aCBhIHNpbmdsZSBpbnN0cnVjdGlv
+biBhbmQgZW5kIHVwDQo+IHVzaW5nIGEgY21weGNoZyBsb29wLCB0aGlzIHJlZHVjZXMgZGV0ZXJt
+aW5pc20uIFJlcGxhY2UgdGhlIGZldGNoX29yDQo+IHdpdGggYSB2ZXJ5IHRyaWNreSBjb21wb3Np
+dGUgeGNoZzggKyBsb2FkLg0KPiANCj4gVGhlIGJhc2ljIGlkZWEgaXMgdGhhdCB3ZSB1c2UgeGNo
+ZzggdG8gdGVzdC1hbmQtc2V0IHRoZSBwZW5kaW5nIGJpdA0KPiAod2hlbiBpdCBpcyBhIGJ5dGUp
+IGFuZCB0aGVuIGEgbG9hZCB0byBmZXRjaCB0aGUgd2hvbGUgd29yZC4gVXNpbmcNCj4gdHdvIGlu
+c3RydWN0aW9ucyBvZiBjb3Vyc2Ugb3BlbnMgYSB3aW5kb3cgd2UgcHJldmlvdXNseSBkaWQgbm90
+IGhhdmUuDQouLi4NCg0KSUlSQyB0aGUgbG9hZCB3aWxsIGJlICdzbG93JyBiZWNhdXNlIGl0IHdp
+bGwgaGF2ZSB0byB3YWl0IGZvciB0aGUNCmVhcmxpZXIgc3RvcmUgdG8gYWN0dWFsbHkgY29tcGxl
+dGUgLSByYXRoZXIgdGhhbiBiZWluZyBzYXRpc2ZpZWQNCmJ5IGRhdGEgZnJvbSB0aGUgc3RvcmUg
+YnVmZmVyIChiZWNhdXNlIHRoZSB3aWR0aHMgYXJlIGRpZmZlcmVudCkuDQoNClRoaXMgbWF5IG5v
+dCBtYXR0ZXIgZm9yIHhjaGcgPw0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExh
+a2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQs
+IFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Again, "downgrade" in the subject
-
-> brk might be used to shinrk memory mapping too other than munmap().
-
-                       ^ shrink
-
-> So, it may hold write mmap_sem for long time when shrinking large
-> mapping, as what commit ("mm: mmap: zap pages with read mmap_sem in
-> munmap") described.
-> 
-> The brk() will not manipulate vmas anymore after __do_munmap() call for
-> the mapping shrink use case. But, it may set mm->brk after
-> __do_munmap(), which needs hold write mmap_sem.
-> 
-> However, a simple trick can workaround this by setting mm->brk before
-> __do_munmap(). Then restore the original value if __do_munmap() fails.
-> With this trick, it is safe to downgrade to read mmap_sem.
-> 
-> So, the same optimization, which downgrades mmap_sem to read for
-> zapping pages, is also feasible and reasonable to this case.
-> 
-> The period of holding exclusive mmap_sem for shrinking large mapping
-> would be reduced significantly with this optimization.
-> 
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-Same nit for the "bool downgrade" name as for patch 1/2.
-
-Thanks,
-Vlastimil
