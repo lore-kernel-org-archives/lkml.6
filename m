@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 954B1C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2B9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E33321533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E33321533
+	by mail.kernel.org (Postfix) with ESMTP id 76F4221533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76F4221533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbeI0Ps4 (ORCPT
+        id S1728983AbeI0PtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:48:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57062 "EHLO
+        Thu, 27 Sep 2018 11:49:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57070 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeI0Ps4 (ORCPT
+        with ESMTP id S1727212AbeI0PtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:48:56 -0400
+        Thu, 27 Sep 2018 11:49:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F5311120;
-        Thu, 27 Sep 2018 09:31:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F22131120;
+        Thu, 27 Sep 2018 09:31:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 44/44] iw_cxgb4: only allow 1 flush on user qps
-Date:   Thu, 27 Sep 2018 11:04:33 +0200
-Message-Id: <20180927090124.694073292@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 35/44] ext4: fix online resizes handling of a too-small final block group
+Date:   Thu, 27 Sep 2018 11:04:24 +0200
+Message-Id: <20180927090123.491361635@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
 References: <20180927090117.997362691@linuxfoundation.org>
@@ -51,57 +52,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve Wise <swise@opengridcomputing.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 308aa2b8f7b7db3332a7d41099fd37851fb793b2 upstream.
+commit f0a459dec5495a3580f8d784555e6f8f3bf7f263 upstream.
 
-Once the qp has been flushed, it cannot be flushed again.  The user qp
-flush logic wasn't enforcing it however.  The bug can cause
-touch-after-free crashes like:
+Avoid growing the file system to an extent so that the last block
+group is too small to hold all of the metadata that must be stored in
+the block group.
 
-Unable to handle kernel paging request for data at address 0x000001ec
-Faulting instruction address: 0xc008000016069100
-Oops: Kernel access of bad area, sig: 11 [#1]
-...
-NIP [c008000016069100] flush_qp+0x80/0x480 [iw_cxgb4]
-LR [c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-Call Trace:
-[c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-[c00800001606e868] c4iw_ib_modify_qp+0x118/0x200 [iw_cxgb4]
-[c0080000119eae80] ib_security_modify_qp+0xd0/0x3d0 [ib_core]
-[c0080000119c4e24] ib_modify_qp+0xc4/0x2c0 [ib_core]
-[c008000011df0284] iwcm_modify_qp_err+0x44/0x70 [iw_cm]
-[c008000011df0fec] destroy_cm_id+0xcc/0x370 [iw_cm]
-[c008000011ed4358] rdma_destroy_id+0x3c8/0x520 [rdma_cm]
-[c0080000134b0540] ucma_close+0x90/0x1b0 [rdma_ucm]
-[c000000000444da4] __fput+0xe4/0x2f0
+This problem can be triggered with the following reproducer:
 
-So fix flush_qp() to only flush the wq once.
+umount /mnt
+mke2fs -F -m0 -b 4096 -t ext4 -O resize_inode,^has_journal \
+	-E resize=1073741824 /tmp/foo.img 128M
+mount /tmp/foo.img /mnt
+truncate --size 1708M /tmp/foo.img
+resize2fs /dev/loop0 295400
+umount /mnt
+e2fsck -fy /tmp/foo.img
 
+Reported-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/infiniband/hw/cxgb4/qp.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/ext4/resize.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1258,6 +1258,12 @@ static void flush_qp(struct c4iw_qp *qhp
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1954,6 +1954,26 @@ retry:
+ 		}
+ 	}
  
- 	t4_set_wq_in_error(&qhp->wq);
- 	if (qhp->ibqp.uobject) {
++	/*
++	 * Make sure the last group has enough space so that it's
++	 * guaranteed to have enough space for all metadata blocks
++	 * that it might need to hold.  (We might not need to store
++	 * the inode table blocks in the last block group, but there
++	 * will be cases where this might be needed.)
++	 */
++	if ((ext4_group_first_block_no(sb, n_group) +
++	     ext4_group_overhead_blocks(sb, n_group) + 2 +
++	     sbi->s_itb_per_group + sbi->s_cluster_ratio) >= n_blocks_count) {
++		n_blocks_count = ext4_group_first_block_no(sb, n_group);
++		n_group--;
++		n_blocks_count_retry = 0;
++		if (resize_inode) {
++			iput(resize_inode);
++			resize_inode = NULL;
++		}
++		goto retry;
++	}
 +
-+		/* for user qps, qhp->wq.flushed is protected by qhp->mutex */
-+		if (qhp->wq.flushed)
-+			return;
-+
-+		qhp->wq.flushed = 1;
- 		t4_set_cq_in_error(&rchp->cq);
- 		spin_lock_irqsave(&rchp->comp_handler_lock, flag);
- 		(*rchp->ibcq.comp_handler)(&rchp->ibcq, rchp->ibcq.cq_context);
+ 	/* extend the last group */
+ 	if (n_group == o_group)
+ 		add = n_blocks_count - o_blocks_count;
 
 
