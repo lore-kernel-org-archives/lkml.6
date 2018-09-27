@@ -2,116 +2,268 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E549C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F29AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E6B32170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:22:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E6B32170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A6CF21712
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:22:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRtYMZq5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6CF21712
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbeI0Ukf (ORCPT
+        id S1728161AbeI0Ukm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:40:35 -0400
-Received: from mga07.intel.com ([134.134.136.100]:9410 "EHLO mga07.intel.com"
+        Thu, 27 Sep 2018 16:40:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728020AbeI0Uke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:40:34 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 07:22:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
-   d="scan'208";a="74223781"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.69])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Sep 2018 07:21:58 -0700
-Date:   Thu, 27 Sep 2018 17:21:58 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
- w/ PF_SGX
-Message-ID: <20180927142158.GG8242@linux.intel.com>
-References: <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
- <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
- <20180926173516.GA10920@linux.intel.com>
- <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
- <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
- <20180926204400.GA11446@linux.intel.com>
- <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
- <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
- <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
- <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com>
+        id S1727263AbeI0Ukl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 16:40:41 -0400
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80D312170B;
+        Thu, 27 Sep 2018 14:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538058130;
+        bh=Ys0f332m0S8tcH8XjlQ3vnXEb15BxBNOfpTDMlO1ZJQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=oRtYMZq5e0CHq0zCp/WHPzrlI2aRmb8HdCMDf7TxBPQ/2aLQlGmW3EFVaQybVmRo+
+         cE4hMPkhD996wZh2vDUqduOAayX4Bqd7w/B93a+hKDmHc2cZAN0/O/H09C1v5GgAsI
+         uCrKzQiPCRd2XFq88cFKYcGC75LsPGjMWZ54+7o0=
+Subject: [PATCH 3/3] resource: Fix find_next_iomem_res() iteration issue
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Lianbo Jiang <lijiang@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, thomas.lendacky@amd.com,
+        baiyaowei@cmss.chinamobile.com, tiwai@suse.de, bp@suse.de,
+        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com
+Date:   Thu, 27 Sep 2018 09:22:09 -0500
+Message-ID: <153805812916.1157.177580438135143788.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <153805773703.1157.14773321497580233478.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <153805773703.1157.14773321497580233478.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXyjRh1sBk1V21iTtjdhiWGCYsHnUNktkJC5xFiZy6c9A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 03:37:45PM -0700, Andy Lutomirski wrote:
-> Yeah.  Maybe like this: > > xorl %eax,%eax > eenter_insn:
-> ENCLU[whatever]
-> eenter_landing_pad:
-> ret
-> 
-> And the kernel would use the existing vdso2c vdso-symbol-finding
-> mechanism to do the fixup.
-> 
-> >
-> > How would a syscall work, though?  I assume we can't just enter the
-> > enclave from ring0.
-> 
-> My understanding of how AEX works is a bit vague, but maybe a syscall
-> could reuse the mechanism?  The vDSO approach seems considerably
-> simpler.
-> 
-> We do need to make sure that a fault that happens on or after return
-> from an AEX event does the right thing.  But I'm still vague on how
-> that works, sigh.
-> 
-> --Andy
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Returning from AEX does not differ from any other memory access event so
-AFAIK it should be handled right with the proposed solution already.
-For convenience I think we could have a fixed trampoline for AEX e.g.
-this how it is implemented in the open source LE that I did:
+Previously find_next_iomem_res() used "*res" as both an input parameter for
+the range to search and the type of resource to search for, and an output
+parameter for the resource we found, which makes the interface confusing.
 
-sgx_get_token:
-	push	%rbx
-	mov	$0x02, %rax
-	mov	%rsi, %rbx
-	mov	%rdx, %rsi
-	mov	$sgx_async_exit, %rcx
-sgx_async_exit:
-	ENCLU
-	pop	%rbx
-	ret
+The current callers use find_next_iomem_res() incorrectly because they
+allocate a single struct resource and use it for repeated calls to
+find_next_iomem_res().  When find_next_iomem_res() returns a resource, it
+overwrites the start, end, flags, and desc members of the struct.  If we
+call find_next_iomem_res() again, we must update or restore these fields.
+The previous code restored res.start and res.end, but not res.flags or
+res.desc.
 
-BTW, if I converted the in-kernel LE as a standalone test program, would
-that be useful for basic testing of the series?
+Since the callers did not restore res.flags, if they searched for flags
+IORESOURCE_MEM | IORESOURCE_BUSY and found a resource with flags
+IORESOURCE_MEM | IORESOURCE_BUSY | IORESOURCE_SYSRAM, the next search would
+incorrectly skip resources unless they were also marked as
+IORESOURCE_SYSRAM.
 
-/Jarkko
+Fix this by restructuring the interface so it takes explicit "start, end,
+flags" parameters and uses "*res" only as an output parameter.
+
+Original-patch: http://lore.kernel.org/lkml/20180921073211.20097-2-lijiang@redhat.com
+Based-on-patch-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ kernel/resource.c |   94 +++++++++++++++++++++++------------------------------
+ 1 file changed, 41 insertions(+), 53 deletions(-)
+
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 155ec873ea4d..9891ea90cc8f 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -319,23 +319,26 @@ int release_resource(struct resource *old)
+ EXPORT_SYMBOL(release_resource);
+ 
+ /*
+- * Finds the lowest iomem resource existing within [res->start..res->end].
+- * The caller must specify res->start, res->end, res->flags, and optionally
+- * desc.  If found, returns 0, res is overwritten, if not found, returns -1.
+- * This function walks the whole tree and not just first level children until
+- * and unless first_level_children_only is true.
++ * Finds the lowest iomem resource that covers part of [start..end].  The
++ * caller must specify start, end, flags, and desc (which may be
++ * IORES_DESC_NONE).
++ *
++ * If a resource is found, returns 0 and *res is overwritten with the part
++ * of the resource that's within [start..end]; if none is found, returns
++ * -1.
++ *
++ * This function walks the whole tree and not just first level children
++ * unless first_level_children_only is true.
+  */
+-static int find_next_iomem_res(struct resource *res, unsigned long desc,
+-			       bool first_level_children_only)
++static int find_next_iomem_res(resource_size_t start, resource_size_t end,
++			       unsigned long flags, unsigned long desc,
++			       bool first_level_children_only,
++			       struct resource *res)
+ {
+-	resource_size_t start, end;
+ 	struct resource *p;
+ 	bool sibling_only = false;
+ 
+ 	BUG_ON(!res);
+-
+-	start = res->start;
+-	end = res->end;
+ 	BUG_ON(start >= end);
+ 
+ 	if (first_level_children_only)
+@@ -344,7 +347,7 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
+ 	read_lock(&resource_lock);
+ 
+ 	for (p = iomem_resource.child; p; p = next_resource(p, sibling_only)) {
+-		if ((p->flags & res->flags) != res->flags)
++		if ((p->flags & flags) != flags)
+ 			continue;
+ 		if ((desc != IORES_DESC_NONE) && (desc != p->desc))
+ 			continue;
+@@ -359,32 +362,31 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
+ 	read_unlock(&resource_lock);
+ 	if (!p)
+ 		return -1;
++
+ 	/* copy data */
+-	if (res->start < p->start)
+-		res->start = p->start;
+-	if (res->end > p->end)
+-		res->end = p->end;
++	res->start = max(start, p->start);
++	res->end = min(end, p->end);
+ 	res->flags = p->flags;
+ 	res->desc = p->desc;
+ 	return 0;
+ }
+ 
+-static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
+-				 bool first_level_children_only,
+-				 void *arg,
++static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
++				 unsigned long flags, unsigned long desc,
++				 bool first_level_children_only, void *arg,
+ 				 int (*func)(struct resource *, void *))
+ {
+-	u64 orig_end = res->end;
++	struct resource res;
+ 	int ret = -1;
+ 
+-	while ((res->start < res->end) &&
+-	       !find_next_iomem_res(res, desc, first_level_children_only)) {
+-		ret = (*func)(res, arg);
++	while (start < end &&
++	       !find_next_iomem_res(start, end, flags, desc,
++				    first_level_children_only, &res)) {
++		ret = (*func)(&res, arg);
+ 		if (ret)
+ 			break;
+ 
+-		res->start = res->end + 1;
+-		res->end = orig_end;
++		start = res.end + 1;
+ 	}
+ 
+ 	return ret;
+@@ -407,13 +409,7 @@ static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
+ int walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start,
+ 		u64 end, void *arg, int (*func)(struct resource *, void *))
+ {
+-	struct resource res;
+-
+-	res.start = start;
+-	res.end = end;
+-	res.flags = flags;
+-
+-	return __walk_iomem_res_desc(&res, desc, false, arg, func);
++	return __walk_iomem_res_desc(start, end, flags, desc, false, arg, func);
+ }
+ EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
+ 
+@@ -427,13 +423,9 @@ EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
+ int walk_system_ram_res(u64 start, u64 end, void *arg,
+ 				int (*func)(struct resource *, void *))
+ {
+-	struct resource res;
+-
+-	res.start = start;
+-	res.end = end;
+-	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
++	unsigned long flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+ 
+-	return __walk_iomem_res_desc(&res, IORES_DESC_NONE, true,
++	return __walk_iomem_res_desc(start, end, flags, IORES_DESC_NONE, true,
+ 				     arg, func);
+ }
+ 
+@@ -444,13 +436,9 @@ int walk_system_ram_res(u64 start, u64 end, void *arg,
+ int walk_mem_res(u64 start, u64 end, void *arg,
+ 		 int (*func)(struct resource *, void *))
+ {
+-	struct resource res;
+-
+-	res.start = start;
+-	res.end = end;
+-	res.flags = IORESOURCE_MEM | IORESOURCE_BUSY;
++	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+ 
+-	return __walk_iomem_res_desc(&res, IORES_DESC_NONE, true,
++	return __walk_iomem_res_desc(start, end, flags, IORES_DESC_NONE, true,
+ 				     arg, func);
+ }
+ 
+@@ -464,25 +452,25 @@ int walk_mem_res(u64 start, u64 end, void *arg,
+ int walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
+ 		void *arg, int (*func)(unsigned long, unsigned long, void *))
+ {
++	resource_size_t start, end;
++	unsigned long flags;
+ 	struct resource res;
+ 	unsigned long pfn, end_pfn;
+-	u64 orig_end;
+ 	int ret = -1;
+ 
+-	res.start = (u64) start_pfn << PAGE_SHIFT;
+-	res.end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+-	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+-	orig_end = res.end;
+-	while ((res.start < res.end) &&
+-		(find_next_iomem_res(&res, IORES_DESC_NONE, true) >= 0)) {
++	start = (u64) start_pfn << PAGE_SHIFT;
++	end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
++	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
++	while (start < end &&
++	       !find_next_iomem_res(start, end, flags, IORES_DESC_NONE,
++				    true, &res)) {
+ 		pfn = (res.start + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 		end_pfn = (res.end + 1) >> PAGE_SHIFT;
+ 		if (end_pfn > pfn)
+ 			ret = (*func)(pfn, end_pfn - pfn, arg);
+ 		if (ret)
+ 			break;
+-		res.start = res.end + 1;
+-		res.end = orig_end;
++		start = res.end + 1;
+ 	}
+ 	return ret;
+ }
+
