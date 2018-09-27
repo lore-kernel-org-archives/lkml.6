@@ -2,158 +2,147 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAD8C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEE6C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03744216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:24:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03744216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 01BE5216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:25:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01BE5216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728727AbeI1Boa (ORCPT
+        id S1728745AbeI1Bot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:44:30 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:41344 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728101AbeI1Boa (ORCPT
+        Thu, 27 Sep 2018 21:44:49 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40689 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728101AbeI1Bot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:44:30 -0400
-X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
-   d="scan'208";a="18564781"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 27 Sep 2018 12:24:42 -0700
-Received: from validation1-HP-EliteBook-8540p.mchp-main.com (10.10.76.4) by
- chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Thu, 27 Sep 2018 12:24:41 -0700
-From:   Yuiko Oshino <yuiko.oshino@microchip.com>
-To:     <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <f.fainelli@gmail.com>,
-        <andrew@lunn.ch>
-CC:     <linux-kernel@vger.kernel.org>, <mark.rutland@arm.com>,
-        <m.felsch@pengutronix.de>, <Markus.Niebel@tqs.de>,
-        <netdev@vger.kernel.org>, <UNGLinuxDriver@microchip.com>
-Subject: [PATCH v2 net-next 1/2] net: phy: micrel: add Microchip KSZ9131 inital driver
-Date:   Thu, 27 Sep 2018 16:16:42 -0400
-Message-ID: <1538079402-6208-1-git-send-email-yuiko.oshino@microchip.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 27 Sep 2018 21:44:49 -0400
+Received: by mail-ot1-f68.google.com with SMTP id g14-v6so3687780otj.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:25:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EzsjO9h7V10qHOZxD5XIsRojhm72Dwp0dDZrz1FkINA=;
+        b=MCAO0f+LIPMx/rzV5kZCKVfJuyp0dXYocjWdO+FmKS1XmMxSVZ0dhBcfe2EP+C1czL
+         rLp+/x9dQKdlb+KGOSMId7CDbwbmhLe7nxBDarRrbipYaFF3pnk2oVowHXauhchnb2ID
+         yKaiH+0HtCNZyFft1oT1b7gzvG52p5IW/0peU0kAyRYg57g4QMZQd2wA5RdFA55tU1bD
+         g2rM+TiDH18RepuD+lDgI6Vemr4S6b5DcDC6RFZF+3mWz4miBYEK4gPFTqJKQEw6h7+z
+         GqA5QqbUVc3Y2AfQcX7q1SXC7niJlJl2qo3lT5Dru4Fa1IwBrtKU4dladrntmCCM/D6U
+         jwxA==
+X-Gm-Message-State: ABuFfojMBzSIPevc7DH2s89ML8RsOB68ZXxllHVeYWNrmvUFjm2zQLIx
+        +gKOkMivn/PU0GawNFS+9DrfDEY49u/n0g==
+X-Google-Smtp-Source: ACcGV61eObLL4t4PC2wrD1OmiXHvTMJWXumpwvV/Y1LRJUzSo4YBGd6ZdQJSPprR9AJIzdloc3NV3g==
+X-Received: by 2002:a9d:4d0c:: with SMTP id n12-v6mr2355183otf.286.1538076301015;
+        Thu, 27 Sep 2018 12:25:01 -0700 (PDT)
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com. [209.85.167.175])
+        by smtp.gmail.com with ESMTPSA id y26-v6sm1128429oti.53.2018.09.27.12.24.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 12:25:00 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id y81-v6so3196791oia.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:24:59 -0700 (PDT)
+X-Received: by 2002:aca:5217:: with SMTP id g23-v6mr1132684oib.293.1538076299687;
+ Thu, 27 Sep 2018 12:24:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180823213600.23426-1-alexandre.belloni@bootlin.com>
+ <CAOesGMjDKKSNVccu4D579SiwL9zEU7ha7HQCHncvh2r4kpO6fQ@mail.gmail.com>
+ <20180926092706.GA16644@piout.net> <CADRPPNQwWgU6OcE7CjxyrgSXjUjwYe4VY0gQD8jx6D+eT_DWrw@mail.gmail.com>
+In-Reply-To: <CADRPPNQwWgU6OcE7CjxyrgSXjUjwYe4VY0gQD8jx6D+eT_DWrw@mail.gmail.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Thu, 27 Sep 2018 14:24:48 -0500
+X-Gmail-Original-Message-ID: <CADRPPNRTWSLapqLHO=y5_Rcbh27CigAjPuorLYPrzqxUGYt-9Q@mail.gmail.com>
+Message-ID: <CADRPPNRTWSLapqLHO=y5_Rcbh27CigAjPuorLYPrzqxUGYt-9Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] soc: fsl: qbman: qman_portal: defer probing when qman
+ is not available
+To:     alexandre.belloni@bootlin.com,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc:     Olof Johansson <olof@lixom.net>, Roy Pledge <roy.pledge@nxp.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Microchip Technology KSZ9131 10/100/1000 Ethernet PHY
+On Wed, Sep 26, 2018 at 1:15 PM Li Yang <leoyang.li@nxp.com> wrote:
+>
+> On Wed, Sep 26, 2018 at 4:28 AM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> >
+> > On 25/09/2018 21:45:56+0200, Olof Johansson wrote:
+> > > Hi,
+> > >
+> > >
+> > > On Thu, Aug 23, 2018 at 11:36 PM Alexandre Belloni
+> > > <alexandre.belloni@bootlin.com> wrote:
+> > > >
+> > > > If the qman driver (qman_ccsr) doesn't probe or fail to probe before
+> > > > qman_portal, qm_ccsr_start will be either NULL or a stale pointer to an
+> > > > unmapped page.
+> > > >
+> > > > This leads to a crash when probing  qman_portal as the init_pcfg function
+> > > > calls qman_liodn_fixup that tries to read qman registers.
+> > > >
+> > > > Assume that qman didn't probe when the pool mask is 0.
+> > > >
+> > > > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > > > ---
+> > > >  drivers/soc/fsl/qbman/qman_portal.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
+> > > > index a120002b630e..4fc80d2c8feb 100644
+> > > > --- a/drivers/soc/fsl/qbman/qman_portal.c
+> > > > +++ b/drivers/soc/fsl/qbman/qman_portal.c
+> > > > @@ -277,6 +277,8 @@ static int qman_portal_probe(struct platform_device *pdev)
+> > > >         }
+> > > >
+> > > >         pcfg->pools = qm_get_pools_sdqcr();
+> > > > +       if (pcfg->pools == 0)
+> > > > +               return -EPROBE_DEFER;
+> > >
+> > > This is quite late in the probe, after a bunch of resources have been claimed.
+> > >
+> > > Note that the ioremaps above this are doing unwinds, and you'll end up
+> > > doing duplicate ioremaps if you come in and probe again.
+> > >
+> > > You should probably unwind those allocations, or move them to devm_*
+> > > or do this check earlier in the function.
+> > >
+> >
+> > The actual chance of having that happen is quite small (this was coming
+> > from a non working DT) and I mainly wanted to avoid a crash so the
+> > platform could still boot. I would think moving to devm_ would be the
+> > right thing to do.
+>
+> Even if it is not failing with the upstreamed device trees, it is
+> still good to harden the driver for possible issues.  Moving to devm_
+> is definitely a right thing to do.  But I also think checking if the
+> qman is already probed should be the first thing to do before starting
+> to allocate resources and etc and rolling back later.  Probably we can
+> move the qm_get_pools_sdqcr() to the begining of the probe to
+> determine if qman is probed as it doesn't seem to depend on any of the
+> setups done right now.
 
-Signed-off-by: Yuiko Oshino <yuiko.oshino@microchip.com>
----
- drivers/net/phy/micrel.c   | 32 +++++++++++++++++++++++++++++---
- include/linux/micrel_phy.h |  1 +
- 2 files changed, 30 insertions(+), 3 deletions(-)
+I just find out Laurentiu also included the following patches in his
+SMMU patch series (although not neccessarily related to SMMU) which
+also fix the same problem.  I think they are more straightforward and
+can deal with the case that qman failed to probe.  So we can take
+these to fix this problem instead in 4.19.
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 3db06b4..a4473cb 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -14,7 +14,7 @@
-  * option) any later version.
-  *
-  * Support : Micrel Phys:
-- *		Giga phys: ksz9021, ksz9031
-+ *		Giga phys: ksz9021, ksz9031, ksz9131
-  *		100/10 Phys : ksz8001, ksz8721, ksz8737, ksz8041
-  *			   ksz8021, ksz8031, ksz8051,
-  *			   ksz8081, ksz8091,
-@@ -425,6 +425,7 @@ static int ksz9021_config_init(struct phy_device *phydev)
- #define MII_KSZ9031RN_MMD_REGDATA_REG	0x0e
- #define OP_DATA				1
- #define KSZ9031_PS_TO_REG		60
-+#define KSZ9131_PS_TO_REG		100
- 
- /* Extended registers */
- /* MMD Address 0x0 */
-@@ -470,6 +471,10 @@ static int ksz9031_of_load_skew_values(struct phy_device *phydev,
- 	u16 maxval;
- 	u16 newval;
- 	int i;
-+	int pstoreg = KSZ9031_PS_TO_REG;
-+
-+	if (phydev->drv->phy_id == PHY_ID_KSZ9131)
-+		pstoreg = KSZ9131_PS_TO_REG;
- 
- 	for (i = 0; i < numfields; i++)
- 		if (!of_property_read_u32(of_node, field[i], val + i))
-@@ -489,7 +494,7 @@ static int ksz9031_of_load_skew_values(struct phy_device *phydev,
- 			mask = 0xffff;
- 			mask ^= maxval << (field_sz * i);
- 			newval = (newval & mask) |
--				(((val[i] / KSZ9031_PS_TO_REG) & maxval)
-+				(((val[i] / pstoreg) & maxval)
- 					<< (field_sz * i));
- 		}
- 
-@@ -602,7 +607,10 @@ static int ksz9031_config_init(struct phy_device *phydev)
- 		}
- 	}
- 
--	return ksz9031_center_flp_timing(phydev);
-+	if (phydev->drv->phy_id == PHY_ID_KSZ9031)
-+		return ksz9031_center_flp_timing(phydev);
-+	else
-+		return 0;
- 
- err_force_master:
- 	phydev_err(phydev, "failed to force the phy to master mode\n");
-@@ -975,6 +983,23 @@ static struct phy_driver ksphy_driver[] = {
- 	.suspend	= genphy_suspend,
- 	.resume		= kszphy_resume,
- }, {
-+	.phy_id		= PHY_ID_KSZ9131,
-+	.phy_id_mask	= MICREL_PHY_ID_MASK,
-+	.name		= "Microchip KSZ9131 Gigabit PHY",
-+	.features	= PHY_GBIT_FEATURES,
-+	.flags		= PHY_HAS_INTERRUPT,
-+	.driver_data	= &ksz9021_type,
-+	.probe		= kszphy_probe,
-+	.config_init	= ksz9031_config_init,
-+	.read_status	= ksz9031_read_status,
-+	.ack_interrupt	= kszphy_ack_interrupt,
-+	.config_intr	= kszphy_config_intr,
-+	.get_sset_count = kszphy_get_sset_count,
-+	.get_strings	= kszphy_get_strings,
-+	.get_stats	= kszphy_get_stats,
-+	.suspend	= genphy_suspend,
-+	.resume		= kszphy_resume,
-+}, {
- 	.phy_id		= PHY_ID_KSZ8873MLL,
- 	.phy_id_mask	= MICREL_PHY_ID_MASK,
- 	.name		= "Micrel KSZ8873MLL Switch",
-@@ -1022,6 +1047,7 @@ MODULE_LICENSE("GPL");
- static struct mdio_device_id __maybe_unused micrel_tbl[] = {
- 	{ PHY_ID_KSZ9021, 0x000ffffe },
- 	{ PHY_ID_KSZ9031, MICREL_PHY_ID_MASK },
-+	{ PHY_ID_KSZ9131, MICREL_PHY_ID_MASK },
- 	{ PHY_ID_KSZ8001, 0x00fffffc },
- 	{ PHY_ID_KS8737, MICREL_PHY_ID_MASK },
- 	{ PHY_ID_KSZ8021, 0x00ffffff },
-diff --git a/include/linux/micrel_phy.h b/include/linux/micrel_phy.h
-index 472fa4d..7361cd3 100644
---- a/include/linux/micrel_phy.h
-+++ b/include/linux/micrel_phy.h
-@@ -31,6 +31,7 @@
- #define PHY_ID_KSZ8081		0x00221560
- #define PHY_ID_KSZ8061		0x00221570
- #define PHY_ID_KSZ9031		0x00221620
-+#define PHY_ID_KSZ9131		0x00221640
- 
- #define PHY_ID_KSZ886X		0x00221430
- #define PHY_ID_KSZ8863		0x00221435
--- 
-2.7.4
+https://patchwork.kernel.org/patch/10616021/
+https://patchwork.kernel.org/patch/10616019/
+https://patchwork.kernel.org/patch/10615971/
 
+Regards,
+Leo
