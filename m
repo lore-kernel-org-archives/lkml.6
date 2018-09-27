@@ -2,131 +2,229 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BDAC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AACC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377202168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:05:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 377202168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F1D321582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:05:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1D321582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbeI0XYM (ORCPT
+        id S1728687AbeI0XYW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:24:12 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45539 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727587AbeI0XYM (ORCPT
+        Thu, 27 Sep 2018 19:24:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41167 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727587AbeI0XYW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:24:12 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g5Zig-0007aT-Ly; Thu, 27 Sep 2018 17:04:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] qed: fix spelling mistake "b_cb_registred" -> "b_cb_registered"
-Date:   Thu, 27 Sep 2018 18:04:54 +0100
-Message-Id: <20180927170454.7829-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 27 Sep 2018 19:24:22 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RH4x6T101795
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 27 Sep 2018 10:04:59 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RH4xWv101792;
+        Thu, 27 Sep 2018 10:04:59 -0700
+Date:   Thu, 27 Sep 2018 10:04:59 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Pu Wen <tipbot@zytor.com>
+Message-ID: <tip-c6babb5806b77c6ca7078c3487bb0a29704a4e38@git.kernel.org>
+Cc:     bp@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, puwen@hygon.cn
+Reply-To: mingo@kernel.org, puwen@hygon.cn, bp@suse.de, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de
+In-Reply-To: <5f8877bd413f2ea0833378dd5454df0720e1c0df.1537885177.git.puwen@hygon.cn>
+References: <5f8877bd413f2ea0833378dd5454df0720e1c0df.1537885177.git.puwen@hygon.cn>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/pci, x86/amd_nb: Add Hygon Dhyana support to PCI
+ and northbridge
+Git-Commit-ID: c6babb5806b77c6ca7078c3487bb0a29704a4e38
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit-ID:  c6babb5806b77c6ca7078c3487bb0a29704a4e38
+Gitweb:     https://git.kernel.org/tip/c6babb5806b77c6ca7078c3487bb0a29704a4e38
+Author:     Pu Wen <puwen@hygon.cn>
+AuthorDate: Tue, 25 Sep 2018 22:46:11 +0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Thu, 27 Sep 2018 18:28:58 +0200
 
-Trivial fix to spelling mistake struct field name, rename it.
+x86/pci, x86/amd_nb: Add Hygon Dhyana support to PCI and northbridge
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hygon's PCI vendor ID is 0x1d94, and there are PCI devices
+0x1450/0x1463/0x1464 for the host bridge on the Hygon Dhyana platform.
+Add Hygon Dhyana support to the PCI and northbridge subsystems by using
+the code path of AMD family 17h.
+
+ [ bp: Massage commit message, sort local vars into reverse xmas tree
+   order and move the amd_northbridges.num check up. ]
+
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci_ids.h
+Cc: tglx@linutronix.de
+Cc: mingo@redhat.com
+Cc: hpa@zytor.com
+Cc: x86@kernel.org
+Cc: thomas.lendacky@amd.com
+Cc: helgaas@kernel.org
+Cc: linux-pci@vger.kernel.org
+Link: https://lkml.kernel.org/r/5f8877bd413f2ea0833378dd5454df0720e1c0df.1537885177.git.puwen@hygon.cn
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c | 12 ++++++------
- drivers/net/ethernet/qlogic/qed/qed_ll2.h |  4 ++--
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/kernel/amd_nb.c | 45 +++++++++++++++++++++++++++++++++++++--------
+ arch/x86/pci/amd_bus.c   |  6 ++++--
+ include/linux/pci_ids.h  |  2 ++
+ 3 files changed, 43 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-index 14ac9cab2653..da13117a604a 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -63,8 +63,8 @@
- #include "qed_sp.h"
- #include "qed_rdma.h"
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index b51c6b183a35..a6eca647bc76 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -61,6 +61,21 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+ 	{}
+ };
  
--#define QED_LL2_RX_REGISTERED(ll2)	((ll2)->rx_queue.b_cb_registred)
--#define QED_LL2_TX_REGISTERED(ll2)	((ll2)->tx_queue.b_cb_registred)
-+#define QED_LL2_RX_REGISTERED(ll2)	((ll2)->rx_queue.b_cb_registered)
-+#define QED_LL2_TX_REGISTERED(ll2)	((ll2)->tx_queue.b_cb_registered)
++static const struct pci_device_id hygon_root_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_AMD_17H_ROOT) },
++	{}
++};
++
++const struct pci_device_id hygon_nb_misc_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_AMD_17H_DF_F3) },
++	{}
++};
++
++static const struct pci_device_id hygon_nb_link_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_AMD_17H_DF_F4) },
++	{}
++};
++
+ const struct amd_nb_bus_dev_range amd_nb_bus_dev_ranges[] __initconst = {
+ 	{ 0x00, 0x18, 0x20 },
+ 	{ 0xff, 0x00, 0x20 },
+@@ -194,15 +209,24 @@ EXPORT_SYMBOL_GPL(amd_df_indirect_read);
  
- #define QED_LL2_TX_SIZE (256)
- #define QED_LL2_RX_SIZE (4096)
-@@ -1404,7 +1404,7 @@ int qed_ll2_acquire_connection(void *cxt, struct qed_ll2_acquire_data *data)
- 				    &p_hwfn->p_ll2_info[i],
- 				    &p_ll2_info->rx_queue.rx_sb_index,
- 				    &p_ll2_info->rx_queue.p_fw_cons);
--		p_ll2_info->rx_queue.b_cb_registred = true;
-+		p_ll2_info->rx_queue.b_cb_registered = true;
+ int amd_cache_northbridges(void)
+ {
+-	u16 i = 0;
+-	struct amd_northbridge *nb;
++	const struct pci_device_id *misc_ids = amd_nb_misc_ids;
++	const struct pci_device_id *link_ids = amd_nb_link_ids;
++	const struct pci_device_id *root_ids = amd_root_ids;
+ 	struct pci_dev *root, *misc, *link;
++	struct amd_northbridge *nb;
++	u16 i = 0;
+ 
+ 	if (amd_northbridges.num)
+ 		return 0;
+ 
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++		root_ids = hygon_root_ids;
++		misc_ids = hygon_nb_misc_ids;
++		link_ids = hygon_nb_link_ids;
++	}
++
+ 	misc = NULL;
+-	while ((misc = next_northbridge(misc, amd_nb_misc_ids)) != NULL)
++	while ((misc = next_northbridge(misc, misc_ids)) != NULL)
+ 		i++;
+ 
+ 	if (!i)
+@@ -218,11 +242,11 @@ int amd_cache_northbridges(void)
+ 	link = misc = root = NULL;
+ 	for (i = 0; i != amd_northbridges.num; i++) {
+ 		node_to_amd_nb(i)->root = root =
+-			next_northbridge(root, amd_root_ids);
++			next_northbridge(root, root_ids);
+ 		node_to_amd_nb(i)->misc = misc =
+-			next_northbridge(misc, amd_nb_misc_ids);
++			next_northbridge(misc, misc_ids);
+ 		node_to_amd_nb(i)->link = link =
+-			next_northbridge(link, amd_nb_link_ids);
++			next_northbridge(link, link_ids);
  	}
  
- 	if (data->input.tx_num_desc) {
-@@ -1413,7 +1413,7 @@ int qed_ll2_acquire_connection(void *cxt, struct qed_ll2_acquire_data *data)
- 				    &p_hwfn->p_ll2_info[i],
- 				    &p_ll2_info->tx_queue.tx_sb_index,
- 				    &p_ll2_info->tx_queue.p_fw_cons);
--		p_ll2_info->tx_queue.b_cb_registred = true;
-+		p_ll2_info->tx_queue.b_cb_registered = true;
- 	}
+ 	if (amd_gart_present())
+@@ -261,6 +285,7 @@ EXPORT_SYMBOL_GPL(amd_cache_northbridges);
+  */
+ bool __init early_is_amd_nb(u32 device)
+ {
++	const struct pci_device_id *misc_ids = amd_nb_misc_ids;
+ 	const struct pci_device_id *id;
+ 	u32 vendor = device & 0xffff;
  
- 	*data->p_connection_handle = i;
-@@ -1929,7 +1929,7 @@ int qed_ll2_terminate_connection(void *cxt, u8 connection_handle)
+@@ -268,8 +293,11 @@ bool __init early_is_amd_nb(u32 device)
+ 	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return false;
  
- 	/* Stop Tx & Rx of connection, if needed */
- 	if (QED_LL2_TX_REGISTERED(p_ll2_conn)) {
--		p_ll2_conn->tx_queue.b_cb_registred = false;
-+		p_ll2_conn->tx_queue.b_cb_registered = false;
- 		smp_wmb(); /* Make sure this is seen by ll2_lb_rxq_completion */
- 		rc = qed_sp_ll2_tx_queue_stop(p_hwfn, p_ll2_conn);
- 		if (rc)
-@@ -1940,7 +1940,7 @@ int qed_ll2_terminate_connection(void *cxt, u8 connection_handle)
- 	}
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++		misc_ids = hygon_nb_misc_ids;
++
+ 	device >>= 16;
+-	for (id = amd_nb_misc_ids; id->vendor; id++)
++	for (id = misc_ids; id->vendor; id++)
+ 		if (vendor == id->vendor && device == id->device)
+ 			return true;
+ 	return false;
+@@ -281,7 +309,8 @@ struct resource *amd_get_mmconfig_range(struct resource *res)
+ 	u64 base, msr;
+ 	unsigned int segn_busn_bits;
  
- 	if (QED_LL2_RX_REGISTERED(p_ll2_conn)) {
--		p_ll2_conn->rx_queue.b_cb_registred = false;
-+		p_ll2_conn->rx_queue.b_cb_registered = false;
- 		smp_wmb(); /* Make sure this is seen by ll2_lb_rxq_completion */
- 		rc = qed_sp_ll2_rx_queue_stop(p_hwfn, p_ll2_conn);
- 		if (rc)
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.h b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
-index f65817012e97..1a5c1ae01474 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.h
-@@ -79,7 +79,7 @@ struct qed_ll2_rx_queue {
- 	struct qed_chain rxq_chain;
- 	struct qed_chain rcq_chain;
- 	u8 rx_sb_index;
--	bool b_cb_registred;
-+	bool b_cb_registered;
- 	__le16 *p_fw_cons;
- 	struct list_head active_descq;
- 	struct list_head free_descq;
-@@ -93,7 +93,7 @@ struct qed_ll2_tx_queue {
- 	spinlock_t lock;
- 	struct qed_chain txq_chain;
- 	u8 tx_sb_index;
--	bool b_cb_registred;
-+	bool b_cb_registered;
- 	__le16 *p_fw_cons;
- 	struct list_head active_descq;
- 	struct list_head free_descq;
--- 
-2.17.1
-
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return NULL;
+ 
+ 	/* assume all cpus from fam10h have mmconfig */
+diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
+index 649bdde63e32..bfa50e65ef6c 100644
+--- a/arch/x86/pci/amd_bus.c
++++ b/arch/x86/pci/amd_bus.c
+@@ -93,7 +93,8 @@ static int __init early_root_info_init(void)
+ 		vendor = id & 0xffff;
+ 		device = (id>>16) & 0xffff;
+ 
+-		if (vendor != PCI_VENDOR_ID_AMD)
++		if (vendor != PCI_VENDOR_ID_AMD &&
++		    vendor != PCI_VENDOR_ID_HYGON)
+ 			continue;
+ 
+ 		if (hb_probes[i].device == device) {
+@@ -390,7 +391,8 @@ static int __init pci_io_ecs_init(void)
+ 
+ static int __init amd_postcore_init(void)
+ {
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return 0;
+ 
+ 	early_root_info_init();
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index d157983b84cf..8a0841c73f81 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2561,6 +2561,8 @@
+ 
+ #define PCI_VENDOR_ID_AMAZON		0x1d0f
+ 
++#define PCI_VENDOR_ID_HYGON		0x1d94
++
+ #define PCI_VENDOR_ID_TEKRAM		0x1de1
+ #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+ 
