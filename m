@@ -2,175 +2,163 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93024C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222AEC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB342157C
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:11:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6B6D21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:11:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nNZJ0i9M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB342157C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iAMi7lWA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZXrHMDHf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B6D21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbeI0O2H (ORCPT
+        id S1727188AbeI0O2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 10:28:07 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53891 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbeI0O2G (ORCPT
+        Thu, 27 Sep 2018 10:28:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58968 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbeI0O2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 10:28:06 -0400
-Received: by mail-it1-f193.google.com with SMTP id q70-v6so6777866itb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:11:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=D7kwNcenCSZhT5ZWHIEghlJsqdfrreH5mIlMNeDqPGg=;
-        b=nNZJ0i9MFIGW7Ynhtqy1z4fLDGyNC7GDJV6+PQYNx3PVtqKh0UWluQc6OVBfDFLvh0
-         /vyTw1KSBqkZs7udjXHgHWxUM2AgW4xP61J9AuX6G7qFTa6o6nAiR6SBV9Cz4NiwKtaf
-         lPPxOz78K8x65WpCGMRN+7SgiZfC25Cpr6W6QDIS1oHjQCxbrhSF72P+M0h+jrq2Ld6C
-         pXxXFnqeiXwQySrzqv8kyo8paSYsu4cEWz9E0J7j7yUerhyQ0GUqspxRJpAtqPesB0+A
-         vrFJL0ee/tOIC/gLUpv51Em1NkxV4SCPQkQBOvEWDG7iNfuSZS3eg8DmRi18eXtcANRd
-         ArSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=D7kwNcenCSZhT5ZWHIEghlJsqdfrreH5mIlMNeDqPGg=;
-        b=j/UYdGt0sJXj1Xo3B3F7iEPWqlHJ2oqHRVo3qxEinWMB5eLK+LcJ7K85oGrY6U3nrq
-         pRjSGWmO69CoglNYXYWIBFNF3Or4tN56bWOknXtfRP/Pu7JejkjJOgaHQzugAYe6zJ7p
-         chWKyPyaiezrkuivVu1ylSBb+SxaqQU0CY9V9wkhN9/VrB0VOHar9vY5mB3XZ4qI4u1E
-         WJW34c9lzFMa/XtpMJLx7spNt8TQK2fjDKgHxcfj1dNF+52zsM4JX6betjtTLb4E7mf1
-         50udLrTCXjwp2h07zgb8oLDV90TAUzjLUYHyiuTmKfgOmvlZ+3RwU8SmCzaeqjcsSg0m
-         QqxA==
-X-Gm-Message-State: ABuFfoj+ENZQejGZRJLPv/TA6C3Od2owLzRDBOH/08+kqPD9X6EEtG3B
-        Gvpqf5sStvnx8QITX48eLcjEj6eEmjVvrSA+lxn3kw==
-X-Google-Smtp-Source: ACcGV60gL0CUXb0+Vo/uK9cmQQNOxHEO2q3mU0bQvA3ft4YQ0T4cioppXOId61uSfq3B31mBhLrYYletkg1ziXcyeMM=
-X-Received: by 2002:a02:c04e:: with SMTP id u14-v6mr4250095jam.110.1538035865774;
- Thu, 27 Sep 2018 01:11:05 -0700 (PDT)
+        Thu, 27 Sep 2018 10:28:48 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 353CB60BF5; Thu, 27 Sep 2018 08:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538035907;
+        bh=YdKP1LfME2hoioR+eYsigXAyOOK8KuacZFl2Y/0pMAw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=iAMi7lWALA7JWRmT1t/rfgzsaElwD4Exds5OgnQNjmgq3GZfpPjqs9riMjZmDLSjZ
+         3NBYBEV3i0tQAxgmYUQhE+9gab5Es3Us5QwVG6svWcLl8u/qwhY6lgYtTag159ecVk
+         03RSGS4ULsylTRXYnRkldvNAf+V7zigQiiJkAh9w=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 869E0607C6;
+        Thu, 27 Sep 2018 08:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538035905;
+        bh=YdKP1LfME2hoioR+eYsigXAyOOK8KuacZFl2Y/0pMAw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZXrHMDHffIAuhRYGG5jFbKVPbULWXRTzXQTUmFph+vWIqR4jJfFAsiA2YNVwF2A5U
+         9NXaNwodM/MEGsoDOxJJBqg7gS/KvaXN1BzgFjWn3r8ieWts/HcLVxe4q2D7FamuX7
+         HuqJvejtA/4ob6c1AU6A8SWui+lDlfIJ90YksAL4=
 MIME-Version: 1.0
-Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 01:10:45
- -0700 (PDT)
-In-Reply-To: <CACT4Y+YbfOYDHJjeK-88wQDg2oSF3fqsaWBhkDwnDr+KUsLnDA@mail.gmail.com>
-References: <00000000000084e2450576c817cc@google.com> <CAM_iQpXxzR3GP4wK7z+wW_0-vC9cuyiwnrCYqx+NpBgDvBXLcg@mail.gmail.com>
- <7fcb1c03-6976-9b34-601d-5f50b74c5b0a@gmail.com> <CAM_iQpX4sKSPFXgEjU-be=he=91+=3Bm9KvP3CMciA9zi2b-6g@mail.gmail.com>
- <CACT4Y+YbfOYDHJjeK-88wQDg2oSF3fqsaWBhkDwnDr+KUsLnDA@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 27 Sep 2018 10:10:45 +0200
-Message-ID: <CACT4Y+YbQbZ7XTPK1HLvPiR9rmSm7Cz0H2LJAFfYfAta1Y3CiQ@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in tcf_block_find
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot+37b8770e6d5a8220a039@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 27 Sep 2018 13:41:45 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        boris.ostrovsky@oracle.com, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, mhocko@suse.com, vbabka@suse.cz,
+        iamjoonsoo.kim@lge.com, gregkh@linuxfoundation.org,
+        osalvador@suse.de, malat@debian.org,
+        kirill.shutemov@linux.intel.com, jrdr.linux@gmail.com,
+        yasu.isimatu@gmail.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, vatsa@codeaurora.org,
+        vinmenon@codeaurora.org, getarunks@gmail.com
+Subject: Re: [PATCH v3] memory_hotplug: Free pages as higher order
+In-Reply-To: <36488c0e-6bae-e277-2cdb-32d0dcc40065@suse.com>
+References: <1538031530-25489-1-git-send-email-arunks@codeaurora.org>
+ <36488c0e-6bae-e277-2cdb-32d0dcc40065@suse.com>
+Message-ID: <21949851c3b2c82853588101f39f1207@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 10:06 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Sep 26, 2018 at 11:55 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
->>> >> Hello,
->>> >>
->>> >> syzbot found the following crash on:
->>> >>
->>> >> HEAD commit:    4b1bd6976945 net: phy: marvell: Fix build.
->>> >> git tree:       net-next
->>> >> console output: https://syzkaller.appspot.com/x/log.txt?x=16f763fa400000
->>> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=443816db871edd66
->>> >> dashboard link: https://syzkaller.appspot.com/bug?extid=37b8770e6d5a8220a039
->>> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a5614e400000
->>> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141a532a400000
->>> >>
->>> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> >> Reported-by: syzbot+37b8770e6d5a8220a039@syzkaller.appspotmail.com
->>> >>
->>> >> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
->>> >> 8021q: adding VLAN 0 to HW filter on device team0
->>> >> ==================================================================
->>> >> BUG: KASAN: use-after-free in tcf_block_find+0x9d1/0xb90
->>> >> net/sched/cls_api.c:646
->>> >> Read of size 4 at addr ffff8801cc126978 by task syz-executor002/5646
->>> >>
->>> >> CPU: 1 PID: 5646 Comm: syz-executor002 Not tainted 4.19.0-rc5+ #232
->>> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>> >> Google 01/01/2011
->>> >> Call Trace:
->>> >>   __dump_stack lib/dump_stack.c:77 [inline]
->>> >>   dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->>> >>   print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->>> >>   kasan_report_error mm/kasan/report.c:354 [inline]
->>> >>   kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->>> >>   __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
->>> >>   tcf_block_find+0x9d1/0xb90 net/sched/cls_api.c:646
->>> >
->>> > Hmm. looks like missing a rcu_dereference() here:
->>> >
->>> >                 if (!*parent) {
->>> >                         *q = dev->qdisc;
->>> >                         *parent = (*q)->handle;
->>> >
->>>
->>> We hold RTNL here.
->>>
->>> Have we already done the changes allowing dev->qdisc being changed
->>> without RTNL being required ?
->>
->> That transition is not completed yet, but holding RTNL doesn't help
->> any more after we now free qdisc in rcu callback.
->>
->> More interestingly, rcu read lock is already held in this context,
->> so it seems we still have to use rcu_deference() to read dev->qdisc
->> and of course mark it with __rcu too.
->
-> On hardware level rcu_deference() only affects Alpha. On software
-> level, it can affect all archs due to e.g. a re-read of the variable.
-> Do we see the potential for compilation that would lead to the UAF
-> here? A missed rcu_deference() would not be the first thing that I
-> would suspect for UAF on x86. It's more likely some bolder bug.
+On 2018-09-27 12:41, Juergen Gross wrote:
+> On 27/09/18 08:58, Arun KS wrote:
+>> When free pages are done with higher order, time spend on
+>> coalescing pages by buddy allocator can be reduced. With
+>> section size of 256MB, hot add latency of a single section
+>> shows improvement from 50-60 ms to less than 1 ms, hence
+>> improving the hot add latency by 60%.
+>> 
+>> Modify external providers of online callback to align with
+>> the change.
+>> 
+>> Signed-off-by: Arun KS <arunks@codeaurora.org>
+>> ---
+>> Changes since v2:
+>> reuse code from __free_pages_boot_core()
+>> 
+>> Changes since v1:
+>> - Removed prefetch()
+>> 
+>> Changes since RFC:
+>> - Rebase.
+>> - As suggested by Michal Hocko remove pages_per_block.
+>> - Modifed external providers of online_page_callback.
+>> 
+>> v2: https://lore.kernel.org/patchwork/patch/991363/
+>> v1: https://lore.kernel.org/patchwork/patch/989445/
+>> RFC: https://lore.kernel.org/patchwork/patch/984754/
+>> 
+>> ---
+>>  drivers/hv/hv_balloon.c        |  6 ++++--
+>>  drivers/xen/balloon.c          | 18 ++++++++++++++---
+>>  include/linux/memory_hotplug.h |  2 +-
+>>  mm/internal.h                  |  1 +
+>>  mm/memory_hotplug.c            | 44 
+>> ++++++++++++++++++++++++++++++------------
+>>  mm/page_alloc.c                |  2 +-
+>>  6 files changed, 54 insertions(+), 19 deletions(-)
+>> 
+> 
+> ...
+> 
+>> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+>> index e12bb25..010cf4d 100644
+>> --- a/drivers/xen/balloon.c
+>> +++ b/drivers/xen/balloon.c
+>> @@ -390,8 +390,8 @@ static enum bp_state 
+>> reserve_additional_memory(void)
+>> 
+>>  	/*
+>>  	 * add_memory_resource() will call online_pages() which in its turn
+>> -	 * will call xen_online_page() callback causing deadlock if we don't
+>> -	 * release balloon_mutex here. Unlocking here is safe because the
+>> +	 * will call xen_bring_pgs_online() callback causing deadlock if we
+>> +	 * don't release balloon_mutex here. Unlocking here is safe because 
+>> the
+>>  	 * callers drop the mutex before trying again.
+>>  	 */
+>>  	mutex_unlock(&balloon_mutex);
+>> @@ -422,6 +422,18 @@ static void xen_online_page(struct page *page)
+>>  	mutex_unlock(&balloon_mutex);
+>>  }
+>> 
+>> +static int xen_bring_pgs_online(struct page *pg, unsigned int order)
+>> +{
+>> +	unsigned long i, size = (1 << order);
+>> +	unsigned long start_pfn = page_to_pfn(pg);
+>> +
+>> +	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, 
+>> start_pfn);
+>> +	for (i = 0; i < size; i++)
+>> +		xen_online_page(pfn_to_page(start_pfn + i));
+> 
 
+Hi,
 
-Would a stack trace for call_rcu be helpful here? I have this idea for
-a long time, but never get around to implementing it:
-https://bugzilla.kernel.org/show_bug.cgi?id=198437
+> xen_online_page() isn't very complex and this is the only user.
+> 
+> Why don't you move its body in here and drop the extra function?
+> And now you can execute the loop with balloon_mutex held instead of
+> taking and releasing it in each iteration of the loop.
+Point taken. Will incorporate them.
 
-Also FWIW I recently used the following hack for another net bug. It
-made that other bug involving call_rcu way more likely to fire. Maybe
-it will be helpful here too.
-
-diff --git a/net/core/dst.c b/net/core/dst.c
-index 81ccf20e28265..591a8d0aca545 100644
---- a/net/core/dst.c
-+++ b/net/core/dst.c
-@@ -187,8 +187,16 @@ void dst_release(struct dst_entry *dst)
-                if (unlikely(newrefcnt < 0))
-                        net_warn_ratelimited("%s: dst:%p refcnt:%d\n",
-                                             __func__, dst, newrefcnt);
--               if (!newrefcnt)
--                       call_rcu(&dst->rcu_head, dst_destroy_rcu);
-+               if (!newrefcnt) {
-+                       if (lock_is_held(&rcu_bh_lock_map) ||
-+                               lock_is_held(&rcu_lock_map) ||
-+                               lock_is_held(&rcu_sched_lock_map)) {
-+                               call_rcu(&dst->rcu_head, dst_destroy_rcu);
-+                       } else {
-+                               synchronize_rcu();
-+                               dst_destroy_rcu(&dst->rcu_head);
-+                       }
-+               }
-        }
- }
+Regards,
+Arun
+> 
+> 
+> Juergen
