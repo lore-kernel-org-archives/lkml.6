@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA247C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A7DC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F28621533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F28621533
+	by mail.kernel.org (Postfix) with ESMTP id 834552159B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834552159B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbeI0PwM (ORCPT
+        id S1729263AbeI0PwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:52:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57402 "EHLO
+        Thu, 27 Sep 2018 11:52:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727389AbeI0PwM (ORCPT
+        with ESMTP id S1728356AbeI0PwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:52:12 -0400
+        Thu, 27 Sep 2018 11:52:15 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 739601136;
-        Thu, 27 Sep 2018 09:34:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 280BE113A;
+        Thu, 27 Sep 2018 09:34:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.4 08/28] xen/x86/vpmu: Zero struct pt_regs before calling into sample handling code
-Date:   Thu, 27 Sep 2018 11:06:32 +0200
-Message-Id: <20180927090638.047261704@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Behmer <jbehmer@google.com>,
+        Vaibhav Nagarnaik <vnagarnaik@google.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 09/28] ring-buffer: Allow for rescheduling when removing pages
+Date:   Thu, 27 Sep 2018 11:06:33 +0200
+Message-Id: <20180927090638.084317176@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090637.687829444@linuxfoundation.org>
 References: <20180927090637.687829444@linuxfoundation.org>
@@ -52,33 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Vaibhav Nagarnaik <vnagarnaik@google.com>
 
-commit 70513d58751d7c6c1a0133557b13089b9f2e3e66 upstream.
+commit 83f365554e47997ec68dc4eca3f5dce525cd15c3 upstream.
 
-Otherwise we may leak kernel stack for events that sample user
-registers.
+When reducing ring buffer size, pages are removed by scheduling a work
+item on each CPU for the corresponding CPU ring buffer. After the pages
+are removed from ring buffer linked list, the pages are free()d in a
+tight loop. The loop does not give up CPU until all pages are removed.
+In a worst case behavior, when lot of pages are to be freed, it can
+cause system stall.
 
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+After the pages are removed from the list, the free() can happen while
+the work is rescheduled. Call cond_resched() in the loop to prevent the
+system hangup.
+
+Link: http://lkml.kernel.org/r/20180907223129.71994-1-vnagarnaik@google.com
+
 Cc: stable@vger.kernel.org
+Fixes: 83f40318dab00 ("ring-buffer: Make removal of ring buffer pages atomic")
+Reported-by: Jason Behmer <jbehmer@google.com>
+Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/pmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/ring_buffer.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/xen/pmu.c
-+++ b/arch/x86/xen/pmu.c
-@@ -477,7 +477,7 @@ static void xen_convert_regs(const struc
- irqreturn_t xen_pmu_irq_handler(int irq, void *dev_id)
- {
- 	int err, ret = IRQ_NONE;
--	struct pt_regs regs;
-+	struct pt_regs regs = {0};
- 	const struct xen_pmu_data *xenpmu_data = get_xenpmu_data();
- 	uint8_t xenpmu_flags = get_xenpmu_flags();
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1513,6 +1513,8 @@ rb_remove_pages(struct ring_buffer_per_c
+ 	tmp_iter_page = first_page;
+ 
+ 	do {
++		cond_resched();
++
+ 		to_remove_page = tmp_iter_page;
+ 		rb_inc_page(cpu_buffer, &tmp_iter_page);
  
 
 
