@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431FBC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7D6C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0187D20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0187D20836
+	by mail.kernel.org (Postfix) with ESMTP id E4A0421582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A0421582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeI0Pbu (ORCPT
+        id S1728454AbeI0Pb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:31:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55528 "EHLO
+        Thu, 27 Sep 2018 11:31:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbeI0Pbu (ORCPT
+        with ESMTP id S1727108AbeI0Pb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:31:50 -0400
+        Thu, 27 Sep 2018 11:31:56 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC4591117;
-        Thu, 27 Sep 2018 09:14:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B12F51117;
+        Thu, 27 Sep 2018 09:14:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        Wen Xu <wen.xu@gatech.edu>
-Subject: [PATCH 4.18 78/88] ext4: avoid arithemetic overflow that can trigger a BUG
-Date:   Thu, 27 Sep 2018 11:03:59 +0200
-Message-Id: <20180927090310.091349330@linuxfoundation.org>
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.18 79/88] ext4: recalucate superblock checksum after updating free blocks/inodes
+Date:   Thu, 27 Sep 2018 11:04:00 +0200
+Message-Id: <20180927090310.193618233@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -53,56 +53,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit bcd8e91f98c156f4b1ebcfacae675f9cfd962441 upstream.
+commit 4274f516d4bc50648a4d97e4f67ecbd7b65cde4a upstream.
 
-A maliciously crafted file system can cause an overflow when the
-results of a 64-bit calculation is stored into a 32-bit length
-parameter.
+When mounting the superblock, ext4_fill_super() calculates the free
+blocks and free inodes and stores them in the superblock.  It's not
+strictly necessary, since we don't use them any more, but it's nice to
+keep them roughly aligned to reality.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200623
+Since it's not critical for file system correctness, the code doesn't
+call ext4_commit_super().  The problem is that it's in
+ext4_commit_super() that we recalculate the superblock checksum.  So
+if we're not going to call ext4_commit_super(), we need to call
+ext4_superblock_csum_set() to make sure the superblock checksum is
+consistent.
 
+Most of the time, this doesn't matter, since we end up calling
+ext4_commit_super() very soon thereafter, and definitely by the time
+the file system is unmounted.  However, it doesn't work in this
+sequence:
+
+mke2fs -Fq -t ext4 /dev/vdc 128M
+mount /dev/vdc /vdc
+cp xfstests/git-versions /vdc
+godown /vdc
+umount /vdc
+mount /dev/vdc
+tune2fs -l /dev/vdc
+
+With this commit, the "tune2fs -l" no longer fails.
+
+Reported-by: Chengguang Xu <cgxu519@gmx.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Wen Xu <wen.xu@gatech.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4.h  |    3 +++
- fs/ext4/inode.c |    8 ++++++--
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ fs/ext4/super.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -675,6 +675,9 @@ enum {
- /* Max physical block we can address w/o extents */
- #define EXT4_MAX_BLOCK_FILE_PHYS	0xFFFFFFFF
- 
-+/* Max logical block we can support */
-+#define EXT4_MAX_LOGICAL_BLOCK		0xFFFFFFFF
-+
- /*
-  * Structure of an inode on the disk
-  */
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3412,12 +3412,16 @@ static int ext4_iomap_begin(struct inode
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
- 	unsigned int blkbits = inode->i_blkbits;
--	unsigned long first_block = offset >> blkbits;
--	unsigned long last_block = (offset + length - 1) >> blkbits;
-+	unsigned long first_block, last_block;
- 	struct ext4_map_blocks map;
- 	bool delalloc = false;
- 	int ret;
- 
-+	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
-+		return -EINVAL;
-+	first_block = offset >> blkbits;
-+	last_block = min_t(loff_t, (offset + length - 1) >> blkbits,
-+			   EXT4_MAX_LOGICAL_BLOCK);
- 
- 	if (flags & IOMAP_REPORT) {
- 		if (ext4_has_inline_data(inode)) {
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4357,11 +4357,13 @@ no_journal:
+ 	block = ext4_count_free_clusters(sb);
+ 	ext4_free_blocks_count_set(sbi->s_es, 
+ 				   EXT4_C2B(sbi, block));
++	ext4_superblock_csum_set(sb);
+ 	err = percpu_counter_init(&sbi->s_freeclusters_counter, block,
+ 				  GFP_KERNEL);
+ 	if (!err) {
+ 		unsigned long freei = ext4_count_free_inodes(sb);
+ 		sbi->s_es->s_free_inodes_count = cpu_to_le32(freei);
++		ext4_superblock_csum_set(sb);
+ 		err = percpu_counter_init(&sbi->s_freeinodes_counter, freei,
+ 					  GFP_KERNEL);
+ 	}
 
 
