@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D23DC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1DEC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 609DE2156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609DE2156B
+	by mail.kernel.org (Postfix) with ESMTP id 507D82156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:07:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507D82156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeI0PYU (ORCPT
+        id S1727362AbeI0PY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:24:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54706 "EHLO
+        Thu, 27 Sep 2018 11:24:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54712 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbeI0PYU (ORCPT
+        with ESMTP id S1726944AbeI0PY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:24:20 -0400
+        Thu, 27 Sep 2018 11:24:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2B2D10C8;
-        Thu, 27 Sep 2018 09:07:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 726AB10C8;
+        Thu, 27 Sep 2018 09:07:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Taht <dave.taht@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 01/88] gso_segment: Reset skb->mac_len after modifying network header
-Date:   Thu, 27 Sep 2018 11:02:42 +0200
-Message-Id: <20180927090300.788614977@linuxfoundation.org>
+Subject: [PATCH 4.18 02/88] ipv6: fix possible use-after-free in ip6_xmit()
+Date:   Thu, 27 Sep 2018 11:02:43 +0200
+Message-Id: <20180927090300.881351924@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -52,55 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Toke Høiland-Jørgensen" <toke@toke.dk>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit c56cae23c6b167acc68043c683c4573b80cbcc2c ]
+[ Upstream commit bbd6528d28c1b8e80832b3b018ec402b6f5c3215 ]
 
-When splitting a GSO segment that consists of encapsulated packets, the
-skb->mac_len of the segments can end up being set wrong, causing packet
-drops in particular when using act_mirred and ifb interfaces in
-combination with a qdisc that splits GSO packets.
+In the unlikely case ip6_xmit() has to call skb_realloc_headroom(),
+we need to call skb_set_owner_w() before consuming original skb,
+otherwise we risk a use-after-free.
 
-This happens because at the time skb_segment() is called, network_header
-will point to the inner header, throwing off the calculation in
-skb_reset_mac_len(). The network_header is subsequently adjust by the
-outer IP gso_segment handlers, but they don't set the mac_len.
+Bring IPv6 in line with what we do in IPv4 to fix this.
 
-Fix this by adding skb_reset_mac_len() calls to both the IPv4 and IPv6
-gso_segment handlers, after they modify the network_header.
-
-Many thanks to Eric Dumazet for his help in identifying the cause of
-the bug.
-
-Acked-by: Dave Taht <dave.taht@gmail.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@toke.dk>
+Fixes: 1da177e4c3f41 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/af_inet.c     |    1 +
- net/ipv6/ip6_offload.c |    1 +
- 2 files changed, 2 insertions(+)
+ net/ipv6/ip6_output.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/net/ipv4/af_inet.c
-+++ b/net/ipv4/af_inet.c
-@@ -1377,6 +1377,7 @@ struct sk_buff *inet_gso_segment(struct
- 		if (encap)
- 			skb_reset_inner_headers(skb);
- 		skb->network_header = (u8 *)iph - skb->head;
-+		skb_reset_mac_len(skb);
- 	} while ((skb = skb->next));
- 
- out:
---- a/net/ipv6/ip6_offload.c
-+++ b/net/ipv6/ip6_offload.c
-@@ -115,6 +115,7 @@ static struct sk_buff *ipv6_gso_segment(
- 			payload_len = skb->len - nhoff - sizeof(*ipv6h);
- 		ipv6h->payload_len = htons(payload_len);
- 		skb->network_header = (u8 *)ipv6h - skb->head;
-+		skb_reset_mac_len(skb);
- 
- 		if (udpfrag) {
- 			int err = ip6_find_1stfragopt(skb, &prevhdr);
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -219,12 +219,10 @@ int ip6_xmit(const struct sock *sk, stru
+ 				kfree_skb(skb);
+ 				return -ENOBUFS;
+ 			}
++			if (skb->sk)
++				skb_set_owner_w(skb2, skb->sk);
+ 			consume_skb(skb);
+ 			skb = skb2;
+-			/* skb_set_owner_w() changes sk->sk_wmem_alloc atomically,
+-			 * it is safe to call in our context (socket lock not held)
+-			 */
+-			skb_set_owner_w(skb, (struct sock *)sk);
+ 		}
+ 		if (opt->opt_flen)
+ 			ipv6_push_frag_opts(skb, opt, &proto);
 
 
