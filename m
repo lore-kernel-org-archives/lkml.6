@@ -7,73 +7,72 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477D4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE621C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EECD9214FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5885B206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejvH+K9N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EECD9214FE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n3dVL426"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5885B206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbeI0SXL (ORCPT
+        id S1727289AbeI0SZY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:23:11 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35478 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbeI0SXL (ORCPT
+        Thu, 27 Sep 2018 14:25:24 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40661 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeI0SZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 14:23:11 -0400
-Received: by mail-wm1-f67.google.com with SMTP id o18-v6so5725769wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 05:05:11 -0700 (PDT)
+        Thu, 27 Sep 2018 14:25:24 -0400
+Received: by mail-wm1-f65.google.com with SMTP id o2-v6so5683592wmh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 05:07:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=tZPTXli445mUPNm3UdaNATqmiA/QbbDo0dTRZDIk38Y=;
-        b=ejvH+K9NkBpLoWOv40vJ+Pjz3byNO2uMgk4JTl5l54lcg0JSqDOpC5Xr5tW4Orkwo1
-         ANkMN82q0ujgOA5RtinecY2j9UZGqWAHPfQktb145uoLOyGY3MoOr8ZgvklpoOMW3d/f
-         k1rLHRsKok5tWyIOf+uwcErKlCdU5OTV2/FI0Ame6lrdESRmOlcFS/kOkOjgOlQmqvK7
-         3cQEcrHJtowiKJ8Cl4I6YHNJT7hCeJOcKz/8gJCO3rfB3ir8BgD9aFDNB8uCts9+d5hT
-         gE9BuOCLaXwNymTBQxrdbMphnJxWaROeTZsET/uoQrblOmoxzC3sYfoiM3UKcS9s4IXx
-         mOdA==
+        bh=rA5HXrGguICT9+nXSQnjsA7qnbS9iyKMSToLqrzmqpI=;
+        b=n3dVL42668f3Q3UxwQwGwePLQnI30Ua0uMXb1ebXaCE34Cb6JT0axcQfw8fPErCGod
+         xWRP2vktnwT3mWGUGhvmkWlu0ryGqjknANXfNUIJ3mjHl5m3kb6heKwOBuBxP2Nb0u35
+         iPSqcDs5b25qpeC3dIwyUG0jVh5CtKvJhG8LbS33GYBhKnup+GDWbjjlYPxL5s6MpmAy
+         gHsu0EUx8JJJIJW6OAfRjfchuNga56QljVnyk3Bqi018jZGHg0h8/VaYxppeAzucI0At
+         m/SzLelFUs3ldcC1izzllZ2DshVDSNFbO0yiu6A9r5YECkwWlrHD2oRD8pA9jWJoGwWa
+         KpZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tZPTXli445mUPNm3UdaNATqmiA/QbbDo0dTRZDIk38Y=;
-        b=TrhIRBjSmwqVi1BDSI+xhJ0KRvqKxghQVxB0f3Bxv0zktqwoX0dofkkG8ol4xp7KMP
-         xhzWK8xVuQlESmBbQpL5HLaIBbT/k3nzkhUPWYWbpJPzPbXNFUSE+DPEJMH8mo9i+ebu
-         yp/JtfiblC0SvIHnii57YkqCHjLCIqr3MXf43KVKTrHVMApSyJBOjLnFKMcTE29aQAxL
-         TcQFbL9EGmUiBaMv3j4AEwP25x2EHiDQy/TGK/nARvqTmlp1wqRRzzTqD54KYyxiadGz
-         /CcYNQES+Sgom/bQCrzL5+8jXFu5Qk2Px3qFLX11063KKseCoK4JdGYm1QapDFb8Dzx/
-         ND2g==
-X-Gm-Message-State: ABuFfojOUOLC4QHIeTi16lTXNcB0SLOUCU49ndZuXvSGh29IkmZfBC6O
-        ZlNQyp00PYObSRwY0S+WwPByKVKy
-X-Google-Smtp-Source: ACcGV60R4/ldFPgl9p63T5QEVrxlZQeul/1QByO4ji1dQRJoQD9uNDJHGTLwfkwJ8ke8FxT+zRquAg==
-X-Received: by 2002:a1c:4182:: with SMTP id o124-v6mr8053942wma.101.1538049910628;
-        Thu, 27 Sep 2018 05:05:10 -0700 (PDT)
+        bh=rA5HXrGguICT9+nXSQnjsA7qnbS9iyKMSToLqrzmqpI=;
+        b=EFVx4vQeY5vjtKvmhTj70Kx89+lUoNPslsahELA15VzyEZsCv7FVCghmnz0r2LQrPL
+         wJ1fUHM7axkRzrF5nBWyZ5DhJtxHauGc0bQnYdr2tnN0Vc4p73u8S5ampP3sU2doJjnr
+         9XM9GyGVhfzU1W1cJW100+HvCilJ6BfgpBYZfANTs+XQMGrKlnofUZJeUteFpf6TLkuJ
+         /sELnLyCGb6MlqQVciQldFN/wgNmTDGEi2McdrqOWOgP1cEkWAhq2EB/EiZjFQiOmY4d
+         zslR+kwYce4kJfiTmpptYdcVe4HHtPAatuxQj8Z/eqDan35dU0CkNbBMRFNBIMC6Fkvi
+         WIFQ==
+X-Gm-Message-State: ABuFfoj30U/Gv9QiUvSlFgi/5UXxTg0/XpiA7phnd/PVw+pFoRNHf5Fr
+        pBIMxntJONx0d1U7Mhs8DwM=
+X-Google-Smtp-Source: ACcGV63RbaQ/WrEhTRlTAPsMROe9t60FZBjZHrA4c1V8zP5Yrr5soGEM2BbRpLr5kkx87gMRxXKDPA==
+X-Received: by 2002:a1c:760d:: with SMTP id r13-v6mr7821387wmc.22.1538050043326;
+        Thu, 27 Sep 2018 05:07:23 -0700 (PDT)
 Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id a105-v6sm5059909wrc.23.2018.09.27.05.05.09
+        by smtp.gmail.com with ESMTPSA id t14-v6sm1856782wmi.35.2018.09.27.05.07.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 05:05:09 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 14:05:08 +0200
+        Thu, 27 Sep 2018 05:07:22 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 14:07:21 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         seanpaul@chromium.org, briannorris@chromium.org, hl@rock-chips.com,
-        nickey.yang@rock-chips.com
-Subject: Re: [PATCH] drm/panel: p079zca: unconditionally remove the panel on
- removal
-Message-ID: <20180927120508.GE29102@ulmo>
-References: <20180816140920.5009-1-heiko@sntech.de>
+        nickey.yang@rock-chips.com, p.zabel@pengutronix.de
+Subject: Re: [PATCH v4] drm/panel: add Kingdisplay kd097d04 panel driver
+Message-ID: <20180927120721.GF29102@ulmo>
+References: <20180817093731.9850-1-heiko@sntech.de>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4Epv4kl9IRBfg3rk"
+        protocol="application/pgp-signature"; boundary="7cm2iqirTL37Ot+N"
 Content-Disposition: inline
-In-Reply-To: <20180816140920.5009-1-heiko@sntech.de>
+In-Reply-To: <20180817093731.9850-1-heiko@sntech.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -81,43 +80,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---4Epv4kl9IRBfg3rk
+--7cm2iqirTL37Ot+N
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 16, 2018 at 04:09:20PM +0200, Heiko Stuebner wrote:
-> There is no need to check innolux->base.dev when trying to remove
-> the panel, as that variable is always set directly before the panel
-> gets added and will still be available on panel_remove.
+On Fri, Aug 17, 2018 at 11:37:31AM +0200, Heiko Stuebner wrote:
+> From: Nickey Yang <nickey.yang@rock-chips.com>
 >=20
+> Support Kingdisplay kd097d04 9.7" 1536x2048 TFT LCD panel,
+> it is a MIPI dual-DSI panel.
+>=20
+> v4:
+> - address Philipp's comments
+>   - real range for usleep_range and
+>   - poweroff ordering in kingdisplay_panel_prepare
+>   - return value beautification in panel_probe
+> - update author naming for full name
+> v3:
+> - address Thierry's comments
+>   - error handling for init dsi writes in init
+>   - unconditionally remove the panel
+>   - don't use drm_panel_detach
+>   - a bit of variable signednes wiggling
+> - I did talk to ChromeOS people and the delays really should be as short
+>   as possible, so dropped the 100ms from the delay comments
+> v2:
+> - update timing + cmds from chromeos kernel
+> - new backlight API including switch to devm_of_find_backlight
+> - fix most of Sean Paul's comments
+>   enable/prepare tracking seems something all panels do
+> - document origins of the init sequence
+> - lanes per dsi interface to 4 (two interfaces). Matches how tegra
+>   and pending rockchip dual-dsi handle (dual-)dsi lanes
+> - spdx header instead of license boilerplate
+>=20
+> Signed-off-by: Nickey Yang <nickey.yang@rock-chips.com>
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  drivers/gpu/drm/panel/panel-innolux-p079zca.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/gpu/drm/panel/Kconfig                 |  11 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  .../drm/panel/panel-kingdisplay-kd097d04.c    | 473 ++++++++++++++++++
+>  3 files changed, 485 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
 
-Applied, thanks.
+This is missing device tree bindings.
 
 Thierry
 
---4Epv4kl9IRBfg3rk
+--7cm2iqirTL37Ot+N
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlusx3QACgkQ3SOs138+
-s6F5PhAAwoel97tiVnr9N/5iUKjz2p0WAM7koaLokqfCcJQDDjl+l9LSZIWhv5FD
-zdgSq4Dw0Jw5/bp+LR/pxrb0sDoPJymXe5KSDUIkOPoiAsvS53twT8BD4Qi6Cc13
-5F6hBHJPDSHcRvin5CtxR9u+SUZN/sI8NBYkO91921bjdxTV7EYzt5vyyd4vCSpJ
-qh0QCoORm8UJv0WossZeBsR69H1Hi/vug/GXqMSBBrCRATrHJM+CxanoErWwgR/3
-OjvEzhnpveCXD84SaJ1+sL95dw4d5IdmmxfZLqOsT1l3dSuM1k2GKI4yEziRH2JV
-bBt/rKqzTvKjNj961rdeESsyW1SyiSXxxUgwX+agCVaVwCujIF8yE2migxc2wVTa
-9h4YOpoSpzv58/wA6zTUaIcZaCRqS2YB6RmHXM+54YHm7scXOsjR5jTLdschSs/X
-uyIYeWqGvctBQ+AJ62GLBf42G493zWZqPoZWDwkUR+aWzONzMiKycOm3POGuAsnr
-X0gNxGVapczvGleQX7ZrHFQnV3968hzwyA1UcdFbex1KHDRO5AiuR4CQWcF0e9w3
-IJqPeHmoFSnW60usiJ5N5OUSzkegQoi/fY+q/din8ZiQ3Hmyb164cwrCRpJSIXLk
-o/+YSVx45/YBi1uns84kkVQVDGUpAS8yIUjiGBOcyjFiqsrCS/Q=
-=IaZF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlusx/kACgkQ3SOs138+
+s6GsoBAApY77hwVAyBUvK6uezZix2+j957v3cx5riVNVemIFOzJa5EBhtwHHg0ji
+UsZvYL21UEeueG/yiX4CQlrmHP44g3OzFFCSjI/cu69qG893zxuplGUK73qML1LL
+pPXNU1eKk5PmfBf/ujwmUbXzhyVe/SdHIYPdU9R/D0HeZqrxTEC6NWp3ZpxPlLxa
+C9Ai161nPwOSwzj0nLRKg1UPxwZk+T00VBHcX9+ObbZB6YXkAFb6/LqAbE6recGN
+PSF4pE8ZaV9RlyfbXOovpz4b5BJyCQeh6gWEF/w2uMORyUCbTs32KgORz2Mf1KV0
+zIz6lO+/PN5kwkHaqEc2PPKtdTdDp0m6dA2FdRMnSdeKpCwknd6ucwqwctnJI0+s
+Tm8JX1Lso6H1ab1PSr2SHNAJzv6pbHjnOL9irs3kG9yjJrCBlgOLn2Q8R85HVgL9
+EreCq2tAxzNe61VnbFmdGFDwoAE/yuAuncLq4hmX+DMNNoIUwtXt31ofZdOH8r6i
+r93xC1vsicz7e0AKlOEc2gnje9QjgZt0pj8BHRvHUrhOedKzNw0Ora/pq87egAit
+MsfkE1MTp4U/iiu11sIFBkifOCSNUITd3Tr687VncuWmHcKZGttIy9okScSgekwr
+plkefloSB3+pbGq+CiocWxMWpgDRk1M/A+I7fbBdP/aDXlCSXh0=
+=4gUX
 -----END PGP SIGNATURE-----
 
---4Epv4kl9IRBfg3rk--
+--7cm2iqirTL37Ot+N--
