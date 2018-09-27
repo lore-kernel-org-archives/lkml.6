@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB01ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3A0C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 101D921582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101D921582
+	by mail.kernel.org (Postfix) with ESMTP id A41EF21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:08:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A41EF21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeI0PZa (ORCPT
+        id S1727992AbeI0PZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:25:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54934 "EHLO
+        Thu, 27 Sep 2018 11:25:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbeI0PZa (ORCPT
+        with ESMTP id S1727020AbeI0PZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:25:30 -0400
+        Thu, 27 Sep 2018 11:25:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09CB71116;
-        Thu, 27 Sep 2018 09:08:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7871210A4;
+        Thu, 27 Sep 2018 09:08:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liam mcbirnie <liam.mcbirnie@boeing.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 22/88] net: rtnl_configure_link: fix dev flags changes arg to __dev_notify_flags
-Date:   Thu, 27 Sep 2018 11:03:03 +0200
-Message-Id: <20180927090303.235199010@linuxfoundation.org>
+        stable@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
+        Allen Pais <allen.pais@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kevin Deus <kdeus@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.18 23/88] NFC: Fix possible memory corruption when handling SHDLC I-Frame commands
+Date:   Thu, 27 Sep 2018 11:03:04 +0200
+Message-Id: <20180927090303.358724477@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -52,35 +55,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roopa Prabhu <roopa@cumulusnetworks.com>
+From: Suren Baghdasaryan <surenb@google.com>
 
-[ Upstream commit 56a49d7048703f5ffdb84d3a0ee034108fba6850 ]
+commit 674d9de02aa7d521ebdf66c3958758bdd9c64e11 upstream.
 
-This fix addresses https://bugzilla.kernel.org/show_bug.cgi?id=201071
+When handling SHDLC I-Frame commands "pipe" field used for indexing
+into an array should be checked before usage. If left unchecked it
+might access memory outside of the array of size NFC_HCI_MAX_PIPES(127).
 
-Commit 5025f7f7d506 wrongly relied on __dev_change_flags to notify users of
-dev flag changes in the case when dev->rtnl_link_state = RTNL_LINK_INITIALIZED.
-Fix it by indicating flag changes explicitly to __dev_notify_flags.
+Malformed NFC HCI frames could be injected by a malicious NFC device
+communicating with the device being attacked (remote attack vector),
+or even by an attacker with physical access to the I2C bus such that
+they could influence the data transfers on that bus (local attack vector).
+skb->data is controlled by the attacker and has only been sanitized in
+the most trivial ways (CRC check), therefore we can consider the
+create_info struct and all of its members to tainted. 'create_info->pipe'
+with max value of 255 (uint8) is used to take an offset of the
+hdev->pipes array of 127 elements which can lead to OOB write.
 
-Fixes: 5025f7f7d506 ("rtnetlink: add rtnl_link_state check in rtnl_configure_link")
-Reported-By: Liam mcbirnie <liam.mcbirnie@boeing.com>
-Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Allen Pais <allen.pais@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Suggested-by: Kevin Deus <kdeus@google.com>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/rtnetlink.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2760,7 +2760,7 @@ int rtnl_configure_link(struct net_devic
- 	}
+---
+ net/nfc/hci/core.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+--- a/net/nfc/hci/core.c
++++ b/net/nfc/hci/core.c
+@@ -209,6 +209,11 @@ void nfc_hci_cmd_received(struct nfc_hci
+ 		}
+ 		create_info = (struct hci_create_pipe_resp *)skb->data;
  
- 	if (dev->rtnl_link_state == RTNL_LINK_INITIALIZED) {
--		__dev_notify_flags(dev, old_flags, 0U);
-+		__dev_notify_flags(dev, old_flags, (old_flags ^ dev->flags));
- 	} else {
- 		dev->rtnl_link_state = RTNL_LINK_INITIALIZED;
- 		__dev_notify_flags(dev, old_flags, ~0U);
++		if (create_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		/* Save the new created pipe and bind with local gate,
+ 		 * the description for skb->data[3] is destination gate id
+ 		 * but since we received this cmd from host controller, we
+@@ -232,6 +237,11 @@ void nfc_hci_cmd_received(struct nfc_hci
+ 		}
+ 		delete_info = (struct hci_delete_pipe_noti *)skb->data;
+ 
++		if (delete_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		hdev->pipes[delete_info->pipe].gate = NFC_HCI_INVALID_GATE;
+ 		hdev->pipes[delete_info->pipe].dest_host = NFC_HCI_INVALID_HOST;
+ 		break;
 
 
