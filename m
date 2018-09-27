@@ -2,111 +2,170 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55D4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 312D7C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50E822170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:13:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VXSmsTdn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E822170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id C5DB2215F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:16:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5DB2215F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbeI1Acx (ORCPT
+        id S1728227AbeI1Ag0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:32:53 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37160 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbeI1Acx (ORCPT
+        Thu, 27 Sep 2018 20:36:26 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34913 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbeI1AgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:32:53 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8RHx3P2146854;
-        Thu, 27 Sep 2018 18:12:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=mjT2C6lHzgGUiU0fI0OkORjd+PtI20uVj1BfMezw4nY=;
- b=VXSmsTdnM5swEuIG8IC3n9v1L137RmFvzXAvvtAIxrYurA1ohsPQvfvtQ9E1e02dyZfW
- NOgbV5CE2N1h4aZtPXuqvPjSq5f2D8Jbv9uvd5AQjECTWMKCuuLJSDVTWsLJm8Nt6nYg
- kwTON7SJDvF57Qs7JsCblro/02beXKtS2f01AXBF+MW1SMrII4y7i2WGwpWcVfxZAinA
- lgYb2yL7CVkwkEj1k7U+4h5c7rlJTgtyximqR9v47ccTtDU2NpmLNmGr+amEVb7xnQ40
- p0nYa9HOOPGT0SzIw8e2EkzK5ZVzal9Jgd4GliK83gqbgAEzAAsZDITTqCvsXDGdfoAr Rw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2mnvtv2hwf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 18:12:42 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8RICf3q017513
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Sep 2018 18:12:41 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8RICeB1031756;
-        Thu, 27 Sep 2018 18:12:41 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Sep 2018 11:12:40 -0700
-Subject: Re: [RFC 00/60] Coscheduling for Linux
-To:     "=?UTF-8?Q?Jan_H._Sch=c3=b6nherr?=" <jschoenh@amazon.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <3336974a-38f7-41dd-25a7-df05e077444f@oracle.com>
- <90282ce3-dd14-73dc-fb9f-e78bb4042221@amazon.de>
- <a68891ae-468b-da35-61ee-a3136c6e64c1@oracle.com>
- <b95ff65d-04fe-642f-4878-a31db8875b0d@amazon.de>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <cb7ce9a8-2274-913a-62ff-7a84de9505f1@oracle.com>
-Date:   Thu, 27 Sep 2018 11:12:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 20:36:25 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j9-v6so3526768otl.2;
+        Thu, 27 Sep 2018 11:16:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HbqgzRDsFoHfh/PD5bSwuxuZlxkzFwExWkWx2uZClDU=;
+        b=UO3H/hRWmP2k2CL8MkfcjtFP3D+Xrvi31HPsaWCoaQmMRE1YkdHrmxRPaUGonyQGjg
+         3kS1dVU9CFpQ243ep5PA5kfcC8aprgHSOr1FPDkI6gV+OIiwmhzMbhj2Q1DQxQU9ralp
+         2PyT8HhS9NfLbTffRf8fRFOk6iJY4Ot8MKL6l4QEJea8N3kdNZlPG2Ot91XxBxfP7lDJ
+         3NPHPvF2GIyWDNXUiS/GhO5X8z3HRYUbjP6mHbd5oTcrKz9O2i4UG+A4wgEEMbYXNpyX
+         xKXSL/nhuWDSYXnd+mJMV+3J2cm5e+NqrbbDPS+m3EOSsqnByQIgyhnVp6x3czhV9Ivm
+         3CAA==
+X-Gm-Message-State: ABuFfoh2oCo45mvIw7hijLHvY05h8qN8VEo6CnAuP5I+qJNL+uT4HX7D
+        yz6uWjjr/4lRRfPxkcK+VA==
+X-Google-Smtp-Source: ACcGV60x3yc8KkcnfxwmYo8pnapDjepkbAzfOVvEbSCI/2jtKnD20pfDRMMWHyDicFkInjRhb73Yag==
+X-Received: by 2002:a9d:171c:: with SMTP id i28-v6mr7349444ota.359.1538072214712;
+        Thu, 27 Sep 2018 11:16:54 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r18-v6sm991104otc.24.2018.09.27.11.16.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 11:16:53 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 13:16:53 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-mtd@lists.infradead.org, Liang Yang <liang.yang@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: nand: meson: add Amlogic NAND
+ controller driver
+Message-ID: <20180927181653.GA22153@bogus>
+References: <1537433449-65213-1-git-send-email-jianxin.pan@amlogic.com>
+ <1537433449-65213-2-git-send-email-jianxin.pan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <b95ff65d-04fe-642f-4878-a31db8875b0d@amazon.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=727
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809270167
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537433449-65213-2-git-send-email-jianxin.pan@amlogic.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 20, 2018 at 04:50:48PM +0800, Jianxin Pan wrote:
+> From: Liang Yang <liang.yang@amlogic.com>
+> 
+> Add Amlogic NAND controller dt-bindings for Meson SoC,
+> Current this driver support GXBB/GXL/AXG platform.
+> 
+> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  .../devicetree/bindings/mtd/amlogic,meson-nand.txt | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+> new file mode 100644
+> index 0000000..803df2a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+> @@ -0,0 +1,60 @@
+> +Amlogic NAND Flash Controller (NFC) for GXBB/GXL/AXG family SoCs
+> +
+> +This file documents the properties in addition to those available in
+> +the MTD NAND bindings.
+> +
+> +Required properties:
+> +- compatible : contains one of:
+> +  - "amlogic,meson-gxl-nfc"
+> +  - "amlogic,meson-axg-nfc"
+> +- clocks     :
+> +	A list of phandle + clock-specifier pairs for the clocks listed
+> +	in clock-names.
+> +
+> +- clock-names: Should contain the following:
+> +	"core" - NFC module gate clock
+> +	"device" - device clock from eMMC sub clock controller
+> +
+> +- amlogic,mmc-syscon	: Required for NAND clocks, it's shared with SD/eMMC
+> +				controller port C
+> +
+> +Optional children nodes:
+> +Children nodes represent the available nand chips.
+> +
+> +Other properties:
+> +see Documentation/devicetree/bindings/mtd/nand.txt for generic bindings.
+> +
+> +Example demonstrate on AXG SoC:
+> +
+> +	sd_emmc_c_clkc: mmc@7000 {
+> +		compatible = "amlogic,meson-axg-mmc-clkc", "syscon";
+> +		reg = <0x0 0x7000 0x0 0x800>;
+> +		status = "okay";
+> +	};
+> +
+> +	nand: nfc@7800 {
 
+nand-controller@7800
 
-On 09/24/2018 08:43 AM, Jan H. Schönherr wrote:
-> On 09/19/2018 11:53 PM, Subhra Mazumdar wrote:
->> Can we have a more generic interface, like specifying a set of task ids
->> to be co-scheduled with a particular level rather than tying this with
->> cgroups? KVMs may not always run with cgroups and there might be other
->> use cases where we might want co-scheduling that doesn't relate to
->> cgroups.
-> Currently: no.
->
-> At this point the implementation is tightly coupled to the cpu cgroup
-> controller. This *might* change, if the task group optimizations mentioned
-> in other parts of this e-mail thread are done, as I think, that it would
-> decouple the various mechanisms.
->
-> That said, what if you were able to disable the "group-based fairness"
-> aspect of the cpu cgroup controller? Then you would be able to control
-> just the coscheduling aspects on their own. Would that satisfy the use
-> case you have in mind?
->
-> Regards
-> Jan
-Yes that will suffice the use case. We wish to experiment at some point
-with co-scheduling of certain workers threads in DB parallel query and see
-if there is any benefit
+> +		compatible = "amlogic,meson-axg-nfc";
+> +		reg = <0x0 0x7800 0x0 0x100>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
+> +		status = "disabled";
+> +
+> +		clocks = <&clkc CLKID_SD_EMMC_C>,
+> +			<&sd_emmc_c_clkc CLKID_MMC_DIV>;
+> +		clock-names = "core", "device";
+> +		amlogic,mmc-syscon = <&sd_emmc_c_clkc>;
+> +
+> +		status = "okay";
 
-Thanks,
-Subhra
+Don't show status in examples, plus you have it twice.
+
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&nand_pins>;
+> +
+> +		nand@0 {
+> +			reg = <0>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			nand-on-flash-bbt;
+> +		};
+> +	};
+> -- 
+> 1.9.1
+> 
