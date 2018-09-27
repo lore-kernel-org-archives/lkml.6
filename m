@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AB6C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B84C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064DA20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064DA20836
+	by mail.kernel.org (Postfix) with ESMTP id 6BF5820836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF5820836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeI0P1t (ORCPT
+        id S1728449AbeI0P1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:27:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55158 "EHLO
+        Thu, 27 Sep 2018 11:27:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55166 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727294AbeI0P1s (ORCPT
+        with ESMTP id S1727294AbeI0P1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:27:48 -0400
+        Thu, 27 Sep 2018 11:27:53 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CE3710A4;
-        Thu, 27 Sep 2018 09:10:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 341D310A4;
+        Thu, 27 Sep 2018 09:10:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 37/88] ALSA: oxfw: fix memory leak for model-dependent data at error path
-Date:   Thu, 27 Sep 2018 11:03:18 +0200
-Message-Id: <20180927090305.126459255@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kirill Kapranov <kirill.kapranov@compulab.co.il>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.18 46/88] spi: fix IDR collision on systems with both fixed and dynamic SPI bus numbers
+Date:   Thu, 27 Sep 2018 11:03:27 +0200
+Message-Id: <20180927090306.382094027@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -51,35 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Kirill Kapranov <kirill.kapranov@compulab.co.il>
 
-commit ce925f088b979537f22f9e05eb923ef9822ca139 upstream.
+commit 1a4327fbf4554d5b78d75b19a13d40d6de220159 upstream.
 
-After allocating model-dependent data, ALSA OXFW driver has memory leak
-of the data at error path.
+On systems where some controllers get a dynamic ID assigned and some have
+a fixed number (e.g. from ACPI tables), the current implementation might
+run into an IDR collision: in case of a fixed bus number is gotten by a
+driver (but not marked busy in IDR tree) and a driver with dynamic bus
+number gets the same ID and predictably fails.
 
-This commit releases the data at the error path.
+Fix this by means of checking-in fixed IDsin IDR as far as dynamic ones
+at the moment of the controller registration.
 
-Fixes: 6c29230e2a5f ('ALSA: oxfw: delayed registration of sound card')
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 9b61e302210e (spi: Pick spi bus number from Linux idr or spi alias)
+Signed-off-by: Kirill Kapranov <kirill.kapranov@compulab.co.il>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/oxfw/oxfw.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/spi/spi.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/sound/firewire/oxfw/oxfw.c
-+++ b/sound/firewire/oxfw/oxfw.c
-@@ -270,6 +270,8 @@ error:
- 	if (oxfw->has_output)
- 		snd_oxfw_stream_destroy_simplex(oxfw, &oxfw->tx_stream);
- 	snd_card_free(oxfw->card);
-+	kfree(oxfw->spec);
-+	oxfw->spec = NULL;
- 	dev_info(&oxfw->unit->device,
- 		 "Sound card registration failed: %d\n", err);
- }
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2170,6 +2170,15 @@ int spi_register_controller(struct spi_c
+ 		if (WARN(id < 0, "couldn't get idr"))
+ 			return id;
+ 		ctlr->bus_num = id;
++	} else {
++		/* devices with a fixed bus num must check-in with the num */
++		mutex_lock(&board_lock);
++		id = idr_alloc(&spi_master_idr, ctlr, ctlr->bus_num,
++			ctlr->bus_num + 1, GFP_KERNEL);
++		mutex_unlock(&board_lock);
++		if (WARN(id < 0, "couldn't get idr"))
++			return id == -ENOSPC ? -EBUSY : id;
++		ctlr->bus_num = id;
+ 	}
+ 	INIT_LIST_HEAD(&ctlr->queue);
+ 	spin_lock_init(&ctlr->queue_lock);
 
 
