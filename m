@@ -2,90 +2,207 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FBBC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9892C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E968B2150D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:45:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E968B2150D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A29F2152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 01:48:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A29F2152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeI0IB2 (ORCPT
+        id S1727146AbeI0IEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 04:01:28 -0400
-Received: from gate.crashing.org ([63.228.1.57]:33091 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbeI0IB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 04:01:28 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w8R1jFU1007969;
-        Wed, 26 Sep 2018 20:45:17 -0500
-Message-ID: <1811156d5a1df1166c7ab7522525619b951f047d.camel@kernel.crashing.org>
-Subject: Re: [PATCH 3/5] dma-direct: refine dma_direct_alloc zone selection
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 27 Sep 2018 11:45:15 +1000
-In-Reply-To: <20180920185247.20037-4-hch@lst.de>
-References: <20180920185247.20037-1-hch@lst.de>
-         <20180920185247.20037-4-hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Thu, 27 Sep 2018 04:04:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40318 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726653AbeI0IEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 04:04:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5AA71AFAF;
+        Thu, 27 Sep 2018 01:48:10 +0000 (UTC)
+Subject: Re: [PATCH] split if-condition code in bch_cache_set_alloc
+To:     Dongbo Cao <cdbdyx@163.com>
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180926090032.1881-1-cdbdyx@163.com>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <f8dbc1eb-61ce-dbd3-4f01-0752e27e5edc@suse.de>
+Date:   Thu, 27 Sep 2018 09:48:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180926090032.1881-1-cdbdyx@163.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-20 at 20:52 +0200, Christoph Hellwig wrote:
-> +static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
-> +               u64 *phys_mask)
-> +{
-> +       if (force_dma_unencrypted())
-> +               *phys_mask = __dma_to_phys(dev, dma_mask);
-> +       else
-> +               *phys_mask = dma_to_phys(dev, dma_mask);
+
+On 9/26/18 5:00 PM, Dongbo Cao wrote:
+> rebase my local code and commit it again.
+>
+> Signed-off-by: Dongbo Cao <cdbdyx@163.com>
+
+Hi Dongbo,
+
+
+The above commit log does not explain why you make this change (it might 
+belong to changelog). Could you please to make it to be more informative ?
+
+Thanks.
+
+Coly Li
+
+> ---
+>   drivers/md/bcache/super.c | 114 +++++++++++++++++++++++++++++++-------
+>   1 file changed, 93 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index a2cc354c..03099c4c 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1691,10 +1691,13 @@ void bch_cache_set_unregister(struct cache_set *c)
+>   struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+>   {
+>   	int iter_size;
+> -	struct cache_set *c = kzalloc(sizeof(struct cache_set), GFP_KERNEL);
+> +	const char *err = NULL;
+>   
+> -	if (!c)
+> -		return NULL;
+> +	struct cache_set *c = kzalloc(sizeof(struct cache_set), GFP_KERNEL);
+> +	if (!c) {
+> +		err = "cache_set alloc failed";
+> +		goto err_cache_set_alloc;
+> +	}
+>   
+>   	__module_get(THIS_MODULE);
+>   	closure_init(&c->cl, NULL);
+> @@ -1750,22 +1753,65 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+>   	iter_size = (sb->bucket_size / sb->block_size + 1) *
+>   		sizeof(struct btree_iter_set);
+>   
+> -	if (!(c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL)) ||
+> -	    mempool_init_slab_pool(&c->search, 32, bch_search_cache) ||
+> -	    mempool_init_kmalloc_pool(&c->bio_meta, 2,
+> -				sizeof(struct bbio) + sizeof(struct bio_vec) *
+> -				bucket_pages(c)) ||
+> -	    mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size) ||
+> -	    bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
+> -			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
+> -	    !(c->uuids = alloc_bucket_pages(GFP_KERNEL, c)) ||
+> -	    !(c->moving_gc_wq = alloc_workqueue("bcache_gc",
+> -						WQ_MEM_RECLAIM, 0)) ||
+> -	    bch_journal_alloc(c) ||
+> -	    bch_btree_cache_alloc(c) ||
+> -	    bch_open_buckets_alloc(c) ||
+> -	    bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages)))
+> -		goto err;
+> +	c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL);
+> +	if (!c->devices) {
+> +		err = "c->devices alloc failed";
+> +		goto err_devices_alloc;
+> +	}
 > +
-> +       /* GFP_DMA32 and GFP_DMA are no ops without the corresponding zones: */
-> +       if (*phys_mask <= DMA_BIT_MASK(ARCH_ZONE_DMA_BITS))
-> +               return GFP_DMA;
-> +       if (*phys_mask <= DMA_BIT_MASK(32))
-> +               return GFP_DMA32;
-> +       return 0;
-> +}
-
-I'm not sure this is entirely right.
-
-Let's say the mask is 30 bits. You will return GFP_DMA32, which will
-fail if you allocate something above 1G (which is legit for
-ZONE_DMA32).
-
-I think the logic should be:
-
-	if (mask < ZONE_DMA)
-		fail;
-	else if (mask < ZONE_DMA32)
-		use ZONE_DMA or fail if doesn't exist
-	else if (mask < top_of_ram)
-		use ZONE_DMA32 or fail if doesn't exist
-	else
-		use ZONE_NORMAL
-
-Additionally, we want to fold-in the top-of-ram test such that we don't
-fail the second case if the mask is 31-bits (smaller than ZONE_DMA32)
-but top of ram is also small enough.
-
-So the top of ram test should take precendence.
-
-Cheers,
-Ben.
-
-
+> +	if (mempool_init_slab_pool(&c->search, 32, bch_search_cache)) {
+> +		err = "c->search alloc failed";
+> +		goto err_search_alloc;
+> +	}
+> +
+> +	if (mempool_init_kmalloc_pool(&c->bio_meta, 2, sizeof(struct bbio)
+> +				+ sizeof(struct bio_vec) * bucket_pages(c))) {
+> +		err = "c->bio_meta alloc failed";
+> +		goto err_bio_meta_alloc;
+> +	}
+> +
+> +	if (mempool_init_kmalloc_pool(&c->fill_iter, 1, iter_size)) {
+> +		err = "c->fill_iter alloc failed";
+> +		goto err_fill_iter_alloc;
+> +	}
+> +
+> +	if (bioset_init(&c->bio_split, 4, offsetof(struct bbio, bio),
+> +				BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER)) {
+> +		err = "c->bio_split init failed";
+> +		goto err_bio_split_init;
+> +	}
+> +
+> +	c->uuids = alloc_bucket_pages(GFP_KERNEL, c);
+> +	if (!c->uuids) {
+> +		err = "c->uuids alloc failed";
+> +		goto err_uuids_alloc;
+> +	}
+> +
+> +	c->moving_gc_wq = alloc_workqueue("bcache_gc", WQ_MEM_RECLAIM, 0);
+> +	if (!c->moving_gc_wq) {
+> +		err = "c->moving_gc_wq alloc failed";
+> +		goto err_moving_gc_wq_alloc;
+> +	}
+> +
+> +	if (bch_journal_alloc(c)) {
+> +		err = "bch_journal_alloc failed";
+> +		goto err_bch_journal_alloc;
+> +	}
+> +
+> +	if (bch_btree_cache_alloc(c)) {
+> +		err = "bch_btree_cache_alloc failed";
+> +		goto err_bch_btree_cache_alloc;
+> +	}
+> +
+> +	if (bch_open_buckets_alloc(c)) {
+> +		err = "bch_open_buckets_alloc failed";
+> +		goto err_bch_open_buckets_alloc;
+> +	}
+> +
+> +	if (bch_bset_sort_state_init(&c->sort, ilog2(c->btree_pages))) {
+> +		err = "bch_bset_sort_state_init failed";
+> +		goto err_bch_bset_sort_state_init;
+> +	}
+>   
+>   	c->congested_read_threshold_us	= 2000;
+>   	c->congested_write_threshold_us	= 20000;
+> @@ -1773,8 +1819,34 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
+>   	WARN_ON(test_and_clear_bit(CACHE_SET_IO_DISABLE, &c->flags));
+>   
+>   	return c;
+> -err:
+> -	bch_cache_set_unregister(c);
+> +
+> +err_bch_bset_sort_state_init:
+> +	bch_open_buckets_free(c);
+> +err_bch_open_buckets_alloc:
+> +	bch_btree_cache_free(c);
+> +err_bch_btree_cache_alloc:
+> +	bch_journal_free(c);
+> +err_bch_journal_alloc:
+> +	destroy_workqueue(c->moving_gc_wq);
+> +err_moving_gc_wq_alloc:
+> +	free_pages((unsigned long) c->uuids, ilog2(bucket_pages(c)));
+> +err_uuids_alloc:
+> +	bioset_exit(&c->bio_split);
+> +err_bio_split_init:
+> +	mempool_exit(&c->fill_iter);
+> +err_fill_iter_alloc:
+> +	mempool_exit(&c->bio_meta);
+> +err_bio_meta_alloc:
+> +	mempool_exit(&c->search);
+> +err_search_alloc:
+> +	kfree(c->devices);
+> +err_devices_alloc:
+> +	bch_cache_accounting_destroy(&c->accounting);
+> +	kfree(c);
+> +	module_put(THIS_MODULE);
+> +err_cache_set_alloc:
+> +	if (err)
+> +		pr_notice("error cache set %s: %s", c->sb.set_uuid, err);
+>   	return NULL;
+>   }
+>   
