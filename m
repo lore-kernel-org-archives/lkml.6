@@ -2,117 +2,138 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B12C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557D3C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3B0215E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3B0215E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B72C21547
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:42:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B72C21547
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbeI0R7g (ORCPT
+        id S1727259AbeI0SAW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:59:36 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:10023 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727292AbeI0R7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:59:10 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8RBY6U4003827;
-        Thu, 27 Sep 2018 13:40:12 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mqd47qxp1-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 27 Sep 2018 13:40:11 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5E1CE31;
-        Thu, 27 Sep 2018 11:40:11 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 363D62986;
-        Thu, 27 Sep 2018 11:40:11 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep
- 2018 13:40:11 +0200
-Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 27 Sep 2018 13:40:10 +0200
-From:   Amelie Delaunay <amelie.delaunay@st.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v3 1/7] dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
-Date:   Thu, 27 Sep 2018 13:39:58 +0200
-Message-ID: <1538048404-9041-2-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
-References: <1538048404-9041-1-git-send-email-amelie.delaunay@st.com>
+        Thu, 27 Sep 2018 14:00:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51102 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727105AbeI0SAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 14:00:21 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3708C208A1; Thu, 27 Sep 2018 13:42:26 +0200 (CEST)
+Received: from bbrezillon (guest-nat.fw1.untrust.par1.mozilla.net [185.155.181.200])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0F3D1207CF;
+        Thu, 27 Sep 2018 13:42:16 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 13:42:16 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v2 5/8] mtd: maps: gpio-addr-flash: Replace array with
+ an integer
+Message-ID: <20180927134216.1952f668@bbrezillon>
+In-Reply-To: <20180905143643.9871-6-ricardo.ribalda@gmail.com>
+References: <20180905143643.9871-1-ricardo.ribalda@gmail.com>
+        <20180905143643.9871-6-ricardo.ribalda@gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-27_06:,,
- signatures=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the
-STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
+On Wed,  5 Sep 2018 16:36:40 +0200
+Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+> By replacing the array with an integer we can avoid completely
+> the bit comparison loop if the value has not changed (by far
+> the most common case).
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>  drivers/mtd/maps/gpio-addr-flash.c | 31 +++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/mtd/maps/gpio-addr-flash.c b/drivers/mtd/maps/gpio-addr-flash.c
+> index 22e100f07112..8f5e3dce9be3 100644
+> --- a/drivers/mtd/maps/gpio-addr-flash.c
+> +++ b/drivers/mtd/maps/gpio-addr-flash.c
+> @@ -43,7 +43,7 @@ struct async_state {
+>  	struct map_info map;
+>  	size_t gpio_count;
+>  	unsigned *gpio_addrs;
+> -	int *gpio_values;
+> +	unsigned int gpio_values;
+>  	unsigned int win_order;
+>  };
+>  #define gf_map_info_to_state(mi) ((struct async_state *)(mi)->map_priv_1)
+> @@ -55,22 +55,25 @@ struct async_state {
+>   *
+>   * Rather than call the GPIO framework every time, cache the last-programmed
+>   * value.  This speeds up sequential accesses (which are by far the most common
+> - * type).  We rely on the GPIO framework to treat non-zero value as high so
+> - * that we don't have to normalize the bits.
+> + * type).
+>   */
+>  static void gf_set_gpios(struct async_state *state, unsigned long ofs)
+>  {
+> -	size_t i = 0;
+> -	int value;
+> +	int i;
+>  
+>  	ofs >>= state->win_order;
+> -	do {
+> -		value = ofs & (1 << i);
+> -		if (state->gpio_values[i] != value) {
+> -			gpio_set_value(state->gpio_addrs[i], value);
+> -			state->gpio_values[i] = value;
+> -		}
+> -	} while (++i < state->gpio_count);
+> +
+> +	if (ofs == state->gpio_values)
+> +		return;
+> +
+> +	for (i = 0; i < state->gpio_count; i++) {
+> +		if ((ofs & BIT(i)) == (state->gpio_values & BIT(i)))
 
-diff --git a/Documentation/devicetree/bindings/mfd/stmfx.txt b/Documentation/devicetree/bindings/mfd/stmfx.txt
-new file mode 100644
-index 0000000..f0c2f7f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/stmfx.txt
-@@ -0,0 +1,28 @@
-+STMicroelectonics Multi-Function eXpander (STMFX) Core bindings
-+
-+ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
-+communication with the main MCU. Its main features are GPIO expansion, main
-+MCU IDD measurement (IDD is the amount of current that flows through VDD) and
-+resistive touchscreen controller.
-+
-+Required properties:
-+- compatible: should be "st,stmfx-0300".
-+- reg: I2C slave address of the device.
-+- interrupts: interrupt specifier triggered by MFX_IRQ_OUT signal.
-+  Please refer to ../interrupt-controller/interrupt.txt
-+
-+Optional properties:
-+- drive-open-drain: configure MFX_IRQ_OUT as open drain.
-+- vdd-supply: phandle of the regulator supplying STMFX.
-+
-+Example:
-+
-+	stmfx: stmfx@42 {
-+		compatible = "st,stmfx-0300";
-+		reg = <0x42>;
-+		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&gpioi>;
-+		vdd-supply = <&v3v3>;
-+	};
-+
-+Please refer to ../pinctrl/pinctrl-stmfx.txt for STMFX GPIO expander function bindings.
--- 
-2.7.4
+Parens around the xx & BIT(i) operations are unneeded.
+
+> +			continue;
+> +
+> +		gpio_set_value(state->gpio_addrs[i], !!(ofs & BIT(i)));
+> +	}
+> +
+> +	state->gpio_values = ofs;
+>  }
+>  
+>  /**
+> @@ -215,7 +218,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
+>  	if (!memory || !gpios || !gpios->end)
+>  		return -EINVAL;
+>  
+> -	arr_size = sizeof(int) * gpios->end;
+> +	arr_size = sizeof(state->gpio_addrs[0]) * gpios->end;
+>  	state = devm_kzalloc(&pdev->dev, sizeof(*state) + arr_size, GFP_KERNEL);
+>  	if (!state)
+>  		return -ENOMEM;
+> @@ -226,9 +229,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
+>  	 */
+>  	state->gpio_count     = gpios->end;
+>  	state->gpio_addrs     = (void *)(unsigned long)gpios->start;
+> -	state->gpio_values    = (void *)(state + 1);
+>  	state->win_order      = get_bitmask_order(resource_size(memory)) - 1;
+> -	memset(state->gpio_values, 0xff, arr_size);
+>  
+>  	state->map.name       = DRIVER_NAME;
+>  	state->map.read       = gf_read;
 
