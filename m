@@ -2,179 +2,124 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A459C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A013C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2612216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44BF72168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:04:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="z6BUNv5/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2612216FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZA/phyu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44BF72168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbeI1AXr (ORCPT
+        id S1728393AbeI1AYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:23:47 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46072 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727612AbeI1AXr (ORCPT
+        Thu, 27 Sep 2018 20:24:15 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54186 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727612AbeI1AYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:23:47 -0400
-Received: by mail-pf1-f194.google.com with SMTP id a23-v6so2427765pfi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:04:20 -0700 (PDT)
+        Thu, 27 Sep 2018 20:24:15 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b19-v6so6828434wme.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=PVeVP6wrlR/Kkx+zEt2gMYHwcYZRXu1qGypYVgaZHnE=;
-        b=z6BUNv5//GXBiVsZbbiGiU9oUlaneXWUku1rbe0LuupaZwaTIhXL7dZu7bxA/vvEzm
-         cc7Zw/oirGZjQltOqoTleNt2NdZ38UmaX6KUqYbD6jwTCbQlY+DMITgzCRue+Jdfi0cX
-         ++xTcxORF1XwqWwSQJt7EMEeGaISpIlygpbfl9edQQ7TnaAD+fPycx29k0NDMScj0Eau
-         Wj8nQguhPF/BVK/EWjTJVVied2SCijcGrMvLPy4KCt80yd8p1SRK7itdu+FAS329GXO2
-         /YM923Dq6EvwT9WfDrJG83dZL2YkE8COuf7sbk6cO3gBzs4Cmhnu6G0NozJiUhxb3Aee
-         HjNg==
+        bh=x7nsDjK2N9dHZ2Xkgqd7jP2hfoyIt7k0fYpYz1TXKwA=;
+        b=DZA/phyuKL8Y/m+HJt7sC84CHIFZxpOX0CbxUgZ58fITfDcIr3r10nNouF9qbyqKy+
+         sn7boA3iPvpvmtdrJwLysfg7DqPWw5umKNQz9GdsKZEj2C1fH7cNRzDvxxlXiYpuiyHD
+         iGwgkhmmKPXGh+v2VjoEyZF7wgOQ8lOyS9gsUqVoqEpJxP5AE8umu29gbT88qJJX1si4
+         sW5yKU3pWjiy3yipzSiIzbgk2FcairGjXnbgHN8jtj+WSitFlHXElin8ApnHl/fyxs9z
+         oJzuQSRz7z97nMUHGAxkJz7WvcRj27/lHewX9Y7J8sTA5TEByglWVNZdTFToncCWUnxG
+         eHtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PVeVP6wrlR/Kkx+zEt2gMYHwcYZRXu1qGypYVgaZHnE=;
-        b=BoeZslOrSm5IXxzzqn+azm5bOM09yMRrwU1rg28WKeuUgFtOK+8hKbtufXKN+c4xlG
-         LVKwseX4vzqqhgvKhjUR6VnI32Xr0O8KQH1JTFOKzAe7A00jyJW6WeDeUHpQNcisop2r
-         qEeR1hIIcvynen9B6efnJ72zQgkQW4aihmCopg+iORdi55E28BnYgFtOTjvBTLLp6nG1
-         etWsm43IDVyXUxMjRYVGLq5wvj/X+m9On6sAH2xidiRdLAKtKtJSt1WBmCSLo9nml2jf
-         1I8xMMK20B2jOXZCVXlSzA4kL5b+vuHxB8DyFviGtkiHWAOH13H/NftL5K22akAetrbQ
-         XRwg==
-X-Gm-Message-State: ABuFfogs9l8ZlbHHyP2Yf1KP0qDAMMynGWssuhI5zn+jQuDsMsI7Bawy
-        hQVlbeFJvJMOamm5MHL/RpCdPA==
-X-Google-Smtp-Source: ACcGV61/TfYHXo/Zwgtz0DXhqbIIXaYSXlmx3zgHcqCGmHSwAloCok/QDSPB3nBZSMCk0YeXcPPzWQ==
-X-Received: by 2002:a63:ac11:: with SMTP id v17-v6mr11379710pge.196.1538071459590;
-        Thu, 27 Sep 2018 11:04:19 -0700 (PDT)
-Received: from cisco.cisco.com ([128.107.241.165])
-        by smtp.gmail.com with ESMTPSA id b76-v6sm6171562pfj.16.2018.09.27.11.04.16
+        bh=x7nsDjK2N9dHZ2Xkgqd7jP2hfoyIt7k0fYpYz1TXKwA=;
+        b=H28T6bbg+RZ7rq9boNDu/BJfI0CSZNY/zhFDoytwfcItMLhIaEgOK6FmYRppHBdlts
+         HyD5PbYd38SgL4ZndDvqCDhIeshCfOcUHbtCzVPdlcSoiuxzNPImaNU5ijk6bk68ZzXs
+         bdBasZ7qenwFhcSXuGNd2jx082PbAHLJu5nzEhm0Pe5InkHPjNdGuOeqe1ZG+0b4FQ4a
+         ZmSwRZ2GywkPeAhHPWM0wkHkqpChf2aZURk52tnGN6vtTjU4jMFjYSS3SnNv9GcGCd9v
+         pZk/OYBvGjvt0g0gaGoXpztdnfBaf3AdqX6kWQYlUY99pmx058hS0BeD+wWwCJBMLbDD
+         zNZA==
+X-Gm-Message-State: ABuFfoitIeTmWnoTF0MhWHz1joR4dufV+/jaYOWez3mIOietjUoWaFHc
+        fFNF9MJMTAnP5+tam6kn3GQIG8Ww
+X-Google-Smtp-Source: ACcGV63qhoGM308LX4lLR+mR1jzH4TGJ7772FaikG88ps8og56nvCNUXJpyXKM7Dt/5IV9q+nbdtTw==
+X-Received: by 2002:a1c:adca:: with SMTP id w193-v6mr8074696wme.147.1538071485735;
+        Thu, 27 Sep 2018 11:04:45 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:388:3ce:110::1:5])
+        by smtp.gmail.com with ESMTPSA id 144-v6sm3887625wma.19.2018.09.27.11.04.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:04:18 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 12:04:15 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        suda.akihiro@lab.ntt.co.jp, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v7 4/6] files: add a replace_fd_files() function
-Message-ID: <20180927180415.GA15491@cisco.cisco.com>
-References: <20180927151119.9989-1-tycho@tycho.ws>
- <20180927151119.9989-5-tycho@tycho.ws>
- <CAG48ez1eU_j_Ti0nRh05Qv6hv7-7hv5i+8gnJS5e30mTti2Jhg@mail.gmail.com>
+        Thu, 27 Sep 2018 11:04:45 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 19:04:43 +0100
+From:   Aymen Qader <qader.aymen@gmail.com>
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] staging: ks7010: Add null pointer check for skb
+Message-ID: <20180927180443.yjqycqa7jir6rb57@localhost.localdomain>
+References: <20180927151614.25470-1-qader.aymen@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez1eU_j_Ti0nRh05Qv6hv7-7hv5i+8gnJS5e30mTti2Jhg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180927151614.25470-1-qader.aymen@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 06:49:02PM +0200, Jann Horn wrote:
-> On Thu, Sep 27, 2018 at 5:11 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > Similar to fd_install/__fd_install, we want to be able to replace an fd of
-> > an arbitrary struct files_struct, not just current's. We'll use this in the
-> > next patch to implement the seccomp ioctl that allows inserting fds into a
-> > stopped process' context.
-> [...]
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 7ffd6e9d103d..3b3c5aadaadb 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -850,24 +850,32 @@ __releases(&files->file_lock)
-> >  }
-> >
-> >  int replace_fd(unsigned fd, struct file *file, unsigned flags)
-> > +{
-> > +       return replace_fd_task(current, fd, file, flags);
-> > +}
-> > +
-> > +/*
-> > + * Same warning as __alloc_fd()/__fd_install() here.
-> > + */
-> > +int replace_fd_task(struct task_struct *task, unsigned fd,
-> > +                   struct file *file, unsigned flags)
-> >  {
-> >         int err;
-> > -       struct files_struct *files = current->files;
+Retraction: in hindsight I see that with the current usage of this
+function, there is already a check for the socket buffer so this check
+is unnecessary. However, I'm not sure if it's considered good practice
+to keep this check anyway--in any case, ENOMEM isn't the right error
+to return.
+
+On Thu, Sep 27, 2018 at 04:16:13PM +0100, Aymen Qader wrote:
+> Add a null pointer check for the socket buffer in ks_hostif.c to avoid a
+> possible null pointer deference, and remove a later now-redundant null
+> pointer check.
 > 
-> Why did you remove this? You could just do s/current/task/ instead, right?
-
-No reason, probably just flailing around trying to figure out what
-exactly I wanted. I'll make the change, thanks.
-
-> >         if (!file)
-> > -               return __close_fd(files, fd);
-> > +               return __close_fd(task->files, fd);
-> >
-> > -       if (fd >= rlimit(RLIMIT_NOFILE))
-> > +       if (fd >= task_rlimit(task, RLIMIT_NOFILE))
-> >                 return -EBADF;
-> >
-> > -       spin_lock(&files->file_lock);
-> > -       err = expand_files(files, fd);
-> > +       spin_lock(&task->files->file_lock);
-> > +       err = expand_files(task->files, fd);
-> >         if (unlikely(err < 0))
-> >                 goto out_unlock;
-> > -       return do_dup2(files, file, fd, flags);
-> > +       return do_dup2(task->files, file, fd, flags);
-> >
-> >  out_unlock:
-> > -       spin_unlock(&files->file_lock);
-> > +       spin_unlock(&task->files->file_lock);
-> >         return err;
-> >  }
-> >
-> > diff --git a/include/linux/file.h b/include/linux/file.h
-> > index 6b2fb032416c..f94277fee038 100644
-> > --- a/include/linux/file.h
-> > +++ b/include/linux/file.h
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/posix_types.h>
-> >
-> >  struct file;
-> > +struct task_struct;
-> >
-> >  extern void fput(struct file *);
-> >
-> > @@ -79,6 +80,13 @@ static inline void fdput_pos(struct fd f)
-> >
-> >  extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
-> >  extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
-> > +/*
-> > + * Warning! This is only safe if you know the owner of the files_struct is
-> > + * stopped outside syscall context. It's a very bad idea to use this unless you
-> > + * have similar guarantees in your code.
-> > + */
-> > +extern int replace_fd_task(struct task_struct *task, unsigned fd,
-> > +                          struct file *file, unsigned flags);
+> Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
+> ---
+> v2: Remove redundant pointer check
+> v3: Style fix
 > 
-> I think Linux kernel coding style is normally to have comments on the
-> implementations of functions, not in the headers? Maybe replace the
-> warning above the implemenation of replace_fd_task() with this
-> comment.
-
-Will do.
-
-Cheers,
-
-Tycho
+>  drivers/staging/ks7010/ks_hostif.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+> index 0e554e3359b5..95b6c7557e84 100644
+> --- a/drivers/staging/ks7010/ks_hostif.c
+> +++ b/drivers/staging/ks7010/ks_hostif.c
+> @@ -1011,6 +1011,11 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
+>  	size_t size;
+>  	int ret;
+>  
+> +	if (!skb) {
+> +		ret = -ENOMEM;
+> +		goto err_kfree;
+> +	}
+> +
+>  	skb_len = skb->len;
+>  	if (skb_len > ETH_FRAME_LEN) {
+>  		netdev_err(priv->net_dev, "bad length skb_len=%d\n", skb_len);
+> @@ -1023,7 +1028,6 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
+>  	    priv->wpa.mic_failure.stop) {
+>  		if (netif_queue_stopped(priv->net_dev))
+>  			netif_wake_queue(priv->net_dev);
+> -		if (skb)
+>  			dev_kfree_skb(skb);
+>  
+>  		return 0;
+> -- 
+> 2.17.1
+> 
