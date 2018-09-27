@@ -2,43 +2,39 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D13C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50D0C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19AA12156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19AA12156B
+	by mail.kernel.org (Postfix) with ESMTP id 7A3002156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3002156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbeI0PlG (ORCPT
+        id S1728352AbeI0PlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:41:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56618 "EHLO
+        Thu, 27 Sep 2018 11:41:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56630 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbeI0PlF (ORCPT
+        with ESMTP id S1727154AbeI0PlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:41:05 -0400
+        Thu, 27 Sep 2018 11:41:11 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34EE81113;
-        Thu, 27 Sep 2018 09:23:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B56CC111C;
+        Thu, 27 Sep 2018 09:23:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, John Crispin <john@phrozen.org>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.14 63/64] tick/nohz: Prevent bogus softirq pending warning
-Date:   Thu, 27 Sep 2018 11:04:20 +0200
-Message-Id: <20180927090258.473509321@linuxfoundation.org>
+        stable@vger.kernel.org, Zdenek Kaspar <zkaspar82@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 64/64] crypto: x86/aegis,morus - Do not require OSXSAVE for SSE2
+Date:   Thu, 27 Sep 2018 11:04:21 +0200
+Message-Id: <20180927090258.591819886@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -56,49 +52,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-Commit 0a0e0829f990 ("nohz: Fix missing tick reprogram when interrupting an
-inline softirq") got backported to stable trees and now causes the NOHZ
-softirq pending warning to trigger. It's not an upstream issue as the NOHZ
-update logic has been changed there.
+commit 24568b47d48ec8c906fd0f589489a08b17e1edca upstream.
 
-The problem is when a softirq disabled section gets interrupted and on
-return from interrupt the tick/nohz state is evaluated, which then can
-observe pending soft interrupts. These soft interrupts are legitimately
-pending because they cannot be processed as long as soft interrupts are
-disabled and the interrupted code will correctly process them when soft
-interrupts are reenabled.
+It turns out OSXSAVE needs to be checked only for AVX, not for SSE.
+Without this patch the affected modules refuse to load on CPUs with SSE2
+but without AVX support.
 
-Add a check for softirqs disabled to the pending check to prevent the
-warning.
+Fixes: 877ccce7cbe8 ("crypto: x86/aegis,morus - Fix and simplify CPUID checks")
+Cc: <stable@vger.kernel.org> # 4.18
+Reported-by: Zdenek Kaspar <zkaspar82@gmail.com>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Reported-by: John Crispin <john@phrozen.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Tested-by: John Crispin <john@phrozen.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: stable@vger.kernel.org
-Fixes: 2d898915ccf4838c ("nohz: Fix missing tick reprogram when interrupting an inline softirq")
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- kernel/time/tick-sched.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -908,7 +908,7 @@ static bool can_stop_idle_tick(int cpu,
- 	if (unlikely(local_softirq_pending() && cpu_online(cpu))) {
- 		static int ratelimit;
+diff --git a/arch/x86/crypto/aegis128-aesni-glue.c b/arch/x86/crypto/aegis128-aesni-glue.c
+index acd11b3bf639..2a356b948720 100644
+--- a/arch/x86/crypto/aegis128-aesni-glue.c
++++ b/arch/x86/crypto/aegis128-aesni-glue.c
+@@ -379,7 +379,6 @@ static int __init crypto_aegis128_aesni_module_init(void)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+ 	    !boot_cpu_has(X86_FEATURE_AES) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
  
--		if (ratelimit < 10 &&
-+		if (ratelimit < 10 && !in_softirq() &&
- 		    (local_softirq_pending() & SOFTIRQ_STOP_IDLE_MASK)) {
- 			pr_warn("NOHZ: local_softirq_pending %02x\n",
- 				(unsigned int) local_softirq_pending());
+diff --git a/arch/x86/crypto/aegis128l-aesni-glue.c b/arch/x86/crypto/aegis128l-aesni-glue.c
+index 2071c3d1ae07..dbe8bb980da1 100644
+--- a/arch/x86/crypto/aegis128l-aesni-glue.c
++++ b/arch/x86/crypto/aegis128l-aesni-glue.c
+@@ -379,7 +379,6 @@ static int __init crypto_aegis128l_aesni_module_init(void)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+ 	    !boot_cpu_has(X86_FEATURE_AES) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
+ 
+diff --git a/arch/x86/crypto/aegis256-aesni-glue.c b/arch/x86/crypto/aegis256-aesni-glue.c
+index b5f2a8fd5a71..8bebda2de92f 100644
+--- a/arch/x86/crypto/aegis256-aesni-glue.c
++++ b/arch/x86/crypto/aegis256-aesni-glue.c
+@@ -379,7 +379,6 @@ static int __init crypto_aegis256_aesni_module_init(void)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+ 	    !boot_cpu_has(X86_FEATURE_AES) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
+ 
+diff --git a/arch/x86/crypto/morus1280-sse2-glue.c b/arch/x86/crypto/morus1280-sse2-glue.c
+index 95cf857d2cbb..f40244eaf14d 100644
+--- a/arch/x86/crypto/morus1280-sse2-glue.c
++++ b/arch/x86/crypto/morus1280-sse2-glue.c
+@@ -40,7 +40,6 @@ MORUS1280_DECLARE_ALGS(sse2, "morus1280-sse2", 350);
+ static int __init crypto_morus1280_sse2_module_init(void)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
+ 
+diff --git a/arch/x86/crypto/morus640-sse2-glue.c b/arch/x86/crypto/morus640-sse2-glue.c
+index 615fb7bc9a32..9afaf8f8565a 100644
+--- a/arch/x86/crypto/morus640-sse2-glue.c
++++ b/arch/x86/crypto/morus640-sse2-glue.c
+@@ -40,7 +40,6 @@ MORUS640_DECLARE_ALGS(sse2, "morus640-sse2", 400);
+ static int __init crypto_morus640_sse2_module_init(void)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_XMM2) ||
+-	    !boot_cpu_has(X86_FEATURE_OSXSAVE) ||
+ 	    !cpu_has_xfeatures(XFEATURE_MASK_SSE, NULL))
+ 		return -ENODEV;
+ 
 
 
