@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8B0C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CE1C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8975021708
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15AAC2170B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:24:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAuYI/jA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8975021708
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1WXpyg7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15AAC2170B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbeI1Any (ORCPT
+        id S1728607AbeI1An5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:43:54 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40054 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbeI1Anx (ORCPT
+        Thu, 27 Sep 2018 20:43:57 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:37598 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727404AbeI1An4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:43:53 -0400
-Received: by mail-qt1-f193.google.com with SMTP id e9-v6so3812624qtp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:24:20 -0700 (PDT)
+        Thu, 27 Sep 2018 20:43:56 -0400
+Received: by mail-qk1-f194.google.com with SMTP id c13-v6so2227180qkm.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:24:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LfhcDKS1UyVeWVBd99qFp44B2bLB9C4f6VmfdsulXwE=;
-        b=bAuYI/jA2WdfsvJ3IUbFtf8KBYcmhlFzabpcBktkjonFmUunj6vnIvcFqNY0v4eukW
-         YQxIIi9VfJ994+gvzCYzwLRnzURaYgaK6Z4cupzt56NdnYYAmqP0Vc04bkj4R0x3HDUB
-         z+BVOLuBnJwwlsA8kiBP3HDNPEc1JcYCkqdKd1b4elhqpnHFvHXpdV6yNeLyO4BgQEY/
-         +kJLmtyr7GLfwBPAnhvbUpeR5PbpZSIPSiRH26Nul0oj8OL5hbszCyfM5m096U0MI0/2
-         cxBgoMNNCkLMGV2+r9KSvBd2LshdrANUFxfA6nG4IyVgXjZP2B6a0c2yB8e54k6znk/R
-         zHAQ==
+        bh=gIe6EifjLklbgUS2i2JLrOv9l/sKlhq3rcHfOJ3pIyc=;
+        b=d1WXpyg7CzpqviSyD8beT8vc6aeMwv6rOty++bRO3KZNWxukxRrVLEgilp+vswEXuV
+         IEPwWWlCWORDH3yP93thtEdFQF6nY8medwXT17IYydXn9H6MB04e+dr/F7qrzyMWVx/f
+         jYYxPvRAtUrBfSAhs/6DcwwSBMqejT9OxYMpluSEAXeD1RaX74/VNpSTh46reT6MZRPj
+         6O8qxXZ+NcBt0IjiAh2/Xxo0XsISCYKFTnIx0TVj1oCzkpJNCuxVAOpb0BNS1f1rgIaz
+         uMjNyX2IFjf8F56/qkHPvltFsgOOQ+AUQiVP7n6XXCP113lDYOvr9bOPLaQn4XsCOswf
+         kLvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LfhcDKS1UyVeWVBd99qFp44B2bLB9C4f6VmfdsulXwE=;
-        b=ZluQXFp+IxAiYaZWfM6Sh5SsuSTsFEe/rY7ChXACV4EQLwyctKwmZcqUbNQjqkmg/I
-         GosFxsjQKPft8cAq9Db/80W9ecnX1K7TslHExNr8KKa0d3jMxZ+CP7KqMWMsWkvedR0T
-         QL14EebjelBtXPmw1cO/ZhhrtKyO4ERp4M/SgAUkS0p301jcecLZrSUYeIrWSJ0QR6vT
-         1eOaceW5oLnPoQwQKRFMI5MfOevVWdQ/WHNVJtsmSt4x/gn7vDAUW2RVugAA+ro4fYMb
-         iYT4STOrIico9BiF9yZkVDL/9YICxYRQglXQUZqLD6wijEp1Zu5CWIt4yHMkde/IzMPN
-         Dqmw==
-X-Gm-Message-State: ABuFfog3pEIuAr93xCk+nBvsIjVLIp6SBChh/Wr36ER0tgM2LLJv1Xal
-        whDhlgRiOJyJzBSpcGTVWco=
-X-Google-Smtp-Source: ACcGV60l0fekmjFGKQviZG7D290NjnqF6vOwUeifD3Pbo7J0Fhrhwb5ZTNXXwM9rDzTqaeBn70NpCA==
-X-Received: by 2002:aed:3848:: with SMTP id j66-v6mr9304357qte.218.1538072660206;
-        Thu, 27 Sep 2018 11:24:20 -0700 (PDT)
+        bh=gIe6EifjLklbgUS2i2JLrOv9l/sKlhq3rcHfOJ3pIyc=;
+        b=KBxjY3Y5+ctQHHWFgWoPptqDQr3zVRw5pR+nXAQTE49XGMxKvJrzUU2Mtdd+ywta9g
+         WAeSH7Tl7/XfO4xz0Dzfn0hTC8EPezIrAN2dv+sHi4mbbybc95RijWVH0NkTDc6kDXJE
+         Nira935ZejNiRZDMtBrleaEeT9VSPpeFUNOcou9XZmYlHf64rl6IWLSnfjrAMS6DjmBv
+         BRrLVnZOKxNmJ9sA7U2QOlhEr/+kgP2qVb0edfJ3XYYMDRWrMq1aWGvcrEMDtujz9ATw
+         e2vh/s2JQq4S/pby3dbefeSvGbHz7m4ibC2DcgQVm6jsbh1SI0mKPxMWhrCgQEq7S8IS
+         zmVA==
+X-Gm-Message-State: ABuFfohzwjc6XZ+PicdsfS0p/vOBubLnXvmg7cfgcE7acLg8cC58MU7j
+        5UJfhAe8/pBhZZTLAU2AyIU=
+X-Google-Smtp-Source: ACcGV60sr6imrnTPl2Lu5XhizqGo11bPqgO3PgbdmnqyC54/qlld49lI6+rekdstmd2TnEhsi5sbQA==
+X-Received: by 2002:a37:26c3:: with SMTP id m64-v6mr9072755qkm.71.1538072664337;
+        Thu, 27 Sep 2018 11:24:24 -0700 (PDT)
 Received: from localhost.localdomain ([187.66.107.61])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm1492988qkc.53.2018.09.27.11.24.16
+        by smtp.gmail.com with ESMTPSA id a8-v6sm1492988qkc.53.2018.09.27.11.24.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 11:24:19 -0700 (PDT)
+        Thu, 27 Sep 2018 11:24:24 -0700 (PDT)
 From:   Diego Viola <diego.viola@gmail.com>
 To:     jikos@kernel.org
 Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org, trivial@kernel.org,
         miguel.ojeda.sandonis@gmail.com, richard.weinberger@gmail.com,
         Diego Viola <diego.viola@gmail.com>
-Subject: [PATCH TRIVIAL v3 2/3] MAINTAINERS: punctuation fix
-Date:   Thu, 27 Sep 2018 15:23:45 -0300
-Message-Id: <20180927182346.2257-2-diego.viola@gmail.com>
+Subject: [PATCH TRIVIAL v3 3/3] Makefile: punctuation fix
+Date:   Thu, 27 Sep 2018 15:23:46 -0300
+Message-Id: <20180927182346.2257-3-diego.viola@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927182346.2257-1-diego.viola@gmail.com>
 References: <20180927182346.2257-1-diego.viola@gmail.com>
@@ -79,22 +79,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Diego Viola <diego.viola@gmail.com>
 ---
- MAINTAINERS | 2 +-
+ Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 02a39617e..db46fa83c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -93,7 +93,7 @@ Descriptions of section entries:
- 	   Supported:	Someone is actually paid to look after this.
- 	   Maintained:	Someone actually looks after it.
- 	   Odd Fixes:	It has a maintainer but they don't have time to do
--			much other than throw the odd patch in. See below..
-+			much other than throw the odd patch in. See below.
- 	   Orphan:	No current maintainer [but maybe you could take the
- 			role as you write your new code].
- 	   Obsolete:	Old code. Something tagged obsolete generally means
+diff --git a/Makefile b/Makefile
+index 0c90c4354..3dd188d52 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1099,7 +1099,7 @@ archprepare: archheaders archscripts prepare1 scripts_basic
+ prepare0: archprepare gcc-plugins
+ 	$(Q)$(MAKE) $(build)=.
+ 
+-# All the preparing..
++# All the preparing...
+ prepare: prepare0 prepare-objtool
+ 
+ # Support for using generic headers in asm-generic
 -- 
 2.19.0
 
