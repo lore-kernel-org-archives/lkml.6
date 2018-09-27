@@ -2,136 +2,121 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4148BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24241C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44552170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:49:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LGKkG2bQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44552170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C59FA21712
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C59FA21712
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeI1EJr (ORCPT
+        id S1726185AbeI1EMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:09:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46630 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbeI1EJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:09:46 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d8-v6so2787079pfo.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:49:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B6l8jerKtTXk/CrbjKV62VlnykqbZHG54l7LeLJ9htE=;
-        b=LGKkG2bQXPyM8blizifIVSWcoqHPbKj7O9hqFQi0c1itiZJHa2styZZCa4Rxcvk33C
-         s+lrcTT9qdZYZ3gh1owwm5/auOyCTBultFBN9DCko+Ojjny085HKBvl25/FKG2wHZdRy
-         SpIAWKgWkXsvgTwEdiQNMFn2cZzuxGyBK3cuo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B6l8jerKtTXk/CrbjKV62VlnykqbZHG54l7LeLJ9htE=;
-        b=lKb5vpMMCoFjyMojvOVfuK4XXvUIgHLIrj5NiB28qFPMzv/X9zu32NEwVdU7IMXys3
-         gdzumT86bC47Y5Jhse8KhoZf4NvtlCaHs5I5XOXbGEXHCLf6wvVKqjXxnyzWpwKgWNQj
-         cmMoCtBgkomcfiZGyArKtj59lFn+2MzB/BQ6AJSrl/nFMnMNvY23uB82eaDkRmiFYgmG
-         D25zVjNQPtawdyiuPH6JIoLw0P/n8Cq7t4lyJxDvHozLRqZJjvLJAfrD4rMFs+jRtQ4x
-         SFdEBz8hWtKHNDUtAtu5tFiuZRY+hggN4TLT3uguUCB+qyj0JuMWFjQDm5b/DYXzJpQw
-         5Jvg==
-X-Gm-Message-State: ABuFfoivdP224O46l6StlW7Mr5e5UZBUHGqrJFlno5/Kkm0Lg2tZHqb6
-        sc7Z4Q3uhV0HAmtjgTEZuDC+EA==
-X-Google-Smtp-Source: ACcGV63Y9kwmBUJmdP2zJfqbh4L+wGL+PXoqNoX9ix39uSNFTX6i0f6B8jTSwZIpvZeznJED9P1QaA==
-X-Received: by 2002:a62:c60e:: with SMTP id m14-v6mr13645704pfg.40.1538084964943;
-        Thu, 27 Sep 2018 14:49:24 -0700 (PDT)
-Received: from zsm-linux.mtv.corp.google.com ([2620:15c:202:201:1b7c:8280:c835:b226])
-        by smtp.googlemail.com with ESMTPSA id h10-v6sm5042350pfj.78.2018.09.27.14.49.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 14:49:23 -0700 (PDT)
-From:   Zubin Mithra <zsm@chromium.org>
-To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, groeck@chromium.org,
-        dvyukov@google.com, zsm@chromium.org
-Subject: [PATCH] apparmor: Fix uninitialized value in aa_split_fqname
-Date:   Thu, 27 Sep 2018 14:49:17 -0700
-Message-Id: <20180927214917.10486-1-zsm@chromium.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Fri, 28 Sep 2018 00:12:09 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:42222 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725972AbeI1EMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 00:12:09 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id PBGDfYIejeeS; Thu, 27 Sep 2018 23:51:45 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BC7FB00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:fb00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9B24A1EC07DB;
+        Thu, 27 Sep 2018 23:51:45 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 23:51:48 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     ndesaulniers@google.com
+Cc:     mingo@redhat.com, tglx@linutronix.de,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/boot: define CC_HAVE_ASM_GOTO
+Message-ID: <20180927215148.GE19687@zn.tnic>
+References: <20180927204800.32210-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180927204800.32210-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Syzkaller reported a OOB-read with the stacktrace below. This occurs
-inside __aa_lookupn_ns as `n` is not initialized. `n` is obtained from
-aa_splitn_fqname. In cases where `name` is invalid, aa_splitn_fqname
-returns without initializing `ns_name` and `ns_len`.
+On Thu, Sep 27, 2018 at 01:47:58PM -0700, ndesaulniers@google.com wrote:
+> Early prototypes of Clang with asm goto support produce 6 instances of
+> the following warning:
+> 
+> In file included from arch/x86/boot/compressed/misc.h:20:
+> In file included from ./include/linux/elf.h:5:
+> In file included from ./arch/x86/include/asm/elf.h:8:
+> In file included from ./include/linux/thread_info.h:38:
+> In file included from ./arch/x86/include/asm/thread_info.h:53:
+> ./arch/x86/include/asm/cpufeature.h:150:2: warning: "Compiler lacks
+> ASM_GOTO support. Add -D __BPF_TRACING__ to your compiler arguments"
+> [-W#warnings]
+> your compiler arguments"
+>  ^
+> 
+> Since 6 files under arch/x86/boot/compressed/ include
+> arch/x86/boot/compressed/misc.h AND
+> arch/x86/boot/compressed/Makefile happens to redefine KBUILD_CFLAGS,
+> which set these variables in the top level MAKEFILE.
+> 
+> Suggested-by: Borislav Petkov <bp@suse.de>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+> v1 -> v2:
+>   Updated commit message to provide more context as per Borislav.
+> 
+>  arch/x86/boot/compressed/Makefile | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 28764dacf018..158c0b4e178a 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -56,6 +56,13 @@ KBUILD_LDFLAGS += $(shell $(LD) --help 2>&1 | grep -q "\-z noreloc-overflow" \
+>  endif
+>  LDFLAGS_vmlinux := -T
+>  
+> +# check for 'asm goto'
+> +ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
+> +  CC_HAVE_ASM_GOTO := 1
+> +  KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
+> +  KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
+> +endif
 
-Fix this by always initializing `ns_name` and `ns_len`.
+I would still like to know why can't we do the -D_SETUP thing here:
+https://lkml.kernel.org/r/20180926090841.GC5745@zn.tnic
 
-	__dump_stack lib/dump_stack.c:77 [inline]
-	dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-	print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-	kasan_report_error mm/kasan/report.c:354 [inline]
-	kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-	__asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-	memcmp+0xe3/0x160 lib/string.c:861
-	strnstr+0x4b/0x70 lib/string.c:934
-	__aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
-	aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
-	aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
-	fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
-	aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
-	aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
-	aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
-	apparmor_setprocattr+0xaa4/0x1150 security/apparmor/lsm.c:658
-	security_setprocattr+0x66/0xc0 security/security.c:1298
-	proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
-	__vfs_write+0x119/0x9f0 fs/read_write.c:485
-	vfs_write+0x1fc/0x560 fs/read_write.c:549
-	ksys_write+0x101/0x260 fs/read_write.c:598
-	__do_sys_write fs/read_write.c:610 [inline]
-	__se_sys_write fs/read_write.c:607 [inline]
-	__x64_sys_write+0x73/0xb0 fs/read_write.c:607
-	do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-	entry_SYSCALL_64_after_hwframe+0x49/0xbe
+instead of polluting this Makefile with defines which are not really
+needed in the compressed kernel build, except to silence build warnings.
 
-Fixes: 3b0aaf5866bf ("apparmor: add lib fn to find the "split" for fqnames")
-Reported-by: syzbot+61e4b490d9d2da591b50@syzkaller.appspotmail.com
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
----
- security/apparmor/lib.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I mean, we can perpetuate that ugly hack and do:
 
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 974affe50531..76491e7f4177 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -90,10 +90,12 @@ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
- 	const char *end = fqname + n;
- 	const char *name = skipn_spaces(fqname, n);
- 
--	if (!name)
--		return NULL;
- 	*ns_name = NULL;
- 	*ns_len = 0;
-+
-+	if (!name)
-+		return NULL;
-+
- 	if (name[0] == ':') {
- 		char *split = strnchr(&name[1], end - &name[1], ':');
- 		*ns_name = skipn_spaces(&name[1], end - &name[1]);
+#define __BPF_TRACING__
+
+here in arch/x86/boot/compressed/misc.h which we could kill once clang
+can do asm goto...
+
+Hmm.
+
 -- 
-2.19.0.605.g01d371f741-goog
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
