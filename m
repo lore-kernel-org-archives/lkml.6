@@ -2,107 +2,127 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D45C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1366EC004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D7321582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:13:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SbVgr5sF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D7321582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C6B652159D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:14:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B652159D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbeI0XcZ (ORCPT
+        id S1728362AbeI0XeL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:32:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43411 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeI0XcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:32:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j26-v6so2345461pfi.10
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 10:13:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ixVkVXi1ynVKb5zmW4srfm6zYKWxWEJWjo4zCwv9DQ8=;
-        b=SbVgr5sFfZQjrA5Eb1SkNKPmLjxA2pT44wto2xeUJioyktm/aTwj57Ux4t1fcOXdeJ
-         SNWNR9OdILfEGpzAcbHK5YKmJTD4R1Ge2eu9xApID8tQivvEMokp9+z2MCbpwVu7rfUs
-         2BBxEzXPOvlFw5V6t5502xx0FxrOZ7y5l0YXs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ixVkVXi1ynVKb5zmW4srfm6zYKWxWEJWjo4zCwv9DQ8=;
-        b=NA1ZrGKruMi+ez7GMHD3xwwNkBYSMDGtbTytm0Oy6rzwk2x4dRiZ3vwrxJUk2WuA88
-         ZeUnroHmVcNecp0gAsAKHFrv94nfyzfI0m2gNj7zk4EvCsajJp4lJIHjCs/SPDKW+MKw
-         LPUeGaZoivWbKX2ctXhERnuuqjThWP2UWg3cN/iKpcB/ZDoFZmNHEJIsIUEUbPofzqqk
-         Atqyy3jnVve+uhNo2UM0nwi+LxxoLm0nDBiTpMMSbqR9uXs2E9ED9uTuRRY/7xxet/b7
-         cg7tjtiV0Ikh/W1NM8+f7l4nSM7fVCQmBvMi7y6/N95g+bR2ak2HeQNg1ManuZGlvy0t
-         Ppwg==
-X-Gm-Message-State: ABuFfogUUf/KTflXlMTiq7K/jGHEM3dJuZd7peES14i0/5SM/jWEK73p
-        1lnlcb8ipb1gnZozi+uN1Le8Zw==
-X-Google-Smtp-Source: ACcGV60pgrjvUs2n7cVXCkFCWoBFZeoCAfDXcM2LWxM/EgqZywdCL1wQ6B84X/5uUVjzxT0k5xU0Fg==
-X-Received: by 2002:a17:902:b7c2:: with SMTP id v2-v6mr12118406plz.238.1538068387083;
-        Thu, 27 Sep 2018 10:13:07 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id o62-v6sm540446pfk.76.2018.09.27.10.13.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 10:13:06 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 10:13:05 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v4 1/2] Bluetooth: Add device_get_bd_address()
-Message-ID: <20180927171305.GG22824@google.com>
-References: <20180927004810.124185-1-mka@chromium.org>
- <20180927004810.124185-2-mka@chromium.org>
- <b28c34475e447cc29a139f9121b3c1d9@codeaurora.org>
- <e6752d4b-b22a-d951-e9db-1ae7445dc403@codeaurora.org>
+        Thu, 27 Sep 2018 19:34:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60723 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727622AbeI0XeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:34:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0299120798; Thu, 27 Sep 2018 19:14:52 +0200 (CEST)
+Received: from localhost (unknown [91.116.141.28])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B0C4F2075C;
+        Thu, 27 Sep 2018 19:14:51 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 19:14:51 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
+ start delay
+Message-ID: <20180927171451.7iqt2nt2log5qojf@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-9-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e6752d4b-b22a-d951-e9db-1ae7445dc403@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180927114850.24565-9-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 12:47:06PM -0400, Sinan Kaya wrote:
-> On 9/27/2018 12:41 PM, Balakrishna Godavarthi wrote:
-> >   void bt_sock_reclassify_lock(struct sock *sk, int proto);
-> > 
-> > +int device_get_bd_address(struct device *dev, bdaddr_t *bd_addr);
+On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
+> Accordingly to BPI-M64-bsp DE DSI code Video start delay
+> can be computed by subtracting total vertical timing with
+> front porch timing and with adding 1 delay line for TCON.
+
+This is what the current code is doing as well.
+
+> This patch simply add the start_delay logic from BPI-M64-bsp,
+> w/o this new computation, the DSI on A64 encounter vblank time out.
 > 
-> Maybe change the API name to start with bt_ and get rid of device_?
+> [CRTC:36:crtc-0] vblank wait timed out
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> index 9918fdb990ff..217db74c6dc3 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+>  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+>  					   struct drm_display_mode *mode)
+>  {
+> -	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+> +	u32 vfp = mode->vsync_start - mode->vdisplay;
 
-device_ indicates that we get the BD_ADDR for a 'struct device' and
-not for e.g. a 'struct fwnode_handle'.
+Again, this is wrong and contrary to what your commit log is saying.
 
-Anyway with this version of the patch fwnode_get_bd_address() has been
-scrapped and it might never be introduced again, so I'm open to change
-the name to bt_ if there is a general preference for it.
+The Allwinner code has:
 
-Cheers
+u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+u32 dsi_start_delay = panel->lcd_vt - vfp + 1;
 
-Matthias
+So, essentially:
+
+vtotal - (vtotal - vdisplay - back porch) + 1
+
+The backporch is hsync_total - hsync_end, so we end up, removing the
+addition / removal of vtotal, with:
+
+vdisplay - (vsync_total - vsync_end) + 1
+
+The formula used there looks indeed different, but unlike what you
+were saying.
+
+> +	u32 start_delay;
+> +
+> +	start_delay = mode->vtotal - vfp + 1;
+> +	if (start_delay > mode->vtotal)
+> +		start_delay -= mode->vtotal;
+> +
+> +	if (!start_delay)
+> +		start_delay = 1;
+> +
+
+I guess that it's actually the clamping that fixes thing. It should be
+mentionned in your commit log.
+
+Maxime
+
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
