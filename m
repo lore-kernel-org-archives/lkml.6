@@ -2,112 +2,185 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D43FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D765C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C6E4204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8E2D21710
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:39:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jj/HJ56Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6E4204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="XUQ3Ulog"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E2D21710
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeI1A6z (ORCPT
+        id S1728530AbeI1A7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:58:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40869 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbeI1A6y (ORCPT
+        Thu, 27 Sep 2018 20:59:08 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45756 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727404AbeI1A7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:58:54 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s5-v6so2507922pfj.7;
-        Thu, 27 Sep 2018 11:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wx4n+pGnn4Z27VuDHAijr/2jdLp27dEjTrmAwqM/WRI=;
-        b=Jj/HJ56ZB8avkSygxia05Hpk+JobOAl4f3IvxnRAXdEdPcjy92KjQlkOrDPbpkFSdh
-         BBE8QzXlAC43dwZxAXcBCclSph0E+JUR3zpz5JKb4dOkuhp9W/W8vmOLzDn5381AorEC
-         d4/69DlyDlEbmuLRal5shjutVlHBLBq/1l5oFVm2pGr+SkNdaEMg26WnaTksgr0Wh/m4
-         JIIWg11vFwY1JRUa549y5EOK8tYmvGeA4Yf2zbdAhv1NBXCB7q5tLYKMqMr5Yj6VzhDN
-         lalzUWF+aQiGpGJ+mbRllSlX3qyag7BElDz+hIdX2GuOsQMuxdSDR2QkBfRIqjw71/L0
-         Ej5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wx4n+pGnn4Z27VuDHAijr/2jdLp27dEjTrmAwqM/WRI=;
-        b=OKD0dZ6zvKL8Np2iXEAfkA8Zng+ks4biZS6ud+g3Tx5fJJmwBkc0ZqI9gV/H6l5UKU
-         NCNL+DXphLN9Fax6jvBOvwiVw23cC95k9E2924jcNkbbXba+NQKU11/CEpSM7sDVab5w
-         xjhNtTlrG1gpbyCmzLP5J14fCsuq6bpUWFA+I3h4gBPTLFadPUcmox4j6mjZL1tzKJmb
-         xdvArbJ+QQ+mAQFK6XYKet6YoUL4pS3qtCKt7eQX3XqWUPQB5amijaNwYErYqCRAQSOh
-         tIakHq14LkSSYpzPR8PgDfpriiyhaBa6M1RKcQxhOCuGHyxnKE9eWiE7uLuof/agGcch
-         ffmw==
-X-Gm-Message-State: ABuFfohm4VjvBBHRr+GWRCUC/5k/3mR4fOO7H4O/Qcq/mhFSJ0wYHoBe
-        IxRrXUomkT6S9+ujxOBJCWLwy9SV
-X-Google-Smtp-Source: ACcGV62hrVcB/QpiRxSpgZlyMWin4gj2FFWlrItZNEPy6NLv7ERsRNMAh1jAfIID5vSSjYszQzj3aw==
-X-Received: by 2002:a62:1b45:: with SMTP id b66-v6mr8322260pfb.94.1538073558525;
-        Thu, 27 Sep 2018 11:39:18 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm5295923pfi.15.2018.09.27.11.39.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:39:17 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 11:39:13 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, corbet@lwn.net, afd@ti.com,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: ina3221: Add enable sysfs nodes
-Message-ID: <20180927183912.GA15719@Asurada-Nvidia.nvidia.com>
-References: <20180926064245.4091-1-nicoleotsuka@gmail.com>
- <20180926064245.4091-3-nicoleotsuka@gmail.com>
- <0cfe55e1-10d8-ac1f-8b6e-73777074a219@roeck-us.net>
- <20180926180243.GA6329@Asurada-Nvidia.nvidia.com>
- <20180926195817.GA19695@roeck-us.net>
- <20180926202519.GB10595@Asurada-Nvidia.nvidia.com>
- <20180926204455.GA17035@roeck-us.net>
- <20180926215504.GC10595@Asurada-Nvidia.nvidia.com>
- <20180927160509.GA18064@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180927160509.GA18064@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 27 Sep 2018 20:59:08 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 322B7242DBE;
+        Thu, 27 Sep 2018 14:39:32 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id ea_gkhkRGZmP; Thu, 27 Sep 2018 14:39:28 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 55AB0242DBA;
+        Thu, 27 Sep 2018 14:39:28 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 55AB0242DBA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1538073568;
+        bh=me7eF6hZJHSTQ9fZBJ6CJsZctm5dT9V6mOScDjkd8iM=;
+        h=From:To:Date:Message-Id;
+        b=XUQ3UlogU1aj7AC/UBgARlnBJu6jOv812zU1OZ1wJkc1TgyltEC5SHLWAZkNtWQ8a
+         q72T7mCmQA2epvNsWhHFzuy5ZFGYxmsb6g6nCVYv8DOwvfvqxthw8LkLxzjHbTmoVk
+         8CvoPo6IxaYCYybNN1tYpcp6RyJOMFI4B+dU3ZL4RNVIje0jljFSzKFMAuk+uvSaqL
+         urWOB0nnR7/6erF6e9EMUou+f+xpZZsp/gQgfXdad/ehqslXfBhMrcUCZfArZn1zjo
+         vwHLkpWHIm0PHUnnICdO2kcwV/QkkkiNyXWJP0+3JyTzoWEkzg3Dv9kXumHzYAZ2GP
+         IC81YcN1kgH2w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 7cA2_8YeuvSY; Thu, 27 Sep 2018 14:39:28 -0400 (EDT)
+Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id D64AB242DB3;
+        Thu, 27 Sep 2018 14:39:27 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Joel Fernandes <joelaf@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Watson <davejwatson@fb.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        linux-kselftest@vger.kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Chris Lameter <cl@linux.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Paul Turner <pjt@google.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Maurer <bmaurer@fb.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v2] rseq/selftests: fix parametrized test with -fpie
+Date:   Thu, 27 Sep 2018 14:39:19 -0400
+Message-Id: <20180927183919.7461-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Guenter,
+On x86-64, the parametrized selftest code for rseq crashes with a
+segmentation fault when compiled with -fpie. This happens when the
+param_test binary is loaded at an address beyond 32-bit on x86-64.
 
-On Thu, Sep 27, 2018 at 09:05:09AM -0700, Guenter Roeck wrote:
-> > > Point is that I don't _know_ how this is going to be used, so I'd
-> > > rather keep it flexible.
-> > 
-> > Well, taking one step back, I am okay to follow your way if you
-> > are really firm about it. Just please give me a more reply and
-> > I will merge this change to that v5, dropping the is_visible().
-> 
-> Quite obviously we are not converging. Given that, I think it
-> would be better to shelve the new attributes for now and to wait
-> for an actual user who actually needs the new attributes.
+The issue is caused by use of a 32-bit register to hold the address
+of the loop counter variable.
 
-I would rather remove the hiding code, if we have to sacrifice
-one of them. We both agreed that in[123]_enable is more useful.
-And actually we will still keep is_visible() for empty labels.
-So even if one day we somehow feel safe to hide a disconnected
-channel one day, it'd only need a couple of lines of changes.
+Fix this by using a 64-bit register to calculate the address of the
+loop counter variables as an offset from rip.
 
-I will squash this change into v6, and will send it after I fix
-things that Rob pointed out at DT binding.
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Acked-by: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: <stable@vger.kernel.org> # v4.18
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+Changes since v1:
+- Update email address for Shuah Khan based on updated MAINTAINERS
+  email address,
+- Rebase on v4.19-rc5.
+---
+ tools/testing/selftests/rseq/param_test.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-Thank you
-Nicolin
+diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
+index 642d4e12abea..eec2663261f2 100644
+--- a/tools/testing/selftests/rseq/param_test.c
++++ b/tools/testing/selftests/rseq/param_test.c
+@@ -56,15 +56,13 @@ unsigned int yield_mod_cnt, nr_abort;
+ 			printf(fmt, ## __VA_ARGS__);	\
+ 	} while (0)
+ 
+-#if defined(__x86_64__) || defined(__i386__)
++#ifdef __i386__
+ 
+ #define INJECT_ASM_REG	"eax"
+ 
+ #define RSEQ_INJECT_CLOBBER \
+ 	, INJECT_ASM_REG
+ 
+-#ifdef __i386__
+-
+ #define RSEQ_INJECT_ASM(n) \
+ 	"mov asm_loop_cnt_" #n ", %%" INJECT_ASM_REG "\n\t" \
+ 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
+@@ -76,9 +74,16 @@ unsigned int yield_mod_cnt, nr_abort;
+ 
+ #elif defined(__x86_64__)
+ 
++#define INJECT_ASM_REG_P	"rax"
++#define INJECT_ASM_REG		"eax"
++
++#define RSEQ_INJECT_CLOBBER \
++	, INJECT_ASM_REG_P \
++	, INJECT_ASM_REG
++
+ #define RSEQ_INJECT_ASM(n) \
+-	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG "\n\t" \
+-	"mov (%%" INJECT_ASM_REG "), %%" INJECT_ASM_REG "\n\t" \
++	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG_P "\n\t" \
++	"mov (%%" INJECT_ASM_REG_P "), %%" INJECT_ASM_REG "\n\t" \
+ 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
+ 	"jz 333f\n\t" \
+ 	"222:\n\t" \
+@@ -86,10 +91,6 @@ unsigned int yield_mod_cnt, nr_abort;
+ 	"jnz 222b\n\t" \
+ 	"333:\n\t"
+ 
+-#else
+-#error "Unsupported architecture"
+-#endif
+-
+ #elif defined(__s390__)
+ 
+ #define RSEQ_INJECT_INPUT \
+-- 
+2.17.1
+
