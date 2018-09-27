@@ -3,173 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2DFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5124C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D07F52159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:30:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D07F52159D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 67CA02159D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:30:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67CA02159D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeI1Dur (ORCPT
+        id S1728337AbeI1DvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:50:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42912 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727340AbeI1Dur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:50:47 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9EE843086249;
-        Thu, 27 Sep 2018 21:30:30 +0000 (UTC)
-Received: from rules.brq.redhat.com (ovpn-200-20.brq.redhat.com [10.40.200.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8DAC3600C5;
-        Thu, 27 Sep 2018 21:30:28 +0000 (UTC)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     syzbot+001516d86dbe88862cec@syzkaller.appspotmail.com,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: KMSAN: uninit-value in __dev_mc_add
-Date:   Thu, 27 Sep 2018 23:30:26 +0200
-Message-Id: <20180927213026.16863-1-vdronov@redhat.com>
-In-Reply-To: <0000000000005e2e530576c6f9ce@google.com>
-References: <0000000000005e2e530576c6f9ce@google.com>
+        Thu, 27 Sep 2018 23:51:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53089 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbeI1DvC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 23:51:02 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g5drO-0003Wc-IO; Thu, 27 Sep 2018 23:30:10 +0200
+Date:   Thu, 27 Sep 2018 23:30:09 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+cc:     Andrey Vagin <avagin@virtuozzo.com>,
+        Dmitry Safonov <dima@arista.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelianov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "criu@openvz.org" <criu@openvz.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
+In-Reply-To: <87zhw4rwiq.fsf@xmission.com>
+Message-ID: <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de>
+References: <20180919205037.9574-1-dima@arista.com>        <874lej6nny.fsf@xmission.com>        <20180924205119.GA14833@outlook.office365.com>        <874leezh8n.fsf@xmission.com>        <20180925014150.GA6302@outlook.office365.com>
+ <87zhw4rwiq.fsf@xmission.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="------------2.14.4"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 27 Sep 2018 21:30:30 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------2.14.4
-Content-Type: text/plain; charset=UTF-8; format=fixed
-Content-Transfer-Encoding: 8bit
+On Wed, 26 Sep 2018, Eric W. Biederman wrote:
+> Reading the code the calling sequence there is:
+> tick_sched_do_timer
+>    tick_do_update_jiffies64
+>       update_wall_time
+>           timekeeping_advance
+>              timekeepging_update
+> 
+> If I read that properly under the right nohz circumstances that update
+> can be delayed indefinitely.
+> 
+> So I think we could prototype a time namespace that was per
+> timekeeping_update and just had update_wall_time iterate through
+> all of the time namespaces.
 
-Hello,
+Please don't go there. timekeeping_update() is already heavy and walking
+through a gazillion of namespaces will just make it horrible,
 
-This report is actually for the same bug which was reported in:
+> I don't think the naive version would scale to very many time
+> namespaces.
 
-https://syzkaller.appspot.com/bug?id=088efeac32fdde781038a777a63e436c0d4d7036
+:)
 
-The note there that the bug was fixed by "Commits: net: fix uninit-value in
-__hw_addr_add_ex()" is wrong. A C-reproducer from the 2nd syzkaller report
-can trigger the bug from this one.
+> At the same time using the techniques from the nohz work and a little
+> smarts I expect we could get the code to scale.
 
-I've researched this and a result is a proposed patch, the problem is the tun
-device code allowing to set an arbitrary link type.
+You'd need to invoke the update when the namespace is switched in and
+hasn't been updated since the last tick happened. That might be doable, but
+you also need to take the wraparound constraints of the underlying
+clocksources into account, which again can cause walking all name spaces
+when they are all idle long enough.
 
-https://lkml.org/lkml/2018/9/26/416
-https://lore.kernel.org/lkml/20180926093018.6646-1-vdronov@redhat.com/T/#u
-https://marc.info/?l=linux-netdev&m=153795423320016&w=2
+From there it becomes hairy, because it's not only timekeeping,
+i.e. reading time, this is also affecting all timers which are armed from a
+namespace.
 
-A simplified reproducer is attached.
+That gets really ugly because when you do settimeofday() or adjtimex() for
+a particular namespace, then you have to search for all armed timers of
+that namespace and adjust them.
 
-Best regards,
-Vladis Dronov
+The original posix timer code had the same issue because it mapped the
+clock realtime timers to the timer wheel so any setting of the clock caused
+a full walk of all armed timers, disarming, adjusting and requeing
+them. That's horrible not only performance wise, it's also a locking
+nightmare of all sorts.
 
---------------2.14.4
-Content-Type: text/plain; name="kmsan-hw_addr_add_ex.c"; charset=UTF-8;
-Content-Transfer-Encoding: 8bit
-Content-Disposition: attachment; filename="kmsan-hw_addr_add_ex.c"
+Add time skew via NTP/PTP into the picture and you might have to adjust
+timers as well, because you need to guarantee that they are not expiring
+early.
 
-#define _GNU_SOURCE
-#include <endian.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <linux/futex.h>
-#include <pthread.h>
-#include <sched.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <sys/prctl.h>
-#include <sys/resource.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <unistd.h>
+I haven't looked through Dimitry's patches yet, but I don't see how this
+can work at all without introducing subtle issues all over the place.
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
+Thanks,
 
-int main(int argc, char **argv)
-{
-  int ret, sockfd, tunfd;
+	tglx
 
-  syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
 
-  // socket(AF_PACKET, SOCK_DGRAM|SOCK_NONBLOCK, 0)
-  sockfd = syscall(__NR_socket, 0x11, 0x100000802, 0);
-  if (sockfd < 0) {
-    perror("socket()");
-    ret = 1;
-    goto exit_end;
-  }
 
-  memcpy((void*)0x20000240, "/dev/net/tun", 13);
-  tunfd = open((char *)0x20000240, 0);
-  if (tunfd < 0) {
-    perror("open()");
-    ret = 2;
-    goto exit_sock_close;
-  }
-
-  memcpy((void*)0x200000c0, "\x69\x67\x62\x30\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 16);
-  *(uint16_t*)0x200000d0 = 0x4012;
-  ret = syscall(__NR_ioctl, tunfd, 0x400454ca, 0x200000c0); // TUNSETIFF _IOW('T', 202, int)
-  if (ret < 0) {
-    perror("ioctl(TUNSETIFF)");
-    ret = 3;
-    goto exit_tun_close;
-  }
-
-  // TUNSETLINK _IOW('T', 205, int) / 0x30a = 778 = ARPHRD_IPGRE
-  if (argc < 2)
-    ret = syscall(__NR_ioctl, tunfd, 0x400454cd, 0x30a);
-  else
-    ret = syscall(__NR_ioctl, tunfd, 0x400454cd, atoi(argv[1]));
-  if (ret < 0) {
-    perror("ioctl(TUNSETLINK)");
-    ret = 4;
-    goto exit_tun_close;
-  }
-
-  memcpy((void*)0x20000040, "\x69\x67\x62\x30\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 16);
-  *(uint16_t*)0x20000050 = 0xa201;
-  ret = syscall(__NR_ioctl, sockfd, 0x8914, 0x20000040); // SIOCSIFFLAGS 0x8914
-  if (ret < 0) {
-    perror("ioctl(SIOCSIFFLAGS)");
-    ret = 5;
-    goto exit_tun_close;
-  }
-
-  printf("done:\n");
-  system("/usr/sbin/ip -details link show igb0");
-
-exit_tun_close:
-  close(tunfd);
-exit_sock_close:
-  close(sockfd);
-exit_end:
-  munmap((void *)0x20000000, 0x1000000);
-  return 0;
-}
---------------2.14.4--
