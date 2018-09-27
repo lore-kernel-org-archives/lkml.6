@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2B9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B15DC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76F4221533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76F4221533
+	by mail.kernel.org (Postfix) with ESMTP id CBCED21533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBCED21533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbeI0PtF (ORCPT
+        id S1729018AbeI0PtL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:49:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57070 "EHLO
+        Thu, 27 Sep 2018 11:49:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeI0PtF (ORCPT
+        with ESMTP id S1727212AbeI0PtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:49:05 -0400
+        Thu, 27 Sep 2018 11:49:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F22131120;
-        Thu, 27 Sep 2018 09:31:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 50DD81120;
+        Thu, 27 Sep 2018 09:31:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 35/44] ext4: fix online resizes handling of a too-small final block group
-Date:   Thu, 27 Sep 2018 11:04:24 +0200
-Message-Id: <20180927090123.491361635@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 36/44] ext4: fix online resizing for bigalloc file systems with a 1k block size
+Date:   Thu, 27 Sep 2018 11:04:25 +0200
+Message-Id: <20180927090123.637136708@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
 References: <20180927090117.997362691@linuxfoundation.org>
@@ -54,60 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit f0a459dec5495a3580f8d784555e6f8f3bf7f263 upstream.
+commit 5f8c10936fab2b69a487400f2872902e597dd320 upstream.
 
-Avoid growing the file system to an extent so that the last block
-group is too small to hold all of the metadata that must be stored in
-the block group.
+An online resize of a file system with the bigalloc feature enabled
+and a 1k block size would be refused since ext4_resize_begin() did not
+understand s_first_data_block is 0 for all bigalloc file systems, even
+when the block size is 1k.
 
-This problem can be triggered with the following reproducer:
-
-umount /mnt
-mke2fs -F -m0 -b 4096 -t ext4 -O resize_inode,^has_journal \
-	-E resize=1073741824 /tmp/foo.img 128M
-mount /tmp/foo.img /mnt
-truncate --size 1708M /tmp/foo.img
-resize2fs /dev/loop0 295400
-umount /mnt
-e2fsck -fy /tmp/foo.img
-
-Reported-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ fs/ext4/resize.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/fs/ext4/resize.c
 +++ b/fs/ext4/resize.c
-@@ -1954,6 +1954,26 @@ retry:
- 		}
- 	}
+@@ -18,6 +18,7 @@
  
-+	/*
-+	 * Make sure the last group has enough space so that it's
-+	 * guaranteed to have enough space for all metadata blocks
-+	 * that it might need to hold.  (We might not need to store
-+	 * the inode table blocks in the last block group, but there
-+	 * will be cases where this might be needed.)
-+	 */
-+	if ((ext4_group_first_block_no(sb, n_group) +
-+	     ext4_group_overhead_blocks(sb, n_group) + 2 +
-+	     sbi->s_itb_per_group + sbi->s_cluster_ratio) >= n_blocks_count) {
-+		n_blocks_count = ext4_group_first_block_no(sb, n_group);
-+		n_group--;
-+		n_blocks_count_retry = 0;
-+		if (resize_inode) {
-+			iput(resize_inode);
-+			resize_inode = NULL;
-+		}
-+		goto retry;
-+	}
-+
- 	/* extend the last group */
- 	if (n_group == o_group)
- 		add = n_blocks_count - o_blocks_count;
+ int ext4_resize_begin(struct super_block *sb)
+ {
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	int ret = 0;
+ 
+ 	if (!capable(CAP_SYS_RESOURCE))
+@@ -28,7 +29,7 @@ int ext4_resize_begin(struct super_block
+          * because the user tools have no way of handling this.  Probably a
+          * bad time to do it anyways.
+          */
+-	if (EXT4_SB(sb)->s_sbh->b_blocknr !=
++	if (EXT4_B2C(sbi, sbi->s_sbh->b_blocknr) !=
+ 	    le32_to_cpu(EXT4_SB(sb)->s_es->s_first_data_block)) {
+ 		ext4_warning(sb, "won't resize using backup superblock at %llu",
+ 			(unsigned long long)EXT4_SB(sb)->s_sbh->b_blocknr);
 
 
