@@ -2,100 +2,163 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CEDC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5F9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 741A721537
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A48A221537
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:03:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CxSuqDRR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 741A721537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZ1YgMmh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A48A221537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbeI0LRv (ORCPT
+        id S1726934AbeI0LTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:17:51 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:53942 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbeI0LRv (ORCPT
+        Thu, 27 Sep 2018 07:19:52 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34911 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbeI0LTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:17:51 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8R50tHM017989;
-        Thu, 27 Sep 2018 00:00:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538024455;
-        bh=leBOwN/sG7kHs4Sm4Dyt0T3mIgV6v21q4PLMEMCCAuc=;
-        h=From:To:CC:Subject:Date;
-        b=CxSuqDRRy5idf0CeFcU7He74QXiZavAxahcPArNu9j8IPFrd1WeovdzicV/EOVwTl
-         g4WQMEWuPazgsz4pvxGclZCneKrPxqKtXh0Dc04xQIdfpcgKi61z4yb2JB1iewd/E2
-         t51BL49PxJn2jkcBk2yk/4lcfr34/qDUONH/i2bo=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8R50tQC019327;
-        Thu, 27 Sep 2018 00:00:55 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 27
- Sep 2018 00:00:55 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 27 Sep 2018 00:00:55 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8R50qVC005315;
-        Thu, 27 Sep 2018 00:00:53 -0500
-From:   Vignesh R <vigneshr@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>
-CC:     Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh R <vigneshr@ti.com>
-Subject: [PATCH] arm64: dts: k3-am65-wakeup: Fix wakeup_uart reg address
-Date:   Thu, 27 Sep 2018 10:31:46 +0530
-Message-ID: <20180927050146.17847-1-vigneshr@ti.com>
+        Thu, 27 Sep 2018 07:19:52 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o18-v6so4514506wmc.0;
+        Wed, 26 Sep 2018 22:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+kVS+6qYjogIYGXD4Q4Bg0yX/XWWmvU+UJlJhxK1XV8=;
+        b=iZ1YgMmhKR0P+Gj6Nw+2LrsHPevgTZxhXXVGhAYUFyEPCaAfOVoKgYVJhZRmEFgq4b
+         EZCWA5bQBdTkAyBFAEH+tdw9AzHSyolmqclF8ndNUCVNAn3bUaifhmV+JnBBcoYB3xs/
+         Lr8Rsqv48vl4yJl0aO5jAeGg+bDNxk02G1vDVMJu1/nd3Izn6bnyMUZLxU7Rntq+Q6cu
+         1pAiklbJyIIFA7Rv+4s4Hl7yXc2ArWhjeCvtUmngi60xr9Ln/7cmZO8laY+guMhIoJ3f
+         tuT3+M523HRuPyDk4Irsk/rBHMSk62haq4jaSuNIG/5ZBAzyjiKGt4H88jIxwGK+9gdC
+         qcvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+kVS+6qYjogIYGXD4Q4Bg0yX/XWWmvU+UJlJhxK1XV8=;
+        b=XZOjdZ0xXIAIEk1Y8rlMjLTxr9phX1rbWqAo2L4sCI0t+6GzSHCnN8gLp/EiPN6j72
+         zAR1U0LuXemsf5cBSD+34oo7lr455yoGxi7cxdKWMYk4o4N9nwZE6CWwSixePnhZN0NH
+         l1SFVra0XnN3cXF7V6lvoB2gdej/uSOvCJAFa49WjPdpoG03RauxnEGKw8K6Zm4197JU
+         8WdTw8BFLZM2HG7CKZckzIeJen0oox/0L3RDEI076rvhjaCXwtjVp1lu+iY2tlLug1oj
+         4HbLyN+elHWBGrfb2EVI8wMpawxjW6Muh+/OVqInVGf3kuE6rcbw1qbuVrW+rwlT5Kjj
+         9BjA==
+X-Gm-Message-State: ABuFfog2PyAWh7bAaUz/czbh94FuZbRWysRZUKDi1xpaM9nmb970pBWY
+        +R1VleTGmd43OSpNIhDAbQU=
+X-Google-Smtp-Source: ACcGV61M6yN2o1BqhhsomDr7FyqyWJbDrAFjMHgjyfZjrKK9zhqDMsr47LYeI2HbBw+CrbcBgWJ/zA==
+X-Received: by 2002:a1c:5801:: with SMTP id m1-v6mr6768556wmb.135.1538024610523;
+        Wed, 26 Sep 2018 22:03:30 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id h73-v6sm3828071wma.11.2018.09.26.22.03.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 22:03:30 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Moni Shoua <monis@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH v2] IB/rxe: Avoid implicit enum conversions in rxe_init functions
+Date:   Wed, 26 Sep 2018 22:01:57 -0700
+Message-Id: <20180927050156.20023-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927011010.8373-1-natechancellor@gmail.com>
+References: <20180927011010.8373-1-natechancellor@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cbass_wakeup interconnect which is the parent of wakeup_uart node
-defines address-cells=1 and size-cells=1, therefore fix up reg property
-of wakeup_uart node accordingly. Otherwise, this UART instance fails to
-probe if enabled.
+Clang warns when an emumerated type is implicitly converted to another.
 
-Fixes: 4201af2544b3 ("arm64: dts: ti: am654: Add uart nodes")
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+drivers/infiniband/sw/rxe/rxe.c:106:27: warning: implicit conversion
+from enumeration type 'enum rxe_device_param' to different enumeration
+type 'enum ib_atomic_cap' [-Wenum-conversion]
+        rxe->attr.atomic_cap                    = RXE_ATOMIC_CAP;
+                                                ~ ^~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:131:22: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_port_state' [-Wenum-conversion]
+        port->attr.state                = RXE_PORT_STATE;
+                                        ~ ^~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:132:24: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_mtu' [-Wenum-conversion]
+        port->attr.max_mtu              = RXE_PORT_MAX_MTU;
+                                        ~ ^~~~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:133:27: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_mtu' [-Wenum-conversion]
+        port->attr.active_mtu           = RXE_PORT_ACTIVE_MTU;
+                                        ~ ^~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:151:24: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_mtu' [-Wenum-conversion]
+                                ib_mtu_enum_to_int(RXE_PORT_ACTIVE_MTU);
+                                ~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~
+5 warnings generated.
+
+Use the appropriate values from the expected enumerated type so no
+conversion needs to happen.
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
 
-Based on next-20180926
+v1 -> v2:
 
- arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Don't cast, just use the expecting enumerated value directly, per
+  Jason's request
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-index ee56959f4af8..c617393ea767 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-@@ -44,7 +44,7 @@
+ drivers/infiniband/sw/rxe/rxe.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe.c b/drivers/infiniband/sw/rxe/rxe.c
+index 10999fa69281..2f4e57886b89 100644
+--- a/drivers/infiniband/sw/rxe/rxe.c
++++ b/drivers/infiniband/sw/rxe/rxe.c
+@@ -103,7 +103,7 @@ static void rxe_init_device_param(struct rxe_dev *rxe)
+ 	rxe->attr.max_res_rd_atom		= RXE_MAX_RES_RD_ATOM;
+ 	rxe->attr.max_qp_init_rd_atom		= RXE_MAX_QP_INIT_RD_ATOM;
+ 	rxe->attr.max_ee_init_rd_atom		= RXE_MAX_EE_INIT_RD_ATOM;
+-	rxe->attr.atomic_cap			= RXE_ATOMIC_CAP;
++	rxe->attr.atomic_cap			= IB_ATOMIC_HCA;
+ 	rxe->attr.max_ee			= RXE_MAX_EE;
+ 	rxe->attr.max_rdd			= RXE_MAX_RDD;
+ 	rxe->attr.max_mw			= RXE_MAX_MW;
+@@ -128,9 +128,9 @@ static void rxe_init_device_param(struct rxe_dev *rxe)
+ /* initialize port attributes */
+ static int rxe_init_port_param(struct rxe_port *port)
+ {
+-	port->attr.state		= RXE_PORT_STATE;
+-	port->attr.max_mtu		= RXE_PORT_MAX_MTU;
+-	port->attr.active_mtu		= RXE_PORT_ACTIVE_MTU;
++	port->attr.state		= IB_PORT_DOWN;
++	port->attr.max_mtu		= IB_MTU_4096;
++	port->attr.active_mtu		= IB_MTU_256;
+ 	port->attr.gid_tbl_len		= RXE_PORT_GID_TBL_LEN;
+ 	port->attr.port_cap_flags	= RXE_PORT_PORT_CAP_FLAGS;
+ 	port->attr.max_msg_sz		= RXE_PORT_MAX_MSG_SZ;
+@@ -147,8 +147,7 @@ static int rxe_init_port_param(struct rxe_port *port)
+ 	port->attr.active_width		= RXE_PORT_ACTIVE_WIDTH;
+ 	port->attr.active_speed		= RXE_PORT_ACTIVE_SPEED;
+ 	port->attr.phys_state		= RXE_PORT_PHYS_STATE;
+-	port->mtu_cap			=
+-				ib_mtu_enum_to_int(RXE_PORT_ACTIVE_MTU);
++	port->mtu_cap			= ib_mtu_enum_to_int(IB_MTU_256);
+ 	port->subnet_prefix		= cpu_to_be64(RXE_PORT_SUBNET_PREFIX);
  
- 	wkup_uart0: serial@42300000 {
- 		compatible = "ti,am654-uart";
--		reg = <0x00 0x42300000 0x00 0x100>;
-+		reg = <0x42300000 0x100>;
- 		reg-shift = <2>;
- 		reg-io-width = <4>;
- 		interrupts = <GIC_SPI 697 IRQ_TYPE_LEVEL_HIGH>;
+ 	return 0;
 -- 
 2.19.0
 
