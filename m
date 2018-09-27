@@ -2,155 +2,118 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B59C004D5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37445C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1BA2156F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D559C2156E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 02:18:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rxxI0iIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D1BA2156F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWpmxmQq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D559C2156E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbeI0I0N (ORCPT
+        id S1727258AbeI0IeZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 04:26:13 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45016 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeI0I0N (ORCPT
+        Thu, 27 Sep 2018 04:34:25 -0400
+Received: from mail-pg1-f175.google.com ([209.85.215.175]:39687 "EHLO
+        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeI0IeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 04:26:13 -0400
-Received: by mail-ed1-f65.google.com with SMTP id t11-v6so3594889edq.11;
-        Wed, 26 Sep 2018 19:10:19 -0700 (PDT)
+        Thu, 27 Sep 2018 04:34:25 -0400
+Received: by mail-pg1-f175.google.com with SMTP id 85-v6so712205pge.6;
+        Wed, 26 Sep 2018 19:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mNTog7Ud4VAx5NlRB3/NDdJuJoHr6fMafWweSvJ7qgM=;
-        b=rxxI0iIycCtl8VoYPwK/dbvpvqg/nGHA1XfwvUgLO0fh6kOEXUF8xiKzBukugKQ25Q
-         TywYonPKsat12/4/V4PSv7UI5WwjtGiF3PuFxC/Qd0ynlRUOJCQSIO3V0mGmeeUqabTN
-         ZXAkPuJ6sjz8FTwtBCuk4ysfO5JjX+NlqJ05xsgY7Kae+Q9yRWWfW5jU1jI6Yo4JGIhH
-         qyBQ+pkQMxl0LuXoBXMjjg2fr7XUZk97jvTHQFSewB80lqZjiGBuSRfeM/vg+YFJ9688
-         feYe1I6CavNwW8cZ2EVuKtt5ahHqSn4Rh310gKuNU89rtUKbjoAF4FAN0OUUPBfIk9hB
-         c64g==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A90Lp2W6H1+QKdsi/tGZOMLHo6szgWaNW4589vJxLIU=;
+        b=hWpmxmQqMq//uMr1RRZQxPLg13DaJvapc2iL6jBFg+FZsF1MYDtiXiKRA993sE77fz
+         BX9k7v9lAum8LM3OytcNSj9/AvcngWEXW9hNjzm7qtt3oSZ7cjIdtgS2FRfE2MeRU25E
+         TmgiT/B6b/a2YbpeBQl2Mf/zJrLTcQl7TTSwF6b6wotPNSS+Fu3B9AaFcy80UPK2Kvy7
+         RzmSBx15y0l5lyTaMhNbScWWfdliPGvlvMBZX5hEX2EVF2CCoNKOp/pQQcfqMe/hIu3I
+         3pIWHdf65rUbMVhCBeqRXIPkMzPawKi+dDRrDw6yglMM2+nYsqHrmQhDKuh8BCfbiFGm
+         bzxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mNTog7Ud4VAx5NlRB3/NDdJuJoHr6fMafWweSvJ7qgM=;
-        b=HCoO83IkB+qMcRxWEUTb2efs3cqFxQ/w5DTpA9kCdzDbH70HoeLyRUMMqmGuUuVNlR
-         KkjpZ9d+AUkZ+JUBaHz1nc31TJfhJWRoRmnnWYrLVsCg+tvCLf7uoy55s9XhDa8X9flN
-         xlmtUns1gDTtEQ0UVzvLw4mGn+foXgmf/dZvuNdXAuokh2l3d5STha7DMrs2GbZz2Mbo
-         WMb1ySXNy1jusZR4YN+jxZ002Ltoe8P5h0foTq6s22VqD++MqoAM/Se8wjJYsBgl7HWu
-         WAXkC8A+U2tLz0Z3U1XpTvhNyTK21gKut1i8rhWkqNaSb2k29WlDKAercc2eY1obnATo
-         PeIQ==
-X-Gm-Message-State: ABuFfohT4ZCPYtaJArMFgBXsN8uAmMHPbslV3YuErtVDw7hExiWTLd34
-        md7dXK5qd0OY5VOuMzOWQ21841UBWuR/rLc9YvU=
-X-Google-Smtp-Source: ACcGV62tscOFDGNagqkmqvVn2qjS5P8IEsOxeACwRO8cog5fDoybQkqp3ubS9LapTgkHtKGHHXlvx68Oq8TlrOUgAng=
-X-Received: by 2002:a50:97c8:: with SMTP id f8-v6mr14264666edb.243.1538014218525;
- Wed, 26 Sep 2018 19:10:18 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A90Lp2W6H1+QKdsi/tGZOMLHo6szgWaNW4589vJxLIU=;
+        b=qQlC+rJ5HCz+WmZJNqiKPgq9BwjLY2PPRa5P0ELweP5XhKYB2mqW1aaRO6Ib7hDWhO
+         XlSi72K/8J2YqoR0dzgPhOy6b8vY1ew8vpFsqujatk9OYJKt8NSfYKd1EPFg2rlzDSqx
+         KbRLFPn/8QgBw9ZfefkkvMfCunc0JIykYWaRluqMEK4IbjSvBYxiY+BCYaGHwUMo6FSe
+         UIaDAUWP5LMEH1mJOYRjIqtoeuTZ82u+q3TOewtZndyk87lB5kJAzvEVCHgJLOH7aYn2
+         dRPLmNTSJ/66oSLrgyx0HWTSPPDfEjHvp2pA0STX11mcFOB8iyw+OoSJa+h8cUdX92ds
+         dnDg==
+X-Gm-Message-State: ABuFfojOY/k9QOq3BZnbDABFj5zhAE9Tpq35HM21qqkh/kmYjnDm6s+l
+        rJc5Opgcr5OhIQuebgtycdc=
+X-Google-Smtp-Source: ACcGV606d2p3BewOLi5iJqWKh7rYxkas3Cgn6BPfd2hazvev7WDUEE7+EirUHOD9P4gD/Er0kIPs/w==
+X-Received: by 2002:a17:902:6909:: with SMTP id j9-v6mr8512247plk.196.1538014710485;
+        Wed, 26 Sep 2018 19:18:30 -0700 (PDT)
+Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id 1-v6sm604434pfm.145.2018.09.26.19.18.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 19:18:29 -0700 (PDT)
+Subject: Re: nfs+tcp boot failures on linuxnext-20180924 from switch
+ tcp_clock_ns to CLOCK_TAI
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        Jesus Sanchez-Palencia <jesus.sanchez-palencia@intel.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>
+References: <30e76d01dd08c2d9127072ad28c5a99afc5daabf.camel@nxp.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <2185d09d-90e1-81ef-7c7f-346eeb951bf4@gmail.com>
+Date:   Wed, 26 Sep 2018 19:18:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <1537974841-29928-1-git-send-email-bmeng.cn@gmail.com> <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180926165721.GA28024@bhelgaas-glaptop.roam.corp.google.com>
-From:   Bin Meng <bmeng.cn@gmail.com>
-Date:   Thu, 27 Sep 2018 10:10:07 +0800
-Message-ID: <CAEUhbmXc--Ph71DGu2b+ijTzB6xvHXzuESBJKp9zARE2gjqV6w@mail.gmail.com>
-Subject: Re: [PATCH] pci: Add a few new IDs for Intel GPU "spurious interrupt" quirk
-To:     helgaas@kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        stable <stable@vger.kernel.org>, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <30e76d01dd08c2d9127072ad28c5a99afc5daabf.camel@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
 
-On Thu, Sep 27, 2018 at 12:57 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> [+cc Intel DRM maintainers, etc]
->
-> On Wed, Sep 26, 2018 at 08:14:01AM -0700, Bin Meng wrote:
-> > Add more PCI IDs to the Intel GPU "spurious interrupt" quirk table,
-> > which are known to break.
->
-> Do you have a reference for this?  Any public bug reports, bugzilla,
-> Intel spec reference or errata?  "Which are known to break" is pretty
-> vague.
->
 
-Sorry I used wrong words and should have been clearer. These devices
-are validated to be broken. The test I used is very simple, just
-unplug the VGA cable and plug it again, and "spurious interrupt" will
-be seen on the interrupt line of the IGD device. I was not aware of
-any public bugs filed to Intel, nor seen any errata from Intel.
+On 09/26/2018 06:15 PM, Leonard Crestez wrote:
+> Hello,
+>  
+> It seems that after commit 72b0094f9182 ("tcp: switch tcp_clock_ns() to
+> CLOCK_TAI base") some systems that use nfs over tcp fail to boot. The
+> last line printed in the log is from systemd:
+>  
+> [    7.232579] systemd[1]: System time before build time, advancing clock.
+>  
+> Superficially it looks like very large clock discontinuities now break
+> TCP. Maybe boottime could avoid such issues?
+>  
+> I didn't find similar reports anywhere else. The machines I’m seeing
+> this are all 32bit arm imx (this shouldn’t matter) and it seems their
+> RTC isn’t properly setup so they boot with realtime set to unix zero,
+> then a ~50 years jump happens when systemd starts up. This is the
+> likely trigger for this issue.
+>  
 
-> > See commit f67fd55fa96f ("PCI: Add quirk for still enabled interrupts
-> > on Intel Sandy Bridge GPUs"), and commit 7c82126a94e6 ("PCI: Add new
-> > ID for Intel GPU "spurious interrupt" quirk") for some history.
-> >
-> > Based on current findings, it is highly possible that all Intel
-> > 1st/2nd/3rd generation Core processors' IGD has such quirk.
->
-> Can you include a reference to these "current findings"?  I assume you
-> have bug reports that include the device IDs you're adding?  If not,
-> how did you build this list of new IDs?
->
+Thanks for the report.
 
-By "current findings" I mean given the IDs we have here, plus previous
-one added by Thomas, it's highly possible this VGA BIOS bug exists in
-every 1st/2nd/3rd generation Core processors.
+It is annoying, because SCM_TXTIME and net/sched/sch_etf.c are using CLOCK_TAI,
+so it means that if we convert TCP (and net/sched/sch_fq.c) back to ktime_get_ns(),
+we will have to differentiate in skbs the clock base.
 
-> The function comment added by f67fd55fa96f ("PCI: Add quirk for still
-> enabled interrupts on Intel Sandy Bridge GPUs") suggests that this is
-> actually a BIOS issue, not a hardware erratum, i.e., I don't see
-> anything there that suggests a hardware defect.
->
-> But there must be a hole somewhere -- the kernel can't be expected to
-> disable interrupts in device-specific ways when there's no driver
-> loaded.  Maybe it's simply a BIOS defect or maybe there's some
-> interrupt or _PRT-related setup we're missing.
->
+This has been discussed in the past (When ETF was merged in 4.19) and we chose
+to use a common clock base.
 
-It's a pure VGA BIOS bug, not the BIOS bug or _PRT etc. The VGA BIOS
-forgot to turn off the interrupt on these devices.
-
-> > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
-> > Cc: <stable@vger.kernel.org> # v3.4+
-> > ---
-> >
-> >  drivers/pci/quirks.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > index 6bc27b7..c0673a7 100644
-> > --- a/drivers/pci/quirks.c
-> > +++ b/drivers/pci/quirks.c
-> > @@ -3190,7 +3190,11 @@ static void disable_igfx_irq(struct pci_dev *dev)
-> >
-> >       pci_iounmap(dev, regs);
-> >  }
-> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
-> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
-> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
-> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
-> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
-> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
-> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
-> >
-> > --
-
-Regards,
-Bin
