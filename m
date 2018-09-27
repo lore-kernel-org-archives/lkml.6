@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 249C6C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C22C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC042150D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:29:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC042150D
+	by mail.kernel.org (Postfix) with ESMTP id BE1622150D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1622150D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbeI0Pqg (ORCPT
+        id S1728187AbeI0Pq4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:46:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56914 "EHLO
+        Thu, 27 Sep 2018 11:46:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeI0Pqf (ORCPT
+        with ESMTP id S1727203AbeI0Pqz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:46:35 -0400
+        Thu, 27 Sep 2018 11:46:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A2D8111C;
-        Thu, 27 Sep 2018 09:29:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DED471120;
+        Thu, 27 Sep 2018 09:29:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 09/44] ALSA: fireworks: fix memory leak of response buffer at error path
-Date:   Thu, 27 Sep 2018 11:03:58 +0200
-Message-Id: <20180927090119.201348484@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Subject: [PATCH 4.9 27/44] drm/nouveau/drm/nouveau: Fix bogus drm_kms_helper_poll_enable() placement
+Date:   Thu, 27 Sep 2018 11:04:16 +0200
+Message-Id: <20180927090121.644708869@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
 References: <20180927090117.997362691@linuxfoundation.org>
@@ -51,35 +55,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Lyude Paul <lyude@redhat.com>
 
-commit c3b55e2ec9c76e7a0de2a0b1dc851fdc9440385b upstream.
+commit d77ef138ff572409ab93d492e5e6c826ee6fb21d upstream.
 
-After allocating memory object for response buffer, ALSA fireworks
-driver has leak of the memory object at error path.
+Turns out this part is my fault for not noticing when reviewing
+9a2eba337cace ("drm/nouveau: Fix drm poll_helper handling"). Currently
+we call drm_kms_helper_poll_enable() from nouveau_display_hpd_work().
+This makes basically no sense however, because that means we're calling
+drm_kms_helper_poll_enable() every time we schedule the hotplug
+detection work. This is also against the advice mentioned in
+drm_kms_helper_poll_enable()'s documentation:
 
-This commit releases the object at the error path.
+ Note that calls to enable and disable polling must be strictly ordered,
+ which is automatically the case when they're only call from
+ suspend/resume callbacks.
 
-Fixes: 7d3c1d5901aa('ALSA: fireworks: delayed registration of sound card')
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Of course, hotplugs can't really be ordered. They could even happen
+immediately after we called drm_kms_helper_poll_disable() in
+nouveau_display_fini(), which can lead to all sorts of issues.
+
+Additionally; enabling polling /after/ we call
+drm_helper_hpd_irq_event() could also mean that we'd miss a hotplug
+event anyway, since drm_helper_hpd_irq_event() wouldn't bother trying to
+probe connectors so long as polling is disabled.
+
+So; simply move this back into nouveau_display_init() again. The race
+condition that both of these patches attempted to work around has
+already been fixed properly in
+
+  d61a5c106351 ("drm/nouveau: Fix deadlock on runtime suspend")
+
+Fixes: 9a2eba337cace ("drm/nouveau: Fix drm poll_helper handling")
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Acked-by: Karol Herbst <kherbst@redhat.com>
+Acked-by: Daniel Vetter <daniel@ffwll.ch>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/fireworks/fireworks.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/nouveau/nouveau_display.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/firewire/fireworks/fireworks.c
-+++ b/sound/firewire/fireworks/fireworks.c
-@@ -301,6 +301,8 @@ error:
- 	snd_efw_transaction_remove_instance(efw);
- 	snd_efw_stream_destroy_duplex(efw);
- 	snd_card_free(efw->card);
-+	kfree(efw->resp_buf);
-+	efw->resp_buf = NULL;
- 	dev_info(&efw->unit->device,
- 		 "Sound card registration failed: %d\n", err);
- }
+--- a/drivers/gpu/drm/nouveau/nouveau_display.c
++++ b/drivers/gpu/drm/nouveau/nouveau_display.c
+@@ -367,8 +367,6 @@ nouveau_display_hpd_work(struct work_str
+ 	pm_runtime_get_sync(drm->dev->dev);
+ 
+ 	drm_helper_hpd_irq_event(drm->dev);
+-	/* enable polling for external displays */
+-	drm_kms_helper_poll_enable(drm->dev);
+ 
+ 	pm_runtime_mark_last_busy(drm->dev->dev);
+ 	pm_runtime_put_sync(drm->dev->dev);
+@@ -422,6 +420,11 @@ nouveau_display_init(struct drm_device *
+ 	if (ret)
+ 		return ret;
+ 
++	/* enable connector detection and polling for connectors without HPD
++	 * support
++	 */
++	drm_kms_helper_poll_enable(dev);
++
+ 	/* enable hotplug interrupts */
+ 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+ 		struct nouveau_connector *conn = nouveau_connector(connector);
 
 
