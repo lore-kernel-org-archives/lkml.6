@@ -2,109 +2,165 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F51C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAB9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90074215F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:41:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90074215F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BAF8E21566
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:42:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF8E21566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbeI1AAi (ORCPT
+        id S1728479AbeI1ACU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:00:38 -0400
-Received: from mga12.intel.com ([192.55.52.136]:4785 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbeI1AAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:00:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 10:41:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
-   d="scan'208";a="95465871"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.151]) ([10.7.153.151])
-  by orsmga002.jf.intel.com with ESMTP; 27 Sep 2018 10:41:16 -0700
-Subject: Re: [PATCH i2c-next v3 2/3] i2c: aspeed: Add 'aspeed,timeout' DT
- property reading code
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jarkko.nikula@linux.intel.com,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180926215842.23125-1-jae.hyun.yoo@linux.intel.com>
- <20180926215842.23125-3-jae.hyun.yoo@linux.intel.com>
- <CACPK8XcKms88EcpT3soE6wLyAmvyiLfVkNeOQT0FgmY4eZoDrw@mail.gmail.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <37ae7a11-44b6-88e5-0f4d-c97c70334ad4@linux.intel.com>
-Date:   Thu, 27 Sep 2018 10:41:16 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 20:02:20 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39363 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbeI1ACU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 20:02:20 -0400
+Received: by mail-oi1-f193.google.com with SMTP id y81-v6so2913662oia.6;
+        Thu, 27 Sep 2018 10:42:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w6d+A0Vv/nUcoBcJgB2dAUxIRKszMsUmC1lmMSWxwrU=;
+        b=Oz+Ny8OC04NrbjiUCbFKAx0prxsaMexiLvhAwupuY7jXSZHPTQ5mzybH8KqnG3ctOH
+         DAY7pDz7iB1V4wnutrdx8H4JoPZ3UEWohFmBv5DJGN2gsiKfJlw/R8eCEqjCgUZWXy43
+         Q1MmxWAtkNCfa0sxfA1ZvxmMuLHgdQVFRPfd+AKtEZb+gZ2ZsN7MHbsMeiy7mubzpeQm
+         /dvIYmyQIeW7Nd42XUEMoTp3HSXwJFnswkq904Zt6WVtcEEqrf8nURDGamA85SsqMvRS
+         IJke6xR+fKPFh3QajIYAryyjvb5R4JSGdtLu/hIx1wwYgCbWnZi3zPEsIGliTHCT3qcu
+         UX0Q==
+X-Gm-Message-State: ABuFfog7vI4CPxHM+Vz7ksRAQOU8XFURHR/Bkc6StVsBwtvqcOdwvClD
+        gKCvtp4JbF6rClbmzRMefA==
+X-Google-Smtp-Source: ACcGV63Ta0cnnjSFSVEVROKO7NV0iBPoUjGfKwjU3KDyECgej/6SDB+ucKP+XrbAKtiEt/y/qbqgYw==
+X-Received: by 2002:aca:5108:: with SMTP id f8-v6mr3811935oib.272.1538070176911;
+        Thu, 27 Sep 2018 10:42:56 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n30-v6sm1176935otb.73.2018.09.27.10.42.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 10:42:56 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 12:42:55 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>, jdelvare@suse.com,
+        mark.rutland@arm.com, corbet@lwn.net, afd@ti.com,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: hwmon: Add ina3221 documentation
+Message-ID: <20180927174255.GA7587@bogus>
+References: <20180925225930.31886-1-nicoleotsuka@gmail.com>
+ <20180925225930.31886-2-nicoleotsuka@gmail.com>
+ <4f16baf7-b1bc-c7d2-3dd9-ed10b78d59b6@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <CACPK8XcKms88EcpT3soE6wLyAmvyiLfVkNeOQT0FgmY4eZoDrw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f16baf7-b1bc-c7d2-3dd9-ed10b78d59b6@roeck-us.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joel,
-
-On 9/26/2018 8:11 PM, Joel Stanley wrote:
-> On Thu, 27 Sep 2018 at 01:58, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
->>
->> +/* Timeout */
->> +#define ASPEED_I2C_BUS_TIMEOUT_US_DEFAULT              (5 * 1000 * 1000)
+On Tue, Sep 25, 2018 at 06:52:29PM -0700, Guenter Roeck wrote:
+> Hi Nicolin,
 > 
-> The 5 seconds time out is way too long. On a system that doesn't have
-> functional i2c, this holds up boot for a long time as most i2c client
-> drivers try to initialise their device and fail. I realise you're not
-> changing the value, but we should pick a better default. 1 second?
-> Half a second?
+> On 09/25/2018 03:59 PM, Nicolin Chen wrote:
+> > Texas Instruments INA3221 is a triple-channel shunt and bus
+> > voltage monitor. This patch adds a DT binding doc for it.
+> > 
+> > Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> > ---
+> > Changelog
+> > v4->v5:
+> >   * Replaced "input-id" with "reg" and added address-cells and size-cells
+> >   * Replaced "input-label" with "label"
+> >   * Replaced "shunt-resistor" with "shunt-resistor-micro-ohms"
+> > v3->v4:
+> >   * Removed the attempt of putting labels in the node names
+> >   * Added a new optional label property in the child node
+> >   * Updated examples accordingly
+> > v2->v3:
+> >   * Added a simple subject in the line 1
+> >   * Fixed the shunt resistor value in the example
+> > v1->v2:
+> >   * Dropped channel name properties
+> >   * Added child node definitions.
+> >   * * Added shunt resistor property in the child node
+> >   * * Added status property to indicate connection status
+> >   * * Changed to use child node name as the label of input source
+> > 
+> >   .../devicetree/bindings/hwmon/ina3221.txt     | 49 +++++++++++++++++++
+> >   1 file changed, 49 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/hwmon/ina3221.txt b/Documentation/devicetree/bindings/hwmon/ina3221.txt
+> > new file mode 100644
+> > index 000000000000..e17a897f4803
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/hwmon/ina3221.txt
+> > @@ -0,0 +1,49 @@
+> > +Texas Instruments INA3221 Device Tree Bindings
+> > +
+> > +1) ina3221 node
+> > +  Required properties:
+> > +  - compatible: Must be "ti,ina3221"
+> > +  - reg: I2C address
+> > +
+> > +  Optional properties:
+> > +  = The node contains optional child nodes for three channels =
+> > +  = Each child node describes the information of input source =
+> > +
+> > +  - #address-cells: Required only if a child node is present. Must be 1.
+> > +  - #size-cells: Required only if a child node is present. Must be 0.
+> > +
+> > +  Example:
+> > +
+> > +  ina3221@40 {
+> > +          compatible = "ti,ina3221";
+> > +          reg = <0x40>;
+> > +          #address-cells = <1>;
+> > +          #size-cells = <0>;
+> > +
+> > +          [ child node definitions... ]
+> > +  };
+> > +
+> > +2) child nodes
+> > +  Required properties:
+> > +  - reg: Must be 0, 1 or 2, corresponding to IN1, IN2 or IN3 port of INA3221
+> > +
+> > +  Optional properties:
+> > +  - label: Name of the input source
+> > +  - shunt-resistor-micro-ohms: Shunt resistor value in micro-Ohm
+> > +  - status: Should be "disabled" if no input source
+> > +
+> > +  Example:
+> > +
+> > +  input@0 {
+> > +          reg = <0x0>;
+> > +          status = "disabled";
 > 
-
-I agree with you. We could probably use 1 second as default which can
-cover the most of general cases. If so, we don't need to make the
-default setting in this driver because i2c-core-base will default
-adap->timeout to 1 second if the value is 0 when a driver registers an
-adapter. Will fix this code.
-
->>
->> +       ret = of_property_read_u32(pdev->dev.of_node, "aspeed,timeout",
->> +                                  &timeout_us);
+> I kind of feel embarrassed that I asked for the reg change ... especially while
+> saying at the same time that I would like to see this work for other chips
+> as well.
 > 
-> Can we make this binding generic? It's not specific to aspeed's
-> hardware. Getting the value could even part of the i2c core.
+> Other chips have different kinds of sensors. Voltage, current, power, temperature,
+> and others. Whatever we come up with should support that.
 > 
-> I read the previous thread with Wolfram. I think this would still fit
-> with what Wolfram suggested, but please forgive my jetlagged brain if
-> I've missed something.
+> I see two possibilities right now. We can stick with reg and add a "type" property,
+> or we can make the index something like
+> 	{voltage,current,power,temperature,humidity}-{id,index}
 > 
+> I personally prefer "type", but I don't really have a strong opinion.
+> What do you think ? Or maybe we should really wait for feedback from Rob.
 
-It followed the way of the existing i2c-mpc driver uses 'fsl,timeout'
-for the same purpose. Though, I also want to make it as a generic as you
-suggested like 'timeout' in milliseconds unit, not in microseconds unit.
-If making it a generic property is acceptable, I'll fix it too.
+reg and 'type' is my preference though just 'type' may be too vague. For 
+this case I don't think we need it if there's only one possible type as 
+the driver should know that.
 
-Wolfram, can you please share your thought on it?
-
-Thanks,
-Jae
+Rob
