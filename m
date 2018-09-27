@@ -2,119 +2,93 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E3FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBABC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD7421571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:00:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TFjiii68"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD7421571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0325721571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0325721571
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbeI0QSI (ORCPT
+        id S1727355AbeI0QST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 12:18:08 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38206 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbeI0QSI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 12:18:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j8-v6so1893365wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 03:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mNcnbW97ikh850xKastQohPQoEuxX7X1bJNWp/R0kfc=;
-        b=TFjiii68mFpLa+Tp/k3w5VWIqggigfwtS4sitjxl8aLLf1Lh4cKklEtHd9X6aYHTWd
-         5piCJ0iQbIe6YK2rGR5E5Oee1LXCE6pruGzzLBGcoAvacbGJi7fcGcvOn413czCDWM4L
-         iMEGnb9icYeGhA7cmTj2fg1ZjgiPQhnUjAG4Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mNcnbW97ikh850xKastQohPQoEuxX7X1bJNWp/R0kfc=;
-        b=Vc48IQCCBwqfxG8OcqnHerLkc+D/VSPe0jYzcYTQkpP2MQ4rsG1rau5E2ERN0etj0Q
-         pGOwrr8p8PUVsX+T8xmQE0FRF2r8/b6h6th/W/p4+EZCAmHi0el1KRTY6RXY107nwfhR
-         vhPpJib6fl/pi6yBCx3yhymI4XZ0PB5UkPCPeAKmmE44KLb0LAsZ0BCOIXKlJoreRHHu
-         ridxyh+jD7eIPOPjlCVauKjQC0Xp1k+LR4TLu/g1bY6XHvKvR6U0e6jo0lHxpxmwPJKQ
-         aeIgxh5ZwKp6yzotDow9eKuU/ZoF8HlYAljmxZU7qGwL+cxUhoPHhydnPzYstZeT1QAX
-         bKhg==
-X-Gm-Message-State: ABuFfoh+KY1WxfNQVduYyIlH0WHXuZ8P0r5zw5FtcvDolTeR/WyHokER
-        vkrlRlAWknljW8gg6ABN/UjBYw==
-X-Google-Smtp-Source: ACcGV63lM9/XBQecOie4waiDYYdbesS987BdMC5PanDWMFFdtt7BuTt9TrBDv0xAc4CZb6S3puiooA==
-X-Received: by 2002:adf:bc84:: with SMTP id g4-v6mr888156wrh.250.1538042437777;
-        Thu, 27 Sep 2018 03:00:37 -0700 (PDT)
-Received: from [192.168.0.41] (30.216.136.77.rev.sfr.net. [77.136.216.30])
-        by smtp.googlemail.com with ESMTPSA id o19-v6sm2004752wro.50.2018.09.27.03.00.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 03:00:36 -0700 (PDT)
-Subject: Re: [PATCH] clocksource/drivers/timer-atmel-pit: properly handle
- error cases
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Cristian Birsan <Cristian.Birsan@microchip.com>
-References: <20180425101439.28908-1-alexandre.belloni@bootlin.com>
- <20180501083626.GE27619@mai>
- <d2b356f9-6a29-0ce2-c511-ac1aff8e91ca@microchip.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <f5f48a3e-233d-99e8-bd8c-978b4ca2a7cc@linaro.org>
-Date:   Thu, 27 Sep 2018 12:00:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 12:18:19 -0400
+Received: from foss.arm.com ([217.140.101.70]:60306 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726931AbeI0QSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 12:18:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F47415AD;
+        Thu, 27 Sep 2018 03:00:49 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82C793F5B7;
+        Thu, 27 Sep 2018 03:00:46 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 11:00:40 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
+ default
+Message-ID: <20180927100021.kpdyol44qpzassup@queper01-lin>
+References: <20180828135324.21976-15-patrick.bellasi@arm.com>
+ <20180904134748.GA4974@localhost.localdomain>
+ <20180906144053.GD25636@e110439-lin>
+ <20180914111003.GC24082@hirez.programming.kicks-ass.net>
+ <20180914140732.GR1413@e110439-lin>
+ <20180914142813.GM24124@hirez.programming.kicks-ass.net>
+ <20180917122723.GS1413@e110439-lin>
+ <20180921091308.GD24082@hirez.programming.kicks-ass.net>
+ <20180924151400.GT1413@e110439-lin>
+ <20180925154956.GA30146@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <d2b356f9-6a29-0ce2-c511-ac1aff8e91ca@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180925154956.GA30146@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/09/2018 14:38, Nicolas Ferre wrote:
-> Daniel,
-> 
-> On 01/05/2018 at 10:36, Daniel Lezcano wrote:
->> On Wed, Apr 25, 2018 at 12:14:39PM +0200, Alexandre Belloni wrote:
->>> smatch now reports a possible leak:
->>>
->>> smatch warnings:
->>> drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init()
->>> warn: possible memory leak of 'data'
->>>
->>> Ensure data is freed before exiting with an error.
->>>
->>> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->>> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->>> ---
->>
->> Applied for 4.17-rc
-> 
-> We don't see it in Mainline as of 4.19-rc neither in linux-next. Has it
-> been forgotten?
+On Tuesday 25 Sep 2018 at 17:49:56 (+0200), Peter Zijlstra wrote:
+> I really don't see how changing the unit changes anything. Either you
+> want to relate to OPPs and those are exposed in 1/1024 unit capacity
+> through the EAS files, or you don't and then the knob has no meaning.
 
-Yes, my bad. I thought it was merge in tip:timers/urgent
+FWIW, with the latest versions of the EAS series, we don't expose the
+capacity of the various OPPs directly any more. You have 'frequency',
+'power' and a more abstract thing called 'cost' (which is useful for
+energy computations) in the sysfs files of the EM.
 
-Let me resend another PR for 4.19-rc and Cc stable@
+We decided to remove the 'capacity' file to simplify things quite a bit,
+and because it wasn't helping much. I'm talking about this discussion w/
+Dietmar on v4:
 
+https://lore.kernel.org/lkml/20180717141955.GA4496@e108498-lin.cambridge.arm.com/
 
+But it is also true that we could add back that 'capacity' file if it
+makes sense for uclamp. It's just an additional show() function in
+energy_model.c, so no problem on that side per se.
 
+The only problem is if you want to use uclamp w/o EAS, I guess ...
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Thanks,
+Quentin
