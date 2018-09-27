@@ -2,67 +2,66 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CA3C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E847ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 552B721533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01C2421533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 03:49:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EAd74jMn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 552B721533
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IZ25KbOD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C2421533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbeI0KFe (ORCPT
+        id S1727124AbeI0KFh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 06:05:34 -0400
-Received: from mail-hk2apc01on0109.outbound.protection.outlook.com ([104.47.124.109]:28856
+        Thu, 27 Sep 2018 06:05:37 -0400
+Received: from mail-hk2apc01on0118.outbound.protection.outlook.com ([104.47.124.118]:22900
         "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726953AbeI0KFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 06:05:33 -0400
+        id S1726557AbeI0KFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 06:05:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2BeI0r2RU14yEwo8VLsuoeXY3JA3CxXIBR28gVEn6eY=;
- b=EAd74jMnLVBbxoVdT65bUbq/jDZZnjhtiNClkpQu9WI4yKwLBaSOgOjmXBvQRi6QsWhxNFBvM3j1HcKEAQCmS9PIBQkktBChbHsRl9j/Rwup+MhhyaCju7pwFR4dxHrI9v2ahE1jCSSFIJE279pEY1rrJ+i0Iv8tk0nkpUE2yfY=
+ bh=iPTMoAeSOP1EBLl+y6ogI5JOOb4P0GRgqcwMj6tWfeo=;
+ b=IZ25KbOD/0k0WYdlydWCpTHa0lOYNzcSbRo+Io8ftCu/iV3gN7t548ZfgEfn8nYut2Oi/7/2CBHOikO86hMZ5r2F+3pDzgh5+O0HXPYU9SmCGX9uR2pTvfkWnrFLn+Y336zgc8Z9u8su/tttfDmXm3iVwjICsnP1nD2PxH9YGhE=
 Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM (52.133.156.18) by
  HK0P153MB0130.APCP153.PROD.OUTLOOK.COM (52.133.156.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.2; Thu, 27 Sep 2018 03:48:51 +0000
+ 15.20.1207.2; Thu, 27 Sep 2018 03:48:45 +0000
 Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
  ([fe80::8584:ad93:130a:6267]) by HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
  ([fe80::8584:ad93:130a:6267%3]) with mapi id 15.20.1207.011; Thu, 27 Sep 2018
- 03:48:51 +0000
+ 03:48:45 +0000
 From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
 CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
         Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
         "pbonzini@redhat.com" <pbonzini@redhat.com>,
         "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         vkuznets <vkuznets@redhat.com>,
         Jork Loeser <Jork.Loeser@microsoft.com>
-Subject: [PATCH V3 1/13] KVM: Add tlb_remote_flush_with_range callback in
- kvm_x86_ops
-Thread-Topic: [PATCH V3 1/13] KVM: Add tlb_remote_flush_with_range callback in
- kvm_x86_ops
-Thread-Index: AQHUVhUAv0Q4r8KpOkWhsnpVLEa0CA==
-Date:   Thu, 27 Sep 2018 03:48:51 +0000
-Message-ID: <20180927034829.2230-2-Tianyu.Lan@microsoft.com>
-References: <20180927034829.2230-1-Tianyu.Lan@microsoft.com>
-In-Reply-To: <20180927034829.2230-1-Tianyu.Lan@microsoft.com>
+Subject: [PATCH V3 00/13] x86/KVM/Hyper-v: Add HV ept tlb range flush
+ hypercall support in KVM
+Thread-Topic: [PATCH V3 00/13] x86/KVM/Hyper-v: Add HV ept tlb range flush
+ hypercall support in KVM
+Thread-Index: AQHUVhT9Jvd8b1MsZ0uZSqXkUgrt4w==
+Date:   Thu, 27 Sep 2018 03:48:44 +0000
+Message-ID: <20180927034829.2230-1-Tianyu.Lan@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -71,29 +70,29 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Tianyu.Lan@microsoft.com; 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK0P153MB0130;6:zdo/+AZwHRQwTyAsUtVhNTyhCyzqDnpT8lFHLsTcpEQ9m/oDtmCyizVUzPnTO5hdV3nCfmbIUfPJbnjzXyRJjfuXFacZCIgSEUzrS3oKNoUwNIC+JddCJasp3apECqy4ww3Tiv/beCp3F6rPEUi90SeC/wAFcmd9y1rLs0TKDMi4Qye00ce5bkyt3oD5sClqgNwESd0+ZiEcCRqHwJQPgmPjNxiHIMsV/3Sa0E5wv2TJVtKpPMZiIaaBwkDzdPU4ApW+m8pdlfBqfPtkIvRbHlR5A2ZuxTdSewphF4UXv+ei5M2wgDB4HQXFtFP36kdIKr6ipvuMo97l28UIlU5rsrgKGynEP7/Myugpoku1+K/ZCWweYm/2Nzb85PF9pXdVCjVX8/6LKFT43u6QdidB8itgw6O/iAHd6q31I5wVPcxHOd31EzyCJdgkJiGsnPDaEeMnc1gIPkSr6/tg0mDbaA==;5:g+nC5oEK8oG1juz0ryUDhIMWWw70dnJQzD8JwnoHPlkueBum5sF1GkDgjv+dqLZnJBwJFCHS0oY1c5tHG6hFg8VNqq7GYOl/POQX5VNUfhXRAJ4+F6xFe5UtreYV3j86JeZxKApSsG+NPGJSpQ//EZM5ZDSqYAdQAzlgD+ofTQ0=;7:O+XW/9UgiHdnV08KLszr/cfMwj9E27N0xNKdjJc5DAbI0EbN9dswd706uWk6EXLCNPm6vn2dP8qbRXFGu3BUKTUFepBU+MfwPpNlfJOUVqSmHFo5OEZOFfFyC59tKaKYfgEBGN3FsKl1JpoydZlN0Rjxndf9YG1jXpZoGV+2xrlpNd1x3lklswhUU9ZDXtWVrsEMfLidZ9AHekYBeuKU1kkaYbzFOHJWH0ao6j0Kxiyn09IymqRN9zQ1xY6XtBmm
-x-ms-office365-filtering-correlation-id: 95a8b254-5867-412d-1651-08d6242c2399
+x-microsoft-exchange-diagnostics: 1;HK0P153MB0130;6:5Iw3OujogA8xHSpsyhnO+9aGffMbvDOo/DLQKUMYYRT0qRPJvrVrpNe5AZPREJZWUoNRhswaCbs7PzxnOdZU2VHm7yV+ud7nKRFt9qbd5XC6yTKzcAkFSrdVBfsSds738JK9+jYK2VGM0Ca8lQy0teVkgoh52RQ8seLU8njVtUpPaOGmMgj2AZcLEBazpOe3HCwrVeVrOyEdUSpbgbqe8Avl9IecpZAF1HD8KyoY9l2awKc0yc3IiTQEGn+NTU/bcxi0v5wFxFS2lf/U1QBqzeMag7cWc4gzlbZ7ayrh4vWm/BchF1PNST/cIbKODdwQc15BdTJShIreu9RsgZJug15uLpn9U+if/II4oTDD32lWu6Vu/Tf9qZbruAP9DarTdIDh9/2N+wsx3Z7lPt7cgvFuRYsX67RXIn+LaIG+/vX3G8GUKu4KtuukNBHFeAFD8CtjufftWXEAqIWS3qNZeQ==;5:aRaP+6nReNvYLxQhERT0GkqlsX6bmNLcwl/DSfRJGuSvvQ/qlHUIOA2cfoVVh2aTXKDT2fEDUafTEj/nEoGn8W9Pcz5RScq/18UwRnIADm1WuNOuk3gWAQmWuMjrtfaO5R0g7bxqgmDo2YMFbU28cerXy/Js1AUM0eVux+UjFOQ=;7:qVPaz2UDa6BsTF+dK+zwLHNUbmdo8ANSEi0yVSlw/ZdFWfD15AsnVWWW2zbn8qdfrNq/LQyvzPHCyoSqJ7Iwn3uGcrdvF7QtwuNKPIujPdjtLjwxjHwkwqCl6SL33xutuTKGCJ+Y0uLBy0Au5yig84C78uWVyZ6i9yp1u1HpOsKRFQCMwg8OO21Ys6VJguGCaFd9LxligNdjCg0qaJQwIKEDUwrhQjDGGZ5F4+1RgUfR/y9jnWiV2x5gTzv4gnI5
+x-ms-office365-filtering-correlation-id: 30d03087-e301-4b4b-3ec4-08d6242c1fce
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HK0P153MB0130;
 x-ms-traffictypediagnostic: HK0P153MB0130:
 x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <HK0P153MB0130B2CC7C9A1A17F77CEF9592140@HK0P153MB0130.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <HK0P153MB01304F0AA6DC1814C8181D5692140@HK0P153MB0130.APCP153.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(788757137089);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051);SRVR:HK0P153MB0130;BCL:0;PCL:0;RULEID:;SRVR:HK0P153MB0130;
 x-forefront-prvs: 0808323E97
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(396003)(39860400002)(376002)(346002)(199004)(189003)(102836004)(478600001)(6506007)(26005)(72206003)(10290500003)(8936002)(36756003)(54906003)(53936002)(22452003)(6486002)(8676002)(5660300001)(5250100002)(14454004)(107886003)(6512007)(7736002)(76176011)(34290500001)(1671002)(6436002)(256004)(86612001)(305945005)(86362001)(59246006)(97736004)(6116002)(66066001)(11346002)(486006)(68736007)(2906002)(7416002)(99286004)(106356001)(3846002)(105586002)(4326008)(2616005)(1076002)(71200400001)(109986005)(81166006)(81156014)(71190400001)(476003)(25786009)(2900100001)(10090500001)(316002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0130;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(396003)(39860400002)(376002)(346002)(199004)(189003)(102836004)(478600001)(6506007)(26005)(72206003)(10290500003)(8936002)(36756003)(54906003)(53936002)(22452003)(6486002)(8676002)(5660300001)(5250100002)(14454004)(107886003)(14444005)(6512007)(7736002)(34290500001)(1671002)(6436002)(256004)(86612001)(305945005)(86362001)(59246006)(97736004)(6116002)(66066001)(486006)(68736007)(2906002)(7416002)(99286004)(106356001)(3846002)(105586002)(4326008)(2616005)(1076002)(71200400001)(109986005)(81166006)(81156014)(71190400001)(476003)(25786009)(2900100001)(10090500001)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0130;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: XCWzrJ5xFuS25lANNbO+hEBKXh+phNs5L/E7WgyWO54NOQoSBDjAWBZKjXsk6BGbjYoqWxQLJmIhcqbiEXMil/RulSnuUzUTH2f9RHH2rRlI7U4ZLcqwVuj9u2PP/zRPhAzkjHZlFqaR2e8Kk/eLasXQ0Ef8c+/Q4lZJ+X56JQ57RK5XFJ/JdtldSTfd8roRG4EO+Pduaq5m2Jmqaqa5HTxmJrmg98GfWsC6WaKa8GmQyRnKAGPfTT1Ta6wCSt8RrJsZyt9fUColdwlVallE3aCc94uzlPXCmgHFAcx33ApKOD/juNcEvqONaKfM2oyiBYK7ySXU7xRlCuOJ8u644w7METAr6KEU/GSI21KvV8I=
+x-microsoft-antispam-message-info: qflaCYWEuCC1tLHfP/KQbWvsIseuilGA79BcmJRjbEJ9CtIpXXnfKyeBhEiLzulLP6riK3tA2zIVukb9eWB7Cic9AZdQiCBbkXHth+7T6xhwEAP09qv0Yjv+tfOkKRWVnTIxJoqxfkKn/JzNdBB/8h8j6N7hGSaLHt8IYloi4kqcrQzuNZjUVkT19EFWJJW8erfgG19/ZvrF0zhzC1qtendURhTDChbjRaBZc+aD2DHS41703NXYttVuWTA3BxnKUns2x4KTXtPokH+TILbv8sNG44lL4QYnJDsREA7ouYH0HQOyWbiAqoz1qXwZCqZwWCYlD0D3IGn6LQXgGrAAQyQMlfVnLHSOuJacmT//XAs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95a8b254-5867-412d-1651-08d6242c2399
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2018 03:48:51.0467
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30d03087-e301-4b4b-3ec4-08d6242c1fce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2018 03:48:44.6592
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -104,45 +103,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add flush range call back in the kvm_x86_ops and platform can use it
-to register its associated function. The parameter "kvm_tlb_range"
-accepts a single range and flush list which contains a list of ranges.
+For nested memory virtualization, Hyper-v doesn't set write-protect
+L1 hypervisor EPT page directory and page table node to track changes=20
+while it relies on guest to tell it changes via HvFlushGuestAddressLlist
+hypercall. HvFlushGuestAddressLlist hypercall provides a way to flush
+EPT page table with ranges which are specified by L1 hypervisor.
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
+If L1 hypervisor uses INVEPT or HvFlushGuestAddressSpace hypercall to
+flush EPT tlb, Hyper-V will invalidate associated EPT shadow page table
+and sync L1's EPT table when next EPT page fault is triggered.
+HvFlushGuestAddressLlist hypercall helps to avoid such redundant EPT
+page fault and synchronization of shadow page table.
+
+Change since v2:
+       1) Fix comment in the kvm_flush_remote_tlbs_with_range()
+       2) Move HV_MAX_FLUSH_PAGES and HV_MAX_FLUSH_REP_COUNT to
+	hyperv-tlfs.h.
+       3) Calculate HV_MAX_FLUSH_REP_COUNT in the macro definition
+       4) Use HV_MAX_FLUSH_REP_COUNT to define length of gpa_list in
+	struct hv_guest_mapping_flush_list.
+
+
 Change since v1:
-       Change "end_gfn" to "pages" to aviod confusion as to whether
-"end_gfn" is inclusive or exlusive.
----
- arch/x86/include/asm/kvm_host.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+       1) Convert "end_gfn" of struct kvm_tlb_range to "pages" in order
+          to avoid confusion as to whether "end_gfn" is inclusive or exlusi=
+ve.
+       2) Add hyperv tlb range struct and replace kvm tlb range struct
+          with new struct in order to avoid using kvm struct in the hyperv
+	  code directly.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_hos=
-t.h
-index 8e90488c3d56..a6b77978502e 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -402,6 +402,12 @@ struct kvm_mmu {
- 	u64 pdptrs[4]; /* pae */
- };
-=20
-+struct kvm_tlb_range {
-+	u64 start_gfn;
-+	u64 pages;
-+	struct list_head *flush_list;
-+};
-+
- enum pmc_type {
- 	KVM_PMC_GP =3D 0,
- 	KVM_PMC_FIXED,
-@@ -991,6 +997,8 @@ struct kvm_x86_ops {
-=20
- 	void (*tlb_flush)(struct kvm_vcpu *vcpu, bool invalidate_gpa);
- 	int  (*tlb_remote_flush)(struct kvm *kvm);
-+	int  (*tlb_remote_flush_with_range)(struct kvm *kvm,
-+			struct kvm_tlb_range *range);
-=20
- 	/*
- 	 * Flush any TLB entries associated with the given GVA.
+
+Lan Tianyu (13):
+  KVM: Add tlb_remote_flush_with_range callback in kvm_x86_ops
+  KVM/MMU: Add tlb flush with range helper function
+  KVM: Replace old tlb flush function with new one to flush a specified
+    range.
+  KVM/MMU: Flush tlb directly in the kvm_handle_hva_range()
+  KVM/MMU: Flush tlb directly in the kvm_zap_gfn_range()
+  KVM/MMU: Flush tlb directly in kvm_mmu_zap_collapsible_spte()
+  KVM: Add flush_link and parent_pte in the struct kvm_mmu_page
+  KVM: Add spte's point in the struct kvm_mmu_page
+  KVM/MMU: Replace tlb flush function with range list flush function
+  x86/hyper-v: Add HvFlushGuestAddressList hypercall support
+  x86/Hyper-v: Add trace in the
+    hyperv_nested_flush_guest_mapping_range()
+  KVM/VMX: Change hv flush logic when ept tables are mismatched.
+  KVM/VMX: Add hv tlb range flush support
+
+ arch/x86/hyperv/nested.c            |  85 +++++++++++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h  |  32 ++++++++
+ arch/x86/include/asm/kvm_host.h     |  10 +++
+ arch/x86/include/asm/mshyperv.h     |  16 ++++
+ arch/x86/include/asm/trace/hyperv.h |  14 ++++
+ arch/x86/kvm/mmu.c                  | 143 +++++++++++++++++++++++++++++++-=
+----
+ arch/x86/kvm/paging_tmpl.h          |  10 ++-
+ arch/x86/kvm/vmx.c                  |  65 +++++++++++++---
+ 8 files changed, 345 insertions(+), 30 deletions(-)
+
 --=20
 2.14.4
