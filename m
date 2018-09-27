@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24747C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F1EC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA00D2152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA00D2152F
+	by mail.kernel.org (Postfix) with ESMTP id 3B72D2152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:18:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B72D2152F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbeI0PfN (ORCPT
+        id S1728935AbeI0PfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:35:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56100 "EHLO
+        Thu, 27 Sep 2018 11:35:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56112 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbeI0PfM (ORCPT
+        with ESMTP id S1727469AbeI0PfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:35:12 -0400
+        Thu, 27 Sep 2018 11:35:18 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E20FA1120;
-        Thu, 27 Sep 2018 09:17:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E61D1117;
+        Thu, 27 Sep 2018 09:18:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 22/64] ALSA: firewire-digi00x: fix memory leak of private data
-Date:   Thu, 27 Sep 2018 11:03:39 +0200
-Message-Id: <20180927090253.094611661@linuxfoundation.org>
+Subject: [PATCH 4.14 23/64] ALSA: firewire-tascam: fix memory leak of private data
+Date:   Thu, 27 Sep 2018 11:03:40 +0200
+Message-Id: <20180927090253.297999632@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -53,7 +53,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit a49a83ab05e34edd6c71a4fbd062c9a7ba6d18aa upstream.
+commit 8d28277c065a974873c6781d44b7bcdcd8fb4e8a upstream.
 
 Although private data of sound card instance is usually allocated in the
 tail of the instance, drivers in ALSA firewire stack allocate the private
@@ -62,25 +62,25 @@ should be released explicitly at .private_free callback of the instance.
 
 This commit fixes memory leak following to the above design.
 
-Fixes: 86c8dd7f4da3 ('ALSA: firewire-digi00x: delayed registration of sound card')
+Fixes: b610386c8afb ('ALSA: firewire-tascam: deleyed registration of sound card')
 Cc: <stable@vger.kernel.org> # v4.7+
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/digi00x/digi00x.c |    1 +
+ sound/firewire/tascam/tascam.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/sound/firewire/digi00x/digi00x.c
-+++ b/sound/firewire/digi00x/digi00x.c
-@@ -49,6 +49,7 @@ static void dg00x_free(struct snd_dg00x
- 	fw_unit_put(dg00x->unit);
+--- a/sound/firewire/tascam/tascam.c
++++ b/sound/firewire/tascam/tascam.c
+@@ -93,6 +93,7 @@ static void tscm_free(struct snd_tscm *t
+ 	fw_unit_put(tscm->unit);
  
- 	mutex_destroy(&dg00x->mutex);
-+	kfree(dg00x);
+ 	mutex_destroy(&tscm->mutex);
++	kfree(tscm);
  }
  
- static void dg00x_card_free(struct snd_card *card)
+ static void tscm_card_free(struct snd_card *card)
 
 
