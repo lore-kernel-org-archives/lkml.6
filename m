@@ -2,153 +2,164 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D961FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF9CC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BB842168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB842168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 60C002147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 12:46:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="nPjhcedu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C002147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbeI0TBU (ORCPT
+        id S1727520AbeI0TEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 15:01:20 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]:42877 "EHLO
-        mail-qk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbeI0TBU (ORCPT
+        Thu, 27 Sep 2018 15:04:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46460 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbeI0TEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 15:01:20 -0400
-Received: by mail-qk1-f180.google.com with SMTP id g20-v6so325167qke.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 05:43:13 -0700 (PDT)
+        Thu, 27 Sep 2018 15:04:31 -0400
+Received: by mail-pf1-f194.google.com with SMTP id d8-v6so1825163pfo.13
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 05:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=glg8Kn1zuYKucLuibWvdd7IIHSdDkUywOJ5LGPayBGA=;
+        b=nPjhceduI+T4YxmC9xvm0wY24g/tXUe5lEYAKj3OOaVnZwgu++AX9p60BTTw7wknDb
+         uJklD4uVVLs3uFbOnGdApULXA/1uVmpZr27gOzWBaJN+/lZ1p5n6i1ygVzIveJmj0+58
+         XgB++wjavYauL4LI+5iuWtDKR1xE/3+ZwN8B63XlsfHhHDxa4Yr6LODdBHoCSNq5vD6r
+         dmMPSQBFt+riYlMf2boqOZ8x5bhO7/+pRWHP65bkuHIs6GKMZHPUGhtDoDKYZ+7nNwYv
+         F8jQVigNHJfveE6MzPdN4vlAsnz+YSDUCMmp0m1RtZbwfoJaA3Z+18jScNDOGQJbdyOA
+         o4AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FSogzSrnj7cf+TG55dYC7OMHvE/PtJdF9+4xnMO//kk=;
-        b=I1UGyhZejlfZbmOUfDj9YfCfh+CJWpNVIYHaQEdTV6IVRewSZyVopf4OtGZ7eEXLbh
-         p7dRySHaPUUMsERVRZRcsqszRmJF0z4z/UxoFHrWfHNQ/UbQT/c87L6xAKakEHi37ujB
-         tV4MU913R9EHJho/rzyjRJoeOyqovyUZ5isV16yWl9dBqNGBvC8Oytq2KzgUkcoMCv3E
-         53qPD7VMnbo16FrM+Xh0YygdVw859VGrIeDBrjgDdUAHja7ogOjAbuqlbrbwfCLsCHcM
-         qVPyJTLRZAalOTkzuGUg3jpP9rwdHCXxZ4EuKW2CyN5kIQQCcDahzMzPlfFgL0fsJI2J
-         twIA==
-X-Gm-Message-State: ABuFfogZKURFNYzlKZoo5GgW3E3/nOzAMizUo+Z/qki36A2O+kqeYDei
-        4w3FEOQU/xeeEHk3FLty5a+5xg==
-X-Google-Smtp-Source: ACcGV60l3eZdkmTfD6YsJWXydBVawLEJ8lyk55y8szaN/kSeTrAatKDOSEIPeEKcHdJFzGNV0c4DEg==
-X-Received: by 2002:a37:e104:: with SMTP id c4-v6mr7844823qkm.28.1538052193052;
-        Thu, 27 Sep 2018 05:43:13 -0700 (PDT)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-DB-0-0-0-F4F.dyn6.twc.com. [2606:a000:1100:db::f4f])
-        by smtp.gmail.com with ESMTPSA id h58-v6sm1234631qtk.60.2018.09.27.05.43.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 05:43:12 -0700 (PDT)
-Message-ID: <51b401b82356c2d8e124bb8701f310afd98e0838.camel@redhat.com>
-Subject: Re: POSIX violation by writeback error
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        =?UTF-8?Q?=E7=84=A6=E6=99=93=E5=86=AC?= <milestonejxd@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rogier Wolff <R.E.Wolff@BitWizard.nl>,
-        Matthew Wilcox <willy@infradead.org>
-Date:   Thu, 27 Sep 2018 08:43:10 -0400
-In-Reply-To: <20180925223054.GH2933@thunk.org>
-References: <CAJDTihx2yaR-_-9Ks1PoFcrKNZgUOoLdN-wRTTMV76Jg_dCLrw@mail.gmail.com>
-         <486f6105fd4076c1af67dae7fdfe6826019f7ff4.camel@redhat.com>
-         <20180925003044.239531c7@alans-desktop>
-         <0662a4c5d2e164d651a6a116d06da380f317100f.camel@redhat.com>
-         <20180925154627.GC2933@thunk.org>
-         <23cd68a665d27216415dc79367ffc3bee1b60b86.camel@redhat.com>
-         <20180925223054.GH2933@thunk.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=glg8Kn1zuYKucLuibWvdd7IIHSdDkUywOJ5LGPayBGA=;
+        b=llItgljCXG8dO2FbY0HjnyV1CoC+jrBO4eaR8ZRUu8CoqS3CFDd04jra3AUI0W2C2x
+         RydmhZI0YSISexye7sjUjL7MnJ0a1L0eA94nrhGDVAyGF+LXBlhKZC6O0vQT0BC5haB6
+         I/DDkG930o1Bjv4RJp1aoMeqc2iJDVzCAQIrNCKSXrLzkRTvbzCM/aIEIhSG6mGe0vhy
+         CQyEntdL/11vdEH1SZUJolIH5PTA16xhyUwA+Kb/KG/ZKNY25LuzmeIFRIKjn7eyfvPL
+         wQwecPdh8cusiTfaO8NF6ODN2TDy5po1N3xXf8Z/kOUW9fbEvtenBZ1XF7OFtUiOVAG5
+         60jQ==
+X-Gm-Message-State: ABuFfoilcYfEqZjdtgMEw6sJQEbpAMSNlq8a4gmVNNWMdHlHxweewXwA
+        Oy07PAeghUxHwszlhyKBgftbk91NWTzOyw==
+X-Google-Smtp-Source: ACcGV63UBxlSqjOuqM4rf8gynxzqSA09Q5i2KNoHaAin4/EdIhQ0z70vGwRRpPdcNVXNEghKintX/w==
+X-Received: by 2002:a63:e355:: with SMTP id o21-v6mr921233pgj.251.1538052383994;
+        Thu, 27 Sep 2018 05:46:23 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.40])
+        by smtp.gmail.com with ESMTPSA id a19-v6sm4339229pfj.38.2018.09.27.05.46.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 05:46:22 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id A994C300029; Thu, 27 Sep 2018 15:46:18 +0300 (+03)
+Date:   Thu, 27 Sep 2018 15:46:18 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        vbabka@suse.cz, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH 1/2 -mm] mm: mremap: dwongrade mmap_sem to read when
+ shrinking
+Message-ID: <20180927124618.dsg4xtxcmn5hrdj6@kshutemo-mobl1>
+References: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537985434-22655-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-25 at 18:30 -0400, Theodore Y. Ts'o wrote:
-> On Tue, Sep 25, 2018 at 12:41:18PM -0400, Jeff Layton wrote:
-> > That's all well and good, but still doesn't quite solve the main concern
-> > with all of this. It's suppose we have this series of events:
-> > 
-> > open file r/w
-> > write 1024 bytes to offset 0
-> > <background writeback that fails>
-> > read 1024 bytes from offset 0
-> > 
-> > Open, write and read are successful, and there was no fsync or close in
-> > between them. Will that read reflect the result of the previous write or
-> > no?
+On Thu, Sep 27, 2018 at 02:10:33AM +0800, Yang Shi wrote:
+> Other than munmap, mremap might be used to shrink memory mapping too.
+> So, it may hold write mmap_sem for long time when shrinking large
+> mapping, as what commit ("mm: mmap: zap pages with read mmap_sem in
+> munmap") described.
 > 
-> If the background writeback hasn't happened, Posix requires that the
-> read returns the result of the write.  And the user doesn't know when
-> or if the background writeback has happened unless the user calls
-> fsync(2).
+> The mremap() will not manipulate vmas anymore after __do_munmap() call for
+> the mapping shrink use case, so it is safe to downgrade to read mmap_sem.
 > 
-> Posix in general basically says anything is possible if the system
-> fails or crashes, or is dropped into molten lava, etc.  Do we say that
-> Linux is not Posix compliant if a cosmic ray flips a few bits in the
-> page cache?  Hardly!  The *only* time Posix makes any guarantees is if
-> fsync(2) returns success.  So the subject line, is in my opinion
-> incorrect.  The moment we are worrying about storage errors, and the
-> user hasn't used fsync(2), Posix is no longer relevant for the
-> purposes of the discussion.
+> So, the same optimization, which downgrades mmap_sem to read for zapping
+> pages, is also feasible and reasonable to this case.
 > 
-> > The answer today is "it depends".
+> The period of holding exclusive mmap_sem for shrinking large mapping
+> would be reduced significantly with this optimization.
 > 
-> And I think that's fine.  The only way we can make any guarantees is
-> if we do what Alan suggested, which is to imply that a read on a dirty
-> page *block* until the the page is successfully written back.  This
-> would destroy performance.  I know I wouldn't want to use such a
-> system, and if someone were to propose it, I'd strongly argue for a
-> switch to turn it *off*, and I suspect most system administators would
-> turn it off once they saw what it did to system performance.  (As a
-> thought experiment, think about what it would do to kernel compiles.
-> It means that before you link the .o files, you would have to block
-> and wait for them to be written to disk so you could be sure the
-> writeback would be successful.  **Ugh**.)
+> MREMAP_FIXED and MREMAP_MAYMOVE are more complicated to adopt this
+> optimization since they need manipulate vmas after do_munmap(),
+> downgrading mmap_sem may create race window.
 > 
-> Given that many people would turn such a feature off once they saw
-> what it does to their system performance, applications in general
-> couldn't rely on it.  which means applications who cared would have to
-> do what they should have done all along.  If it's precious data use
-> fsync(2).  If not, most of the time things are *fine* and it's not
-> worth sacrificing performance for the corner cases unless it really is
-> ultra-precious data and you are willing to pay the overhead.
+> Simple mapping shrink is the low hanging fruit, and it may cover the
+> most cases of unmap with munmap together.
+> 
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Kirill A. Shutemov <kirill@shutemov.name>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+> v2: Rephrase the commit log per Michal
+> 
+>  include/linux/mm.h |  2 ++
+>  mm/mmap.c          |  4 ++--
+>  mm/mremap.c        | 17 +++++++++++++----
+>  3 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a61ebe8..3028028 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2286,6 +2286,8 @@ extern unsigned long do_mmap(struct file *file, unsigned long addr,
+>  	unsigned long len, unsigned long prot, unsigned long flags,
+>  	vm_flags_t vm_flags, unsigned long pgoff, unsigned long *populate,
+>  	struct list_head *uf);
+> +extern int __do_munmap(struct mm_struct *, unsigned long, size_t,
+> +		       struct list_head *uf, bool downgrade);
+>  extern int do_munmap(struct mm_struct *, unsigned long, size_t,
+>  		     struct list_head *uf);
+>  
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 847a17d..017bcfa 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2687,8 +2687,8 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>   * work.  This now handles partial unmappings.
+>   * Jeremy Fitzhardinge <jeremy@goop.org>
+>   */
+> -static int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> -		       struct list_head *uf, bool downgrade)
+> +int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> +		struct list_head *uf, bool downgrade)
+>  {
+>  	unsigned long end;
+>  	struct vm_area_struct *vma, *prev, *last;
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 5c2e185..8f1ec2b 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -525,6 +525,7 @@ static int vma_expandable(struct vm_area_struct *vma, unsigned long delta)
+>  	unsigned long ret = -EINVAL;
+>  	unsigned long charged = 0;
+>  	bool locked = false;
+> +	bool downgrade = false;
 
-Basically, the problem (as I see it) is that we can end up evicting
-uncleanable data from the cache before you have a chance to call fsync,
-and that means that the results of a read after a write are not
-completely reliable.
+s/downgrade/downgraded/ ?
 
-We had some small discussion of this at LSF (mostly over malt beverages)
-and wondered: could we offer a guarantee that uncleanable dirty data
-will stick around until:
+Otherwise looks good to me:
 
-1) someone issues fsync() and scrapes the error
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-...or...
-
-2) some timeout occurs (or we hit some other threshold? This part is
-definitely open for debate)
-
-That would at least allow an application issuing regular fsync calls to
-reliably re-fetch write data via reads up until the point where we see
-fsync fail. Those that don't issue regular fsyncs should be no worse off
-than they are today.
-
-Granted #2 above represents something of an open-ended commitment -- we
-could have a bunch of writers that don't call fsync fill up memory with
-uncleanable pages, and at that point we're sort of stuck.
-
-That said, all of this is a rather theoretical problem. I've not heard
-any reports of problems due to uncleanable data being evicted prior to
-fsync, so I've not lept to start rolling patches for this.
 -- 
-Jeff Layton <jlayton@redhat.com>
-
+ Kirill A. Shutemov
