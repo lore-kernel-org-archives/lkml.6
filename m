@@ -2,160 +2,384 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C63C004D5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DBDC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B459521570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B459521570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B1E721580
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:58:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPyvq+A+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B1E721580
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeI0LJ0 (ORCPT
+        id S1726659AbeI0LOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:09:26 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:46042 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726641AbeI0LJ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:09:26 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437836|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.CwOr12R_1538023958;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwOr12R_1538023958)
-          by smtp.aliyun-inc.com(10.147.44.118);
-          Thu, 27 Sep 2018 12:52:38 +0800
-Date:   Thu, 27 Sep 2018 12:52:38 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] csky: fixups after bootmem removal
-Message-ID: <20180927045237.GA2820@guoren>
-References: <20180926112744.GC4628@rapoport-lnx>
+        Thu, 27 Sep 2018 07:14:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726566AbeI0LOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 07:14:43 -0400
+Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83DBD21570;
+        Thu, 27 Sep 2018 04:58:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538024303;
+        bh=1XqqroiCcFCDMcLMAhhTq0ALo2ZM6tqa66MJOpDpMrU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mPyvq+A+LRkWVL0jHDdGKKAJXaLytwpn45OIswVIXdRd1BUEVplASULUU4/UvTv6X
+         ocms4zRWYu8AKoz1NKB2oGfKzmLUwvsINv/b6uh/XAyldaFqGBpQz/MbEiIeOKtfl3
+         eUcRb++w2GZLmUEg5XE0q8TvzfuPyO28P4gKlWpI=
+Date:   Wed, 26 Sep 2018 21:58:22 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 2/2 v2] f2fs: avoid f2fs_bug_on if
+ f2fs_get_meta_page_nofail got EIO
+Message-ID: <20180927045822.GA71203@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918021805.85032-2-jaegeuk@kernel.org>
+ <20180918175648.GE91945@jaegeuk-macbookpro.roam.corp.google.com>
+ <9813f294-3e09-ee2d-56f0-6bb476e88a5a@huawei.com>
+ <20180920214656.GE35918@jaegeuk-macbookpro.roam.corp.google.com>
+ <e36d331c-d368-fcc4-fa30-15f503b737d7@huawei.com>
+ <20180926001806.GA3829@jaegeuk-macbookpro.roam.corp.google.com>
+ <b251de75-6cf4-52a1-434a-d42025a35e8b@huawei.com>
+ <2996d79d-c791-1a22-8abd-ad37d48edf17@huawei.com>
+ <20180926194932.GA44119@jaegeuk-macbookpro.roam.corp.google.com>
+ <49223ef7-88b9-99ed-35ff-52f11fbfeae3@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180926112744.GC4628@rapoport-lnx>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <49223ef7-88b9-99ed-35ff-52f11fbfeae3@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 02:27:45PM +0300, Mike Rapoport wrote:
-> Hi,
+On 09/27, Chao Yu wrote:
+> On 2018/9/27 3:49, Jaegeuk Kim wrote:
+> > On 09/26, Chao Yu wrote:
+> >> On 2018/9/26 9:10, Chao Yu wrote:
+> >>> On 2018/9/26 8:18, Jaegeuk Kim wrote:
+> >>>> On 09/21, Chao Yu wrote:
+> >>>>> On 2018/9/21 5:46, Jaegeuk Kim wrote:
+> >>>>>> On 09/20, Chao Yu wrote:
+> >>>>>>> On 2018/9/19 1:56, Jaegeuk Kim wrote:
+> >>>>>>>> This patch avoids BUG_ON when f2fs_get_meta_page_nofail got EIO during
+> >>>>>>>> xfstests/generic/475.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>>>>> ---
+> >>>>>>>> Change log from v1:
+> >>>>>>>>  - propagate errno
+> >>>>>>>>  - drop sum_pages
+> >>>>>>>>
+> >>>>>>>>  fs/f2fs/checkpoint.c | 10 +++++-----
+> >>>>>>>>  fs/f2fs/f2fs.h       |  2 +-
+> >>>>>>>>  fs/f2fs/gc.c         |  9 +++++++++
+> >>>>>>>>  fs/f2fs/node.c       | 32 ++++++++++++++++++++++++--------
+> >>>>>>>>  fs/f2fs/recovery.c   |  2 ++
+> >>>>>>>>  fs/f2fs/segment.c    |  3 +++
+> >>>>>>>>  6 files changed, 44 insertions(+), 14 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>>>>>>> index 01e0d8f5bbbe..1ddf332ce4b2 100644
+> >>>>>>>> --- a/fs/f2fs/checkpoint.c
+> >>>>>>>> +++ b/fs/f2fs/checkpoint.c
+> >>>>>>>> @@ -119,11 +119,8 @@ struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
+> >>>>>>>>  		if (PTR_ERR(page) == -EIO &&
+> >>>>>>>>  				++count <= DEFAULT_RETRY_IO_COUNT)
+> >>>>>>>>  			goto retry;
+> >>>>>>>> -
+> >>>>>>>>  		f2fs_stop_checkpoint(sbi, false);
+> >>>>>>>> -		f2fs_bug_on(sbi, 1);
+> >>>>>>>>  	}
+> >>>>>>>> -
+> >>>>>>>>  	return page;
+> >>>>>>>>  }
+> >>>>>>>>  
+> >>>>>>>> @@ -1512,7 +1509,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  	ckpt->checkpoint_ver = cpu_to_le64(++ckpt_ver);
+> >>>>>>>>  
+> >>>>>>>>  	/* write cached NAT/SIT entries to NAT/SIT area */
+> >>>>>>>> -	f2fs_flush_nat_entries(sbi, cpc);
+> >>>>>>>> +	err = f2fs_flush_nat_entries(sbi, cpc);
+> >>>>>>>> +	if (err)
+> >>>>>>>> +		goto stop;
+> >>>>>>>
+> >>>>>>> To make sure, if partial NAT pages become dirty, flush them back to device
+> >>>>>>> outside checkpoint() is not harmful, right?
+> >>>>>>
+> >>>>>> I think so.
+> >>>>>
+> >>>>> Oh, one more case, now we use NAT #0, if partial NAT pages were
+> >>>>> writebacked, then we start to use NAT #1, later, in another checkpoint(),
+> >>>>> we update those NAT pages again, we will write them to NAT #0, which is
+> >>>>> belong to last valid checkpoint(), it's may cause corrupted checkpoint in
+> >>>>> scenario of SPO. So it's harmfull, right?
+> >>>>
+> >>>> We already stopped checkpoint anymore, so there'd be no way to proceed another
+> >>>> checkpoint. Am I missing something?
+> >>>
+> >>> You're right, we have called f2fs_stop_checkpoint(), so we are safe now. :)
+> >>
+> >> Can we allow to writeback fs metadata (NAT/SIT/SSA) in prior to checkpoint
+> >> to mitigate IO stress of checkpoint?
+> > 
+> > What's the point related to this patch?
 > 
-> The below patch fixes the bootmem leftovers in csky. It is based on the
-> current mmots and csky build there fails because of undefined reference to
-> dma_direct_ops: 
+> It's not related to this patch.
 > 
->   MODPOST vmlinux.o
-> kernel/dma/mapping.o: In function `dmam_alloc_attrs':
-> kernel/dma/mapping.c:143: undefined reference to `dma_direct_ops'
-> kernel/dma/mapping.o: In function `dmam_declare_coherent_memory':
-> kernel/dma/mapping.c:184: undefined reference to `dma_direct_ops'
-> mm/dmapool.o: In function `dma_free_attrs': 
-> include/linux/dma-mapping.h:558: undefined reference to `dma_direct_ops'
+> > Anyway, do you mean f2fs_write_meta_pages is not enough?
 > 
-> I've blindly added "select DMA_DIRECT_OPS" to arch/csky/Kconfig and it
-> fixed the build, but I really have no idea if this the right thing to do...
-You are almost right, the issue is come from the patch:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=bc3ec75de5452db59b683487867ba562b950708a
+> Yup, f2fs_write_meta_pages can only flush summary pages, I guess we can
+> allow to flush dirty nat/sit entries to NAT/SIT blocks in some conditions,
+> and then flush those block in background.
 
-we need:
--	select DMA_NONCOHERENT_OPS
-+	select DMA_DIRECT_OPS
+I see, then NAT/SIT will be dirtied and flushed during checkpoint. Do you
+mean flushing some of them partially in background, even if we don't know
+it will be flushed again? We may need to gather some data first.
 
-I'll fixup it in my repo.
-
-> From 63c3b24e661e6cad88f0432dd460d35a16741871 Mon Sep 17 00:00:00 2001
-> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Date: Wed, 26 Sep 2018 13:40:13 +0300
-> Subject: [PATCH] csky: fixups after bootmem removal
 > 
-> The bootmem removal patchest didn't take into account csky architecture and
-> it still had bootmem leftovers. Remove them now.
+> Thanks,
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> ---
->  arch/csky/Kconfig        | 1 -
->  arch/csky/kernel/setup.c | 1 -
->  arch/csky/mm/highmem.c   | 4 ++--
->  arch/csky/mm/init.c      | 3 +--
->  4 files changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-> index fb2a0ae..fc25ea6 100644
-> --- a/arch/csky/Kconfig
-> +++ b/arch/csky/Kconfig
-> @@ -35,7 +35,6 @@ config CSKY
->  	select HAVE_C_RECORDMCOUNT
->  	select HAVE_DMA_API_DEBUG
->  	select HAVE_DMA_CONTIGUOUS
-> -	select HAVE_MEMBLOCK
->  	select MAY_HAVE_SPARSE_IRQ
->  	select MODULES_USE_ELF_RELA if MODULES
->  	select OF
-> diff --git a/arch/csky/kernel/setup.c b/arch/csky/kernel/setup.c
-> index 27f9e10..bee4d26 100644
-> --- a/arch/csky/kernel/setup.c
-> +++ b/arch/csky/kernel/setup.c
-> @@ -3,7 +3,6 @@
->  
->  #include <linux/console.h>
->  #include <linux/memblock.h>
-> -#include <linux/bootmem.h>
->  #include <linux/initrd.h>
->  #include <linux/of.h>
->  #include <linux/of_fdt.h>
-> diff --git a/arch/csky/mm/highmem.c b/arch/csky/mm/highmem.c
-> index 149921a..5b90501 100644
-> --- a/arch/csky/mm/highmem.c
-> +++ b/arch/csky/mm/highmem.c
-> @@ -4,7 +4,7 @@
->  #include <linux/module.h>
->  #include <linux/highmem.h>
->  #include <linux/smp.h>
-> -#include <linux/bootmem.h>
-> +#include <linux/memblock.h>
->  #include <asm/fixmap.h>
->  #include <asm/tlbflush.h>
->  #include <asm/cacheflush.h>
-> @@ -138,7 +138,7 @@ static void __init fixrange_init (unsigned long start, unsigned long end,
->  			pmd = (pmd_t *)pud;
->  			for (; (k < PTRS_PER_PMD) && (vaddr != end); pmd++, k++) {
->  				if (pmd_none(*pmd)) {
-> -					pte = (pte_t *) alloc_bootmem_low_pages(PAGE_SIZE);
-> +					pte = (pte_t *) memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
->  					set_pmd(pmd, __pmd(__pa(pte)));
->  					BUG_ON(pte != pte_offset_kernel(pmd, 0));
->  				}
-> diff --git a/arch/csky/mm/init.c b/arch/csky/mm/init.c
-> index fd2791b..46c5aaa 100644
-> --- a/arch/csky/mm/init.c
-> +++ b/arch/csky/mm/init.c
-> @@ -14,7 +14,6 @@
->  #include <linux/ptrace.h>
->  #include <linux/mman.h>
->  #include <linux/mm.h>
-> -#include <linux/bootmem.h>
->  #include <linux/highmem.h>
->  #include <linux/memblock.h>
->  #include <linux/swap.h>
-> @@ -44,7 +43,7 @@ void __init mem_init(void)
->  #endif
->  	high_memory = (void *) __va(max_low_pfn << PAGE_SHIFT);
->  
-> -	free_all_bootmem();
-> +	memblock_free_all();
->  
->  #ifdef CONFIG_HIGHMEM
->  	for (tmp = highstart_pfn; tmp < highend_pfn; tmp++) {
-The patch looks good for me.
-
-Thx
- Guo Ren
+> > 
+> >>
+> >> Maybe below conditions can be consider to trigger writebacking:
+> >> a) dirty count of meta (NAT/SIT/SSA) exceeds threshold
+> >> b) exceed time threshold
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>>
+> >>>>>>>
+> >>>>>>>> +
+> >>>>>>>>  	f2fs_flush_sit_entries(sbi, cpc);
+> >>>>>>>>  
+> >>>>>>>>  	/* unlock all the fs_lock[] in do_checkpoint() */
+> >>>>>>>> @@ -1521,7 +1521,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  		f2fs_release_discard_addrs(sbi);
+> >>>>>>>>  	else
+> >>>>>>>>  		f2fs_clear_prefree_segments(sbi, cpc);
+> >>>>>>>> -
+> >>>>>>>> +stop:
+> >>>>>>>>  	unblock_operations(sbi);
+> >>>>>>>>  	stat_inc_cp_count(sbi->stat_info);
+> >>>>>>>>  
+> >>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>>>>>> index a0c868127a7c..29021dbc8f2a 100644
+> >>>>>>>> --- a/fs/f2fs/f2fs.h
+> >>>>>>>> +++ b/fs/f2fs/f2fs.h
+> >>>>>>>> @@ -2895,7 +2895,7 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
+> >>>>>>>>  int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
+> >>>>>>>>  int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+> >>>>>>>>  			unsigned int segno, struct f2fs_summary_block *sum);
+> >>>>>>>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+> >>>>>>>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+> >>>>>>>>  int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
+> >>>>>>>>  void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi);
+> >>>>>>>>  int __init f2fs_create_node_manager_caches(void);
+> >>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >>>>>>>> index 4bcc8a59fdef..c7d14282dbf4 100644
+> >>>>>>>> --- a/fs/f2fs/gc.c
+> >>>>>>>> +++ b/fs/f2fs/gc.c
+> >>>>>>>> @@ -1070,6 +1070,15 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+> >>>>>>>>  	/* reference all summary page */
+> >>>>>>>>  	while (segno < end_segno) {
+> >>>>>>>>  		sum_page = f2fs_get_sum_page(sbi, segno++);
+> >>>>>>>> +		if (IS_ERR(sum_page)) {
+> >>>>>>>> +			end_segno = segno - 1;
+> >>>>>>>> +			for (segno = start_segno; segno < end_segno; segno++) {
+> >>>>>>>> +				sum_page = find_get_page(META_MAPPING(sbi),
+> >>>>>>>> +						GET_SUM_BLOCK(sbi, segno));
+> >>>>>>>> +				f2fs_put_page(sum_page, 0);
+> >>>>>>>
+> >>>>>>> find_get_page() will add one more reference on page, so we need to call
+> >>>>>>> f2fs_put_page(sum_page, 0) twice.
+> >>>>>>
+> >>>>>> Done.
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>> +			}
+> >>>>>>>> +			return PTR_ERR(sum_page);
+> >>>>>>>> +		}
+> >>>>>>>>  		unlock_page(sum_page);
+> >>>>>>>>  	}
+> >>>>>>>>  
+> >>>>>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> >>>>>>>> index fa2381c0bc47..79b6fee354f7 100644
+> >>>>>>>> --- a/fs/f2fs/node.c
+> >>>>>>>> +++ b/fs/f2fs/node.c
+> >>>>>>>> @@ -126,6 +126,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+> >>>>>>>>  
+> >>>>>>>>  	/* get current nat block page with lock */
+> >>>>>>>>  	src_page = get_current_nat_page(sbi, nid);
+> >>>>>>>> +	if (IS_ERR(src_page))
+> >>>>>>>> +		return src_page;
+> >>>>>>>>  	dst_page = f2fs_grab_meta_page(sbi, dst_off);
+> >>>>>>>>  	f2fs_bug_on(sbi, PageDirty(src_page));
+> >>>>>>>>  
+> >>>>>>>> @@ -2265,15 +2267,19 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+> >>>>>>>>  						nm_i->nat_block_bitmap)) {
+> >>>>>>>>  			struct page *page = get_current_nat_page(sbi, nid);
+> >>>>>>>>  
+> >>>>>>>> -			ret = scan_nat_page(sbi, page, nid);
+> >>>>>>>> -			f2fs_put_page(page, 1);
+> >>>>>>>> +			if (IS_ERR(page)) {
+> >>>>>>>> +				ret = PTR_ERR(page);
+> >>>>>>>> +			} else {
+> >>>>>>>> +				ret = scan_nat_page(sbi, page, nid);
+> >>>>>>>> +				f2fs_put_page(page, 1);
+> >>>>>>>> +			}
+> >>>>>>>>  
+> >>>>>>>>  			if (ret) {
+> >>>>>>>>  				up_read(&nm_i->nat_tree_lock);
+> >>>>>>>>  				f2fs_bug_on(sbi, !mount);
+> >>>>>>>>  				f2fs_msg(sbi->sb, KERN_ERR,
+> >>>>>>>>  					"NAT is corrupt, run fsck to fix it");
+> >>>>>>>> -				return -EINVAL;
+> >>>>>>>> +				return ret;
+> >>>>>>>>  			}
+> >>>>>>>>  		}
+> >>>>>>>>  
+> >>>>>>>> @@ -2700,7 +2706,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+> >>>>>>>>  		__clear_bit_le(nat_index, nm_i->full_nat_bits);
+> >>>>>>>>  }
+> >>>>>>>>  
+> >>>>>>>> -static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>>>>>> +static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>>>>>>  		struct nat_entry_set *set, struct cp_control *cpc)
+> >>>>>>>>  {
+> >>>>>>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >>>>>>>> @@ -2724,6 +2730,9 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>>>>>>  		down_write(&curseg->journal_rwsem);
+> >>>>>>>>  	} else {
+> >>>>>>>>  		page = get_next_nat_page(sbi, start_nid);
+> >>>>>>>> +		if (IS_ERR(page))
+> >>>>>>>> +			return PTR_ERR(page);
+> >>>>>>>> +
+> >>>>>>>>  		nat_blk = page_address(page);
+> >>>>>>>>  		f2fs_bug_on(sbi, !nat_blk);
+> >>>>>>>>  	}
+> >>>>>>>> @@ -2769,12 +2778,13 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >>>>>>>>  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+> >>>>>>>>  		kmem_cache_free(nat_entry_set_slab, set);
+> >>>>>>>>  	}
+> >>>>>>>> +	return 0;
+> >>>>>>>>  }
+> >>>>>>>>  
+> >>>>>>>>  /*
+> >>>>>>>>   * This function is called during the checkpointing process.
+> >>>>>>>>   */
+> >>>>>>>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  {
+> >>>>>>>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> >>>>>>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >>>>>>>> @@ -2784,6 +2794,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  	unsigned int found;
+> >>>>>>>>  	nid_t set_idx = 0;
+> >>>>>>>>  	LIST_HEAD(sets);
+> >>>>>>>> +	int err = 0;
+> >>>>>>>>  
+> >>>>>>>>  	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
+> >>>>>>>>  	if (enabled_nat_bits(sbi, cpc)) {
+> >>>>>>>> @@ -2793,7 +2804,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  	}
+> >>>>>>>>  
+> >>>>>>>>  	if (!nm_i->dirty_nat_cnt)
+> >>>>>>>> -		return;
+> >>>>>>>> +		return 0;
+> >>>>>>>>  
+> >>>>>>>>  	down_write(&nm_i->nat_tree_lock);
+> >>>>>>>>  
+> >>>>>>>> @@ -2816,11 +2827,16 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>>>>>>>  	}
+> >>>>>>>>  
+> >>>>>>>>  	/* flush dirty nats in nat entry set */
+> >>>>>>>> -	list_for_each_entry_safe(set, tmp, &sets, set_list)
+> >>>>>>>> -		__flush_nat_entry_set(sbi, set, cpc);
+> >>>>>>>> +	list_for_each_entry_safe(set, tmp, &sets, set_list) {
+> >>>>>>>> +		err = __flush_nat_entry_set(sbi, set, cpc);
+> >>>>>>>> +		if (err)
+> >>>>>>>> +			break;
+> >>>>>>>> +	}
+> >>>>>>>>  
+> >>>>>>>>  	up_write(&nm_i->nat_tree_lock);
+> >>>>>>>>  	/* Allow dirty nats by node block allocation in write_begin */
+> >>>>>>>> +
+> >>>>>>>> +	return err;
+> >>>>>>>>  }
+> >>>>>>>>  
+> >>>>>>>>  static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+> >>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>>>>>>> index 56d34193a74b..ba678efe7cad 100644
+> >>>>>>>> --- a/fs/f2fs/recovery.c
+> >>>>>>>> +++ b/fs/f2fs/recovery.c
+> >>>>>>>> @@ -355,6 +355,8 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+> >>>>>>>>  	}
+> >>>>>>>>  
+> >>>>>>>>  	sum_page = f2fs_get_sum_page(sbi, segno);
+> >>>>>>>> +	if (IS_ERR(sum_page))
+> >>>>>>>> +		return PTR_ERR(sum_page);
+> >>>>>>>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >>>>>>>>  	sum = sum_node->entries[blkoff];
+> >>>>>>>>  	f2fs_put_page(sum_page, 1);
+> >>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>>>>>> index aa96a371aaf8..ab7386a7e9d3 100644
+> >>>>>>>> --- a/fs/f2fs/segment.c
+> >>>>>>>> +++ b/fs/f2fs/segment.c
+> >>>>>>>> @@ -2487,6 +2487,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
+> >>>>>>>>  	__next_free_blkoff(sbi, curseg, 0);
+> >>>>>>>>  
+> >>>>>>>>  	sum_page = f2fs_get_sum_page(sbi, new_segno);
+> >>>>>>>> +	f2fs_bug_on(sbi, IS_ERR(sum_page));
+> >>>>>>>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
+> >>>>>>>>  	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
+> >>>>>>>>  	f2fs_put_page(sum_page, 1);
+> >>>>>>>> @@ -3971,6 +3972,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+> >>>>>>>>  
+> >>>>>>>>  			se = &sit_i->sentries[start];
+> >>>>>>>>  			page = get_current_sit_page(sbi, start);
+> >>>>>>>> +			if (IS_ERR(page))
+> >>>>>>>> +				return PTR_ERR(page);
+> >>>>>>>>  			sit_blk = (struct f2fs_sit_block *)page_address(page);
+> >>>>>>>>  			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+> >>>>>>>>  			f2fs_put_page(page, 1);
+> >>>>>>>>
+> >>>>>>
+> >>>>>> .
+> >>>>>>
+> >>>>
+> >>>> .
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>> _______________________________________________
+> >>> Linux-f2fs-devel mailing list
+> >>> Linux-f2fs-devel@lists.sourceforge.net
+> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
