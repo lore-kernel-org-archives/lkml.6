@@ -2,426 +2,631 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C19AC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06703C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1143F216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 612A9216E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eJbMfK5s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1143F216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XbhqiryQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612A9216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbeI0XFF (ORCPT
+        id S1728382AbeI0XF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:05:05 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40951 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeI0XFE (ORCPT
+        Thu, 27 Sep 2018 19:05:29 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:56303 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeI0XF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:05:04 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n31-v6so2368105pgm.7
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:45:57 -0700 (PDT)
+        Thu, 27 Sep 2018 19:05:29 -0400
+Received: by mail-it1-f196.google.com with SMTP id c23-v6so8685503itd.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:46:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cXAatDLPIxaS3x3ieWehdZteRb/zmOGIBgk32Ee1Z8k=;
-        b=eJbMfK5ssHpXAhXXE+yU57S+NsCZQk1n4RjI+5p2fRRqafVYJtuqIJG/UhQYjvuCZu
-         cDKoZlmYvXaP2S++27DSrICy/ZUO5/DTmmVq9Jqr2inNPzV1gMSF0r5ajNyjJdadTzUo
-         Flr+XiaO7jLQbMPBqXQvqdy5eHHJ/nGtiAxVU=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WAFyrFNdkzjdJ7KIQVDae92V8cueMJvhUTlDKEjkiQQ=;
+        b=XbhqiryQj3x/4o17jqFUOyQT6ScU5kmC+7tWZlOh9klWnfG3nyWrtkQEOlD99u6baT
+         DER1BL/znoCPIwhd3o0jNwa8qX1KEVdWgB9OuPX3uF44PwZJMstb0XJ+l4pDszAfdZcC
+         QMK0Tf3pSH+6p9OrwgWPHWErDAYRhGNTVwKaA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cXAatDLPIxaS3x3ieWehdZteRb/zmOGIBgk32Ee1Z8k=;
-        b=AaPyHNtU0V1yiXD6FdOf8YOIrILGnMrbNZqxlWHLR409olw0Nx2o9YgAIWzctSz8JC
-         ox9Uuvom4CqYXvay8kddnF3u51fdzZQt+s+g2xS2GoPyZu9yj+XzOShxw+fAmKqA4Rpl
-         QuSqir2+wZ+vu/3YqntDSdbLMXVatj8+khes2BJHY7OxSngPv9f9sMi91Rvrnm+nUlYF
-         FFMtW6fmkYw2ToaYDvotxA0aphWc0HI1ARaGQ4l5oTQ9TRtvvujODVcheddPuiMXaIBZ
-         6aERKRbzUbEfBk69pamWtjtoOAbQ9iuTVlWWHOsWWDOUAkf4QzNTP0gjwGv/+2utIcrz
-         GS7Q==
-X-Gm-Message-State: ABuFfohUYy27rb0o2aT7F/oBkzkcrCLXSdrcculnq1Eh4SwRUM/EOD0N
-        zANku/cMWwYYfV7qTHN34ZMQEJcAQZA8TVDQKnAJOw==
-X-Google-Smtp-Source: ACcGV63H/s3pkauwqqFCJhftYckovs2jxDE/pkGBVxF7Z2JAEkjImJOUSTkRMiHNiFSUpy9Gzg9IbfkVLVq6h+CyVeY=
-X-Received: by 2002:a65:6143:: with SMTP id o3-v6mr11333483pgv.52.1538066756863;
- Thu, 27 Sep 2018 09:45:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WAFyrFNdkzjdJ7KIQVDae92V8cueMJvhUTlDKEjkiQQ=;
+        b=NgI7vQ3QgqKPWYDt5+PUuzeVlYkEBN2r5I8etfKnt/8E6k9zrJ17oScmjuUpwn5gL4
+         UrO6K9QsLTxfkhleacvDyNbCYekOcbUM83FfozHE1CyETRLl97BXfjv6pF9OTlGtU2qw
+         YDnLb36RH8NA6OtulREfEoOPp0CH3rVSPq/oE3e9hAtoshE9MgjwfGyLUhZ8aarl14A5
+         lZfApKSxIoqaKnpQFZea7/JtP3+K6/157Ng9iIL4MC2O+1lxLHBzONmsUr6dy266ue2m
+         kgc6LmcpYK12HCcYM8dr2+3BoJ7YDnkTPGSUzrV8BQCT1NMecPtN6rbmq7v3C1ccCwse
+         lswA==
+X-Gm-Message-State: ABuFfohtNu+4ac+mnc05i1w3PQgqrjcbnD7gXBK5eu0kmo1g7WKu4Uyu
+        JpkJetTFkR5fl3ftuBElT2QDS562Ot8=
+X-Google-Smtp-Source: ACcGV61VPfKh26mqF7HbQopCHXagwmiHb4fkyvD2/AzBcNkWvtzLQKCV3i6+2gPI+jwwSpXCFM3O+g==
+X-Received: by 2002:a24:4d8d:: with SMTP id l135-v6mr10440615itb.49.1538066780614;
+        Thu, 27 Sep 2018 09:46:20 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id 127-v6sm566764itj.36.2018.09.27.09.46.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 09:46:19 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 10:46:17 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [QUEUED v20180920 04/16] stm class: Introduce framing protocol
+ drivers
+Message-ID: <20180927164617.GB7481@xps15>
+References: <20180920124553.56978-1-alexander.shishkin@linux.intel.com>
+ <20180920124553.56978-5-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-References: <20180920231308.237277-1-seobrien@chromium.org>
-In-Reply-To: <20180920231308.237277-1-seobrien@chromium.org>
-From:   "Sean O'Brien" <seobrien@chromium.org>
-Date:   Thu, 27 Sep 2018 09:45:45 -0700
-Message-ID: <CAOOzhkosyZpr+B1xwZcG3viNbWZFWr9WQtgGdP13i_+_Ocdgmg@mail.gmail.com>
-Subject: Re: [PATCH] [v3] HID: add support for Apple Magic Trackpad 2
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     marek.wyborski@emwesoft.com, linux-kernel@vger.kernel.org,
-        dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
-        rydberg@bitmath.org, Jiri Kosina <jikos@kernel.org>,
-        claudio@ponyfleisch.ch
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920124553.56978-5-alexander.shishkin@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gentle reminder, thank you!
-
-On Thu, Sep 20, 2018 at 4:13 PM Sean O'Brien <seobrien@chromium.org> wrote:
->
-> USB device
->         Vendor 05ac (Apple)
->         Device 0265 (Magic Trackpad 2)
-> Bluetooth device
->         Vendor 004c (Apple)
->         Device 0265 (Magic Trackpad 2)
->
-> Add support for Apple Magic Trackpad 2 over USB and bluetooth, putting
-> the device in multi-touch mode.
->
-> Signed-off-by: Claudio Mettler <claudio@ponyfleisch.ch>
-> Signed-off-by: Marek Wyborski <marek.wyborski@emwesoft.com>
-> Signed-off-by: Sean O'Brien <seobrien@chromium.org>
+On Thu, Sep 20, 2018 at 03:45:41PM +0300, Alexander Shishkin wrote:
+> At the moment, the stm class applies a certain STP framing pattern to
+> the data as it is written to the underlying STM device. In order to
+> allow different framing patterns (aka protocols), this patch introduces
+> the concept of STP protocol drivers, defines data structures and APIs
+> for the protocol drivers to use.
+> 
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 > ---
->
->  drivers/hid/hid-ids.h        |   1 +
->  drivers/hid/hid-magicmouse.c | 149 +++++++++++++++++++++++++++++++----
->  2 files changed, 134 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> index 5146ee029db4..bb0cd212c7cc 100644
-> --- a/drivers/hid/hid-ids.h
-> +++ b/drivers/hid/hid-ids.h
-> @@ -92,6 +92,7 @@
->  #define USB_DEVICE_ID_APPLE_MIGHTYMOUSE        0x0304
->  #define USB_DEVICE_ID_APPLE_MAGICMOUSE 0x030d
->  #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD      0x030e
-> +#define USB_DEVICE_ID_APPLE_MAGICTRACKPAD2     0x0265
->  #define USB_DEVICE_ID_APPLE_FOUNTAIN_ANSI      0x020e
->  #define USB_DEVICE_ID_APPLE_FOUNTAIN_ISO       0x020f
->  #define USB_DEVICE_ID_APPLE_GEYSER_ANSI        0x0214
-> diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
-> index b454c4386157..6a3a6c83e509 100644
-> --- a/drivers/hid/hid-magicmouse.c
-> +++ b/drivers/hid/hid-magicmouse.c
-> @@ -54,6 +54,8 @@ module_param(report_undeciphered, bool, 0644);
->  MODULE_PARM_DESC(report_undeciphered, "Report undeciphered multi-touch state field using a MSC_RAW event");
->
->  #define TRACKPAD_REPORT_ID 0x28
-> +#define TRACKPAD2_USB_REPORT_ID 0x02
-> +#define TRACKPAD2_BT_REPORT_ID 0x31
->  #define MOUSE_REPORT_ID    0x29
->  #define DOUBLE_REPORT_ID   0xf7
->  /* These definitions are not precise, but they're close enough.  (Bits
-> @@ -91,6 +93,17 @@ MODULE_PARM_DESC(report_undeciphered, "Report undeciphered multi-touch state fie
->  #define TRACKPAD_RES_Y \
->         ((TRACKPAD_MAX_Y - TRACKPAD_MIN_Y) / (TRACKPAD_DIMENSION_Y / 100))
->
-> +#define TRACKPAD2_DIMENSION_X (float)16000
-> +#define TRACKPAD2_MIN_X -3678
-> +#define TRACKPAD2_MAX_X 3934
-> +#define TRACKPAD2_RES_X \
-> +       ((TRACKPAD2_MAX_X - TRACKPAD2_MIN_X) / (TRACKPAD2_DIMENSION_X / 100))
-> +#define TRACKPAD2_DIMENSION_Y (float)11490
-> +#define TRACKPAD2_MIN_Y -2478
-> +#define TRACKPAD2_MAX_Y 2587
-> +#define TRACKPAD2_RES_Y \
-> +       ((TRACKPAD2_MAX_Y - TRACKPAD2_MIN_Y) / (TRACKPAD2_DIMENSION_Y / 100))
+>  drivers/hwtracing/stm/core.c   | 142 ++++++++++++++++++++++++++++++++
+>  drivers/hwtracing/stm/policy.c | 145 ++++++++++++++++++++++++++++++---
+>  drivers/hwtracing/stm/stm.h    |  52 ++++++++++--
+>  3 files changed, 321 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+> index 7b1c549d6320..c869a30661ac 100644
+> --- a/drivers/hwtracing/stm/core.c
+> +++ b/drivers/hwtracing/stm/core.c
+> @@ -316,11 +316,26 @@ static int stm_output_assign(struct stm_device *stm, unsigned int width,
+>  	output->master = midx;
+>  	output->channel = cidx;
+>  	output->nr_chans = width;
+> +	if (stm->pdrv->output_open) {
+> +		void *priv = stp_policy_node_priv(policy_node);
 > +
->  /**
->   * struct magicmouse_sc - Tracks Magic Mouse-specific data.
->   * @input: Input device through which we report events.
-> @@ -183,6 +196,7 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+> +		if (WARN_ON_ONCE(!priv))
+> +			goto unlock;
+> +
+> +		/* configfs subsys mutex is held by the caller */
+> +		ret = stm->pdrv->output_open(priv, output);
+> +		if (ret)
+> +			goto unlock;
+> +	}
+> +
+>  	stm_output_claim(stm, output);
+>  	dev_dbg(&stm->dev, "assigned %u:%u (+%u)\n", midx, cidx, width);
+>  
+>  	ret = 0;
+>  unlock:
+> +	if (ret)
+> +		output->nr_chans = 0;
+> +
+>  	spin_unlock(&output->lock);
+>  	spin_unlock(&stm->mc_lock);
+>  
+> @@ -333,6 +348,8 @@ static void stm_output_free(struct stm_device *stm, struct stm_output *output)
+>  	spin_lock(&output->lock);
+>  	if (output->nr_chans)
+>  		stm_output_disclaim(stm, output);
+> +	if (stm->pdrv->output_close)
+> +		stm->pdrv->output_close(output);
+>  	spin_unlock(&output->lock);
+>  	spin_unlock(&stm->mc_lock);
+>  }
+> @@ -349,6 +366,122 @@ static int major_match(struct device *dev, const void *data)
+>  	return MAJOR(dev->devt) == major;
+>  }
+>  
+> +/*
+> + * Framing protocol management
+> + * Modules can implement STM protocol drivers and (un-)register them
+> + * with the STM class framework.
+> + */
+> +static struct list_head stm_pdrv_head;
+> +static struct mutex stm_pdrv_mutex;
+> +
+> +struct stm_pdrv_entry {
+> +	struct list_head			entry;
+> +	const struct stm_protocol_driver	*pdrv;
+> +	const struct config_item_type		*node_type;
+> +};
+> +
+> +static const struct stm_pdrv_entry *
+> +__stm_lookup_protocol(const char *name)
+> +{
+> +	struct stm_pdrv_entry *pe;
+> +
+> +	list_for_each_entry(pe, &stm_pdrv_head, entry) {
+> +		if (!name || !*name || !strcmp(name, pe->pdrv->name))
+> +			return pe;
+> +	}
+
+Please add a comment asserting your intentions with this loop.  I had to look at
+it for quite a while before understanding all the implications it conveys.
+
+> +
+> +	return NULL;
+> +}
+> +
+> +int stm_register_protocol(const struct stm_protocol_driver *pdrv)
+> +{
+> +	struct stm_pdrv_entry *pe = NULL;
+> +	int ret = -ENOMEM;
+> +
+> +	mutex_lock(&stm_pdrv_mutex);
+> +
+> +	if (__stm_lookup_protocol(pdrv->name)) {
+> +		ret = -EEXIST;
+> +		goto unlock;
+> +	}
+> +
+> +	pe = kzalloc(sizeof(*pe), GFP_KERNEL);
+> +	if (!pe)
+> +		goto unlock;
+> +
+> +	if (pdrv->policy_attr) {
+> +		pe->node_type = get_policy_node_type(pdrv->policy_attr);
+> +		if (!pe->node_type)
+> +			goto unlock;
+> +	}
+> +
+> +	list_add_tail(&pe->entry, &stm_pdrv_head);
+> +	pe->pdrv = pdrv;
+> +
+> +	ret = 0;
+> +unlock:
+> +	mutex_unlock(&stm_pdrv_mutex);
+> +
+> +	if (ret)
+> +		kfree(pe);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(stm_register_protocol);
+> +
+> +void stm_unregister_protocol(const struct stm_protocol_driver *pdrv)
+> +{
+> +	struct stm_pdrv_entry *pe, *iter;
+> +
+> +	mutex_lock(&stm_pdrv_mutex);
+> +
+> +	list_for_each_entry_safe(pe, iter, &stm_pdrv_head, entry) {
+> +		if (pe->pdrv == pdrv) {
+> +			list_del(&pe->entry);
+> +
+> +			/* XXX: factor out */
+> +			if (pe->node_type) {
+> +				kfree(pe->node_type->ct_attrs);
+> +				kfree(pe->node_type);
+> +			}
+> +			kfree(pe);
+> +			break;
+> +		}
+> +	}
+> +
+> +	mutex_unlock(&stm_pdrv_mutex);
+> +}
+> +EXPORT_SYMBOL_GPL(stm_unregister_protocol);
+> +
+> +static bool stm_get_protocol(const struct stm_protocol_driver *pdrv)
+> +{
+> +	return try_module_get(pdrv->owner);
+> +}
+> +
+> +void stm_put_protocol(const struct stm_protocol_driver *pdrv)
+> +{
+> +	module_put(pdrv->owner);
+> +}
+> +
+> +int stm_lookup_protocol(const char *name,
+> +			const struct stm_protocol_driver **pdrv,
+> +			const struct config_item_type **node_type)
+> +{
+> +	const struct stm_pdrv_entry *pe;
+> +
+> +	mutex_lock(&stm_pdrv_mutex);
+> +
+> +	pe = __stm_lookup_protocol(name);
+> +	if (pe && pe->pdrv && stm_get_protocol(pe->pdrv)) {
+> +		*pdrv = pe->pdrv;
+> +		*node_type = pe->node_type;
+> +	}
+> +
+> +	mutex_unlock(&stm_pdrv_mutex);
+> +
+> +	return pe ? 0 : -ENOENT;
+> +}
+> +
+>  static int stm_char_open(struct inode *inode, struct file *file)
 >  {
->         struct input_dev *input = msc->input;
->         int id, x, y, size, orientation, touch_major, touch_minor, state, down;
-> +       int pressure = 0;
->
->         if (input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE) {
->                 id = (tdata[6] << 2 | tdata[5] >> 6) & 0xf;
-> @@ -194,6 +208,20 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
->                 touch_minor = tdata[4];
->                 state = tdata[7] & TOUCH_STATE_MASK;
->                 down = state != TOUCH_STATE_NONE;
-> +       } else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-> +               id = tdata[8] & 0xf;
-> +               x = (tdata[1] << 27 | tdata[0] << 19) >> 19;
-> +               y = -((tdata[3] << 30 | tdata[2] << 22 | tdata[1] << 14) >> 19);
-> +               size = tdata[6];
-> +               orientation = (tdata[8] >> 5) - 4;
-> +               touch_major = tdata[4];
-> +               touch_minor = tdata[5];
-> +               /* Add to pressure to prevent libraries such as libinput
-> +                * from ignoring low pressure touches
-> +                */
-> +               pressure = tdata[7] + 30;
-> +               state = tdata[3] & 0xC0;
-> +               down = state == 0x80;
->         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
->                 id = (tdata[7] << 2 | tdata[6] >> 6) & 0xf;
->                 x = (tdata[1] << 27 | tdata[0] << 19) >> 19;
-> @@ -215,7 +243,8 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
->         /* If requested, emulate a scroll wheel by detecting small
->          * vertical touch motions.
->          */
-> -       if (emulate_scroll_wheel) {
-> +       if (emulate_scroll_wheel && (input->id.product !=
-> +                       USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)) {
->                 unsigned long now = jiffies;
->                 int step_x = msc->touches[id].scroll_x - x;
->                 int step_y = msc->touches[id].scroll_y - y;
-> @@ -269,10 +298,14 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
->                 input_report_abs(input, ABS_MT_POSITION_X, x);
->                 input_report_abs(input, ABS_MT_POSITION_Y, y);
->
-> +               if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
-> +                       input_report_abs(input, ABS_MT_PRESSURE, pressure);
+>  	struct stm_file *stmf;
+> @@ -1178,6 +1311,15 @@ static int __init stm_core_init(void)
+>  		goto err_src;
+>  
+>  	init_srcu_struct(&stm_source_srcu);
+> +	INIT_LIST_HEAD(&stm_pdrv_head);
+> +	mutex_init(&stm_pdrv_mutex);
 > +
->                 if (report_undeciphered) {
->                         if (input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE)
->                                 input_event(input, EV_MSC, MSC_RAW, tdata[7]);
-> -                       else /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
-> +                       else if (input->id.product !=
-> +                                       USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
->                                 input_event(input, EV_MSC, MSC_RAW, tdata[8]);
->                 }
->         }
-> @@ -287,6 +320,7 @@ static int magicmouse_raw_event(struct hid_device *hdev,
->
->         switch (data[0]) {
->         case TRACKPAD_REPORT_ID:
-> +       case TRACKPAD2_BT_REPORT_ID:
->                 /* Expect four bytes of prefix, and N*9 bytes of touch data. */
->                 if (size < 4 || ((size - 4) % 9) != 0)
->                         return 0;
-> @@ -301,12 +335,22 @@ static int magicmouse_raw_event(struct hid_device *hdev,
->                         magicmouse_emit_touch(msc, ii, data + ii * 9 + 4);
->
->                 clicks = data[1];
-> +               break;
-> +       case TRACKPAD2_USB_REPORT_ID:
-> +               /* Expect twelve bytes of prefix and N*9 bytes of touch data. */
-> +               if (size < 12 || ((size - 12) % 9) != 0)
-> +                       return 0;
-> +               npoints = (size - 12) / 9;
-> +               if (npoints > 15) {
-> +                       hid_warn(hdev, "invalid size value (%d) for TRACKPAD2_USB_REPORT_ID\n",
-> +                                       size);
-> +                       return 0;
-> +               }
-> +               msc->ntouches = 0;
-> +               for (ii = 0; ii < npoints; ii++)
-> +                       magicmouse_emit_touch(msc, ii, data + ii * 9 + 12);
->
-> -               /* The following bits provide a device specific timestamp. They
-> -                * are unused here.
-> -                *
-> -                * ts = data[1] >> 6 | data[2] << 2 | data[3] << 10;
-> -                */
-> +               clicks = data[1];
->                 break;
->         case MOUSE_REPORT_ID:
->                 /* Expect six bytes of prefix, and N*8 bytes of touch data. */
-> @@ -352,6 +396,9 @@ static int magicmouse_raw_event(struct hid_device *hdev,
->                 magicmouse_emit_buttons(msc, clicks & 3);
->                 input_report_rel(input, REL_X, x);
->                 input_report_rel(input, REL_Y, y);
-> +       } else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-> +               input_mt_sync_frame(input);
-> +               input_report_key(input, BTN_MOUSE, clicks & 1);
->         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
->                 input_report_key(input, BTN_MOUSE, clicks & 1);
->                 input_mt_report_pointer_emulation(input, true);
-> @@ -364,6 +411,7 @@ static int magicmouse_raw_event(struct hid_device *hdev,
->  static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hdev)
->  {
->         int error;
-> +       int mt_flags = 0;
->
->         __set_bit(EV_KEY, input->evbit);
->
-> @@ -380,6 +428,22 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
->                         __set_bit(REL_WHEEL, input->relbit);
->                         __set_bit(REL_HWHEEL, input->relbit);
->                 }
-> +       } else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-> +               /* setting the device name to ensure the same driver settings
-> +                * get loaded, whether connected through bluetooth or USB
-> +                */
-> +               input->name = "Apple Inc. Magic Trackpad 2";
-> +
-> +               __clear_bit(EV_MSC, input->evbit);
-> +               __clear_bit(BTN_0, input->keybit);
-> +               __clear_bit(BTN_RIGHT, input->keybit);
-> +               __clear_bit(BTN_MIDDLE, input->keybit);
-> +               __set_bit(BTN_MOUSE, input->keybit);
-> +               __set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
-> +               __set_bit(BTN_TOOL_FINGER, input->keybit);
-> +
-> +               mt_flags = INPUT_MT_POINTER | INPUT_MT_DROP_UNUSED |
-> +                               INPUT_MT_TRACK;
->         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
->                 /* input->keybit is initialized with incorrect button info
->                  * for Magic Trackpad. There really is only one physical
-> @@ -402,14 +466,13 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
->
->         __set_bit(EV_ABS, input->evbit);
->
-> -       error = input_mt_init_slots(input, 16, 0);
-> +       error = input_mt_init_slots(input, 16, mt_flags);
->         if (error)
->                 return error;
->         input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0, 255 << 2,
->                              4, 0);
->         input_set_abs_params(input, ABS_MT_TOUCH_MINOR, 0, 255 << 2,
->                              4, 0);
-> -       input_set_abs_params(input, ABS_MT_ORIENTATION, -31, 32, 1, 0);
->
->         /* Note: Touch Y position from the device is inverted relative
->          * to how pointer motion is reported (and relative to how USB
-> @@ -418,6 +481,7 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
->          * inverse of the reported Y.
->          */
->         if (input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE) {
-> +               input_set_abs_params(input, ABS_MT_ORIENTATION, -31, 32, 1, 0);
->                 input_set_abs_params(input, ABS_MT_POSITION_X,
->                                      MOUSE_MIN_X, MOUSE_MAX_X, 4, 0);
->                 input_set_abs_params(input, ABS_MT_POSITION_Y,
-> @@ -427,7 +491,25 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
->                                   MOUSE_RES_X);
->                 input_abs_set_res(input, ABS_MT_POSITION_Y,
->                                   MOUSE_RES_Y);
-> +       } else if (input->id.product ==  USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-> +               input_set_abs_params(input, ABS_MT_PRESSURE, 0, 283, 0, 0);
-> +               input_set_abs_params(input, ABS_PRESSURE, 0, 283, 0, 0);
-> +               input_set_abs_params(input, ABS_MT_ORIENTATION, -3, 4, 0, 0);
-> +               input_set_abs_params(input, ABS_X, TRACKPAD2_MIN_X,
-> +                                    TRACKPAD2_MAX_X, 0, 0);
-> +               input_set_abs_params(input, ABS_Y, TRACKPAD2_MIN_Y,
-> +                                    TRACKPAD2_MAX_Y, 0, 0);
-> +               input_set_abs_params(input, ABS_MT_POSITION_X,
-> +                                    TRACKPAD2_MIN_X, TRACKPAD2_MAX_X, 0, 0);
-> +               input_set_abs_params(input, ABS_MT_POSITION_Y,
-> +                                    TRACKPAD2_MIN_Y, TRACKPAD2_MAX_Y, 0, 0);
-> +
-> +               input_abs_set_res(input, ABS_X, TRACKPAD2_RES_X);
-> +               input_abs_set_res(input, ABS_Y, TRACKPAD2_RES_Y);
-> +               input_abs_set_res(input, ABS_MT_POSITION_X, TRACKPAD2_RES_X);
-> +               input_abs_set_res(input, ABS_MT_POSITION_Y, TRACKPAD2_RES_Y);
->         } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
-> +               input_set_abs_params(input, ABS_MT_ORIENTATION, -31, 32, 1, 0);
->                 input_set_abs_params(input, ABS_X, TRACKPAD_MIN_X,
->                                      TRACKPAD_MAX_X, 4, 0);
->                 input_set_abs_params(input, ABS_Y, TRACKPAD_MIN_Y,
-> @@ -447,7 +529,8 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
->
->         input_set_events_per_packet(input, 60);
->
-> -       if (report_undeciphered) {
-> +       if (report_undeciphered &&
-> +           input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
->                 __set_bit(EV_MSC, input->evbit);
->                 __set_bit(MSC_RAW, input->mscbit);
->         }
-> @@ -465,7 +548,8 @@ static int magicmouse_input_mapping(struct hid_device *hdev,
->                 msc->input = hi->input;
->
->         /* Magic Trackpad does not give relative data after switching to MT */
-> -       if (hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD &&
-> +       if ((hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD ||
-> +            hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) &&
->             field->flags & HID_MAIN_ITEM_RELATIVE)
->                 return -1;
->
-> @@ -494,11 +578,20 @@ static int magicmouse_input_configured(struct hid_device *hdev,
->  static int magicmouse_probe(struct hid_device *hdev,
->         const struct hid_device_id *id)
->  {
-> -       const u8 feature[] = { 0xd7, 0x01 };
-> +       const u8 *feature;
-> +       const u8 feature_mt[] = { 0xD7, 0x01 };
-> +       const u8 feature_mt_trackpad2_usb[] = { 0x02, 0x01 };
-> +       const u8 feature_mt_trackpad2_bt[] = { 0xF1, 0x02, 0x01 };
->         u8 *buf;
->         struct magicmouse_sc *msc;
->         struct hid_report *report;
->         int ret;
-> +       int feature_size;
-> +
-> +       if (id->vendor == USB_VENDOR_ID_APPLE &&
-> +           id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
-> +           hdev->type != HID_TYPE_USBMOUSE)
-> +               return 0;
->
->         msc = devm_kzalloc(&hdev->dev, sizeof(*msc), GFP_KERNEL);
->         if (msc == NULL) {
-> @@ -532,7 +625,14 @@ static int magicmouse_probe(struct hid_device *hdev,
->         if (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE)
->                 report = hid_register_report(hdev, HID_INPUT_REPORT,
->                         MOUSE_REPORT_ID, 0);
-> -       else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
-> +       else if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-> +               if (id->vendor == BT_VENDOR_ID_APPLE)
-> +                       report = hid_register_report(hdev, HID_INPUT_REPORT,
-> +                               TRACKPAD2_BT_REPORT_ID, 0);
-> +               else /* USB_VENDOR_ID_APPLE */
-> +                       report = hid_register_report(hdev, HID_INPUT_REPORT,
-> +                               TRACKPAD2_USB_REPORT_ID, 0);
-> +       } else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
->                 report = hid_register_report(hdev, HID_INPUT_REPORT,
->                         TRACKPAD_REPORT_ID, 0);
->                 report = hid_register_report(hdev, HID_INPUT_REPORT,
-> @@ -546,7 +646,20 @@ static int magicmouse_probe(struct hid_device *hdev,
->         }
->         report->size = 6;
->
-> -       buf = kmemdup(feature, sizeof(feature), GFP_KERNEL);
-> +       if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-> +               if (id->vendor == BT_VENDOR_ID_APPLE) {
-> +                       feature_size = sizeof(feature_mt_trackpad2_bt);
-> +                       feature = feature_mt_trackpad2_bt;
-> +               } else { /* USB_VENDOR_ID_APPLE */
-> +                       feature_size = sizeof(feature_mt_trackpad2_usb);
-> +                       feature = feature_mt_trackpad2_usb;
-> +               }
-> +       } else {
-> +               feature_size = sizeof(feature_mt);
-> +               feature = feature_mt;
-> +       }
-> +
-> +       buf = kmemdup(feature, feature_size, GFP_KERNEL);
->         if (!buf) {
->                 ret = -ENOMEM;
->                 goto err_stop_hw;
-> @@ -560,10 +673,10 @@ static int magicmouse_probe(struct hid_device *hdev,
->          * but there seems to be no other way of switching the mode.
->          * Thus the super-ugly hacky success check below.
->          */
-> -       ret = hid_hw_raw_request(hdev, buf[0], buf, sizeof(feature),
-> +       ret = hid_hw_raw_request(hdev, buf[0], buf, feature_size,
->                                 HID_FEATURE_REPORT, HID_REQ_SET_REPORT);
->         kfree(buf);
-> -       if (ret != -EIO && ret != sizeof(feature)) {
-> +       if (ret != -EIO && ret != feature_size) {
->                 hid_err(hdev, "unable to request touch data (%d)\n", ret);
->                 goto err_stop_hw;
->         }
-> @@ -579,6 +692,10 @@ static const struct hid_device_id magic_mice[] = {
->                 USB_DEVICE_ID_APPLE_MAGICMOUSE), .driver_data = 0 },
->         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE,
->                 USB_DEVICE_ID_APPLE_MAGICTRACKPAD), .driver_data = 0 },
-> +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE,
-> +               USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
-> +       { HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
-> +               USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
->         { }
+> +	/*
+> +	 * So as to not confuse existing users with a requirement
+> +	 * to load yet another module, do it here.
+> +	 */
+> +	if (IS_ENABLED(CONFIG_STM_PROTO_BASIC))
+> +		(void)request_module_nowait("stm_p_basic");
+>  
+>  	stm_core_up++;
+>  
+> diff --git a/drivers/hwtracing/stm/policy.c b/drivers/hwtracing/stm/policy.c
+> index a505f055f464..894598cfe2b7 100644
+> --- a/drivers/hwtracing/stm/policy.c
+> +++ b/drivers/hwtracing/stm/policy.c
+> @@ -33,8 +33,18 @@ struct stp_policy_node {
+>  	unsigned int		last_master;
+>  	unsigned int		first_channel;
+>  	unsigned int		last_channel;
+> +	/* this is the one that's exposed to the attributes */
+> +	unsigned char		priv[0];
 >  };
->  MODULE_DEVICE_TABLE(hid, magic_mice);
-> --
-> 2.19.0.444.g18242da7ef-goog
->
+>  
+> +void *stp_policy_node_priv(struct stp_policy_node *pn)
+> +{
+> +	if (!pn)
+> +		return NULL;
+> +
+> +	return pn->priv;
+> +}
+> +
+>  static struct configfs_subsystem stp_policy_subsys;
+>  
+>  void stp_policy_node_get_ranges(struct stp_policy_node *policy_node,
+> @@ -68,6 +78,14 @@ to_stp_policy_node(struct config_item *item)
+>  		NULL;
+>  }
+>  
+> +void *to_pdrv_policy_node(struct config_item *item)
+> +{
+> +	struct stp_policy_node *node = to_stp_policy_node(item);
+> +
+> +	return stp_policy_node_priv(node);
+> +}
+> +EXPORT_SYMBOL_GPL(to_pdrv_policy_node);
+> +
+>  static ssize_t
+>  stp_policy_node_masters_show(struct config_item *item, char *page)
+>  {
+> @@ -163,7 +181,9 @@ stp_policy_node_channels_store(struct config_item *item, const char *page,
+>  
+>  static void stp_policy_node_release(struct config_item *item)
+>  {
+> -	kfree(to_stp_policy_node(item));
+> +	struct stp_policy_node *node = to_stp_policy_node(item);
+> +
+> +	kfree(node);
+>  }
+>  
+>  static struct configfs_item_operations stp_policy_node_item_ops = {
+> @@ -182,10 +202,61 @@ static struct configfs_attribute *stp_policy_node_attrs[] = {
+>  static const struct config_item_type stp_policy_type;
+>  static const struct config_item_type stp_policy_node_type;
+>  
+> +/* lifted from arch/x86/events/core.c */
+> +static struct configfs_attribute **merge_attr(struct configfs_attribute **a, struct configfs_attribute **b)
+> +{
+> +	struct configfs_attribute **new;
+> +	int j, i;
+> +
+> +	for (j = 0; a[j]; j++)
+> +		;
+> +	for (i = 0; b[i]; i++)
+> +		j++;
+> +	j++;
+> +
+> +	new = kmalloc_array(j, sizeof(struct configfs_attribute *),
+> +			    GFP_KERNEL);
+> +	if (!new)
+> +		return NULL;
+> +
+> +	j = 0;
+> +	for (i = 0; a[i]; i++)
+> +		new[j++] = a[i];
+> +	for (i = 0; b[i]; i++)
+> +		new[j++] = b[i];
+> +	new[j] = NULL;
+> +
+> +	return new;
+> +}
+> +
+> +const struct config_item_type *
+> +get_policy_node_type(struct configfs_attribute **attrs)
+> +{
+> +	struct config_item_type *type;
+> +	struct configfs_attribute **merged;
+> +
+> +	type = kmemdup(&stp_policy_node_type, sizeof(stp_policy_node_type),
+> +		       GFP_KERNEL);
+> +	if (!type)
+> +		return NULL;
+> +
+> +	merged = merge_attr(stp_policy_node_attrs, attrs);
+> +	if (!merged) {
+> +		kfree(type);
+> +		return NULL;
+> +	}
+> +
+> +	type->ct_attrs = merged;
+> +
+> +	return type;
+> +}
+> +
+>  static struct config_group *
+>  stp_policy_node_make(struct config_group *group, const char *name)
+>  {
+> +	const struct config_item_type *type = &stp_policy_node_type;
+>  	struct stp_policy_node *policy_node, *parent_node;
+> +	const struct stm_protocol_driver *pdrv;
+>  	struct stp_policy *policy;
+>  
+>  	if (group->cg_item.ci_type == &stp_policy_type) {
+> @@ -199,12 +270,20 @@ stp_policy_node_make(struct config_group *group, const char *name)
+>  	if (!policy->stm)
+>  		return ERR_PTR(-ENODEV);
+>  
+> -	policy_node = kzalloc(sizeof(struct stp_policy_node), GFP_KERNEL);
+> +	pdrv = policy->stm->pdrv;
+> +	policy_node =
+> +		kzalloc(offsetof(struct stp_policy_node, priv[pdrv->priv_sz]),
+> +			GFP_KERNEL);
+>  	if (!policy_node)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	config_group_init_type_name(&policy_node->group, name,
+> -				    &stp_policy_node_type);
+> +	if (pdrv->policy_node_init)
+> +		pdrv->policy_node_init((void *)policy_node->priv);
+> +
+> +	if (policy->stm->pdrv_node_type)
+> +		type = policy->stm->pdrv_node_type;
+> +
+> +	config_group_init_type_name(&policy_node->group, name, type);
+>  
+>  	policy_node->policy = policy;
+>  
+> @@ -254,8 +333,26 @@ static ssize_t stp_policy_device_show(struct config_item *item,
+>  
+>  CONFIGFS_ATTR_RO(stp_policy_, device);
+>  
+> +static ssize_t stp_policy_protocol_show(struct config_item *item,
+> +					char *page)
+> +{
+> +	struct stp_policy *policy = to_stp_policy(item);
+> +	ssize_t count;
+> +
+> +	/* XXX: there shouldn't be 'none', ever */
+> +	count = sprintf(page, "%s\n",
+> +			(policy && policy->stm) ?
+> +			policy->stm->pdrv->name :
+> +			"<none>");
+> +
+> +	return count;
+> +}
+> +
+> +CONFIGFS_ATTR_RO(stp_policy_, protocol);
+> +
+>  static struct configfs_attribute *stp_policy_attrs[] = {
+>  	&stp_policy_attr_device,
+> +	&stp_policy_attr_protocol,
+>  	NULL,
+>  };
+>  
+> @@ -276,6 +373,7 @@ void stp_policy_unbind(struct stp_policy *policy)
+>  	stm->policy = NULL;
+>  	policy->stm = NULL;
+>  
+> +	stm_put_protocol(stm->pdrv);
+>  	stm_put_device(stm);
+>  }
+>  
+> @@ -313,9 +411,12 @@ static const struct config_item_type stp_policy_type = {
+>  static struct config_group *
+>  stp_policy_make(struct config_group *group, const char *name)
+>  {
+> +	const struct config_item_type *pdrv_node_type;
+> +	const struct stm_protocol_driver *pdrv;
+> +	char *devname, *proto, *p;
+>  	struct config_group *ret;
+>  	struct stm_device *stm;
+> -	char *devname, *p;
+> +	int err;
+>  
+>  	devname = kasprintf(GFP_KERNEL, "%s", name);
+>  	if (!devname)
+> @@ -326,6 +427,7 @@ stp_policy_make(struct config_group *group, const char *name)
+>  	 * <device_name> is the name of an existing stm device; may
+>  	 *               contain dots;
+>  	 * <policy_name> is an arbitrary string; may not contain dots
+> +	 * <device_name>:<protocol_name>.<policy_name>
+>  	 */
+>  	p = strrchr(devname, '.');
+>  	if (!p) {
+> @@ -335,11 +437,28 @@ stp_policy_make(struct config_group *group, const char *name)
+>  
+>  	*p = '\0';
+>  
+> +	/*
+> +	 * look for ":<protocol_name>":
+> +	 *  + no protocol suffix: fall back to whatever is available;
+> +	 *  + unknown protocol: fail the whole thing
+> +	 */
+> +	proto = strrchr(devname, ':');
+> +	if (proto)
+> +		*proto++ = '\0';
+> +
+>  	stm = stm_find_device(devname);
+> +	if (!stm) {
+> +		kfree(devname);
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +
+> +	err = stm_lookup_protocol(proto, &pdrv, &pdrv_node_type);
+>  	kfree(devname);
+>  
+> -	if (!stm)
+> +	if (err) {
+> +		stm_put_device(stm);
+>  		return ERR_PTR(-ENODEV);
+> +	}
+
+This condition prevent the subsystem from being used until patch 06/16 is added.
+I would also suggest automatically compiling in the functionality provided by
+p_basic if p_sys-t is not selected.  That way we preserve the original
+behaviour.  I would also use p_basic if no protocol driver is selected rather
+than leaving it to the insertion order to make things more deterministic.  
+
+>  
+>  	mutex_lock(&stm->policy_mutex);
+>  	if (stm->policy) {
+> @@ -349,21 +468,27 @@ stp_policy_make(struct config_group *group, const char *name)
+>  
+>  	stm->policy = kzalloc(sizeof(*stm->policy), GFP_KERNEL);
+>  	if (!stm->policy) {
+> -		ret = ERR_PTR(-ENOMEM);
+> -		goto unlock_policy;
+> +		mutex_unlock(&stm->policy_mutex);
+> +		stm_put_protocol(pdrv);
+> +		stm_put_device(stm);
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+>  	config_group_init_type_name(&stm->policy->group, name,
+>  				    &stp_policy_type);
+> -	stm->policy->stm = stm;
+>  
+> +	stm->pdrv = pdrv;
+> +	stm->pdrv_node_type = pdrv_node_type;
+> +	stm->policy->stm = stm;
+>  	ret = &stm->policy->group;
+>  
+>  unlock_policy:
+>  	mutex_unlock(&stm->policy_mutex);
+>  
+> -	if (IS_ERR(ret))
+> +	if (IS_ERR(ret)) {
+> +		stm_put_protocol(stm->pdrv);
+>  		stm_put_device(stm);
+> +	}
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/hwtracing/stm/stm.h b/drivers/hwtracing/stm/stm.h
+> index e5df08ae59cf..921ebd9fd3bd 100644
+> --- a/drivers/hwtracing/stm/stm.h
+> +++ b/drivers/hwtracing/stm/stm.h
+> @@ -10,20 +10,17 @@
+>  #ifndef _STM_STM_H_
+>  #define _STM_STM_H_
+>  
+> +#include <linux/configfs.h>
+> +
+>  struct stp_policy;
+>  struct stp_policy_node;
+> +struct stm_protocol_driver;
+>  
+> -struct stp_policy_node *
+> -stp_policy_node_lookup(struct stm_device *stm, char *s);
+> -void stp_policy_node_put(struct stp_policy_node *policy_node);
+> -void stp_policy_unbind(struct stp_policy *policy);
+> -
+> -void stp_policy_node_get_ranges(struct stp_policy_node *policy_node,
+> -				unsigned int *mstart, unsigned int *mend,
+> -				unsigned int *cstart, unsigned int *cend);
+>  int stp_configfs_init(void);
+>  void stp_configfs_exit(void);
+>  
+> +void *stp_policy_node_priv(struct stp_policy_node *pn);
+> +
+>  struct stp_master {
+>  	unsigned int	nr_free;
+>  	unsigned long	chan_map[0];
+> @@ -40,6 +37,9 @@ struct stm_device {
+>  	struct mutex		link_mutex;
+>  	spinlock_t		link_lock;
+>  	struct list_head	link_list;
+> +	/* framing protocol in use */
+> +	const struct stm_protocol_driver	*pdrv;
+> +	const struct config_item_type		*pdrv_node_type;
+>  	/* master allocation */
+>  	spinlock_t		mc_lock;
+>  	struct stp_master	*masters[0];
+> @@ -48,11 +48,25 @@ struct stm_device {
+>  #define to_stm_device(_d)				\
+>  	container_of((_d), struct stm_device, dev)
+>  
+> +struct stp_policy_node *
+> +stp_policy_node_lookup(struct stm_device *stm, char *s);
+> +void stp_policy_node_put(struct stp_policy_node *policy_node);
+> +void stp_policy_unbind(struct stp_policy *policy);
+> +
+> +void stp_policy_node_get_ranges(struct stp_policy_node *policy_node,
+> +				unsigned int *mstart, unsigned int *mend,
+> +				unsigned int *cstart, unsigned int *cend);
+> +
+> +/* XXX: unXXX this! */
+> +const struct config_item_type *
+> +get_policy_node_type(struct configfs_attribute **attrs);
+> +
+>  struct stm_output {
+>  	spinlock_t		lock;
+>  	unsigned int		master;
+>  	unsigned int		channel;
+>  	unsigned int		nr_chans;
+> +	void			*pdrv_private;
+>  };
+>  
+>  struct stm_file {
+> @@ -76,4 +90,26 @@ struct stm_source_device {
+>  #define to_stm_source_device(_d)				\
+>  	container_of((_d), struct stm_source_device, dev)
+>  
+> +void *to_pdrv_policy_node(struct config_item *item);
+> +
+> +struct stm_protocol_driver {
+> +	struct module	*owner;
+> +	const char	*name;
+> +	ssize_t		(*write)(struct stm_data *data,
+> +				 struct stm_output *output, unsigned int chan,
+> +				 const char *buf, size_t count);
+> +	void		(*policy_node_init)(void *arg);
+> +	int		(*output_open)(void *priv, struct stm_output *output);
+> +	void		(*output_close)(struct stm_output *output);
+> +	ssize_t		priv_sz;
+> +	struct configfs_attribute	**policy_attr;
+> +};
+> +
+> +int stm_register_protocol(const struct stm_protocol_driver *pdrv);
+> +void stm_unregister_protocol(const struct stm_protocol_driver *pdrv);
+> +int stm_lookup_protocol(const char *name,
+> +			const struct stm_protocol_driver **pdrv,
+> +			const struct config_item_type **type);
+> +void stm_put_protocol(const struct stm_protocol_driver *pdrv);
+> +
+>  #endif /* _STM_STM_H_ */
+> -- 
+> 2.18.0
+> 
