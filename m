@@ -2,74 +2,78 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23556C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85801C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDC31216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45FE521712
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sryG2n3C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC31216FE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbLZoFn1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45FE521712
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeI1Cxx (ORCPT
+        id S1728278AbeI1CyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:53:53 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37251 "EHLO
+        Thu, 27 Sep 2018 22:54:01 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33230 "EHLO
         mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbeI1Cxw (ORCPT
+        with ESMTP id S1727265AbeI1CyB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:53:52 -0400
-Received: by mail-qt1-f194.google.com with SMTP id n6-v6so4312352qtl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:33:47 -0700 (PDT)
+        Thu, 27 Sep 2018 22:54:01 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i10-v6so4343221qtp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:33:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XeIyob3e+k3Lc5ztFb3Djiyfr8ggM4MacXhRFEsvkkA=;
-        b=sryG2n3CWA31tKWbRXfdvI77Q8UY63bmgwq1TyDGDz48alGDJlQAGkkcc5wK6GkG6X
-         Uok0FFrmxXjZSj4pQkJsllMvxae2QUuTsWgmt0GCGkVwnc4Oc8u6lVSHhsrf+P78qr/l
-         C88GmeNYUBCbqY+F2xTG/Sn4A5i0erXOhsFrrYcBlS5qTTmGZik5dvn6sE6mo3p7BHaa
-         d1G5dFpBX8xFvc06fK+IRiF4yMy9NE2ckdLjFbfzodqwPaQZUGnlVNECficDQ2JxwxqJ
-         E7Ot7z1/jj575hgazluBAQEVIsbGBWW6cJtfMLlB+cv4CkzsmM0+Bf9e8PIAkHmgbIV9
-         nylg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wX9c6L0ppsCvK4n6MoWQcsqdE557eipciyxbajazBV4=;
+        b=cbLZoFn1DD72nuAoz6vuc2x57RyfoajlUtve9WQ6xxTGHxnsks8aBkrZiCA2DOgerO
+         X7naJCe3j8QVoRKaKARs7KXNcSpdlyl63phx1QXJvO2ZYtoJmKk1H9z87hKNNE5CvSu3
+         3fwLD0Ip8GY+MDk+51bY+/iSSpXoljl/+rDKEL6UyYNs9w+GgPPozFroM9+I0uswYH9S
+         Yd8ZVE0r3Nqd+7v+Aoy3aVf8HjFpH0Uycwj0IqzXeq+KrfteNWlu0kJyInysUabMy47y
+         Lr4nKQpRH/46CZnvdYPAxdAg+rmDzJUQ1l1x4QPejMCnFZJuvbv/6syS4jFEe9dQi9SS
+         lbUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XeIyob3e+k3Lc5ztFb3Djiyfr8ggM4MacXhRFEsvkkA=;
-        b=V9Z3TEY9o38MOlwIOaAlF7hfM9nlX0iNgJieNF6XHkP4exZXSxXPrdNYsmqTT0/ErY
-         2EGHACFnOnOMgUd1nMFomc8dyRICaiqQu1aShGitwULC3DApbKcjnHeaUOW0U/X6+vrG
-         8fSlDsx0U8Wezb18o/Z9Lis7BVHlbg67P7qoKy9O4fJkGtRFhAx2EGhUB6zwTY9a0d0n
-         nN8g5e8k7YMzVI/gvXjnkaPwq0c3CEoI+FozE1ETbRZCMlgzBb7o33yLObHm7kfx9D83
-         g4610rJzGoZnvrXYLrQcfTicqC5VbHyjxEBRKtEU9A+icmRC0t4RcGhYSSj9u/WGcvUB
-         rzCg==
-X-Gm-Message-State: ABuFfogZfHPtqK92iocA0CwDBC0uMM6kadOabfns199lti1dfk7zfjyB
-        bjOH1MmU9b6vUl9t6z/Ftg==
-X-Google-Smtp-Source: ACcGV62L0+UteccsE7SbJnFxDdExoCe4Zr/+WCHhLJABKg6ROTRBTbK7wQhclByNg74G7SJiE+zW+A==
-X-Received: by 2002:a0c:9691:: with SMTP id a17-v6mr9534621qvd.30.1538080427373;
-        Thu, 27 Sep 2018 13:33:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wX9c6L0ppsCvK4n6MoWQcsqdE557eipciyxbajazBV4=;
+        b=euN+dy959BkrtK0nmMiZT3UdM2GR37Ji64tNyDQjYtTTEwB9itlNcoy190h9xcipWV
+         yNNCNGpgp+Snotmqn862JUsDPlcRtaMUh+azemO9nNPkTSTKjKyed6Lf5UHV5YqhWkrm
+         86LmUdxssZ1KigaOffW41NM2zzVNT3r3BbuHovlq4BGK+jyJQPgejUQXD+tKt/TVL/ef
+         0wQq2AUcHB4Hm32GNg659Gb1dbI/VjPlsquAwI3JeKQMate8lnGrmriodnVivtyGbU3Q
+         wh6ui5S13EufJFJ1HequdeHWArg7gUVOm8sKyjUQ5qXypbFZVexI7gzFibD5/Zrgfv2s
+         INBg==
+X-Gm-Message-State: ABuFfohlUp++r3BbnWoLTfPQ23fZykvEk+8EzOzaidRmNxabkvJJJskE
+        d7FvJiSU5QVLpSSXxKLRLg==
+X-Google-Smtp-Source: ACcGV63Gktp4FcRqw02YApeEQPJlnOAsMXGizXHbP3afcfvODxxes5iIcjEQIbixiKosBmyLeGCZ6g==
+X-Received: by 2002:ad4:5004:: with SMTP id s4-v6mr9495349qvo.207.1538080436583;
+        Thu, 27 Sep 2018 13:33:56 -0700 (PDT)
 Received: from centos7.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id v187-v6sm1649374qka.73.2018.09.27.13.33.46
+        by smtp.gmail.com with ESMTPSA id v187-v6sm1649374qka.73.2018.09.27.13.33.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 13:33:46 -0700 (PDT)
+        Thu, 27 Sep 2018 13:33:56 -0700 (PDT)
 From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Baoquan He <bhe@redhat.com>
 Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] Add a kernel parameter to change the padding size for KASLR
-Date:   Thu, 27 Sep 2018 16:31:43 -0400
-Message-Id: <20180927203146.12201-1-msys.mizuma@gmail.com>
+Subject: [PATCH v4 1/3] x86/mm: Add a kernel parameter to change the padding used for the physical memory mapping
+Date:   Thu, 27 Sep 2018 16:31:44 -0400
+Message-Id: <20180927203146.12201-2-msys.mizuma@gmail.com>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927203146.12201-1-msys.mizuma@gmail.com>
+References: <20180927203146.12201-1-msys.mizuma@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,39 +81,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series are adding an kernel parameter to change
-the padding size used for KASLR. It is useful for memory hotplug
-capable system. User can adjust the padding size to use it.
+From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-It is better if the padding size is calculated automatically,
-however, ACPI SRAT is not available at the KASLR initialization
-time. So, I add a message for user to tell the suitable padding
-size. User can set it on next reboot.
+If the physical memory layout has huge space for memory hotplug,
+the padding used for the physical memory mapping section is not enough.
+For example of the layout:
+  SRAT: Node 6 PXM 4 [mem 0x100000000000-0x13ffffffffff] hotplug
+  SRAT: Node 7 PXM 5 [mem 0x140000000000-0x17ffffffffff] hotplug
+  SRAT: Node 2 PXM 6 [mem 0x180000000000-0x1bffffffffff] hotplug
+  SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
 
-This patch series don't change the current default padding size.
+We can increase the padding by CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING,
+however, the needed padding size depends on the physical memory layout
+defined by SRAT. The kernel option is better than changing the config.
 
-Change log from v3:
- - Add a warning message if the padding size for KASLR is not enough.
-   And it says the suitable padding size to user.
+Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Reviewed-by: Baoquan He <bhe@redhat.com>
+---
+ arch/x86/mm/kaslr.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-Change log from v2:
- - Simplify the description. As Baoquan said, this is similar SGI UV issue,
-   but a little different. Remove SGI UV description.
-
-Masayoshi Mizuma (3):
-  x86/mm: Add an option to change the padding used for the physical
-    memory mapping
-  ACPI / NUMA: Add warning message if the padding size for KASLR is not
-    enough
-  docs: kernel-parameters.txt: document rand_mem_physical_padding
-    parameter
-
- Documentation/admin-guide/kernel-parameters.txt |  7 +++++++
- arch/x86/include/asm/setup.h                    |  2 ++
- arch/x86/mm/kaslr.c                             | 17 ++++++++++++++++-
- drivers/acpi/numa.c                             | 14 ++++++++++++++
- 4 files changed, 39 insertions(+), 1 deletion(-)
-
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 61db77b..00cf4ca 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -40,6 +40,7 @@
+  */
+ static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
+ 
++int __initdata rand_mem_physical_padding = CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+ /*
+  * Memory regions randomized by KASLR (except modules that use a separate logic
+  * earlier during boot). The list is ordered based on virtual addresses. This
+@@ -69,6 +70,20 @@ static inline bool kaslr_memory_enabled(void)
+ 	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
+ }
+ 
++static int __init rand_mem_physical_padding_setup(char *str)
++{
++	int max_padding = (1 << (MAX_PHYSMEM_BITS - TB_SHIFT)) - 1;
++
++	get_option(&str, &rand_mem_physical_padding);
++	if (rand_mem_physical_padding < 0)
++		rand_mem_physical_padding = 0;
++	else if (rand_mem_physical_padding > max_padding)
++		rand_mem_physical_padding = max_padding;
++
++	return 0;
++}
++early_param("rand_mem_physical_padding", rand_mem_physical_padding_setup);
++
+ /* Initialize base and padding for each memory region randomized with KASLR */
+ void __init kernel_randomize_memory(void)
+ {
+@@ -102,7 +117,7 @@ void __init kernel_randomize_memory(void)
+ 	 */
+ 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
+ 	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+-		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
++		rand_mem_physical_padding;
+ 
+ 	/* Adapt phyiscal memory region size based on available memory */
+ 	if (memory_tb < kaslr_regions[0].size_tb)
 -- 
 2.18.0
 
