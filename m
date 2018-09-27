@@ -2,120 +2,145 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53610C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBE1ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01497215E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:00:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eNtyxRtF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eNtyxRtF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01497215E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 68853215E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:02:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68853215E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbeI0RRq (ORCPT
+        id S1727405AbeI0RTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:17:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40384 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbeI0RRq (ORCPT
+        Thu, 27 Sep 2018 13:19:48 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:34986 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeI0RTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:17:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A729B60B72; Thu, 27 Sep 2018 11:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538046002;
-        bh=jS1nmCIpqujG+mfxRrARKy+iWzwTv6mhvNTOgaKkBI0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=eNtyxRtF9DAkSthMZUJxBxLueq47PfAQL/mbJtStN+EuGXYvtdq6JaNnZsWZzh5qT
-         RDKHNnoKjx2CBHalyPSF2kbRacu6Q5PpLW6TdjNE2Wc+GmkDbBugo98Jvsbl+tkekf
-         kFoJfMvoR7sD9lOWHZl5WYCpLdnCAO8jr6Ypiz9M=
-Received: from [10.206.25.139] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DD0F260214;
-        Thu, 27 Sep 2018 10:59:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538046002;
-        bh=jS1nmCIpqujG+mfxRrARKy+iWzwTv6mhvNTOgaKkBI0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=eNtyxRtF9DAkSthMZUJxBxLueq47PfAQL/mbJtStN+EuGXYvtdq6JaNnZsWZzh5qT
-         RDKHNnoKjx2CBHalyPSF2kbRacu6Q5PpLW6TdjNE2Wc+GmkDbBugo98Jvsbl+tkekf
-         kFoJfMvoR7sD9lOWHZl5WYCpLdnCAO8jr6Ypiz9M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD0F260214
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-Subject: Re: [PATCH 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated
- dynamically
-To:     Doug Anderson <dianders@google.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        Evan Green <evgreen@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1537887875-29494-1-git-send-email-vbadigan@codeaurora.org>
- <1537887875-29494-3-git-send-email-vbadigan@codeaurora.org>
- <CAD=FV=VxLR6v3vyimjznrqa1Tj5rPziPQX7Pt+wJRR+xm1N-0A@mail.gmail.com>
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Message-ID: <e6f0c8c6-cd0f-33b9-30da-ab09953449ca@codeaurora.org>
-Date:   Thu, 27 Sep 2018 16:29:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 13:19:47 -0400
+Received: by mail-vk1-f193.google.com with SMTP id w193-v6so487158vke.2;
+        Thu, 27 Sep 2018 04:02:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7HJUfQz7O6e48xTUuJGMgp+ZT+lbPUT9KkUOBt+vzK0=;
+        b=dr0x7cURRh99Vt4Emp7EFYWhoHtbJnvkf4M8JljbbfLocIt90p3sEeRnQHQpZhLCv0
+         hpsp36xu9DlzVauOrmCPrL+ZojmE/EAIzYUconvK8G3P9FNofECgcT5UZx2NIyCrC1+L
+         scocFjcPVhq2uoOBB9l69BoRAikjvaZSO7rVZSN+XH3eZSXpFzTTUCQUILrLvvavgmMf
+         wx//Fm2Wf1v4x7QlzANf1/XCUVwPNkYEk3zl+2pm31RGPefs5GpWKbPAcCgrUhsslzyN
+         x+SWdcdt1pBrPJJ16Jd0rKxN05Lltee9vYSkSk+idv51Odm6yAC+4czp9dweYmtnn9c+
+         CfIQ==
+X-Gm-Message-State: ABuFfohQF0J8z6H8yTtZuz/tWBDp6Gpb38IDZ7qFBkvHzTDkjgeqaHSZ
+        32bqaAGMYOGM/qEA/u0peWJqilWFDJLUZxw5mm0=
+X-Google-Smtp-Source: ACcGV632f+TVRrtufR5Tym8RX0A5aCMQQvLLztJCcbtkaLetrHt5l1n8pVTEB/XEN9IZPloYkaa8nEpjJYSXkrIFAGk=
+X-Received: by 2002:a1f:2ad6:: with SMTP id q205-v6mr3318912vkq.83.1538046123270;
+ Thu, 27 Sep 2018 04:02:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VxLR6v3vyimjznrqa1Tj5rPziPQX7Pt+wJRR+xm1N-0A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20180924101150.23349-1-brgl@bgdev.pl> <20180924101150.23349-4-brgl@bgdev.pl>
+ <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com> <9ad301dc-47ef-cd7d-699d-e51716d1703f@rasmusvillemoes.dk>
+In-Reply-To: <9ad301dc-47ef-cd7d-699d-e51716d1703f@rasmusvillemoes.dk>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 27 Sep 2018 13:01:50 +0200
+Message-ID: <CAMuHMdWi0TQfu093po9-TniiLa2=T1E1c5R0S0tr85F==GcaGw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        vivek.gautam@codeaurora.org, Robin Murphy <robin.murphy@arm.com>,
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, guro@fb.com,
+        Huang Ying <ying.huang@intel.com>,
+        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+Hi Rasmus,
 
-
-On 9/26/2018 3:58 AM, Doug Anderson wrote:
-> Hi,
+On Thu, Sep 27, 2018 at 12:55 PM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+> On 2018-09-27 01:13, Kees Cook wrote:
+> > On Mon, Sep 24, 2018 at 3:11 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >> Provide a resource managed version of kstrdup_const(). This variant
+> >> internally calls devm_kstrdup() on pointers that are outside of
+> >> .rodata section and returns the string as is otherwise.
+> >>
+> >> Also provide a corresponding version of devm_kfree().
+> >>
+> >> +/**
+> >> + * devm_kfree_const - Resource managed conditional kfree
+> >> + * @dev: device this memory belongs to
+> >> + * @p: memory to free
+> >> + *
+> >> + * Function calls devm_kfree only if @p is not in .rodata section.
+> >> + */
+> >> +void devm_kfree_const(struct device *dev, const void *p)
+> >> +{
+> >> +       if (!is_kernel_rodata((unsigned long)p))
+> >> +               devm_kfree(dev, p);
+> >> +}
+> >> +EXPORT_SYMBOL(devm_kfree_const);
+> >> +
+> >>  /**
+> >>   * devm_kmemdup - Resource-managed kmemdup
+> >>   * @dev: Device this memory belongs to
+> >> diff --git a/include/linux/device.h b/include/linux/device.h
+> >> index 33f7cb271fbb..79ccc6eb0975 100644
+> >> --- a/include/linux/device.h
+> >> +++ b/include/linux/device.h
+> >> @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
+> >>         return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+> >>  }
+> >>  extern void devm_kfree(struct device *dev, const void *p);
+> >> +extern void devm_kfree_const(struct device *dev, const void *p);
+> >
+> > With devm_kfree and devm_kfree_const both taking "const", how are
+> > devm_kstrdup_const() and devm_kfree_const() going to be correctly
+> > paired at compile time? (i.e. I wasn't expecting the prototype change
+> > to devm_kfree())
 >
-> On Tue, Sep 25, 2018 at 8:05 AM Veerabhadrarao Badiganti
-> <vbadigan@codeaurora.org> wrote:
->> +       /*
->> +        * Whenever core-clock is gated dynamically, it's needed to
->> +        * re-initialize the DLL when the clock is ungated.
->> +        */
->> +       if (msm_host->restore_dll_cfg_needed && msm_host->clk_rate) {
->> +               msm_host->restore_dll_cfg = true;
->> +               mmc_retune_needed(host->mmc);
-> Using the boolean "restore_dll_cfg" to communicate like this seems
-> really fragile.  I have no basis in fact, but I worry that something
-> will happen in the meantime that really ought to invalidate the
-> "saved_tuning_phase" but the boolean will still be set.
->
-> Is there a reason you can't just call msm_config_cm_dll_phase()
-> directly from sdhci_msm_runtime_resume()?  Perhaps after the
-> clk_bulk_prepare_enable() call below?
+> Just drop devm_kfree_const and teach devm_kfree to ignore
+> is_kernel_rodata(). That avoids the 50-100 bytes of overhead for adding
+> yet another EXPORT_SYMBOL and makes it easier to port drivers to
+> devm_kstrdup_const (and avoids the bugs Kees is worried about). devm
+> managed resources are almost never freed explicitly, so that single
+> extra comparison in devm_kfree shouldn't matter for performance.
 
-I can do that.
+I guess we can also teach kfree() to ignore is_kernel_rodata(), and
+drop kfree_const()?
 
-But we don't need to restore the clock phase for all speed modes since 
-every mode
-doesn't use DLL. Only few speed modes (only SDR104 mode for SD card)
-would need to restore DLL setting. So I would need to do some extra checks
-for performing this operation for only required speed modes.
-And we should re-initialize the DLL first before programming the phase.
+Gr{oetje,eeting}s,
 
-I wanted to reuse the existing logic which does all these things. So did 
-this way.
+                        Geert
 
->
-> -Doug
-Thanks
-Veera
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
