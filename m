@@ -2,100 +2,100 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186ABC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EBCC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC7D1216E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:26:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="1rQsKvHV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC7D1216E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 10B3021582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:26:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B3021582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=applied-asynchrony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeI0Tov (ORCPT
+        id S1727987AbeI0Toz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 15:44:51 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:37177 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726953AbeI0Tov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 15:44:51 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 622fc1b8;
-        Thu, 27 Sep 2018 13:07:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=kJbJIBwFj1VSoSN+yDEDgJrLb7w=; b=1rQsKv
-        HVyfezV6JkNzI87kCjJpuJZuF0nNPPTkbI73haqgEtGfznNvYW6cz9eU318yCGav
-        n2UDTdAdrrGc8GDWcnEhzcOHlL1gdJ83HTup9NUgvC+lIEwevzEzFn9gaj+xbeja
-        T0b7N6KvGxZnq3vOQItKTP0LVQiSEZslv2CUxIZHLIUnpNGp02u0PhiWK5Laln4a
-        +Qyn8/Loi35sdfIjb3RU6N/yLmVDLFwSaWbqhZem2c0RbuyiXvpoe/QpKPxp8cE+
-        4hUOVyZjCNFswMWMfm+oUeH4KcdJXzX9kOT4DFN6VHIol1tfSi9kh6jkP+0qrmqY
-        x6h0jCMkhugCoYiw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6cec1f13 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Thu, 27 Sep 2018 13:07:51 +0000 (UTC)
-Received: by mail-oi1-f172.google.com with SMTP id d63-v6so2087355oic.12;
-        Thu, 27 Sep 2018 06:26:31 -0700 (PDT)
-X-Gm-Message-State: ABuFfoj8FvSuqL88Ye1ByeAoEQwHMCGPEsN1DT8FPL0BJ+IG744mOyMM
-        8T6ZdvI8vQp/keDVT69FPbF1sdMq/bAvnPoOgM8=
-X-Google-Smtp-Source: ACcGV61HW6kmnKtZpPcyeCXvaN5gKv2xZjcNgitwxISY0LIhUfGpUeBkN+xGGrGkMeeGRjR0YViYgiv8Dvp1lQ/nVTA=
-X-Received: by 2002:aca:df42:: with SMTP id w63-v6mr3037351oig.295.1538054790312;
- Thu, 27 Sep 2018 06:26:30 -0700 (PDT)
+        Thu, 27 Sep 2018 15:44:55 -0400
+Received: from mail02.iobjects.de ([188.40.134.68]:49148 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeI0Toy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 15:44:54 -0400
+Received: from tux.wizards.de (p3EE2F45F.dip0.t-ipconnect.de [62.226.244.95])
+        by mail02.iobjects.de (Postfix) with ESMTPSA id CE6E84161AE4;
+        Thu, 27 Sep 2018 15:26:37 +0200 (CEST)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+        by tux.wizards.de (Postfix) with ESMTP id 716C2F0162C;
+        Thu, 27 Sep 2018 15:26:37 +0200 (CEST)
+Subject: Re: [PATCH 4.18 74/88] drm/atomic: Use drm_drv_uses_atomic_modeset()
+ for debugfs creation
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Lyude Paul <lyude@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+References: <20180927090300.631426620@linuxfoundation.org>
+ <20180927090309.614592493@linuxfoundation.org>
+ <42cbbf9c-3076-0c49-36c2-b6fd09628694@applied-asynchrony.com>
+ <20180927123706.GA23563@kroah.com>
+From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <f54355c2-4eeb-9b7a-3964-57ca465dae17@applied-asynchrony.com>
+Date:   Thu, 27 Sep 2018 15:26:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
- <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
- <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
- <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
- <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com>
- <CAHmME9pbRabkGjNh-65S9qBNNS1GLJSwZ_tTM507S_Ezr1=QLg@mail.gmail.com>
- <CAHmME9ru=kJO8QiW+uNNgt5NgFVZzRsQ4tNSgo+f+KfHs3fAKQ@mail.gmail.com>
- <CAKv+Gu-WDt8f9qVjLDRPHL7THS0BjtKHThw2RMfHbWBT8Hs8aQ@mail.gmail.com> <CAHmME9qNn5aRgtbV3bAsz3xW1A49a7RMMkOzGruBUPzLVUxVNg@mail.gmail.com>
-In-Reply-To: <CAHmME9qNn5aRgtbV3bAsz3xW1A49a7RMMkOzGruBUPzLVUxVNg@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 27 Sep 2018 15:26:18 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rN3-7Mj5JQqt2EFPauG9vjkN5pQn3tPiJY4fPiwksaDA@mail.gmail.com>
-Message-ID: <CAHmME9rN3-7Mj5JQqt2EFPauG9vjkN5pQn3tPiJY4fPiwksaDA@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180927123706.GA23563@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On 09/27/18 14:37, Greg Kroah-Hartman wrote:
+> On Thu, Sep 27, 2018 at 12:43:33PM +0200, Holger Hoffstätte wrote:
+>> On 09/27/18 11:03, Greg Kroah-Hartman wrote:
+>>> 4.18-stable review patch.  If anyone has any objections, please let me know.
+>>>
+>>> ------------------
+>>>
+>>> From: Lyude Paul <lyude@redhat.com>
+>>>
+>>> commit 3c499ea0c662e2f38aafbd4f516b08aab8cfa0e5 upstream.
+>>>
+>>> As pointed out by Daniel Vetter, we should be usinng
+>>> drm_drv_uses_atomic_modeset() for determining whether or not we want to
+>>> make the debugfs nodes for atomic instead of checking DRIVER_ATOMIC, as
+>>> the former isn't an accurate representation of whether or not the driver
+>>> is actually using atomic modesetting internally (even though it might
+>>> not be exposing atomic capabilities).
+>>>
+>>> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>> Cc: stable@vger.kernel.org
+>>> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+>>> Link: https://patchwork.freedesktop.org/patch/msgid/20180917173733.21293-1-lyude@redhat.com
+>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>
+>> This patch breaks switching the console to high resolution during boot on my
+>> workstation with a Radeon card; it worked fine with 4.18.10 and reverting it
+>> fixes the problem:
+> 
+> Is 4.19-rc5 also a problem?
+> 
 
-I'm trying to optimize this for crypto performance while still taking
-into account preemption concerns. I'm having a bit of trouble figuring
-out a way to determine numerically what the upper bounds for this
-stuff looks like. I'm sure I could pick a pretty sane number that's
-arguably okay -- and way under the limit -- but I still am interested
-in determining what that limit actually is. I was hoping there'd be a
-debugging option called, "warn if preemption is disabled for too
-long", or something, but I couldn't find anything like that. I'm also
-not quite sure what the latency limits are, to just compute this with
-a formula. Essentially what I'm trying to determine is:
+No, 4.19-rc5 with the same config works fine and properly switches the
+console during boot.
 
-preempt_disable();
-asm volatile(".fill N, 1, 0x90;");
-preempt_enable();
+Interestingly another machine with i915 chip seemed to work fine with this
+patch included (rebooted that one first), so it might well be related to
+different motherboard/chipset or the Radeon card (an admittedly old, but
+otherwise completely functional fanless r600).
 
-What is the maximum value of N for which the above is okay? What
-technique would you generally use in measuring this?
+I'll try to find more clues, but for now that's all I got.
 
-Thanks,
-Jason
+Holger
