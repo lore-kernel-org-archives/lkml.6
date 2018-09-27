@@ -2,151 +2,98 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4FFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 439F9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CD721722
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:55:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f8O9wUvT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CD721722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id EE49821537
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 13:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE49821537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeI0UNX (ORCPT
+        id S1727544AbeI0UOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:13:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52146 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbeI0UNX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:13:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oPc8CVsTAhdBUmo/apAA7tmkwWNXZSsMfbh/Wjz5WvU=; b=f8O9wUvTlkLBSxdSIUUvmgVf/
-        hw9SteJrGkhehRIfAcAMAu3G3zyYj6mWhb/x/PEcN4B6WqqbfFxZLGC4Z0npjtXF033q3EilNv30B
-        k9hnO7tZQYhHOHhg6XAEZV07k8drjEFK8T4vRzixEmlK6KTSqbzFKmIzjZi/+YnPCt5erRhp7mGa0
-        BMIk7QcNLShA6zQJMdFPbAL5qkxbiRt2l/Gg4Bdlmv5LFqxjOeEIAy9eohqYEL3s+J611qXVITLqA
-        qgcVz+mB/SPXD2WBmNi8hqhK/pNKxfal+ceTAXNdb0dH8/tTG90ZMpPWt+NH4L+HZ5qxJNWPYBzPN
-        z5N94gMcQ==;
-Received: from [4.28.11.154] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5WkU-0006qC-IK; Thu, 27 Sep 2018 13:54:54 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Guan Xuetao <gxt@pku.edu.cn>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH, RFC] unicore32: remove swiotlb support
-Date:   Thu, 27 Sep 2018 06:54:34 -0700
-Message-Id: <20180927135434.6866-1-hch@lst.de>
-X-Mailer: git-send-email 2.19.0
+        Thu, 27 Sep 2018 16:14:32 -0400
+Received: from mga02.intel.com ([134.134.136.20]:38443 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726953AbeI0UOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 16:14:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 06:56:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
+   d="scan'208";a="93847732"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.69])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Sep 2018 06:56:04 -0700
+Date:   Thu, 27 Sep 2018 16:56:03 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v14 09/19] x86/mm: x86/sgx: Signal SEGV_SGXERR for #PFs
+ w/ PF_SGX
+Message-ID: <20180927135603.GF8242@linux.intel.com>
+References: <20180925130845.9962-1-jarkko.sakkinen@linux.intel.com>
+ <20180925130845.9962-10-jarkko.sakkinen@linux.intel.com>
+ <CALCETrVAhiwv+g5fzVO3ZSHZgcQKbeeG8r3HUcXO9k7Gi94NdQ@mail.gmail.com>
+ <20180926173516.GA10920@linux.intel.com>
+ <2D60780F-ADB4-48A4-AB74-15683493D369@amacapital.net>
+ <9835e288-ba98-2f9e-ac73-504db9512bb9@intel.com>
+ <20180926204400.GA11446@linux.intel.com>
+ <b7e14c6e-fc05-93fa-eef9-5e3f06ab4729@intel.com>
+ <CALCETrXByb2UVuZ6AXUeOd8y90NAikbZuvdN3wf_TjHZ+CxNhA@mail.gmail.com>
+ <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <992b1d6d-cc0f-776f-d938-2a1f7cad52c8@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-unicore32 is a bog standard 32-bit port without larger physical address
-space, highmem or any other obvious addressing limitation.  There should
-be no need to bounce buffer using swiotlb.
+On Wed, Sep 26, 2018 at 02:45:17PM -0700, Dave Hansen wrote:
+> On 09/26/2018 02:15 PM, Andy Lutomirski wrote:
+> > Could we perhaps have a little vDSO entry (or syscall, I suppose) that
+> > runs an enclave an returns an error code, and rig up the #PF handler
+> > to check if the error happened in the vDSO entry and fix it up rather
+> > than sending a signal?
+> 
+> Yeah, signals suck.
+> 
+> So, instead of doing the enclave entry instruction (EENTER is it?), the
+> app would do the vDSO call.  It would have some calling convention, like
+> "set %rax to 0 before entering".  Then, we just teach the page fault
+> handler about the %RIP in the vDSO that can fault and how to move one
+> instruction later, munge %RIP to a value that tells about the error,
+> then return from the fault.  It would basically be like the kernel
+> exception tables, but for userspace.  Right?
+> 
+> How would a syscall work, though?  I assume we can't just enter the
+> enclave from ring0.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
+Enclave cannot be entered from ring-0.
 
-Guan, can you double check my assumptions?  I really can't find a
-reason why unicore32 would need swiotlb.
+For me this plan sounds simple and sound.
 
- arch/unicore32/Kconfig                   |  2 +-
- arch/unicore32/include/asm/Kbuild        |  1 +
- arch/unicore32/include/asm/dma-mapping.h | 22 ----------------------
- arch/unicore32/mm/init.c                 |  3 ---
- 4 files changed, 2 insertions(+), 26 deletions(-)
- delete mode 100644 arch/unicore32/include/asm/dma-mapping.h
-
-diff --git a/arch/unicore32/Kconfig b/arch/unicore32/Kconfig
-index 60eae744d8fd..3a3b40f79558 100644
---- a/arch/unicore32/Kconfig
-+++ b/arch/unicore32/Kconfig
-@@ -4,6 +4,7 @@ config UNICORE32
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_MIGHT_HAVE_PC_SERIO
-+	select DMA_DIRECT_OPS
- 	select HAVE_MEMBLOCK
- 	select HAVE_GENERIC_DMA_COHERENT
- 	select HAVE_KERNEL_GZIP
-@@ -20,7 +21,6 @@ config UNICORE32
- 	select GENERIC_IOMAP
- 	select MODULES_USE_ELF_REL
- 	select NEED_DMA_MAP_STATE
--	select SWIOTLB
- 	help
- 	  UniCore-32 is 32-bit Instruction Set Architecture,
- 	  including a series of low-power-consumption RISC chip
-diff --git a/arch/unicore32/include/asm/Kbuild b/arch/unicore32/include/asm/Kbuild
-index bfc7abe77905..1372553dc0a9 100644
---- a/arch/unicore32/include/asm/Kbuild
-+++ b/arch/unicore32/include/asm/Kbuild
-@@ -4,6 +4,7 @@ generic-y += compat.h
- generic-y += current.h
- generic-y += device.h
- generic-y += div64.h
-+generic-y += dma-mapping.h
- generic-y += emergency-restart.h
- generic-y += exec.h
- generic-y += extable.h
-diff --git a/arch/unicore32/include/asm/dma-mapping.h b/arch/unicore32/include/asm/dma-mapping.h
-deleted file mode 100644
-index 790bc2ef4af2..000000000000
---- a/arch/unicore32/include/asm/dma-mapping.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/*
-- * linux/arch/unicore32/include/asm/dma-mapping.h
-- *
-- * Code specific to PKUnity SoC and UniCore ISA
-- *
-- * Copyright (C) 2001-2010 GUAN Xue-tao
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--#ifndef __UNICORE_DMA_MAPPING_H__
--#define __UNICORE_DMA_MAPPING_H__
--
--#include <linux/swiotlb.h>
--
--static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
--{
--	return &swiotlb_dma_ops;
--}
--
--#endif
-diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
-index f4950fbfe574..5f72a8d1d953 100644
---- a/arch/unicore32/mm/init.c
-+++ b/arch/unicore32/mm/init.c
-@@ -234,9 +234,6 @@ void __init bootmem_init(void)
- 
- 	uc32_bootmem_init(min, max_low);
- 
--#ifdef CONFIG_SWIOTLB
--	swiotlb_init(1);
--#endif
- 	/*
- 	 * Sparsemem tries to allocate bootmem in memory_present(),
- 	 * so must be done after the fixed reservations
--- 
-2.19.0
-
+/Jarkko
