@@ -2,384 +2,100 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DBDC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CEDC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1E721580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 741A721537
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:01:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPyvq+A+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B1E721580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CxSuqDRR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 741A721537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbeI0LOo (ORCPT
+        id S1726688AbeI0LRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:14:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbeI0LOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:14:43 -0400
-Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83DBD21570;
-        Thu, 27 Sep 2018 04:58:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538024303;
-        bh=1XqqroiCcFCDMcLMAhhTq0ALo2ZM6tqa66MJOpDpMrU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mPyvq+A+LRkWVL0jHDdGKKAJXaLytwpn45OIswVIXdRd1BUEVplASULUU4/UvTv6X
-         ocms4zRWYu8AKoz1NKB2oGfKzmLUwvsINv/b6uh/XAyldaFqGBpQz/MbEiIeOKtfl3
-         eUcRb++w2GZLmUEg5XE0q8TvzfuPyO28P4gKlWpI=
-Date:   Wed, 26 Sep 2018 21:58:22 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 2/2 v2] f2fs: avoid f2fs_bug_on if
- f2fs_get_meta_page_nofail got EIO
-Message-ID: <20180927045822.GA71203@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180918021805.85032-2-jaegeuk@kernel.org>
- <20180918175648.GE91945@jaegeuk-macbookpro.roam.corp.google.com>
- <9813f294-3e09-ee2d-56f0-6bb476e88a5a@huawei.com>
- <20180920214656.GE35918@jaegeuk-macbookpro.roam.corp.google.com>
- <e36d331c-d368-fcc4-fa30-15f503b737d7@huawei.com>
- <20180926001806.GA3829@jaegeuk-macbookpro.roam.corp.google.com>
- <b251de75-6cf4-52a1-434a-d42025a35e8b@huawei.com>
- <2996d79d-c791-1a22-8abd-ad37d48edf17@huawei.com>
- <20180926194932.GA44119@jaegeuk-macbookpro.roam.corp.google.com>
- <49223ef7-88b9-99ed-35ff-52f11fbfeae3@huawei.com>
+        Thu, 27 Sep 2018 07:17:51 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:53942 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbeI0LRv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 07:17:51 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8R50tHM017989;
+        Thu, 27 Sep 2018 00:00:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1538024455;
+        bh=leBOwN/sG7kHs4Sm4Dyt0T3mIgV6v21q4PLMEMCCAuc=;
+        h=From:To:CC:Subject:Date;
+        b=CxSuqDRRy5idf0CeFcU7He74QXiZavAxahcPArNu9j8IPFrd1WeovdzicV/EOVwTl
+         g4WQMEWuPazgsz4pvxGclZCneKrPxqKtXh0Dc04xQIdfpcgKi61z4yb2JB1iewd/E2
+         t51BL49PxJn2jkcBk2yk/4lcfr34/qDUONH/i2bo=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8R50tQC019327;
+        Thu, 27 Sep 2018 00:00:55 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 27
+ Sep 2018 00:00:55 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 27 Sep 2018 00:00:55 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8R50qVC005315;
+        Thu, 27 Sep 2018 00:00:53 -0500
+From:   Vignesh R <vigneshr@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>
+CC:     Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vignesh R <vigneshr@ti.com>
+Subject: [PATCH] arm64: dts: k3-am65-wakeup: Fix wakeup_uart reg address
+Date:   Thu, 27 Sep 2018 10:31:46 +0530
+Message-ID: <20180927050146.17847-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49223ef7-88b9-99ed-35ff-52f11fbfeae3@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/27, Chao Yu wrote:
-> On 2018/9/27 3:49, Jaegeuk Kim wrote:
-> > On 09/26, Chao Yu wrote:
-> >> On 2018/9/26 9:10, Chao Yu wrote:
-> >>> On 2018/9/26 8:18, Jaegeuk Kim wrote:
-> >>>> On 09/21, Chao Yu wrote:
-> >>>>> On 2018/9/21 5:46, Jaegeuk Kim wrote:
-> >>>>>> On 09/20, Chao Yu wrote:
-> >>>>>>> On 2018/9/19 1:56, Jaegeuk Kim wrote:
-> >>>>>>>> This patch avoids BUG_ON when f2fs_get_meta_page_nofail got EIO during
-> >>>>>>>> xfstests/generic/475.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>>>>>>> ---
-> >>>>>>>> Change log from v1:
-> >>>>>>>>  - propagate errno
-> >>>>>>>>  - drop sum_pages
-> >>>>>>>>
-> >>>>>>>>  fs/f2fs/checkpoint.c | 10 +++++-----
-> >>>>>>>>  fs/f2fs/f2fs.h       |  2 +-
-> >>>>>>>>  fs/f2fs/gc.c         |  9 +++++++++
-> >>>>>>>>  fs/f2fs/node.c       | 32 ++++++++++++++++++++++++--------
-> >>>>>>>>  fs/f2fs/recovery.c   |  2 ++
-> >>>>>>>>  fs/f2fs/segment.c    |  3 +++
-> >>>>>>>>  6 files changed, 44 insertions(+), 14 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> >>>>>>>> index 01e0d8f5bbbe..1ddf332ce4b2 100644
-> >>>>>>>> --- a/fs/f2fs/checkpoint.c
-> >>>>>>>> +++ b/fs/f2fs/checkpoint.c
-> >>>>>>>> @@ -119,11 +119,8 @@ struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
-> >>>>>>>>  		if (PTR_ERR(page) == -EIO &&
-> >>>>>>>>  				++count <= DEFAULT_RETRY_IO_COUNT)
-> >>>>>>>>  			goto retry;
-> >>>>>>>> -
-> >>>>>>>>  		f2fs_stop_checkpoint(sbi, false);
-> >>>>>>>> -		f2fs_bug_on(sbi, 1);
-> >>>>>>>>  	}
-> >>>>>>>> -
-> >>>>>>>>  	return page;
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>> @@ -1512,7 +1509,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	ckpt->checkpoint_ver = cpu_to_le64(++ckpt_ver);
-> >>>>>>>>  
-> >>>>>>>>  	/* write cached NAT/SIT entries to NAT/SIT area */
-> >>>>>>>> -	f2fs_flush_nat_entries(sbi, cpc);
-> >>>>>>>> +	err = f2fs_flush_nat_entries(sbi, cpc);
-> >>>>>>>> +	if (err)
-> >>>>>>>> +		goto stop;
-> >>>>>>>
-> >>>>>>> To make sure, if partial NAT pages become dirty, flush them back to device
-> >>>>>>> outside checkpoint() is not harmful, right?
-> >>>>>>
-> >>>>>> I think so.
-> >>>>>
-> >>>>> Oh, one more case, now we use NAT #0, if partial NAT pages were
-> >>>>> writebacked, then we start to use NAT #1, later, in another checkpoint(),
-> >>>>> we update those NAT pages again, we will write them to NAT #0, which is
-> >>>>> belong to last valid checkpoint(), it's may cause corrupted checkpoint in
-> >>>>> scenario of SPO. So it's harmfull, right?
-> >>>>
-> >>>> We already stopped checkpoint anymore, so there'd be no way to proceed another
-> >>>> checkpoint. Am I missing something?
-> >>>
-> >>> You're right, we have called f2fs_stop_checkpoint(), so we are safe now. :)
-> >>
-> >> Can we allow to writeback fs metadata (NAT/SIT/SSA) in prior to checkpoint
-> >> to mitigate IO stress of checkpoint?
-> > 
-> > What's the point related to this patch?
-> 
-> It's not related to this patch.
-> 
-> > Anyway, do you mean f2fs_write_meta_pages is not enough?
-> 
-> Yup, f2fs_write_meta_pages can only flush summary pages, I guess we can
-> allow to flush dirty nat/sit entries to NAT/SIT blocks in some conditions,
-> and then flush those block in background.
+cbass_wakeup interconnect which is the parent of wakeup_uart node
+defines address-cells=1 and size-cells=1, therefore fix up reg property
+of wakeup_uart node accordingly. Otherwise, this UART instance fails to
+probe if enabled.
 
-I see, then NAT/SIT will be dirtied and flushed during checkpoint. Do you
-mean flushing some of them partially in background, even if we don't know
-it will be flushed again? We may need to gather some data first.
+Fixes: 4201af2544b3 ("arm64: dts: ti: am654: Add uart nodes")
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Maybe below conditions can be consider to trigger writebacking:
-> >> a) dirty count of meta (NAT/SIT/SSA) exceeds threshold
-> >> b) exceed time threshold
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>> +
-> >>>>>>>>  	f2fs_flush_sit_entries(sbi, cpc);
-> >>>>>>>>  
-> >>>>>>>>  	/* unlock all the fs_lock[] in do_checkpoint() */
-> >>>>>>>> @@ -1521,7 +1521,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  		f2fs_release_discard_addrs(sbi);
-> >>>>>>>>  	else
-> >>>>>>>>  		f2fs_clear_prefree_segments(sbi, cpc);
-> >>>>>>>> -
-> >>>>>>>> +stop:
-> >>>>>>>>  	unblock_operations(sbi);
-> >>>>>>>>  	stat_inc_cp_count(sbi->stat_info);
-> >>>>>>>>  
-> >>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>>>>>> index a0c868127a7c..29021dbc8f2a 100644
-> >>>>>>>> --- a/fs/f2fs/f2fs.h
-> >>>>>>>> +++ b/fs/f2fs/f2fs.h
-> >>>>>>>> @@ -2895,7 +2895,7 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
-> >>>>>>>>  int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
-> >>>>>>>>  int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
-> >>>>>>>>  			unsigned int segno, struct f2fs_summary_block *sum);
-> >>>>>>>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
-> >>>>>>>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
-> >>>>>>>>  int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
-> >>>>>>>>  void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi);
-> >>>>>>>>  int __init f2fs_create_node_manager_caches(void);
-> >>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> >>>>>>>> index 4bcc8a59fdef..c7d14282dbf4 100644
-> >>>>>>>> --- a/fs/f2fs/gc.c
-> >>>>>>>> +++ b/fs/f2fs/gc.c
-> >>>>>>>> @@ -1070,6 +1070,15 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
-> >>>>>>>>  	/* reference all summary page */
-> >>>>>>>>  	while (segno < end_segno) {
-> >>>>>>>>  		sum_page = f2fs_get_sum_page(sbi, segno++);
-> >>>>>>>> +		if (IS_ERR(sum_page)) {
-> >>>>>>>> +			end_segno = segno - 1;
-> >>>>>>>> +			for (segno = start_segno; segno < end_segno; segno++) {
-> >>>>>>>> +				sum_page = find_get_page(META_MAPPING(sbi),
-> >>>>>>>> +						GET_SUM_BLOCK(sbi, segno));
-> >>>>>>>> +				f2fs_put_page(sum_page, 0);
-> >>>>>>>
-> >>>>>>> find_get_page() will add one more reference on page, so we need to call
-> >>>>>>> f2fs_put_page(sum_page, 0) twice.
-> >>>>>>
-> >>>>>> Done.
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>> +			}
-> >>>>>>>> +			return PTR_ERR(sum_page);
-> >>>>>>>> +		}
-> >>>>>>>>  		unlock_page(sum_page);
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> >>>>>>>> index fa2381c0bc47..79b6fee354f7 100644
-> >>>>>>>> --- a/fs/f2fs/node.c
-> >>>>>>>> +++ b/fs/f2fs/node.c
-> >>>>>>>> @@ -126,6 +126,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
-> >>>>>>>>  
-> >>>>>>>>  	/* get current nat block page with lock */
-> >>>>>>>>  	src_page = get_current_nat_page(sbi, nid);
-> >>>>>>>> +	if (IS_ERR(src_page))
-> >>>>>>>> +		return src_page;
-> >>>>>>>>  	dst_page = f2fs_grab_meta_page(sbi, dst_off);
-> >>>>>>>>  	f2fs_bug_on(sbi, PageDirty(src_page));
-> >>>>>>>>  
-> >>>>>>>> @@ -2265,15 +2267,19 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
-> >>>>>>>>  						nm_i->nat_block_bitmap)) {
-> >>>>>>>>  			struct page *page = get_current_nat_page(sbi, nid);
-> >>>>>>>>  
-> >>>>>>>> -			ret = scan_nat_page(sbi, page, nid);
-> >>>>>>>> -			f2fs_put_page(page, 1);
-> >>>>>>>> +			if (IS_ERR(page)) {
-> >>>>>>>> +				ret = PTR_ERR(page);
-> >>>>>>>> +			} else {
-> >>>>>>>> +				ret = scan_nat_page(sbi, page, nid);
-> >>>>>>>> +				f2fs_put_page(page, 1);
-> >>>>>>>> +			}
-> >>>>>>>>  
-> >>>>>>>>  			if (ret) {
-> >>>>>>>>  				up_read(&nm_i->nat_tree_lock);
-> >>>>>>>>  				f2fs_bug_on(sbi, !mount);
-> >>>>>>>>  				f2fs_msg(sbi->sb, KERN_ERR,
-> >>>>>>>>  					"NAT is corrupt, run fsck to fix it");
-> >>>>>>>> -				return -EINVAL;
-> >>>>>>>> +				return ret;
-> >>>>>>>>  			}
-> >>>>>>>>  		}
-> >>>>>>>>  
-> >>>>>>>> @@ -2700,7 +2706,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
-> >>>>>>>>  		__clear_bit_le(nat_index, nm_i->full_nat_bits);
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>> -static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>> +static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>>  		struct nat_entry_set *set, struct cp_control *cpc)
-> >>>>>>>>  {
-> >>>>>>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> >>>>>>>> @@ -2724,6 +2730,9 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>>  		down_write(&curseg->journal_rwsem);
-> >>>>>>>>  	} else {
-> >>>>>>>>  		page = get_next_nat_page(sbi, start_nid);
-> >>>>>>>> +		if (IS_ERR(page))
-> >>>>>>>> +			return PTR_ERR(page);
-> >>>>>>>> +
-> >>>>>>>>  		nat_blk = page_address(page);
-> >>>>>>>>  		f2fs_bug_on(sbi, !nat_blk);
-> >>>>>>>>  	}
-> >>>>>>>> @@ -2769,12 +2778,13 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >>>>>>>>  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
-> >>>>>>>>  		kmem_cache_free(nat_entry_set_slab, set);
-> >>>>>>>>  	}
-> >>>>>>>> +	return 0;
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>>  /*
-> >>>>>>>>   * This function is called during the checkpointing process.
-> >>>>>>>>   */
-> >>>>>>>> -void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>> +int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  {
-> >>>>>>>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> >>>>>>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> >>>>>>>> @@ -2784,6 +2794,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	unsigned int found;
-> >>>>>>>>  	nid_t set_idx = 0;
-> >>>>>>>>  	LIST_HEAD(sets);
-> >>>>>>>> +	int err = 0;
-> >>>>>>>>  
-> >>>>>>>>  	/* during unmount, let's flush nat_bits before checking dirty_nat_cnt */
-> >>>>>>>>  	if (enabled_nat_bits(sbi, cpc)) {
-> >>>>>>>> @@ -2793,7 +2804,7 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>>  	if (!nm_i->dirty_nat_cnt)
-> >>>>>>>> -		return;
-> >>>>>>>> +		return 0;
-> >>>>>>>>  
-> >>>>>>>>  	down_write(&nm_i->nat_tree_lock);
-> >>>>>>>>  
-> >>>>>>>> @@ -2816,11 +2827,16 @@ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>>  	/* flush dirty nats in nat entry set */
-> >>>>>>>> -	list_for_each_entry_safe(set, tmp, &sets, set_list)
-> >>>>>>>> -		__flush_nat_entry_set(sbi, set, cpc);
-> >>>>>>>> +	list_for_each_entry_safe(set, tmp, &sets, set_list) {
-> >>>>>>>> +		err = __flush_nat_entry_set(sbi, set, cpc);
-> >>>>>>>> +		if (err)
-> >>>>>>>> +			break;
-> >>>>>>>> +	}
-> >>>>>>>>  
-> >>>>>>>>  	up_write(&nm_i->nat_tree_lock);
-> >>>>>>>>  	/* Allow dirty nats by node block allocation in write_begin */
-> >>>>>>>> +
-> >>>>>>>> +	return err;
-> >>>>>>>>  }
-> >>>>>>>>  
-> >>>>>>>>  static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
-> >>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> >>>>>>>> index 56d34193a74b..ba678efe7cad 100644
-> >>>>>>>> --- a/fs/f2fs/recovery.c
-> >>>>>>>> +++ b/fs/f2fs/recovery.c
-> >>>>>>>> @@ -355,6 +355,8 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
-> >>>>>>>>  	}
-> >>>>>>>>  
-> >>>>>>>>  	sum_page = f2fs_get_sum_page(sbi, segno);
-> >>>>>>>> +	if (IS_ERR(sum_page))
-> >>>>>>>> +		return PTR_ERR(sum_page);
-> >>>>>>>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
-> >>>>>>>>  	sum = sum_node->entries[blkoff];
-> >>>>>>>>  	f2fs_put_page(sum_page, 1);
-> >>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>>>>>> index aa96a371aaf8..ab7386a7e9d3 100644
-> >>>>>>>> --- a/fs/f2fs/segment.c
-> >>>>>>>> +++ b/fs/f2fs/segment.c
-> >>>>>>>> @@ -2487,6 +2487,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
-> >>>>>>>>  	__next_free_blkoff(sbi, curseg, 0);
-> >>>>>>>>  
-> >>>>>>>>  	sum_page = f2fs_get_sum_page(sbi, new_segno);
-> >>>>>>>> +	f2fs_bug_on(sbi, IS_ERR(sum_page));
-> >>>>>>>>  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
-> >>>>>>>>  	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
-> >>>>>>>>  	f2fs_put_page(sum_page, 1);
-> >>>>>>>> @@ -3971,6 +3972,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >>>>>>>>  
-> >>>>>>>>  			se = &sit_i->sentries[start];
-> >>>>>>>>  			page = get_current_sit_page(sbi, start);
-> >>>>>>>> +			if (IS_ERR(page))
-> >>>>>>>> +				return PTR_ERR(page);
-> >>>>>>>>  			sit_blk = (struct f2fs_sit_block *)page_address(page);
-> >>>>>>>>  			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
-> >>>>>>>>  			f2fs_put_page(page, 1);
-> >>>>>>>>
-> >>>>>>
-> >>>>>> .
-> >>>>>>
-> >>>>
-> >>>> .
-> >>>>
-> >>>
-> >>>
-> >>>
-> >>> _______________________________________________
-> >>> Linux-f2fs-devel mailing list
-> >>> Linux-f2fs-devel@lists.sourceforge.net
-> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+Based on next-20180926
+
+ arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+index ee56959f4af8..c617393ea767 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+@@ -44,7 +44,7 @@
+ 
+ 	wkup_uart0: serial@42300000 {
+ 		compatible = "ti,am654-uart";
+-		reg = <0x00 0x42300000 0x00 0x100>;
++		reg = <0x42300000 0x100>;
+ 		reg-shift = <2>;
+ 		reg-io-width = <4>;
+ 		interrupts = <GIC_SPI 697 IRQ_TYPE_LEVEL_HIGH>;
+-- 
+2.19.0
+
