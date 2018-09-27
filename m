@@ -2,277 +2,174 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB5DC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1701C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C096221580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C096221580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 93849215E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 11:18:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Htb4rV05"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93849215E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeI0RfS (ORCPT
+        id S1727482AbeI0Rf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 13:35:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36558 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbeI0RfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 13:35:17 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B279309179F;
-        Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BAFB3091384;
-        Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 11642181A12E;
-        Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 07:17:30 -0400 (EDT)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+d3402c47f680ff24b29c@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Message-ID: <1439650590.16502818.1538047050900.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CACT4Y+a8_4=dmZavdmZjPOraqYAtjBB228TjurbwLKSgJ9+J7Q@mail.gmail.com>
-References: <000000000000565ab805768bf006@google.com> <125732064.15444205.1537718529926.JavaMail.zimbra@redhat.com> <CACT4Y+Z1G_QMG_PQu_ZwHsyhwyh_DBOG4mX9n=va08w3Z7j02Q@mail.gmail.com> <1040580049.15456466.1537740558279.JavaMail.zimbra@redhat.com> <CAG_fn=WwmJONmipmqdZkNj8K0Z-ZRmEiCvG4qt_fHknGYQe5Cg@mail.gmail.com> <CACT4Y+a8_4=dmZavdmZjPOraqYAtjBB228TjurbwLKSgJ9+J7Q@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in memcmp (2)
+        Thu, 27 Sep 2018 13:35:56 -0400
+Received: from mail-eopbgr700089.outbound.protection.outlook.com ([40.107.70.89]:20290
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727163AbeI0Rf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 13:35:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O+93qaZ5dJ2Epbu4+H5F1unnu/muwL53w7xVHC75sV4=;
+ b=Htb4rV05dKm20p/J20Eo+JVmiJsjdZ/Fyn70jF5GJCXCR4Rq/QVGXZiTCaipLDsFrXehwejDj6xkEB2QfOJQehzsdlVLlrM1ZVo9EuMxETTZN60Is6lOLDCQTluau7vTsPAi3xY4/3SzBgRhg9/6vqjoN8wzOkWYnbxFFSWrDSQ=
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
+ MWHPR02MB3232.namprd02.prod.outlook.com (10.164.133.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.20; Thu, 27 Sep 2018 10:57:36 +0000
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::f0c9:d512:1636:4e40]) by MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::f0c9:d512:1636:4e40%4]) with mapi id 15.20.1164.024; Thu, 27 Sep 2018
+ 10:57:35 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>
+Subject: RE: [LINUX PATCH v11 1/3] dt-bindings: mtd: arasan: Add device tree
+ binding documentation
+Thread-Topic: [LINUX PATCH v11 1/3] dt-bindings: mtd: arasan: Add device tree
+ binding documentation
+Thread-Index: AQHUVMo9ALqqhBoxFkyUoaLnh1YbXqUCjTaAgAFprIA=
+Date:   Thu, 27 Sep 2018 10:57:35 +0000
+Message-ID: <MWHPR02MB2623FE755E8F0C61A754F74DAF140@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1537878031-22253-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <1537878031-22253-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <CABGGiszo3BO9LrSPT7tRey9g6jMZkB_0oXJA7ebsk-toud0EGw@mail.gmail.com>
+In-Reply-To: <CABGGiszo3BO9LrSPT7tRey9g6jMZkB_0oXJA7ebsk-toud0EGw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB3232;6:RpfK4t5s12KjTYk0Xub/DmeRxJVO/7bs7fgGe6jn5bGXqUurCq5seOFyBK8GLWjUFBWD9k9rcl4e74Ui/3jgn+XIZs2WxgEUdzByTkjABvGuXFru/VCtFegNRxOiSBiQGu08jUomM1FU6YhbKr9WfLq2scpDjR5dKciQmbNBvMj+3YOyIn4NYgfy4o1+sDhWWvEEgQZqFOVQgd1eZx/SFM6plM+TRwYiu4WhL3s8RKHlZ+4eLDjio2F4DeoDZPmsmQBYq6e8LQEt3zEVQu3PIQj0q6oCP7s24XtM77Em71qgpk7TB+sEx+n3tLUjsF/0VvhQgZssYIVg3NNpkv2zTveNsqrRkgNxBCQxWoM2O9gdeRqh4F8/GiXMhSDQFSMTP+3sto0I05ZLaaztdF5XZeugA8A+ob+DeUZqReR9jd8o5+Ye4SAmdwACCqZLAYTOwVyQQJT/YGZtcTUTcUI41A==;5:ebz8ap+4/6Yi8OtFS8ceUmru4Su9PnGe0BE0LbQDPIURYRRLMKzRykJnrmlKG+qJ39brPruzMHFgBl+PTZ4h1WMN2Krq/MzPJ+vv2XG0Ng6PxZdnXDF+JgRP+phB+FsPMXAvS4sE77c1OdHoADwGhdyJkkTTTF1QsedH4ORCpJg=;7:fe8u4WBHaB8peBvVETw2Mp5WpvIUpXqIlQB33qTMksRC50s4KcJZJqUWGLPjg7qZkf+cW0HhUDWkGuu6lpAQJE2fN577c0umahSPSa7GP7WSjFqvdfhxUqy9a3STdL1aNJt0g1jw4Ae7Q1WhG+36C5ECR8mbNOX7Pg/I7BJ/XDaPbOKe/JJMOc36a0Wc23YMGHPFkYMJPL7Xhl9QEQIrp58XN2VycuXIa2sYKoiMj6yuQpCy6GWZVLQa5SytC8aG
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(366004)(51914003)(199004)(189003)(13464003)(14444005)(256004)(54906003)(105586002)(106356001)(74316002)(7736002)(102836004)(33656002)(217873002)(305945005)(99286004)(316002)(7696005)(7416002)(53546011)(6506007)(76176011)(97736004)(2900100001)(6116002)(3846002)(5250100002)(4326008)(8936002)(8676002)(25786009)(81166006)(81156014)(2906002)(6246003)(39060400002)(68736007)(229853002)(6916009)(5660300001)(66066001)(9686003)(53936002)(6436002)(55016002)(14454004)(71190400001)(478600001)(71200400001)(186003)(34290500001)(86362001)(26005)(476003)(486006)(11346002)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB3232;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 5f1a7ab2-87cb-48b5-94cd-08d624680837
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB3232;
+x-ms-traffictypediagnostic: MWHPR02MB3232:
+x-microsoft-antispam-prvs: <MWHPR02MB3232602396F3B0267679EAD0AF140@MWHPR02MB3232.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158)(258649278758335)(192813158149592)(9452136761055);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:MWHPR02MB3232;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB3232;
+x-forefront-prvs: 0808323E97
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: K99tIa1qXl1pFiIBtOyaSVfAtlz5PnHtCQq3dTI4IjS5aKWkKiTkEi2WcaP6ldxtHrIdVyytgz+CyB6V5l9rti1Epfd2s/2yvGmAn8WRxxCyKWi52bB1vsLYK538IFgXFRYz6zV55GSwStdXXCqYH0805z1b2OyFBjpQXxrgpePX+G1fZLHIUTDjxVeIAZ1RkRwaTkKQXgxStTubtl8H3/CPtflv9bbMH+uodje4NKcAAb9oKhcon5XiEBf4n1zP9CkOgTyL1G2e7YNyT7bd5k2TUN8hUuArYzgW1hjYSMv33zJ6uvGMkHZ/XlLhfvqYQG+fuPSTf/evlufXyPIroH+ZqVBqlf15Jv48eOuU6wk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.40.5.28, 10.4.195.16]
-Thread-Topic: KMSAN: uninit-value in memcmp (2)
-Thread-Index: mEownoKM9RqC+IXDKx3Xkk2onzKxJA==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 27 Sep 2018 11:17:31 +0000 (UTC)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f1a7ab2-87cb-48b5-94cd-08d624680837
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Sep 2018 10:57:35.1156
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB3232
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Dmirty,
-
-Thank you for the explanation of how syzkaller/syzbot works in this and
-other emails. I understand that is it a complicated task to determine
-and categorize bugs based on just crash dump and messages, and syzkaller
-does a great job of doing so.
-
-> Re __hw_addr_add_ex bug, as Alex noted the crash was detected _after_
-> the fixing commit went in. So it's something new and different and
-> can't be fixed by the older commit.
-
-Indeed, you're right, there is another issue with tun/tap devices which
-leads to this bug. I've posted a patch (https://lkml.org/lkml/2018/9/26/416)
-to fix it.
-
-I hope I did not do much damage, reporting previous fix as a fix for this bug,
-as syzkaller will probably create another "KMSAN: uninit-value in <...>"
-report.
-
-Best regards,
-Vladis Dronov | Red Hat, Inc. | Product Security Engineer
-
------ Original Message -----
-> From: "Dmitry Vyukov" <dvyukov@google.com>
-> To: "Alexander Potapenko" <glider@google.com>
-> Cc: "Vladis Dronov" <vdronov@redhat.com>, "syzbot" <syzbot+d3402c47f680ff24b29c@syzkaller.appspotmail.com>,
-> "syzkaller-bugs" <syzkaller-bugs@googlegroups.com>, "David Miller" <davem@davemloft.net>, "Eric Dumazet"
-> <edumazet@google.com>, "LKML" <linux-kernel@vger.kernel.org>, "Networking" <netdev@vger.kernel.org>, "sunlianwen"
-> <sunlw.fnst@cn.fujitsu.com>
-> Sent: Monday, September 24, 2018 11:39:08 AM
-> Subject: Re: KMSAN: uninit-value in memcmp (2)
-> 
-> On Mon, Sep 24, 2018 at 8:53 AM, Alexander Potapenko <glider@google.com>
-> wrote:
-> > On Mon, Sep 24, 2018 at 12:09 AM Vladis Dronov <vdronov@redhat.com> wrote:
-> >>
-> >> Hello, Dmirty,
-> >>
-> >> Thank you for the reply. Can we please, discuss this further?
-> > Hi Vladis,
-> >> > You can see on dashboard that the last crash
-> >> > for the second version (2) happened just few days ago. So this is a
-> >> > different bug.
-> > FWIW I've just double-checked that the reproducer provided by
-> > syzkaller in the original message still triggers the report from the
-> > original message in the latest KMSAN tree (which already contains the
-> > __hw_addr_add_ex() fix from April).
-> >> Well... yes and no. When I was looking at this bug (bug?id=088efeac32fd) I
-> >> was looking
-> >> at the report at "2018/05/09 18:55"
-> >> (https://syzkaller.appspot.com/text?tag=CrashReport&x=141b707b800000),
-> >> since it was the only report with a reproducer. This was my error.
-> >>
-> >> The error and the call trace in this report are:
-> >>
-> >> >>>
-> >> BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
-> >> CPU: 0 PID: 38 Comm: kworker/0:1 Not tainted 4.17.0-rc3+ #88
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> Google 01/01/2011
-> >> Workqueue: ipv6_addrconf addrconf_dad_work
-> >> Call Trace:
-> >>  __dump_stack lib/dump_stack.c:77 [inline]
-> >>  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-> >>  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-> >>  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-> >>  memcmp+0x119/0x180 lib/string.c:861
-> >>  __hw_addr_add_ex net/core/dev_addr_lists.c:61 [inline]
-> >>  __dev_mc_add+0x1fc/0x900 net/core/dev_addr_lists.c:670
-> >>  dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
-> >>  igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
-> >>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
-> >>  addrconf_join_solict net/ipv6/addrconf.c:2103 [inline]
-> >>  addrconf_dad_begin net/ipv6/addrconf.c:3853 [inline]
-> >>  addrconf_dad_work+0x462/0x2a20 net/ipv6/addrconf.c:3979
-> >>  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
-> >>  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
-> >>  kthread+0x539/0x720 kernel/kthread.c:239
-> >>  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
-> >>
-> >> Local variable description: ----buf@igmp6_group_added
-> >> Variable was created at:
-> >>  igmp6_group_added+0x4a/0xa00 net/ipv6/mcast.c:650
-> >>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
-> >> <<<
-> >>
-> >> It is the same like in bug?id=3887c0d99aecb27d085180c5222d245d08a30806
-> >> which, after some more test, made me believe these bugs are duplicate
-> >> and are fixed by the same commit.
-> >>
-> >> But let's look at another report at "2018/09/12 21:00"
-> >> (https://syzkaller.appspot.com/text?tag=CrashReport&x=14f99b71400000)
-> >> at the bug (bug?id=088efeac32fd), the one you've mentioned as
-> >> "the last crash for the second version (2) happened just few days ago".
-> >>
-> >> Its error and the call trace are completely different:
-> >>
-> >> >>>
-> >> BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
-> >> CPU: 0 PID: 6107 Comm: syz-executor4 Not tainted 4.19.0-rc3+ #45
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> Google 01/01/2011
-> >> Call Trace:
-> >>  __dump_stack lib/dump_stack.c:77 [inline]
-> >>  dump_stack+0x14b/0x190 lib/dump_stack.c:113
-> >>  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
-> >>  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
-> >>  memcmp+0x11d/0x180 lib/string.c:863
-> >>  dev_uc_add_excl+0x165/0x7b0 net/core/dev_addr_lists.c:464
-> >>  ndo_dflt_fdb_add net/core/rtnetlink.c:3463 [inline]
-> >>  rtnl_fdb_add+0x1081/0x1270 net/core/rtnetlink.c:3558
-> >>  rtnetlink_rcv_msg+0xa0b/0x1530 net/core/rtnetlink.c:4715
-> >>  netlink_rcv_skb+0x36e/0x5f0 net/netlink/af_netlink.c:2454
-> >>  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4733
-> >>  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
-> >>  netlink_unicast+0x1638/0x1720 net/netlink/af_netlink.c:1343
-> >>  netlink_sendmsg+0x1205/0x1290 net/netlink/af_netlink.c:1908
-> >>  sock_sendmsg_nosec net/socket.c:621 [inline]
-> >>  sock_sendmsg net/socket.c:631 [inline]
-> >> ...
-> >> Uninit was created at:
-> >> ...
-> >>  slab_post_alloc_hook mm/slab.h:446 [inline]
-> >>  slab_alloc_node mm/slub.c:2718 [inline]
-> >>  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4351
-> >>  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-> >>  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
-> >>  alloc_skb include/linux/skbuff.h:996 [inline]
-> >>  netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
-> >>  netlink_sendmsg+0xb49/0x1290 net/netlink/af_netlink.c:1883
-> >>  sock_sendmsg_nosec net/socket.c:621 [inline]
-> >>  sock_sendmsg net/socket.c:631 [inline]
-> >>  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
-> >> <<<
-> >>
-> >> This is a different bug. How come these 2 different reports for 2
-> >> different
-> >> bugs have ended in the same syzkaller report (bug?id=088efeac32fd) ?
-> >
-> > I suspect this is because syzbot used the top stack frame as the
-> > report signature.
-> > There's a mechanism to ignore frames like memcmp() in the reports, not
-> > sure why didn't it work in this case (maybe it just wasn't in place at
-> > the time the report happened).
-> >> One bug is fixed by the "net: fix uninit-value in __hw_addr_add_ex()"
-> >> commit,
-> >> the second one is not, but they are still in the same syzkaller report.
-> >>
-> >> This was the reason of my confusion. I'm not sure how to fix this. If it
-> >> is possible,
-> >> probably we need to cancel/revoke "#syz fix: net: fix uninit-value in
-> >> __hw_addr_add_ex()"
-> >> for this syzkaller report (bug?id=088efeac32fd). And then "split" it into
-> >> 2 or
-> >> more different reports, but I'm not sure if this is possible.
-> >>
-> >> Probably, syzkaller needs to look deeper into the KMSAN reports to
-> >> differentiate
-> >> KMSAN errors happening because of different reasons.
-> >>
-> >> > On Sun, Sep 23, 2018 at 6:02 PM, Vladis Dronov <vdronov@redhat.com>
-> >> > wrote:
-> >> > > #syz fix: net: fix uninit-value in __hw_addr_add_ex()
-> >> >
-> >> > Hi Vladis,
-> >> >
-> >> > This can be fixed with "net: fix uninit-value in __hw_addr_add_ex()".
-> >> > That commit landed in April, syzbot waited till the commit reached all
-> >> > tested trees, and then closed the bug.
-> >> > But the similar bug continued to happen, so syzbot created second
-> >> > version of this bug (2). You can see on dashboard that the last crash
-> >> > for the second version (2) happened just few days ago. So this is a
-> >> > different bug.
-> 
-> 
-> Precisely discriminating bugs (root causes) bases on crash text is
-> generally undecidable problem, even for humans. We even can have
-> literally equal crash texts, which are still different bugs. And we
-> can have significantly differently looking crash texts, which are
-> actually caused by the same root cause. syzbot extracts some
-> "identity" string for each crash and than uses that string to
-> discriminate crashes and sort them into bins. This identity string is
-> what you see in email subject and bug title on dashboard. This method
-> can have both false positives and false negatives, but works
-> reasonably well in most cases and looks like the best practical
-> option.
-> 
-> For this exact instance (memcmp) we actually improved the analysis
-> logic recently:
-> https://github.com/google/syzkaller/commit/0e29942f77715486995d996f80f82742812d75a2#diff-abe1515f011fad2659ff218f9eea9ae1
-> But this crash was analyzed and reported before the change. So if this
-> crash happens again it should be reported as "in __hw_addr_add_ex"
-> now.
-> 
-> Re __hw_addr_add_ex bug, as Alex noted the crash was detected _after_
-> the fixing commit went in. So it's something new and different and
-> can't be fixed by the older commit.
-> 
-> There are no general, single guideline as to what to do when several
-> different bugs glued together into a single bug. Fixing at least one
-> of them (any) in the context of the bug is good, fixing both is good
-> too. When/if a bug is closed, new occurrences of similar crashes (the
-> same identity string) will lead to creation of a new bug. So if we fix
-> only one and close the bug, eventually the second one will lead to a
-> new bug (won't be lost), now dedicated to this second crash.
-> 
-> Now syzbot thinks that this bug is fixed/closed:
-> https://syzkaller.appspot.com/bug?extid=d3402c47f680ff24b29c
-> There is specifically no "undo" functionality, because it's inherently
-> racy with creation of a new version of this bugs by new crashes. So if
-> of these crashes will happen again, syzbot will open new bugs (now
-> with better discriminated titles). We can wait for that. Or we can
-> submit new fixes without waiting for new syzbot bugs (adding
-> Reported-by to new commits referencing this bug should not do any
-> harm).
-> 
-> Hope this clarifies things a bit.
-> 
-> Thanks
+SGkgUm9iLA0KDQpUaGFua3MgZm9yIHRoZSByZXZpZXcuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNz
+YWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgW21haWx0bzpyb2JoQGtlcm5lbC5vcmddDQo+
+IFNlbnQ6IFdlZG5lc2RheSwgU2VwdGVtYmVyIDI2LCAyMDE4IDY6NDggUE0NCj4gVG86IE5hZ2Eg
+U3VyZXNoa3VtYXIgUmVsbGkgPG5hZ2FzdXJlQHhpbGlueC5jb20+DQo+IENjOiBib3Jpcy5icmV6
+aWxsb25AYm9vdGxpbi5jb207IG1pcXVlbC5yYXluYWxAYm9vdGxpbi5jb207IHJpY2hhcmRAbm9k
+LmF0Ow0KPiBkd213MkBpbmZyYWRlYWQub3JnOyBjb21wdXRlcnNmb3JwZWFjZUBnbWFpbC5jb207
+IG1hcmVrLnZhc3V0QGdtYWlsLmNvbTsgbGludXgtDQo+IG10ZEBsaXN0cy5pbmZyYWRlYWQub3Jn
+OyBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+PjsgTWljaGFsDQo+IFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+OyBuYWdhc3VyZXNoMTJAZ21h
+aWwuY29tDQo+IFN1YmplY3Q6IFJlOiBbTElOVVggUEFUQ0ggdjExIDEvM10gZHQtYmluZGluZ3M6
+IG10ZDogYXJhc2FuOiBBZGQgZGV2aWNlIHRyZWUgYmluZGluZw0KPiBkb2N1bWVudGF0aW9uDQo+
+IA0KPiBEVCBiaW5kaW5ncyBzaG91bGQgYmUgc2VudCB0byBEVCBsaXN0Lg0KU2luY2UgbGFzdCA0
+IHZlcnNpb24gb2YgcGF0Y2hlcyBJIGFtIHNlbmRpbmcgbGlrZSB0aGlzLg0KVGhhbmtzIGZvciBs
+ZXR0aW5nIHVzIGtub3cuDQpDdXJyZW50bHkgSSBhbSB3YWl0aW5nIGZvciBhcmFzYW5fbmFuZCBk
+cml2ZXIgcmV2aWV3Lg0KT25jZSBpdCBpcyBkb25lLCBJIHdpbGwgYWRkcmVzcyBhbGwgdGhlIGNv
+bW1lbnRzIGFuZCBzZW5kIG5ldyB2ZXJzaW9uLCBhbG9uZyB3aXRoIHRoZSBkcml2ZXIgY2hhbmdl
+cw0KDQpUaGFua3MsDQpOYWdhIFN1cmVzaGt1bWFyIFJlbGxpDQoNCj4gDQo+IE9uIFR1ZSwgU2Vw
+IDI1LCAyMDE4IGF0IDc6MjEgQU0gTmFnYSBTdXJlc2hrdW1hciBSZWxsaQ0KPiA8bmFnYS5zdXJl
+c2hrdW1hci5yZWxsaUB4aWxpbnguY29tPiB3cm90ZToNCj4gPg0KPiA+IFRoaXMgcGF0Y2ggYWRk
+cyB0aGUgZHRzIGJpbmRpbmcgZG9jdW1lbnQgZm9yIGFyYXNhbiBuYW5kIGZsYXNoDQo+ID4gY29u
+dHJvbGxlcg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTmFnYSBTdXJlc2hrdW1hciBSZWxsaQ0K
+PiA+IDxuYWdhLnN1cmVzaGt1bWFyLnJlbGxpQHhpbGlueC5jb20+DQo+ID4gLS0tDQo+ID4gQ2hh
+bmdlcyBpbiB2MTE6DQo+ID4gIC0gVXBkYXRlZCBjb21wYXRpYmxlIGRlc2NyaXB0aW9uIGFzIHN1
+Z2dlc3RlZCBieSBCb3Jpcw0KPiA+ICAtIFJlbW92ZWQgYXJhc2FuLWhhcy1kbWEgcHJvcGVydHkN
+Cj4gPiBDaGFuZ2VzIGluIHYxMDoNCj4gPiAtIE5vbmUNCj4gPiBDaGFuZ2VzIGluIHY5Og0KPiA+
+IC0gTm9uZQ0KPiA+IENoYW5nZXMgaW4gdjg6DQo+ID4gLSBVcGRhdGVkIGNvbXBhdGlibGUgYW5k
+IGNsb2NrLW5hbWVzIGFzIHBlciBCb3JpcyBjb21tZW50cyBDaGFuZ2VzIGluDQo+ID4gdjc6DQo+
+ID4gLSBDb3JyZWN0ZWQgdGhlIGFjcm9ueW1zIHRob3NlIHNob3VsZCBiZSBpbiBjYXBzIENoYW5n
+ZXMgaW4gdjY6DQo+ID4gLSBSZW1vdmVkIG51bS1jcyBwcm9wZXJ0eQ0KPiA+IC0gU2VwYXJhdGVk
+IG5hbmRjaGlwIGZyb20gbmFuZCBjb250cm9sbGVyIENoYW5nZXMgaW4gdjU6DQo+ID4gLSBOb25l
+DQo+ID4gQ2hhbmdlcyBpbiB2NDoNCj4gPiAtIEFkZGVkIG51bS1jcyBwcm9wZXJ0eQ0KPiA+IC0g
+QWRkZWQgY2xvY2sgc3VwcG9ydA0KPiA+IENoYW5nZXMgaW4gdjM6DQo+ID4gLSBOb25lDQo+ID4g
+Q2hhbmdlcyBpbiB2MjoNCj4gPiAtIE5vbmUNCj4gPiAtLS0NCj4gPiAgLi4uL2RldmljZXRyZWUv
+YmluZGluZ3MvbXRkL2FyYXNhbl9uYW5kLnR4dCAgICAgICAgfCAzMyArKysrKysrKysrKysrKysr
+KysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzMyBpbnNlcnRpb25zKCspDQo+ID4gIGNyZWF0
+ZSBtb2RlIDEwMDY0NA0KPiA+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tdGQv
+YXJhc2FuX25hbmQudHh0DQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL210ZC9hcmFzYW5fbmFuZC50eHQNCj4gPiBiL0RvY3VtZW50YXRpb24v
+ZGV2aWNldHJlZS9iaW5kaW5ncy9tdGQvYXJhc2FuX25hbmQudHh0DQo+ID4gbmV3IGZpbGUgbW9k
+ZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwLi41NDZlZDk4DQo+ID4gLS0tIC9kZXYvbnVsbA0K
+PiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tdGQvYXJhc2FuX25h
+bmQudHh0DQo+ID4gQEAgLTAsMCArMSwzMyBAQA0KPiA+ICtBcmFzYW4gTkFORCBGbGFzaCBDb250
+cm9sbGVyIHdpdGggT05GSSAzLjEgc3VwcG9ydA0KPiA+ICsNCj4gPiArUmVxdWlyZWQgcHJvcGVy
+dGllczoNCj4gPiArLSBjb21wYXRpYmxlOiAgICAgICAgICBTaG91bGQgYmUgInhsbngsenlucW1w
+LW5hbmQiLCAiYXJhc2FuLG5mYy12M3AxMCINCj4gPiArLSByZWc6ICAgICAgICAgICAgICAgICBN
+ZW1vcnkgbWFwIGZvciBtb2R1bGUgYWNjZXNzDQo+ID4gKy0gaW50ZXJydXB0LXBhcmVudDogICAg
+SW50ZXJydXB0IGNvbnRyb2xsZXIgdGhlIGludGVycnVwdCBpcyByb3V0ZWQgdGhyb3VnaA0KPiAN
+Cj4gRHJvcCB0aGlzLiBJdCBpcyBpbXBsaWVkLg0KPiANCj4gPiArLSBpbnRlcnJ1cHRzOiAgICAg
+ICAgICBTaG91bGQgY29udGFpbiB0aGUgaW50ZXJydXB0IGZvciB0aGUgZGV2aWNlDQo+ID4gKy0g
+Y2xvY2stbmFtZTogICAgICAgICAgTGlzdCBvZiBpbnB1dCBjbG9ja3MgLSAic3lzIiwgImZsYXNo
+Ig0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIChTZWUgY2xvY2sgYmluZGluZ3MgZm9yIGRl
+dGFpbHMpDQo+ID4gKy0gY2xvY2tzOiAgICAgICAgICAgICAgQ2xvY2sgcGhhbmRsZXMgKHNlZSBj
+bG9jayBiaW5kaW5ncyBmb3IgZGV0YWlscykNCj4gPiArDQo+ID4gK1JlcXVpcmVkIHByb3BlcnRp
+ZXMgZm9yIGNoaWxkIG5vZGU6DQo+ID4gKy0gbmFuZC1lY2MtbW9kZTogc2VlIG5hbmQudHh0DQo+
+ID4gKw0KPiA+ICtGb3IgTkFORCBwYXJ0aXRpb24gaW5mb3JtYXRpb24gcGxlYXNlIHJlZmVyIHRo
+ZSBiZWxvdyBmaWxlDQo+ID4gK0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tdGQv
+cGFydGl0aW9uLnR4dA0KPiA+ICsNCj4gPiArRXhhbXBsZToNCj4gPiArICAgICAgIG5mYzogbmFu
+ZEBmZjEwMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAieGxueCx6eW5x
+bXAtbmFuZCIsICJhcmFzYW4sbmZjLXYzcDEwIg0KPiANCj4gTWlzc2luZyA7DQo+IA0KPiA+ICsg
+ICAgICAgICAgICAgICByZWcgPSA8MHgwIDB4ZmYxMDAwMDAgMHgxMDAwPjsNCj4gPiArICAgICAg
+ICAgICAgICAgY2xvY2stbmFtZSA9ICJzeXMiLCAiZmxhc2giDQo+IA0KPiBNaXNzaW5nIDsNCj4g
+DQo+ID4gKyAgICAgICAgICAgICAgIGNsb2NrcyA9IDwmbWlzY19jbGsgJm1pc2NfY2xrPjsNCj4g
+PiArICAgICAgICAgICAgICAgaW50ZXJydXB0LXBhcmVudCA9IDwmZ2ljPjsNCj4gPiArICAgICAg
+ICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDE0IDQ+Ow0KPiA+ICsgICAgICAgICAgICAgICAjYWRk
+cmVzcy1jZWxscyA9IDwxPjsNCj4gPiArICAgICAgICAgICAgICAgI3NpemUtY2VsbHMgPSA8MD4N
+Cj4gDQo+IE1pc3NpbmcgOw0KPiANCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIG5hbmRAMCB7
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDA+DQo+IA0KPiBNaXNzaW5nIDsN
+Cj4gDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgbmFuZC1lY2MtbW9kZSA9ICJodyI7DQo+
+ID4gKyAgICAgICAgICAgICAgIH07DQo+ID4gKyAgICAgICB9Ow0KPiA+IC0tDQo+ID4gMi43LjQN
+Cj4gPg0K
