@@ -2,113 +2,121 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1372C04E87
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B4BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869B321710
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:19:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 869B321710
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C53221582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:20:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ouJFqEan"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C53221582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeI0Wig (ORCPT
+        id S1728269AbeI0Wjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:38:36 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:58006 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727282AbeI0Wig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:38:36 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1g5Z0m-0003OM-A3; Thu, 27 Sep 2018 10:19:33 -0600
-To:     Wesley.Sheng@microchip.com, kurt.schwemmer@microsemi.com,
-        Kurt.Schwemmer@microchip.com, bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kelvin.Cao@microchip.com
-References: <DM2PR11MB0105CD1B3A264290413ED1CA95140@DM2PR11MB0105.namprd11.prod.outlook.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <f640f7a1-946f-c1b2-56aa-a4ee0bad67b4@deltatee.com>
-Date:   Thu, 27 Sep 2018 10:19:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 27 Sep 2018 18:39:48 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54513 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727480AbeI0Wjr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 18:39:47 -0400
+Received: by mail-it1-f196.google.com with SMTP id f14-v6so8610189ita.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:20:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1VeUtHWJ3hOtNfiEHSMOXor7IJiBoxL53Ef0kdq6OmY=;
+        b=ouJFqEanR0LXNdZwbHwVdWHvYWycT3QG5ko6/tkZsgU2VfeIC3c+hsRqqsZUu9Tyjg
+         Xc/EGSieyzJvvFbTNmyyJZC1YGSUpYXv9Rk/hC8Wd7PE3mUpmmBLSrrZX8h+E/7WTBvC
+         xGFUg/InUIfFV5BsyuJwMv8MYleOH0bO52tNk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1VeUtHWJ3hOtNfiEHSMOXor7IJiBoxL53Ef0kdq6OmY=;
+        b=ftz1aYr+Iwo06QOPkRT/uSnF4v39aD6NEU0fC2JzPc6yzHzoaAVDcNRZKZYfmCO+/C
+         pW+VW3l3Eaiqhv99YYh6vtPHffK3QlBtgEoquS1nynQHPqXimMuPL0x08sWk7z8tNUil
+         e/CTFR3sR2FgR5y2yJUwL50ULvo8C0a6qJWNSP/TZC85o+I3IN6Z2yk/EBqlFKIRyAaZ
+         zg5p621Db3LJiaiI1eBW8T9Is1ezfsgPfvddL4Kv7OZGQAE4RdS2k6ho7dLrYBem7e0S
+         cSk4ZLbBLkGWw/t7e+4BpzwXv+1KYqCRtKrGrjWauR2XLPZtYvCraOKMoMoqNvvxQGy2
+         e8Gg==
+X-Gm-Message-State: ABuFfoh/8NS5wqNvpEeE/5FO2xp5HBIKj9vNAldNpu+tvPFl+75VhVJh
+        2+LLWkmb4+PMJIQezAJV+xTv43vvDNWXVxgke4rh4w==
+X-Google-Smtp-Source: ACcGV603XjvQBcuXF8BUeqBg3UhyEiugcdBAXPKq57gRju76W56Aap6+J83Ua+wd4cI+VJmL8TwvD0miXnH7z+lg9pA=
+X-Received: by 2002:a24:5214:: with SMTP id d20-v6mr7771107itb.24.1538065245874;
+ Thu, 27 Sep 2018 09:20:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <DM2PR11MB0105CD1B3A264290413ED1CA95140@DM2PR11MB0105.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: Kelvin.Cao@microchip.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, bhelgaas@google.com, Kurt.Schwemmer@microchip.com, kurt.schwemmer@microsemi.com, Wesley.Sheng@microchip.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 1/12 v2] switchtec: Remove immediate status check after
- submit a MRPC command
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-7-jagan@amarulasolutions.com> <20180927152126.vovnvwmqdfpuxgdm@flea>
+In-Reply-To: <20180927152126.vovnvwmqdfpuxgdm@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 27 Sep 2018 21:50:34 +0530
+Message-ID: <CAMty3ZABx9Fod5W_T7JciZEsn7jGvuM-LsBFATdA=hQ2CVwELw@mail.gmail.com>
+Subject: Re: [PATCH 06/12] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wesley, I'm going to suggest you send patches to me before sending them
-to the community until you have a better handle of the tools and
-process. The subject suggests you have 11 other patches in this series
-so you've mishandled the tools.
+On Thu, Sep 27, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Thu, Sep 27, 2018 at 05:18:44PM +0530, Jagan Teki wrote:
+> > According to horizontal and vertical timings are defined
+> > per the diagram from include/drm/drm_modes.h
+> >
+> > Back porch = [hv]total - [hv]sync_end
+> >
+> > So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
+> > mode->vtotal - mode->vsync_end
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > index 1c7e42015645..599284971ab6 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > @@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+> >       regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
+> >                    SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
+> >                                              mode->vsync_start) |
+> > -                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
+> > -                                            mode->vdisplay));
+> > +                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
+> > +                                            mode->vsync_end));
+>
+> Is it purely theoretical, or did you find some source that back that?
 
-On 2018-09-26 11:57 p.m., Wesley.Sheng@microchip.com wrote:
-> After submit a Firmware Download (Download sub-command) MRPC
-> command, Switchtec firmware refuses to response any management 
-> EP's BAR access until current flash programming finished.
-> During this time, a READ TLP to the gas area in the BAR of the
-> management EP will complete with significant delay like more than 
-> 10ms.
-> It's a Switchtec firmware limitation that READ requests cannot get
-> prompt service during firmware download.
-> The delayed completion of READ TLP would be a problem on some system
->  which is sensitive to READ timeout.
-> Current driver check status immediately after submit a MRPC command,
-> which triggers READ TLP to the gas area in the BAR of the management EP.
-> Also, other processes or functions, like NTB, would also trigger READ TLP by
-> accessing the GAS.
-> To avoid this, the immediate check of status is removed in this patch, and
-> driver delays the status check to the occurrence of MSIx or MRPC timeout.
-> In the meantime, user must not initiate any gas access during a firmware
-> download.
-> Also, any process that issues MRPC command will be affected by the delay
-> in this patch.
-> However, this is only a software workaround to the READ issue in firmware
-> download. A complete fix of this should happen in firmware.
-> 
-> Note: For NTB function, the memory window access is handled by Switchtec
-> hardware. So it's not affected by this firmware limitation. But the other GAS
-> access which is handled by Switchtec firmware is are affected by this firmware
-> limitation.
+VSA is done as per that, sync_end - sync start would give sync time.
+VBP also done in BPI-M64-bsp[1] which results back porch existing code
+results fron porch.
 
-The commit message is poorly formatted/wrapped and with all due respect,
-I think the grammar needs a lot of work.
-
-> ---
->  drivers/pci/switch/switchtec.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c index 4591f15..b759228 100644
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -142,10 +142,6 @@ static void mrpc_cmd_submit(struct switchtec_dev *stdev)
->  		    stuser->data, stuser->data_len);
->  	iowrite32(stuser->cmd, &stdev->mmio_mrpc->cmd);
->  
-> -	stuser->status = ioread32(&stdev->mmio_mrpc->status);
-> -	if (stuser->status != SWITCHTEC_MRPC_STATUS_INPROGRESS)
-> -		mrpc_complete_cmd(stdev);
-> -
->  	schedule_delayed_work(&stdev->mrpc_timeout,
->  			      msecs_to_jiffies(500));
->  }
-
-The change itself looks good.
-
-Logan
+[1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L955
