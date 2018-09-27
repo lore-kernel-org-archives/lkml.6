@@ -2,97 +2,135 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5F4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C384C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E3421571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 337B421571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:10:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="bUr6mxMz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E3421571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MiHY2I6p";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HUwv2Th0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337B421571
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbeI1D3O (ORCPT
+        id S1727722AbeI1DbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:29:14 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38079 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbeI1D3O (ORCPT
+        Thu, 27 Sep 2018 23:31:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54916 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeI1DbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:29:14 -0400
-Received: by mail-oi1-f196.google.com with SMTP id u197-v6so3475179oif.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:09:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+bICWFM1jyMxBwC6r22lCQ/9c4PhzMBZbxjc7KfJXWk=;
-        b=bUr6mxMzKYpRrdKum5UAWcTWL3o3seT1pffAZRfM0Ze5gDprguctl/FBkD3fe1tJYz
-         37Hyf4y1jxMA2vRDOWZpahhad8ThE3gwT1WQnDusnhIXVz9Ki62aqmXqNMw0L+mjrcHW
-         SJxV3QtBtwqkc7LEpSs9A7DhPCl1Srz0GtowfxTZXXogOjFkj9GO2pwlRG6tzitdfj7s
-         G7pbOJnqj+l1Pqf5nn+XS4SzOR2izly8HQ0ufihiXw93kTir+KcqcZC1ogbMk/madrOv
-         F0nZrrjiv/75V3r3Gq9RlMsTmz2nC951LVmY01y/1qrdIVYaao1kgDNmQ2XQyZjDdO2c
-         cFfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+bICWFM1jyMxBwC6r22lCQ/9c4PhzMBZbxjc7KfJXWk=;
-        b=FhHQw6c2MnCsPM7EqH/zvXdaafuZy1PHZUG0XCtqZm0ukRCtuPd+8mDgZwb3lJz2ew
-         xPFljqmt9FAfbTIEla+ugIDqthbBWAAk0zIH5OqLM6fPUG8I8I/pzIZYFrHyfl/3BiK+
-         +r9KFFpj+DUJ8s1EguooF6x78dG0lB+t36Tesp3O4wZcRLy1Pbl6ur9j+JnfgZGgMt5+
-         tDeNoXHbpHF7X/Vd7IVSzICW0Jfg3tyReLb98tQLtZxzAPDtiaVQ4/8OINtlRBiMIS4t
-         0pIfm7vhaRcIDZFEgcvrbwZ2xVUe6HhkZGvPV/eOKXxcElzzP95cYTssEADcbWpV7wtP
-         AKEQ==
-X-Gm-Message-State: ABuFfoiRG38ltKEoC8pl74bCMYCPd+LpP4fLtH2eVju2db3nbaYz+0iI
-        8ewsWogLT92r7Mh66qkxBv0eCylKerrwzSZeIPYGjA==
-X-Google-Smtp-Source: ACcGV63DPaNQvd494x430KLuBNnMg4fHn1+HW91d2MmR54KhTkCUk+W/f8SvpbzkDhTLJwjc0dOBLu6lVLJWvdOkTQw=
-X-Received: by 2002:aca:b355:: with SMTP id c82-v6mr4406474oif.9.1538082542181;
- Thu, 27 Sep 2018 14:09:02 -0700 (PDT)
+        Thu, 27 Sep 2018 23:31:07 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D5488609A8; Thu, 27 Sep 2018 21:10:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538082653;
+        bh=U1f7Qo7jJFn2XoIFfYq9zZn4KCmjZdEBrJuyDk/ikOI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MiHY2I6ps8gl+dYXQwASXCgbQcvel/pp73ZfBOfdUbjXipC5ubX7wxfJeRmBGGgKB
+         ggxMz7/WEXb21cUQ4lBcWgtQ719VgxCH0XT0DKHuJtuIIeP4zbMk71v2vDGSDMivn0
+         K/SS9YafoxFLPV/PrSMeFaGEepB+SLtmGWiU7whc=
+Received: from [10.226.60.82] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rruigrok@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D05C60128;
+        Thu, 27 Sep 2018 21:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538082652;
+        bh=U1f7Qo7jJFn2XoIFfYq9zZn4KCmjZdEBrJuyDk/ikOI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HUwv2Th05UqM4OBwQaHG1yPgWOkqGPfUhIl5vXlCCYJhea4XOlofJEt63jstijp1A
+         E+Qsg2ShATUmTpB1/PoQ6yy28xiwHocgdSwCSAipSH8B/TxmVrjoJHufIp7nCSEUeM
+         kdZwlU7gsAP9O0ZJfYc4Tm3b9RMs0d/4HTNf/Ezc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D05C60128
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rruigrok@codeaurora.org
+Subject: Re: [PATCH 00/10] GICv3 support for kexec/kdump on EFI systems
+To:     Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <20180921195954.21574-1-marc.zyngier@arm.com>
+From:   Richard Ruigrok <rruigrok@codeaurora.org>
+Message-ID: <44ac1fad-8df4-4738-0f25-8a7a2de8f6df@codeaurora.org>
+Date:   Thu, 27 Sep 2018 15:10:50 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1538077089-14550-1-git-send-email-yang.shi@linux.alibaba.com>
-In-Reply-To: <1538077089-14550-1-git-send-email-yang.shi@linux.alibaba.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 27 Sep 2018 14:08:51 -0700
-Message-ID: <CAPcyv4jvmTUUgVXd7gCVcmMbOM0OcY8rTQGkp+Ak1NHpi+zS_g@mail.gmail.com>
-Subject: Re: [PATCH] mm: dax: add comment for PFN_SPECIAL
-To:     yang.shi@linux.alibaba.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180921195954.21574-1-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 12:39 PM <yang.shi@linux.alibaba.com> wrote:
->
-> The comment for PFN_SPECIAL is missed in pfn_t.h. Add comment to get
-> consistent with other pfn flags.
->
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  include/linux/pfn_t.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/linux/pfn_t.h b/include/linux/pfn_t.h
-> index 21713dc..d2e5dd4 100644
-> --- a/include/linux/pfn_t.h
-> +++ b/include/linux/pfn_t.h
-> @@ -9,6 +9,7 @@
->   * PFN_SG_LAST - pfn references a page and is the last scatterlist entry
->   * PFN_DEV - pfn is not covered by system memmap by default
->   * PFN_MAP - pfn has a dynamic page mapping established by a device driver
-> + * PFN_SPECIAL - indicates that _PAGE_SPECIAL should be used for DAX ptes
+Hi Marc
 
-That's not quite accurate, I would change this to:
+On 9/21/2018 1:59 PM, Marc Zyngier wrote:
+> The GICv3 architecture has the remarkable feature that once LPI tables
+> have been assigned to redistributors and that LPI delivery is enabled,
+> there is no guarantee that LPIs can be turned off (and most
+> implementations do not allow it), nor can it be reprogrammed to use
+> other tables.
+>
+> This is a bit of a problem for kexec, where the secondary kernel
+> completely looses track of the previous allocations. If the secondary
+> kernel doesn't allocate the tables exactly the same way, no LPIs will
+> be delivered by the GIC (which continues to use the old tables), and
+> memory previously allocated for the pending tables will be slowly
+> corrupted, one bit at a time.
+>
+> The workaround for this is based on a series[1] by Ard Biesheuvel,
+> which adds the required infrastructure for memory reservations to be
+> passed from one kernel to another using an EFI table.
+>
+> This infrastructure is then used to register the allocation of GIC
+> tables with EFI, and allow the GIC driver to safely reuse the existing
+> programming if it detects that the tables have been correctly
+> registered. On non-EFI systems, there is not much we can do.
+>
+> This has been tested on a TX2 system both as a host and a guest. I'd
+> welcome additional testing of different HW. For convenience, I've
+> stashed a branch containing the whole thing at [2].
+I tested [2] from the 4.19-rc4 set which included this series and [1].
+Tested kexec on Centriq system with ITS support (46 core).  On-board was a MLX CX5 NIC, verified MSIs are active in /proc/interrupts.
+Prior to this we used a workaround from Shanker to reuse the same tables in the kexec'ed kernel.
+Let me know if further testing is needed, and thanks for adding this support.
+> [1] https://marc.info/?l=linux-efi&m=153754757208163&w=2
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/gicv3-kdump
+>
+> Marc Zyngier (10):
+>   irqchip/gic-v3-its: Change initialization ordering for LPIs
+>   irqchip/gic-v3-its: Consolidate LPI_PENDBASE_SZ usage
+>   irqchip/gic-v3-its: Split property table clearing from allocation
+>   irqchip/gic-v3-its: Move pending table allocation to init time
+>   irqchip/gic-v3-its: Keep track of property table's PA and VA
+>   irqchip/gic-v3-its: Allow use of pre-programmed LPI tables
+>   irqchip/gic-v3-its: Use pre-programmed redistributor tables with kdump
+>     kernels
+>   irqchip/gic-v3-its: Check that all RDs have the same property table
+>   irqchip/gic-v3-its: Register LPI tables with EFI config table
+>   irqchip/gic-v3-its: Allow use of LPI tables in reserved memory
+>
+>  drivers/irqchip/irq-gic-v3-its.c   | 249 ++++++++++++++++++++++-------
+>  drivers/irqchip/irq-gic-v3.c       |  20 ++-
+>  include/linux/irqchip/arm-gic-v3.h |   4 +-
+>  3 files changed, 208 insertions(+), 65 deletions(-)
+>
 
-PFN_SPECIAL - for CONFIG_FS_DAX_LIMITED builds to allow XIP, but not
-get_user_pages.
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
