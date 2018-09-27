@@ -3,37 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5FCC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D13C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47132152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A47132152F
+	by mail.kernel.org (Postfix) with ESMTP id 19AA12156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:23:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19AA12156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbeI0PlA (ORCPT
+        id S1727958AbeI0PlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:41:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56606 "EHLO
+        Thu, 27 Sep 2018 11:41:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56618 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbeI0Pk7 (ORCPT
+        with ESMTP id S1727154AbeI0PlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:40:59 -0400
+        Thu, 27 Sep 2018 11:41:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEF801113;
-        Thu, 27 Sep 2018 09:23:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34EE81113;
+        Thu, 27 Sep 2018 09:23:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, John Crispin <john@phrozen.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 62/64] iw_cxgb4: only allow 1 flush on user qps
-Date:   Thu, 27 Sep 2018 11:04:19 +0200
-Message-Id: <20180927090258.353490884@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.14 63/64] tick/nohz: Prevent bogus softirq pending warning
+Date:   Thu, 27 Sep 2018 11:04:20 +0200
+Message-Id: <20180927090258.473509321@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -51,57 +56,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve Wise <swise@opengridcomputing.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 308aa2b8f7b7db3332a7d41099fd37851fb793b2 upstream.
+Commit 0a0e0829f990 ("nohz: Fix missing tick reprogram when interrupting an
+inline softirq") got backported to stable trees and now causes the NOHZ
+softirq pending warning to trigger. It's not an upstream issue as the NOHZ
+update logic has been changed there.
 
-Once the qp has been flushed, it cannot be flushed again.  The user qp
-flush logic wasn't enforcing it however.  The bug can cause
-touch-after-free crashes like:
+The problem is when a softirq disabled section gets interrupted and on
+return from interrupt the tick/nohz state is evaluated, which then can
+observe pending soft interrupts. These soft interrupts are legitimately
+pending because they cannot be processed as long as soft interrupts are
+disabled and the interrupted code will correctly process them when soft
+interrupts are reenabled.
 
-Unable to handle kernel paging request for data at address 0x000001ec
-Faulting instruction address: 0xc008000016069100
-Oops: Kernel access of bad area, sig: 11 [#1]
-...
-NIP [c008000016069100] flush_qp+0x80/0x480 [iw_cxgb4]
-LR [c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-Call Trace:
-[c00800001606cd6c] c4iw_modify_qp+0x71c/0x11d0 [iw_cxgb4]
-[c00800001606e868] c4iw_ib_modify_qp+0x118/0x200 [iw_cxgb4]
-[c0080000119eae80] ib_security_modify_qp+0xd0/0x3d0 [ib_core]
-[c0080000119c4e24] ib_modify_qp+0xc4/0x2c0 [ib_core]
-[c008000011df0284] iwcm_modify_qp_err+0x44/0x70 [iw_cm]
-[c008000011df0fec] destroy_cm_id+0xcc/0x370 [iw_cm]
-[c008000011ed4358] rdma_destroy_id+0x3c8/0x520 [rdma_cm]
-[c0080000134b0540] ucma_close+0x90/0x1b0 [rdma_ucm]
-[c000000000444da4] __fput+0xe4/0x2f0
+Add a check for softirqs disabled to the pending check to prevent the
+warning.
 
-So fix flush_qp() to only flush the wq once.
-
+Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Reported-by: John Crispin <john@phrozen.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Tested-by: John Crispin <john@phrozen.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
+Fixes: 2d898915ccf4838c ("nohz: Fix missing tick reprogram when interrupting an inline softirq")
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/infiniband/hw/cxgb4/qp.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/time/tick-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1395,6 +1395,12 @@ static void flush_qp(struct c4iw_qp *qhp
- 	schp = to_c4iw_cq(qhp->ibqp.send_cq);
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -908,7 +908,7 @@ static bool can_stop_idle_tick(int cpu,
+ 	if (unlikely(local_softirq_pending() && cpu_online(cpu))) {
+ 		static int ratelimit;
  
- 	if (qhp->ibqp.uobject) {
-+
-+		/* for user qps, qhp->wq.flushed is protected by qhp->mutex */
-+		if (qhp->wq.flushed)
-+			return;
-+
-+		qhp->wq.flushed = 1;
- 		t4_set_wq_in_error(&qhp->wq);
- 		t4_set_cq_in_error(&rchp->cq);
- 		spin_lock_irqsave(&rchp->comp_handler_lock, flag);
+-		if (ratelimit < 10 &&
++		if (ratelimit < 10 && !in_softirq() &&
+ 		    (local_softirq_pending() & SOFTIRQ_STOP_IDLE_MASK)) {
+ 			pr_warn("NOHZ: local_softirq_pending %02x\n",
+ 				(unsigned int) local_softirq_pending());
 
 
