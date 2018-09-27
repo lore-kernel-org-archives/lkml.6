@@ -2,61 +2,62 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FACBC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A9BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE74216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E980A216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:27:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r6XhF5MV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE74216C4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NyPbJ3Tw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E980A216C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeI1Brk (ORCPT
+        id S1728567AbeI1Bro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:47:40 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42078 "EHLO
+        Thu, 27 Sep 2018 21:47:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46900 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727587AbeI1Brk (ORCPT
+        with ESMTP id S1728401AbeI1Brn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:47:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i4-v6so2052746pgq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:27:52 -0700 (PDT)
+        Thu, 27 Sep 2018 21:47:43 -0400
+Received: by mail-pg1-f194.google.com with SMTP id b129-v6so2636046pga.13
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=3GCyOHWIpD7IB326Tq5Whn5QBKsp9/pOp1wUxjWkEUs=;
-        b=r6XhF5MVSU0FAwczVIaqCFdapvujaZdJw7BrJu9edAIefeadvnyVj6srdZDksMQgvF
-         ft7KypMi3DLc1qZmGdluou12U6XcJEQ4gfymRmsbv+47kiXh96J9hwu4RcvCR+p4TLCj
-         hJJBC0Z3i12DIZCxmCkWWqgXplYMIv2dboy4tV3G7toXcP5GRdlfrDgzsWp6oHuGI88E
-         GKMlXgDdcWXhFE73rcBXpMPwVqGLkosiNleiUStN5D5ABjUZTi9ZiDbAoadBbvjFa4Pz
-         GxSj8OuQOaNiUrspsLPMnR93O95/SuwVV+H0ncLDyxjNc6XErlWrxn0pW1KGupFWpBq5
-         /UqA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=idS9CWU81VVg7Wphz/MpSwKUtfQ6rlPXr/UIS8hVWNw=;
+        b=NyPbJ3Twf18IBYzjZI8Kd/LHWSRv1QcMlXt8kDJJWhUdcXpp8XK0WI4oAunAadQv06
+         Hd4Wt8qOZJLcg/2Y0R6gG/q6l/en3v087KKMB10uY/DBcYSrSM0kXgW6jy74Y25Zil6c
+         0UOpmaLsVnaot/UZu2TsafnFCWX5WSCa27HAYrlPuLdS2mI5hek/R0MuqbylvhfipSTE
+         40kZm4mhscsJdG4GpgVzzoJtcetCHhmdUiqMmHnIofFWYrMBQ6gislhThNFTja3PXt99
+         FngPdTOQZSqgwaFSxaDtwROT2KOsZLUah+9QtAQ4XRupi+aojhZsI5Kn/oWHuydnffui
+         hmpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=3GCyOHWIpD7IB326Tq5Whn5QBKsp9/pOp1wUxjWkEUs=;
-        b=gJbxOKKeIDOP5itBtkbOBnDkJuh6IaOLzoNh+FcX4tba2ZRPgXWSZVzi3P6emr7UMA
-         mOdyavobEr8AUgP4d+PUkdecF2O/LIGMB4+XXrvqn88JZZZmZPzIF91ccvkGNx0UOpVf
-         pQeFP4Qwhp8gGZ/LYB0k8d9cuR71gW7i5lAGlLteR7+ElavphPLeShkflcRmXKg5KkJU
-         yhT2Vi0i7yK6voXofzqPdSNVmpPcY2y8uetR/FdGizSdSw2/iXsxqMY7gXeI6UxmqEIz
-         9T8NmXNXlZ1irFkIJSYFxT4/o+yIQ0A2SEdk2LMC0kWSze2s2OYD1JNyWiOPF1tE5MgJ
-         hS6A==
-X-Gm-Message-State: ABuFfoi2TsMKTlbKWTkb8cYpmzKKNMR1BCfIebjkPOYEru6a3l17O1UT
-        5ew5fVePdue51fJZs73WYv4=
-X-Google-Smtp-Source: ACcGV610+dRgUHWYiSEcMHYUT2FfAldTgNTp2pGveA/msUeHg34DweRmkqelSCyiBUe0Gka+pHVBSg==
-X-Received: by 2002:a63:91:: with SMTP id 139-v6mr2430628pga.389.1538076471845;
-        Thu, 27 Sep 2018 12:27:51 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=idS9CWU81VVg7Wphz/MpSwKUtfQ6rlPXr/UIS8hVWNw=;
+        b=EwNxuAT8JX2LlPIMKTeDOhJO15uL7ZoT8JzCdeSNTJSoMxUi68ZKzyyHS0JyX1oGia
+         e6PxGDso043HLLNjAs2fXToq7SjL32RyEIvvpyf9pPu2R1fMpW/cm0neQx2aSe/p1+gv
+         PLtRhBs8yzi9NCYx6N8rpmlW4XaJULiWkatLWoHxXRJSwPyO+9Uy7aNvH8oV220Qd7vR
+         ygkQrsKMl2nh9+NrvS/GJTEEWiwcqNcNaYwm3h1F8KaxYtvQpco+pGiXcd+ZORR+sZKp
+         FRV5R+gcC0Wj3Zl2jkEloJch11n+rgwc7+UUgH0I3yV5y3mrRuUQ9wTY1W6iAtGpj3lB
+         YjTQ==
+X-Gm-Message-State: ABuFfoj3zeY3uWm5Ax11z0VGq8cuOz5TTVhhONdXpf5x7gV+9xpGsE+m
+        nv4EPFmTenfnuoTDmEaL4LU=
+X-Google-Smtp-Source: ACcGV60y5iSZ28H1BZ9safitCo7nBVyNkd4r06V9q2WyA2BZvSRMQuec+V432jX7UdJWuR7X4Poneg==
+X-Received: by 2002:a63:a0d:: with SMTP id 13-v6mr11955274pgk.318.1538076473735;
+        Thu, 27 Sep 2018 12:27:53 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm8531502pfc.17.2018.09.27.12.27.50
+        by smtp.gmail.com with ESMTPSA id q2-v6sm8531502pfc.17.2018.09.27.12.27.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 12:27:50 -0700 (PDT)
+        Thu, 27 Sep 2018 12:27:52 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -69,39 +70,68 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         ARCHITECTURE), Rob Herring <robh@kernel.org>,
         Doug Berger <opendmb@gmail.com>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 0/3] ARM/PSCI: Fix THUMB2_KERNEL entry points
-Date:   Thu, 27 Sep 2018 12:27:08 -0700
-Message-Id: <20180927192711.26455-1-f.fainelli@gmail.com>
+Subject: [PATCH 1/3] firmware/psci: Fix cpu_resume entry points with THUMB2_KERNEL
+Date:   Thu, 27 Sep 2018 12:27:09 -0700
+Message-Id: <20180927192711.26455-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180927192711.26455-1-f.fainelli@gmail.com>
+References: <20180927192711.26455-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+When THUMB2_KERNEL is enabled, we would be failing to resume from an
+idle or system suspend call where the reentry point is set to
+cpu_resume() because that function is in Thumb2. Utilize
+cpu_resume_arm() for ARM 32-bit kernels which takes care of the mode
+switching for us.
 
-While playing with THUMB2_KERNEL on ARCH_BRCMSTB, several issues came up
-which are addressed by these 3 patches.
+Fixes: 8b6f2499ac45 ("ARM: 8511/1: ARM64: kernel: PSCI: move PSCI idle management code to drivers/firmware")
+Fixes: faf7ec4a92c0 ("drivers: firmware: psci: add system suspend support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/firmware/psci.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-The THUMB() assembler macro is a no-op unless CONFIG_THUMB2_KERNEL so
-using it unconditionally for CONFIG_ARM should not cause a problem
-AFAICT.
-
-Those patches can all be independently picked up by their respective
-maintainers and don't depent on one another.
-
-Thank you!
-
-Florian Fainelli (3):
-  firmware/psci: Fix cpu_resume entry points with THUMB2_KERNEL
-  ARM: psci: Fix secondary core boot with THUMB2_KERNEL
-  soc: bcm: brcmstb: Fix re-entry point with a THUMB2_KERNEL
-
- arch/arm/kernel/psci_smp.c          |  4 ++--
- drivers/firmware/psci.c             | 18 +++++++++++++++---
- drivers/soc/bcm/brcmstb/pm/pm-arm.c |  2 +-
- 3 files changed, 18 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+index c80ec1d03274..f8b154384483 100644
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -400,9 +400,14 @@ int psci_cpu_init_idle(unsigned int cpu)
+ static int psci_suspend_finisher(unsigned long index)
+ {
+ 	u32 *state = __this_cpu_read(psci_power_state);
++	unsigned long reentry;
+ 
+-	return psci_ops.cpu_suspend(state[index - 1],
+-				    __pa_symbol(cpu_resume));
++#ifdef CONFIG_ARM
++	reentry = __pa_symbol(cpu_resume_arm);
++#else
++	reentry = __pa_symbol(cpu_resume);
++#endif
++	return psci_ops.cpu_suspend(state[index - 1], reentry);
+ }
+ 
+ int psci_cpu_suspend_enter(unsigned long index)
+@@ -437,8 +442,15 @@ CPUIDLE_METHOD_OF_DECLARE(psci, "psci", &psci_cpuidle_ops);
+ 
+ static int psci_system_suspend(unsigned long unused)
+ {
++	unsigned long reentry;
++
++#ifdef CONFIG_ARM
++	reentry = __pa_symbol(cpu_resume_arm);
++#else
++	reentry = __pa_symbol(cpu_resume);
++#endif
+ 	return invoke_psci_fn(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND),
+-			      __pa_symbol(cpu_resume), 0, 0);
++			      reentry, 0, 0);
+ }
+ 
+ static int psci_system_suspend_enter(suspend_state_t state)
 -- 
 2.17.1
 
