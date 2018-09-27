@@ -5,111 +5,110 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F67C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57782C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AFA421582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:06:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AFA421582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E0C3D21571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:09:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C3D21571
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeI0QXc convert rfc822-to-8bit (ORCPT
+        id S1727265AbeI0Q1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 12:23:32 -0400
-Received: from mga01.intel.com ([192.55.52.88]:50287 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbeI0QXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 12:23:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 03:06:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
-   d="scan'208";a="92363092"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Sep 2018 03:05:50 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 27 Sep 2018 03:05:50 -0700
-Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.140]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.37]) with mapi id 14.03.0319.002;
- Thu, 27 Sep 2018 18:05:49 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     Andi Kleen <ak@linux.intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Liang, Kan" <kan.liang@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Xu, Like" <like.xu@intel.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>
-Subject: RE: [PATCH v3 4/5] KVM/x86/vPMU: Add APIs to support host
- save/restore the guest lbr stack
-Thread-Topic: [PATCH v3 4/5] KVM/x86/vPMU: Add APIs to support host
- save/restore the guest lbr stack
-Thread-Index: AQHUUM3pU3aoeAw5SE6eJtMPeYOl0qT4xgeAgAsk5FA=
-Date:   Thu, 27 Sep 2018 10:05:48 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F7397FCAD0@shsmsx102.ccr.corp.intel.com>
-References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com>
- <1537437959-8751-5-git-send-email-wei.w.wang@intel.com>
- <20180920153035.GB10360@tassilo.jf.intel.com>
-In-Reply-To: <20180920153035.GB10360@tassilo.jf.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTVkNmU1YWQtMjEzMC00Yzk5LTk5ZjYtZTBhMGUxZWU4ZGI3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMTBZZmNTZVhZNFc3MWVcL0RJc2d4bVJGUTBLYkRLTUZDSzlWdFNpclZ5N012djJxbEVuRXdhSUJlVHpCZlFtSHIifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 27 Sep 2018 12:27:18 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:59932 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726929AbeI0Q1R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 12:27:17 -0400
+Received: from [192.168.1.10] ([80.101.105.217])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id 5TEtgvMIvgyCD5TEugUsAc; Thu, 27 Sep 2018 12:09:45 +0200
+Subject: Re: [PATCH] media: intel-ipu3: cio2: register the mdev on v4l2 async
+ notifier complete
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Qiu, Tian Shu" <tian.shu.qiu@intel.com>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Bing Bu Cao <bingbu.cao@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Zheng, Jian Xu" <jian.xu.zheng@intel.com>,
+        "Zhi, Yong" <yong.zhi@intel.com>,
+        "Cao, Bingbu" <bingbu.cao@intel.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+References: <20180831152045.9957-1-javierm@redhat.com>
+ <cd307d41-ed19-5ab0-cbdb-a743cdb76e09@linux.intel.com>
+ <c1e54228-a21a-b4a2-1083-c75b2dda797c@redhat.com>
+ <b15b236e-e0a7-8b2f-1e1f-196c9dc04f4d@linux.intel.com>
+ <44eb94a8-3712-155b-b3ab-35538f5b6b38@redhat.com>
+ <F4B393EC1A37C8418714AECDAAEF72A93C9A39FC@shsmsx102.ccr.corp.intel.com>
+ <20180904064605.6prcawieb4ooxtyl@paasikivi.fi.intel.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5c6944ec-ee1f-8be6-3eff-2c65fd888222@xs4all.nl>
+Date:   Thu, 27 Sep 2018 12:09:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180904064605.6prcawieb4ooxtyl@paasikivi.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfMYizZfNC/3+JnBXuRWzPpX5ORTqAigwhsuTMkQHjuW0qlShaW/0RfAI6i5LIvturcqJVfD7woUdOXUZ0rHfgAYD/SBXPLmA4SFqo5njsPJCyf4MSJuI
+ Km65uu8nqph9Vf/TR84GTcMq4bbl5TmSZpjdcNsD3HWWM7zSF29JpsUHizYwC97G6+uaCiu22Ov6UZrh8FEWe0zpBONTRCxnLkn7bWjQEfUEMxInznLrwwiA
+ vitK2XpcDPOpnay2GGuiASKE2H1UXu5lc7UNB3+dfpeFMyqzuFD1AqN0f9TymdSea9JZW4nTxOWuMpchZo8eXXcbGpMKHnkZiMCUgeMqOu/hiYDpeJZ99pPJ
+ hh43JhYSO+uQUDbjW9hVuynCCRjzQmCOKYhdsJEuAfExUpKbAEtrLtrlQklViijzTAC9cYIurU4jB4pU2hUhi6tbLm6WvHiIAL4owBid7/yXoXsb30kTwjF8
+ ZaX63w6bH445rOmJBpthxOWSoWe4X5XHDhb2Ww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, September 20, 2018 11:31 PM, Andi Kleen wrote:
-> > +int intel_pmu_enable_save_guest_lbr(struct kvm_vcpu *vcpu) {
-> > +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> > +	struct perf_event *event;
-> > +	struct perf_event_attr attr = {
-> > +		.type = PERF_TYPE_RAW,
-> > +		.size = sizeof(attr),
-> > +		.pinned = true,
-> > +		.exclude_host = true,
-> > +		.sample_type = PERF_SAMPLE_BRANCH_STACK,
-> > +		.branch_sample_type = PERF_SAMPLE_BRANCH_CALL_STACK
-> |
-> > +				      PERF_SAMPLE_BRANCH_USER |
-> > +				      PERF_SAMPLE_BRANCH_KERNEL,
-
-
-Sorry for my late response (I was digging into some of the details).
-
-
-> I think that will allocate an extra perfmon counter, right?
+On 09/04/2018 08:46 AM, Sakari Ailus wrote:
+> Hi Javier, Tian Shu,
 > 
-> So if the guest wants to use all perfmon counters we would start to multiplex,
-> which would be bad
-
-Right. The host side counter allocation is not necessary.
-
-
-> Would need to fix perf core to not allocate a perfmon counter in this case, if
-> no period and no event count is requested.
+> On Tue, Sep 04, 2018 at 05:01:56AM +0000, Qiu, Tian Shu wrote:
+>> Hi,
+>>
+>> Raise my point.
+>> The case here is that we have multiple sensors connected to CIO2. The sensors work independently. So failure on one sensor should not block the function of the other.
+>> That is, we should not rely on that all sensors are ready before allowing user to operate on the ready cameras.
+>> Sometimes due to hardware issues or incompleteness, we did met the case that one sensor is not probing properly. And in this case, the current implementation blocks us using the working one.
+>> What I can think now to solve this are:
+>> 1. Register multiple media devices. One for each sensor path. This will increase media device count.
+>> 2. Use .bound callback to create the link and register the subdev node for each sensor. Leave .complete empty.
+>>      Not sure if this breaks the rule of media framework. And also have not found an API to register one single subdev node.
+> 
+> I'd prefer to keep the driver as-is.
+> 
+> Even if the media device is only created once all the sub-devices are
+> around, the devices are still created one by one so there's no way to
+> prevent the user space seeing a partially registered media device complex.
+> 
+> In general that doesn't happen as the sensors are typically registered
+> early during system boot.
+> 
+> Javier is right in asking a way for the user to know whether everything is
+> fully initialised. That should be added but I don't think it is in any way
+> specific to the cio2 driver.
 > 
 
-If no period (i.e. .sample_period = 0), the current code still uses one counter with the period set to the max period.
-If we change that to do no counter allocation, would that break any of the existing usages (I didn't find the reason why the existing code not avoid that allocation for a non-sampling event)?
+Today we have no userspace mechanism to deal with partially initialized topologies.
+Instead if parts fails to come up we shouldn't register any media device and
+instead (once we discover that something is broken) tear everything down.
 
-Best,
-Wei
+In fact, video/subdev/media devices shouldn't be registered until everything is
+complete.
+
+I know we want to allow for partial bring up as well, and I fully agree with that,
+but in that case someone needs to write an RFC with a proposal how userspace should
+handle this.
+
+We've discussed this in the past, but I have not seen such an RFC.
+
+So until we add support for partial bringup I think this patch does the right
+thing since otherwise this is out-of-spec.
+
+Regards,
+
+	Hans
