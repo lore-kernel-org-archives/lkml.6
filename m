@@ -2,94 +2,122 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BDFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20954C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7950621710
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:54:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TVia+H8x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7950621710
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id DEE9A21710
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE9A21710
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbeI1BOS (ORCPT
+        id S1728725AbeI1BOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:14:18 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37798 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728590AbeI1BOS (ORCPT
+        Thu, 27 Sep 2018 21:14:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33809 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728598AbeI1BOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:14:18 -0400
-Received: by mail-io1-f68.google.com with SMTP id v14-v6so2668905iob.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:54:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AejKBxcld1fBFFg7tYQzQKzorIZyLeJ0kNLqUFXBqnc=;
-        b=TVia+H8xHy3+1hhdUOL54ewhkFd0kE2VH+1ocOg1zYlr9E/hCqI/AP1VFrJw6E6i2f
-         58hfYREFA6ZVsjP6rB7R5I6DROs6QOnj9RYHsU/PsGo8dxFk26HFgLN/kwTRCIIy7654
-         5icaYVj4N8d6sy/7dHHIRt5lPnhCgnLShYK4D9ExNeVgDNrSM9bOMyssUxDAF0yY1tJ7
-         sLjWwxbwzyrwb5xWi4y7zVqV132QrWBiqVFIQzNHhxBN/kSjh8s3NegJ8++ri6jg/1ON
-         D92EgFUqFCiYHM9FdH2Q2pmOKGgHvdnhuZaOq46s9NdiZFe3XKRWPoFLcmwNrhyJYG0k
-         Kl9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AejKBxcld1fBFFg7tYQzQKzorIZyLeJ0kNLqUFXBqnc=;
-        b=Zsbz7QUPT8hHX35Bi25MiSMnFRxQxABmYyOp4KiVJG4lf1ddkyoptJ5JaZwlteSXYv
-         127v/bVfboz4JftBlmef1XqYxYt9pI53mFB4OK16WvfATbQ96l6fGm/GWthdUfoGsZyN
-         jBiEsLUMrXwy8aNa8o8dJpFdBOuWYn5vVfM2p6sBJmnerCiijU0//WS/wHDXp5msrg0g
-         0qlhYJkNqnrmG35KDNx1rc5sjZJL2O1BNFrn1I0yIzbY3je/VoJFSi2VvLBk6cpgpv67
-         f8qIThN2IJHU8ep2NAz8Rm4TX0R0FY9aDwK4k9Y5RwWQMRZGW4eXKgaOAz9kYoxePyAT
-         CsAQ==
-X-Gm-Message-State: ABuFfoiGBmBEwq7h0WVRURbpa0NL9/16tSFqc4yFxrBCVKAgfQwbRbdG
-        AvWkmnWBhlDZ5pQU1bFLNhXJTA==
-X-Google-Smtp-Source: ACcGV61vzdvVruHnfWmZIv1peCgMxnfA+ZcK9jwxJLeRTHILmcbwUp2w+La0iqjveIcaGyp1kg1NeQ==
-X-Received: by 2002:a6b:a15:: with SMTP id z21-v6mr2137241ioi.57.1538074478332;
-        Thu, 27 Sep 2018 11:54:38 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id v126-v6sm1332245ith.12.2018.09.27.11.54.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:54:37 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g5bQq-0005d3-29; Thu, 27 Sep 2018 12:54:36 -0600
-Date:   Thu, 27 Sep 2018 12:54:36 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/hns: fix spelling mistake "reseved" -> "reserved"
-Message-ID: <20180927185436.GA19130@ziepe.ca>
-References: <20180927132430.25172-1-colin.king@canonical.com>
+        Thu, 27 Sep 2018 21:14:38 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIsD71130398
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 27 Sep 2018 11:54:13 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIsCOI130395;
+        Thu, 27 Sep 2018 11:54:12 -0700
+Date:   Thu, 27 Sep 2018 11:54:12 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-5f464b33b17219a233af1267c621632225bc7acc@git.kernel.org>
+Cc:     mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, mark.gross@intel.com,
+        dave.hansen@intel.com, bin.yang@intel.com
+Reply-To: bin.yang@intel.com, dave.hansen@intel.com, mark.gross@intel.com,
+          tglx@linutronix.de, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <20180919085948.036195503@infradead.org>
+References: <20180919085948.036195503@infradead.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/cpa: Move CLFLUSH test into cpa_flush_range()
+Git-Commit-ID: 5f464b33b17219a233af1267c621632225bc7acc
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180927132430.25172-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 02:24:30PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_hw_v1.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Commit-ID:  5f464b33b17219a233af1267c621632225bc7acc
+Gitweb:     https://git.kernel.org/tip/5f464b33b17219a233af1267c621632225bc7acc
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Wed, 19 Sep 2018 10:50:21 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 27 Sep 2018 20:39:41 +0200
 
-Applied to for-next, thanks
+x86/mm/cpa: Move CLFLUSH test into cpa_flush_range()
 
-Jason
+Rather than guarding all cpa_flush_range() uses with a CLFLUSH test,
+put it inside.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Bin Yang <bin.yang@intel.com>
+Cc: Mark Gross <mark.gross@intel.com>
+Link: https://lkml.kernel.org/r/20180919085948.036195503@infradead.org
+
+---
+ arch/x86/mm/pageattr.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 02eb18403594..3cc4a2ae4dbb 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -293,6 +293,11 @@ static void cpa_flush_range(unsigned long start, int numpages, int cache)
+ 	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
+ 	WARN_ON(PAGE_ALIGN(start) != start);
+ 
++	if (!static_cpu_has(X86_FEATURE_CLFLUSH)) {
++		cpa_flush_all(cache);
++		return;
++	}
++
+ 	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
+ 
+ 	if (!cache)
+@@ -2078,10 +2083,7 @@ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+ 	/*
+ 	 * Before changing the encryption attribute, we need to flush caches.
+ 	 */
+-	if (static_cpu_has(X86_FEATURE_CLFLUSH))
+-		cpa_flush_range(start, numpages, 1);
+-	else
+-		cpa_flush_all(1);
++	cpa_flush_range(start, numpages, 1);
+ 
+ 	ret = __change_page_attr_set_clr(&cpa, 1);
+ 
+@@ -2092,10 +2094,7 @@ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+ 	 * in case TLB flushing gets optimized in the cpa_flush_range()
+ 	 * path use the same logic as above.
+ 	 */
+-	if (static_cpu_has(X86_FEATURE_CLFLUSH))
+-		cpa_flush_range(start, numpages, 0);
+-	else
+-		cpa_flush_all(0);
++	cpa_flush_range(start, numpages, 0);
+ 
+ 	return ret;
+ }
