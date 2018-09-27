@@ -2,181 +2,112 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865A3C004D5
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618C0C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465182170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 197B42170E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="o0sy6bis";
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="m6n4vYDm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465182170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex.ru
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KgPFqKVd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197B42170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeI1CJ2 (ORCPT
+        id S1728548AbeI1CJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:09:28 -0400
-Received: from forward105p.mail.yandex.net ([77.88.28.108]:39069 "EHLO
-        forward105p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727530AbeI1CJ1 (ORCPT
+        Thu, 27 Sep 2018 22:09:32 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37929 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbeI1CJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:09:27 -0400
-X-Greylist: delayed 466 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Sep 2018 22:09:24 EDT
-Received: from mxback15j.mail.yandex.net (mxback15j.mail.yandex.net [IPv6:2a02:6b8:0:1619::91])
-        by forward105p.mail.yandex.net (Yandex) with ESMTP id 041F440876E1;
-        Thu, 27 Sep 2018 22:41:46 +0300 (MSK)
-Received: from smtp1p.mail.yandex.net (smtp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:6])
-        by mxback15j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id F9YVjElSvM-fjfW8nYK;
-        Thu, 27 Sep 2018 22:41:45 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1538077306;
-        bh=p9KYwSN7c3drpZGnNBkY2ptdEpqFYs/sJIPVtXknpRs=;
-        h=From:To:Cc:Subject:Date:Message-Id;
-        b=o0sy6bisKBO2LP9/6tlBUG1Y4aKo9YBZp0NwnSMtUw/f0tlNWJMYOSwO8Iv/5eQwm
-         hnN4bHZZ92RY14fU9g3KXpBGacN5FBwqp4NwuBsMpkRINJcezxfUdm0iU7F1I/yK/G
-         4xLlhkadu+aMV/5Eyba0tHbqjHGepq15CFWfuj20=
-Received: by smtp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id WtsMNePOsp-fiK0PDD6;
-        Thu, 27 Sep 2018 22:41:44 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1538077304;
-        bh=p9KYwSN7c3drpZGnNBkY2ptdEpqFYs/sJIPVtXknpRs=;
-        h=From:To:Cc:Subject:Date:Message-Id;
-        b=m6n4vYDm/hnHUHfyTTOijEJ2/Br36MIUV4MVVARMtd7Rb9wMUrrtagyy3nKRh1aSx
-         TveArBwxP1wQ/bdn9UbYdrvNfEFU37oDzlOL2WWm835pIA+eTwzqkXWHHOM8xr8gw1
-         pC62YDOsQztfihGoG8Sa5QkXkvMSC1qQa47t1RCc=
-Authentication-Results: smtp1p.mail.yandex.net; dkim=pass header.i=@yandex.ru
-From:   Andrey Abramov <st5pub@yandex.ru>
-To:     tytso@mit.edu
-Cc:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrey Abramov <st5pub@yandex.ru>
-Subject: [PATCH] Fixed some code style issues in the fs/ext4/...
-Date:   Thu, 27 Sep 2018 22:41:43 +0300
-Message-Id: <20180927194143.32665-1-st5pub@yandex.ru>
-X-Mailer: git-send-email 2.19.0
+        Thu, 27 Sep 2018 22:09:32 -0400
+Received: by mail-ot1-f65.google.com with SMTP id h15-v6so3782389otj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:49:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xvzR1FHaIiGrJzDjWZDHSHctMY6/8YLrE9EiC/S+3wg=;
+        b=KgPFqKVdYkxIJR1UiEEKS2KwtqQHOVsxqHCzh9gBiovdRRQTBUO6sk4WNby1smweAu
+         CqEyQ9m57P+Kv7CbPFXIFhAsmvjAFsQSrcXFYfJNbqqAoRGJKmly1h9MQ3ATlxdkAF0M
+         e6jDcss0voc1NlXiwd5RS0xLGpx953hR8uyMzAiYJHmlF5sVMWZxKh0vw6/wtu39yV21
+         zk/FhSvIsxEymJaheVQHsXyd7ouysivY0sP+wGWASCI8eFs1pdi7lXCuxOYQrAYYyyt+
+         dOQ9N9kQI108LLJUsF83/fM9YLw24ftcagNNFaCoH/TbbifsBZvYh0ckYeYhs3L78UQ5
+         8OqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xvzR1FHaIiGrJzDjWZDHSHctMY6/8YLrE9EiC/S+3wg=;
+        b=ASqgTDtNT2VinLC0sxulLhplK0E5NAXmubbXaut0v5lt9X/8mNXTT7+gCBgg3M/zWQ
+         mWEMGBg5rw+Ecm6cXOxxva3y3TARH6btSkC6w32/MwjIweb5ceoEUtOZ1wbNUoub6cDY
+         LMEyS9u2mYafYuEbVxQ8ruUaxfEI4CPnz1bzdT2GsFKOQpKj0YOxksV/75gAlCylIeI7
+         2/HpB5s0QJ1Y8xMLLyLpnd2QnY5vBX/SPY739aMaREIDOjeuAux9gI/hsLpPCRk9RHWF
+         gzelmIfmNLlmXXEahfFpzggqQwFigXCvlpB2gG5s5J5IhA/muxc4gpa8v0oqctXwKTmA
+         22tw==
+X-Gm-Message-State: ABuFfogZ4MU2lkXZ+JIuD6nCbQAVGjlzgUu63H1mz0YqmSPdhVvZjoqI
+        7M9PO2Zons+lprB8KDb6QhhrmtkI+OTkynIU036UqSmy4Hc=
+X-Google-Smtp-Source: ACcGV62ZtewSHy76we1eICNLd4/tqsCsFzNEEFO5Yd1NVN+PKesjFuTZ91A/gIEOHv2fnFhc5f0TfAk1ph9SBd0xZHI=
+X-Received: by 2002:a9d:4e94:: with SMTP id v20-v6mr8039959otk.255.1538077777344;
+ Thu, 27 Sep 2018 12:49:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180824224117.3356-1-casey.schaufler@intel.com> <20180927191720.9480-1-casey.schaufler@intel.com>
+In-Reply-To: <20180927191720.9480-1-casey.schaufler@intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 27 Sep 2018 21:49:10 +0200
+Message-ID: <CAG48ez1qZQqffLfB_JV=UB12QjFWmfHm2=PH2eiF+Z_yn9RhpA@mail.gmail.com>
+Subject: Re: [PATCH 6/5] capability: Repair sidechannel test in ptrace
+To:     Casey Schaufler <casey.schaufler@intel.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
+        deneen.t.dock@intel.com, kristen@linux.intel.com,
+        Arjan van de Ven <arjan@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Andrey Abramov <st5pub@yandex.ru>
----
- fs/ext4/balloc.c         |  7 +++----
- fs/ext4/block_validity.c |  4 +++-
- fs/ext4/file.c           | 16 ++++++++++------
- 3 files changed, 16 insertions(+), 11 deletions(-)
+On Thu, Sep 27, 2018 at 9:17 PM Casey Schaufler
+<casey.schaufler@intel.com> wrote:
+>
+> From: Casey Schaufler <casey@schaufler-ca.com>
+>
+> The PTRACE_MODE_SCHED check erroniously returns 0 in
+> all cases. It should be returning -EPERM. This fixes
+> the logic to correct that error.
+>
+> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index e5d6ee61ff48..87dca171d7f6 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -239,7 +239,7 @@ unsigned ext4_free_clusters_after_init(struct super_block *sb,
- 				       ext4_group_t block_group,
- 				       struct ext4_group_desc *gdp)
- {
--	return num_clusters_in_group(sb, block_group) - 
-+	return num_clusters_in_group(sb, block_group) -
- 		ext4_num_overhead_clusters(sb, block_group, gdp);
- }
- 
-@@ -261,7 +261,7 @@ unsigned ext4_free_clusters_after_init(struct super_block *sb,
-  * @bh:			pointer to the buffer head to store the block
-  *			group descriptor
-  */
--struct ext4_group_desc * ext4_get_group_desc(struct super_block *sb,
-+struct ext4_group_desc *ext4_get_group_desc(struct super_block *sb,
- 					     ext4_group_t block_group,
- 					     struct buffer_head **bh)
- {
-@@ -823,8 +823,7 @@ unsigned long ext4_bg_num_gdb(struct super_block *sb, ext4_group_t group)
- 	if (!ext4_has_feature_meta_bg(sb) || metagroup < first_meta_bg)
- 		return ext4_bg_num_gdb_nometa(sb, group);
- 
--	return ext4_bg_num_gdb_meta(sb,group);
--
-+	return ext4_bg_num_gdb_meta(sb, group);
- }
- 
- /*
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 913061c0de1b..35e96951eb84 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -154,11 +154,12 @@ int ext4_setup_system_zone(struct super_block *sb)
- 	if (sbi->system_blks.rb_node)
- 		return 0;
- 
--	for (i=0; i < ngroups; i++) {
-+	for (i = 0; i < ngroups; i++) {
- 		if (ext4_bg_has_super(sb, i) &&
- 		    ((i < 5) || ((i % flex_size) == 0)))
- 			add_system_zone(sbi, ext4_group_first_block_no(sb, i),
- 					ext4_bg_num_gdb(sb, i) + 1);
-+
- 		gdp = ext4_get_group_desc(sb, i, NULL);
- 		ret = add_system_zone(sbi, ext4_block_bitmap(sb, gdp), 1);
- 		if (ret)
-@@ -174,6 +175,7 @@ int ext4_setup_system_zone(struct super_block *sb)
- 
- 	if (test_opt(sb, DEBUG))
- 		debug_print_tree(sbi);
-+
- 	return 0;
- }
- 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 69d65d49837b..3e5ded9b3dd4 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -64,7 +64,10 @@ static ssize_t ext4_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 
- static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
--	if (unlikely(ext4_forced_shutdown(EXT4_SB(file_inode(iocb->ki_filp)->i_sb))))
-+	if (unlikely(ext4_forced_shutdown(
-+		EXT4_SB(file_inode(iocb->ki_filp)->i_sb)
-+		)))
-+
- 		return -EIO;
- 
- 	if (!iov_iter_count(to))
-@@ -89,14 +92,15 @@ static int ext4_release_file(struct inode *inode, struct file *filp)
- 		ext4_clear_inode_state(inode, EXT4_STATE_DA_ALLOC_CLOSE);
- 	}
- 	/* if we are the last writer on the inode, drop the block reservation */
--	if ((filp->f_mode & FMODE_WRITE) &&
--			(atomic_read(&inode->i_writecount) == 1) &&
--		        !EXT4_I(inode)->i_reserved_data_blocks)
--	{
-+	if ((filp->f_mode & FMODE_WRITE)
-+		&& (atomic_read(&inode->i_writecount) == 1)
-+		&& !EXT4_I(inode)->i_reserved_data_blocks) {
-+
- 		down_write(&EXT4_I(inode)->i_data_sem);
- 		ext4_discard_preallocations(inode);
- 		up_write(&EXT4_I(inode)->i_data_sem);
- 	}
-+
- 	if (is_dx(inode) && filp->private_data)
- 		ext4_htree_free_dir_info(filp->private_data);
- 
-@@ -429,7 +433,7 @@ static int ext4_sample_last_mounted(struct super_block *sb,
- 	return err;
- }
- 
--static int ext4_file_open(struct inode * inode, struct file * filp)
-+static int ext4_file_open(struct inode *inode, struct file *filp)
- {
- 	int ret;
- 
--- 
-2.19.0
+Reviewed-by: Jann Horn <jannh@google.com>
 
+> ---
+>  security/commoncap.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index e77457110d05..70a7e3d19c16 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -152,9 +152,8 @@ int cap_ptrace_access_check(struct task_struct *child, unsigned int mode)
+>         if (cred->user_ns == child_cred->user_ns &&
+>             cap_issubset(child_cred->cap_permitted, *caller_caps))
+>                 goto out;
+> -       if (mode & PTRACE_MODE_SCHED)
+> -               goto out;
+> -       if (ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
+> +       if (!(mode & PTRACE_MODE_SCHED) &&
+> +           ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
+>                 goto out;
+>         ret = -EPERM;
+>  out:
+> --
+> 2.17.1
+>
