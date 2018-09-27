@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7D6C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96914C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A0421582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A0421582
+	by mail.kernel.org (Postfix) with ESMTP id 5B16421582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:14:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B16421582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728454AbeI0Pb5 (ORCPT
+        id S1728568AbeI0PcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:31:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55534 "EHLO
+        Thu, 27 Sep 2018 11:32:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55542 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbeI0Pb4 (ORCPT
+        with ESMTP id S1727108AbeI0PcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:31:56 -0400
+        Thu, 27 Sep 2018 11:32:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B12F51117;
-        Thu, 27 Sep 2018 09:14:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DDA131117;
+        Thu, 27 Sep 2018 09:14:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        stable@vger.kernel.org,
+        Torsten Hilbrich <torsten.hilbrich@secunet.com>,
         Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.18 79/88] ext4: recalucate superblock checksum after updating free blocks/inodes
-Date:   Thu, 27 Sep 2018 11:04:00 +0200
-Message-Id: <20180927090310.193618233@linuxfoundation.org>
+Subject: [PATCH 4.18 80/88] ext4: fix online resizes handling of a too-small final block group
+Date:   Thu, 27 Sep 2018 11:04:01 +0200
+Message-Id: <20180927090310.334721472@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090300.631426620@linuxfoundation.org>
 References: <20180927090300.631426620@linuxfoundation.org>
@@ -53,59 +54,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 4274f516d4bc50648a4d97e4f67ecbd7b65cde4a upstream.
+commit f0a459dec5495a3580f8d784555e6f8f3bf7f263 upstream.
 
-When mounting the superblock, ext4_fill_super() calculates the free
-blocks and free inodes and stores them in the superblock.  It's not
-strictly necessary, since we don't use them any more, but it's nice to
-keep them roughly aligned to reality.
+Avoid growing the file system to an extent so that the last block
+group is too small to hold all of the metadata that must be stored in
+the block group.
 
-Since it's not critical for file system correctness, the code doesn't
-call ext4_commit_super().  The problem is that it's in
-ext4_commit_super() that we recalculate the superblock checksum.  So
-if we're not going to call ext4_commit_super(), we need to call
-ext4_superblock_csum_set() to make sure the superblock checksum is
-consistent.
+This problem can be triggered with the following reproducer:
 
-Most of the time, this doesn't matter, since we end up calling
-ext4_commit_super() very soon thereafter, and definitely by the time
-the file system is unmounted.  However, it doesn't work in this
-sequence:
+umount /mnt
+mke2fs -F -m0 -b 4096 -t ext4 -O resize_inode,^has_journal \
+	-E resize=1073741824 /tmp/foo.img 128M
+mount /tmp/foo.img /mnt
+truncate --size 1708M /tmp/foo.img
+resize2fs /dev/loop0 295400
+umount /mnt
+e2fsck -fy /tmp/foo.img
 
-mke2fs -Fq -t ext4 /dev/vdc 128M
-mount /dev/vdc /vdc
-cp xfstests/git-versions /vdc
-godown /vdc
-umount /vdc
-mount /dev/vdc
-tune2fs -l /dev/vdc
-
-With this commit, the "tune2fs -l" no longer fails.
-
-Reported-by: Chengguang Xu <cgxu519@gmx.com>
+Reported-by: Torsten Hilbrich <torsten.hilbrich@secunet.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/resize.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4357,11 +4357,13 @@ no_journal:
- 	block = ext4_count_free_clusters(sb);
- 	ext4_free_blocks_count_set(sbi->s_es, 
- 				   EXT4_C2B(sbi, block));
-+	ext4_superblock_csum_set(sb);
- 	err = percpu_counter_init(&sbi->s_freeclusters_counter, block,
- 				  GFP_KERNEL);
- 	if (!err) {
- 		unsigned long freei = ext4_count_free_inodes(sb);
- 		sbi->s_es->s_free_inodes_count = cpu_to_le32(freei);
-+		ext4_superblock_csum_set(sb);
- 		err = percpu_counter_init(&sbi->s_freeinodes_counter, freei,
- 					  GFP_KERNEL);
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1986,6 +1986,26 @@ retry:
+ 		}
  	}
+ 
++	/*
++	 * Make sure the last group has enough space so that it's
++	 * guaranteed to have enough space for all metadata blocks
++	 * that it might need to hold.  (We might not need to store
++	 * the inode table blocks in the last block group, but there
++	 * will be cases where this might be needed.)
++	 */
++	if ((ext4_group_first_block_no(sb, n_group) +
++	     ext4_group_overhead_blocks(sb, n_group) + 2 +
++	     sbi->s_itb_per_group + sbi->s_cluster_ratio) >= n_blocks_count) {
++		n_blocks_count = ext4_group_first_block_no(sb, n_group);
++		n_group--;
++		n_blocks_count_retry = 0;
++		if (resize_inode) {
++			iput(resize_inode);
++			resize_inode = NULL;
++		}
++		goto retry;
++	}
++
+ 	/* extend the last group */
+ 	if (n_group == o_group)
+ 		add = n_blocks_count - o_blocks_count;
 
 
