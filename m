@@ -2,146 +2,109 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C4EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3662C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A15521582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:22:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A15521582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 6509321582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6509321582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeI0QkO (ORCPT
+        id S1727301AbeI0Qkk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 12:40:14 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:58285 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727015AbeI0QkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 12:40:14 -0400
-Received: from [192.168.1.10] ([80.101.105.217])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id 5TRNgvTr6gyCD5TROgUw6o; Thu, 27 Sep 2018 12:22:38 +0200
-Subject: Re: [PATCH 0/2] media: intel-ipu3: allow the media graph to be used
- even if a subdev fails
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Tian Shu Qiu <tian.shu.qiu@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jian Xu Zheng <jian.xu.zheng@intel.com>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>, linux-media@vger.kernel.org
-References: <20180904113018.14428-1-javierm@redhat.com>
- <0e31ae40-276e-22be-c6aa-b62f8dbea79e@xs4all.nl>
- <20180927071330.1fa3cfdd@coco.lan>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <865b545d-3c3a-a2d3-4c1b-2a5b41a7ff37@xs4all.nl>
-Date:   Thu, 27 Sep 2018 12:22:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 12:40:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60642 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727230AbeI0Qkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 12:40:39 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80CF07A9;
+        Thu, 27 Sep 2018 03:23:05 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77FCD3F5B7;
+        Thu, 27 Sep 2018 03:23:02 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 11:23:00 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 06/16] sched/cpufreq: uclamp: add utilization clamping
+ for FAIR tasks
+Message-ID: <20180927102258.gxhte2k4li2uktm5@queper01-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-7-patrick.bellasi@arm.com>
+ <20180914093240.GB24082@hirez.programming.kicks-ass.net>
+ <20180914131919.GO1413@e110439-lin>
+ <20180914133654.GL24124@hirez.programming.kicks-ass.net>
+ <20180914135712.GQ1413@e110439-lin>
 MIME-Version: 1.0
-In-Reply-To: <20180927071330.1fa3cfdd@coco.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfG0IaJs7LNwzHx9hQWTvlWXAowmwx3nvr4ap0+9nFZUiFMTxJBHTHmpVeU/nqqBJtVO4sC5qq7tNAyRYyFNsXRMFBVGkJOdEJWWWrrnqW4rT8ZuVvZ+4
- BwLhTCXOsdm9NDgxMs+cO6chDfgCgf1PY/ACQ0/jws3fLfq8MXKfWCXwLOszfn/aCs4gaohPHlqxCicTPAgj5WXQvHgDy6OI+31u7+9YKsmY1woxDlXDgAfX
- By7Q7W1eIW86+lVKCNcwBOIx4h77tCTxOvKNZTqI5krW4R1lzp28NqKUXxHtiiHy4jnO1heh8bW08+9Sd9cXOWRrm0amXJhA6JV0+5YTQufhqk2D6mSyoTrd
- KNlMMoP+VwsxRhzOpsoZGbnUZsJqqXySx6yTJ66TxO4VQUV6llc2oHTieQPuEBtBAWxOxN2ltCFn+pGiKv5rtYSSxHOTSBZo28KtY4q+pwyaxOzIj5x2z8Ny
- XmjuoytgQ5XLmI7xzRtC1W/CpP+h6WKFJkY0qQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180914135712.GQ1413@e110439-lin>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/27/2018 12:13 PM, Mauro Carvalho Chehab wrote:
-> Em Thu, 27 Sep 2018 11:52:35 +0200
-> Hans Verkuil <hverkuil@xs4all.nl> escreveu:
-> 
->> Hi Javier,
->>
->> On 09/04/2018 01:30 PM, Javier Martinez Canillas wrote:
->>> Hello,
->>>
->>> This series allows the ipu3-cio2 driver to properly expose a subset of the
->>> media graph even if some drivers for the pending subdevices fail to probe.
->>>
->>> Currently the driver exposes a non-functional graph since the pad links are
->>> created and the subdev dev nodes are registered in the v4l2 async .complete
->>> callback. Instead, these operations should be done in the .bound callback.
->>>
->>> Patch #1 just adds a v4l2_device_register_subdev_node() function to allow
->>> registering a single device node for a subdev of a v4l2 device.
->>>
->>> Patch #2 moves the logic of the ipu3-cio2 .complete callback to the .bound
->>> callback. The .complete callback is just removed since is empy after that.  
->>
->> Sorry, I missed this series until you pointed to it on irc just now :-)
->>
->> I have discussed this topic before with Sakari and Laurent. My main problem
->> with this is how an application can discover that not everything is online?
->> And which parts are offline?
-> 
-> Via the media controller? It should be possible for an application to see
-> if a videonode is missing using it.
-> 
->> Perhaps a car with 10 cameras can function with 9, but not with 8. How would
->> userspace know?
-> 
-> I guess this is not the only case where someone submitted a patch for
-> a driver that would keep working if some device node registration fails.
-> 
-> It could be just déjà vu, but I have a vague sensation that I merged something 
-> similar to it in the past on another driver, but I can't remember any details.
-> 
->>
->> I completely agree that we need to support these advanced scenarios (including
->> what happens when a camera suddenly fails), but it is the userspace aspects
->> for which I would like to see an RFC first before you can do these things.
-> 
-> Dynamic runtime fails should likely rise some signal. Perhaps a sort of
-> media controller event?
+On Friday 14 Sep 2018 at 14:57:12 (+0100), Patrick Bellasi wrote:
+> On 14-Sep 15:36, Peter Zijlstra wrote:
+> > On Fri, Sep 14, 2018 at 02:19:19PM +0100, Patrick Bellasi wrote:
+> > > On 14-Sep 11:32, Peter Zijlstra wrote:
+> > 
+> > > > Should that not be:
+> > > > 
+> > > > 	util = clamp_util(rq, cpu_util_cfs(rq));
+> > > > 
+> > > > Because if !util might we not still want to enforce the min clamp?
+> > > 
+> > > If !util CFS tasks should have been gone since a long time
+> > > (proportional to their estimated utilization) and thus it probably
+> > > makes sense to not affect further energy efficiency for tasks of other
+> > > classes.
+> > 
+> > I don't remember what we do for util for new tasks; but weren't we
+> > talking about setting that to 0 recently? IIRC the problem was that if
+> > we start at 1 with util we'll always run new tasks on big cores, or
+> > something along those lines.
 
-See this old discussion: https://patchwork.kernel.org/patch/9849317/
+I guess you're referring to that discussion ?
 
-My point is that someone needs to think about this and make a proposal.
-There may well be a simple approach, but it needs to be specced first.
+https://lore.kernel.org/lkml/CAKfTPtDcoySXK0fBkDNy4wp1vsRxmiuAGT3CDZBh6Vnwyep2BA@mail.gmail.com/
 
-Regards,
+If yes, then the outcome was that we'll see later what we do with new
+tasks :-)
 
-	Hans
+Setting the util of new tasks to 0 surely can help power, but that can
+also harm performance pretty badly, I think. You'd be stuck at min freq
+for a while w/ sugov in case of a fork bomb for example.
 
-> 
->>
->> Regards,
->>
->> 	Hans
->>
->>>
->>> Best regards,
->>> Javier
->>>
->>>
->>> Javier Martinez Canillas (2):
->>>   [media] v4l: allow to register dev nodes for individual v4l2 subdevs
->>>   media: intel-ipu3: create pad links and register subdev nodes at bound
->>>     time
->>>
->>>  drivers/media/pci/intel/ipu3/ipu3-cio2.c | 66 ++++++-----------
->>>  drivers/media/v4l2-core/v4l2-device.c    | 90 ++++++++++++++----------
->>>  include/media/v4l2-device.h              | 10 +++
->>>  3 files changed, 85 insertions(+), 81 deletions(-)
->>>   
->>
-> 
-> 
-> 
-> Thanks,
-> Mauro
-> 
+> Mmm.. could have been in a recent discussion with Quentin, but I
+> think I've missed it. I know we have something similar on Android for
+> similar reasons.
 
+I don't think PELT is different in Android (we still set the initial
+util of new tasks as half of the spare cap of the CPU), but there are
+other tweaks that influence the first task placement, though. And WALT
+sets the util of new tasks to 0 IIRC (but I'm not sure it's relevant
+since its signal ramps up a lot faster than PELT's).
+
+Thanks,
+Quentin
