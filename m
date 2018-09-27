@@ -2,57 +2,59 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABA7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F9DC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3170921708
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:25:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24C2B216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:25:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jh7WAag+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3170921708
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hp04tXel"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C2B216FE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbeI0Une (ORCPT
+        id S1728087AbeI0Unk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:43:34 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37646 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbeI0Une (ORCPT
+        Thu, 27 Sep 2018 16:43:40 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41174 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727873AbeI0Unk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:43:34 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c10-v6so2097055pgq.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 07:25:03 -0700 (PDT)
+        Thu, 27 Sep 2018 16:43:40 -0400
+Received: by mail-pf1-f195.google.com with SMTP id m77-v6so2036370pfi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 07:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ni/eVDa2Hujp+DsYcqwh+SM8Be5zik7hZCcPMihIUEA=;
-        b=Jh7WAag+py26oqDj6xOuxjjGnozv3h/zkNrpCfO6khLoTQbXFJTKtS42ZtzcgxwjPm
-         aJNpjX9466yjozwk17+IdMSpcXoTInyFhHZaTDGZfjGMzOKEt3lHMei/onc0ODjRKL3G
-         iTxOO7LcBZM+L2mYI1/0AbdpZQmmOqu8p5TXk=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=p45a/e2du0K3VOKtsUCRlFfXZHC5nty49NugILWrhhY=;
+        b=Hp04tXelDoxjmpjnvGyk1hbmHmr+mthqWJ0pcvHjEV1MfQ4YeGeZ6ZmDA3qms6BAdJ
+         3uHH4DaIb80ZpI/cy4V+562r6yG7jpGW38yQaiKnVEpP+2dvFsYQoPSOEHcFVNSGBHMq
+         p3LVcf4DbI7D6VwtT1GuWIwNnDy2ajWis10OE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ni/eVDa2Hujp+DsYcqwh+SM8Be5zik7hZCcPMihIUEA=;
-        b=ZfNMgRGT90fQYQgMqy9ju+BGbcPpdrRl3yMyHEryGX/mcGJ+/9tOAe8/AfOABX7ufw
-         fpM7cI3rjpf3TwV2aRcxdFBLupsFS6KEIO43WOK6cUYBMYR7ST7WfxgEVx8ky79TQLH9
-         /UppIeIGOPAdBdT68jT2N3E7dzIcCv6bcGmTiEr4g8txWsA7v100iNntu9ytH0CJxth+
-         miU63RWEWU1YXnVYjyPGU31Q2oZRdQ85l1eH/kVHXP6Yv7Bc0iFTzhKNA3Qpl8E2uSHH
-         +4+IiZkeb3qAHV/ezPH/4o5Epk8xYutYgtpbND43NVTAkQ1RRcupgpYhJCzorphH2suI
-         clEg==
-X-Gm-Message-State: ABuFfoifn9XXldaKboyU6IvSyjbzeEsscVJNR00HcD34hBeTeKfYbx1P
-        2QcRpSD4yiKGxwEk5S5dYmvjYw==
-X-Google-Smtp-Source: ACcGV60vVzNc6oCm0vz6eiOudxb0ecHaZfGOsl2vW0RH0qZ/luM10DJ446cL/oA0K0ayuCrI6jyDjA==
-X-Received: by 2002:a17:902:9045:: with SMTP id w5-v6mr11603577plz.10.1538058303127;
-        Thu, 27 Sep 2018 07:25:03 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=p45a/e2du0K3VOKtsUCRlFfXZHC5nty49NugILWrhhY=;
+        b=FjD5OOPY+q4ZV+3J1+peOb49KeQKqfyOLLAPP+ICXcz8eVx8sARwFRWFJT5DpXZQrC
+         l6qfRL9iRqgPRDT4nao6Gp1gBSJQN4UUqEwvzFJJmttTf8iaIRewahxqyfzRRUevKdRi
+         fKdRevAkMGLb+CdYsqVsnHwBOZkqY2Q9pFy7WPfIXVu2UfQoRRpH2H7sEHMfi7GWH3xx
+         6fUKvIyBBw8mWBn3t3fvCaFibMEsabLAKRHF/SJVE4CETgZLVHVAubxqwMGPihArFFtf
+         F8EEAC7R+K0p4LO2VXJhZgwWlOyy6D8CwKAohpyDYrZxAM97AAX+7ntqZ9u/3q2gOEDU
+         4FuA==
+X-Gm-Message-State: ABuFfogzLPtAcuSy3eneTlRk1V26/7n6NxEmKWO7kpSgGHnLjHdhWEWG
+        JQ+pSkDVRYu2XInuRVpgdy3fhg==
+X-Google-Smtp-Source: ACcGV61+Shi0tUodVNrcHq1kqqZ7BVtB5nSbOH3nBXhNZZusVSMlPSrsmE8sFi6FCYsheg6EZzwfQQ==
+X-Received: by 2002:a62:ee06:: with SMTP id e6-v6mr11979421pfi.2.1538058308607;
+        Thu, 27 Sep 2018 07:25:08 -0700 (PDT)
 Received: from qualcomm-HP-ZBook-14-G2.domain.name ([106.51.105.186])
-        by smtp.gmail.com with ESMTPSA id f81-v6sm9717421pfh.46.2018.09.27.07.24.57
+        by smtp.gmail.com with ESMTPSA id f81-v6sm9717421pfh.46.2018.09.27.07.25.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 27 Sep 2018 07:25:02 -0700 (PDT)
+        Thu, 27 Sep 2018 07:25:08 -0700 (PDT)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linux-parisc@vger.kernel.org,
         "James E . J . Bottomley" <jejb@parisc-linux.org>,
@@ -64,87 +66,72 @@ To:     linux-parisc@vger.kernel.org,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v2 0/5] System call table generation support
-Date:   Thu, 27 Sep 2018 19:54:22 +0530
-Message-Id: <1538058267-3765-1-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v2 1/5] parisc: move __IGNORE* entries to non uapi header
+Date:   Thu, 27 Sep 2018 19:54:23 +0530
+Message-Id: <1538058267-3765-2-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1538058267-3765-1-git-send-email-firoz.khan@linaro.org>
+References: <1538058267-3765-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this patch series is:
-1. We can easily add/modify/delete system call by changing entry 
-in syscall.tbl file. No need to manually edit many files.
+All the  __IGNORE* entries are resides in the uapi header
+file moved to non uapi header. Basically it is not used by
+any user space applications.
 
-2. It is easy to unify the system call implementation across all 
-the architectures. 
+One of the patch in this patch series will generate the
+uapi header file and system call table file. So if we move
+all the __IGNORE* entries to non uapi header, it will help
+to simplify the uapi header and system call table file
+generation script.
 
-The system call tables are in different format in all architecture 
-and it will be difficult to manually add or modify the system calls
-in the respective files manually. To make it easy by keeping a script 
-and which'll generate the header file and syscall table file so this 
-change will unify them across all architectures.
+It is correct to keep __IGNORE* entry in non uapi header
+asm/unistd.h while uapi/asm/unistd.h must hold information
+only useful for user space applications.
 
-syscall.tbl contains the list of available system calls along with 
-system call number and corresponding entry point. Add a new system 
-call in this architecture will be possible by adding new entry in 
-the syscall.tbl file.
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+---
+ arch/parisc/include/asm/unistd.h      | 6 ++++++
+ arch/parisc/include/uapi/asm/unistd.h | 7 -------
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-Adding a new table entry consisting of:
-        - System call number.
-        - ABI.
-        - System call name.
-        - Entry point name.
-        - Compat entry name, if required.
-
-ARM, s390 and x86 architecuture does exist the similar support. I 
-leverage their implementation to come up with a generic solution.
-
-I have done the same support for work for alpha, microblaze, sparc,
-m68k, mips, powerpc, sh, sparc, and xtensa. But I started sending 
-the patch for one architecuture for review. Below mentioned git
-repository contains more details.
-Git repo:- https://github.com/frzkhn/system_call_table_generator/
-
-Added an extra patch to keep __IGNORE* entries in asm/unistd.h.
-
-Finally, this is the ground work for solving the Y2038 issue. We 
-need to add/change two dozen of system calls to solve Y2038 issue. 
-So this patch series will help to easily modify from existing 
-system call to Y2038 compatible system calls.
-
-Firoz Khan (5):
-  parisc: move __IGNORE* entries to non uapi header
-  parisc: add __NR_Linux_syscalls macro with __NR_syscalls
-  parisc: add system call table generation support
-  parisc: uapi header and system call table file generation
-  parisc: add __IGNORE* entries in asm/unistd.h
-
- arch/parisc/Makefile                       |   4 +
- arch/parisc/include/asm/Kbuild             |   3 +
- arch/parisc/include/asm/unistd.h           |   9 +
- arch/parisc/include/uapi/asm/Kbuild        |   2 +
- arch/parisc/include/uapi/asm/unistd.h      | 380 +-----------------------
- arch/parisc/kernel/syscall.S               |  12 +-
- arch/parisc/kernel/syscall_table.S         | 459 -----------------------------
- arch/parisc/kernel/syscall_table_32.S      |  13 +
- arch/parisc/kernel/syscall_table_64.S      |  20 ++
- arch/parisc/kernel/syscalls/Makefile       |  55 ++++
- arch/parisc/kernel/syscalls/syscall_32.tbl | 342 +++++++++++++++++++++
- arch/parisc/kernel/syscalls/syscall_64.tbl | 342 +++++++++++++++++++++
- arch/parisc/kernel/syscalls/syscallhdr.sh  |  35 +++
- arch/parisc/kernel/syscalls/syscalltbl.sh  |  42 +++
- 14 files changed, 877 insertions(+), 841 deletions(-)
- delete mode 100644 arch/parisc/kernel/syscall_table.S
- create mode 100644 arch/parisc/kernel/syscall_table_32.S
- create mode 100644 arch/parisc/kernel/syscall_table_64.S
- create mode 100644 arch/parisc/kernel/syscalls/Makefile
- create mode 100644 arch/parisc/kernel/syscalls/syscall_32.tbl
- create mode 100644 arch/parisc/kernel/syscalls/syscall_64.tbl
- create mode 100644 arch/parisc/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/parisc/kernel/syscalls/syscalltbl.sh
-
+diff --git a/arch/parisc/include/asm/unistd.h b/arch/parisc/include/asm/unistd.h
+index 3d507d0..93fd9f6 100644
+--- a/arch/parisc/include/asm/unistd.h
++++ b/arch/parisc/include/asm/unistd.h
+@@ -8,6 +8,12 @@
+ 
+ #define SYS_ify(syscall_name)   __NR_##syscall_name
+ 
++#define __IGNORE_select                /* newselect */
++#define __IGNORE_fadvise64             /* fadvise64_64 */
++#define __IGNORE_pkey_mprotect
++#define __IGNORE_pkey_alloc
++#define __IGNORE_pkey_free
++
+ #ifndef ASM_LINE_SEP
+ # define ASM_LINE_SEP ;
+ #endif
+diff --git a/arch/parisc/include/uapi/asm/unistd.h b/arch/parisc/include/uapi/asm/unistd.h
+index dc77c5a..bb52e12 100644
+--- a/arch/parisc/include/uapi/asm/unistd.h
++++ b/arch/parisc/include/uapi/asm/unistd.h
+@@ -368,13 +368,6 @@
+ 
+ #define __NR_Linux_syscalls	(__NR_io_pgetevents + 1)
+ 
+-
+-#define __IGNORE_select		/* newselect */
+-#define __IGNORE_fadvise64	/* fadvise64_64 */
+-#define __IGNORE_pkey_mprotect
+-#define __IGNORE_pkey_alloc
+-#define __IGNORE_pkey_free
+-
+ #define LINUX_GATEWAY_ADDR      0x100
+ 
+ #endif /* _UAPI_ASM_PARISC_UNISTD_H_ */
 -- 
 1.9.1
 
