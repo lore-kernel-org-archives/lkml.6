@@ -2,133 +2,106 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD4BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB2CC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42D3E2170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42D3E2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2AB292170E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 19:49:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eorNFOES"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB292170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeI1CIx (ORCPT
+        id S1728186AbeI1CJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:08:53 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35974 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727361AbeI1CIw (ORCPT
+        Thu, 27 Sep 2018 22:09:10 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35678 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727331AbeI1CJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:08:52 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d1-v6so2707947pgo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 12:48:59 -0700 (PDT)
+        Thu, 27 Sep 2018 22:09:10 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so2641224pfh.2;
+        Thu, 27 Sep 2018 12:49:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NyltW0T3+m2Q3RLz0xHvkBC3ilCvPRrdix0TWbU39J0=;
+        b=eorNFOESZOzUGrzG3p5iXGs9psXwxlbyQIHwiCHW8KLcNwu5wxpUPWJWRTnj8E5IgH
+         Q36drIQZCn3GcvwDR4aQZI8Irxy7j085er51Nl4KWhQYlTi9bQIbvSz8nmbrtcaoEa7Q
+         rObjYZjGgAub3POvkSakY30TB9Uhh7F8kCASvjjqsQSdZ73RQsb3jmNL5Ghz69HXYAW3
+         4L278dHvWCdHyEMHhfxfqrk0ZTWANmzxCToWScaIEUNSoORshAaDMjrR7fflhKC+Xqsx
+         WaQ8mU4/gMzkYs6UIQHv4OGMzPukZrvFr8T2sCNC6ZRuuyVJvza4BfgaiNrKc73+mueF
+         3jKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WgkLxetghD43EB2J79DDlFtMR0Nk9CEW/84WajNEtF0=;
-        b=NfSfyqfVkdpikbQ20eeZJXdj0LD8ZHg1GEulhy9zNRXxVUsQFh34SIfRTqQjKmzvcQ
-         fylIqQQ1Dvz1ouqjDcfuekKE2/sZTc55AGAA5IZ3dbrdml5Rx6DkyQJQCHUhFckkUDBM
-         /34FOOemU8WLooOegmpEACJkNaoNgiFajapbG5FBPvbsqRP6rpB1aKYCLn0aBuujbPGt
-         dK/s5ulEJGHcl5ZpbiUxqj1ebM7VAaT+K7mGhZT2/JKeYtZxJfP2JW0/a2LGImFOhZiR
-         f8zZWPAlSnLgg5DLbA/KMBhJn54WMEKnoRNonrcWKAyWNFt6gkGh7PYsk6c30XfMDRRz
-         3O+Q==
-X-Gm-Message-State: ABuFfoh83CdZeFMVp1dizlmOl2nmU3xW5eYHXHjsZ4JoqhP+azzEwbY6
-        W057GwgwU34wG14mdPATqeaj4DORHug=
-X-Google-Smtp-Source: ACcGV62zRVQctwEpZWwUwvYlsA3Kg9WfQDmkKydHtHv/q7J8mTNRHEDn8Va4R52iDFu524HhYEATpA==
-X-Received: by 2002:a62:23cd:: with SMTP id q74-v6mr13065696pfj.151.1538077738485;
-        Thu, 27 Sep 2018 12:48:58 -0700 (PDT)
-Received: from localhost ([207.114.172.147])
-        by smtp.gmail.com with ESMTPSA id g66-v6sm4256628pfk.39.2018.09.27.12.48.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 12:48:57 -0700 (PDT)
-From:   Moritz Fischer <mdf@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     netdev@vger.kernel.org, keescook@chromium.org, davem@davemloft.net,
-        moritz.fischer@ettus.com, f.fainelli@gmail.com,
-        alex.williams@ni.com, Moritz Fischer <mdf@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH net-next] net: nixge: Address compiler warnings when building for i386
-Date:   Thu, 27 Sep 2018 12:48:51 -0700
-Message-Id: <20180927194851.3042-1-mdf@kernel.org>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NyltW0T3+m2Q3RLz0xHvkBC3ilCvPRrdix0TWbU39J0=;
+        b=gZV4znlvcyZKuSn3S131MjEKB0xmNZ4OAeeUgMlttWQkMkA/Xmloj4CWcQryWIxSFz
+         fEVc2WdtUgWd/8PwSTd5aRpYtlXZYmk2gBuvp7Au7Lss3NhFDvumQ/MO8BPDn59qzwyb
+         bEJ8TsN/pXBMbQprVECHn0RBXPhdONz3E8/Z/OAeySqkKnTEV9Sx/TDzbpWL93igb6Qt
+         G60Ahydo3Ow7qptIMeetYgItvY/h/4cWCAbRoVs7DV+vKuH4hCmSKg22QiCkKBKaV4tW
+         scrjrcj+moPeJr7/9L11cSgCv5ifSuKxxnN9g04mRCHKYZswHKJMIBuA4mX07mPNHnFD
+         iOxw==
+X-Gm-Message-State: ABuFfoiNVqSdVy7fUI8clU03TK7ZJWY9gOaPgqULZBuCju+AybL+gy+v
+        ofdodyTBpSYmVUNPUN6u09k=
+X-Google-Smtp-Source: ACcGV61onZl98wmTy8h/bPpyTV69RF13jJK3zKtJfyC0R1U9OvDesa+2EdGb32dcPB/UYpTsoaZwGQ==
+X-Received: by 2002:a17:902:566:: with SMTP id 93-v6mr12810650plf.184.1538077756082;
+        Thu, 27 Sep 2018 12:49:16 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id g65-v6sm1449850pfg.98.2018.09.27.12.49.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 12:49:15 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net
+Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH v6 0/2] Add an initial DT binding doc for ina3221
+Date:   Thu, 27 Sep 2018 12:49:08 -0700
+Message-Id: <20180927194910.18464-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Address compiler warning reported by kbuild autobuilders
-when building for i386 as a result of dma_addr_t size on
-different architectures.
+This series adds a initial DT binding doc for ina3221. It defines
+a child node to describe the input source of each ina3221 channel.
+Then it changes the driver to handle the information properly.
 
-warning: cast to pointer from integer of different size
-	[-Wint-to-pointer-cast]
+Changelog
+v5->v6:
+ * Removed status property and merged examples (PATCH-1)
+ * Added in[123]_enable sysfs nodes (PATCH-2)
+v4->v5:
+ * Changed two property names of child node (PATCH-1)
+ * Changed the driver accordingly and simplified is_visible (PATCH-2)
+v3->v4:
+ * Fixed one place in child DT node bindings (PATCH-1)
+ * Changed the driver accordingly and added is_visible (PATCH-2)
+v2->v3:
+ * Fixed two places in DT bindings (PATCH-1)
+v1->v2:
+ * Redefined DT bindings (detail in PATCH-1)
+ * Changed the driver code accordingly (detail in PATCH-2)
 
-Fixes: 7e8d5755be0e ("net: nixge: Add support for 64-bit platforms")
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/ni/nixge.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Nicolin Chen (2):
+  dt-bindings: hwmon: Add ina3221 documentation
+  hwmon: ina3221: Read channel input source info from DT
 
-diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
-index 74cf52e3fb09..0611f2335b4a 100644
---- a/drivers/net/ethernet/ni/nixge.c
-+++ b/drivers/net/ethernet/ni/nixge.c
-@@ -127,8 +127,8 @@ struct nixge_hw_dma_bd {
- #ifdef CONFIG_PHYS_ADDR_T_64BIT
- #define nixge_hw_dma_bd_set_addr(bd, field, addr) \
- 	do { \
--		(bd)->field##_lo = lower_32_bits(((u64)addr)); \
--		(bd)->field##_hi = upper_32_bits(((u64)addr)); \
-+		(bd)->field##_lo = lower_32_bits((addr)); \
-+		(bd)->field##_hi = upper_32_bits((addr)); \
- 	} while (0)
- #else
- #define nixge_hw_dma_bd_set_addr(bd, field, addr) \
-@@ -251,7 +251,7 @@ static void nixge_hw_dma_bd_release(struct net_device *ndev)
- 				 NIXGE_MAX_JUMBO_FRAME_SIZE,
- 				 DMA_FROM_DEVICE);
- 
--		skb = (struct sk_buff *)
-+		skb = (struct sk_buff *)(uintptr_t)
- 			nixge_hw_dma_bd_get_addr(&priv->rx_bd_v[i],
- 						 sw_id_offset);
- 		dev_kfree_skb(skb);
-@@ -323,7 +323,7 @@ static int nixge_hw_dma_bd_init(struct net_device *ndev)
- 		if (!skb)
- 			goto out;
- 
--		nixge_hw_dma_bd_set_offset(&priv->rx_bd_v[i], skb);
-+		nixge_hw_dma_bd_set_offset(&priv->rx_bd_v[i], (uintptr_t)skb);
- 		phys = dma_map_single(ndev->dev.parent, skb->data,
- 				      NIXGE_MAX_JUMBO_FRAME_SIZE,
- 				      DMA_FROM_DEVICE);
-@@ -601,8 +601,8 @@ static int nixge_recv(struct net_device *ndev, int budget)
- 		tail_p = priv->rx_bd_p + sizeof(*priv->rx_bd_v) *
- 			 priv->rx_bd_ci;
- 
--		skb = (struct sk_buff *)nixge_hw_dma_bd_get_addr(cur_p,
--								 sw_id_offset);
-+		skb = (struct sk_buff *)(uintptr_t)
-+			nixge_hw_dma_bd_get_addr(cur_p, sw_id_offset);
- 
- 		length = cur_p->status & XAXIDMA_BD_STS_ACTUAL_LEN_MASK;
- 		if (length > NIXGE_MAX_JUMBO_FRAME_SIZE)
-@@ -643,7 +643,7 @@ static int nixge_recv(struct net_device *ndev, int budget)
- 		nixge_hw_dma_bd_set_phys(cur_p, cur_phys);
- 		cur_p->cntrl = NIXGE_MAX_JUMBO_FRAME_SIZE;
- 		cur_p->status = 0;
--		nixge_hw_dma_bd_set_offset(cur_p, new_skb);
-+		nixge_hw_dma_bd_set_offset(cur_p, (uintptr_t)new_skb);
- 
- 		++priv->rx_bd_ci;
- 		priv->rx_bd_ci %= RX_BD_NUM;
+ .../devicetree/bindings/hwmon/ina3221.txt     |  40 +++
+ Documentation/hwmon/ina3221                   |   2 +
+ drivers/hwmon/ina3221.c                       | 237 ++++++++++++++++--
+ 3 files changed, 265 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.txt
+
 -- 
-2.19.0
+2.17.1
 
