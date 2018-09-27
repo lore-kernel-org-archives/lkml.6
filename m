@@ -2,171 +2,182 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF95ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E4CC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A022150D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A022150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C0EC2150D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C0EC2150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbeI0Pn1 (ORCPT
+        id S1728738AbeI0PnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:43:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53618 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727464AbeI0Pn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:43:26 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2A8BE30820D8;
-        Thu, 27 Sep 2018 09:26:04 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-205.ams2.redhat.com [10.36.116.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D57820154E7;
-        Thu, 27 Sep 2018 09:25:54 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
-        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Allen <jallen@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Len Brown <lenb@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
-Subject: [PATCH v3 0/6] mm: online/offline_pages called w.o. mem_hotplug_lock
-Date:   Thu, 27 Sep 2018 11:25:48 +0200
-Message-Id: <20180927092554.13567-1-david@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 27 Sep 2018 09:26:06 +0000 (UTC)
+        Thu, 27 Sep 2018 11:43:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56826 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727464AbeI0PnY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:43:24 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5BFFC1113;
+        Thu, 27 Sep 2018 09:26:02 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        syzbot <syzkaller@googlegroups.com>, NeilBrown <neilb@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 4.9 18/44] mm: shmem.c: Correctly annotate new inodes for lockdep
+Date:   Thu, 27 Sep 2018 11:04:07 +0200
+Message-Id: <20180927090120.421136715@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
+References: <20180927090117.997362691@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-@Andrew, Only patch #5 changed (see change notes below). Thanks!
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-Reading through the code and studying how mem_hotplug_lock is to be used,
-I noticed that there are two places where we can end up calling
-device_online()/device_offline() - online_pages()/offline_pages() without
-the mem_hotplug_lock. And there are other places where we call
-device_online()/device_offline() without the device_hotplug_lock.
+From: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-While e.g.
-	echo "online" > /sys/devices/system/memory/memory9/state
-is fine, e.g.
-	echo 1 > /sys/devices/system/memory/memory9/online
-Will not take the mem_hotplug_lock. However the device_lock() and
-device_hotplug_lock.
+commit b45d71fb89ab8adfe727b9d0ee188ed58582a647 upstream.
 
-E.g. via memory_probe_store(), we can end up calling
-add_memory()->online_pages() without the device_hotplug_lock. So we can
-have concurrent callers in online_pages(). We e.g. touch in online_pages()
-basically unprotected zone->present_pages then.
+Directories and inodes don't necessarily need to be in the same lockdep
+class.  For ex, hugetlbfs splits them out too to prevent false positives
+in lockdep.  Annotate correctly after new inode creation.  If its a
+directory inode, it will be put into a different class.
 
-Looks like there is a longer history to that (see Patch #2 for details),
-and fixing it to work the way it was intended is not really possible. We
-would e.g. have to take the mem_hotplug_lock in device/base/core.c, which
-sounds wrong.
+This should fix a lockdep splat reported by syzbot:
 
-Summary: We had a lock inversion on mem_hotplug_lock and device_lock().
-More details can be found in patch 3 and patch 6.
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.18.0-rc8-next-20180810+ #36 Not tainted
+> ------------------------------------------------------
+> syz-executor900/4483 is trying to acquire lock:
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at: inode_lock
+> include/linux/fs.h:765 [inline]
+> 00000000d2bfc8fe (&sb->s_type->i_mutex_key#9){++++}, at:
+> shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>
+> but task is already holding lock:
+> 0000000025208078 (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xb4/0x630
+> drivers/staging/android/ashmem.c:448
+>
+> which lock already depends on the new lock.
+>
+> -> #2 (ashmem_mutex){+.+.}:
+>        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+>        __mutex_lock+0x171/0x1700 kernel/locking/mutex.c:1073
+>        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
+>        ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+>        call_mmap include/linux/fs.h:1844 [inline]
+>        mmap_region+0xf27/0x1c50 mm/mmap.c:1762
+>        do_mmap+0xa10/0x1220 mm/mmap.c:1535
+>        do_mmap_pgoff include/linux/mm.h:2298 [inline]
+>        vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+>        ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+>        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+>        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+>        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #1 (&mm->mmap_sem){++++}:
+>        __might_fault+0x155/0x1e0 mm/memory.c:4568
+>        _copy_to_user+0x30/0x110 lib/usercopy.c:25
+>        copy_to_user include/linux/uaccess.h:155 [inline]
+>        filldir+0x1ea/0x3a0 fs/readdir.c:196
+>        dir_emit_dot include/linux/fs.h:3464 [inline]
+>        dir_emit_dots include/linux/fs.h:3475 [inline]
+>        dcache_readdir+0x13a/0x620 fs/libfs.c:193
+>        iterate_dir+0x48b/0x5d0 fs/readdir.c:51
+>        __do_sys_getdents fs/readdir.c:231 [inline]
+>        __se_sys_getdents fs/readdir.c:212 [inline]
+>        __x64_sys_getdents+0x29f/0x510 fs/readdir.c:212
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> -> #0 (&sb->s_type->i_mutex_key#9){++++}:
+>        lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
+>        down_write+0x8f/0x130 kernel/locking/rwsem.c:70
+>        inode_lock include/linux/fs.h:765 [inline]
+>        shmem_fallocate+0x18b/0x12e0 mm/shmem.c:2602
+>        ashmem_shrink_scan+0x236/0x630 drivers/staging/android/ashmem.c:455
+>        ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+>        vfs_ioctl fs/ioctl.c:46 [inline]
+>        file_ioctl fs/ioctl.c:501 [inline]
+>        do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+>        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+>        __do_sys_ioctl fs/ioctl.c:709 [inline]
+>        __se_sys_ioctl fs/ioctl.c:707 [inline]
+>        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+>        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> other info that might help us debug this:
+>
+> Chain exists of:
+>   &sb->s_type->i_mutex_key#9 --> &mm->mmap_sem --> ashmem_mutex
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(ashmem_mutex);
+>                                lock(&mm->mmap_sem);
+>                                lock(ashmem_mutex);
+>   lock(&sb->s_type->i_mutex_key#9);
+>
+>  *** DEADLOCK ***
+>
+> 1 lock held by syz-executor900/4483:
+>  #0: 0000000025208078 (ashmem_mutex){+.+.}, at:
+> ashmem_shrink_scan+0xb4/0x630 drivers/staging/android/ashmem.c:448
 
-I propose the general rules (documentation added in patch 6):
+Link: http://lkml.kernel.org/r/20180821231835.166639-1-joel@joelfernandes.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Suggested-by: NeilBrown <neilb@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-1. add_memory/add_memory_resource() must only be called with
-   device_hotplug_lock.
-2. remove_memory() must only be called with device_hotplug_lock. This is
-   already documented and holds for all callers.
-3. device_online()/device_offline() must only be called with
-   device_hotplug_lock. This is already documented and true for now in core
-   code. Other callers (related to memory hotplug) have to be fixed up.
-4. mem_hotplug_lock is taken inside of add_memory/remove_memory/
-   online_pages/offline_pages.
+---
+ mm/shmem.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-To me, this looks way cleaner than what we have right now (and easier to
-verify). And looking at the documentation of remove_memory, using
-lock_device_hotplug also for add_memory() feels natural.
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2160,6 +2160,8 @@ static struct inode *shmem_get_inode(str
+ 			mpol_shared_policy_init(&info->policy, NULL);
+ 			break;
+ 		}
++
++		lockdep_annotate_inode_mutex_key(inode);
+ 	} else
+ 		shmem_free_inode(sb);
+ 	return inode;
 
-
-v2 -> v3:
-- Take device_hotplug_lock outside of loop in patch #5
-- Added Ack to patch #5
-
-v1 -> v2:
-- Upstream changes in powerpc/powernv code required modifications to
-  patch #1, #4 and #5.
-- Minor patch description changes.
-- Added more locking details in patch #6.
-- Added rb's
-
-RFCv2 -> v1:
-- Dropped an unnecessary _ref from remove_memory() in patch #1
-- Minor patch description fixes.
-- Added rb's
-
-RFC -> RFCv2:
-- Don't export device_hotplug_lock, provide proper remove_memory/add_memory
-  wrappers.
-- Split up the patches a bit.
-- Try to improve powernv memtrace locking
-- Add some documentation for locking that matches my knowledg
-
-David Hildenbrand (6):
-  mm/memory_hotplug: make remove_memory() take the device_hotplug_lock
-  mm/memory_hotplug: make add_memory() take the device_hotplug_lock
-  mm/memory_hotplug: fix online/offline_pages called w.o.
-    mem_hotplug_lock
-  powerpc/powernv: hold device_hotplug_lock when calling device_online()
-  powerpc/powernv: hold device_hotplug_lock when calling
-    memtrace_offline_pages()
-  memory-hotplug.txt: Add some details about locking internals
-
- Documentation/memory-hotplug.txt              | 42 ++++++++++++-
- arch/powerpc/platforms/powernv/memtrace.c     |  8 ++-
- .../platforms/pseries/hotplug-memory.c        |  8 +--
- drivers/acpi/acpi_memhotplug.c                |  4 +-
- drivers/base/memory.c                         | 22 +++----
- drivers/xen/balloon.c                         |  3 +
- include/linux/memory_hotplug.h                |  4 +-
- mm/memory_hotplug.c                           | 59 +++++++++++++++----
- 8 files changed, 114 insertions(+), 36 deletions(-)
-
--- 
-2.17.1
 
