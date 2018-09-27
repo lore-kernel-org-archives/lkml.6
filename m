@@ -2,98 +2,134 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7791ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C020C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E0A204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:13:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E0A204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id B360B20836
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:18:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="niDmxcYu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B360B20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeI0N3r (ORCPT
+        id S1727027AbeI0Ney (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:29:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41696 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726698AbeI0N3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:29:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1E9B7B030;
-        Thu, 27 Sep 2018 07:12:57 +0000 (UTC)
-Subject: Re: [PATCH] xen/blkfront: When purging persistent grants, keep them
- in the buffer
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
-Date:   Thu, 27 Sep 2018 09:12:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 09:34:54 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60790 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbeI0Ney (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:34:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kXrUhltrPvBstYu2G3tnlKIsq4Y7OF9hPJ8wrBjJ6l8=; b=niDmxcYu3JBRBdiuyTYGAI1nN
+        4dSr8xGoB8Hy8YTmV8siHLAJMMztSGuKmDSda+fZJzuyxgnsMSUJbcODDSegpusRtlNZ0GQc77+hB
+        5xD1T3cGN86heqbtqG68beHicywPBne3Jx8sCcocGoC9K1SgNQhYuym1lDTIKYVGXmo0DJtDMacJb
+        /0zIOdrmIkFRdvhA8FWcq0KUjneAQCot+AViA4BIhrcWMMoRBY8HTiMQn84NqVO3QgcwPRd0Kloye
+        fj+wCSbANhqoLGwXhgbEnA5w87NFdBTrKvrRFaOgLNypV1jgQBMAsAA1K1MJR7YPBRehZTA1TUuZ/
+        kk8STJ+uw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5QYW-0005LU-M9; Thu, 27 Sep 2018 07:17:58 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5A3C020696FC3; Thu, 27 Sep 2018 09:17:47 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 09:17:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     will.deacon@arm.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, longman@redhat.com,
+        tglx@linutronix.de
+Subject: Re: [RFC][PATCH 3/3] locking/qspinlock: Optimize for x86
+Message-ID: <20180927071747.GD5254@hirez.programming.kicks-ass.net>
+References: <20180926110117.405325143@infradead.org>
+ <20180926111307.513429499@infradead.org>
+ <20180926205208.GA4864@andrea>
 MIME-Version: 1.0
-In-Reply-To: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926205208.GA4864@andrea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/09/18 21:55, Boris Ostrovsky wrote:
-> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
-> added support for purging persistent grants when they are not in use. As
-> part of the purge, the grants were removed from the grant buffer, This
-> eventually causes the buffer to become empty, with BUG_ON triggered in
-> get_free_grant(). This can be observed even on an idle system, within
-> 20-30 minutes.
+On Wed, Sep 26, 2018 at 10:52:08PM +0200, Andrea Parri wrote:
+> On Wed, Sep 26, 2018 at 01:01:20PM +0200, Peter Zijlstra wrote:
+> > On x86 we cannot do fetch_or with a single instruction and end up
+> > using a cmpxchg loop, this reduces determinism. Replace the fetch_or
+> > with a very tricky composite xchg8 + load.
+> > 
+> > The basic idea is that we use xchg8 to test-and-set the pending bit
+> > (when it is a byte) and then a load to fetch the whole word. Using
+> > two instructions of course opens a window we previously did not have.
+> > In particular the ordering between pending and tail is of interrest,
+> > because that is where the split happens.
+> > 
+> > The claim is that if we order them, it all works out just fine. There
+> > are two specific cases where the pending,tail state changes:
+> > 
+> >  - when the 3rd lock(er) comes in and finds pending set, it'll queue
+> >    and set tail; since we set tail while pending is set, the ordering
+> >    is split is not important (and not fundamentally different form
+> >    fetch_or). [*]
+> > 
+> >  - when the last queued lock holder acquires the lock (uncontended),
+> >    we clear the tail and set the lock byte. By first setting the
+> >    pending bit this cmpxchg will fail and the later load must then
+> >    see the remaining tail.
+> > 
+> > Another interesting scenario is where there are only 2 threads:
+> > 
+> > 	lock := (0,0,0)
+> > 
+> > 	CPU 0			CPU 1
+> > 
+> > 	lock()			lock()
+> > 	  trylock(-> 0,0,1)       trylock() /* fail */
+> > 	    return;               xchg_relaxed(pending, 1) (-> 0,1,1)
+> > 				  mb()
+> > 				  val = smp_load_acquire(*lock);
+> > 
+> > Where, without the mb() the load would've been allowed to return 0 for
+> > the locked byte.
 > 
-> We should keep the grants in the buffer when purging, and only free the
-> grant ref.
-> 
-> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> If this were true, we would have a violation of "coherence":
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+The thing is, this is mixed size, see:
 
+  https://www.cl.cam.ac.uk/~pes20/popl17/mixed-size.pdf
 
-Juergen
+If I remember things correctly (I've not reread that paper recently) it
+is allowed for:
+
+	old = xchg(pending,1);
+	val = smp_load_acquire(*lock);
+
+to be re-ordered like:
+
+	val = smp_load_acquire(*lock);
+	old = xchg(pending, 1);
+
+with the exception that it will fwd the pending byte into the later
+load, so we get:
+
+	val = (val & _Q_PENDING_MASK) | (old << _Q_PENDING_OFFSET);
+
+for 'free'.
+
+LKMM in particular does _NOT_ deal with mixed sized atomics _at_all_.
+
+With the addition of smp_mb__after_atomic(), we disallow the load to be
+done prior to the xchg(). It might still fwd the more recent pending
+byte from its store buffer, but at least the other bytes must not be
+earlier.
