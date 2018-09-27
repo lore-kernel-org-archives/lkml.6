@@ -2,165 +2,139 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7033EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 038F7C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C58421566
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:08:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C58421566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 9638821566
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9638821566
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbeI0LYU (ORCPT
+        id S1726681AbeI0L0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:24:20 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:49181 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726590AbeI0LYU (ORCPT
+        Thu, 27 Sep 2018 07:26:45 -0400
+Received: from [222.66.158.132] ([222.66.158.132]:15829 "EHLO
+        SHSQR01.unisoc.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726590AbeI0L0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:24:20 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437524|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07408;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CwOqUFU_1538024862;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwOqUFU_1538024862)
-          by smtp.aliyun-inc.com(10.147.40.44);
-          Thu, 27 Sep 2018 13:07:42 +0800
-Date:   Thu, 27 Sep 2018 13:07:42 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
-        green.hu@gmail.com, palmer@sifive.com
-Subject: Re: [PATCH V5 17/30] csky: Misc headers
-Message-ID: <20180927050739.GA27703@guoren>
-References: <cover.1537789736.git.ren_guo@c-sky.com>
- <5ae1990e1863fe2293bba1e5ec0408892a9a7f0c.1537789737.git.ren_guo@c-sky.com>
- <20180925100803.GA6891@andrea>
- <20180925104541.GA27311@hirez.programming.kicks-ass.net>
+        Thu, 27 Sep 2018 07:26:45 -0400
+X-Greylist: delayed 5124 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Sep 2018 07:26:44 EDT
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+        by SHSQR01.unisoc.com with ESMTP id w8R3hFVR038733
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:43:15 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from ig2.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+        by SHSQR01.spreadtrum.com with ESMTP id w8R3dgo4033808
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 27 Sep 2018 11:39:43 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from localhost (10.0.93.106) by BJMBX02.spreadtrum.com (10.0.64.8)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Thu, 27 Sep 2018 11:41:39
+ +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+CC:     Arnd Bergmann <arnd@arndb.de>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [RESEND PATCH] ARM: prevent tracing IPI_CPU_BACKTRACE
+Date:   Thu, 27 Sep 2018 11:41:37 +0800
+Message-ID: <1538019697-14673-1-git-send-email-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180925104541.GA27311@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Originating-IP: [10.0.93.106]
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com w8R3dgo4033808
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 12:45:41PM +0200, Peter Zijlstra wrote:
-> On Tue, Sep 25, 2018 at 12:08:03PM +0200, Andrea Parri wrote:
-> > Hi Guo,
-> > 
-> > > +/*
-> > > + * set_bit - Atomically set a bit in memory
-> > > + * @nr: the bit to set
-> > > + * @addr: the address to start counting from
-> > > + *
-> > > + * This function is atomic and may not be reordered.  See __set_bit()
-> > > + * if you do not require the atomic guarantees.
-> > > + *
-> > > + * Note: there are no guarantees that this function will not be reordered
-> > > + * on non x86 architectures, so if you are writing portable code,
-> > > + * make sure not to rely on its reordering guarantees.
-> > > + *
-> > > + * Note that @nr may be almost arbitrarily large; this function is not
-> > > + * restricted to acting on a single-word quantity.
-> > > + */
-> > > +static inline void set_bit(int nr, volatile unsigned long *addr)
-> > > +{
-> > > +	unsigned long mask = BIT_MASK(nr);
-> > > +	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-> > > +	unsigned long tmp;
-> > > +
-> > > +	/* *p  |= mask; */
-> > > +	smp_mb();
-> > > +	asm volatile (
-> > > +		"1:	ldex.w		%0, (%2)	\n"
-> > > +		"	or32		%0, %0, %1	\n"
-> > > +		"	stex.w		%0, (%2)	\n"
-> > > +		"	bez		%0, 1b		\n"
-> > > +		: "=&r"(tmp)
-> > > +		: "r"(mask), "r"(p)
-> > > +		: "memory");
-> > > +	smp_mb();
-> > > +}
-> > > +
-> > > +/**
-> > > + * clear_bit - Clears a bit in memory
-> > > + * @nr: Bit to clear
-> > > + * @addr: Address to start counting from
-> > > + *
-> > > + * clear_bit() is atomic and may not be reordered.  However, it does
-> > > + * not contain a memory barrier, so if it is used for locking purposes,
-> > > + * you should call smp_mb__before_atomic() and/or smp_mb__after_atomic()
-> > > + * in order to ensure changes are visible on other processors.
-> > > + */
-> > > +static inline void clear_bit(int nr, volatile unsigned long *addr)
-> > > +{
-> > > +	unsigned long mask = BIT_MASK(nr);
-> > > +	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-> > > +	unsigned long tmp;
-> > > +
-> > > +	/* *p &= ~mask; */
-> > > +	mask = ~mask;
-> > > +	smp_mb();
-> > > +	asm volatile (
-> > > +		"1:	ldex.w		%0, (%2)	\n"
-> > > +		"	and32		%0, %0, %1	\n"
-> > > +		"	stex.w		%0, (%2)	\n"
-> > > +		"	bez		%0, 1b		\n"
-> > > +		: "=&r"(tmp)
-> > > +		: "r"(mask), "r"(p)
-> > > +		: "memory");
-> > > +	smp_mb();
-> > > +}
-> > > +
-> > > +/**
-> > > + * change_bit - Toggle a bit in memory
-> > > + * @nr: Bit to change
-> > > + * @addr: Address to start counting from
-> > > + *
-> > > + * change_bit() is atomic and may not be reordered. It may be
-> > > + * reordered on other architectures than x86.
-> > > + * Note that @nr may be almost arbitrarily large; this function is not
-> > > + * restricted to acting on a single-word quantity.
-> > > + */
-> > > +static inline void change_bit(int nr, volatile unsigned long *addr)
-> > > +{
-> > > +	unsigned long mask = BIT_MASK(nr);
-> > > +	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-> > > +	unsigned long tmp;
-> > > +
-> > > +	/* *p ^= mask; */
-> > > +	smp_mb();
-> > > +	asm volatile (
-> > > +		"1:	ldex.w		%0, (%2)	\n"
-> > > +		"	xor32		%0, %0, %1	\n"
-> > > +		"	stex.w		%0, (%2)	\n"
-> > > +		"	bez		%0, 1b		\n"
-> > > +		: "=&r"(tmp)
-> > > +		: "r"(mask), "r"(p)
-> > > +		: "memory");
-> > > +	smp_mb();
-> > > +}
-> > 
-> > The {set,clear,change}_bit() operations don't have to be ordered: you
-> > might want to remove the above smp_mb()s (and adjust the comments).
-I confused it with cmpxchg, seems cmpxchg need smp_mb() before&after.
-See: https://lkml.org/lkml/2018/7/6/383
+From: Arnd Bergmann <arnd@arndb.de>
 
-> Better yet, you can entirely delete all that and use
-> asm-generic/bitops/atomic.h instead.
-Yes, approve. Seems I only need care about asm/atomic.h, it's good for
-me.
+When function tracing for IPIs is enabled, we get a warning for an
+overflow of the ipi_types array with the IPI_CPU_BACKTRACE type
+as triggered by raise_nmi():
 
-Best Regards
- Guo Ren
+arch/arm/kernel/smp.c: In function 'raise_nmi':
+arch/arm/kernel/smp.c:489:2: error: array subscript is above array bounds [-Werror=array-bounds]
+	trace_ipi_raise(target, ipi_types[ipinr]);
+
+This is a correct warning as we actually overflow the array here.
+
+This patch raise_nmi() to call __smp_cross_call() instead of
+smp_cross_call(), to avoid calling into ftrace. For clarification,
+I'm also adding a two new code comments describing how this one
+is special.
+
+The warning appears to have shown up after patch e7273ff49acf
+("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI"), which
+changed the number assignment from '15' to '8', but as far as I can
+tell has existed since the IPI tracepoints were first introduced.
+If we decide to backport this patch to stable kernels, we probably
+need to backport e7273ff49acf as well.
+
+Resubmiting this patch is because that I found coverity is complaining
+the issue this patch fixed, and also I got the traces like below:
+"ipi_raise: target_mask=00000001 (machine_suspend)" which actually was
+the TPS of suspend_resume[1] rather than ipi_raise.
+
+[1]
+https://elixir.bootlin.com/linux/latest/source/kernel/power/suspend.c#L80
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: e7273ff49acf ("ARM: 8488/1: Make IPI_CPU_BACKTRACE a "non-secure" SGI")
+Fixes: 365ec7b17327 ("ARM: add IPI tracepoints") # v3.17
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+ arch/arm/include/asm/hardirq.h | 1 +
+ arch/arm/kernel/smp.c          | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/include/asm/hardirq.h b/arch/arm/include/asm/hardirq.h
+index cba23ea..7a88f16 100644
+--- a/arch/arm/include/asm/hardirq.h
++++ b/arch/arm/include/asm/hardirq.h
+@@ -6,6 +6,7 @@
+ #include <linux/threads.h>
+ #include <asm/irq.h>
+ 
++/* number of IPIS _not_ including IPI_CPU_BACKTRACE */
+ #define NR_IPI	7
+ 
+ typedef struct {
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 0978282..123be77 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -75,6 +75,10 @@ enum ipi_msg_type {
+ 	IPI_CPU_STOP,
+ 	IPI_IRQ_WORK,
+ 	IPI_COMPLETION,
++	/*
++	 * CPU_BACKTRACE is special and not included in NR_IPI
++	 * or tracable with trace_ipi_*
++	 */
+ 	IPI_CPU_BACKTRACE,
+ 	/*
+ 	 * SGI8-15 can be reserved by secure firmware, and thus may
+@@ -755,7 +759,7 @@ core_initcall(register_cpufreq_notifier);
+ 
+ static void raise_nmi(cpumask_t *mask)
+ {
+-	smp_cross_call(mask, IPI_CPU_BACKTRACE);
++	_smp_cross_call(mask, IPI_CPU_BACKTRACE);
+ }
+ 
+ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
+-- 
+2.7.4
+
