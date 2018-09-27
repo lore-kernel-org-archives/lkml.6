@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57727C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9456C004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CAB921564
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:07:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CAB921564
+	by mail.kernel.org (Postfix) with ESMTP id 78E5D21564
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:08:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E5D21564
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbeI0X1L (ORCPT
+        id S1728453AbeI0X1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:27:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36403 "EHLO
+        Thu, 27 Sep 2018 19:27:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57135 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728352AbeI0X1K (ORCPT
+        with ESMTP id S1727320AbeI0X1l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:27:10 -0400
+        Thu, 27 Sep 2018 19:27:41 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RH7jnu102311
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RH8GcS102368
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 10:07:45 -0700
+        Thu, 27 Sep 2018 10:08:17 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RH7jxf102308;
-        Thu, 27 Sep 2018 10:07:45 -0700
-Date:   Thu, 27 Sep 2018 10:07:45 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RH8GWZ102365;
+        Thu, 27 Sep 2018 10:08:16 -0700
+Date:   Thu, 27 Sep 2018 10:08:16 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Pu Wen <tipbot@zytor.com>
-Message-ID: <tip-4044240365e85ef7ae43a6dc454669b57853124c@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, puwen@hygon.cn,
-        boris.ostrovsky@oracle.com, tglx@linutronix.de, mingo@kernel.org,
-        bp@suse.de, hpa@zytor.com
-Reply-To: hpa@zytor.com, bp@suse.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, puwen@hygon.cn,
-          boris.ostrovsky@oracle.com, tglx@linutronix.de
-In-Reply-To: <311bf41f08f24550aa6c5da3f1e03a68d3b89dac.1537533369.git.puwen@hygon.cn>
-References: <311bf41f08f24550aa6c5da3f1e03a68d3b89dac.1537533369.git.puwen@hygon.cn>
+Message-ID: <tip-7377ed4bd56e6cc1ddbb63f03626fc5b92d3d6fe@git.kernel.org>
+Cc:     bp@suse.de, hpa@zytor.com, rafael.j.wysocki@intel.com,
+        puwen@hygon.cn, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Reply-To: puwen@hygon.cn, mingo@kernel.org, rafael.j.wysocki@intel.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org, bp@suse.de,
+          hpa@zytor.com
+In-Reply-To: <cce6ee26f4e2ebbab493433264d89d7cea661284.1537533369.git.puwen@hygon.cn>
+References: <cce6ee26f4e2ebbab493433264d89d7cea661284.1537533369.git.puwen@hygon.cn>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/xen: Add Hygon Dhyana support to Xen
-Git-Commit-ID: 4044240365e85ef7ae43a6dc454669b57853124c
+Subject: [tip:x86/cpu] ACPI: Add Hygon Dhyana support
+Git-Commit-ID: 7377ed4bd56e6cc1ddbb63f03626fc5b92d3d6fe
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,82 +58,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4044240365e85ef7ae43a6dc454669b57853124c
-Gitweb:     https://git.kernel.org/tip/4044240365e85ef7ae43a6dc454669b57853124c
+Commit-ID:  7377ed4bd56e6cc1ddbb63f03626fc5b92d3d6fe
+Gitweb:     https://git.kernel.org/tip/7377ed4bd56e6cc1ddbb63f03626fc5b92d3d6fe
 Author:     Pu Wen <puwen@hygon.cn>
-AuthorDate: Sun, 23 Sep 2018 17:36:46 +0800
+AuthorDate: Sun, 23 Sep 2018 17:37:05 +0800
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 27 Sep 2018 18:28:59 +0200
+CommitDate: Thu, 27 Sep 2018 18:29:00 +0200
 
-x86/xen: Add Hygon Dhyana support to Xen
+ACPI: Add Hygon Dhyana support
 
-To make Xen work on the Hygon platform, reuse AMD's Xen support code
-path for Hygon Dhyana CPU.
-
-There are six core performance events counters per thread, so there are
-six MSRs for these counters. Also there are four legacy PMC MSRs, they
-are aliases of the counters.
-
-In this version, use the legacy and safe version of MSR access. Tested
-successfully with VPMU enabled in Xen on Hygon platform by testing with
-perf.
+The Hygon Dhyana CPU has NONSTOP TSC feature, so enable the ACPI driver
+support to it.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: jgross@suse.com
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: rjw@rjwysocki.net
 Cc: tglx@linutronix.de
 Cc: mingo@redhat.com
 Cc: hpa@zytor.com
 Cc: x86@kernel.org
 Cc: thomas.lendacky@amd.com
-Cc: xen-devel@lists.xenproject.org
-Link: https://lkml.kernel.org/r/311bf41f08f24550aa6c5da3f1e03a68d3b89dac.1537533369.git.puwen@hygon.cn
+Cc: lenb@kernel.org
+Cc: rafael@kernel.org
+Cc: linux-acpi@vger.kernel.org
+Link: https://lkml.kernel.org/r/cce6ee26f4e2ebbab493433264d89d7cea661284.1537533369.git.puwen@hygon.cn
 ---
- arch/x86/xen/pmu.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/acpi/acpi_pad.c       | 1 +
+ drivers/acpi/processor_idle.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
-index 7d00d4ad44d4..9403854cde31 100644
---- a/arch/x86/xen/pmu.c
-+++ b/arch/x86/xen/pmu.c
-@@ -90,6 +90,12 @@ static void xen_pmu_arch_init(void)
- 			k7_counters_mirrored = 0;
- 			break;
- 		}
-+	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
-+		amd_num_counters = F10H_NUM_COUNTERS;
-+		amd_counters_base = MSR_K7_PERFCTR0;
-+		amd_ctrls_base = MSR_K7_EVNTSEL0;
-+		amd_msr_step = 1;
-+		k7_counters_mirrored = 0;
- 	} else {
- 		uint32_t eax, ebx, ecx, edx;
+diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
+index 552c1f725b6c..a47676a55b84 100644
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -70,6 +70,7 @@ static void power_saving_mwait_init(void)
  
-@@ -285,7 +291,7 @@ static bool xen_amd_pmu_emulate(unsigned int msr, u64 *val, bool is_read)
- 
- bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
+ #if defined(CONFIG_X86)
+ 	switch (boot_cpu_data.x86_vendor) {
++	case X86_VENDOR_HYGON:
+ 	case X86_VENDOR_AMD:
+ 	case X86_VENDOR_INTEL:
+ 		/*
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index abb559cd28d7..b2131c4ea124 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -205,6 +205,7 @@ static void lapic_timer_state_broadcast(struct acpi_processor *pr,
+ static void tsc_check_state(int state)
  {
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
- 		if (is_amd_pmu_msr(msr)) {
- 			if (!xen_amd_pmu_emulate(msr, val, 1))
- 				*val = native_read_msr_safe(msr, err);
-@@ -308,7 +314,7 @@ bool pmu_msr_write(unsigned int msr, uint32_t low, uint32_t high, int *err)
- {
- 	uint64_t val = ((uint64_t)high << 32) | low;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
- 		if (is_amd_pmu_msr(msr)) {
- 			if (!xen_amd_pmu_emulate(msr, &val, 0))
- 				*err = native_write_msr_safe(msr, low, high);
-@@ -379,7 +385,7 @@ static unsigned long long xen_intel_read_pmc(int counter)
- 
- unsigned long long xen_read_pmc(int counter)
- {
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
- 		return xen_amd_read_pmc(counter);
- 	else
- 		return xen_intel_read_pmc(counter);
+ 	switch (boot_cpu_data.x86_vendor) {
++	case X86_VENDOR_HYGON:
+ 	case X86_VENDOR_AMD:
+ 	case X86_VENDOR_INTEL:
+ 	case X86_VENDOR_CENTAUR:
