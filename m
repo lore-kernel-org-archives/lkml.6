@@ -2,50 +2,45 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B138FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C054C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69E7A21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:34:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E7A21533
+	by mail.kernel.org (Postfix) with ESMTP id 5509F21533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:35:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5509F21533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbeI0PwU (ORCPT
+        id S1728574AbeI0PwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:52:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57430 "EHLO
+        Thu, 27 Sep 2018 11:52:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57436 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728246AbeI0PwT (ORCPT
+        with ESMTP id S1728246AbeI0PwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:52:19 -0400
+        Thu, 27 Sep 2018 11:52:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 649B41136;
-        Thu, 27 Sep 2018 09:34:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 333D01132;
+        Thu, 27 Sep 2018 09:34:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/28] 4.4.159-stable review
-Date:   Thu, 27 Sep 2018 11:06:24 +0200
-Message-Id: <20180927090637.687829444@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
+        Mike Christie <mchristi@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 25/44] scsi: target: iscsi: Use hex2bin instead of a re-implementation
+Date:   Thu, 27 Sep 2018 11:04:14 +0200
+Message-Id: <20180927090121.392109241@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
+In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
+References: <20180927090117.997362691@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.159-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.159-rc1
-X-KernelTest-Deadline: 2018-09-29T09:06+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,150 +48,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.159 release.
-There are 28 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sat Sep 29 09:06:27 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.159-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
+From: Vincent Pelletier <plr.vincent@gmail.com>
 
-thanks,
+commit 1816494330a83f2a064499d8ed2797045641f92c upstream.
 
-greg k-h
+This change has the following effects, in order of descreasing importance:
 
--------------
-Pseudo-Shortlog of commits:
+1) Prevent a stack buffer overflow
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.159-rc1
+2) Do not append an unnecessary NULL to an anyway binary buffer, which
+   is writing one byte past client_digest when caller is:
+   chap_string_to_hex(client_digest, chap_r, strlen(chap_r));
 
-Steve Wise <swise@opengridcomputing.com>
-    iw_cxgb4: only allow 1 flush on user qps
+The latter was found by KASAN (see below) when input value hes expected size
+(32 hex chars), and further analysis revealed a stack buffer overflow can
+happen when network-received value is longer, allowing an unauthenticated
+remote attacker to smash up to 17 bytes after destination buffer (16 bytes
+attacker-controlled and one null).  As switching to hex2bin requires
+specifying destination buffer length, and does not internally append any null,
+it solves both issues.
 
-Roderick Colenbrander <roderick.colenbrander@sony.com>
-    HID: sony: Support DS4 dongle
+This addresses CVE-2018-14633.
 
-Roderick Colenbrander <roderick.colenbrander@sony.com>
-    HID: sony: Update device ids
+Beyond this:
 
-Catalin Marinas <catalin.marinas@arm.com>
-    arm64: Add trace_hardirqs_off annotation in ret_to_user
+- Validate received value length and check hex2bin accepted the input, to log
+  this rejection reason instead of just failing authentication.
 
-Li Dongyang <dongyangli@ddn.com>
-    ext4: don't mark mmp buffer head dirty
+- Only log received CHAP_R and CHAP_C values once they passed sanity checks.
 
-Theodore Ts'o <tytso@mit.edu>
-    ext4: fix online resizing for bigalloc file systems with a 1k block size
+==================================================================
+BUG: KASAN: stack-out-of-bounds in chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
+Write of size 1 at addr ffff8801090ef7c8 by task kworker/0:0/1021
 
-Theodore Ts'o <tytso@mit.edu>
-    ext4: fix online resize's handling of a too-small final block group
+CPU: 0 PID: 1021 Comm: kworker/0:0 Tainted: G           O      4.17.8kasan.sess.connops+ #2
+Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 05/19/2014
+Workqueue: events iscsi_target_do_login_rx [iscsi_target_mod]
+Call Trace:
+ dump_stack+0x71/0xac
+ print_address_description+0x65/0x22e
+ ? chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
+ kasan_report.cold.6+0x241/0x2fd
+ chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
+ chap_server_compute_md5.isra.2+0x2cb/0x860 [iscsi_target_mod]
+ ? chap_binaryhex_to_asciihex.constprop.5+0x50/0x50 [iscsi_target_mod]
+ ? ftrace_caller_op_ptr+0xe/0xe
+ ? __orc_find+0x6f/0xc0
+ ? unwind_next_frame+0x231/0x850
+ ? kthread+0x1a0/0x1c0
+ ? ret_from_fork+0x35/0x40
+ ? ret_from_fork+0x35/0x40
+ ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? deref_stack_reg+0xd0/0xd0
+ ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? is_module_text_address+0xa/0x11
+ ? kernel_text_address+0x4c/0x110
+ ? __save_stack_trace+0x82/0x100
+ ? ret_from_fork+0x35/0x40
+ ? save_stack+0x8c/0xb0
+ ? 0xffffffffc1660000
+ ? iscsi_target_do_login+0x155/0x8d0 [iscsi_target_mod]
+ ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? process_one_work+0x35c/0x640
+ ? worker_thread+0x66/0x5d0
+ ? kthread+0x1a0/0x1c0
+ ? ret_from_fork+0x35/0x40
+ ? iscsi_update_param_value+0x80/0x80 [iscsi_target_mod]
+ ? iscsit_release_cmd+0x170/0x170 [iscsi_target_mod]
+ chap_main_loop+0x172/0x570 [iscsi_target_mod]
+ ? chap_server_compute_md5.isra.2+0x860/0x860 [iscsi_target_mod]
+ ? rx_data+0xd6/0x120 [iscsi_target_mod]
+ ? iscsit_print_session_params+0xd0/0xd0 [iscsi_target_mod]
+ ? cyc2ns_read_begin.part.2+0x90/0x90
+ ? _raw_spin_lock_irqsave+0x25/0x50
+ ? memcmp+0x45/0x70
+ iscsi_target_do_login+0x875/0x8d0 [iscsi_target_mod]
+ ? iscsi_target_check_first_request.isra.5+0x1a0/0x1a0 [iscsi_target_mod]
+ ? del_timer+0xe0/0xe0
+ ? memset+0x1f/0x40
+ ? flush_sigqueue+0x29/0xd0
+ iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
+ ? iscsi_target_nego_release+0x80/0x80 [iscsi_target_mod]
+ ? iscsi_target_restore_sock_callbacks+0x130/0x130 [iscsi_target_mod]
+ process_one_work+0x35c/0x640
+ worker_thread+0x66/0x5d0
+ ? flush_rcu_work+0x40/0x40
+ kthread+0x1a0/0x1c0
+ ? kthread_bind+0x30/0x30
+ ret_from_fork+0x35/0x40
 
-Theodore Ts'o <tytso@mit.edu>
-    ext4: recalucate superblock checksum after updating free blocks/inodes
+The buggy address belongs to the page:
+page:ffffea0004243bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x17fffc000000000()
+raw: 017fffc000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffea0004243c20 ffffea0004243ba0 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
 
-Theodore Ts'o <tytso@mit.edu>
-    ext4: avoid divide by zero fault when deleting corrupted inline directories
+Memory state around the buggy address:
+ ffff8801090ef680: f2 f2 f2 f2 f2 f2 f2 01 f2 f2 f2 f2 f2 f2 f2 00
+ ffff8801090ef700: f2 f2 f2 f2 f2 f2 f2 00 02 f2 f2 f2 f2 f2 f2 00
+>ffff8801090ef780: 00 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f2 f2 f2 f2 00
+                                              ^
+ ffff8801090ef800: 00 f2 f2 f2 f2 f2 f2 00 00 00 00 02 f2 f2 f2 f2
+ ffff8801090ef880: f2 f2 f2 00 00 00 00 00 00 00 00 f2 f2 f2 f2 00
+==================================================================
 
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    tty: vt_ioctl: fix potential Spectre v1
+Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Lyude Paul <lyude@redhat.com>
-    drm/nouveau/drm/nouveau: Use pm_runtime_get_noresume() in connector_detect()
+---
+ drivers/target/iscsi/iscsi_target_auth.c |   30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-Junxiao Bi <junxiao.bi@oracle.com>
-    ocfs2: fix ocfs2 read block panic
-
-Vincent Pelletier <plr.vincent@gmail.com>
-    scsi: target: iscsi: Use hex2bin instead of a re-implementation
-
-Vasily Khoruzhick <vasilykh@arista.com>
-    neighbour: confirm neigh entries when ARP packet is received
-
-Colin Ian King <colin.king@canonical.com>
-    net: hp100: fix always-true check for link up state
-
-Willy Tarreau <w@1wt.eu>
-    net/appletalk: fix minor pointer leak to userspace in SIOCFINDIPDDPRT
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: fix possible use-after-free in ip6_xmit()
-
-Toke Høiland-Jørgensen <toke@toke.dk>
-    gso_segment: Reset skb->mac_len after modifying network header
-
-Joel Fernandes (Google) <joel@joelfernandes.org>
-    mm: shmem.c: Correctly annotate new inodes for lockdep
-
-Vaibhav Nagarnaik <vnagarnaik@google.com>
-    ring-buffer: Allow for rescheduling when removing pages
-
-Boris Ostrovsky <boris.ostrovsky@oracle.com>
-    xen/x86/vpmu: Zero struct pt_regs before calling into sample handling code
-
-Juergen Gross <jgross@suse.com>
-    xen/netfront: don't bug in case of too many frags
-
-Mario Limonciello <mario.limonciello@dell.com>
-    platform/x86: alienware-wmi: Correct a memory leak
-
-Willy Tarreau <w@1wt.eu>
-    ALSA: emu10k1: fix possible info leak to userspace on SNDRV_EMU10K1_IOCTL_INFO
-
-Takashi Sakamoto <o-takashi@sakamocchi.jp>
-    ALSA: bebob: use address returned by kmalloc() instead of kernel stack for streaming DMA mapping
-
-Sébastien Szymanski <sebastien.szymanski@armadeus.com>
-    ASoC: cs4265: fix MMTLR Data switch control
-
-Suren Baghdasaryan <surenb@google.com>
-    NFC: Fix the number of pipes
-
-Suren Baghdasaryan <surenb@google.com>
-    NFC: Fix possible memory corruption when handling SHDLC I-Frame commands
-
-
--------------
-
-Diffstat:
-
- Makefile                                    |  4 ++--
- arch/arm64/kernel/entry.S                   |  3 +++
- arch/x86/xen/pmu.c                          |  2 +-
- drivers/gpu/drm/nouveau/nouveau_connector.c | 20 ++++++++++---------
- drivers/hid/hid-core.c                      |  3 +++
- drivers/hid/hid-ids.h                       |  2 ++
- drivers/hid/hid-sony.c                      |  6 ++++++
- drivers/infiniband/hw/cxgb4/qp.c            |  6 ++++++
- drivers/net/appletalk/ipddp.c               |  8 ++++++--
- drivers/net/ethernet/hp/hp100.c             |  2 +-
- drivers/net/xen-netfront.c                  |  8 +++++++-
- drivers/platform/x86/alienware-wmi.c        |  1 +
- drivers/target/iscsi/iscsi_target_auth.c    | 30 ++++++++++++++---------------
- drivers/tty/vt/vt_ioctl.c                   |  4 ++++
- fs/ext4/dir.c                               | 20 +++++++++----------
- fs/ext4/inline.c                            |  4 +++-
- fs/ext4/mmp.c                               |  1 -
- fs/ext4/resize.c                            | 23 +++++++++++++++++++++-
- fs/ext4/super.c                             |  2 ++
- fs/ocfs2/buffer_head_io.c                   |  1 +
- include/net/nfc/hci.h                       |  2 +-
- kernel/trace/ring_buffer.c                  |  2 ++
- mm/shmem.c                                  |  2 ++
- net/core/neighbour.c                        | 13 ++++++++-----
- net/ipv4/af_inet.c                          |  1 +
- net/ipv6/ip6_offload.c                      |  1 +
- net/ipv6/ip6_output.c                       |  6 ++----
- net/nfc/hci/core.c                          | 10 ++++++++++
- sound/firewire/bebob/bebob_maudio.c         | 24 +++++++++++++----------
- sound/pci/emu10k1/emufx.c                   |  2 +-
- sound/soc/codecs/cs4265.c                   |  4 ++--
- 31 files changed, 148 insertions(+), 69 deletions(-)
+--- a/drivers/target/iscsi/iscsi_target_auth.c
++++ b/drivers/target/iscsi/iscsi_target_auth.c
+@@ -26,18 +26,6 @@
+ #include "iscsi_target_nego.h"
+ #include "iscsi_target_auth.h"
+ 
+-static int chap_string_to_hex(unsigned char *dst, unsigned char *src, int len)
+-{
+-	int j = DIV_ROUND_UP(len, 2), rc;
+-
+-	rc = hex2bin(dst, src, j);
+-	if (rc < 0)
+-		pr_debug("CHAP string contains non hex digit symbols\n");
+-
+-	dst[j] = '\0';
+-	return j;
+-}
+-
+ static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
+ {
+ 	int i;
+@@ -240,9 +228,16 @@ static int chap_server_compute_md5(
+ 		pr_err("Could not find CHAP_R.\n");
+ 		goto out;
+ 	}
++	if (strlen(chap_r) != MD5_SIGNATURE_SIZE * 2) {
++		pr_err("Malformed CHAP_R\n");
++		goto out;
++	}
++	if (hex2bin(client_digest, chap_r, MD5_SIGNATURE_SIZE) < 0) {
++		pr_err("Malformed CHAP_R\n");
++		goto out;
++	}
+ 
+ 	pr_debug("[server] Got CHAP_R=%s\n", chap_r);
+-	chap_string_to_hex(client_digest, chap_r, strlen(chap_r));
+ 
+ 	tfm = crypto_alloc_shash("md5", 0, 0);
+ 	if (IS_ERR(tfm)) {
+@@ -341,9 +336,7 @@ static int chap_server_compute_md5(
+ 		pr_err("Could not find CHAP_C.\n");
+ 		goto out;
+ 	}
+-	pr_debug("[server] Got CHAP_C=%s\n", challenge);
+-	challenge_len = chap_string_to_hex(challenge_binhex, challenge,
+-				strlen(challenge));
++	challenge_len = DIV_ROUND_UP(strlen(challenge), 2);
+ 	if (!challenge_len) {
+ 		pr_err("Unable to convert incoming challenge\n");
+ 		goto out;
+@@ -352,6 +345,11 @@ static int chap_server_compute_md5(
+ 		pr_err("CHAP_C exceeds maximum binary size of 1024 bytes\n");
+ 		goto out;
+ 	}
++	if (hex2bin(challenge_binhex, challenge, challenge_len) < 0) {
++		pr_err("Malformed CHAP_C\n");
++		goto out;
++	}
++	pr_debug("[server] Got CHAP_C=%s\n", challenge);
+ 	/*
+ 	 * During mutual authentication, the CHAP_C generated by the
+ 	 * initiator must not match the original CHAP_C generated by
 
 
