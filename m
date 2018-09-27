@@ -2,150 +2,94 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AB9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AE5C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAF7121582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:47:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aaathats3as.com header.i=@aaathats3as.com header.b="zaRWhRfm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAF7121582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aaathats3as.com
+	by mail.kernel.org (Postfix) with ESMTP id EE49521582
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:48:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE49521582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbeI0PEy (ORCPT
+        id S1727234AbeI0PFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:04:54 -0400
-Received: from cock.li ([185.100.85.212]:58650 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726929AbeI0PEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:04:54 -0400
+        Thu, 27 Sep 2018 11:05:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47048 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeI0PFb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 11:05:31 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D3DF10AB;
+        Thu, 27 Sep 2018 08:48:21 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 10:48:17 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     John Crispin <john@phrozen.org>, frederic@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH stable] tick/nohz: Prevent bogus softirq pending warning
+Message-ID: <20180927084817.GA10781@kroah.com>
+References: <alpine.DEB.2.21.1808301702450.1210@nanos.tec.linutronix.de>
+ <CAMuHMdXASyzFpLp7RF36HWZcDdQcvdZ+JsmSn+Az8ZHcFLJ1zA@mail.gmail.com>
+ <CAMuHMdXyAQP_GYyHXJd7qq1ww25TbVs5QONDTqzLK_arGiLeMQ@mail.gmail.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaathats3as.com;
-        s=mail; t=1538038063;
-        bh=YStGAI65OQs8Q8+9Lap1v+Z5lpcnvSyPNkl87Kcqczo=;
-        h=Date:From:To:Subject:From;
-        b=zaRWhRfm2gM09vI4vIFR9N782YH/AGCQkzeaQgS1//dnc1oZ0rW+jsv5sloXvV/nB
-         HtGPX0cmcFGnamlCur8RA0+f7eSBjSpJvt2iNpmCDty2Reax9tPHfUw1qPtTIsuWPV
-         bcplQXUK3/Qt1aTygeM9T4rk+BAXL9SReI3yi+QORKEkkcfKmYVTje721RyvTBlEVR
-         rcPA6n8899hq0w7J9ayu1sDDoX4f59CRPWIWlAma9myejWTAJcM13W66y4pOnVtNmo
-         JhZq5bbDHF+d+pUqDmTm4DEPTKsh7PkR8DxJ7mXkqWQBQQVF9qZqOVDUH74PeUtp2I
-         RyVzIaM2AI+vg==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 27 Sep 2018 08:47:43 +0000
-From:   viewedforward@aaathats3as.com
-To:     linux-kernel@vger.kernel.org
-Subject: Yes you CAN revoke a GPLv2 licensed work. (Response to software
- freedom conservancy)
-Message-ID: <d6c41b068160c1a17d97632c9f48d206@aaathats3as.com>
-X-Sender: viewedforward@aaathats3as.com
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXyAQP_GYyHXJd7qq1ww25TbVs5QONDTqzLK_arGiLeMQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The software freedom conservancy has tendered its response:
-http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
-http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
+On Thu, Sep 27, 2018 at 10:07:39AM +0200, Geert Uytterhoeven wrote:
+> Hi Greg,
+> 
+> On Wed, Sep 12, 2018 at 3:56 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Thu, Aug 30, 2018 at 5:06 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > Commit 0a0e0829f990 ("nohz: Fix missing tick reprogram when interrupting an
+> > > inline softirq") got backported to stable trees and now causes the NOHZ
+> > > softirq pending warning to trigger. It's not an upstream issue as the NOHZ
+> > > update logic has been changed there.
+> > >
+> > > The problem is when a softirq disabled section gets interrupted and on
+> > > return from interrupt the tick/nohz state is evaluated, which then can
+> > > observe pending soft interrupts. These soft interrupts are legitimately
+> > > pending because they cannot be processed as long as soft interrupts are
+> > > disabled and the interrupted code will correctly process them when soft
+> > > interrupts are reenabled.
+> > >
+> > > Add a check for softirqs disabled to the pending check to prevent the
+> > > warning.
+> > >
+> > > Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> > > Reported-by: John Crispin <john@phrozen.org>
+> > > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > > Tested-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> > > Tested-by: John Crispin <john@phrozen.org>
+> > > Cc: Frederic Weisbecker <frederic@kernel.org>
+> > > Cc: Ingo Molnar <mingo@kernel.org>
+> > > Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: stable@vger.kernel.org
+> >
+> > Fixes: 2d898915ccf4838c ("nohz: Fix missing tick reprogram when
+> > interrupting an inline softirq")
+> >
+> > Issue in v4.14.x bisected to the above commit, and fixed by your patch.
+> >
+> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> This issue is still present in v4.14.72. Can you please apply Thomas' fix?
 
+Oops, sorry for the delay, now queued up.
 
-""
-"The GPLv2 have several provisions that, when taken together, can be 
-construed as an irrevocable license from each contributor. "
-""
-
-It cites:
-
-
-           " That license granted to downstream is irrevocable, again 
-provided that the downstream user complies with the license terms: 
-"[P]arties who have received copies, or rights, from you under this 
-License will not have their licenses terminated so long as such parties 
-remain in full compliance" (GPLv2§4). "
-
-However this is disingenuous
-
-The full text of section 4 is as follows:
-
-""
-   4. You may not copy, modify, sublicense, or distribute the Program
-except as expressly provided under this License.  Any attempt
-otherwise to copy, modify, sublicense or distribute the Program is
-void, and will automatically terminate your rights under this License.
-However, parties who have received copies, or rights, from you under
-this License will not have their licenses terminated so long as such
-parties remain in full compliance.
-""
-
-
-
-The "You" in section 4 is speaking of the licensee regarding 
-sub-licensees, it is not speaking to the licensor/copyright-holder.
-
-IE: if the licensee loses his license, through operation of the 
-automatic-revocation provisions, the sub-licensees do not also lose 
-their licenses.
-
-IE: The language is disclaiming a chain topography for license 
-distribution, and instead substituting a hub-and-spoke topography (all 
-licenses originating from the copyright holder, not the 
-previous-in-line)
-
-GPLv3 added a no-rescission clause for a reason: the reason being to 
-attempt to create an estoppel defense for the licensees against the 
-licensor. You will notice that Eben Moglen never speaks on these issues. 
-(He preumably is aware of the weaknesses vis a vis the US copyright 
-regime.)
-
-Section 6 further clarifies the hub-and-spoke model:
-""
-    6. Each time you redistribute the Program (or any work based on the
-Program), the recipient automatically receives a license from the
-original licensor to copy, distribute or modify the Program subject to
-these terms and conditions.  You may not impose any further
-restrictions on the recipients' exercise of the rights granted herein.
-You are not responsible for enforcing compliance by third parties to
-this License.
-""
-
-The memorandum posted then goes on to a discussion of estoppel, 
-detrimental reliance, etc; noting that users may have relied on the 
-software and their licenses may be estopped from being revoked from said 
-users since doing so might cause them unanticipated loss. This is 
-speaking of already published, existent, versions of the program used by 
-end users.
-
-The memorandum seems to ignore what happens to "upstream" once said 
-project  receives a revocation notice. Thought it may be possible that 
-users of a published piece of software may have defenses to license 
-revocation, the same is not true regarding the rescinded property 
-vis-a-vis future prospective versions of the software nor of future 
-prospective licensees of said software.
-
-That is: once the grant to use the code in question is rescinded, future 
-versions of the software may not use that code. Current users of the 
-software may be-able to raise an estoppel / detrimental reliance defense 
-regarding the current published software, however the programmers 
-working on the next version of said software cannot continue to use the 
-property in future versions of the software (such would be a copyright 
-violation once the gratuitous license is rescinded by the grantor).
-
-Additionally, prospective-licensees, once the grant was rescinded and 
-such was published, would have no same-such estoppel defense (not being 
-user-licensees at the time of revocation).
-
-(Ignoring this eventuality in the published memorandum, is, of-course, 
-by design.)
-(Now, to note: the free-software movement is focused on the freedom of 
-the user, not the progenitors of the software, so one could certainly 
-say that ignoring some developer-focused analysis is consistent with 
-their prerogative...)
-
-__
+greg k-h
