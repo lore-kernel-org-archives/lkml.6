@@ -2,94 +2,109 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5270C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F51C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 664942170B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:38:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664942170B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 90074215F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:41:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90074215F0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbeI0X5o (ORCPT
+        id S1728451AbeI1AAi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:57:44 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39390 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727870AbeI0X5o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:57:44 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c12-v6so3372353otl.6;
-        Thu, 27 Sep 2018 10:38:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u7An+RNIBLO4O18VMZttAslJeYKvxjirnHe/HfmRScs=;
-        b=ROS54IUyHOCYu22K16VkodLrfqJHk65Cbm6hZvofgjBC+hEIrw4Ygxq2GTBUxOxTZC
-         rMidewMMFadiT4QbW8McI+GWSSWDjCsjlLMRDKAwuCRowtMNZP/cKL/Ygqnpjg6TupCo
-         dOpyacm9thlb1N9+/DyFJtBQs+VMuvH9CPir/mtj9kJiGDHblYs0uC/bzKmrF9jRgj/i
-         pWzsPfO2wYgCBy9X03VfPWwUBd8goAkifEa6ifWjepRy9cbN+/8jJs/ZsiujYr5x6TEz
-         qeGYiz83XcwlortF/l3OpYN+3lRaI53o0zGNG/S80945Z0bj8yIJc41YsVhA7zj6eQuT
-         Qzig==
-X-Gm-Message-State: ABuFfojWt1+X6805Hih42k241aPCXwosksFg9yHTudNfntqWwX/Y05bc
-        vwlPDl/8X2dMhqHwlnOxQSxW805Vs6rw
-X-Google-Smtp-Source: ACcGV61gvZqboz7Q8ssy9EGTLF+VdVE0E4pql9XpeYqvhN8InIPeIqPuSeepX07GfacH2ohgyey7zw==
-X-Received: by 2002:a9d:5c0b:: with SMTP id o11-v6mr7224589otk.77.1538069902649;
-        Thu, 27 Sep 2018 10:38:22 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k23-v6sm833573otl.69.2018.09.27.10.38.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 10:38:22 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 12:38:21 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Damian Kos <dkos@cadence.com>
-Cc:     David Airlie <airlied@linux.ie>,
+        Thu, 27 Sep 2018 20:00:38 -0400
+Received: from mga12.intel.com ([192.55.52.136]:4785 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727320AbeI1AAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 20:00:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 10:41:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,311,1534834800"; 
+   d="scan'208";a="95465871"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.151]) ([10.7.153.151])
+  by orsmga002.jf.intel.com with ESMTP; 27 Sep 2018 10:41:16 -0700
+Subject: Re: [PATCH i2c-next v3 2/3] i2c: aspeed: Add 'aspeed,timeout' DT
+ property reading code
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Damian Kos <dkos@cadence.com>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, pgaj@cadence.com,
-        ltyrala@cadence.com, rafalc@cadence.com, jartur@cadence.com,
-        piotrs@cadence.com, quentin.schulz@bootlin.com, jbergsagel@ti.com
-Subject: Re: [PATCH v5 4/5] dt-bindings: drm/bridge: Document Cadence MHDP
- bridge bindings
-Message-ID: <20180927173821.GA7422@bogus>
-References: <1537866837-4408-1-git-send-email-dkos@cadence.com>
- <1537866837-4408-5-git-send-email-dkos@cadence.com>
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jarkko.nikula@linux.intel.com,
+        James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20180926215842.23125-1-jae.hyun.yoo@linux.intel.com>
+ <20180926215842.23125-3-jae.hyun.yoo@linux.intel.com>
+ <CACPK8XcKms88EcpT3soE6wLyAmvyiLfVkNeOQT0FgmY4eZoDrw@mail.gmail.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <37ae7a11-44b6-88e5-0f4d-c97c70334ad4@linux.intel.com>
+Date:   Thu, 27 Sep 2018 10:41:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537866837-4408-5-git-send-email-dkos@cadence.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CACPK8XcKms88EcpT3soE6wLyAmvyiLfVkNeOQT0FgmY4eZoDrw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Sep 2018 10:13:34 +0100, Damian Kos wrote:
-> From: Quentin Schulz <quentin.schulz@free-electrons.com>
+Hi Joel,
+
+On 9/26/2018 8:11 PM, Joel Stanley wrote:
+> On Thu, 27 Sep 2018 at 01:58, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+>>
+>> +/* Timeout */
+>> +#define ASPEED_I2C_BUS_TIMEOUT_US_DEFAULT              (5 * 1000 * 1000)
 > 
-> Document the bindings used for the Cadence MHDP DPI/DP bridge.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Signed-off-by: Damian Kos <dkos@cadence.com>
-> ---
->  .../bindings/display/bridge/cdns,mhdp.txt     | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
+> The 5 seconds time out is way too long. On a system that doesn't have
+> functional i2c, this holds up boot for a long time as most i2c client
+> drivers try to initialise their device and fail. I realise you're not
+> changing the value, but we should pick a better default. 1 second?
+> Half a second?
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I agree with you. We could probably use 1 second as default which can
+cover the most of general cases. If so, we don't need to make the
+default setting in this driver because i2c-core-base will default
+adap->timeout to 1 second if the value is 0 when a driver registers an
+adapter. Will fix this code.
+
+>>
+>> +       ret = of_property_read_u32(pdev->dev.of_node, "aspeed,timeout",
+>> +                                  &timeout_us);
+> 
+> Can we make this binding generic? It's not specific to aspeed's
+> hardware. Getting the value could even part of the i2c core.
+> 
+> I read the previous thread with Wolfram. I think this would still fit
+> with what Wolfram suggested, but please forgive my jetlagged brain if
+> I've missed something.
+> 
+
+It followed the way of the existing i2c-mpc driver uses 'fsl,timeout'
+for the same purpose. Though, I also want to make it as a generic as you
+suggested like 'timeout' in milliseconds unit, not in microseconds unit.
+If making it a generic property is acceptable, I'll fix it too.
+
+Wolfram, can you please share your thought on it?
+
+Thanks,
+Jae
