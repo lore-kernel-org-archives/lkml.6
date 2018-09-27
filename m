@@ -2,266 +2,487 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BFFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14737C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 479C22156D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:55:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n3Xc2tN7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 479C22156D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C3F62156E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:57:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3F62156E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeI0OMC (ORCPT
+        id S1727187AbeI0OOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 10:12:02 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38485 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbeI0OMC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 10:12:02 -0400
-Received: by mail-ed1-f67.google.com with SMTP id x8-v6so4186780eds.5;
-        Thu, 27 Sep 2018 00:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GPpYznAj87DPVzlW6kNndkK3D9Uz+Fy28fCyfcBw0VM=;
-        b=n3Xc2tN7Lx0dERyjHNQ1nesr467135Mb4UuUvTnL2ay+ZUEW+TnTsYrh3fkXJQqz/3
-         t05enBTldqSGGftj55nZNg4TjAQRi8eKZMYtQKSaMcb77fTTnZGO5YJqCwLzeJDr9sD+
-         ZWkVuRWCZt33I3+jWdCULu3KJECPhQpOWDBLTg50vxa/C3TPMAdAHeAHJ5MEiDtXuetC
-         4o0eazNIlVR2EHr9JmJhlWRPlGGGYCgXuMuEt9jnA368smFGDuqCg5w6VyzX3cR0LsIy
-         rNJTcJ9DbOmGPofV0ulVHsTpxE2+XqhXW+a3Gb+p6cjU/k/QsJCCUazyjN7DclRJW0rX
-         aqTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GPpYznAj87DPVzlW6kNndkK3D9Uz+Fy28fCyfcBw0VM=;
-        b=BSHFR97c5CWDyl8YEtfLiwtTlLkVsaan5kHjwaoC9N3K8mFyxL+z9Sj5nZafLRRSvg
-         5VYjNZ5CxHCh21hUsTCZuStVx7/EJTu53TiAmbc5Fg0XtD2G3AybllVGc6pCxeFj038Z
-         x4fDp+LHxkWDQhrMgicaPmc0uvplOgUBmHEaVQkGNgodkEBKLvOV758u5tB+qXnJCX17
-         xLBz578IY3gQMye5uzgMwPCf5CCbKhgFNu+bVBrF+P2yTwIlCIwtXtfeF31KiprPh/uJ
-         tmPMgswJLUJDJfCtW/aRk8W7hHWD6uJdmIqJ3tny7I9E6EPudjXOfkfKUvPiyLGpG6rM
-         RJ7Q==
-X-Gm-Message-State: ABuFfojEGN5VyumnasO977G/eMaotomRXu2R4T10DoJOCvOEc+NdsCWw
-        m6nKzq5faP7jZq5iPTFK2ig=
-X-Google-Smtp-Source: ACcGV603Ec75Ss9gUEoLix3GTbyZZPanRelXvJTSX7PrPwj7fUJwVAWSdS8x4n5o9G7AobUZvgl9+g==
-X-Received: by 2002:a50:9ac5:: with SMTP id p63-v6mr17097101edb.112.1538034902840;
-        Thu, 27 Sep 2018 00:55:02 -0700 (PDT)
-Received: from ziggy.stardust ([93.176.144.101])
-        by smtp.gmail.com with ESMTPSA id j14-v6sm847911edq.25.2018.09.27.00.55.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 00:55:01 -0700 (PDT)
-Subject: Re: [PATCH v23 4/4] soc: mediatek: Add Mediatek CMDQ helper
-To:     houlong wei <houlong.wei@mediatek.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
-        =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= 
-        <Bibby.Hsieh@mediatek.com>,
-        =?UTF-8?B?WVQgU2hlbiAo5rKI5bKz6ZyGKQ==?= <Yt.Shen@mediatek.com>,
-        =?UTF-8?B?RGFveXVhbiBIdWFuZyAo6buD6YGT5Y6fKQ==?= 
-        <Daoyuan.Huang@mediatek.com>,
-        =?UTF-8?B?SmlhZ3VhbmcgWmhhbmcgKOW8oOWKoOW5vyk=?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        =?UTF-8?B?RGVubmlzLVlDIEhzaWVoICjorJ3lroflk7Ip?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        =?UTF-8?B?TW9uaWNhIFdhbmcgKOeOi+Wtn+Wptyk=?= 
-        <monica.wang@mediatek.com>,
-        =?UTF-8?B?SHMgTGlhbyAo5buW5a6P56WlKQ==?= <Hs.Liao@mediatek.com>,
-        =?UTF-8?B?R2lubnkgQ2hlbiAo6Zmz5rK75YKRKQ==?= 
-        <ginny.chen@mediatek.com>,
-        =?UTF-8?B?RW56aHUgV2FuZyAo546L5oGp5p+xKQ==?= 
-        <enzhu.wang@mediatek.com>
-References: <1532482002-11164-1-git-send-email-houlong.wei@mediatek.com>
- <1532482002-11164-5-git-send-email-houlong.wei@mediatek.com>
- <1534297570.21668.3.camel@mhfsdcap03>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <23d76d03-c0e9-cd83-f9a8-f5efa0c72938@gmail.com>
-Date:   Thu, 27 Sep 2018 09:55:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 27 Sep 2018 10:14:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34946 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726659AbeI0OOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 10:14:01 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6493637E7B;
+        Thu, 27 Sep 2018 07:57:03 +0000 (UTC)
+Received: from redhat.com (ovpn-120-56.rdu2.redhat.com [10.10.120.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB88D308BDA5;
+        Thu, 27 Sep 2018 07:56:55 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 03:56:52 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Henry Willard <henry.willard@oracle.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Zi Yan <zi.yan@cs.rutgers.edu>, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: mprotect: check page dirty when change ptes
+Message-ID: <20180927075651.GA7035@redhat.com>
+References: <20180912064921.31015-1-peterx@redhat.com>
+ <20180912130355.GA4009@redhat.com>
+ <20180912132438.GB4009@redhat.com>
+ <20180913073722.GF10763@xz-x1>
+ <20180913142328.GA3576@redhat.com>
+ <20180914004239.GA31077@redhat.com>
+ <20180914071610.GL10763@xz-x1>
+ <20180915004157.GA15678@redhat.com>
+ <20180927074338.GB8870@xz-x1>
 MIME-Version: 1.0
-In-Reply-To: <1534297570.21668.3.camel@mhfsdcap03>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180927074338.GB8870@xz-x1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 27 Sep 2018 07:57:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 27, 2018 at 03:43:38PM +0800, Peter Xu wrote:
+> On Fri, Sep 14, 2018 at 08:41:57PM -0400, Jerome Glisse wrote:
+> > On Fri, Sep 14, 2018 at 03:16:11PM +0800, Peter Xu wrote:
+> > > On Thu, Sep 13, 2018 at 08:42:39PM -0400, Jerome Glisse wrote:
 
-
-On 15/08/2018 03:46, houlong wei wrote:
-[...]
->> +
->> +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
->> +				   u32 arg_a, u32 arg_b)
->> +{
->> +	u64 *cmd_ptr;
->> +
->> +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
->> +		pkt->cmd_buf_size += CMDQ_INST_SIZE;
->> +		return -ENOMEM;
->> +	}
->> +	cmd_ptr = pkt->va_base + pkt->cmd_buf_size;
->> +	(*cmd_ptr) = (u64)((code << CMDQ_OP_CODE_SHIFT) | arg_a) << 32 | arg_b;
->> +	pkt->cmd_buf_size += CMDQ_INST_SIZE;
->> +
->> +	return 0;
->> +}
->> +
->> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset)
->> +{
->> +	u32 arg_a = (offset & CMDQ_ARG_A_WRITE_MASK) |
->> +		    (subsys << CMDQ_SUBSYS_SHIFT);
->> +
->> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WRITE, arg_a, value);
->> +}
->> +EXPORT_SYMBOL(cmdq_pkt_write);
->> +
->> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
->> +			u32 subsys, u32 offset, u32 mask)
->> +{
->> +	u32 offset_mask = offset;
->> +	int err;
->> +
->> +	if (mask != 0xffffffff) {
->> +		err = cmdq_pkt_append_command(pkt, CMDQ_CODE_MASK, 0, ~mask);
->> +		WARN_ON(err < 0);
-
-If we want to write out a warning to the kernel log, then we should but that in
-the if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) from
-cmdq_pkt_append_command to make it consistent between cmdq_pkt_write,
-cmdq_pkt_write_mask and cmdq_pkt_finalize
-
-Sorry, just saw this right now.
-
->> +		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
->> +	}
->> +
->> +	return cmdq_pkt_write(pkt, value, subsys, offset_mask);
->> +}
->> +EXPORT_SYMBOL(cmdq_pkt_write_mask);
->> +
->> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event)
->> +{
->> +	u32 arg_b;
->> +
->> +	if (event >= CMDQ_MAX_EVENT)
->> +		return -EINVAL;
->> +
->> +	/*
->> +	 * WFE arg_b
->> +	 * bit 0-11: wait value
->> +	 * bit 15: 1 - wait, 0 - no wait
->> +	 * bit 16-27: update value
->> +	 * bit 31: 1 - update, 0 - no update
->> +	 */
->> +	arg_b = CMDQ_WFE_UPDATE | CMDQ_WFE_WAIT | CMDQ_WFE_WAIT_VALUE;
->> +
->> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE, event, arg_b);
->> +}
->> +EXPORT_SYMBOL(cmdq_pkt_wfe);
->> +
->> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event)
->> +{
->> +	if (event >= CMDQ_MAX_EVENT)
->> +		return -EINVAL;
->> +
->> +	return cmdq_pkt_append_command(pkt, CMDQ_CODE_WFE, event,
->> +				       CMDQ_WFE_UPDATE);
->> +}
->> +EXPORT_SYMBOL(cmdq_pkt_clear_event);
->> +
->> +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
->> +{
->> +	int err;
->> +
->> +	/* insert EOC and generate IRQ for each command iteration */
->> +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
->> +	WARN_ON(err < 0);
-
-Should move into cmdq_pkt_append_command
-
->> +
->> +	/* JUMP to end */
->> +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
->> +	WARN_ON(err < 0);
-
-same here.
-
->> +
->> +	return err;
->> +}
->> +
 [...]
 
-Regards,
-Matthias
+> > 
+> > From 83abd3f16950a0b5cb6870a04d89d4fcc06b8865 Mon Sep 17 00:00:00 2001
+> > From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+> > Date: Thu, 13 Sep 2018 10:16:30 -0400
+> > Subject: [PATCH] mm/mprotect: add a mkwrite paramater to change_protection()
+> > MIME-Version: 1.0
+> > Content-Type: text/plain; charset=UTF-8
+> > Content-Transfer-Encoding: 8bit
+> > 
+> > The mkwrite parameter allow to change read only pte to write one which
+> > is needed by userfaultfd to un-write-protect after a fault have been
+> > handled.
+> > 
+> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > ---
+> >  include/linux/huge_mm.h  |  2 +-
+> >  include/linux/mm.h       |  3 +-
+> >  mm/huge_memory.c         | 32 +++++++++++++++++++--
+> >  mm/mempolicy.c           |  2 +-
+> >  mm/mprotect.c            | 61 +++++++++++++++++++++++++++++-----------
+> >  mm/userfaultfd.c         |  2 +-
+> >  tools/lib/str_error_r.c  |  9 ++++--
+> >  tools/lib/subcmd/pager.c |  5 +++-
+> >  8 files changed, 90 insertions(+), 26 deletions(-)
+> > 
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index a8a126259bc4..b51ff7f8e65c 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -45,7 +45,7 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+> >  			 pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush);
+> >  extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> >  			unsigned long addr, pgprot_t newprot,
+> > -			int prot_numa);
+> > +			int prot_numa, bool mkwrite);
+> >  int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+> >  			pmd_t *pmd, pfn_t pfn, bool write);
+> >  int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 5d5c7fd07dc0..2bbf3e33bf9e 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -1492,7 +1492,8 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+> >  		bool need_rmap_locks);
+> >  extern unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+> >  			      unsigned long end, pgprot_t newprot,
+> > -			      int dirty_accountable, int prot_numa);
+> > +			      int dirty_accountable, int prot_numa,
+> > +			      bool mkwrite);
+> >  extern int mprotect_fixup(struct vm_area_struct *vma,
+> >  			  struct vm_area_struct **pprev, unsigned long start,
+> >  			  unsigned long end, unsigned long newflags);
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index abf621aba672..7b848b84d80c 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -1842,12 +1842,13 @@ bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+> >   *  - HPAGE_PMD_NR is protections changed and TLB flush necessary
+> >   */
+> >  int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> > -		unsigned long addr, pgprot_t newprot, int prot_numa)
+> > +		unsigned long addr, pgprot_t newprot, int prot_numa,
+> > +		bool mkwrite)
+> >  {
+> >  	struct mm_struct *mm = vma->vm_mm;
+> >  	spinlock_t *ptl;
+> >  	pmd_t entry;
+> > -	bool preserve_write;
+> > +	bool preserve_write, do_mkwrite = false;
+> >  	int ret;
+> >  
+> >  	ptl = __pmd_trans_huge_lock(pmd, vma);
+> > @@ -1857,6 +1858,31 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> >  	preserve_write = prot_numa && pmd_write(*pmd);
+> >  	ret = 1;
+> >  
+> > +	if (mkwrite && pmd_present(*pmd) && !pmd_write(*pmd)) {
+> > +		pmd_t orig_pmd = READ_ONCE(*pmd);
+> > +		struct page *page = pmd_page(orig_pmd);
+> > +
+> > +		VM_BUG_ON_PAGE(!PageCompound(page) || !PageHead(page), page);
+> > +		/*
+> > +		 * We can only allow mkwrite if nobody else maps the huge page
+> > +		 * or it's part.
+> > +		 */
+> > +		if (!trylock_page(page)) {
+> > +			get_page(page);
+> > +			spin_unlock(ptl);
+> > +			lock_page(page);
+> > +
+> > +			ptl = __pmd_trans_huge_lock(pmd, vma);
+> > +			if (!ptl)
+> > +				return 0;
+> > +		}
+> > +		if (pmd_same(*pmd, orig_pmd) && reuse_swap_page(page, NULL)) {
+> > +			do_mkwrite = true;
+> > +		}
+> > +		unlock_page(page);
+> > +		put_page(page);
+> > +	}
+> > +
+> >  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >  	if (is_swap_pmd(*pmd)) {
+> >  		swp_entry_t entry = pmd_to_swp_entry(*pmd);
+> > @@ -1925,6 +1951,8 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> >  	entry = pmd_modify(entry, newprot);
+> >  	if (preserve_write)
+> >  		entry = pmd_mk_savedwrite(entry);
+> > +	if (do_mkwrite)
+> > +		entry = pmd_mkwrite(entry);
+> >  	ret = HPAGE_PMD_NR;
+> >  	set_pmd_at(mm, addr, pmd, entry);
+> >  	BUG_ON(vma_is_anonymous(vma) && !preserve_write && pmd_write(entry));
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index 4ce44d3ff03d..2d0ee09e6b26 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -579,7 +579,7 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
+> >  {
+> >  	int nr_updated;
+> >  
+> > -	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1);
+> > +	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1, false);
+> >  	if (nr_updated)
+> >  		count_vm_numa_events(NUMA_PTE_UPDATES, nr_updated);
+> >  
+> > diff --git a/mm/mprotect.c b/mm/mprotect.c
+> > index 58b629bb70de..2d0c7e39f075 100644
+> > --- a/mm/mprotect.c
+> > +++ b/mm/mprotect.c
+> > @@ -36,7 +36,7 @@
+> >  
+> >  static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> >  		unsigned long addr, unsigned long end, pgprot_t newprot,
+> > -		int dirty_accountable, int prot_numa)
+> > +		int dirty_accountable, int prot_numa, bool mkwrite)
+> >  {
+> >  	struct mm_struct *mm = vma->vm_mm;
+> >  	pte_t *pte, oldpte;
+> > @@ -72,13 +72,15 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> >  		if (pte_present(oldpte)) {
+> >  			pte_t ptent;
+> >  			bool preserve_write = prot_numa && pte_write(oldpte);
+> > +			bool do_mkwrite = false;
+> >  
+> >  			/*
+> >  			 * Avoid trapping faults against the zero or KSM
+> >  			 * pages. See similar comment in change_huge_pmd.
+> >  			 */
+> > -			if (prot_numa) {
+> > +			if (prot_numa || mkwrite) {
+> >  				struct page *page;
+> > +				int tmp;
+> >  
+> >  				page = vm_normal_page(vma, addr, oldpte);
+> >  				if (!page || PageKsm(page))
+> > @@ -94,6 +96,26 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> >  				 */
+> >  				if (target_node == page_to_nid(page))
+> >  					continue;
+> > +
+> > +				if (mkwrite) {
+> > +					if (!trylock_page(page)) {
+> > +						pte_t orig_pte = READ_ONCE(*pte);
+> > +						get_page(page);
+> > +						pte_unmap_unlock(pte, ptl);
+> > +						lock_page(page);
+> > +						pte = pte_offset_map_lock(vma->vm_mm, pmd,
+> > +									  addr, &ptl);
+> > +						if (!pte_same(*pte, orig_pte)) {
+> > +							unlock_page(page);
+> > +							put_page(page);
+> > +							continue;
+> > +						}
+> > +					}
+> > +					if (reuse_swap_page(page, &tmp))
+> > +						do_mkwrite = true;
+> > +					unlock_page(page);
+> > +					put_page(page);
+> > +				}
+> >  			}
+> >  
+> >  			ptent = ptep_modify_prot_start(mm, addr, pte);
+> > @@ -102,9 +124,9 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> >  				ptent = pte_mk_savedwrite(ptent);
+> >  
+> >  			/* Avoid taking write faults for known dirty pages */
+> > -			if (dirty_accountable && pte_dirty(ptent) &&
+> > -					(pte_soft_dirty(ptent) ||
+> > -					 !(vma->vm_flags & VM_SOFTDIRTY))) {
+> > +			if (do_mkwrite || (dirty_accountable &&
+> > +			    pte_dirty(ptent) && (pte_soft_dirty(ptent) ||
+> > +			    !(vma->vm_flags & VM_SOFTDIRTY)))) {
+> >  				ptent = pte_mkwrite(ptent);
+> >  			}
+> >  			ptep_modify_prot_commit(mm, addr, pte, ptent);
+> > @@ -150,7 +172,8 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+> >  
+> >  static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+> >  		pud_t *pud, unsigned long addr, unsigned long end,
+> > -		pgprot_t newprot, int dirty_accountable, int prot_numa)
+> > +		pgprot_t newprot, int dirty_accountable, int prot_numa,
+> > +		bool mkwrite)
+> >  {
+> >  	pmd_t *pmd;
+> >  	struct mm_struct *mm = vma->vm_mm;
+> > @@ -179,7 +202,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+> >  				__split_huge_pmd(vma, pmd, addr, false, NULL);
+> >  			} else {
+> >  				int nr_ptes = change_huge_pmd(vma, pmd, addr,
+> > -						newprot, prot_numa);
+> > +						newprot, prot_numa, mkwrite);
+> >  
+> >  				if (nr_ptes) {
+> >  					if (nr_ptes == HPAGE_PMD_NR) {
+> > @@ -194,7 +217,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+> >  			/* fall through, the trans huge pmd just split */
+> >  		}
+> >  		this_pages = change_pte_range(vma, pmd, addr, next, newprot,
+> > -				 dirty_accountable, prot_numa);
+> > +				 dirty_accountable, prot_numa, mkwrite);
+> >  		pages += this_pages;
+> >  next:
+> >  		cond_resched();
+> > @@ -210,7 +233,8 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+> >  
+> >  static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+> >  		p4d_t *p4d, unsigned long addr, unsigned long end,
+> > -		pgprot_t newprot, int dirty_accountable, int prot_numa)
+> > +		pgprot_t newprot, int dirty_accountable, int prot_numa,
+> > +		bool mkwrite)
+> >  {
+> >  	pud_t *pud;
+> >  	unsigned long next;
+> > @@ -222,7 +246,7 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+> >  		if (pud_none_or_clear_bad(pud))
+> >  			continue;
+> >  		pages += change_pmd_range(vma, pud, addr, next, newprot,
+> > -				 dirty_accountable, prot_numa);
+> > +				 dirty_accountable, prot_numa, mkwrite);
+> >  	} while (pud++, addr = next, addr != end);
+> >  
+> >  	return pages;
+> > @@ -230,7 +254,8 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+> >  
+> >  static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+> >  		pgd_t *pgd, unsigned long addr, unsigned long end,
+> > -		pgprot_t newprot, int dirty_accountable, int prot_numa)
+> > +		pgprot_t newprot, int dirty_accountable, int prot_numa,
+> > +		bool mkwrite)
+> >  {
+> >  	p4d_t *p4d;
+> >  	unsigned long next;
+> > @@ -242,7 +267,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+> >  		if (p4d_none_or_clear_bad(p4d))
+> >  			continue;
+> >  		pages += change_pud_range(vma, p4d, addr, next, newprot,
+> > -				 dirty_accountable, prot_numa);
+> > +				 dirty_accountable, prot_numa, mkwrite);
+> >  	} while (p4d++, addr = next, addr != end);
+> >  
+> >  	return pages;
+> > @@ -250,7 +275,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+> >  
+> >  static unsigned long change_protection_range(struct vm_area_struct *vma,
+> >  		unsigned long addr, unsigned long end, pgprot_t newprot,
+> > -		int dirty_accountable, int prot_numa)
+> > +		int dirty_accountable, int prot_numa, bool mkwrite)
+> >  {
+> >  	struct mm_struct *mm = vma->vm_mm;
+> >  	pgd_t *pgd;
+> > @@ -267,7 +292,7 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
+> >  		if (pgd_none_or_clear_bad(pgd))
+> >  			continue;
+> >  		pages += change_p4d_range(vma, pgd, addr, next, newprot,
+> > -				 dirty_accountable, prot_numa);
+> > +				 dirty_accountable, prot_numa, mkwrite);
+> >  	} while (pgd++, addr = next, addr != end);
+> >  
+> >  	/* Only flush the TLB if we actually modified any entries: */
+> > @@ -280,14 +305,16 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
+> >  
+> >  unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+> >  		       unsigned long end, pgprot_t newprot,
+> > -		       int dirty_accountable, int prot_numa)
+> > +		       int dirty_accountable, int prot_numa, bool mkwrite)
+> >  {
+> >  	unsigned long pages;
+> >  
+> >  	if (is_vm_hugetlb_page(vma))
+> >  		pages = hugetlb_change_protection(vma, start, end, newprot);
+> >  	else
+> > -		pages = change_protection_range(vma, start, end, newprot, dirty_accountable, prot_numa);
+> > +		pages = change_protection_range(vma, start, end, newprot,
+> > +						dirty_accountable,
+> > +						prot_numa, mkwrite);
+> >  
+> >  	return pages;
+> >  }
+> > @@ -366,7 +393,7 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+> >  	vma_set_page_prot(vma);
+> >  
+> >  	change_protection(vma, start, end, vma->vm_page_prot,
+> > -			  dirty_accountable, 0);
+> > +			  dirty_accountable, 0, false);
+> >  
+> >  	/*
+> >  	 * Private VM_LOCKED VMA becoming writable: trigger COW to avoid major
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index a0379c5ffa7c..c745c5d87523 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -632,7 +632,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+> >  		newprot = vm_get_page_prot(dst_vma->vm_flags);
+> >  
+> >  	change_protection(dst_vma, start, start + len, newprot,
+> > -				!enable_wp, 0);
+> > +			  0, 0, !enable_wp);
+> >  
+> >  	err = 0;
+> >  out_unlock:
+> > diff --git a/tools/lib/str_error_r.c b/tools/lib/str_error_r.c
+> > index d6d65537b0d9..11c3425f272b 100644
+> > --- a/tools/lib/str_error_r.c
+> > +++ b/tools/lib/str_error_r.c
+> > @@ -21,7 +21,12 @@
+> >  char *str_error_r(int errnum, char *buf, size_t buflen)
+> >  {
+> >  	int err = strerror_r(errnum, buf, buflen);
+> > -	if (err)
+> > -		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
+> > +	if (err) {
+> > +		char *err_buf = buf;
+> > +
+> > +		snprintf(err_buf, buflen,
+> > +			 "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d",
+> > +			 errnum, buf, buflen, err);
+> > +	}
+> >  	return buf;
+> >  }
+> > diff --git a/tools/lib/subcmd/pager.c b/tools/lib/subcmd/pager.c
+> > index 5ba754d17952..e1895568edaf 100644
+> > --- a/tools/lib/subcmd/pager.c
+> > +++ b/tools/lib/subcmd/pager.c
+> > @@ -25,6 +25,8 @@ void pager_init(const char *pager_env)
+> >  
+> >  static void pager_preexec(void)
+> >  {
+> > +	void *ptr;
+> > +
+> >  	/*
+> >  	 * Work around bug in "less" by not starting it until we
+> >  	 * have real input
+> > @@ -33,7 +35,8 @@ static void pager_preexec(void)
+> >  
+> >  	FD_ZERO(&in);
+> >  	FD_SET(0, &in);
+> > -	select(1, &in, NULL, &in, NULL);
+> > +	ptr = &in;
+> > +	select(1, &in, NULL, ptr, NULL);
+> >  
+> >  	setenv("LESS", "FRSX", 0);
+> >  }
+> > -- 
+> > 2.17.1
+> > 
+> 
+> Hello, Jerome,
+> 
+> Sorry for a very late response.  Actually I tried this patch many days
+> ago but it hanged my remote host when I started my uffd-wp userspace
+> test program (what I got was a ssh connection there)... so I found
+> another day to reach the system and reboot it. It's reproducable 100%.
+> 
+> I wanted to capture some panic trace or things alike for you but I
+> failed to do so.  I tried to install software watchdog plus kdump
+> services (so that when panic happened kdump will capture more
+> information) but unluckily the hang I encountered didn't really
+> trigger either of them (so not only kdump is not triggered and also
+> the software watchdog is not failing).  It just seems like a pure hang
+> without panic, though the system is totally not responding so I cannot
+> collect anything.
+> 
+> Let me know if you have any idea on how to debug this scenario.
+
+Maybe run qemu with qemu -s (qemu-system-x86_64 -s -nographic ...)
+then you can attach a gdb to the kernel run by your qemu:
+
+gdb -ex 'set architecture i386:x86-64' -ex 'target remote localhost:1234' -ex "file $VMLINUX"
+
+where $VMLINUX is the vmlinux kernel that is being run. Then
+it is just regular gdb so you can stop, continue, break, set
+watchpoint ...
+
+> 
+> (Btw, I'm not sure whether we'll need those reuse_swap_page() that you
+>  added - AFAIU currently Andrea's uffd-wp tree does not support shmem,
+>  so will any of the write protected page be shared by more than one
+>  PTE?)
+
+No we do need reuse_swap_page() because of fork() and COW (copy on write)
+we can only un-write protect an anonymous page that is not map mutiple
+times.
+
+I am traveling and on pto next week so probably won't be able to followup
+before couple weeks.
+
+Cheers,
+Jérôme
