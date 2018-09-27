@@ -2,68 +2,438 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18899C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5AFC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94706216C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:16:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94706216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FE53216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:17:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c2DGEQjG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE53216C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbeI1Egx (ORCPT
+        id S1727974AbeI1Eh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:36:53 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:52307 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726081AbeI1Egx (ORCPT
+        Fri, 28 Sep 2018 00:37:28 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:33786 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbeI1Eh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:36:53 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0T9b-h7p_1538086549;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T9b-h7p_1538086549)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 28 Sep 2018 06:15:55 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     dan.j.williams@intel.com, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [v2 PATCH] mm: dax: add comment for PFN_SPECIAL
-Date:   Fri, 28 Sep 2018 06:15:49 +0800
-Message-Id: <1538086549-100536-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 28 Sep 2018 00:37:27 -0400
+Received: by mail-yb1-f196.google.com with SMTP id z18-v6so1835450ybr.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 15:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=jYy3eqLHI7z62ivnsleT3C39cBa+h7oTQ22JrSq/UnA=;
+        b=c2DGEQjGRw2lo25Nf9uwtMVyRpIWupTtNmxwoLJ755iEyK7NtEz51ArBTBDbbfQrBf
+         QxZpMnTtBqjiqoD0fkNQKEdSbD0wxTPkp0zA8vNeMYPEVi0UUzgxrHHwb/jg/8Rihoy2
+         3Rerw6fvQBssARlsei0m4w8UaCdQQ0R1xOdV0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=jYy3eqLHI7z62ivnsleT3C39cBa+h7oTQ22JrSq/UnA=;
+        b=B3kTccoL+84NjtMnXTpgUEaA2Um8rAFdETu+BOL3LziIqKNQ5Q6rUKeG4ozLKEkRl2
+         E+d5yZxlnts2Vvnpc19WO6lAHmG0RXqdQ4CAbUo7nXVb4TiatZHl4hBuX0G+X019GKew
+         STzQOziB1DlPYRMPyQYNxoUCbNINtG71M2qsKouwXYagtjPZXJW7HpkEBUltCbM/UD8i
+         gBQrtKoLMdeBwFpT8Z7X14LU/wAS0WtCBwuf1a5DRyqJSTOPDR3Wmd75cah5edX/CveO
+         gIK64Qz3JGsOVuf0SEsNWSCA9EdaSeaA0UN4/5jBdk2Yj+LB/kBEQUZdmLlEcIq6BczZ
+         WyaA==
+X-Gm-Message-State: ABuFfog0JYcu+aKRtpa42X5K+iqAkDbecg1cxziI3dPMwy/xeOcCTipx
+        QHLAFCQFezIy5UkZf/qugN6O8FN1ICA=
+X-Google-Smtp-Source: ACcGV61Oc3lbkinWKKtX1uyr88L8URLY9eqPWQWG+dWKqbnUjb/l8wMFe20XnMXAIHWuCtHP4/J2dQ==
+X-Received: by 2002:a25:3d81:: with SMTP id k123-v6mr7059256yba.252.1538086618710;
+        Thu, 27 Sep 2018 15:16:58 -0700 (PDT)
+Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
+        by smtp.gmail.com with ESMTPSA id r8-v6sm3207119ywa.56.2018.09.27.15.16.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 15:16:58 -0700 (PDT)
+Received: by mail-yw1-f54.google.com with SMTP id r187-v6so991475ywg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 15:16:58 -0700 (PDT)
+X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr7147719ywd.124.1538086147654;
+ Thu, 27 Sep 2018 15:09:07 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 15:09:06
+ -0700 (PDT)
+In-Reply-To: <20180927151119.9989-6-tycho@tycho.ws>
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-6-tycho@tycho.ws>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 27 Sep 2018 15:09:06 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLs1sOKMktS2MG+rer5n+cy=A8YL0LH5X0MJCdNTv8WuA@mail.gmail.com>
+Message-ID: <CAGXu5jLs1sOKMktS2MG+rer5n+cy=A8YL0LH5X0MJCdNTv8WuA@mail.gmail.com>
+Subject: Re: [PATCH v7 5/6] seccomp: add a way to pass FDs via a notification fd
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment for PFN_SPECIAL is missed in pfn_t.h. Add comment to get
-consistent with other pfn flags.
+On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> This patch adds a way to insert FDs into the tracee's process (also
+> close/overwrite fds for the tracee). This functionality is necessary to
+> mock things like socketpair() or dup2() or similar, but since it depends on
+> external (vfs) patches, I've left it as a separate patch as before so the
+> core functionality can still be merged while we argue about this. Except
+> this time it doesn't add any ugliness to the API :)
+>
+> v7: new in v7
+>
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Eric W. Biederman <ebiederm@xmission.com>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Christian Brauner <christian.brauner@ubuntu.com>
+> CC: Tyler Hicks <tyhicks@canonical.com>
+> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> ---
+>  .../userspace-api/seccomp_filter.rst          |  16 +++
+>  include/uapi/linux/seccomp.h                  |   9 ++
+>  kernel/seccomp.c                              |  54 ++++++++
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 126 ++++++++++++++++++
+>  4 files changed, 205 insertions(+)
+>
+> diff --git a/Documentation/userspace-api/seccomp_filter.rst b/Documentation/userspace-api/seccomp_filter.rst
+> index d2e61f1c0a0b..383a8dbae304 100644
+> --- a/Documentation/userspace-api/seccomp_filter.rst
+> +++ b/Documentation/userspace-api/seccomp_filter.rst
+> @@ -237,6 +237,13 @@ The interface for a seccomp notification fd consists of two structures:
+>          __s64 val;
+>      };
+>
+> +    struct seccomp_notif_put_fd {
+> +        __u64 id;
+> +        __s32 fd;
+> +        __u32 fd_flags;
+> +        __s32 to_replace;
+> +    };
+> +
+>  Users can read via ``ioctl(SECCOMP_NOTIF_RECV)``  (or ``poll()``) on a seccomp
+>  notification fd to receive a ``struct seccomp_notif``, which contains five
+>  members: the input length of the structure, a unique-per-filter ``id``, the
+> @@ -256,6 +263,15 @@ mentioned above in this document: all arguments being read from the tracee's
+>  memory should be read into the tracer's memory before any policy decisions are
+>  made. This allows for an atomic decision on syscall arguments.
+>
+> +Userspace can also insert (or overwrite) file descriptors of the tracee using
+> +``ioctl(SECCOMP_NOTIF_PUT_FD)``. The ``id`` member is the request/pid to insert
+> +the fd into. The ``fd`` is the fd in the listener's table to send or ``-1`` if
+> +an fd should be closed instead. The ``to_replace`` fd is the fd in the tracee's
+> +table that should be overwritten, or -1 if a new fd is installed. ``fd_flags``
+> +should be the flags that the fd in the tracee's table is opened with (e.g.
+> +``O_CLOEXEC`` or similar). The return value from this ioctl is the fd number
+> +that was installed.
+> +
+>  Sysctls
+>  =======
+>
+> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> index d4ccb32fe089..91d77f041fbb 100644
+> --- a/include/uapi/linux/seccomp.h
+> +++ b/include/uapi/linux/seccomp.h
+> @@ -77,6 +77,13 @@ struct seccomp_notif_resp {
+>         __s64 val;
+>  };
+>
+> +struct seccomp_notif_put_fd {
+> +       __u64 id;
+> +       __s32 fd;
+> +       __u32 fd_flags;
+> +       __s32 to_replace;
+> +};
+> +
+>  #define SECCOMP_IOC_MAGIC              0xF7
+>
+>  /* Flags for seccomp notification fd ioctl. */
+> @@ -86,5 +93,7 @@ struct seccomp_notif_resp {
+>                                         struct seccomp_notif_resp)
+>  #define SECCOMP_NOTIF_ID_VALID _IOR(SECCOMP_IOC_MAGIC, 2,      \
+>                                         __u64)
+> +#define SECCOMP_NOTIF_PUT_FD   _IOR(SECCOMP_IOC_MAGIC, 3,      \
+> +                                       struct seccomp_notif_put_fd)
+>
+>  #endif /* _UAPI_LINUX_SECCOMP_H */
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index 17685803a2af..07a05ad59731 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -41,6 +41,8 @@
+>  #include <linux/tracehook.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/anon_inodes.h>
+> +#include <linux/fdtable.h>
+> +#include <net/cls_cgroup.h>
+>
+>  enum notify_state {
+>         SECCOMP_NOTIFY_INIT,
+> @@ -1684,6 +1686,56 @@ static long seccomp_notify_id_valid(struct seccomp_filter *filter,
+>         return ret;
+>  }
+>
+> +static long seccomp_notify_put_fd(struct seccomp_filter *filter,
+> +                                 unsigned long arg)
+> +{
+> +       struct seccomp_notif_put_fd req;
+> +       void __user *buf = (void __user *)arg;
+> +       struct seccomp_knotif *knotif = NULL;
+> +       long ret;
+> +
+> +       if (copy_from_user(&req, buf, sizeof(req)))
+> +               return -EFAULT;
+> +
+> +       if (req.fd < 0 && req.to_replace < 0)
+> +               return -EINVAL;
+> +
+> +       ret = mutex_lock_interruptible(&filter->notify_lock);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ret = -ENOENT;
+> +       list_for_each_entry(knotif, &filter->notif->notifications, list) {
+> +               struct file *file = NULL;
+> +
+> +               if (knotif->id != req.id)
+> +                       continue;
+> +
+> +               if (req.fd >= 0)
+> +                       file = fget(req.fd);
 
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
-v2: rephrase the comment per Dan
+Shouldn't we test for !file here?
 
- include/linux/pfn_t.h | 2 ++
- 1 file changed, 2 insertions(+)
+> +
+> +               if (req.to_replace >= 0) {
+> +                       ret = replace_fd_task(knotif->task, req.to_replace,
+> +                                             file, req.fd_flags);
+> +               } else {
+> +                       unsigned long max_files;
+> +
+> +                       max_files = task_rlimit(knotif->task, RLIMIT_NOFILE);
+> +                       ret = __alloc_fd(knotif->task->files, 0, max_files,
+> +                                        req.fd_flags);
+> +                       if (ret < 0)
+> +                               break;
+> +
+> +                       __fd_install(knotif->task->files, ret, file);
+> +               }
+> +
+> +               break;
+> +       }
+> +
+> +       mutex_unlock(&filter->notify_lock);
+> +       return ret;
+> +}
+> +
+>  static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
+>                                  unsigned long arg)
+>  {
+> @@ -1696,6 +1748,8 @@ static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
+>                 return seccomp_notify_send(filter, arg);
+>         case SECCOMP_NOTIF_ID_VALID:
+>                 return seccomp_notify_id_valid(filter, arg);
+> +       case SECCOMP_NOTIF_PUT_FD:
+> +               return seccomp_notify_put_fd(filter, arg);
+>         default:
+>                 return -EINVAL;
+>         }
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index c6ba3ed5392e..cd1322c02b92 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -43,6 +43,7 @@
+>  #include <sys/times.h>
+>  #include <sys/socket.h>
+>  #include <sys/ioctl.h>
+> +#include <linux/kcmp.h>
+>
+>  #include <unistd.h>
+>  #include <sys/syscall.h>
+> @@ -169,6 +170,9 @@ struct seccomp_metadata {
+>                                         struct seccomp_notif_resp)
+>  #define SECCOMP_NOTIF_ID_VALID _IOR(SECCOMP_IOC_MAGIC, 2,      \
+>                                         __u64)
+> +#define SECCOMP_NOTIF_PUT_FD   _IOR(SECCOMP_IOC_MAGIC, 3,      \
+> +                                       struct seccomp_notif_put_fd)
+> +
+>  struct seccomp_notif {
+>         __u16 len;
+>         __u64 id;
+> @@ -183,6 +187,13 @@ struct seccomp_notif_resp {
+>         __s32 error;
+>         __s64 val;
+>  };
+> +
+> +struct seccomp_notif_put_fd {
+> +       __u64 id;
+> +       __s32 fd;
+> +       __u32 fd_flags;
+> +       __s32 to_replace;
+> +};
+>  #endif
+>
+>  #ifndef seccomp
+> @@ -193,6 +204,14 @@ int seccomp(unsigned int op, unsigned int flags, void *args)
+>  }
+>  #endif
+>
+> +#ifndef kcmp
+> +int kcmp(pid_t pid1, pid_t pid2, int type, unsigned long idx1,
+> +        unsigned long idx2)
+> +{
+> +       return syscall(__NR_kcmp, pid1, pid2, type, idx1, idx2);
+> +}
+> +#endif
+> +
+>  #ifndef PTRACE_SECCOMP_NEW_LISTENER
+>  #define PTRACE_SECCOMP_NEW_LISTENER 0x420e
+>  #endif
+> @@ -3243,6 +3262,113 @@ TEST(get_user_notification_ptrace)
+>         close(listener);
+>  }
+>
+> +TEST(user_notification_pass_fd)
+> +{
+> +       pid_t pid;
+> +       int status, listener, fd;
+> +       int sk_pair[2];
+> +       char c;
+> +       struct seccomp_notif req = {};
+> +       struct seccomp_notif_resp resp = {};
+> +       struct seccomp_notif_put_fd putfd = {};
+> +       long ret;
+> +
+> +       ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
+> +
+> +       pid = fork();
+> +       ASSERT_GE(pid, 0);
+> +
+> +       if (pid == 0) {
+> +               int fd;
+> +               char buf[16];
+> +
+> +               EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
+> +
+> +               /* Signal we're ready and have installed the filter. */
+> +               EXPECT_EQ(write(sk_pair[1], "J", 1), 1);
+> +
+> +               EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
+> +               EXPECT_EQ(c, 'H');
+> +               close(sk_pair[1]);
+> +
+> +               /* An fd from getpid(). Let the games begin. */
+> +               fd = syscall(__NR_getpid);
+> +               EXPECT_GT(fd, 0);
+> +               EXPECT_EQ(read(fd, buf, sizeof(buf)), 12);
+> +               close(fd);
+> +
+> +               exit(strcmp("hello world", buf));
+> +       }
+> +
+> +       EXPECT_EQ(read(sk_pair[0], &c, 1), 1);
+> +       EXPECT_EQ(c, 'J');
+> +
+> +       EXPECT_EQ(ptrace(PTRACE_ATTACH, pid), 0);
+> +       EXPECT_EQ(waitpid(pid, NULL, 0), pid);
+> +       listener = ptrace(PTRACE_SECCOMP_NEW_LISTENER, pid, 0);
+> +       EXPECT_GE(listener, 0);
+> +       EXPECT_EQ(ptrace(PTRACE_DETACH, pid, NULL, 0), 0);
+> +
+> +       /* Now signal we are done installing so it can do a getpid */
+> +       EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
+> +       close(sk_pair[0]);
+> +
+> +       /* Make a new socket pair so we can send half across */
+> +       EXPECT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
+> +
+> +       ret = read_notif(listener, &req);
+> +       EXPECT_EQ(ret, sizeof(req));
+> +       EXPECT_EQ(errno, 0);
+> +
+> +       resp.len = sizeof(resp);
+> +       resp.id = req.id;
+> +
+> +       putfd.id = req.id;
+> +       putfd.fd_flags = 0;
+> +
+> +       /* First, let's just create a new fd with our stdout. */
+> +       putfd.fd = 0;
+> +       putfd.to_replace = -1;
+> +       fd = ioctl(listener, SECCOMP_NOTIF_PUT_FD, &putfd);
+> +       EXPECT_GE(fd, 0);
+> +       EXPECT_EQ(kcmp(req.pid, getpid(), KCMP_FILE, fd, 0), 0);
+> +
+> +       /* Dup something else over the top of it. */
+> +       putfd.fd = sk_pair[1];
+> +       putfd.to_replace = fd;
+> +       fd = ioctl(listener, SECCOMP_NOTIF_PUT_FD, &putfd);
+> +       EXPECT_GE(fd, 0);
+> +       EXPECT_EQ(kcmp(req.pid, getpid(), KCMP_FILE, fd, sk_pair[1]), 0);
+> +
+> +       /* Now, try to close it. */
+> +       putfd.fd = -1;
+> +       putfd.to_replace = fd;
+> +       fd = ioctl(listener, SECCOMP_NOTIF_PUT_FD, &putfd);
+> +       EXPECT_GE(fd, 0);
+> +       EXPECT_EQ(kcmp(req.pid, getpid(), KCMP_FILE, fd, sk_pair[1]), 1);
+> +
+> +       /* Ok, we tried the three cases, now let's do what we really want. */
+> +       putfd.fd = sk_pair[1];
+> +       putfd.to_replace = -1;
+> +       fd = ioctl(listener, SECCOMP_NOTIF_PUT_FD, &putfd);
+> +       EXPECT_GE(fd, 0);
+> +       EXPECT_EQ(kcmp(req.pid, getpid(), KCMP_FILE, fd, sk_pair[1]), 0);
+> +
+> +       resp.val = fd;
+> +       resp.error = 0;
+> +
+> +       EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
+> +       close(sk_pair[1]);
+> +
+> +       EXPECT_EQ(write(sk_pair[0], "hello world\0", 12), 12);
+> +       close(sk_pair[0]);
+> +
+> +       EXPECT_EQ(waitpid(pid, &status, 0), pid);
+> +       EXPECT_EQ(true, WIFEXITED(status));
+> +       EXPECT_EQ(0, WEXITSTATUS(status));
+> +       close(listener);
+> +}
+> +
+>  /*
+>   * Check that a pid in a child namespace still shows up as valid in ours.
+>   */
+> --
+> 2.17.1
+>
 
-diff --git a/include/linux/pfn_t.h b/include/linux/pfn_t.h
-index 21713dc..d6cc4b5 100644
---- a/include/linux/pfn_t.h
-+++ b/include/linux/pfn_t.h
-@@ -9,6 +9,8 @@
-  * PFN_SG_LAST - pfn references a page and is the last scatterlist entry
-  * PFN_DEV - pfn is not covered by system memmap by default
-  * PFN_MAP - pfn has a dynamic page mapping established by a device driver
-+ * PFN_SPECIAL - for CONFIG_FS_DAX_LIMITED builds to allow XIP, but not
-+ *		 get_user_pages 
-  */
- #define PFN_FLAGS_MASK (((u64) ~PAGE_MASK) << (BITS_PER_LONG_LONG - PAGE_SHIFT))
- #define PFN_SG_CHAIN (1ULL << (BITS_PER_LONG_LONG - 1))
+In no surprise to anyone, I agree with Jann's feedback too.
+
+And thank you again for the tests! :) It's really nice for seeing some
+"live samples" of the intention of the API.
+
+-Kees
+
 -- 
-1.8.3.1
-
+Kees Cook
+Pixel Security
