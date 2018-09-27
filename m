@@ -2,186 +2,104 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E09BBC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876A9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4ED21564
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:06:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E4ED21564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4320521566
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 17:07:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="KFcoWr5z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4320521566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbeI0X0B (ORCPT
+        id S1728579AbeI0X0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:26:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38203 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbeI0X0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:26:01 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RH6cNs102192
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 10:06:38 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RH6cXc102188;
-        Thu, 27 Sep 2018 10:06:38 -0700
-Date:   Thu, 27 Sep 2018 10:06:38 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Pu Wen <tipbot@zytor.com>
-Message-ID: <tip-ac78bd72355d0da64c073c12927264d4ff19b886@git.kernel.org>
-Cc:     bp@suse.de, hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-        puwen@hygon.cn, linux-kernel@vger.kernel.org
-Reply-To: puwen@hygon.cn, mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, bp@suse.de, hpa@zytor.com
-In-Reply-To: <87d8a4f16bdea0bfe0c0cf2e4a8d2c2a99b1055c.1537533369.git.puwen@hygon.cn>
-References: <87d8a4f16bdea0bfe0c0cf2e4a8d2c2a99b1055c.1537533369.git.puwen@hygon.cn>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/mce: Add Hygon Dhyana support to the MCA
- infrastructure
-Git-Commit-ID: ac78bd72355d0da64c073c12927264d4ff19b886
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 27 Sep 2018 19:26:19 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:44257 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727335AbeI0X0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:26:19 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id ebcf9317;
+        Thu, 27 Sep 2018 16:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type:content-transfer-encoding; s=mail; bh=ShRe34BhklmL
+        O1KHTDlei/vS7iU=; b=KFcoWr5z/Np+2GfXx+6XGkU21g/hNCabSLI1bEC+lU/2
+        2yU7NAkNZHlr6xKKRkt2GDSXvAWeWT+P3EBA8KGkODR6KlnkMD1sQpHWLxdDwyCt
+        kMpYgJnd6Zd/PWxslxL6HlB9c4JmHOB136xDHe/FIfjVSI1z+OzrSmGZg4R6nNpt
+        e095iX/Nd0aM9UYzPdVWLXYXguZJR48VSd3dtMws3iF0YxivDia94YfTWswTQJKO
+        /f5tsucJZyc8JPAIxik5FQtJ0aXGe8OMT6Q132qZtl0VyVRg8HHiAal8B3BX2u4m
+        0uKStlv3pNL7YWNgZiCf9zW+8MM0wUrNOIcfIjOOfA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d195dd04 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Thu, 27 Sep 2018 16:48:22 +0000 (UTC)
+Received: by mail-oi1-f169.google.com with SMTP id j68-v6so2809332oib.7;
+        Thu, 27 Sep 2018 10:07:03 -0700 (PDT)
+X-Gm-Message-State: ABuFfohyMuiJx7J2ARpCYIRyvMME83zr+pPtPv5E/QTuUYtHfqAWxE0C
+        1cRm9N4kzGHUfJSBWiAPI94p5TC+ezW2snlmkJc=
+X-Google-Smtp-Source: ACcGV62SfiuMBvv1beXiJlJkIpUYTAuMtML6v7KHRM8VTMRTvncoyH3daK+nZsq7PNjiNzi7avPYKq9Oh4pik3QNvgM=
+X-Received: by 2002:aca:ce4c:: with SMTP id e73-v6mr3480575oig.225.1538068022255;
+ Thu, 27 Sep 2018 10:07:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
+ <CAKv+Gu9mVAfdBvOMCFqRJj+wBiWu3JVOgPZdkcdjzqSdQQ5Jrw@mail.gmail.com>
+ <CAHmME9r9KppoFwwNVpzpYbU+9dCPzb7Pit+4iRa4MY_ouJBWrA@mail.gmail.com>
+ <CAKv+Gu8ih-TsASRGqK+ST_5+EQ0=Zo-zhGCadOdGyPjucMFTCg@mail.gmail.com>
+ <CAKv+Gu8w74dUSEAGxxh=C6To6F=bSm8DjiExUPmh_LUyhoDLhg@mail.gmail.com>
+ <CAHmME9pbRabkGjNh-65S9qBNNS1GLJSwZ_tTM507S_Ezr1=QLg@mail.gmail.com>
+ <CAHmME9ru=kJO8QiW+uNNgt5NgFVZzRsQ4tNSgo+f+KfHs3fAKQ@mail.gmail.com>
+ <CAKv+Gu-WDt8f9qVjLDRPHL7THS0BjtKHThw2RMfHbWBT8Hs8aQ@mail.gmail.com>
+ <CAHmME9qNn5aRgtbV3bAsz3xW1A49a7RMMkOzGruBUPzLVUxVNg@mail.gmail.com>
+ <CAHmME9rN3-7Mj5JQqt2EFPauG9vjkN5pQn3tPiJY4fPiwksaDA@mail.gmail.com>
+ <CAHmME9pBRu4hC5=Ef62R_nWOi3jTegxvxNrR8qDM+VfO=2t8Tg@mail.gmail.com> <BB2CD8D5-E7FF-4D25-8C83-F64960253248@amacapital.net>
+In-Reply-To: <BB2CD8D5-E7FF-4D25-8C83-F64960253248@amacapital.net>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 27 Sep 2018 19:06:50 +0200
+X-Gmail-Original-Message-ID: <CAHmME9oXBin5NyVTKfV2efSzztW4Snno+sZoWJr-ieDLNVgVGQ@mail.gmail.com>
+Message-ID: <CAHmME9oXBin5NyVTKfV2efSzztW4Snno+sZoWJr-ieDLNVgVGQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ac78bd72355d0da64c073c12927264d4ff19b886
-Gitweb:     https://git.kernel.org/tip/ac78bd72355d0da64c073c12927264d4ff19b886
-Author:     Pu Wen <puwen@hygon.cn>
-AuthorDate: Sun, 23 Sep 2018 17:36:04 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 27 Sep 2018 18:28:59 +0200
+On Thu, Sep 27, 2018 at 6:27 PM Andy Lutomirski <luto@amacapital.net> wrote=
+:
+> I would add another consideration: if you can get better latency with neg=
+ligible overhead (0.1%? 0.05%), then that might make sense too. For example=
+, it seems plausible that checking need_resched() every few blocks adds bas=
+ically no overhead, and the SIMD helpers could do this themselves or perhap=
+s only ever do a block at a time.
+>
+> need_resched() costs a cacheline access, but it=E2=80=99s usually a hot c=
+acheline, and the actual check is just whether a certain bit in memory is s=
+et.
 
-x86/mce: Add Hygon Dhyana support to the MCA infrastructure
-
-The machine check architecture for Hygon Dhyana CPU is similar to the
-AMD family 17h one. Add vendor checking for Hygon Dhyana to share the
-code path of AMD family 17h.
-
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: tglx@linutronix.de
-Cc: mingo@redhat.com
-Cc: hpa@zytor.com
-Cc: tony.luck@intel.com
-Cc: thomas.lendacky@amd.com
-Cc: linux-edac@vger.kernel.org
-Link: https://lkml.kernel.org/r/87d8a4f16bdea0bfe0c0cf2e4a8d2c2a99b1055c.1537533369.git.puwen@hygon.cn
----
- arch/x86/include/asm/mce.h                |  2 ++
- arch/x86/kernel/cpu/mcheck/mce-severity.c |  3 ++-
- arch/x86/kernel/cpu/mcheck/mce.c          | 20 +++++++++++++++-----
- 3 files changed, 19 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 3a17107594c8..550f2c95dc1e 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -214,6 +214,8 @@ static inline void mce_amd_feature_init(struct cpuinfo_x86 *c) { }
- static inline int umc_normaddr_to_sysaddr(u64 norm_addr, u16 nid, u8 umc, u64 *sys_addr) { return -EINVAL; };
- #endif
- 
-+static inline void mce_hygon_feature_init(struct cpuinfo_x86 *c) { return mce_amd_feature_init(c); }
-+
- int mce_available(struct cpuinfo_x86 *c);
- bool mce_is_memory_error(struct mce *m);
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-severity.c b/arch/x86/kernel/cpu/mcheck/mce-severity.c
-index f34d89c01edc..44396d521987 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-severity.c
-@@ -336,7 +336,8 @@ int (*mce_severity)(struct mce *m, int tolerant, char **msg, bool is_excp) =
- 
- void __init mcheck_vendor_init_severity(void)
- {
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
- 		mce_severity = mce_severity_amd;
- }
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 953b3ce92dcc..909f1d75165c 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -270,7 +270,7 @@ static void print_mce(struct mce *m)
- {
- 	__print_mce(m);
- 
--	if (m->cpuvendor != X86_VENDOR_AMD)
-+	if (m->cpuvendor != X86_VENDOR_AMD && m->cpuvendor != X86_VENDOR_HYGON)
- 		pr_emerg_ratelimited(HW_ERR "Run the above through 'mcelog --ascii'\n");
- }
- 
-@@ -508,9 +508,9 @@ static int mce_usable_address(struct mce *m)
- 
- bool mce_is_memory_error(struct mce *m)
- {
--	if (m->cpuvendor == X86_VENDOR_AMD) {
-+	if (m->cpuvendor == X86_VENDOR_AMD ||
-+	    m->cpuvendor == X86_VENDOR_HYGON) {
- 		return amd_mce_is_memory_error(m);
--
- 	} else if (m->cpuvendor == X86_VENDOR_INTEL) {
- 		/*
- 		 * Intel SDM Volume 3B - 15.9.2 Compound Error Codes
-@@ -539,6 +539,9 @@ static bool mce_is_correctable(struct mce *m)
- 	if (m->cpuvendor == X86_VENDOR_AMD && m->status & MCI_STATUS_DEFERRED)
- 		return false;
- 
-+	if (m->cpuvendor == X86_VENDOR_HYGON && m->status & MCI_STATUS_DEFERRED)
-+		return false;
-+
- 	if (m->status & MCI_STATUS_UC)
- 		return false;
- 
-@@ -1705,7 +1708,7 @@ static int __mcheck_cpu_ancient_init(struct cpuinfo_x86 *c)
-  */
- static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
- {
--	if (c->x86_vendor == X86_VENDOR_AMD) {
-+	if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON) {
- 		mce_flags.overflow_recov = !!cpu_has(c, X86_FEATURE_OVERFLOW_RECOV);
- 		mce_flags.succor	 = !!cpu_has(c, X86_FEATURE_SUCCOR);
- 		mce_flags.smca		 = !!cpu_has(c, X86_FEATURE_SMCA);
-@@ -1746,6 +1749,11 @@ static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
- 		mce_amd_feature_init(c);
- 		break;
- 		}
-+
-+	case X86_VENDOR_HYGON:
-+		mce_hygon_feature_init(c);
-+		break;
-+
- 	case X86_VENDOR_CENTAUR:
- 		mce_centaur_feature_init(c);
- 		break;
-@@ -1971,12 +1979,14 @@ static void mce_disable_error_reporting(void)
- static void vendor_disable_error_reporting(void)
- {
- 	/*
--	 * Don't clear on Intel or AMD CPUs. Some of these MSRs are socket-wide.
-+	 * Don't clear on Intel or AMD or Hygon CPUs. Some of these MSRs
-+	 * are socket-wide.
- 	 * Disabling them for just a single offlined CPU is bad, since it will
- 	 * inhibit reporting for all shared resources on the socket like the
- 	 * last level cache (LLC), the integrated memory controller (iMC), etc.
- 	 */
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON ||
- 	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
- 		return;
- 
+Yes you're right, I do plan to check quite often, rather than seldom,
+for this reason. I've been toying with the idea of instead processing
+65k (maximum size of a UDP packet) at a time before checking
+need_resched(), but armed with the 20=C2=B5s figure, this isn't remotely
+possible on most hardware. So I'll stick with the original
+conservative plan of checking very often, and not making things
+different from the aspects worked out by the present crypto API in
+this regard.
