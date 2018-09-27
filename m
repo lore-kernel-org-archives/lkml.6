@@ -2,75 +2,114 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C35C4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF81BC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860CB21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:10:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860CB21533
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 58549216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:11:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58549216FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbeI0W3h (ORCPT
+        id S1728285AbeI0WaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:29:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38548 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727377AbeI0W3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:29:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BEE2EAFAD;
-        Thu, 27 Sep 2018 16:10:37 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 18:10:38 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     lijiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        brijesh.singh@amd.com, dyoung@redhat.com, bhe@redhat.com,
-        jroedel@suse.de
-Subject: Re: [PATCH v7 RESEND 1/4] x86/ioremap: add a function
- ioremap_encrypted() to remap kdump old memory
-Message-ID: <20180927161038.GB19779@zn.tnic>
-References: <20180927071954.29615-1-lijiang@redhat.com>
- <20180927071954.29615-2-lijiang@redhat.com>
- <20180927131737.GA19779@zn.tnic>
- <6306eaa9-d81e-2fa4-8978-63503a7ecce4@redhat.com>
+        Thu, 27 Sep 2018 18:30:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44339 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbeI0WaX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 18:30:23 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g5Ysp-0004Yj-OF; Thu, 27 Sep 2018 16:11:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] b43: fix spelling mistake "hw_registred" -> "hw_registered"
+Date:   Thu, 27 Sep 2018 17:11:19 +0100
+Message-Id: <20180927161119.6698-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6306eaa9-d81e-2fa4-8978-63503a7ecce4@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 10:53:47PM +0800, lijiang wrote:
-> If no need to break this line, it will cause a warning of exceeding 80 characters per line.
+From: Colin Ian King <colin.king@canonical.com>
 
-That's fine - we don't take the 80 cols rule blindly but apply common
-sense. In this particular case the lines can stick out because they're
-simply externs and are meant to be skimmed over and not really read. :)
+Trivial fix to spelling mistake struct field name, rename it.
 
-> Thank you for pointing out this issue, i forgot to remove this header file. 
-> 
-> I will get rid of this header file and post this patch again.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/broadcom/b43/b43.h  | 2 +-
+ drivers/net/wireless/broadcom/b43/main.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-No need - already fixed that up.
-
-Thx.
-
+diff --git a/drivers/net/wireless/broadcom/b43/b43.h b/drivers/net/wireless/broadcom/b43/b43.h
+index b77d1a904f7e..9fc7c088a539 100644
+--- a/drivers/net/wireless/broadcom/b43/b43.h
++++ b/drivers/net/wireless/broadcom/b43/b43.h
+@@ -909,7 +909,7 @@ struct b43_wl {
+ 
+ 	/* Set this if we call ieee80211_register_hw() and check if we call
+ 	 * ieee80211_unregister_hw(). */
+-	bool hw_registred;
++	bool hw_registered;
+ 
+ 	/* We can only have one operating interface (802.11 core)
+ 	 * at a time. General information about this interface follows.
+diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
+index b37e7391f55d..4daa1ce8cba3 100644
+--- a/drivers/net/wireless/broadcom/b43/main.c
++++ b/drivers/net/wireless/broadcom/b43/main.c
+@@ -2611,7 +2611,7 @@ static void b43_request_firmware(struct work_struct *work)
+ 	err = ieee80211_register_hw(wl->hw);
+ 	if (err)
+ 		goto err_one_core_detach;
+-	wl->hw_registred = true;
++	wl->hw_registered = true;
+ 	b43_leds_register(wl->current_dev);
+ 
+ 	/* Register HW RNG driver */
+@@ -5610,7 +5610,7 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
+ 
+ 	wiphy_ext_feature_set(hw->wiphy, NL80211_EXT_FEATURE_CQM_RSSI_LIST);
+ 
+-	wl->hw_registred = false;
++	wl->hw_registered = false;
+ 	hw->max_rates = 2;
+ 	SET_IEEE80211_DEV(hw, dev->dev);
+ 	if (is_valid_ether_addr(sprom->et1mac))
+@@ -5693,7 +5693,7 @@ static void b43_bcma_remove(struct bcma_device *core)
+ 	B43_WARN_ON(!wl);
+ 	if (!wldev->fw.ucode.data)
+ 		return;			/* NULL if firmware never loaded */
+-	if (wl->current_dev == wldev && wl->hw_registred) {
++	if (wl->current_dev == wldev && wl->hw_registered) {
+ 		b43_leds_stop(wldev);
+ 		ieee80211_unregister_hw(wl->hw);
+ 	}
+@@ -5776,7 +5776,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
+ 	B43_WARN_ON(!wl);
+ 	if (!wldev->fw.ucode.data)
+ 		return;			/* NULL if firmware never loaded */
+-	if (wl->current_dev == wldev && wl->hw_registred) {
++	if (wl->current_dev == wldev && wl->hw_registered) {
+ 		b43_leds_stop(wldev);
+ 		ieee80211_unregister_hw(wl->hw);
+ 	}
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
