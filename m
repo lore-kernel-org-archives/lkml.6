@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C50C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2622AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 141272152F
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 141272152F
+	by mail.kernel.org (Postfix) with ESMTP id DC9B42156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:17:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9B42156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbeI0Pe6 (ORCPT
+        id S1728910AbeI0PfD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:34:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56068 "EHLO
+        Thu, 27 Sep 2018 11:35:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727272AbeI0Pe5 (ORCPT
+        with ESMTP id S1727272AbeI0PfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:34:57 -0400
+        Thu, 27 Sep 2018 11:35:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A53B3110D;
-        Thu, 27 Sep 2018 09:17:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F52C110D;
+        Thu, 27 Sep 2018 09:17:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/64] ipv6: fix possible use-after-free in ip6_xmit()
-Date:   Thu, 27 Sep 2018 11:03:19 +0200
-Message-Id: <20180927090250.130790874@linuxfoundation.org>
+        stable@vger.kernel.org, Willy Tarreau <w@1wt.eu>,
+        Jann Horn <jannh@google.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 20/64] ALSA: emu10k1: fix possible info leak to userspace on SNDRV_EMU10K1_IOCTL_INFO
+Date:   Thu, 27 Sep 2018 11:03:37 +0200
+Message-Id: <20180927090252.811487335@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090249.801943776@linuxfoundation.org>
 References: <20180927090249.801943776@linuxfoundation.org>
@@ -52,41 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Willy Tarreau <w@1wt.eu>
 
-[ Upstream commit bbd6528d28c1b8e80832b3b018ec402b6f5c3215 ]
+commit 49434c6c575d2008c0abbc93e615019f39e01252 upstream.
 
-In the unlikely case ip6_xmit() has to call skb_realloc_headroom(),
-we need to call skb_set_owner_w() before consuming original skb,
-otherwise we risk a use-after-free.
+snd_emu10k1_fx8010_ioctl(SNDRV_EMU10K1_IOCTL_INFO) allocates
+memory using kmalloc() and partially fills it by calling
+snd_emu10k1_fx8010_info() before returning the resulting
+structure to userspace, leaving uninitialized holes. Let's
+just use kzalloc() here.
 
-Bring IPv6 in line with what we do in IPv4 to fix this.
-
-Fixes: 1da177e4c3f41 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+BugLink: http://blog.infosectcbr.com.au/2018/09/linux-kernel-infoleaks.html
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+Cc: Jann Horn <jannh@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6_output.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -219,12 +219,10 @@ int ip6_xmit(const struct sock *sk, stru
- 				kfree_skb(skb);
- 				return -ENOBUFS;
- 			}
-+			if (skb->sk)
-+				skb_set_owner_w(skb2, skb->sk);
- 			consume_skb(skb);
- 			skb = skb2;
--			/* skb_set_owner_w() changes sk->sk_wmem_alloc atomically,
--			 * it is safe to call in our context (socket lock not held)
--			 */
--			skb_set_owner_w(skb, (struct sock *)sk);
- 		}
- 		if (opt->opt_flen)
- 			ipv6_push_frag_opts(skb, opt, &proto);
+---
+ sound/pci/emu10k1/emufx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -2547,7 +2547,7 @@ static int snd_emu10k1_fx8010_ioctl(stru
+ 		emu->support_tlv = 1;
+ 		return put_user(SNDRV_EMU10K1_VERSION, (int __user *)argp);
+ 	case SNDRV_EMU10K1_IOCTL_INFO:
+-		info = kmalloc(sizeof(*info), GFP_KERNEL);
++		info = kzalloc(sizeof(*info), GFP_KERNEL);
+ 		if (!info)
+ 			return -ENOMEM;
+ 		snd_emu10k1_fx8010_info(emu, info);
 
 
