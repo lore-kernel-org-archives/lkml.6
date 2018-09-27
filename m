@@ -2,133 +2,279 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A98C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB11AC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D781021570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:25:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="sLdN/TPd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D781021570
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B02F2156D
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:28:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B02F2156D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbeI0Ll7 (ORCPT
+        id S1727015AbeI0Lo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:41:59 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:52256 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbeI0Ll7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:41:59 -0400
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w8R5PTr9001586;
-        Thu, 27 Sep 2018 14:25:30 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w8R5PTr9001586
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538025930;
-        bh=hZgcEwn1/ZgEfovmVKBft+CfxFdeSLzoLIZ0xYn2NBM=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=sLdN/TPdft6Ho0HM93m+pBIF0MHuATMZ7tkRtv9F6jkzxj4ol21epDq+7Uk+N8OhY
-         sPb8AcOE3WNsSOhIUcNJUjLsIX0sP7gsZtP59rzC/ldCnJkXorSSowTGg5Niuidu0k
-         kRaiGkNkXL3cdsbhGulI8txxX4lLIr73BS0jomzSsaR6fJ6vTlzyleGhCa0gpC77S/
-         lH7ningJj8vT4wI6ImRcGzcKl5/BvvexsefufgtDNNVrjYDZ4Rbr1CbLiLqPC3sPd8
-         rjEbVzTGuiKWDaAwDXe+XyoO5v0nRkq1ofR4hKrYSXLcKK/b3+qHywMEHaIuttP/RE
-         BwOFBDzZgp/UQ==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id i18-v6so57014ual.13;
-        Wed, 26 Sep 2018 22:25:29 -0700 (PDT)
-X-Gm-Message-State: ABuFfoj3E4clLHHPYmTZp6aecN96G9RIIB/UwJ7IlDuA++3v37TdGYg2
-        xOPLkxmKBNaUO3XOe1ib31SwFeLJUf8SpzDitsA=
-X-Google-Smtp-Source: ACcGV63LTBTyZ6Pf7cY4Hvej/6DyTknNyFDloo6HP09FRTrcm3JkgcDiqICnWkkKPluBYdigDVFfRRS0hMH3oycKNeM=
-X-Received: by 2002:a9f:25f1:: with SMTP id 104-v6mr1926153uaf.55.1538025928751;
- Wed, 26 Sep 2018 22:25:28 -0700 (PDT)
+        Thu, 27 Sep 2018 07:44:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41418 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726599AbeI0Lo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 07:44:26 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AF36E3082B64;
+        Thu, 27 Sep 2018 05:28:00 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-101.pek2.redhat.com [10.72.12.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B607100195E;
+        Thu, 27 Sep 2018 05:27:45 +0000 (UTC)
+Subject: Re: [PATCH 3/3] resource: Fix find_next_iomem_res() iteration issue
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     dan.j.williams@intel.com, brijesh.singh@amd.com, bhe@redhat.com,
+        thomas.lendacky@amd.com, tiwai@suse.de, x86@kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, baiyaowei@cmss.chinamobile.com, hpa@zytor.com,
+        tglx@linutronix.de, bp@suse.de, dyoung@redhat.com,
+        akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>
+References: <153782698067.130337.12079523922130875402.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <153782730364.130337.17794279728329113665.stgit@bhelgaas-glaptop.roam.corp.google.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <13084ce6-e29a-c244-3f9c-cf0725646d9f@redhat.com>
+Date:   Thu, 27 Sep 2018 13:27:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 22:24:48
- -0700 (PDT)
-In-Reply-To: <87bm8m5qbs.fsf@concordia.ellerman.id.au>
-References: <e1b65467-7497-5db4-aa93-1ad00d12af3f@c-s.fr> <87mus75c5m.fsf@concordia.ellerman.id.au>
- <56227965-464a-d972-1c25-d6a4d190e1a1@c-s.fr> <87bm8m5qbs.fsf@concordia.ellerman.id.au>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 27 Sep 2018 14:24:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQA2JyK9aOp9QQF32bwsz2MitaZ5HrqSVjdEvRdCQpO3g@mail.gmail.com>
-Message-ID: <CAK7LNAQA2JyK9aOp9QQF32bwsz2MitaZ5HrqSVjdEvRdCQpO3g@mail.gmail.com>
-Subject: Re: How to define some additional KBUILD_CFLAGS after building
- include/generated/asm-offsets.h ?
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Christophe LEROY <christophe.leroy@c-s.fr>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <153782730364.130337.17794279728329113665.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 27 Sep 2018 05:28:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+在 2018年09月25日 06:15, Bjorn Helgaas 写道:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Previously find_next_iomem_res() used "*res" as both an input parameter for
+> the range to search and the type of resource to search for, and an output
+> parameter for the resource we found, which makes the interface confusing
+> and hard to use correctly.
+> 
+> All callers allocate a single struct resource and use it for repeated calls
+> to find_next_iomem_res().  When find_next_iomem_res() returns a resource,
+> it overwrites the start, end, flags, and desc members of the struct.  If we
+> call find_next_iomem_res() again, we must update or restore these fields.
+> 
+> The callers (__walk_iomem_res_desc() and walk_system_ram_range()) do not
+> restore res->flags, so if the caller is searching for flags of
+> IORESOURCE_MEM | IORESOURCE_BUSY and finds a resource with flags of
+> IORESOURCE_MEM | IORESOURCE_BUSY | IORESOURCE_SYSRAM, the next search will
+> find only resources marked as IORESOURCE_SYSRAM.
+> 
+> Fix this by restructuring the interface so it takes explicit "start, end,
+> flags" parameters and uses "*res" only as an output parameter.
+> 
 
-2018-09-25 10:16 GMT+09:00 Michael Ellerman <mpe@ellerman.id.au>:
-> Christophe LEROY <christophe.leroy@c-s.fr> writes:
->
->> Le 24/09/2018 =C3=A0 14:10, Michael Ellerman a =C3=A9crit :
->>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>>
->>>> I'm trying to implement TLS based stack protector in the Linux Kernel.
->>>> For that I need to give to GCC the offset at which it will find the
->>>> canary (register r2 is pointing to the current task struct).
->>>>
->>>> I have been able to do it with the below patch, but it only works when
->>>> include/generated/asm-offsets.h already exists from the start of the b=
-uild.
->>>>
->>>> Is there a way to evaluate CANARY_OFFSET and add the stack-protector
->>>> flags to KBUILD_FLAGS only after include/generated/asm-offsets.h is bu=
-ilt ?
->>>>
->>>> Or another way of add -mstack-protector-guard-offset=3Doffsetof(struct
->>>> task_struct, stack_canary) ?
->>>
->>> This seems to work, at least I see the value in CFLAGS:
->>>
->>> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
->>> index 07d9dce..39ee113 100644
->>> --- a/arch/powerpc/Makefile
->>> +++ b/arch/powerpc/Makefile
->>> @@ -404,6 +394,11 @@ archclean:
->>>
->>>   archprepare: checkbin
->>>
->>> +prepare: stack_protector_prepare
->>> +
->>> +stack_protector_prepare: prepare0
->>> +    $(eval KBUILD_CFLAGS +=3D -mstack-protector-guard-offset=3D$(shell=
- awk '{if ($$2 =3D=3D "TSK_STACK_CANARY") print $$3;}' include/generated/as=
-m-offsets.h))
->>> +
->>
->> Great, it works !
->> Thanks, I have sent v3 of the patches.
->
-> Cool.
->
-> It would be good to here from someone who knows Kbuild better than me if
-> this is acceptable or just a gross hack :)
+Hi, Bjorn
+I personally suggest that some comments might be added in the code, make it clear
+and easy to understand, then which could avoid the old confusion and more code changes.
 
-
-I am fine with this solution.
-
-Thanks.
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thanks
+Lianbo
+> Original-patch: http://lore.kernel.org/lkml/20180921073211.20097-2-lijiang@redhat.com
+> Based-on-patch-by: Lianbo Jiang <lijiang@redhat.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  kernel/resource.c |   94 +++++++++++++++++++++++------------------------------
+>  1 file changed, 41 insertions(+), 53 deletions(-)
+> 
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index 155ec873ea4d..9891ea90cc8f 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -319,23 +319,26 @@ int release_resource(struct resource *old)
+>  EXPORT_SYMBOL(release_resource);
+>  
+>  /*
+> - * Finds the lowest iomem resource existing within [res->start..res->end].
+> - * The caller must specify res->start, res->end, res->flags, and optionally
+> - * desc.  If found, returns 0, res is overwritten, if not found, returns -1.
+> - * This function walks the whole tree and not just first level children until
+> - * and unless first_level_children_only is true.
+> + * Finds the lowest iomem resource that covers part of [start..end].  The
+> + * caller must specify start, end, flags, and desc (which may be
+> + * IORES_DESC_NONE).
+> + *
+> + * If a resource is found, returns 0 and *res is overwritten with the part
+> + * of the resource that's within [start..end]; if none is found, returns
+> + * -1.
+> + *
+> + * This function walks the whole tree and not just first level children
+> + * unless first_level_children_only is true.
+>   */
+> -static int find_next_iomem_res(struct resource *res, unsigned long desc,
+> -			       bool first_level_children_only)
+> +static int find_next_iomem_res(resource_size_t start, resource_size_t end,
+> +			       unsigned long flags, unsigned long desc,
+> +			       bool first_level_children_only,
+> +			       struct resource *res)
+>  {
+> -	resource_size_t start, end;
+>  	struct resource *p;
+>  	bool sibling_only = false;
+>  
+>  	BUG_ON(!res);
+> -
+> -	start = res->start;
+> -	end = res->end;
+>  	BUG_ON(start >= end);
+>  
+>  	if (first_level_children_only)
+> @@ -344,7 +347,7 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
+>  	read_lock(&resource_lock);
+>  
+>  	for (p = iomem_resource.child; p; p = next_resource(p, sibling_only)) {
+> -		if ((p->flags & res->flags) != res->flags)
+> +		if ((p->flags & flags) != flags)
+>  			continue;
+>  		if ((desc != IORES_DESC_NONE) && (desc != p->desc))
+>  			continue;
+> @@ -359,32 +362,31 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
+>  	read_unlock(&resource_lock);
+>  	if (!p)
+>  		return -1;
+> +
+>  	/* copy data */
+> -	if (res->start < p->start)
+> -		res->start = p->start;
+> -	if (res->end > p->end)
+> -		res->end = p->end;
+> +	res->start = max(start, p->start);
+> +	res->end = min(end, p->end);
+>  	res->flags = p->flags;
+>  	res->desc = p->desc;
+>  	return 0;
+>  }
+>  
+> -static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
+> -				 bool first_level_children_only,
+> -				 void *arg,
+> +static int __walk_iomem_res_desc(resource_size_t start, resource_size_t end,
+> +				 unsigned long flags, unsigned long desc,
+> +				 bool first_level_children_only, void *arg,
+>  				 int (*func)(struct resource *, void *))
+>  {
+> -	u64 orig_end = res->end;
+> +	struct resource res;
+>  	int ret = -1;
+>  
+> -	while ((res->start < res->end) &&
+> -	       !find_next_iomem_res(res, desc, first_level_children_only)) {
+> -		ret = (*func)(res, arg);
+> +	while (start < end &&
+> +	       !find_next_iomem_res(start, end, flags, desc,
+> +				    first_level_children_only, &res)) {
+> +		ret = (*func)(&res, arg);
+>  		if (ret)
+>  			break;
+>  
+> -		res->start = res->end + 1;
+> -		res->end = orig_end;
+> +		start = res.end + 1;
+>  	}
+>  
+>  	return ret;
+> @@ -407,13 +409,7 @@ static int __walk_iomem_res_desc(struct resource *res, unsigned long desc,
+>  int walk_iomem_res_desc(unsigned long desc, unsigned long flags, u64 start,
+>  		u64 end, void *arg, int (*func)(struct resource *, void *))
+>  {
+> -	struct resource res;
+> -
+> -	res.start = start;
+> -	res.end = end;
+> -	res.flags = flags;
+> -
+> -	return __walk_iomem_res_desc(&res, desc, false, arg, func);
+> +	return __walk_iomem_res_desc(start, end, flags, desc, false, arg, func);
+>  }
+>  EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
+>  
+> @@ -427,13 +423,9 @@ EXPORT_SYMBOL_GPL(walk_iomem_res_desc);
+>  int walk_system_ram_res(u64 start, u64 end, void *arg,
+>  				int (*func)(struct resource *, void *))
+>  {
+> -	struct resource res;
+> -
+> -	res.start = start;
+> -	res.end = end;
+> -	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> +	unsigned long flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+>  
+> -	return __walk_iomem_res_desc(&res, IORES_DESC_NONE, true,
+> +	return __walk_iomem_res_desc(start, end, flags, IORES_DESC_NONE, true,
+>  				     arg, func);
+>  }
+>  
+> @@ -444,13 +436,9 @@ int walk_system_ram_res(u64 start, u64 end, void *arg,
+>  int walk_mem_res(u64 start, u64 end, void *arg,
+>  		 int (*func)(struct resource *, void *))
+>  {
+> -	struct resource res;
+> -
+> -	res.start = start;
+> -	res.end = end;
+> -	res.flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+> +	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
+>  
+> -	return __walk_iomem_res_desc(&res, IORES_DESC_NONE, true,
+> +	return __walk_iomem_res_desc(start, end, flags, IORES_DESC_NONE, true,
+>  				     arg, func);
+>  }
+>  
+> @@ -464,25 +452,25 @@ int walk_mem_res(u64 start, u64 end, void *arg,
+>  int walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
+>  		void *arg, int (*func)(unsigned long, unsigned long, void *))
+>  {
+> +	resource_size_t start, end;
+> +	unsigned long flags;
+>  	struct resource res;
+>  	unsigned long pfn, end_pfn;
+> -	u64 orig_end;
+>  	int ret = -1;
+>  
+> -	res.start = (u64) start_pfn << PAGE_SHIFT;
+> -	res.end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+> -	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> -	orig_end = res.end;
+> -	while ((res.start < res.end) &&
+> -		(find_next_iomem_res(&res, IORES_DESC_NONE, true) >= 0)) {
+> +	start = (u64) start_pfn << PAGE_SHIFT;
+> +	end = ((u64)(start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+> +	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> +	while (start < end &&
+> +	       !find_next_iomem_res(start, end, flags, IORES_DESC_NONE,
+> +				    true, &res)) {
+>  		pfn = (res.start + PAGE_SIZE - 1) >> PAGE_SHIFT;
+>  		end_pfn = (res.end + 1) >> PAGE_SHIFT;
+>  		if (end_pfn > pfn)
+>  			ret = (*func)(pfn, end_pfn - pfn, arg);
+>  		if (ret)
+>  			break;
+> -		res.start = res.end + 1;
+> -		res.end = orig_end;
+> +		start = res.end + 1;
+>  	}
+>  	return ret;
+>  }
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+> 
