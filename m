@@ -2,117 +2,116 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F79C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88928C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C27D821714
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:03:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C27D821714
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 083EC21714
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:04:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ch7oW1Lu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 083EC21714
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbeI1EYT (ORCPT
+        id S1727646AbeI1EYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:24:19 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:42588 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725728AbeI1EYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:24:19 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ycv3F1MjcskK; Fri, 28 Sep 2018 00:03:52 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BC7FB00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:fb00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4CBF21EC0317;
-        Fri, 28 Sep 2018 00:03:52 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 00:03:55 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Russ Anderson <rja@hpe.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Justin Ernst <justin.ernst@hpe.com>, russ.anderson@hpe.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aristeu Rozanski Filho <arozansk@redhat.com>
-Subject: Re: [PATCH] Raise maximum number of memory controllers
-Message-ID: <20180927220355.GF19687@zn.tnic>
-References: <20180925180458.GG23986@zn.tnic>
- <20180926093510.GA5584@zn.tnic>
- <20180926152752.GG5584@zn.tnic>
- <20180926130340.6b22918b@coco.lan>
- <20180926161749.GI5584@zn.tnic>
- <20180926181035.GA1132@agluck-desk>
- <20180926182317.patqjso7nzw2oxiz@hpe.com>
- <20180926230257.GA5666@agluck-desk>
- <20180927045244.GA30912@zn.tnic>
- <20180927214400.GA2249@agluck-desk>
+        Fri, 28 Sep 2018 00:24:42 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38924 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbeI1EYm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 00:24:42 -0400
+Received: by mail-ot1-f68.google.com with SMTP id c12-v6so4114894otl.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 15:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oqgMJbhcO2IglCnCbVStRcsqcUrZkhWEcfQJTNfl9OE=;
+        b=Ch7oW1Lu3ZVtUCKuEfiVd+2IpB0+RY7ZIXhoLo60etP8s8uwnCpArUWqDPJ+xvbzas
+         TUKbgR4Qo7S73ljdQVR7GviMkkAG4RAuzr6aCXW0HzwsXi8i+m/2EDTUv9LI7ZjMAAjw
+         diQ6Nxso3KSs4mhAQXkJ+DhSx141S4JOyxezMxc/bRPrinh/Al98K80nj68Gxt3XMSRg
+         66jlxD75jPf9nEl6aQQr3Ejif5ZIjnMloBJL1thamRJyGd1awlgi6QDgh6/8hqnWre5S
+         pManAI4yVr2gUrcmkWUq8dH13FOv+gSLZ+Zk1mYkYFr7eXVAhvIi6GUOSExlw0etoj/v
+         zqBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oqgMJbhcO2IglCnCbVStRcsqcUrZkhWEcfQJTNfl9OE=;
+        b=WU7NwuEWwsBYPPBI75yhFEYFBZ45ogfbA/RIYABCBOtsBbhcmX9mvtoQuC1J61PWe4
+         FCGHSWWx1GnsatqKa9vYuByHUiUilL0aGnBAy9+Ha7+74y13MuauENIEbYipuWszWMEZ
+         lkn9hMeY3vXMOrXdBIQByapYpaHaEjKC0xfVYEcThV2mX2bgG8YPcWOq6Aea0DgUHN3D
+         s0XlLriklH42f8DjvFTEZmwr/CskJAISOgrv+6yKvzy+u/NNbWS5PUXjuAVZUapPdKlK
+         LM0NYgeHfc0dY4zTvlrwfthcpPF5sZORUHWq5MUwg7g93TKbkZmw61BR4T7mjTAl6InY
+         EAEQ==
+X-Gm-Message-State: ABuFfohhPBPgP80j6lB5IEaAdaSNSVQXWl0yFHQqHMhqAFxnVugyHIdH
+        fvr5xtVboFESqvWRsz/HmxSDyj1V
+X-Google-Smtp-Source: ACcGV63zPaAWLJLEsqZocJr6Cc/1NTCjYpjm9jJ+JzWwMLNBzMUX22Q7mCD00EhA70fPfJBDQiKTPg==
+X-Received: by 2002:a9d:6253:: with SMTP id i19-v6mr372otk.185.1538085855860;
+        Thu, 27 Sep 2018 15:04:15 -0700 (PDT)
+Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id s21-v6sm1081795otk.7.2018.09.27.15.04.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 15:04:15 -0700 (PDT)
+Subject: Re: [PATCH v2] staging: rtl8188eu: Skip unnecessary field checks
+To:     Aymen Qader <qader.aymen@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20180927211911.26484-1-qader.aymen@gmail.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <ac8995c8-0dee-6f55-fdb7-a1cb9328d364@lwfinger.net>
+Date:   Thu, 27 Sep 2018 17:04:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180927214400.GA2249@agluck-desk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180927211911.26484-1-qader.aymen@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 02:44:01PM -0700, Luck, Tony wrote:
-> The problem with your patch that gets rid of EDAC_MAX_MCS is making
-> device links under /sys/bus/edac.  Which is hinted at in some of the
-> code your patch deleted:
+On 9/27/18 4:19 PM, Aymen Qader wrote:
+> Skip unnecessary request field checks when the information element
+> pointer is null.
 > 
-> -       /*
-> -        * The memory controller needs its own bus, in order to avoid
-> -        * namespace conflicts at /sys/bus/edac.
-> -        */
-> -       name = kasprintf(GFP_KERNEL, "mc%d", mci->mc_idx);
-> -       if (!name)
-> -               return -ENOMEM;
-> -
-> -       mci->bus->name = name;
-
-Yes, and that needed to go because I am using a single bus. Which kinda
-makes sense because you want to have a single bus and multiple devices
-on it. I mean, if we *have* to have a bus.
-
-I think this whole /sys/bus/edac thing is crap and needs to go. We
-have a perfectly fine hierarchy under /sys/devices/system/edac and
-duplicating it under /sys/bus/edac is just bollocks. IMHO. Feel free to
-correct me with, but but, this is useful for...
-
-> which seemed to work.
-
-Right.
-
-> But then I began wondering what are ABI expectations
-> from applications that read the EDAC /sys files?
+> Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
+> ---
+> v2: combine pointer check and length check & change commit message to be
+> more appropriate
 > 
-> Is this this current source repository?  https://github.com/grondo/edac-utils
+>   drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> This code doesn't seem to know about the "dimm*" directories below the
-> "mc*" level. It just looks for the csrow* entries.
+> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+> index 834053a0ae9d..4d55bbdf8fb7 100644
+> --- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+> +++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+> @@ -2971,11 +2971,11 @@ static unsigned int OnAssocReq(struct adapter *padapter,
+>   	/*  checking SSID */
+>   	p = rtw_get_ie(pframe + WLAN_HDR_A3_LEN + ie_offset, _SSID_IE_, &ie_len,
+>   		pkt_len - WLAN_HDR_A3_LEN - ie_offset);
+> -	if (!p)
+> -		status = _STATS_FAILURE_;
+>   
+> -	if (ie_len == 0) { /*  broadcast ssid, however it is not allowed in assocreq */
+> +	if (!p || ie_len == 0) {
+> +		/*  broadcast ssid, however it is not allowed in assocreq */
+>   		status = _STATS_FAILURE_;
+> +		goto OnAssocReqFail;
+>   	} else {
+>   		/*  check if ssid match */
+>   		if (memcmp((void *)(p+2), cur->Ssid.Ssid, cur->Ssid.SsidLength))
+> 
 
-I guess this is a question for Mauro. I never really needed any special
-edac tool to get info and if you ask me, we probably should try to keep
-it simple and grep sysfs. So that you can always get the info without
-having to install any special tools. Like ftrace works on every system
-with just a shell and basic tools. I think this is very powerful. But
-this is old spartan me only thinking out loud.
+ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-In any case, I'm more than fine with dropping the bus hierarchy if
-nothing uses it.
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
