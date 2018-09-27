@@ -5,118 +5,84 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8C9C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9B6C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC8B721582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:10:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8B721582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0045C2172A
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 23:13:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0045C2172A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbeI1Faz (ORCPT
+        id S1727799AbeI1Fdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 01:30:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbeI1Faz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 01:30:55 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 65F6688312;
-        Thu, 27 Sep 2018 23:10:14 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 53E161062242;
-        Thu, 27 Sep 2018 23:10:14 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 210DB18005CE;
-        Thu, 27 Sep 2018 23:10:14 +0000 (UTC)
-Date:   Thu, 27 Sep 2018 19:10:13 -0400 (EDT)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     syzbot+001516d86dbe88862cec@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
+        Fri, 28 Sep 2018 01:33:53 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:15475 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbeI1Fdx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 01:33:53 -0400
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8RNCkRw033719;
+        Fri, 28 Sep 2018 08:12:46 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
+ Fri, 28 Sep 2018 08:12:46 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8RNCfYR033700
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 28 Sep 2018 08:12:46 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: Leaking Path in XFS's ioctl interface(missing LSM check)
+To:     Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>
+Cc:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>, TongZhang <ztong@vt.edu>,
+        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Message-ID: <525568947.16793847.1538089813920.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CANn89iJNNfiEPM24NgnodV-QUnCyJcrRjKsHV9jdP4i3fBdESw@mail.gmail.com>
-References: <0000000000005e2e530576c6f9ce@google.com> <20180927213026.16863-1-vdronov@redhat.com> <CANn89iJNNfiEPM24NgnodV-QUnCyJcrRjKsHV9jdP4i3fBdESw@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in __dev_mc_add
+        linux-security-module@vger.kernel.org,
+        Wenbo Shen <shenwenbosmile@gmail.com>
+References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+ <20180926013329.GD31060@dastard> <20180926192426.472360ea@alans-desktop>
+ <20180927013812.GF31060@dastard>
+ <alpine.LRH.2.21.1809280720330.8410@namei.org>
+ <20180927221948.GH31060@dastard>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <43032103-99c5-88ae-5aa1-a7906e059a8b@I-love.SAKURA.ne.jp>
+Date:   Fri, 28 Sep 2018 08:12:41 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180927221948.GH31060@dastard>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.40.200.20, 10.4.195.25]
-Thread-Topic: KMSAN: uninit-value in __dev_mc_add
-Thread-Index: rdSpYqoLF7bzz3JYiAErs+/p6K4VQA==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 27 Sep 2018 23:10:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Eric, all,
+On 2018/09/28 7:19, Dave Chinner wrote:> IOWs, the security_file_ioctl() hook is almost completely useless in
+> cases like this - you can't isolate the ioctl based on the file
+> argument, because it can point to any file or directory in the
+> filesystem. And without actually parsing, decoding and instantiating
+> the the ioctl arguments, you can't tell the ioctl it can't act on
+> specific targets. And because filehandle to dentry resolution
+> results in disconnected dentries, the paths are not complete and
+> hence path based security checks (e.g. tomoyo) are likely to be
+> broken and unfixable...
 
-> I dunno, your patch looks quite not the right fix.
+Though TOMOYO uses pathname as a mandatory parameter, CaitSith
+(currently waiting for review) does not.
 
-I agree, it looks more like a dirty hack. Unfortunately, I lack the deep
-expertise in the network stack subsystem, so I've posted the patch to,
-sort of, start a discussion and probably get some hints.
- 
-> If TUN is able to change dev->type,  how comes it does not set the
-> appropriate dev->addr_len at the same time ?
+CaitSith can filter filesystem specific ioctl() using fsmagic
+and cmd parameter like:
 
-Well,... probably, nobody cared to do so:
+10 acl ioctl path.fsmagic=0x9FA0
+    audit 0
+    10 deny cmd=@FORBIDDEN_IOCTLS_ON_PROCFS
+    20 allow
 
-[drivers/net/tun.c]
-        case TUNSETLINK:
-                ...
-                        tun->dev->type = (int) arg; //<--- that's all!
-                        tun_debug(KERN_INFO, tun, "linktype set to %d\n",
-                                  tun->dev->type);
-                        ret = 0;
-                }
-                break;
-
-> Really the bug seems to be deeper, and without setting proper
-> dev->addr_len, we'll need more 'fixes' like yours.
-
-Absolutely. Unfortunately, I wasn't able to just write such deeper patch. 
-Let me share what I have found and let me hope to get an advise.
-
-- So setting just the tun->dev->type makes the dev struct inconsistent.
-
-- There are more field to adjust, at least dev->broadcast. Also, there are
-  a number of *_ops fields which are all set for the Ethernet type, most
-  probably they must be adjusted also.
-
-- There is no get_addr_len_by_link_type() or a simple way to get link layer
-  properties by dev->type. Such settings are scattered in *_setup and
-  *_init functions, like ipgre_tunnel_init() { ... dev->addr_len = 4; ...}
-
-Having these, I can imagine 2 ways for a proper fix.
-
-1) Destroy the net_device in question and recreate it when changing a link
-type. This way all the dev fields are set right. Create it in a similar way
-as rtnl_newlink() does. Again, we do not have get_X_by_link_type(), so it
-probably will be some large switch()/case:
-
-  $ grep '^#define ARPHRD_' include/uapi/linux/if_arp.h | wc -l
-  59
-
-2) Leave tun an Ethernet device, add some tun->pretend_to_be_this_link_type
-field and change only it on TUNSETLINK. And use this field in cases for which
-TUNSETLINK was invented in the first place. Unfortunately, I do not have such
-a list. The initial the commit ff4cc3ac93e1 says:
-
-  For use with
-  wireless and other networking types it should be possible to set the
-  ARP type via an ioctl.
-
-Surely, there can be something else which I do not see. Could anyone suggest
-an advice on this?
-
-Best regards,
-Vladis Dronov | Red Hat, Inc. | Product Security Engineer
+CaitSith does ioctl() checks. Missing LSM check is a bug.
