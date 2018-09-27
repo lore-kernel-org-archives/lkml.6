@@ -2,149 +2,179 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBFFC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A459C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C30A2168B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2612216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:04:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cePcWO8D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C30A2168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="z6BUNv5/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2612216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbeI1AVh (ORCPT
+        id S1728278AbeI1AXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:21:37 -0400
-Received: from mail.efficios.com ([167.114.142.138]:41714 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbeI1AVh (ORCPT
+        Thu, 27 Sep 2018 20:23:47 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46072 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727612AbeI1AXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:21:37 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id AF9F4242677;
-        Thu, 27 Sep 2018 14:02:09 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id l0Q7b_oDttTC; Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 8BD3224266F;
-        Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8BD3224266F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1538071328;
-        bh=yXlhQ35jnZf6icPPCSOWEouOm7NFShHC25nup+qr6Qw=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=cePcWO8Dak50DE69JL99ikvnNySdMt3Yqgrz6BMdzNKBKUatC4PWRZ/VIU60zIdhS
-         JNfqrx5b66pXg3kpz43cTXO3jK6MAUgzElWb4CrlV+bpiWWw7JAQ29VvuUfT2bNojM
-         t1aYSqXQQOQH+HfwM8GptgJemKytnRVzFcl8R4qwHSoGdkWD6CEzDrUozfsxjvYC8R
-         aJbJEswf01d4CVFWFeXe7Ywd8JwnU3tc7hBL05qsjPs4bvnOq/j/ilXD87kAMKBc8B
-         qKDHzony/uVITcw/+6JST/666wgeIvWAJ85tLdcqu8xB2ttYKa2IeVZS4e2WAJ2Kte
-         XXJr5g0tVka3w==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id ucwMxwGiL1Or; Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 6A5A4242668;
-        Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
-Date:   Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     shuah kh <shuah.kh@samsung.com>
-Cc:     rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
+        Thu, 27 Sep 2018 20:23:47 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a23-v6so2427765pfi.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:04:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PVeVP6wrlR/Kkx+zEt2gMYHwcYZRXu1qGypYVgaZHnE=;
+        b=z6BUNv5//GXBiVsZbbiGiU9oUlaneXWUku1rbe0LuupaZwaTIhXL7dZu7bxA/vvEzm
+         cc7Zw/oirGZjQltOqoTleNt2NdZ38UmaX6KUqYbD6jwTCbQlY+DMITgzCRue+Jdfi0cX
+         ++xTcxORF1XwqWwSQJt7EMEeGaISpIlygpbfl9edQQ7TnaAD+fPycx29k0NDMScj0Eau
+         Wj8nQguhPF/BVK/EWjTJVVied2SCijcGrMvLPy4KCt80yd8p1SRK7itdu+FAS329GXO2
+         /YM923Dq6EvwT9WfDrJG83dZL2YkE8COuf7sbk6cO3gBzs4Cmhnu6G0NozJiUhxb3Aee
+         HjNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PVeVP6wrlR/Kkx+zEt2gMYHwcYZRXu1qGypYVgaZHnE=;
+        b=BoeZslOrSm5IXxzzqn+azm5bOM09yMRrwU1rg28WKeuUgFtOK+8hKbtufXKN+c4xlG
+         LVKwseX4vzqqhgvKhjUR6VnI32Xr0O8KQH1JTFOKzAe7A00jyJW6WeDeUHpQNcisop2r
+         qEeR1hIIcvynen9B6efnJ72zQgkQW4aihmCopg+iORdi55E28BnYgFtOTjvBTLLp6nG1
+         etWsm43IDVyXUxMjRYVGLq5wvj/X+m9On6sAH2xidiRdLAKtKtJSt1WBmCSLo9nml2jf
+         1I8xMMK20B2jOXZCVXlSzA4kL5b+vuHxB8DyFviGtkiHWAOH13H/NftL5K22akAetrbQ
+         XRwg==
+X-Gm-Message-State: ABuFfogs9l8ZlbHHyP2Yf1KP0qDAMMynGWssuhI5zn+jQuDsMsI7Bawy
+        hQVlbeFJvJMOamm5MHL/RpCdPA==
+X-Google-Smtp-Source: ACcGV61/TfYHXo/Zwgtz0DXhqbIIXaYSXlmx3zgHcqCGmHSwAloCok/QDSPB3nBZSMCk0YeXcPPzWQ==
+X-Received: by 2002:a63:ac11:: with SMTP id v17-v6mr11379710pge.196.1538071459590;
+        Thu, 27 Sep 2018 11:04:19 -0700 (PDT)
+Received: from cisco.cisco.com ([128.107.241.165])
+        by smtp.gmail.com with ESMTPSA id b76-v6sm6171562pfj.16.2018.09.27.11.04.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 11:04:18 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 12:04:15 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
         Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        stable <stable@vger.kernel.org>, shuah <shuah@kernel.org>
-Message-ID: <44897232.11546.1538071328396.JavaMail.zimbra@efficios.com>
-In-Reply-To: <a7bae2ff-1f4d-dbfc-43f8-e7a89f319abb@samsung.com>
-References: <20180918135328.32034-1-mathieu.desnoyers@efficios.com> <1367962117.10271.1537897176578.JavaMail.zimbra@efficios.com> <CGME20180927132250epcas4p3d0775cc258f6112d27bdad359fc6e416@epcas4p3.samsung.com> <20180927092235.77282e35@vmware.local.home> <a7bae2ff-1f4d-dbfc-43f8-e7a89f319abb@samsung.com>
-Subject: Re: [PATCH] rseq/selftests: fix parametrized test with -fpie
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        suda.akihiro@lab.ntt.co.jp, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v7 4/6] files: add a replace_fd_files() function
+Message-ID: <20180927180415.GA15491@cisco.cisco.com>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-5-tycho@tycho.ws>
+ <CAG48ez1eU_j_Ti0nRh05Qv6hv7-7hv5i+8gnJS5e30mTti2Jhg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.9_GA_3019 (ZimbraWebClient - FF52 (Linux)/8.8.9_GA_3019)
-Thread-Topic: rseq/selftests: fix parametrized test with -fpie
-Thread-Index: eUxmozW8H4gJdhHOEwUVY+Vn8yzteA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez1eU_j_Ti0nRh05Qv6hv7-7hv5i+8gnJS5e30mTti2Jhg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Sep 27, 2018, at 9:58 AM, Shuah Khan shuah.kh@samsung.com wrote:
-
-> On 09/27/2018 07:22 AM, Steven Rostedt wrote:
->> On Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
->> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->> 
->>> ----- On Sep 18, 2018, at 9:53 AM, Mathieu Desnoyers
->>> mathieu.desnoyers@efficios.com wrote:
->>>
->>>> On x86-64, the parametrized selftest code for rseq crashes with a
->>>> segmentation fault when compiled with -fpie. This happens when the
->>>> param_test binary is loaded at an address beyond 32-bit on x86-64.
->>>>
->>>> The issue is caused by use of a 32-bit register to hold the address
->>>> of the loop counter variable.
->>>>
->>>> Fix this by using a 64-bit register to calculate the address of the
->>>> loop counter variables as an offset from rip.
->>>
->>> Should this fix go through tip or the selftests tree ?
->>>
->> 
->> I usually have changes like this pulled through Shuah's tree with an
->> ack from the maintainer of the code that it tests.
->> 
->> -- Steve
->> 
+On Thu, Sep 27, 2018 at 06:49:02PM +0200, Jann Horn wrote:
+> On Thu, Sep 27, 2018 at 5:11 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > Similar to fd_install/__fd_install, we want to be able to replace an fd of
+> > an arbitrary struct files_struct, not just current's. We'll use this in the
+> > next patch to implement the seccomp ioctl that allows inserting fds into a
+> > stopped process' context.
+> [...]
+> > diff --git a/fs/file.c b/fs/file.c
+> > index 7ffd6e9d103d..3b3c5aadaadb 100644
+> > --- a/fs/file.c
+> > +++ b/fs/file.c
+> > @@ -850,24 +850,32 @@ __releases(&files->file_lock)
+> >  }
+> >
+> >  int replace_fd(unsigned fd, struct file *file, unsigned flags)
+> > +{
+> > +       return replace_fd_task(current, fd, file, flags);
+> > +}
+> > +
+> > +/*
+> > + * Same warning as __alloc_fd()/__fd_install() here.
+> > + */
+> > +int replace_fd_task(struct task_struct *task, unsigned fd,
+> > +                   struct file *file, unsigned flags)
+> >  {
+> >         int err;
+> > -       struct files_struct *files = current->files;
 > 
-> Right that is what I prefer. I usually wait for an Ack. I can pull this
-> in.
+> Why did you remove this? You could just do s/current/task/ instead, right?
 
-I am maintainer of the code that it tests as well, so being both author
-of the selftest patch and giving an ack to it seems a bit silly. :) Other
-rseq co-maintainers could weight in though: Peter, Paul, and Boqun.
+No reason, probably just flailing around trying to figure out what
+exactly I wanted. I'll make the change, thanks.
 
-Thanks,
-
-Mathieu
-
+> >         if (!file)
+> > -               return __close_fd(files, fd);
+> > +               return __close_fd(task->files, fd);
+> >
+> > -       if (fd >= rlimit(RLIMIT_NOFILE))
+> > +       if (fd >= task_rlimit(task, RLIMIT_NOFILE))
+> >                 return -EBADF;
+> >
+> > -       spin_lock(&files->file_lock);
+> > -       err = expand_files(files, fd);
+> > +       spin_lock(&task->files->file_lock);
+> > +       err = expand_files(task->files, fd);
+> >         if (unlikely(err < 0))
+> >                 goto out_unlock;
+> > -       return do_dup2(files, file, fd, flags);
+> > +       return do_dup2(task->files, file, fd, flags);
+> >
+> >  out_unlock:
+> > -       spin_unlock(&files->file_lock);
+> > +       spin_unlock(&task->files->file_lock);
+> >         return err;
+> >  }
+> >
+> > diff --git a/include/linux/file.h b/include/linux/file.h
+> > index 6b2fb032416c..f94277fee038 100644
+> > --- a/include/linux/file.h
+> > +++ b/include/linux/file.h
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/posix_types.h>
+> >
+> >  struct file;
+> > +struct task_struct;
+> >
+> >  extern void fput(struct file *);
+> >
+> > @@ -79,6 +80,13 @@ static inline void fdput_pos(struct fd f)
+> >
+> >  extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
+> >  extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
+> > +/*
+> > + * Warning! This is only safe if you know the owner of the files_struct is
+> > + * stopped outside syscall context. It's a very bad idea to use this unless you
+> > + * have similar guarantees in your code.
+> > + */
+> > +extern int replace_fd_task(struct task_struct *task, unsigned fd,
+> > +                          struct file *file, unsigned flags);
 > 
-> thanks,
-> -- Shuah
-> 
-> --
-> Shuah Khan
-> Sr. Linux Kernel Developer
-> Open Source Innovation Group
-> Samsung Research America(Silicon Valley)
-> shuah.kh@samsung.com
+> I think Linux kernel coding style is normally to have comments on the
+> implementations of functions, not in the headers? Maybe replace the
+> warning above the implemenation of replace_fd_task() with this
+> comment.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Will do.
+
+Cheers,
+
+Tycho
