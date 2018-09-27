@@ -2,97 +2,94 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0C2C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FACC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 859942156B
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:32:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ejlvwa1k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 859942156B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id 46F822156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 22:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F822156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeI1Ewu (ORCPT
+        id S1727683AbeI1EyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 00:52:50 -0400
-Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:37077
-        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725957AbeI1Ewt (ORCPT
+        Fri, 28 Sep 2018 00:54:17 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43781 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725728AbeI1EyR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 00:52:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1538087537; bh=+blMXPnkw9U+tzuzdgsEaDHx14656Bl0m+1PHfJ8+40=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ejlvwa1khTIu14bwj0r1dvT79gXy9NMBvbqJLUkNqC7ICCSpYxOs3BC24U7Ax+6r2OjmNnx00JkmM4GtkLIF9geE9dtki4rJ7D/nZzNkS/HuMTYduWSlhRQ8Rf0l4RyfvE5Cf6vFKTZwRnkyxLJ3HbrtJYKHrD6rB/FOo8655HrdRGT4l+RDPjmKY4+DhSo8SvzesG6PyMCe2MaqaOhs4d8K8KRtCqloxcPXPUVUQ0C+I7h46niA3Sp4f1+UvaaFixCKeiUO3svxj8gx4zC4JwVshmlLQTAj5IeZYqDAippObWo37iBmhRf5yjFR/iOkMmUnNsls3bWuwI0V5RziTQ==
-X-YMail-OSG: fWCKTBoVM1mapm2MjLU.KDC509byz1mEVx4vhIcz03b3GH8eNGx_SA85S6wH94.
- WLtI7YVdVDVTUL5XMzBwR_NZKp1TpDzqR0ZQYSgiuNYR3kwQb1nLGJ0E.lr0PKer4ItwAdZZN7MY
- uKNhHdI59yn.QWrJ3fWlTpptFtekv5p2JyDylDJgVtRz66A7alWHZ2HfK9zhGd4_8BAo1.XxMtVC
- yN632Il8D3rQqeNr4ld_XH1OzbxIrOX4JJDy2QFwr0nAxvkF2GDZY3BNvGJ3H6VpfJkd09mQKLjN
- 6PPpIkhU.R.e2LRtPc47t8zU5uuStbERuTpyu07cCZ48F4eus1FzjkCH78bFicT59C0K5scCAnhr
- 8GLiNwKeb4LiAcQntqEeGHRbJSbdLwqBZy49RhiHC_nTfOh6VmLnRnZfHfo_OiZ9qc60aqGGXRnt
- EsNmafSG41D_kmWKopX4q9iujqQKKGa9xD.xjVAZ5HNQE_z7Tz82QN2KHJZel8vtwZPaik_LlwjL
- nANI1M3ZBBrnS01CwTcye4j560QEkXv7TjhRLFziZc0SficUlhMUtN71nzf0nIvClgVRCAcU3pnG
- CM2EJljQaFTp1lyReSH3RzYSH7za3csRZ4mUyjgvCze4YE.QnYVSZ6rc_Xg5jJJ4TKloFmE9FQR6
- JSKw3rN7MNzhnA2MJEjRJ.DMBbH2nqOrs.p4Y2srxxQ9kYw4WxBRGaKHjYDMrVlkv_ck.wEEsceV
- aiMX5fUGaBiT4uup6uVIjiD1GtLbrYXVV1W.JkszyBylCrrKyxvrygea4ZOoVupUCOwLkFT9yP3D
- 3RPS5.39ZwnbCWkEPFw8n_7rNnpibgBqUfuqcACCZ4Y_9k2.GCvPqVPjcDR2z9R6sIwZtFDekQ8b
- l78_R1_I0bH81VfdTvUnB.m6yj9trkGyIoW4ywkrk0Ka5iKj1cjp9uEL8C0p2jDqqzA_fiEfuAYc
- .TvWzS8sJ0OqK6n_DvrIaZ7Px3ysMNNGIV9IWTIOyARvCrf.HEUuR5974sLmXVRsymI3DNlYDudI
- oPWhCb__adbHHV6kucvs-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 27 Sep 2018 22:32:17 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp425.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0b03ad2633d2b766f3841f07f09ec377;
-          Thu, 27 Sep 2018 22:32:16 +0000 (UTC)
-Subject: Re: [PATCH v4 04/19] SELinux: Remove cred security blob poisoning
-To:     James Morris <jmorris@namei.org>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
- <5360cd42-5827-58af-515c-6e1ded1d9154@schaufler-ca.com>
- <alpine.LRH.2.21.1809280813270.8410@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <84719272-fb62-76b6-b2fd-f0c36d49707d@schaufler-ca.com>
-Date:   Thu, 27 Sep 2018 15:32:15 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1809280813270.8410@namei.org>
-Content-Type: text/plain; charset=utf-8
+        Fri, 28 Sep 2018 00:54:17 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j26-v6so2858416pfi.10;
+        Thu, 27 Sep 2018 15:33:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YKkXUfaCYdq6yxzO7uhEWTyHfHdjdUnTxVMCNoxAA54=;
+        b=fUiKRRT8vMMaeXsgiAyaH4je2RX5aedJhWsy0hxIi2gkAL46Eyi03XGNbASYxYgJA3
+         1AsljsquUpff6RVjX8hm6Ca3EnkH28uFRwmDNQxaqWKQioL8N7ZEknuHCqDqzyKfHmkR
+         78XNOOQ96jZhZPBbby7BqqwqNfTQA7kCeCGM5y4AILYTZlP1GM430wdtJZ6QQs2Wy7Oz
+         XT040zKC7QaPOGg6EMu/JvEQv3lcMGWlTo3ZWTrmEtnxdNytiJX2GKrbEB8aWbhsgmGF
+         MQGpj2VuW8CEnIsnzdwDd2lE0qRVteClRtxHRe59z+EPcBOnfeQJVBxDY2EBVMN6E6Mv
+         LQZw==
+X-Gm-Message-State: ABuFfojg7bo8lmB060buKDWRtTxh0sFI3VBru6rIbzN6lC9hShUAyi4/
+        dGK0ZA/8KA48wmj84WGMnN8=
+X-Google-Smtp-Source: ACcGV63X5qRW6IPBqj0YdPS5kh/oSrkk3hxu3HVo+cOWyYQFAGgH3KijX7XRz9bAHcYPJ3izPRQ2Iw==
+X-Received: by 2002:aa7:8751:: with SMTP id g17-v6mr13379463pfo.250.1538087624488;
+        Thu, 27 Sep 2018 15:33:44 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id x13-v6sm3665036pgl.87.2018.09.27.15.33.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 15:33:43 -0700 (PDT)
+Message-ID: <1538087622.226558.8.camel@acm.org>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>, dledford@redhat.com,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 27 Sep 2018 15:33:42 -0700
+In-Reply-To: <20180927222821.GC28301@ziepe.ca>
+References: <20180924195716.30848-1-natechancellor@gmail.com>
+         <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
+         <20180924222737.GA26973@flashbox>
+         <CAKwvOdkZ-0k4BhXYz0wj3wXNyy95nKFe9aYXxXveLafuviGG2w@mail.gmail.com>
+         <20180925023722.GA32600@ziepe.ca> <20180927010803.GA7640@flashbox>
+         <20180927044826.GC24889@ziepe.ca>
+         <CAKwvOdnmg2XY6K-8jTna3EKR1Nx04gOm6ZoywUwQO_CSANR_jg@mail.gmail.com>
+         <20180927202849.GA11120@flashbox>
+         <CAKwvOdnMOcdKPNHwKbcsg8rJX3_hDTgY752Nb4hgMC2D4p5aRg@mail.gmail.com>
+         <20180927222821.GC28301@ziepe.ca>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/27/2018 3:13 PM, James Morris wrote:
-> On Fri, 21 Sep 2018, Casey Schaufler wrote:
->
->> The SELinux specific credential poisioning only makes sense
->> if SELinux is managing the credentials. As the intent of this
->> patch set is to move the blob management out of the modules
->> and into the infrastructure, the SELinux specific code has
->> to go. The poisioning could be introduced into the infrastructure
->> at some later date.
-> If it's useful, it should be incorporated into core LSM, otherwise that's 
-> a regression for SELinux
+On Thu, 2018-09-27 at 16:28 -0600, Jason Gunthorpe wrote:
++AD4 On Thu, Sep 27, 2018 at 01:34:16PM -0700, Nick Desaulniers wrote:
++AD4 
++AD4 +AD4 +AD4 Neither ib+AF8-qp+AF8-create+AF8-flags nor mlx4+AF8-ib+AF8-qp+AF8-flags have negative values, is
++AD4 +AD4 +AD4 signedness necessary?
++AD4 +AD4 
++AD4 +AD4 enums are by default restricted to the range of ints.  
++AD4 
++AD4 That's not quite right, the compiler sizes the enum to be able to fit
++AD4 the largest value contained within, today that is int, but if we added
++AD4 1+ADwAPA-31, then it would become larger.
 
-When I discussed this code with David Howells he indicated
-that it was primarily used for debugging the original shared
-credential implementation and that is was not especially
-valuable any longer. If someone thinks it is valuable we
-should consider doing it in the infrastructure for all the
-blobs, not just the credential.
+Hi Jason,
+
+Are you perhaps confusing C and C+-+-? For C+-+-, an enumeration whose underlying
+type is not fixed, the underlying type is an integral type that can represent
+all the enumerator values defined in the enumeration. For C however I think
+that enumeration values are restricted to what fits in an int.
+
+Bart.
 
