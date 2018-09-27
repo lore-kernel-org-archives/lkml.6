@@ -2,126 +2,108 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C118FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132DDC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF1221547
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:08:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hK5oxA1k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF1221547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AEB8D2156B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB8D2156B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbeI0U0z (ORCPT
+        id S1727460AbeI0U3u convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:26:55 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42102 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbeI0U0y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:26:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i4-v6so1443884pgq.9;
-        Thu, 27 Sep 2018 07:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6x61LsIEMPBlMr59UuLtUedNy+MpQHDFd6/mORvL11w=;
-        b=hK5oxA1kT3GF/C0NdnkiSQKmbAxE8f0r24KbjjU2EKGiTUP36hhvdhM64exlFWt9pv
-         cQos8Flq+D6+etuwtu61Yv9nVht0FVRQqqGP+g7PcXwgfK43piS1EAHZKQUo60S9mA0p
-         b8E13xBBc5VqSKuR7zpuqB+uP4sDdY3XP3XlclSZ7+dH27IbQVRCI44geuk2oiN5JNr2
-         ZTK3MoEZnyD+fn+fy+Wv6PKoecV6k4Vd+l+YnRrkFAYXrenwjimiwuu3CDBdemz5FL89
-         VDZaQpzlkuVspjKrCH8Xar4PnPl2BTLVQGWzlXSs7aL4g9EY7k+yuP39TUeG3Z0PNySu
-         l9aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6x61LsIEMPBlMr59UuLtUedNy+MpQHDFd6/mORvL11w=;
-        b=fOFyyB777k9H8+eFJOzHC1PcXi299dT6z0mJejwR2kU280HimWf3v40PG0FVa0/13R
-         uekscmHQqHKxrVJBJumiO2cHcycZFuWSh+Itcpd+en5TXKzTlASXpsgy4QrITeplSucl
-         h0vvspumRLi1VuysSu1Dflr/5QWyoZ8inP1n+2UedStrx7x9o9y+dnqqBvIWP/vZuujg
-         jvHvN6TOpt34yLFxp6fP1iFFyvhR6WgywcYV17/+PsZeGk2KihujV61g9QFSY9NFnJz+
-         mPBIcEstVwVaZKtRYm1oa543TmKJGm6+Dn9hZZT7Kk2RGudQvm7b3eyp52s5vZXokDIs
-         Xxgw==
-X-Gm-Message-State: ABuFfohCOnW5p2ZGF4D5I6Sl7avetlQ2IT+aZYEsMOxkvFW511qLzSOa
-        0/uvbiAzgoiqxLclvkVrhoY=
-X-Google-Smtp-Source: ACcGV615vJqnSIKgvgZ3wV3wvJQoyk/Afvl/CmrUd9Ref4PhlrIehb8cxmfaUyh1+OyTEBCXOonkaA==
-X-Received: by 2002:a63:1b52:: with SMTP id b18-v6mr10408382pgm.303.1538057307578;
-        Thu, 27 Sep 2018 07:08:27 -0700 (PDT)
-Received: from localhost.localdomain ([103.51.74.185])
-        by smtp.gmail.com with ESMTPSA id r205-v6sm4259763pgr.11.2018.09.27.07.08.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 07:08:27 -0700 (PDT)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Subject: [PATCHv5 6/6] mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
-Date:   Thu, 27 Sep 2018 14:07:38 +0000
-Message-Id: <20180927140738.1006-7-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180927140738.1006-1-linux.amoon@gmail.com>
-References: <20180927140738.1006-1-linux.amoon@gmail.com>
+        Thu, 27 Sep 2018 16:29:50 -0400
+Received: from mga01.intel.com ([192.55.52.88]:17787 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727262AbeI0U3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 16:29:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 07:11:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
+   d="scan'208";a="266315642"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga005.fm.intel.com with ESMTP; 27 Sep 2018 07:11:11 -0700
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 27 Sep 2018 07:11:11 -0700
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 27 Sep 2018 07:11:10 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.140]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.27]) with mapi id 14.03.0319.002;
+ Thu, 27 Sep 2018 22:11:08 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     "Gonglei (Arei)" <arei.gonglei@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>
+CC:     "Liang, Kan" <kan.liang@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Xu, Like" <like.xu@intel.com>,
+        "jannh@google.com" <jannh@google.com>
+Subject: RE: [PATCH v3 5/5] KVM/x86/lbr: lazy save the guest lbr stack
+Thread-Topic: [PATCH v3 5/5] KVM/x86/lbr: lazy save the guest lbr stack
+Thread-Index: AQHUUM3r0paOOfw3cUyiMvfFvyNRYKT4jVyAgAuiBxA=
+Date:   Thu, 27 Sep 2018 14:11:08 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7397FD491@shsmsx102.ccr.corp.intel.com>
+References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com>
+ <1537437959-8751-6-git-send-email-wei.w.wang@intel.com>
+ <33183CC9F5247A488A2544077AF19020DB0F7483@dggeml511-mbx.china.huawei.com>
+In-Reply-To: <33183CC9F5247A488A2544077AF19020DB0F7483@dggeml511-mbx.china.huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODIwNDUwN2EtYzFjMi00ZjA0LWE0MzYtNTYwYjJjNDU2ZjZmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZ2VCOWo4eVk0Wlk2SXNaN1lJQzNYRmd2YjJQY29walQySVZINGZHZzhSVGhENEJRV2xpMUtUSytGb25HeGd6dyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add tuning for sdr and ddr timing for USH-I mode sdr104/sdr50/ddr50
-for host controller.
+On Thursday, September 20, 2018 8:08 PM, Gonglei (Arei) wrote:
+> > +static bool guest_access_lbr_msr(struct kvm_vcpu *vcpu,
+> > +				 struct msr_data *msr_info,
+> > +				 bool set)
+> > +{
+> > +	bool ret = false;
+> > +
+> > +	if (!vcpu->kvm->arch.guest_lbr_enabled)
+> > +		return false;
+> > +
+> > +	if (set)
+> > +		ret = guest_set_lbr_msr(vcpu, msr_info);
+> > +	else
+> > +		ret = guest_get_lbr_msr(vcpu, msr_info);
+> > +
+> > +	if (ret) {
+> > +		vcpu->arch.lbr_used = true;
+> > +		vmx_set_intercept_for_lbr_msrs(vcpu, false);
+> 
+> You can use if (!vcpu->arch.lbr_used) as the condition of assign values.
+> They are need only once.
 
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-No changes from previous patch
----
- drivers/mmc/host/dw_mmc-exynos.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Thanks, I think it would be better to use
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index ab47b018716a..d46c3439b508 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -253,6 +253,8 @@ static void dw_mci_exynos_config_hs400(struct dw_mci *host, u32 timing)
- 	if (timing == MMC_TIMING_MMC_HS400) {
- 		dqs |= DATA_STROBE_EN;
- 		strobe = DQS_CTRL_RD_DELAY(strobe, priv->dqs_delay);
-+	} else if (timing == MMC_TIMING_UHS_SDR104) {
-+		dqs &= 0xffffff00;
- 	} else {
- 		dqs &= ~DATA_STROBE_EN;
- 	}
-@@ -312,6 +314,15 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- 		if (ios->bus_width == MMC_BUS_WIDTH_8)
- 			wanted <<= 1;
- 		break;
-+	case MMC_TIMING_UHS_SDR104:
-+	case MMC_TIMING_UHS_SDR50:
-+		clksel = (priv->sdr_timing & 0xfff8ffff) |
-+			(priv->ciu_div << 16);
-+		break;
-+	case MMC_TIMING_UHS_DDR50:
-+		clksel = (priv->ddr_timing & 0xfff8ffff) |
-+			(priv->ciu_div << 16);
-+		break;
- 	default:
- 		clksel = priv->sdr_timing;
- 	}
--- 
-2.17.1
+If (ret && !vcpu->arch.lbr_used)
+(we need to make sure that the guest is accessing one of the LBR related MSRs via ret=true)
 
+Best,
+Wei
