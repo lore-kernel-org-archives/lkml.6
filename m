@@ -2,231 +2,108 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C054C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6175FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5509F21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5509F21533
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 05F1921533
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:39:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05F1921533
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbeI0PwY (ORCPT
+        id S1727272AbeI0P5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:52:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57436 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728246AbeI0PwX (ORCPT
+        Thu, 27 Sep 2018 11:57:21 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:53396 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbeI0P5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:52:23 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 333D01132;
-        Thu, 27 Sep 2018 09:34:58 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Pelletier <plr.vincent@gmail.com>,
-        Mike Christie <mchristi@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 25/44] scsi: target: iscsi: Use hex2bin instead of a re-implementation
-Date:   Thu, 27 Sep 2018 11:04:14 +0200
-Message-Id: <20180927090121.392109241@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180927090117.997362691@linuxfoundation.org>
-References: <20180927090117.997362691@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 27 Sep 2018 11:57:20 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5Sm1-0000i0-MF; Thu, 27 Sep 2018 03:39:53 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g5Sm0-0006oo-H8; Thu, 27 Sep 2018 03:39:53 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <871s9j462u.fsf@xmission.com>
+        <20180926173841.GD175719@arrakis.emea.arm.com>
+Date:   Thu, 27 Sep 2018 11:39:35 +0200
+In-Reply-To: <20180926173841.GD175719@arrakis.emea.arm.com> (Catalin Marinas's
+        message of "Wed, 26 Sep 2018 18:38:42 +0100")
+Message-ID: <87ftxvs2i0.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1g5Sm0-0006oo-H8;;;mid=<87ftxvs2i0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19mhsuTzrR+swoaCRJ7qkJqyNxWeL/osKc=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [REVIEW][PATCH 00/15] signal/arm64: siginfo cleanups
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Catalin Marinas <catalin.marinas@arm.com> writes:
 
-------------------
+> Hi Eric,
+>
+> On Mon, Sep 24, 2018 at 11:07:05AM +0200, Eric W. Biederman wrote:
+>> This is the continuation of my work to sort out signaling of exceptions
+>> with siginfo.  The old signal sending functions by taking a siginfo
+>> argument resulted in their callers having to deal with the fiddly nature
+>> of siginfo directly.  In small numbers of callers this is not a problem
+>> but in the number of callers in the kernel this resulted in cases
+>> where fields were not initialized or improperly initialized before
+>> being passed to userspace.
+>> 
+>> To avoid having to worry about those issues I have added new signal
+>> sending functions that each deal wit a different siginfo case.  When
+>> using these functions there is no room for the fiddly nature of siginfo
+>> to cause mistakes.
+>> 
+>> This is my set of changes to update arm64 to use those functions.
+>> Along with some refactoring so those functions can be cleanly used.
+>> 
+>> Folks please review and double check me.  I think I have kept these
+>> changes simple and obviously correct but I am human and mess up
+>> sometimes.
+>
+> Nice clean-up, thanks. I started reviewing the patches, I should finish
+> by tomorrow (I also applied them locally to give some testing).
+>
+>> After these patches have had a chance to be reviewed I plan to merge
+>> them by my siginfo tree.  If you would rather take them in the arm64
+>> tree let me know.   All of the prerequisites should have been merged
+>> through Linus's tree several releases ago.
+>
+> Either way works for me. There is a trivial conflict in
+> force_signal_inject() with the arm64 for-next/core tree so I could as
+> well put them on top of this branch and send them during the 4.20
+> merging window.
 
-From: Vincent Pelletier <plr.vincent@gmail.com>
+As long as there is a trivial conflict I would like to keep everything
+in one tree.
 
-commit 1816494330a83f2a064499d8ed2797045641f92c upstream.
+There is a following patchset that manages to reduce the size of struct
+siginfo in the kernel that I have also posted for review.    With
+everything in one tree I can make that change now, and just cross it off
+my list of things to worry about.
 
-This change has the following effects, in order of descreasing importance:
-
-1) Prevent a stack buffer overflow
-
-2) Do not append an unnecessary NULL to an anyway binary buffer, which
-   is writing one byte past client_digest when caller is:
-   chap_string_to_hex(client_digest, chap_r, strlen(chap_r));
-
-The latter was found by KASAN (see below) when input value hes expected size
-(32 hex chars), and further analysis revealed a stack buffer overflow can
-happen when network-received value is longer, allowing an unauthenticated
-remote attacker to smash up to 17 bytes after destination buffer (16 bytes
-attacker-controlled and one null).  As switching to hex2bin requires
-specifying destination buffer length, and does not internally append any null,
-it solves both issues.
-
-This addresses CVE-2018-14633.
-
-Beyond this:
-
-- Validate received value length and check hex2bin accepted the input, to log
-  this rejection reason instead of just failing authentication.
-
-- Only log received CHAP_R and CHAP_C values once they passed sanity checks.
-
-==================================================================
-BUG: KASAN: stack-out-of-bounds in chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
-Write of size 1 at addr ffff8801090ef7c8 by task kworker/0:0/1021
-
-CPU: 0 PID: 1021 Comm: kworker/0:0 Tainted: G           O      4.17.8kasan.sess.connops+ #2
-Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 05/19/2014
-Workqueue: events iscsi_target_do_login_rx [iscsi_target_mod]
-Call Trace:
- dump_stack+0x71/0xac
- print_address_description+0x65/0x22e
- ? chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
- kasan_report.cold.6+0x241/0x2fd
- chap_string_to_hex+0x32/0x60 [iscsi_target_mod]
- chap_server_compute_md5.isra.2+0x2cb/0x860 [iscsi_target_mod]
- ? chap_binaryhex_to_asciihex.constprop.5+0x50/0x50 [iscsi_target_mod]
- ? ftrace_caller_op_ptr+0xe/0xe
- ? __orc_find+0x6f/0xc0
- ? unwind_next_frame+0x231/0x850
- ? kthread+0x1a0/0x1c0
- ? ret_from_fork+0x35/0x40
- ? ret_from_fork+0x35/0x40
- ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
- ? deref_stack_reg+0xd0/0xd0
- ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
- ? is_module_text_address+0xa/0x11
- ? kernel_text_address+0x4c/0x110
- ? __save_stack_trace+0x82/0x100
- ? ret_from_fork+0x35/0x40
- ? save_stack+0x8c/0xb0
- ? 0xffffffffc1660000
- ? iscsi_target_do_login+0x155/0x8d0 [iscsi_target_mod]
- ? iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
- ? process_one_work+0x35c/0x640
- ? worker_thread+0x66/0x5d0
- ? kthread+0x1a0/0x1c0
- ? ret_from_fork+0x35/0x40
- ? iscsi_update_param_value+0x80/0x80 [iscsi_target_mod]
- ? iscsit_release_cmd+0x170/0x170 [iscsi_target_mod]
- chap_main_loop+0x172/0x570 [iscsi_target_mod]
- ? chap_server_compute_md5.isra.2+0x860/0x860 [iscsi_target_mod]
- ? rx_data+0xd6/0x120 [iscsi_target_mod]
- ? iscsit_print_session_params+0xd0/0xd0 [iscsi_target_mod]
- ? cyc2ns_read_begin.part.2+0x90/0x90
- ? _raw_spin_lock_irqsave+0x25/0x50
- ? memcmp+0x45/0x70
- iscsi_target_do_login+0x875/0x8d0 [iscsi_target_mod]
- ? iscsi_target_check_first_request.isra.5+0x1a0/0x1a0 [iscsi_target_mod]
- ? del_timer+0xe0/0xe0
- ? memset+0x1f/0x40
- ? flush_sigqueue+0x29/0xd0
- iscsi_target_do_login_rx+0x3bc/0x4c0 [iscsi_target_mod]
- ? iscsi_target_nego_release+0x80/0x80 [iscsi_target_mod]
- ? iscsi_target_restore_sock_callbacks+0x130/0x130 [iscsi_target_mod]
- process_one_work+0x35c/0x640
- worker_thread+0x66/0x5d0
- ? flush_rcu_work+0x40/0x40
- kthread+0x1a0/0x1c0
- ? kthread_bind+0x30/0x30
- ret_from_fork+0x35/0x40
-
-The buggy address belongs to the page:
-page:ffffea0004243bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x17fffc000000000()
-raw: 017fffc000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: ffffea0004243c20 ffffea0004243ba0 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8801090ef680: f2 f2 f2 f2 f2 f2 f2 01 f2 f2 f2 f2 f2 f2 f2 00
- ffff8801090ef700: f2 f2 f2 f2 f2 f2 f2 00 02 f2 f2 f2 f2 f2 f2 00
->ffff8801090ef780: 00 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f2 f2 f2 f2 00
-                                              ^
- ffff8801090ef800: 00 f2 f2 f2 f2 f2 f2 00 00 00 00 02 f2 f2 f2 f2
- ffff8801090ef880: f2 f2 f2 00 00 00 00 00 00 00 00 f2 f2 f2 f2 00
-==================================================================
-
-Signed-off-by: Vincent Pelletier <plr.vincent@gmail.com>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/target/iscsi/iscsi_target_auth.c |   30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
-
---- a/drivers/target/iscsi/iscsi_target_auth.c
-+++ b/drivers/target/iscsi/iscsi_target_auth.c
-@@ -26,18 +26,6 @@
- #include "iscsi_target_nego.h"
- #include "iscsi_target_auth.h"
- 
--static int chap_string_to_hex(unsigned char *dst, unsigned char *src, int len)
--{
--	int j = DIV_ROUND_UP(len, 2), rc;
--
--	rc = hex2bin(dst, src, j);
--	if (rc < 0)
--		pr_debug("CHAP string contains non hex digit symbols\n");
--
--	dst[j] = '\0';
--	return j;
--}
--
- static void chap_binaryhex_to_asciihex(char *dst, char *src, int src_len)
- {
- 	int i;
-@@ -240,9 +228,16 @@ static int chap_server_compute_md5(
- 		pr_err("Could not find CHAP_R.\n");
- 		goto out;
- 	}
-+	if (strlen(chap_r) != MD5_SIGNATURE_SIZE * 2) {
-+		pr_err("Malformed CHAP_R\n");
-+		goto out;
-+	}
-+	if (hex2bin(client_digest, chap_r, MD5_SIGNATURE_SIZE) < 0) {
-+		pr_err("Malformed CHAP_R\n");
-+		goto out;
-+	}
- 
- 	pr_debug("[server] Got CHAP_R=%s\n", chap_r);
--	chap_string_to_hex(client_digest, chap_r, strlen(chap_r));
- 
- 	tfm = crypto_alloc_shash("md5", 0, 0);
- 	if (IS_ERR(tfm)) {
-@@ -341,9 +336,7 @@ static int chap_server_compute_md5(
- 		pr_err("Could not find CHAP_C.\n");
- 		goto out;
- 	}
--	pr_debug("[server] Got CHAP_C=%s\n", challenge);
--	challenge_len = chap_string_to_hex(challenge_binhex, challenge,
--				strlen(challenge));
-+	challenge_len = DIV_ROUND_UP(strlen(challenge), 2);
- 	if (!challenge_len) {
- 		pr_err("Unable to convert incoming challenge\n");
- 		goto out;
-@@ -352,6 +345,11 @@ static int chap_server_compute_md5(
- 		pr_err("CHAP_C exceeds maximum binary size of 1024 bytes\n");
- 		goto out;
- 	}
-+	if (hex2bin(challenge_binhex, challenge, challenge_len) < 0) {
-+		pr_err("Malformed CHAP_C\n");
-+		goto out;
-+	}
-+	pr_debug("[server] Got CHAP_C=%s\n", challenge);
- 	/*
- 	 * During mutual authentication, the CHAP_C generated by the
- 	 * initiator must not match the original CHAP_C generated by
-
+Eric
 
