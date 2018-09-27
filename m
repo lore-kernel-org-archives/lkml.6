@@ -5,302 +5,114 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDB0C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 313F9C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5CDD21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:10:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5CDD21582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id E0FAA20833
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 10:11:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0FAA20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbeI0Q2Y (ORCPT
+        id S1727467AbeI0Q2i convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 12:28:24 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:53858 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727244AbeI0Q2Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 12:28:24 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1g5TFv-0001Pm-7q; Thu, 27 Sep 2018 12:10:47 +0200
-Message-ID: <1538043034.14416.42.camel@sipsolutions.net>
-Subject: Re: [PATCH net-next v2] wireless-drivers: rtnetlink wifi simulation
- device
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Cody Schuffelen <schuffelen@google.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@android.com
-Date:   Thu, 27 Sep 2018 12:10:34 +0200
-In-Reply-To: <20180926194324.71290-1-schuffelen@google.com> (sfid-20180926_214418_801913_9719889B)
-References: <20180926194324.71290-1-schuffelen@google.com>
-         (sfid-20180926_214418_801913_9719889B)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 27 Sep 2018 12:28:38 -0400
+Received: from mga18.intel.com ([134.134.136.126]:36862 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727154AbeI0Q2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 12:28:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 03:11:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,310,1534834800"; 
+   d="scan'208";a="76650746"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga008.jf.intel.com with ESMTP; 27 Sep 2018 03:10:55 -0700
+Received: from fmsmsx116.amr.corp.intel.com (10.18.116.20) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 27 Sep 2018 03:10:55 -0700
+Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
+ fmsmsx116.amr.corp.intel.com (10.18.116.20) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 27 Sep 2018 03:10:55 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.140]) by
+ SHSMSX101.ccr.corp.intel.com ([169.254.1.220]) with mapi id 14.03.0319.002;
+ Thu, 27 Sep 2018 18:10:53 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Liang, Kan" <kan.liang@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Xu, Like" <like.xu@intel.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>
+Subject: RE: [PATCH v3 4/5] KVM/x86/vPMU: Add APIs to support host
+ save/restore the guest lbr stack
+Thread-Topic: [PATCH v3 4/5] KVM/x86/vPMU: Add APIs to support host
+ save/restore the guest lbr stack
+Thread-Index: AQHUUM3pU3aoeAw5SE6eJtMPeYOl0qT4xgeAgAAO9YCACxkHwA==
+Date:   Thu, 27 Sep 2018 10:10:52 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7397FCAF8@shsmsx102.ccr.corp.intel.com>
+References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com>
+ <1537437959-8751-5-git-send-email-wei.w.wang@intel.com>
+ <20180920153035.GB10360@tassilo.jf.intel.com>
+ <20180920162407.GA24124@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180920162407.GA24124@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWI3NzM1ZjgtYTQ3Mi00YjViLWJlZDctNDRlZDZiZTI0OWFlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSzU2VTRUQnJtYjJvMFJuQzlnU3RqOEdcL2YydkNQRWpTUW5Seko0cFBISDRhZUZvYlBBbEZpTE5zbWFvdm9nNlYifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-26 at 12:43 -0700, Cody Schuffelen wrote:
-
-> ip link set eth0 down
-> ip link set eth0 name buried_eth0
-> ip link set buried_eth0 up
-> ip link add link buried_eth0 name wlan0 type virt_wifi
+On Friday, September 21, 2018 12:24 AM, Peter Zijlstra wrote:
+> On Thu, Sep 20, 2018 at 08:30:35AM -0700, Andi Kleen wrote:
+> > > +int intel_pmu_enable_save_guest_lbr(struct kvm_vcpu *vcpu) {
+> > > +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+> > > +	struct perf_event *event;
+> > > +	struct perf_event_attr attr = {
+> > > +		.type = PERF_TYPE_RAW,
+> > > +		.size = sizeof(attr),
+> > > +		.pinned = true,
+> > > +		.exclude_host = true,
+> > > +		.sample_type = PERF_SAMPLE_BRANCH_STACK,
+> > > +		.branch_sample_type = PERF_SAMPLE_BRANCH_CALL_STACK
+> |
+> > > +				      PERF_SAMPLE_BRANCH_USER |
+> > > +				      PERF_SAMPLE_BRANCH_KERNEL,
+> >
+> > I think that will allocate an extra perfmon counter, right?
 > 
-> eth0 is renamed to buried_eth0 to avoid a network manager trying to
-> manage it, 
+> I throught the same too, but I think the exclude_host/guest, whichever is the
+> right one makes that work for regular counters too.
 
-I feel you should remove this "buried" thing at least from the plain
-instructions - first of all, I'm not convinced it actually *works* in
-general (network managers are able to find it anyway, right? perhaps
-android's has some rules?), and it's not really necessary from a kernel
-POV.
+Sorry for being late.
 
-Perhaps add a note like "you may have to rename or otherwise hide the
-eth0 from your connection manager" (also "NetworkManager" is a specific
-software, so "network manager" is confusing - I actually first thought
-you meant NM).
+I'm not sure if exclude_host/guest would be suitable, for example, if the guest wants to use a perf counter, host will create a perf event with "exclude_host=true" to have the counter not count in host. And "exclude_guest=true" is a flag to the perf core that the counter should not count when the guest runs.
 
-Anyway, just a thought.
+What would you think if we add a new flag (e.g. .force_no_counters) to the perf core to indicate not allocating a perf counter?
 
-> Thanks for the detailed review! I believe I've addressed all comments.
+> That code is a wee bit magical and I didn't take the time to reverse engineer
+> that. It most certainly needs a comment.
 
-Thanks!
+No problem. I will add more comments in the next version.
 
-> The problem we've experienced with routing the hwsim virtual medium from the
-> inside the VM to outside the VM is this required running hwsim on the host
-> kernel as well. This is too intrusive for our use-case, whereas wifi that
-> exists completely inside the VM kernel is much more palatable.
+Best,
+Wei
 
-Fair enough. I still think it'd be worthwhile in the long run because
-then you could start multiple APs to simulate roaming etc. without
-having to implement all of this here.
-
-IOW - I don't think we should extend this much. As is, I think it's
-fine, but I wouldn't want to see extensions like "have two scan result",
-"let userspace control the RSSI of the scan results to force 'roaming'"
-etc.
-
-> +static struct ieee80211_channel channel_2ghz = {
-> +	.band = NL80211_BAND_2GHZ,
-> +	.center_freq = 5500,
-> +	.hw_value = 5500,
-
-That doesn't seem right - a 2 GHz channel that's really 5.5 GHz?
-
-> +	.max_power = 5500,
-
-That seems more like a copy/paste bug rather than intentional?
-
-> +static struct ieee80211_rate bitrates_2ghz[] = {
-> +	{
-> +		.bitrate = 10,
-> +	}, {
-> +		.bitrate = 20,
-> +	}, {
-> +		.bitrate = 55,
-> +	}, {
-> +		.bitrate = 60,
-> +	}, {
-> +		.bitrate = 110,
-> +	}, {
-> +		.bitrate = 120,
-> +	}, {
-> +		.bitrate = 240,
-> +	},
-> +};
-
-That's ... strangely formatted? I guess we'd usually write
-
-	{ .bitrate = 10 },
-	{ .bitrate = 20 },
-	...
-
-
-
-> +static struct ieee80211_supported_band band_2ghz = {
-> +	.channels = &channel_2ghz,
-> +	.bitrates = bitrates_2ghz,
-> +	.band = NL80211_BAND_2GHZ,
-> +	.n_channels = 1,
-> +	.n_bitrates = 7,
-
-Please use ARRAY_SIZE()
-
-> +	.ht_cap = {
-> +		.ht_supported = true,
-> +	},
-> +	.vht_cap = {
-> +		.vht_supported = true,
-> +	},
-
-That looks _really_ bare - you may want to copy something sane to here.
-
-> +};
-> +
-> +static struct ieee80211_channel channel_5ghz = {
-
-> +	.max_power = 5500,
-
-same here - max_power 5500?
-
-> +	.max_reg_power = 9999,
-> +};
-> +
-> +static struct ieee80211_rate bitrates_5ghz[] = {
-> +	{
-> +		.bitrate = 60,
-> +	}, {
-> +		.bitrate = 120,
-> +	}, {
-> +		.bitrate = 240,
-> +	},
-> +};
-
-Same comment here regarding formatting.
-
-> +static struct ieee80211_supported_band band_5ghz = {
-> +	.channels = &channel_5ghz,
-> +	.bitrates = bitrates_5ghz,
-> +	.band = NL80211_BAND_5GHZ,
-> +	.n_channels = 1,
-> +	.n_bitrates = 3,
-
-and ARRAY_SIZE
-
-> +	.ht_cap = {
-> +		.ht_supported = true,
-> +	},
-> +	.vht_cap = {
-> +		.vht_supported = true,
-> +	},
-
-and HT/VHT
-
-> +/** Assigned at module init. Guaranteed locally-administered and unicast. */
-> +static u8 fake_router_bssid[ETH_ALEN] = {};
-
-Maybe make that __ro_after_init?
-
-It doesn't matter that much, but is a good signal.
-
-> +static void virt_wifi_scan_result(struct work_struct *work)
-> +{
-> +	char ssid[] = "__VirtWifi";
-> +	struct cfg80211_bss *informed_bss;
-> +	struct virt_wifi_priv *priv =
-> +		container_of(work, struct virt_wifi_priv,
-> +			     scan_result.work);
-> +	struct wiphy *wiphy = priv_to_wiphy(priv);
-> +	struct cfg80211_inform_bss mock_inform_bss = {
-> +		.chan = &channel_5ghz,
-> +		.scan_width = NL80211_BSS_CHAN_WIDTH_20,
-> +		.signal = -60,
-> +		.boottime_ns = ktime_get_boot_ns(),
-> +	};
-> +
-> +	ssid[0] = WLAN_EID_SSID;
-> +	/* size of the array minus null terminator, length byte, tag byte */
-> +	ssid[1] = sizeof(ssid) - 3;
-
-Seems like you could make that const?
-	struct {
-		u8 tag;
-		u8 len;
-		u8 ssid[8];
-	} ssid = { .tag = 0, .len = 8, .ssid = "VirtWifi" };
-
-or something like that?
-
-Hmm, maybe that doesn't work.. whatever, not really important.
-
-> +	informed_bss = cfg80211_inform_bss_data(wiphy, &mock_inform_bss,
-> +						CFG80211_BSS_FTYPE_PRESP,
-> +						fake_router_bssid,
-> +						mock_inform_bss.boottime_ns,
-> +						WLAN_CAPABILITY_ESS, 0, ssid,
-> +						/* Truncate before the null. */
-> +						sizeof(ssid) - 1, GFP_KERNEL);
-> +	cfg80211_put_bss(wiphy, informed_bss);
-> +
-> +	informed_bss = cfg80211_inform_bss_data(wiphy, &mock_inform_bss,
-> +						CFG80211_BSS_FTYPE_BEACON,
-> +						fake_router_bssid,
-> +						mock_inform_bss.boottime_ns,
-> +						WLAN_CAPABILITY_ESS, 0, ssid,
-> +						/* Truncate before the null. */
-> +						sizeof(ssid) - 1, GFP_KERNEL);
-> +	cfg80211_put_bss(wiphy, informed_bss);
-
-Hmm, what's the point of doing it twice? You don't really need to
-receive both PRESP/BEACON, just one is sufficient.
-
-> +	schedule_delayed_work(&priv->scan_complete, HZ * 2);
-> +}
-
-I don't think you need to make that async again.
-
-> +static int virt_wifi_connect(struct wiphy *wiphy, struct net_device *netdev,
-> +			     struct cfg80211_connect_params *sme)
-> +{
-> +	struct virt_wifi_priv *priv = wiphy_priv(wiphy);
-> +	bool could_schedule;
-> +
-> +	if (priv->being_deleted)
-> +		return -EBUSY;
-> +
-> +	if (sme->bssid && !ether_addr_equal(sme->bssid, fake_router_bssid))
-> +		return -EINVAL;
-
-If you wanted to be more "real", you'd accept this and then check it in
-the connect worker, rejecting it there if mismatched.
-
-> +static int virt_wifi_get_station(struct wiphy *wiphy, struct net_device *dev,
-> +				 const u8 *mac, struct station_info *sinfo)
-> +{
-> +	wiphy_debug(wiphy, "get_station\n");
-> +	sinfo->filled = BIT(NL80211_STA_INFO_TX_PACKETS) |
-> +		BIT(NL80211_STA_INFO_TX_FAILED) | BIT(NL80211_STA_INFO_SIGNAL) |
-> +		BIT(NL80211_STA_INFO_TX_BITRATE);
-> +	sinfo->tx_packets = 1;
-> +	sinfo->tx_failed = 0;
-> +	sinfo->signal = -60;
-> +	sinfo->txrate = (struct rate_info) {
-> +		.legacy = 10, /* units are 100kbit/s */
-> +	};
-> +	return 0;
-> +}
-
-You should check that mac is fake_router_bssid, and otherwise return not
-found (-ENOENT), IIRC.
-
-> +static netdev_tx_t virt_wifi_start_xmit(struct sk_buff *skb,
-> +					struct net_device *dev)
-> +{
-> +	struct virt_wifi_netdev_priv *priv = netdev_priv(dev);
-> +	struct virt_wifi_priv *w_priv = wiphy_priv(dev->ieee80211_ptr->wiphy);
-> +
-> +	if (!w_priv->is_connected)
-> +		return NETDEV_TX_BUSY;
-
-I think you should just drop the frame.
-
-> +/* Called under rcu_read_lock() from netif_receive_skb */
-> +static rx_handler_result_t virt_wifi_rx_handler(struct sk_buff **pskb)
-
-FWIW, the stuff beyond this point, especially the netlink, I'm less
-familiar with.
-
-> +/** Called with rtnl lock held. */
-
-/** is usually used only for kernel-doc
-
-johannes
