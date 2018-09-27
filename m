@@ -2,154 +2,55 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2007DC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AA3C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDA8E2156D
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:10:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Axe2n6T1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA8E2156D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B552204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 07:11:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B552204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeI0N0v (ORCPT
+        id S1726947AbeI0N1s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 09:26:51 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60750 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726929AbeI0N0v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 09:26:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W/M2C/EenKG6L8h8nExvJlpxCRNdVmxu1ik9wEaaKXI=; b=Axe2n6T12lZSjyYNyHQHhxWjx
-        2pXOiVthOFXxp+aWDVBDeI3ytlsSf/tCCIFC/wYWeKh4yqJm1z0GIVIgCbbk0GfzFrmi4UK0uUGDP
-        aRre9JeqIiuvxKKdDO33oXRJDqPQ87vu3dTykjc6gAdEEM+YWdWf7RMm09HgOlKVI0C+JXTfxcdpC
-        F032ac73nBC1VFBja1qCuF42KVJI8Kmg2F1szaO54y/QCWa1Wr3Fwy2KM7tCnAcmos3yoM9CP7urT
-        3As89ldQrz+kxlUE0XzqIB1R3KeVLW/dlK2MIkkPl8HenYBXsDuGFXe38JpyCQmOXp4v/HppAAHsl
-        Wbh6T7oyA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5QQI-0005JD-97; Thu, 27 Sep 2018 07:09:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5E5B420696FC6; Thu, 27 Sep 2018 09:08:59 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 09:08:59 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     akpm@linux-foundation.org, arnd@arndb.de,
-        daniel.lezcano@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, devicetree@vger.kernel.org,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        green.hu@gmail.com, palmer@sifive.com
-Subject: Re: [PATCH V5 06/30] csky: Cache and TLB routines
-Message-ID: <20180927070859.GC5254@hirez.programming.kicks-ass.net>
-References: <cover.1537789736.git.ren_guo@c-sky.com>
- <7cd7abcd2acf5c61435589338ff80a75a13173ca.1537789737.git.ren_guo@c-sky.com>
- <20180925072407.GA6999@hirez.programming.kicks-ass.net>
- <20180927052737.GA28407@guoren>
+        Thu, 27 Sep 2018 09:27:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41372 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726669AbeI0N1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 09:27:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1A3FDADBC;
+        Thu, 27 Sep 2018 07:11:01 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 09:10:59 +0200
+From:   Joerg Roedel <jroedel@suse.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sedat Dilek <sedat.dilek@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: Re: Linux 4.19-rc5: Missing iommu fix
+Message-ID: <20180927071059.k6mgp35nkwb472oy@suse.de>
+References: <CA+icZUUdxjVe4p-9aui0cqj_EiHD3O2VZ=dW8HqWf-+9jqnWCA@mail.gmail.com>
+ <20180926195917.GB20689@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927052737.GA28407@guoren>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180926195917.GB20689@kroah.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 01:27:38PM +0800, Guo Ren wrote:
-> On Tue, Sep 25, 2018 at 09:24:07AM +0200, Peter Zijlstra wrote:
-> > On Mon, Sep 24, 2018 at 10:36:22PM +0800, Guo Ren wrote:
-> > > diff --git a/arch/csky/abiv1/inc/abi/cacheflush.h b/arch/csky/abiv1/inc/abi/cacheflush.h
-> > > new file mode 100644
-> > > index 0000000..f0de49c
-> > > --- /dev/null
-> > > +++ b/arch/csky/abiv1/inc/abi/cacheflush.h
+On Wed, Sep 26, 2018 at 09:59:17PM +0200, Greg Kroah-Hartman wrote:
+> Is this all now merged properly?
 
-> > > +#define flush_cache_range(mm,start,end)	cache_wbinv_range(start, end)
-> >                              ^^^ should be vma
-> Yes, I'll change it to:
-> #define flush_cache_range(mm,start,end)	cache_wbinv_all()
-> 
-> I'll improve it later after test.
+Yes, the fix for that was in the pull-request I sent recently.
 
-That's not what I meant; I meant you need something like:
+Regards,
 
-#define flush_cache_range(vma, start, end) cache_wbinv_range(start, end) 
-
-The first argument is a vma, not an mm.
-
-> > > +#endif /* __ABI_CSKY_CACHEFLUSH_H */
-> > 
-> > 
-> > > diff --git a/arch/csky/abiv1/inc/abi/tlb.h b/arch/csky/abiv1/inc/abi/tlb.h
-> > > new file mode 100644
-> > > index 0000000..6d461f3
-> > > --- /dev/null
-> > > +++ b/arch/csky/abiv1/inc/abi/tlb.h
-> > > @@ -0,0 +1,12 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-> > > +
-> > > +#ifndef __ABI_CSKY_TLB_H
-> > > +#define __ABI_CSKY_TLB_H
-> > > +
-> > > +#define tlb_start_vma(tlb, vma) \
-> > > +	do { \
-> > > +		if (!tlb->fullmm) \
-> > > +			cache_wbinv_all(); \
-> > > +	}  while (0)
-> > > +#endif /* __ABI_CSKY_TLB_H */
-> > 
-> > That should be:
-> > 
-> > 	if (!tlb->fullmm)
-> > 		flush_cache_range(vma, vma->vm_start, vma->vm_end);
-> > 
-> > Because as per the whole abiv1 vs abiv2, you don't need write back
-> > invalidation for v2 at all, also, you only need to invalidate the vma
-> > range, no reason to shoot everything down.
-> > 
-> > Also, I'll be shortly removing this:
-> > 
-> >   https://lkml.kernel.org/r/20180913092812.071989585@infradead.org
-> Ok, I'll follow the rules.
-
-
-> > > diff --git a/arch/csky/abiv2/inc/abi/cacheflush.h b/arch/csky/abiv2/inc/abi/cacheflush.h
-> > > new file mode 100644
-> > > index 0000000..756beb7
-> > > --- /dev/null
-> > > +++ b/arch/csky/abiv2/inc/abi/cacheflush.h
-> > > @@ -0,0 +1,40 @@
-
-> > > +#define flush_cache_range(vma, start, end)	do { } while (0)
-> >                              ^^^ like here..
-> #define flush_cache_range(vma, start, end) \
-> 	do { \
-> 		if (vma->vm_flags & VM_EXEC) \
-> 			icache_inv_all(); \
-> 	}
-> 
-> Hmm ?
-> 
-
-For v2, which IIUC is PIPT (as opposed to v1 which is VIPT), what you
-had was correct.
-
-I was merely pointing out that the flush_cache_range() definition was
-inconsitent between v1 and v2; v1 using @mm and v2 using @vma for the
-first argument.
+	Joerg
