@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A904FC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4088C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2DD21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:33:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2DD21533
+	by mail.kernel.org (Postfix) with ESMTP id 77EEA21546
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 09:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77EEA21546
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbeI0Puy (ORCPT
+        id S1729147AbeI0PvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:50:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57254 "EHLO
+        Thu, 27 Sep 2018 11:51:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57268 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbeI0Pux (ORCPT
+        with ESMTP id S1726948AbeI0Pu7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:50:53 -0400
+        Thu, 27 Sep 2018 11:50:59 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 232FD1132;
-        Thu, 27 Sep 2018 09:33:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11B321132;
+        Thu, 27 Sep 2018 09:33:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Karol Herbst <kherbst@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>, Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.4 18/28] drm/nouveau/drm/nouveau: Use pm_runtime_get_noresume() in connector_detect()
-Date:   Thu, 27 Sep 2018 11:06:42 +0200
-Message-Id: <20180927090638.440155729@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alan Cox <alan@linux.intel.com>
+Subject: [PATCH 4.4 19/28] tty: vt_ioctl: fix potential Spectre v1
+Date:   Thu, 27 Sep 2018 11:06:43 +0200
+Message-Id: <20180927090638.488067328@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180927090637.687829444@linuxfoundation.org>
 References: <20180927090637.687829444@linuxfoundation.org>
@@ -53,64 +52,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 6833fb1ec120bf078e1a527c573a09d4de286224 upstream.
+commit e97267cb4d1ee01ca0929638ec0fcbb0904f903d upstream.
 
-It's true we can't resume the device from poll workers in
-nouveau_connector_detect(). We can however, prevent the autosuspend
-timer from elapsing immediately if it hasn't already without risking any
-sort of deadlock with the runtime suspend/resume operations. So do that
-instead of entirely avoiding grabbing a power reference.
+vsa.console is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Karol Herbst <kherbst@redhat.com>
-Acked-by: Daniel Vetter <daniel@ffwll.ch>
+This issue was detected with the help of Smatch:
+
+drivers/tty/vt/vt_ioctl.c:711 vt_ioctl() warn: potential spectre issue
+'vc_cons' [r]
+
+Fix this by sanitizing vsa.console before using it to index vc_cons
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
 Cc: stable@vger.kernel.org
-Cc: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Alan Cox <alan@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c |   20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ drivers/tty/vt/vt_ioctl.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -253,12 +253,16 @@ nouveau_connector_detect(struct drm_conn
- 		nv_connector->edid = NULL;
- 	}
+--- a/drivers/tty/vt/vt_ioctl.c
++++ b/drivers/tty/vt/vt_ioctl.c
+@@ -31,6 +31,8 @@
+ #include <asm/io.h>
+ #include <asm/uaccess.h>
  
--	/* Outputs are only polled while runtime active, so acquiring a
--	 * runtime PM ref here is unnecessary (and would deadlock upon
--	 * runtime suspend because it waits for polling to finish).
-+	/* Outputs are only polled while runtime active, so resuming the
-+	 * device here is unnecessary (and would deadlock upon runtime suspend
-+	 * because it waits for polling to finish). We do however, want to
-+	 * prevent the autosuspend timer from elapsing during this operation
-+	 * if possible.
- 	 */
--	if (!drm_kms_helper_is_poll_worker()) {
--		ret = pm_runtime_get_sync(connector->dev->dev);
-+	if (drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_get_noresume(dev->dev);
-+	} else {
-+		ret = pm_runtime_get_sync(dev->dev);
- 		if (ret < 0 && ret != -EACCES)
- 			return conn_status;
- 	}
-@@ -329,10 +333,8 @@ detect_analog:
- 
-  out:
- 
--	if (!drm_kms_helper_is_poll_worker()) {
--		pm_runtime_mark_last_busy(connector->dev->dev);
--		pm_runtime_put_autosuspend(connector->dev->dev);
--	}
-+	pm_runtime_mark_last_busy(dev->dev);
-+	pm_runtime_put_autosuspend(dev->dev);
- 
- 	return conn_status;
- }
++#include <linux/nospec.h>
++
+ #include <linux/kbd_kern.h>
+ #include <linux/vt_kern.h>
+ #include <linux/kbd_diacr.h>
+@@ -703,6 +705,8 @@ int vt_ioctl(struct tty_struct *tty,
+ 		if (vsa.console == 0 || vsa.console > MAX_NR_CONSOLES)
+ 			ret = -ENXIO;
+ 		else {
++			vsa.console = array_index_nospec(vsa.console,
++							 MAX_NR_CONSOLES + 1);
+ 			vsa.console--;
+ 			console_lock();
+ 			ret = vc_allocate(vsa.console);
 
 
