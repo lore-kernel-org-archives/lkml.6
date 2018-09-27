@@ -2,122 +2,143 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1F4C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B978FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29FC5216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:31:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B210216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:33:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="LesRW5Eo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FC5216FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="PN5GSPNg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B210216FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=eikelenboom.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeI1Cvt (ORCPT
+        id S1727567AbeI1Cxu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 22:51:49 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46972 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbeI1Cvs (ORCPT
+        Thu, 27 Sep 2018 22:53:50 -0400
+Received: from server.eikelenboom.it ([91.121.65.215]:59386 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727265AbeI1Cxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 22:51:48 -0400
-Received: by mail-io1-f68.google.com with SMTP id y12-v6so2801605ioj.13
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 13:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:from:message-id;
-        bh=xCH7yiyLXlZr1Up+3oAqIzJNXN+8X2mepSDlKKTs+Tw=;
-        b=LesRW5EoReyVs98A290jIzK2y0W67wsQet85vJbOHxajaLR92A/MDD82SFCZ+3Mbfn
-         qonWiVRBUfpJAHqVlwWY6hUil3+2VHRdfr5/ZL/W3U7qDh3OF2fDNM37eiNrMFDVaGNT
-         WbdlZi5goPcBdAk4hfvyq7FtrM2MYY9lO40tKwFkKU1TjUTuImbSiFtqzscuyKx89Ihv
-         r15XId5suUV9Qz9piuWUzpEv47o7I10ZbmQqzWzB546PBlL122YI4aC5r4lF4A23j2dP
-         JZtdwxQOhT2SfkKfT261Jmd0kLX4xMpBhr59zJHeHdPoOl1MFtRU93k9Xx0Z58IzWaOF
-         aZLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:from:message-id;
-        bh=xCH7yiyLXlZr1Up+3oAqIzJNXN+8X2mepSDlKKTs+Tw=;
-        b=CYISSaB8XzQsQzur+tz4ZTo/7IlHzY58riOXGVctO50zYEdrRI98PGujpZ6X5u7Eul
-         xWmu9/8oO1vFNNbuylPzz4UTRG2cgI3G8PAPfl9wQh7DRrbc2oGfnPG9rFDYInmITHaw
-         fME0ZJpNNZeTyy6M52xYTrCrR7eA6LTC8wFNZK3Yyq2BqZ4aNW4iSowGfZkpT53Irs3Q
-         QuO6mPvobKrJqDeqafrHb+hGXkY5Z5EChnNikrTlOlgmgQ1wtQ+lLQluhrwE/f0iG4pq
-         07LnOgLtm9obE5Bt/pORTgjDz0PkFlDnaMLIjy64TY+pXnXydMl5eq23jVvusW0ZQ01e
-         kyRA==
-X-Gm-Message-State: ABuFfoixlgeLbP8mzaL0B2n3HRafWnQv3Ga9DKAYsG7WyrwoEa4igTPP
-        tRCLAaNi/JATxRvOATc5LqUqhA==
-X-Google-Smtp-Source: ACcGV60ET4RMGz3PPN5mjKMKSMxpwKxtMBcJ1eUHZaauBq1x6a3FyDNwCeOAsj8j0Q99oQoQJ/NfLQ==
-X-Received: by 2002:a6b:203:: with SMTP id 3-v6mr9779181ioc.131.1538080304033;
-        Thu, 27 Sep 2018 13:31:44 -0700 (PDT)
-Received: from [26.66.85.135] ([172.56.12.112])
-        by smtp.gmail.com with ESMTPSA id k81-v6sm1259187ioe.26.2018.09.27.13.31.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 13:31:42 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 22:31:37 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <e7ec6202-7d4b-8dc1-1b25-76325129ba6f@gmail.com>
-References: <20180927175857.3511-1-christian@brauner.io> <e7ec6202-7d4b-8dc1-1b25-76325129ba6f@gmail.com>
+        Thu, 27 Sep 2018 22:53:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=uBpjsAyPkqDWWizMSZSE7E4tXvlXtOBWhRYVIxu1IPw=; b=PN5GSPNgPg0FHCIqURxhT7p8P2
+        Yu+6uYETYqvJADbqcQiSAUd/DDHD6iAXkaCCmi6Cor3eRUXJc5mdmNVYCjXNYqURIKjpcR1kccJHf
+        d2hFnAEP9YMiZfzHZ7UjcepFmRvOUKAJiseuCGIBOYk/3R9Gejzgvx2p69nkvSek6Cas=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:51568 helo=[172.16.1.49])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1g5cyh-0006wP-NI; Thu, 27 Sep 2018 22:33:39 +0200
+Subject: Re: [Xen-devel] [PATCH] xen/blkfront: When purging persistent grants,
+ keep them in the buffer
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Juergen Gross <jgross@suse.com>,
+        konrad.wilk@oracle.com, roger.pau@citrix.com
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
+ <28aa9249-7406-21c6-f509-65411828e2d7@suse.com>
+ <5bd1a695-50c6-e79f-38dd-c980fc2138ad@kernel.dk>
+ <00030538-e1ce-28ad-3548-8e3b07083b05@eikelenboom.it>
+ <b181cc24-16fc-ac94-24f8-1955efa6565d@kernel.dk>
+ <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+Message-ID: <4f53cd6f-0a73-ccdc-c816-1225aebd8d58@eikelenboom.it>
+Date:   Thu, 27 Sep 2018 22:33:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next 0/7] rtnetlink: add RTM_GETADDR2
-To:     David Ahern <dsahern@gmail.com>, jbenc@redhat.com,
-        davem@davemloft.net, stephen@networkplumber.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <15579097-D689-4CBC-AE9E-B554527C71DF@brauner.io>
+In-Reply-To: <04bc976c-9991-e24b-4994-55540b06f133@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On September 27, 2018 10:24:36 PM GMT+02:00, David Ahern <dsahern@gmail=2Ec=
-om> wrote:
->On 9/27/18 11:58 AM, Christian Brauner wrote:
->> Various userspace programs (e=2Eg=2E iproute2) have sent RTM_GETADDR
->> requests with struct ifinfomsg=2E This is wrong and should have been
->> struct ifaddrmsg all along as mandated by the manpages=2E However, dump
->> requests so far didn't parse the netlink message that was sent and
->> succeeded even when a wrong struct was passed along=2E
->
->=2E=2E=2E
->
->> The correct solution at this point seems to me to introduce a new
->> RTM_GETADDR2 request=2E This way we can parse the message and fail hard
->if
->> the struct is not struct ifaddrmsg and can safely extend it in the
->> future=2E Userspace tools that rely on the buggy RTM_GETADDR API will
->> still keep working without even having to see any log messages and
->new
->> userspace tools that want to make user of new features can make use
->of
->> the new RTM_GETADDR2 requests=2E
->
->First, I think this is the wrong precedent when all we need is a single
->bit flag that userspace can use to tell the kernel "I have a clue and I
->am passing in the proper header for this dump request"=2E
+On 27/09/18 21:06, Boris Ostrovsky wrote:
+> On 9/27/18 2:56 PM, Jens Axboe wrote:
+>> On 9/27/18 12:52 PM, Sander Eikelenboom wrote:
+>>> On 27/09/18 16:26, Jens Axboe wrote:
+>>>> On 9/27/18 1:12 AM, Juergen Gross wrote:
+>>>>> On 22/09/18 21:55, Boris Ostrovsky wrote:
+>>>>>> Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
+>>>>>> added support for purging persistent grants when they are not in use. As
+>>>>>> part of the purge, the grants were removed from the grant buffer, This
+>>>>>> eventually causes the buffer to become empty, with BUG_ON triggered in
+>>>>>> get_free_grant(). This can be observed even on an idle system, within
+>>>>>> 20-30 minutes.
+>>>>>>
+>>>>>> We should keep the grants in the buffer when purging, and only free the
+>>>>>> grant ref.
+>>>>>>
+>>>>>> Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
+>>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>>> Reviewed-by: Juergen Gross <jgross@suse.com>
+>>>> Since Konrad is out, I'm going to queue this up for 4.19.
+>>>>
+>>> Hi Boris/Juergen.
+>>>
+>>> Last week i tested a linux-4.19-rc4 kernel with xen-next and this patch from Boris pulled on top. 
+>>> Unfortunately it made a VM hang (probably because it's rootFS is shuffled from under it's feet 
+> 
+> What do you mean by "rootFS is shuffled from under it's feet " ?
 
-That had been NAKed previously but if you have an idea that will be accept=
-ed all the more power to you=2E
+Assumption that block-front getting borked and either a kernel crash or rootfs becoming mounted readonly. Didn't (try) to check though.
 
->
->Second, you are not addressing the problems of the past by requiring
->the
->proper header and checking values passed in it=2E
+>>> and it gave these in dom0 dmesg:
+>>>
+>>> [ 9251.696090] xen-blkback: requesting a grant already in use
+>>> [ 9251.705861] xen-blkback: trying to add a gref that's already in the tree
+>>> [ 9251.715781] xen-blkback: requesting a grant already in use
+>>> [ 9251.725756] xen-blkback: trying to add a gref that's already in the tree
+>>> [ 9251.735698] xen-blkback: requesting a grant already in use
+>>> [ 9251.745573] xen-blkback: trying to add a gref that's already in the tree
+>>>
+>>> The VM was a HVM with 4 vcpu's and 2 phy disks:
+>>> xen-blkback: backend/vbd/14/768: using 4 queues, protocol 1 (x86_64-abi) persistent grants
+>>> xen-blkback: backend/vbd/14/832: using 4 queues, protocol 1 (x86_64-abi) persistent grants
+>>>
+>>>
+>>> Currently i have been running 4.19-rc5 with xen-next on top and commit
+>>> a46b53672b2c reverted, for a couple of days. That seems to run stable
+>>> for me (since it's a small box so i'm not hit by what a46b53672b2c
+>>> tried to fix.
+>>>
+>>> If you can come up with a debug patch i can give that a spin tomorrow
+>>> evening or in the weekend, so we are hopefully still in time for the
+>>> 4.19 release.
+>> At this late in the game, might make more sense to simply revert the
+>> buggy commit.  Especially since what is currently out there doesn't fix
+>> the issue for you.
+Don't know if Boris or Juergen have a hunch about the issue, if not perhaps a revert is the best. 
 
-I don't follow=2E RTM_GETADDR requests are absolutely unchanged=2E The ful=
-l legacy behavior is restored by this patchset=2E
+> If decision is to revert then I think the whole series needs to be
+> reverted.
+> 
+> -boris
+> 
 
-And requiring that RTM_GETADDR2 requests always pass the correct header is=
- absolutely fine=2E We don't want built invalid legacy behavior into a new =
-request  type=2E
+For Boris and Juergen:
+Would it make sense to have an "xen-next" branch in the xen-tip tree that is:
+- based on the previous stable kernel
+- and has the for-linus branches for the upcoming kernel release on top;
+- and has the pathes for net(-next) and block changes on top (since these don't go via the tree but only via mailing-list patches);
+  (which are scattered, difficult to track and use for automated testing)
+- and dependency patches for the above if necessary to be able to build.
 
->
->I have another idea=2E I'll send an RFC patch soon=2E
+So there is one branch that can be used to test ALL pending kernel related Xen patches and which could be used in OSStest without as
+many potential false alarms as linux-next will have ?
 
+--
+Sander
