@@ -2,97 +2,88 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB15C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544C2C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6EDB215F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6EDB215F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 180252170E
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180252170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbeI1D42 (ORCPT
+        id S1728621AbeI1D4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:56:28 -0400
-Received: from mga02.intel.com ([134.134.136.20]:2906 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728372AbeI1D42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:56:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 14:36:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,312,1534834800"; 
-   d="scan'208";a="78009680"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.151]) ([10.7.153.151])
-  by orsmga006.jf.intel.com with ESMTP; 27 Sep 2018 14:35:53 -0700
-Subject: Re: [PATCH i2c-next v3 1/3] dt-bindings: i2c: aspeed: Add 'timeout'
- property as an optional property
-To:     Rob Herring <robh@kernel.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180926215842.23125-1-jae.hyun.yoo@linux.intel.com>
- <20180926215842.23125-2-jae.hyun.yoo@linux.intel.com>
- <20180927205610.GA29022@bogus>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <c045aceb-80e4-4f9f-7ff2-c30172f04b3e@linux.intel.com>
-Date:   Thu, 27 Sep 2018 14:35:52 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 23:56:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49093 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbeI1D4r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 23:56:47 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g5dxT-0006yR-Hw; Thu, 27 Sep 2018 21:36:27 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rpmsg: fix memory leak on channel
+Date:   Thu, 27 Sep 2018 22:36:27 +0100
+Message-Id: <20180927213627.12752-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20180927205610.GA29022@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 9/27/2018 1:56 PM, Rob Herring wrote:
-> On Wed, Sep 26, 2018 at 02:58:40PM -0700, Jae Hyun Yoo wrote:
->> This commit adds 'aspeed,timeout' property as an optional property
->> which can be used for setting 'timeout' value of
->> 'struct i2c_adapter'. With this patch, the timeout value can be
->> set through an I2C_TIMEOUT ioctl on cdev, or through this optional
->> DT property.
-> 
-> Isn't controlling this from userspace or relying on a default
-> sufficient?  I can't see this needing to be highly tuned for each
-> platform.
-> 
+Currently a failed allocation of channel->name leads to an
+immediate return without freeing channel. Fix this by setting
+ret to -ENOMEM and jumping to an exit path that kfree's channel.
 
-It can be controlled using an ioctl command on an I2C cdev from
-userspace if CONFIG_I2C_CHARDEV is enabled. A couple of I2C drivers use
-their own specific default value for it but in general the common
-default value (1 second) which is set by i2c core is sufficient.
-But it still needs to be tuned for specific cases based on attached
-devices' characteristic, on packet length, on bus speed and on etc.
-Specifically in Aspeed I2C driver for BMC, it should be tuned
-to support multi-master use cases properly, and it needs a device tree
-property to apply this timeout value from the probing time of the
-module.
+Detected by CoverityScan, CID#1473692 ("Resource Leak")
 
-> However, if we do have a property, it should be common.
-> 
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rpmsg/qcom_smd.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Okay, I'll change it to 'timeout'.
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 0dae7c9f4a8f..4abbeea782fa 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1122,8 +1122,10 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+ 
+ 	channel->edge = edge;
+ 	channel->name = kstrdup(name, GFP_KERNEL);
+-	if (!channel->name)
+-		return ERR_PTR(-ENOMEM);
++	if (!channel->name) {
++		ret = -ENOMEM;
++		goto free_channel;
++	}
+ 
+ 	spin_lock_init(&channel->tx_lock);
+ 	spin_lock_init(&channel->recv_lock);
+@@ -1173,6 +1175,7 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+ 
+ free_name_and_channel:
+ 	kfree(channel->name);
++free_channel:
+ 	kfree(channel);
+ 
+ 	return ERR_PTR(ret);
+-- 
+2.17.1
 
-Thanks a lot,
-Jae
