@@ -2,114 +2,104 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF81BC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EBCC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58549216FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58549216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 48C84216FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:15:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C84216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbeI0WaX (ORCPT
+        id S1728089AbeI0Wd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:30:23 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44339 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727270AbeI0WaX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 18:30:23 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g5Ysp-0004Yj-OF; Thu, 27 Sep 2018 16:11:19 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] b43: fix spelling mistake "hw_registred" -> "hw_registered"
-Date:   Thu, 27 Sep 2018 17:11:19 +0100
-Message-Id: <20180927161119.6698-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 27 Sep 2018 18:33:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:36894 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727262AbeI0Wd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 18:33:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2C6E7A9;
+        Thu, 27 Sep 2018 09:14:58 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0EEF3F5B3;
+        Thu, 27 Sep 2018 09:14:57 -0700 (PDT)
+Subject: Re: [PATCH 4/5] dma-direct: implement complete bus_dma_mask handling
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <20180920185247.20037-1-hch@lst.de>
+ <20180920185247.20037-5-hch@lst.de>
+ <a7626d1b-4dd8-abc4-0ab0-21ab7e5d1a4c@arm.com>
+ <20180927153252.GE10566@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <967e98b1-99ab-8f95-4c89-6156ce489b93@arm.com>
+Date:   Thu, 27 Sep 2018 17:14:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180927153252.GE10566@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 27/09/18 16:32, Christoph Hellwig wrote:
+> On Thu, Sep 27, 2018 at 03:58:04PM +0100, Robin Murphy wrote:
+>>>    }
+>>>    #endif /* !CONFIG_ARCH_HAS_PHYS_TO_DMA */
+>>>    diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+>>> index 3c404e33d946..64466b7ef67b 100644
+>>> --- a/kernel/dma/direct.c
+>>> +++ b/kernel/dma/direct.c
+>>> @@ -43,10 +43,11 @@ check_addr(struct device *dev, dma_addr_t dma_addr, size_t size,
+>>>    			return false;
+>>>    		}
+>>>    -		if (*dev->dma_mask >= DMA_BIT_MASK(32)) {
+>>> +		if (*dev->dma_mask >= DMA_BIT_MASK(32) || dev->bus_dma_mask) {
+>>
+>> Hmm... say *dev->dma_mask is 31 bits and dev->bus_dma_mask is 40 bits due
+>> to a global DT property, we'll now scream where we didn't before even
+>> though the bus mask is almost certainly irrelevant - is that desirable?
+> 
+> This is just the reporting in the error case - we'll only hit this
+> IFF dma_capable already returned false.  But if you don't want a message
+> here we can probably drop this hunk.
 
-Trivial fix to spelling mistake struct field name, rename it.
+It was only a question of consistency - whatever the reason was to avoid 
+warning for small device masks before, it's not obvious why it wouldn't 
+still apply in the presence of nonzero but larger bus mask. The fact 
+that the current check is there at all implied to me that we're 
+expecting less-capable device to hit this often and thus wanted to avoid 
+being noisy. If that's not the case then it's fine as-is AFAIC.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/broadcom/b43/b43.h  | 2 +-
- drivers/net/wireless/broadcom/b43/main.c | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+>>> @@ -65,12 +66,18 @@ u64 dma_direct_get_required_mask(struct device *dev)
+>>>    {
+>>>    	u64 max_dma = phys_to_dma_direct(dev, (max_pfn - 1) << PAGE_SHIFT);
+>>>    +	if (dev->bus_dma_mask && dev->bus_dma_mask < max_dma)
+>>> +		max_dma = dev->bus_dma_mask;
+>>
+>> Again, I think we could just do another min_not_zero() here. A device wired
+>> to address only one single page of RAM isn't a realistic prospect (and we
+>> could just flip the -1 and the shift in the max_dma calculation if we
+>> *really* wanted to support such things).
+> 
+> This just seemed more readable to me than min_not_zero, but if others
+> prefer min_not_zero I can switch.
 
-diff --git a/drivers/net/wireless/broadcom/b43/b43.h b/drivers/net/wireless/broadcom/b43/b43.h
-index b77d1a904f7e..9fc7c088a539 100644
---- a/drivers/net/wireless/broadcom/b43/b43.h
-+++ b/drivers/net/wireless/broadcom/b43/b43.h
-@@ -909,7 +909,7 @@ struct b43_wl {
- 
- 	/* Set this if we call ieee80211_register_hw() and check if we call
- 	 * ieee80211_unregister_hw(). */
--	bool hw_registred;
-+	bool hw_registered;
- 
- 	/* We can only have one operating interface (802.11 core)
- 	 * at a time. General information about this interface follows.
-diff --git a/drivers/net/wireless/broadcom/b43/main.c b/drivers/net/wireless/broadcom/b43/main.c
-index b37e7391f55d..4daa1ce8cba3 100644
---- a/drivers/net/wireless/broadcom/b43/main.c
-+++ b/drivers/net/wireless/broadcom/b43/main.c
-@@ -2611,7 +2611,7 @@ static void b43_request_firmware(struct work_struct *work)
- 	err = ieee80211_register_hw(wl->hw);
- 	if (err)
- 		goto err_one_core_detach;
--	wl->hw_registred = true;
-+	wl->hw_registered = true;
- 	b43_leds_register(wl->current_dev);
- 
- 	/* Register HW RNG driver */
-@@ -5610,7 +5610,7 @@ static struct b43_wl *b43_wireless_init(struct b43_bus_dev *dev)
- 
- 	wiphy_ext_feature_set(hw->wiphy, NL80211_EXT_FEATURE_CQM_RSSI_LIST);
- 
--	wl->hw_registred = false;
-+	wl->hw_registered = false;
- 	hw->max_rates = 2;
- 	SET_IEEE80211_DEV(hw, dev->dev);
- 	if (is_valid_ether_addr(sprom->et1mac))
-@@ -5693,7 +5693,7 @@ static void b43_bcma_remove(struct bcma_device *core)
- 	B43_WARN_ON(!wl);
- 	if (!wldev->fw.ucode.data)
- 		return;			/* NULL if firmware never loaded */
--	if (wl->current_dev == wldev && wl->hw_registred) {
-+	if (wl->current_dev == wldev && wl->hw_registered) {
- 		b43_leds_stop(wldev);
- 		ieee80211_unregister_hw(wl->hw);
- 	}
-@@ -5776,7 +5776,7 @@ static void b43_ssb_remove(struct ssb_device *sdev)
- 	B43_WARN_ON(!wl);
- 	if (!wldev->fw.ucode.data)
- 		return;			/* NULL if firmware never loaded */
--	if (wl->current_dev == wldev && wl->hw_registred) {
-+	if (wl->current_dev == wldev && wl->hw_registered) {
- 		b43_leds_stop(wldev);
- 		ieee80211_unregister_hw(wl->hw);
- 	}
--- 
-2.17.1
+Nah, just checking whether there were any intentionally different 
+assumptions compared to the couple of other places in the patch where 
+min_not_zero() *is* used. If it's purely a style thing then no worries 
+(personally I'd have written it yet another way anyway).
 
+Robin.
