@@ -2,309 +2,102 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B93A3C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C99B0C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74534216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74534216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 8AAB8216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:47:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="P+lnyYD+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AAB8216FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeI1BGk (ORCPT
+        id S1728616AbeI1BGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:06:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:32877 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbeI1BGk (ORCPT
+        Thu, 27 Sep 2018 21:06:43 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37033 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728586AbeI1BGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:06:40 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIkOoa129282
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 27 Sep 2018 11:46:24 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIkN5a129279;
-        Thu, 27 Sep 2018 11:46:23 -0700
-Date:   Thu, 27 Sep 2018 11:46:23 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-8679de0959e65ee7f78db6405a8d23e61665751d@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        tglx@linutronix.de, mark.gross@intel.com, bin.yang@intel.com,
-        peterz@infradead.org, dave.hansen@intel.com
-Reply-To: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, dave.hansen@intel.com,
-          peterz@infradead.org, bin.yang@intel.com, mark.gross@intel.com
-In-Reply-To: <20180917143545.830507216@linutronix.de>
-References: <20180917143545.830507216@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Split, rename and clean up
- try_preserve_large_page()
-Git-Commit-ID: 8679de0959e65ee7f78db6405a8d23e61665751d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 27 Sep 2018 21:06:43 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x26-v6so2529276pfn.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=T8gGTefPliVXuB3MK0oV0l1+/Y8rrKEEYTUbzCEqKSo=;
+        b=P+lnyYD+zP37fltMY+MH51bNITdkTdKOIZMK0IPiAJhMiSwPnMs/zhjXm9JifB9b1W
+         wLg4HE0HAjAOQYJiSI16oA0eH7pHW6k8G2y3dxwiO61n935Z3dHYtzfDH5vUxbEEmj/W
+         O5JjRtHOVGEBvbCX5ctprLd7QRNu+YVchAPUNrZcZAz6fwT1Iu6nHOpjFbtPk0Znvcgt
+         RDvwRyjupjdMUWmZVxrJk6bKUuOJHA+8w5F7evEgRTEoLaxESyiU2cgERPgMng1CUCJI
+         JNrW2cE4fO+5DCXfuiZ6qz6v3LQiupWf/fzYvd2usoNdS680PUnpG4Z3fRRM9ngvh/1Y
+         tlGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T8gGTefPliVXuB3MK0oV0l1+/Y8rrKEEYTUbzCEqKSo=;
+        b=PYwhqNKgYulnkebH/AUDqpJdKHEubxAUsh5sgcNEmxHH+jdVOWtAINIe+7rI0vc7Kb
+         OC3bAEAn1o17xIRpef48T0luHXuumb5yc7AJfjFfFuX7739TtlSVunb/Cj3/cvYY/RHf
+         17mqfaFGQLouUbriqSEixmcaF7qPFDtSoF39FmIhzKTZuNO0OGR/Z7Vvhu7QSdtt1GoA
+         LTZknzpjnrJB/ca2Pse6y/ZU9JXkTYkbo8xlSKyZdSBh8SuzvU/CpYNzzDyjWrcWXUBK
+         o59duK4DNOHZDfB+L/H/2wK9O+KsF92mXFKApTuyipt+KCQ4KpL9UUBK1bwqkyv+flx3
+         WWNw==
+X-Gm-Message-State: ABuFfohvSeZE1A2jzbUjk2K7yrRBfp+CxNkkqwLbg8XpykaFCh/SuvRF
+        hThKLuPoYMHcH0pseAEGsOloJ9n1gwo=
+X-Google-Smtp-Source: ACcGV60fAtqrIukR4ErbrTxtK8YDaqNYogDNrpBusrEU/q2A+APnKBjUlrgsZ2FEfXxp72166bKuzA==
+X-Received: by 2002:aa7:881a:: with SMTP id c26-v6mr12728116pfo.82.1538074025590;
+        Thu, 27 Sep 2018 11:47:05 -0700 (PDT)
+Received: from vader ([2620:10d:c090:200::5:3e64])
+        by smtp.gmail.com with ESMTPSA id t85-v6sm5561876pfi.73.2018.09.27.11.47.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 11:47:05 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 11:47:04 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     dsterba@suse.com, jbacik@fb.com, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: list usage cleanup
+Message-ID: <20180927184704.GA29754@vader>
+References: <1537950945-5627-1-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1537950945-5627-1-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8679de0959e65ee7f78db6405a8d23e61665751d
-Gitweb:     https://git.kernel.org/tip/8679de0959e65ee7f78db6405a8d23e61665751d
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 17 Sep 2018 16:29:08 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 27 Sep 2018 20:39:37 +0200
+On Wed, Sep 26, 2018 at 04:35:45PM +0800, zhong jiang wrote:
+> Trival cleanup, list_move_tail will implement the same function that
+> list_del() + list_add_tail() will do. hence just replace them.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  fs/btrfs/send.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> index 094cc144..d87f416 100644
+> --- a/fs/btrfs/send.c
+> +++ b/fs/btrfs/send.c
+> @@ -2075,8 +2075,7 @@ static struct name_cache_entry *name_cache_search(struct send_ctx *sctx,
+>   */
+>  static void name_cache_used(struct send_ctx *sctx, struct name_cache_entry *nce)
+>  {
+> -	list_del(&nce->list);
+> -	list_add_tail(&nce->list, &sctx->name_cache_list);
+> +	list_move_tail(&nce->list, &sctx->name_cache_list);
+>  }
 
-x86/mm/cpa: Split, rename and clean up try_preserve_large_page()
-
-Avoid the extra variable and gotos by splitting the function into the
-actual algorithm and a callable function which contains the lock
-protection.
-
-Rename it to should_split_large_page() while at it so the return values make
-actually sense.
-
-Clean up the code flow, comments and general whitespace damage while at it. No
-functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Dave Hansen <dave.hansen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Bin Yang <bin.yang@intel.com>
-Cc: Mark Gross <mark.gross@intel.com>
-Link: https://lkml.kernel.org/r/20180917143545.830507216@linutronix.de
-
----
- arch/x86/mm/pageattr.c | 121 ++++++++++++++++++++++++-------------------------
- 1 file changed, 60 insertions(+), 61 deletions(-)
-
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 51a5a69ecac9..36f5d711ddbe 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -421,18 +421,18 @@ pte_t *lookup_address_in_pgd(pgd_t *pgd, unsigned long address,
-  */
- pte_t *lookup_address(unsigned long address, unsigned int *level)
- {
--        return lookup_address_in_pgd(pgd_offset_k(address), address, level);
-+	return lookup_address_in_pgd(pgd_offset_k(address), address, level);
- }
- EXPORT_SYMBOL_GPL(lookup_address);
- 
- static pte_t *_lookup_address_cpa(struct cpa_data *cpa, unsigned long address,
- 				  unsigned int *level)
- {
--        if (cpa->pgd)
-+	if (cpa->pgd)
- 		return lookup_address_in_pgd(cpa->pgd + pgd_index(address),
- 					       address, level);
- 
--        return lookup_address(address, level);
-+	return lookup_address(address, level);
- }
- 
- /*
-@@ -549,27 +549,22 @@ static pgprot_t pgprot_clear_protnone_bits(pgprot_t prot)
- 	return prot;
- }
- 
--static int
--try_preserve_large_page(pte_t *kpte, unsigned long address,
--			struct cpa_data *cpa)
-+static int __should_split_large_page(pte_t *kpte, unsigned long address,
-+				     struct cpa_data *cpa)
- {
--	unsigned long nextpage_addr, numpages, pmask, psize, addr, pfn, old_pfn;
--	pte_t new_pte, old_pte, *tmp;
-+	unsigned long numpages, pmask, psize, lpaddr, addr, pfn, old_pfn;
- 	pgprot_t old_prot, new_prot, req_prot;
--	int i, do_split = 1;
-+	pte_t new_pte, old_pte, *tmp;
- 	enum pg_level level;
-+	int i;
- 
--	if (cpa->force_split)
--		return 1;
--
--	spin_lock(&pgd_lock);
- 	/*
- 	 * Check for races, another CPU might have split this page
- 	 * up already:
- 	 */
- 	tmp = _lookup_address_cpa(cpa, address, &level);
- 	if (tmp != kpte)
--		goto out_unlock;
-+		return 1;
- 
- 	switch (level) {
- 	case PG_LEVEL_2M:
-@@ -581,8 +576,7 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
- 		old_pfn = pud_pfn(*(pud_t *)kpte);
- 		break;
- 	default:
--		do_split = -EINVAL;
--		goto out_unlock;
-+		return -EINVAL;
- 	}
- 
- 	psize = page_level_size(level);
-@@ -592,8 +586,8 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
- 	 * Calculate the number of pages, which fit into this large
- 	 * page starting at address:
- 	 */
--	nextpage_addr = (address + psize) & pmask;
--	numpages = (nextpage_addr - address) >> PAGE_SHIFT;
-+	lpaddr = (address + psize) & pmask;
-+	numpages = (lpaddr - address) >> PAGE_SHIFT;
- 	if (numpages < cpa->numpages)
- 		cpa->numpages = numpages;
- 
-@@ -620,57 +614,62 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
- 		pgprot_val(req_prot) |= _PAGE_PSE;
- 
- 	/*
--	 * old_pfn points to the large page base pfn. So we need
--	 * to add the offset of the virtual address:
-+	 * old_pfn points to the large page base pfn. So we need to add the
-+	 * offset of the virtual address:
- 	 */
- 	pfn = old_pfn + ((address & (psize - 1)) >> PAGE_SHIFT);
- 	cpa->pfn = pfn;
- 
--	new_prot = static_protections(req_prot, address, pfn);
-+	/*
-+	 * Calculate the large page base address and the number of 4K pages
-+	 * in the large page
-+	 */
-+	lpaddr = address & pmask;
-+	numpages = psize >> PAGE_SHIFT;
- 
- 	/*
--	 * We need to check the full range, whether
--	 * static_protection() requires a different pgprot for one of
--	 * the pages in the range we try to preserve:
-+	 * Make sure that the requested pgprot does not violate the static
-+	 * protections. Check the full large page whether one of the pages
-+	 * in it results in a different pgprot than the first one of the
-+	 * requested range. If yes, then the page needs to be split.
- 	 */
--	addr = address & pmask;
-+	new_prot = static_protections(req_prot, address, pfn);
- 	pfn = old_pfn;
--	for (i = 0; i < (psize >> PAGE_SHIFT); i++, addr += PAGE_SIZE, pfn++) {
-+	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
- 		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
- 
- 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
--			goto out_unlock;
-+			return 1;
- 	}
- 
--	/*
--	 * If there are no changes, return. maxpages has been updated
--	 * above:
--	 */
--	if (pgprot_val(new_prot) == pgprot_val(old_prot)) {
--		do_split = 0;
--		goto out_unlock;
--	}
-+	/* If there are no changes, return. */
-+	if (pgprot_val(new_prot) == pgprot_val(old_prot))
-+		return 0;
- 
- 	/*
--	 * We need to change the attributes. Check, whether we can
--	 * change the large page in one go. We request a split, when
--	 * the address is not aligned and the number of pages is
--	 * smaller than the number of pages in the large page. Note
--	 * that we limited the number of possible pages already to
--	 * the number of pages in the large page.
-+	 * Verify that the address is aligned and the number of pages
-+	 * covers the full page.
- 	 */
--	if (address == (address & pmask) && cpa->numpages == (psize >> PAGE_SHIFT)) {
--		/*
--		 * The address is aligned and the number of pages
--		 * covers the full page.
--		 */
--		new_pte = pfn_pte(old_pfn, new_prot);
--		__set_pmd_pte(kpte, address, new_pte);
--		cpa->flags |= CPA_FLUSHTLB;
--		do_split = 0;
--	}
-+	if (address != lpaddr || cpa->numpages != numpages)
-+		return 1;
-+
-+	/* All checks passed. Update the large page mapping. */
-+	new_pte = pfn_pte(old_pfn, new_prot);
-+	__set_pmd_pte(kpte, address, new_pte);
-+	cpa->flags |= CPA_FLUSHTLB;
-+	return 0;
-+}
-+
-+static int should_split_large_page(pte_t *kpte, unsigned long address,
-+				   struct cpa_data *cpa)
-+{
-+	int do_split;
-+
-+	if (cpa->force_split)
-+		return 1;
- 
--out_unlock:
-+	spin_lock(&pgd_lock);
-+	do_split = __should_split_large_page(kpte, address, cpa);
- 	spin_unlock(&pgd_lock);
- 
- 	return do_split;
-@@ -1273,7 +1272,7 @@ repeat:
- 	 * Check, whether we can keep the large page intact
- 	 * and just change the pte:
- 	 */
--	do_split = try_preserve_large_page(kpte, address, cpa);
-+	do_split = should_split_large_page(kpte, address, cpa);
- 	/*
- 	 * When the range fits into the existing large page,
- 	 * return. cp->numpages and cpa->tlbflush have been updated in
-@@ -1288,23 +1287,23 @@ repeat:
- 	err = split_large_page(cpa, kpte, address);
- 	if (!err) {
- 		/*
--	 	 * Do a global flush tlb after splitting the large page
--	 	 * and before we do the actual change page attribute in the PTE.
--	 	 *
--	 	 * With out this, we violate the TLB application note, that says
--	 	 * "The TLBs may contain both ordinary and large-page
-+		 * Do a global flush tlb after splitting the large page
-+		 * and before we do the actual change page attribute in the PTE.
-+		 *
-+		 * With out this, we violate the TLB application note, that says
-+		 * "The TLBs may contain both ordinary and large-page
- 		 *  translations for a 4-KByte range of linear addresses. This
- 		 *  may occur if software modifies the paging structures so that
- 		 *  the page size used for the address range changes. If the two
- 		 *  translations differ with respect to page frame or attributes
- 		 *  (e.g., permissions), processor behavior is undefined and may
- 		 *  be implementation-specific."
--	 	 *
--	 	 * We do this global tlb flush inside the cpa_lock, so that we
-+		 *
-+		 * We do this global tlb flush inside the cpa_lock, so that we
- 		 * don't allow any other cpu, with stale tlb entries change the
- 		 * page attribute in parallel, that also falls into the
- 		 * just split large page entry.
--	 	 */
-+		 */
- 		flush_tlb_all();
- 		goto repeat;
- 	}
+At that point do we even need such a trivial helper, considering that
+this is only called in one place?
