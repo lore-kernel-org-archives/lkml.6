@@ -2,131 +2,185 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50615C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD09C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08316216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6218216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:04:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NABKZz3v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08316216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T8QOZZJO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6218216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbeI0UWx (ORCPT
+        id S1727804AbeI0UXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:22:53 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42197 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeI0UWx (ORCPT
+        Thu, 27 Sep 2018 16:23:20 -0400
+Received: from mailout2.w2.samsung.com ([211.189.100.12]:43431 "EHLO
+        mailout2.w2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727731AbeI0UXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 16:22:53 -0400
-Received: by mail-qk1-f194.google.com with SMTP id g20-v6so511330qke.9;
-        Thu, 27 Sep 2018 07:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Aw5iVKMofaO/YrtDj5lmpQCvyVhSfIDWEQBpceKe6Xk=;
-        b=NABKZz3vlF/pUue0jfZ9SLAPg4yxt9Ha9+sZzELd0jH3PLqjHxAYUCQwu70mfkB0tM
-         MY0gxWdL9lGof9sPhw0LeisGFcgwbMrPC7iE/wMTEI7BTnzAN/yG0c9UbG/IEraE/yi/
-         t4sfb4Z4ztFlDt9H73ieocZ4Y22VwhduyzLQstAcVb80A2pMoCWxAf8vJTgg2O0lmt9U
-         +HC7zDIXvv2svv3Bzx1cz4dVkqkFGd1/6oM2/j7Tao9TqXhLCF2OrObVM/k1jnRfzPtl
-         nNH6ccXXaOy4pLpTiU8SqkfPDIf98TrRrkcLuD8s1jZFUl+QTipjCpLBCMISZ95BaGUl
-         ZePQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Aw5iVKMofaO/YrtDj5lmpQCvyVhSfIDWEQBpceKe6Xk=;
-        b=QO2/Pe3w98dLeXO9QOtgX125XsnCnWNM8A85w3lBpBUrE5W50f3bZvqYSp5WjDFBG4
-         BBAOZH5mrXoTceMPB5mUwLFfGOimK6S0SWY/gPYxLHvx4MG1QJQU4VozfvHjFsazc3Hh
-         4mpBd3SwIE8fnyz2KrULOkuKShBgfaGfgo2UcU1gYUeWyi4ncZ+3h7h0uZF6uAh9Kcga
-         I2oIXYCwVCf9sUVKj/O6rRCmTgsAsnfsb3/SyATqAYpm3FAY96pAFOSQ1yI2J+tYx5wB
-         aNfOm+k9KPwpb6Lj4NxmaNneBniVUOX1QtbeTA9iNZ3bQOpNI+OTtLmFhzExoT6Q1UWa
-         JMGw==
-X-Gm-Message-State: ABuFfoiouwOQQ//J2H2P01C6n/GJz0jncpF4HcMdOWjRaA1W2qnlIfv3
-        TsP2dt0tnJz4rLeaNspJRmU1aBlM
-X-Google-Smtp-Source: ACcGV620Ptwrixj2Vks6uxpkMeDyr/4DcFWvUYXy81Pvd1ZlDodfAVfpxspIPeQG6Ntp7XPuJRGhgQ==
-X-Received: by 2002:a37:9442:: with SMTP id w63-v6mr8071990qkd.304.1538057067405;
-        Thu, 27 Sep 2018 07:04:27 -0700 (PDT)
-Received: from [192.168.1.10] (pool-96-255-154-210.washdc.fios.verizon.net. [96.255.154.210])
-        by smtp.gmail.com with ESMTPSA id e206-v6sm1055553qkb.4.2018.09.27.07.04.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 07:04:26 -0700 (PDT)
-Subject: Re: [PATCH] team: set IFF_SLAVE on team ports
-To:     Jiri Pirko <jiri@resnulli.us>, Jan Blunck <jblunck@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
-References: <1436435914-8903-1-git-send-email-jblunck@infradead.org>
- <20150709100727.GE2270@nanopsycho.orion>
- <CALe+Z03R_MPcgUSa8xoMeT5Sv3z8KwFhrtoYYzON=prfR-7hxQ@mail.gmail.com>
- <20150710064147.GA2204@nanopsycho.orion>
-From:   Chas Williams <3chas3@gmail.com>
-Message-ID: <c674e681-9f7f-85c2-a578-a246d1ec9f45@gmail.com>
-Date:   Thu, 27 Sep 2018 10:04:26 -0400
+        Thu, 27 Sep 2018 16:23:20 -0400
+X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Sep 2018 16:23:19 EDT
+Received: from uscas1p2.samsung.com (unknown [182.198.245.207])
+        by mailout2.w2.samsung.com (KnoxPortal) with ESMTP id 20180927135843usoutp02d45cc7889f5a0a0c25c4b264a55f0f2c~YRnDmvVGw0927309273usoutp023;
+        Thu, 27 Sep 2018 13:58:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w2.samsung.com 20180927135843usoutp02d45cc7889f5a0a0c25c4b264a55f0f2c~YRnDmvVGw0927309273usoutp023
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538056723;
+        bh=ROiSMdpv9kD7V19fPhy+LBceqWdDfxFDJkoiVwGN3HY=;
+        h=Reply-to:Subject:To:Cc:From:Date:In-reply-to:References:From;
+        b=T8QOZZJOEKGcoFdeKU8j+fvodTe4PGHzo5g6Rxnj0mWdx7v6ZDaUm4qF9d4jXBdr0
+         ZMOOoqiFBW8stVhiyA3iIM4CjmBk2ptEY0QmK0El1GT6CQnIpFyn63OsI/OZ7dyN0z
+         607khrka6I2T6gHEteQAEXtIySucm9j5YBvTBU2o=
+Received: from ussmges1new.samsung.com (u109.gpu85.samsung.co.kr
+        [203.254.195.109]) by uscas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180927135843uscas1p191bd62293b069b89cdc6defb6c3742da~YRnDbGRSE1110411104uscas1p1h;
+        Thu, 27 Sep 2018 13:58:43 +0000 (GMT)
+Received: from uscas1p2.samsung.com ( [182.198.245.207]) by
+        ussmges1new.samsung.com (USCPEMTA) with SMTP id 57.4E.04477.312ECAB5; Thu,
+        27 Sep 2018 09:58:43 -0400 (EDT)
+Received: from ussmgms1.samsung.com (unknown [182.198.245.179]) by
+        uscas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180927135842uscas1p2bcff0065e45b80ad107288e9b1ecf241~YRnDDX8i22549625496uscas1p2i;
+        Thu, 27 Sep 2018 13:58:42 +0000 (GMT)
+X-AuditID: cbfec36d-1c1ff7000000117d-32-5bace21343d3
+Received: from ussync2.samsung.com ( [203.254.195.82]) by
+        ussmgms1.samsung.com (USCPMMTA) with SMTP id FD.2E.04155.212ECAB5; Thu, 27
+        Sep 2018 09:58:42 -0400 (EDT)
+Received: from srafidmail02pr.sisa.samsung.com ([105.144.21.51]) by
+        ussync2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTP id <0PFP00KBZW5US740@ussync2.samsung.com>;
+        Thu, 27 Sep 2018 09:58:42 -0400 (EDT)
+Received: from sisasmtp.sisa.samsung.com (sraex01sc.sisa.samsung.com
+        [105.160.16.22]) by srafidmail02pr.sisa.samsung.com (Postfix) with ESMTP id
+        2F2AD3C07F7;    Thu, 27 Sep 2018 13:58:42 +0000 (UTC)
+Received: from [105.160.10.155] (105.160.10.155) by
+        sraex01sc.sisa.samsung.com (105.160.16.22) with Microsoft SMTP Server (TLS)
+        id 15.0.1367.3; Thu, 27 Sep 2018 06:58:40 -0700
+Reply-to: shuah.kh@samsung.com
+Subject: Re: [PATCH] rseq/selftests: fix parametrized test with -fpie
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        stable <stable@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
+From:   Shuah Khan <shuah.kh@samsung.com>
+Message-id: <a7bae2ff-1f4d-dbfc-43f8-e7a89f319abb@samsung.com>
+Date:   Thu, 27 Sep 2018 07:58:32 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20150710064147.GA2204@nanopsycho.orion>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thunderbird/52.9.1
+MIME-version: 1.0
+In-reply-to: <20180927092235.77282e35@vmware.local.home>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-US
+Content-transfer-encoding: 7bit
+X-Originating-IP: [105.160.10.155]
+X-ClientProxiedBy: sracas01sc.sisa.samsung.com (105.144.22.46) To
+        sraex01sc.sisa.samsung.com (105.160.16.22)
+X-Content-Scanned: Fidelis Mail
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGPfcbtuq1YHjDcJouxtjNr8gfJ5GRZXPJXbKYzagjNlEbuUMj
+        LaYXEEyMzJbBFJ2bFFj9oBggWIpILypIQkhBSsBB1KqRotZGiEJBG6oMGHOWWxP++533eZ+c
+        5zk5HKnuYRK5A8Zs0WTUZ2qYWOp695uBtXEBp26Dz0Xj841OBnc9mGLx70O1BHY2/0LgV7Ul
+        CD98G0S4baydwmVNCXjaq8Hv7FlYnipm8L2b5xlcPvSKwb57KlzfUEBj+e/bJL7bYSdw7xk/
+        i8flKRp7TnUQuPVyHY3bi/0ELn15hcXW8GsK25sCCMsuK4kDp8dZ/DLUQ32VJDwNzlGC86IT
+        CRZzCSPU9AUZ4Q/zBCtUtoaQ0Gp7zAqW9kFWsLtyBLlOKwyOfSm4HL8xwkR/Pyv0VMxSwnNv
+        OSH43TL1Q/yu2JR0MfNArmhan7o3dv/o9T2HrDF5/zZcYgpQFXsCxXDAJ4PjViV1AsVyav4y
+        gm5PNaMcJhGERiapD1sjrXZCEWoRnGq7SEYENV9EwLVfv1cED4Ix32zULiM4Wf4suvUpHK+u
+        n+c4/ltoKbcwEY7nd4PF0YIiBpKfZsF/o2z+PoZfDZNjLe8TcpyKT4WattTImOJXQUN4iI7w
+        Mj4NuvxVKMIqfin8c/bJvDWGx+D3tBMRJvk18CL8J6VwApgLH0V5BcjOcVKppoHQYx+tsBEK
+        b9ujlVfAi/ob85WBD3Iw3HQr+mJbwOWqiJrjYNTTHJ0nwYytm1QMRQguVP8VFUoRvK6JV3gz
+        vOsYYJUUi2FuJoDOoM9sC0rYFgS3LQhuWxDcjigHSsiRJEOGKG00iofXSXqDlGPMWLcvy+BC
+        7/9333+dhhbU1bfPjXgOaT5WXW2q16lpfa6Ub3Aj4EhNvIp94tSpVen6/COiKWuPKSdTlNzo
+        E47SJKh6207q1HyGPls8KIqHRNMHleBiEgtQnZjibdxRVpLSSWu59E2jrgeNvdv6Ld7Eqq0T
+        U5+bM8M/7ty9/ItvzsqF06cr8ndalxTd2a5qdoTSjsVtHr7z6Outlvs/L/Lp8lcGuTx/+Kei
+        wFOr16KtSlt6/1znskp6eXLtd70fpSw5vKV4YHGNmbjgzqWOJpVesR3Uao/v8K6d1VDSfv1G
+        LWmS9P8DO3flSdsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRzGe885O+dsOTwuzRe7KIOwe1p9eD+UBFG8faisQUlCOvKgopu1
+        k90IstRSKcu85ZJakbe2pdsxcxpLpqVmVxUrUxOp0NSWqZl0MeeK/PZ7nvf/PH9e+LOkolni
+        x8ZqD/M6rTpeScuolt/1u1cp+kzhQc0jwaiw3ESjho4JBl3sKiaQqfI0gZzF5wF69W0IoNpB
+        O4XyLL5osl2JpgwJSJxIo1FbTSGN8rucNHrbJkdGc5IEiU+fkKi1zkCgx5d6GTQsTkhQ44U6
+        AtnKSiXIntZLoJyBOwzKHftCIYOlDyDRmkuivsxhBg2MNFGbFuJ3Q78obLpmAjgl+TyNi1qG
+        aJyV/JnB120jANv03QxOsXcy2GBNxGLpctw5uBFbb6fT+POzZwxuuvKDwu/b8wnc6xCpUO99
+        sg1RfHzsEV63JiRSFvOpKuJgrvTYT/NNOgncYDKAlIXcevjRZiAygIxVcLcAvHju/l+RTsCG
+        7OekWzQDaK65z7iFCKBzPIt25RXcYnjmlpF08TxuC6zOT5nxvbn9MPPdOOUKkNwkAzMqu4A7
+        nUrAgkepM1M0FwhHB6una1lWzoXAotoQl01xS6B5rEviYh8uDBpL+mdYznnB79k9lIulHIK9
+        jXbCFSWna3JyNC6b5Hxhcuobys3+UDQNk+5/KuFI91uJm7Uw0/mVcrM/7DfeIy6B+fpZG/T/
+        W/WzWvWzWg2Aug28EwVBE60RglcLao2QqI1efSBBYwXTB1b1aFysBu1nQh2AY4HSQ15hMYYr
+        JOojwnGNA0CWVHrLmR5TuEIepT5+gtclROgS43nBARawlNJX/mLO2nAFF60+zMfx/EFe9++V
+        YKV+SWBDsHbrduuxFo9leR6j+yOi7IF7VEJF3MCioWGfsPKaACITPRy8Ky9YVdLRORXIUV5z
+        FaqYIn9R9rosv9hSG9vqOBv7YOED28ptm6UlLy+vPLpzF7Z4eq49+SGoo94WucK87mp6WP34
+        XqcqZqlXXWf9Dru66lTx1psBqkP9RUavp0pKiFEHLyd1gvoP18NkNlwDAAA=
+X-CMS-MailID: 20180927135842uscas1p2bcff0065e45b80ad107288e9b1ecf241
+X-Msg-Generator: CA
+CMS-TYPE: 301P
+X-CMS-RootMailID: 20180927132250epcas4p3d0775cc258f6112d27bdad359fc6e416
+References: <20180918135328.32034-1-mathieu.desnoyers@efficios.com>
+        <1367962117.10271.1537897176578.JavaMail.zimbra@efficios.com>
+        <CGME20180927132250epcas4p3d0775cc258f6112d27bdad359fc6e416@epcas4p3.samsung.com>
+        <20180927092235.77282e35@vmware.local.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/10/15 02:41, Jiri Pirko wrote:
-> Thu, Jul 09, 2015 at 05:36:55PM CEST, jblunck@infradead.org wrote:
->> On Thu, Jul 9, 2015 at 12:07 PM, Jiri Pirko <jiri@resnulli.us> wrote:
->>> Thu, Jul 09, 2015 at 11:58:34AM CEST, jblunck@infradead.org wrote:
->>>> The code in net/ipv6/addrconf.c:addrconf_notify() tests for IFF_SLAVE to
->>>> decide if it should start the address configuration. Since team ports
->>>> shouldn't get link-local addresses assigned lets set IFF_SLAVE when linking
->>>> a port to the team master.
+On 09/27/2018 07:22 AM, Steven Rostedt wrote:
+> On Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> ----- On Sep 18, 2018, at 9:53 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+>>
+>>> On x86-64, the parametrized selftest code for rseq crashes with a
+>>> segmentation fault when compiled with -fpie. This happens when the
+>>> param_test binary is loaded at an address beyond 32-bit on x86-64.
 >>>
->>> I don't want to use IFF_SLAVE in team. Other master-slave devices are
->>> not using that as well, for example bridge, ovs, etc.
+>>> The issue is caused by use of a 32-bit register to hold the address
+>>> of the loop counter variable.
 >>>
+>>> Fix this by using a 64-bit register to calculate the address of the
+>>> loop counter variables as an offset from rip.  
 >>
->> Maybe they need to get fixed too. I've used that flag because it is
->> documented as
->> a "slave of a load balancer" which describes what a team port is.
+>> Should this fix go through tip or the selftests tree ?
 >>
->>
->>> I think that this should be fixed in addrconf_notify. It should lookup
->>> if there is a master on top and bail out in that case.
->>
->> There are other virtual interfaces that have a master assigned and want to
->> participate in IPv6 address configuration.
 > 
-> Can you give me an example?
+> I usually have changes like this pulled through Shuah's tree with an
+> ack from the maintainer of the code that it tests.
+> 
+> -- Steve
+> 
 
-I would like to revisit this patch (yes, I know it has been a while).  I 
-believe the VRF implementation uses master to group the interfaces under
-a single interface.
+Right that is what I prefer. I usually wait for an Ack. I can pull this
+in.
 
-I don't see a reason not to use IFF_SLAVE since team and bonding are 
-fairly similar.
+thanks,
+-- Shuah
 
->>
->> Unless we want to have a cascade of conditionals testing the priv_flags in
->> addrconf_notify() this is asking for a new net_device_flags flag.
->> Maybe something
->> generic like IFF_L2PORT ?
->>
->> Thanks,
->> Jan
->>
->> [ Jiri, sorry for getting that mail twice ]
-> 
-> 
-> 
+-- 
+Shuah Khan
+Sr. Linux Kernel Developer
+Open Source Innovation Group
+Samsung Research America(Silicon Valley)
+shuah.kh@samsung.com
