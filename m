@@ -2,315 +2,214 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2890EC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01D4C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B177021566
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:12:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D54C21566
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 05:14:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FdX96o4C";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lUIqVQUI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B177021566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REJBySRf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D54C21566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeI0L3J (ORCPT
+        id S1726934AbeI0LbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 07:29:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48750 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeI0L3I (ORCPT
+        Thu, 27 Sep 2018 07:31:07 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39267 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbeI0LbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:29:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E0A1F60B73; Thu, 27 Sep 2018 05:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538025164;
-        bh=jIZQsWDuq12aOs/KwC499W6oSUNAyIUU+Hkps2lOTSo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FdX96o4CfaqXJkopa+mv35WVZ/9YdoQsAIYn5/z/1vU/bVE717PfvDPRHG/L8ayq0
-         O6HUP1szFtlvQDp5KTHxauDS79LX9lkJXb6PdTqqlP72FPUcF9O6xojWNa2gQ/9UXm
-         ABen/pdqwuPSty9m6rb7CphFFSyGT9zJNaY0dF7g=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CF8ED60275;
-        Thu, 27 Sep 2018 05:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1538025163;
-        bh=jIZQsWDuq12aOs/KwC499W6oSUNAyIUU+Hkps2lOTSo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lUIqVQUIZLaSZVvUeUouYIiUfiumBiTAxS8KGb1iSE796lraQ32zNlA0eLgpsHqmS
-         qnWmtrYM6u+ZZ/yEl1Rzv9Iyo0Wux4fUGsR2AYVg8o1uAoly7I17r934up95s84QRY
-         DHvzTzU29mItYw8256KIwW86uDzbK9zVEt3ufP4s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF8ED60275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date:   Thu, 27 Sep 2018 10:42:38 +0530
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: allow out-place-update for direct IO
- in LFS mode
-Message-ID: <20180927051237.GJ22939@codeaurora.org>
-References: <20180921131222.32057-1-chao@kernel.org>
+        Thu, 27 Sep 2018 07:31:07 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s14-v6so1074750wrw.6;
+        Wed, 26 Sep 2018 22:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qLkTiUn1JH5jWsSxtXtnjyX1UNRWQAxctcHfU5wdJ4c=;
+        b=REJBySRfvh+fLQcddAuTux5/y15OCi2bwywwHpQ9zlknwXeOI+fZAYvlv0xuTRPrMh
+         eqbxW+E3+d2zVhAmssPm5AqXqI2RtuTEagqyF9hs7sKZtFprNOqrEEtx1qaUEDGSlHxh
+         b8EBNxcCkyMZ9MpbC4gJKVfzivj6lB7SiMiLxcpIzMhZEPVCveIRHFgWPpZCsNqTG/GH
+         aE7OXwroaE8Y60uNmvDFh7iNfW7/mUbVsdOa4f7BJmfIy4sanveJbrpSi6BBNkTJgj9B
+         xB/+p3Z6gAwyKGiMTyEwlxqoaEkuYGDKTfXIMaBd+GaZiV4U1GEuJMQLyn1KwDJbJCBZ
+         lNgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qLkTiUn1JH5jWsSxtXtnjyX1UNRWQAxctcHfU5wdJ4c=;
+        b=ciHX2S3JxLXk4ho3hx/O0u1394/MUYbihbkoH5MDrkMUOyEwDtSpRVrdXI67pzj3FT
+         i5bd54CkWI4kg5sxrDhTOmGbdIgDuSVE1pZxELQJoO/ck7ElM5MF0kBXGILiZ69FzhE+
+         FfNYOfGxkkmL+s0taYLq7+gNriEjAnU+1Qa5c6RFCbaed0PnhdzfWNKLOBpr78O+qcPS
+         ikdeNa9zgghH87HLKvBP1Anh2StqD2dYGl9Ni3HBnhz8DDqEkQb5/dESALegFI3X2sA4
+         J6CMYYefxI2AjTG577Qjt8zjKhNBg0BJFOMitsPmUfP4/qFc9DLI6vxJnKlTqncZ31XY
+         W2FA==
+X-Gm-Message-State: ABuFfogsWy3B110PB1j14/dxXbw133ca3k+VoZ7v2i7e16Z3eXs/3XgG
+        iOgLvjYBiQ5pW+ZJJlK3BLY=
+X-Google-Smtp-Source: ACcGV6073kVi6WiLyYk1VAsvND/J8OysZ5nJzXtGAIELBtSkIbbf5B13/RHBFrf2Fs1J2g0oztIlUw==
+X-Received: by 2002:adf:8bc5:: with SMTP id w5-v6mr6763077wra.110.1538025281747;
+        Wed, 26 Sep 2018 22:14:41 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id r30-v6sm1321269wrc.90.2018.09.26.22.14.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Sep 2018 22:14:41 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Moni Shoua <monis@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH v3] IB/rxe: Remove unnecessary enum values
+Date:   Wed, 26 Sep 2018 22:12:23 -0700
+Message-Id: <20180927051222.23084-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180927050156.20023-1-natechancellor@gmail.com>
+References: <20180927050156.20023-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921131222.32057-1-chao@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 09:12:22PM +0800, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
-> allow triggering any in-place-update writes, so we fallback direct
-> write to buffered write, result in bad performance of large size
-> write.
-> 
-> This patch adds to support triggering out-place-update for direct IO
-> to enhance its performance.
-> 
-> Note that it needs to exclude direct read IO during direct write,
-> since new data writing to new block address will no be valid until
-> write finished.
-> 
-> storage: zram
-> 
-> time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
-> 
-> Before:
-> real	0m13.061s
-> user	0m0.327s
-> sys	0m12.486s
-> 
-> After:
-> real	0m6.448s
-> user	0m0.228s
-> sys	0m6.212s
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v4:
-> - correct parameter in f2fs_sb_has_blkzoned()
->  fs/f2fs/data.c | 44 +++++++++++++++++++++++++++++++++++---------
->  fs/f2fs/f2fs.h | 45 +++++++++++++++++++++++++++++++++++++++++----
->  fs/f2fs/file.c |  3 ++-
->  3 files changed, 78 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index b96f8588d565..38d5baa1c35d 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
->  
->  	dn->data_blkaddr = datablock_addr(dn->inode,
->  				dn->node_page, dn->ofs_in_node);
-> -	if (dn->data_blkaddr == NEW_ADDR)
-> +	if (dn->data_blkaddr != NULL_ADDR)
->  		goto alloc;
->  
->  	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
-> @@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->  
->  	if (direct_io) {
->  		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
-> -		flag = f2fs_force_buffered_io(inode, WRITE) ?
-> +		flag = f2fs_force_buffered_io(inode, iocb, from) ?
->  					F2FS_GET_BLOCK_PRE_AIO :
->  					F2FS_GET_BLOCK_PRE_DIO;
->  		goto map_blocks;
-> @@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  		goto sync_out;
->  	}
->  
-> -	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
-> +	if (is_valid_data_blkaddr(sbi, blkaddr)) {
-> +		/* use out-place-update for driect IO under LFS mode */
-> +		if (test_opt(sbi, LFS) && create &&
-> +				flag == F2FS_GET_BLOCK_DEFAULT) {
+Clang warns when an emumerated type is implicitly converted to another.
 
-One of the recent patches from Jaegeuk, 0a4daae5ffea ("f2fs: update i_size after DIO
-completion") added new flag for DIO - F2FS_GET_BLOCK_DIO. I think this patch needs to be
-updated accordingly.
+drivers/infiniband/sw/rxe/rxe.c:106:27: warning: implicit conversion
+from enumeration type 'enum rxe_device_param' to different enumeration
+type 'enum ib_atomic_cap' [-Wenum-conversion]
+        rxe->attr.atomic_cap                    = RXE_ATOMIC_CAP;
+                                                ~ ^~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:131:22: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_port_state' [-Wenum-conversion]
+        port->attr.state                = RXE_PORT_STATE;
+                                        ~ ^~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:132:24: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_mtu' [-Wenum-conversion]
+        port->attr.max_mtu              = RXE_PORT_MAX_MTU;
+                                        ~ ^~~~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:133:27: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_mtu' [-Wenum-conversion]
+        port->attr.active_mtu           = RXE_PORT_ACTIVE_MTU;
+                                        ~ ^~~~~~~~~~~~~~~~~~~
+drivers/infiniband/sw/rxe/rxe.c:151:24: warning: implicit conversion
+from enumeration type 'enum rxe_port_param' to different enumeration
+type 'enum ib_mtu' [-Wenum-conversion]
+                                ib_mtu_enum_to_int(RXE_PORT_ACTIVE_MTU);
+                                ~~~~~~~~~~~~~~~~~~ ^~~~~~~~~~~~~~~~~~~
+5 warnings generated.
 
-> +			err = __allocate_data_block(&dn, map->m_seg_type);
-> +			if (!err)
-> +				set_inode_flag(inode, FI_APPEND_WRITE);
-> +		}
-> +	} else {
->  		if (create) {
->  			if (unlikely(f2fs_cp_error(sbi))) {
->  				err = -EIO;
-> @@ -2493,36 +2501,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->  	struct inode *inode = mapping->host;
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->  	size_t count = iov_iter_count(iter);
->  	loff_t offset = iocb->ki_pos;
->  	int rw = iov_iter_rw(iter);
->  	int err;
->  	enum rw_hint hint = iocb->ki_hint;
->  	int whint_mode = F2FS_OPTION(sbi).whint_mode;
-> +	bool do_opu;
->  
->  	err = check_direct_IO(inode, iter, offset);
->  	if (err)
->  		return err < 0 ? err : 0;
->  
-> -	if (f2fs_force_buffered_io(inode, rw))
-> +	if (f2fs_force_buffered_io(inode, iocb, iter))
->  		return 0;
->  
-> +	do_opu = allow_outplace_dio(inode, iocb, iter);
-> +
->  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
->  
->  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
->  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
->  
-> -	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
-> -		if (iocb->ki_flags & IOCB_NOWAIT) {
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
-> +			iocb->ki_hint = hint;
-> +			err = -EAGAIN;
-> +			goto out;
-> +		}
-> +		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
-> +			up_read(&fi->i_gc_rwsem[rw]);
->  			iocb->ki_hint = hint;
->  			err = -EAGAIN;
->  			goto out;
->  		}
-> -		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-> +	} else {
-> +		down_read(&fi->i_gc_rwsem[rw]);
-> +		if (do_opu)
-> +			down_read(&fi->i_gc_rwsem[READ]);
->  	}
->  
->  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
-> -	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-> +
-> +	if (do_opu)
-> +		up_read(&fi->i_gc_rwsem[READ]);
-> +
-> +	up_read(&fi->i_gc_rwsem[rw]);
->  
->  	if (rw == WRITE) {
->  		if (whint_mode == WHINT_MODE_OFF)
-> @@ -2530,7 +2555,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  		if (err > 0) {
->  			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
->  									err);
-> -			set_inode_flag(inode, FI_UPDATE_WRITE);
-> +			if (!do_opu)
-> +				set_inode_flag(inode, FI_UPDATE_WRITE);
->  		} else if (err < 0) {
->  			f2fs_write_failed(mapping, offset + count);
->  		}
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 894a2503e722..72d46860cee3 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -8,6 +8,7 @@
->  #ifndef _LINUX_F2FS_H
->  #define _LINUX_F2FS_H
->  
-> +#include <linux/uio.h>
->  #include <linux/types.h>
->  #include <linux/page-flags.h>
->  #include <linux/buffer_head.h>
-> @@ -3486,11 +3487,47 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
->  #endif
->  }
->  
-> -static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
-> +static inline int block_unaligned_IO(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
->  {
-> -	return (f2fs_post_read_required(inode) ||
-> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
-> -			F2FS_I_SB(inode)->s_ndevs);
-> +	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
-> +	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
-> +	loff_t offset = iocb->ki_pos;
-> +	unsigned long align = offset | iov_iter_alignment(iter);
-> +
-> +	return align & blocksize_mask;
-> +}
-> +
-> +static inline int allow_outplace_dio(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	int rw = iov_iter_rw(iter);
-> +
-> +	return (test_opt(sbi, LFS) && (rw == WRITE) &&
-> +				!block_unaligned_IO(inode, iocb, iter));
-> +}
-> +
-> +static inline bool f2fs_force_buffered_io(struct inode *inode,
-> +				struct kiocb *iocb, struct iov_iter *iter)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	int rw = iov_iter_rw(iter);
-> +
-> +	if (f2fs_post_read_required(inode))
-> +		return true;
-> +	if (sbi->s_ndevs)
-> +		return true;
-> +	/*
-> +	 * for blkzoned device, fallback direct IO to buffered IO, so
-> +	 * all IOs can be serialized by log-structured write.
-> +	 */
-> +	if (f2fs_sb_has_blkzoned(sbi->sb))
-> +		return true;
-> +	if (test_opt(sbi, LFS) && (rw == WRITE) &&
-> +				block_unaligned_IO(inode, iocb, iter))
-> +		return true;
-> +	return false;
->  }
->  
->  #ifdef CONFIG_F2FS_FAULT_INJECTION
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index a75f3e145bf1..a388866e71ee 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3019,7 +3019,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
->  						iov_iter_count(from)) ||
->  					f2fs_has_inline_data(inode) ||
-> -					f2fs_force_buffered_io(inode, WRITE)) {
-> +					f2fs_force_buffered_io(inode,
-> +							iocb, from)) {
->  						clear_inode_flag(inode,
->  								FI_NO_PREALLOC);
->  						inode_unlock(inode);
-> -- 
-> 2.18.0
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Use the appropriate values from the expected enumerated type so no
+conversion needs to happen then remove the unneeded definitions.
 
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+v1 -> v2:
+
+* Don't cast, just use the expecting enumerated value directly, per
+  Jason's request
+
+v2 -> v3:
+
+* Convert two spots from RXE_PORT_MAX_MTU to IB_MTU_4096 then remove
+  value definitions.
+
+ drivers/infiniband/sw/rxe/rxe.c       | 13 ++++++-------
+ drivers/infiniband/sw/rxe/rxe_loc.h   |  2 +-
+ drivers/infiniband/sw/rxe/rxe_param.h |  4 ----
+ 3 files changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe.c b/drivers/infiniband/sw/rxe/rxe.c
+index 10999fa69281..383e65c7bbc0 100644
+--- a/drivers/infiniband/sw/rxe/rxe.c
++++ b/drivers/infiniband/sw/rxe/rxe.c
+@@ -103,7 +103,7 @@ static void rxe_init_device_param(struct rxe_dev *rxe)
+ 	rxe->attr.max_res_rd_atom		= RXE_MAX_RES_RD_ATOM;
+ 	rxe->attr.max_qp_init_rd_atom		= RXE_MAX_QP_INIT_RD_ATOM;
+ 	rxe->attr.max_ee_init_rd_atom		= RXE_MAX_EE_INIT_RD_ATOM;
+-	rxe->attr.atomic_cap			= RXE_ATOMIC_CAP;
++	rxe->attr.atomic_cap			= IB_ATOMIC_HCA;
+ 	rxe->attr.max_ee			= RXE_MAX_EE;
+ 	rxe->attr.max_rdd			= RXE_MAX_RDD;
+ 	rxe->attr.max_mw			= RXE_MAX_MW;
+@@ -128,9 +128,9 @@ static void rxe_init_device_param(struct rxe_dev *rxe)
+ /* initialize port attributes */
+ static int rxe_init_port_param(struct rxe_port *port)
+ {
+-	port->attr.state		= RXE_PORT_STATE;
+-	port->attr.max_mtu		= RXE_PORT_MAX_MTU;
+-	port->attr.active_mtu		= RXE_PORT_ACTIVE_MTU;
++	port->attr.state		= IB_PORT_DOWN;
++	port->attr.max_mtu		= IB_MTU_4096;
++	port->attr.active_mtu		= IB_MTU_256;
+ 	port->attr.gid_tbl_len		= RXE_PORT_GID_TBL_LEN;
+ 	port->attr.port_cap_flags	= RXE_PORT_PORT_CAP_FLAGS;
+ 	port->attr.max_msg_sz		= RXE_PORT_MAX_MSG_SZ;
+@@ -147,8 +147,7 @@ static int rxe_init_port_param(struct rxe_port *port)
+ 	port->attr.active_width		= RXE_PORT_ACTIVE_WIDTH;
+ 	port->attr.active_speed		= RXE_PORT_ACTIVE_SPEED;
+ 	port->attr.phys_state		= RXE_PORT_PHYS_STATE;
+-	port->mtu_cap			=
+-				ib_mtu_enum_to_int(RXE_PORT_ACTIVE_MTU);
++	port->mtu_cap			= ib_mtu_enum_to_int(IB_MTU_256);
+ 	port->subnet_prefix		= cpu_to_be64(RXE_PORT_SUBNET_PREFIX);
+ 
+ 	return 0;
+@@ -300,7 +299,7 @@ void rxe_set_mtu(struct rxe_dev *rxe, unsigned int ndev_mtu)
+ 	mtu = eth_mtu_int_to_enum(ndev_mtu);
+ 
+ 	/* Make sure that new MTU in range */
+-	mtu = mtu ? min_t(enum ib_mtu, mtu, RXE_PORT_MAX_MTU) : IB_MTU_256;
++	mtu = mtu ? min_t(enum ib_mtu, mtu, IB_MTU_4096) : IB_MTU_256;
+ 
+ 	port->attr.active_mtu = mtu;
+ 	port->mtu_cap = ib_mtu_enum_to_int(mtu);
+diff --git a/drivers/infiniband/sw/rxe/rxe_loc.h b/drivers/infiniband/sw/rxe/rxe_loc.h
+index 8e305422adbb..afd53f57a62b 100644
+--- a/drivers/infiniband/sw/rxe/rxe_loc.h
++++ b/drivers/infiniband/sw/rxe/rxe_loc.h
+@@ -195,7 +195,7 @@ static inline int qp_mtu(struct rxe_qp *qp)
+ 	if (qp->ibqp.qp_type == IB_QPT_RC || qp->ibqp.qp_type == IB_QPT_UC)
+ 		return qp->attr.path_mtu;
+ 	else
+-		return RXE_PORT_MAX_MTU;
++		return IB_MTU_4096;
+ }
+ 
+ static inline int rcv_wqe_size(int max_sge)
+diff --git a/drivers/infiniband/sw/rxe/rxe_param.h b/drivers/infiniband/sw/rxe/rxe_param.h
+index 4555510d86c4..bdea899a58ac 100644
+--- a/drivers/infiniband/sw/rxe/rxe_param.h
++++ b/drivers/infiniband/sw/rxe/rxe_param.h
+@@ -90,7 +90,6 @@ enum rxe_device_param {
+ 	RXE_MAX_RES_RD_ATOM		= 0x3f000,
+ 	RXE_MAX_QP_INIT_RD_ATOM		= 128,
+ 	RXE_MAX_EE_INIT_RD_ATOM		= 0,
+-	RXE_ATOMIC_CAP			= 1,
+ 	RXE_MAX_EE			= 0,
+ 	RXE_MAX_RDD			= 0,
+ 	RXE_MAX_MW			= 0,
+@@ -139,9 +138,6 @@ enum rxe_device_param {
+ 
+ /* default/initial rxe port parameters */
+ enum rxe_port_param {
+-	RXE_PORT_STATE			= IB_PORT_DOWN,
+-	RXE_PORT_MAX_MTU		= IB_MTU_4096,
+-	RXE_PORT_ACTIVE_MTU		= IB_MTU_256,
+ 	RXE_PORT_GID_TBL_LEN		= 1024,
+ 	RXE_PORT_PORT_CAP_FLAGS		= RDMA_CORE_CAP_PROT_ROCE_UDP_ENCAP,
+ 	RXE_PORT_MAX_MSG_SZ		= 0x800000,
 -- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+2.19.0
+
