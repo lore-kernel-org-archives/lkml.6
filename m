@@ -2,148 +2,149 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D99C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBFFC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E192172E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C30A2168B
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:02:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="L5dA4XKH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E192172E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cePcWO8D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C30A2168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbeI1AUf (ORCPT
+        id S1728446AbeI1AVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 20:20:35 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41385 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbeI1AUe (ORCPT
+        Thu, 27 Sep 2018 20:21:37 -0400
+Received: from mail.efficios.com ([167.114.142.138]:41714 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbeI1AVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 20:20:34 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f38-v6so5853822edd.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 11:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=n3ktsnD+yok69VnSyFU16j3H/ZpzQu/cKDfNwOD/jjk=;
-        b=L5dA4XKHOBofkJGfn7HJJ0rWi9hwX9VEEFFI7x4t3uOi/2od+dyrKXvcNcTEHfU4lM
-         9uwJINri+LNat5XPBR8nycrwDOoQYypcGV3OWnoCPCRWSJymvP69Jy3V0ohpotVOfMZs
-         3J5okCT4UPjVmr9XXMd8s6LomVUuujkfYwepo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=n3ktsnD+yok69VnSyFU16j3H/ZpzQu/cKDfNwOD/jjk=;
-        b=f8ZKvcxFtAN3Mp5PzEyrCZs5mxyBiYwvq3TAeg0zmZKVniI4MIHFY2btt1Q1MGPy6Y
-         Dpx7XcD/Anj1KBYzv0NJcgUkcfk5S0ArM/+tdntxCD6nBeFFiPpJRvdKqCE8dT+kI4SG
-         sEnrCBhbPSvFQyflcBXDgM/07koaNOSRXdOqT9p9FUYMmA1/acgl7bMz0nLhnlMhbtBv
-         SePx2xn8kN8P3IG4yyeh2VbbM3STo2d97WC2GAq05ea25IiQG5VI8ktzmTiMybtvRON3
-         kITzPMLGYpNlsg8S6Q0UfVNme1Gc2VzJ0SIhyCofL8zH1KhsUCV1f7EihfbrEHr/mEaY
-         0MVw==
-X-Gm-Message-State: ABuFfogf3cDfxH/eNVV8iaJULENsVemTCvh0GK87jVB8maTho6MfYM4l
-        j5Uz6FbJp0upDoNC/MAlmjQWKw==
-X-Google-Smtp-Source: ACcGV63/06WDcQTH/E5gdbU5nBN2Ff+ZqrTks/w/q3QcwMddkQ7PHJQwP2Kc3uqO7hjXYzPvO8IQTA==
-X-Received: by 2002:a50:aed4:: with SMTP id f20-v6mr19231643edd.271.1538071266964;
-        Thu, 27 Sep 2018 11:01:06 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id k5-v6sm209554eja.44.2018.09.27.11.01.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 11:01:05 -0700 (PDT)
-Subject: Re: [PATCH v4 1/3] dt-bindings: thermal: Add binding document for SR
- thermal
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     daniel.lezcano@linaro.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-References: <1538062603-7490-1-git-send-email-srinath.mannam@broadcom.com>
- <1538062603-7490-2-git-send-email-srinath.mannam@broadcom.com>
- <20180927172758.GA17761@bogus>
- <b1099893-f704-8ca6-a945-2711d6945a0f@gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <f20afabc-e712-8f35-8dd6-d42b9a0131f0@broadcom.com>
-Date:   Thu, 27 Sep 2018 11:00:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 27 Sep 2018 20:21:37 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id AF9F4242677;
+        Thu, 27 Sep 2018 14:02:09 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id l0Q7b_oDttTC; Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 8BD3224266F;
+        Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8BD3224266F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1538071328;
+        bh=yXlhQ35jnZf6icPPCSOWEouOm7NFShHC25nup+qr6Qw=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=cePcWO8Dak50DE69JL99ikvnNySdMt3Yqgrz6BMdzNKBKUatC4PWRZ/VIU60zIdhS
+         JNfqrx5b66pXg3kpz43cTXO3jK6MAUgzElWb4CrlV+bpiWWw7JAQ29VvuUfT2bNojM
+         t1aYSqXQQOQH+HfwM8GptgJemKytnRVzFcl8R4qwHSoGdkWD6CEzDrUozfsxjvYC8R
+         aJbJEswf01d4CVFWFeXe7Ywd8JwnU3tc7hBL05qsjPs4bvnOq/j/ilXD87kAMKBc8B
+         qKDHzony/uVITcw/+6JST/666wgeIvWAJ85tLdcqu8xB2ttYKa2IeVZS4e2WAJ2Kte
+         XXJr5g0tVka3w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id ucwMxwGiL1Or; Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 6A5A4242668;
+        Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
+Date:   Thu, 27 Sep 2018 14:02:08 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     shuah kh <shuah.kh@samsung.com>
+Cc:     rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        stable <stable@vger.kernel.org>, shuah <shuah@kernel.org>
+Message-ID: <44897232.11546.1538071328396.JavaMail.zimbra@efficios.com>
+In-Reply-To: <a7bae2ff-1f4d-dbfc-43f8-e7a89f319abb@samsung.com>
+References: <20180918135328.32034-1-mathieu.desnoyers@efficios.com> <1367962117.10271.1537897176578.JavaMail.zimbra@efficios.com> <CGME20180927132250epcas4p3d0775cc258f6112d27bdad359fc6e416@epcas4p3.samsung.com> <20180927092235.77282e35@vmware.local.home> <a7bae2ff-1f4d-dbfc-43f8-e7a89f319abb@samsung.com>
+Subject: Re: [PATCH] rseq/selftests: fix parametrized test with -fpie
 MIME-Version: 1.0
-In-Reply-To: <b1099893-f704-8ca6-a945-2711d6945a0f@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.9_GA_3019 (ZimbraWebClient - FF52 (Linux)/8.8.9_GA_3019)
+Thread-Topic: rseq/selftests: fix parametrized test with -fpie
+Thread-Index: eUxmozW8H4gJdhHOEwUVY+Vn8yzteA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+----- On Sep 27, 2018, at 9:58 AM, Shuah Khan shuah.kh@samsung.com wrote:
 
+> On 09/27/2018 07:22 AM, Steven Rostedt wrote:
+>> On Tue, 25 Sep 2018 13:39:36 -0400 (EDT)
+>> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+>> 
+>>> ----- On Sep 18, 2018, at 9:53 AM, Mathieu Desnoyers
+>>> mathieu.desnoyers@efficios.com wrote:
+>>>
+>>>> On x86-64, the parametrized selftest code for rseq crashes with a
+>>>> segmentation fault when compiled with -fpie. This happens when the
+>>>> param_test binary is loaded at an address beyond 32-bit on x86-64.
+>>>>
+>>>> The issue is caused by use of a 32-bit register to hold the address
+>>>> of the loop counter variable.
+>>>>
+>>>> Fix this by using a 64-bit register to calculate the address of the
+>>>> loop counter variables as an offset from rip.
+>>>
+>>> Should this fix go through tip or the selftests tree ?
+>>>
+>> 
+>> I usually have changes like this pulled through Shuah's tree with an
+>> ack from the maintainer of the code that it tests.
+>> 
+>> -- Steve
+>> 
+> 
+> Right that is what I prefer. I usually wait for an Ack. I can pull this
+> in.
 
-On 18-09-27 10:31 AM, Florian Fainelli wrote:
-> On 09/27/2018 10:27 AM, Rob Herring wrote:
->> On Thu, Sep 27, 2018 at 09:06:41PM +0530, Srinath Mannam wrote:
->>> From: Pramod Kumar <pramod.kumar@broadcom.com>
->>>
->>> Add binding document for supported thermal implementation
->>> in Stingray.
->>>
->>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
->>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>> ---
->>>   .../bindings/thermal/brcm,sr-thermal.txt           | 25 ++++++++++++++++++++++
->>>   1 file changed, 25 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>> new file mode 100644
->>> index 0000000..717617b
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>> @@ -0,0 +1,25 @@
->>> +* Broadcom Stingray Thermal
->>> +
->>> +This binding describes thermal sensors that is part of Stingray SoCs.
->>> +
->>> +Required properties:
->>> +- compatible : Must be "brcm,sr-thermal"
->>> +- reg : memory where tmon data will be available.
->>> +- brcm,tmon-mask: A one cell bit mask of valid TMON sources.
->>> +                  Each bit represents single TMON source.
->>> +- brcm,max-crit-temp: Maximum supported critical temperature.
->> We already have a defined binding for setting trip points.
-> Indeed, and if you have multiple TMONs, they would in premise possibly
-> each have a different critical trip point.
-Which may be a good reason to go back to our original bindings which 
-were generic and had each sensor in its own node?
->>> +
->>> +Example:
->>> +	tmons {
->>> +		compatible = "simple-bus";
->>> +		#address-cells = <1>;
->>> +		#size-cells = <1>;
->>> +		ranges = <0x0 0x0 0x8f100000 0x100>;
->>> +
->>> +		tmon: thermal@0 {
->>> +			compatible = "brcm,sr-thermal";
->>> +			reg = <0 0x40>;
->>> +			brcm,tmon-mask = <0x3f>;
->>> +			brcm,max-crit-temp = <105000>;
->>> +		};
->>> +	};
->>> -- 
->>> 2.7.4
->>>
->
+I am maintainer of the code that it tests as well, so being both author
+of the selftest patch and giving an ack to it seems a bit silly. :) Other
+rseq co-maintainers could weight in though: Peter, Paul, and Boqun.
 
+Thanks,
+
+Mathieu
+
+> 
+> thanks,
+> -- Shuah
+> 
+> --
+> Shuah Khan
+> Sr. Linux Kernel Developer
+> Open Source Innovation Group
+> Samsung Research America(Silicon Valley)
+> shuah.kh@samsung.com
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
