@@ -2,156 +2,107 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C154C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E417C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A59A2170E
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 20:57:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1F132152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 21:01:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mV7ljj6/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A59A2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=percona.com header.i=@percona.com header.b="Yh8zpG4U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F132152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=percona.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbeI1DRS (ORCPT
+        id S1727451AbeI1DVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 23:17:18 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38621 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbeI1DRS (ORCPT
+        Thu, 27 Sep 2018 23:21:54 -0400
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:35823 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbeI1DVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 23:17:18 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z16-v6so166475wmi.3;
-        Thu, 27 Sep 2018 13:57:07 -0700 (PDT)
+        Thu, 27 Sep 2018 23:21:53 -0400
+Received: by mail-wm1-f47.google.com with SMTP id o18-v6so194553wmc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 14:01:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/MCnOWG9uwP6deUpl1LXHp074WRmvmwLGHPGftzWtNw=;
-        b=mV7ljj6/D04ms6W4K8VcQy3W+16/jbN17Sz0e+JLLu4PUdw0yfHz0Ktl94dgML9ePt
-         VYa01DK/NwZBHWeyRDVsFhDZCH6FwwYpPBAvMVhJwczL18mxRVUs7XC5R3YwZJU28kJt
-         4DfdPZEwTKWcuov/8HTJae8qtRI/6bjdjSecTQUJfcEtQ3RPevQBgxRHhnxulYJHfEee
-         HMtFWbHKmlL8m4T1/ozxLFLJlHs6u15HfRL3/jMm0tRZ3nRSe2cCPu3FyhdHZo8zH8su
-         HjLqFK+j++Z2ELfowCXdA2I+qUgKd3Dr2f9gMzPnoNh3fhXV1MX1WhI2KnicLtGYpE+g
-         zUDA==
+        d=percona.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WBz03yuexB8J1CjKn61uY6pVAgVZq8pavNpRm43Jya0=;
+        b=Yh8zpG4UTR6FhOVZABWDo/dE4D6+MjChssOz2VZEflRD1A4i+L5Jf0/s/7Y+Xs1mwL
+         2kJEazsDkPoLmK8sWRbt2snMRfR5lcmrsaISkXtc4s6F/o5WYp8zju/M/Qov7K9CTx8Z
+         vfT19291ob/H6pXDuAEJqynIIGAsFygiBqpDk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/MCnOWG9uwP6deUpl1LXHp074WRmvmwLGHPGftzWtNw=;
-        b=KSjKsZz5OQAUG48JOUzmEu7AcpSKNoY0iGCorD+YNLcrkhpJMiorAuMsiyvUCb1/LP
-         U5I259reXPxej54J5iEsXddisC7P0XiO3RRcnJQc1t9e1pPoggylITPjWxtjD0mhPjd3
-         YaNLuYTjLlO6UPkQLEAM0dPzSkV+m+U1GH7rQ9hWH8CA4El9IdyU3InDx6ksG3jDARrL
-         JaqGn21jGdlDk6H/wz5tP0taftL+uRaue23GO0PgHVczGmNrGctMYcu2URFwWlMS8CP0
-         kQPvmdIxBRgM7BzenBOsWX+0sfBnrHJlwxUINpoJT49+Gb1NbiIn3G5ZfEofGiBHlWh3
-         atUg==
-X-Gm-Message-State: ABuFfoiivoeM5NKvNwlV7aRl9DblbIw9YiapXo3ANGX/3SCaZMdAdvwr
-        UAlwW3O3eDIDLWi/62qkgkE=
-X-Google-Smtp-Source: ACcGV623lFMF7xzQXNsRPIByIr0YBivwPVM4LgY9tCEkcZuqp47qmXSV2LAIyXwsm2dPtpK8oIyLwQ==
-X-Received: by 2002:a1c:dac7:: with SMTP id r190-v6mr198351wmg.137.1538081826076;
-        Thu, 27 Sep 2018 13:57:06 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id u23-v6sm4215886wrc.42.2018.09.27.13.57.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 13:57:05 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v2] RDMA/qedr: Remove enumerated type qed_roce_ll2_tx_dest
-Date:   Thu, 27 Sep 2018 13:55:58 -0700
-Message-Id: <20180927205557.32026-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180927011820.13608-1-natechancellor@gmail.com>
-References: <20180927011820.13608-1-natechancellor@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WBz03yuexB8J1CjKn61uY6pVAgVZq8pavNpRm43Jya0=;
+        b=Fk0dVfg/VDUeWFneBHTOkSQ0bx5LE22cJ3B/1PKCnGRZkGnrNLiiyY3pzaBSCAcN/I
+         SQVxRajtbdU8ANzZ1f43CXHnTC9jefipJ86Zw2I4hOLduQ9nELfEP2BOB5gY3MRR+pN/
+         Fv5fW+PHyfBCuRBWu2d966hk/XFMchsiH4Wd4zsWzhTUkn7w6MYoR2JQY0DZrBT0J/z4
+         jNNd5vgILFyMeDfqCIUqQcQ6CPRHspCmWwl415UqWgIzDvKCe88cBc7mwcEXTCe7n0i3
+         V+Kujro8qaGcpyQuRkJlSuW5D2RQrLgsblyyIAh6QHPDiiEd4CR1CEMAk7xFoTE/pFQV
+         2gsQ==
+X-Gm-Message-State: ABuFfohCUZ6jJhgdOG+85qHn0gE4VQS9nEHM+aE0stGXs9+m0oKKf/gJ
+        N6ULQfixHa09qno0AKyJP1nNCLNL1DW5dTKDnCznhHZoLOc=
+X-Google-Smtp-Source: ACcGV63vhDTHtAUYzYDTHdJXXPyTd3c/8TxTgUtF3wEEMVJMVVj592gwLEiBH6fa9qagYKz16Aaf9Ln7LiMm3fQFgb4=
+X-Received: by 2002:a1c:bc86:: with SMTP id m128-v6mr200236wmf.147.1538082101591;
+ Thu, 27 Sep 2018 14:01:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a1c:1444:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 14:01:01
+ -0700 (PDT)
+In-Reply-To: <04f4b19f-2990-6ad3-1ae4-b41da1ca089f@schaufler-ca.com>
+References: <CAGQTitMPcrHRhFVLfApe21T7hYyeX05ffuSJj452+f+ZksmQqg@mail.gmail.com>
+ <CAGQTitONf2L_p9JQ7oMac+Sw2wdJZg_z2MHucpdf87vvBBgF0g@mail.gmail.com> <04f4b19f-2990-6ad3-1ae4-b41da1ca089f@schaufler-ca.com>
+From:   Roel Van de Paar <roel.vandepaar@percona.com>
+Date:   Fri, 28 Sep 2018 07:01:01 +1000
+Message-ID: <CAGQTitOKGj_+DDxaGnfRRdZ+TJxhZ8SxBLcZzLF-vtxYDZXbEA@mail.gmail.com>
+Subject: Re: Bug: getcwd: cannot access parent directories
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is explicitly converted to another.
+Hi Casey,
 
-drivers/infiniband/hw/qedr/qedr_roce_cm.c:198:28: warning: implicit
-conversion from enumeration type 'enum qed_roce_ll2_tx_dest' to
-different enumeration type 'enum qed_ll2_tx_dest' [-Wenum-conversion]
-        ll2_tx_pkt.tx_dest = pkt->tx_dest;
-                           ~ ~~~~~^~~~~~~
-1 warning generated.
+On 28 September 2018 at 05:46, Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Turns out that QED_ROCE_LL2_TX_DEST_NW and QED_ROCE_LL2_TX_DEST_LB are
-only used once in the whole tree and QED_ROCE_LL2_TX_DEST_MAX is used
-nowhere. Remove them and use the equivalent values from qed_ll2_tx_dest
-in their place.
+> Please try doing this under strace, in particular
+>
+>         strace mv 3 /dev/shm
+>
+> What you will see is that the mv command does a copy/delete
+> when changing filesystems. The original "2" directory, which
+> is your current working directory, will have no parent as the
+> original "1" will have been removed.
+>
+>>>
+>>> Back to session 1
+>>>   cd ..   # fail
+>>>   cd ..   # fail
+>>>   cd ..   # fail
+>>>   cd ..   # fail
+>>>   cd ..   # fail
+>>>   cd ..   # fail
+>>>   cd ..   # works, but to completely incorrect directory given the
+>>> many 'cd ..'```
+>>>
+>>> The problem is made more clear here by using 3/4/5/6/7 but you can
+>>> also just use a single subdir to see it
+>> Roel Van de Paar, Technical Director - Quality Assurance, Percona
+>
+> The system is working properly.
 
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+Thank you for the analysis.
 
-v1 -> v2:
+I can see your point, but it looks like this could be improved by
+matching the behavior when not changing filesystems.
 
-* Rather than using an explicit cast, just convert the uses to the
-  appropriate values and delete the duplicated enum.
-
- drivers/infiniband/hw/qedr/qedr_roce_cm.c |  4 ++--
- include/linux/qed/qed_rdma_if.h           | 11 +----------
- 2 files changed, 3 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/infiniband/hw/qedr/qedr_roce_cm.c b/drivers/infiniband/hw/qedr/qedr_roce_cm.c
-index 85578887421b..e1ac2fd60bb1 100644
---- a/drivers/infiniband/hw/qedr/qedr_roce_cm.c
-+++ b/drivers/infiniband/hw/qedr/qedr_roce_cm.c
-@@ -519,9 +519,9 @@ static inline int qedr_gsi_build_packet(struct qedr_dev *dev,
- 	}
- 
- 	if (ether_addr_equal(udh.eth.smac_h, udh.eth.dmac_h))
--		packet->tx_dest = QED_ROCE_LL2_TX_DEST_LB;
-+		packet->tx_dest = QED_LL2_TX_DEST_LB;
- 	else
--		packet->tx_dest = QED_ROCE_LL2_TX_DEST_NW;
-+		packet->tx_dest = QED_LL2_TX_DEST_NW;
- 
- 	packet->roce_mode = roce_mode;
- 	memcpy(packet->header.vaddr, ud_header_buffer, header_size);
-diff --git a/include/linux/qed/qed_rdma_if.h b/include/linux/qed/qed_rdma_if.h
-index df4d13f7e191..d15f8e4815e3 100644
---- a/include/linux/qed/qed_rdma_if.h
-+++ b/include/linux/qed/qed_rdma_if.h
-@@ -39,15 +39,6 @@
- #include <linux/qed/qed_ll2_if.h>
- #include <linux/qed/rdma_common.h>
- 
--enum qed_roce_ll2_tx_dest {
--	/* Light L2 TX Destination to the Network */
--	QED_ROCE_LL2_TX_DEST_NW,
--
--	/* Light L2 TX Destination to the Loopback */
--	QED_ROCE_LL2_TX_DEST_LB,
--	QED_ROCE_LL2_TX_DEST_MAX
--};
--
- #define QED_RDMA_MAX_CNQ_SIZE               (0xFFFF)
- 
- /* rdma interface */
-@@ -581,7 +572,7 @@ struct qed_roce_ll2_packet {
- 	int n_seg;
- 	struct qed_roce_ll2_buffer payload[RDMA_MAX_SGE_PER_SQ_WQE];
- 	int roce_mode;
--	enum qed_roce_ll2_tx_dest tx_dest;
-+	enum qed_ll2_tx_dest tx_dest;
- };
- 
- enum qed_rdma_type {
--- 
-2.19.0
-
+Also, there is a difference between working when it is a different
+filesystem or not - so there is inconsistency in operation.
