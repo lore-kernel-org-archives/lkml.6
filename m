@@ -2,130 +2,155 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E15C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE78C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DEED2157C
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CA9621570
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 08:51:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MxmXSZVp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DEED2157C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="hsWkxJmE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA9621570
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeI0PIa (ORCPT
+        id S1727529AbeI0PIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 11:08:30 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33099 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727478AbeI0PIW (ORCPT
+        Thu, 27 Sep 2018 11:08:41 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38684 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727097AbeI0PIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 11:08:22 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f10-v6so1692414wrs.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:51:13 -0700 (PDT)
+        Thu, 27 Sep 2018 11:08:40 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x17-v6so1410937pfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 01:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TfIdZcBS7cb/g0U3CKumXnOhft7wKZSPUCftG/nZTIU=;
-        b=MxmXSZVp9aZeoV7cZf9KfayGE16KbjJtimG5liLaZNVP2zRf2ka2NLhsepqy2hQH5D
-         VL/D1UATC2OZdEDtaH9HRBuuTL/QPFCktrwVSqgaW1FLpdj1GTBrlfTBpxFBSIzwHRqc
-         NlBi66GGIhZQeDCYg19m3yCWKfjxjyU9ajlIw=
+        bh=iBc/SOI345QfGxvKdfvkTT+7P+THgElx/Kz0O2jep8E=;
+        b=hsWkxJmEc8nb065d+Md/1f9dww/VL5fh1JqJomdQUpOoTfXdw8CjKpdT3ItZbrhu0n
+         nGoxqbRlOwOrKunZOnKOL9nG60bX+8OJYrZ4Hh/bR4SAUR6Q9jCJpMXODkpzgJ7UgnBR
+         mEsiK9SS1c9ifkWWh8ZVeygcWP1zAOMWI0RRw6naR1i+kk28pSKwZNQKTWcrVELTYdeT
+         KXxxh9vSHyQn9oEf3+5leCcB0ekZiFIluovUj1y3iykGiCq4FYc27kjxnq68HdayvWJP
+         UhUsanhIAI7mRZAoJbHT5BWUliBeV3Hvq17bMqWhTh9eobhWWGkldM7JA/ac1Z5eoVz8
+         gGhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TfIdZcBS7cb/g0U3CKumXnOhft7wKZSPUCftG/nZTIU=;
-        b=okVus9TFWUlIi+6Da+Fa7zmJvBcX5zYJS6w6je3ozrJm48E/pft8YpxFk///IEUOJT
-         i11Kpq4I2ndMp05jzboJAOmNPXsuJx9ocHlzq+uQybgNXupOQsMIQdH/gSKHvfDp0SDL
-         bIP1emdNzl0j/K5XubsUZgGskHhXeZk4jZdyysK14UgMMksev4Ibw5qrXnDT1nHOIvHV
-         V36GL8JTFLLeZ0mScPKsbk6SxFnhXxzemBPGxLIU5r2soms2b6Js/S0DJ5CBhDnJUxrk
-         fZ00Mw3wu83dnubYdQRcc0WDYs5LUH+uGACHFuA3hyuWr1arx1HM3a3dlVUCBDn8vtrA
-         JQ2g==
-X-Gm-Message-State: ABuFfoivT7tznwVjPVZ0pe8fR/X6TyZKoC2qFdQKX7OGYpcm0911bmXT
-        R2OV+feMuUqACiRtHdG6yX4LnnvBaqg=
-X-Google-Smtp-Source: ACcGV62lpj0tO23totT9GMhswf5PW9PtiG4HFA4bMpYhxLRzCnmGH5WnlKYypepbQ8S6upGA5SIvRA==
-X-Received: by 2002:adf:ffc3:: with SMTP id x3-v6mr8154410wrs.137.1538038272552;
-        Thu, 27 Sep 2018 01:51:12 -0700 (PDT)
-Received: from rev03.home ([2a01:cb1d:112:6f00:546e:3c44:5966:2f5e])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm1304055wrd.74.2018.09.27.01.51.11
+        bh=iBc/SOI345QfGxvKdfvkTT+7P+THgElx/Kz0O2jep8E=;
+        b=sJN2OWkrRUmx/iT7SZJwCy2rB1T6y29dN9qYCLkjlxnC+fHGtFNdOmvRVL7y3IW86B
+         MjeIIwVkQ8NnX2Tzhhns+X15u4a7ehO68H4bCmqpifRyMY5DH7PFQy5s1whPet7OYlAK
+         s5mF+kD5/A0G8TkbWKyUOyf40l4qY16bsvmXwXvQd0nJqf4V3UtlCjLnTUYPrCEUa+IG
+         l1mCksfgoJjXYtka/fUozIh2qulFgPnsvFIaalUX2ypDMMi/GSpPh8NRXPtKLViPZbSL
+         sZqx8lHmQKlVpefEnQFRo0MfTbsymUKPtZJpg/vVnIYBS39+e86cTfytLQL04Ijux5Je
+         zlUg==
+X-Gm-Message-State: ABuFfogOPSP9jDEJzESZRSvd6nkZ7LxQFmUjFpa1/o7y8Dw/bg8XsLoT
+        jjCGpvSQAQZjuRi0o0N7lAS8Zg==
+X-Google-Smtp-Source: ACcGV61Y+SYRLeTsHN4EGaEMW0VH5vRV/hZ2Zf2ZBJrIJGEHULr4x1cU6xd69C2UtZVoHbigoaCNCw==
+X-Received: by 2002:a63:574c:: with SMTP id h12-v6mr9215162pgm.423.1538038291225;
+        Thu, 27 Sep 2018 01:51:31 -0700 (PDT)
+Received: from localhost.localdomain (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
+        by smtp.gmail.com with ESMTPSA id b64-v6sm2330188pfg.66.2018.09.27.01.51.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 01:51:11 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ivan Hu <ivan.hu@canonical.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Robinson <pbrobinson@redhat.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 11/11] x86: boot: Fix EFI stub alignment
-Date:   Thu, 27 Sep 2018 10:50:38 +0200
-Message-Id: <20180927085039.8391-12-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
-References: <20180927085039.8391-1-ard.biesheuvel@linaro.org>
+        Thu, 27 Sep 2018 01:51:30 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] platform/x86: asus-wmi: Simplify the keyboard brightness updating process
+Date:   Thu, 27 Sep 2018 16:50:09 +0800
+Message-Id: <20180927085009.4190-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180816084104.434-1-jian-hong@endlessm.com>
+References: <20180816084104.434-1-jian-hong@endlessm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+The original asus-wmi queues a work which calls the ACPI/WMI methods to
+update the keyboard LED brightness.  Similar drivers - acer-wmi,
+dell-wmi-led just call the ACPI/WMI methods directly without workqueues.
 
-We currently align the end of the compressed image to a multiple of
-16.  However, the PE-COFF header included in the EFI stub says that
-the file alignment is 32 bytes, and when adding an EFI signature to
-the file it must first be padded to this alignment.
+This patch simplifies the keyboard brightness updating process which
+calls the kbd_led_update function directly without workqueue in
+asus-wmi.
 
-sbsigntool commands warn about this:
-
-  warning: file-aligned section .text extends beyond end of file
-  warning: checksum areas are greater than image size. Invalid section table?
-
-Worse, pesign -at least when creating a detached signature- uses the
-hash of the unpadded file, resulting in an invalid signature if
-padding is required.
-
-Avoid both these problems by increasing alignment to 32 bytes when
-CONFIG_EFI_STUB is enabled.
-
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
 ---
- arch/x86/boot/tools/build.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/platform/x86/asus-wmi.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
-index d4e6cd4577e5..bf0e82400358 100644
---- a/arch/x86/boot/tools/build.c
-+++ b/arch/x86/boot/tools/build.c
-@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
- 		die("Unable to mmap '%s': %m", argv[2]);
- 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
- 	sys_size = (sz + 15 + 4) / 16;
-+#ifdef CONFIG_EFI_STUB
-+	/*
-+	 * COFF requires minimum 32-byte alignment of sections, and
-+	 * adding a signature is problematic without that alignment.
-+	 */
-+	sys_size = (sys_size + 1) & ~1;
-+#endif
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 2d6e272315a8..9441cce636e6 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -239,7 +239,6 @@ struct asus_wmi {
+ 	int lightbar_led_wk;
+ 	struct workqueue_struct *led_workqueue;
+ 	struct work_struct tpd_led_work;
+-	struct work_struct kbd_led_work;
+ 	struct work_struct wlan_led_work;
+ 	struct work_struct lightbar_led_work;
  
- 	/* Patch the setup code with the appropriate size parameters */
- 	buf[0x1f1] = setup_sectors-1;
+@@ -456,12 +455,9 @@ static enum led_brightness tpd_led_get(struct led_classdev *led_cdev)
+ 	return read_tpd_led_state(asus);
+ }
+ 
+-static void kbd_led_update(struct work_struct *work)
++static void kbd_led_update(struct asus_wmi *asus)
+ {
+ 	int ctrl_param = 0;
+-	struct asus_wmi *asus;
+-
+-	asus = container_of(work, struct asus_wmi, kbd_led_work);
+ 
+ 	/*
+ 	 * bits 0-2: level
+@@ -516,7 +512,7 @@ static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
+ 		value = 0;
+ 
+ 	asus->kbd_led_wk = value;
+-	queue_work(asus->led_workqueue, &asus->kbd_led_work);
++	kbd_led_update(asus);
+ }
+ 
+ static void kbd_led_set(struct led_classdev *led_cdev,
+@@ -671,8 +667,6 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+ 
+ 	led_val = kbd_led_read(asus, NULL, NULL);
+ 	if (led_val >= 0) {
+-		INIT_WORK(&asus->kbd_led_work, kbd_led_update);
+-
+ 		asus->kbd_led_wk = led_val;
+ 		asus->kbd_led.name = "asus::kbd_backlight";
+ 		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+@@ -2310,7 +2304,7 @@ static int asus_hotk_resume(struct device *device)
+ 	struct asus_wmi *asus = dev_get_drvdata(device);
+ 
+ 	if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
+-		queue_work(asus->led_workqueue, &asus->kbd_led_work);
++		kbd_led_update(asus);
+ 
+ 	return 0;
+ }
+@@ -2346,7 +2340,7 @@ static int asus_hotk_restore(struct device *device)
+ 		rfkill_set_sw_state(asus->uwb.rfkill, bl);
+ 	}
+ 	if (!IS_ERR_OR_NULL(asus->kbd_led.dev))
+-		queue_work(asus->led_workqueue, &asus->kbd_led_work);
++		kbd_led_update(asus);
+ 
+ 	return 0;
+ }
 -- 
-2.18.0
+2.11.0
 
