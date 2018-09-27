@@ -2,164 +2,336 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B46C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CF3C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2130821580
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:51:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G9Q61Zw7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2130821580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6C16521580
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 14:52:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C16521580
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeI0VK3 (ORCPT
+        id S1728437AbeI0VKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:10:29 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32854 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbeI0VK2 (ORCPT
+        Thu, 27 Sep 2018 17:10:39 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43804 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727280AbeI0VKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:10:28 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f10-v6so2986025wrs.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 07:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LqqPzQb5rQKmQSK7Lm4nztokxHt2+EweWXTUlu6+fsA=;
-        b=G9Q61Zw7AvfgvRicmMgoe0AStVH40izkd7SM/8qLl8TRaLFgDpRHnjAPlSV1DMdCKg
-         lSJ4gx/mqrNoVFTQ+unVTgrjq1rf0j1F6byP6YE0jMN/w8ngEny4i40cJT+GSsO3snO5
-         PPx/gZucA4Du4MaqnS8RLiF/t2AgbcyPHIMD8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=LqqPzQb5rQKmQSK7Lm4nztokxHt2+EweWXTUlu6+fsA=;
-        b=BHRNDykXriWsQYpgSCAr7Z6Pj3S4RdzQ+2EaNG2p8GXHSKulney4dYWgV6KaObVmma
-         dh3ZwrK0RvHavg6LfMkGQnkjlYR194k0xB8DvpT65HHBr5qNaV8krQU1IKjz7b3E4+YU
-         QaKPrmiNnmoBFqI4O4Gebz+18PYKqIC43qiFxPq/JzVOUKUC3G7xsI+Xj7uwVZ3wAdsm
-         e0vObkKXG3L9G1JQCA3bRtT3YosVIUd03p/5rX9Uri14kLw8RzDV2dnfMcFiHlgMaShN
-         WV41GPOfP8zJPTAOI+Zg0mfiJbwPy+ZsTtgYZPtb0KV3g54DjxeXkwQLFsPQrH/jgwjV
-         y0gA==
-X-Gm-Message-State: ABuFfoipSgJ74pVfroxStzvFyiMmVgXFZCTbITT+PiszePLhO4stpX0Z
-        Kz+ctJonAPS0nmXCgjAh5zuUBg==
-X-Google-Smtp-Source: ACcGV61nkJsXQrtq+1tFBSBPJQu8hmPkaDLT7xWt8w1vX1rgs4BCKfblKTcOYXCIrpRWk+v8yQnFog==
-X-Received: by 2002:adf:ef0a:: with SMTP id e10-v6mr948078wro.292.1538059909962;
-        Thu, 27 Sep 2018 07:51:49 -0700 (PDT)
-Received: from localhost.localdomain (30.216.136.77.rev.sfr.net. [77.136.216.30])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm2398023wrd.74.2018.09.27.07.51.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 27 Sep 2018 07:51:49 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     mingo@kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-kernel@vger.kernel.org (open list:CLOCKSOURCE, CLOCKEVENT DRIVERS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip
-        (AT91) SoC support)
-Subject: [PATCH] clocksource/drivers/timer-atmel-pit: Properly handle error cases
-Date:   Thu, 27 Sep 2018 16:51:35 +0200
-Message-Id: <1538059895-10049-1-git-send-email-daniel.lezcano@linaro.org>
+        Thu, 27 Sep 2018 17:10:25 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437529|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.CwbSExE_1538059873;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwbSExE_1538059873)
+          by smtp.aliyun-inc.com(10.147.41.178);
+          Thu, 27 Sep 2018 22:51:13 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, green.hu@gmail.com,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V6 16/33] csky: SMP support
+Date:   Thu, 27 Sep 2018 22:47:53 +0800
+Message-Id: <3738782b6821ed5f2110c1b4d76c6bfde3328947.1538058840.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <ea561d6f-22f8-b1f7-a063-d559900a9004@linaro.org>
-References: <ea561d6f-22f8-b1f7-a063-d559900a9004@linaro.org>
+In-Reply-To: <cover.1538058840.git.ren_guo@c-sky.com>
+References: <cover.1538058840.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1538058840.git.ren_guo@c-sky.com>
+References: <cover.1538058840.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This patch adds boot, ipi, hotplug code for SMP.
 
-The smatch utility reports a possible leak:
-
-smatch warnings:
-drivers/clocksource/timer-atmel-pit.c:183 at91sam926x_pit_dt_init() warn: possible memory leak of 'data'
-
-Ensure data is freed before exiting with an error.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- drivers/clocksource/timer-atmel-pit.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ arch/csky/include/asm/smp.h |  26 +++++
+ arch/csky/kernel/smp.c      | 234 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 260 insertions(+)
+ create mode 100644 arch/csky/include/asm/smp.h
+ create mode 100644 arch/csky/kernel/smp.c
 
-diff --git a/drivers/clocksource/timer-atmel-pit.c b/drivers/clocksource/timer-atmel-pit.c
-index ec8a437..2fab18f 100644
---- a/drivers/clocksource/timer-atmel-pit.c
-+++ b/drivers/clocksource/timer-atmel-pit.c
-@@ -180,26 +180,29 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 	data->base = of_iomap(node, 0);
- 	if (!data->base) {
- 		pr_err("Could not map PIT address\n");
--		return -ENXIO;
-+		ret = -ENXIO;
-+		goto exit;
- 	}
- 
- 	data->mck = of_clk_get(node, 0);
- 	if (IS_ERR(data->mck)) {
- 		pr_err("Unable to get mck clk\n");
--		return PTR_ERR(data->mck);
-+		ret = PTR_ERR(data->mck);
-+		goto exit;
- 	}
- 
- 	ret = clk_prepare_enable(data->mck);
- 	if (ret) {
- 		pr_err("Unable to enable mck\n");
--		return ret;
-+		goto exit;
- 	}
- 
- 	/* Get the interrupts property */
- 	data->irq = irq_of_parse_and_map(node, 0);
- 	if (!data->irq) {
- 		pr_err("Unable to get IRQ from DT\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto exit;
- 	}
- 
- 	/*
-@@ -227,7 +230,7 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 	ret = clocksource_register_hz(&data->clksrc, pit_rate);
- 	if (ret) {
- 		pr_err("Failed to register clocksource\n");
--		return ret;
-+		goto exit;
- 	}
- 
- 	/* Set up irq handler */
-@@ -236,7 +239,8 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 			  "at91_tick", data);
- 	if (ret) {
- 		pr_err("Unable to setup IRQ\n");
--		return ret;
-+		clocksource_unregister(&data->clksrc);
-+		goto exit;
- 	}
- 
- 	/* Set up and register clockevents */
-@@ -254,6 +258,10 @@ static int __init at91sam926x_pit_dt_init(struct device_node *node)
- 	clockevents_register_device(&data->clkevt);
- 
- 	return 0;
+diff --git a/arch/csky/include/asm/smp.h b/arch/csky/include/asm/smp.h
+new file mode 100644
+index 0000000..9a53abf
+--- /dev/null
++++ b/arch/csky/include/asm/smp.h
+@@ -0,0 +1,26 @@
++#ifndef __ASM_CSKY_SMP_H
++#define __ASM_CSKY_SMP_H
 +
-+exit:
-+	kfree(data);
-+	return ret;
- }
- TIMER_OF_DECLARE(at91sam926x_pit, "atmel,at91sam9260-pit",
- 		       at91sam926x_pit_dt_init);
++#include <linux/cpumask.h>
++#include <linux/irqreturn.h>
++#include <linux/threads.h>
++
++#ifdef CONFIG_SMP
++
++void __init setup_smp(void);
++
++void __init setup_smp_ipi(void);
++
++void __init enable_smp_ipi(void);
++
++void arch_send_call_function_ipi_mask(struct cpumask *mask);
++
++void arch_send_call_function_single_ipi(int cpu);
++
++void __init set_send_ipi(void (*func)(const unsigned long *, unsigned long));
++
++#define raw_smp_processor_id()	(current_thread_info()->cpu)
++
++#endif /* CONFIG_SMP */
++
++#endif /* __ASM_CSKY_SMP_H */
+diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
+new file mode 100644
+index 0000000..522c73f
+--- /dev/null
++++ b/arch/csky/kernel/smp.c
+@@ -0,0 +1,234 @@
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/mm.h>
++#include <linux/sched.h>
++#include <linux/kernel_stat.h>
++#include <linux/notifier.h>
++#include <linux/cpu.h>
++#include <linux/percpu.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/of.h>
++#include <linux/sched/task_stack.h>
++#include <linux/sched/mm.h>
++#include <asm/irq.h>
++#include <asm/traps.h>
++#include <asm/sections.h>
++#include <asm/mmu_context.h>
++#include <asm/pgalloc.h>
++
++#define IPI_IRQ	15
++
++static struct {
++	unsigned long bits ____cacheline_aligned;
++} ipi_data[NR_CPUS] __cacheline_aligned;
++
++enum ipi_message_type {
++	IPI_EMPTY,
++	IPI_RESCHEDULE,
++	IPI_CALL_FUNC,
++	IPI_MAX
++};
++
++static irqreturn_t handle_ipi(int irq, void *dev)
++{
++	unsigned long *pending_ipis = &ipi_data[smp_processor_id()].bits;
++
++	while (true) {
++		unsigned long ops;
++
++		ops = xchg(pending_ipis, 0);
++		if (ops == 0)
++			return IRQ_HANDLED;
++
++		if (ops & (1 << IPI_RESCHEDULE))
++			scheduler_ipi();
++
++		if (ops & (1 << IPI_CALL_FUNC))
++			generic_smp_call_function_interrupt();
++
++		BUG_ON((ops >> IPI_MAX) != 0);
++	}
++
++	return IRQ_HANDLED;
++}
++
++static void (*send_arch_ipi)(const unsigned long *mask, unsigned long irq) = NULL;
++
++void __init set_send_ipi(void (*func)(const unsigned long *, unsigned long))
++{
++	if (send_arch_ipi)
++		return;
++
++	send_arch_ipi = func;
++}
++
++static void
++send_ipi_message(const struct cpumask *to_whom, enum ipi_message_type operation)
++{
++	int i;
++
++	for_each_cpu(i, to_whom)
++		set_bit(operation, &ipi_data[i].bits);
++
++	smp_mb();
++	send_arch_ipi(cpumask_bits(to_whom), IPI_IRQ);
++}
++
++void arch_send_call_function_ipi_mask(struct cpumask *mask)
++{
++	send_ipi_message(mask, IPI_CALL_FUNC);
++}
++
++void arch_send_call_function_single_ipi(int cpu)
++{
++	send_ipi_message(cpumask_of(cpu), IPI_CALL_FUNC);
++}
++
++static void ipi_stop(void *unused)
++{
++	while (1);
++}
++
++void smp_send_stop(void)
++{
++	on_each_cpu(ipi_stop, NULL, 1);
++}
++
++void smp_send_reschedule(int cpu)
++{
++	send_ipi_message(cpumask_of(cpu), IPI_RESCHEDULE);
++}
++
++void *__cpu_up_stack_pointer[NR_CPUS];
++void *__cpu_up_task_pointer[NR_CPUS];
++
++void __init smp_prepare_boot_cpu(void)
++{
++}
++
++void __init smp_prepare_cpus(unsigned int max_cpus)
++{
++}
++
++static int ipi_dummy_dev;
++
++void __init enable_smp_ipi(void)
++{
++	enable_percpu_irq(IPI_IRQ, 0);
++}
++
++void __init setup_smp_ipi(void)
++{
++	int rc;
++
++	irq_create_mapping(NULL, IPI_IRQ);
++
++	rc = request_percpu_irq(IPI_IRQ, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
++	if (rc)
++		panic("%s IRQ request failed\n", __func__);
++
++	enable_smp_ipi();
++}
++
++void __init setup_smp(void)
++{
++	struct device_node *node = NULL;
++	int cpu;
++
++	while ((node = of_find_node_by_type(node, "cpu"))) {
++		if (!of_device_is_available(node))
++			continue;
++
++		if (of_property_read_u32(node, "reg", &cpu))
++			continue;
++
++		if (cpu >= NR_CPUS)
++			continue;
++
++		set_cpu_possible(cpu, true);
++		set_cpu_present(cpu, true);
++	}
++}
++
++extern void _start_smp_secondary(void);
++
++volatile unsigned int secondary_hint;
++volatile unsigned int secondary_ccr;
++volatile unsigned int secondary_stack;
++
++int __cpu_up(unsigned int cpu, struct task_struct *tidle)
++{
++	unsigned int tmp;
++
++	secondary_stack = (unsigned int)tidle->stack + THREAD_SIZE;
++
++	secondary_hint = mfcr("cr31");
++
++	secondary_ccr  = mfcr("cr18");
++
++	/* Flush dcache */
++	mtcr("cr17", 0x22);
++
++	/* Enable cpu in SMP reset ctrl reg */
++	tmp = mfcr("cr<29, 0>");
++	tmp |= 1 << cpu;
++	mtcr("cr<29, 0>", tmp);
++
++	/* Wait for the cpu online */
++	while (!cpu_online(cpu));
++
++	secondary_stack = 0;
++
++	return 0;
++}
++
++void __init smp_cpus_done(unsigned int max_cpus)
++{
++}
++
++int setup_profiling_timer(unsigned int multiplier)
++{
++	return -EINVAL;
++}
++
++void csky_start_secondary(void)
++{
++	struct mm_struct *mm = &init_mm;
++	unsigned int cpu = smp_processor_id();
++
++	mtcr("cr31", secondary_hint);
++	mtcr("cr18", secondary_ccr);
++
++	mtcr("vbr", vec_base);
++
++	flush_tlb_all();
++	write_mmu_pagemask(0);
++	TLBMISS_HANDLER_SETUP_PGD(swapper_pg_dir);
++	TLBMISS_HANDLER_SETUP_PGD_KERNEL(swapper_pg_dir);
++
++	asid_cache(smp_processor_id()) = ASID_FIRST_VERSION;
++
++#ifdef CONFIG_CPU_HAS_FPU
++	init_fpu();
++#endif
++
++	enable_smp_ipi();
++
++	mmget(mm);
++	mmgrab(mm);
++	current->active_mm = mm;
++	cpumask_set_cpu(cpu, mm_cpumask(mm));
++
++	notify_cpu_starting(cpu);
++	set_cpu_online(cpu, true);
++
++	pr_info("CPU%u Online: %s...\n", cpu, __func__);
++
++	local_irq_enable();
++	preempt_disable();
++	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
++}
 -- 
 2.7.4
 
