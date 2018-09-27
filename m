@@ -2,277 +2,152 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 288A7C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E0FC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB30E2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB30E2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id C66422152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 16:55:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="FXt/sOk2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C66422152F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=globallogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeI0XNr (ORCPT
+        id S1728666AbeI0XO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:13:47 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:58452 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728504AbeI0XNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:13:45 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g5ZYZ-0003f6-QF; Thu, 27 Sep 2018 10:54:34 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1g5ZYU-0001OW-3K; Thu, 27 Sep 2018 10:54:22 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Thu, 27 Sep 2018 19:14:29 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40504 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727622AbeI0XO2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:14:28 -0400
+Received: by mail-lf1-f66.google.com with SMTP id t22-v6so2738158lfb.7
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 09:55:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=globallogic.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=iM8c0ufFnsdAl7ba5T+Z3WN7gLhoLrTNvpjR0bH4AwM=;
+        b=FXt/sOk2SbP1AvGPLTOWaXNJ9cR+513RIm7Dt6AcPZDnSx93A93v2fVw4FcXXPxVfX
+         9HG6FnPSdxRX5sQTijVTqJwwQasX91r8h+UrrC0CPVoN2fSqnGO66AbKofmeTdJVlq4z
+         3cdCTwbDa45Ywz6Ggkp5862BNoSfRP4rVaozQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iM8c0ufFnsdAl7ba5T+Z3WN7gLhoLrTNvpjR0bH4AwM=;
+        b=I0DpS6Q+dxudC0PoppaCv0JrH9375xLHs1AprHoiCPd/o0fdo+Ak8ZQ8BUqDHITfnb
+         945iLa6dgLN4y0caDd49sM+6mqz21YriPktPrQ0eLPC3iI03vaURmRHiRhZ8hf9BjLHC
+         upoAo/+ve3jL845erjLAjECD2H4fZbC30ckg4f0igsEEkeqiHF7UqwROXrIG92Ndl96m
+         mOu4HkZUBUxwp0GD/EkrfURGuGVYquZj9pZpWji/KyL8MwFQjfjdA7rW0w2YiPy+355J
+         z5JMFzowf+iWMB4Df+u367BLtCJGq+gR3/Ua/tjHOpAg1oJ/0PrrTWPwxv6PTG8sWmB9
+         zRsg==
+X-Gm-Message-State: ABuFfohmgUrxcmSVKaZJeBPYgysXJNfB3090Y6Y7RUVr/+qy8fg9FQ57
+        1yK8QJzkBa7qx/sUmSSXWpx1Pg==
+X-Google-Smtp-Source: ACcGV60IVvJ1LmrupkgPSKGUTSqjIw+n1U2CyKX7tDFZzcRbrqnbFz86YNwU9RqIoJEQ9c/o4zxHOg==
+X-Received: by 2002:a19:635b:: with SMTP id x88-v6mr789639lfb.85.1538067316929;
+        Thu, 27 Sep 2018 09:55:16 -0700 (PDT)
+Received: from kbp1-lhp-f55466.synapse.com ([195.238.92.77])
+        by smtp.gmail.com with ESMTPSA id n3-v6sm533529lfi.96.2018.09.27.09.55.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 27 Sep 2018 09:55:16 -0700 (PDT)
+From:   Maksym Kokhan <maksym.kokhan@globallogic.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Date:   Thu, 27 Sep 2018 10:54:13 -0600
-Message-Id: <20180927165420.5290-7-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180927165420.5290-1-logang@deltatee.com>
-References: <20180927165420.5290-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-block@vger.kernel.org, sbates@raithlin.com, hch@lst.de, sagi@grimberg.me, bhelgaas@google.com, jgg@mellanox.com, maxg@mellanox.com, keith.busch@intel.com, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, axboe@kernel.dk, logang@deltatee.com, corbet@lwn.net
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v8 06/13] PCI/P2PDMA: Add P2P DMA driver writer's documentation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Daniel Walker <dwalker@fifo99.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Andrii Bordunov <aborduno@cisco.com>,
+        Ruslan Bilovol <rbilovol@cisco.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-mips@linux-mips.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 0/8] add generic builtin command line
+Date:   Thu, 27 Sep 2018 19:55:08 +0300
+Message-Id: <1538067309-5711-1-git-send-email-maksym.kokhan@globallogic.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a restructured text file describing how to write drivers
-with support for P2P DMA transactions. The document describes
-how to use the APIs that were added in the previous few
-commits.
+There were series of patches [1] for 4.3.0-rc3, that allowed
+architectures to use a generic builtin command line. I have rebased
+these patches on kernel 4.19.0-rc4.
 
-Also adds an index for the PCI documentation tree even though this
-is the only PCI document that has been converted to restructured text
-at this time.
+Things, modified in comparison with original patches:                            
+* There was some bug for mips, in the case when CONFIG_CMDLINE_PREPEND
+and CONFIG_CMDLINE_APPEND are empty and CMDLINE_OVERRIDE is not set,
+command line from bootloader was ignored, so I fixed it, modifying
+patch "add generic builtin command line".
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/driver-api/pci/index.rst  |   1 +
- Documentation/driver-api/pci/p2pdma.rst | 170 ++++++++++++++++++++++++
- 2 files changed, 171 insertions(+)
- create mode 100644 Documentation/driver-api/pci/p2pdma.rst
+* Implemented new patch to resolve conflict with new kernel, which
+modify EFI stub code. Unfortunately, I don't have capability to test
+this modification on real arm board with EFI.
 
-diff --git a/Documentation/driver-api/pci/index.rst b/Documentation/driver-api/pci/index.rst
-index eaf20b24bf7d..ecc7416c523b 100644
---- a/Documentation/driver-api/pci/index.rst
-+++ b/Documentation/driver-api/pci/index.rst
-@@ -11,6 +11,7 @@ The Linux PCI driver implementer's API guide
-    :maxdepth: 2
- 
-    pci
-+   p2pdma
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
-new file mode 100644
-index 000000000000..7febe66ee4f3
---- /dev/null
-+++ b/Documentation/driver-api/pci/p2pdma.rst
-@@ -0,0 +1,170 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+============================
-+PCI Peer-to-Peer DMA Support
-+============================
-+
-+The PCI bus has pretty decent support for performing DMA transfers
-+between two devices on the bus. This type of transaction is henceforth
-+called Peer-to-Peer (or P2P). However, there are a number of issues that
-+make P2P transactions tricky to do in a perfectly safe way.
-+
-+One of the biggest issues is that PCI doesn't require forwarding
-+transactions between hierarchy domains, and in PCIe, each Root Port
-+defines a separate hierarchy domain. To make things worse, there is no
-+simple way to determine if a given Root Complex supports this or not.
-+(See PCIe r4.0, sec 1.3.1). Therefore, as of this writing, the kernel
-+only supports doing P2P when the endpoints involved are all behind the
-+same PCI bridge, as such devices are all in the same PCI hierarchy
-+domain, and the spec guarantees that all transactions within the
-+hierarchy will be routable, but it does not require routing
-+between hierarchies.
-+
-+The second issue is that to make use of existing interfaces in Linux,
-+memory that is used for P2P transactions needs to be backed by struct
-+pages. However, PCI BARs are not typically cache coherent so there are
-+a few corner case gotchas with these pages so developers need to
-+be careful about what they do with them.
-+
-+
-+Driver Writer's Guide
-+=====================
-+
-+In a given P2P implementation there may be three or more different
-+types of kernel drivers in play:
-+
-+* Provider - A driver which provides or publishes P2P resources like
-+  memory or doorbell registers to other drivers.
-+* Client - A driver which makes use of a resource by setting up a
-+  DMA transaction to or from it.
-+* Orchestrator - A driver which orchestrates the flow of data between
-+  clients and providers.
-+
-+In many cases there could be overlap between these three types (i.e.,
-+it may be typical for a driver to be both a provider and a client).
-+
-+For example, in the NVMe Target Copy Offload implementation:
-+
-+* The NVMe PCI driver is both a client, provider and orchestrator
-+  in that it exposes any CMB (Controller Memory Buffer) as a P2P memory
-+  resource (provider), it accepts P2P memory pages as buffers in requests
-+  to be used directly (client) and it can also make use the CMB as
-+  submission queue entries.
-+* The RDMA driver is a client in this arrangement so that an RNIC
-+  can DMA directly to the memory exposed by the NVMe device.
-+* The NVMe Target driver (nvmet) can orchestrate the data from the RNIC
-+  to the P2P memory (CMB) and then to the NVMe device (and vice versa).
-+
-+This is currently the only arrangement supported by the kernel but
-+one could imagine slight tweaks to this that would allow for the same
-+functionality. For example, if a specific RNIC added a BAR with some
-+memory behind it, its driver could add support as a P2P provider and
-+then the NVMe Target could use the RNIC's memory instead of the CMB
-+in cases where the NVMe cards in use do not have CMB support.
-+
-+
-+Provider Drivers
-+----------------
-+
-+A provider simply needs to register a BAR (or a portion of a BAR)
-+as a P2P DMA resource using :c:func:`pci_p2pdma_add_resource()`.
-+This will register struct pages for all the specified memory.
-+
-+After that it may optionally publish all of its resources as
-+P2P memory using :c:func:`pci_p2pmem_publish()`. This will allow
-+any orchestrator drivers to find and use the memory. When marked in
-+this way, the resource must be regular memory with no side effects.
-+
-+For the time being this is fairly rudimentary in that all resources
-+are typically going to be P2P memory. Future work will likely expand
-+this to include other types of resources like doorbells.
-+
-+
-+Client Drivers
-+--------------
-+
-+A client driver typically only has to conditionally change its DMA map
-+routine to use the mapping function :c:func:`pci_p2pdma_map_sg()` instead
-+of the usual :c:func:`dma_map_sg()` function. Memory mapped in this
-+way does not need to be unmapped.
-+
-+The client may also, optionally, make use of
-+:c:func:`is_pci_p2pdma_page()` to determine when to use the P2P mapping
-+functions and when to use the regular mapping functions. In some
-+situations, it may be more appropriate to use a flag to indicate a
-+given request is P2P memory and map appropriately (for example the
-+block layer uses a flag to keep P2P memory out of queues that do not
-+have P2P client support). It is important to ensure that struct pages that
-+back P2P memory stay out of code that does not have support for them.
-+
-+
-+Orchestrator Drivers
-+--------------------
-+
-+The first task an orchestrator driver must do is compile a list of
-+all client devices that will be involved in a given transaction. For
-+example, the NVMe Target driver creates a list including all NVMe
-+devices and the RNIC in use. The list is stored as an anonymous struct
-+list_head which must be initialized with the usual INIT_LIST_HEAD.
-+The following functions may then be used to add to, remove from and free
-+the list of clients with the functions :c:func:`pci_p2pdma_add_client()`,
-+:c:func:`pci_p2pdma_remove_client()` and
-+:c:func:`pci_p2pdma_client_list_free()`.
-+
-+With the client list in hand, the orchestrator may then call
-+:c:func:`pci_p2pmem_find()` to obtain a published P2P memory provider
-+that is supported (behind the same root port) as all the clients. If more
-+than one provider is supported, the one nearest to all the clients will
-+be chosen first. If more than one provider is an equal distance away, the
-+one returned will be chosen at random. This function returns the PCI
-+device to use for the provider with a reference taken and therefore
-+when it's no longer needed it should be returned with pci_dev_put().
-+
-+Alternatively, if the orchestrator knows (via some other means)
-+which provider it wants to use it may use :c:func:`pci_has_p2pmem()`
-+to determine if it has P2P memory and :c:func:`pci_p2pdma_distance()`
-+to determine the cumulative distance between it and a potential
-+list of clients.
-+
-+With a supported provider in hand, the driver can then call
-+:c:func:`pci_p2pdma_assign_provider()` to assign the provider
-+to the client list. This function returns false if any of the
-+clients are unsupported by the provider.
-+
-+Once a provider is assigned to a client list via either
-+:c:func:`pci_p2pmem_find()` or :c:func:`pci_p2pdma_assign_provider()`,
-+the list is permanently bound to the provider such that any new clients
-+added to the list must be supported by the already selected provider.
-+If they are not supported, :c:func:`pci_p2pdma_add_client()` will return
-+an error. In this way, orchestrators are free to add and remove devices
-+without having to recheck support or tear down existing transfers to
-+change P2P providers.
-+
-+Once a provider is selected, the orchestrator can then use
-+:c:func:`pci_alloc_p2pmem()` and :c:func:`pci_free_p2pmem()` to
-+allocate P2P memory from the provider. :c:func:`pci_p2pmem_alloc_sgl()`
-+and :c:func:`pci_p2pmem_free_sgl()` are convenience functions for
-+allocating scatter-gather lists with P2P memory.
-+
-+Struct Page Caveats
-+-------------------
-+
-+Driver writers should be very careful about not passing these special
-+struct pages to code that isn't prepared for it. At this time, the kernel
-+interfaces do not have any checks for ensuring this. This obviously
-+precludes passing these pages to userspace.
-+
-+P2P memory is also technically IO memory but should never have any side
-+effects behind it. Thus, the order of loads and stores should not be important
-+and ioreadX(), iowriteX() and friends should not be necessary.
-+However, as the memory is not cache coherent, if access ever needs to
-+be protected by a spinlock then :c:func:`mmiowb()` must be used before
-+unlocking the lock. (See ACQUIRES VS I/O ACCESSES in
-+Documentation/memory-barriers.txt)
-+
-+
-+P2P DMA Support Library
-+=====================
-+
-+.. kernel-doc:: drivers/pci/p2pdma.c
-+   :export:
+* Removed new realisation of mips builtin command line, which was
+created after 4.3.0-rc3.
+
+* Kernel 4.3.0-rc3 with original patches could not be compiled for
+powerpc due to prom_init.c checking by prom_init_check.sh. So I added
+strlcat (which is used by cmdline_add_builtin macro) to
+prom_init_check.sh whitelist.
+
+Patches have been tested in QEMU for x86, arm (little-endian), arm64
+(little-endian), mips (little-endian, 32-bit) and powerpc
+(big-endian, 64-bit), everything works perfectly. Also it was tested
+on linux-next (next-20180924 tag) for all listed above architectures.
+
+[1] : https://lore.kernel.org/patchwork/patch/604992/
+
+Daniel Walker (7):
+  add generic builtin command line
+  drivers: of: ifdef out cmdline section
+  x86: convert to generic builtin command line
+  arm: convert to generic builtin command line
+  arm64: convert to generic builtin command line
+  mips: convert to generic builtin command line
+  powerpc: convert to generic builtin command line
+
+Maksym Kokhan (1):
+  efi: modify EFI stub code for arm/arm64
+
+ arch/arm/Kconfig                        | 38 +-----------------
+ arch/arm/kernel/atags_parse.c           | 14 ++-----
+ arch/arm/kernel/devtree.c               |  2 +
+ arch/arm64/Kconfig                      | 17 +-------
+ arch/arm64/kernel/setup.c               |  3 ++
+ arch/mips/Kconfig                       | 24 +----------
+ arch/mips/Kconfig.debug                 | 47 ----------------------
+ arch/mips/kernel/setup.c                | 41 ++-----------------
+ arch/powerpc/Kconfig                    | 23 +----------
+ arch/powerpc/kernel/prom.c              |  4 ++
+ arch/powerpc/kernel/prom_init.c         |  8 ++--
+ arch/powerpc/kernel/prom_init_check.sh  |  2 +-
+ arch/x86/Kconfig                        | 44 +--------------------
+ arch/x86/kernel/setup.c                 | 19 ++-------
+ drivers/firmware/efi/libstub/arm-stub.c | 10 ++---
+ drivers/of/fdt.c                        |  2 +-
+ include/linux/cmdline.h                 | 70 +++++++++++++++++++++++++++++++++
+ init/Kconfig                            | 68 ++++++++++++++++++++++++++++++++
+ 18 files changed, 173 insertions(+), 263 deletions(-)
+ create mode 100644 include/linux/cmdline.h
+
 -- 
-2.19.0
+2.7.4
 
