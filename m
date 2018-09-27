@@ -2,129 +2,94 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DEDC43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319CBC43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A15721571
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:21:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pvsv1txO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A15721571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id DF61121571
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 15:21:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF61121571
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeI0VkD (ORCPT
+        id S1728138AbeI0VkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:40:03 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:41772 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbeI0VkD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 17:40:03 -0400
-Received: by mail-vk1-f195.google.com with SMTP id j14-v6so674321vke.8
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 08:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=si9pxhw5KruNhYwgMx5FX+vsyfkmm9WWF9lrLjFqAME=;
-        b=Pvsv1txOPw9Djm+RGylWq2Qprpu9Tcz89T/GKGLrksGp/akt98fVx3WHYTxPetR0IM
-         qHj1F46Z12boJPO4DIpXDVZWwAukb9Qmzmi4448ujZS/Emcai+6diBHFpWqMPAHpccMu
-         b1kYUawQV1pDafzQW4zSeE5CZbzozaagyS4w+TxlD9X1enqWyR7bK9otU3rUrlMp0im2
-         Sgl4WDMOuR7tkYZgFHuj6X77CaXtyZXeMLBhGdy7+g35wiV3GetWZ1uBh8YXPNBELf1x
-         kSIX28avUpBATwzSrWeF3h1cDKFwgYEdozGE5y8CxpCPBsGZTUhL7EWTVFwLmV7p2JXs
-         js4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=si9pxhw5KruNhYwgMx5FX+vsyfkmm9WWF9lrLjFqAME=;
-        b=CdkpIwJ+9AhAIEVU8CvUu3wkxeriFTtHlT75VSUKz+ydwpgIhVv3AWqv0cB3rJOTrZ
-         RvWmjWSAXA9QHaC95h3qaRwmc+rUku2K278iE/wBU7+EM91QBDqSr2P/NXBXqyyp+8sZ
-         +4BfzRC91KrqV+6Q0cu+fJP6EXf+BrsMuj1n2ty6H5PLuSdk4Ih2u5iZg6FtxA2fX3DK
-         RQMx0UnYZac/C8Ak042rr04fvZDa/GHHP6g+WfzNJcLOwKU8rmSVC3RCBekXSM2txPB9
-         8UFByIUJKhGRPu8bG57Akfbvtx7OXAOYGrQ36aDUgK+t05/REnF8snUi94t95SGLkIi1
-         esTg==
-X-Gm-Message-State: ABuFfoiXXKfCKJszHmlqDweg566vBPeo22C3jE7Hj64WUxSXLj007DPN
-        w7IeEJ/qmbeVjFOdU1gUh6B7D4sTFMzsmvxL/6s4WA==
-X-Google-Smtp-Source: ACcGV626Itv076D3Z9bJjiXNh+O2OsqBp4BPbX/l7eW+3rUUNhTG8PgtCN1B6a9At2ZUJOONqPqKqZQ9wcTfMWHMkVw=
-X-Received: by 2002:a1f:9b52:: with SMTP id d79-v6mr3604210vke.79.1538061676759;
- Thu, 27 Sep 2018 08:21:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <1537887875-29494-1-git-send-email-vbadigan@codeaurora.org>
- <1537887875-29494-3-git-send-email-vbadigan@codeaurora.org>
- <CAD=FV=VxLR6v3vyimjznrqa1Tj5rPziPQX7Pt+wJRR+xm1N-0A@mail.gmail.com> <e6f0c8c6-cd0f-33b9-30da-ab09953449ca@codeaurora.org>
-In-Reply-To: <e6f0c8c6-cd0f-33b9-30da-ab09953449ca@codeaurora.org>
-From:   Doug Anderson <dianders@google.com>
-Date:   Thu, 27 Sep 2018 08:21:03 -0700
-Message-ID: <CAD=FV=ULtdGkpRfmAZRbM0VQu6sJ37_bPBRHKFReK4X+jYjT_Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: sdhci-msm: Re-initialize DLL if MCLK is gated dynamically
-To:     vbadigan@codeaurora.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thu, 27 Sep 2018 17:40:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57520 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727270AbeI0VkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 17:40:25 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5F0B2207E5; Thu, 27 Sep 2018 17:21:37 +0200 (CEST)
+Received: from localhost (nat-240.udc.es [193.144.61.240])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0518820730;
+        Thu, 27 Sep 2018 17:21:26 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 17:21:26 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Asutosh Das <asutoshd@codeaurora.org>, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        Evan Green <evgreen@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 06/12] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+Message-ID: <20180927152126.vovnvwmqdfpuxgdm@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-7-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927114850.24565-7-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Thu, Sep 27, 2018 at 4:00 AM Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
+On Thu, Sep 27, 2018 at 05:18:44PM +0530, Jagan Teki wrote:
+> According to horizontal and vertical timings are defined
+> per the diagram from include/drm/drm_modes.h
+> 
+> Back porch = [hv]total - [hv]sync_end
 >
-> Hi Doug,
->
->
-> On 9/26/2018 3:58 AM, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Tue, Sep 25, 2018 at 8:05 AM Veerabhadrarao Badiganti
-> > <vbadigan@codeaurora.org> wrote:
-> >> +       /*
-> >> +        * Whenever core-clock is gated dynamically, it's needed to
-> >> +        * re-initialize the DLL when the clock is ungated.
-> >> +        */
-> >> +       if (msm_host->restore_dll_cfg_needed && msm_host->clk_rate) {
-> >> +               msm_host->restore_dll_cfg = true;
-> >> +               mmc_retune_needed(host->mmc);
-> > Using the boolean "restore_dll_cfg" to communicate like this seems
-> > really fragile.  I have no basis in fact, but I worry that something
-> > will happen in the meantime that really ought to invalidate the
-> > "saved_tuning_phase" but the boolean will still be set.
-> >
-> > Is there a reason you can't just call msm_config_cm_dll_phase()
-> > directly from sdhci_msm_runtime_resume()?  Perhaps after the
-> > clk_bulk_prepare_enable() call below?
->
-> I can do that.
->
-> But we don't need to restore the clock phase for all speed modes since
-> every mode
-> doesn't use DLL. Only few speed modes (only SDR104 mode for SD card)
-> would need to restore DLL setting. So I would need to do some extra checks
-> for performing this operation for only required speed modes.
-> And we should re-initialize the DLL first before programming the phase.
->
-> I wanted to reuse the existing logic which does all these things. So did
-> this way.
+> So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
+> mode->vtotal - mode->vsync_end
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> index 1c7e42015645..599284971ab6 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> @@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+>  	regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
+>  		     SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
+>  					       mode->vsync_start) |
+> -		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
+> -					       mode->vdisplay));
+> +		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
+> +					       mode->vsync_end));
 
-Personally I'd rather see the extra checks or even restore the DLL
-settings some cases when it wasn't truly needed.
+Is it purely theoretical, or did you find some source that back that?
 
-In theory, though, I'd expect that there's a hardware register
-somewhere that says whether the DLL settings matter or not.  Can't you
-just key off of that?  ...or if that register is also lost when the
-clock turns off then whenever you change that register to turn the DLL
-off then clear your saved phase?
+Maxime
 
-
--Doug
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
