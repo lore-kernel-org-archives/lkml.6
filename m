@@ -2,86 +2,141 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6790C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DF2C43382
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998C8216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:46:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998C8216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 66AA7216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 18:46:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66AA7216FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeI1BGL (ORCPT
+        id S1728535AbeI1BGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:06:11 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34743 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbeI1BGL (ORCPT
+        Thu, 27 Sep 2018 21:06:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60617 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbeI1BGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 21:06:11 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i12-v6so3614827otl.1;
-        Thu, 27 Sep 2018 11:46:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dbxbl5OVda9ZVbKRmjeStu0K1EUlwT5YlOyFzt04/Sk=;
-        b=oxXddilPS3ZqW5GT7eem9nPDXTm32SISarCXvedBGuMrAzUECx4pBw+7V5rvF8VLYA
-         +uwmYzwXwh7kFYjRxs7FPGE21f8qehxEz68lu7DbQKbPCypupPtYsSL105sToyiPjU1Z
-         nU6Eo1PmkU5woVhx0YrXKHuKoN1j3AFt6Z7x/gkCumhzCvRE5cKupZBkLAchSRC8znzo
-         PncLxQoDgbVFPyI6iT5PhdTFdohmq4AADvmvrmgI2LeMMtke5ByMr+y34S6OxBHdjk3P
-         2lO9YnCqBvAY6lTN+6HpQAaVfTmbNOg83V/nfT/UhE+2Znzyu960cRntsVTVIMU4w4lL
-         +ezg==
-X-Gm-Message-State: ABuFfoiwO0x/TU//Rp03LJiPg9h2Qtg7rmzdH3E+0tu51dAnUqCfVyGT
-        Y5KpbsWq2RtCP2EGISAtUuDLjUHFGsv/
-X-Google-Smtp-Source: ACcGV61o3gGERcz2ti8Yi5m+NESSavJ54EO13ZOjp2njo2mz/D8Nf2QCSqv2KoRvwkI87ER6SZEpOw==
-X-Received: by 2002:a9d:fcf:: with SMTP id m15-v6mr8147774otd.81.1538073993943;
-        Thu, 27 Sep 2018 11:46:33 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w3-v6sm1207710ota.33.2018.09.27.11.46.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 11:46:33 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 13:46:32 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     ctatlor97@gmail.com, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] dt-bindings: pinctrl: qcom: Add SDM660 pinctrl
- binding
-Message-ID: <20180927184632.GA31215@bogus>
-References: <20180925173801.3835-1-ctatlor97@gmail.com>
- <20180926162644.10039-1-ctatlor97@gmail.com>
- <20180926162644.10039-2-ctatlor97@gmail.com>
+        Thu, 27 Sep 2018 21:06:20 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8RIjqCZ129250
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 27 Sep 2018 11:45:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8RIjqsp129247;
+        Thu, 27 Sep 2018 11:45:52 -0700
+Date:   Thu, 27 Sep 2018 11:45:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-2a25dc7c79c92c6cba45c6218c49395173be80bf@git.kernel.org>
+Cc:     bin.yang@intel.com, peterz@infradead.org, mark.gross@intel.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, rong.a.chen@intel.com, mingo@kernel.org,
+        hpa@zytor.com
+Reply-To: rong.a.chen@intel.com, mingo@kernel.org, hpa@zytor.com,
+          bin.yang@intel.com, peterz@infradead.org, mark.gross@intel.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          dave.hansen@intel.com
+In-Reply-To: <20180917143545.731701535@linutronix.de>
+References: <20180917143545.731701535@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/init32: Mark text and rodata RO in one go
+Git-Commit-ID: 2a25dc7c79c92c6cba45c6218c49395173be80bf
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180926162644.10039-2-ctatlor97@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 26 Sep 2018 17:26:43 +0100, Craig Tatlor wrote:
-> Add the binding for the TLMM pinctrl block found in the SDM660 platform.
-> 
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-> ---
-> Changes from v3: 
->    Updated for tile structure
->    change irq field
-> 
->  .../bindings/pinctrl/qcom,sdm660-pinctrl.txt  | 181 ++++++++++++++++++
->  1 file changed, 181 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl.txt
-> 
+Commit-ID:  2a25dc7c79c92c6cba45c6218c49395173be80bf
+Gitweb:     https://git.kernel.org/tip/2a25dc7c79c92c6cba45c6218c49395173be80bf
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 17 Sep 2018 16:29:07 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 27 Sep 2018 20:39:37 +0200
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+x86/mm/init32: Mark text and rodata RO in one go
+
+The sequence of marking text and rodata read-only in 32bit init is:
+
+  set_ro(text);
+  kernel_set_to_readonly = 1;
+  set_ro(rodata);
+
+When kernel_set_to_readonly is 1 it enables the protection mechanism in CPA
+for the read only regions. With the upcoming checks for existing mappings
+this consequently triggers the warning about an existing mapping being
+incorrect vs. static protections because rodata has not been converted yet.
+
+There is no technical reason to split the two, so just combine the RO
+protection to convert text and rodata in one go.
+
+Convert the printks to pr_info while at it.
+
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Bin Yang <bin.yang@intel.com>
+Cc: Mark Gross <mark.gross@intel.com>
+Link: https://lkml.kernel.org/r/20180917143545.731701535@linutronix.de
+
+---
+ arch/x86/mm/init_32.c | 23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
+
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index 979e0a02cbe1..142c7d9f89cc 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -923,34 +923,19 @@ static void mark_nxdata_nx(void)
+ void mark_rodata_ro(void)
+ {
+ 	unsigned long start = PFN_ALIGN(_text);
+-	unsigned long size = PFN_ALIGN(_etext) - start;
++	unsigned long size = (unsigned long)__end_rodata - start;
+ 
+ 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
+-	printk(KERN_INFO "Write protecting the kernel text: %luk\n",
++	pr_info("Write protecting kernel text and read-only data: %luk\n",
+ 		size >> 10);
+ 
+ 	kernel_set_to_readonly = 1;
+ 
+ #ifdef CONFIG_CPA_DEBUG
+-	printk(KERN_INFO "Testing CPA: Reverting %lx-%lx\n",
+-		start, start+size);
+-	set_pages_rw(virt_to_page(start), size>>PAGE_SHIFT);
+-
+-	printk(KERN_INFO "Testing CPA: write protecting again\n");
+-	set_pages_ro(virt_to_page(start), size>>PAGE_SHIFT);
+-#endif
+-
+-	start += size;
+-	size = (unsigned long)__end_rodata - start;
+-	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
+-	printk(KERN_INFO "Write protecting the kernel read-only data: %luk\n",
+-		size >> 10);
+-
+-#ifdef CONFIG_CPA_DEBUG
+-	printk(KERN_INFO "Testing CPA: undo %lx-%lx\n", start, start + size);
++	pr_info("Testing CPA: Reverting %lx-%lx\n", start, start + size);
+ 	set_pages_rw(virt_to_page(start), size >> PAGE_SHIFT);
+ 
+-	printk(KERN_INFO "Testing CPA: write protecting again\n");
++	pr_info("Testing CPA: write protecting again\n");
+ 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
+ #endif
+ 	mark_nxdata_nx();
