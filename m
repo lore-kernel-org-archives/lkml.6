@@ -2,146 +2,160 @@ Return-Path: <SRS0=J4ua=MJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D403C43382
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C63C004D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2898321570
-	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2898321570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B459521570
+	for <linux-kernel@archiver.kernel.org>; Thu, 27 Sep 2018 04:53:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B459521570
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbeI0LJ0 (ORCPT
+        id S1726976AbeI0LJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 27 Sep 2018 07:09:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:8126 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726653AbeI0LJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 27 Sep 2018 07:09:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2018 21:53:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,309,1534834800"; 
-   d="scan'208";a="260600884"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by orsmga005.jf.intel.com with ESMTP; 26 Sep 2018 21:51:55 -0700
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx-trybot@lists.freedesktop.org
-Cc:     Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:46042 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726641AbeI0LJ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 27 Sep 2018 07:09:26 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437836|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.CwOr12R_1538023958;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwOr12R_1538023958)
+          by smtp.aliyun-inc.com(10.147.44.118);
+          Thu, 27 Sep 2018 12:52:38 +0800
+Date:   Thu, 27 Sep 2018 12:52:38 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 06/39] component: alloc component_match without any comp to match
-Date:   Thu, 27 Sep 2018 10:19:02 +0530
-Message-Id: <1538023775-19286-7-git-send-email-ramalingam.c@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1538023775-19286-1-git-send-email-ramalingam.c@intel.com>
-References: <1538023775-19286-1-git-send-email-ramalingam.c@intel.com>
+Subject: Re: [PATCH] csky: fixups after bootmem removal
+Message-ID: <20180927045237.GA2820@guoren>
+References: <20180926112744.GC4628@rapoport-lnx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926112744.GC4628@rapoport-lnx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
+On Wed, Sep 26, 2018 at 02:27:45PM +0300, Mike Rapoport wrote:
+> Hi,
+> 
+> The below patch fixes the bootmem leftovers in csky. It is based on the
+> current mmots and csky build there fails because of undefined reference to
+> dma_direct_ops: 
+> 
+>   MODPOST vmlinux.o
+> kernel/dma/mapping.o: In function `dmam_alloc_attrs':
+> kernel/dma/mapping.c:143: undefined reference to `dma_direct_ops'
+> kernel/dma/mapping.o: In function `dmam_declare_coherent_memory':
+> kernel/dma/mapping.c:184: undefined reference to `dma_direct_ops'
+> mm/dmapool.o: In function `dma_free_attrs': 
+> include/linux/dma-mapping.h:558: undefined reference to `dma_direct_ops'
+> 
+> I've blindly added "select DMA_DIRECT_OPS" to arch/csky/Kconfig and it
+> fixed the build, but I really have no idea if this the right thing to do...
+You are almost right, the issue is come from the patch:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=bc3ec75de5452db59b683487867ba562b950708a
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
+we need:
+-	select DMA_NONCOHERENT_OPS
++	select DMA_DIRECT_OPS
 
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
+I'll fixup it in my repo.
 
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
+> From 63c3b24e661e6cad88f0432dd460d35a16741871 Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Date: Wed, 26 Sep 2018 13:40:13 +0300
+> Subject: [PATCH] csky: fixups after bootmem removal
+> 
+> The bootmem removal patchest didn't take into account csky architecture and
+> it still had bootmem leftovers. Remove them now.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> ---
+>  arch/csky/Kconfig        | 1 -
+>  arch/csky/kernel/setup.c | 1 -
+>  arch/csky/mm/highmem.c   | 4 ++--
+>  arch/csky/mm/init.c      | 3 +--
+>  4 files changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
+> index fb2a0ae..fc25ea6 100644
+> --- a/arch/csky/Kconfig
+> +++ b/arch/csky/Kconfig
+> @@ -35,7 +35,6 @@ config CSKY
+>  	select HAVE_C_RECORDMCOUNT
+>  	select HAVE_DMA_API_DEBUG
+>  	select HAVE_DMA_CONTIGUOUS
+> -	select HAVE_MEMBLOCK
+>  	select MAY_HAVE_SPARSE_IRQ
+>  	select MODULES_USE_ELF_RELA if MODULES
+>  	select OF
+> diff --git a/arch/csky/kernel/setup.c b/arch/csky/kernel/setup.c
+> index 27f9e10..bee4d26 100644
+> --- a/arch/csky/kernel/setup.c
+> +++ b/arch/csky/kernel/setup.c
+> @@ -3,7 +3,6 @@
+>  
+>  #include <linux/console.h>
+>  #include <linux/memblock.h>
+> -#include <linux/bootmem.h>
+>  #include <linux/initrd.h>
+>  #include <linux/of.h>
+>  #include <linux/of_fdt.h>
+> diff --git a/arch/csky/mm/highmem.c b/arch/csky/mm/highmem.c
+> index 149921a..5b90501 100644
+> --- a/arch/csky/mm/highmem.c
+> +++ b/arch/csky/mm/highmem.c
+> @@ -4,7 +4,7 @@
+>  #include <linux/module.h>
+>  #include <linux/highmem.h>
+>  #include <linux/smp.h>
+> -#include <linux/bootmem.h>
+> +#include <linux/memblock.h>
+>  #include <asm/fixmap.h>
+>  #include <asm/tlbflush.h>
+>  #include <asm/cacheflush.h>
+> @@ -138,7 +138,7 @@ static void __init fixrange_init (unsigned long start, unsigned long end,
+>  			pmd = (pmd_t *)pud;
+>  			for (; (k < PTRS_PER_PMD) && (vaddr != end); pmd++, k++) {
+>  				if (pmd_none(*pmd)) {
+> -					pte = (pte_t *) alloc_bootmem_low_pages(PAGE_SIZE);
+> +					pte = (pte_t *) memblock_alloc_low(PAGE_SIZE, PAGE_SIZE);
+>  					set_pmd(pmd, __pmd(__pa(pte)));
+>  					BUG_ON(pte != pte_offset_kernel(pmd, 0));
+>  				}
+> diff --git a/arch/csky/mm/init.c b/arch/csky/mm/init.c
+> index fd2791b..46c5aaa 100644
+> --- a/arch/csky/mm/init.c
+> +++ b/arch/csky/mm/init.c
+> @@ -14,7 +14,6 @@
+>  #include <linux/ptrace.h>
+>  #include <linux/mman.h>
+>  #include <linux/mm.h>
+> -#include <linux/bootmem.h>
+>  #include <linux/highmem.h>
+>  #include <linux/memblock.h>
+>  #include <linux/swap.h>
+> @@ -44,7 +43,7 @@ void __init mem_init(void)
+>  #endif
+>  	high_memory = (void *) __va(max_low_pfn << PAGE_SHIFT);
+>  
+> -	free_all_bootmem();
+> +	memblock_free_all();
+>  
+>  #ifdef CONFIG_HIGHMEM
+>  	for (tmp = highstart_pfn; tmp < highend_pfn; tmp++) {
+The patch looks good for me.
 
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
-
-v2:
-  No Change.
-
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index 8946dfee4768..007fb738263a 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -312,6 +312,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
--- 
-2.7.4
-
+Thx
+ Guo Ren
