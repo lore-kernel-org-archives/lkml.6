@@ -2,167 +2,273 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9111C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D18AC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA3F2170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 242822170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nosnCNdp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA3F2170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yzr+Q31j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 242822170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729177AbeI1PLV (ORCPT
+        id S1729284AbeI1PMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 11:11:21 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40650 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727389AbeI1PLV (ORCPT
+        Fri, 28 Sep 2018 11:12:32 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52177 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729047AbeI1PMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 11:11:21 -0400
-Received: by mail-wm1-f67.google.com with SMTP id o2-v6so1330742wmh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:48:37 -0700 (PDT)
+        Fri, 28 Sep 2018 11:12:31 -0400
+Received: by mail-it1-f195.google.com with SMTP id 74-v6so1703706itw.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:49:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=s75buDw2mMzBLZeMnGxvWNt1SFXgFzKNUBdlljzot/g=;
-        b=nosnCNdpQl+AYUNW9bms9uvMisffHdRfh7H1xj/sg3C4PhKmfDb51UFACUyoy/wGnW
-         iME6zSjT1uA7FKJL40Otne7I4TeCyda7wn8ErnvPfbR0oocJ1xF4IBlA4g/cSXRDlZSw
-         MtOp910TdKAzlQGtFxhB8Q3oWxx8bq/gnSa8V0bmiB8RR+JgG7MIr5sl9xiUOAUgRp9h
-         id8TZtCEZvT+qiyylsAkWYTqkWLAIswtMtTddmSaY2Gs9pMbhDYxHJWLULNg34meEB2a
-         O+w6kbDfXhZer2xC6rD70SSVG5i1VBKBbco6BIr+zU5blvjvvwtTf45JpOY9eDboYNaQ
-         HdRw==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=aYG1GqUuFPbDlJb8lTqv4mppTm4ZcDdb/ZYOuWmcGKI=;
+        b=Yzr+Q31jiIl7HhzpDIEPciu2ui7jCwSvha6sfS2j/3iI0NIucMMHWSs4OXczptBvca
+         dyrs6XhY32s0gZXsbw+zIinq2rrvUUafKQBi7YLkKy2Bmy5iDRcIwqfMBEeckbrVAiem
+         Fkf9BajIR2EZcUIGj4pDtUzL9XhJxn6B2pPms=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s75buDw2mMzBLZeMnGxvWNt1SFXgFzKNUBdlljzot/g=;
-        b=F91tIR9QjFgIvvbakxg4OzrM+/aV/BGXhT1iylAZ0wY8IyjceuysgxUVZP5AyooXak
-         qfpQTp8wAUI5UD2jAJKfqWhiszz64MkF8brxRvKUwgB60L5fuPX1hNPPOwyc0i8smAnG
-         7G4KoofJDffjJxFZcLseyRnikzskOzC85fp7ddqhKkRH5BkmJhOA28EUT+Folwv53xXk
-         kYWoYmk17qPWUX4dNz7Q8zXAtJUu0hbzVvvNRrzWV6iuj6wzovMGbMOtfooiElIhZaa1
-         R0AwD1Ysu037CflC6FDpgI8WYo6eWxIDx6edxxcRRZVXvSi/p7pKc+dWsGKykZi9Imhl
-         1G5Q==
-X-Gm-Message-State: ABuFfojSYuYK/35Q6jkt7GXYUp/UAUN27Ty7lgn6PITc4f319/gYhXXk
-        VOmyHXR6yZE4AotZH+u/Bs7QaN7hjPo=
-X-Google-Smtp-Source: ACcGV60oHf4OX19rnMyp5pBxFFrJj5LcKbsBW3yt39XSafP2p271/7YAc7XqqNqDwKMVzC3SimbFVA==
-X-Received: by 2002:a1c:545d:: with SMTP id p29-v6mr979019wmi.94.1538124516778;
-        Fri, 28 Sep 2018 01:48:36 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:388:3ce:110::1:5])
-        by smtp.gmail.com with ESMTPSA id q5-v6sm2328282wmd.29.2018.09.28.01.48.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 01:48:36 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 09:48:34 +0100
-From:   Aymen Qader <qader.aymen@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] staging: ks7010: Add null pointer check for skb
-Message-ID: <20180928084834.dwmc4dpnr7tgoxhi@localhost.localdomain>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=aYG1GqUuFPbDlJb8lTqv4mppTm4ZcDdb/ZYOuWmcGKI=;
+        b=V+CFUcRlDTdPZQK66sjJjtb8vbSp0aeJQ1DUFvlIISnjYzr8LUjzXBXdEz2bpCb4gI
+         f6lis/dSbKlqimsqGC2ytyEBgZMgubm9sMqcuqGsU1Q7vrbaJgiZxTPOr8btZ9zyLshq
+         Wgfg3j40BSLXqHAkInJTcKEA5F4aU2dG1VPJLjN7ss83c8k/7uJATiUCU6hw6PHNMF7/
+         /61DCfMjY/YKk5x+vviuHf2dZlW1OJWJb/asEs8USP82LbYvaxG5kCEpiAlgng3/FbSe
+         TwY7K9Zg5pckSpatn7PlK8j1I6OWS4FHR0CrhVpoPgkKdKsnDbacoQDOPhG8fdBoEntW
+         cQzQ==
+X-Gm-Message-State: ABuFfojTQhOmHUNENWn6huovki4AFM/Il1g5WIss5FPWaTo1n4Y0aqVB
+        kQ/ar6zuL5FXTK6FeNURSHHNk/OlYLAaOX+z70UIzQ==
+X-Google-Smtp-Source: ACcGV62uvY7lyjHaC1MpfnplQWAPMm12kxRhni0HG09JcvwWI7uR6mePuPxEpkv0/t7EBo8oGMys12qq3XkR+ntqTr0=
+X-Received: by 2002:a02:b015:: with SMTP id p21-v6mr12934045jah.2.1538124587636;
+ Fri, 28 Sep 2018 01:49:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928082239.disbtllum3duvdcg@mwanda>
- <20180928081325.krgawue3cs6mavw2@mwanda>
- <20180928081601.is2gl764krxcvtlv@mwanda>
-User-Agent: NeoMutt/20180716
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 01:49:47
+ -0700 (PDT)
+In-Reply-To: <CAKv+Gu9e35+AyktmSq9qeNE0LR83_yrEEB3DiQv0bmyArivqRQ@mail.gmail.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-2-Jason@zx2c4.com>
+ <CAKv+Gu9e35+AyktmSq9qeNE0LR83_yrEEB3DiQv0bmyArivqRQ@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 28 Sep 2018 10:49:47 +0200
+Message-ID: <CAKv+Gu9kbLPZH4W0zKAfuv-b11mcDaZ05HUauvh9gMZVGVR0AQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 01/23] asm: simd context helper API
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Joe Perches <joe@perches.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 11:13:25AM +0300, Dan Carpenter wrote:
-> You might want to try running Smatch on your patches.  This is the
-> second one where maybe the results would have been interesting.
-> 
-> git clone http://repo.or.cz/w/smatch.git
-> cd smatch
-> make
-> cd ~/kernel/src/
-> ~/smatch/smatch_scripts/kchecker drivers/staging/ks7010/ks_hostif.c
-> 
-> This patch introduced a problem, but the earlier one fixed a potential
-> problem in rtl8723bs:
-> 
-> drivers/staging/rtl8723bs/core/rtw_mlme_ext.c:1274 OnAssocReq() error: uninitialized symbol 'ie_len'.
-> 
-> Unfortunately, Smatch missed the potential NULL dereference in
-> OnAssocReq()...  It wouldn't be that hard to fix...
-> 
-> regards,
-> dan carpenter
+(+ Joe)
 
-Oh thanks, I've not used Smatch before--that's really helpful, I'm going
-to use that a lot in the future.
+On 28 September 2018 at 10:28, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 25 September 2018 at 16:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>> Sometimes it's useful to amortize calls to XSAVE/XRSTOR and the related
+>> FPU/SIMD functions over a number of calls, because FPU restoration is
+>> quite expensive. This adds a simple header for carrying out this pattern:
+>>
+>>     simd_context_t simd_context;
+>>
+>>     simd_get(&simd_context);
+>>     while ((item = get_item_from_queue()) != NULL) {
+>>         encrypt_item(item, simd_context);
+>>         simd_relax(&simd_context);
+>>     }
+>>     simd_put(&simd_context);
+>>
+>> The relaxation step ensures that we don't trample over preemption, and
+>> the get/put API should be a familiar paradigm in the kernel.
+>>
+>> On the other end, code that actually wants to use SIMD instructions can
+>> accept this as a parameter and check it via:
+>>
+>>    void encrypt_item(struct item *item, simd_context_t *simd_context)
+>>    {
+>>        if (item->len > LARGE_FOR_SIMD && simd_use(simd_context))
+>>            wild_simd_code(item);
+>>        else
+>>            boring_scalar_code(item);
+>>    }
+>>
+>> The actual XSAVE happens during simd_use (and only on the first time),
+>> so that if the context is never actually used, no performance penalty is
+>> hit.
+>>
+>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+>> Cc: Samuel Neves <sneves@dei.uc.pt>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Greg KH <gregkh@linuxfoundation.org>
+>> Cc: linux-arch@vger.kernel.org
+>> ---
+>>  arch/alpha/include/asm/Kbuild      |  5 ++-
+>>  arch/arc/include/asm/Kbuild        |  1 +
+>>  arch/arm/include/asm/simd.h        | 63 ++++++++++++++++++++++++++++++
+>>  arch/arm64/include/asm/simd.h      | 51 +++++++++++++++++++++---
+>>  arch/c6x/include/asm/Kbuild        |  3 +-
+>>  arch/h8300/include/asm/Kbuild      |  3 +-
+>>  arch/hexagon/include/asm/Kbuild    |  1 +
+>>  arch/ia64/include/asm/Kbuild       |  1 +
+>>  arch/m68k/include/asm/Kbuild       |  1 +
+>>  arch/microblaze/include/asm/Kbuild |  1 +
+>>  arch/mips/include/asm/Kbuild       |  1 +
+>>  arch/nds32/include/asm/Kbuild      |  7 ++--
+>>  arch/nios2/include/asm/Kbuild      |  1 +
+>>  arch/openrisc/include/asm/Kbuild   |  7 ++--
+>>  arch/parisc/include/asm/Kbuild     |  1 +
+>>  arch/powerpc/include/asm/Kbuild    |  3 +-
+>>  arch/riscv/include/asm/Kbuild      |  3 +-
+>>  arch/s390/include/asm/Kbuild       |  3 +-
+>>  arch/sh/include/asm/Kbuild         |  1 +
+>>  arch/sparc/include/asm/Kbuild      |  1 +
+>>  arch/um/include/asm/Kbuild         |  3 +-
+>>  arch/unicore32/include/asm/Kbuild  |  1 +
+>>  arch/x86/include/asm/simd.h        | 44 ++++++++++++++++++++-
+>>  arch/xtensa/include/asm/Kbuild     |  1 +
+>>  include/asm-generic/simd.h         | 20 ++++++++++
+>>  include/linux/simd.h               | 28 +++++++++++++
+>>  26 files changed, 234 insertions(+), 21 deletions(-)
+>>  create mode 100644 arch/arm/include/asm/simd.h
+>>  create mode 100644 include/linux/simd.h
+>>
+>> diff --git a/arch/alpha/include/asm/Kbuild b/arch/alpha/include/asm/Kbuild
+>> index 0580cb8c84b2..07b2c1025d34 100644
+>> --- a/arch/alpha/include/asm/Kbuild
+>> +++ b/arch/alpha/include/asm/Kbuild
+>> @@ -2,14 +2,15 @@
+>>
+>>
+>>  generic-y += compat.h
+>> +generic-y += current.h
+>>  generic-y += exec.h
+>>  generic-y += export.h
+>>  generic-y += fb.h
+>>  generic-y += irq_work.h
+>> +generic-y += kprobes.h
+>>  generic-y += mcs_spinlock.h
+>>  generic-y += mm-arch-hooks.h
+>>  generic-y += preempt.h
+>>  generic-y += sections.h
+>> +generic-y += simd.h
+>>  generic-y += trace_clock.h
+>> -generic-y += current.h
+>> -generic-y += kprobes.h
+>
+> Given that this patch applies to all architectures at once, it is
+> probably better to drop the unrelated reordering hunks to avoid
+> conflicts.
+>
+>> diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
+>> index feed50ce89fa..a7f4255f1649 100644
+>> --- a/arch/arc/include/asm/Kbuild
+>> +++ b/arch/arc/include/asm/Kbuild
+>> @@ -22,6 +22,7 @@ generic-y += parport.h
+>>  generic-y += pci.h
+>>  generic-y += percpu.h
+>>  generic-y += preempt.h
+>> +generic-y += simd.h
+>>  generic-y += topology.h
+>>  generic-y += trace_clock.h
+>>  generic-y += user.h
+>> diff --git a/arch/arm/include/asm/simd.h b/arch/arm/include/asm/simd.h
+>> new file mode 100644
+>> index 000000000000..263950dd69cb
+>> --- /dev/null
+>> +++ b/arch/arm/include/asm/simd.h
+>> @@ -0,0 +1,63 @@
+>> +/* SPDX-License-Identifier: GPL-2.0
+>> + *
+>> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+>> + */
+>> +
+>> +#include <linux/simd.h>
+>> +#ifndef _ASM_SIMD_H
+>> +#define _ASM_SIMD_H
+>> +
+>> +#ifdef CONFIG_KERNEL_MODE_NEON
+>> +#include <asm/neon.h>
+>> +
+>> +static __must_check inline bool may_use_simd(void)
+>> +{
+>> +       return !in_interrupt();
+>> +}
+>> +
+>
+> Remember this guy?
+>
+> https://marc.info/?l=linux-arch&m=149631094625176&w=2
+>
+> That was never merged, so let's get it right this time.
+>
+...
+>> diff --git a/include/linux/simd.h b/include/linux/simd.h
+>> new file mode 100644
+>> index 000000000000..33bba21012ff
+>> --- /dev/null
+>> +++ b/include/linux/simd.h
+>> @@ -0,0 +1,28 @@
+>> +/* SPDX-License-Identifier: GPL-2.0
+>> + *
+>> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+>> + */
+>> +
+>> +#ifndef _SIMD_H
+>> +#define _SIMD_H
+>> +
+>> +typedef enum {
+>> +       HAVE_NO_SIMD = 1 << 0,
+>> +       HAVE_FULL_SIMD = 1 << 1,
+>> +       HAVE_SIMD_IN_USE = 1 << 31
+>> +} simd_context_t;
+>> +
 
-On Fri, Sep 28, 2018 at 11:16:01AM +0300, Dan Carpenter wrote:
-> Btw, if you have the cross function DB built then Smatch says that the
-> NULL check can be removed here no problem.
-> 
-> $ smdb hostif_data_request
-> [ snip ]
-> drivers/staging/ks7010/ks_wlan_net.c |   ks_wlan_start_xmit |  hostif_data_request |  PARAM_VALUE |  1 | skb | s64min-(-1),1-s64max
-> 
-> regards,
-> dan carpenter
-> 
+Oh, and another thing (and I'm surprised checkpatch.pl didn't complain
+about it): the use of typedef in new code is strongly discouraged.
+This policy predates my involvement, so perhaps Joe can elaborate on
+the rationale?
 
-Again, thanks very much! That's really cool, Smatch looks like a great
-tool, I wish I found it before!
 
-On Fri, Sep 28, 2018 at 11:22:39AM +0300, Dan Carpenter wrote:
-> On Thu, Sep 27, 2018 at 07:04:43PM +0100, Aymen Qader wrote:
-> > Retraction: in hindsight I see that with the current usage of this
-> > function, there is already a check for the socket buffer so this check
-> > is unnecessary. However, I'm not sure if it's considered good practice
-> > to keep this check anyway--in any case, ENOMEM isn't the right error
-> > to return.
-> 
-> When we find inconsistent NULL checks then we fix it to make sense.
-> Generally, we prefer a minimal style, with no extra code for future
-> proofing.  (The future seldom goes the way you expect and those extra
-> NULL checks would be easy to add back).
-
-Hm I understand, so if a parameter can currently never be null there's
-no need to add unnecessary checks for in case that changes in the
-future. I'll be sure to keep that in mind from now on.
-
-> 
-> So, yes, do remove the NULL check but also fix the indenting while
-> you're at it.
-> 
-> Take your time to write patches.  I write them, then I sit on them over
-> night then I send them in the morning.  It means that sometimes other
-> people have already sent it but that's fine.  If you have to redo a
-> patch then don't send the v2 patch on the same day.  v2 patches are
-> stressful and you imagine that everyone is waiting for you to send it
-> or something.  We are not waiting for you.  We don't care if you wait
-> until next week to send these...
-> 
-> So when you write a v2 patch wait until the next day to send it.  Then
-> you will be calm when you review it.
-> 
-> regards,
-> dan carpenter
->  
-
-Thank you very much for all of these tips, I really appreciate you
-taking the time. I'm definitely going to try and apply this philosophy
-in the future, I think I've been too impulsive with my patches so far.
-I've been thinking "oh no, I made a mistake--I need to quickly send a
-v2!" and then end up making even more mistakes, so I completely
-understand what you mean.
-
-Thanks again.
-
-Kind regards,
-Aymen Qader
-
+>> +#include <linux/sched.h>
+>> +#include <asm/simd.h>
+>> +
+>> +static inline void simd_relax(simd_context_t *ctx)
+>> +{
+>> +#ifdef CONFIG_PREEMPT
+>> +       if ((*ctx & HAVE_SIMD_IN_USE) && need_resched()) {
+>> +               simd_put(ctx);
+>> +               simd_get(ctx);
+>> +       }
+>> +#endif
+>
+> Could we return a bool here indicating whether we rescheduled or not?
+> In some cases, we could pass that into the asm code as a 'reload'
+> param, allowing repeated loads of key schedules, round constant tables
+> or S-boxes to be elided.
+>
+>> +}
+>> +
+>> +#endif /* _SIMD_H */
+>> --
+>> 2.19.0
+>>
