@@ -2,184 +2,118 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FABC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6382C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67188206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:18:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67188206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 54D3D206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:19:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SEU3XydI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D3D206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeI2BnR (ORCPT
+        id S1726964AbeI2BoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 21:43:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55058 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbeI2BnR (ORCPT
+        Fri, 28 Sep 2018 21:44:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42206 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbeI2BoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 21:43:17 -0400
-Received: from 1.general.cascardo.us.vpn ([10.172.70.58] helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <cascardo@canonical.com>)
-        id 1g5yH3-00005G-W3; Fri, 28 Sep 2018 19:18:02 +0000
-From:   Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-To:     linux-nvme@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Jens Axboe <axboe@fb.com>,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH] nvme: create 'paths' entries for hidden controllers
-Date:   Fri, 28 Sep 2018 16:17:20 -0300
-Message-Id: <20180928191720.3461-1-cascardo@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 28 Sep 2018 21:44:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eJRn+NCJD19OKCs4nx+a2tKYlAg2+VbnS6n2puTD5fM=; b=SEU3XydIp2YjA85OIU6iKX5Ce
+        MBrsQryyV4GPNzvJBMBMOxbgS+U7/WAqzDC9Ic1kW7KdKFfyXR2ve9uQ7bP15uzMAFFr+/f/P5TOC
+        FmLnsF6ts2ElDAsVfZ3MIo8CzVEWAzmBqEFKgFSW5L/hB06vHe1K0n6EEwCyIAbDQhAV8xccM9jyP
+        Lkd/9i8nKFYQsXpvMQR/3kCpeIY6UtqajV+Y9fNLTBpBp/CjiVf6GNhReWierPyLA60EK9DBfAlfw
+        7mvzlvFfQ620vrsTfNTGGFHihcqZgHuEWwreCKRvNcXl1gOAJXc2yxxrsA3xeJnWOfNAxWyZvcZKr
+        DRv3TKvjw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5yHy-00013j-4H; Fri, 28 Sep 2018 19:18:59 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A0274202C1A17; Fri, 28 Sep 2018 21:18:53 +0200 (CEST)
+Date:   Fri, 28 Sep 2018 21:18:53 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kan.liang@linux.intel.com, mingo@redhat.com, len.brown@intel.com,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
+Message-ID: <20180928191853.GJ3439@hirez.programming.kicks-ass.net>
+References: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com>
+ <1b7cb461-5321-86cf-3031-5ff545c3dc42@linux.intel.com>
+ <20180807174851.GJ2494@hirez.programming.kicks-ass.net>
+ <20180807183736.GR4238@tassilo.jf.intel.com>
+ <alpine.DEB.2.21.1808072257080.1672@nanos.tec.linutronix.de>
+ <20180807221725.GU4238@tassilo.jf.intel.com>
+ <alpine.DEB.2.21.1808080653120.1672@nanos.tec.linutronix.de>
+ <20180927142519.GB3439@hirez.programming.kicks-ass.net>
+ <20180928170704.7e428738@alans-desktop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928170704.7e428738@alans-desktop>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using initramfs-tools with only the necessary dependencies to mount
-the root filesystem, it will fail to include nvme drivers for a root on a
-multipath nvme. That happens because the slaves relationship is not
-present.
+On Fri, Sep 28, 2018 at 05:07:04PM +0100, Alan Cox wrote:
+> > > SILVERMONT_CLIENT  	0x37	     Baytrail, Valleyview
+> 
+> There is no such product as Valleyview. Some things talk about
+> Valleyview 2 but shouldn't as that is Baytrail.
 
-As discussed in [1], using slaves will break lsblk, because the slaves are
-hidden from userspace, that is, they have no real block device, just an
-entry under sysfs.
+I couldn't find it either, but it is all over the linux code.
 
-Introducing the paths subdir and using that on initramfs-tools makes it
-possible to now boot a system with nvme multipath as root.
+I'd be happy to remove it from this comment though.
 
-[1] https://www.spinics.net/lists/stable/msg222779.html
+> > /* "Small Core" Processors (Atom) */
+> > 
+> > #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
+> > #define INTEL_FAM6_ATOM_BONNELL_MID	0x26 /* Silverthorne, Lincroft */
+> > 
+> > #define INTEL_FAM6_ATOM_SALTWELL	0x36 /* Cedarview */
+> > #define INTEL_FAM6_ATOM_SALTWELL_MID	0x27 /* Penwell */
+> > #define INTEL_FAM6_ATOM_SALTWELL_TABLET	0x35 /* Cloverview */
+> > 
+> > #define INTEL_FAM6_ATOM_SILVERMONT	0x37 /* Bay Trail, Valleyview */
+> > #define INTEL_FAM6_ATOM_SILVERMONT_X	0x4D /* Avaton, Rangely */
+> > #define INTEL_FAM6_ATOM_SILVERMONT_MID	0x4A /* Merriefield */
+> > 
+> > #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* Cherry Trail, Braswell */
+> > #define INTEL_FAM6_ATOM_AIRMONT_MID	0x5A /* Moorefield */
+> > 
+> > #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
+> > #define INTEL_FAM6_ATOM_GOLDMONT_X	0x5F /* Denvertor */
+> > #define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
+> 
+> Can you decide if you are going to consistently use the -view or the
+> -trail naming ? I think for our use cases you mean Pinetrail, Cedartrail,
+> Clovertrail, Cherrytrail as you are talking about platform (at least in
+> the Intel sense of the word).
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Potnuri Bharat Teja <bharat@chelsio.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
----
- drivers/nvme/host/core.c      |  2 ++
- drivers/nvme/host/multipath.c | 28 ++++++++++++++++++++++++++--
- drivers/nvme/host/nvme.h      |  9 +++++++++
- 3 files changed, 37 insertions(+), 2 deletions(-)
+Like I said; I went with whatever is on this here page:
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 456d37a02ea3..6958e8cab92c 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3056,6 +3056,7 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 			ns->disk->disk_name);
- 
- 	nvme_mpath_add_disk(ns->head);
-+	nvme_mpath_add_disk_links(ns);
- 	nvme_fault_inject_init(ns);
- 	return;
-  out_unlink_ns:
-@@ -3077,6 +3078,7 @@ static void nvme_ns_remove(struct nvme_ns *ns)
- 
- 	nvme_fault_inject_fini(ns);
- 	if (ns->disk && ns->disk->flags & GENHD_FL_UP) {
-+		nvme_mpath_remove_disk_links(ns);
- 		sysfs_remove_group(&disk_to_dev(ns->disk)->kobj,
- 					&nvme_ns_id_attr_group);
- 		if (ns->ndev)
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 348aa405b641..70a4a0611550 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -220,15 +220,29 @@ void nvme_mpath_add_disk(struct nvme_ns_head *head)
- 
- 	mutex_lock(&head->subsys->lock);
- 	if (!(head->disk->flags & GENHD_FL_UP)) {
-+		struct kobject *hd_kobj = &disk_to_dev(head->disk)->kobj;
- 		device_add_disk(&head->subsys->dev, head->disk);
--		if (sysfs_create_group(&disk_to_dev(head->disk)->kobj,
--				&nvme_ns_id_attr_group))
-+		head->path_dir = kobject_create_and_add("paths", hd_kobj);
-+		if (sysfs_create_group(hd_kobj, &nvme_ns_id_attr_group))
- 			pr_warn("%s: failed to create sysfs group for identification\n",
- 				head->disk->disk_name);
- 	}
- 	mutex_unlock(&head->subsys->lock);
- }
- 
-+void nvme_mpath_add_disk_links(struct nvme_ns *ns)
-+{
-+	struct kobject *path_disk_kobj;
-+
-+	if (!ns->head->disk)
-+		return;
-+
-+	path_disk_kobj = &disk_to_dev(ns->disk)->kobj;
-+	if (sysfs_create_link(ns->head->path_dir, path_disk_kobj,
-+			kobject_name(path_disk_kobj)))
-+		return;
-+}
-+
- void nvme_mpath_remove_disk(struct nvme_ns_head *head)
- {
- 	if (!head->disk)
-@@ -241,5 +255,15 @@ void nvme_mpath_remove_disk(struct nvme_ns_head *head)
- 	kblockd_schedule_work(&head->requeue_work);
- 	flush_work(&head->requeue_work);
- 	blk_cleanup_queue(head->disk->queue);
-+	kobject_put(head->path_dir);
- 	put_disk(head->disk);
- }
-+
-+void nvme_mpath_remove_disk_links(struct nvme_ns *ns)
-+{
-+	if (!ns->head->disk)
-+		return;
-+
-+	sysfs_remove_link(ns->head->path_dir,
-+			kobject_name(&disk_to_dev(ns->disk)->kobj));
-+}
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 07452adef110..8371f98b657e 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -265,6 +265,7 @@ struct nvme_ns_ids {
- struct nvme_ns_head {
- #ifdef CONFIG_NVME_MULTIPATH
- 	struct gendisk		*disk;
-+	struct kobject		*path_dir;
- 	struct nvme_ns __rcu	*current_path;
- 	struct bio_list		requeue_list;
- 	spinlock_t		requeue_lock;
-@@ -456,7 +457,9 @@ void nvme_failover_req(struct request *req);
- void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
- int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
- void nvme_mpath_add_disk(struct nvme_ns_head *head);
-+void nvme_mpath_add_disk_links(struct nvme_ns *ns);
- void nvme_mpath_remove_disk(struct nvme_ns_head *head);
-+void nvme_mpath_remove_disk_links(struct nvme_ns *ns);
- 
- static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
- {
-@@ -503,6 +506,12 @@ static inline void nvme_mpath_add_disk(struct nvme_ns_head *head)
- static inline void nvme_mpath_remove_disk(struct nvme_ns_head *head)
- {
- }
-+static inline void nvme_mpath_add_disk_links(struct nvme_ns *ns)
-+{
-+}
-+static inline void nvme_mpath_remove_disk_links(struct nvme_ns *ns)
-+{
-+}
- static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
- {
- }
--- 
-2.17.1
+  https://en.wikipedia.org/wiki/List_of_Intel_Atom_microprocessors
+
+There is no Cedar Trail, or Bayview. If you could do me a delta patch
+with the names you think are appropriate i'd be happy to fold it in.
+Alternatively, I can remove the tail comments entirely.
+
+I spend entirely too much time already trying to come up with sensible
+names already.
 
