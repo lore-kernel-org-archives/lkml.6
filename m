@@ -6,205 +6,226 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26083C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BFBC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EA02172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EA02172C
+	by mail.kernel.org (Postfix) with ESMTP id 108252172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:10:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108252172C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729457AbeI1QdZ (ORCPT
+        id S1729486AbeI1Qdd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 12:33:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37734 "EHLO mx1.redhat.com"
+        Fri, 28 Sep 2018 12:33:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50746 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729093AbeI1QdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:33:25 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1729093AbeI1Qdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 12:33:32 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9AB20300286E;
-        Fri, 28 Sep 2018 10:10:23 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A557F308214B;
+        Fri, 28 Sep 2018 10:10:30 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 88B775D777;
-        Fri, 28 Sep 2018 10:10:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A01B965F5A;
+        Fri, 28 Sep 2018 10:10:29 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net 4/8] rxrpc: Emit BUSY packets when supposed to rather
- than ABORTs
+Subject: [PATCH net 5/8] rxrpc: Improve up-front incoming packet checking
 From:   David Howells <dhowells@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 28 Sep 2018 11:10:21 +0100
-Message-ID: <153812942175.10469.7486837009948924652.stgit@warthog.procyon.org.uk>
+Date:   Fri, 28 Sep 2018 11:10:28 +0100
+Message-ID: <153812942886.10469.13663153754559997324.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153812939111.10469.179989653628053410.stgit@warthog.procyon.org.uk>
 References: <153812939111.10469.179989653628053410.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 28 Sep 2018 10:10:23 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 28 Sep 2018 10:10:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the input path, a received sk_buff can be marked for rejection by
-setting RXRPC_SKB_MARK_* in skb->mark and, if needed, some auxiliary data
-(such as an abort code) in skb->priority.  The rejection is handled by
-queueing the sk_buff up for dealing with in process context.  The output
-code reads the mark and priority and, theoretically, generates an
-appropriate response packet.
+Do more up-front checking on incoming packets to weed out invalid ones and
+also ones aimed at services that we don't support.
 
-However, if RXRPC_SKB_MARK_BUSY is set, this isn't noticed and an ABORT
-message with a random abort code is generated (since skb->priority wasn't
-set to anything).
+Whilst we're at it, replace the clearing of call and skew if we don't find
+a connection with just initialising the variables to zero at the top of the
+function.
 
-Fix this by outputting the appropriate sort of packet.
-
-Also, whilst we're at it, most of the marks are no longer used, so remove
-them and rename the remaining two to something more obvious.
-
-Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- net/rxrpc/ar-internal.h |   13 ++++---------
- net/rxrpc/call_accept.c |    6 +++---
- net/rxrpc/input.c       |    2 +-
- net/rxrpc/output.c      |   23 ++++++++++++++++++-----
- 4 files changed, 26 insertions(+), 18 deletions(-)
+ net/rxrpc/input.c    |   63 ++++++++++++++++++++++++++++++++++++++++----------
+ net/rxrpc/protocol.h |   15 ------------
+ 2 files changed, 50 insertions(+), 28 deletions(-)
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 9fcb3e197b14..e8861cb78070 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -40,17 +40,12 @@ struct rxrpc_crypt {
- struct rxrpc_connection;
- 
- /*
-- * Mark applied to socket buffers.
-+ * Mark applied to socket buffers in skb->mark.  skb->priority is used
-+ * to pass supplementary information.
-  */
- enum rxrpc_skb_mark {
--	RXRPC_SKB_MARK_DATA,		/* data message */
--	RXRPC_SKB_MARK_FINAL_ACK,	/* final ACK received message */
--	RXRPC_SKB_MARK_BUSY,		/* server busy message */
--	RXRPC_SKB_MARK_REMOTE_ABORT,	/* remote abort message */
--	RXRPC_SKB_MARK_LOCAL_ABORT,	/* local abort message */
--	RXRPC_SKB_MARK_NET_ERROR,	/* network error message */
--	RXRPC_SKB_MARK_LOCAL_ERROR,	/* local error message */
--	RXRPC_SKB_MARK_NEW_CALL,	/* local error message */
-+	RXRPC_SKB_MARK_REJECT_BUSY,	/* Reject with BUSY */
-+	RXRPC_SKB_MARK_REJECT_ABORT,	/* Reject with ABORT (code in skb->priority) */
- };
- 
- /*
-diff --git a/net/rxrpc/call_accept.c b/net/rxrpc/call_accept.c
-index 9d1e298b784c..e88f131c1d7f 100644
---- a/net/rxrpc/call_accept.c
-+++ b/net/rxrpc/call_accept.c
-@@ -353,7 +353,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
- 
- 	trace_rxrpc_abort(0, "INV", sp->hdr.cid, sp->hdr.callNumber, sp->hdr.seq,
- 			  RX_INVALID_OPERATION, EOPNOTSUPP);
--	skb->mark = RXRPC_SKB_MARK_LOCAL_ABORT;
-+	skb->mark = RXRPC_SKB_MARK_REJECT_ABORT;
- 	skb->priority = RX_INVALID_OPERATION;
- 	_leave(" = NULL [service]");
- 	return NULL;
-@@ -364,7 +364,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
- 	    rx->sk.sk_state == RXRPC_CLOSE) {
- 		trace_rxrpc_abort(0, "CLS", sp->hdr.cid, sp->hdr.callNumber,
- 				  sp->hdr.seq, RX_INVALID_OPERATION, ESHUTDOWN);
--		skb->mark = RXRPC_SKB_MARK_LOCAL_ABORT;
-+		skb->mark = RXRPC_SKB_MARK_REJECT_ABORT;
- 		skb->priority = RX_INVALID_OPERATION;
- 		_leave(" = NULL [close]");
- 		call = NULL;
-@@ -373,7 +373,7 @@ struct rxrpc_call *rxrpc_new_incoming_call(struct rxrpc_local *local,
- 
- 	call = rxrpc_alloc_incoming_call(rx, local, conn, skb);
- 	if (!call) {
--		skb->mark = RXRPC_SKB_MARK_BUSY;
-+		skb->mark = RXRPC_SKB_MARK_REJECT_BUSY;
- 		_leave(" = NULL [busy]");
- 		call = NULL;
- 		goto out;
 diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index 7f9ed3a60b9a..b0f12471f5e7 100644
+index b0f12471f5e7..a569e9e010d1 100644
 --- a/net/rxrpc/input.c
 +++ b/net/rxrpc/input.c
-@@ -1354,7 +1354,7 @@ void rxrpc_data_ready(struct sock *udp_sk)
- protocol_error:
- 	skb->priority = RX_PROTOCOL_ERROR;
- post_abort:
--	skb->mark = RXRPC_SKB_MARK_LOCAL_ABORT;
-+	skb->mark = RXRPC_SKB_MARK_REJECT_ABORT;
- reject_packet:
- 	trace_rxrpc_rx_done(skb->mark, skb->priority);
- 	rxrpc_reject_packet(local, skb);
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index 8a4da3fe96df..e8fb8922bca8 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -524,7 +524,7 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
- 	struct kvec iov[2];
- 	size_t size;
- 	__be32 code;
--	int ret;
-+	int ret, ioc;
+@@ -1125,12 +1125,13 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ {
+ 	struct rxrpc_connection *conn;
+ 	struct rxrpc_channel *chan;
+-	struct rxrpc_call *call;
++	struct rxrpc_call *call = NULL;
+ 	struct rxrpc_skb_priv *sp;
+ 	struct rxrpc_local *local = udp_sk->sk_user_data;
++	struct rxrpc_sock *rx;
+ 	struct sk_buff *skb;
+ 	unsigned int channel;
+-	int ret, skew;
++	int ret, skew = 0;
  
- 	_enter("%d", local->debug_id);
+ 	_enter("%p", udp_sk);
  
-@@ -532,7 +532,6 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
- 	iov[0].iov_len = sizeof(whdr);
- 	iov[1].iov_base = &code;
- 	iov[1].iov_len = sizeof(code);
--	size = sizeof(whdr) + sizeof(code);
+@@ -1181,12 +1182,6 @@ void rxrpc_data_ready(struct sock *udp_sk)
  
- 	msg.msg_name = &srx.transport;
- 	msg.msg_control = NULL;
-@@ -540,17 +539,31 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
- 	msg.msg_flags = 0;
+ 	trace_rxrpc_rx_packet(sp);
  
- 	memset(&whdr, 0, sizeof(whdr));
--	whdr.type = RXRPC_PACKET_TYPE_ABORT;
- 
- 	while ((skb = skb_dequeue(&local->reject_queue))) {
- 		rxrpc_see_skb(skb, rxrpc_skb_rx_seen);
- 		sp = rxrpc_skb(skb);
- 
-+		switch (skb->mark) {
-+		case RXRPC_SKB_MARK_REJECT_BUSY:
-+			whdr.type = RXRPC_PACKET_TYPE_BUSY;
-+			size = sizeof(whdr);
-+			ioc = 1;
-+			break;
-+		case RXRPC_SKB_MARK_REJECT_ABORT:
-+			whdr.type = RXRPC_PACKET_TYPE_ABORT;
-+			code = htonl(skb->priority);
-+			size = sizeof(whdr) + sizeof(code);
-+			ioc = 2;
-+			break;
-+		default:
-+			rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
-+			continue;
-+		}
-+
- 		if (rxrpc_extract_addr_from_skb(local, &srx, skb) == 0) {
- 			msg.msg_namelen = srx.transport_len;
- 
--			code = htonl(skb->priority);
+-	if (sp->hdr.type >= RXRPC_N_PACKET_TYPES ||
+-	    !((RXRPC_SUPPORTED_PACKET_TYPES >> sp->hdr.type) & 1)) {
+-		_proto("Rx Bad Packet Type %u", sp->hdr.type);
+-		goto bad_message;
+-	}
 -
- 			whdr.epoch	= htonl(sp->hdr.epoch);
- 			whdr.cid	= htonl(sp->hdr.cid);
- 			whdr.callNumber	= htonl(sp->hdr.callNumber);
+ 	switch (sp->hdr.type) {
+ 	case RXRPC_PACKET_TYPE_VERSION:
+ 		if (rxrpc_to_client(sp))
+@@ -1198,24 +1193,63 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ 		if (rxrpc_to_server(sp))
+ 			goto discard;
+ 		/* Fall through */
++	case RXRPC_PACKET_TYPE_ACK:
++	case RXRPC_PACKET_TYPE_ACKALL:
++		if (sp->hdr.callNumber == 0)
++			goto bad_message;
++		/* Fall through */
++	case RXRPC_PACKET_TYPE_ABORT:
++		break;
+ 
+ 	case RXRPC_PACKET_TYPE_DATA:
+-		if (sp->hdr.callNumber == 0)
++		if (sp->hdr.callNumber == 0 ||
++		    sp->hdr.seq == 0)
+ 			goto bad_message;
+ 		if (sp->hdr.flags & RXRPC_JUMBO_PACKET &&
+ 		    !rxrpc_validate_jumbo(skb))
+ 			goto bad_message;
+ 		break;
+ 
++	case RXRPC_PACKET_TYPE_CHALLENGE:
++		if (rxrpc_to_server(sp))
++			goto discard;
++		break;
++	case RXRPC_PACKET_TYPE_RESPONSE:
++		if (rxrpc_to_client(sp))
++			goto discard;
++		break;
++
+ 		/* Packet types 9-11 should just be ignored. */
+ 	case RXRPC_PACKET_TYPE_PARAMS:
+ 	case RXRPC_PACKET_TYPE_10:
+ 	case RXRPC_PACKET_TYPE_11:
+ 		goto discard;
++
++	default:
++		_proto("Rx Bad Packet Type %u", sp->hdr.type);
++		goto bad_message;
+ 	}
+ 
++	if (sp->hdr.serviceId == 0)
++		goto bad_message;
++
+ 	rcu_read_lock();
+ 
++	if (rxrpc_to_server(sp)) {
++		/* Weed out packets to services we're not offering.  Packets
++		 * that would begin a call are explicitly rejected and the rest
++		 * are just discarded.
++		 */
++		rx = rcu_dereference(local->service);
++		if (!rx || (sp->hdr.serviceId != rx->srx.srx_service &&
++			    sp->hdr.serviceId != rx->second_service)) {
++			if (sp->hdr.type == RXRPC_PACKET_TYPE_DATA &&
++			    sp->hdr.seq == 1)
++				goto unsupported_service;
++			goto discard_unlock;
++		}
++	}
++
+ 	conn = rxrpc_find_connection_rcu(local, skb);
+ 	if (conn) {
+ 		if (sp->hdr.securityIndex != conn->security_ix)
+@@ -1297,14 +1331,10 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ 			if (!test_bit(RXRPC_CALL_RX_HEARD, &call->flags))
+ 				set_bit(RXRPC_CALL_RX_HEARD, &call->flags);
+ 		}
+-	} else {
+-		skew = 0;
+-		call = NULL;
+ 	}
+ 
+ 	if (!call || atomic_read(&call->usage) == 0) {
+ 		if (rxrpc_to_client(sp) ||
+-		    sp->hdr.callNumber == 0 ||
+ 		    sp->hdr.type != RXRPC_PACKET_TYPE_DATA)
+ 			goto bad_message_unlock;
+ 		if (sp->hdr.seq != 1)
+@@ -1340,6 +1370,13 @@ void rxrpc_data_ready(struct sock *udp_sk)
+ 	skb->priority = RXKADINCONSISTENCY;
+ 	goto post_abort;
+ 
++unsupported_service:
++	rcu_read_unlock();
++	trace_rxrpc_abort(0, "INV", sp->hdr.cid, sp->hdr.callNumber, sp->hdr.seq,
++			  RX_INVALID_OPERATION, EOPNOTSUPP);
++	skb->priority = RX_INVALID_OPERATION;
++	goto post_abort;
++
+ reupgrade:
+ 	rcu_read_unlock();
+ 	trace_rxrpc_abort(0, "UPG", sp->hdr.cid, sp->hdr.callNumber, sp->hdr.seq,
+diff --git a/net/rxrpc/protocol.h b/net/rxrpc/protocol.h
+index 93da73bf7098..f9cb83c938f3 100644
+--- a/net/rxrpc/protocol.h
++++ b/net/rxrpc/protocol.h
+@@ -50,7 +50,6 @@ struct rxrpc_wire_header {
+ #define RXRPC_PACKET_TYPE_10		10	/* Ignored */
+ #define RXRPC_PACKET_TYPE_11		11	/* Ignored */
+ #define RXRPC_PACKET_TYPE_VERSION	13	/* version string request */
+-#define RXRPC_N_PACKET_TYPES		14	/* number of packet types (incl type 0) */
+ 
+ 	uint8_t		flags;		/* packet flags */
+ #define RXRPC_CLIENT_INITIATED	0x01		/* signifies a packet generated by a client */
+@@ -72,20 +71,6 @@ struct rxrpc_wire_header {
+ 
+ } __packed;
+ 
+-#define RXRPC_SUPPORTED_PACKET_TYPES (			\
+-		(1 << RXRPC_PACKET_TYPE_DATA) |		\
+-		(1 << RXRPC_PACKET_TYPE_ACK) |		\
+-		(1 << RXRPC_PACKET_TYPE_BUSY) |		\
+-		(1 << RXRPC_PACKET_TYPE_ABORT) |	\
+-		(1 << RXRPC_PACKET_TYPE_ACKALL) |	\
+-		(1 << RXRPC_PACKET_TYPE_CHALLENGE) |	\
+-		(1 << RXRPC_PACKET_TYPE_RESPONSE) |	\
+-		/*(1 << RXRPC_PACKET_TYPE_DEBUG) | */	\
+-		(1 << RXRPC_PACKET_TYPE_PARAMS) |	\
+-		(1 << RXRPC_PACKET_TYPE_10) |		\
+-		(1 << RXRPC_PACKET_TYPE_11) |		\
+-		(1 << RXRPC_PACKET_TYPE_VERSION))
+-
+ /*****************************************************************************/
+ /*
+  * jumbo packet secondary header
 
