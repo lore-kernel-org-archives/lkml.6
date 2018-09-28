@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BCFC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E61C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02FA221733
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBA2521733
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvmFn6I5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FA221733
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUMDJJN6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBA2521733
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbeI1Ia1 (ORCPT
+        id S1728952AbeI1Iad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:30:27 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43159 "EHLO
+        Fri, 28 Sep 2018 04:30:33 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:35632 "EHLO
         mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728720AbeI1Ia0 (ORCPT
+        with ESMTP id S1728930AbeI1Iac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:30:26 -0400
-Received: by mail-qt1-f195.google.com with SMTP id q41-v6so231120qtq.10;
-        Thu, 27 Sep 2018 19:09:05 -0700 (PDT)
+        Fri, 28 Sep 2018 04:30:32 -0400
+Received: by mail-qt1-f195.google.com with SMTP id z14-v6so5087523qtn.2;
+        Thu, 27 Sep 2018 19:09:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
-        b=CvmFn6I5WJhu5ZjswWU6NzsS8X94KzBnve8IPgf+Qo6+pGu2PExO5XGt9GjYlBuI6f
-         yB0zavI67z3Rr315H9OjdoAxzOXkapemDB+UbEQ4nR7uWyDe5kyOwt3G4Hk5p3yhbDC7
-         VFzi5S5oBin74hhJBjZrfFraRA8Xk7CZCc6MMPDptY+iI7gjh2tqqWEOTmbYvlkjW74v
-         Przjh5jnrARDJ/euhODiw8YiBOw0ToWTNDFMM5SSONXmROOfa/oOUaT94qADuvKOiPNJ
-         BDJ9sMRmwUHNSEUCAQMqeY7CJG90IDiOzZ+87daoHoqM/jclAfWRTnTrIioyRDLSCg8Q
-         wn8Q==
+        bh=e059U9EVFIrXzIdKY/vX6Gpjk8Vp1fLvpRknwNsZouQ=;
+        b=CUMDJJN6yNfQfPCW439dOQT+mg2FWYBh8yUgNBZoAQPPMTfGpXDngoyfLVL+HlOd5y
+         oihWC3LDp8QTHpjtZCQ83WH1tntlr3ad4P0XC+MJZSAmnddZBRSLjS4NQ9q3wtoWgayR
+         77yvHHtGJK7YiQJAoFHgjJ1sLBigzfhw//dx3l3l2RhAeDMlvRiGeBaQC1PL2ZZKA0ak
+         iF3FACthDKmxCOfaY0pYq5sCEv5OMWq76/YAZGAuFFr9/zHFomV9AY3YL2/dYgU4Iba2
+         0Y4yBgZi3sW0i0NtVabWn/pZejIx7sZSiOUhkU/WM9l+5Kh1I4GO9IhlzdbgHFcCsA2L
+         RuiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
-        b=Jlawu+0MZF3ZNrDGOu4VIKVNEDEhh6WpZCkOcmNafm/aVWZkdtouXpBN7D/086jUnp
-         N/kRPXp3s7bAeO0YbgEIG8M6/nNHV+gftaAa65T/XK+KnCWnjotZscMWJiCoaiW1frpE
-         FtezT6PYZYKPsY1bqLZFISEP1+SysNLYy7KPxd9P8nt3Mcnq5ZZ5OUpYdVmFn8mqfuRP
-         iPhzpHr7OHwtIps2zC9m20tBAwXQPqmGX8fZ7MOqcw1vNVWlDTNCQtTvNcdOks69XY5e
-         4FFEXAetVe9uY0ewuQqrI3azlTZnhQcSMVBHr2M5eCTg9XhovRIiJXtKMOG/Bq+Qof10
-         yckA==
-X-Gm-Message-State: ABuFfog3z5ZBhOV6LHRPwBLF9LlpTKEzk4oEozjtU6S3nf7pdPntvo6A
-        At+Z4A0e9vh2OI6ACxCKKjUVwdKf
-X-Google-Smtp-Source: ACcGV60cYOoAvibTXe4yQuqsipnRLZW5RkMJuY3DX7N4kd0h5Qo3N/FN0jP/X1Ce5LsCwIBLW8pghg==
-X-Received: by 2002:ac8:728e:: with SMTP id v14-v6mr10886397qto.126.1538100545277;
-        Thu, 27 Sep 2018 19:09:05 -0700 (PDT)
+        bh=e059U9EVFIrXzIdKY/vX6Gpjk8Vp1fLvpRknwNsZouQ=;
+        b=padHfS/gRZpQxZupuPRZq7s9tMYRjG2NqJEvYmRSaBO7nRadHCXQrXlJ0Bf3QcCqfK
+         aKQePUhZMtNhxMi6wHSALHAvabV/eQgZHgHsm2oV+WlEhRlOuAMr2LKfshPKEAAwS9Ri
+         BjMZVPSfc+yIW4nUjhl0tQyNj4MRLfkVrGTQZqDZ58nDRHpafo48VxLXw6/BIdbkNiiZ
+         HqxhK1vUhMNzIVTMerxu9tFAQUKKqsWeI9ajxDuqRAlzciUbHDrY7r2MwUy5994m27/2
+         /Gu1NMehNJQ0uALi6/xMmwLDGOfXlToVvdvX+G6HQtGDEfJarERicexjKJvLFTQQpOOz
+         GOPw==
+X-Gm-Message-State: ABuFfogcTxDgnrVoif6+yzLXnOsi88yblWuUOCi6D1knxmQQbv4IGSpi
+        zvvv5H11cyLMIscg7ijVI30=
+X-Google-Smtp-Source: ACcGV63Hsji/ySypatu1xD4zofutjOYePf7Z6bqsj9iZGRmP6CfMfuBGZrIhJykyjXnZlNL65uhvTQ==
+X-Received: by 2002:aed:2b43:: with SMTP id p61-v6mr10997907qtd.107.1538100551318;
+        Thu, 27 Sep 2018 19:09:11 -0700 (PDT)
 Received: from localhost.localdomain ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id y138-v6sm731191qka.36.2018.09.27.19.08.59
+        by smtp.gmail.com with ESMTPSA id y138-v6sm731191qka.36.2018.09.27.19.09.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 19:09:04 -0700 (PDT)
+        Thu, 27 Sep 2018 19:09:10 -0700 (PDT)
 From:   =?UTF-8?q?Leonardo=20Br=C3=A1s?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     =?UTF-8?q?Leonardo=20Br=C3=A1s?= <leobras.c@gmail.com>,
@@ -73,9 +73,9 @@ Cc:     =?UTF-8?q?Leonardo=20Br=C3=A1s?= <leobras.c@gmail.com>,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH v3 5/7] drivers: s390: Avoids building drivers if ARCH is not s390.
-Date:   Thu, 27 Sep 2018 23:08:14 -0300
-Message-Id: <20180928020816.11251-6-leobras.c@gmail.com>
+Subject: [PATCH v3 6/7] drivers: oprofile: Avoids building driver from direct make command
+Date:   Thu, 27 Sep 2018 23:08:15 -0300
+Message-Id: <20180928020816.11251-7-leobras.c@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180928020816.11251-1-leobras.c@gmail.com>
 References: <20180928020816.11251-1-leobras.c@gmail.com>
@@ -87,30 +87,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoids building s390 drivers if 'make drivers/s390/' is called but
-ARCH is not s390.
+Creates new Makefile to avoid building driver if
+'make drivers/oprofile/' is called directly.
+
+This driver is usually built from arch/$ARCH and seems to have
+no meaning building alone.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/s390/Makefile | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/oprofile/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 drivers/oprofile/Makefile
 
-diff --git a/drivers/s390/Makefile b/drivers/s390/Makefile
-index a863b0462b43..0575f02dba45 100644
---- a/drivers/s390/Makefile
-+++ b/drivers/s390/Makefile
-@@ -3,7 +3,7 @@
- # Makefile for the S/390 specific device drivers
- #
- 
--obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
--
--drivers-y += drivers/s390/built-in.a
--
-+ifeq ($(ARCH),s390)
-+	obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
-+	drivers-y += drivers/s390/built-in.a
-+endif
+diff --git a/drivers/oprofile/Makefile b/drivers/oprofile/Makefile
+new file mode 100644
+index 000000000000..361867ec2338
+--- /dev/null
++++ b/drivers/oprofile/Makefile
+@@ -0,0 +1 @@
++#Does nothing, since the source is called from arch/$ARCH/ tree.
 -- 
 2.19.0
 
