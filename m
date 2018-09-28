@@ -2,130 +2,223 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C72C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821E2C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4FC2173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:16:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2242173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:17:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGXut0Lb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4FC2173D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCNB+S8l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2242173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeI1HhZ (ORCPT
+        id S1728602AbeI1Hig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 03:37:25 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42971 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeI1HhZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 03:37:25 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b11-v6so4522414wru.9
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 18:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ql+uz9UBZ5a9CnjJSPXp7ea3dKb8x2qU8+2IBmkCGoU=;
-        b=LGXut0LbLkCeOcwjXjYWEnU+2/p1I/5ur+9olqVfld8E220ry2muoEOIQuYzzLaMwW
-         plugbY2IHhglewCflZe7fj22vB8NPM/uEynquf51Q2PYGqgoBx7FqCFmJLAl68Bwkzq6
-         496inUEfKV7hecA8JSP592LDRXvuey2Q3CN9LMOE2BV/qoFamdO2WK/MFY1In4MMqNy+
-         ezFAswvDeZaE3QGYj8QMhliM4rMR2HhTbhQksplYhURNEamEqsFZlOBn0z2SCd6NOMvK
-         X9i5kp6e18MlJatYUWh6cuqYBMVCfw4+KSASkFkFx+nFqu5YTwj1fLylfkqMU+FfH0eL
-         9hmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ql+uz9UBZ5a9CnjJSPXp7ea3dKb8x2qU8+2IBmkCGoU=;
-        b=CWs9ymJ2BjgJnl6adiNTdtZfUWGOJt0ib2536V5ORoFO+zNH8Gv7pm5cSH8JptFi5y
-         gWQ1mEqN8vGisQnb1yMBTQpvojWUW71rPx14dCSCDo4DyD1cDuxgnjClfdHoZJZckPgt
-         pTI6AoamPh06ls7v7nOURsQb7lb0W/9O1d4bvJFTbbPRcHbgcBHPigCZIIyls58b1mcz
-         99eBQ1E1dKPx+1Rb8nIzlG1PGvVZeBGqy+u1PHhSh9rtJYDrNkVJZd+/8Ngq6edwkHFI
-         saWcNPR2GZbIOWc7aqLSvdI/8gF3G3u0GLBNFQ3lnwKMOw1D2psYbNvN8fKfS8vEL8t3
-         O5Tw==
-X-Gm-Message-State: ABuFfojsl6P9v1GoOUrX4eyDpTLI28ZJ0cW0Bern0NXrWduMnk55N95p
-        41x/6uz5MhVCr8eFf0kbWHuXIbBjO7SFqQ==
-X-Google-Smtp-Source: ACcGV62BIOyPSiyMGrP8J7fwt8sl5TyTkzDiagR9F4s8llRHQ+7ikclMsGzeSMs0V9NHHjyIF/pgMg==
-X-Received: by 2002:a5d:42ca:: with SMTP id t10-v6mr7425898wrr.104.1538097376580;
-        Thu, 27 Sep 2018 18:16:16 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id i125-v6sm654679wmd.23.2018.09.27.18.16.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 18:16:15 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 18:16:14 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] mfd: cros_ec: Avoid unneeded internal declaration warning
-Message-ID: <20180928011614.GA3681@flashbox>
-References: <20180927033316.9784-1-natechancellor@gmail.com>
+        Fri, 28 Sep 2018 03:38:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbeI1Hig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 03:38:36 -0400
+Received: from gmail.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6914D2173D;
+        Fri, 28 Sep 2018 01:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538097448;
+        bh=0A3OcA/V/LKrh8LYeOomBUiIdWNIzKROAgMtJqkX4B4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kCNB+S8lmF+nf+obozY5LmUBXFSUlKSse7snLzh21Wx5DF+mDT+PblhEItTfedAoK
+         RQjZE7IQfL5oO2zuo07xeoor6hr7/uLA8R35Ikgpdub6HDmB3hrpnz1Lg/oWnlr2cC
+         GSc4Jbzg/6sLs9STt96Spfk4zlFyhOGfttJF26/4=
+Date:   Thu, 27 Sep 2018 18:17:27 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
+Message-ID: <20180928011726.GA98113@gmail.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com>
+ <20180927182944.GA22921@gmail.com>
+ <20180927213537.GA27576@zx2c4.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927033316.9784-1-natechancellor@gmail.com>
+In-Reply-To: <20180927213537.GA27576@zx2c4.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 08:33:17PM -0700, Nathan Chancellor wrote:
-> Clang warns:
+On Thu, Sep 27, 2018 at 11:35:39PM +0200, Jason A. Donenfeld wrote:
+> Hi Eric,
 > 
-> drivers/mfd/cros_ec_dev.c:509:40: warning: variable 'cros_ec_id' is not
-> needed and will not be emitted [-Wunneeded-internal-declaration]
-> static const struct platform_device_id cros_ec_id[] = {
->                                        ^
-> 1 warning generated.
+> On Thu, Sep 27, 2018 at 8:29 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > Why is Herbert Xu's existing crypto tree being circumvented, especially for
+> > future patches (the initial merge isn't quite as important as that's a one-time
+> > event)?  I like being able to check out cryptodev to test upcoming crypto
+> > patches.  And currently, changes to APIs, algorithms, tests, and implementations
+> > all go through cryptodev, which is convenient for crypto developers.
+> >
+> > Apparently, you're proposing that someone adding a new algorithm will now have
+> > to submit the API portion to one maintainer (Herbert Xu) and the implementation
+> > portion to another maintainer (you), and they'll go through separate git trees.
+> > That's inconvenient for developers, and it seems that in practice you and
+> > Herbert will be stepping on each other's toes a lot.
+> >
+> > Can you please reach some kind of sane agreement with Herbert so that the
+> > development process isn't fractured into two?  Perhaps you could review patches,
+> > but Herbert could still apply them?
 > 
-> Avoid this warning by adding it to the cros_ec_dev_driver definition
-> under the id_table member like all other platform drivers.
+> I think you're overthinking it a bit. Zinc will have a few software
+> implementations of primitives that are useful in cases where it's nice to call
+> the primitive directly. Think: various usages of sha2, siphash, the wireguard
+> suite (what this patchset includes), other things in lib/, etc. In so much as
+> this winds up duplicating things within the crypto API, I'll work with Herbert
+> to build one on top of the other -- as I've done in the two commits in this
+> series. But beyond that, think of the two initiatives as orthogonal. I'm
+> working on curating a few primitives that are maximally useful throughout
+> the kernel for various uses, and doing so in a way that I think brings
+> about a certain quality. Meanwhile the crypto API is amassing a huge
+> collection of primitives for some things, and that will continue to exist,
+> and Herbert will continue to maintain that. I expect for the crossover
+> to be fairly isolated and manageable, without too much foreseeable tree-
+> conflicts and such. Therefore, Samuel Neves and I plan to maintain the
+> codebase we've spent quite some time writing, and maintain our own tree for
+> it, which we'll be submitting through Greg. In other words, this is not
+> a matter of "circumvention" or "stepping on toes", but rather separate
+> efforts. I'm quite certain to the extent they overlap we'll be able to work
+> out fairly easily.
 > 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
+> Either way, I'll take your suggestion and reach out to Herbert, since at
+> least a discussion between the two of us sounds like it could be productive.
+
+So, Zinc will simultaneously replace the current crypto implementations, *and*
+be "orthogonal" and "separate" from all the crypto code currently maintained by
+Herbert?  You can't have your cake and eat it too...
+
+I'm still concerned you're splitting the community in two.  It will be unclear
+where new algorithms and implementations should go.  Some people will choose
+Herbert and the current crypto API and conventions, and some people will choose
+you and Zinc...  I still don't see clear guidelines for what will go where.  And
+yes, you and Herbert will step on each others' toes and duplicate stuff, as the
+efforts are *not* separate, as you've even argued yourself.
+
+Please reach out to Herbert to find a sane solution, ideally one that involves
+having a single git tree for crypto development and allows people to continue
+crypto development without choosing "sides".
+
 > 
-> I looked at several drivers with platform_device_id defintions and I
-> didn't really find any where the definition wasn't then added to the
-> platform_driver so I'm not sure if this was just missed in commit
-> afbf8ec7c4f9 ("platform/chrome: cros_ec_dev - Add a platform
-> device ID table") or if it was an intentional omission. I'm not super
-> familiar with the inner workings of platform devices.
+> > I'm also wondering about the criteria for making additions and changes to
+> > "Zinc".  You mentioned before that one of the "advantages" of Zinc is that it
+> > doesn't include "cipher modes from 90s cryptographers" -- what does that mean
+> > exactly?  You've also indicated before that you don't want people modifying the
+> > Poly1305 implementations as they are too error-prone.  Useful contributions
+> > could be blocked or discouraged in the future. Can you please elaborate on
+> > your criteria for contributions to Zinc?
+> >
+> > Also, will you allow algorithms that aren't up to modern security standards but
+> > are needed for compatibility reasons, e.g. MD5, SHA-1, and DES?  There are
+> > existing standards, APIs, and data formats that use these "legacy" algorithms;
+> > so implementations of them are often still needed, whether we like it or not.
+> >
+> > And does it matter who designed the algorithms, e.g. do algorithms from Daniel
+> > Bernstein get effectively a free pass, while algorithms from certain countries,
+> > governments, or organizations are not allowed?  E.g. wireless driver developers
+> > may need the SM4 block cipher (which is now supported by the crypto API) as it's
+> > specified in a Chinese wireless standard.  Will you allow SM4 in Zinc?  Or will
+> > people have to submit some algorithms to Herbert and some to you due to
+> > disagreements about what algorithms should be included?
 > 
-> Should this commit be undesirable, the warning can be silenced with the
-> __used attribute but this seemed like a more proper first commit.
+> Similarly here, I think you're over-politicizing everything. Stable address
+> generation for IPv6 uses SHA1 -- see net/ipv6/addrconf.c:3203 -- do you think
+> that this should use, say, the SM3 chinese hash function instead? No, of
+> course not, for a variety of interesting reasons. Rather, it should use some
+> simple hash function that's fast in software that we have available in Zinc.
+> On the other hand, it seems like parts of the kernel that have pretty high-
+> levels of cipher agility -- such as dmcrypt, ipsec, wifi apparently, and
+> so on -- will continue to use dynamic-dispatch system like the crypto API,
+> since that's what it was made to do and is effective at doing. And so, your
+> example of SM4 seems to fit perfectly into what the crypto API is well-suited
+> for, and it would fit naturally in there.
 > 
->  drivers/mfd/cros_ec_dev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index 999dac752bcc..8f9d6964173e 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -546,6 +546,7 @@ static struct platform_driver cros_ec_dev_driver = {
->  		.name = DRV_NAME,
->  		.pm = &cros_ec_dev_pm_ops,
->  	},
-> +	.id_table = cros_ec_id,
->  	.probe = ec_device_probe,
->  	.remove = ec_device_remove,
->  	.shutdown = ec_device_shutdown,
-> -- 
-> 2.19.0
+> In other words, the "political criteria" for what we add to lib/zinc/ will
+> mostly be the same as for the rest of lib/: are there things using it that
+> benefit from it being there in a direct and obvious way, and does the
+> implementation meet certain quality standards.
 > 
 
-It just occurred to me I probably should have added some of the Chromium
-guys who have modified this driver to this patch. I've done that now.
+So, crypto implementations and algorithms will go to different maintainers,
+source locations, and git trees based purely on whether the current users need
+"cipher agility"?  Note that usage can change over time; a user that requires a
+single cipher could later need multiple, and vice versa.
 
-Nathan
+What if the portion of a wireless driver that needs SM4 doesn't need any other
+cipher in the same place, so static dispatch would suffice?  Would SM4 be
+allowed in Zinc then?
+
+> > to change them yourself, e.g. when you added the part that converts the
+> > accumulator from base 26 to base 32.  I worry there may be double standards
+> > here
+> 
+> We do actually appreciate your concern here. However, there's a lot more that
+> went into that short patch than meets the eye:
+> 
+>   - It matches exactly what Andy Polyakov's code is doing for the exact
+>     same reason, so this isn't something that's actually "new". (There
+>     are paths inside his implementation that branch from the vector code
+>     to the scalar code.)
+
+Matches Andy's code, where?  The reason you had to add the radix conversion is
+because his code does *not* handle it...
+
+>   - It has been discussed at length with Andy, including what kinds of
+>     proofs we'll need if we want to chop it down further (to remove that
+>     final reduction), and why we both don't want to do that yet, and so
+>     we go with the full carrying for the avoidance of risk.
+
+Sorry, other people don't know about your private discussions.  For the rest of
+us, why not add a comment to the code explaining what's going on?
+
+>   - We've proved its correctness with Z3, actually using an even looser
+>     constraint on digit size than what Andy mentioned to us, thus resulting
+>     in a stronger proof result. So we're certain this isn't rubbish.
+
+AFAICS actually it *is* rubbish, because your C code stores the accumulator as
+64-bit integers whereas the asm code (at least, the 32-bit version) reads it as
+32-bit integers.  That won't work correctly on big endian ARM.
+
+>   - There's been some considerable computing power sunk into fuzzing it.
+> 
+> There's no doubt about it, we've done our due-diligence here. 
+
+Apparently not, given that it's broken on big endian ARM.
+
+> fact the kind of efforts we require of submissions. You could fault us for
+> not detailing this in "the commit message" -- except as this is still a
+> patch series, we're putting improvements into the 00/XX change log, instead
+> of adding fixes and additions on top of the series. 
+
+The details of the correctness proofs and fuzzing you claim to have done aren't
+explained, even in the cover letter; so for now we just have to trust you on
+that point.  Of course, having bugs in code which you insist was proven correct
++ fuzzed doesn't exactly inspire trust.
+
+I understand that your standards are still as high or even higher than
+Herbert's, which is good; crypto code should be held to high standards!  But
+based on the evidence, I do worry there's a double standard going on where you
+get away with things yourself which you won't allow from others in Zinc.  It's
+just not honest, and it will make people not want to contribute to Zinc.
+Maintainers are supposed to be unbiased and hold all contributions to the same
+standard.
+
+We need "Zinc" to be Linux's crypto library, not "Jason's crypto library".
+
+- Eric
