@@ -2,96 +2,60 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3E0C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FA3C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87CAA21580
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:35:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87CAA21580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 107882168B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:36:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107882168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbeI1T7A (ORCPT
+        id S1729045AbeI1UAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:59:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53138 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728062AbeI1T7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:59:00 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4B4A83004406;
-        Fri, 28 Sep 2018 13:35:11 +0000 (UTC)
-Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7054600C1;
-        Fri, 28 Sep 2018 13:35:07 +0000 (UTC)
-Date:   Fri, 28 Sep 2018 15:35:06 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [FIXUP v11] fixup! s390: vfio-ap: implement mediated device
- open callback
-Message-ID: <20180928153506.3521bc33.cohuck@redhat.com>
-In-Reply-To: <20180928133321.31884-1-akrowiak@linux.vnet.ibm.com>
-References: <20180928121429.7323d78b.cohuck@redhat.com>
-        <20180928133321.31884-1-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        Fri, 28 Sep 2018 16:00:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49792 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbeI1UAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:00:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91897ED1;
+        Fri, 28 Sep 2018 06:36:46 -0700 (PDT)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C17E53F5D3;
+        Fri, 28 Sep 2018 06:36:43 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 14:36:40 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     joro@8bytes.org, thunder.leizhen@huawei.com,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
+        john.garry@huawei.com
+Subject: Re: [PATCH v8 0/7] Add non-strict mode support for iommu-dma
+Message-ID: <20180928133639.GF1577@brain-police>
+References: <cover.1537458163.git.robin.murphy@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 28 Sep 2018 13:35:11 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1537458163.git.robin.murphy@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Sep 2018 09:33:21 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On Thu, Sep 20, 2018 at 05:10:20PM +0100, Robin Murphy wrote:
+> Hopefully this is the last spin of the series - I've now dropped my light
+> touch and fixed up all the various prose text, plus implemented the proper
+> quirk support for short-descriptor because it's actually just a trivial
+> cut-and-paste job.
 
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> 
-> Fixes case statement in vfio_ap_mdev_copy_masks() function in
-> vfio-ap-ops.c.
-> ---
->  drivers/s390/crypto/vfio_ap_ops.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index e1e1beaaeba5..86b42487a51c 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -741,11 +741,12 @@ static void vfio_ap_mdev_copy_masks(struct ap_matrix_mdev *matrix_mdev)
->  		break;
->  	case CRYCB_FORMAT1:
->  	case CRYCB_FORMAT0:
-> -	default:
->  		apm = (unsigned long *)crycb->apcb0.apm;
->  		aqm = (unsigned long *)crycb->apcb0.aqm;
->  		adm = (unsigned long *)crycb->apcb0.adm;
->  		break;
-> +	default:
-> +		return;
+Did you manage to clarify how the lifetime of the domain/flush queue interacts
+with the periodic timer after the cookie has been freed?
 
-/* cannot happen */
-
-?
-
->  	}
->  
->  	nbytes = DIV_ROUND_UP(matrix_mdev->matrix.apm_max + 1, BITS_PER_BYTE);
-
+Will
