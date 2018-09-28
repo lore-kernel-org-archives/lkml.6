@@ -2,75 +2,68 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A1DC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB54C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54172170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7182170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:27:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f8Go6/5v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54172170E
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mbojafY/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7182170E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeI1LtG (ORCPT
+        id S1728911AbeI1LtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 07:49:06 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36766 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbeI1LtF (ORCPT
+        Fri, 28 Sep 2018 07:49:24 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54540 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeI1LtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 07:49:05 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8S5QS4Q082419;
-        Fri, 28 Sep 2018 00:26:28 -0500
+        Fri, 28 Sep 2018 07:49:24 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8S5RNBB104699;
+        Fri, 28 Sep 2018 00:27:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538112388;
-        bh=2SK59Fm7J4tWTYyJ9580x17q0j5NjdzlB/V1FN1xZSQ=;
+        s=ti-com-17Q1; t=1538112443;
+        bh=p1SZM5aS56QGrpqtlxlo0AM9m1s3g1j+Tqi8umoM0Sw=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=f8Go6/5v7Z8T748kZt148Bp2xum2hcrWnsNg6VCMpzEWnzLqv0ULIse3ucz7XaYBP
-         fPIGru3Q+Eh58KYEMwulmcc3AUH7tG6pvvoYVz/SSyFMtpIdof0FONaVTqvrk+Wxcs
-         BxMPeWPuuhC7ZgWjlZOduvIgp2dIixTvt0Mtaseg=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5QSle015055;
-        Fri, 28 Sep 2018 00:26:28 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+        b=mbojafY/Y2acz4VYzoz/PaiLIJ/SWvewJIQohNqb//3/cS2TXa962QDGzoRFFasKY
+         6MxiYJkMq9uIV8bP9ZcuORCGlLD8sD6hrOAc/UdV3KXjIUTmL5cbRJpDZBN8EY9okq
+         FOhsiYLt4jY8IQ4ihaDhQEkRQCHxP5mexM8q045o=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5RNQH024726;
+        Fri, 28 Sep 2018 00:27:23 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 28
- Sep 2018 00:26:28 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ Sep 2018 00:27:23 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 28 Sep 2018 00:26:27 -0500
+ Fri, 28 Sep 2018 00:27:23 -0500
 Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5QNnI007219;
-        Fri, 28 Sep 2018 00:26:24 -0500
-Subject: Re: [PATCH 1/2] dt-bindings: i2c-omap: Add new compatible for AM654
- SoCs
-To:     Peter Rosin <peda@axentia.se>, Rob Herring <robh+dt@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC:     "Nori, Sekhar" <nsekhar@ti.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5RLRr008234;
+        Fri, 28 Sep 2018 00:27:22 -0500
+Subject: Re: [PATCH v4] ARM: dts: dra7: Fix up unaligned access setting for
+ PCIe EP
+To:     Tony Lindgren <tony@atomide.com>
+CC:     "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Menon, Nishanth" <nm@ti.com>, "Kristo, Tero" <t-kristo@ti.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180926115751.20421-1-vigneshr@ti.com>
- <20180926115751.20421-2-vigneshr@ti.com>
- <c3421929-1c40-513a-5c14-73e132a11d0f@axentia.se>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20180925052151.9537-1-vigneshr@ti.com>
+ <20180926172711.GW5662@atomide.com>
 From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <3943f2b1-3850-ad1e-6318-cfaec0eff485@ti.com>
-Date:   Fri, 28 Sep 2018 10:57:18 +0530
+Message-ID: <eb3bb7ba-e32d-aa0f-1877-985ab3d6fe4c@ti.com>
+Date:   Fri, 28 Sep 2018 10:58:16 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <c3421929-1c40-513a-5c14-73e132a11d0f@axentia.se>
+In-Reply-To: <20180926172711.GW5662@atomide.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,43 +75,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On Wednesday 26 September 2018 08:14 PM, Peter Rosin wrote:
-> On 2018-09-26 13:57, Vignesh R wrote:
->> AM654 SoCs have similar I2C IP as OMAP SoCs. Add new compatible to
->> handle AM654 SoCs.
+On Wednesday 26 September 2018 10:57 PM, Tony Lindgren wrote:
+> * Vignesh R <vigneshr@ti.com> [180924 22:25]:
+>> Bit positions of PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE and
+>> PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE in CTRL_CORE_SMA_SW_7 are
+>> incorrectly documented in the TRM. In fact, the bit positions are
+>> swapped. Update the DT bindings for PCIe EP to reflect the same.
 >>
+>> Fixes: d23f3839fe97 ("ARM: dts: DRA7: Add pcie1 dt node for EP mode")
+>> Cc: stable@vger.kernel.org
 >> Signed-off-by: Vignesh R <vigneshr@ti.com>
 >> ---
->>  Documentation/devicetree/bindings/i2c/i2c-omap.txt | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/i2c/i2c-omap.txt b/Documentation/devicetree/bindings/i2c/i2c-omap.txt
->> index 7e49839d4124..11ce869d682d 100644
->> --- a/Documentation/devicetree/bindings/i2c/i2c-omap.txt
->> +++ b/Documentation/devicetree/bindings/i2c/i2c-omap.txt
->> @@ -2,7 +2,8 @@ I2C for OMAP platforms
->>  
->>  Required properties :
->>  - compatible : Must be "ti,omap2420-i2c", "ti,omap2430-i2c", "ti,omap3-i2c"
->> -  or "ti,omap4-i2c"
->> +  or "ti,omap4-i2c" for OMAP2+ SoCs
->> +- compatible : Must "ti,am654-i2c", "ti,omap4-i2c" for AM654 SoCs
->                       ^
->                      be
+>> This patch is split from v3 here:
+>> https://lore.kernel.org/patchwork/cover/967020/
+>> Patch can be applied standalone and has no dependencies on other patches
+>> in v3.
 > 
-> Also, it looks bad with two 'compatible' entries in the properties list.
-> I think the trend is to list one valid compatible (plus fallbacks)
-> per line. So, you should consider reformatting, possibly like so:
-> 
-> - compatible : Must be one of
-> 	"ti,omap2420-i2c"
-> 	"ti,omap2430-i2c"
-> 	"ti,omap3-i2c"
->         "ti,omap4-i2c"
-> 	"ti,am654-i2c", "ti,omap4-i2c"
+> Hmm is this needed for v4.19-rc cycle or can this wait for
+> v4.20 merge window?
 > 
 
-I have sent v2 with these changes. Thanks for the review!
+v4.20 should be fine.
 
 
 -- 
