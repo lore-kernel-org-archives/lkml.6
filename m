@@ -2,102 +2,106 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14839C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C34C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7668206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:42:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7668206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5141F2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:46:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5141F2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbeI2DHh (ORCPT
+        id S1727203AbeI2DMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:07:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60311 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727221AbeI2DHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:07:36 -0400
-Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr04-ext.fm.intel.com [192.55.54.39])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w8SKfpn4555004
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Fri, 28 Sep 2018 13:41:52 -0700
-Subject: Re: [PATCH] x86/boot: define CC_HAVE_ASM_GOTO
-To:     Borislav Petkov <bp@suse.de>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        x86@kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
+        Fri, 28 Sep 2018 23:12:20 -0400
+Received: from mga03.intel.com ([134.134.136.65]:1537 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726665AbeI2DMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 23:12:20 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 13:46:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,316,1534834800"; 
+   d="scan'208";a="76963986"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga007.jf.intel.com with ESMTP; 28 Sep 2018 13:45:56 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id A2AF0300B51; Fri, 28 Sep 2018 13:45:56 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 13:45:56 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
         Kees Cook <keescook@chromium.org>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180907202618.258569-1-ndesaulniers@google.com>
- <CAKwvOdn4BcKUjGnGgFfbGxbwvSh9mYLT1gJ_ozDHua1LcjJ1rw@mail.gmail.com>
- <20180925190829.GC15464@zn.tnic>
- <CAKwvOdmaUMmLAv-529A0ShW7et3Jnnmc4Agjody+VReN5feTeg@mail.gmail.com>
- <CAKwvOdmLSVH7EVGY1ExU1Fh_hvL=FUzhq-80snDfZ+QhCT2FOA@mail.gmail.com>
- <20180926090841.GC5745@zn.tnic>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <56442061-7f55-878d-5b26-7cdd14e901d2@zytor.com>
-Date:   Fri, 28 Sep 2018 13:41:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Jann Horn <jannh@google.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+Message-ID: <20180928204556.GB32651@tassilo.jf.intel.com>
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
+ <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
+ <e89ec139-1a97-803e-343c-76eedf244d65@linux.intel.com>
+ <alpine.DEB.2.21.1809281542180.2004@nanos.tec.linutronix.de>
+ <0feb9867-0040-0306-a95b-4b6df1818312@linux.intel.com>
+ <alpine.DEB.2.21.1809281932040.1432@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180926090841.GC5745@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809281932040.1432@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/26/18 02:08, Borislav Petkov wrote:
-> On Tue, Sep 25, 2018 at 02:13:16PM -0700, Nick Desaulniers wrote:
->> Orthogonally, do you know *why* this Makefile overwrites
->> KBUILD_CFLAGS?  We take great care to set various compiler flags in
->> the top level Makefile, so to reset them lower in the tree seems
->> troublesome on first glance.  Take for instance the fact that GCC
->> changed the default C standard from gnu89 to gnu11 in GCC 5.  So a
->> kernel dev with gcc 5+ is now building a kernel with some translation
->> units built as gnu89, and some as gnu11.
-> 
-> Right, so I'd defer to hpa for a definitive answer here but AFAICT, the
-> reasoning is that because this is the special relocatable compressed
-> kernel and as such, it is redefining build flags completely so that
-> nothing leaks from kernel proper.
-> 
-> Which is funny because what happens is, that something *does* leak,
-> and what you're trying to fix is one incarnation. Because we do use
-> facilities from include/linux/. And looking at your error:
-> 
-> #warning "Compiler lacks ASM_GOTO support. Add -D __BPF_TRACING__ to your compiler arguments"
-> 
-> I don't think it does matter to the compressed kernel whether the
-> compiler has asm goto or not.
-> 
-> And looking at arch/x86/boot/Makefile, it does:
-> 
-> KBUILD_CFLAGS   := $(REALMODE_CFLAGS) -D_SETUP
-> 
-> and that _SETUP guard is kinda used to separate that early boot code
-> from kernel proper.
-> 
-> And I wonder if adding such guard to arch/x86/boot/compressed/Makefile
-> and then protect the asm goto check in arch/x86/include/asm/cpufeature.h
-> with it, would be more in line with how this whole machinery should
-> work...
-> 
+> Right now we have a single knob, which is poorly documented and that should
+> be fixed first. But some googling gives you the information that allowing
+> unprivilegded access is a security risk. So the security focussed sysadmin
 
-It overrides CFLAGS because it is by necessity a 32-bit compile (16
-bits, really, but that's done at the assembly level only.)  Some 64-bit
-flags cause the 32-bit compile to error out.
+Ah only if google could simply answer all our questions!
 
-	-hpa
+> will deny access to the PMUs no matter what.
+
+It's not like there is or isn't a security risk and that you
+can say that it is or it isn't in a global way.
+
+Essentially these are channels of information. The channels always exist
+in form of timing variances for any shared resource (like shared caches
+or shared memory/IO/interconnect bandwidth) that can be measured.
+
+Perfmon counters make the channels generally less noisy, but they do not cause
+them.
+
+To really close them completely you would need to avoid sharing
+anything, or not allowing to measure time, neither of which is practical
+short of an air gap.
+
+There are reasonable assesments you can make either way and the answers
+will be different based on your requirements. There isn't a single
+answer that works for everyone. 
+
+There are cases where it isn't a problem at all.
+
+If you don't have multiple users on the system your tolerance
+should be extremely high.
+
+For users who have multiple users there can be different tradeoffs.
+
+So there isn't a single answer, and that is why it is important
+that this if configurable.
+
+-Andi
 
