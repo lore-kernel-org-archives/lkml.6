@@ -2,56 +2,92 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F1DC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A89CC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 079712073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079712073F
+	by mail.kernel.org (Postfix) with ESMTP id 445AB2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:09:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3h++Oud"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445AB2073F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeI2Ces (ORCPT
+        id S1727142AbeI2Ces (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 28 Sep 2018 22:34:48 -0400
-Received: from [195.159.176.226] ([195.159.176.226]:41437 "EHLO
-        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbeI2Ces (ORCPT
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41483 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeI2Ces (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 28 Sep 2018 22:34:48 -0400
-Received: from list by blaine.gmane.org with local (Exim 4.84_2)
-        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
-        id 1g5z2g-0002Mf-AM
-        for linux-kernel@vger.kernel.org; Fri, 28 Sep 2018 22:07:14 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-kernel@vger.kernel.org
-From:   Dmitry Osipenko <digetx@gmail.com>
+Received: by mail-pg1-f193.google.com with SMTP id z3-v6so5198678pgv.8;
+        Fri, 28 Sep 2018 13:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:newsgroups:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n+3Rk+UYwaASXOgUiBKyc9xr1KIVO9+e0SuvE5Th8Rs=;
+        b=C3h++Ouduxhaex5fjgkZrIvqMEWoGBTlQaYXPhOr362aRCity7/YwHjBp3gKEfAONf
+         WU7olnWlLtvvUCKVt4dt0b/ptCHC5ltrye5ng8XXVTynMSu0ybCkQ00PUxh4BuGxrHDP
+         JhSEGEX5jPumGCzJVHRg4j3D8trwsND2OCjVQFskBiIWAkg/0wL7HsQgDpF1vpZ77HxG
+         kJASv5zXj9CrNlvv15MYiMqYaCy1MmoUNfOzTNQDTrsgXWnZIw6puJKBmVtsu17hB4AS
+         n4kGWc6yNeleICHEUZ4I82uYN6L23Kbqe039WOt5IeeicqEfzXDWz0Wva96UsQmcmktr
+         GOLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:newsgroups:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=n+3Rk+UYwaASXOgUiBKyc9xr1KIVO9+e0SuvE5Th8Rs=;
+        b=eIaNxZQ6x6KXP904U5qWV3zB9lKvwnkiTm8xThVuglVjmlo+ghMRwfrMuWYV7aXakg
+         /85QeY8566bRTcrZM7nlHsvvRka5EKDB4mcb4yik/E1hXbCfEsvL/jjyv2kmiieJUB8L
+         VeWbbxRUeR2he2n4zQzPwp7ZlkRp1hcsNUSRs4/8LUiSljJVC0TxSwHPC1CqsMFf50Y9
+         v3efNHyRvLZcUxnjuWjy5Yfy4degJD5mhMfA2mNKBi3etV3xgADqYEvaJQNdGntdxz7I
+         x84i2VJlnRCbBQK/VHUEthVeXSjFP51Yu3MzJuTMCTLqfymUo9b4uoFHTM5gcoiMH3xn
+         BnQQ==
+X-Gm-Message-State: ABuFfogx7xa2Aj+OxKXIQIEK9M0kbndbkFZJbxx35EF+mwJa+BL4EM2D
+        nY4SnfnW0izW+JCP1TBLD8Y=
+X-Google-Smtp-Source: ACcGV62jvNxitTlt253RL4D+Qvz0GVYNdwOj3KaeXUa7DZzGcLsruY7w4hClQ//7/Ra4qR+EJE5m/A==
+X-Received: by 2002:a63:730c:: with SMTP id o12-v6mr138268pgc.397.1538165367017;
+        Fri, 28 Sep 2018 13:09:27 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id t63-v6sm9690081pfa.158.2018.09.28.13.09.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 13:09:26 -0700 (PDT)
 Subject: Re: [PATCH] regulator: core: Pass max_uV value to
  regulator_set_voltage_rdev
-Date:   Fri, 28 Sep 2018 23:09:17 +0300
-Message-ID: <95655644-ef41-f5bd-7e8e-a257d48cd020@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>,
+        Maciej Purski <m.purski@samsung.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org, Carlos Hernandez <ceh@ti.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Newsgroups: gmane.linux.kernel,gmane.linux.ports.arm.kernel,gmane.linux.ports.arm.omap
 References: <20180615112916.GK112168@atomide.com>
  <CGME20180618140856eucas1p281619f9bf003655a3c2eac356216ab25@eucas1p2.samsung.com>
  <1529330913-11152-1-git-send-email-m.purski@samsung.com>
  <20180702080505.GN112168@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Complaints-To: usenet@blaine.gmane.org
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <95655644-ef41-f5bd-7e8e-a257d48cd020@gmail.com>
+Date:   Fri, 28 Sep 2018 23:09:17 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
+MIME-Version: 1.0
 In-Reply-To: <20180702080505.GN112168@atomide.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180928200917.7y7CZjkYadBgLvbQOo4hX9lmx8XXAQQMHkGSaJCP0S8@z>
 
 On 7/2/18 11:05 AM, Tony Lindgren wrote:
 > * Maciej Purski <m.purski@samsung.com> [180618 14:11]:
@@ -196,4 +232,3 @@ index 282511508698..4a386fe9f26a 100644
  			goto out;
 -- 
 2.19.0
-
