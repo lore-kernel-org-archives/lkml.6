@@ -2,144 +2,233 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37200C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF45C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07BAE2064D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:53:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BAE2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 930782064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:55:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oBIM3rQC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930782064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbeI1VRl convert rfc822-to-8bit (ORCPT
+        id S1729121AbeI1VTq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 17:17:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40006 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726867AbeI1VRl (ORCPT
+        Fri, 28 Sep 2018 17:19:46 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38053 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbeI1VTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 17:17:41 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8SEmiTU065057
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:53:32 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2msnhqaupv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:53:31 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Fri, 28 Sep 2018 15:53:29 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Sep 2018 15:53:24 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8SErNXN61866094
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Sep 2018 14:53:23 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56DCD11C058;
-        Fri, 28 Sep 2018 17:53:03 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E7BCF11C050;
-        Fri, 28 Sep 2018 17:53:02 +0100 (BST)
-Received: from mschwideX1 (unknown [9.152.212.164])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Sep 2018 17:53:02 +0100 (BST)
-Date:   Fri, 28 Sep 2018 16:53:21 +0200
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Finn Thain <fthain@telegraphics.com.au>
-Subject: Re: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
-In-Reply-To: <0B38810F-3E22-45A8-9D5D-EDEABD214148@amacapital.net>
-References: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org>
-        <alpine.DEB.2.21.1809280819040.8118@nanos.tec.linutronix.de>
-        <CAMuHMdWWxgvo0a+8UvesiVikWS_45yOXRhM39F31Vn17kN+Ptg@mail.gmail.com>
-        <20180928103726.07761672@mschwideX1>
-        <alpine.DEB.2.21.1809281041420.2004@nanos.tec.linutronix.de>
-        <0B38810F-3E22-45A8-9D5D-EDEABD214148@amacapital.net>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-X-TM-AS-GCONF: 00
-x-cbid: 18092814-0016-0000-0000-0000020BDFEC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092814-0017-0000-0000-000032630CBD
-Message-Id: <20180928165321.0ddaf948@mschwideX1>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Fri, 28 Sep 2018 17:19:45 -0400
+Received: by mail-it1-f195.google.com with SMTP id p129-v6so2896622ite.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:55:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=yBJVWrd1B6/Qmjd5s2uvQeofnVOBerar1G5f0Zk9ckE=;
+        b=oBIM3rQCHN2xC7AjkOI80YuzcCu7QlAhSVOBNdHa2mnaTcEBFf0tRHjCrZHU5xlmel
+         Pe7BzPs2D4i/oSso4y0mmX1t3/igf9PVByx2fe8vVH7fo3xZr8gjA31E1f+0h7W14IR+
+         x7hRs0tv7TAsKShwkpp4hiL0fYEys9ziUZdCpkGgWm/JHrWZ3aEOxMUhqmU5gFIRlQc+
+         bJHlCNwXPfzB4fYUmT2u//7JFvzNDjLNtB90qAkr/oD6A4W4bKZ+uz5JlQ/lQHC1bvXc
+         COQIV3DonwhuwNAICAdULJ2KAArQkRDjPEiSDMDAGkqtVYW+xQ1RDWLTk1TCm93h37c8
+         UyXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=yBJVWrd1B6/Qmjd5s2uvQeofnVOBerar1G5f0Zk9ckE=;
+        b=dOAf59wEnm0JzkYnaT+qrAwq0OnKOuiMXidQLFYYbfMOUMcEcRQmy8gCJgQWDab0z0
+         QzJ//BkAiiH/uTLCmSw/msOhs1zJPaJqOPX6wHz6H2gFQa6bmsW53cYBBhaiZEGnbS7n
+         wiHUXNnT0T+h0fF3Jkio91Zg93nIoctR09ZhclQJfAW8+UunwGVHWAHpLFkUJLI5288Y
+         tLHrwESY7uk/WOraYenqC+f/ags0oVdt0mcieOuiAPqAG8mim/t+Tc/O7V98WBWqe7U/
+         hOmorPWTPV4CVRfaCeycEWad8SPeCGsOBUTXm4QYJ/fxMFTcT4Ut+OGGl+IPuL7Z0oxq
+         H9wA==
+X-Gm-Message-State: ABuFfoixVRxMTbhsdjqJOmxI8IDD42gYvaRu3rlQ+zeASyuf1jzQm2a9
+        vgp4xsb/dnlB+ZiOlv4r4KHA0fdxonEjDFlQTtbqKg==
+X-Google-Smtp-Source: ACcGV62hMSZ7YhhgJE8+2lPzn6FXSHbnvBI4EdkIvqbhdVL5TKHlblJnMrGiRzVe0CM/WcTaDPIkLLYH/6+ejhRaa4w=
+X-Received: by 2002:a24:c0c5:: with SMTP id u188-v6mr1892280itf.57.1538146535055;
+ Fri, 28 Sep 2018 07:55:35 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809280150
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 07:55:14
+ -0700 (PDT)
+In-Reply-To: <0000000000003852440576ef80b2@google.com>
+References: <0000000000003852440576ef80b2@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 28 Sep 2018 16:55:14 +0200
+Message-ID: <CACT4Y+bR+9vy5ZKDN31gmvKk5hcoNojaBuD9Dz1wswfObyt0uw@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in string (2)
+To:     syzbot <syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 28 Sep 2018 07:11:44 -0700
-Andy Lutomirski <luto@amacapital.net> wrote:
+On Fri, Sep 28, 2018 at 4:45 PM, syzbot
+<syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    c127e59bee3e Merge tag 'for_v4.19-rc6' of git://git.kernel..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13b2f32a400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=dfb440e26f0a6f6f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=376cea2b0ef340db3dd4
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com
 
-> > On Sep 28, 2018, at 1:42 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >   
-> >> On Fri, 28 Sep 2018, Martin Schwidefsky wrote:
-> >> On Fri, 28 Sep 2018 09:12:10 +0200
-> >> Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
-> >>> I don't know if that has happened, and whether it would work on s390 now.  
-> >> 
-> >> commit 03b8c7b623c80af264c4c8d6111e5c6289933666
-> >> Author: Heiko Carstens <heiko.carstens@de.ibm.com>
-> >> Date:   Sun Mar 2 13:09:47 2014 +0100
-> >> 
-> >>    futex: Allow architectures to skip futex_atomic_cmpxchg_inatomic() test
-> >> 
-> >>    If an architecture has futex_atomic_cmpxchg_inatomic() implemented and there
-> >>    is no runtime check necessary, allow to skip the test within futex_init().
-> >> 
-> >>    This allows to get rid of some code which would always give the same result,
-> >>    and also allows the compiler to optimize a couple of if statements away.
-> >> 
-> >>    Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> >>    Cc: Finn Thain <fthain@telegraphics.com.au>
-> >>    Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> >>    Link: http://lkml.kernel.org/r/20140302120947.GA3641@osiris
-> >>    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> >> 
-> >> 
-> >> Heiko created the CONFIG_HAVE_FUTEX_CMPXCHG to get around this issue.
-> >> We just skip the runtime check as well as arc, m68k and sh. Not sure
-> >> about xtensa, the set it config option only for !MMU.  
-> > 
-> > Duh. grep would have told me. -ENOTENOUGHCOFFEE
-> > 
-> >   
-> 
-> There’s another way to skin this cat: keep KERNEL_DS but pass a valid pointer.
-> I don’t suppose you remember why you didn’t do that?
+I guess this is overlayfs rather than printk. +overlayfs maintainers
+In future syzbot will avoid attributing crashes to printk, because I
+think it's not the first time crashes are mis-attributed to printk:
+https://github.com/google/syzkaller/commit/41e4b32952f4590341ae872db0abf819b4004713
 
-No, I don't remember. To use a valid kernel pointer with KERNEL_DS and
-then test for == 0 (vs -ENOSYS) imho should work.
 
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
-
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
+> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0e714a76d4
+> R13: 00000000004c32cb R14: 00000000004d4ef0 R15: 0000000000000004
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in string+0x298/0x2d0 lib/vsprintf.c:604
+> Read of size 1 at addr ffff8801c36c66ba by task syz-executor2/27811
+>
+> CPU: 0 PID: 27811 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #36
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+>  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+>  string+0x298/0x2d0 lib/vsprintf.c:604
+>  vsnprintf+0x48e/0x1b60 lib/vsprintf.c:2293
+>  vscnprintf+0x2d/0x80 lib/vsprintf.c:2396
+>  vprintk_store+0x43/0x510 kernel/printk/printk.c:1847
+>  vprintk_emit+0x1c1/0x930 kernel/printk/printk.c:1905
+>  vprintk_default+0x28/0x30 kernel/printk/printk.c:1963
+>  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+>  printk+0xa7/0xcf kernel/printk/printk.c:1996
+>  ovl_lookup_index.cold.15+0xe8/0x1f8 fs/overlayfs/namei.c:689
+>  ovl_lookup+0x9f2/0x29c0 fs/overlayfs/namei.c:1022
+>  __lookup_hash+0x12e/0x190 fs/namei.c:1546
+>  do_rmdir+0x3b3/0x630 fs/namei.c:3930
+>  __do_sys_rmdir fs/namei.c:3959 [inline]
+>  __se_sys_rmdir fs/namei.c:3957 [inline]
+>  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3957
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x457579
+> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f0e714a6c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
+> RAX: ffffffffffffffda RBX: 00007f0e714a6c90 RCX: 0000000000457579
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
+> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0e714a76d4
+> R13: 00000000004c32cb R14: 00000000004d4ef0 R15: 0000000000000004
+>
+> Allocated by task 27811:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+>  __do_kmalloc mm/slab.c:3718 [inline]
+>  __kmalloc+0x14e/0x760 mm/slab.c:3727
+>  kmalloc_array include/linux/slab.h:635 [inline]
+>  kcalloc include/linux/slab.h:646 [inline]
+>  ovl_get_index_name_fh+0x57/0x180 fs/overlayfs/namei.c:596
+>  ovl_get_index_name+0x5c/0x80 fs/overlayfs/namei.c:631
+>  ovl_lookup_index+0xe4/0x700 fs/overlayfs/namei.c:678
+>  ovl_lookup+0x9f2/0x29c0 fs/overlayfs/namei.c:1022
+>  __lookup_hash+0x12e/0x190 fs/namei.c:1546
+>  do_rmdir+0x3b3/0x630 fs/namei.c:3930
+>  __do_sys_rmdir fs/namei.c:3959 [inline]
+>  __se_sys_rmdir fs/namei.c:3957 [inline]
+>  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3957
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 5441:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>  __cache_free mm/slab.c:3498 [inline]
+>  kfree+0xcf/0x230 mm/slab.c:3813
+>  __vunmap+0x335/0x460 mm/vmalloc.c:1532
+>  vfree+0x68/0x100 mm/vmalloc.c:1593
+>  copy_entries_to_user net/ipv4/netfilter/ip_tables.c:870 [inline]
+>  get_entries net/ipv4/netfilter/ip_tables.c:1027 [inline]
+>  do_ipt_get_ctl+0x9eb/0xbc0 net/ipv4/netfilter/ip_tables.c:1703
+>  nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
+>  nf_getsockopt+0x80/0xe0 net/netfilter/nf_sockopt.c:122
+>  ip_getsockopt+0x1af/0x240 net/ipv4/ip_sockglue.c:1577
+>  tcp_getsockopt+0x93/0xe0 net/ipv4/tcp.c:3583
+>  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2997
+>  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
+>  __do_sys_getsockopt net/socket.c:1950 [inline]
+>  __se_sys_getsockopt net/socket.c:1947 [inline]
+>  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> The buggy address belongs to the object at ffff8801c36c6680
+>  which belongs to the cache kmalloc-64 of size 64
+> The buggy address is located 58 bytes inside of
+>  64-byte region [ffff8801c36c6680, ffff8801c36c66c0)
+> The buggy address belongs to the page:
+> page:ffffea00070db180 count:1 mapcount:0 mapping:ffff8801da800340
+> index:0xffff8801c36c6380
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffffea0006d16508 ffffea000638a588 ffff8801da800340
+> raw: ffff8801c36c6380 ffff8801c36c6000 000000010000001b 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffff8801c36c6580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>  ffff8801c36c6600: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>>
+>> ffff8801c36c6680: 00 00 00 00 00 00 00 02 fc fc fc fc fc fc fc fc
+>
+>                                         ^
+>  ffff8801c36c6700: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>  ffff8801c36c6780: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000003852440576ef80b2%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
