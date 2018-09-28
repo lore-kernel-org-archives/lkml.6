@@ -2,108 +2,119 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00C3C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27F8C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6445A20838
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6445A20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 943D120833
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:27:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="th7/JP3G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943D120833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729137AbeI1VvH (ORCPT
+        id S1729261AbeI1Vvm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 17:51:07 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54701 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbeI1VvG (ORCPT
+        Fri, 28 Sep 2018 17:51:42 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:33990 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729138AbeI1Vvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 17:51:06 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <kurt.kanzenbach@linutronix.de>)
-        id 1g5ufG-0001AI-Qw; Fri, 28 Sep 2018 17:26:46 +0200
-Date:   Fri, 28 Sep 2018 17:26:46 +0200
-From:   Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [Problem] Cache line starvation
-Message-ID: <20180928152646.mzjpwtj3qqvdnrlx@linutronix.de>
-References: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
- <20180926125301.GE2979@brain-police>
- <20180927142547.ucgh5elb7pxs46dq@linutronix.de>
- <20180927144127.qdkem4juhztxdkdb@linutronix.de>
- <alpine.DEB.2.21.1809271644120.8118@nanos.tec.linutronix.de>
- <20180928090521.mj5elgqnla6qcz2r@linutronix.de>
+        Fri, 28 Sep 2018 17:51:41 -0400
+Received: by mail-vs1-f66.google.com with SMTP id v12-v6so3835037vsc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 08:27:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=xCRJKwPQyqcEaIvsihvljNLTHQ9SrE93BNWbd8raIUE=;
+        b=th7/JP3GmlJUnx3SDf6WSnSih9bHD7Mtg2dCXnCGFUP/OE2uh890YfVT9LJD5Bqhk0
+         oTTiJMmH0gH4SZMlwVY3EeyciFydmy/9606g3gx4kRsV0xp0+lX/wwoY5XQNjQ7PMTFR
+         RaSI0PF1s8nUiAhiyLUbDNzzdIG02R6a7/r/6XwrXfNhEEuc3nwrybQIWoWEMVcfiVYS
+         9qVL/lGNFNkam3zUe8+QVZiFB9xeIUUkLmqkTYBk8wKnJl8bIPoqgrlvW+t882arWmJZ
+         r3ARidAxaA/DCIIvVYeQr95y/qtKsOEsTfRi45r+8pBzNM/NN/oRGYFN2lmTDeErWuMI
+         U+tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=xCRJKwPQyqcEaIvsihvljNLTHQ9SrE93BNWbd8raIUE=;
+        b=dPyqtdWJBp0lcdxaMqG80HKLEdEyBltjiu90aRPI1TveZsGNDJJCAj92tknIi2WY3T
+         ryrnzLfVlTinAJ6HDx2Mizog/zz2DNRcgl4AGTkJeMTII1RHY7s11fEE5m4k8oFdKbyX
+         UXpkR08UT6QOM/5J/P7uWTzHmaQNaPQP9eGcltn6uMuBe/QRFPmN7ZyIhl8M1CGPV95Z
+         5dVV7FcUxs5CtgY3iodhynXMZFAQttcd1TJPGFAiC2fArypvT1iISHrqN0z6DVIGsQ1I
+         9uCI9g1Ds9IB0j2YKfw4MEVDSaRKoZsL+1P9Ud5kgaMN5nBgqomwLt/IAqjP3pbQ2PJI
+         2SFQ==
+X-Gm-Message-State: ABuFfoj13mvQJ4isk3KBYrDsIdupJHZuzAdwayExzHryGa8COnjLFynf
+        XcC+AZnJhimjrTz0J/bn2QT3Mz0m/OErbAKysBIueQ==
+X-Google-Smtp-Source: ACcGV62KolCBj4aw3pl4Xzx/eBdHrm+BeAEJlqgs53TT1l4NSMrzvg1DLTQdEiSHHnST5QpPtzMNm7DlL+HpZKCYahw=
+X-Received: by 2002:a67:6582:: with SMTP id z124-v6mr2926438vsb.11.1538148444070;
+ Fri, 28 Sep 2018 08:27:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928090521.mj5elgqnla6qcz2r@linutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1537449521-16182-1-git-send-email-gilad@benyossef.com>
+ <1537449521-16182-3-git-send-email-gilad@benyossef.com> <CAKv+Gu9T7Z2oV8TEaN8uVdrFxGmmCKLh6ZjDnRnhgCmLwuVf4w@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9T7Z2oV8TEaN8uVdrFxGmmCKLh6ZjDnRnhgCmLwuVf4w@mail.gmail.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Fri, 28 Sep 2018 18:27:13 +0300
+Message-ID: <CAOtvUMd68Bv7O8za5CLn7SGSgCDyR0fEE3MFU+5MfhfVBd2WHw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] crypto: add output feedback mode
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 11:05:21AM +0200, Kurt Kanzenbach wrote:
-> Hi Thomas,
+Hi,
+
+On Fri, Sep 28, 2018 at 1:06 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
 >
-> On Thu, Sep 27, 2018 at 04:47:47PM +0200, Thomas Gleixner wrote:
-> > On Thu, 27 Sep 2018, Kurt Kanzenbach wrote:
-> > > On Thu, Sep 27, 2018 at 04:25:47PM +0200, Kurt Kanzenbach wrote:
-> > > > However, the issue still triggers fine. With stress-ng we're able to
-> > > > generate latency in millisecond range. The only workaround we've found
-> > > > so far is to add a "delay" in cpu_relax().
-> > >
-> > > It might interesting for you, how we added the delay. We've used:
-> > >
-> > > static inline void cpu_relax(void)
-> > > {
-> > > 	volatile int i = 0;
-> > >
-> > > 	asm volatile("yield" ::: "memory");
-> > > 	while (i++ <= 1000);
-> > > }
-> > >
-> > > Of course it's not efficient, but it works.
+> On 20 September 2018 at 15:18, Gilad Ben-Yossef <gilad@benyossef.com> wro=
+te:
+> > Add a generic version of output feedback mode. We already have support =
+of
+> > several hardware based transformations of this mode and the needed test
+> > vectors but we somehow missed adding a generic software one. Fix this n=
+ow.
 > >
-> > I wonder if it's just the store on the stack which makes it work. I've seen
-> > that when instrumenting x86. When the careful instrumentation just stayed
-> > in registers it failed. Once it was too much and stack got involved it
-> > vanished away.
+> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 >
-> I've performed more tests: Adding a store to a global variable just
-> before calling cpu_relax() doesn't help. Furthermore, adding up to 20
-> yield instructions (just like you did on x86) didn't work either.
+> I couldn't find any users of OFB in the kernel. Any idea who is using
+> it and for what?
 
-In addition, the stress-ng test triggers on v4.14-rt and v4.18-rt as
-well.
+Most probably nothing in-kernel, as there was no generic software
+implementation up till now and no one complained. :-)
+It is available via the user space crpto API *if* you happened to have
+supporting hardware, which is a very odd situation.
 
-As v4.18-rt still uses the old spin lock implementation, I've backported
-the qspinlock implementation to v4.18-rt. The commits I've identified
-are:
+The kernel has test vectors for OFB for DES, 3DES and AES. We have
+multiple HW based implementation registering
+and making available their support for this mode for some time now,
+but not software implementation and probably no in kernel users.
 
- - 598865c5f32d ("arm64: barrier: Implement smp_cond_load_relaxed")
- - c11090474d70 ("arm64: locking: Replace ticket lock implementation with qspinlock")
+Had we have no support for it in the kernel at, I wouldn't have
+offered a generic software implementation, but since
+we do and have for some time supported using this operation mode (but
+only if you have supporting HW), it seems
+we are in a strange limbo position and should go to either removing
+all support or adding generic support - hence my patch.
 
-Using these commits it's still possible to trigger the issue. But it
-takes longer.
 
-Did I miss anything?
+Gilad
 
-Thanks,
-Kurt
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+values of =CE=B2 will give rise to dom!
