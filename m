@@ -2,231 +2,101 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CF3C004D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E107C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67EC92073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:36:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67EC92073F
+	by mail.kernel.org (Postfix) with ESMTP id 4177B206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:37:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="uuBZjw89"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4177B206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeI2FCb (ORCPT
+        id S1727569AbeI2FCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:02:31 -0400
-Received: from mga11.intel.com ([192.55.52.93]:9443 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727455AbeI2FA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:00:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 15:35:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,316,1534834800"; 
-   d="scan'208";a="267880168"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Sep 2018 15:34:58 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v5 08/21] tpm: factor out tpm1_get_random into tpm1-cmd.c
-Date:   Sat, 29 Sep 2018 01:30:22 +0300
-Message-Id: <20180928223035.14471-9-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
+        Sat, 29 Sep 2018 01:02:54 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:45062 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeI2FCx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:02:53 -0400
+Received: by mail-oi1-f195.google.com with SMTP id d63-v6so6720777oic.12
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:37:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZWzR/p3p5OqCUB5+F8FIBR7qdl+zO0eppQWz7JomGWw=;
+        b=uuBZjw89MnBCokj39L/zVrn0FQvlfcgkWi48MhZY1OP0I9NkRcdSiBYqNCpDU2DPRi
+         2JlVe21wDwQzmlfrqvqTnha6eAYK9KS8aLlun2KBIYdF8yeac8pSbFaN1Ha1RItAAcK9
+         BRweexXepdycnj01nlzEXV1s3zW/50Eb8+ug7gu+jsvZT5UozWK2R7ypKeoixza3nmcv
+         QHIzObpEBo1/KjXPm/XQMhwkLXSz5eHSwHHwf1BaqVsprDOEDZTlIpag8t9ueIwOVvbR
+         EW6bxAOoiS8pDse5F7qQTu/b1WLEtfwBU7ajuxMBry1i37rzbf7vbPciV4ZwEmdDIzyq
+         C0eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZWzR/p3p5OqCUB5+F8FIBR7qdl+zO0eppQWz7JomGWw=;
+        b=bgTIVx56/i+Xfo/paXfucTL/f4EaCkNmhfrG1eUEXauzwhi2mO7Zfp7R5lDCFMzyO4
+         q88A8SSnvgVFyGngam4vBMr++uTEfbbyyQRYW81lSZUg0unWAuzOa37k9ZwcmcnPQ3uv
+         XqFIjaZfsG98qxBGs/SKadNXphLmLHHndpCFu17L5pp5qO7XeNV2R3R1Qexr1tyHf+di
+         N0TAPHk7rM9rZRs1m/Bq6fsg0+jGtPDb/NMBPFYqkMx8xxdZteVu+68qD+meRlxVZbxH
+         TuwcoXuu+tKZBr1YFBkIwSkf0dv6hF4VT1dWdCfczx4pXRHg2REQLZEvHTKxckQQfRyq
+         XahA==
+X-Gm-Message-State: ABuFfohdIW3L785xmR+DspO4ENalQNGE9TNCeXzs1ymbhJvUmjn87HLt
+        VcDhn9bPG0Vg9zB4XEddfK9YOgQRxVWuCq/ZW6P1UwR8eC4=
+X-Google-Smtp-Source: ACcGV60d6Plr/8WUWU2E1UFNxqZmorib2royjkNdH+Tr2eMdJwf1SaREnqpkbdvTqb7hJmo6H/GikOfGmJweewktQ5s=
+X-Received: by 2002:aca:b02:: with SMTP id 2-v6mr321748oil.305.1538174221294;
+ Fri, 28 Sep 2018 15:37:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <1538173916-95849-1-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <1538173916-95849-1-git-send-email-yang.shi@linux.alibaba.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 28 Sep 2018 15:36:49 -0700
+Message-ID: <CAPcyv4jdTWoJMSPuxso=8fu8nGOrmbBPYxkJvsuEDfJSYvsDWg@mail.gmail.com>
+Subject: Re: [PATCH] mm: enforce THP for VM_NOHUGEPAGE dax mappings
+To:     yang.shi@linux.alibaba.com
+Cc:     Jan Kara <jack@suse.cz>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out get random implementation from tpm-interface.c
-into tpm1_get_random function in tpm1-cmd.c.
-No functional changes.
+On Fri, Sep 28, 2018 at 3:34 PM <yang.shi@linux.alibaba.com> wrote:
+>
+> commit baabda261424517110ea98c6651f632ebf2561e3 ("mm: always enable thp
+> for dax mappings") says madvise hguepage policy makes less sense for
+> dax, and force enabling thp for dax mappings in all cases, even though
+> THP is set to "never".
+>
+> However, transparent_hugepage_enabled() may return false if
+> VM_NOHUGEPAGE is set even though the mapping is dax.
+>
+> So, move is_vma_dax() check to the very beginning to enforce THP for dax
+> mappings in all cases.
+>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> ---
+> I didn't find anyone mention the check should be before VM_NOHUGEPAGE in
+> the review for Dan's original patch. And, that patch commit log states
+> clearly that THP for dax mapping for all cases even though THP is never.
+> So, I'm supposed it should behave in this way.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
----
-V2-V3: Rebase
-V4-V5: Resend
-
- drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
- drivers/char/tpm/tpm.h           |  1 +
- drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+), 51 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index a94a88f9f91c..a2205f26c74c 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -811,14 +811,6 @@ int tpm_pm_resume(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(tpm_pm_resume);
- 
--#define TPM_ORD_GET_RANDOM 70
--#define TPM_GETRANDOM_RESULT_SIZE	18
--static const struct tpm_input_header tpm_getrandom_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(14),
--	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
--};
--
- /**
-  * tpm_get_random() - get random bytes from the TPM's RNG
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-@@ -829,58 +821,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
-  */
- int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- {
--	struct tpm_cmd_t tpm_cmd;
--	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
--	int err, total = 0, retries = 5;
--	u8 *dest = out;
-+	int rc;
- 
--	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
-+	if (!out || max > TPM_MAX_RNG_DATA)
- 		return -EINVAL;
- 
- 	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		err = tpm2_get_random(chip, out, max);
--		tpm_put_ops(chip);
--		return err;
--	}
--
--	do {
--		tpm_cmd.header.in = tpm_getrandom_header;
--		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
--
--		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
--				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
--				       offsetof(struct tpm_getrandom_out,
--						rng_data),
--				       0, "attempting get random");
--		if (err)
--			break;
--
--		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
--		if (recd > num_bytes) {
--			total = -EFAULT;
--			break;
--		}
--
--		rlength = be32_to_cpu(tpm_cmd.header.out.length);
--		if (rlength < TPM_HEADER_SIZE +
--			      offsetof(struct tpm_getrandom_out, rng_data) +
--			      recd) {
--			total = -EFAULT;
--			break;
--		}
--		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
--
--		dest += recd;
--		total += recd;
--		num_bytes -= recd;
--	} while (retries-- && total < max);
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		rc = tpm2_get_random(chip, out, max);
-+	else
-+		rc = tpm1_get_random(chip, out, max);
- 
- 	tpm_put_ops(chip);
--	return total ? total : -EIO;
-+	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm_get_random);
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 1c1980c79c30..496a56156e77 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
- 		    const char *log_msg);
- ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		    const char *desc, size_t min_cap_length);
-+int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 3bd079587ef5..e02f0c1c822f 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -469,3 +469,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 	return rc;
- }
- EXPORT_SYMBOL_GPL(tpm1_getcap);
-+
-+#define TPM_ORD_GET_RANDOM 70
-+#define TPM_GETRANDOM_RESULT_SIZE	18
-+static const struct tpm_input_header tpm_getrandom_header = {
-+	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-+	.length = cpu_to_be32(14),
-+	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
-+};
-+
-+int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
-+{
-+	struct tpm_cmd_t tpm_cmd;
-+	u32 recd;
-+	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
-+	u32 rlength;
-+	int err, total = 0, retries = 5;
-+	u8 *dest = out;
-+
-+	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
-+		return -EINVAL;
-+
-+	do {
-+		tpm_cmd.header.in = tpm_getrandom_header;
-+		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
-+
-+		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
-+				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
-+				       offsetof(struct tpm_getrandom_out,
-+						rng_data),
-+				       0, "attempting get random");
-+		if (err)
-+			break;
-+
-+		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-+		if (recd > num_bytes) {
-+			total = -EFAULT;
-+			break;
-+		}
-+
-+		rlength = be32_to_cpu(tpm_cmd.header.out.length);
-+		if (rlength < TPM_HEADER_SIZE +
-+			      offsetof(struct tpm_getrandom_out, rng_data) +
-+			      recd) {
-+			total = -EFAULT;
-+			break;
-+		}
-+		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
-+
-+		dest += recd;
-+		total += recd;
-+		num_bytes -= recd;
-+	} while (retries-- && (size_t)total < max);
-+
-+	return total ? total : -EIO;
-+}
--- 
-2.14.4
-
+No, if someone explicitly does MADV_NOHUGEPAGE then the kernel should
+honor that, even if the mapping is DAX.
