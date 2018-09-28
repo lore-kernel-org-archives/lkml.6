@@ -2,176 +2,142 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90058C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDF6C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 393C6206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:01:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25DE7206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:02:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U35wVhCq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 393C6206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="TrQ8p7Vk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25DE7206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeI2AZy (ORCPT
+        id S1727244AbeI2A1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 20:25:54 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39177 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbeI2AZy (ORCPT
+        Fri, 28 Sep 2018 20:27:36 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55905 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbeI2A1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 20:25:54 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s14-v6so7298734wrw.6;
-        Fri, 28 Sep 2018 11:00:58 -0700 (PDT)
+        Fri, 28 Sep 2018 20:27:36 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 206-v6so3078966wmb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 11:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wA5posi+vGig+3+fjgVLM2GVtCwL3CSWCPE/7mJdTTs=;
-        b=U35wVhCqIKfsfBMkrDtFEsxwaw5fogUYy1Jo9safJ9s6Zb0EElCIEjNXhOtK0sTHmU
-         xcJph24nW81WPoOZ/GDXGbOhcybXnTC2o4q6FWm1ERB1st1IFFXVd5VQpL9TiaMp5EGU
-         anff9llz/2/QJ+qGna5MUWMtaRF/z1v8WTfJ/MKogfP1tk34Cxu1EqAKn213sNTBt/dP
-         FedH075Nz8rLrOBeSkg/JexWVfrSNQHnHmm2UlUDfxO5O7d/Czfhvz+5sYGD9k87zybA
-         FomiXzEXALIDFlKHpsXwi6TyWKm+i4TukZRdq+WJeiYXw5rq4FgcCf2gx4ssHNcTXsjl
-         KEUw==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=bItNCzbIip1U0eRatOVgiKLhunondv56R2ZU+g5mRGg=;
+        b=TrQ8p7Vket9a4tmyqKnxpATG9DBuJ5Px2QyTIgtorKte38PRYEiTvFQB6Uxtw/1LVX
+         NhetuzwgbyGLDbNKdHEopsHGopsO5GVZ6pbPkZO1F82LyYqwC5klPHtka5Xh3CeFX10y
+         thBibmOz0okXEaqxQ5OBOKb2pq3SF56AeM/iPJLxorJYbR5RMjmn8QhCHMYyId2Gbxnh
+         cVPgohEIxyLyTavR8ttNbVFvJIIyv+b7AEUFekL/BeIQRiMd5LTQF3v5wxvL+7zwWFpZ
+         hNZMCLVyNHJARdBOVwZgqyqGgvT1qjkkRdAALK7Jnk35yZXMOKbeULOUmwN5clOnGH++
+         BBdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wA5posi+vGig+3+fjgVLM2GVtCwL3CSWCPE/7mJdTTs=;
-        b=PpMqIwY6GZFRB6/+1Aduh4Qi/VOTVJmLRB+hi+PYBi3XOOUhFrrr4xLaRZqDNX1BOg
-         Q3LI+0DTt0iUlgT1YyXAKxUM4PjuDA+ofNEWA0LzxnI/j9sd5uL6XrgQe47fwBk+VZ0j
-         zbZDDhd9qhRJP7JpU0av8P3X9NkgWcwMbxKTSOsWkh7lB4ZRcpkXBcay4K1w95CV+MmL
-         Mx5cAuOgBIOvTPV5pR0l89QtWE4PB5LxdtpSwflN7l2PSLqSX3UBZ+DGrGwgyp9sZYfc
-         INmR5ZZXxrIHToVitL85tlNnWK/uUZhuqP+ewggMC09ghp1HBqQp0CEj6u8gzrhA2UQ4
-         Rhwg==
-X-Gm-Message-State: ABuFfohgLOn3XAibYegOL45CeKXgjhZu7lhGuZ7IBR2ffP4orthfyhvw
-        sXHg/R5goGPE/gexqq3UWUU=
-X-Google-Smtp-Source: ACcGV60+ViiGSFPM+emRMj6uwO+OF7oQlC0unBBfm0jLLLkzDBHGWHzQwoF5gB1FUuQbAWB7bwdv+Q==
-X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr12975633wra.120.1538157657433;
-        Fri, 28 Sep 2018 11:00:57 -0700 (PDT)
-Received: from localhost.localdomain ([141.226.14.107])
-        by smtp.gmail.com with ESMTPSA id j46-v6sm9606897wre.91.2018.09.28.11.00.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 11:00:56 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, Mark Fasheh <mark@fasheh.com>
-Subject: [PATCH] fs: fix access beyond unterminated strings in prints
-Date:   Fri, 28 Sep 2018 21:00:48 +0300
-Message-Id: <20180928180048.14259-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bItNCzbIip1U0eRatOVgiKLhunondv56R2ZU+g5mRGg=;
+        b=JFoh/EyOs7ufgCGB7zzmhNjSp9q7dPomx0dd+Kd0TGPKdCBbkp0MlcbXXM9dymJL4P
+         qKCh7lyUb3LrI1dOSRj5JznKzYVjACL5jD9pQvLpe0rTaqjlzYi0TOqAihheSQkJXOzv
+         B1rZ6VQdkLSrlfF7E+HHNmuQzFhZTVjlRcKnr5vhqEdaW7IAC3VxCxjJZWWbuLrVrd3d
+         zUj2lq/rRG5Wvayy6ezLHGkM/3rZZv+OBJUMYPkPLPgTc1B7WFwToZBGFQVJXXsjemo3
+         CcaQjpGqoqdE9GSBiK1GdtZW1GZDFhN62yT+Idvo/cIOaZJvNfuSa9+VPiuuFiIo4cEF
+         4SSw==
+X-Gm-Message-State: ABuFfojgFxVwWlkbJdsn7qSRLfp88bc6GqtXQmzsxNZ+nQUfEp5UQnIg
+        q3x7hcCFhUnwZXUT9sFnOFAWq4iuFIsNsqRn4d+u7w==
+X-Google-Smtp-Source: ACcGV60kpWJh/qocEQAW7aFz8ubjSnB+yaFO9bG2aCkcDBTIzrqtGNBpInxh75RZt7fzI3oMBADgEhSD6zUwxODjUnk=
+X-Received: by 2002:a1c:9355:: with SMTP id v82-v6mr2574458wmd.128.1538157757987;
+ Fri, 28 Sep 2018 11:02:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org>
+ <alpine.DEB.2.21.1809280819040.8118@nanos.tec.linutronix.de>
+ <CAMuHMdWWxgvo0a+8UvesiVikWS_45yOXRhM39F31Vn17kN+Ptg@mail.gmail.com>
+ <20180928103726.07761672@mschwideX1> <alpine.DEB.2.21.1809281041420.2004@nanos.tec.linutronix.de>
+ <0B38810F-3E22-45A8-9D5D-EDEABD214148@amacapital.net> <20180928165321.0ddaf948@mschwideX1>
+In-Reply-To: <20180928165321.0ddaf948@mschwideX1>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 28 Sep 2018 11:02:26 -0700
+Message-ID: <CALCETrXm_-YVVw4YQVn8E+hHGAQ6tv+ie8Sfq=h72R5U8=hf-g@mail.gmail.com>
+Subject: Re: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        fthain@telegraphics.com.au
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KASAN detected slab-out-of-bounds access in printk from overlayfs,
-because string format used %*s instead of %.*s.
-Found and fixed 4 other places that use %*s incorrectly in filesystems.
-
-> BUG: KASAN: slab-out-of-bounds in string+0x298/0x2d0 lib/vsprintf.c:604
-> Read of size 1 at addr ffff8801c36c66ba by task syz-executor2/27811
+On Fri, Sep 28, 2018 at 7:53 AM Martin Schwidefsky
+<schwidefsky@de.ibm.com> wrote:
 >
-> CPU: 0 PID: 27811 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #36
-...
->  printk+0xa7/0xcf kernel/printk/printk.c:1996
->  ovl_lookup_index.cold.15+0xe8/0x1f8 fs/overlayfs/namei.c:689
+> On Fri, 28 Sep 2018 07:11:44 -0700
+> Andy Lutomirski <luto@amacapital.net> wrote:
+>
+> > > On Sep 28, 2018, at 1:42 AM, Thomas Gleixner <tglx@linutronix.de> wro=
+te:
+> > >
+> > >> On Fri, 28 Sep 2018, Martin Schwidefsky wrote:
+> > >> On Fri, 28 Sep 2018 09:12:10 +0200
+> > >> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > >>> I don't know if that has happened, and whether it would work on s39=
+0 now.
+> > >>
+> > >> commit 03b8c7b623c80af264c4c8d6111e5c6289933666
+> > >> Author: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > >> Date:   Sun Mar 2 13:09:47 2014 +0100
+> > >>
+> > >>    futex: Allow architectures to skip futex_atomic_cmpxchg_inatomic(=
+) test
+> > >>
+> > >>    If an architecture has futex_atomic_cmpxchg_inatomic() implemente=
+d and there
+> > >>    is no runtime check necessary, allow to skip the test within fute=
+x_init().
+> > >>
+> > >>    This allows to get rid of some code which would always give the s=
+ame result,
+> > >>    and also allows the compiler to optimize a couple of if statement=
+s away.
+> > >>
+> > >>    Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> > >>    Cc: Finn Thain <fthain@telegraphics.com.au>
+> > >>    Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > >>    Link: http://lkml.kernel.org/r/20140302120947.GA3641@osiris
+> > >>    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > >>
+> > >>
+> > >> Heiko created the CONFIG_HAVE_FUTEX_CMPXCHG to get around this issue=
+.
+> > >> We just skip the runtime check as well as arc, m68k and sh. Not sure
+> > >> about xtensa, the set it config option only for !MMU.
+> > >
+> > > Duh. grep would have told me. -ENOTENOUGHCOFFEE
+> > >
+> > >
+> >
+> > There=E2=80=99s another way to skin this cat: keep KERNEL_DS but pass a=
+ valid pointer.
+> > I don=E2=80=99t suppose you remember why you didn=E2=80=99t do that?
+>
+> No, I don't remember. To use a valid kernel pointer with KERNEL_DS and
+> then test for =3D=3D 0 (vs -ENOSYS) imho should work.
+>
 
-Reported-by: syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Harkes <jaharkes@cs.cmu.edu>
-Cc: Mark Fasheh <mark@fasheh.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
-
-Miklos,
-
-I chose not to split the patches per fs in the hope that maintainers
-would quickly ack the patch and ask you to carry it for them.
-
-If this doesn't happen, feel free to drop non-acked bits from the patch.
-
-Thanks,
-Amir.
-
- fs/coda/dir.c            | 2 +-
- fs/lockd/host.c          | 2 +-
- fs/ocfs2/super.c         | 2 +-
- fs/overlayfs/namei.c     | 2 +-
- fs/overlayfs/overlayfs.h | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/coda/dir.c b/fs/coda/dir.c
-index 00876ddadb43..23ee5de8b4be 100644
---- a/fs/coda/dir.c
-+++ b/fs/coda/dir.c
-@@ -47,7 +47,7 @@ static struct dentry *coda_lookup(struct inode *dir, struct dentry *entry, unsig
- 	int type = 0;
- 
- 	if (length > CODA_MAXNAMLEN) {
--		pr_err("name too long: lookup, %s (%*s)\n",
-+		pr_err("name too long: lookup, %s (%.*s)\n",
- 		       coda_i2s(dir), (int)length, name);
- 		return ERR_PTR(-ENAMETOOLONG);
- 	}
-diff --git a/fs/lockd/host.c b/fs/lockd/host.c
-index d35cd6be0675..93fb7cf0b92b 100644
---- a/fs/lockd/host.c
-+++ b/fs/lockd/host.c
-@@ -341,7 +341,7 @@ struct nlm_host *nlmsvc_lookup_host(const struct svc_rqst *rqstp,
- 	};
- 	struct lockd_net *ln = net_generic(net, lockd_net_id);
- 
--	dprintk("lockd: %s(host='%*s', vers=%u, proto=%s)\n", __func__,
-+	dprintk("lockd: %s(host='%.*s', vers=%u, proto=%s)\n", __func__,
- 			(int)hostname_len, hostname, rqstp->rq_vers,
- 			(rqstp->rq_prot == IPPROTO_UDP ? "udp" : "tcp"));
- 
-diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-index 3415e0b09398..b74435dc85fd 100644
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -259,7 +259,7 @@ static int ocfs2_osb_dump(struct ocfs2_super *osb, char *buf, int len)
- 
- 	if (cconn) {
- 		out += snprintf(buf + out, len - out,
--				"%10s => Stack: %s  Name: %*s  "
-+				"%10s => Stack: %s  Name: %.*s  "
- 				"Version: %d.%d\n", "Cluster",
- 				(*osb->osb_cluster_stack == '\0' ?
- 				 "o2cb" : osb->osb_cluster_stack),
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index f28711846dd6..9c0ca6a7becf 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -686,7 +686,7 @@ struct dentry *ovl_lookup_index(struct ovl_fs *ofs, struct dentry *upper,
- 			index = NULL;
- 			goto out;
- 		}
--		pr_warn_ratelimited("overlayfs: failed inode index lookup (ino=%lu, key=%*s, err=%i);\n"
-+		pr_warn_ratelimited("overlayfs: failed inode index lookup (ino=%lu, key=%.*s, err=%i);\n"
- 				    "overlayfs: mount with '-o index=off' to disable inodes index.\n",
- 				    d_inode(origin)->i_ino, name.len, name.name,
- 				    err);
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index f61839e1054c..c096f12657cd 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -152,7 +152,7 @@ static inline int ovl_do_setxattr(struct dentry *dentry, const char *name,
- 				  const void *value, size_t size, int flags)
- {
- 	int err = vfs_setxattr(dentry, name, value, size, flags);
--	pr_debug("setxattr(%pd2, \"%s\", \"%*s\", 0x%x) = %i\n",
-+	pr_debug("setxattr(%pd2, \"%s\", \"%.*s\", 0x%x) = %i\n",
- 		 dentry, name, (int) size, (char *) value, flags, err);
- 	return err;
- }
--- 
-2.17.1
-
+There may be a much nicer solution.  Unless I missed something, only
+mips and xtensa even have the possibility of cmpxchg being missing.
+We could just make those arches supply a futex-detecting helper.
