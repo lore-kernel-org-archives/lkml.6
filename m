@@ -2,195 +2,151 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34326C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B80C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADC2215E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:00:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zuv4+wfy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADC2215E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 90703215E4
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:01:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90703215E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=diehl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbeI1SXn (ORCPT
+        id S1728643AbeI1SYg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 14:23:43 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:33209 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbeI1SXn (ORCPT
+        Fri, 28 Sep 2018 14:24:36 -0400
+Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:14264 "EHLO
+        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726024AbeI1SYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 14:23:43 -0400
-Received: by mail-it1-f194.google.com with SMTP id h6-v6so38951ith.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 05:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cfAi6cLY5StfphmrK8e7JbfFGi0q2KFfmMHsIsRg4TI=;
-        b=Zuv4+wfyvnmFHJZl7dHaphFMIA3lE7rcTe4qFDxae5HowADo2MFcigzgoq++udzuJ9
-         WsXcLtfstVFQtIdncDHSZFSQLq3L9wGokSUlOcbI7KcTdkU++a9Mrr0pbbJgRA6HgA3B
-         lUsxAhTexyYT5PP7emOdEp5hFFUtKw4v+q5Po=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cfAi6cLY5StfphmrK8e7JbfFGi0q2KFfmMHsIsRg4TI=;
-        b=fcoSH3vSH7q66BLZWl6u99z+HyEFqab3LuVof4pzr3fjJg10sMWbZ1JCUE4GAD4OcL
-         +5ZaLkYACtNn1g5LG1lEo71eBckmELp6Aer62yPDyYKiUCd9tpTlGikPdbNOIkbG8iFc
-         W/aQBravexxlnfuYvwUXdAuhIIti9YxdbagwatkwPFSj7fU+JAQ6TnMosdDHn5XFfTyl
-         1jpyvvf3d0qgJWBs/kCS6Ki1Iem/BihfG4EdKf187/4lMRmq1l1wX2Bqc6rt+cHKXyh3
-         WEJCuV0Y6uq4SZ9JxjV3re9facRslwdDMTP68rL3O5Ejjdx1BakRO1OULsURS6nWLZ1B
-         EPqg==
-X-Gm-Message-State: ABuFfohOdNIfS2Iiec1PE4N9jhRop9WcYRN063Q2wzkv/y3XNN51qVH5
-        SB4cZkb2t2E9l2k1cHrc5ImIPagMmUFp7oeNGp3IGA==
-X-Google-Smtp-Source: ACcGV635tdHJW8V8L1IiwDQyYK8JYogZon6MLC+inVNv7WTFNIvdaTgCsiS5yYgoQyzdq39BJnen73hNTXcAhk2HxSw=
-X-Received: by 2002:a24:8045:: with SMTP id g66-v6mr1303690itd.45.1538136015830;
- Fri, 28 Sep 2018 05:00:15 -0700 (PDT)
+        Fri, 28 Sep 2018 14:24:36 -0400
+X-Greylist: delayed 591 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 Sep 2018 14:24:35 EDT
+X-$ESA-Groupmapping: true
+X-IronPort-AV: E=Sophos;i="5.54,314,1534802400"; 
+   d="scan'208";a="36654630"
+From:   Denis OSTERLAND <denis.osterland@diehl.com>
+To:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Denis OSTERLAND" <denis.osterland@diehl.com>
+Subject: [PATCH] rtc: isl1208: access i2c client via rtc parent
+Thread-Topic: [PATCH] rtc: isl1208: access i2c client via rtc parent
+Thread-Index: AQHUVyGQKP+USsTTMEa4uID7TSMNXQ==
+Date:   Fri, 28 Sep 2018 11:51:17 +0000
+Message-ID: <20180928114832.27383-1-Denis.Osterland@diehl.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 04:59:35
- -0700 (PDT)
-In-Reply-To: <20180830144541.17740-2-vivek.gautam@codeaurora.org>
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org> <20180830144541.17740-2-vivek.gautam@codeaurora.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 28 Sep 2018 13:59:35 +0200
-Message-ID: <CAPDyKFohpvEMfDoDooYEyxPMeQ+9dU71qz7ZAZxQ1rzyW-w8iA@mail.gmail.com>
-Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: Add pm_runtime/sleep ops
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        iommu@lists.linux-foundation.org,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, robdclark@gmail.com,
-        Linux PM <linux-pm@vger.kernel.org>,
-        freedreno@lists.freedesktop.org, Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sricharan <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        architt@codeaurora.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-TrailerSkip: 1
+X-GBS-PROC: 415AWy8o668fDtCxszluzyTxtule2fzpl/mNt4bSsMHQALdi8BOj7OdbdMtiUqvX
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 August 2018 at 16:45, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
-> From: Sricharan R <sricharan@codeaurora.org>
->
-> The smmu needs to be functional only when the respective
-> master's using it are active. The device_link feature
-> helps to track such functional dependencies, so that the
-> iommu gets powered when the master device enables itself
-> using pm_runtime. So by adapting the smmu driver for
-> runtime pm, above said dependency can be addressed.
->
-> This patch adds the pm runtime/sleep callbacks to the
-> driver and also the functions to parse the smmu clocks
-> from DT and enable them in resume/suspend.
->
-> Also, while we enable the runtime pm add a pm sleep suspend
-> callback that pushes devices to low power state by turning
-> the clocks off in a system sleep.
-> Also add corresponding clock enable path in resume callback.
->
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Archit Taneja <architt@codeaurora.org>
-> [vivek: rework for clock and pm ops]
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/iommu/arm-smmu.c | 77 ++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 74 insertions(+), 3 deletions(-)
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+From: Denis Osterland <Denis.Osterland@diehl.com>
 
-[...]
+The move of atrim, dtrim usr sysfs properties from i2c device
+to rtc device require to access them via dev->parent.
+This patch also aligns timestamp0.
 
-> -static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
-> +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
->  {
->         struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> +       int ret;
-> +
-> +       ret = clk_bulk_enable(smmu->num_clks, smmu->clks);
-> +       if (ret)
-> +               return ret;
->
->         arm_smmu_device_reset(smmu);
-> +
->         return 0;
->  }
->
-> -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
-> +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
-> +{
-> +       struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> +
-> +       clk_bulk_disable(smmu->num_clks, smmu->clks);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
-> +{
-> +       if (pm_runtime_suspended(dev))
-> +               return 0;
+Fixes: 03df75dd03301307ec578ccd4e8c1c0117b8e65c
+Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
+---
+ drivers/rtc/rtc-isl1208.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Looks like you should be able use pm_runtime_force_resume(), instead
-of using this local trick. Unless I am missing something, of course.
+diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
+index 15094df12985..ec5ef518a09b 100644
+--- a/drivers/rtc/rtc-isl1208.c
++++ b/drivers/rtc/rtc-isl1208.c
+@@ -517,7 +517,7 @@ static ssize_t timestamp0_store(struct device *dev,
+ 				struct device_attribute *attr,
+ 				const char *buf, size_t count)
+ {
+-	struct i2c_client *client = dev_get_drvdata(dev);
++	struct i2c_client *client = to_i2c_client(dev->parent);
+ 	int sr;
+ 
+ 	sr = isl1208_i2c_get_sr(client);
+@@ -539,7 +539,7 @@ static ssize_t timestamp0_store(struct device *dev,
+ static ssize_t timestamp0_show(struct device *dev,
+ 			       struct device_attribute *attr, char *buf)
+ {
+-	struct i2c_client *client = dev_get_drvdata(dev);
++	struct i2c_client *client = to_i2c_client(dev->parent);
+ 	u8 regs[ISL1219_EVT_SECTION_LEN] = { 0, };
+ 	struct rtc_time tm;
+ 	int sr;
+@@ -649,7 +649,7 @@ static ssize_t
+ isl1208_sysfs_show_atrim(struct device *dev,
+ 			 struct device_attribute *attr, char *buf)
+ {
+-	int atr = isl1208_i2c_get_atr(to_i2c_client(dev));
++	int atr = isl1208_i2c_get_atr(to_i2c_client(dev->parent));
+ 	if (atr < 0)
+ 		return atr;
+ 
+@@ -662,7 +662,7 @@ static ssize_t
+ isl1208_sysfs_show_dtrim(struct device *dev,
+ 			 struct device_attribute *attr, char *buf)
+ {
+-	int dtr = isl1208_i2c_get_dtr(to_i2c_client(dev));
++	int dtr = isl1208_i2c_get_dtr(to_i2c_client(dev->parent));
+ 	if (dtr < 0)
+ 		return dtr;
+ 
+@@ -675,7 +675,7 @@ static ssize_t
+ isl1208_sysfs_show_usr(struct device *dev,
+ 		       struct device_attribute *attr, char *buf)
+ {
+-	int usr = isl1208_i2c_get_usr(to_i2c_client(dev));
++	int usr = isl1208_i2c_get_usr(to_i2c_client(dev->parent));
+ 	if (usr < 0)
+ 		return usr;
+ 
+@@ -700,7 +700,10 @@ isl1208_sysfs_store_usr(struct device *dev,
+ 	if (usr < 0 || usr > 0xffff)
+ 		return -EINVAL;
+ 
+-	return isl1208_i2c_set_usr(to_i2c_client(dev), usr) ? -EIO : count;
++	if (isl1208_i2c_set_usr(to_i2c_client(dev->parent), usr))
++		return -EIO;
++
++	return count;
+ }
+ 
+ static DEVICE_ATTR(usr, S_IRUGO | S_IWUSR, isl1208_sysfs_show_usr,
+@@ -764,7 +767,6 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	rtc->ops = &isl1208_rtc_ops;
+ 
+ 	i2c_set_clientdata(client, rtc);
+-	dev_set_drvdata(&rtc->dev, client);
+ 
+ 	rc = isl1208_i2c_get_sr(client);
+ 	if (rc < 0) {
+-- 
+2.19.0
 
-In other words, just assign the system sleep callbacks for resume, to
-pm_runtime_force_resume(). And vice verse for the system suspend
-callbacks, pm_runtime_force_suspend(), of course.
 
-> +
-> +       return arm_smmu_runtime_resume(dev);
-> +}
-> +
-> +static int __maybe_unused arm_smmu_pm_suspend(struct device *dev)
-> +{
-> +       if (pm_runtime_suspended(dev))
-> +               return 0;
-> +
-> +       return arm_smmu_runtime_suspend(dev);
-> +}
-> +
-> +static const struct dev_pm_ops arm_smmu_pm_ops = {
-> +       SET_SYSTEM_SLEEP_PM_OPS(arm_smmu_pm_suspend, arm_smmu_pm_resume)
 
-I am wondering if using the ->suspend|resume() callback is really
-"late/early" enough in the device suspend phase?
+Diehl Connectivity Solutions GmbH
+Geschäftsführung: Horst Leonberger
+Sitz der Gesellschaft: Nürnberg - Registergericht: Amtsgericht
+Nürnberg: HRB 32315
+___________________________________________________________________________________________________
 
-Others is using the noirq phase and some is even using the syscore
-ops. Of course it depends on the behavior of the consumers of iommu
-device, and I guess not everyone is using device links, which for sure
-improves things in this regards as well.
-
-> +       SET_RUNTIME_PM_OPS(arm_smmu_runtime_suspend,
-> +                          arm_smmu_runtime_resume, NULL)
-> +};
->
->  static struct platform_driver arm_smmu_driver = {
->         .driver = {
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
-
-BTW, apologize for very late review comments.
-
-Besides the above comments, the series looks good to me.
-
-Kind regards
-Uffe
+Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
+Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht.
+Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
+The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by
+mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited. 
