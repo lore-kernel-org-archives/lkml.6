@@ -2,150 +2,360 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FEA8C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE9AC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5466C2172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:06:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5466C2172C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 578F52173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 10:06:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QgFu+Vc9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 578F52173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729402AbeI1Q27 (ORCPT
+        id S1729460AbeI1Q3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 12:28:59 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51389 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbeI1Q27 (ORCPT
+        Fri, 28 Sep 2018 12:29:31 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54945 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728936AbeI1Q3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:28:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y25-v6so1622612wmi.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 03:05:58 -0700 (PDT)
+        Fri, 28 Sep 2018 12:29:31 -0400
+Received: by mail-it1-f196.google.com with SMTP id f14-v6so1869261ita.4
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 03:06:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=gZdMi/Co5EeUulcLDx+vF2wUrL7/QNUE8gdFmGk/ByE=;
+        b=QgFu+Vc9x71IcDob50VnKMGzRSb9QUlDso8r9a9SuJQ+1hxpti/da13aTEdvlxUsCM
+         nHDoHBxP6V+4Pu/AiZ741O1i8Yk4kCugKLVnosgyrd6rMN4mqDdPZwwaLsNbrjPzGjuX
+         OUS8TCfyz1ujB7LEaqK1yKTin+NOwkoWcYzAw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lGMHxH4BFovP6Taz0P/DUOoqw7PdkG2kKjivxOPydQk=;
-        b=TH3Qnc/jJzrNHsf3ufXhQ+ahIYhrH90No2EIaFbJzuH74xX0w0HxQo+oIoM4/EEYtA
-         cDLOF4uN0hji+PeZzuPUVVAdyR9KqX9EXjLaE0uPg93/kEkP9yVA96EmqtP8Jzg2uZtp
-         LrGOgTuBJlSFpa+17oPatSMl2gg/qhsxS0ww1zyzgX/NyMNfCIF7C+oMmma4OdYEbme7
-         qY+MxZuF9iuD2LR87nmc7Hz4hCVAzThs8q5hAB+f3a/hVLS6ATzN/vq27PExt+fLYHuB
-         oZeAvvAPwvoiRvZxQ5AY+psf7BSYelUz1hFEJgG4Fu8jiId4MmQgzt0QfVNG3F+sDI1l
-         W/JA==
-X-Gm-Message-State: ABuFfohnQP68eQrG/CURdgQigVYD+aNU/y0+pDJL4rcKAG4ETwx1paf0
-        b6UwDMJpeXUj0Bo+ydgp2LR9
-X-Google-Smtp-Source: ACcGV60Uf2bDcvgqQt7B9/bzG/PTbdWNbJAFfUjHk+k1w5aTyFm+PkYZcgBdYl9iDf0ap8OIY79tKQ==
-X-Received: by 2002:a1c:5e48:: with SMTP id s69-v6mr1138135wmb.19.1538129157494;
-        Fri, 28 Sep 2018 03:05:57 -0700 (PDT)
-Received: from localhost (cpc111743-lutn13-2-0-cust844.9-3.cable.virginm.net. [82.17.115.77])
-        by smtp.gmail.com with ESMTPSA id y14-v6sm1286222wmi.20.2018.09.28.03.05.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 03:05:56 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 11:05:55 +0100
-From:   Aaron Tomlin <atomlin@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] slub: extend slub debug to handle multiple slabs
-Message-ID: <20180928100555.bvv75beo3c57g6vw@atomlin.usersys.com>
-References: <20180920200016.11003-1-atomlin@redhat.com>
- <20180921163412.de1b331a639a8031aaf85d4f@linux-foundation.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=gZdMi/Co5EeUulcLDx+vF2wUrL7/QNUE8gdFmGk/ByE=;
+        b=PUUMmlEve2VO+kSaLFoUcvA48Z/okMcme0u9Kl5Kzj8e5EMgewADDflheWOaqAyHA7
+         I3e0LLyvOvifzEv2U+vi0KI9EeOCkat8wqptHKHJcEOOMecfwwlwLGywK2sOqu6lDjDD
+         rV3lNGtaosYVYdiQUbS9RvyR2VhlhDqlbFbncrQr7+QoPHg4KUuD9XtgoKCbaje02nA8
+         rpx9CweEwZzzxcUJEYJ0Q88gQGLGT0WiT+8rREuSdGYUIG6Ru6he8GOLREhQP/8u7yd0
+         RNwb679pmd9m+3Lj4uRqX/gkEkc8FT/r0v8noq089v5iGQ1/XluUDukyJR1+6VwZ+WQV
+         RwVA==
+X-Gm-Message-State: ABuFfoi9CXCdfU0zPfXeX1WTuXPq4ttsbIRI0tCOQyKgRkNi6ro7efgu
+        uaJVwPe8ZlzpqVc7TVRMDIr5FBboFMF1c4t3SKMA5Q==
+X-Google-Smtp-Source: ACcGV63ehIPvbz637Q2jMAtPaqRY8WAAy6IZez69Ga+gw5J+XTKqcurPNlAedP6jr0inoF6AzbyRJ6gPC8msMs4Kl7A=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr985320ite.123.1538129190381;
+ Fri, 28 Sep 2018 03:06:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180921163412.de1b331a639a8031aaf85d4f@linux-foundation.org>
-X-PGP-Key: http://pgp.mit.edu/pks/lookup?search=atomlin%40redhat.com
-X-PGP-Fingerprint: 7906 84EB FA8A 9638 8D1E  6E9B E2DE 9658 19CC 77D6
-User-Agent: NeoMutt/20180323-113-abcfed
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 03:06:29
+ -0700 (PDT)
+In-Reply-To: <1537449521-16182-3-git-send-email-gilad@benyossef.com>
+References: <1537449521-16182-1-git-send-email-gilad@benyossef.com> <1537449521-16182-3-git-send-email-gilad@benyossef.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 28 Sep 2018 12:06:29 +0200
+Message-ID: <CAKv+Gu9T7Z2oV8TEaN8uVdrFxGmmCKLh6ZjDnRnhgCmLwuVf4w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] crypto: add output feedback mode
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, ofir.drang@arm.com,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-09-21 16:34 -0700, Andrew Morton wrote:
-> On Thu, 20 Sep 2018 21:00:16 +0100 Aaron Tomlin <atomlin@redhat.com> wrote:
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -1283,9 +1283,37 @@ slab_flags_t kmem_cache_flags(unsigned int object_size,
-> >  	/*
-> >  	 * Enable debugging if selected on the kernel commandline.
-> >  	 */
-> 
-> The above comment is in a strange place.  Can we please move it to
-> above the function definition in the usual fashion?  And make it
-> better, if anything seems to be missing.
+On 20 September 2018 at 15:18, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> Add a generic version of output feedback mode. We already have support of
+> several hardware based transformations of this mode and the needed test
+> vectors but we somehow missed adding a generic software one. Fix this now.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-OK.
+I couldn't find any users of OFB in the kernel. Any idea who is using
+it and for what?
 
-> > -	if (slub_debug && (!slub_debug_slabs || (name &&
-> > -		!strncmp(slub_debug_slabs, name, strlen(slub_debug_slabs)))))
-> > -		flags |= slub_debug;
-> > +
-> > +	char *end, *n, *glob;
-> 
-> `end' and `glob' could be local to the loop which uses them, which I
-> find a bit nicer.
-
-OK.
-
-> `n' is a rotten identifier.  Can't we think of something which
-> communicates meaning?
-
-OK.
-
-> > +	int len = strlen(name);
-> > +
-> > +	/* If slub_debug = 0, it folds into the if conditional. */
-> > +	if (!slub_debug_slabs)
-> > +		return flags | slub_debug;
-> 
-> If we take the above return, the call to strlen() was wasted cycles. 
-> Presumably gcc is smart enough to prevent that, but why risk it.
-
-OK.
-
-> > +	n = slub_debug_slabs;
-> > +	while (*n) {
-> > +		int cmplen;
-> > +
-> > +		end = strchr(n, ',');
-> > +		if (!end)
-> > +			end = n + strlen(n);
-> > +
-> > +		glob = strnchr(n, end - n, '*');
-> > +		if (glob)
-> > +			cmplen = glob - n;
-> > +		else
-> > +			cmplen = max(len, (int)(end - n));
-> 
-> max_t() exists for this.  Or maybe make `len' size_t, but I expect that
-> will still warn - that subtraction returns a ptrdiff_t, yes?
-
-I think max_t(size_t, ...) should be appropriate?
-
-I'll address the above and in the next version.
-
-
-> > +
-> > +		if (!strncmp(name, n, cmplen)) {
-> > +			flags |= slub_debug;
-> > +			break;
-> > +		}
-> > +
-> > +		if (!*end)
-> > +			break;
-> > +		n = end + 1;
-> > +	}
-> The code in this loop hurts my brain a bit. I hope it's correct ;)
-
-It works :)
-
-
-
--- 
-Aaron Tomlin
+> ---
+>  crypto/Kconfig  |  12 +++
+>  crypto/Makefile |   1 +
+>  crypto/ofb.c    | 225 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 238 insertions(+)
+>  create mode 100644 crypto/ofb.c
+>
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 90f2811..d8cb65b 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -456,6 +456,18 @@ config CRYPTO_LRW
+>           The first 128, 192 or 256 bits in the key are used for AES and the
+>           rest is used to tie each cipher block to its logical position.
+>
+> +config CRYPTO_OFB
+> +       tristate "OFB support"
+> +       select CRYPTO_BLKCIPHER
+> +       select CRYPTO_MANAGER
+> +       help
+> +         OFB: the Output Feedback mode makes a block cipher into a synchronous
+> +         stream cipher. It generates keystream blocks, which are then XORed
+> +         with the plaintext blocks to get the ciphertext. Flipping a bit in the
+> +         ciphertext produces a flipped bit in the plaintext at the same
+> +         location. This property allows many error correcting codes to function
+> +         normally even when applied before encryption.
+> +
+>  config CRYPTO_PCBC
+>         tristate "PCBC support"
+>         select CRYPTO_BLKCIPHER
+> diff --git a/crypto/Makefile b/crypto/Makefile
+> index d719843..5cde057 100644
+> --- a/crypto/Makefile
+> +++ b/crypto/Makefile
+> @@ -141,6 +141,7 @@ obj-$(CONFIG_CRYPTO_USER_API_SKCIPHER) += algif_skcipher.o
+>  obj-$(CONFIG_CRYPTO_USER_API_RNG) += algif_rng.o
+>  obj-$(CONFIG_CRYPTO_USER_API_AEAD) += algif_aead.o
+>  obj-$(CONFIG_CRYPTO_ZSTD) += zstd.o
+> +obj-$(CONFIG_CRYPTO_OFB) += ofb.o
+>
+>  ecdh_generic-y := ecc.o
+>  ecdh_generic-y += ecdh.o
+> diff --git a/crypto/ofb.c b/crypto/ofb.c
+> new file mode 100644
+> index 0000000..8866317
+> --- /dev/null
+> +++ b/crypto/ofb.c
+> @@ -0,0 +1,225 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * OFB: Output FeedBack mode
+> + *
+> + * Copyright (C) 2018 ARM Limited or its affiliates.
+> + * All rights reserved.
+> + *
+> + * Based loosely on public domain code gleaned from libtomcrypt
+> + * (https://github.com/libtom/libtomcrypt).
+> + */
+> +
+> +#include <crypto/algapi.h>
+> +#include <crypto/internal/skcipher.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/scatterlist.h>
+> +#include <linux/slab.h>
+> +
+> +struct crypto_ofb_ctx {
+> +       struct crypto_cipher *child;
+> +       int cnt;
+> +};
+> +
+> +
+> +static int crypto_ofb_setkey(struct crypto_skcipher *parent, const u8 *key,
+> +                            unsigned int keylen)
+> +{
+> +       struct crypto_ofb_ctx *ctx = crypto_skcipher_ctx(parent);
+> +       struct crypto_cipher *child = ctx->child;
+> +       int err;
+> +
+> +       crypto_cipher_clear_flags(child, CRYPTO_TFM_REQ_MASK);
+> +       crypto_cipher_set_flags(child, crypto_skcipher_get_flags(parent) &
+> +                                      CRYPTO_TFM_REQ_MASK);
+> +       err = crypto_cipher_setkey(child, key, keylen);
+> +       crypto_skcipher_set_flags(parent, crypto_cipher_get_flags(child) &
+> +                                 CRYPTO_TFM_RES_MASK);
+> +       return err;
+> +}
+> +
+> +static int crypto_ofb_encrypt_segment(struct crypto_ofb_ctx *ctx,
+> +                                     struct skcipher_walk *walk,
+> +                                     struct crypto_cipher *tfm)
+> +{
+> +       int bsize = crypto_cipher_blocksize(tfm);
+> +       int nbytes = walk->nbytes;
+> +
+> +       u8 *src = walk->src.virt.addr;
+> +       u8 *dst = walk->dst.virt.addr;
+> +       u8 *iv = walk->iv;
+> +
+> +       do {
+> +               if (ctx->cnt == bsize) {
+> +                       if (nbytes < bsize)
+> +                               break;
+> +                       crypto_cipher_encrypt_one(tfm, iv, iv);
+> +                       ctx->cnt = 0;
+> +               }
+> +               *dst = *src ^ iv[ctx->cnt];
+> +               src++;
+> +               dst++;
+> +               ctx->cnt++;
+> +       } while (--nbytes);
+> +       return nbytes;
+> +}
+> +
+> +static int crypto_ofb_encrypt(struct skcipher_request *req)
+> +{
+> +       struct skcipher_walk walk;
+> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+> +       unsigned int bsize;
+> +       struct crypto_ofb_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +       struct crypto_cipher *child = ctx->child;
+> +       int ret = 0;
+> +
+> +       bsize =  crypto_cipher_blocksize(child);
+> +       ctx->cnt = bsize;
+> +
+> +       ret = skcipher_walk_virt(&walk, req, false);
+> +
+> +       while (walk.nbytes) {
+> +               ret = crypto_ofb_encrypt_segment(ctx, &walk, child);
+> +               ret = skcipher_walk_done(&walk, ret);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +/* OFB encrypt and decrypt are identical */
+> +static int crypto_ofb_decrypt(struct skcipher_request *req)
+> +{
+> +       return crypto_ofb_encrypt(req);
+> +}
+> +
+> +static int crypto_ofb_init_tfm(struct crypto_skcipher *tfm)
+> +{
+> +       struct skcipher_instance *inst = skcipher_alg_instance(tfm);
+> +       struct crypto_spawn *spawn = skcipher_instance_ctx(inst);
+> +       struct crypto_ofb_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +       struct crypto_cipher *cipher;
+> +
+> +       cipher = crypto_spawn_cipher(spawn);
+> +       if (IS_ERR(cipher))
+> +               return PTR_ERR(cipher);
+> +
+> +       ctx->child = cipher;
+> +       return 0;
+> +}
+> +
+> +static void crypto_ofb_exit_tfm(struct crypto_skcipher *tfm)
+> +{
+> +       struct crypto_ofb_ctx *ctx = crypto_skcipher_ctx(tfm);
+> +
+> +       crypto_free_cipher(ctx->child);
+> +}
+> +
+> +static void crypto_ofb_free(struct skcipher_instance *inst)
+> +{
+> +       crypto_drop_skcipher(skcipher_instance_ctx(inst));
+> +       kfree(inst);
+> +}
+> +
+> +static int crypto_ofb_create(struct crypto_template *tmpl, struct rtattr **tb)
+> +{
+> +       struct skcipher_instance *inst;
+> +       struct crypto_attr_type *algt;
+> +       struct crypto_spawn *spawn;
+> +       struct crypto_alg *alg;
+> +       u32 mask;
+> +       int err;
+> +
+> +       err = crypto_check_attr_type(tb, CRYPTO_ALG_TYPE_SKCIPHER);
+> +       if (err)
+> +               return err;
+> +
+> +       inst = kzalloc(sizeof(*inst) + sizeof(*spawn), GFP_KERNEL);
+> +       if (!inst)
+> +               return -ENOMEM;
+> +
+> +       algt = crypto_get_attr_type(tb);
+> +       err = PTR_ERR(algt);
+> +       if (IS_ERR(algt))
+> +               goto err_free_inst;
+> +
+> +       mask = CRYPTO_ALG_TYPE_MASK |
+> +               crypto_requires_off(algt->type, algt->mask,
+> +                                   CRYPTO_ALG_NEED_FALLBACK);
+> +
+> +       alg = crypto_get_attr_alg(tb, CRYPTO_ALG_TYPE_CIPHER, mask);
+> +       err = PTR_ERR(alg);
+> +       if (IS_ERR(alg))
+> +               goto err_free_inst;
+> +
+> +       spawn = skcipher_instance_ctx(inst);
+> +       err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
+> +                               CRYPTO_ALG_TYPE_MASK);
+> +       crypto_mod_put(alg);
+> +       if (err)
+> +               goto err_free_inst;
+> +
+> +       err = crypto_inst_setname(skcipher_crypto_instance(inst), "ofb", alg);
+> +       if (err)
+> +               goto err_drop_spawn;
+> +
+> +       inst->alg.base.cra_priority = alg->cra_priority;
+> +       inst->alg.base.cra_blocksize = alg->cra_blocksize;
+> +       inst->alg.base.cra_alignmask = alg->cra_alignmask;
+> +
+> +       /* We access the data as u32s when xoring. */
+> +       inst->alg.base.cra_alignmask |= __alignof__(u32) - 1;
+> +
+> +       inst->alg.ivsize = alg->cra_blocksize;
+> +       inst->alg.min_keysize = alg->cra_cipher.cia_min_keysize;
+> +       inst->alg.max_keysize = alg->cra_cipher.cia_max_keysize;
+> +
+> +       inst->alg.base.cra_ctxsize = sizeof(struct crypto_ofb_ctx);
+> +
+> +       inst->alg.init = crypto_ofb_init_tfm;
+> +       inst->alg.exit = crypto_ofb_exit_tfm;
+> +
+> +       inst->alg.setkey = crypto_ofb_setkey;
+> +       inst->alg.encrypt = crypto_ofb_encrypt;
+> +       inst->alg.decrypt = crypto_ofb_decrypt;
+> +
+> +       inst->free = crypto_ofb_free;
+> +
+> +       err = skcipher_register_instance(tmpl, inst);
+> +       if (err)
+> +               goto err_drop_spawn;
+> +
+> +out:
+> +       return err;
+> +
+> +err_drop_spawn:
+> +       crypto_drop_spawn(spawn);
+> +err_free_inst:
+> +       kfree(inst);
+> +       goto out;
+> +}
+> +
+> +static struct crypto_template crypto_ofb_tmpl = {
+> +       .name = "ofb",
+> +       .create = crypto_ofb_create,
+> +       .module = THIS_MODULE,
+> +};
+> +
+> +static int __init crypto_ofb_module_init(void)
+> +{
+> +       return crypto_register_template(&crypto_ofb_tmpl);
+> +}
+> +
+> +static void __exit crypto_ofb_module_exit(void)
+> +{
+> +       crypto_unregister_template(&crypto_ofb_tmpl);
+> +}
+> +
+> +module_init(crypto_ofb_module_init);
+> +module_exit(crypto_ofb_module_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("OFB block cipher algorithm");
+> +MODULE_ALIAS_CRYPTO("ofb");
+> --
+> 2.7.4
+>
