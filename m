@@ -2,125 +2,117 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA43C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C8DC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4C5216FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4C5216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 75E8D2173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 04:44:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qyy2vrIS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E8D2173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbeI1K4M (ORCPT
+        id S1728499AbeI1LGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 06:56:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39878 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726271AbeI1K4L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 06:56:11 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8S4YMOi057633
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:34:23 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2msbfv3kst-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:34:23 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 28 Sep 2018 05:34:00 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 28 Sep 2018 05:33:57 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8S4XuD964815142
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 28 Sep 2018 04:33:56 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB0B64C04E;
-        Fri, 28 Sep 2018 07:33:39 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B9684C04A;
-        Fri, 28 Sep 2018 07:33:38 +0100 (BST)
-Received: from [9.124.35.65] (unknown [9.124.35.65])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Sep 2018 07:33:37 +0100 (BST)
-Subject: Re: [PATCH v3 1/1] perf: Sharing PMU counters across compatible
- events
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-References: <20180924222517.197296-1-songliubraving@fb.com>
- <20180924222517.197296-2-songliubraving@fb.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Fri, 28 Sep 2018 10:03:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180924222517.197296-2-songliubraving@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092804-0008-0000-0000-000002780EF4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092804-0009-0000-0000-000021E119B6
-Message-Id: <0b57307e-b75c-5df8-1ea7-27d527577489@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809280048
+        Fri, 28 Sep 2018 07:06:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726106AbeI1LGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 07:06:04 -0400
+Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED5BD2170E;
+        Fri, 28 Sep 2018 04:44:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538109855;
+        bh=auUKGtk9R4m16ZE0rC/nI6N0K0OKYQT6FN/1Q+NhGZI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Qyy2vrISg8VJPpEsp9nCG3l/uFYvKRGMXgzYkuFvbXR0HS04ajnFt3A406SDZE94x
+         hzOVRZeck4eLgKRhgZ79HunrsztY+5vzZFFfx6qHUTU+C5Lk1Ef6klON2q/Z10W4S7
+         29Eta/nJZzaW8bklIv4sTe83O88wwc/H0HXAROVE=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Darren Hart <dvhart@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>, linux-s390@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
+Date:   Thu, 27 Sep 2018 21:44:13 -0700
+Message-Id: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Song,
+futex_detect_cmpxchg() checks whether cmpxchg is available by trying
+it on the NULL pointer and seeing what the error code is (EFAULT vs
+ENOSYS).  This happens with KERNEL_DS set, which is impolite: while
+the NULL *user* pointer is definitely invalid when there is no user
+program running, the NULL *kernel* pointer seems more like a
+programming error than a safe place to do an intentionally-failing
+access.  An upcoming hardening series I'm working on causes the
+existing code to OOPS, because it considers any failed uaccess with
+KERNEL_DS to be a sign of a bug.
 
-On 09/25/2018 03:55 AM, Song Liu wrote:
-> This patch tries to enable PMU sharing. To make perf event scheduling
-> fast, we use special data structures.
-> 
-> An array of "struct perf_event_dup" is added to the perf_event_context,
-> to remember all the duplicated events under this ctx. All the events
-> under this ctx has a "dup_id" pointing to its perf_event_dup. Compatible
-> events under the same ctx share the same perf_event_dup. The following
-> figure shows a simplified version of the data structure.
-> 
->       ctx ->  perf_event_dup -> master
->                      ^
->                      |
->          perf_event /|
->                      |
->          perf_event /
-> 
+Explicitly set USER_DS to avoid this problem.
 
-I've not gone through the patch in detail, but I was specifically
-interested in scenarios where one perf instance is counting event
-systemwide and thus other perf instance fails to count the same
-event for a specific workload because that event can be counted
-in one hw counter only.
+Cc: linux-s390@vger.kernel.org
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Finn Thain <fthain@telegraphics.com.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+---
 
-Ex: https://lkml.org/lkml/2018/3/12/1011
+I have a couple questions here:
 
-Seems this patch does not solve this issue. Please let me know if
-I'm missing anything.
+ - Is this actually okay on all architectures?  That is, are there
+   cases where we'll screw up if we fail a USER_DS access this early?
+   s390 stands out as the obvious special case (where USER_DS is not
+   than just a subset of KERNEL_DS), but s390 opts out.
 
-Thanks,
-Ravi
+ - Why doesn't x86 set HAVE_FUTEX_CMPXCHG?  Or do we still support
+   some 32-bit configurations that don't have cmpxchg and don't know
+   about it at compile time?
+
+ kernel/futex.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 11fc3bb456d6..16bd3e72602a 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -3593,6 +3593,7 @@ static void __init futex_detect_cmpxchg(void)
+ {
+ #ifndef CONFIG_HAVE_FUTEX_CMPXCHG
+ 	u32 curval;
++	mm_segment_t old_seg;
+ 
+ 	/*
+ 	 * This will fail and we want it. Some arch implementations do
+@@ -3604,8 +3605,11 @@ static void __init futex_detect_cmpxchg(void)
+ 	 * implementation, the non-functional ones will return
+ 	 * -ENOSYS.
+ 	 */
++	old_seg = get_fs();
++	set_fs(USER_DS);
+ 	if (cmpxchg_futex_value_locked(&curval, NULL, 0, 0) == -EFAULT)
+ 		futex_cmpxchg_enabled = 1;
++	set_fs(old_seg);
+ #endif
+ }
+ 
+-- 
+2.17.1
 
