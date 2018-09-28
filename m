@@ -2,171 +2,109 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375BAC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB10C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6B8206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:49:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6B8206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DD7E7206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:50:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD7E7206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbeI2EP1 (ORCPT
+        id S1726403AbeI2EQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:15:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54894 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbeI2EPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:15:25 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 87949300272B;
-        Fri, 28 Sep 2018 21:49:44 +0000 (UTC)
-Received: from redhat.com (ovpn-121-115.rdu2.redhat.com [10.10.121.115])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 28B12600C0;
-        Fri, 28 Sep 2018 21:49:39 +0000 (UTC)
-Date:   Fri, 28 Sep 2018 17:49:37 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Benvenuti <benve@cisco.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>
-Subject: Re: [PATCH 0/4] get_user_pages*() and RDMA: first steps
-Message-ID: <20180928214934.GA3265@redhat.com>
-References: <20180928053949.5381-1-jhubbard@nvidia.com>
- <20180928152958.GA3321@redhat.com>
- <4c884529-e2ff-3808-9763-eb0e71f5a616@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4c884529-e2ff-3808-9763-eb0e71f5a616@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 28 Sep 2018 21:49:44 +0000 (UTC)
+        Sat, 29 Sep 2018 00:16:38 -0400
+Received: from smtprelay0132.hostedemail.com ([216.40.44.132]:40453 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725266AbeI2EQi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 00:16:38 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id AE9E4182CED5B;
+        Fri, 28 Sep 2018 21:50:56 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: cord13_424602b389563
+X-Filterd-Recvd-Size: 2708
+Received: from joe-laptop.perches.com (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:50:55 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: Bad MAINTAINERS pattern in section 'ACPI'
+Date:   Fri, 28 Sep 2018 14:50:53 -0700
+Message-Id: <20180928215054.28561-1-joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 12:06:12PM -0700, John Hubbard wrote:
-> On 9/28/18 8:29 AM, Jerome Glisse wrote:
-> > On Thu, Sep 27, 2018 at 10:39:45PM -0700, john.hubbard@gmail.com wrote:
-> >> From: John Hubbard <jhubbard@nvidia.com>
-> >>
-> >> Hi,
-> >>
-> >> This short series prepares for eventually fixing the problem described
-> >> in [1], and is following a plan listed in [2].
-> >>
-> >> I'd like to get the first two patches into the -mm tree.
-> >>
-> >> Patch 1, although not technically critical to do now, is still nice to have,
-> >> because it's already been reviewed by Jan, and it's just one more thing on the
-> >> long TODO list here, that is ready to be checked off.
-> >>
-> >> Patch 2 is required in order to allow me (and others, if I'm lucky) to start
-> >> submitting changes to convert all of the callsites of get_user_pages*() and
-> >> put_page().  I think this will work a lot better than trying to maintain a
-> >> massive patchset and submitting all at once.
-> >>
-> >> Patch 3 converts infiniband drivers: put_page() --> put_user_page(). I picked
-> >> a fairly small and easy example.
-> >>
-> >> Patch 4 converts a small driver from put_page() --> release_user_pages(). This
-> >> could just as easily have been done as a change from put_page() to
-> >> put_user_page(). The reason I did it this way is that this provides a small and
-> >> simple caller of the new release_user_pages() routine. I wanted both of the
-> >> new routines, even though just placeholders, to have callers.
-> >>
-> >> Once these are all in, then the floodgates can open up to convert the large
-> >> number of get_user_pages*() callsites.
-> >>
-> >> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
-> >>
-> >> [2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
-> >>     Proposed steps for fixing get_user_pages() + DMA problems.
-> >>
-> > 
-> > So the solution is to wait (possibly for days, months, years) that the
-> > RDMA or GPU which did GUP and do not have mmu notifier, release the page
-> > (or put_user_page()) ?
-> > 
-> > This sounds bads. Like i said during LSF/MM there is no way to properly
-> > fix hardware that can not be preempted/invalidated ... most GPU are fine.
-> > Few RDMA are fine, most can not ...
-> > 
-> 
-> Hi Jerome,
-> 
-> Personally, I'm think that this particular design is the best one I've seen
-> so far, but if other, better designs show up, than let's do those instead, sure.
-> 
-> I guess your main concern is that this might take longer than other approaches.
-> 
-> As for time frame, perhaps I made it sound worse than it really is. I have patches
-> staged already for all of the simpler call sites, and for about half of the more
-> complicated ones. The core solution in mm is not large, and we've gone through a 
-> few discussion threads about it back in July or so, so it shouldn't take too long
-> to perfect it.
-> 
-> So it may be a few months to get it all reviewed and submitted, but I don't
-> see "years" by any stretch.
+Please fix this defect appropriately.
 
-Bit of miss-comprehention there :) By month, years, i am talking about
-the time it will take for some user to release the pin they have on the
-page. Not the time to push something upstream.
+linux-next MAINTAINERS section:
 
-AFAICT RDMA driver do not have any upper bound on how long they can hold
-a page reference and thus your solution can leave one CPU core stuck for
-as long as the pin is active. Worst case might lead to all CPU core waiting
-for something that might never happen.
+	308	ACPI
+	309	M:	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+	310	M:	Len Brown <lenb@kernel.org>
+	311	L:	linux-acpi@vger.kernel.org
+	312	W:	https://01.org/linux-acpi
+	313	Q:	https://patchwork.kernel.org/project/linux-acpi/list/
+	314	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+	315	B:	https://bugzilla.kernel.org
+	316	S:	Supported
+	317	F:	drivers/acpi/
+	318	F:	drivers/pnp/pnpacpi/
+	319	F:	include/linux/acpi.h
+	320	F:	include/linux/fwnode.h
+	321	F:	include/acpi/
+	322	F:	Documentation/acpi/
+	323	F:	Documentation/ABI/testing/sysfs-bus-acpi
+	324	F:	Documentation/ABI/testing/configfs-acpi
+	325	F:	drivers/pci/*acpi*
+	326	F:	drivers/pci/*/*acpi*
+-->	327	F:	drivers/pci/*/*/*acpi*
+	328	F:	tools/power/acpi/
 
-> 
-> 
-> > If it is just about fixing the set_page_dirty() bug then just looking at
-> > refcount versus mapcount should already tell you if you can remove the
-> > buffer head from the page or not. Which would fix the bug without complex
-> > changes (i still like the put_user_page just for symetry with GUP).
-> > 
-> 
-> It's about more than that. The goal is to make it safe and correct to
-> use a non-CPU device to read and write to "pinned" memory, especially when
-> that memory is backed by a file system.
-> 
-> I recall there were objections to just narrowly fixing the set_page_dirty()
-> bug, because the underlying problem is large and serious. So here we are.
+Commit that introduced this:
 
-Except that you can not solve that issue without proper hardware. GPU are
-fine. RDMA are broken except the mellanox5 hardware which can invalidate
-at anytime its page table thus allowing to write protect the page at any
-time.
+commit 15fd830dd310e6cf589478e5e1e7733caf68e777
+ Author: Bjorn Helgaas <bhelgaas@google.com>
+ Date:   Wed Jun 26 13:38:37 2013 -0600
+ 
+     MAINTAINERS: Add ACPI folks for ACPI-related things under drivers/pci
+     
+     Add file patterns so get_maintainers.pl reports both PCI and ACPI folks
+     for ACPI-related things in drivers/pci.
+     
+     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+     Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+ 
+  MAINTAINERS | 3 +++
+  1 file changed, 3 insertions(+)
 
-With the solution put forward here you can potentialy wait _forever_ for
-the driver that holds a pin to drop it. This was the point i was trying to
-get accross during LSF/MM. You can not fix broken hardware that decided to
-use GUP to do a feature they can't reliably do because their hardware is
-not capable to behave.
+Last commit with drivers/pci/*/*/*acpi*
 
-Because code is easier here is what i was meaning:
+commit 256a459370930bed087f92bb763517f8b09407eb
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Fri Jun 8 08:39:45 2018 -0500
 
-https://cgit.freedesktop.org/~glisse/linux/commit/?h=gup&id=a5dbc0fe7e71d347067579f13579df372ec48389
-https://cgit.freedesktop.org/~glisse/linux/commit/?h=gup&id=01677bc039c791a16d5f82b3ef84917d62fac826
+    PCI/AER: Squash aerdrv_acpi.c into aerdrv.c
+    
+    Squash aerdrv_acpi.c into aerdrv.c.  No functional change intended.
+    
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-Cheers,
-Jérôme
+ drivers/pci/pcie/aer/Makefile      |   1 -
+ drivers/pci/pcie/aer/aerdrv.c      | 122 ++++++++++++++++++++++++++++++++
+ drivers/pci/pcie/aer/aerdrv_acpi.c | 141 -------------------------------------
+ 3 files changed, 122 insertions(+), 142 deletions(-)
