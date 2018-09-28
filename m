@@ -2,143 +2,143 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5319FC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B50C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BAD72082C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C40AA206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:36:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ju6Y8+u0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BAD72082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NUpUIyOq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C40AA206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbeI1W7e (ORCPT
+        id S1729389AbeI1XAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:59:34 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55348 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbeI1W7e (ORCPT
+        Fri, 28 Sep 2018 19:00:50 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43955 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbeI1XAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:59:34 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180928163459euoutp01c5556f0f149e8da6bb5cb086086b715d~YnYyY6L2E2358423584euoutp01h
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:34:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180928163459euoutp01c5556f0f149e8da6bb5cb086086b715d~YnYyY6L2E2358423584euoutp01h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1538152499;
-        bh=2KUGrxQYysnULRy7UJzubxrOd/9DZpwSn/2KdMc5YDw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ju6Y8+u0eaU5tyj5ETkc85/YxVeHdIhP9yKogmz5ib5rAGFPAOm1RYENF4NlQt9ci
-         bTzxH/lSW75R1PzsuTCAXxab0oKvmmt7eHZUanFpxTAuf4LDFKpSXPhHwaemDrda0Z
-         Tlt9WziH4Kv/YSXRd3xFBKraWgkyyKIgNlz0ocxM=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180928163458eucas1p2308ee539686621070f17033e78143e49~YnYxPB-aX0470304703eucas1p2g;
-        Fri, 28 Sep 2018 16:34:58 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 51.BB.04441.2385EAB5; Fri, 28
-        Sep 2018 17:34:58 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20180928163457eucas1p10a18e67b832104c32e6148dcb1a67c52~YnYwPaOho0754307543eucas1p1L;
-        Fri, 28 Sep 2018 16:34:57 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180928163457eusmtrp23d67b7752ef6f396ff3d77e85984939c~YnYv_yBFu1354613546eusmtrp2g;
-        Fri, 28 Sep 2018 16:34:57 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-93-5bae58324400
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1D.CB.04128.1385EAB5; Fri, 28
-        Sep 2018 17:34:57 +0100 (BST)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20180928163457eusmtip2af55f15c4f991ce671d24e56f74e9018~YnYvstzyc0763707637eusmtip2V;
-        Fri, 28 Sep 2018 16:34:57 +0000 (GMT)
-Subject: Re: [PATCH] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date:   Fri, 28 Sep 2018 18:34:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAJKOXPcfvpiO8NpRzDwNgEyJf21+jFt8r9E=OOs_6f7wSjC+Zw@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRmVeSWpSXmKPExsWy7djP87pGEeuiDeZ/Fbfof/ya2eL8+Q3s
-        FpseX2O1uLxrDpvFjPP7mCwOTd3L6MDmcfnaRWaPTas62Tw2L6n3+LxJLoAlissmJTUnsyy1
-        SN8ugStj2+E2toJt7BX7b91ka2DsYeti5OSQEDCRuPbrIXMXIxeHkMAKRonmozcYIZwvjBLr
-        25qgMp8ZJZ4fu8wC07LqdRc7RGI5o8Thu5+gnPeMEt+/TGcGqRIWSJRonvuBHcQWEdCUuP73
-        OytIEbPAHkaJG28OgBWxCVhJTGxfxQhiswioSjTNugdUxMEhKhAh0X9GHSTMKyAocXLmE7DN
-        nAKBEj933gJrZRaQl9j+dg7YeRIC09kldnVtZoNoKJNYvOIKI8SpLhLrV32DsoUlXh3fwg5h
-        y0j83zmfCaqZUeLNr6UsEM56Rok1Z44xQVRZSxw+fhHsImagF9bv0ocIO0q0bd7CDBKWEOCT
-        uPFWEOIgPolJ26ZDhXklOtqEIKrVJDYs28AGs7Zr50pmCNtDYsKO46wTGBVnIXlzFpLXZiHs
-        XcDIvIpRPLW0ODc9tdgwL7Vcrzgxt7g0L10vOT93EyMwsZz+d/zTDsavl5IOMQpwMCrx8L6w
-        WhctxJpYVlyZe4hRgoNZSYR3X/XaaCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8fFpp0UIC6Ykl
-        qdmpqQWpRTBZJg5OqQbGtOQ4yYWxUx4uDdj3+Qiz6ZevrlpBuVzft3x2nGGw+IeugNwTj52Z
-        a+5OVbDR+ZlSMufKTvMCWf3Yqp32d2v2PbqyVWv2s6l32O5dVIvubr18Jl3frvi9pu4eX/3H
-        Rn55Jr7yB2qqGJoFl6+KqNhopcW/lWGKSP7G1nf8h7Z5WixwKdofrjhJiaU4I9FQi7moOBEA
-        W+wOuCgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xe7qGEeuiDfbdFbbof/ya2eL8+Q3s
-        FpseX2O1uLxrDpvFjPP7mCwOTd3L6MDmcfnaRWaPTas62Tw2L6n3+LxJLoAlSs+mKL+0JFUh
-        I7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS9j2+E2toJt7BX7b91k
-        a2DsYeti5OSQEDCRWPW6i72LkYtDSGApo8TUVzdYuhg5gBIyEsfXl0HUCEv8udbFBlHzllGi
-        79RFZpCEsECiRPPcD+wgtoiApsT1v99ZIYomMkls2/2LEcRhFtjHKHHizSoWkCo2ASuJie2r
-        GEFsXgE7iaWv9oCdwSKgKtE06x4riC0qECFx62EHC0SNoMTJmU/AbE6BQImfO2+BbWYWUJf4
-        M+8SlC0vsf3tHOYJjIKzkLTMQlI2C0nZAkbmVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIER
-        s+3Yzy07GLveBR9iFOBgVOLhdbBdFy3EmlhWXJl7iFGCg1lJhHdf9dpoId6UxMqq1KL8+KLS
-        nNTiQ4ymQE9MZJYSTc4HRnNeSbyhqaG5haWhubG5sZmFkjjveYPKKCGB9MSS1OzU1ILUIpg+
-        Jg5OqQbGsFvibdWezzcGnjLur9v9vmNd0rvbXHsK+5i8773/XFXw/k2zRq3932z/5FMF7Kb/
-        4yf7y+zfVL3ikkVsbNwpew1d87netxreectZPJs+6WN8hxbv2dbE+SocRasnTWJzfTW35rz8
-        rLtPU+/PFdTe/HDh37DcK9EG/U1HhVcHHt39Yc6fBQUPlFiKMxINtZiLihMB6k1PEK4CAAA=
-Message-Id: <20180928163457eucas1p10a18e67b832104c32e6148dcb1a67c52~YnYwPaOho0754307543eucas1p1L@eucas1p1.samsung.com>
-X-CMS-MailID: 20180928163457eucas1p10a18e67b832104c32e6148dcb1a67c52
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d
-References: <CGME20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d@eucas1p1.samsung.com>
-        <20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d~Yk9kqY_Ga2124121241eucas1p1b@eucas1p1.samsung.com>
-        <CAJKOXPcfvpiO8NpRzDwNgEyJf21+jFt8r9E=OOs_6f7wSjC+Zw@mail.gmail.com>
+        Fri, 28 Sep 2018 19:00:49 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z14-v6so7035159wrs.10
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 09:36:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=qL3yUFJ0UT1bR43mpkGMugA4fyPt/enfdN4FzCYYm+4=;
+        b=NUpUIyOq1lTKWdVNXG6aalKMVKjyckdHmwvo6kgFLf8TUdeO2oRdpe/BR+0oIUjyxe
+         ZRj/wU6D0ZkV4JssUAkrb1G1Fy+VQZ3LQEP2WhFN6rXXHjPzEtzQYjFtCvrL45vJ6IfU
+         76QKgus0J3nvN4FEn1a5eh9OUI7/lYAMc28gc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qL3yUFJ0UT1bR43mpkGMugA4fyPt/enfdN4FzCYYm+4=;
+        b=XhDgwEsCVUuv/6QTC4Y+T62wDa3JBztPQKavQ8W0gApm8vUSzn63mt5s78VgOpZA6x
+         /56FhaynDD+fDORA3lUgVjg/04txSPtbsFe7QVF0TddUOgyzWB01dNhKZPGOMlIr7lyW
+         Rmz2sOc+cJE5ETFKv7oCTRXXSfEb7MO2AnKxfll/A1MkCwbdEVBQOEjwFT2Ukr6WjdnQ
+         CyGKXBc4Ssy1h2RIADqLI1Bfy9BA+OacEl1Gt9wc4pFQIrq7+epVQ4DC4DJ4hHrqrtDR
+         UkX+S/Nc4Dd0FRy5awGW8pSsCnM0v1Gjj19xraRmEHXzeWLMm8iY/EP5d6fUr+bbMVe0
+         3rng==
+X-Gm-Message-State: ABuFfoggoW6jZCJ2kdLOTMnAHbZ4x39Dwu4jdvIgz6JZIlh4VqfvLuNW
+        BCRsLoG3mpPHbsMIR3WH2A3t8h0xk6rXIw==
+X-Google-Smtp-Source: ACcGV603nK5ZMplZt6oFXy+RE86QyFOaRn5mzx1IfRwLwqfCs8WmmexGWLG/UwueUOHFfwFoKZ57ag==
+X-Received: by 2002:adf:fb0e:: with SMTP id c14-v6mr12957820wrr.117.1538152573834;
+        Fri, 28 Sep 2018 09:36:13 -0700 (PDT)
+Received: from localhost ([49.248.49.136])
+        by smtp.gmail.com with ESMTPSA id a1-v6sm1029768wrt.79.2018.09.28.09.36.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 09:36:13 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
+        mka@chromium.org, rui.zhang@intel.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v1 0/2] driver: thermal: Move some drivers into subdirs
+Date:   Fri, 28 Sep 2018 22:06:04 +0530
+Message-Id: <cover.1538141538.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Move the various drivers for Intel platforms into their own subdir. Also
+consolidate Qualcomm drivers into the qcom subdir.
 
+This cleans up the directory making it easier to find things.
 
-On 09/28/2018 03:54 PM, Krzysztof Kozlowski wrote:
-> On Fri, 28 Sep 2018 at 15:37, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
->>
->> "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
->> config option) is not working properly (debug messages are not
->> displayed after resume) on Exynos platforms because GPIOs restore
->> code is not implemented.
-> 
-> AFAIR, it worked properly for the suspend part showing more logs.
-> Unless it changed, the feature looks still useful.
+There is no great time to send patches that move files around, but I'm told
+that towards the end is nicer. So here's an attempt to sneak it into 4.20
+after everything else and hoping that these files won't change after
+4.19-rc4. :-) 
 
-Yes, it shows few additional messages from mach/plat specific suspend
-code but it breaks the assumption that features (even debug ones)
-work correctly and make you invest time in debugging known broken
-code.
+This was compile-tested and generated against 4.19-rc4. If you would like
+me to try another time, I'm happy to do so.
 
-In case it is needed/useful (which should be rather rare situation)
-one can always easily revert the commit locally.
+Regards,
+Amit
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Amit Kucheria (2):
+  drivers: thermal: Move various drivers for intel platforms into a
+    subdir
+  drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom subdir
+
+ drivers/thermal/Kconfig                       | 94 +------------------
+ drivers/thermal/Makefile                      | 10 +-
+ drivers/thermal/intel/Kconfig                 | 77 +++++++++++++++
+ drivers/thermal/intel/Makefile                | 12 +++
+ .../{ => intel}/int340x_thermal/Kconfig       |  0
+ .../{ => intel}/int340x_thermal/Makefile      |  0
+ .../int340x_thermal/acpi_thermal_rel.c        |  0
+ .../int340x_thermal/acpi_thermal_rel.h        |  0
+ .../int340x_thermal/int3400_thermal.c         |  0
+ .../int340x_thermal/int3402_thermal.c         |  0
+ .../int340x_thermal/int3403_thermal.c         |  0
+ .../int340x_thermal/int3406_thermal.c         |  0
+ .../int340x_thermal/int340x_thermal_zone.c    |  0
+ .../int340x_thermal/int340x_thermal_zone.h    |  0
+ .../processor_thermal_device.c                |  0
+ .../{ => intel}/intel_bxt_pmic_thermal.c      |  0
+ .../thermal/{ => intel}/intel_pch_thermal.c   |  0
+ .../thermal/{ => intel}/intel_powerclamp.c    |  0
+ .../{ => intel}/intel_quark_dts_thermal.c     |  0
+ .../thermal/{ => intel}/intel_soc_dts_iosf.c  |  0
+ .../thermal/{ => intel}/intel_soc_dts_iosf.h  |  0
+ .../{ => intel}/intel_soc_dts_thermal.c       |  0
+ .../{ => intel}/x86_pkg_temp_thermal.c        |  0
+ drivers/thermal/qcom/Kconfig                  | 11 +++
+ drivers/thermal/qcom/Makefile                 |  1 +
+ .../thermal/{ => qcom}/qcom-spmi-temp-alarm.c |  0
+ 26 files changed, 107 insertions(+), 98 deletions(-)
+ create mode 100644 drivers/thermal/intel/Kconfig
+ create mode 100644 drivers/thermal/intel/Makefile
+ rename drivers/thermal/{ => intel}/int340x_thermal/Kconfig (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/Makefile (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.c (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.h (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/int3400_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/int3402_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/int3403_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/int3406_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.c (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.h (100%)
+ rename drivers/thermal/{ => intel}/int340x_thermal/processor_thermal_device.c (100%)
+ rename drivers/thermal/{ => intel}/intel_bxt_pmic_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/intel_pch_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/intel_powerclamp.c (100%)
+ rename drivers/thermal/{ => intel}/intel_quark_dts_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.c (100%)
+ rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.h (100%)
+ rename drivers/thermal/{ => intel}/intel_soc_dts_thermal.c (100%)
+ rename drivers/thermal/{ => intel}/x86_pkg_temp_thermal.c (100%)
+ rename drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c (100%)
+
+-- 
+2.17.1
+
