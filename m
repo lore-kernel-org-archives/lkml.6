@@ -2,269 +2,125 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D910CC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECADC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787B2206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:51:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6871F2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sv1VrOic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787B2206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="atpTXFAE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6871F2073F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbeI2GRX (ORCPT
+        id S1727328AbeI2GS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 02:17:23 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43959 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeI2GRX (ORCPT
+        Sat, 29 Sep 2018 02:18:28 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34883 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbeI2GS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 02:17:23 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r8-v6so7319516ljc.10;
-        Fri, 28 Sep 2018 16:51:14 -0700 (PDT)
+        Sat, 29 Sep 2018 02:18:28 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so5320624pfh.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TObcMEIo2UFf+JuXNN1ycWFBVq90kdbI3LpwatPuoTc=;
-        b=sv1VrOicxTT0B2McrK2NF5le7usatTCOkSmAgcYKjs4Y2HwbtS4EKlZz2kZaiDcOqd
-         KN4/3i1B2xogwvb9BBayhgFBJhm4fNzwKMuQ+3Nv45F31u/HXztmGqPrrRo4YndAGTlw
-         vuvYTfjAeenzdVxEPWTi3JILgCG/23DX0UxLX7cbvSv+NrJ6WjmmboGO+H+rPTeCyb7g
-         CuquwpVHiyvfgYukMox1q5wmuMIPiKBZDBc9fvH44TiNXQpQbZnsCzNVElsv9ISs3KQ5
-         CvYlp118pamipeabxhr1EW/X47WXWR9bdZ6ttMP866o6G8BA5X5TXdiOGluy9VagFs84
-         s0ZQ==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OnT54z5lgaA9LYwi8+7ZPe4Iw8qJqNThCDiT5afzxE4=;
+        b=atpTXFAEOoVV2Tvoe/9xuQpRmltCARrRutFpFsk+ykbLsKU5ERcJDUx1mp5ld5ifgu
+         nUDEkY2DxLclyHaElK90g6rSNPRbOjFghnN5hhZR8jqzX/ioy859l8mV1OJsD2Kl6kfe
+         Qu3yrg8O2uQQHcTG2Kag09wMY0DAWashv7IuPzaSstz5WNaBaRJuZ+STIkiKI7awiJRV
+         LEkyBqs9nCStga4WUsICeU+YwXOrXEvE6hcjtsftkw5wFqpv83IwDb2TxoHVwZuQfkZx
+         cgAwNrTL/Htwdv7NYY3pr7tBfXE7sjeMkW1J+vSXUTdFQtX7MiB9E8irxCDm2AbQ8zvR
+         ZCnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TObcMEIo2UFf+JuXNN1ycWFBVq90kdbI3LpwatPuoTc=;
-        b=qIeYcjacOkNVL6ZNkCXej/0BMBQAFIOcADpPd7HYf7QFYzv8W+awUepklCUlWzMDL4
-         He8Shk0cffRlkMgqEicfOv6DUc85wP1s/S+YEfQIvWTNGlOKidLygyuomhWQ51aeMMRL
-         WE8ZW2Ru3JzL0+yMNup1rCEjbQv21ntuRrilCSJIvr8O5kOgRE5bkzAih12mnY9Kc+Fn
-         Zm6OZWNElJhfrD/gk0UGfP4qwc9GcHZrXNXsY1ztRn0Cj2BdMRm6LNQCOOwHgXSi7RGe
-         pGdHWGVJwPdbkhx+KlvDzm9r2Olw51SgE6xE1ZiOIbN2ge6/PIm6J31ErLCuU3E5VX6U
-         RzSw==
-X-Gm-Message-State: ABuFfohLxMNhT4UNycYoD7m5tlbMSf8bSjQ8OvhRf6ivSnvNxRaWNpnW
-        uRRmq4px3UFoKXWnxJ4U1r/ARXJ0
-X-Google-Smtp-Source: ACcGV60x/lNQQXMAwFHUwu7UHcj2qfEPVlm+Ki9yYQ4HP2VEbXBdd7YlBPuHGTm+L2cjVyKD4LEgPg==
-X-Received: by 2002:a2e:9b46:: with SMTP id o6-v6mr489605ljj.78.1538178673508;
-        Fri, 28 Sep 2018 16:51:13 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.213])
-        by smtp.googlemail.com with ESMTPSA id n12-v6sm45529ljc.3.2018.09.28.16.51.12
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=OnT54z5lgaA9LYwi8+7ZPe4Iw8qJqNThCDiT5afzxE4=;
+        b=YHEFwGPsq23dW4UGvlPLvcDcJLp0RUWAxQ8+dVC2d/KHU1wJriaxHEDFUzrf+Ts2yi
+         Xv4ag5FFZoFd20bxzW/dYq+R7otp+7zz/UcT69GJhaFCZXFYB5XAhOLXJECKu16+D/E6
+         l5kNiifcQdN/i/L65A3aSEzqa63nsilBkW0iKjDKbscssnIuyi1xv7O19SbLggAnlVk2
+         3LBf+dyVJLOPNs9xTnn1uZJNu9otCGm8qv3Pjl9B2sAkcHr9A1B0rb1GUov0x9QMf7np
+         tBqUeNRIrZOnP/Uih74vV0fXu7mq9SE4WE/7jRan/gOPd24Jm0yxtJ8vkK2SM94xMrF5
+         gTAg==
+X-Gm-Message-State: ABuFfoh9zEZeP73CRjHrbVKtRo1NIUx60YiiuAc5in+Se4EcnN8z+5Dv
+        7mZk72f/rb2ciNfPePNJCqAJVA==
+X-Google-Smtp-Source: ACcGV61Pix4ATLo985K1Eza8oxcyndnQwfnEvur90Met3eYk/2XQiDEm1cxLA8k4Mr07M6SNzmNiJw==
+X-Received: by 2002:a62:34c4:: with SMTP id b187-v6mr826125pfa.15.1538178740272;
+        Fri, 28 Sep 2018 16:52:20 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm10237794pfi.24.2018.09.28.16.52.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 16:51:12 -0700 (PDT)
-Subject: Re: [PATCH] regulator: core: Pass max_uV value to
- regulator_set_voltage_rdev
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Maciej Purski <m.purski@samsung.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        Carlos Hernandez <ceh@ti.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20180615112916.GK112168@atomide.com>
- <CGME20180618140856eucas1p281619f9bf003655a3c2eac356216ab25@eucas1p2.samsung.com>
- <1529330913-11152-1-git-send-email-m.purski@samsung.com>
- <20180702080505.GN112168@atomide.com>
- <95655644-ef41-f5bd-7e8e-a257d48cd020@gmail.com>
- <20180928202251.GM5662@atomide.com>
- <2c0132ff-ea0f-f19e-ebfb-a0d077565d2c@gmail.com>
- <20180928224109.GS5662@atomide.com>
- <ea0a59ef-e201-986a-9499-a0638359b1b9@gmail.com>
-Message-ID: <d14cc796-8644-41a3-5135-299bd8820204@gmail.com>
-Date:   Sat, 29 Sep 2018 02:51:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <ea0a59ef-e201-986a-9499-a0638359b1b9@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 28 Sep 2018 16:52:19 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 16:52:19 -0700 (PDT)
+X-Google-Original-Date: Fri, 28 Sep 2018 16:51:53 PDT (-0700)
+Subject:     Re: [PATCH v2 0/5] Fix some bugs on RV32 build fail and issue
+In-Reply-To: <cover.1537949825.git.zongbox@gmail.com>
+CC:     aou@eecs.berkeley.edu, zong@andestech.com, vincentc@andestech.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        zongbox@gmail.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     zongbox@gmail.com, Christoph Hellwig <hch@infradead.org>
+Message-ID: <mhng-1934187c-6fab-4000-af19-23a80173669d@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/29/18 2:17 AM, Dmitry Osipenko wrote:
-> On 9/29/18 1:41 AM, Tony Lindgren wrote:
->> * Dmitry Osipenko <digetx@gmail.com> [180928 22:31]:
->>> On 9/28/18 11:22 PM, Tony Lindgren wrote:
->>>> * Dmitry Osipenko <digetx@gmail.com> [180928 20:13]:
->>>>> Tony, could you please give a try to the patch below?
->>>>>
->>>>> Do the following:
->>>>>
->>>>> 1) git cherry-pick 696861761a58d8c93605b5663824929fb6540f16
->>>>> 2) git cherry-pick 456e7cdf3b1a14e2606b8b687385ab2e3f23a49a
->>>>> 3) Apply this patch:
->>>>
->>>> Seems to be getting closer, system boots up and starts
->>>> init, but then I start getting tons of this on beagle-x15:
->>>
->>> Tony, could you please try this one? Fixed couple more bugs, should be good now.
->>
->> I'm still getting these errors after init:
-> 
-> Thank you very much again, seems I got what's wrong with your case. The ti-abb-regulator driver sets the "abb->current_info_idx = -EINVAL" on probe and that value is getting updated only after the first voltage change, hence _regulator_get_voltage() returns -22.
-> 
-> Please try this patch:
+On Wed, 26 Sep 2018 01:31:09 PDT (-0700), zongbox@gmail.com wrote:
+> This patches contain the modificaion as follows:
+> 1. Fix up the building fail on RV32.
+> 2. Add umoddi3 and udivmoddi4 functions for RV32.
+> 3. Fix ioremap problem on RV32.
+>
+> Changes in v2:
+>  - Retain the copyright notices from libgcc in umoddi3.c and udivmoddi4.c.
+>
+> Vincent Chen (1):
+>   RISC-V: Avoid corrupting the upper 32-bit of phys_addr_t in ioremap
+>
+> Zong Li (4):
+>   RISC-V: Build tishift only on 64-bit
+>   RISC-V: Use swiotlb on RV64 only
+>   lib: Add umoddi3 and udivmoddi4 of GCC library routines
+>   RISC-V: Select GENERIC_LIB_UMODDI3 on RV32
+>
+>  arch/riscv/Kconfig        |   1 +
+>  arch/riscv/kernel/setup.c |   3 +
+>  arch/riscv/lib/Makefile   |   3 +-
+>  arch/riscv/mm/ioremap.c   |   2 +-
+>  lib/Kconfig               |   3 +
+>  lib/Makefile              |   1 +
+>  lib/udivmoddi4.c          | 309 ++++++++++++++++++++++++++++++++++++++++++++++
+>  lib/umoddi3.c             |  34 +++++
+>  8 files changed, 354 insertions(+), 2 deletions(-)
+>  create mode 100644 lib/udivmoddi4.c
+>  create mode 100644 lib/umoddi3.c
 
-I've revised the patch and here is the current final version.
+I like what this does, but there's a license issue here that Christoph pointed 
+out.  It'd be great to have RV32I systems booting 4.19, do you think there's a 
+chance you can sort this out next week so we can get it into the last RC?  That 
+would help with the rv32i glibc process, as we'll actually be able to boot an 
+upstream kernel.
 
+It looks like the functions we have an issue with come from libgcc2.c, which 
+doesn't change very much.  As far as I can tell we might be able to get away 
+with these functions from 4.2.1, which was licensed under the GPLv2.  Here's 
+the relevant functions on GCC's github mirror
 
-From 0332e230568d5bba470f917f0b36dd9ef9e6e511 Mon Sep 17 00:00:00 2001
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Fri, 28 Sep 2018 21:49:20 +0300
-Subject: [PATCH] Fixup regulator_balance_voltage() v4
+    https://github.com/gcc-mirror/gcc/blob/gcc-4_2_1-release/gcc/libgcc2.c#L559
+    https://github.com/gcc-mirror/gcc/blob/gcc-4_2_1-release/gcc/libgcc2.c#L844
 
----
- drivers/regulator/core.c | 58 +++++++++++++++++++++++-----------------
- 1 file changed, 34 insertions(+), 24 deletions(-)
+These look very similar to what you send out.  As far as I can tell, if you 
+base your code on the GPLv2 version then this should be fine to include.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 282511508698..17dce370f236 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3099,10 +3099,6 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
- 	voltage->min_uV = min_uV;
- 	voltage->max_uV = max_uV;
- 
--	ret = regulator_check_consumers(rdev, &min_uV, &max_uV, state);
--	if (ret < 0)
--		goto out2;
--
- 	/* for not coupled regulators this will just set the voltage */
- 	ret = regulator_balance_voltage(rdev, state);
- 	if (ret < 0)
-@@ -3187,7 +3183,9 @@ static int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
- 	return ret;
- }
- 
--static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
-+static int regulator_get_optimal_voltage(struct regulator_dev *rdev,
-+					 int *min_uV, int *max_uV,
-+					 suspend_state_t state)
- {
- 	struct coupling_desc *c_desc = &rdev->coupling_desc;
- 	struct regulator_dev **c_rdevs = c_desc->coupled_rdevs;
-@@ -3202,7 +3200,8 @@ static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
- 	desired_max_uV = rdev->constraints->max_uV;
- 	ret = regulator_check_consumers(rdev,
- 					&desired_min_uV,
--					&desired_max_uV, PM_SUSPEND_ON);
-+					&desired_max_uV,
-+					state);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -3210,8 +3209,10 @@ static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
- 	 * If there are no coupled regulators, simply set the voltage demanded
- 	 * by consumers.
- 	 */
--	if (n_coupled == 1) {
--		ret = desired_min_uV;
-+	if (n_coupled == 1 || state != PM_SUSPEND_ON) {
-+		*min_uV = desired_min_uV;
-+		*max_uV = desired_max_uV;
-+		ret = 1;
- 		goto out;
- 	}
- 
-@@ -3285,8 +3286,10 @@ static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
- 		ret = -EINVAL;
- 		goto out;
- 	}
--	ret = possible_uV;
-+	ret = (possible_uV == desired_min_uV);
- 
-+	*min_uV = possible_uV;
-+	*max_uV = desired_max_uV;
- out:
- 	return ret;
- }
-@@ -3298,7 +3301,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
- 	struct regulator_dev *best_rdev;
- 	struct coupling_desc *c_desc = &rdev->coupling_desc;
- 	int n_coupled;
--	int i, best_delta, best_uV, ret = 1;
-+	int i, best_delta, best_min_uV, best_max_uV, ret = 1;
-+	bool last = false;
- 
- 	c_rdevs = c_desc->coupled_rdevs;
- 	n_coupled = c_desc->n_coupled;
-@@ -3314,9 +3318,10 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
- 	 * Find the best possible voltage change on each loop. Leave the loop
- 	 * if there isn't any possible change.
- 	 */
--	while (1) {
-+	while (!last) {
- 		best_delta = 0;
--		best_uV = 0;
-+		best_min_uV = 0;
-+		best_max_uV = 0;
- 		best_rdev = NULL;
- 
- 		/*
-@@ -3330,24 +3335,29 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
- 			 * max_spread constraint in order to balance
- 			 * the coupled voltages.
- 			 */
--			int optimal_uV, current_uV;
-+			int optimal_uV, optimal_max_uV, current_uV = 0;
- 
--			optimal_uV = regulator_get_optimal_voltage(c_rdevs[i]);
--			if (optimal_uV < 0) {
--				ret = optimal_uV;
-+			ret = regulator_get_optimal_voltage(c_rdevs[i],
-+							    &optimal_uV,
-+							    &optimal_max_uV,
-+							    state);
-+			if (ret < 0)
- 				goto out;
--			}
- 
--			current_uV = _regulator_get_voltage(c_rdevs[i]);
--			if (current_uV < 0) {
--				ret = optimal_uV;
--				goto out;
-+			if (n_coupled > 1) {
-+				current_uV = _regulator_get_voltage(c_rdevs[i]);
-+				if (current_uV < 0) {
-+					ret = current_uV;
-+					goto out;
-+				}
- 			}
- 
- 			if (abs(best_delta) < abs(optimal_uV - current_uV)) {
- 				best_delta = optimal_uV - current_uV;
- 				best_rdev = c_rdevs[i];
--				best_uV = optimal_uV;
-+				best_min_uV = optimal_uV;
-+				best_max_uV = optimal_max_uV;
-+				last = (best_rdev == rdev && ret > 0);
- 			}
- 		}
- 
-@@ -3357,8 +3367,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
- 			goto out;
- 		}
- 
--		ret = regulator_set_voltage_rdev(best_rdev, best_uV,
--						 best_uV, state);
-+		ret = regulator_set_voltage_rdev(best_rdev, best_min_uV,
-+						 best_max_uV, state);
- 
- 		if (ret < 0)
- 			goto out;
--- 
-2.19.0
-
-
-
+Thanks!
