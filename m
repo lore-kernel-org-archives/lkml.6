@@ -2,228 +2,225 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B452FC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A10C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 471972170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:34:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 471972170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 78D542170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:35:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="rQbCMtyY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D542170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbeI1I4G (ORCPT
+        id S1728700AbeI1I5S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:56:06 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13138 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726060AbeI1I4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:56:05 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 741BBA22C7BDA;
-        Fri, 28 Sep 2018 10:34:37 +0800 (CST)
-Received: from HULK-Android.huawei.com (10.113.189.218) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 28 Sep 2018 10:34:32 +0800
-From:   Sheng Yong <shengyong1@huawei.com>
-To:     <jaegeuk@kernel.org>, <yuchao0@huawei.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>
-Subject: [PATCH] f2fs: cleanup dirty pages if recover failed
-Date:   Fri, 28 Sep 2018 10:34:24 +0800
-Message-ID: <20180928023424.28186-1-shengyong1@huawei.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 28 Sep 2018 04:57:18 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:45749 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726060AbeI1I5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 04:57:18 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 3fb1e1b4;
+        Fri, 28 Sep 2018 02:17:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
+        :cc:subject:message-id:references:mime-version:content-type
+        :in-reply-to; s=mail; bh=OsRjeCnSqYferUDKuV1z/bCdgLE=; b=rQbCMty
+        YD+GA5gAdETZwbBXZTz31q/T4NsFMK+AFIe3YK6arMcgXPs42yDrN9EJVUnpWKTS
+        h5HUv2GoI6iczR9Ytn/B2juepATrYNaBUJikzE4yd9iwFlC3cHs30S+3ojP0dtYj
+        /BTqnV4Mrk2EsR5ja6FXlT3niIbBKnxU1ggv7MnBo9VjV5Mxum0lyIf5ahw2ej0k
+        eQmjuhWPQVghCTDd9fR57zGPPeR774aL5OprkKOxzbS+I7+Ri9lAJ+iW/M+1Hjeo
+        fVLpONXB94ILpwyrex1+B5h2xtO6OfipJpexqFX3meKdURCVZ1VfqCH5zuJrFZK+
+        61pFcMOgczK8h5g==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1429ebf7 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Fri, 28 Sep 2018 02:17:06 +0000 (UTC)
+Date:   Fri, 28 Sep 2018 04:35:48 +0200
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH net-next v6 00/23] WireGuard: Secure Network Tunnel
+Message-ID: <20180928023546.GA20765@zx2c4.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com>
+ <20180927182944.GA22921@gmail.com>
+ <20180927213537.GA27576@zx2c4.com>
+ <20180928011726.GA98113@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.113.189.218]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180928011726.GA98113@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During recover, we will try to create new dentries for inodes with
-dentry_mark. But if the parent is missing (e.g. killed by fsck),
-recover will break. But those recovered dirty pages are not cleanup.
-This will hit f2fs_bug_on:
+Hi Eric,
 
-[   53.519566] F2FS-fs (loop0): Found nat_bits in checkpoint
-[   53.539354] F2FS-fs (loop0): recover_inode: ino = 5, name = file, inline = 3
-[   53.539402] F2FS-fs (loop0): recover_dentry: ino = 5, name = file, dir = 0, err = -2
-[   53.545760] F2FS-fs (loop0): Cannot recover all fsync data errno=-2
-[   53.546105] F2FS-fs (loop0): access invalid blkaddr:4294967295
-[   53.546171] WARNING: CPU: 1 PID: 1798 at fs/f2fs/checkpoint.c:163 f2fs_is_valid_blkaddr+0x26c/0x320
-[   53.546174] Modules linked in:
-[   53.546183] CPU: 1 PID: 1798 Comm: mount Not tainted 4.19.0-rc2+ #1
-[   53.546186] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[   53.546191] RIP: 0010:f2fs_is_valid_blkaddr+0x26c/0x320
-[   53.546195] Code: 85 bb 00 00 00 48 89 df 88 44 24 07 e8 ad a8 db ff 48 8b 3b 44 89 e1 48 c7 c2 40 03 72 a9 48 c7 c6 e0 01 72 a9 e8 84 3c ff ff <0f> 0b 0f b6 44 24 07 e9 8a 00 00 00 48 8d bf 38 01 00 00 e8 7c a8
-[   53.546201] RSP: 0018:ffff88006c067768 EFLAGS: 00010282
-[   53.546208] RAX: 0000000000000000 RBX: ffff880068844200 RCX: ffffffffa83e1a33
-[   53.546211] RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff88006d51e590
-[   53.546215] RBP: 0000000000000005 R08: ffffed000daa3cb3 R09: ffffed000daa3cb3
-[   53.546218] R10: 0000000000000001 R11: ffffed000daa3cb2 R12: 00000000ffffffff
-[   53.546221] R13: ffff88006a1f8000 R14: 0000000000000200 R15: 0000000000000009
-[   53.546226] FS:  00007fb2f3646840(0000) GS:ffff88006d500000(0000) knlGS:0000000000000000
-[   53.546229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   53.546234] CR2: 00007f0fd77f0008 CR3: 00000000687e6002 CR4: 00000000000206e0
-[   53.546237] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   53.546240] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   53.546242] Call Trace:
-[   53.546248]  f2fs_submit_page_bio+0x95/0x740
-[   53.546253]  read_node_page+0x161/0x1e0
-[   53.546271]  ? truncate_node+0x650/0x650
-[   53.546283]  ? add_to_page_cache_lru+0x12c/0x170
-[   53.546288]  ? pagecache_get_page+0x262/0x2d0
-[   53.546292]  __get_node_page+0x200/0x660
-[   53.546302]  f2fs_update_inode_page+0x4a/0x160
-[   53.546306]  f2fs_write_inode+0x86/0xb0
-[   53.546317]  __writeback_single_inode+0x49c/0x620
-[   53.546322]  writeback_single_inode+0xe4/0x1e0
-[   53.546326]  sync_inode_metadata+0x93/0xd0
-[   53.546330]  ? sync_inode+0x10/0x10
-[   53.546342]  ? do_raw_spin_unlock+0xed/0x100
-[   53.546347]  f2fs_sync_inode_meta+0xe0/0x130
-[   53.546351]  f2fs_fill_super+0x287d/0x2d10
-[   53.546367]  ? vsnprintf+0x742/0x7a0
-[   53.546372]  ? f2fs_commit_super+0x180/0x180
-[   53.546379]  ? up_write+0x20/0x40
-[   53.546385]  ? set_blocksize+0x5f/0x140
-[   53.546391]  ? f2fs_commit_super+0x180/0x180
-[   53.546402]  mount_bdev+0x181/0x200
-[   53.546406]  mount_fs+0x94/0x180
-[   53.546411]  vfs_kern_mount+0x6c/0x1e0
-[   53.546415]  do_mount+0xe5e/0x1510
-[   53.546420]  ? fs_reclaim_release+0x9/0x30
-[   53.546424]  ? copy_mount_string+0x20/0x20
-[   53.546428]  ? fs_reclaim_acquire+0xd/0x30
-[   53.546435]  ? __might_sleep+0x2c/0xc0
-[   53.546440]  ? ___might_sleep+0x53/0x170
-[   53.546453]  ? __might_fault+0x4c/0x60
-[   53.546468]  ? _copy_from_user+0x95/0xa0
-[   53.546474]  ? memdup_user+0x39/0x60
-[   53.546478]  ksys_mount+0x88/0xb0
-[   53.546482]  __x64_sys_mount+0x5d/0x70
-[   53.546495]  do_syscall_64+0x65/0x130
-[   53.546503]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   53.547639] ---[ end trace b804d1ea2fec893e ]---
+On Thu, Sep 27, 2018 at 06:17:27PM -0700, Eric Biggers wrote:
+> So, Zinc will simultaneously replace the current crypto implementations, *and*
+> be "orthogonal" and "separate" from all the crypto code currently maintained by
+> Herbert?  You can't have your cake and eat it too...
 
-So if recover fails, we need to drop all recovered data.
+The plan is for it to replace many uses of the crypto API where it makes
+sense, but not replace uses where it doesn't make sense. Perhaps in the
+long run, over time, its usage will grow to cover those cases too, or,
+perhaps instead, Zinc will form a simple basis of software crypto
+algorithms in whatever future API designs crop up. In other words, like
+most changes in kernel development, things happen gradually, starting
+with a few good cases, and gradually growing as the need and design
+arise.
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fs/f2fs/recovery.c | 19 ++++++++++++-------
- fs/f2fs/super.c    | 15 ++++++++++++++-
- 2 files changed, 26 insertions(+), 8 deletions(-)
+> I'm still concerned you're splitting the community in two.  It will be unclear
+> where new algorithms and implementations should go.  Some people will choose
+> Herbert and the current crypto API and conventions, and some people will choose
+> you and Zinc...  I still don't see clear guidelines for what will go where.
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index fb24a6d734e9..064b91544a84 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -96,8 +96,12 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
- 	return ERR_PTR(err);
- }
- 
--static void del_fsync_inode(struct fsync_inode_entry *entry)
-+static void del_fsync_inode(struct fsync_inode_entry *entry, int drop)
- {
-+	if (drop) {
-+		make_bad_inode(entry->inode);
-+		f2fs_inode_synced(entry->inode);
-+	}
- 	iput(entry->inode);
- 	list_del(&entry->list);
- 	kmem_cache_free(fsync_entry_slab, entry);
-@@ -337,12 +341,12 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 	return err;
- }
- 
--static void destroy_fsync_dnodes(struct list_head *head)
-+static void destroy_fsync_dnodes(struct list_head *head, int drop)
- {
- 	struct fsync_inode_entry *entry, *tmp;
- 
- 	list_for_each_entry_safe(entry, tmp, head, list)
--		del_fsync_inode(entry);
-+		del_fsync_inode(entry, drop);
- }
- 
- static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
-@@ -631,7 +635,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		}
- 
- 		if (entry->blkaddr == blkaddr)
--			del_fsync_inode(entry);
-+			del_fsync_inode(entry, 0);
- next:
- 		/* check next segment */
- 		blkaddr = next_blkaddr_of_node(page);
-@@ -697,7 +701,7 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	if (!err)
- 		f2fs_bug_on(sbi, !list_empty(&inode_list));
- skip:
--	destroy_fsync_dnodes(&inode_list);
-+	destroy_fsync_dnodes(&inode_list, err);
- 
- 	/* truncate meta pages to be used by the recovery */
- 	truncate_inode_pages_range(META_MAPPING(sbi),
-@@ -706,13 +710,14 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	if (err) {
- 		truncate_inode_pages_final(NODE_MAPPING(sbi));
- 		truncate_inode_pages_final(META_MAPPING(sbi));
-+	} else {
-+		clear_sbi_flag(sbi, SBI_POR_DOING);
- 	}
- 
--	clear_sbi_flag(sbi, SBI_POR_DOING);
- 	mutex_unlock(&sbi->cp_mutex);
- 
- 	/* let's drop all the directory inodes for clean checkpoint */
--	destroy_fsync_dnodes(&dir_list);
-+	destroy_fsync_dnodes(&dir_list, err);
- 
- 	if (need_writecp) {
- 		set_sbi_flag(sbi, SBI_IS_RECOVERED);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c47b1ef2685a..9cc3c43a0b35 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1883,6 +1883,19 @@ void f2fs_quota_off_umount(struct super_block *sb)
- 	}
- }
- 
-+static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
-+{
-+	struct quota_info *dqopt = sb_dqopt(sb);
-+	int type;
-+
-+	for (type = 0; type < MAXQUOTAS; type++) {
-+		if (!dqopt->files[type])
-+			continue;
-+		f2fs_inode_synced(dqopt->files[type]);
-+		truncate_inode_pages_final(dqopt->files[type]->i_mapping);
-+	}
-+}
-+
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
- {
- 	*projid = F2FS_I(inode)->i_projid;
-@@ -3135,10 +3148,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- free_meta:
- #ifdef CONFIG_QUOTA
-+	f2fs_truncate_quota_inode_pages(sb);
- 	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb))
- 		f2fs_quota_off_umount(sbi->sb);
- #endif
--	f2fs_sync_inode_meta(sbi);
- 	/*
- 	 * Some dirty meta pages can be produced by f2fs_recover_orphan_inodes()
- 	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
--- 
-2.17.1
+I can try to work out some explicit guidelines and write these up for
+Documentation/, if that'd make a difference for you. I don't think this
+is a matter of "community splitting". On the contrary, I think Zinc will
+bring communities together, inviting the larger cryptography community
+to take an interest in improving the state of crypto in Linux. Either
+way, the litmus test for where code should go remains pretty similar to
+how it's been working so far. Are you tempted to stick it in lib/
+because that fits your programming paradigm and because you think it's
+generally useful? If so, submit it to lib/zinc/. Conversely, is it only
+something used in the large array of options provided by dmcrypt, ipsec,
+afalg, etc? Submit it to the crypto API.
 
+If you think this criteria is lacking, I'm amenable to adjusting that
+and changing it, especially as situations and designs change and morph
+over time. But that seems like a fairly decent starting point.
+
+> Please reach out to Herbert to find a sane solution
+> crypto development without choosing "sides".
+
+Please, don't politicize this. This has nothing to do with "sides". This
+has to do with which paradigm makes sense for implementing a particular
+algorithm. And everything that goes in Zinc gets to be used seamlessly
+by the crypto API anyway, through use of the trivial stub glue code,
+like what I've shown in the two commits in this series. Again, if it's
+something that will work well as a direct function call, then it seems
+like Zinc makes sense as a home for it.
+
+With that said, I've reached out to Herbert, and we'll of course discuss
+and reach a good conclusion together.
+
+> Note that usage can change over time; a user that requires a
+> single cipher could later need multiple, and vice versa.
+
+I think this depends on the design of the driver and the style it's
+implemented in. For example, I could imagine something like this:
+
+   encrypt_stuff_with_morus(obj, key);
+
+evolving over time to:
+
+  if (obj->type == MORUS_TYPE)
+    encrypt_stuff_with_morus(obj, key);
+  else if (obj->type == AEGIS_TYPE)
+    encrypt_stuff_with_aegis(obj, key);
+
+On the other hand, if the developer has good reason to use the crypto
+API's dynamic dispatch and async API and so forth, then perhaps it just
+changes from:
+
+  static const char *cipher_name = "morus";
+
+to
+
+  static const char *cipher_name_type_1 = "morus";
+  static const char *cipher_name_type_2 = "aegis";
+
+I can imagine both programming styles and evolutions being desirable for
+different reasons.
+
+> >   - It matches exactly what Andy Polyakov's code is doing for the exact
+> >     same reason, so this isn't something that's actually "new". (There
+> >     are paths inside his implementation that branch from the vector code
+> >     to the scalar code.)
+> 
+> Matches Andy's code, where?  The reason you had to add the radix conversion is
+> because his code does *not* handle it...
+
+For example, check out the avx blocks function. The radix conversion
+happens in a few different places throughout. The reason we need it
+separately here is because, unlike userspace, it's possible the kernel
+code will transition from 2^26 back to 2^64 as a result of the FPU
+context changing.
+
+As well, AndyP seems to like the idea of including this logic in the
+assembly instead of in C, if I understood our discussions correctly, so
+there's a decent chance this will migrate out of the glue code and into
+the assembly properly, which is probably a better place for it.
+
+> >   - It has been discussed at length with Andy, including what kinds of
+> >     proofs we'll need if we want to chop it down further (to remove that
+> >     final reduction), and why we both don't want to do that yet, and so
+> >     we go with the full carrying for the avoidance of risk.
+> 
+> Sorry, other people don't know about your private discussions.  For the rest of
+> us, why not add a comment to the code explaining what's going on?
+
+That's a good idea. I can include some discussion about this as well in
+the commit message that introduces the glue code, too, I guess? I've
+been hesitant to fill these commit messages up even more, given there
+are already so many walls of text and whatnot, but if you think that'd
+be useful, I'll do that for v7, and also add comments.
+
+> >   - We've proved its correctness with Z3, actually using an even looser
+> >     constraint on digit size than what Andy mentioned to us, thus resulting
+> >     in a stronger proof result. So we're certain this isn't rubbish.
+> AFAICS actually it *is* rubbish, because your C code stores the accumulator as
+> 64-bit integers whereas the asm code (at least, the 32-bit version) reads it as
+> 32-bit integers.  That won't work correctly on big endian ARM.
+> > There's no doubt about it, we've done our due-diligence here. 
+> Apparently not, given that it's broken on big endian ARM.
+> Of course, having bugs in code which you insist was proven correct
+> + fuzzed doesn't exactly inspire trust.
+
+What's with the snark? It's not rubbish. I'm not sure if you noticed it in
+the development trees (both the WireGuard module tree and my kernel.org
+integration tree for this patch), but the big endian ARM support was fixed
+pretty shortly after I jumped the gun posting v6. Like, super soon after.
+That, and other big endian fixes (on aarch64 as well) are already queued up
+for v7. And now build.wireguard.com has more big endian running in CI.
+
+> The details of the correctness proofs and fuzzing you claim to have done aren't
+> explained, even in the cover letter; so for now we just have to trust you on
+> that point.
+
+"Claim to have done", "trust you on that point" -- I think there's no
+reason to doubt the integrity of my "claims", and I don't appreciate the
+phrasing that appears to call that into question.
+
+Regardless, sure, we can expand the "wall-of-text" commit messages even
+further, if you want, and include the verbatim Z3 scripts for reproduction.
+
+> I understand that your standards are still as high or even higher than
+> Herbert's, which is good; crypto code should be held to high standards!  But
+> based on the evidence, I do worry there's a double standard going on where you
+> get away with things yourself which you won't allow from others in Zinc.  It's
+> just not honest, and it will make people not want to contribute to Zinc.
+> Maintainers are supposed to be unbiased and hold all contributions to the same
+> standard.
+
+This is complete and utter garbage, and I find its insinuations insulting
+and ridiculous. There is absolutely no lack of honesty and no double
+standard being applied whatsoever. Your attempt to cast doubt about the
+quality of standards applied and the integrity of the process is wholly
+inappropriate. When I tell you that high standards were applied and that
+due-diligence was done in developing a particular patch, I mean what I
+say.
+
+> We need "Zinc" to be Linux's crypto library, not "Jason's crypto library".
+
+This very much is a project directed toward the benefit of the kernel in
+a general sense. It's been this way from the start, and there's nothing
+in its goals or plans to the contrary of that. Please leave this vague
+and unproductive rhetoric aside.
+
+Jason
