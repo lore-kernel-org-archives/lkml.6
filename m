@@ -2,92 +2,133 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA854C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEAEC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70A1720875
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="WU0GpXWl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70A1720875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 5B32F20779
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:41:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B32F20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbeI1WFf (ORCPT
+        id S1729509AbeI1WFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:05:35 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39841 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729138AbeI1WFe (ORCPT
+        Fri, 28 Sep 2018 18:05:44 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:24019 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729138AbeI1WFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:05:34 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j8-v6so4591279pff.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 08:41:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RUq0l2SYHD0AG6njdK8y747K5Y3V9hOROgJ/1m1Z7ns=;
-        b=WU0GpXWlfnh4Y3XeaCoUEzo03NRxZSXiqNsXGQXgrz0znuJxr0s5L1QeHZjzpj1KeX
-         GEqwFG3WtTto75/MrYVhCnZ4ZZTYhztxAmLsbGSYWAUz6pPX9gz0dYfgMRN9DMPUqhje
-         P+fD5TyAAs7+Or+SifI3RPbsxrSjboHGBIE+0JCWRTiSoyVVkMS4Y7CjmDsnuPJMKzZE
-         TQOj4nXFVnyfTkAW4tfrWrClfhq+6LvicvOic9u4bT94fNT0XAg2/YVfcMnFhXIcXmUz
-         9O9diQzLA015njWeRwBc5blfsu2fV4gGMceJ9t1q8JZWoHJ30twFV+zKUV+jfLyquTgj
-         VJ9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RUq0l2SYHD0AG6njdK8y747K5Y3V9hOROgJ/1m1Z7ns=;
-        b=Pmi7BR1WEoW3T6IMS3+AxEAAVxhkORSB2pncQwjfNoVrmkc99z/Bj4OkWKl3vmQvsI
-         c/tnGvffG0uG87/3m1hVo3b7Bv0xj8Xuy6QMRqGHUVJr5SxlsKtjbfgTcGp6ZchpOq4D
-         CwN4WTitDeuC5hVwIvl4pQ/U0wYzpFzoFHX9PEFywa2lwef4N8AwBmwPdOmbE3nFnUIc
-         DfvAXQz0W8v5Ndx8AeJ/7FN9S/H9mJvycDM1MBt+fW7mS3+319mf+SReOQ+8e3rC+tFU
-         UlfI7uVBVHWKU8hoSG0LLwegyazgiJMEOXqi/456olRlEqUF+l1upLcLpVD/DKr/V/bJ
-         9YSw==
-X-Gm-Message-State: ABuFfohiUkbPSFsK9zn5XvS7cW1v7u5rExe+kgx+26mSJSdhic871I/f
-        +Ii7ZMjaSiOZzEHZTJi5qJ0dFQ==
-X-Google-Smtp-Source: ACcGV63DC8GQKKm/DeCj0LHjQpwcwkG8ojFK70Qa5FVqVJ0rVcnB8O+8+wHWXG+zDi2zXgDZM2pVPA==
-X-Received: by 2002:a62:a0e:: with SMTP id s14-v6mr15218019pfi.153.1538149275728;
-        Fri, 28 Sep 2018 08:41:15 -0700 (PDT)
-Received: from [172.20.10.3] (mobile-166-170-51-171.mycingular.net. [166.170.51.171])
-        by smtp.gmail.com with ESMTPSA id b3-v6sm5876374pfc.178.2018.09.28.08.41.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 08:41:14 -0700 (PDT)
-Subject: Re: [PATCH] xen/blkfront: correct purging of persistent grants
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org
-Cc:     boris.ostrovsky@oracle.com, roger.pau@citrix.com,
-        konrad.wilk@oracle.com
-References: <20180928072827.14229-1-jgross@suse.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ccbfcbab-85d5-8ca2-8019-dd24b994f791@kernel.dk>
-Date:   Fri, 28 Sep 2018 09:41:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180928072827.14229-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 28 Sep 2018 18:05:44 -0400
+X-UUID: 10fadca6f10a48a89a9288a065550b77-20180928
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1071842508; Fri, 28 Sep 2018 23:41:19 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Sep 2018 23:41:17 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 28 Sep 2018 23:41:17 +0800
+Message-ID: <1538149277.23182.7.camel@mtkswgap22>
+Subject: Re: [PATCH v5 4/9] PCI: mediatek: Convert to use pci_host_probe()
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     <honghui.zhang@mediatek.com>
+CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ulf.hansson@linaro.org>,
+        <marc.zyngier@arm.com>, <matthias.bgg@gmail.com>,
+        <devicetree@vger.kernel.org>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <youlin.pei@mediatek.com>,
+        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
+Date:   Fri, 28 Sep 2018 23:41:17 +0800
+In-Reply-To: <1538129080-8206-5-git-send-email-honghui.zhang@mediatek.com>
+References: <1538129080-8206-1-git-send-email-honghui.zhang@mediatek.com>
+         <1538129080-8206-5-git-send-email-honghui.zhang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/28/18 1:28 AM, Juergen Gross wrote:
-> Commit a46b53672b2c2e3770b38a4abf90d16364d2584b ("xen/blkfront: cleanup
-> stale persistent grants") introduced a regression as purged persistent
-> grants were not pu into the list of free grants again. Correct that.
+On Fri, 2018-09-28 at 18:04 +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> Part of mtk_pcie_register_host is an open-coded version of
+> pci_host_probe(). So instead of duplicating this code, use
+> pci_host_probe() directly and remove mtk_pcie_register_host.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 37 ++++++++--------------------------
+>  1 file changed, 8 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index e2c4127..cbf4543 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -1125,34 +1125,6 @@ static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> -static int mtk_pcie_register_host(struct pci_host_bridge *host)
+> -{
+> -	struct mtk_pcie *pcie = pci_host_bridge_priv(host);
+> -	struct pci_bus *child;
+> -	int err;
 
-I'll apply this for 4.19, and if things unexpectedly don't work out,
-we can always revert the series next week.
+To make the patch simple, could we keep these host->*. and return
+pci_host_probe() directly?
 
--- 
-Jens Axboe
+> -	host->busnr = pcie->busn.start;
+> -	host->dev.parent = pcie->dev;
+> -	host->ops = pcie->soc->ops;
+> -	host->map_irq = of_irq_parse_and_map_pci;
+> -	host->swizzle_irq = pci_common_swizzle;
+> -	host->sysdata = pcie;
+> -
+> -	err = pci_scan_root_bus_bridge(host);
+> -	if (err < 0)
+> -		return err;
+> -
+> -	pci_bus_size_bridges(host->bus);
+> -	pci_bus_assign_resources(host->bus);
+> -
+> -	list_for_each_entry(child, &host->bus->children, node)
+> -		pcie_bus_configure_settings(child);
+> -
+> -	pci_bus_add_devices(host->bus);
+> -
+> -	return 0;
+> -}
+> -
+>  static int mtk_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1179,7 +1151,14 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+>  	if (err)
+>  		goto put_resources;
+>  
+> -	err = mtk_pcie_register_host(host);
+> +	host->busnr = pcie->busn.start;
+> +	host->dev.parent = pcie->dev;
+> +	host->ops = pcie->soc->ops;
+> +	host->map_irq = of_irq_parse_and_map_pci;
+> +	host->swizzle_irq = pci_common_swizzle;
+> +	host->sysdata = pcie;
+> +
+> +	err = pci_host_probe(host);
+>  	if (err)
+>  		goto put_resources;
+>  
+
 
