@@ -2,95 +2,99 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC03EC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C58AC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D4C216FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:41:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92D4C216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 49B1F216FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:46:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e3k6KKNw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B1F216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbeI1MDA (ORCPT
+        id S1728781AbeI1MIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 08:03:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57648 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbeI1MDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 08:03:00 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 359A55F730;
-        Fri, 28 Sep 2018 05:41:00 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-29.ams2.redhat.com [10.36.116.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 06455600C1;
-        Fri, 28 Sep 2018 05:40:58 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id EEE217724; Fri, 28 Sep 2018 07:40:56 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 07:40:56 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     intel-gvt-dev@lists.freedesktop.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] vfio: add edid support to mbochs sample driver
-Message-ID: <20180928054056.vjqwxvaj7sjmsozh@sirius.home.kraxel.org>
-References: <20180921083013.15028-1-kraxel@redhat.com>
- <20180921083013.15028-3-kraxel@redhat.com>
- <4b9847dd-c37d-1d5d-3343-7030e62894fb@nvidia.com>
+        Fri, 28 Sep 2018 08:08:52 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37315 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbeI1MIw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 08:08:52 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y26-v6so899606wma.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 22:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=xEGE5DU1O98krIGWQG4A1LBz2KM3jLaZwfQ8nakMnUc=;
+        b=e3k6KKNwNVRnsPr7UgxTPIp47TAN9KUhQMKezq8VJEEd3t/9wJ+fY57vvGmGP55uaT
+         pCILpy9ttmjVrnWHaNsNNKOcjC7iZ+EfGI4jBLtl11gepvOxAXAnlNaNRYroA5IId8ob
+         JCb75FDUEcS+v5iWlnWrPQEAeUtQjEQrNgbfU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xEGE5DU1O98krIGWQG4A1LBz2KM3jLaZwfQ8nakMnUc=;
+        b=kUAl1DnvMKXcuiVJgm2cwBDdmTTbVN1QjvhGyoOmx0uJgEDmusvH29jCQ/2wQorxnK
+         MfOdYFkTl56sxMTEf9TUqHp6WLC1yBo8tDfa6KAktorgHx/c6ObbfqNHBDudHO4j/mIM
+         gRQKK92N6+kTzjGI+sdQaRKi6QVKft7qZXm+yKaeF9jH8MdNx/nkUQc8gzWlKW9A9oha
+         hzjVsadD3YzZvlNawo2LTtrZ0HI4qq8sLUYyyOCUwQ227vsZ9pQYudl+FAK4lR5s+6a4
+         p5UBTl4l4yEui3g4ykrqk3PECvCdlT/IghdahtkC0ZdTfAeireREvoBiuv5S0lDfgeDo
+         dHmg==
+X-Gm-Message-State: ABuFfogiYz8Ln1lJGBHvg11SaPgqorOOs+yJsEpQTFR9mN6ECMBlFTfG
+        AsMlw3mcaBc2hSEmoOWwfoJIsAI4rQ8tKg==
+X-Google-Smtp-Source: ACcGV63Pfgn4TgWjq7jGwXgY/ku8v+JRiXeJM1PaG5Hc5JJuilQwCZpOfzhVRMJl99NcD5KaNQOHQA==
+X-Received: by 2002:a1c:5fc2:: with SMTP id t185-v6mr512273wmb.12.1538113609203;
+        Thu, 27 Sep 2018 22:46:49 -0700 (PDT)
+Received: from dell ([2.27.167.111])
+        by smtp.gmail.com with ESMTPSA id d2-v6sm3689916wrm.71.2018.09.27.22.46.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 22:46:48 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 06:46:46 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH] mfd: arizona: Correct link for sound binding document
+Message-ID: <20180928054646.GK8485@dell>
+References: <20180917153322.29206-1-ckeepax@opensource.cirrus.com>
+ <20180926223944.GA30051@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4b9847dd-c37d-1d5d-3343-7030e62894fb@nvidia.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 28 Sep 2018 05:41:00 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180926223944.GA30051@bogus>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +	case MBOCHS_EDID_REGION_INDEX:
-> > +		ext->base.argsz = sizeof(*ext);
-> > +		ext->base.offset = MBOCHS_EDID_OFFSET;
-> > +		ext->base.size = MBOCHS_EDID_SIZE;
-> > +		ext->base.flags = (VFIO_REGION_INFO_FLAG_READ  |
-> > +				   VFIO_REGION_INFO_FLAG_WRITE |
-> > +				   VFIO_REGION_INFO_FLAG_CAPS);
+On Wed, 26 Sep 2018, Rob Herring wrote:
+
+> On Mon, Sep 17, 2018 at 04:33:22PM +0100, Charles Keepax wrote:
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > ---
+> >  Documentation/devicetree/bindings/mfd/arizona.txt | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Any reason to not to use _MMAP flag?
+> Applied.
 
-There is no page backing this.  Also it is not performance-critical,
-edid updates should be rare, so the extra code for mmap support doesn't
-look like it is worth it.
+Probably won't do any harm in this instance, but it's usually better
+for MFD binding changes to go through the MFD tree to avoid
+merge-conflicts.
 
-Also for the virtual registers (especially link_state) it is probably
-useful to have the write callback of the mdev driver called to get
-notified about the change.
-
-> How would QEMU side code read this region? will it be always trapped?
-
-qemu uses read & write syscalls (well, pread & pwrite actually).
-
-> If vendor driver sets _MMAP flag, will QEMU side handle that case as well?
-
-The current test branch doesn't, it expects read+write to work.
-  https://git.kraxel.org/cgit/qemu/log/?h=sirius/edid-vfio
-
-> I think since its blob, edid could be read by QEMU using one memcpy
-> rather than adding multiple memcpy of 4 or 8 bytes.
-
-From qemu it's a single pwrite syscall actually.  mbochs_write() splits
-it into 4 byte writes and calls mbochs_access() for each of them.  One
-could probably add a special case for the EDID blob to mbochs_write().
-But again: doesn't seem worth the effort given that edid updates should
-be a rare event.
-
-cheers,
-  Gerd
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
