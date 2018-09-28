@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6ED4C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50421C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75396206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:36:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75396206B8
+	by mail.kernel.org (Postfix) with ESMTP id 0CFDE206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CFDE206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeI2FCJ (ORCPT
+        id S1727523AbeI2FA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:02:09 -0400
-Received: from mga11.intel.com ([192.55.52.93]:9449 "EHLO mga11.intel.com"
+        Sat, 29 Sep 2018 01:00:59 -0400
+Received: from mga11.intel.com ([192.55.52.93]:9453 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727454AbeI2FBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:01:02 -0400
+        id S1727203AbeI2FA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:00:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 15:35:01 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 15:35:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,316,1534834800"; 
-   d="scan'208";a="267880131"
+   d="scan'208";a="267880211"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Sep 2018 15:34:50 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 28 Sep 2018 15:35:01 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -41,9 +41,9 @@ Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
-Date:   Sat, 29 Sep 2018 01:30:19 +0300
-Message-Id: <20180928223035.14471-6-tomas.winkler@intel.com>
+Subject: [PATCH v5 09/21] tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
+Date:   Sat, 29 Sep 2018 01:30:23 +0300
+Message-Id: <20180928223035.14471-10-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
@@ -52,335 +52,422 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out tpm_get_timeouts() into tpm2_get_timeouts()
-and tpm1_get_timeouts()
+Move the tpm1 selftest code functions to tpm1-cmd.c
+and adjust callers to use the new function names.
+ 1. tpm_pcr_read_dev() to tpm1_pcr_read_dev().
+ 2. tpm_continue_selftest() to tpm1_continue_selftest().
+ 3. tpm_do_selftest() to tpm1_do_selftest()
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
+
 V2-V3: Rebase
 V4: Fix the commit message.
 V5: Resend.
 
- drivers/char/tpm/tpm-interface.c | 127 ++-------------------------------------
- drivers/char/tpm/tpm.h           |   5 +-
- drivers/char/tpm/tpm1-cmd.c      | 106 ++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-cmd.c      |  22 +++++++
- 4 files changed, 136 insertions(+), 124 deletions(-)
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-interface.c     | 148 +----------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |   2 +-
+ drivers/char/tpm/tpm.h               |   4 +-
+ drivers/char/tpm/tpm1-cmd.c          | 142 +++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_core.c      |   2 +-
+ 6 files changed, 150 insertions(+), 150 deletions(-)
 
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index abd675bec88c..64dc560859f2 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -649,7 +649,7 @@ int st33zp24_pm_resume(struct device *dev)
+ 	} else {
+ 		ret = tpm_pm_resume(dev);
+ 		if (!ret)
+-			tpm_do_selftest(chip);
++			tpm1_do_selftest(chip);
+ 	}
+ 	return ret;
+ } /* st33zp24_pm_resume() */
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 305eb3069101..1fa0300f3829 100644
+index a2205f26c74c..70b20b4c789a 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -502,132 +502,13 @@ EXPORT_SYMBOL_GPL(tpm_getcap);
- 
- int tpm_get_timeouts(struct tpm_chip *chip)
- {
--	cap_t cap;
--	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
--	ssize_t rc;
--
- 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
- 		return 0;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		/* Fixed timeouts for TPM2 */
--		chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
--		chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
--		chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
--		chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
--		chip->duration[TPM_SHORT] =
--		    msecs_to_jiffies(TPM2_DURATION_SHORT);
--		chip->duration[TPM_MEDIUM] =
--		    msecs_to_jiffies(TPM2_DURATION_MEDIUM);
--		chip->duration[TPM_LONG] =
--		    msecs_to_jiffies(TPM2_DURATION_LONG);
--		chip->duration[TPM_LONG_LONG] =
--		    msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
--
--		chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
--		return 0;
--	}
--
--	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
--			sizeof(cap.timeout));
--	if (rc == TPM_ERR_INVALID_POSTINIT) {
--		if (tpm_startup(chip))
--			return rc;
--
--		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
--				"attempting to determine the timeouts",
--				sizeof(cap.timeout));
--	}
--
--	if (rc) {
--		dev_err(&chip->dev,
--			"A TPM error (%zd) occurred attempting to determine the timeouts\n",
--			rc);
--		return rc;
--	}
--
--	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
--	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
--	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
--	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
--	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
--	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
--	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
--	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
--	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
--
--	/*
--	 * Provide ability for vendor overrides of timeout values in case
--	 * of misreporting.
--	 */
--	if (chip->ops->update_timeouts != NULL)
--		chip->timeout_adjusted =
--			chip->ops->update_timeouts(chip, timeout_eff);
--
--	if (!chip->timeout_adjusted) {
--		/* Restore default if chip reported 0 */
--		int i;
--
--		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
--			if (timeout_eff[i])
--				continue;
--
--			timeout_eff[i] = timeout_old[i];
--			chip->timeout_adjusted = true;
--		}
--
--		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
--			/* timeouts in msec rather usec */
--			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
--				timeout_eff[i] *= 1000;
--			chip->timeout_adjusted = true;
--		}
--	}
--
--	/* Report adjusted timeouts */
--	if (chip->timeout_adjusted) {
--		dev_info(&chip->dev,
--			 HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
--			 timeout_chip[0], timeout_eff[0],
--			 timeout_chip[1], timeout_eff[1],
--			 timeout_chip[2], timeout_eff[2],
--			 timeout_chip[3], timeout_eff[3]);
--	}
--
--	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
--	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
--	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
--	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
--
--	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
--			"attempting to determine the durations",
--			sizeof(cap.duration));
--	if (rc)
--		return rc;
--
--	chip->duration[TPM_SHORT] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
--	chip->duration[TPM_MEDIUM] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
--	chip->duration[TPM_LONG] =
--		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
--	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
--
--	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
--	 * value wrong and apparently reports msecs rather than usecs. So we
--	 * fix up the resulting too-small TPM_SHORT value to make things work.
--	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
--	 */
--	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
--		chip->duration[TPM_SHORT] = HZ;
--		chip->duration[TPM_MEDIUM] *= 1000;
--		chip->duration[TPM_LONG] *= 1000;
--		chip->duration_adjusted = true;
--		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
--	}
--
--	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
--	return 0;
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		return tpm2_get_timeouts(chip);
-+	else
-+		return tpm1_get_timeouts(chip);
+@@ -466,59 +466,6 @@ int tpm_get_timeouts(struct tpm_chip *chip)
  }
  EXPORT_SYMBOL_GPL(tpm_get_timeouts);
  
+-#define TPM_ORD_CONTINUE_SELFTEST 83
+-#define CONTINUE_SELFTEST_RESULT_SIZE 10
+-
+-static const struct tpm_input_header continue_selftest_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(10),
+-	.ordinal = cpu_to_be32(TPM_ORD_CONTINUE_SELFTEST),
+-};
+-
+-/**
+- * tpm_continue_selftest -- run TPM's selftest
+- * @chip: TPM chip to use
+- *
+- * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
+- * a TPM error code.
+- */
+-static int tpm_continue_selftest(struct tpm_chip *chip)
+-{
+-	int rc;
+-	struct tpm_cmd_t cmd;
+-
+-	cmd.header.in = continue_selftest_header;
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, CONTINUE_SELFTEST_RESULT_SIZE,
+-			      0, 0, "continue selftest");
+-	return rc;
+-}
+-
+-#define TPM_ORDINAL_PCRREAD 21
+-#define READ_PCR_RESULT_SIZE 30
+-#define READ_PCR_RESULT_BODY_SIZE 20
+-static const struct tpm_input_header pcrread_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
+-};
+-
+-int tpm_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+-{
+-	int rc;
+-	struct tpm_cmd_t cmd;
+-
+-	cmd.header.in = pcrread_header;
+-	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
+-	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
+-			      READ_PCR_RESULT_BODY_SIZE, 0,
+-			      "attempting to read a pcr value");
+-
+-	if (rc == 0)
+-		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
+-		       TPM_DIGEST_SIZE);
+-	return rc;
+-}
+-
+ /**
+  * tpm_is_tpm2 - do we a have a TPM2 chip?
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+@@ -559,10 +506,12 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ 	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
++
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		rc = tpm2_pcr_read(chip, pcr_idx, res_buf);
+ 	else
+-		rc = tpm_pcr_read_dev(chip, pcr_idx, res_buf);
++		rc = tpm1_pcr_read_dev(chip, pcr_idx, res_buf);
++
+ 	tpm_put_ops(chip);
+ 	return rc;
+ }
+@@ -613,97 +562,6 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+ }
+ EXPORT_SYMBOL_GPL(tpm_pcr_extend);
+ 
+-/**
+- * tpm_do_selftest - have the TPM continue its selftest and wait until it
+- *                   can receive further commands
+- * @chip: TPM chip to use
+- *
+- * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
+- * a TPM error code.
+- */
+-int tpm_do_selftest(struct tpm_chip *chip)
+-{
+-	int rc;
+-	unsigned int loops;
+-	unsigned int delay_msec = 100;
+-	unsigned long duration;
+-	u8 dummy[TPM_DIGEST_SIZE];
+-
+-	duration = tpm1_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
+-
+-	loops = jiffies_to_msecs(duration) / delay_msec;
+-
+-	rc = tpm_continue_selftest(chip);
+-	if (rc == TPM_ERR_INVALID_POSTINIT) {
+-		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
+-		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
+-	}
+-	/* This may fail if there was no TPM driver during a suspend/resume
+-	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
+-	 */
+-	if (rc)
+-		return rc;
+-
+-	do {
+-		/* Attempt to read a PCR value */
+-		rc = tpm_pcr_read_dev(chip, 0, dummy);
+-
+-		/* Some buggy TPMs will not respond to tpm_tis_ready() for
+-		 * around 300ms while the self test is ongoing, keep trying
+-		 * until the self test duration expires. */
+-		if (rc == -ETIME) {
+-			dev_info(
+-			    &chip->dev, HW_ERR
+-			    "TPM command timed out during continue self test");
+-			tpm_msleep(delay_msec);
+-			continue;
+-		}
+-
+-		if (rc == TPM_ERR_DISABLED || rc == TPM_ERR_DEACTIVATED) {
+-			dev_info(&chip->dev,
+-				 "TPM is disabled/deactivated (0x%X)\n", rc);
+-			/* TPM is disabled and/or deactivated; driver can
+-			 * proceed and TPM does handle commands for
+-			 * suspend/resume correctly
+-			 */
+-			return 0;
+-		}
+-		if (rc != TPM_WARN_DOING_SELFTEST)
+-			return rc;
+-		tpm_msleep(delay_msec);
+-	} while (--loops > 0);
+-
+-	return rc;
+-}
+-EXPORT_SYMBOL_GPL(tpm_do_selftest);
+-
+-/**
+- * tpm1_auto_startup - Perform the standard automatic TPM initialization
+- *                     sequence
+- * @chip: TPM chip to use
+- *
+- * Returns 0 on success, < 0 in case of fatal error.
+- */
+-int tpm1_auto_startup(struct tpm_chip *chip)
+-{
+-	int rc;
+-
+-	rc = tpm_get_timeouts(chip);
+-	if (rc)
+-		goto out;
+-	rc = tpm_do_selftest(chip);
+-	if (rc) {
+-		dev_err(&chip->dev, "TPM self test failed\n");
+-		goto out;
+-	}
+-
+-	return rc;
+-out:
+-	if (rc > 0)
+-		rc = -ENODEV;
+-	return rc;
+-}
+-
+ /**
+  * tpm_send - send a TPM command
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index 008515314ae3..861acafd8f29 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -114,7 +114,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+ 
+ 	num_pcrs = be32_to_cpu(cap.num_pcrs);
+ 	for (i = 0; i < num_pcrs; i++) {
+-		rc = tpm_pcr_read_dev(chip, i, digest);
++		rc = tpm1_pcr_read_dev(chip, i, digest);
+ 		if (rc)
+ 			break;
+ 		str += sprintf(str, "PCR-%02d: ", i);
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 73511cd89bef..a97d72fcda5b 100644
+index 496a56156e77..fd945fc828b6 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -544,8 +544,10 @@ int tpm_startup(struct tpm_chip *chip);
- ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		   const char *desc, size_t min_cap_length);
+@@ -542,13 +542,14 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ 			 const char *desc);
+ int tpm_startup(struct tpm_chip *chip);
  int tpm_get_timeouts(struct tpm_chip *);
--int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm_do_selftest(struct tpm_chip *chip);
-+
-+int tpm1_auto_startup(struct tpm_chip *chip);
-+int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
-@@ -585,6 +587,7 @@ static inline u32 tpm2_rc_value(u32 rc)
- 	return (rc & BIT(7)) ? rc & 0xff : rc;
- }
+-int tpm_do_selftest(struct tpm_chip *chip);
  
-+int tpm2_get_timeouts(struct tpm_chip *chip);
- int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
- 		    struct tpm2_digest *digests);
++int tpm1_do_selftest(struct tpm_chip *chip);
+ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm1_get_timeouts(struct tpm_chip *chip);
+ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
++int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		    const char *desc, size_t min_cap_length);
+ int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+@@ -575,7 +576,6 @@ void tpm_chip_unregister(struct tpm_chip *chip);
+ 
+ void tpm_sysfs_add_device(struct tpm_chip *chip);
+ 
+-int tpm_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+ 
+ #ifdef CONFIG_ACPI
+ extern void tpm_add_ppi(struct tpm_chip *chip);
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index dfbe9c60cbcf..978946748ea3 100644
+index e02f0c1c822f..a69a02366c32 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -307,3 +307,109 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- 	else
- 		return duration;
+@@ -524,3 +524,145 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ 
+ 	return total ? total : -EIO;
  }
 +
-+int tpm1_get_timeouts(struct tpm_chip *chip)
++#define TPM_ORDINAL_PCRREAD 21
++#define READ_PCR_RESULT_SIZE 30
++#define READ_PCR_RESULT_BODY_SIZE 20
++static const struct tpm_input_header pcrread_header = {
++	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
++	.length = cpu_to_be32(14),
++	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
++};
++
++int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
 +{
-+	cap_t cap;
-+	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
-+	ssize_t rc;
++	int rc;
++	struct tpm_cmd_t cmd;
 +
-+	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
-+			sizeof(cap.timeout));
++	cmd.header.in = pcrread_header;
++	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
++	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
++			      READ_PCR_RESULT_BODY_SIZE, 0,
++			      "attempting to read a pcr value");
++
++	if (rc == 0)
++		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
++		       TPM_DIGEST_SIZE);
++	return rc;
++}
++
++#define TPM_ORD_CONTINUE_SELFTEST 83
++#define CONTINUE_SELFTEST_RESULT_SIZE 10
++static const struct tpm_input_header continue_selftest_header = {
++	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
++	.length = cpu_to_be32(10),
++	.ordinal = cpu_to_be32(TPM_ORD_CONTINUE_SELFTEST),
++};
++
++/**
++ * tpm_continue_selftest -- run TPM's selftest
++ * @chip: TPM chip to use
++ *
++ * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
++ * a TPM error code.
++ */
++static int tpm1_continue_selftest(struct tpm_chip *chip)
++{
++	int rc;
++	struct tpm_cmd_t cmd;
++
++	cmd.header.in = continue_selftest_header;
++	rc = tpm_transmit_cmd(chip, NULL, &cmd, CONTINUE_SELFTEST_RESULT_SIZE,
++			      0, 0, "continue selftest");
++	return rc;
++}
++
++/**
++ * tpm1_do_selftest - have the TPM continue its selftest and wait until it
++ *                   can receive further commands
++ * @chip: TPM chip to use
++ *
++ * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
++ * a TPM error code.
++ */
++int tpm1_do_selftest(struct tpm_chip *chip)
++{
++	int rc;
++	unsigned int loops;
++	unsigned int delay_msec = 100;
++	unsigned long duration;
++	u8 dummy[TPM_DIGEST_SIZE];
++
++	duration = tpm1_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
++
++	loops = jiffies_to_msecs(duration) / delay_msec;
++
++	rc = tpm1_continue_selftest(chip);
 +	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		if (tpm_startup(chip))
-+			return rc;
-+
-+		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
-+				"attempting to determine the timeouts",
-+				sizeof(cap.timeout));
++		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
++		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
 +	}
-+
-+	if (rc) {
-+		dev_err(&chip->dev, "A TPM error (%zd) occurred attempting to determine the timeouts\n",
-+			rc);
-+		return rc;
-+	}
-+
-+	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
-+	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
-+	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
-+	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
-+	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
-+	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
-+	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
-+	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
-+	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
-+
-+	/*
-+	 * Provide ability for vendor overrides of timeout values in case
-+	 * of misreporting.
++	/* This may fail if there was no TPM driver during a suspend/resume
++	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
 +	 */
-+	if (chip->ops->update_timeouts)
-+		chip->timeout_adjusted =
-+			chip->ops->update_timeouts(chip, timeout_eff);
-+
-+	if (!chip->timeout_adjusted) {
-+		/* Restore default if chip reported 0 */
-+		unsigned int i;
-+
-+		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
-+			if (timeout_eff[i])
-+				continue;
-+
-+			timeout_eff[i] = timeout_old[i];
-+			chip->timeout_adjusted = true;
-+		}
-+
-+		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
-+			/* timeouts in msec rather usec */
-+			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
-+				timeout_eff[i] *= 1000;
-+			chip->timeout_adjusted = true;
-+		}
-+	}
-+
-+	/* Report adjusted timeouts */
-+	if (chip->timeout_adjusted) {
-+		dev_info(&chip->dev, HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
-+			 timeout_chip[0], timeout_eff[0],
-+			 timeout_chip[1], timeout_eff[1],
-+			 timeout_chip[2], timeout_eff[2],
-+			 timeout_chip[3], timeout_eff[3]);
-+	}
-+
-+	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
-+	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
-+	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
-+	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
-+
-+	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
-+			"attempting to determine the durations",
-+			sizeof(cap.duration));
 +	if (rc)
 +		return rc;
 +
-+	chip->duration[TPM_SHORT] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
-+	chip->duration[TPM_MEDIUM] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
-+	chip->duration[TPM_LONG] =
-+		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
-+	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
++	do {
++		/* Attempt to read a PCR value */
++		rc = tpm1_pcr_read_dev(chip, 0, dummy);
 +
-+	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
-+	 * value wrong and apparently reports msecs rather than usecs. So we
-+	 * fix up the resulting too-small TPM_SHORT value to make things work.
-+	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
-+	 */
-+	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
-+		chip->duration[TPM_SHORT] = HZ;
-+		chip->duration[TPM_MEDIUM] *= 1000;
-+		chip->duration[TPM_LONG] *= 1000;
-+		chip->duration_adjusted = true;
-+		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
++		/* Some buggy TPMs will not respond to tpm_tis_ready() for
++		 * around 300ms while the self test is ongoing, keep trying
++		 * until the self test duration expires.
++		 */
++		if (rc == -ETIME) {
++			dev_info(&chip->dev, HW_ERR "TPM command timed out during continue self test");
++			tpm_msleep(delay_msec);
++			continue;
++		}
++
++		if (rc == TPM_ERR_DISABLED || rc == TPM_ERR_DEACTIVATED) {
++			dev_info(&chip->dev, "TPM is disabled/deactivated (0x%X)\n",
++				 rc);
++			/* TPM is disabled and/or deactivated; driver can
++			 * proceed and TPM does handle commands for
++			 * suspend/resume correctly
++			 */
++			return 0;
++		}
++		if (rc != TPM_WARN_DOING_SELFTEST)
++			return rc;
++		tpm_msleep(delay_msec);
++	} while (--loops > 0);
++
++	return rc;
++}
++EXPORT_SYMBOL_GPL(tpm1_do_selftest);
++
++/**
++ * tpm1_auto_startup - Perform the standard automatic TPM initialization
++ *                     sequence
++ * @chip: TPM chip to use
++ *
++ * Returns 0 on success, < 0 in case of fatal error.
++ */
++int tpm1_auto_startup(struct tpm_chip *chip)
++{
++	int rc;
++
++	rc = tpm1_get_timeouts(chip);
++	if (rc)
++		goto out;
++	rc = tpm1_do_selftest(chip);
++	if (rc) {
++		dev_err(&chip->dev, "TPM self test failed\n");
++		goto out;
 +	}
 +
-+	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-+	return 0;
++	return rc;
++out:
++	if (rc > 0)
++		rc = -ENODEV;
++	return rc;
 +}
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 5e7bf8842be0..49df54b0e210 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -40,6 +40,28 @@ static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
- };
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index ced01ec146b5..bf7e49cfa643 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -1056,7 +1056,7 @@ int tpm_tis_resume(struct device *dev)
+ 	 * an error code but for unknown reason it isn't handled.
+ 	 */
+ 	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
+-		tpm_do_selftest(chip);
++		tpm1_do_selftest(chip);
  
-+int tpm2_get_timeouts(struct tpm_chip *chip)
-+{
-+	/* Fixed timeouts for TPM2 */
-+	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
-+	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
-+	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
-+	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
-+
-+	/* PTP spec timeouts */
-+	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
-+	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
-+	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
-+
-+	/* Key creation commands long timeouts */
-+	chip->duration[TPM_LONG_LONG] =
-+		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-+
-+	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-+
-+	return 0;
-+}
-+
- /**
-  * tpm2_ordinal_duration_index() - returns an index to the chip duration table
-  * @ordinal: TPM command ordinal.
+ 	return 0;
+ }
 -- 
 2.14.4
 
