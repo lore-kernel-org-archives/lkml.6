@@ -2,170 +2,128 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16829C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEABDC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA3E204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A00B6204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:17:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xy1UODqw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA3E204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENJKLdTI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A00B6204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbeI1XmE (ORCPT
+        id S1729465AbeI1Xm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:42:04 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33127 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbeI1XmE (ORCPT
+        Fri, 28 Sep 2018 19:42:26 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:35368 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbeI1Xm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:42:04 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so4777982pfn.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:17:20 -0700 (PDT)
+        Fri, 28 Sep 2018 19:42:26 -0400
+Received: by mail-vs1-f67.google.com with SMTP id n25-v6so581204vsm.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=crtRLGJiVAFC0D32YvyvgtTHnUYkXZHpcOpGMJz8SWI=;
-        b=Xy1UODqwSPw4hiwRPXNO5bfuT+g61rV3W+n/AXj+eFbFB8AI2oadBqhrhLM5xOFO5n
-         NJgCHafvWzXaZdewsiUNQtUiF7Q2m0oGhlry7n2L3+c9oyZKMHB2fL4eQsHOYev3cjNM
-         QUQHsvy1RNP7OlrPbBo5inGRKixrNYNOjG20Q=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=kYqmJBZOUhMvnpViRDm7LDJYSmDvSlwc74lk4ALniWo=;
+        b=ENJKLdTIItYXKqe1z8XPaxkq6/CPzYw4347ZL/XNlwFPmtXtk2wIOmCiTpN66wIFZV
+         Re91GttdLfHkVmDW4sIecRKy9z0vKgPtLklQWOdVaqpFui1VsdjYK6ag3kaIhYBo+EGL
+         QuLPtdw+t4GKpQw2EAYWyrnvBMg5sCuzLqVi5wavkG9Bekrq6gmKdSptMzcHVynIV3WR
+         hndqAU3w7uqOdiht60PmRNIIbX/W54dGFuYAFCAfKd0vI2DHlOQ614igQKfpAXAoaHqC
+         9wp8oGbrzPrBz/2/5z4SDXFrKR2wN0Ao5GJuxqlTrH4z/ZX/efKhKY2UgfjR1kCuzJCe
+         u4Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=crtRLGJiVAFC0D32YvyvgtTHnUYkXZHpcOpGMJz8SWI=;
-        b=tXKDhi8KdW9Ilq9cR3GXqcZX8Q4hVY1mS/eDY0iugCkJ1fJnvuSCQfBNS3tnrygI4r
-         Sw8DsklJRYrZuLL3ShJ2/R3yszIIt1X6B7vedGGszsHtFNBD4XrYE/uX8MohwBl7D+e2
-         OlHvbdEfhouLrcFL4mUxbwQNi1CMh+qPSRIw8MhNrCYxQPQ4RvCC8rSe+Wf0KYYejKFa
-         SNP9dpQORJ0IDDEIb7wAwPCmnVmmqcJi+5vwR8jIkerv9JiypToFk+Oo0retR1J428v4
-         CciKJWltPuovUdxRJFA2ZmWKxteWASGHKJTsK4Helx/gaMGRQng+jdWUWjFJZ5oL+iIz
-         JvnQ==
-X-Gm-Message-State: ABuFfojb37cpoikzt5+F2rSGtWZdLtDEm51Zuzu+/PxpuzZD7cqGVDCv
-        gH3UgJllc+ErgB9Q9EKOv9vjhA==
-X-Google-Smtp-Source: ACcGV60rKrpfOBR4ra6rZiihVbMfYwnddJHs6sAv/4LKXNoKfpGAfTqaaaUpAZMvTvWXj3JgWKXjyQ==
-X-Received: by 2002:a62:ff09:: with SMTP id b9-v6mr17649426pfn.46.1538155039850;
-        Fri, 28 Sep 2018 10:17:19 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z7-v6sm11485240pff.146.2018.09.28.10.17.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 10:17:19 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 10:21:45 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alex Elder <elder@linaro.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: qmi: add a prompt to QCOM_QMI_HELPERS
-Message-ID: <20180928172145.GA5008@tuxbook-pro>
-References: <20180427140358.30839-1-elder@linaro.org>
- <ec0e7861-4bf0-f135-a881-1a1de4579277@linaro.org>
- <20180928122616.GA5249@centauri.lan>
- <4025f206-631a-55e9-9b7a-89dcf3370284@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=kYqmJBZOUhMvnpViRDm7LDJYSmDvSlwc74lk4ALniWo=;
+        b=Z2dLiGFFLR1IAMAqnFNG2XoUGiPzf6iSW+Ik4Umx0goOUsiJ4C40V0SbHlmhpUIGc/
+         oSuhtEFwjVJ22wbodMUwXpiKBveZHAOILK74Hxo9gsnYF4YqdRjxE/kGeiRMxSIfNsRg
+         oEiJHaTYm9m+01LLUjRR4AKFV982/C06UnFEXzhMItgqLmjiQd9t1NsD2VSISPPaERNj
+         T30G9Pl05Lli1eOl551HKeSNZYlfVl04DAUxPa2whbi+lhSWCPjOzkBq0iPtCbBU4zFF
+         LmH1xWNWmmy3BwIu14+x/KUnaj/65ON+keLBgoNKbczKi6sLIEQuMok1IXHptU5l7Nk7
+         3+ew==
+X-Gm-Message-State: ABuFfogyNxl07xxTXK8AAbReGWJ+kXirnVswpE03DncF4iH6qfP3Vj3J
+        ov7zVFms7lmZD9oOGGBSEWhtrMj00zAVa4Nywg==
+X-Google-Smtp-Source: ACcGV62IhXETSjcZXpSZl0n0FnhVfhI0kygZgASn0DbXewVG/4UJSI1x5R6QyxvlOkzo2Z3AH/tekKOvAaZDEY0nVPY=
+X-Received: by 2002:a67:6582:: with SMTP id z124-v6mr3087844vsb.11.1538155061432;
+ Fri, 28 Sep 2018 10:17:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4025f206-631a-55e9-9b7a-89dcf3370284@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <22cc40a7-015b-6038-2093-8cd1ff0c807e@baylibre.com> <20180928170818.32124-1-jekarlson@gmail.com>
+In-Reply-To: <20180928170818.32124-1-jekarlson@gmail.com>
+From:   Emil Karlson <jekarlson@gmail.com>
+Date:   Fri, 28 Sep 2018 20:16:21 +0300
+Message-ID: <CAELSAVbQRGDEwR0o7R2KW91zODaYTRFgYOeikKtWW9Lxwcwa=A@mail.gmail.com>
+Subject: Re: [PATCH] mfd: cros-ec: copy the whole event in get_next_event_xfer
+To:     Emil Renner Berthing <kernel@esmil.dk>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Stefan Adolfsson <sadolfsson@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>, bleung@chromium.org,
+        olof@lixom.net,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 28 Sep 06:23 PDT 2018, Alex Elder wrote:
+I failed in In-Reply-To:
+<22cc40a7-015b-6038-2093-8cd1ff0c807e@baylibre.com> somehow.
 
-> On 09/28/2018 07:26 AM, Niklas Cassel wrote:
-> > On Fri, Sep 28, 2018 at 06:41:11AM -0500, Alex Elder wrote:
-> >> Was there something wrong with this patch?  I sent it a long time
-> >> ago but it still applies cleanly.  I can re-send if you like.
-> > 
-> > Hello Alex,
-> > 
-> > This patch does not apply on top of
-> > https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=for-next
-> 
-> Sorry, I sent this before I tracked down where Andy's for-next
-> tree was.  It applied OK to linus/master.
-> 
-> > When you don't specify a string for a Kconfig, then you won't be able to
-> > select it via menuconfig, only through other Kconfigs, e.g.:
-> > $ git grep QCOM_QMI_HELPERS
-> > drivers/remoteproc/Kconfig:     select QCOM_QMI_HELPERS
-> > 
-> > What Kconfig is it that needs QCOM_QMI_HELPERS?
-> 
-> IPA, which is not yet merged.
-> 
-> The entry in "drivers/soc/qcom/Kconfig" for this option includes
-> help text, so I presume it was an oversight not to include a
-> string (prompt).  It is the only non-trivial entry in that file
-> that does not include one.  Why should this entry not be listed
-> in menus?
-> 
-> > Why do you need to make is selectable via menuconfig?
+I was urged to go for correct rather than conservative fix on IRC. I
+have tested this on my message
+version 0 Kevin and it fixes the original problem for me, but someone
+should perhaps test this on
+newer system that has message version 1. Background work documented in
+commit message.
 
-I made it this way because I don't see a reason for anyone to ever
-select this config option if there isn't a client available - and
-clients that "depends on" this simply forces the developer to find the
-QMI helpers in menuconfig and enable it manually.
-
-> > Isn't it sufficient to add a "select QCOM_QMI_HELPERS" to that Kconfig?
-> 
-> I have CONFIG_IPA dependent on CONFIG_QCOM_QMI_HELPERS.  I could
-> change that to select it instead but I still think this entry
-> should be changed.
-> 
-
-Why do you say it needs to change? I tested this by just adding a
-"select QCOM_QMI_HELPERS" in my client drivers.
-
-> I'll mention that SLIM_QCOM_NGD_CTRL in drivers/slimbus/Kconfig
-> also depends on--rather than selects--QCOM_QMI_HELPERS.
-> 
-
-That's wrong.
-
-Regards,
-Bjorn
-
-> 					-Alex
-> 
-> > 
-> > Kind regards,
-> > Niklas
-> > 
-> >>
-> >> 					-Alex
-> >>
-> >> On 04/27/2018 09:03 AM, Alex Elder wrote:
-> >>> Add a prompt to the "tristate" attribute in the Kconfig file in
-> >>> which QCOM_QMI_HELPERS is defined; I find it doesn't get selected
-> >>> without it.
-> >>>
-> >>> Signed-off-by: Alex Elder <elder@linaro.org>
-> >>> ---
-> >>>  drivers/soc/qcom/Kconfig | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> >>> index 5c4535b545cc..81a501765cd9 100644
-> >>> --- a/drivers/soc/qcom/Kconfig
-> >>> +++ b/drivers/soc/qcom/Kconfig
-> >>> @@ -36,7 +36,7 @@ config QCOM_PM
-> >>>  	  low power modes.
-> >>>  
-> >>>  config QCOM_QMI_HELPERS
-> >>> -	tristate
-> >>> +	tristate "Qualcomm QMI Helpers"
-> >>>  	depends on ARCH_QCOM && NET
-> >>>  	help
-> >>>  	  Helper library for handling QMI encoded messages.  QMI encoded
-> >>>
-> >>
-> 
+Best regards
+-Emil
+On Fri, Sep 28, 2018 at 8:08 PM Emil Karlson <jekarlson@gmail.com> wrote:
+>
+> Commit 57e94c8b974db2d83c60e1139c89a70806abbea0 caused cros-ec keyboard events
+> be truncated on many chromebooks so that Left and Right keys on Column 12 were
+> always 0. Use ret as memcpy len to fix this.
+>
+> drivers/platform/chrome/cros_ec_proto.c:509
+> get_next_event_xfer uses ret from cros_ec_cmd_xfer for memcpy for msg->data len
+> drivers/platform/chrome/cros_ec_proto.c:445
+> cros_ec_cmd_xfer gets ret from send_command
+> drivers/platform/chrome/cros_ec_proto.c:93
+> send_command gets ret from bus specific xfer_fn
+> drivers/mfd/cros_ec_spi.c:598
+> cros_ec_cmd_xfer_spi copies len amount to ec_msg->data and returns len as ret
+> drivers/mfd/cros_ec_i2c.c:267
+> cros_ec_cmd_xfer_i2c copies len amount to ec_msg->data and returns len as ret
+>
+> so msg->data length is always the same as ret.
+>
+> Fixes: 57e94c8b974d ("mfd: cros-ec: Increase maximum mkbp event size")
+> Signed-off-by: Emil Karlson <jekarlson@gmail.com>
+> ---
+>  drivers/platform/chrome/cros_ec_proto.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+> index 398393ab5df8..b6fd4838f60f 100644
+> --- a/drivers/platform/chrome/cros_ec_proto.c
+> +++ b/drivers/platform/chrome/cros_ec_proto.c
+> @@ -520,7 +520,7 @@ static int get_next_event_xfer(struct cros_ec_device *ec_dev,
+>         ret = cros_ec_cmd_xfer(ec_dev, msg);
+>         if (ret > 0) {
+>                 ec_dev->event_size = ret - 1;
+> -               memcpy(&ec_dev->event_data, msg->data, ec_dev->event_size);
+> +               memcpy(&ec_dev->event_data, msg->data, ret);
+>         }
+>
+>         return ret;
+> --
+> 2.19.0
+>
