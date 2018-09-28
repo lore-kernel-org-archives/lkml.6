@@ -2,135 +2,143 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A126C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03ADAC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE22A2082C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:20:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EllzHqvi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE22A2082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id CEC76206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:20:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEC76206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeI2ApD (ORCPT
+        id S1726568AbeI2ApV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 20:45:03 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46836 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbeI2ApC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 20:45:02 -0400
-Received: by mail-qt1-f194.google.com with SMTP id h22-v6so7603633qtr.13
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 11:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LcKmU7L+xBx0pBdhtJyMkoX3aJB7gK2IFsKoZuZ4G2o=;
-        b=EllzHqviTOTomyNkep9PH15pjXWKPAJAfkV9tztBHpEgJjzTP9O42Ih2+/+3pOFbsg
-         W/MpVC/KajS8rjW0f9TTOSMO8eSYIJz1oL7k63CCTrwaROtSlDdN34YY/ROIFCY1vZZF
-         kWy/YCJo0ltpnKZdYoMdCEY3sPM8qk6JtZS00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LcKmU7L+xBx0pBdhtJyMkoX3aJB7gK2IFsKoZuZ4G2o=;
-        b=ioRuNavr4zLjr4uPkTo2H6fI3tJykwOCD3VFIKjc3c+ncovyWk401ZnBl3gywM0+On
-         BBt3jzRMSZh2JP3FAqOigY1GkN972gdR9LHtl9hbsT9DYFrxUjy0oCQmjrtYBlHrf+VY
-         Rz1DYpvwh7b3Ldx34kpFgD5aprwrlwvSWdizICXAgcXy9rgyct3L7Xtf6FuuiUEDiNNG
-         tIAO+Kswm53z1Jq5MD4sfbYuM5KO214XecKERFGf4q6BSnGVoj9jiO44GZ1AzURYI20d
-         mLVsp/akmmzf1NoZvv140PtSzOCBH1kJOm8IWOvWclQHGfpqmZN1icnQ8jDC+OFpiXhD
-         N+qg==
-X-Gm-Message-State: ABuFfogfOvoRTOYSjRfJMfMsmgAT47Nonz+M4v4/EYn7m9hkKWrsfUXG
-        xiucAW08FQLWNFqTT1CrySno6lu5wgPJy2KZED2V6g==
-X-Google-Smtp-Source: ACcGV62UJI1ojCXjTIlG1FKItuy7iG3uUcuqrji77E2oFGbeJGFYf2eEvo8EbPE6kqZ400304BOG8v65FV1ZkW/SVzY=
-X-Received: by 2002:ac8:1019:: with SMTP id z25-v6mr13780167qti.25.1538158802236;
- Fri, 28 Sep 2018 11:20:02 -0700 (PDT)
+        Fri, 28 Sep 2018 20:45:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34898 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725906AbeI2ApU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 20:45:20 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 41B16E3E18;
+        Fri, 28 Sep 2018 18:20:21 +0000 (UTC)
+Received: from [10.40.204.119] (ovpn-204-119.brq.redhat.com [10.40.204.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 444A11852A;
+        Fri, 28 Sep 2018 18:20:14 +0000 (UTC)
+Subject: Re: [RFC 01/20] ns: Introduce Time Namespace
+To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.api
+References: <20180919205037.9574-1-dima@arista.com>
+ <20180919205037.9574-2-dima@arista.com>
+From:   Laurent Vivier <lvivier@redhat.com>
+Message-ID: <2087cf9b-89a1-e591-4dcd-4d98767a1be6@redhat.com>
+Date:   Fri, 28 Sep 2018 20:20:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180926205204.184898-1-ryandcase@chromium.org>
- <20180926205204.184898-2-ryandcase@chromium.org> <153803059441.119890.891880266219521584@swboyd.mtv.corp.google.com>
-In-Reply-To: <153803059441.119890.891880266219521584@swboyd.mtv.corp.google.com>
-From:   Ryan Case <ryandcase@chromium.org>
-Date:   Fri, 28 Sep 2018 11:19:51 -0700
-Message-ID: <CACjz--=Qj8Jd9yCvox1MGh1PFkHAzpt1L0OwPkMhtV30_jCDWA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] spi: Introduce new driver for Qualcomm QuadSPI controller
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180919205037.9574-2-dima@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 28 Sep 2018 18:20:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 11:43 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> Quoting Ryan Case (2018-09-26 13:52:04)
-> > From: Girish Mahadevan <girishm@codeaurora.org>
-> > +#include <asm/unaligned.h>
-> > +
-> > +#define AHB_MIN_HZ             9600000UL
->
-> Is this used?
+On 19/09/2018 22:50, Dmitry Safonov wrote:
+> From: Andrei Vagin <avagin@openvz.org>
+> 
+> Time Namespace isolates clock values.
+> 
+> The kernel provides access to several clocks CLOCK_REALTIME,
+> CLOCK_MONOTONIC, CLOCK_BOOTTIME, etc.
+> 
+> CLOCK_REALTIME
+>       System-wide  clock  that  measures real (i.e., wall-clock) time.
+> 
+> CLOCK_MONOTONIC
+>       Clock that cannot be set and represents monotonic time since
+>       some  unspecified starting point.
+> 
+> CLOCK_BOOTTIME
+>       Identical  to  CLOCK_MONOTONIC, except it also includes any time
+>       that the system is suspended.
+> 
+> For many users, the time namespace means the ability to changes time in
+> a container (CLOCK_REALTIME).
+> 
+> But in a context of the checkpoint/restore functionality, monotonic and
+> bootime clocks become interesting. Both clocks are monotonic with
+> unspecified staring points. These clocks are widely used to measure time
+> slices, set timers. After restoring or migrating processes, we have to
+> guarantee that they never go backward. In an ideal case, the behavior of
+> these clocks should be the same as for a case when a whole system is
+> suspended. All this means that we need to be able to set CLOCK_MONOTONIC
+> and CLOCK_BOOTTIME clocks, what can be done by adding per-namespace
+> offsets for clocks.
+> 
+> Link: https://criu.org/Time_namespace
+> Link: https://lists.openvz.org/pipermail/criu/2018-June/041504.html
+> Signed-off-by: Andrei Vagin <avagin@openvz.org>
+> Co-developed-by: Dmitry Safonov <dima@arista.com>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+> ---
+>  fs/proc/namespaces.c           |   3 +
+>  include/linux/nsproxy.h        |   1 +
+>  include/linux/proc_ns.h        |   1 +
+>  include/linux/time_namespace.h |  59 ++++++++++++++
+>  include/linux/user_namespace.h |   1 +
+>  include/uapi/linux/sched.h     |   1 +
+>  init/Kconfig                   |   7 ++
+>  kernel/Makefile                |   1 +
+>  kernel/fork.c                  |   3 +-
+>  kernel/nsproxy.c               |  19 ++++-
+>  kernel/time_namespace.c        | 169 +++++++++++++++++++++++++++++++++++++++++
+>  11 files changed, 262 insertions(+), 3 deletions(-)
+>  create mode 100644 include/linux/time_namespace.h
+>  create mode 100644 kernel/time_namespace.c
+> 
+...
+> diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
+> new file mode 100644
+> index 000000000000..902cd9c22159
+> --- /dev/null
+> +++ b/kernel/time_namespace.c
+...
+> +
+> +struct time_namespace init_time_ns = {
+> +	.kref = KREF_INIT(2),
+> +	.user_ns = &init_user_ns,
+> +	.ns.inum = PROC_UTS_INIT_INO,
 
-Nope. Do you want all currently unused defines removed or specifically this
-one? I saw precedent in other drivers for defining registers/flags/values of
-supported but unused functionality so I left these (big endian, DDR, ...).
+Do you mean PROC_TIME_INIT_INO?
 
+> +#ifdef CONFIG_UTS_NS
+> +	.ns.ops = &timens_operations,
+> +#endif
 
-> > +       speed_hz = slv->max_speed_hz;
-> > +       if (xfer->speed_hz)
-> > +               speed_hz = xfer->speed_hz;
-> > +
-> > +       ret = clk_set_rate(ctrl->clks[QSPI_CLK_CORE].clk, speed_hz * 4);
->
-> Why 4? Is that related to the number of wires?
+Do you mean CONFIG_TIME_NS?
 
-In normal operation the core clock should be running at 4x the rate of the
-transfer clock regardless of number of wires used.
-
-> > +                       put_unaligned(rd_fifo, word_buf++);
-> > +               }
-> > +               ctrl->xfer.rx_buf = word_buf;
-> > +       }
-> > +
-> > +       if (bytes_to_read) {
-> > +               byte_buf = ctrl->xfer.rx_buf;
->
-> Does this need to move forward by words_to_read bytes so that the left
-> over bytes are tacked onto the end? Or this should be an else if
-> statement?
-
-When the words block completes it updates the rx_buf location so it is already
-at the correct offset for bytes.
-
-> > +
-> > +       master->max_speed_hz = 300000000;
-> > +       master->num_chipselect = QSPI_NUM_CS;
-> > +       master->bus_num = pdev->id;
->
-> Can this come from DT aliases? I've never thought about qspi and
-> "regular" spi being in the same spi bus numbering system, but I suppose
-> that will happen now and we need to make sure that qspi numbers start
-> after the regular ones?
-
-I'm not sure. Can look into it.
-
->
-> > +       master->dev.of_node = pdev->dev.of_node;
-> > +       master->mode_bits = SPI_MODE_0 |
-> > +                           SPI_TX_DUAL | SPI_RX_DUAL |
-> > +                           SPI_TX_QUAD | SPI_RX_QUAD;
-> > +       master->flags = SPI_MASTER_HALF_DUPLEX;
-> > +       master->prepare_message = qcom_qspi_prepare_message;
-> > +       master->transfer_one = qcom_qspi_transfer_one;
+Thanks,
+Laurent
