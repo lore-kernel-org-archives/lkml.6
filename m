@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADA5C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 451CDC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125AE2172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC1C82172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:48:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tc7XQ2hZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125AE2172C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NmzOBt9S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1C82172C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbeI1NK4 (ORCPT
+        id S1729152AbeI1NLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:10:56 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34580 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeI1NKz (ORCPT
+        Fri, 28 Sep 2018 09:11:12 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39033 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeI1NLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:10:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k19-v6so3645416pfi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 23:48:41 -0700 (PDT)
+        Fri, 28 Sep 2018 09:11:11 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 85-v6so3729080pge.6
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 23:48:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=N8QYerXEaqWdfHlNx6gpLi8IwzqsBwOqOFk9N60B1+Q=;
-        b=Tc7XQ2hZJ6SjS4SXXcKYB/SZbNb8G/jmNJ+1vuqJYd6C/k6BbqE+edQSjeMnGiZs3Y
-         A0VCZ/JHZhiBiB2/7MRSyB7FIRkKBkb47ALkfv9KmfCTbOszUQLURgCsckkyVtuljXOR
-         T63PHJt3JR4e4MvygfII/ddGbUISN86QOFxSg=
+        bh=vzr4R2Cq+6LI3NmBny8qeM6kKSI6IrCINci/4DwDurI=;
+        b=NmzOBt9SYJiINTopNWJxES3Ii8Ip9h3YBRbfaMCfqDxr+8HgduY2+snZV3WvaKyjno
+         jDgQ16BL5b0xBDer5t1T3srjxKkpSzcni4ev0szNZIZPI4/jnkEEoULsl0tM6bfFznQ9
+         0JtluZuWp7YbRG6fdx4+uCgn1rGy1WS7XfLGY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=N8QYerXEaqWdfHlNx6gpLi8IwzqsBwOqOFk9N60B1+Q=;
-        b=hx0BVY/PEpOAJBtEuJJdTg6Xox86AgDCeLml834TvYtmUCEjpZO4i475NDXp8i+1hp
-         4OItzELdTHBf1y0GpWE9XropsJZKy01wfBoaWRJZx0f4t1ag4tpbL3feTmpaAyxURLaC
-         t98RhAyqAiwax1lKHkv7nG32ylbGixC+qlYztdMBdh82a/2zPooOEKRhEbINpibA1nDV
-         49Fp5eCIw0Yu5nKzUf4PQ+zFL+Aqymu3zTueR0keTaZOfqQCg5aSqjWGb00R+wvuVhhy
-         fxDNlSVvP6xGH9tbqlrcDwGXhgRKaGiyuTz1eSD2S4RqYm5U9WRT2bB3n8TJ3fQcA0UA
-         BdRg==
-X-Gm-Message-State: ABuFfoin4wdhox5DVEiVoaG44VF0eVwaa5n0RBJ2qlzbb1seIJyOMV3F
-        9u6p7HH7Kj3CxiJoUHYp3QRIkQ==
-X-Google-Smtp-Source: ACcGV60mPmG4AADbz/8T/ORk88Dmpu4qsOFHXgJ2s6jc32zlsjO64PKUhS8nPy+J/BF2GDfcl8kbdQ==
-X-Received: by 2002:a62:7501:: with SMTP id q1-v6mr15046736pfc.225.1538117320761;
-        Thu, 27 Sep 2018 23:48:40 -0700 (PDT)
+        bh=vzr4R2Cq+6LI3NmBny8qeM6kKSI6IrCINci/4DwDurI=;
+        b=XdBPkLxfXj9Kf74eHxkzHVyU80eeY1WIsWmPni2K0a5tYf855BtiYPH0qwPq5z2aXw
+         j0gEQXf7GppYAXXriBhz7xOXoC4+ufmkAdHttPHEEPZWw/5G3sKo+T1/JpeLo7AXNbhP
+         zGUjTolCo1Yla4OV7MZ+5DI53CeEUxOosA06ySMAFXe7fTS2uxC55i34SQ/aZ5jgIEs+
+         SyzXX83w1liyzy+EeFOrvg9pPPwMeMM2Fagf8Yh9gEMXvT0L9xp0lpjm4HOjIduBiP9g
+         3CcYLMV6Lj+I8Fa8jDSOU/ABJQ4pR3s9AI4tN2uVXUkmDcKHLQ1BuYXpsBZDc1viS8ZL
+         9Yzw==
+X-Gm-Message-State: ABuFfoj3/oP91/fDtw7XHHed6Bb8I++62K1Ll0UPrc4QjXbXJ30V+l6o
+        rAOMF5L8qOtyNLd/7uiOIzLrrg==
+X-Google-Smtp-Source: ACcGV60RgPyS9f47l+aARxAWCcz+1AQ7BKGkss9wGAbsBBA/sz9LziQDQSp3FK7759bsa9TsuqflMQ==
+X-Received: by 2002:a62:2646:: with SMTP id m67-v6mr15207110pfm.254.1538117336614;
+        Thu, 27 Sep 2018 23:48:56 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id m21-v6sm5869051pgd.6.2018.09.27.23.48.39
+        by smtp.googlemail.com with ESMTPSA id f6-v6sm5316468pgf.52.2018.09.27.23.48.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 23:48:39 -0700 (PDT)
+        Thu, 27 Sep 2018 23:48:55 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au,
@@ -66,9 +66,9 @@ Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v15 09/16] arm64: enable KEXEC_FILE config
-Date:   Fri, 28 Sep 2018 15:48:34 +0900
-Message-Id: <20180928064841.14117-10-takahiro.akashi@linaro.org>
+Subject: [PATCH v15 10/16] arm64: kexec_file: load initrd and device-tree
+Date:   Fri, 28 Sep 2018 15:48:35 +0900
+Message-Id: <20180928064841.14117-11-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180928064841.14117-1-takahiro.akashi@linaro.org>
 References: <20180928064841.14117-1-takahiro.akashi@linaro.org>
@@ -79,76 +79,258 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify arm64/Kconfig to enable kexec_file_load support.
+load_other_segments() is expected to allocate and place all the necessary
+memory segments other than kernel, including initrd and device-tree
+blob (and elf core header for crash).
+While most of the code was borrowed from kexec-tools' counterpart,
+users may not be allowed to specify dtb explicitly, instead, the dtb
+presented by the original boot loader is reused.
+
+arch_kimage_kernel_post_load_cleanup() is responsible for freeing arm64-
+specific data allocated in load_other_segments().
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: James Morse <james.morse@arm.com>
+Reviewed-by: James Morse <james.morse@arm.com>
 ---
- arch/arm64/Kconfig                     |  9 +++++++++
- arch/arm64/kernel/Makefile             |  3 ++-
- arch/arm64/kernel/machine_kexec_file.c | 16 ++++++++++++++++
- 3 files changed, 27 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/kernel/machine_kexec_file.c
+ arch/arm64/include/asm/kexec.h         |  17 +++
+ arch/arm64/kernel/machine_kexec_file.c | 188 +++++++++++++++++++++++++
+ 2 files changed, 205 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 1b1a0e95c751..5eb18d0cb513 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -843,6 +843,15 @@ config KEXEC
- 	  but it is independent of the system firmware.   And like a reboot
- 	  you can start any kernel with it, not just Linux.
+diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+index e17f0529a882..157b2897d911 100644
+--- a/arch/arm64/include/asm/kexec.h
++++ b/arch/arm64/include/asm/kexec.h
+@@ -93,6 +93,23 @@ static inline void crash_prepare_suspend(void) {}
+ static inline void crash_post_resume(void) {}
+ #endif
  
-+config KEXEC_FILE
-+	bool "kexec file based system call"
-+	select KEXEC_CORE
-+	help
-+	  This is new version of kexec system call. This system call is
-+	  file based and takes file descriptors as system call argument
-+	  for kernel and initramfs as opposed to list of segments as
-+	  accepted by previous system call.
++#ifdef CONFIG_KEXEC_FILE
++#define ARCH_HAS_KIMAGE_ARCH
 +
- config CRASH_DUMP
- 	bool "Build kdump crash kernel"
- 	help
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 4c8b13bede80..030a39bff117 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -49,8 +49,9 @@ arm64-obj-$(CONFIG_ARM64_ACPI_PARKING_PROTOCOL)	+= acpi_parking_protocol.o
- arm64-obj-$(CONFIG_PARAVIRT)		+= paravirt.o
- arm64-obj-$(CONFIG_RANDOMIZE_BASE)	+= kaslr.o
- arm64-obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
--arm64-obj-$(CONFIG_KEXEC)		+= machine_kexec.o relocate_kernel.o	\
-+arm64-obj-$(CONFIG_KEXEC_CORE)		+= machine_kexec.o relocate_kernel.o	\
- 					   cpu-reset.o
-+arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o
- arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
- arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
- arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-new file mode 100644
-index 000000000000..c38a8048ed00
---- /dev/null
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * kexec_file for arm64
-+ *
-+ * Copyright (C) 2018 Linaro Limited
-+ * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-+ *
-+ */
-+
-+#define pr_fmt(fmt) "kexec_file: " fmt
-+
-+#include <linux/kexec.h>
-+
-+const struct kexec_file_ops * const kexec_file_loaders[] = {
-+	NULL
++struct kimage_arch {
++	void *dtb;
++	unsigned long dtb_mem;
 +};
++
++struct kimage;
++
++extern int arch_kimage_file_post_load_cleanup(struct kimage *image);
++extern int load_other_segments(struct kimage *image,
++		unsigned long kernel_load_addr, unsigned long kernel_size,
++		char *initrd, unsigned long initrd_len,
++		char *cmdline, unsigned long cmdline_len);
++#endif
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif
+diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+index c38a8048ed00..f53f14bd1700 100644
+--- a/arch/arm64/kernel/machine_kexec_file.c
++++ b/arch/arm64/kernel/machine_kexec_file.c
+@@ -5,12 +5,200 @@
+  * Copyright (C) 2018 Linaro Limited
+  * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+  *
++ * Most code is derived from arm64 port of kexec-tools
+  */
+ 
+ #define pr_fmt(fmt) "kexec_file: " fmt
+ 
++#include <linux/ioport.h>
++#include <linux/kernel.h>
+ #include <linux/kexec.h>
++#include <linux/libfdt.h>
++#include <linux/memblock.h>
++#include <linux/of_fdt.h>
++#include <linux/types.h>
++#include <asm/byteorder.h>
++
++/* relevant device tree properties */
++#define FDT_PSTR_INITRD_STA	"linux,initrd-start"
++#define FDT_PSTR_INITRD_END	"linux,initrd-end"
++#define FDT_PSTR_BOOTARGS	"bootargs"
+ 
+ const struct kexec_file_ops * const kexec_file_loaders[] = {
+ 	NULL
+ };
++
++int arch_kimage_file_post_load_cleanup(struct kimage *image)
++{
++	vfree(image->arch.dtb);
++	image->arch.dtb = NULL;
++
++	return kexec_image_post_load_cleanup_default(image);
++}
++
++static int setup_dtb(struct kimage *image,
++		unsigned long initrd_load_addr, unsigned long initrd_len,
++		char *cmdline, unsigned long cmdline_len,
++		void **dtb_buf, unsigned long *dtb_buf_len)
++{
++	void *buf = NULL;
++	size_t buf_size;
++	int nodeoffset;
++	int ret;
++
++	/* duplicate dt blob */
++	buf_size = fdt_totalsize(initial_boot_params);
++
++	if (initrd_load_addr) {
++		/* can be redundant, but trimmed at the end */
++		buf_size += fdt_prop_len(FDT_PSTR_INITRD_STA, sizeof(u64));
++		buf_size += fdt_prop_len(FDT_PSTR_INITRD_END, sizeof(u64));
++	}
++
++	if (cmdline)
++		/* can be redundant, but trimmed at the end */
++		buf_size += fdt_prop_len(FDT_PSTR_BOOTARGS, cmdline_len);
++
++	buf = vmalloc(buf_size);
++	if (!buf) {
++		ret = -ENOMEM;
++		goto out_err;
++	}
++
++	ret = fdt_open_into(initial_boot_params, buf, buf_size);
++	if (ret) {
++		ret = -EINVAL;
++		goto out_err;
++	}
++
++	nodeoffset = fdt_path_offset(buf, "/chosen");
++	if (nodeoffset < 0) {
++		ret = -EINVAL;
++		goto out_err;
++	}
++
++	/* add bootargs */
++	if (cmdline) {
++		ret = fdt_setprop_string(buf, nodeoffset, FDT_PSTR_BOOTARGS,
++							cmdline);
++		if (ret) {
++			ret = -EINVAL;
++			goto out_err;
++		}
++	} else {
++		ret = fdt_delprop(buf, nodeoffset, FDT_PSTR_BOOTARGS);
++		if (ret && (ret != -FDT_ERR_NOTFOUND)) {
++			ret = -EINVAL;
++			goto out_err;
++		}
++	}
++
++	/* add initrd-* */
++	if (initrd_load_addr) {
++		ret = fdt_setprop_u64(buf, nodeoffset, FDT_PSTR_INITRD_STA,
++							initrd_load_addr);
++		if (ret) {
++			ret = -EINVAL;
++			goto out_err;
++		}
++
++		ret = fdt_setprop_u64(buf, nodeoffset, FDT_PSTR_INITRD_END,
++						initrd_load_addr + initrd_len);
++		if (ret) {
++			ret = -EINVAL;
++			goto out_err;
++		}
++	} else {
++		ret = fdt_delprop(buf, nodeoffset, FDT_PSTR_INITRD_STA);
++		if (ret && (ret != -FDT_ERR_NOTFOUND)) {
++			ret = -EINVAL;
++			goto out_err;
++		}
++
++		ret = fdt_delprop(buf, nodeoffset, FDT_PSTR_INITRD_END);
++		if (ret && (ret != -FDT_ERR_NOTFOUND)) {
++			ret = -EINVAL;
++			goto out_err;
++		}
++	}
++
++	/* trim a buffer */
++	fdt_pack(buf);
++	*dtb_buf = buf;
++	*dtb_buf_len = fdt_totalsize(buf);
++
++	return 0;
++
++out_err:
++	vfree(buf);
++	return ret;
++}
++
++int load_other_segments(struct kimage *image,
++			unsigned long kernel_load_addr,
++			unsigned long kernel_size,
++			char *initrd, unsigned long initrd_len,
++			char *cmdline, unsigned long cmdline_len)
++{
++	struct kexec_buf kbuf;
++	void *dtb = NULL;
++	unsigned long initrd_load_addr = 0, dtb_len;
++	int ret = 0;
++
++	kbuf.image = image;
++	/* not allocate anything below the kernel */
++	kbuf.buf_min = kernel_load_addr + kernel_size;
++
++	/* load initrd */
++	if (initrd) {
++		kbuf.buffer = initrd;
++		kbuf.bufsz = initrd_len;
++		kbuf.mem = 0;
++		kbuf.memsz = initrd_len;
++		kbuf.buf_align = 0;
++		/* within 1GB-aligned window of up to 32GB in size */
++		kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
++						+ (unsigned long)SZ_1G * 32;
++		kbuf.top_down = false;
++
++		ret = kexec_add_buffer(&kbuf);
++		if (ret)
++			goto out_err;
++		initrd_load_addr = kbuf.mem;
++
++		pr_debug("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
++				initrd_load_addr, initrd_len, initrd_len);
++	}
++
++	/* load dtb blob */
++	ret = setup_dtb(image, initrd_load_addr, initrd_len,
++				cmdline, cmdline_len, &dtb, &dtb_len);
++	if (ret) {
++		pr_err("Preparing for new dtb failed\n");
++		goto out_err;
++	}
++
++	kbuf.buffer = dtb;
++	kbuf.bufsz = dtb_len;
++	kbuf.mem = 0;
++	kbuf.memsz = dtb_len;
++	/* not across 2MB boundary */
++	kbuf.buf_align = SZ_2M;
++	kbuf.buf_max = ULONG_MAX;
++	kbuf.top_down = true;
++
++	ret = kexec_add_buffer(&kbuf);
++	if (ret)
++		goto out_err;
++	image->arch.dtb = dtb;
++	image->arch.dtb_mem = kbuf.mem;
++
++	pr_debug("Loaded dtb at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
++			kbuf.mem, dtb_len, dtb_len);
++
++	return 0;
++
++out_err:
++	vfree(dtb);
++	return ret;
++}
 -- 
 2.19.0
 
