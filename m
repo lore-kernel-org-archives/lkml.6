@@ -2,85 +2,174 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D33EC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DDDC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3AD8216FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08E4D216FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:21:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I9Lb0Z40"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AD8216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="HA8SQRov"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E4D216FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbeI1Nng (ORCPT
+        id S1729053AbeI1Nnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:43:36 -0400
-Received: from mail-qt1-f178.google.com ([209.85.160.178]:38782 "EHLO
-        mail-qt1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728825AbeI1Nnf (ORCPT
+        Fri, 28 Sep 2018 09:43:52 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:38536 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728811AbeI1Nnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:43:35 -0400
-Received: by mail-qt1-f178.google.com with SMTP id z13-v6so5599779qts.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:21:13 -0700 (PDT)
+        Fri, 28 Sep 2018 09:43:52 -0400
+Received: by mail-yw1-f67.google.com with SMTP id d126-v6so2217424ywa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:21:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NGenF/m9ckJHYVDUVTri8N4wb7OxwY51oo+K75pNda0=;
-        b=I9Lb0Z4030h/BK62Ocw4q46XUhF6ypBy88iTUluVPvpHBHAH3+SuZ9sWfL3Yci30iA
-         1Lv50ZNNBCTGgW3tGiYPxpU1j7H5cYV6/jbbuSUZ6TaZQIPwyo30EUE3oAraLju5Ckh3
-         JVTINviCPPkR4/+VVKr7xjC66HiStfDiVxnCM=
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=D9gWa7fu4i0NHR67rYPV0hKYax0wtWp/u83TZhiScO0=;
+        b=HA8SQRovbk6zHzg/9BwW9/noCrHoFONuU5gP3PtA5t2GwF6Wipg7Zxj+gE8KNvWNDV
+         z+yK2QRnLMvM1Xqkw3VCUwZIoZM2UPsxyLzR4eITpJxtjk58nHJzxZZ5sjBQ24+8KChD
+         BO033xmpgQCABH2ICvPTKj9NXx8cdfb22XMI+WPdMRPS26z2TeLpaj0yo9CY0RYfoXSv
+         KZStUEXT+gUSMqvSTElaKaf9laPNbVVOVKLTaOIHRcNM2vEzWid8TVp2DDALBcBpWssw
+         Ma1RyCrNGjQQW2JkzwLvOu6i+sVouk1dAQRahYZO1tzE4bPC8YQ5xDqHVyQO43eYl6HZ
+         MrOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NGenF/m9ckJHYVDUVTri8N4wb7OxwY51oo+K75pNda0=;
-        b=pLTxLporGmgwhgBayzoprC0GZCGzZbkHPJ9cC88aB680ACKoGLh05wCHvTShXJhju2
-         zcFX9aCYIqVy04zqeEmTOnCg7OjB2uupD9FCbxawNip+/b+NPnlYhD5w5xDbGw1uPxA5
-         4x0ThFG/HfNySNn0I5EJ8opWZ6aY30+DPS+H9y8YLB5Y/GLXq8jRo0pjuC/KnZ8JeGXl
-         C1OTuAyRKAl9GBenudcsvdSIaTjIvCr3R3Y+G1Ij2iVLLycas8P2a36hV6ta2aHlj+O1
-         Hht63nsdC7rk1u0A2FLSHJmD9oL2MGC+/MqZVrsbQGktOLqvB/axI5fgdhxiQc7Xq9vS
-         VouQ==
-X-Gm-Message-State: ABuFfogxDSQ3pnOQDcGOY3Qa++xs8L4anWpr3veUnLDh7LlFovGBUBuL
-        lGxpLGfXfu2m9rXLSVMoeW0bku4xdl9MaCWK27iHlg==
-X-Google-Smtp-Source: ACcGV60aVMzbV5dkZLBpjx6ID3fhYHdEneJPaklANc+rm2Pl7Xbl7tqWwwTGOal47pyqJw7Bis8fMisF8unrFbeWniw=
-X-Received: by 2002:a0c:c202:: with SMTP id l2-v6mr10833840qvh.209.1538119272699;
- Fri, 28 Sep 2018 00:21:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180812142413.20856-1-ctatlor97@gmail.com> <20180925173801.3835-1-ctatlor97@gmail.com>
- <CACRpkda4SuPVz8Awg6OhhanmZKEs4URw3WBMv0Fa8iJa2MD-KA@mail.gmail.com> <43F103C6-7ADF-4D4C-A930-376D66F538F0@gmail.com>
-In-Reply-To: <43F103C6-7ADF-4D4C-A930-376D66F538F0@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 Sep 2018 09:21:00 +0200
-Message-ID: <CACRpkdasDARc-5F7tp_AMsWKCHG3hEhexrfMFbZjWkawdxTOog@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] pinctrl: qcom: Add sdm660 pinctrl driver
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, neeraju@codeaurora.org,
-        vabbar@codeaurora.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=D9gWa7fu4i0NHR67rYPV0hKYax0wtWp/u83TZhiScO0=;
+        b=BtY9I2CYmT0BUi+D6CXoQqFsB9exunijlIgLVcKrU8KrdUtkjWTB17IDF3FV0nTq1y
+         m8FCZE8uEWkWSkB2vDNPCKPDU8qNup7wr12jRPV+GlgJlwF61RFyOS+7OgtUfH/o+Q6Y
+         xmqzd83/KdNrRPPK07zsBJpXVTHYdMghLLxXLy3S9UZfNMYjvvSfsOJdUEBApkNSE27N
+         7an9Y+N/ogm2craB2Zz092nzaLDJ2/e0fbm25Nw1NFnQwDdCH8WLpeQ2de9mScXTTev5
+         B+EYxp0ZDzIP9DJhD/EsMjfDsp3L9q8ug/N24zajLWo+VWHa1JGL6LZHXuvWw56uirz+
+         wueQ==
+X-Gm-Message-State: ABuFfogsptbvkqk49rssY6Knyex5ma4eyYC07rhWLEcxqcGCJZ7f7cSy
+        hvqckt62Fq1hJN7a7GrCl3RiUsQrcRqFRLbf
+X-Google-Smtp-Source: ACcGV60Ye5tiSWduadup6e7Ay0OqiPU9OWI0DVKmre4HcK2UwYU6z0TxgS3FFxE7XWeGtYrCAJ11pA==
+X-Received: by 2002:a0d:c4c2:: with SMTP id g185-v6mr7706150ywd.355.1538119289933;
+        Fri, 28 Sep 2018 00:21:29 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id r69-v6sm2169329ywh.44.2018.09.28.00.21.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 00:21:29 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 03:21:29 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Damian Kos <dkos@cadence.com>
+Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, pgaj@cadence.com,
+        ltyrala@cadence.com, rafalc@cadence.com, jartur@cadence.com,
+        piotrs@cadence.com, quentin.schulz@bootlin.com, jbergsagel@ti.com
+Subject: Re: [PATCH v5 3/5] drm/dp: make dp_get_lane_status usable from
+ outside of the core
+Message-ID: <20180928072129.GX72545@art_vandelay>
+References: <1537866837-4408-1-git-send-email-dkos@cadence.com>
+ <1537866837-4408-4-git-send-email-dkos@cadence.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537866837-4408-4-git-send-email-dkos@cadence.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 6:30 PM Craig <ctatlor97@gmail.com> wrote:
+On Tue, Sep 25, 2018 at 10:13:33AM +0100, Damian Kos wrote:
+> From: Quentin Schulz <quentin.schulz@free-electrons.com>
+> 
+> dp_get_lane_status is pretty generic and can be used for other means,
+> so let's make it "public".
+> 
+> This adds drm_dp_get_lane_status to the header file and add the appropriate
+> EXPORT_SYMBOL for it so that it can be used by other drivers, be they compiled
+> built-in or as modules.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+> Signed-off-by: Damian Kos <dkos@cadence.com>
 
-> You seem to have missed the bindings, it might be an idea to drop and reapply with the new ones I just sent off when they get a review.
+Now that you've refactored mhdp_validate_cr(), you no longer need this patch.
 
-Nah I just didn't coordinate things. It gets too messy sometimes, I will
-apply the bindings separately I guess.
+Sean
 
-Yours,
-Linus Walleij
+> ---
+>  drivers/gpu/drm/drm_dp_helper.c | 9 +++++----
+>  include/drm/drm_dp_helper.h     | 2 ++
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+> index 735ebde5c2f0..169db52f92f5 100644
+> --- a/drivers/gpu/drm/drm_dp_helper.c
+> +++ b/drivers/gpu/drm/drm_dp_helper.c
+> @@ -48,14 +48,15 @@ static u8 dp_link_status(const u8 link_status[DP_LINK_STATUS_SIZE], int r)
+>  	return link_status[r - DP_LANE0_1_STATUS];
+>  }
+>  
+> -static u8 dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE],
+> -			     int lane)
+> +u8 drm_dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE],
+> +			  int lane)
+>  {
+>  	int i = DP_LANE0_1_STATUS + (lane >> 1);
+>  	int s = (lane & 1) * 4;
+>  	u8 l = dp_link_status(link_status, i);
+>  	return (l >> s) & 0xf;
+>  }
+> +EXPORT_SYMBOL(drm_dp_get_lane_status);
+>  
+>  bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+>  			  int lane_count)
+> @@ -69,7 +70,7 @@ bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+>  	if ((lane_align & DP_INTERLANE_ALIGN_DONE) == 0)
+>  		return false;
+>  	for (lane = 0; lane < lane_count; lane++) {
+> -		lane_status = dp_get_lane_status(link_status, lane);
+> +		lane_status = drm_dp_get_lane_status(link_status, lane);
+>  		if ((lane_status & DP_CHANNEL_EQ_BITS) != DP_CHANNEL_EQ_BITS)
+>  			return false;
+>  	}
+> @@ -84,7 +85,7 @@ bool drm_dp_clock_recovery_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+>  	u8 lane_status;
+>  
+>  	for (lane = 0; lane < lane_count; lane++) {
+> -		lane_status = dp_get_lane_status(link_status, lane);
+> +		lane_status = drm_dp_get_lane_status(link_status, lane);
+>  		if ((lane_status & DP_LANE_CR_DONE) == 0)
+>  			return false;
+>  	}
+> diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
+> index 698082a02b97..973d2fda9654 100644
+> --- a/include/drm/drm_dp_helper.h
+> +++ b/include/drm/drm_dp_helper.h
+> @@ -952,6 +952,8 @@
+>  #define DP_MST_LOGICAL_PORT_0 8
+>  
+>  #define DP_LINK_STATUS_SIZE	   6
+> +
+> +u8 drm_dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE], int lane);
+>  bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+>  			  int lane_count);
+>  bool drm_dp_clock_recovery_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+> -- 
+> 2.17.1
+> 
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
