@@ -2,233 +2,188 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF45C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C904EC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930782064D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:55:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oBIM3rQC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930782064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 749522064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:56:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749522064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbeI1VTq (ORCPT
+        id S1729196AbeI1VU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 17:19:46 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38053 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbeI1VTp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 17:19:45 -0400
-Received: by mail-it1-f195.google.com with SMTP id p129-v6so2896622ite.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=yBJVWrd1B6/Qmjd5s2uvQeofnVOBerar1G5f0Zk9ckE=;
-        b=oBIM3rQCHN2xC7AjkOI80YuzcCu7QlAhSVOBNdHa2mnaTcEBFf0tRHjCrZHU5xlmel
-         Pe7BzPs2D4i/oSso4y0mmX1t3/igf9PVByx2fe8vVH7fo3xZr8gjA31E1f+0h7W14IR+
-         x7hRs0tv7TAsKShwkpp4hiL0fYEys9ziUZdCpkGgWm/JHrWZ3aEOxMUhqmU5gFIRlQc+
-         bJHlCNwXPfzB4fYUmT2u//7JFvzNDjLNtB90qAkr/oD6A4W4bKZ+uz5JlQ/lQHC1bvXc
-         COQIV3DonwhuwNAICAdULJ2KAArQkRDjPEiSDMDAGkqtVYW+xQ1RDWLTk1TCm93h37c8
-         UyXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=yBJVWrd1B6/Qmjd5s2uvQeofnVOBerar1G5f0Zk9ckE=;
-        b=dOAf59wEnm0JzkYnaT+qrAwq0OnKOuiMXidQLFYYbfMOUMcEcRQmy8gCJgQWDab0z0
-         QzJ//BkAiiH/uTLCmSw/msOhs1zJPaJqOPX6wHz6H2gFQa6bmsW53cYBBhaiZEGnbS7n
-         wiHUXNnT0T+h0fF3Jkio91Zg93nIoctR09ZhclQJfAW8+UunwGVHWAHpLFkUJLI5288Y
-         tLHrwESY7uk/WOraYenqC+f/ags0oVdt0mcieOuiAPqAG8mim/t+Tc/O7V98WBWqe7U/
-         hOmorPWTPV4CVRfaCeycEWad8SPeCGsOBUTXm4QYJ/fxMFTcT4Ut+OGGl+IPuL7Z0oxq
-         H9wA==
-X-Gm-Message-State: ABuFfoixVRxMTbhsdjqJOmxI8IDD42gYvaRu3rlQ+zeASyuf1jzQm2a9
-        vgp4xsb/dnlB+ZiOlv4r4KHA0fdxonEjDFlQTtbqKg==
-X-Google-Smtp-Source: ACcGV62hMSZ7YhhgJE8+2lPzn6FXSHbnvBI4EdkIvqbhdVL5TKHlblJnMrGiRzVe0CM/WcTaDPIkLLYH/6+ejhRaa4w=
-X-Received: by 2002:a24:c0c5:: with SMTP id u188-v6mr1892280itf.57.1538146535055;
- Fri, 28 Sep 2018 07:55:35 -0700 (PDT)
+        Fri, 28 Sep 2018 17:20:56 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4078 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727349AbeI1VUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 17:20:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 07:56:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,315,1534834800"; 
+   d="scan'208";a="266788608"
+Received: from tursulin-mobl.ger.corp.intel.com (HELO [10.252.0.58]) ([10.252.0.58])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Sep 2018 07:56:40 -0700
+Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Tvrtko Ursulin <tursulin@ursulin.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
+ <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
+ <e89ec139-1a97-803e-343c-76eedf244d65@linux.intel.com>
+ <alpine.DEB.2.21.1809281542180.2004@nanos.tec.linutronix.de>
+From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
+Message-ID: <732fdf91-0b44-e71d-f943-66ba63b5776f@linux.intel.com>
+Date:   Fri, 28 Sep 2018 15:56:40 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 07:55:14
- -0700 (PDT)
-In-Reply-To: <0000000000003852440576ef80b2@google.com>
-References: <0000000000003852440576ef80b2@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 28 Sep 2018 16:55:14 +0200
-Message-ID: <CACT4Y+bR+9vy5ZKDN31gmvKk5hcoNojaBuD9Dz1wswfObyt0uw@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in string (2)
-To:     syzbot <syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-unionfs@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1809281542180.2004@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 4:45 PM, syzbot
-<syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    c127e59bee3e Merge tag 'for_v4.19-rc6' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13b2f32a400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=dfb440e26f0a6f6f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=376cea2b0ef340db3dd4
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com
 
-I guess this is overlayfs rather than printk. +overlayfs maintainers
-In future syzbot will avoid attributing crashes to printk, because I
-think it's not the first time crashes are mis-attributed to printk:
-https://github.com/google/syzkaller/commit/41e4b32952f4590341ae872db0abf819b4004713
-
-
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
-> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0e714a76d4
-> R13: 00000000004c32cb R14: 00000000004d4ef0 R15: 0000000000000004
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in string+0x298/0x2d0 lib/vsprintf.c:604
-> Read of size 1 at addr ffff8801c36c66ba by task syz-executor2/27811
->
-> CPU: 0 PID: 27811 Comm: syz-executor2 Not tainted 4.19.0-rc5+ #36
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
->  string+0x298/0x2d0 lib/vsprintf.c:604
->  vsnprintf+0x48e/0x1b60 lib/vsprintf.c:2293
->  vscnprintf+0x2d/0x80 lib/vsprintf.c:2396
->  vprintk_store+0x43/0x510 kernel/printk/printk.c:1847
->  vprintk_emit+0x1c1/0x930 kernel/printk/printk.c:1905
->  vprintk_default+0x28/0x30 kernel/printk/printk.c:1963
->  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
->  printk+0xa7/0xcf kernel/printk/printk.c:1996
->  ovl_lookup_index.cold.15+0xe8/0x1f8 fs/overlayfs/namei.c:689
->  ovl_lookup+0x9f2/0x29c0 fs/overlayfs/namei.c:1022
->  __lookup_hash+0x12e/0x190 fs/namei.c:1546
->  do_rmdir+0x3b3/0x630 fs/namei.c:3930
->  __do_sys_rmdir fs/namei.c:3959 [inline]
->  __se_sys_rmdir fs/namei.c:3957 [inline]
->  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3957
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457579
-> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f0e714a6c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
-> RAX: ffffffffffffffda RBX: 00007f0e714a6c90 RCX: 0000000000457579
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
-> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0e714a76d4
-> R13: 00000000004c32cb R14: 00000000004d4ef0 R15: 0000000000000004
->
-> Allocated by task 27811:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
->  __do_kmalloc mm/slab.c:3718 [inline]
->  __kmalloc+0x14e/0x760 mm/slab.c:3727
->  kmalloc_array include/linux/slab.h:635 [inline]
->  kcalloc include/linux/slab.h:646 [inline]
->  ovl_get_index_name_fh+0x57/0x180 fs/overlayfs/namei.c:596
->  ovl_get_index_name+0x5c/0x80 fs/overlayfs/namei.c:631
->  ovl_lookup_index+0xe4/0x700 fs/overlayfs/namei.c:678
->  ovl_lookup+0x9f2/0x29c0 fs/overlayfs/namei.c:1022
->  __lookup_hash+0x12e/0x190 fs/namei.c:1546
->  do_rmdir+0x3b3/0x630 fs/namei.c:3930
->  __do_sys_rmdir fs/namei.c:3959 [inline]
->  __se_sys_rmdir fs/namei.c:3957 [inline]
->  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3957
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 5441:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kfree+0xcf/0x230 mm/slab.c:3813
->  __vunmap+0x335/0x460 mm/vmalloc.c:1532
->  vfree+0x68/0x100 mm/vmalloc.c:1593
->  copy_entries_to_user net/ipv4/netfilter/ip_tables.c:870 [inline]
->  get_entries net/ipv4/netfilter/ip_tables.c:1027 [inline]
->  do_ipt_get_ctl+0x9eb/0xbc0 net/ipv4/netfilter/ip_tables.c:1703
->  nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
->  nf_getsockopt+0x80/0xe0 net/netfilter/nf_sockopt.c:122
->  ip_getsockopt+0x1af/0x240 net/ipv4/ip_sockglue.c:1577
->  tcp_getsockopt+0x93/0xe0 net/ipv4/tcp.c:3583
->  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2997
->  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
->  __do_sys_getsockopt net/socket.c:1950 [inline]
->  __se_sys_getsockopt net/socket.c:1947 [inline]
->  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8801c36c6680
->  which belongs to the cache kmalloc-64 of size 64
-> The buggy address is located 58 bytes inside of
->  64-byte region [ffff8801c36c6680, ffff8801c36c66c0)
-> The buggy address belongs to the page:
-> page:ffffea00070db180 count:1 mapcount:0 mapping:ffff8801da800340
-> index:0xffff8801c36c6380
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffffea0006d16508 ffffea000638a588 ffff8801da800340
-> raw: ffff8801c36c6380 ffff8801c36c6000 000000010000001b 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801c36c6580: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->  ffff8801c36c6600: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+On 28/09/2018 15:02, Thomas Gleixner wrote:
+> Tvrtko,
+> 
+> On Fri, 28 Sep 2018, Tvrtko Ursulin wrote:
+>> On 28/09/2018 11:26, Thomas Gleixner wrote:
+>>> On Wed, 19 Sep 2018, Tvrtko Ursulin wrote:
+>>>
+>>> It would be very helpful if you cc all involved people on the cover letter
+>>> instead of just cc'ing your own pile of email addresses. CC'ed now.
 >>
->> ffff8801c36c6680: 00 00 00 00 00 00 00 02 fc fc fc fc fc fc fc fc
->
->                                         ^
->  ffff8801c36c6700: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->  ffff8801c36c6780: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000003852440576ef80b2%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>> I accept it was by bad to miss adding Cc's on the cover letter, but my own
+>> email addresses hopefully should not bother you. It is simply a question of
+>> what I have in .gitconfig vs what I forgot to do manually.
+> 
+> The keyword in the above sentence is 'just'. You can add as many of yours
+> as you want as long as everybody else is cc'ed.
+
+Sure, but you also used the word "pile" and I would argue that made the 
+rest of your sentence, after and including "instead", sound like it not 
+only bothers you I forgot to Cc people on the cover letter, but it also 
+bothers you I included a "pile" of my own addresses. If that wasn't your 
+intention in the slightest then I apologise for misreading it.
+
+>>> I read through the previous thread and there was a clear request to involve
+>>> security people into this. Especially those who are deeply involved with
+>>> hardware side channels. I don't see anyone Cc'ed on the whole series.
+>>
+>> Who would you recommend I add? Because I really don't know..
+> 
+> Sure, and because you don't know you didn't bother to ask around and
+> ignored the review request.
+
+No, not because of that. You are assuming my actions and motivations and 
+constructing a story.
+
+"did not bother" = negative connotations
+"ignored" = negative connotations
+
+Note instead the time lapse between this and previous posting of the 
+series, and if you want to assume something, assume things can get 
+missed and forgotten without intent or malice.
+
+> I already added Kees and Jann. Please look for the SECCOMP folks in
+> MAINTAINERS.
+
+Thanks!
+
+>>> For the record, I'm not buying the handwavy 'more noise' argument at
+>>> all. It wants a proper analysis and we need to come up with criteria which
+>>> PMUs can be exposed at all.
+>>>
+>>> All of this want's a proper documentation clearly explaining the risks and
+>>> scope of these knobs per PMU. Just throwing magic knobs at sysadmins and
+>>> then saying 'its their problem to figure it out' is not acceptable.
+>>
+>> Presumably you see adding fine grained control as diminishing the overall
+>> security rather than raising it? Could you explain why? Because incompetent
+>> sysadmin will turn it off for some PMU, while without having the fine-grained
+>> control they wouldn't turn it off globally?
+> 
+> I did not say at all that this might be diminishing security. And the
+> argumentation with 'incompetent sysadmins' is just the wrong attitude.
+
+Wrong attitude what? I was trying to guess your reasoning (cues in 
+"presumably" and a lot of question marks) since it wasn't clear to me 
+why is your position what it is.
+
+> What I was asking for is proper documentation and this proper documentation
+> is meant for _competent_ sysadmins.
+> 
+> That documentation has to clearly describe what kind of information is
+> accessible and what potential side effects security wise this might
+> have. You cannot expect that even competent sysadmins know offhand what
+> which PMU might expose. And telling them 'Use Google' is just not the right
+> thing to do.
+
+I did not mention Google.
+
+> If you can't explain and document it, then providing the knob is just
+> fulfilling somebodys 'I want a pony' request.
+
+Well it's not a pony, it is mechanism to avoid having to turn off all 
+security. We can hopefully discuss it without ponies.
+
+>> This feature was requested by the exact opposite concern, that in order to
+>> access the i915 PMU, one has to compromise the security of the entire system
+>> by allowing access to *all* PMU's.
+>>
+>> Making this ability fine-grained sounds like a logical solution for solving
+>> this weakening of security controls.
+> 
+> Sure, and this wants to be documented in the cover letter and the
+> changelogs.
+> 
+> But this does also require a proper analysis and documentation why it is
+> not a security risk to expose the i915 PMU or what potential security
+> issues this can create, so that the competent sysadmin can make a
+> judgement.
+> 
+> And the same is required for all other PMUs which can be enabled in the
+> same way for unprivileged access. And we might as well come to the
+> conclusion via analysis that for some PMUs unpriviledged access is just not
+> a good idea and exclude them. I surely know a few which qualify for
+> exclusion, so the right approach is to provide this knob only when the risk
+> is analyzed and documented and the PMU has been flagged as candidate for
+> unpriviledged exposure. I.e. opt in and not opt out.
+
+I am happy to work on the mechanics of achieving this once the security 
+guys and all PMU owners get involved. Even though I am not convinced the 
+bar to allow fine-grained control should be evaluating all possible 
+PMUs*, but if the security folks agree that is the case it is fine by me.
+
+Regards,
+
+Tvrtko
+
+*) The part of my reply you did not quote explains how the fine-grained 
+control improves security in existing deployments. The documentation I 
+added refers to the existing perf_event_paranoid documentation for 
+explanation of security concerns involved. Which is not much in itself. 
+But essentially we both have a PMU and a knob already. I don't see why 
+adding the same knob per-PMU needs much more stringent criteria to be 
+accepted. But as said, that's for security people to decide.
