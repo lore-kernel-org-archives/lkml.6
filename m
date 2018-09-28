@@ -2,93 +2,100 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E442CC004D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D1FC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9B62073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoFEU6Cy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9B62073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 017D4206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 017D4206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeI2ETy (ORCPT
+        id S1727421AbeI2EUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:19:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbeI2ETx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:19:53 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA9F42082C
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 21:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538171651;
-        bh=uQt/H0Qsg9xfeMmMwXyE4p6FDKSju1tJwvqNR426emE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EoFEU6CyKSNIGfYXRda//0bb2mMLKRgfSDXdW9sL8ts87s+XEV/jzQuTy3UQx++ET
-         EUnkujSo9uA/pyyl6TA9MV53H/H00nKP/iABf5C/cH2g59dViw5Afssrz/4XM57vTX
-         415Ch5GQdojrahbDFZRJYMKIApLSWHEUNLw9Ka+Y=
-Received: by mail-qk1-f169.google.com with SMTP id 204-v6so4144690qkd.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 14:54:11 -0700 (PDT)
-X-Gm-Message-State: ABuFfoi9Q/DxhsrJtJjNJxbiNvV71e55a6IjaaWy5fzpsl9jxoUwCen1
-        5Vg+v8hYhP88I5H/myMAjqIE3WUNJtGBHMlwGg==
-X-Google-Smtp-Source: ACcGV60ng0ae5W7y9F7F45Q63DtO2VJg/EIcUrGvZUl9E6OPI7bVaUOlvNWA9pVmS0l8WLHNiCsB7Jwa0X2R+fn1WLA=
-X-Received: by 2002:a37:12d1:: with SMTP id 78-v6mr395666qks.147.1538171650940;
- Fri, 28 Sep 2018 14:54:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-27-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-27-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 28 Sep 2018 16:54:00 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJH=s-JOH=OuwPv+pMHYJftVb-ODgL0P6ibDyETx+4W3A@mail.gmail.com>
-Message-ID: <CAL_JsqJH=s-JOH=OuwPv+pMHYJftVb-ODgL0P6ibDyETx+4W3A@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: Convert to using %pOFn instead of device_node.name
-To:     Jassi Brar <jaswinder.singh@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 29 Sep 2018 00:20:07 -0400
+Received: from smtprelay0084.hostedemail.com ([216.40.44.84]:40723 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726332AbeI2EUH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 00:20:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 68FD5182CED28;
+        Fri, 28 Sep 2018 21:54:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: join92_6094d4fda1c3e
+X-Filterd-Recvd-Size: 2992
+Received: from joe-laptop.perches.com (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:54:23 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>, netdev@vger.kernel.org
+Subject: Bad MAINTAINERS pattern in section 'LANTIQ / INTEL Ethernet drivers'
+Date:   Fri, 28 Sep 2018 14:54:22 -0700
+Message-Id: <20180928215422.29755-1-joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 8:54 PM Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/mailbox/ti-msgmgr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Please fix this defect appropriately.
 
-Ping.
+linux-next MAINTAINERS section:
 
->
-> diff --git a/drivers/mailbox/ti-msgmgr.c b/drivers/mailbox/ti-msgmgr.c
-> index 5bceafbf6699..713d701b6568 100644
-> --- a/drivers/mailbox/ti-msgmgr.c
-> +++ b/drivers/mailbox/ti-msgmgr.c
-> @@ -560,8 +560,8 @@ static struct mbox_chan *ti_msgmgr_of_xlate(struct mbox_controller *mbox,
->         }
->
->  err:
-> -       dev_err(inst->dev, "Queue ID %d, Proxy ID %d is wrong on %s\n",
-> -               req_qid, req_pid, p->np->name);
-> +       dev_err(inst->dev, "Queue ID %d, Proxy ID %d is wrong on %pOFn\n",
-> +               req_qid, req_pid, p->np);
->         return ERR_PTR(-ENOENT);
->  }
->
-> --
-> 2.17.1
->
+	8155	LANTIQ / INTEL Ethernet drivers
+	8156	M:	Hauke Mehrtens <hauke@hauke-m.de>
+	8157	L:	netdev@vger.kernel.org
+	8158	S:	Maintained
+	8159	F:	net/dsa/tag_gswip.c
+	8160	F:	drivers/net/ethernet/lantiq_xrx200.c
+	8161	F:	drivers/net/dsa/lantiq_pce.h
+-->	8162	F:	drivers/net/dsa/intel_gswip.c
+
+Commit that introduced this:
+
+commit 14fceff4771e51b23b4485b575cf9e5b3414b89b
+ Author: Hauke Mehrtens <hauke@hauke-m.de>
+ Date:   Sun Sep 9 22:20:39 2018 +0200
+ 
+     net: dsa: Add Lantiq / Intel DSA driver for vrx200
+     
+     This adds the DSA driver for the GSWIP Switch found in the VRX200 SoC.
+     This switch is integrated in the DSL SoC, this SoC uses a GSWIP version
+     2.1, there are other SoCs using different versions of this IP block, but
+     this driver was only tested with the version found in the VRX200.
+     Currently only the basic features are implemented which will forward all
+     packages to the CPU and let the CPU do the forwarding. The hardware also
+     support Layer 2 offloading which is not yet implemented in this driver.
+     
+     The GPHY FW loaded is now done by this driver and not any more by the
+     separate driver in drivers/soc/lantiq/gphy.c, I will remove this driver
+     is a separate patch. to make use of the GPHY this switch driver is
+     needed anyway. Other SoCs have more embedded GPHYs so this driver should
+     support a variable number of GPHYs. After the firmware was loaded the
+     GPHY can be probed on the MDIO bus and it behaves like an external GPHY,
+     without the firmware it can not be probed on the MDIO bus.
+     
+     The clock names in the sysctrl.c file have to be changed because the
+     clocks are now used by a different driver. This should be cleaned up and
+     a real common clock driver should provide the clocks instead.
+     
+     Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+     Signed-off-by: David S. Miller <davem@davemloft.net>
+ 
+  MAINTAINERS                     |    2 +
+  arch/mips/lantiq/xway/sysctrl.c |    8 +-
+  drivers/net/dsa/Kconfig         |    8 +
+  drivers/net/dsa/Makefile        |    1 +
+  drivers/net/dsa/lantiq_gswip.c  | 1169 +++++++++++++++++++++++++++++++++++++++
+  drivers/net/dsa/lantiq_pce.h    |  153 +++++
+  6 files changed, 1337 insertions(+), 4 deletions(-)
+
+No commit with drivers/net/dsa/intel_gswip.c found
+
