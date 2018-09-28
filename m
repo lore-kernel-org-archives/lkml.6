@@ -2,142 +2,114 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C79C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B08C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1616F215E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:30:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7231021733
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:30:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="DcAFdqqR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1616F215E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPHOtlCJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7231021733
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeI1GvD (ORCPT
+        id S1728587AbeI1GvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 02:51:03 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:53948 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726100AbeI1GvC (ORCPT
+        Fri, 28 Sep 2018 02:51:12 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44251 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbeI1GvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 02:51:02 -0400
-Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie2.idc.renesas.com with ESMTP; 28 Sep 2018 09:30:02 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 277CC64C2C;
-        Fri, 28 Sep 2018 09:30:02 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,312,1534777200"; 
-   d="scan'208";a="292124320"
-Received: from mail-ty1jpn01lp0179.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.179])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 28 Sep 2018 09:30:01 +0900
+        Fri, 28 Sep 2018 02:51:12 -0400
+Received: by mail-io1-f67.google.com with SMTP id u12-v6so3140703ioc.11;
+        Thu, 27 Sep 2018 17:30:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=82WdEJ+V7fRStoLEdFPGsMDOphrEM5xuNvZ5+TtMYSU=;
- b=DcAFdqqRgulgYooyc35U4KeSeI5SWrIZYwbTHfJUOavCwYHbB9d5Q+J2ueXdWEMd/u2JfeZwfxi4Vr49ndixJXr9P7VC38tBHOnTCvL7RxlBFl18LZrp7ztFN6pVhaBvWfLaT3JXsGZiGkx7jtznBrjP55ct5hk8TMObbhmdUGk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.130) by
- OSBPR01MB1862.jpnprd01.prod.outlook.com (2603:1096:603:2::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.22; Fri, 28 Sep 2018 00:29:59 +0000
-Message-ID: <87h8iatqrn.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     <jiada_wang@mentor.com>
-Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <twischer@de.adit-jv.com>,
-        <dragos_tarcatu@mentor.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH linux-next 10/10] ASoC: rsnd: Add kctrl to configure dai's busif
-In-Reply-To: <20180927051229.18080-1-jiada_wang@mentor.com>
-References: <20180927051229.18080-1-jiada_wang@mentor.com>
-User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Fri, 28 Sep 2018 00:29:59 +0000
-X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: TYAPR01CA0041.jpnprd01.prod.outlook.com
- (2603:1096:404:28::29) To OSBPR01MB1862.jpnprd01.prod.outlook.com
- (2603:1096:603:2::15)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a4faf5e5-d20c-4a7f-b950-08d624d98602
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1862;
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;3:/53IZ8TLJwJIY+ToqRdH1tAtrtpALVIBXG6FA642dnY5vrvQ6OvxWRlZqhwkWrEmIDT8mfhO6ftT4Cd7O3HOdvJSTYHonO2yjRSGDnzu3ifZF7el3zjciQJomqbolGcVS1Xi+2reZVL6hciGbuGRGXX84jw8o+av734bgbqbiiKqaE2XG7C8cRmgFkgVRS42BtGo8dq0nNsGrAk3QFEaD9Z+zll24Dbe3sOLWTDQlmgQMUVB0XhrJP3lE3HWLHju;25:H2sRX8g2JQF5widqpOnQ165kiAIOPD602iZg3b7cJgWA6cdajxERO9P5g+gVcIKFht950FGDBj+jJ5UfwAYbFQCo3qoMV7YPyX8SjFfCG1+4exaApwCO5aAQWINVHHlAYzqeEeuj8YkxtIU2M1UZg2XQVcQWqlqW82MPH6FJfbvTcwc/1fkZ0YAUMBjE8zB3jzDfKoLPqK/S3uu6GnAvVdZQLPymI0rl2XIeg/4W4Nh9v2mxf6Gnvjd1jnXZfF+b7gn99jMq+Vc48GkZw/8BMGPVy+/KYqdJI0jFcBhUvpWn9qYUzjun3CSvFjxbIVeRvQ5uZ/5moIadSF8rcyXivA==;31:KcSK2VXLh7oLKJEZkXV+Hl+v2azpQhu4KUFQ4T4+AmdjcUAb6wLhQLxb37eQ+5HJO5M00Tb1lpQMWjUhXxyw4CRnb64pGaUCoxNm5+DOZ0X1xEVxFxDiLCTEYtTx2KlEKuS23wKIH0bv6gs+mTKspuVMW5gLj29Sh88pUsHMZ/OcBNMcpsUf4UxZ5SIU84FcwsopkHsauyhyeW1pWEggg1knyU0g3CmC5Kfg992+3Fc=
-X-MS-TrafficTypeDiagnostic: OSBPR01MB1862:
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;20:UIKMEr7zrxWbrZevULvAKrrZAjwxuNpqO4CkLFrRBk/mLaaumTBO4/R0dNLpZWPnMJFV2N35djQv8xh3nzbn30Zd9L7QaVb8+DNRfxMTGNsoGQ7rjs4wLB0EerloAQLOmsTxRQhHQtwLzcTGInx34zu2Mu6TpDbiwg/eKHV6hdZx/YXh82timKF2rKyHxhO8TVJMg2yQW+kvN79l0OuBi+Nex0xKQw/+tquy4PpzDV8qIeIug5r6fUixhwsmt1b7U88JE40MwFG8aUw/8Ckw/ndhRx6dIqB1HwwlSf43MqrIQMdXUkORM8/HX9xg21uqT+lZCwRnfVhiF4Yo/kX5gY8mL78Z2wK14Pqc8N8CrJ/4mra0UemmtPOYmnkEl7ApF87XvQGDYRGFeUphWm+IaYUV5UvIJ1tDTpd7PNd3NSl/s1Xs6fp/SewzTnZ+BFwBzIXwoI6cWMkpYyvDCpq8rNKic71KsL5KKQTk12K33sWFOH34JuAtrUvdghmB44zh;4:IsD26Rtg8xLscaTCjQVGsgBksI7CPJ5+X5W4evWXZUyQ1WyPIQAlyj3KxooumpaUTV+IPxLmXp2h+Pd+/8/GqLwBlTPQiwuIXVJ6O51Krb4VIeKaS5mO0DKeAPiyr02LyyvUdyd1DZILDRZnF9b+v3hTu5TggnMSe4xXiIP5/6cU9zO5FpRoYdhJe9snfL3RLM4pEz+MqDLIwbwjeleBmD+sL59dXA2kQUsj3Zm9w05oHf/gk+pagYyfpTUNzdN3DZfoH1sMoaEU/3R6AIvDSg==
-X-Microsoft-Antispam-PRVS: <OSBPR01MB1862B957AA4591FE5EFEDEB7D4EC0@OSBPR01MB1862.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051);SRVR:OSBPR01MB1862;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1862;
-X-Forefront-PRVS: 0809C12563
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(346002)(136003)(366004)(396003)(39860400002)(199004)(189003)(305945005)(68736007)(6246003)(16586007)(69596002)(7736002)(8676002)(54906003)(58126008)(23726003)(6116002)(3846002)(36756003)(2906002)(5660300001)(86362001)(8936002)(81156014)(6916009)(186003)(2351001)(81166006)(16526019)(26005)(105586002)(106356001)(14444005)(229853002)(486006)(25786009)(34290500001)(53416004)(4326008)(11346002)(345774005)(446003)(97736004)(2616005)(50466002)(476003)(53936002)(52116002)(956004)(7696005)(316002)(76176011)(66066001)(478600001)(47776003)(6486002)(39060400002)(386003)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1862;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB1862;23:2Hy34H5J166X9fxWM45poJ34Dyjhhcp5+IDhO+Wfp?=
- =?us-ascii?Q?s9QtEnAxYgp0+RA5kSxEfQX1076npqcUvCsyIqSAZsj2zUNXehYmGIJmLGDT?=
- =?us-ascii?Q?ttq9ESfLyL/14o3E79pRdHg/KPeynLS27FXEGZ8kYuTrpkTjJXJLTzLP3/ZW?=
- =?us-ascii?Q?1JwG9KVHBoIqpHkMord0bhazrAzBfV8E97LRJPcKCOqsbM+oMI80vmXykoib?=
- =?us-ascii?Q?W+QUAPw2KTp18lPtG1zQ2PQI7jjfSc8FmQh9Mm3RrHzFDbJ9cm2BqFzTnnWM?=
- =?us-ascii?Q?We/AqTU+vh5NYGKvrDac4Vl8hhXtyT4YQ+VtfZozDnYh0X6mliV1nEVddcYe?=
- =?us-ascii?Q?1XhQnCEBAMBTHYFLtQW9blgUvCJwkhDfD164YOGKpNscWe1tkdSvJYe+aHHU?=
- =?us-ascii?Q?vF7ZUeKOIcMd6s+dqn5T4tsPKoke63kH1DY5z/UpcVNq1vPk/ymafjQtbQ+q?=
- =?us-ascii?Q?Yz6HM9m3kx438Z2QKGfRtRhTrkuwq5iyJ7bCTFamKmGI0DzpyFylqqv9rf/h?=
- =?us-ascii?Q?2aVakTynQiWRdgTn3MBYz4Ib1YM+1UsMYzyrQ9I23TSRXo4JfJOvo359YB/e?=
- =?us-ascii?Q?pveRhfCHM2z7vFRvbrDuP2rNH1INS3IeU5totNL5oATspdG/PzGHtkLYje4l?=
- =?us-ascii?Q?Tc1TYjT5oOAs43gEEIlks7Q50zA2q1uBADhyBbbios8d/wlAHRQ2DG1XVyNa?=
- =?us-ascii?Q?t7ShnQxiWnLlDJnpIfPCM8zUnjl0lXYL5vpxSfIZfmNsApuX0f1b8nC7Tj68?=
- =?us-ascii?Q?fvgqrPeMkOAs8tntbsjGwsEQz8t/bnl/D9fFZYjb2L6hZp59himCwVQFW9bL?=
- =?us-ascii?Q?QY1R+dppMu22kuomXRIXvk8XySaz3RcM3ynr+Rhu4nN6HcqhTx1M/OK1TRNH?=
- =?us-ascii?Q?5S118G1YCsJf8Sg9E7ncttpaQiQml3p1paYuusU9senV5zLFBu9khxSlg65o?=
- =?us-ascii?Q?PanrHIUvCCl4zUCVPWfQB6KYbaOOHK+Xcf/eAkUBS/lDpAGJNGU15fETQZgp?=
- =?us-ascii?Q?Prj03GcTJcHpWuUxyM7I9GgzoPOgKI1DLWkyshlOc5z1JuYEQlBO0FBx/NpO?=
- =?us-ascii?Q?4XMEI7Ca+ot0dw6W+BiLwe4Lp6YF7sybMoAhqXVNWRGKabMb3zfp1TcuyymN?=
- =?us-ascii?Q?xFvOXgcn2QToEI1znuRdFsUz/1UJwFI0AIfqrXjQ2D32eg6MzbN4CYXPpQXK?=
- =?us-ascii?Q?9/y/jqF+Z7/nTG3rPpSVDsFu/Mekw8M1wXR7Jl86JQk/xV2cvdv1MZNScRMa?=
- =?us-ascii?Q?72pLw4LNszVQoyS5HbPkq+H3RXv5sDNaKLBbrMPjOayzQZC/aoYyPtdWR0m4?=
- =?us-ascii?Q?HTX3ncfUwAsRDnk2PmNwsS9JFrGh2n76jH/i3gE3rqYF1Kd6Vjk7gk2zSfI1?=
- =?us-ascii?Q?K+c+g=3D=3D?=
-X-Microsoft-Antispam-Message-Info: Nme8bXkAM3oJUjvvnYyBv19Jdt9PspBM38hTK9bglhRQSvbcCWXsoJVf9YstxzoqP+rqB9dTZJ+8TpOuicn1QKYmFvjsIrWKDeKzetqFzwJwDgwOUeD2Ive+7uM0IHvDp0KhFmZiAgnYSrHFioU2JHr4qpdaZWRRVlvXHOV6xOkavOzFZVFWQHZ74FWKzrTaPLfVWyFzo9Sz+Bqdtnm+kKYzhs/EPdSR3ZbwmZVtL5LJtgczDqvbk0/dPcoXVUto3GBwUqzU541Nk2+St8zkdgiC2BBQhGtljC84eXAcOKu3MmQ8AyF5gO/nClhy4wOlKmuNLRJLRR96GauDRaoD3WFEwO+GxEro5iQCnQnePYs=
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;6:WPZS2j9mG+WFMO8nXMDZ/X70YZOzLiteGcViXMEYQrLXiuUQa97UNVHWEVZs3w7eszdzDngrHMKqe8GlZYQXp869JsxMEqDkQRjxBi7sGbLbi52LA42m6xr8u2ZWrn52vxO1Sd/iA0lybSD746jRHdsCbZ6hlh1L3t7DSnoTpFq5sSHOvZrDS79po6DUq87hhp/XetkEOmJeAIE7C4MQkspnAFA9dYmz3xBYMeQ08Y87cFtYrSlL1kQoUpboB4J+0W5uDEKHTPrALie0wHqpWSJxhAgHKj6r8OqKXjzdLFxYe2qYPRXvzrtuCyDw8YL3re2wy9vVNQExuQ9wJiZkX3sq47x9jo3qRHqvt6k49x4Xd/HBFWqjGucfcuDc+Zqafnopkbe/dTffiY+8I4qn0g8/01xDfL3WOcUEaK9VG8Kbhw94HOh2j3qiU8UMSQg0iZqA3S2MPmP9jOfEENwq7g==;5:wXWmK8+o6yH+6BjxmA/HBBaT1owRjmPJ9pW272tYrTuSTFNIDvAkuCNyOfdV4al7QgopJ8SOwY+JeqMVJtMwMQfC5BaKsOV0FOtVNKJUTTZUQxhUprY9bRLPxfwFmg2dTIDrj97FNC/IOMjfTJu6dDIbjPK/5ve7/48i+tpdmVk=;7:oAgNY+W7MbulXqCOejvxI5khWj/SGWM1StYoXTDMyJUfdQgfQFAg+1SKl9KqVAdAoCyZUpKe8/q4+HFSVV7noaRelEcJOjBuP5kwotRLZcYwI7FdJR3i9vy/98XjnStqIWjn4si0l2SijAZZ/kYT2LNAUhKO8irXGiCjTZa5/sxfDGCg4fRyrmTtdlggt98zMfFGXc5MOvwVNlKVON1lkAPMkiGF4ajzrsDfdWaiup933bptcCHe/1dSdp8qDFCr
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB1862;20:pmi9z3ou6F7RI/q4tLBNVMHaWa6Hjz3g1WDzuOvgN/i+3SpUpL02vvUcph4vPiOHBW/SFINt0d2evIjTClitaiI4hHAoHJZboX2oGL/zvZN115/cX6SOyE/xOjM0tI62OYw2vcHwVGGVAOphDL1V/fOqlKPtOQAMns73Ev1OKIQ=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2018 00:29:59.2241 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4faf5e5-d20c-4a7f-b950-08d624d98602
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1862
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uhdMuGSgilQYdfghsiQsGyl22I3jhLnaWudIsjlWo5k=;
+        b=nPHOtlCJBHHMcYNVoH3gfY4Reo94K+uwfTO7gi+bzOtNR5n3RKWcc10qCNpqqGQD9k
+         O+6Mgcm807Ne5vjIoWPi0jShS7ZnSNrJhDxQsZjJ0T/T5MnuBIHQQ82dgrslsZWntqh/
+         91C66TF2kHNcXv1ZhJMakPZnSJsLjiYUaegaRqSR2mYcezTty6pTB504jJmUKhxQYjKP
+         B1inZijmSAk/4+DsDHyWndEHqnomN/kTKb9hYITkru7BR4Zv0lFYyJm5Kcwm8hzO4E2Z
+         enSmuf7gfj4RrV/9kAHIXienCMoTfp751sWltlafyvysQcE3fEQ1ievvnIm3/LdmsG9F
+         W93Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uhdMuGSgilQYdfghsiQsGyl22I3jhLnaWudIsjlWo5k=;
+        b=TCh+ivtlUOT2hmgpwbIE60jG+RlKRbUrwCozM7voglFhbQui0Y1Eid/a3JjmLvplR3
+         k6JW1ALjlqGduKty7eWtgxG1o8vPKLM835dRZMBk0uoWcfZpVrzAVdE9innEepjTOiGN
+         TPnV523NEkwgWqqr6iJ/ggifp9/P3lErMLS0O9vQ64eIaXLLa3j1IZ6RlQF4OxxxUZBd
+         C4pg8lkpYSziyxGuhUvXocP6wcjczc9dWtt25QZR2Gb//VzFLVdkALAXvew4U/bs7WG/
+         kyFwciWf1LOE4dnsRRBZReTVg6BXmqbxJG64OdfT/XXnWqgWOBI93GIOCP9+BCvbZJNC
+         5LQA==
+X-Gm-Message-State: ABuFfojPzTUQsrUzG6rOC1w/LOX4ftOKJg6ecHAIUq8Jh70edaKiYL5K
+        hiSeDHohuFfaUK7J9xlrrg==
+X-Google-Smtp-Source: ACcGV60h7BwVvxlxAOTXWsI7G6Wi4qgyuWNVlm1u0ZO6kKx+v7kj4LbwFBYmQjecUIn5tJUePpdhOA==
+X-Received: by 2002:a6b:8b8b:: with SMTP id n133-v6mr9992702iod.234.1538094614831;
+        Thu, 27 Sep 2018 17:30:14 -0700 (PDT)
+Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
+        by smtp.gmail.com with ESMTPSA id i8-v6sm1355106ioa.6.2018.09.27.17.30.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Sep 2018 17:30:13 -0700 (PDT)
+From:   ryang <decatf@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ryang <decatf@gmail.com>
+Subject: [PATCH v4 1/2] dt-bindings: iio: light: bh1750: Add device tree binding documentation
+Date:   Thu, 27 Sep 2018 20:29:57 -0400
+Message-Id: <20180928002958.3935-1-decatf@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Document device tree bindings for ROHM BH1750 ambient light sensor driver.
 
-Hi Jiada
+Signed-off-by: ryang <decatf@gmail.com>
+---
+Changes in v4:
+ - Change example node-name to light-sensor
 
-Thank you for your patch
+ .../devicetree/bindings/iio/light/bh1750.txt   | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/bh1750.txt
 
-> ssi0, ssi1, ssi2, ssi3, ssi4 and ssi9 have busif0 to busif7,
-> currently only busif0 is used by all ssi.
-> But tdm split and tdm ex-split mode, which require busif1 to
-> busif7.
-> 
-> This patch adds kctrl in ssi for dai-link, to make it possible
-> to configure the busif used by each dai-link.
-> Also adds rsnd_dma_addr_update() interface to make it possible
-> to update dma data address when there is change in condition
-> of dai connection.
-> 
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-> ---
-
-Do we really need to select BUSIF number by kctrl ??
-In other words, does *all* user need to know detail of SSI BUSIF connection ?
-I think it should be selected automatically somehow.
+diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.txt b/Documentation/devicetree/bindings/iio/light/bh1750.txt
+new file mode 100644
+index 000000000000..1e7685797d7a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/bh1750.txt
+@@ -0,0 +1,18 @@
++ROHM BH1750 - ALS, Ambient light sensor
++
++Required properties:
++
++- compatible: Must be one of:
++    "rohm,bh1710"
++    "rohm,bh1715"
++    "rohm,bh1721"
++    "rohm,bh1750"
++    "rohm,bh1751"
++- reg: the I2C address of the sensor
++
++Example:
++
++light-sensor@23 {
++	compatible = "rohm,bh1750";
++	reg = <0x23>;
++};
+-- 
+2.17.1
 
