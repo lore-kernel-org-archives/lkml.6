@@ -2,96 +2,120 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6215DC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B680FC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09AE72150F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:32:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YABYxVoa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09AE72150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 678012157C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678012157C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeI1HxP (ORCPT
+        id S1727519AbeI1IDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 03:53:15 -0400
-Received: from mail-qk1-f182.google.com ([209.85.222.182]:38268 "EHLO
-        mail-qk1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbeI1HxP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 03:53:15 -0400
-Received: by mail-qk1-f182.google.com with SMTP id 204-v6so2226950qkd.5
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 18:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=oJr5DWtLiVafdfUCbmNJXu4KOoHAWBrDblqNsTLuAHg=;
-        b=YABYxVoaX/AdJ89zgsKrIzShtbMXlI53cZLYxOrSsQGthdem2SXNykeOMMccrC0//D
-         E8IxJW37BB0yvlkPcalZoHwHjqZIdrIlN7it8RGEWSdqsE+mo4CZYe6mrRGd+2ffHfDn
-         EnrgDemWILXQkbgowWS/vx17Z5qcGDedFWZaDk64hwwObjST55g/agu8TygRIpxHI+Tn
-         NqKsiRiRJLIep4qrEQyH2fDcZtW4fIMCqKUkd/DUx5MSL4HQ84EnpOYjfeZK8FK9rK+1
-         J4Dd8fS9WcI4JbL5mNVuje56y44VwQKHRrD9sbEZN4+7vqBIHjrqBawi48gMwEwRu8iq
-         DCpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=oJr5DWtLiVafdfUCbmNJXu4KOoHAWBrDblqNsTLuAHg=;
-        b=E7qfxTtW3MDE/+cGWzRGhKWg68NjrMFw2276rG3dpktThPf7lHhdYf4EhJo9a29k2y
-         SEu+IG0Igsxt2fWhQJcTrIYETUo0tBl6avs9UXkxwUNhgPXnL4y9LhCRG1XS5Vg4Ptwy
-         t/I9xep6rNjqau3bc5RYaN+VZVPDLOEVlB4J5yIw4P6925V7WdyXWjNgcOkS9gm1io+W
-         U41kheu31LsnP8/8FzgVnazN6HT3PK7neBHr+MkeCKyusGdgabY1nF7Acn5ngVVOFd4P
-         r5a2bI9f9qriN0rcs5RlFCK2oE9Y/fAQhwc5DwbGg0bizs/E5BuD5t876e4ebI6SeHPV
-         dsMw==
-X-Gm-Message-State: ABuFfogPb2Yl1fQwHa5d+n6igNi+YdnnEPNl3p2MpERFidwvTQbsTPSs
-        aZcTYu1uSw95zK81cJxPSUP1N2Be
-X-Google-Smtp-Source: ACcGV60ZHGm0gSomMl8YThk/PgXLc04kYvVtwSxQqL8uJh/icDt7QM86dea0k4NxebZnB32C5TSfhA==
-X-Received: by 2002:a37:8984:: with SMTP id l126-v6mr9987480qkd.195.1538098326013;
-        Thu, 27 Sep 2018 18:32:06 -0700 (PDT)
-Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id r82-v6sm3124378qkh.28.2018.09.27.18.32.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 18:32:05 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 22:32:00 -0300
-From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
-To:     Rolf Eike Beer <eike-kernel@sf-tec.de>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 6/7] drivers: oprofile: Avoids building driver from
- direct make command
-Message-ID: <20180928013200.GA8272@WindFlash>
-References: <20180927014138.GA8988@WindFlash>
- <5236278.7dVKUIXYaR@daneel.sf-tec.de>
- <CADvQ+rFPiaGKLyzfSx4DmTnmgG15=Jk0RVy8xuYYyvLPJfDdkA@mail.gmail.com>
- <136913b41707c8556fb5d41969d2080e@sf-tec.de>
+        Fri, 28 Sep 2018 04:03:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:13827 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbeI1IDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 04:03:40 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2018 18:42:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,312,1534834800"; 
+   d="scan'208";a="267589568"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by fmsmga006.fm.intel.com with ESMTP; 27 Sep 2018 18:42:19 -0700
+Date:   Fri, 28 Sep 2018 09:47:39 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
+        alan@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] x86/earlyprintk: Don't fail the pciserial device
+ with incorrect class code
+Message-ID: <20180928014739.owdi42l5q23f7uu7@shbuild888>
+References: <20180927124320.13419-1-feng.tang@intel.com>
+ <20180927133050.GA19687@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <136913b41707c8556fb5d41969d2080e@sf-tec.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180927133050.GA19687@zn.tnic>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Eike,
+Hi Borislav,
 
-> No, that's fine. But it means it has to have one LF after "tree.". It had
-> none, now it hat 2.
+Thanks for the review.
+
+On Thu, Sep 27, 2018 at 03:30:50PM +0200, Borislav Petkov wrote:
+> On Thu, Sep 27, 2018 at 08:43:20PM +0800, Feng Tang wrote:
+> > "pciserial" earlyprintk helps much on many modern x86 platforms,
+> > but unfortunately there are some platforms whose PCI UART devices
+> > have wrong PCI class code, which will be blocked by current check.
+> > 
+> > So loose the class code check by giving a warning message instead.
+> > This should be fine, as a developer who can give the accurate
+> > BDF should know whether it's a usable UART device.
 > 
-> Eike
+> BDF? No.
+> 
+> Please write it out what it means.
 
-Oh, i haven't noticed. Sorry for the trouble.
+Will do.
 
-Thanks for the feedback!
+> > Signed-off-by: Feng Tang <feng.tang@intel.com>
+> > ---
+> >  arch/x86/kernel/early_printk.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
+> > index 5e801c8..abe1d08 100644
+> > --- a/arch/x86/kernel/early_printk.c
+> > +++ b/arch/x86/kernel/early_printk.c
+> > @@ -265,7 +265,8 @@ static __init void early_pci_serial_init(char *s)
+> >  	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+> >  	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+> >  	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
+> > -		return;
+> > +		pr_warn("earlyprintk: classcode for pcidev %d:%d:%d shows it's not a UART like device, please check!\n",
+> > +			bus, slot, func);
+> 
+> So where did the return statement go?
+> 
+> What are you trying to do here? If the device is still an UART device
+> then we don't need the check at all as you're basically overriding it
+> and only the class code is wrong.
+> 
+> If so, why do we need the pr_warn at all? What can the user do about the
+> class code? Nothing, I'd say. I don't see her "fixing" PCI config space
+> so that the device has a correct class code.
 
-Leonardo Brás
+That's true. We can hardly do anything from OS side,
+
+> 
+> But what happens if the user really supplies the wrong BDF? We end up
+> poking in PCI config space of *some* device and then the cat might catch
+> fire.
+
+Valid point, I can not argue on this :)
+
+> 
+> So it sounds to me like we need:
+> 
+> earlyprintk=pciserial,force,00:18.1,115200
+
+I would follow this way, thanks
+
+-Feng
