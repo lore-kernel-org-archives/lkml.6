@@ -2,123 +2,220 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1BCC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5106C04E87
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2649320652
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:11:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2649320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 7211B21755
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:23:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="B3oqWtqF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7211B21755
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbeI1Lcx (ORCPT
+        id S1728694AbeI1Lps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 07:32:53 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:42608 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbeI1Lcw (ORCPT
+        Fri, 28 Sep 2018 07:45:48 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55155 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727421AbeI1Lps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 07:32:52 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1g5l3J-0000B3-Aa; Fri, 28 Sep 2018 13:10:57 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1g5l2l-00062f-Qp; Fri, 28 Sep 2018 13:10:23 +0800
-Date:   Fri, 28 Sep 2018 13:10:23 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        "David S. Miller" <davem@davemloft.net>, qat-linux@intel.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Conor McLoughlin <conor.mcloughlin@intel.com>
-Subject: Re: [PATCH] crypto: qat - Fix KASAN stack-out-of-bounds bug in
- adf_probe()
-Message-ID: <20180928051023.3hcs7hctgplnh4go@gondor.apana.org.au>
-References: <1537663315-4168-1-git-send-email-longman@redhat.com>
+        Fri, 28 Sep 2018 07:45:48 -0400
+Received: by mail-it1-f193.google.com with SMTP id f14-v6so1232574ita.4
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 22:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=C8l/NdNU70ldu1eZDyHhwFKeWFHIqn4FyYC2IvbfJGE=;
+        b=B3oqWtqFzxKAJ55AGGxrWWaCtmb+Hp7wsVRkv6gPLdk288kdevERoBicsxfQwg7mE/
+         lKr/9/1AvdDyeN37dbbYlTh1oqyQHEl6docE5zhWLu3+e6mqEEYYboF+KZkHTLkq5p7n
+         andwMRyp4ZApMPXxatI9BYzYlMZfIEsPUwYdHpsLxrj3z5SS88uwOu8vpOIHmzZNq6sG
+         dO5PU3FJrEAi4QF2MpvBFaKtAZKclNu76YfwrwScajsQe2jMbQ0eZT927L3mYb4o3xbs
+         EFpw9q32I/zFUR6lFMQE+f/dY/rpKYBnOsF+qgxqSn5oiEFkq3xdQDm9OKl+JaOJH7ph
+         HITg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C8l/NdNU70ldu1eZDyHhwFKeWFHIqn4FyYC2IvbfJGE=;
+        b=ldirP2TX9s0H2rbWvrVwn7U3P4ffjlvXcN0PoEmZrBBYFHJ+Xxn9iweIK1SCCNf2en
+         db+S2z9QVzYlCcGzTgwdHt461DT5eerlo4yTr4/ywZNmeIc414To+89JcT160konie3B
+         oGf9eOATHXlzSQUzPGB9Kac9p38/6kOhp9k2j60iFo7qGSABqZKQW71Xytp2BrucN4Ty
+         DOk1j2iCqYy6Fh5p8fO6n/i8sKVEaVbBhVSYgy5WhFDlESFOc+cQ1pUJQDH0iNG76iGJ
+         P2zYsP25CwMqxIwd60nKbRXwFNzxHP7lW4zyPBN333qUXOVQYzID5oyWJx5wtcYo2aA8
+         +aEA==
+X-Gm-Message-State: ABuFfojLRHpYV/C09A6+0kihfaydUw+imuedOJt3oWVPKFULWuvTG/qN
+        +tAWSFA7IuDjL8m2NerUqYPwtg==
+X-Google-Smtp-Source: ACcGV62vvKUBfGjMMpnBgLpks6lV4vf1JhiCKV3XOMuVbXHUQJqTu5uURfhvQ3aLDavOTvtJT9K7FA==
+X-Received: by 2002:a24:6fc6:: with SMTP id x189-v6mr500528itb.149.1538112230552;
+        Thu, 27 Sep 2018 22:23:50 -0700 (PDT)
+Received: from cisco.lan (71-218-141-49.hlrn.qwest.net. [71.218.141.49])
+        by smtp.gmail.com with ESMTPSA id k9-v6sm1326914iop.1.2018.09.27.22.23.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 22:23:49 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 23:23:46 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v7 4/6] files: add a replace_fd_files() function
+Message-ID: <20180928052346.GA18045@cisco.lan>
+References: <20180927151119.9989-1-tycho@tycho.ws>
+ <20180927151119.9989-5-tycho@tycho.ws>
+ <CAGXu5jLOe0izpGoB8c-hAeH2SzA51dF1BuMcXbk-d=QwqfjxxQ@mail.gmail.com>
+ <CAGXu5jJvkkNNsGj=MK+=Dg0=nauANRkp=b1MrvOOzxkpb+DVkg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537663315-4168-1-git-send-email-longman@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAGXu5jJvkkNNsGj=MK+=Dg0=nauANRkp=b1MrvOOzxkpb+DVkg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 08:41:55PM -0400, Waiman Long wrote:
-> The following KASAN warning was printed when booting a 64-bit kernel
-> on some systems with Intel CPUs:
+On Thu, Sep 27, 2018 at 07:20:50PM -0700, Kees Cook wrote:
+> On Thu, Sep 27, 2018 at 2:59 PM, Kees Cook <keescook@chromium.org> wrote:
+> > On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> >> Similar to fd_install/__fd_install, we want to be able to replace an fd of
+> >> an arbitrary struct files_struct, not just current's. We'll use this in the
+> >> next patch to implement the seccomp ioctl that allows inserting fds into a
+> >> stopped process' context.
+> >>
+> >> v7: new in v7
+> >>
+> >> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> >> CC: Alexander Viro <viro@zeniv.linux.org.uk>
+> >> CC: Kees Cook <keescook@chromium.org>
+> >> CC: Andy Lutomirski <luto@amacapital.net>
+> >> CC: Oleg Nesterov <oleg@redhat.com>
+> >> CC: Eric W. Biederman <ebiederm@xmission.com>
+> >> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> >> CC: Christian Brauner <christian.brauner@ubuntu.com>
+> >> CC: Tyler Hicks <tyhicks@canonical.com>
+> >> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> >> ---
+> >>  fs/file.c            | 22 +++++++++++++++-------
+> >>  include/linux/file.h |  8 ++++++++
+> >>  2 files changed, 23 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/fs/file.c b/fs/file.c
+> >> index 7ffd6e9d103d..3b3c5aadaadb 100644
+> >> --- a/fs/file.c
+> >> +++ b/fs/file.c
+> >> @@ -850,24 +850,32 @@ __releases(&files->file_lock)
+> >>  }
+> >>
+> >>  int replace_fd(unsigned fd, struct file *file, unsigned flags)
+> >> +{
+> >> +       return replace_fd_task(current, fd, file, flags);
+> >> +}
+> >> +
+> >> +/*
+> >> + * Same warning as __alloc_fd()/__fd_install() here.
+> >> + */
+> >> +int replace_fd_task(struct task_struct *task, unsigned fd,
+> >> +                   struct file *file, unsigned flags)
+> >>  {
+> >>         int err;
+> >> -       struct files_struct *files = current->files;
+> >
+> > Same feedback as Jann: on a purely "smaller diff" note, this could
+> > just be s/current/task/ here and all the other s/files/task->files/
+> > would go away...
+> >
+> >>
+> >>         if (!file)
+> >> -               return __close_fd(files, fd);
+> >> +               return __close_fd(task->files, fd);
+> >>
+> >> -       if (fd >= rlimit(RLIMIT_NOFILE))
+> >> +       if (fd >= task_rlimit(task, RLIMIT_NOFILE))
+> >>                 return -EBADF;
+> >>
+> >> -       spin_lock(&files->file_lock);
+> >> -       err = expand_files(files, fd);
+> >> +       spin_lock(&task->files->file_lock);
+> >> +       err = expand_files(task->files, fd);
+> >>         if (unlikely(err < 0))
+> >>                 goto out_unlock;
+> >> -       return do_dup2(files, file, fd, flags);
+> >> +       return do_dup2(task->files, file, fd, flags);
+> >>
+> >>  out_unlock:
+> >> -       spin_unlock(&files->file_lock);
+> >> +       spin_unlock(&task->files->file_lock);
+> >>         return err;
+> >>  }
+> >>
+> >> diff --git a/include/linux/file.h b/include/linux/file.h
+> >> index 6b2fb032416c..f94277fee038 100644
+> >> --- a/include/linux/file.h
+> >> +++ b/include/linux/file.h
+> >> @@ -11,6 +11,7 @@
+> >>  #include <linux/posix_types.h>
+> >>
+> >>  struct file;
+> >> +struct task_struct;
+> >>
+> >>  extern void fput(struct file *);
+> >>
+> >> @@ -79,6 +80,13 @@ static inline void fdput_pos(struct fd f)
+> >>
+> >>  extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
+> >>  extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
+> >> +/*
+> >> + * Warning! This is only safe if you know the owner of the files_struct is
+> >> + * stopped outside syscall context. It's a very bad idea to use this unless you
+> >> + * have similar guarantees in your code.
+> >> + */
+> >> +extern int replace_fd_task(struct task_struct *task, unsigned fd,
+> >> +                          struct file *file, unsigned flags);
+> >
+> > Perhaps call this __replace_fd() to indicate the "please don't use
+> > this unless you're very sure"ness of it?
+> >
+> >>  extern void set_close_on_exec(unsigned int fd, int flag);
+> >>  extern bool get_close_on_exec(unsigned int fd);
+> >>  extern int get_unused_fd_flags(unsigned flags);
+> >> --
+> >> 2.17.1
+> >>
+> >
+> > If I can get an Ack from Al, that would be very nice. :)
 > 
-> [   44.512826] ==================================================================
-> [   44.520165] BUG: KASAN: stack-out-of-bounds in find_first_bit+0xb0/0xc0
-> [   44.526786] Read of size 8 at addr ffff88041e02fc50 by task kworker/0:2/124
-> 
-> [   44.535253] CPU: 0 PID: 124 Comm: kworker/0:2 Tainted: G               X --------- ---  4.18.0-12.el8.x86_64+debug #1
-> [   44.545858] Hardware name: Intel Corporation PURLEY/PURLEY, BIOS BKVDTRL1.86B.0005.D08.1712070559 12/07/2017
-> [   44.555682] Workqueue: events work_for_cpu_fn
-> [   44.560043] Call Trace:
-> [   44.562502]  dump_stack+0x9a/0xe9
-> [   44.565832]  print_address_description+0x65/0x22e
-> [   44.570683]  ? find_first_bit+0xb0/0xc0
-> [   44.570689]  kasan_report.cold.6+0x92/0x19f
-> [   44.578726]  find_first_bit+0xb0/0xc0
-> [   44.578737]  adf_probe+0x9eb/0x19a0 [qat_c62x]
-> [   44.578751]  ? adf_remove+0x110/0x110 [qat_c62x]
-> [   44.591490]  ? mark_held_locks+0xc8/0x140
-> [   44.591498]  ? _raw_spin_unlock+0x30/0x30
-> [   44.591505]  ? trace_hardirqs_on_caller+0x381/0x570
-> [   44.604418]  ? adf_remove+0x110/0x110 [qat_c62x]
-> [   44.604427]  local_pci_probe+0xd4/0x180
-> [   44.604432]  ? pci_device_shutdown+0x110/0x110
-> [   44.617386]  work_for_cpu_fn+0x51/0xa0
-> [   44.621145]  process_one_work+0x8fe/0x16e0
-> [   44.625263]  ? pwq_dec_nr_in_flight+0x2d0/0x2d0
-> [   44.629799]  ? lock_acquire+0x14c/0x400
-> [   44.633645]  ? move_linked_works+0x12e/0x2a0
-> [   44.637928]  worker_thread+0x536/0xb50
-> [   44.641690]  ? __kthread_parkme+0xb6/0x180
-> [   44.645796]  ? process_one_work+0x16e0/0x16e0
-> [   44.650160]  kthread+0x30c/0x3d0
-> [   44.653400]  ? kthread_create_worker_on_cpu+0xc0/0xc0
-> [   44.658457]  ret_from_fork+0x3a/0x50
-> 
-> [   44.663557] The buggy address belongs to the page:
-> [   44.668350] page:ffffea0010780bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-> [   44.676356] flags: 0x17ffffc0000000()
-> [   44.680023] raw: 0017ffffc0000000 ffffea0010780bc8 ffffea0010780bc8 0000000000000000
-> [   44.687769] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> [   44.695510] page dumped because: kasan: bad access detected
-> 
-> [   44.702578] Memory state around the buggy address:
-> [   44.707372]  ffff88041e02fb00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> [   44.714593]  ffff88041e02fb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> [   44.721810] >ffff88041e02fc00: 00 00 00 00 00 00 f1 f1 f1 f1 04 f2 f2 f2 f2 f2
-> [   44.729028]                                                  ^
-> [   44.734864]  ffff88041e02fc80: f2 f2 00 00 00 00 f3 f3 f3 f3 00 00 00 00 00 00
-> [   44.742082]  ffff88041e02fd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> [   44.749299] ==================================================================
-> 
-> Looking into the code:
-> 
->   int ret, bar_mask;
->     :
->   for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
-> 
-> It is casting a 32-bit integer pointer to a 64-bit unsigned long
-> pointer. There are two problems here. First, the 32-bit pointer address
-> may not be 64-bit aligned. Secondly, it is accessing an extra 4 bytes.
-> 
-> This is fixed by changing the bar_mask type to unsigned long.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
+> In out-of-band feedback from Al, he's pointed out a much cleaner
+> approach: do the work on the "current" side. i.e. current is stopped
+> in __seccomp_filter in the case SECCOMP_RET_USER_NOTIFY. Instead of
+> having the ioctl-handing process doing the work, have it done on the
+> other side. This may cause some additional complexity on the ioctl
+> return path, but it solves both this problem and the "ptrace attach"
+> issue: have the work delayed until "current" gets caught by seccomp.
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+So this is pretty much what we had in v6 (a one fd version, but the
+idea is the same). The biggest issue is that in the case of e.g.
+socketpair(), the fd values need to be written somewhere in the task's
+memory, which means they need to be known before the response is sent.
+If we have to wait until we're back in the task's context to install
+them, we can't know the fd values.
+
+V6 implementation: https://lkml.org/lkml/2018/9/6/773
+
+Tycho
