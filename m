@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A796C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BCFC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D6C5216E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02FA221733
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:09:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n/uSFHt6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D6C5216E3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvmFn6I5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FA221733
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbeI1IaV (ORCPT
+        id S1728920AbeI1Ia1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:30:21 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34119 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728720AbeI1IaU (ORCPT
+        Fri, 28 Sep 2018 04:30:27 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43159 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbeI1Ia0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:30:20 -0400
-Received: by mail-qt1-f193.google.com with SMTP id x23-v6so5084871qtr.1;
-        Thu, 27 Sep 2018 19:08:59 -0700 (PDT)
+        Fri, 28 Sep 2018 04:30:26 -0400
+Received: by mail-qt1-f195.google.com with SMTP id q41-v6so231120qtq.10;
+        Thu, 27 Sep 2018 19:09:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FnsE+PwbSYT7Ik4sfBLqTvLMfucbH50GCrBzd4xVqgg=;
-        b=n/uSFHt6d+HCUETD/614yqwcizWwVLls342kxJhg7jvzKajBcriywXtRgekX3nkOLb
-         ACtKZCqOmYCX47uywr+QcDecfTemGUKAeroLZlgV7T1iIZBGhbPCHwOenZyI6o7CHHBP
-         2C5KTzrn6qnJLESQ5YDu5X9CSCDoPHytvHu/yIZBlsdgWaJSWSL8nxQS36jSjIPpuCbX
-         QyMEK5kxb9LMPJB2vaRhr5xO2U9m3U9nBAQy9l8uCFHqpkDqu0C6a7qXk7rwIM7fP0o4
-         iJupUc4+1P23OxonbcvIrioDXN+CAogQcOlNL9FpbzVR4b8DT7dIRzwWcKI+pqSj+68j
-         JM6Q==
+        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
+        b=CvmFn6I5WJhu5ZjswWU6NzsS8X94KzBnve8IPgf+Qo6+pGu2PExO5XGt9GjYlBuI6f
+         yB0zavI67z3Rr315H9OjdoAxzOXkapemDB+UbEQ4nR7uWyDe5kyOwt3G4Hk5p3yhbDC7
+         VFzi5S5oBin74hhJBjZrfFraRA8Xk7CZCc6MMPDptY+iI7gjh2tqqWEOTmbYvlkjW74v
+         Przjh5jnrARDJ/euhODiw8YiBOw0ToWTNDFMM5SSONXmROOfa/oOUaT94qADuvKOiPNJ
+         BDJ9sMRmwUHNSEUCAQMqeY7CJG90IDiOzZ+87daoHoqM/jclAfWRTnTrIioyRDLSCg8Q
+         wn8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FnsE+PwbSYT7Ik4sfBLqTvLMfucbH50GCrBzd4xVqgg=;
-        b=FywH483DofL75a8gTF55g7AlOwoXZGkHmhLulbbTs/bt+Z6w8ktqR8tO1UHjm/kpfD
-         z7O7n8pvMuddJjl1h/d4t3ViI95SPKmHmpPneS+H2Oxn95AjiXIctrxGYq81/ZB+vh2y
-         gGJlaK2W9aw7TQ6KNIYn9XzVCvAU7zkxBBkeCCfE0wSXHh/KE9gO7REEUimBFOltLCo8
-         gDQpLA8x2APW7pQLIwJAFy+RiaHg1m0gyQiQnFqDTA6VvxvMr7u5FyJsIOQsJWsTH4xP
-         RheJR1RPHINkLbbH2wZX6PAvrxcRkIJ6mLmoNnLjUW+auo7m4GXzgXwyiC01s6ep5P43
-         tqiw==
-X-Gm-Message-State: ABuFfoirkTkOkxv6laJ/zrJ0eHLUzQ/4NdBlQawlyWQRjGY85sdld/K0
-        jT+oalOiq2i/FBxsnOc4NEc=
-X-Google-Smtp-Source: ACcGV60ofa9o4GpIHIDU2Wr4VJFAxKzxYG+RRnI2evk5IX94glLjzmF1zMR8rul47F5Qndp/EGtMPg==
-X-Received: by 2002:aed:20a3:: with SMTP id 32-v6mr10391742qtb.195.1538100539239;
-        Thu, 27 Sep 2018 19:08:59 -0700 (PDT)
+        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
+        b=Jlawu+0MZF3ZNrDGOu4VIKVNEDEhh6WpZCkOcmNafm/aVWZkdtouXpBN7D/086jUnp
+         N/kRPXp3s7bAeO0YbgEIG8M6/nNHV+gftaAa65T/XK+KnCWnjotZscMWJiCoaiW1frpE
+         FtezT6PYZYKPsY1bqLZFISEP1+SysNLYy7KPxd9P8nt3Mcnq5ZZ5OUpYdVmFn8mqfuRP
+         iPhzpHr7OHwtIps2zC9m20tBAwXQPqmGX8fZ7MOqcw1vNVWlDTNCQtTvNcdOks69XY5e
+         4FFEXAetVe9uY0ewuQqrI3azlTZnhQcSMVBHr2M5eCTg9XhovRIiJXtKMOG/Bq+Qof10
+         yckA==
+X-Gm-Message-State: ABuFfog3z5ZBhOV6LHRPwBLF9LlpTKEzk4oEozjtU6S3nf7pdPntvo6A
+        At+Z4A0e9vh2OI6ACxCKKjUVwdKf
+X-Google-Smtp-Source: ACcGV60cYOoAvibTXe4yQuqsipnRLZW5RkMJuY3DX7N4kd0h5Qo3N/FN0jP/X1Ce5LsCwIBLW8pghg==
+X-Received: by 2002:ac8:728e:: with SMTP id v14-v6mr10886397qto.126.1538100545277;
+        Thu, 27 Sep 2018 19:09:05 -0700 (PDT)
 Received: from localhost.localdomain ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id y138-v6sm731191qka.36.2018.09.27.19.08.53
+        by smtp.gmail.com with ESMTPSA id y138-v6sm731191qka.36.2018.09.27.19.08.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 19:08:58 -0700 (PDT)
+        Thu, 27 Sep 2018 19:09:04 -0700 (PDT)
 From:   =?UTF-8?q?Leonardo=20Br=C3=A1s?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     =?UTF-8?q?Leonardo=20Br=C3=A1s?= <leobras.c@gmail.com>,
@@ -73,9 +73,9 @@ Cc:     =?UTF-8?q?Leonardo=20Br=C3=A1s?= <leobras.c@gmail.com>,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH v3 4/7] drivers: zorro: Avoids building proc.o if CONFIG_ZORRO is disabled
-Date:   Thu, 27 Sep 2018 23:08:13 -0300
-Message-Id: <20180928020816.11251-5-leobras.c@gmail.com>
+Subject: [PATCH v3 5/7] drivers: s390: Avoids building drivers if ARCH is not s390.
+Date:   Thu, 27 Sep 2018 23:08:14 -0300
+Message-Id: <20180928020816.11251-6-leobras.c@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180928020816.11251-1-leobras.c@gmail.com>
 References: <20180928020816.11251-1-leobras.c@gmail.com>
@@ -87,32 +87,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoids building proc.o if 'make drivers/zorro/' is called and
-CONFIG_ZORRO is disabled, even if CONFIG_PROC_FS is enabled.
+Avoids building s390 drivers if 'make drivers/s390/' is called but
+ARCH is not s390.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/zorro/Makefile | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/s390/Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/zorro/Makefile b/drivers/zorro/Makefile
-index b360ac4ea846..d580f9f08e0a 100644
---- a/drivers/zorro/Makefile
-+++ b/drivers/zorro/Makefile
-@@ -3,9 +3,10 @@
- # Makefile for the Zorro bus specific drivers.
+diff --git a/drivers/s390/Makefile b/drivers/s390/Makefile
+index a863b0462b43..0575f02dba45 100644
+--- a/drivers/s390/Makefile
++++ b/drivers/s390/Makefile
+@@ -3,7 +3,7 @@
+ # Makefile for the S/390 specific device drivers
  #
  
--obj-$(CONFIG_ZORRO)	+= zorro.o zorro-driver.o zorro-sysfs.o
--obj-$(CONFIG_PROC_FS)	+= proc.o
--obj-$(CONFIG_ZORRO_NAMES) +=  names.o
-+obj-$(CONFIG_ZORRO) 		:= zorro_all.o
-+zorro_all-y			+= zorro.o zorro-driver.o zorro-sysfs.o
-+zorro_all-$(CONFIG_ZORRO_NAMES) += names.o
-+zorro_all-$(CONFIG_PROC_FS)	+= proc.o
- 
- hostprogs-y 		:= gen-devlist
- 
+-obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
+-
+-drivers-y += drivers/s390/built-in.a
+-
++ifeq ($(ARCH),s390)
++	obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
++	drivers-y += drivers/s390/built-in.a
++endif
 -- 
 2.19.0
 
