@@ -6,115 +6,150 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47BBC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FD8C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A101D206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:21:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A101D206B6
+	by mail.kernel.org (Postfix) with ESMTP id 1A6E3206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:21:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6E3206B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbeI2Frb (ORCPT
+        id S1727667AbeI2Frd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:47:31 -0400
-Received: from anholt.net ([50.246.234.109]:45446 "EHLO anholt.net"
+        Sat, 29 Sep 2018 01:47:33 -0400
+Received: from anholt.net ([50.246.234.109]:45454 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbeI2Frb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:47:31 -0400
+        id S1726492AbeI2Frc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:47:32 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 1427D10A1AF1;
-        Fri, 28 Sep 2018 16:21:30 -0700 (PDT)
+        by anholt.net (Postfix) with ESMTP id 1D73210A1AF0;
+        Fri, 28 Sep 2018 16:21:31 -0700 (PDT)
 X-Virus-Scanned: Debian amavisd-new at anholt.net
 Received: from anholt.net ([127.0.0.1])
         by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id DkX1X_iNQ64i; Fri, 28 Sep 2018 16:21:28 -0700 (PDT)
+        with LMTP id oap7_UIFLlNK; Fri, 28 Sep 2018 16:21:28 -0700 (PDT)
 Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 0253310A1504;
+        by anholt.net (Postfix) with ESMTP id EB10110A0414;
         Fri, 28 Sep 2018 16:21:27 -0700 (PDT)
 Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id DDF462FE1B40; Fri, 28 Sep 2018 16:21:26 -0700 (PDT)
+        id E4BB52FE1B3F; Fri, 28 Sep 2018 16:21:26 -0700 (PDT)
 From:   Eric Anholt <eric@anholt.net>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-kernel@vger.kernel.org, boris.brezillon@bootlin.com,
         Eric Anholt <eric@anholt.net>
-Subject: [PATCH 1/4] drm/v3d: Fix a use-after-free race accessing the scheduler's fences.
-Date:   Fri, 28 Sep 2018 16:21:23 -0700
-Message-Id: <20180928232126.4332-1-eric@anholt.net>
+Subject: [PATCH 2/4] drm/v3d: Add a little debugfs entry for measuring the core clock.
+Date:   Fri, 28 Sep 2018 16:21:24 -0700
+Message-Id: <20180928232126.4332-2-eric@anholt.net>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180928232126.4332-1-eric@anholt.net>
+References: <20180928232126.4332-1-eric@anholt.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Once we push the job, the scheduler could run it and free it.  So, if
-we want to reference their fences, we need to grab them before then.
-I haven't seen this happen in many days of conformance test runtime,
-but let's still close the race.
+This adds just enough performance counter support to measure the
+clock.  We don't have linux kernel drivers for the clock driving the
+HW, and this was useful for determining that the V3D HW is running on
+a slow clock, not that the driver was slow.
 
 Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
 ---
- drivers/gpu/drm/v3d/v3d_drv.h | 5 +++++
- drivers/gpu/drm/v3d/v3d_gem.c | 8 ++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/v3d/v3d_debugfs.c | 35 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/v3d/v3d_regs.h    | 30 ++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-index 5042573e97f4..83c55ab6e1c0 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.h
-+++ b/drivers/gpu/drm/v3d/v3d_drv.h
-@@ -204,6 +204,11 @@ struct v3d_exec_info {
- 	 */
- 	struct dma_fence *bin_done_fence;
+diff --git a/drivers/gpu/drm/v3d/v3d_debugfs.c b/drivers/gpu/drm/v3d/v3d_debugfs.c
+index 4db62c545748..d48008adb085 100644
+--- a/drivers/gpu/drm/v3d/v3d_debugfs.c
++++ b/drivers/gpu/drm/v3d/v3d_debugfs.c
+@@ -176,9 +176,44 @@ static int v3d_debugfs_bo_stats(struct seq_file *m, void *unused)
+ 	return 0;
+ }
  
-+	/* Fence for when the scheduler considers the render to be
-+	 * done, for when the BOs reservations should be complete.
-+	 */
-+	struct dma_fence *render_done_fence;
++static int v3d_measure_clock(struct seq_file *m, void *unused)
++{
++	struct drm_info_node *node = (struct drm_info_node *)m->private;
++	struct drm_device *dev = node->minor->dev;
++	struct v3d_dev *v3d = to_v3d_dev(dev);
++	uint32_t cycles;
++	int core = 0;
++	int measure_ms = 1000;
 +
- 	struct kref refcount;
- 
- 	/* This is the array of BOs that were looked up at the start of exec. */
-diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-index e1fcbb4cd0ae..c98fbfbdb68e 100644
---- a/drivers/gpu/drm/v3d/v3d_gem.c
-+++ b/drivers/gpu/drm/v3d/v3d_gem.c
-@@ -209,7 +209,7 @@ v3d_flush_caches(struct v3d_dev *v3d)
- static void
- v3d_attach_object_fences(struct v3d_exec_info *exec)
- {
--	struct dma_fence *out_fence = &exec->render.base.s_fence->finished;
-+	struct dma_fence *out_fence = exec->render_done_fence;
- 	struct v3d_bo *bo;
- 	int i;
- 
-@@ -409,6 +409,7 @@ v3d_exec_cleanup(struct kref *ref)
- 	dma_fence_put(exec->render.done_fence);
- 
- 	dma_fence_put(exec->bin_done_fence);
-+	dma_fence_put(exec->render_done_fence);
- 
- 	for (i = 0; i < exec->bo_count; i++)
- 		drm_gem_object_put_unlocked(&exec->bo[i]->base);
-@@ -574,6 +575,9 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	if (ret)
- 		goto fail_unreserve;
- 
-+	exec->render_done_fence =
-+		dma_fence_get(&exec->render.base.s_fence->finished);
++	if (v3d->ver >= 40) {
++		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_SRC_0_3,
++			       V3D_SET_FIELD(V3D_PCTR_CYCLE_COUNT,
++					     V3D_PCTR_S0));
++		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_CLR, 1);
++		V3D_CORE_WRITE(core, V3D_V4_PCTR_0_EN, 1);
++	} else {
++		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_PCTRS0,
++			       V3D_PCTR_CYCLE_COUNT);
++		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_CLR, 1);
++		V3D_CORE_WRITE(core, V3D_V3_PCTR_0_EN,
++			       V3D_V3_PCTR_0_EN_ENABLE |
++			       1);
++	}
++	msleep(measure_ms);
++	cycles = V3D_CORE_READ(core, V3D_PCTR_0_PCTR0);
 +
- 	kref_get(&exec->refcount); /* put by scheduler job completion */
- 	drm_sched_entity_push_job(&exec->render.base,
- 				  &v3d_priv->sched_entity[V3D_RENDER]);
-@@ -587,7 +591,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	sync_out = drm_syncobj_find(file_priv, args->out_sync);
- 	if (sync_out) {
- 		drm_syncobj_replace_fence(sync_out,
--					  &exec->render.base.s_fence->finished);
-+					  exec->render_done_fence);
- 		drm_syncobj_put(sync_out);
- 	}
++	seq_printf(m, "cycles: %d (%d.%d Mhz)\n",
++		   cycles,
++		   cycles / (measure_ms * 1000),
++		   (cycles / (measure_ms * 100)) % 10);
++
++	return 0;
++}
++
+ static const struct drm_info_list v3d_debugfs_list[] = {
+ 	{"v3d_ident", v3d_v3d_debugfs_ident, 0},
+ 	{"v3d_regs", v3d_v3d_debugfs_regs, 0},
++	{"measure_clock", v3d_measure_clock, 0},
+ 	{"bo_stats", v3d_debugfs_bo_stats, 0},
+ };
  
+diff --git a/drivers/gpu/drm/v3d/v3d_regs.h b/drivers/gpu/drm/v3d/v3d_regs.h
+index 854046565989..c3a5e4e44f73 100644
+--- a/drivers/gpu/drm/v3d/v3d_regs.h
++++ b/drivers/gpu/drm/v3d/v3d_regs.h
+@@ -267,6 +267,36 @@
+ # define V3D_PTB_BXCF_RWORDERDISA                      BIT(1)
+ # define V3D_PTB_BXCF_CLIPDISA                         BIT(0)
+ 
++#define V3D_V3_PCTR_0_EN                               0x00674
++#define V3D_V3_PCTR_0_EN_ENABLE                        BIT(31)
++#define V3D_V4_PCTR_0_EN                               0x00650
++/* When a bit is set, resets the counter to 0. */
++#define V3D_V3_PCTR_0_CLR                              0x00670
++#define V3D_V4_PCTR_0_CLR                              0x00654
++#define V3D_PCTR_0_OVERFLOW                            0x00658
++
++#define V3D_V3_PCTR_0_PCTRS0                           0x00684
++#define V3D_V3_PCTR_0_PCTRS15                          0x00660
++#define V3D_V3_PCTR_0_PCTRSX(x)                        (V3D_V3_PCTR_0_PCTRS0 + \
++							4 * (x))
++/* Each src reg muxes four counters each. */
++#define V3D_V4_PCTR_0_SRC_0_3                          0x00660
++#define V3D_V4_PCTR_0_SRC_28_31                        0x0067c
++# define V3D_PCTR_S0_MASK                              V3D_MASK(6, 0)
++# define V3D_PCTR_S0_SHIFT                             0
++# define V3D_PCTR_S1_MASK                              V3D_MASK(14, 8)
++# define V3D_PCTR_S1_SHIFT                             8
++# define V3D_PCTR_S2_MASK                              V3D_MASK(22, 16)
++# define V3D_PCTR_S2_SHIFT                             16
++# define V3D_PCTR_S3_MASK                              V3D_MASK(30, 24)
++# define V3D_PCTR_S3_SHIFT                             24
++# define V3D_PCTR_CYCLE_COUNT                          32
++
++/* Output values of the counters. */
++#define V3D_PCTR_0_PCTR0                               0x00680
++#define V3D_PCTR_0_PCTR31                              0x006fc
++#define V3D_PCTR_0_PCTRX(x)                            (V3D_PCTR_0_PCTR0 + \
++							4 * (x))
+ #define V3D_GMP_STATUS                                 0x00800
+ # define V3D_GMP_STATUS_GMPRST                         BIT(31)
+ # define V3D_GMP_STATUS_WR_COUNT_MASK                  V3D_MASK(30, 24)
 -- 
 2.18.0
 
