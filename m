@@ -2,173 +2,171 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2BFC004D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 375BAC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49D5206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:49:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvOUnICT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49D5206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EF6B8206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:49:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6B8206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbeI2EPY (ORCPT
+        id S1726725AbeI2EP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:15:24 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44062 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbeI2EPX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:15:23 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k21-v6so5134500pff.11;
-        Fri, 28 Sep 2018 14:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=npQ3xWQWGGJNGPKbAJA6+96Rj377BwfjmaODrJXnkRw=;
-        b=DvOUnICTFGnpyXAE4pcg5fSfEPIH5BgTqeFAy735fAU3oknltScFGGfieUD+cOVPLb
-         en6k5mP8QKLz6z6cxDsLJhlkDurmmZu6ySdz1waJWY91fh7tr1pgsIiyAMHz3Y/xBWJ0
-         hDmKleWYuOF0YeDmtQ54TFEsEHNS3akW1Et4H2Pra1nCVddys286bZHd9lBQXuK/0toJ
-         NdvKo+4jQaOCV8sSmW7x0d3pPzHytREkRy+7VtcZTB4wOHbuKCQh4OyGBfs2q+hRo/+D
-         WSk37CA14VwXswv9F7H6gTGRhpbs/30+ZxF9s60iX/qv4W5hgO/t/LC5wWS8M4i6m31R
-         +ZXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=npQ3xWQWGGJNGPKbAJA6+96Rj377BwfjmaODrJXnkRw=;
-        b=ONF9vBpY7gilRY5Rgo/LPxiTNLL6Ln6ZnZNJ07StPOsO5gBqQ12ShWsf+8Rg2FJMFv
-         W44uNkgVrIG6SIuzrLaHwhOGeXYIE1XraTEca5NLUN7dqvDB78SvLik44nSzjAWvO7Ki
-         HoQs/AesajHlIxHfs62GmN7qyxsyqWwxuOiovHDR2pUSIfQJtrmQrzoW0wCFIGgL5zzy
-         Oyw/rsiyvZ+rDP3V506V74moL7ouT9bbW05Rcjrg/KWE7PUxAoVLLHHEuXcZjCDxg9w1
-         6t3pYBMDli9pyFJlJ0hnOR/aJtVFqHVg/Yz7PoAyNETlIxiAk6r4017b4uXC6PspmC2H
-         jrkQ==
-X-Gm-Message-State: ABuFfohV8+/80gu6sZ3o2P9KfFuQ0a+n9ey/erSqm9udRlgGNUNsgbJi
-        4eTGRrNg1Tb66ot8nDkjjaU=
-X-Google-Smtp-Source: ACcGV63BHsG1aW5MB1SaSkbZvzbYXLK2HlzHV2B3tjJSbCuyogre9kB75HaJgPhICJZKg8becSU49w==
-X-Received: by 2002:a63:5558:: with SMTP id f24-v6mr453664pgm.37.1538171382266;
-        Fri, 28 Sep 2018 14:49:42 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id r1-v6sm136842pgo.81.2018.09.28.14.49.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 14:49:41 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jdelvare@suse.com, linux@roeck-us.net
-Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] hwmon: ina3221: Add suspend and resume functions
-Date:   Fri, 28 Sep 2018 14:49:21 -0700
-Message-Id: <20180928214921.11528-3-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180928214921.11528-1-nicoleotsuka@gmail.com>
-References: <20180928214921.11528-1-nicoleotsuka@gmail.com>
+        Sat, 29 Sep 2018 00:15:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54894 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbeI2EPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 00:15:25 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 87949300272B;
+        Fri, 28 Sep 2018 21:49:44 +0000 (UTC)
+Received: from redhat.com (ovpn-121-115.rdu2.redhat.com [10.10.121.115])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 28B12600C0;
+        Fri, 28 Sep 2018 21:49:39 +0000 (UTC)
+Date:   Fri, 28 Sep 2018 17:49:37 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Benvenuti <benve@cisco.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>
+Subject: Re: [PATCH 0/4] get_user_pages*() and RDMA: first steps
+Message-ID: <20180928214934.GA3265@redhat.com>
+References: <20180928053949.5381-1-jhubbard@nvidia.com>
+ <20180928152958.GA3321@redhat.com>
+ <4c884529-e2ff-3808-9763-eb0e71f5a616@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4c884529-e2ff-3808-9763-eb0e71f5a616@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 28 Sep 2018 21:49:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depending on the hardware design, an INA3221 chip might lose
-its power during system suspend/resume. So this patch adds
-a pair of suspend and resume functions to cache the register
-values including config register value and limit settings.
+On Fri, Sep 28, 2018 at 12:06:12PM -0700, John Hubbard wrote:
+> On 9/28/18 8:29 AM, Jerome Glisse wrote:
+> > On Thu, Sep 27, 2018 at 10:39:45PM -0700, john.hubbard@gmail.com wrote:
+> >> From: John Hubbard <jhubbard@nvidia.com>
+> >>
+> >> Hi,
+> >>
+> >> This short series prepares for eventually fixing the problem described
+> >> in [1], and is following a plan listed in [2].
+> >>
+> >> I'd like to get the first two patches into the -mm tree.
+> >>
+> >> Patch 1, although not technically critical to do now, is still nice to have,
+> >> because it's already been reviewed by Jan, and it's just one more thing on the
+> >> long TODO list here, that is ready to be checked off.
+> >>
+> >> Patch 2 is required in order to allow me (and others, if I'm lucky) to start
+> >> submitting changes to convert all of the callsites of get_user_pages*() and
+> >> put_page().  I think this will work a lot better than trying to maintain a
+> >> massive patchset and submitting all at once.
+> >>
+> >> Patch 3 converts infiniband drivers: put_page() --> put_user_page(). I picked
+> >> a fairly small and easy example.
+> >>
+> >> Patch 4 converts a small driver from put_page() --> release_user_pages(). This
+> >> could just as easily have been done as a change from put_page() to
+> >> put_user_page(). The reason I did it this way is that this provides a small and
+> >> simple caller of the new release_user_pages() routine. I wanted both of the
+> >> new routines, even though just placeholders, to have callers.
+> >>
+> >> Once these are all in, then the floodgates can open up to convert the large
+> >> number of get_user_pages*() callsites.
+> >>
+> >> [1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+> >>
+> >> [2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
+> >>     Proposed steps for fixing get_user_pages() + DMA problems.
+> >>
+> > 
+> > So the solution is to wait (possibly for days, months, years) that the
+> > RDMA or GPU which did GUP and do not have mmu notifier, release the page
+> > (or put_user_page()) ?
+> > 
+> > This sounds bads. Like i said during LSF/MM there is no way to properly
+> > fix hardware that can not be preempted/invalidated ... most GPU are fine.
+> > Few RDMA are fine, most can not ...
+> > 
+> 
+> Hi Jerome,
+> 
+> Personally, I'm think that this particular design is the best one I've seen
+> so far, but if other, better designs show up, than let's do those instead, sure.
+> 
+> I guess your main concern is that this might take longer than other approaches.
+> 
+> As for time frame, perhaps I made it sound worse than it really is. I have patches
+> staged already for all of the simpler call sites, and for about half of the more
+> complicated ones. The core solution in mm is not large, and we've gone through a 
+> few discussion threads about it back in July or so, so it shouldn't take too long
+> to perfect it.
+> 
+> So it may be a few months to get it all reviewed and submitted, but I don't
+> see "years" by any stretch.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/hwmon/ina3221.c | 54 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+Bit of miss-comprehention there :) By month, years, i am talking about
+the time it will take for some user to release the pin they have on the
+page. Not the time to push something upstream.
 
-diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index cfe65ff01051..26f66f728b27 100644
---- a/drivers/hwmon/ina3221.c
-+++ b/drivers/hwmon/ina3221.c
-@@ -91,11 +91,13 @@ static const unsigned int register_channel[] = {
-  * @regmap: Register map of the device
-  * @fields: Register fields of the device
-  * @shunt_resistors: Array of resistor values per channel
-+ * @reg_config: Register value of INA3221_CONFIG
-  */
- struct ina3221_data {
- 	struct regmap *regmap;
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	int shunt_resistors[INA3221_NUM_CHANNELS];
-+	u32 reg_config;
- };
- 
- static int ina3221_read_value(struct ina3221_data *ina, unsigned int reg,
-@@ -415,8 +417,59 @@ static int ina3221_probe(struct i2c_client *client,
- 		return PTR_ERR(hwmon_dev);
- 	}
- 
-+	dev_set_drvdata(dev, ina);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM
-+static int ina3221_suspend(struct device *dev)
-+{
-+	struct ina3221_data *ina = dev_get_drvdata(dev);
-+	int ret;
-+
-+	/* Save config register value and enable cache-only */
-+	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
-+	if (ret)
-+		return ret;
-+
-+	regcache_cache_only(ina->regmap, true);
-+	regcache_mark_dirty(ina->regmap);
-+
-+	return 0;
-+}
-+
-+static int ina3221_resume(struct device *dev)
-+{
-+	struct ina3221_data *ina = dev_get_drvdata(dev);
-+	int ret;
-+
-+	regcache_cache_only(ina->regmap, false);
-+
-+	/* Software reset the chip */
-+	ret = regmap_field_write(ina->fields[F_RST], true);
-+	if (ret) {
-+		dev_err(dev, "Unable to reset device\n");
-+		return ret;
-+	}
-+
-+	/* Restore cached register values to hardware */
-+	ret = regcache_sync(ina->regmap);
-+	if (ret)
-+		return ret;
-+
-+	/* Restore config register value to hardware */
-+	ret = regmap_write(ina->regmap, INA3221_CONFIG, ina->reg_config);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
-+#endif
-+
-+static const struct dev_pm_ops ina3221_pm = {
-+	SET_SYSTEM_SLEEP_PM_OPS(ina3221_suspend, ina3221_resume)
-+};
- 
- static const struct of_device_id ina3221_of_match_table[] = {
- 	{ .compatible = "ti,ina3221", },
-@@ -435,6 +488,7 @@ static struct i2c_driver ina3221_i2c_driver = {
- 	.driver = {
- 		.name = INA3221_DRIVER_NAME,
- 		.of_match_table = ina3221_of_match_table,
-+		.pm = &ina3221_pm,
- 	},
- 	.id_table = ina3221_ids,
- };
--- 
-2.17.1
+AFAICT RDMA driver do not have any upper bound on how long they can hold
+a page reference and thus your solution can leave one CPU core stuck for
+as long as the pin is active. Worst case might lead to all CPU core waiting
+for something that might never happen.
 
+> 
+> 
+> > If it is just about fixing the set_page_dirty() bug then just looking at
+> > refcount versus mapcount should already tell you if you can remove the
+> > buffer head from the page or not. Which would fix the bug without complex
+> > changes (i still like the put_user_page just for symetry with GUP).
+> > 
+> 
+> It's about more than that. The goal is to make it safe and correct to
+> use a non-CPU device to read and write to "pinned" memory, especially when
+> that memory is backed by a file system.
+> 
+> I recall there were objections to just narrowly fixing the set_page_dirty()
+> bug, because the underlying problem is large and serious. So here we are.
+
+Except that you can not solve that issue without proper hardware. GPU are
+fine. RDMA are broken except the mellanox5 hardware which can invalidate
+at anytime its page table thus allowing to write protect the page at any
+time.
+
+With the solution put forward here you can potentialy wait _forever_ for
+the driver that holds a pin to drop it. This was the point i was trying to
+get accross during LSF/MM. You can not fix broken hardware that decided to
+use GUP to do a feature they can't reliably do because their hardware is
+not capable to behave.
+
+Because code is easier here is what i was meaning:
+
+https://cgit.freedesktop.org/~glisse/linux/commit/?h=gup&id=a5dbc0fe7e71d347067579f13579df372ec48389
+https://cgit.freedesktop.org/~glisse/linux/commit/?h=gup&id=01677bc039c791a16d5f82b3ef84917d62fac826
+
+Cheers,
+Jérôme
