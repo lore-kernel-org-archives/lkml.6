@@ -2,156 +2,125 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A48C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33F3C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC55206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DC55206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 8792F206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U1c8a2if"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8792F206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbeI2EUV (ORCPT
+        id S1727347AbeI2EUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:20:21 -0400
-Received: from smtprelay0189.hostedemail.com ([216.40.44.189]:45141 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726353AbeI2EUU (ORCPT
+        Sat, 29 Sep 2018 00:20:32 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45903 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbeI2EUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:20:20 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id A31441802B160;
-        Fri, 28 Sep 2018 21:54:38 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: net67_629813cc37526
-X-Filterd-Recvd-Size: 5128
-Received: from joe-laptop.perches.com (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf19.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:54:37 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jason Low <jason.low2@hpe.com>, Ingo Molnar <mingo@kernel.org>
-Subject: Bad MAINTAINERS pattern in section 'LOCKING PRIMITIVES'
-Date:   Fri, 28 Sep 2018 14:54:36 -0700
-Message-Id: <20180928215436.29842-1-joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Sat, 29 Sep 2018 00:20:31 -0400
+Received: by mail-ot1-f66.google.com with SMTP id b43-v6so3021517otd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 14:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iWNYkMpphDJ+ndlDpjBFdzoXG3ztgAAIwahjiBoQgK8=;
+        b=U1c8a2ifd0MJ8xwM/7igFOZ7ZdbgmB0IkD22MecjWeTKzyam4jK8d14xfPtYor7Dfn
+         YYbbsaxcKquqf3wUQPW2u1e0EQZSq7mkE0clojsniJhnaEnoiWedq81sAlQ0+EG3gS7q
+         vwGRSPv/S9PFlvLuUgvpGGavJlCKO/7PlVMDr4TaPkbHDTBuISnvvfgNTQRjdQ9c5ONs
+         zzMIOJ0lLm6CBqpft4wK+U1EOHxPP1Ji25iPWDkUUwZP183hzD7VnG5bokSd86+MBRZS
+         josL7XQ0kZSt6IDu/MBkCyAIiaJYB8D+nLbwZkI38QajIuXgI3h4T/COHofO+PBRUX1U
+         wFEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iWNYkMpphDJ+ndlDpjBFdzoXG3ztgAAIwahjiBoQgK8=;
+        b=aQjjhLBvjZ2Ol9pU57/pYupxpHGA8OUT4GBI6/hZzwgG58/el+aPSVjCYM3sje6LRS
+         48+Q4Hn8y9L0CLEfxbp18XbsWJ4F4+o/ciKP8bLUOR8ojLbVqK50l2jxpaNpZ18ZqHSx
+         i/4ISnwQqPZVEsBvmpzx+IOTFWpr5C2GbzGyzq8osg/5qxpWSLpmC433ga1G7FbeJa0T
+         hgGoLST8fjUzpKloEPJ7lLNw3uRU6w3nrpj1uK8O+vp5RA02jrgM6Df62Ya/XM25RdIS
+         7QT2elVfzqQ5hJokbvK/vgmDr/1DGksDVqj9dLS8BXiB9hDnUSzgZyA99OzgVv8LVwic
+         J0Eg==
+X-Gm-Message-State: ABuFfoiUM8fIbA1jBtZM32aCbLYotdGe14eyAxueN+YjCv0B6HNcZVvk
+        hb8NCioS0d/HkiTHcMLyjW4l0upq1cgKWwn/yi3vcg==
+X-Google-Smtp-Source: ACcGV60Ap8iYmoltzz7AdyUrgReDWgETYOEnYVVi8mke5g5bMNv49QqnoGHofFNwLi3/ePSZyCuA6tKzAHNL3ULKpQc=
+X-Received: by 2002:a9d:5011:: with SMTP id a17-v6mr388828oth.198.1538171689021;
+ Fri, 28 Sep 2018 14:54:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180928154648.6320-1-tycho@tycho.ws> <20180928154648.6320-3-tycho@tycho.ws>
+ <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com>
+ <20180928205652.GC18045@cisco.lan> <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
+ <20180928213557.GD18045@cisco.lan>
+In-Reply-To: <20180928213557.GD18045@cisco.lan>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 28 Sep 2018 23:54:22 +0200
+Message-ID: <CAG48ez18dg1dZ-jDQjDQ6zmo7R54SHJYYAZpunFLojOChwZ=9g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please fix this defect appropriately.
+On Fri, Sep 28, 2018 at 11:36 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> On Fri, Sep 28, 2018 at 11:10:48PM +0200, Jann Horn wrote:
+> > On Fri, Sep 28, 2018 at 10:56 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > >
+> > > On Fri, Sep 28, 2018 at 10:33:34PM +0200, Jann Horn wrote:
+> > > > On Fri, Sep 28, 2018 at 5:47 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > > > As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
+> > > > > the ptrace code that can inspect a filter of another process. Let's
+> > > > > introduce read locking into the two ptrace accesses so that we don't race.
+> > > >
+> > > > Hmm. Is that true? The ptrace code uses get_nth_filter(), which holds
+> > > > the siglock while grabbing the seccomp filter and bumping its
+> > > > refcount. And TSYNC happens from seccomp_set_mode_filter(), which
+> > > > takes the siglock. So this looks okay to me?
+> > >
+> > > Oh, yes, you're right. So I guess we should just change the comment to
+> > > say we're using siglock to represent the read lock.
+> >
+> > Hmm... actually, looking at this closer, I think you only need the
+> > siglock for writing. As far as I can tell, any read (no matter if
+> > current or non-current) can just use READ_ONCE(), because once a
+> > seccomp filter is in a task's seccomp filter chain, it can't be freed
+> > until the task reaches free_task() and calls put_seccomp_filter() from
+> > there. And if the task whose seccomp filter you're trying to read can
+> > reach free_task(), you have bigger problems.
+>
+> Ok; looks like get_nth_filter() took the siglock anyway. Since we get
+> the filters in these two functions in get_nth_filter(), I think it's
+> enough just to just,
+>
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index f65d47650ac1..79d833ed4c34 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -1001,7 +1001,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       orig = task->seccomp.filter;
+> +       orig = READ_ONCE(task->seccomp.filter);
+>         __get_seccomp_filter(orig);
+>         spin_unlock_irq(&task->sighand->siglock);
 
-linux-next MAINTAINERS section:
+Huh? Now you're holding the siglock *and* you're using READ_ONCE()?
+I'm not sure what you're trying to accomplish here.
 
-	8566	LOCKING PRIMITIVES
-	8567	M:	Peter Zijlstra <peterz@infradead.org>
-	8568	M:	Ingo Molnar <mingo@redhat.com>
-	8569	M:	Will Deacon <will.deacon@arm.com>
-	8570	L:	linux-kernel@vger.kernel.org
-	8571	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-	8572	S:	Maintained
-	8573	F:	Documentation/locking/
-	8574	F:	include/linux/lockdep.h
-	8575	F:	include/linux/spinlock*.h
-	8576	F:	arch/*/include/asm/spinlock*.h
-	8577	F:	include/linux/rwlock*.h
-	8578	F:	include/linux/mutex*.h
--->	8579	F:	arch/*/include/asm/mutex*.h
-	8580	F:	include/linux/rwsem*.h
-	8581	F:	arch/*/include/asm/rwsem.h
-	8582	F:	include/linux/seqlock.h
-	8583	F:	lib/locking*.[ch]
-	8584	F:	kernel/locking/
-	8585	X:	kernel/locking/locktorture.c
-
-Commit that introduced this:
-
-commit d4c3be70ca0e7a1ae308bedd3462900c61e97b11
- Author: Ingo Molnar <mingo@kernel.org>
- Date:   Thu Jun 9 12:20:25 2016 +0200
- 
-     MAINTAINERS: Update locking tree description and file patterns
-     
-     Update the file patterns, the Git tree URI and also widen the
-     scope from 'LOCKDEP and LOCKSTAT' to 'LOCKING PRIMITIVES'.
-     
-     Signed-off-by: Ingo Molnar <mingo@kernel.org>
-     Cc: Peter Zijlstra <peterz@infradead.org>
-     Cc: Linus Torvalds <torvalds@linux-foundation.org>
-     Cc: Andrew Morton <akpm@linux-foundation.org>
-     Cc: Thomas Gleixner <tglx@linutronix.de>
-     Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-     Cc: linux-kernel@vger.kernel.org
- 
-  MAINTAINERS | 16 ++++++++++++----
-  1 file changed, 12 insertions(+), 4 deletions(-)
-
-Last commit with arch/*/include/asm/mutex*.h
-
-commit 890658b7ab48d1362a0362df842cecc73c83146f
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Tue Aug 23 13:36:04 2016 +0200
-
-    locking/mutex: Kill arch specific code
-    
-    Its all generic atomic_long_t stuff now.
-    
-    Tested-by: Jason Low <jason.low2@hpe.com>
-    Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-    Cc: Andrew Morton <akpm@linux-foundation.org>
-    Cc: Linus Torvalds <torvalds@linux-foundation.org>
-    Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: Thomas Gleixner <tglx@linutronix.de>
-    Cc: linux-arch@vger.kernel.org
-    Cc: linux-kernel@vger.kernel.org
-    Signed-off-by: Ingo Molnar <mingo@kernel.org>
-
- arch/alpha/include/asm/mutex.h      |   9 ---
- arch/arc/include/asm/mutex.h        |  18 -----
- arch/arm/include/asm/mutex.h        |  21 ------
- arch/arm64/include/asm/Kbuild       |   1 -
- arch/avr32/include/asm/mutex.h      |   9 ---
- arch/blackfin/include/asm/Kbuild    |   1 -
- arch/c6x/include/asm/mutex.h        |   6 --
- arch/cris/include/asm/mutex.h       |   9 ---
- arch/frv/include/asm/mutex.h        |   9 ---
- arch/h8300/include/asm/mutex.h      |   9 ---
- arch/hexagon/include/asm/mutex.h    |   8 ---
- arch/ia64/include/asm/mutex.h       |  90 ------------------------
- arch/m32r/include/asm/mutex.h       |   9 ---
- arch/m68k/include/asm/Kbuild        |   1 -
- arch/metag/include/asm/Kbuild       |   1 -
- arch/microblaze/include/asm/mutex.h |   1 -
- arch/mips/include/asm/Kbuild        |   1 -
- arch/mn10300/include/asm/mutex.h    |  16 -----
- arch/nios2/include/asm/mutex.h      |   1 -
- arch/openrisc/include/asm/mutex.h   |  27 --------
- arch/parisc/include/asm/Kbuild      |   1 -
- arch/powerpc/include/asm/mutex.h    | 132 ------------------------------------
- arch/s390/include/asm/mutex.h       |   9 ---
- arch/score/include/asm/mutex.h      |   6 --
- arch/sh/include/asm/mutex-llsc.h    | 109 -----------------------------
- arch/sh/include/asm/mutex.h         |  12 ----
- arch/sparc/include/asm/Kbuild       |   1 -
- arch/tile/include/asm/Kbuild        |   1 -
- arch/um/include/asm/Kbuild          |   1 -
- arch/unicore32/include/asm/mutex.h  |  20 ------
- arch/x86/include/asm/mutex.h        |   5 --
- arch/x86/include/asm/mutex_32.h     | 110 ------------------------------
- arch/x86/include/asm/mutex_64.h     | 127 ----------------------------------
- arch/xtensa/include/asm/mutex.h     |   9 ---
- include/asm-generic/mutex-dec.h     |  88 ------------------------
- include/asm-generic/mutex-null.h    |  19 ------
- include/asm-generic/mutex-xchg.h    | 120 --------------------------------
- include/asm-generic/mutex.h         |   9 ---
- 38 files changed, 1026 deletions(-)
+> since once it's returned from get_nth_filter() we don't need to worry
+> about multiple accesses?
+>
+> Tycho
