@@ -4,424 +4,156 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4963FC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5D1C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABCC2168B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AF312168B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:32:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hthr4iIl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABCC2168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="W73+Vl3q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF312168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbeI1TzX (ORCPT
+        id S1729122AbeI1Tzs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:55:23 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39335 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728913AbeI1TzX (ORCPT
+        Fri, 28 Sep 2018 15:55:48 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51408 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeI1Tzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:55:23 -0400
-Received: by mail-io1-f66.google.com with SMTP id l7-v6so4179588iok.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 06:31:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2qcB572wm1dTQ8rmlM9Ij5ZlMEGmnOP+k2bDTQ4EWzE=;
-        b=Hthr4iIlQ8Ww5ipeyI+e5EbEkE/UVHi4jodr00A2LtF8uqcUZMggRLrxFM0IsHEChB
-         TbtXgrSws+w/L0d5/Zm7G8nEHgQ8Md0Ue4xp3L2PhCAqgG0YNVGtOzXnjPThRYTdvqfX
-         SpWP4ce0d5jiwtaNpfxrAQmbOutACi2eTFiEI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2qcB572wm1dTQ8rmlM9Ij5ZlMEGmnOP+k2bDTQ4EWzE=;
-        b=gP4CgWM6Ue96QfwBvz/j3vSBF/5tZmCJ1FVztFYDN4xan2GObfSihdX2gxqWNgJ7eQ
-         W7Y4ldE84sYOpNqM5wFpQOqoKcVg6FFsFFUBH2BMuao8rTho24ExFgZmtepIGXDVli+G
-         L6Mj03nbd2LA7n17/rO/OmOQ555Wk6eDxKC+I+zmHq6uBahEuJO3k/7M8ui30q/whPbr
-         MnsECY5x4SJiGTrl03tJAE8xQ8RuUbOFz9Cdv1PU6Agwk2sIBEXWmFNqR2KvhKo6ew3d
-         aZb1P5XTk8SNPhCDMLmZ1RHKuksK18OQ4CYH42rvPa/P59vvf+gWu7wcqqswku39Pk+9
-         e6FA==
-X-Gm-Message-State: ABuFfogJNryugP33EOgVpyRwOtmIi4frsO+oAox24aWTWg4COhIsfVN1
-        /NMNSxT4lp5NH+tNqinKBdScF+GVrCe4muOgl7cKSA==
-X-Google-Smtp-Source: ACcGV62yggPDE31VsSj3WNAvyS3/d9kvsizRxM+PoLB+OQTTXabUnzC/0G1nkfLiO4cuX4jb9mpCsDBO/ZalaFQj104=
-X-Received: by 2002:a6b:3787:: with SMTP id e129-v6mr12475414ioa.60.1538141494913;
- Fri, 28 Sep 2018 06:31:34 -0700 (PDT)
+        Fri, 28 Sep 2018 15:55:48 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8SDNeRC110827;
+        Fri, 28 Sep 2018 13:31:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=19rWMn+OcCijELCFnV/Kd1D7QHkXITp7pfNfWpn4ECI=;
+ b=W73+Vl3qVMWCbFJM9W5vhvL3Fh7oy3bI/NaqitxqF2hw2XkmYYRuKxi2Pq++HmT3yDxl
+ 5xY7MhqTPnWBRRJclcjPPXls/VFgA9dA/Ofsplvjv0zs/VgNJExV25sfjXZVadjWxp8Y
+ FCoDuqXkASqON183RmAvDKEoHfCTBK9dzPMBBBDrJpfzXLbg6MCyAugUS6XeK9mvcaIY
+ zsS0sRRxpE6x4U0LIYzJ+FsBCIVCTR01E8xvy17WWL6PHaFH9yLi76D/Ha4SZ5+2oc5T
+ 0WTCkbLeorxtl4vsrUiTT6WkNvSJMMH2GV+q9ADXrdPPjNpWXSeYwGWpx/rNlz1LHqiQ Hw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mnd5u0970-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Sep 2018 13:31:52 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8SDVkH9002359
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Sep 2018 13:31:46 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8SDVkAc019754;
+        Fri, 28 Sep 2018 13:31:46 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Sep 2018 06:31:45 -0700
+Subject: Re: [PATCH] xen/blkfront: correct purging of persistent grants
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org
+Cc:     roger.pau@citrix.com, konrad.wilk@oracle.com, axboe@kernel.dk
+References: <20180928072827.14229-1-jgross@suse.com>
+ <95e32835-426f-36c9-a86a-09563f090f22@oracle.com>
+ <772c3886-d4fe-b912-b125-a648b31a3074@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <b454645f-de15-2912-864e-18f00736013d@oracle.com>
+Date:   Fri, 28 Sep 2018 09:33:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 06:31:34
- -0700 (PDT)
-In-Reply-To: <20180921113802.26475-3-Jampala.Srikanth@cavium.com>
-References: <20180921113802.26475-1-Jampala.Srikanth@cavium.com> <20180921113802.26475-3-Jampala.Srikanth@cavium.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 28 Sep 2018 15:31:34 +0200
-Message-ID: <CAKv+Gu-XHRpuP5tOa+KkM_yzeauaGUrmjbxTHtjw2Q8odZ2Krg@mail.gmail.com>
-Subject: Re: [PATCH cryptodev-2.6 3/3] crypto: cavium/nitrox - updated debugfs information.
-To:     Srikanth Jampala <Jampala.Srikanth@cavium.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        sgadam@cavium.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <772c3886-d4fe-b912-b125-a648b31a3074@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809280136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 September 2018 at 13:38, Srikanth Jampala
-<Jampala.Srikanth@cavium.com> wrote:
-> Updated debugfs to provide device partname and frequency etc.
-> New file "stats" shows the number of requests posted, dropped and
-> completed.
->
-> Signed-off-by: Srikanth Jampala <Jampala.Srikanth@cavium.com>
-> ---
->  drivers/crypto/cavium/nitrox/Makefile         |   1 +
->  drivers/crypto/cavium/nitrox/nitrox_debugfs.c | 113 +++++++++++++++
->  drivers/crypto/cavium/nitrox/nitrox_dev.h     |  13 ++
->  drivers/crypto/cavium/nitrox/nitrox_main.c    | 129 ------------------
->  4 files changed, 127 insertions(+), 129 deletions(-)
->  create mode 100644 drivers/crypto/cavium/nitrox/nitrox_debugfs.c
->
-> diff --git a/drivers/crypto/cavium/nitrox/Makefile b/drivers/crypto/caviu=
-m/nitrox/Makefile
-> index 6fcda6b56f7e..e12954791673 100644
-> --- a/drivers/crypto/cavium/nitrox/Makefile
-> +++ b/drivers/crypto/cavium/nitrox/Makefile
-> @@ -9,3 +9,4 @@ n5pf-objs :=3D nitrox_main.o \
->         nitrox_algs.o
->
->  n5pf-$(CONFIG_PCI_IOV) +=3D nitrox_sriov.o
-> +n5pf-$(CONFIG_DEBUG_FS) +=3D nitrox_debugfs.o
-> diff --git a/drivers/crypto/cavium/nitrox/nitrox_debugfs.c b/drivers/cryp=
-to/cavium/nitrox/nitrox_debugfs.c
-> new file mode 100644
-> index 000000000000..2f1e74ea846e
-> --- /dev/null
-> +++ b/drivers/crypto/cavium/nitrox/nitrox_debugfs.c
-> @@ -0,0 +1,113 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/seq_file.h>
-> +#include <linux/debugfs.h>
-> +
-> +#include "nitrox_csr.h"
-> +#include "nitrox_dev.h"
-> +
-> +static int firmware_show(struct seq_file *s, void *v)
-> +{
-> +       struct nitrox_device *ndev =3D s->private;
-> +
-> +       seq_printf(s, "Version: %s\n", ndev->hw.fw_name);
-> +       return 0;
-> +}
-> +
-> +static int firmware_open(struct inode *inode, struct file *file)
-> +{
-> +       return single_open(file, firmware_show, inode->i_private);
-> +}
-> +
-> +static const struct file_operations firmware_fops =3D {
-> +       .owner =3D THIS_MODULE,
-> +       .open =3D firmware_open,
-> +       .read =3D seq_read,
-> +       .llseek =3D seq_lseek,
-> +       .release =3D single_release,
-> +};
-> +
-> +static int device_show(struct seq_file *s, void *v)
-> +{
-> +       struct nitrox_device *ndev =3D s->private;
-> +
-> +       seq_printf(s, "NITROX [%d]\n", ndev->idx);
-> +       seq_printf(s, "  Part Name: %s\n", ndev->hw.partname);
-> +       seq_printf(s, "  Frequency: %d MHz\n", ndev->hw.freq);
-> +       seq_printf(s, "  Device ID: 0x%0x\n", ndev->hw.device_id);
-> +       seq_printf(s, "  Revision ID: 0x%0x\n", ndev->hw.revision_id);
-> +       seq_printf(s, "  Cores: [AE=3D%u  SE=3D%u  ZIP=3D%u]\n",
-> +                  ndev->hw.ae_cores, ndev->hw.se_cores, ndev->hw.zip_cor=
-es);
-> +
-> +       return 0;
-> +}
-> +
-> +static int nitrox_open(struct inode *inode, struct file *file)
-> +{
-> +       return single_open(file, device_show, inode->i_private);
-> +}
-> +
-> +static const struct file_operations nitrox_fops =3D {
-> +       .owner =3D THIS_MODULE,
-> +       .open =3D nitrox_open,
-> +       .read =3D seq_read,
-> +       .llseek =3D seq_lseek,
-> +       .release =3D single_release,
-> +};
-> +
-> +static int stats_show(struct seq_file *s, void *v)
-> +{
-> +       struct nitrox_device *ndev =3D s->private;
-> +
-> +       seq_printf(s, "NITROX [%d] Request Statistics\n", ndev->idx);
-> +       seq_printf(s, "  Posted: %lld\n", atomic64_read(&ndev->stats.post=
-ed));
-> +       seq_printf(s, "  Completed: %lld\n",
-> +                  atomic64_read(&ndev->stats.completed));
-> +       seq_printf(s, "  Dropped: %lld\n", atomic64_read(&ndev->stats.dro=
-pped));
-> +
+On 9/28/18 9:13 AM, Juergen Gross wrote:
+> On 28/09/2018 14:45, Boris Ostrovsky wrote:
+>> On 9/28/18 3:28 AM, Juergen Gross wrote:
+>>> Commit a46b53672b2c2e3770b38a4abf90d16364d2584b ("xen/blkfront: cleanup
+>>> stale persistent grants") introduced a regression as purged persistent
+>>> grants were not pu into the list of free grants again. Correct that.
+>>>
+>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>>> ---
+>>>  drivers/block/xen-blkfront.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+>>> index a71d817e900d..429d20131c7e 100644
+>>> --- a/drivers/block/xen-blkfront.c
+>>> +++ b/drivers/block/xen-blkfront.c
+>>> @@ -2670,8 +2670,8 @@ static void purge_persistent_grants(struct blkfront_info *info)
+>>>  			list_del(&gnt_list_entry->node);
+>>>  			gnttab_end_foreign_access(gnt_list_entry->gref, 0, 0UL);
+>>>  			rinfo->persistent_gnts_c--;
+>>> -			__free_page(gnt_list_entry->page);
+>>> -			kfree(gnt_list_entry);
+>>> +			gnt_list_entry->gref = GRANT_INVALID_REF;
+>>> +			list_add_tail(&gnt_list_entry->node, &rinfo->grants);
+>> Sorry, I don't follow this. What is the purpose of removing the grant
+>> from rinfo->grants list with list_del() and then adding it back with
+>> list_add_tail()?
+> The persistent grants are at the list head and the non-persistent ones
+> at the tail.
 
-This gives me
+Oh, I didn't realize that. But isn't that an optimization (and so not
+following this rule should not cause errors)?
 
-/home/ard/linux/drivers/crypto/cavium/nitrox/nitrox_debugfs.c: In
-function =E2=80=98stats_show=E2=80=99:
-/home/ard/linux/drivers/crypto/cavium/nitrox/nitrox_debugfs.c:62:30:
-warning: format =E2=80=98%lld=E2=80=99 expects argument of type =E2=80=98lo=
-ng long int=E2=80=99, but
-argument 3 has type =E2=80=98long int=E2=80=99 [-Wformat=3D]
-  seq_printf(s, "  Posted: %lld\n", atomic64_read(&ndev->stats.posted));
-                              ^
-/home/ard/linux/drivers/crypto/cavium/nitrox/nitrox_debugfs.c:63:33:
-warning: format =E2=80=98%lld=E2=80=99 expects argument of type =E2=80=98lo=
-ng long int=E2=80=99, but
-argument 3 has type =E2=80=98long int=E2=80=99 [-Wformat=3D]
-  seq_printf(s, "  Completed: %lld\n",
-                                 ^
-/home/ard/linux/drivers/crypto/cavium/nitrox/nitrox_debugfs.c:65:31:
-warning: format =E2=80=98%lld=E2=80=99 expects argument of type =E2=80=98lo=
-ng long int=E2=80=99, but
-argument 3 has type =E2=80=98long int=E2=80=99 [-Wformat=3D]
-  seq_printf(s, "  Dropped: %lld\n", atomic64_read(&ndev->stats.dropped));
-                               ^
-
-when building on arm64.
-
-
-> +       return 0;
-> +}
-> +
-> +static int nitrox_stats_open(struct inode *inode, struct file *file)
-> +{
-> +       return single_open(file, stats_show, inode->i_private);
-> +}
-> +
-> +static const struct file_operations nitrox_stats_fops =3D {
-> +       .owner =3D THIS_MODULE,
-> +       .open =3D nitrox_stats_open,
-> +       .read =3D seq_read,
-> +       .llseek =3D seq_lseek,
-> +       .release =3D single_release,
-> +};
-> +
-> +void nitrox_debugfs_exit(struct nitrox_device *ndev)
-> +{
-> +       debugfs_remove_recursive(ndev->debugfs_dir);
-> +       ndev->debugfs_dir =3D NULL;
-> +}
-> +
-> +int nitrox_debugfs_init(struct nitrox_device *ndev)
-> +{
-> +       struct dentry *dir, *f;
-> +
-> +       dir =3D debugfs_create_dir(KBUILD_MODNAME, NULL);
-> +       if (!dir)
-> +               return -ENOMEM;
-> +
-> +       ndev->debugfs_dir =3D dir;
-> +       f =3D debugfs_create_file("firmware", 0400, dir, ndev, &firmware_=
-fops);
-> +       if (!f)
-> +               goto err;
-> +       f =3D debugfs_create_file("device", 0400, dir, ndev, &nitrox_fops=
-);
-> +       if (!f)
-> +               goto err;
-> +       f =3D debugfs_create_file("stats", 0400, dir, ndev, &nitrox_stats=
-_fops);
-> +       if (!f)
-> +               goto err;
-> +
-> +       return 0;
-> +
-> +err:
-> +       nitrox_debugfs_exit(ndev);
-> +       return -ENODEV;
-> +}
-> diff --git a/drivers/crypto/cavium/nitrox/nitrox_dev.h b/drivers/crypto/c=
-avium/nitrox/nitrox_dev.h
-> index a1442006f256..abb5c8ac54e5 100644
-> --- a/drivers/crypto/cavium/nitrox/nitrox_dev.h
-> +++ b/drivers/crypto/cavium/nitrox/nitrox_dev.h
-> @@ -218,4 +218,17 @@ static inline bool nitrox_ready(struct nitrox_device=
- *ndev)
->         return atomic_read(&ndev->state) =3D=3D __NDEV_READY;
->  }
->
-> +#ifdef CONFIG_DEBUG_FS
-> +int nitrox_debugfs_init(struct nitrox_device *ndev);
-> +void nitrox_debugfs_exit(struct nitrox_device *ndev);
-> +#else
-> +static inline int nitrox_debugfs_init(struct nitrox_device *ndev)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline void nitrox_debugfs_exit(struct nitrox_device *ndev)
-> +{ }
-> +#endif
-> +
->  #endif /* __NITROX_DEV_H */
-> diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/=
-cavium/nitrox/nitrox_main.c
-> index 362e7217354c..5bd97cff1405 100644
-> --- a/drivers/crypto/cavium/nitrox/nitrox_main.c
-> +++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
-> @@ -323,135 +323,6 @@ static int nitrox_pf_hw_init(struct nitrox_device *=
-ndev)
->         return 0;
->  }
->
-> -#if IS_ENABLED(CONFIG_DEBUG_FS)
-> -static int registers_show(struct seq_file *s, void *v)
-> -{
-> -       struct nitrox_device *ndev =3D s->private;
-> -       u64 offset;
-> -
-> -       /* NPS DMA stats */
-> -       offset =3D NPS_STATS_PKT_DMA_RD_CNT;
-> -       seq_printf(s, "NPS_STATS_PKT_DMA_RD_CNT  0x%016llx\n",
-> -                  nitrox_read_csr(ndev, offset));
-> -       offset =3D NPS_STATS_PKT_DMA_WR_CNT;
-> -       seq_printf(s, "NPS_STATS_PKT_DMA_WR_CNT  0x%016llx\n",
-> -                  nitrox_read_csr(ndev, offset));
-> -
-> -       /* BMI/BMO stats */
-> -       offset =3D BMI_NPS_PKT_CNT;
-> -       seq_printf(s, "BMI_NPS_PKT_CNT  0x%016llx\n",
-> -                  nitrox_read_csr(ndev, offset));
-> -       offset =3D BMO_NPS_SLC_PKT_CNT;
-> -       seq_printf(s, "BMO_NPS_PKT_CNT  0x%016llx\n",
-> -                  nitrox_read_csr(ndev, offset));
-> -
-> -       return 0;
-> -}
-> -
-> -static int registers_open(struct inode *inode, struct file *file)
-> -{
-> -       return single_open(file, registers_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations register_fops =3D {
-> -       .owner =3D THIS_MODULE,
-> -       .open =3D registers_open,
-> -       .read =3D seq_read,
-> -       .llseek =3D seq_lseek,
-> -       .release =3D single_release,
-> -};
-> -
-> -static int firmware_show(struct seq_file *s, void *v)
-> -{
-> -       struct nitrox_device *ndev =3D s->private;
-> -
-> -       seq_printf(s, "Version: %s\n", ndev->hw.fw_name);
-> -       return 0;
-> -}
-> -
-> -static int firmware_open(struct inode *inode, struct file *file)
-> -{
-> -       return single_open(file, firmware_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations firmware_fops =3D {
-> -       .owner =3D THIS_MODULE,
-> -       .open =3D firmware_open,
-> -       .read =3D seq_read,
-> -       .llseek =3D seq_lseek,
-> -       .release =3D single_release,
-> -};
-> -
-> -static int nitrox_show(struct seq_file *s, void *v)
-> -{
-> -       struct nitrox_device *ndev =3D s->private;
-> -
-> -       seq_printf(s, "NITROX-5 [idx: %d]\n", ndev->idx);
-> -       seq_printf(s, "  Revision ID: 0x%0x\n", ndev->hw.revision_id);
-> -       seq_printf(s, "  Cores [AE: %u  SE: %u]\n",
-> -                  ndev->hw.ae_cores, ndev->hw.se_cores);
-> -       seq_printf(s, "  Number of Queues: %u\n", ndev->nr_queues);
-> -       seq_printf(s, "  Queue length: %u\n", ndev->qlen);
-> -       seq_printf(s, "  Node: %u\n", ndev->node);
-> -
-> -       return 0;
-> -}
-> -
-> -static int nitrox_open(struct inode *inode, struct file *file)
-> -{
-> -       return single_open(file, nitrox_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations nitrox_fops =3D {
-> -       .owner =3D THIS_MODULE,
-> -       .open =3D nitrox_open,
-> -       .read =3D seq_read,
-> -       .llseek =3D seq_lseek,
-> -       .release =3D single_release,
-> -};
-> -
-> -static void nitrox_debugfs_exit(struct nitrox_device *ndev)
-> -{
-> -       debugfs_remove_recursive(ndev->debugfs_dir);
-> -       ndev->debugfs_dir =3D NULL;
-> -}
-> -
-> -static int nitrox_debugfs_init(struct nitrox_device *ndev)
-> -{
-> -       struct dentry *dir, *f;
-> -
-> -       dir =3D debugfs_create_dir(KBUILD_MODNAME, NULL);
-> -       if (!dir)
-> -               return -ENOMEM;
-> -
-> -       ndev->debugfs_dir =3D dir;
-> -       f =3D debugfs_create_file("counters", 0400, dir, ndev, &register_=
-fops);
-> -       if (!f)
-> -               goto err;
-> -       f =3D debugfs_create_file("firmware", 0400, dir, ndev, &firmware_=
-fops);
-> -       if (!f)
-> -               goto err;
-> -       f =3D debugfs_create_file("nitrox", 0400, dir, ndev, &nitrox_fops=
-);
-> -       if (!f)
-> -               goto err;
-> -
-> -       return 0;
-> -
-> -err:
-> -       nitrox_debugfs_exit(ndev);
-> -       return -ENODEV;
-> -}
-> -#else
-> -static int nitrox_debugfs_init(struct nitrox_device *ndev)
-> -{
-> -       return 0;
-> -}
-> -
-> -static void nitrox_debugfs_exit(struct nitrox_device *ndev)
-> -{
-> -}
-> -#endif
-> -
->  /**
->   * nitrox_probe - NITROX Initialization function.
->   * @pdev: PCI device information struct
-> --
-> 2.17.1
->
+-boris
