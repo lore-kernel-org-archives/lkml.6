@@ -2,280 +2,111 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C002CC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 008B2C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D3AA2073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2307206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:47:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5QcoWAM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D3AA2073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkOqPqY6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2307206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeI2GGc (ORCPT
+        id S1727388AbeI2GNP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 02:06:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727230AbeI2GGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 02:06:32 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33533206B8;
-        Fri, 28 Sep 2018 23:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538178026;
-        bh=JzOIfbR1jgr9snNS5L+zmGsgZir1AG+OuQuD0Np67kw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S5QcoWAM3zLi5NoIQ/VIVG5Bn9eASHU3BC245HxGOxxg/tO+ic7NcAGyT9k6PhYD+
-         BHVBcGxzJBBAWP3dv+AGCJI3xBnf5H4a+HGFUZgzPV855p1CBJKSMu9wLYWkGiehNM
-         vGRTgo4eJUdjSPekynf/uB1JnUBwxXEKfC1WtiOo=
-Date:   Fri, 28 Sep 2018 16:40:25 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-Message-ID: <20180928234025.GA94043@jaegeuk-macbookpro.roam.corp.google.com>
-References: <157abebb-80e7-d32d-3102-69ddfc5892f2@huawei.com>
- <20180920214213.GD35918@jaegeuk-macbookpro.roam.corp.google.com>
- <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
- <20180926002909.GC3829@jaegeuk-macbookpro.roam.corp.google.com>
- <b45beb50-c814-5fb4-63da-060871e33553@huawei.com>
- <20180926014418.GE3829@jaegeuk-macbookpro.roam.corp.google.com>
- <e1e855e5-2aaf-6560-d69d-2b7b0f60404e@huawei.com>
- <20180926020921.GG3829@jaegeuk-macbookpro.roam.corp.google.com>
- <d4279226-ca5c-8905-f6e9-c660c3aad6a0@huawei.com>
- <20180928173721.GB64391@jaegeuk-macbookpro.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928173721.GB64391@jaegeuk-macbookpro.roam.corp.google.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        Sat, 29 Sep 2018 02:13:15 -0400
+Received: from mail-it1-f201.google.com ([209.85.166.201]:53918 "EHLO
+        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726746AbeI2GNP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 02:13:15 -0400
+Received: by mail-it1-f201.google.com with SMTP id e21-v6so3032476itc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=WYhEGWFlZp8I00fOpL04YdCTY1rewGNsa3hhi7x38fI=;
+        b=hkOqPqY6CorgJ4JDlZP7VJpetlKZAbmVH/w7SZ6IhA/I7zCiTHAi9LiNPCyTb9oI2s
+         lxjGcJc8CFQ0B0zwd2Q7/33qzCZM7PBHlvqnxnlEPkNxRRYcgTs1Hrta3I6CxaDMqjBN
+         bJ5sj89LlhilWwQMUbOTRYHPpMLAVBVPZ88Qcpn/qdiy4kH7TiyNWQVy7c732S6sp1t7
+         tU95KAeoyjADInl+7dGjH9uJZ/GUgC96A2WaQZfrhSYlfjb4h4YZoMXCKXvnlt5Zv8S5
+         iZUcywCuJCfM9505uXd0xnWxiTBIl020EjuB7B5dyPTHvxOnHgSVm3ebPdNvwfujly/2
+         ywWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=WYhEGWFlZp8I00fOpL04YdCTY1rewGNsa3hhi7x38fI=;
+        b=qz+bKYZitsRO4SV+GoFEDq0/LcezNOvlQueG9XxwMI/Wm8gdzpdvsvJB2mEWvqhFHF
+         ipr9uuNE1KWgvjFgISwvDzKO0p4gyPVo2EAUApEWaarZKjOaPQgFQc9S2u8B7fReiaO4
+         s6Ryk9qsGu/8Odl4qjWZ7sy00AUB161JbA6dgMs1O7o80f6SnI5UjBS0YwYdAXQ7glMW
+         Fznvu3L8f/GJY0zVErC6EI+DqAdIT1Ohzf9uf3G7jUqqb7Q8Go8eipD8GQSdwMwj16rH
+         zbwzswP2hUTxf6y1FLW/iskCmXxrJwsyPmgsyiDKlRVv02dpvy78Je8Kz2lGIsiVyBrm
+         bOvQ==
+X-Gm-Message-State: ABuFfoj5NGQZd7ZR2iMIGT+BnI7MKsqe4IvCfRYNtJOAn6I5rB3D4Fbm
+        1rYBxcI+S+7cK4Dgp5iOqsU89cUgF7c=
+X-Google-Smtp-Source: ACcGV61g7rrQxKfWIvtPXvSVn+MwINlXGHoXUpuAaq9awaH6fZPuEyNrvr+s465Yw1+yZufP2gnFDzqq0Oo=
+X-Received: by 2002:a24:6794:: with SMTP id u142-v6mr197776itc.9.1538178428213;
+ Fri, 28 Sep 2018 16:47:08 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 16:47:01 -0700
+Message-Id: <20180928234703.15970-1-badhri@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+Subject: [PATCH 1/3] [PATCH 1/3] dt-bindings: connector: Add self-powered property
+From:   Badhri Jagan Sridharan <badhri@google.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>, Li Jun <jun.li@nxp.com>,
+        linux@roeck-us.net
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Badhri Jagan Sridharan <badhri@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Testing other fix.
+From USB_PD_R3_0
+7.1.5 Response to Hard Resets
+Device operation during and after a Hard Reset is defined as follows:
+Self-powered devices Should Not disconnect from USB during a Hard Reset
+(see Section 9.1.2).
+Bus powered devices will disconnect from USB during a Hard Reset due to the
+loss of their power source.
 
+Therefore it is necessary to know whether the port belongs to
+a device which is self powered or bus powered. This change
+adds "self-powered" flag to the connector class which present indicates
+that the port belongs to a device that is self powered. Else it is
+bus powered usb device.
+
+Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
 ---
- fs/f2fs/checkpoint.c |  7 +++++++
- fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/gc.c         | 10 +++++++++-
- fs/f2fs/super.c      | 22 +++++++++++++++++++++-
- 4 files changed, 38 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/connector/usb-connector.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 524b87667cf4..3fde91f41a91 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1494,6 +1494,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	unsigned long long ckpt_ver;
-+	bool need_up = false;
- 	int err = 0;
+diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
+index 8855bfcfd7785..8f7a36ae29bf7 100644
+--- a/Documentation/devicetree/bindings/connector/usb-connector.txt
++++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
+@@ -14,6 +14,8 @@ Optional properties:
+ - label: symbolic name for the connector,
+ - type: size of the connector, should be specified in case of USB-A, USB-B
+   non-fullsize connectors: "mini", "micro".
++- self-powered: Set this property if the usb device that has its own power
++  source.
  
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-@@ -1506,6 +1507,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		f2fs_msg(sbi->sb, KERN_WARNING,
- 				"Start checkpoint disabled!");
- 	}
-+	if (!is_sbi_flag_set(sbi, SBI_QUOTA_INIT)) {
-+		need_up = true;
-+		down_read(&sbi->sb->s_umount);
-+	}
- 	mutex_lock(&sbi->cp_mutex);
- 
- 	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
-@@ -1582,6 +1587,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
- out:
- 	mutex_unlock(&sbi->cp_mutex);
-+	if (need_up)
-+		up_read(&sbi->sb->s_umount);
- 	return err;
- }
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 57c829dd107e..30194f2f108e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1096,6 +1096,7 @@ enum {
- 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
- 	SBI_IS_RECOVERED,			/* recovered orphan/data */
- 	SBI_CP_DISABLED,			/* CP was disabled last mount */
-+	SBI_QUOTA_INIT,				/* avoid sb->s_umount lock */
- 	SBI_QUOTA_NEED_FLUSH,			/* need to flush quota info in CP */
- 	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
- 	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index adaf5a695b12..deece448cb3b 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -55,9 +55,14 @@ static int gc_thread_func(void *data)
- 			f2fs_stop_checkpoint(sbi, false);
- 		}
- 
--		if (!sb_start_write_trylock(sbi->sb))
-+		if (!down_read_trylock(&sbi->sb->s_umount))
- 			continue;
- 
-+		set_sbi_flag(sbi, SBI_QUOTA_INIT);
-+
-+		if (!sb_start_write_trylock(sbi->sb))
-+			goto next_umount;
-+
- 		/*
- 		 * [GC triggering condition]
- 		 * 0. GC is not conducted currently.
-@@ -104,6 +109,9 @@ static int gc_thread_func(void *data)
- 		f2fs_balance_fs_bg(sbi);
- next:
- 		sb_end_write(sbi->sb);
-+next_umount:
-+		clear_sbi_flag(sbi, SBI_QUOTA_INIT);
-+		up_read(&sbi->sb->s_umount);
- 
- 	} while (!kthread_should_stop());
- 	return 0;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index a28c245b1288..40a77a4eb465 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1029,6 +1029,8 @@ static void f2fs_put_super(struct super_block *sb)
- 	int i;
- 	bool dropped;
- 
-+	set_sbi_flag(sbi, SBI_QUOTA_INIT);
-+
- 	f2fs_quota_off_umount(sb);
- 
- 	/* prevent remaining shrinker jobs */
-@@ -1122,11 +1124,17 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
- 
- 	if (sync) {
- 		struct cp_control cpc;
-+		bool keep = is_sbi_flag_set(sbi, SBI_QUOTA_INIT);
- 
- 		cpc.reason = __get_cp_reason(sbi);
- 
- 		mutex_lock(&sbi->gc_mutex);
-+		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE)
-+			set_sbi_flag(sbi, SBI_QUOTA_INIT);
-+
- 		err = f2fs_write_checkpoint(sbi, &cpc);
-+		if (!keep)
-+			clear_sbi_flag(sbi, SBI_QUOTA_INIT);
- 		mutex_unlock(&sbi->gc_mutex);
- 	}
- 	f2fs_trace_ios(NULL, 1);
-@@ -1534,6 +1542,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		}
- 	}
- #endif
-+	set_sbi_flag(sbi, SBI_QUOTA_INIT);
- 
- 	/* recover superblocks we couldn't write due to previous RO mount */
- 	if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
-@@ -1653,6 +1662,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
- 
- 	limit_reserve_root(sbi);
-+	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
- 	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
- 	return 0;
- restore_gc:
-@@ -1673,6 +1683,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- #endif
- 	sbi->mount_opt = org_mount_opt;
- 	sb->s_flags = old_sb_flags;
-+	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
- 	return err;
- }
- 
-@@ -1706,6 +1717,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
- 				congestion_wait(BLK_RW_ASYNC, HZ/50);
- 				goto repeat;
- 			}
-+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
- 			return PTR_ERR(page);
- 		}
- 
-@@ -1717,6 +1729,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
- 		}
- 		if (unlikely(!PageUptodate(page))) {
- 			f2fs_put_page(page, 1);
-+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
- 			return -EIO;
- 		}
- 
-@@ -1758,6 +1771,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 				congestion_wait(BLK_RW_ASYNC, HZ/50);
- 				goto retry;
- 			}
-+			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
- 			break;
- 		}
- 
-@@ -1794,7 +1808,6 @@ static qsize_t *f2fs_get_reserved_space(struct inode *inode)
- 
- static int f2fs_quota_on_mount(struct f2fs_sb_info *sbi, int type)
- {
--
- 	if (is_set_ckpt_flags(sbi, CP_QUOTA_NEED_FSCK_FLAG)) {
- 		f2fs_msg(sbi->sb, KERN_ERR,
- 			"quota sysfile may be corrupted, skip loading it");
-@@ -1958,7 +1971,9 @@ static int f2fs_quota_on(struct super_block *sb, int type, int format_id,
- 	if (err)
- 		return err;
- 
-+	set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
- 	err = dquot_quota_on(sb, type, format_id, path);
-+	clear_sbi_flag(F2FS_SB(sb), SBI_QUOTA_INIT);
- 	if (err)
- 		return err;
- 
-@@ -3179,6 +3194,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_meta_inode;
- 	}
- 
-+	set_sbi_flag(sbi, SBI_QUOTA_INIT);
- 	if (__is_set_ckpt_flags(F2FS_CKPT(sbi), CP_QUOTA_NEED_FSCK_FLAG))
- 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
- 
-@@ -3370,6 +3386,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 				cur_cp_version(F2FS_CKPT(sbi)));
- 	f2fs_update_time(sbi, CP_TIME);
- 	f2fs_update_time(sbi, REQ_TIME);
-+
-+	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
- 	return 0;
- 
- free_meta:
-@@ -3434,6 +3452,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		shrink_dcache_sb(sb);
- 		goto try_onemore;
- 	}
-+	clear_sbi_flag(sbi, SBI_QUOTA_INIT);
- 	return err;
- }
- 
-@@ -3449,6 +3468,7 @@ static void kill_f2fs_super(struct super_block *sb)
- 		struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 
- 		set_sbi_flag(sbi, SBI_IS_CLOSE);
-+		set_sbi_flag(sbi, SBI_QUOTA_INIT);
- 		f2fs_stop_gc_thread(sbi);
- 		f2fs_stop_discard_thread(sbi);
- 
+ Optional properties for usb-c-connector:
+ - power-role: should be one of "source", "sink" or "dual"(DRP) if typec
 -- 
 2.19.0.605.g01d371f741-goog
 
