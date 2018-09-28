@@ -7,156 +7,130 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F22C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2023EC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 400A02170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C06D32170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:34:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnfxwgE6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 400A02170E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWKD/Zss"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06D32170E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbeI1SvF (ORCPT
+        id S1728967AbeI1S5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 14:51:05 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42357 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727870AbeI1SvF (ORCPT
+        Fri, 28 Sep 2018 14:57:49 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41400 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeI1S5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 14:51:05 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y71-v6so5630227lje.9
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 05:27:30 -0700 (PDT)
+        Fri, 28 Sep 2018 14:57:49 -0400
+Received: by mail-qt1-f194.google.com with SMTP id m15-v6so6358880qtp.8;
+        Fri, 28 Sep 2018 05:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZLYApzrB2a383//5QOJflBXAFfTWVmBjvn7HWIS61ZE=;
-        b=RnfxwgE6Y5vpUqFVMSRC8IDtjg0eG3u+g9LuOfXHikIhW9isnVKi8Ha0ra8wxPVvmK
-         0NMOU0VIyw7TWQ61cYzb0YVcdVi3OfUvUzlFsDdyzmgvzKPZ37IyPQZQlP8VRycWER2E
-         i2dPoz/dojQigJ9IIQE3y1PT6oCAh9cL5Dk9TCUySIhsCcT8HIEBTsppvcJZ+tKO+0mK
-         3IpO+tf9rfUMwog3IQqLF68OfmRoSdEFTFAsLfx37EnzRYJfemeiUpJY6ePAstdh3S4q
-         BWBr8eVFpc8m2aywuX6Jp/kBP/cQkMo7fPXK2oNOLpgayDIuHldz13YooRpiVO7gczPO
-         aICw==
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=8T3xt4YZ/jzuiFPj3emz8wyggwTifi8XRQyHhp33ssI=;
+        b=WWKD/ZssTpSbYt7NkGFaAanGgbIS8dst7Ha/wkFRSpTK4Qic0T4+O+P8DQv9IPO2Pb
+         aDCrLLdRyh0hI37KHqVxH09ltYPXopagFoc892kO6hq4zajNIS0WP2DZ56DpoSJQgRwc
+         3XaD0kEbKXl/PuoRscShxUT1cbK3iTzhWEA+F6uhbBxBS2tAZhh1qz+MQfw1SgDej+iD
+         G7ds8CEWcnPoQnUNUaEl7nH3KAdRMZPgBHEuVLJrN0Y3t8WYTcKaHSBlPHN8KD+Qk6x5
+         cfCHDL8NnVNMq8gh8TtphrvF4IMe7E2KY+q23czONP41PRQox/oQQQ6qQjTdstHz10I4
+         U4dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZLYApzrB2a383//5QOJflBXAFfTWVmBjvn7HWIS61ZE=;
-        b=TochTRSpreAkyuS/raF9whSEm5GlRmTlqJmtZUhPu0ZtIM5zDRaxk3d8h9cakCADod
-         fiufihELc261mrSgSDbvVDnu7xGrbZX5rY5OWp0RvzHH+mR9MApcX3vOK/Ei0p/V5/qw
-         UjqNuYAg06qIyD021e5v2AJgJzHhuyq5KfBGrjXh4BQIsViUwmlRFk1EDYzg9l6zF/FI
-         cVWS+ha4jmc9Gi1+65BRPu3Rx04s6z5I1pfoveuxHnqD2Zc5beWYaVyiAy/XpLZOttto
-         L/POjYmrlGjJraSmTJSGKiu05gIurUV2y8gYnX1x1JZTPtcYC/OKAUCj7r3GgMMKFidh
-         KG/Q==
-X-Gm-Message-State: ABuFfoh8zv7GSBLSFrqEYeH4Sue8lAar3yilM65Rv+e5V08Vq0hlsTnw
-        5viRhbe3L1rvlVejNX/rfxrlRVaAQCsd5SDPX3w=
-X-Google-Smtp-Source: ACcGV622RRqXzbsDFM2CqG6FQ2o9epKLGpNatLD9CQqN+GEre2qnUXJ7/Ttg/gjuF+ro0i+GGgDWwmOyjnbTPJl8zlE=
-X-Received: by 2002:a2e:b04b:: with SMTP id d11-v6mr11106553ljl.93.1538137649730;
- Fri, 28 Sep 2018 05:27:29 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=8T3xt4YZ/jzuiFPj3emz8wyggwTifi8XRQyHhp33ssI=;
+        b=Hlxc/i91pFP0c2gddRtG/RN1kbBr+Vs5vj2XHh+dZOPX7gwPFqYdp+5fDknTjExXgT
+         4ngvLAijZEtVT1ooWkE7cKQeC4HV+rLxuj9tIL3hSnLSrfW6nCzcn+lvpfjViMqspApD
+         hK/2sQS/Hz+mPZX1pO9/q/iupghE1IwR8apFxpWfD6BTB2g0JJZXNI72d6OznEBQhT6f
+         troerm92y+gAQZgooNEpn4VBK3hDNrmcFWesOBajZpBSJv7rzK9OwZn9I23NQKNkVsAx
+         FoKqQ6W+Gg8Bho/APy5/PUqUMVGWzQmmEBYMV2PEPHMfQoiNAv2zBPp5PjMkdbiWjgbv
+         DSyA==
+X-Gm-Message-State: ABuFfoiuLLY+GUPPQuH01FN9u7sZGaLr8a7Kk9G2mS8JBvghH8eY3FWh
+        JVAuhzf38D92gtjOpyP6ytLgv4oFWhZxlw2idxg=
+X-Google-Smtp-Source: ACcGV60YI6WHQgBuoSmNjc3p8Cwxk1bUZgV9OmFVwNaQ3W2lHk5qRX+TLZOo+CodP/rF+Sf6qXnFGXxB7ypXunE7fDw=
+X-Received: by 2002:ac8:60d0:: with SMTP id i16-v6mr6318104qtm.249.1538138053534;
+ Fri, 28 Sep 2018 05:34:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180927175123.GA16367@jordon-HP-15-Notebook-PC> <20180927183236.GJ6278@dhcp22.suse.cz>
-In-Reply-To: <20180927183236.GJ6278@dhcp22.suse.cz>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 28 Sep 2018 17:57:17 +0530
-Message-ID: <CAFqt6zbnV+wV+O2EMi1mE4qWDjsZ=Y847MFUc+zv6g8OoVM30g@mail.gmail.com>
-Subject: Re: [PATCH] mm: Introduce new function vm_insert_kmem_page
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        pasha.tatashin@oracle.com, riel@redhat.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Huang, Ying" <ying.huang@intel.com>, ak@linux.intel.com,
-        rppt@linux.vnet.ibm.com, linux@dominikbrodowski.net,
-        Arnd Bergmann <arnd@arndb.de>, mcgrof@kernel.org,
-        Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+References: <CACK8Z6Ebo0giDifRHBg13pe_mO18vb1n0+LGMoMjkLai6X9MNg@mail.gmail.com>
+ <20180926074756.GD2664@lahna.fi.intel.com> <CAHp75Vdf7NxFtgZx+hqsA1YZY4szD5Ba9jbyo4CeeDHeaU3YAQ@mail.gmail.com>
+ <CACK8Z6F1jkSN3KXiv+0X2uh61pBkpSMpHrdMHwLarbSAFoHMUA@mail.gmail.com>
+ <CAHp75VcQ0SviZ6vsn_5inn5oZxxj-5ZQq5bC+bXPxuF8KOa_Rg@mail.gmail.com>
+ <CACK8Z6HjFy_5sv_ZRRyfRgCYMYPpuoFqmKekyi7fSLk14YpN6w@mail.gmail.com> <CACRpkdZZW_HK8uFA=iQQ88DnoR7KX2mYTbO3HMtNBLd-3GpiWQ@mail.gmail.com>
+In-Reply-To: <CACRpkdZZW_HK8uFA=iQQ88DnoR7KX2mYTbO3HMtNBLd-3GpiWQ@mail.gmail.com>
+Reply-To: rajatxjain@gmail.com
+From:   Rajat Jain <rajatxjain@gmail.com>
+Date:   Fri, 28 Sep 2018 05:34:01 -0700
+Message-ID: <CAA93t1qYN8BAZjOY+osHzTjYthYo+HY10zvfgQ-Z8+AQ2HdFZA@mail.gmail.com>
+Subject: Re: sdhci driver card-detect is broken because gpiolib can't fallback
+ to _CRS?
+To:     linus.walleij@linaro.org
+Cc:     Rajat Jain <rajatja@google.com>, andy.shevchenko@gmail.com,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 12:02 AM Michal Hocko <mhocko@kernel.org> wrote:
+On Fri, Sep 28, 2018 at 1:42 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> On Thu 27-09-18 23:21:23, Souptick Joarder wrote:
-> > vm_insert_kmem_page is similar to vm_insert_page and will
-> > be used by drivers to map kernel (kmalloc/vmalloc/pages)
-> > allocated memory to user vma.
-> >
-> > Previously vm_insert_page is used for both page fault
-> > handlers and outside page fault handlers context. When
-> > vm_insert_page is used in page fault handlers context,
-> > each driver have to map errno to VM_FAULT_CODE in their
-> > own way. But as part of vm_fault_t migration all the
-> > page fault handlers are cleaned up by using new vmf_insert_page.
-> > Going forward, vm_insert_page will be removed by converting
-> > it to vmf_insert_page.
-> >
-> > But their are places where vm_insert_page is used outside
-> > page fault handlers context and converting those to
-> > vmf_insert_page is not a good approach as drivers will end
-> > up with new VM_FAULT_CODE to errno conversion code and it will
-> > make each user more complex.
-> >
-> > So this new vm_insert_kmem_page can be used to map kernel
-> > memory to user vma outside page fault handler context.
-> >
-> > In short, vmf_insert_page will be used in page fault handlers
-> > context and vm_insert_kmem_page will be used to map kernel
-> > memory to user vma outside page fault handlers context.
-> >
-> > We will slowly convert all the user of vm_insert_page to
-> > vm_insert_kmem_page after this API be available in linus tree.
+> On Thu, Sep 27, 2018 at 7:57 PM Rajat Jain <rajatja@google.com> wrote:
 >
-> In general I do not like patches adding a new exports/functionality
-> without any user added at the same time. I am not going to look at the
-> implementation right now but the above opens more questions than it
-> gives answers. Why do we have to distinguish #PF from other paths?
+> > > Patches are welcome, I think.
+> > >
+> > > Btw, is there any existing hardware on the market with such BIOS?
+> >
+> > Yes, all the chrome books available in the market (at least the ones
+> > released in last 3 years) have same ACPI layout (provide _DSD for
+> > card-detect). They are all working fine today because they use an
+> > older kernel, but if we update them to the latest kernel, this part
+> > will be broken.
+>
+> This is not looking good at all.
+>
+> Andy should we revert the patch or do you have some other
+> quick fix in mind we could do? It seems reverting the patch
+> could be bad for the mctrl patches IIUC, but this regression
+> seems even more serious.
 
-Going forward, the plan is to restrict future drivers not to use vm_insert_page
-( *it will generate new errno to VM_FAULT_CODE mapping code for new drivers
-which were already cleaned up for existing drivers*) in #PF context but to make
-use of vmf_insert_page which returns VMF_FAULT_CODE and that is not possible
-until both vm_insert_page and vmf_insert_page API exists.
+Sorry, I may have made it sound like more serious than it is. Yes,
+what I said is true, but we (Google) does not plan to update those
+devices to the latest kernel. That regression will only be seen by any
+developers who try to do it on their own.
 
-But there are some consumers of vm_insert_page which use it outside #PF context.
-straight forward conversion of vm_insert_page to vmf_insert_page won't
-work there as
-those function calls expects errno not vm_fault_t in return.
+Also, the commit I mentioned above was put in long time back, and I
+think it is more reasonable to put a fix in the sdhci driver instead.
 
-e.g - drivers/auxdisplay/cfag12864bfb.c, line 55
-        drivers/auxdisplay/ht16k33.c, line 227
-        drivers/firewire/core-iso.c, line 115
-        drivers/gpu/drm/rockchip/rockchip_drm_gem.c, line 237
-        drivers/gpu/drm/xen/xen_drm_front_gem.c, line 253
-        drivers/iommu/dma-iommu.c, line 600
-        drivers/media/common/videobuf2/videobuf2-dma-sg.c, line 343
-        drivers/media/usb/usbvision/usbvision-video.c, line 1056
-        drivers/xen/gntalloc.c, line 548
-        drivers/xen/gntdev.c, line 1149
-        drivers/xen/privcmd-buf.c, line 184
-        mm/vmalloc.c, line 2254
-        net/ipv4/tcp.c, line 1806
-        net/packet/af_packet.c, line 4407
+I tried using Andy's suggestion yesterday, but was faced with more
+questions that I did not have answers to (with my limited
+understanding):
 
-These are the approaches which could have been taken to handle this scenario -
+ - It seems that 1 SDHCI device may support multiple slots. It was not
+clear to me if they could share card detect interrupts, or should have
+separate ones? Also, the driver may not really know? So should I add 1
+or two pins using the devm_acpi_dev_add_driver_gpios().
 
-1. Replace vm_insert_page with vmf_insert_page and then write few
-   extra lines of code to convert VM_FAULT_CODE to errno which
-   makes driver users more complex ( also the reverse mapping errno to
-   VM_FAULT_CODE have been cleaned up as part of vm_fault_t migration ,
-   not preferred to introduce anything similar again)
+- I was unsure what should I set the active_low to.
 
-2. Maintain both vm_insert_page and vmf_insert_page and use it in
-   respective places. But it won't gurantee that vm_insert_page will
-   never be used in #PF context.
+Given these concerns, it seemed the easiest fix to me, if we can call
+mmc_gpiod_request_cd() twice, once with "cd" and then with NULL as a
+fallback.
 
-3. Introduce a similar API like vm_insert_page, convert all non #PF
-   consumer to use it and finally remove vm_insert_page by converting
-   it to vmf_insert_page.
+Thanks,
 
-And the 3rd approach was taken by introducing vm_insert_kmem_page().
+Rajat Jain
+
+>
+> Yours,
+> Linus Walleij
