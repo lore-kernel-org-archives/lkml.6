@@ -2,106 +2,166 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5E9C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81467C04E87
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09A452170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A452170E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 381412170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8tpR4VK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381412170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbeI1Sti (ORCPT
+        id S1729291AbeI1Sti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 28 Sep 2018 14:49:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48496 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbeI1Stg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 14:49:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D167ED1;
-        Fri, 28 Sep 2018 05:26:04 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C1CA3F5D3;
-        Fri, 28 Sep 2018 05:26:02 -0700 (PDT)
-Subject: Re: [PATCH v8 5/7] iommu/arm-smmu-v3: Add support for non-strict mode
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     joro@8bytes.org, thunder.leizhen@huawei.com,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
-        john.garry@huawei.com
-References: <cover.1537458163.git.robin.murphy@arm.com>
- <b98f8f695178c9c9ac6e081680090d5ac97e8d7c.1537458163.git.robin.murphy@arm.com>
- <20180928121900.GB1577@brain-police>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <1d2b57f7-be4e-39c5-4981-7f8e2f601b6a@arm.com>
-Date:   Fri, 28 Sep 2018 13:26:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Received: from mail.kernel.org ([198.145.29.99]:46210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729147AbeI1Sti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 14:49:38 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08A3421748;
+        Fri, 28 Sep 2018 12:26:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538137564;
+        bh=ISJhP+8fLpA30HRsmsEDKO0AbOV8UxkW9KDWipFinAY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=m8tpR4VKiX4AwvVzDs1aQtsktOUkPXbw1k5HVyU4aJOdKNHqcuWEix6QRbYkySXpc
+         TE5g03VnYnvUGOj0Q22yrI4VCYO2J42Ml+pls5pmnLibBr5oeDdpPDpA+wqrMrtaLj
+         YYp4/NTltB0Oo9WrQUlvujFpjgGZywXHAH8WtXJ4=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thiago Macieira <thiago.macieira@intel.com>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 6/6] perf python: Use -Wno-redundant-decls to build with PYTHON=python3
+Date:   Fri, 28 Sep 2018 09:25:39 -0300
+Message-Id: <20180928122539.29326-7-acme@kernel.org>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180928122539.29326-1-acme@kernel.org>
+References: <20180928122539.29326-1-acme@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180928121900.GB1577@brain-police>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/09/18 13:19, Will Deacon wrote:
-> On Thu, Sep 20, 2018 at 05:10:25PM +0100, Robin Murphy wrote:
->> From: Zhen Lei <thunder.leizhen@huawei.com>
->>
->> Now that io-pgtable knows how to dodge strict TLB maintenance, all
->> that's left to do is bridge the gap between the IOMMU core requesting
->> DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE for default domains, and showing the
->> appropriate IO_PGTABLE_QUIRK_NON_STRICT flag to alloc_io_pgtable_ops().
->>
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->> [rm: convert to domain attribute, tweak commit message]
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->>
->> v8:
->>   - Use nested switches for attrs
->>   - Document barrier semantics
->>
->>   drivers/iommu/arm-smmu-v3.c | 79 ++++++++++++++++++++++++++-----------
->>   1 file changed, 56 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->> index f10c852479fc..db402e8b068b 100644
->> --- a/drivers/iommu/arm-smmu-v3.c
->> +++ b/drivers/iommu/arm-smmu-v3.c
->> @@ -612,6 +612,7 @@ struct arm_smmu_domain {
->>   	struct mutex			init_mutex; /* Protects smmu pointer */
->>   
->>   	struct io_pgtable_ops		*pgtbl_ops;
->> +	bool				non_strict;
->>   
->>   	enum arm_smmu_domain_stage	stage;
->>   	union {
->> @@ -1407,6 +1408,12 @@ static void arm_smmu_tlb_inv_context(void *cookie)
->>   		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
->>   	}
->>   
->> +	/*
->> +	 * NOTE: when io-pgtable is in non-strict mode, we may get here with
->> +	 * PTEs previously cleared by unmaps on the current CPU not yet visible
->> +	 * to the SMMU. We are relying on the DSB implicit in queue_inc_prod()
->> +	 * to guarantee those are observed before the TLBI. Do be careful, 007.
->> +	 */
-> 
-> Good, so you can ignore my comment on the previous patch :)
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Well, I suppose that comment in io-pgtable *could* have explicitly noted 
-that same-CPU order is dealt with elsewhere - feel free to fix it up if 
-you think it would be a helpful reminder for the future.
+When building in ClearLinux using 'make PYTHON=python3' with gcc 8.2.1
+it fails with:
 
-Cheers,
-Robin.
+    GEN      /tmp/build/perf/python/perf.so
+  In file included from /usr/include/python3.7m/Python.h:126,
+                   from /git/linux/tools/perf/util/python.c:2:
+  /usr/include/python3.7m/import.h:58:24: error: redundant redeclaration of ‘_PyImport_AddModuleObject’ [-Werror=redundant-decls]
+   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *, PyObject *);
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+  /usr/include/python3.7m/import.h:47:24: note: previous declaration of ‘_PyImport_AddModuleObject’ was here
+   PyAPI_FUNC(PyObject *) _PyImport_AddModuleObject(PyObject *name,
+                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
+  error: command 'gcc' failed with exit status 1
+
+And indeed there is a redundant declaration in that Python.h file, one
+with parameter names and the other without, so just add
+-Wno-error=redundant-decls to the python setup instructions.
+
+Now perf builds with gcc in ClearLinux with the following Dockerfile:
+
+  # docker.io/acmel/linux-perf-tools-build-clearlinux:latest
+  FROM docker.io/clearlinux:latest
+  MAINTAINER Arnaldo Carvalho de Melo <acme@kernel.org>
+  RUN swupd update && \
+      swupd bundle-add sysadmin-basic-dev
+  RUN mkdir -m 777 -p /git /tmp/build/perf /tmp/build/objtool /tmp/build/linux && \
+      groupadd -r perfbuilder && \
+      useradd -m -r -g perfbuilder perfbuilder && \
+      chown -R perfbuilder.perfbuilder /tmp/build/ /git/
+  USER perfbuilder
+  COPY rx_and_build.sh /
+  ENV EXTRA_MAKE_ARGS=PYTHON=python3
+  ENTRYPOINT ["/rx_and_build.sh"]
+
+Now to figure out why the build fails with clang, that is present in the
+above container as detected by the rx_and_build.sh script:
+
+  clang version 6.0.1 (tags/RELEASE_601/final)
+  Target: x86_64-unknown-linux-gnu
+  Thread model: posix
+  InstalledDir: /usr/sbin
+  make: Entering directory '/git/linux/tools/perf'
+    BUILD:   Doing 'make -j4' parallel build
+    HOSTCC   /tmp/build/perf/fixdep.o
+    HOSTLD   /tmp/build/perf/fixdep-in.o
+    LINK     /tmp/build/perf/fixdep
+
+  Auto-detecting system features:
+  ...                         dwarf: [ OFF ]
+  ...            dwarf_getlocations: [ OFF ]
+  ...                         glibc: [ OFF ]
+  ...                          gtk2: [ OFF ]
+  ...                      libaudit: [ OFF ]
+  ...                        libbfd: [ OFF ]
+  ...                        libelf: [ OFF ]
+  ...                       libnuma: [ OFF ]
+  ...        numa_num_possible_cpus: [ OFF ]
+  ...                       libperl: [ OFF ]
+  ...                     libpython: [ OFF ]
+  ...                      libslang: [ OFF ]
+  ...                     libcrypto: [ OFF ]
+  ...                     libunwind: [ OFF ]
+  ...            libdw-dwarf-unwind: [ OFF ]
+  ...                          zlib: [ OFF ]
+  ...                          lzma: [ OFF ]
+  ...                     get_cpuid: [ OFF ]
+  ...                           bpf: [ OFF ]
+
+  Makefile.config:331: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
+  make[1]: *** [Makefile.perf:206: sub-make] Error 2
+  make: *** [Makefile:70: all] Error 2
+  make: Leaving directory '/git/linux/tools/perf'
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thiago Macieira <thiago.macieira@intel.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-c3khb9ac86s00qxzjrueomme@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 97efbcad076e..1942f6dd24f6 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -35,7 +35,7 @@ class install_lib(_install_lib):
+ 
+ cflags = getenv('CFLAGS', '').split()
+ # switch off several checks (need to be at the end of cflags list)
+-cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
++cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
+ if cc != "clang":
+     cflags += ['-Wno-cast-function-type' ]
+ 
+-- 
+2.14.4
+
