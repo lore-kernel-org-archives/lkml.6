@@ -2,120 +2,238 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB73C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD57C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48B6C215F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:09:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1mqZRJk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B6C215F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F78D215F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 11:11:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F78D215F0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbeI1RdA (ORCPT
+        id S1729371AbeI1Re3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 13:33:00 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41003 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729183AbeI1RdA (ORCPT
+        Fri, 28 Sep 2018 13:34:29 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35649 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729089AbeI1Re3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 13:33:00 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y17-v6so5428699ljy.8;
-        Fri, 28 Sep 2018 04:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3auzNwdhXwqUf7Lms3lpVUZPv9EB8LIwpUjJDKNc/pE=;
-        b=M1mqZRJkLicaIEL0pQ3cs57TytwMIpNWz7rIpGrbp9z2LuWlMeQMXV3+qrhpidExLa
-         Mp23q4pqfGfdUTVKDhJa6Za/GeXtp2hwE9mbT0FMbaEJSUlT7JEPkl954B9V31eXHEn2
-         wWbu4PUzuQYPNHFwWzld0N9lQLSGi+w2TuB2tfK8/RpmEAV0vO/OrcDO88ujMIZRA3fG
-         sH94NQMhRUqnMQorX+zcL7HJaCFym5haBVmGjPmHjWEgv70LkCky3zejHXyxA098eLWz
-         DhF8j7n8wTMIyBxs5D42TEnNrOP+xe3u3JHU+8gSp5eoYvysHia2Mdnt+G7+43vMPmnE
-         g82A==
+        Fri, 28 Sep 2018 13:34:29 -0400
+Received: by mail-ed1-f66.google.com with SMTP id y21-v6so7838364edr.2;
+        Fri, 28 Sep 2018 04:11:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3auzNwdhXwqUf7Lms3lpVUZPv9EB8LIwpUjJDKNc/pE=;
-        b=WbgLFojfHGvDXb0NOGw/oaiehtPdNEw+Z/YSbKbtYpahhM5CegeFoL+8uuZD/0TGrR
-         iRdP4Yv8uzOPX8pzR9zqS0DkASd4wIEYPxyN/9qQHOHPsESg0hsrNYj2Og/bF//8wprO
-         1kwfYD0m3oqk1l8s1av4sNtfj6CR+glI+lyhRk01acRU28Qu71iP0/REPyCErSLslZpa
-         tee4FeoLCQK+fKtXSsz5ewpiF5fUg1ovk2l3YCDGHia7u0JQRaK9qCyEbqURht1c0hJz
-         LY/AnGUw8k2JfUgsl7q//fEwE8qOyKtnOnPzv+QYZFYn70QtFwMSIqR8uQD5sYHow7p2
-         tg8A==
-X-Gm-Message-State: ABuFfogTnWOClbwEOuHQUu7DqxzSmVGmFteFp9/05hjeFtSJNh/+Di7e
-        inn/z60OR5fZ6v5STMsvdWmS7aS7cGXseJ5xgNQ=
-X-Google-Smtp-Source: ACcGV61beW2afoAWk7vKFDtTfo5Ine9XVbkDPKz0CJf+zvQCnpZAhu/peWH9Bjcw+rTMEf9usr/diiH/GIY6yCUxHTs=
-X-Received: by 2002:a2e:44d0:: with SMTP id b77-v6mr8637732ljf.47.1538132982966;
- Fri, 28 Sep 2018 04:09:42 -0700 (PDT)
+        bh=lNLw2EDB/0ZGOEwR/b6SNIhp1EW1z+JSRiWPuEI8Vwg=;
+        b=YXu/LhfIbLAnTPuFl8rOaPg1RsPXKSKbabT4/xNanxEsB2aS2WkToXkBx7LCPYbXFc
+         4ZHjgV+YDB2LgqIWtIfzfu4xjl6fFF7JjHXqNxmf19DWoVBPXqa+NVI/XimYbwFHjn2a
+         L352RIXGfB3I7BTYXzLaSrrgwNiRDPovysl4+RQ4F4K6mJPr12W1M7Fyo+4mbkZAjN3+
+         qM7Da+N6Dr4NUGkkuKMfExi+E4F7kk6wz1eyD0tjzdGNKch3yOxBCQLLMEYoZpne+Ai1
+         QLCs0ofmaZvF+DoEmS4+DUX6XgGbb67RaU+PDohiSFvWdcQ7a05dAtTHaY9v2CaPVmg/
+         ELUg==
+X-Gm-Message-State: ABuFfohozVjW8tRU8v7jXZK9QmZIuee7AVx/HJD0nBPHcsN7pT28TALJ
+        020owzD4iUIV8SjYIdyd5Z+pUMCosYM=
+X-Google-Smtp-Source: ACcGV630H5jGkquqlkpY9sptCR/fFHxi9tFYHwwHhghFcMdzMHZjniRidfSFVOU/TURTu60r5En5+w==
+X-Received: by 2002:a50:9306:: with SMTP id m6-v6mr2251643eda.206.1538133070905;
+        Fri, 28 Sep 2018 04:11:10 -0700 (PDT)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id 30-v6sm2101158edt.24.2018.09.28.04.11.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 04:11:10 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 189-v6so1492251wmw.2;
+        Fri, 28 Sep 2018 04:11:10 -0700 (PDT)
+X-Received: by 2002:a1c:1d6:: with SMTP id 205-v6mr1393154wmb.151.1538133069789;
+ Fri, 28 Sep 2018 04:11:09 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab3:619:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 04:09:02 -0700 (PDT)
-In-Reply-To: <CAK8P3a2WWFp5W5-7o-X3joOpSGgnK=s_ZyGev7gsVV0SjN0p0A@mail.gmail.com>
-References: <20180912135352.19722-1-suzuki.poulose@arm.com>
- <20180912135352.19722-5-suzuki.poulose@arm.com> <ccc61e1b-768c-2a6d-3ff5-95b72bc58a6f@arm.com>
- <CAAfSe-swWPgCWN6cZbQxLL6fwaJ1qLXnC_X7A0zeYuHDaZ_A1Q@mail.gmail.com> <CAK8P3a2WWFp5W5-7o-X3joOpSGgnK=s_ZyGev7gsVV0SjN0p0A@mail.gmail.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Fri, 28 Sep 2018 19:09:02 +0800
-Message-ID: <CAAfSe-sD-Yk2N-7aRuBW8UuX5=111Ofb5GLZRTHQKJ5n+Y=uog@mail.gmail.com>
-Subject: Re: [PATCH v2 04/11] arm64: dts: sc9836/sc9860: Update coresight
- bindings for hardware ports
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        coresight@lists.linaro.org, Leo Yan <leo.yan@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>
+References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
+ <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com> <14114604.4rraf0qJLU@avalon>
+ <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com>
+In-Reply-To: <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 28 Sep 2018 19:10:58 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
+Message-ID: <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
+Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera
+ Sensor Interface (CSI)
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 September 2018 at 18:45, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Sep 27, 2018 at 11:19 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->>
->> Hi Suzuki,
->>
->> On 27 September 2018 at 16:51, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->> > +To: Chunyan Zhang
->> >
->> > Chunyan Zhang,
->> >
->> > On 09/12/2018 02:53 PM, Suzuki K Poulose wrote:
->> >>
->> >> Switch to the new coresight bindings for hw ports
->> >>
->> >
->> > How can we push this patch ? Do you generally send the spreadtrum
->> > specific changes to ARM soc folks ? Or would you like me to post
->> > this directly to ARM soc folks ?
->>
->> Yeah, at present sprd dts files generally got merged through arm-soc
->> (I've added arm@kernel.org).
+On Fri, Sep 28, 2018 at 6:23 PM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
 >
-> Yes, that's fine. Generally, we prefer if you collect patches for your
-> platform first, and then send them as a pull request or short set
-> of patches. for inclusion, rather than picking them up from the list.
+> Hi Laurent,
 >
-
-Ok, I will send you a patchset once merge window open.
-
-Thanks,
-Chunyan
-
-> If this is the only DT patch for spreadtrum in 4.20, I can also just
-> pick it up with your Ack.
+> On Fri, Sep 28, 2018 at 12:45:12PM +0300, Laurent Pinchart wrote:
+> > Hi Sakari,
+> >
+> > On Friday, 28 September 2018 12:38:33 EEST Sakari Ailus wrote:
+> > > On Wed, Sep 26, 2018 at 04:40:04PM +0800, Yong Deng wrote:
+> > > > Add binding documentation for Allwinner V3s CSI.
+> > > >
+> > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > >
+> > > I know... but I have a few more comments.
+> > >
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
+> > > > ---
+> > > >
+> > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++
+> > > >  1 file changed, 59 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
+> > > > 100644
+> > > > index 000000000000..2ff47a9507a6
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > > @@ -0,0 +1,59 @@
+> > > > +Allwinner V3s Camera Sensor Interface
+> > > > +-------------------------------------
+> > > > +
+> > > > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+> > > > +interface and CSI1 is used for parallel interface.
+> > > > +
+> > > > +Required properties:
+> > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
+> > > > +  - reg: base address and size of the memory-mapped region.
+> > > > +  - interrupts: interrupt associated to this IP
+> > > > +  - clocks: phandles to the clocks feeding the CSI
+> > > > +    * bus: the CSI interface clock
+> > > > +    * mod: the CSI module clock
+> > > > +    * ram: the CSI DRAM clock
+> > > > +  - clock-names: the clock names mentioned above
+> > > > +  - resets: phandles to the reset line driving the CSI
+> > > > +
+> > > > +Each CSI node should contain one 'port' child node with one child
+> > > > 'endpoint' +node, according to the bindings defined in
+> > > > +Documentation/devicetree/bindings/media/video-interfaces.txt. As
+> > > > mentioned
+> > > > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
+> > > > or +Bt656 for CSI1.
+> > >
+> > > Which port represents CSI0 and which one is CSI1? That needs to be
+> > > documented.
+> >
+> > There are two CSI devices, named CSI0 and CSI1, with one port each. The CSI0
+> > device supports CSI-2 only, and the CSI1 device parallel (BT.601 or BT.656)
+> > only.
+> >
+> > > > +
+> > > > +Endpoint node properties for CSI1
+> > >
+> > > How about CSI0? I'd expect at least data-lanes, and clock-lanes as well if
+> > > the hardware supports lane mapping.
+> >
+> > I enquired about that too. As far as I understand, CSI0 isn't supported yet in
+> > the driver due to lack of documentation and lack of open-source vendor-
+> > provided source code. While DT bindings are not tied to driver
+> > implementations, it's not the best idea to design DT bindings without at least
+> > one working implementation to test them. I thus proposed just listing CSI0 as
+> > being unsupported for now.
 >
->        Arnd
+> Ack.
+>
+> We should still define which receiver corresponds to a given port. Probably
+> 1 for CSI1 would make sense, in order to avoid changing the order the
+> hardware already uses. 0 doesn't need to be documented no IMO.
+>
+> What do you think?
+
+AFAICT it would be a completely seperate node, since they have different address
+spaces, clocks and reset controls. So there's no possibility of confusion.
+
+According to Yong, CSI0 is tied internally to some unknown MIPI CSI2-receiver,
+which is the undocumented part. CSI1 has its parallel data pins exposed to the
+outside.
+
+ChenYu
+
+> >
+> > > > +---------------------------------
+> > > > +
+> > > > +- remote-endpoint        : (required) a phandle to the bus receiver's endpoint
+> > > > +                    node
+> > > > +- bus-width:             : (required) must be 8, 10, 12 or 16
+> > > > +- pclk-sample            : (optional) (default: sample on falling edge)
+> > >
+> > > Could you add that video-interfaces.txt contains documentation of these
+> > > properties as well? There's a reference above but only discusses port and
+> > > endpoint nodes.
+> > >
+> > > > +- hsync-active           : (only required for parallel)
+> > > > +- vsync-active           : (only required for parallel)
+> > >
+> > > As you support both Bt656 and parallel (with sync signals), you can detect
+> > > the interface type from the presence of these properties. I think you
+> > > should also say that these properties are not allowed on Bt656. So I'd
+> > > change this to e.g.
+> > >
+> > >     (required; parallel-only)
+> > >
+> > > > +
+> > > > +Example:
+> > > > +
+> > > > +csi1: csi@1cb4000 {
+> > > > + compatible = "allwinner,sun8i-v3s-csi";
+> > > > + reg = <0x01cb4000 0x1000>;
+> > > > + interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> > > > + clocks = <&ccu CLK_BUS_CSI>,
+> > > > +          <&ccu CLK_CSI1_SCLK>,
+> > > > +          <&ccu CLK_DRAM_CSI>;
+> > > > + clock-names = "bus", "mod", "ram";
+> > > > + resets = <&ccu RST_BUS_CSI>;
+> > > > +
+> > > > + port {
+> > > > +         /* Parallel bus endpoint */
+> > > > +         csi1_ep: endpoint {
+> > > > +                 remote-endpoint = <&adv7611_ep>;
+> > > > +                 bus-width = <16>;
+> > > > +
+> > > > +                 /* If hsync-active/vsync-active are missing,
+> > > > +                    embedded BT.656 sync is used */
+> > > > +                 hsync-active = <0>; /* Active low */
+> > > > +                 vsync-active = <0>; /* Active low */
+> > > > +                 pclk-sample = <1>;  /* Rising */
+> > > > +         };
+> > > > + };
+> > > > +};
+>
+> --
+> Terveisin,
+>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
