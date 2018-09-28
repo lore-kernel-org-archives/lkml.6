@@ -2,237 +2,134 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E45C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64408C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE3DB206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:02:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE3DB206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 26C45206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="udrTHRWl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C45206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbeI2E14 (ORCPT
+        id S1726548AbeI2E2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:27:56 -0400
-Received: from smtprelay0065.hostedemail.com ([216.40.44.65]:45697 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726244AbeI2E14 (ORCPT
+        Sat, 29 Sep 2018 00:28:32 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46228 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbeI2E2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:27:56 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id E01261802AD2D;
-        Fri, 28 Sep 2018 22:02:09 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: arm29_12be92163ee09
-X-Filterd-Recvd-Size: 10725
-Received: from joe-laptop.perches.com (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:02:08 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Bad MAINTAINERS pattern in section 'SAA7146 VIDEO4LINUX-2 DRIVER'
-Date:   Fri, 28 Sep 2018 15:02:07 -0700
-Message-Id: <20180928220207.31227-1-joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Sat, 29 Sep 2018 00:28:31 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d8-v6so5149695pfo.13
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DEpx5TG66rcd4Z2ytd18XX/tOyyZDkshRv3fyOh2Nhk=;
+        b=udrTHRWlBJGnPnqJKHivAZau1tHBKUyNW3vlgWma06MjqtPssVF3PjDI8EpIkPPCCc
+         mPrVh8U4O7P10OpXRI3KrkZmFER8/SxeSTCm0CmC6Mc80IimlBEqvHVd5Eqr2pnxUg2k
+         +UTDhquYQ3M1HEzz/DRcIjbXrXVA2vZFE7FJy6wEE6hziSCxMmabyoVnCKbNYx/rWL7c
+         hzJqUf03Ct92zmiTgoLM3DUR0ffU3ZgI4Uv/oG3gjkw+B3Fi2FMyQSVTdsbE2CAB7G8f
+         1ehnxYFoCIHwJfflknGvSa1oQMUM8s+U893o7ziDK1HrMENC9A2NqVZuTszueyImi+3D
+         EwqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DEpx5TG66rcd4Z2ytd18XX/tOyyZDkshRv3fyOh2Nhk=;
+        b=OxqGJlblfhhHOC6iZJJteZ9fpOrTLt5ETRaoJTo+JiHgPAadrOghmnyQTTKbkJQsBT
+         vOJqeegzKINxbAXRbhObxG94aLT7YIaUFFZyQPQE2IiJkZONSJKFyJ2D05C7BaIfMq2Y
+         T3Bbnv4VaCAtl/ThFYqx2bN2MAS1lw+JJIcDl0lUn7cZT1yBx5YozZ+OXXPZDmVKMQTI
+         l7CZG1kFSdO2Ezt8W1RFs+sZurwB7dmWDoO+qXgNUAXrOzFaEmKz9iSZubbAuLx4rDey
+         oz2lLb2Kmjb0Cu9Ed+Y3DsXrEi58wk4N+XWkr1lEdhLDorHm93qH3uYyikzMYoGglLtD
+         L7PQ==
+X-Gm-Message-State: ABuFfogYnh/IzW/L5DAUuyqaiRM59NQ2S246ZkuZsiwFdLrogyQCeC11
+        gmZXV5Ri4qnqUcjo7RFKxLftug==
+X-Google-Smtp-Source: ACcGV60/lAkWQr0S1MYTyOT96uQhEFw3up52kLQjJKK6u9Qrsk+hWOupWS4oxONJ3Jb4fP0dYykFFw==
+X-Received: by 2002:a62:52cc:: with SMTP id g195-v6mr488883pfb.241.1538172166265;
+        Fri, 28 Sep 2018 15:02:46 -0700 (PDT)
+Received: from cisco.lan ([128.107.241.171])
+        by smtp.gmail.com with ESMTPSA id k3-v6sm15483040pfk.60.2018.09.28.15.02.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Sep 2018 15:02:45 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 16:02:43 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
+Message-ID: <20180928220243.GE18045@cisco.lan>
+References: <20180928154648.6320-1-tycho@tycho.ws>
+ <20180928154648.6320-3-tycho@tycho.ws>
+ <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com>
+ <20180928205652.GC18045@cisco.lan>
+ <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
+ <20180928213557.GD18045@cisco.lan>
+ <CAG48ez18dg1dZ-jDQjDQ6zmo7R54SHJYYAZpunFLojOChwZ=9g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez18dg1dZ-jDQjDQ6zmo7R54SHJYYAZpunFLojOChwZ=9g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please fix this defect appropriately.
+On Fri, Sep 28, 2018 at 11:54:22PM +0200, Jann Horn wrote:
+> On Fri, Sep 28, 2018 at 11:36 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > On Fri, Sep 28, 2018 at 11:10:48PM +0200, Jann Horn wrote:
+> > > On Fri, Sep 28, 2018 at 10:56 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > >
+> > > > On Fri, Sep 28, 2018 at 10:33:34PM +0200, Jann Horn wrote:
+> > > > > On Fri, Sep 28, 2018 at 5:47 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > > > > As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
+> > > > > > the ptrace code that can inspect a filter of another process. Let's
+> > > > > > introduce read locking into the two ptrace accesses so that we don't race.
+> > > > >
+> > > > > Hmm. Is that true? The ptrace code uses get_nth_filter(), which holds
+> > > > > the siglock while grabbing the seccomp filter and bumping its
+> > > > > refcount. And TSYNC happens from seccomp_set_mode_filter(), which
+> > > > > takes the siglock. So this looks okay to me?
+> > > >
+> > > > Oh, yes, you're right. So I guess we should just change the comment to
+> > > > say we're using siglock to represent the read lock.
+> > >
+> > > Hmm... actually, looking at this closer, I think you only need the
+> > > siglock for writing. As far as I can tell, any read (no matter if
+> > > current or non-current) can just use READ_ONCE(), because once a
+> > > seccomp filter is in a task's seccomp filter chain, it can't be freed
+> > > until the task reaches free_task() and calls put_seccomp_filter() from
+> > > there. And if the task whose seccomp filter you're trying to read can
+> > > reach free_task(), you have bigger problems.
+> >
+> > Ok; looks like get_nth_filter() took the siglock anyway. Since we get
+> > the filters in these two functions in get_nth_filter(), I think it's
+> > enough just to just,
+> >
+> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > index f65d47650ac1..79d833ed4c34 100644
+> > --- a/kernel/seccomp.c
+> > +++ b/kernel/seccomp.c
+> > @@ -1001,7 +1001,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+> >                 return ERR_PTR(-EINVAL);
+> >         }
+> >
+> > -       orig = task->seccomp.filter;
+> > +       orig = READ_ONCE(task->seccomp.filter);
+> >         __get_seccomp_filter(orig);
+> >         spin_unlock_irq(&task->sighand->siglock);
+> 
+> Huh? Now you're holding the siglock *and* you're using READ_ONCE()?
+> I'm not sure what you're trying to accomplish here.
 
-linux-next MAINTAINERS section:
+Yes, let's just drop this patch all together.
 
-	12825	SAA7146 VIDEO4LINUX-2 DRIVER
-	12826	M:	Hans Verkuil <hverkuil@xs4all.nl>
-	12827	L:	linux-media@vger.kernel.org
-	12828	T:	git git://linuxtv.org/media_tree.git
-	12829	S:	Maintained
-	12830	F:	drivers/media/common/saa7146/
-	12831	F:	drivers/media/pci/saa7146/
--->	12832	F:	include/media/saa7146*
-
-Commit that introduced this:
-
-commit 90d72ac6e1c3c65233a13816770fb85c8831bff2
- Author: Mauro Carvalho Chehab <mchehab@redhat.com>
- Date:   Sat Sep 15 17:59:42 2012 -0300
- 
-     MAINTAINERS: fix the path for the media drivers that got renamed
-     
-     Due to the media tree path renaming, several drivers change their
-     location. Update MAINTAINERS accordingly.
-     
-     Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
- 
-  MAINTAINERS | 43 +++++++++++++++++++++----------------------
-  1 file changed, 21 insertions(+), 22 deletions(-)
-
-Last commit with include/media/saa7146*
-
-commit d647f0b70ce2b4aeb443639dc92b2d859da697a7
-Author: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Date:   Fri Nov 13 19:40:07 2015 -0200
-
-    [media] include/media: move driver interface headers to a separate dir
-    
-    Let's not mix headers used by the core with those headers that
-    are needed by some driver-specific interface header.
-    
-    The headers used on drivers were manually moved using:
-        mkdir include/media/drv-intf/
-        git mv include/media/cx2341x.h include/media/cx25840.h \
-            include/media/exynos-fimc.h include/media/msp3400.h \
-            include/media/s3c_camif.h include/media/saa7146.h \
-            include/media/saa7146_vv.h  include/media/sh_mobile_ceu.h \
-            include/media/sh_mobile_csi2.h include/media/sh_vou.h \
-            include/media/si476x.h include/media/soc_mediabus.h \
-            include/media/tea575x.h include/media/drv-intf/
-    
-    And the references for those headers were corrected using:
-    
-        MAIN_DIR="media/"
-        PREV_DIR="media/"
-        DIRS="drv-intf/"
-    
-        echo "Checking affected files" >&2
-        for i in $DIRS; do
-            for j in $(find include/$MAIN_DIR/$i -type f -name '*.h'); do
-                     n=`basename $j`
-                    git grep -l $n
-            done
-        done|sort|uniq >files && (
-            echo "Handling files..." >&2;
-            echo "for i in \$(cat files|grep -v Documentation); do cat \$i | \\";
-            (
-                    cd include/$MAIN_DIR;
-                    for j in $DIRS; do
-                            for i in $(ls $j); do
-                                    echo "perl -ne 's,(include [\\\"\\<])$PREV_DIR($i)([\\\"\\>]),\1$MAIN_DIR$j\2\3,; print \$_' |\\";
-                            done;
-                    done;
-                    echo "cat > a && mv a \$i; done";
-            );
-            echo "Handling documentation..." >&2;
-            echo "for i in MAINTAINERS \$(cat files); do cat \$i | \\";
-            (
-                    cd include/$MAIN_DIR;
-                    for j in $DIRS; do
-                            for i in $(ls $j); do
-                                    echo "  perl -ne 's,include/$PREV_DIR($i)\b,include/$MAIN_DIR$j\1,; print \$_' |\\";
-                            done;
-                    done;
-                    echo "cat > a && mv a \$i; done"
-            );
-        ) >script && . ./script
-    
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-    Acked-by: Arnd Bergmann <arnd@arndb.de>
-
- MAINTAINERS                                              | 4 ++--
- arch/sh/boards/mach-ap325rxa/setup.c                     | 2 +-
- arch/sh/boards/mach-ecovec24/setup.c                     | 4 ++--
- arch/sh/boards/mach-kfr2r09/setup.c                      | 2 +-
- arch/sh/boards/mach-migor/setup.c                        | 2 +-
- arch/sh/boards/mach-se/7724/setup.c                      | 4 ++--
- drivers/media/common/cx2341x.c                           | 2 +-
- drivers/media/common/saa7146/saa7146_core.c              | 2 +-
- drivers/media/common/saa7146/saa7146_fops.c              | 2 +-
- drivers/media/common/saa7146/saa7146_hlp.c               | 2 +-
- drivers/media/common/saa7146/saa7146_i2c.c               | 2 +-
- drivers/media/common/saa7146/saa7146_vbi.c               | 2 +-
- drivers/media/common/saa7146/saa7146_video.c             | 2 +-
- drivers/media/i2c/cx25840/cx25840-audio.c                | 2 +-
- drivers/media/i2c/cx25840/cx25840-core.c                 | 2 +-
- drivers/media/i2c/cx25840/cx25840-firmware.c             | 2 +-
- drivers/media/i2c/cx25840/cx25840-ir.c                   | 2 +-
- drivers/media/i2c/cx25840/cx25840-vbi.c                  | 2 +-
- drivers/media/i2c/m5mols/m5mols_capture.c                | 2 +-
- drivers/media/i2c/msp3400-driver.c                       | 2 +-
- drivers/media/i2c/msp3400-driver.h                       | 2 +-
- drivers/media/i2c/msp3400-kthreads.c                     | 2 +-
- drivers/media/i2c/soc_camera/mt9m001.c                   | 2 +-
- drivers/media/i2c/soc_camera/mt9v022.c                   | 2 +-
- drivers/media/pci/bt8xx/bttv-driver.c                    | 2 +-
- drivers/media/pci/bt8xx/bttvp.h                          | 2 +-
- drivers/media/pci/cx18/cx23418.h                         | 2 +-
- drivers/media/pci/cx23885/cx23885-417.c                  | 2 +-
- drivers/media/pci/cx23885/cx23885-cards.c                | 2 +-
- drivers/media/pci/cx23885/cx23885-video.c                | 2 +-
- drivers/media/pci/cx23885/cx23885.h                      | 2 +-
- drivers/media/pci/cx88/cx88-blackbird.c                  | 2 +-
- drivers/media/pci/cx88/cx88.h                            | 2 +-
- drivers/media/pci/ivtv/ivtv-cards.c                      | 4 ++--
- drivers/media/pci/ivtv/ivtv-driver.h                     | 2 +-
- drivers/media/pci/ivtv/ivtv-i2c.c                        | 2 +-
- drivers/media/pci/ivtv/ivtv-routing.c                    | 2 +-
- drivers/media/pci/saa7146/hexium_gemini.c                | 2 +-
- drivers/media/pci/saa7146/hexium_orion.c                 | 2 +-
- drivers/media/pci/saa7146/mxb.c                          | 2 +-
- drivers/media/pci/ttpci/av7110.h                         | 2 +-
- drivers/media/pci/ttpci/budget-av.c                      | 2 +-
- drivers/media/pci/ttpci/budget.h                         | 2 +-
- drivers/media/platform/exynos4-is/common.c               | 2 +-
- drivers/media/platform/exynos4-is/fimc-core.h            | 2 +-
- drivers/media/platform/exynos4-is/fimc-isp-video.c       | 2 +-
- drivers/media/platform/exynos4-is/fimc-isp.h             | 2 +-
- drivers/media/platform/exynos4-is/fimc-lite-reg.c        | 2 +-
- drivers/media/platform/exynos4-is/fimc-lite.c            | 2 +-
- drivers/media/platform/exynos4-is/fimc-lite.h            | 2 +-
- drivers/media/platform/exynos4-is/fimc-reg.c             | 2 +-
- drivers/media/platform/exynos4-is/media-dev.c            | 2 +-
- drivers/media/platform/exynos4-is/media-dev.h            | 2 +-
- drivers/media/platform/exynos4-is/mipi-csis.c            | 2 +-
- drivers/media/platform/s3c-camif/camif-core.h            | 2 +-
- drivers/media/platform/s3c-camif/camif-regs.h            | 2 +-
- drivers/media/platform/sh_vou.c                          | 2 +-
- drivers/media/platform/soc_camera/atmel-isi.c            | 2 +-
- drivers/media/platform/soc_camera/mx2_camera.c           | 2 +-
- drivers/media/platform/soc_camera/mx3_camera.c           | 2 +-
- drivers/media/platform/soc_camera/omap1_camera.c         | 2 +-
- drivers/media/platform/soc_camera/pxa_camera.c           | 2 +-
- drivers/media/platform/soc_camera/rcar_vin.c             | 2 +-
- drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c | 6 +++---
- drivers/media/platform/soc_camera/sh_mobile_csi2.c       | 6 +++---
- drivers/media/platform/soc_camera/soc_camera.c           | 2 +-
- drivers/media/platform/soc_camera/soc_mediabus.c         | 2 +-
- drivers/media/radio/radio-maxiradio.c                    | 2 +-
- drivers/media/radio/radio-sf16fmr2.c                     | 2 +-
- drivers/media/radio/radio-shark.c                        | 2 +-
- drivers/media/radio/radio-si476x.c                       | 2 +-
- drivers/media/radio/tea575x.c                            | 2 +-
- drivers/media/usb/cx231xx/cx231xx-417.c                  | 2 +-
- drivers/media/usb/cx231xx/cx231xx-cards.c                | 2 +-
- drivers/media/usb/cx231xx/cx231xx-vbi.c                  | 2 +-
- drivers/media/usb/cx231xx/cx231xx-video.c                | 2 +-
- drivers/media/usb/cx231xx/cx231xx.h                      | 2 +-
- drivers/media/usb/em28xx/em28xx-cards.c                  | 2 +-
- drivers/media/usb/em28xx/em28xx-video.c                  | 2 +-
- drivers/media/usb/pvrusb2/pvrusb2-audio.c                | 2 +-
- drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c          | 2 +-
- drivers/media/usb/pvrusb2/pvrusb2-hdw-internal.h         | 2 +-
- include/media/{ => drv-intf}/cx2341x.h                   | 0
- include/media/{ => drv-intf}/cx25840.h                   | 0
- include/media/{ => drv-intf}/exynos-fimc.h               | 0
- include/media/{ => drv-intf}/msp3400.h                   | 1 -
- include/media/{ => drv-intf}/s3c_camif.h                 | 0
- include/media/{ => drv-intf}/saa7146.h                   | 0
- include/media/{ => drv-intf}/saa7146_vv.h                | 2 +-
- include/media/{ => drv-intf}/sh_mobile_ceu.h             | 0
- include/media/{ => drv-intf}/sh_mobile_csi2.h            | 0
- include/media/{ => drv-intf}/sh_vou.h                    | 0
- include/media/{ => drv-intf}/si476x.h                    | 2 +-
- include/media/{ => drv-intf}/soc_mediabus.h              | 0
- include/media/{ => drv-intf}/tea575x.h                   | 0
- include/uapi/linux/v4l2-controls.h                       | 6 ++++--
- sound/pci/es1968.c                                       | 2 +-
- sound/pci/fm801.c                                        | 2 +-
- 98 files changed, 98 insertions(+), 97 deletions(-)
+Tycho
