@@ -2,235 +2,144 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB02C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB6BC004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE211206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE211206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id AE474206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE474206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeI2ERy (ORCPT
+        id S1727359AbeI2ER4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:17:54 -0400
-Received: from smtprelay0020.hostedemail.com ([216.40.44.20]:59480 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727234AbeI2ERx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:17:53 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 58FB1100E86C3;
-        Fri, 28 Sep 2018 21:52:12 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bird29_4d49770a3861a
-X-Filterd-Recvd-Size: 10570
-Received: from joe-laptop.perches.com (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:52:10 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Bad MAINTAINERS pattern in section 'CX2341X MPEG ENCODER HELPER MODULE'
-Date:   Fri, 28 Sep 2018 14:52:09 -0700
-Message-Id: <20180928215210.29037-1-joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Sat, 29 Sep 2018 00:17:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56244 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727234AbeI2ERz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 00:17:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34B9D18A;
+        Fri, 28 Sep 2018 14:52:14 -0700 (PDT)
+Received: from [192.168.100.242] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B625B3F5B3;
+        Fri, 28 Sep 2018 14:52:13 -0700 (PDT)
+Subject: Re: [PATCH v3 2/2] ACPI/PPTT: Handle architecturally unknown cache
+ types
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, sudeep.holla@arm.com,
+        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
+        linux-acpi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org
+References: <1538103477-15513-1-git-send-email-jhugo@codeaurora.org>
+ <1538103477-15513-3-git-send-email-jhugo@codeaurora.org>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <377f840c-6c4f-9a17-7aa5-cc2fa4f7b244@arm.com>
+Date:   Fri, 28 Sep 2018 16:52:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1538103477-15513-3-git-send-email-jhugo@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please fix this defect appropriately.
+Hi,
 
-linux-next MAINTAINERS section:
+On 09/27/2018 09:57 PM, Jeffrey Hugo wrote:
+> The type of a cache might not be specified by architectural mechanisms (ie
+> system registers), but its type might be specified in the PPTT.  In this
+> case, we should populate the type of the cache, rather than leave it
+> undefined. 
+> 
+> This fixes the issue where the cacheinfo driver will not populate sysfs
+> for such caches, resulting in the information missing from utilities like
+> lstopo and lscpu, thus degrading the user experience.
 
-	3857	CX2341X MPEG ENCODER HELPER MODULE
-	3858	M:	Hans Verkuil <hverkuil@xs4all.nl>
-	3859	L:	linux-media@vger.kernel.org
-	3860	T:	git git://linuxtv.org/media_tree.git
-	3861	W:	https://linuxtv.org
-	3862	S:	Maintained
-	3863	F:	drivers/media/common/cx2341x*
--->	3864	F:	include/media/cx2341x*
+The code looks fine to me.
 
-Commit that introduced this:
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
 
-commit 3f101d916b5b2b95d36369e1b2505720db2dcecb
- Author: Hans Verkuil <hans.verkuil@cisco.com>
- Date:   Fri Nov 23 07:00:02 2012 -0300
- 
-     [media] MAINTAINERS: add cx2341x entry
-     
-     Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-     Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
- 
-  MAINTAINERS | 9 +++++++++
-  1 file changed, 9 insertions(+)
+Thanks!
 
-Last commit with include/media/cx2341x*
+> 
+> Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology Table parsing)
+> Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
 
-commit d647f0b70ce2b4aeb443639dc92b2d859da697a7
-Author: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Date:   Fri Nov 13 19:40:07 2015 -0200
+PS:
 
-    [media] include/media: move driver interface headers to a separate dir
-    
-    Let's not mix headers used by the core with those headers that
-    are needed by some driver-specific interface header.
-    
-    The headers used on drivers were manually moved using:
-        mkdir include/media/drv-intf/
-        git mv include/media/cx2341x.h include/media/cx25840.h \
-            include/media/exynos-fimc.h include/media/msp3400.h \
-            include/media/s3c_camif.h include/media/saa7146.h \
-            include/media/saa7146_vv.h  include/media/sh_mobile_ceu.h \
-            include/media/sh_mobile_csi2.h include/media/sh_vou.h \
-            include/media/si476x.h include/media/soc_mediabus.h \
-            include/media/tea575x.h include/media/drv-intf/
-    
-    And the references for those headers were corrected using:
-    
-        MAIN_DIR="media/"
-        PREV_DIR="media/"
-        DIRS="drv-intf/"
-    
-        echo "Checking affected files" >&2
-        for i in $DIRS; do
-            for j in $(find include/$MAIN_DIR/$i -type f -name '*.h'); do
-                     n=`basename $j`
-                    git grep -l $n
-            done
-        done|sort|uniq >files && (
-            echo "Handling files..." >&2;
-            echo "for i in \$(cat files|grep -v Documentation); do cat \$i | \\";
-            (
-                    cd include/$MAIN_DIR;
-                    for j in $DIRS; do
-                            for i in $(ls $j); do
-                                    echo "perl -ne 's,(include [\\\"\\<])$PREV_DIR($i)([\\\"\\>]),\1$MAIN_DIR$j\2\3,; print \$_' |\\";
-                            done;
-                    done;
-                    echo "cat > a && mv a \$i; done";
-            );
-            echo "Handling documentation..." >&2;
-            echo "for i in MAINTAINERS \$(cat files); do cat \$i | \\";
-            (
-                    cd include/$MAIN_DIR;
-                    for j in $DIRS; do
-                            for i in $(ls $j); do
-                                    echo "  perl -ne 's,include/$PREV_DIR($i)\b,include/$MAIN_DIR$j\1,; print \$_' |\\";
-                            done;
-                    done;
-                    echo "cat > a && mv a \$i; done"
-            );
-        ) >script && . ./script
-    
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-    Acked-by: Arnd Bergmann <arnd@arndb.de>
+Although, if you end up re-spinning this, I think its appropriate to add 
+in the commit message that what this is really working around is 
+firmware that has declined to fill out all the fields in the cache 
+description.
 
- MAINTAINERS                                              | 4 ++--
- arch/sh/boards/mach-ap325rxa/setup.c                     | 2 +-
- arch/sh/boards/mach-ecovec24/setup.c                     | 4 ++--
- arch/sh/boards/mach-kfr2r09/setup.c                      | 2 +-
- arch/sh/boards/mach-migor/setup.c                        | 2 +-
- arch/sh/boards/mach-se/7724/setup.c                      | 4 ++--
- drivers/media/common/cx2341x.c                           | 2 +-
- drivers/media/common/saa7146/saa7146_core.c              | 2 +-
- drivers/media/common/saa7146/saa7146_fops.c              | 2 +-
- drivers/media/common/saa7146/saa7146_hlp.c               | 2 +-
- drivers/media/common/saa7146/saa7146_i2c.c               | 2 +-
- drivers/media/common/saa7146/saa7146_vbi.c               | 2 +-
- drivers/media/common/saa7146/saa7146_video.c             | 2 +-
- drivers/media/i2c/cx25840/cx25840-audio.c                | 2 +-
- drivers/media/i2c/cx25840/cx25840-core.c                 | 2 +-
- drivers/media/i2c/cx25840/cx25840-firmware.c             | 2 +-
- drivers/media/i2c/cx25840/cx25840-ir.c                   | 2 +-
- drivers/media/i2c/cx25840/cx25840-vbi.c                  | 2 +-
- drivers/media/i2c/m5mols/m5mols_capture.c                | 2 +-
- drivers/media/i2c/msp3400-driver.c                       | 2 +-
- drivers/media/i2c/msp3400-driver.h                       | 2 +-
- drivers/media/i2c/msp3400-kthreads.c                     | 2 +-
- drivers/media/i2c/soc_camera/mt9m001.c                   | 2 +-
- drivers/media/i2c/soc_camera/mt9v022.c                   | 2 +-
- drivers/media/pci/bt8xx/bttv-driver.c                    | 2 +-
- drivers/media/pci/bt8xx/bttvp.h                          | 2 +-
- drivers/media/pci/cx18/cx23418.h                         | 2 +-
- drivers/media/pci/cx23885/cx23885-417.c                  | 2 +-
- drivers/media/pci/cx23885/cx23885-cards.c                | 2 +-
- drivers/media/pci/cx23885/cx23885-video.c                | 2 +-
- drivers/media/pci/cx23885/cx23885.h                      | 2 +-
- drivers/media/pci/cx88/cx88-blackbird.c                  | 2 +-
- drivers/media/pci/cx88/cx88.h                            | 2 +-
- drivers/media/pci/ivtv/ivtv-cards.c                      | 4 ++--
- drivers/media/pci/ivtv/ivtv-driver.h                     | 2 +-
- drivers/media/pci/ivtv/ivtv-i2c.c                        | 2 +-
- drivers/media/pci/ivtv/ivtv-routing.c                    | 2 +-
- drivers/media/pci/saa7146/hexium_gemini.c                | 2 +-
- drivers/media/pci/saa7146/hexium_orion.c                 | 2 +-
- drivers/media/pci/saa7146/mxb.c                          | 2 +-
- drivers/media/pci/ttpci/av7110.h                         | 2 +-
- drivers/media/pci/ttpci/budget-av.c                      | 2 +-
- drivers/media/pci/ttpci/budget.h                         | 2 +-
- drivers/media/platform/exynos4-is/common.c               | 2 +-
- drivers/media/platform/exynos4-is/fimc-core.h            | 2 +-
- drivers/media/platform/exynos4-is/fimc-isp-video.c       | 2 +-
- drivers/media/platform/exynos4-is/fimc-isp.h             | 2 +-
- drivers/media/platform/exynos4-is/fimc-lite-reg.c        | 2 +-
- drivers/media/platform/exynos4-is/fimc-lite.c            | 2 +-
- drivers/media/platform/exynos4-is/fimc-lite.h            | 2 +-
- drivers/media/platform/exynos4-is/fimc-reg.c             | 2 +-
- drivers/media/platform/exynos4-is/media-dev.c            | 2 +-
- drivers/media/platform/exynos4-is/media-dev.h            | 2 +-
- drivers/media/platform/exynos4-is/mipi-csis.c            | 2 +-
- drivers/media/platform/s3c-camif/camif-core.h            | 2 +-
- drivers/media/platform/s3c-camif/camif-regs.h            | 2 +-
- drivers/media/platform/sh_vou.c                          | 2 +-
- drivers/media/platform/soc_camera/atmel-isi.c            | 2 +-
- drivers/media/platform/soc_camera/mx2_camera.c           | 2 +-
- drivers/media/platform/soc_camera/mx3_camera.c           | 2 +-
- drivers/media/platform/soc_camera/omap1_camera.c         | 2 +-
- drivers/media/platform/soc_camera/pxa_camera.c           | 2 +-
- drivers/media/platform/soc_camera/rcar_vin.c             | 2 +-
- drivers/media/platform/soc_camera/sh_mobile_ceu_camera.c | 6 +++---
- drivers/media/platform/soc_camera/sh_mobile_csi2.c       | 6 +++---
- drivers/media/platform/soc_camera/soc_camera.c           | 2 +-
- drivers/media/platform/soc_camera/soc_mediabus.c         | 2 +-
- drivers/media/radio/radio-maxiradio.c                    | 2 +-
- drivers/media/radio/radio-sf16fmr2.c                     | 2 +-
- drivers/media/radio/radio-shark.c                        | 2 +-
- drivers/media/radio/radio-si476x.c                       | 2 +-
- drivers/media/radio/tea575x.c                            | 2 +-
- drivers/media/usb/cx231xx/cx231xx-417.c                  | 2 +-
- drivers/media/usb/cx231xx/cx231xx-cards.c                | 2 +-
- drivers/media/usb/cx231xx/cx231xx-vbi.c                  | 2 +-
- drivers/media/usb/cx231xx/cx231xx-video.c                | 2 +-
- drivers/media/usb/cx231xx/cx231xx.h                      | 2 +-
- drivers/media/usb/em28xx/em28xx-cards.c                  | 2 +-
- drivers/media/usb/em28xx/em28xx-video.c                  | 2 +-
- drivers/media/usb/pvrusb2/pvrusb2-audio.c                | 2 +-
- drivers/media/usb/pvrusb2/pvrusb2-cx2584x-v4l.c          | 2 +-
- drivers/media/usb/pvrusb2/pvrusb2-hdw-internal.h         | 2 +-
- include/media/{ => drv-intf}/cx2341x.h                   | 0
- include/media/{ => drv-intf}/cx25840.h                   | 0
- include/media/{ => drv-intf}/exynos-fimc.h               | 0
- include/media/{ => drv-intf}/msp3400.h                   | 1 -
- include/media/{ => drv-intf}/s3c_camif.h                 | 0
- include/media/{ => drv-intf}/saa7146.h                   | 0
- include/media/{ => drv-intf}/saa7146_vv.h                | 2 +-
- include/media/{ => drv-intf}/sh_mobile_ceu.h             | 0
- include/media/{ => drv-intf}/sh_mobile_csi2.h            | 0
- include/media/{ => drv-intf}/sh_vou.h                    | 0
- include/media/{ => drv-intf}/si476x.h                    | 2 +-
- include/media/{ => drv-intf}/soc_mediabus.h              | 0
- include/media/{ => drv-intf}/tea575x.h                   | 0
- include/uapi/linux/v4l2-controls.h                       | 6 ++++--
- sound/pci/es1968.c                                       | 2 +-
- sound/pci/fm801.c                                        | 2 +-
- 98 files changed, 98 insertions(+), 97 deletions(-)
+
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>   drivers/acpi/pptt.c | 30 +++++++++++++-----------------
+>   1 file changed, 13 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index d1e26cb..38ac30e 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -357,25 +357,15 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+>   				    struct acpi_pptt_cache *found_cache,
+>   				    struct acpi_pptt_processor *cpu_node)
+>   {
+> -	int valid_flags = 0;
+> -
+>   	this_leaf->fw_token = cpu_node;
+> -	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID) {
+> +	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
+>   		this_leaf->size = found_cache->size;
+> -		valid_flags++;
+> -	}
+> -	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID) {
+> +	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
+>   		this_leaf->coherency_line_size = found_cache->line_size;
+> -		valid_flags++;
+> -	}
+> -	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID) {
+> +	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
+>   		this_leaf->number_of_sets = found_cache->number_of_sets;
+> -		valid_flags++;
+> -	}
+> -	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID) {
+> +	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
+>   		this_leaf->ways_of_associativity = found_cache->associativity;
+> -		valid_flags++;
+> -	}
+>   	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID) {
+>   		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
+>   		case ACPI_PPTT_CACHE_POLICY_WT:
+> @@ -402,11 +392,17 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
+>   		}
+>   	}
+>   	/*
+> -	 * If the above flags are valid, and the cache type is NOCACHE
+> -	 * update the cache type as well.
+> +	 * If cache type is NOCACHE, then the cache hasn't been specified
+> +	 * via other mechanisms.  Update the type if a cache type has been
+> +	 * provided.
+> +	 *
+> +	 * Note, we assume such caches are unified based on conventional system
+> +	 * design and known examples.  Significant work is required elsewhere to
+> +	 * fully support data/instruction only type caches which are only
+> +	 * specified in PPTT.
+>   	 */
+>   	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
+> -	    valid_flags == PPTT_CHECKED_ATTRIBUTES)
+> +	    found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)
+>   		this_leaf->type = CACHE_TYPE_UNIFIED;
+>   }
+>   
+> 
+
