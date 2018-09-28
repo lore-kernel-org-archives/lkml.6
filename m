@@ -2,141 +2,144 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8052C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37200C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8994820676
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:52:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQttvulW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8994820676
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 07BAE2064D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:53:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BAE2064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729306AbeI1VQq (ORCPT
+        id S1729253AbeI1VRl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 17:16:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbeI1VQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 17:16:45 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 889EF2064D;
-        Fri, 28 Sep 2018 14:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538146357;
-        bh=tbeLucJf7uqZcaFvHRtMt9IkxE2ncxyWPV9p2UJrrtc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PQttvulW+Tm92l/lvVW0IAnvCIj5RtcG2GkhSjDc33ffj3yKZBaXyojowV4pmCcPl
-         cyctnGOHrme9WV5TOUdwcGatnWqhyiw+GqBK5Cw5ncPv0fjTC1FMuj4BS9wlIowdOK
-         au2ygII6TTJO+WK+eco8eTNKyTqfI3a3Rv/PIc1s=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 2CAAC14024D; Fri, 28 Sep 2018 11:52:34 -0300 (-03)
-Date:   Fri, 28 Sep 2018 11:52:34 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH v3] perf test: S390 does not support watchpoints in test
- 22
-Message-ID: <20180928145234.GK25764@kernel.org>
-References: <20180928105335.67179-1-tmricht@linux.ibm.com>
- <f1ee3dc0-6b96-c7e5-f449-caabd3bf7f8a@linux.ibm.com>
+        Fri, 28 Sep 2018 17:17:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40006 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726867AbeI1VRl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 17:17:41 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8SEmiTU065057
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:53:32 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2msnhqaupv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:53:31 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Fri, 28 Sep 2018 15:53:29 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Sep 2018 15:53:24 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8SErNXN61866094
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Sep 2018 14:53:23 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 56DCD11C058;
+        Fri, 28 Sep 2018 17:53:03 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7BCF11C050;
+        Fri, 28 Sep 2018 17:53:02 +0100 (BST)
+Received: from mschwideX1 (unknown [9.152.212.164])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 28 Sep 2018 17:53:02 +0100 (BST)
+Date:   Fri, 28 Sep 2018 16:53:21 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Finn Thain <fthain@telegraphics.com.au>
+Subject: Re: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
+In-Reply-To: <0B38810F-3E22-45A8-9D5D-EDEABD214148@amacapital.net>
+References: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org>
+        <alpine.DEB.2.21.1809280819040.8118@nanos.tec.linutronix.de>
+        <CAMuHMdWWxgvo0a+8UvesiVikWS_45yOXRhM39F31Vn17kN+Ptg@mail.gmail.com>
+        <20180928103726.07761672@mschwideX1>
+        <alpine.DEB.2.21.1809281041420.2004@nanos.tec.linutronix.de>
+        <0B38810F-3E22-45A8-9D5D-EDEABD214148@amacapital.net>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+X-TM-AS-GCONF: 00
+x-cbid: 18092814-0016-0000-0000-0000020BDFEC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092814-0017-0000-0000-000032630CBD
+Message-Id: <20180928165321.0ddaf948@mschwideX1>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1ee3dc0-6b96-c7e5-f449-caabd3bf7f8a@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809280150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Sep 28, 2018 at 04:43:06PM +0530, Ravi Bangoria escreveu:
-> On 09/28/2018 04:23 PM, Thomas Richter wrote:
-> > S390 does not support the perf_event_open system call for
-> > attribute type PERF_TYPE_BREAKPOINT. This results in test
-> > failure for test 22:
+On Fri, 28 Sep 2018 07:11:44 -0700
+Andy Lutomirski <luto@amacapital.net> wrote:
 
-> > [root@s8360046 perf]# ./perf test 22
-> > 22: Watchpoint                                :
-> > 22.1: Read Only Watchpoint                    : FAILED!
-> > 22.2: Write Only Watchpoint                   : FAILED!
-> > 22.3: Read / Write Watchpoint                 : FAILED!
-> > 22.4: Modify Watchpoint                       : FAILED!
-> > [root@s8360046 perf]#
+> > On Sep 28, 2018, at 1:42 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> >   
+> >> On Fri, 28 Sep 2018, Martin Schwidefsky wrote:
+> >> On Fri, 28 Sep 2018 09:12:10 +0200
+> >> Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
+> >>> I don't know if that has happened, and whether it would work on s390 now.  
+> >> 
+> >> commit 03b8c7b623c80af264c4c8d6111e5c6289933666
+> >> Author: Heiko Carstens <heiko.carstens@de.ibm.com>
+> >> Date:   Sun Mar 2 13:09:47 2014 +0100
+> >> 
+> >>    futex: Allow architectures to skip futex_atomic_cmpxchg_inatomic() test
+> >> 
+> >>    If an architecture has futex_atomic_cmpxchg_inatomic() implemented and there
+> >>    is no runtime check necessary, allow to skip the test within futex_init().
+> >> 
+> >>    This allows to get rid of some code which would always give the same result,
+> >>    and also allows the compiler to optimize a couple of if statements away.
+> >> 
+> >>    Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+> >>    Cc: Finn Thain <fthain@telegraphics.com.au>
+> >>    Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> >>    Link: http://lkml.kernel.org/r/20140302120947.GA3641@osiris
+> >>    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> >> 
+> >> 
+> >> Heiko created the CONFIG_HAVE_FUTEX_CMPXCHG to get around this issue.
+> >> We just skip the runtime check as well as arc, m68k and sh. Not sure
+> >> about xtensa, the set it config option only for !MMU.  
+> > 
+> > Duh. grep would have told me. -ENOTENOUGHCOFFEE
+> > 
+> >   
+> 
+> There’s another way to skin this cat: keep KERNEL_DS but pass a valid pointer.
+> I don’t suppose you remember why you didn’t do that?
 
-> > Add s390 support to avoid these tests being executed on
-> > s390 platform:
+No, I don't remember. To use a valid kernel pointer with KERNEL_DS and
+then test for == 0 (vs -ENOSYS) imho should work.
 
-> > [root@s8360046 perf]# ./perf test 22
-> > [root@s8360046 perf]# ./perf test -v 22
-> > 22: Watchpoint                                : Disabled
-> > [root@s8360046 perf]#
+-- 
+blue skies,
+   Martin.
 
-> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
- 
-> Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+"Reality continues to ruin my life." - Calvin.
 
-Thanks, applying.
-
-Just one nit, in cases like this I think a Reviewed-by tag fits better
-than a Acked-by, as per Documentation/process/submitting-patches.rst:
-
---------------
-
-Reviewed-by:, instead, indicates that the patch has been reviewed and found
-acceptable according to the Reviewer's Statement:
-
-Reviewer's statement of oversight
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-By offering my Reviewed-by: tag, I state that:
-
-         (a) I have carried out a technical review of this patch to
-             evaluate its appropriateness and readiness for inclusion into
-             the mainline kernel.
-
-         (b) Any problems, concerns, or questions relating to the patch
-             have been communicated back to the submitter.  I am satisfied
-             with the submitter's response to my comments.
-
-         (c) While there may be things that could be improved with this
-             submission, I believe that it is, at this time, (1) a
-             worthwhile modification to the kernel, and (2) free of known
-             issues which would argue against its inclusion.
-
-         (d) While I have reviewed the patch and believe it to be sound, I
-             do not (unless explicitly stated elsewhere) make any
-             warranties or guarantees that it will achieve its stated
-             purpose or function properly in any given situation.
-
-A Reviewed-by tag is a statement of opinion that the patch is an
-appropriate modification of the kernel without any remaining serious
-technical issues.  Any interested reviewer (who has done the work) can
-offer a Reviewed-by tag for a patch.  This tag serves to give credit to
-reviewers and to inform maintainers of the degree of review which has been
-done on the patch.  Reviewed-by: tags, when supplied by reviewers known to
-understand the subject area and to perform thorough reviews, will normally
-increase the likelihood of your patch getting into the kernel.
-
-----------
-
-While an Acked-by conveys just some quick look was performed, and in
-this case you did what Reviewed-by signifies, I think.
-
-I'm tentatively converting this Acked-by to a Reviewed-by, please let me
-know if you disagree,
-
-Thanks a lot!
-
-- Arnaldo
