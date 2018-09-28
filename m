@@ -2,137 +2,190 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A89C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE1CC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47586216FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53164216FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:11:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MRKv1eOK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47586216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCfKeKo7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53164216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbeI1NdI (ORCPT
+        id S1728916AbeI1Nd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:33:08 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:32814 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728691AbeI1NdH (ORCPT
+        Fri, 28 Sep 2018 09:33:56 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52694 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeI1Ndz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:33:07 -0400
-Received: by mail-qt1-f195.google.com with SMTP id i10-v6so5621789qtp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:10:48 -0700 (PDT)
+        Fri, 28 Sep 2018 09:33:55 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 189-v6so796246wmw.2;
+        Fri, 28 Sep 2018 00:11:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ugMDAi+++0a8OErs+jed8PkSuNvgHRBUmVtruH4QyIU=;
-        b=MRKv1eOKVriHs7Bp9kPCrbRqAVBD7oIrznJNWUYXSiQa3v9Z80LpVxfTnn8t5MiDTq
-         9p8YN3HzUx6U5DFy5aUBuR2xA9o9ykcHh2ZxYkVLvigQGRFqW99YFx0RxivBfRWrurql
-         4RL4F03b+LA7oJgOx1Lkz1c8YYoaGUwJC9fwg=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=qQ8TbzZiFZ7lvQBm0XTQUB+HtYV4NxETXRNqnH6EQCg=;
+        b=XCfKeKo7KdL0vfZ5Yu0E1xOJqsP1dBchuyHQ0KSmnWRAwEt8mnNeCQCu5cuXusLgIe
+         qBEOG2S3432fHm4Aek1OxXP4z1LjUsAFsTDwVWKPyq7GV7xtoupMhXubu+KOZ5rbyk29
+         QgPkmqohZnVzr03WYn6fnk5St3agScuB47rwwAtGE6162jtOESyHqWT1Hnx9oTyhWVRm
+         WXpVVBhUF2VLXEYPFEfpw7f869JhyTd2maWSoq5c+j+ghQnLkueIMXQbUoISSZ1hAbQy
+         Zg+EgCqABUz04byIGdi5frhzOn8p/ve3w3quOIMSX6fkkMUBEinf+dOI8dkAg++/UtpX
+         ordw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ugMDAi+++0a8OErs+jed8PkSuNvgHRBUmVtruH4QyIU=;
-        b=B6lZc2P9VQ29vROMvjCeuZ4e9qq9nsYoZqX+CzIL3XZbx13/DJSsbgut2iyui29Z/R
-         3ZgoooB1qkgC4loR3LpvzI4E9XSHebxnN0mI5Qbuwhmn/qHh4olAEKl4tBoNOqDfB5Cz
-         d9XL+YfQFXXqrQpR+Bx2HLObDlu6a7rBtLXyKjcRtTsfkmACBYX6BPXGD7mWCtR6Tl1f
-         twya/qUTOau8BeiTWHT/Osk7BCDjJhiE6isx2IwH7o+dq2jxtTCu6iWC1fW00Nc8VDcz
-         W9fg8yzBa8jlgZamPeS79FiBwOcoYZ/NBKR/fqoe8dDe1jX0mLAjHKRaChEbPdSWB/Hv
-         i8uQ==
-X-Gm-Message-State: ABuFfohtw/kNJFAyg/QsQtOS8tfB2HQjL6JlJmHPTpnHj9lCoL8iwBrX
-        Ok7/BDqJu/8jtFxNZgcyvs+OdLph1ObpC/my6VzcvQ==
-X-Google-Smtp-Source: ACcGV63hlIOyFT9cuTSLHvIswlT81vDWMuRZq66gXDaVxvxoIC7jecO/AsQ5Z5ZEEZrq3lmI/HkALRM5KIIv+8cLsz0=
-X-Received: by 2002:ac8:1793:: with SMTP id o19-v6mr11356439qtj.98.1538118647676;
- Fri, 28 Sep 2018 00:10:47 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=qQ8TbzZiFZ7lvQBm0XTQUB+HtYV4NxETXRNqnH6EQCg=;
+        b=mu2tjWpaTAEVH3JcR7zDmIPVB7LK0XHLsShN/G4mhk5SQ4NjgOS1TQ0vjb1GHYnuRh
+         IGNaijvyg6fwS+qVAugpn8e4l+lOScrk4aQSyqdfB1CbgaBE4WhmCIdbriPGYC/XVzGR
+         aGPpaaa/J1oFwc9DfAOaQ1VMUjZyy9ROxFjqdcH1JQrn8fGFb2fDo02gl2lHP2K4JtvY
+         Len7dcocWDkCmeFbFrTlFbl1QWQNmcZdkQLHpv47pUqAzt9Z7U6fwXI2/A0Fj/ZddCzI
+         Bh9rlFV9Yi82YpE42VeHDUzymRZGMqHHlyKVAEda3AsuYjkHWrkRH9ked4o61eIEPO6M
+         gQFQ==
+X-Gm-Message-State: ABuFfoh7/Iz1fSHOkZ3NGgT66EIT118ppC+TJO+bs6nfqnpke1yTVvk7
+        +TbzgHc39OpfET2Ri8gpCnY+gN9IbkPxBPaeUj0=
+X-Google-Smtp-Source: ACcGV61B2FxprzY0ytjMHv44lsZiHBN8xvAbO+9A4x1rSkUwV9d+CVgBjxvgHOH8l7jsSBk1f6CN79Pf1A9YJxBR1TM=
+X-Received: by 2002:a1c:1f50:: with SMTP id f77-v6mr757189wmf.52.1538118693062;
+ Fri, 28 Sep 2018 00:11:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180924221748.21584-1-bjorn.andersson@linaro.org> <20180924221748.21584-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20180924221748.21584-2-bjorn.andersson@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 28 Sep 2018 09:10:35 +0200
-Message-ID: <CACRpkdaWboGvKVaSjv4C1CCz5DJXbB+ZWV6vGeyX93vb4zo1sw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] pinctrl: qcom: Introduce readl/writel accessors
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+References: <20180907062502.8241-1-andrea.merello@gmail.com>
+ <20180907062502.8241-2-andrea.merello@gmail.com> <20180918162105.GC2613@vkoul-mobl>
+In-Reply-To: <20180918162105.GC2613@vkoul-mobl>
+Reply-To: andrea.merello@gmail.com
+From:   Andrea Merello <andrea.merello@gmail.com>
+Date:   Fri, 28 Sep 2018 09:11:19 +0200
+Message-ID: <CAN8YU5PWB0sRskcirCcYnY5vG5A_W6pcOMpgyOD3faWfMeu5Rg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/7] dmaengine: xilinx_dma: in axidma slave_sg and
+ dma_cyclic mode align split descriptors
+To:     Vinod <vkoul@kernel.org>
+Cc:     dan.j.williams@intel.com, michal.simek@xilinx.com,
+        appana.durga.rao@xilinx.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        devicetree <devicetree@vger.kernel.org>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 25, 2018 at 12:15 AM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-
-> In preparation for the support for dispersed tiles move all readl and
-> writel calls to helper functions. This will allow us to isolate the
-> added complexity of another indirection.
+On Tue, Sep 18, 2018 at 6:21 PM Vinod <vkoul@kernel.org> wrote:
 >
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> On 07-09-18, 08:24, Andrea Merello wrote:
+> > Whenever a single or cyclic transaction is prepared, the driver
+> > could eventually split it over several SG descriptors in order
+> > to deal with the HW maximum transfer length.
+> >
+> > This could end up in DMA operations starting from a misaligned
+> > address. This seems fatal for the HW if DRE (Data Realignment Engine)
+> > is not enabled.
+> >
+> > This patch eventually adjusts the transfer size in order to make sure
+> > all operations start from an aligned address.
+> >
+> > Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> > Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> > Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> > ---
+> > Changes in v2:
+> >         - don't introduce copy_mask field, rather rely on already-esistent
+> >           copy_align field. Suggested by Radhey Shyam Pandey
+> >         - reword title
+> > Changes in v3:
+> >       - fix bug introduced in v2: wrong copy size when DRE is enabled
+> >       - use implementation suggested by Radhey Shyam Pandey
+> > Changes in v4:
+> >       - rework on the top of 1/6
+> > Changes in v5:
+> >       - fix typo in commit title
+> >       - add hint about "DRE" meaning in commit message
+> > ---
+> >  drivers/dma/xilinx/xilinx_dma.c | 22 ++++++++++++++++++----
+> >  1 file changed, 18 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+> > index a3aaa0e34cc7..aaa6de8a70e4 100644
+> > --- a/drivers/dma/xilinx/xilinx_dma.c
+> > +++ b/drivers/dma/xilinx/xilinx_dma.c
+> > @@ -954,15 +954,28 @@ static int xilinx_dma_alloc_chan_resources(struct dma_chan *dchan)
+> >
+> >  /**
+> >   * xilinx_dma_calc_copysize - Calculate the amount of data to copy
+> > + * @chan: Driver specific DMA channel
+> >   * @size: Total data that needs to be copied
+> >   * @done: Amount of data that has been already copied
+> >   *
+> >   * Return: Amount of data that has to be copied
+> >   */
+> > -static int xilinx_dma_calc_copysize(int size, int done)
+> > +static int xilinx_dma_calc_copysize(struct xilinx_dma_chan *chan,
+> > +                                 int size, int done)
+>
+> align to preceeding line opening brace please
 
-This clashes with Stephen Boyds fix:
-"pinctrl: msm: Really mask level interrupts to prevent latching"
+After applying, I'm seeing it already aligned as you requested; 4 tabs
++ 4 spaces so the 2nd line starts right under the "s" near the opened
+brace..
+Patch sent using git, so it should pass through without being ruined;
+don't know why you see it misaligned :(
 
-I've resolved it like this:
+> >  {
+> > -     return min_t(size_t, size - done,
+> > +     size_t copy = min_t(size_t, size - done,
+> >                    XILINX_DMA_MAX_TRANS_LEN);
+>
+> so we can do this way in patch 1:
+>
+>         size t copy;
+>
+>         copy =  min_t(size_t, size - done,
+>                       XILINX_DMA_MAX_TRANS_LEN);
+>
+>         return copy;
+>
+> and then add these here, feels like we are redoing change introduced in
+> patch 1..
 
-static void msm_gpio_irq_mask(struct irq_data *d)
-{
-    struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-    struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
-    const struct msm_pingroup *g;
-    unsigned long flags;
-    u32 val;
+OK, this sounds good :)
 
-    g = &pctrl->soc->groups[d->hwirq];
+>
+> > +     if ((copy + done < size) &&
+> > +         chan->xdev->common.copy_align) {
+> > +             /*
+> > +              * If this is not the last descriptor, make sure
+> > +              * the next one will be properly aligned
+> > +              */
+> > +             copy = rounddown(copy,
+> > +                              (1 << chan->xdev->common.copy_align));
+> > +     }
+> > +     return copy;
+> >  }
+> >
+> >  /**
+> > @@ -1804,7 +1817,7 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_slave_sg(
+> >                        * Calculate the maximum number of bytes to transfer,
+> >                        * making sure it is less than the hw limit
+> >                        */
+> > -                     copy = xilinx_dma_calc_copysize(sg_dma_len(sg),
+> > +                     copy = xilinx_dma_calc_copysize(chan, sg_dma_len(sg),
+>
+> why not keep chan in patch 1 and add only handling in patch 2, seems
+> less churn to me..
 
-    raw_spin_lock_irqsave(&pctrl->lock, flags);
+Indeed this was something I was unsure about.. I ended up in feeling
+better not to add introduce a function that takes an unused (yet)
+argument, but I can change this of course :)
 
-    val = msm_readl_intr_cfg(pctrl, g);
-    /*
-     * There are two bits that control interrupt forwarding to the CPU. The
-     * RAW_STATUS_EN bit causes the level or edge sensed on the line to be
-     * latched into the interrupt status register when the hardware detects
-     * an irq that it's configured for (either edge for edge type or level
-     * for level type irq). The 'non-raw' status enable bit causes the
-     * hardware to assert the summary interrupt to the CPU if the latched
-     * status bit is set. There's a bug though, the edge detection logic
-     * seems to have a problem where toggling the RAW_STATUS_EN bit may
-     * cause the status bit to latch spuriously when there isn't any edge
-     * so we can't touch that bit for edge type irqs and we have to keep
-     * the bit set anyway so that edges are latched while the line is masked.
-     *
-     * To make matters more complicated, leaving the RAW_STATUS_EN bit
-     * enabled all the time causes level interrupts to re-latch into the
-     * status register because the level is still present on the line after
-     * we ack it. We clear the raw status enable bit during mask here and
-     * set the bit on unmask so the interrupt can't latch into the hardware
-     * while it's masked.
-     */
-    if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK)
-        val &= ~BIT(g->intr_raw_status_bit);
-
-    val &= ~BIT(g->intr_enable_bit);
-    msm_writel_intr_cfg(val, pctrl, g);
-
-    clear_bit(d->hwirq, pctrl->enabled_irqs);
-
-    raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-}
-
-
-Please check.
-
-Yours,
-Linus Walleij
+> --
+> ~Vinod
