@@ -2,129 +2,125 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5611C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D5CC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EBF20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7278520671
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="xLa+anWE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EBF20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tqCdzvzW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7278520671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbeI2EBj (ORCPT
+        id S1726325AbeI2ECN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:01:39 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40576 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeI2EBi (ORCPT
+        Sat, 29 Sep 2018 00:02:13 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:43252 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725266AbeI2ECM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:01:38 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n31-v6so5328500pgm.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 14:36:00 -0700 (PDT)
+        Sat, 29 Sep 2018 00:02:12 -0400
+Received: by mail-yb1-f193.google.com with SMTP id w80-v6so3266827ybe.10;
+        Fri, 28 Sep 2018 14:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=p0Rn2oFe/6hznO3NPjkrSRQTmzEzp1V3hJsY2r8gT30=;
-        b=xLa+anWEY5+H6jIchBEs6Z4+iLIsRAs/sVTxYqXsfCFmUqXqcRquXfrk5To0HW4btV
-         3xIVcALC00nitap/OP2mPwgHElJU8niYEkci7b+29UziSQf8SA2yupT8XOI/4TF8esAb
-         9p2mxbpm63Tncd9Qe2C23JZTZzuBi/kf5tfoCeaY1Yy+9cmoqT8JS06XDpaA8xwFt9Gv
-         J/fHKU8OtWTFrDHZ/gQmHNEs/0nObmLyMQFT6GNUv3cHbFku9qudvZDohW34r08plwEk
-         He5dqg1W4G2BOicfl3daAgQEzkUCBvmqknRp8eooblVo0GSaVWEi1hXqhlsE7gMLJGJF
-         dUgA==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jhbdEF+gsaxOdiMIDcR8L/VpF3hXS9g6CTNKCQwg7TU=;
+        b=tqCdzvzWLU5QuGGAry+ZBN9rmQ6tPHbEQLDkeWAh8d/FtYKVxkS7ze186KeliN27uH
+         C0+Y3jd9fM2SnGH/Poi9pz8rUGhAAHg+4nlS5HTLEWPp31T0hP6IQPAylffsxuIUPCx0
+         NgV9lGtTCtCaE42VsgtFk5WOZimty2KLg3wrNux2oxTRggnzJKM7s2bWpDs8pwanr9o+
+         nT502iE9rdG3JTwqisXWdiUFaw67CsB+mNJHAX1E+n8N0BFx9Xd5x+9M7mBRO0A30Jle
+         3wbBOV3UtTfnGu/bDsVTbd1ptU59namgTD2Rbg1wnAXWfryTcd/Pedb8/STOZTTCVh8G
+         wqGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p0Rn2oFe/6hznO3NPjkrSRQTmzEzp1V3hJsY2r8gT30=;
-        b=JlrYGtBGL3OrvP9qw89+00kMn+Hy9N4zY6XmhzYubiUdEHLTUaxMeFAlhE4HcGHzwo
-         PJYpHonAbadn1oj+gyXSUg+L9C2MdhMLbapfgAvM5dAZXUon+qijF3mKw6HzCSzWCD18
-         lqSvqf3qimIiTIJ9C1i5lIIRqA1jmNZy1sw4+p6DchKE2J8ZGJuIfnpQyOKgkelObP8w
-         NsD2k9jzplv6QsaowRWBlwE930q9RqG195WSNECnAx0K26P7X0BmxOW9Bhx2YHLWqhks
-         WThdDCjSmTn0FHneJBVRyfENJ16Gh4SA5laK++HdPso1WZCq8jK7fIPm86luxuXr5p7S
-         8E2A==
-X-Gm-Message-State: ABuFfogVfLusTYYYIecXp41xll908Prr1dxCPjo1JrLuSwlsRBRcBoVO
-        OHuapHkAPa0d0RpjamQvT2fJ6w==
-X-Google-Smtp-Source: ACcGV62Q/98Gk+3+sbbMn3Lcs/IamJ2YyZW1oQ0oOHOlWCpMGdksdx3u8pTaLccGpbGwcpkI9xbwwg==
-X-Received: by 2002:a17:902:1744:: with SMTP id i62-v6mr400856pli.315.1538170560082;
-        Fri, 28 Sep 2018 14:36:00 -0700 (PDT)
-Received: from cisco.lan ([128.107.241.171])
-        by smtp.gmail.com with ESMTPSA id g3-v6sm6992930pgn.37.2018.09.28.14.35.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 14:35:58 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 15:35:57 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
-Message-ID: <20180928213557.GD18045@cisco.lan>
-References: <20180928154648.6320-1-tycho@tycho.ws>
- <20180928154648.6320-3-tycho@tycho.ws>
- <CAG48ez2h51s1VG8hf1ASHHq88r5b+6rS4nSkgvre77jgsJLbhg@mail.gmail.com>
- <20180928205652.GC18045@cisco.lan>
- <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jhbdEF+gsaxOdiMIDcR8L/VpF3hXS9g6CTNKCQwg7TU=;
+        b=jCGsQT/zmMrbXAKWZYRPRmQr57c4fZCzE4nSeCrLIwKTk45ZFAMNTuf+5izaCkWAET
+         cAzKhRD4zKjZlGNrzTKyYL32NY+oe7gsyg7fA3UjmtYOGqN4ZIVhJh1NPz8hda6lAYM4
+         yLnzdGa/8F1qDm/yQK00vYZpEEBHacqI5uzDguHaIVIa+TDa8E7/14lwtV54JLFX/82b
+         9zyCoNEFKioZGE3Sm+12wsMg4Z3yLRyLtnsyqvpwyOHde1n1zLFbKuRHs6OS2jFuGqHv
+         h17Z62S6dhwynyVP/GkKBAb6s3aw2P6XUZaSg6Y4yqDOIbSqhR+5/Pu1w9I01Ycuqqd/
+         VSkw==
+X-Gm-Message-State: ABuFfoip9mPz+JN8HSc8zqL8jV5jTHPQLB9z4zupLIPUG7Oiug+nnyFC
+        sq1TkL6oWpAxU0vP6Xa8LXdUDjRo0klnyzkq1Y5vSg==
+X-Google-Smtp-Source: ACcGV62mwCj5AAM+4FggloObo8VyHP/zQcJ4Jfo0Ricmb5UrZQbakRR05IX4RMgJ8o4bKKQPIOH+NzI4kbGu0A1MNBA=
+X-Received: by 2002:a25:bcce:: with SMTP id l14-v6mr299513ybm.452.1538170594222;
+ Fri, 28 Sep 2018 14:36:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez1CpPmk6BFOztA-=w1U-pvaNBXou6JpcfMKx_ELGSwDVA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a5b:505:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 14:36:33 -0700 (PDT)
+In-Reply-To: <A3EEA386-DC02-432B-8B53-F1ECD035F431@amacapital.net>
+References: <74fb6ce22f62e0fb48b91ca9918b74cedbcecaf1.1538096323.git.luto@kernel.org>
+ <alpine.DEB.2.21.1809280819040.8118@nanos.tec.linutronix.de>
+ <CAMuHMdWWxgvo0a+8UvesiVikWS_45yOXRhM39F31Vn17kN+Ptg@mail.gmail.com>
+ <20180928103726.07761672@mschwideX1> <alpine.DEB.2.21.1809281041420.2004@nanos.tec.linutronix.de>
+ <0B38810F-3E22-45A8-9D5D-EDEABD214148@amacapital.net> <20180928165321.0ddaf948@mschwideX1>
+ <CALCETrXm_-YVVw4YQVn8E+hHGAQ6tv+ie8Sfq=h72R5U8=hf-g@mail.gmail.com>
+ <CAMo8BfJ7t-qPWzGPb6JzqEhPm9JBzvAX0a2paBXeQt-RCeHe_w@mail.gmail.com>
+ <alpine.DEB.2.21.1809282224090.1432@nanos.tec.linutronix.de> <A3EEA386-DC02-432B-8B53-F1ECD035F431@amacapital.net>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Fri, 28 Sep 2018 14:36:33 -0700
+Message-ID: <CAMo8Bf+mfK72DPehvphfJnvLc=ne-0bn52drOnMawp1oKjYsig@mail.gmail.com>
+Subject: Re: [PATCH] futex: Set USER_DS for the futex_detect_cmpxchg() test
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        fthain@telegraphics.com.au
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 11:10:48PM +0200, Jann Horn wrote:
-> On Fri, Sep 28, 2018 at 10:56 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> >
-> > On Fri, Sep 28, 2018 at 10:33:34PM +0200, Jann Horn wrote:
-> > > On Fri, Sep 28, 2018 at 5:47 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
-> > > > the ptrace code that can inspect a filter of another process. Let's
-> > > > introduce read locking into the two ptrace accesses so that we don't race.
-> > >
-> > > Hmm. Is that true? The ptrace code uses get_nth_filter(), which holds
-> > > the siglock while grabbing the seccomp filter and bumping its
-> > > refcount. And TSYNC happens from seccomp_set_mode_filter(), which
-> > > takes the siglock. So this looks okay to me?
-> >
-> > Oh, yes, you're right. So I guess we should just change the comment to
-> > say we're using siglock to represent the read lock.
-> 
-> Hmm... actually, looking at this closer, I think you only need the
-> siglock for writing. As far as I can tell, any read (no matter if
-> current or non-current) can just use READ_ONCE(), because once a
-> seccomp filter is in a task's seccomp filter chain, it can't be freed
-> until the task reaches free_task() and calls put_seccomp_filter() from
-> there. And if the task whose seccomp filter you're trying to read can
-> reach free_task(), you have bigger problems.
+On Fri, Sep 28, 2018 at 2:08 PM, Andy Lutomirski <luto@amacapital.net> wrot=
+e:
+>
+>
+>> On Sep 28, 2018, at 1:26 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>>
+>>> On Fri, 28 Sep 2018, Max Filippov wrote:
+>>>
+>>>> On Fri, Sep 28, 2018 at 11:02 AM, Andy Lutomirski <luto@amacapital.net=
+> wrote:
+>>>> There may be a much nicer solution.  Unless I missed something, only
+>>>> mips and xtensa even have the possibility of cmpxchg being missing.
+>>>> We could just make those arches supply a futex-detecting helper.
+>>>
+>>> In case of xtensa availability of cmpxchg is known at build time.
+>>
+>> That makes it even simpler. Could you provide a patch which selects
+>> CONFIG_HAVE_FUTEX_CMPXCHG for the right set of CPUs please?
+>>
+>>
+>
+> I think that=E2=80=99s the wrong approach, since it won=E2=80=99t cover m=
+ips. How about adding this to mips and xtensa only:
+>
+> static inline void arch_have_futex_cmpxchg(void) {...};
+> #define arch_have_futex_cmpxchg arch_have_futex_cmpxchg
+>
+> And getting rid of the config option.
 
-Ok; looks like get_nth_filter() took the siglock anyway. Since we get
-the filters in these two functions in get_nth_filter(), I think it's
-enough just to just,
+I'd rather do that, given that defining Kconfig entries that describe
+parts of xtensa configuration is somewhat awkward and redundant.
 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index f65d47650ac1..79d833ed4c34 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -1001,7 +1001,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	orig = task->seccomp.filter;
-+	orig = READ_ONCE(task->seccomp.filter);
- 	__get_seccomp_filter(orig);
- 	spin_unlock_irq(&task->sighand->siglock);
- 
-
-since once it's returned from get_nth_filter() we don't need to worry
-about multiple accesses?
-
-Tycho
+--=20
+Thanks.
+-- Max
