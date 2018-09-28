@@ -2,208 +2,120 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F365EC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0BBC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97A82168B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:43:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97A82168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F4A421571
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:43:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4A421571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbeI1UG7 (ORCPT
+        id S1729446AbeI1UHK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:06:59 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46854 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728920AbeI1UG6 (ORCPT
+        Fri, 28 Sep 2018 16:07:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44294 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728748AbeI1UHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:06:58 -0400
-Received: by mail-ed1-f68.google.com with SMTP id k14-v6so8190735edr.13;
-        Fri, 28 Sep 2018 06:43:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HKFzhuDKfVWhiOjl4PQ2E/qoKeAawArYOMOYGkpl+Zg=;
-        b=F4yjT90Vu/ZoCztzs9NVSE8ayN0jVRMI3WoAwMvcAMZoh3B7VWTTrvz4mOLdfWVNZ2
-         Y3chmE5Sz38/acbpQ+llNmlEJqT60BiSWLcxdEP5sgngUwEvdNJNr3fbY5tu4kKcXM7H
-         6XI4b8BnryGYW+U26rzsyHtvvjoIE+hBxMVv1Pwd9isNvS9LWDMeTgruS9OMnXsbJWWz
-         sfVO47Ok3n8FP6XrFSQ/wmAuY+zwWj8vRzRIeSzK6epHTe7kVuez53UOv6gpKjY6gjGm
-         fifu5vNX5ion/4nnpOYftimqUJY20PYGJQIv7f/6C4Gk7P1OhFmqlvixlJqs1lXNLpSY
-         jLAw==
-X-Gm-Message-State: ABuFfohrZyxCilei4KYLu8fLu42rsz52PXDE7sOyOg9ddXBM7AeitCgw
-        b1reut8MYlKSpHvSol331i3LqoEX9HM=
-X-Google-Smtp-Source: ACcGV636pQ5df+oZKznz4kl9tzbXQ34P4CesJa77YUYdkhZ+Rz9AlCNUxHTVOkMCx4nauakQsk/n3A==
-X-Received: by 2002:a17:906:6698:: with SMTP id z24-v6mr2523258ejo.101.1538142185511;
-        Fri, 28 Sep 2018 06:43:05 -0700 (PDT)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id w8-v6sm2074117edq.81.2018.09.28.06.43.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 06:43:03 -0700 (PDT)
-Received: by mail-wm1-f52.google.com with SMTP id b19-v6so2278889wme.3;
-        Fri, 28 Sep 2018 06:43:03 -0700 (PDT)
-X-Received: by 2002:a1c:f53:: with SMTP id 80-v6mr1767858wmp.58.1538142182857;
- Fri, 28 Sep 2018 06:43:02 -0700 (PDT)
+        Fri, 28 Sep 2018 16:07:10 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8SDd1NS088705
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 09:43:19 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mskv9cuuk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 09:43:18 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Fri, 28 Sep 2018 07:43:18 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 28 Sep 2018 07:43:14 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8SDhBaU27001024
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Sep 2018 06:43:11 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80BC36A051;
+        Fri, 28 Sep 2018 07:43:11 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9D1096A04D;
+        Fri, 28 Sep 2018 07:43:09 -0600 (MDT)
+Received: from oc8043147753.ibm.com.endicott.ibm.com (unknown [9.60.75.213])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Fri, 28 Sep 2018 07:43:09 -0600 (MDT)
+From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, fiuczy@linux.vnet.ibm.com,
+        buendgen@de.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: [FIXUP v9] fixup! fixup! s390: doc: detailed specifications for AP virtualization
+Date:   Fri, 28 Sep 2018 09:43:06 -0400
+X-Mailer: git-send-email 2.19.0.221.g150f307
+In-Reply-To: <20180926164222.74731b74@t450s.home>
+References: <20180926164222.74731b74@t450s.home>
 MIME-Version: 1.0
-References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
- <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com> <14114604.4rraf0qJLU@avalon>
- <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com> <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
- <20180928125601.6ye5tvrmh57amvh5@paasikivi.fi.intel.com>
-In-Reply-To: <20180928125601.6ye5tvrmh57amvh5@paasikivi.fi.intel.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 28 Sep 2018 21:42:50 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67v0No0=JSt4HQCWeKKTz4gSHUfdyv16T-=4dxGB=JCow@mail.gmail.com>
-Message-ID: <CAGb2v67v0No0=JSt4HQCWeKKTz4gSHUfdyv16T-=4dxGB=JCow@mail.gmail.com>
-Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera
- Sensor Interface (CSI)
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18092813-0020-0000-0000-00000E6E8A50
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009786; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01094891; UDB=6.00566015; IPR=6.00874926;
+ MB=3.00023544; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-28 13:43:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092813-0021-0000-0000-0000632FF993
+Message-Id: <20180928134306.1395-1-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=781 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809280138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Tony Krowiak <akrowiak@linux.ibm.com>
 
-On Fri, Sep 28, 2018 at 8:56 PM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Chen-Yu,
->
-> On Fri, Sep 28, 2018 at 07:10:58PM +0800, Chen-Yu Tsai wrote:
-> > On Fri, Sep 28, 2018 at 6:23 PM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Laurent,
-> > >
-> > > On Fri, Sep 28, 2018 at 12:45:12PM +0300, Laurent Pinchart wrote:
-> > > > Hi Sakari,
-> > > >
-> > > > On Friday, 28 September 2018 12:38:33 EEST Sakari Ailus wrote:
-> > > > > On Wed, Sep 26, 2018 at 04:40:04PM +0800, Yong Deng wrote:
-> > > > > > Add binding documentation for Allwinner V3s CSI.
-> > > > > >
-> > > > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > >
-> > > > > I know... but I have a few more comments.
-> > > > >
-> > > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> > > > > > ---
-> > > > > >
-> > > > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++
-> > > > > >  1 file changed, 59 insertions(+)
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> > > > > > 100644
-> > > > > > index 000000000000..2ff47a9507a6
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > > @@ -0,0 +1,59 @@
-> > > > > > +Allwinner V3s Camera Sensor Interface
-> > > > > > +-------------------------------------
-> > > > > > +
-> > > > > > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> > > > > > +interface and CSI1 is used for parallel interface.
-> > > > > > +
-> > > > > > +Required properties:
-> > > > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > > > > > +  - reg: base address and size of the memory-mapped region.
-> > > > > > +  - interrupts: interrupt associated to this IP
-> > > > > > +  - clocks: phandles to the clocks feeding the CSI
-> > > > > > +    * bus: the CSI interface clock
-> > > > > > +    * mod: the CSI module clock
-> > > > > > +    * ram: the CSI DRAM clock
-> > > > > > +  - clock-names: the clock names mentioned above
-> > > > > > +  - resets: phandles to the reset line driving the CSI
-> > > > > > +
-> > > > > > +Each CSI node should contain one 'port' child node with one child
-> > > > > > 'endpoint' +node, according to the bindings defined in
-> > > > > > +Documentation/devicetree/bindings/media/video-interfaces.txt. As
-> > > > > > mentioned
-> > > > > > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
-> > > > > > or +Bt656 for CSI1.
-> > > > >
-> > > > > Which port represents CSI0 and which one is CSI1? That needs to be
-> > > > > documented.
-> > > >
-> > > > There are two CSI devices, named CSI0 and CSI1, with one port each. The CSI0
-> > > > device supports CSI-2 only, and the CSI1 device parallel (BT.601 or BT.656)
-> > > > only.
-> > > >
-> > > > > > +
-> > > > > > +Endpoint node properties for CSI1
-> > > > >
-> > > > > How about CSI0? I'd expect at least data-lanes, and clock-lanes as well if
-> > > > > the hardware supports lane mapping.
-> > > >
-> > > > I enquired about that too. As far as I understand, CSI0 isn't supported yet in
-> > > > the driver due to lack of documentation and lack of open-source vendor-
-> > > > provided source code. While DT bindings are not tied to driver
-> > > > implementations, it's not the best idea to design DT bindings without at least
-> > > > one working implementation to test them. I thus proposed just listing CSI0 as
-> > > > being unsupported for now.
-> > >
-> > > Ack.
-> > >
-> > > We should still define which receiver corresponds to a given port. Probably
-> > > 1 for CSI1 would make sense, in order to avoid changing the order the
-> > > hardware already uses. 0 doesn't need to be documented no IMO.
-> > >
-> > > What do you think?
-> >
-> > AFAICT it would be a completely seperate node, since they have different address
-> > spaces, clocks and reset controls. So there's no possibility of confusion.
-> >
-> > According to Yong, CSI0 is tied internally to some unknown MIPI CSI2-receiver,
-> > which is the undocumented part. CSI1 has its parallel data pins exposed to the
-> > outside.
->
-> Thanks for clearing up the confusion. If these are truly different kinds of
-> devices, then don't they also deserve different compatible strings? And
-> possibly also different DT binding documentation in a separate file.
+Removes extraneous text from third line below:
 
-Allwinner's documents aren't particularly clear about this. AFAICT it does not
-say anything about them being different. The CSI section gives a register table
-with two base addresses. The V3S SDK listed on linux-sunxi wiki also doesn't
-differentiate between the two. What's more is there's actually code and register
-addresses for the MIPI stuff [1], though the license is questionable,
-as with most
-BSPs. It indeed seems like a CSI controller, which basically just takes whatever
-input it is configured for and sends it to either a downstream ISP or DRAM.
-There are MIPI-CSI receiver and DPHY blocks in addresses following CSI0, but we
-can treat them as separate hardware blocks.
++05          CEX5A Accelerator
++05.0047     CEX5A Accelerator
++05.00ff     CEX5A Accelerator (5,4), (5,171), (6,4), (6,171),
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---
+ Documentation/s390/vfio-ap.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ChenYu
+diff --git a/Documentation/s390/vfio-ap.txt b/Documentation/s390/vfio-ap.txt
+index 599eb0f75c07..6a880a27cfb6 100644
+--- a/Documentation/s390/vfio-ap.txt
++++ b/Documentation/s390/vfio-ap.txt
+@@ -459,7 +459,7 @@ CARD.DOMAIN TYPE  MODE
+ ------------------------------
+ 05          CEX5A Accelerator
+ 05.0047     CEX5A Accelerator
+-05.00ff     CEX5A Accelerator (5,4), (5,171), (6,4), (6,171),
++05.00ff     CEX5A Accelerator
+ 
+ Guest2
+ ------
+-- 
+2.19.0.221.g150f307
 
-[1] https://github.com/yeashen/v3s-linux-sdk/blob/master/linux-3.4/drivers/media/video/sunxi-vfe/platform/sun8iw8p1_vfe_cfg.h#L27
