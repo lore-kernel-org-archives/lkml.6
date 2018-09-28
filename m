@@ -2,118 +2,120 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AE6C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E56C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1076E204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22BD2204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bNyWQ4Qx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1076E204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="WvvO/4Mr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BD2204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbeI1U4A (ORCPT
+        id S1729390AbeI1U4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:56:00 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:47616 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeI1U4A (ORCPT
+        Fri, 28 Sep 2018 16:56:09 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:41116 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeI1U4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:56:00 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8SESSg6184981;
-        Fri, 28 Sep 2018 14:31:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=WEhzwGiHdxfYyJFfJE2dEdATgcfRskocApAjCXznkCY=;
- b=bNyWQ4Qx6BkO8Q6/Y4laP/i4KYeucg76JNBcZ8+jB8ibMQKDN0frzRF0VYLaOy5wJe72
- g4cieKpUCeyOtWkNZUOgVdYUf2zfGjlUn83s18MM9VF7TSYzrr04xdaBs1L//e5wWhzw
- N8IflxgdG1VnhxAyIspa8XC7hhtS80xfLWYZXr23T6w2zCB3mrPYQpe+ldBMymjNkXth
- OIf4ZsYhhJrsEhV5wRsM8w3PvdKFlGF5B3o7dqBAessppEkCP54BXqlVvN85m76NM43G
- K1DG/kYlLhjRcg4I4i98gvFI0nOaSiab43gxWBtDsgFi+XZ+3ISBgLwZ0hG9rJy0f+fw GA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2mndpq0jw1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Sep 2018 14:31:53 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8SEVlPX031597
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Sep 2018 14:31:47 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8SEVlQp032204;
-        Fri, 28 Sep 2018 14:31:47 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 28 Sep 2018 07:31:47 -0700
-Date:   Fri, 28 Sep 2018 17:31:40 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH 05/13] staging:rtl8192u: Remove AdvCoding and GreenField
- - Style
-Message-ID: <20180928143140.e5fwzgdpehiw527f@mwanda>
-References: <20180926191704.16322-1-johnfwhitmore@gmail.com>
- <20180926191704.16322-6-johnfwhitmore@gmail.com>
+        Fri, 28 Sep 2018 16:56:09 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 96ACC10C0F6E;
+        Fri, 28 Sep 2018 07:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1538145125; bh=q1h9ENHygeE89lD6FfafBAdW7I3ApbO1f4FnbqGLh/Q=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=WvvO/4Mrh/MJFxE09QEOn1rdgG9XOhhaeADpN+Ne+81yi3h8nOGUWxQ5cliNjhMWC
+         BD6np+h6xycBypbI92w4w07oj8Q9/Hd5Vu0wNorTdCHb9nFbYLWdMHSJwG2mcZpIw1
+         6xAZXo8UxfzPMsocDUBTXZAxfnVHh3XftRda7azAdavwentXjeR4XGGnoZA2Qi0NbB
+         NwxXa4BxqHauQAfTA2HcaOZX8860nxTbimxM8mC9oDhLDnHY9gHAKShN0maE4rOZpC
+         2Oy3nTJArD7uGV9VMc2zUfu1wDuruNjbJri8K9Eug24d4OHKplYWK+tS2hs9G5pc5L
+         ItL4DcR3Y1XWQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 51FBF3F4E;
+        Fri, 28 Sep 2018 07:32:05 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 28 Sep 2018 07:32:04 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Fri,
+ 28 Sep 2018 16:32:02 +0200
+From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+To:     "ville.syrjala@linux.intel.com" <ville.syrjala@linux.intel.com>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>
+CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH] DRM: VBLANK: provide valid timestamp for EVENT_FLIP
+Thread-Topic: [PATCH] DRM: VBLANK: provide valid timestamp for EVENT_FLIP
+Thread-Index: AQHUVaTd72K6txZPUEmQwUCRbzZgK6UCoZWAgAMBogA=
+Date:   Fri, 28 Sep 2018 14:32:01 +0000
+Message-ID: <1538145120.5186.6.camel@synopsys.com>
+References: <20180926142535.17997-1-Eugeniy.Paltsev@synopsys.com>
+         <20180926163723.GW9144@intel.com>
+In-Reply-To: <20180926163723.GW9144@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.38]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <43575F86C0A4944BAA17EC090EFB7CF6@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180926191704.16322-6-johnfwhitmore@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809280146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 26, 2018 at 08:16:56PM +0100, John Whitmore wrote:
-> The member variables AdvCoding and GreenField are unused in code so
-> have been removed from the structure and associated initialisation
-> function.
-> 
-> This is a coding style change which should have no impact on runtime
-> code execution.
-> 
-> Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
-> ---
->  drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h     | 2 --
->  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 --
->  2 files changed, 4 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-> index 64d5359cf7e2..83fb8f34ccbd 100644
-> --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-> +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
-> @@ -39,10 +39,8 @@ enum ht_extension_chan_offset {
->  
->  struct ht_capability_ele {
->  	//HT capability info
-> -	u8	AdvCoding:1;
->  	u8	ChlWidth:1;
->  	u8	MimoPwrSave:2;
-> -	u8	GreenField:1;
->  	u8	ShortGI20Mhz:1;
->  	u8	ShortGI40Mhz:1;
->  	u8	TxSTBC:1;
-
-I feel like we discussed this before.  I'm pretty sure this comes from
-the firmware and so the format can't be changed.  When I look at
-rtllib_parse_mife_generic() then I think that "info_element" probably
-comes from the firmware.
-
-I wouldn't want to accept this with out someone testing it.
-
-regards,
-dan carpenter
-
+T24gV2VkLCAyMDE4LTA5LTI2IGF0IDE5OjM3ICswMzAwLCBWaWxsZSBTeXJqw6Rsw6Qgd3JvdGU6
+DQo+IE9uIFdlZCwgU2VwIDI2LCAyMDE4IGF0IDA1OjI1OjM1UE0gKzAzMDAsIEV1Z2VuaXkgUGFs
+dHNldiB3cm90ZToNCj4gPiBJZiBkcml2ZXIvSFcgZG9lc24ndCBzdXBwb3J0IHZibGFuayBmdW5j
+dGlvbmFsaXR5IChmb3IgZXhhbXBsZQ0KPiA+IFVETCBkcml2ZXIsIEFSQ1BHVSBkcml2ZXIsIC4u
+Likgd2UgYWx3YXlzIGhhdmUgdmJsYW5rLT50aW1lID09IDAuDQo+ID4gSW4gcmVzdWx0IHdlIGFs
+d2F5cyBwcm92aWRlIHplcm8gdGltZXN0YW1wIGZvcg0KPiA+IERSTV9FVkVOVF9GTElQX0NPTVBM
+RVRFLiBUaGlzIGJyZWFrcyB1c2Vyc3BhY2UgYXBwcyAoZm9yIGV4YW1wbGUNCj4gPiB3ZXN0b24p
+IHdoaWNoIHJlbGllcyBvbiB0aW1lc3RhbXAgdmFsdWUuDQo+ID4gDQo+ID4gU2V0dXAgdGltZSB0
+byBwcm92aWRlIHZhbGlkIHRpbWVzdGFtcCBmb3IgRFJNX0VWRU5UX0ZMSVBfQ09NUExFVEUNCj4g
+PiBldmVudC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBFdWdlbml5IFBhbHRzZXYgPEV1Z2Vu
+aXkuUGFsdHNldkBzeW5vcHN5cy5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9k
+cm1fdmJsYW5rLmMgfCA5ICsrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRp
+b25zKCspDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fdmJsYW5r
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX3ZibGFuay5jDQo+ID4gaW5kZXggMjhjZGNmNzZiNmY5
+Li4wZDE5YWNhNDg3ODIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV92Ymxh
+bmsuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fdmJsYW5rLmMNCj4gPiBAQCAtOTEx
+LDYgKzkxMSwxNSBAQCB2b2lkIGRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KHN0cnVjdCBkcm1f
+Y3J0YyAqY3J0YywNCj4gPiAgDQo+ID4gIAlpZiAoZGV2LT5udW1fY3J0Y3MgPiAwKSB7DQo+IA0K
+PiBJZiB0aG9zZSBkcml2ZXJzIGRvbid0IHN1cHBvcnQgdmJsYW5rIHN0dWZmIHdoeSBhcmUgdGhl
+eSBjYWxsaW5nDQo+IGJsZHJtX3ZhbmtfaW5pdCgpIHcvIG51bV9jcnRjcyA+IDA/IElmIHRoZXkg
+ZGlkbid0IHRoZXknZCB0YWtlIHRoZQ0KPiBlbHNlIGJyYW5jaCB3aGljaCBhbHJlYWR5IGRvZXMg
+d2hhdCB5b3Ugd2FudC4NCg0KSG1tLi4uDQpBcyBJIGNhbiBzZWUgVURMIGNhbGwgZHJtX3ZibGFu
+a19pbml0KCkgd2l0aCBudW1fY3J0Y3MgPSAxIGJ1dCBVREwgSFcNCmRvZXNuJ3Qgc3VwcG9ydCB2
+YmxhbmsgYXQgYWxsLg0KSSBndWVzcyBJIG5lZWQgdG8gZml4IGl0Lg0KDQo+ID4gIAkJc2VxID0g
+ZHJtX3ZibGFua19jb3VudF9hbmRfdGltZShkZXYsIHBpcGUsICZub3cpOw0KPiA+ICsNCj4gPiAr
+CQkvKg0KPiA+ICsJCSAqIElmIGRyaXZlci9IVyBkb2Vzbid0IHN1cHBvcnQgdmJsYW5rIGZ1bmN0
+aW9uYWxpdHkgd2UNCj4gPiArCQkgKiBhbHdheXMgaGF2ZSB2YmxhbmstPnRpbWUgPT0gMC4gU2V0
+dXAgdGltZSB0byBwcm92aWRlIHZhbGlkDQo+ID4gKwkJICogdGltZXN0YW1wIGZvciBEUk1fRVZF
+TlRfRkxJUF9DT01QTEVURSBldmVudC4NCj4gPiArCQkgKi8NCj4gPiArCQlpZiAoIW5vdyAmJiBl
+LT5ldmVudC5iYXNlLnR5cGUgPT0gRFJNX0VWRU5UX0ZMSVBfQ09NUExFVEUpDQo+ID4gKwkJCW5v
+dyA9IGt0aW1lX2dldCgpOw0KPiA+ICsNCj4gPiAgCX0gZWxzZSB7DQo+ID4gIAkJc2VxID0gMDsN
+Cj4gPiAgDQo+ID4gLS0gDQo+ID4gMi4xNC40DQo+ID4gDQo+ID4gX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+DQo+ID4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiA+IGh0dHBzOi8vdXJsZGVm
+ZW5zZS5wcm9vZnBvaW50LmNvbS92Mi91cmw/dT1odHRwcy0zQV9fbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnX21haWxtYW5fbGlzdGluZm9fZHJpLTJEZGV2ZWwmZD1Ed0lEQXcmYz1EUEw2X1hfNkprWEZ4
+N0FYV3FCMHRnJnI9WmxKTjFNDQo+ID4gcmlQVVRrQktDclBTeDY3R21hcGxFVUdjQUVrOXlQdENM
+ZFVYSSZtPTViYmI5U2VWWFRNUERhMWJYUXhxbEJJT25TZEthS1k1VzBCa01DZ3dpakUmcz01MEVo
+QXBDWkFlTU1EVUVkNkZWcFhmNW93ZDFCaTN2bjVHYUJ0MEtFMkN3JmU9DQo+IA0KPiANCi0tIA0K
+IEV1Z2VuaXkgUGFsdHNldg==
