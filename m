@@ -2,61 +2,62 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5740C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F13C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E005206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18BCB206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:19:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbBAIoGd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E005206B8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJeOchJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18BCB206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbeI2FpM (ORCPT
+        id S1727480AbeI2FpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:45:12 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52947 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeI2FpM (ORCPT
+        Sat, 29 Sep 2018 01:45:17 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46208 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeI2FpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:45:12 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 189-v6so3357957wmw.2;
-        Fri, 28 Sep 2018 16:19:11 -0700 (PDT)
+        Sat, 29 Sep 2018 01:45:16 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z3-v6so7923368wrr.13;
+        Fri, 28 Sep 2018 16:19:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7oaLS8ACfLUPYqaIS+pJ6VIS3KUj/1jvMEuK+sFryvM=;
-        b=nbBAIoGdm6jLuGkXagmvLabK6Gj7ZZP92UPlfKpDtUEyqph8/e8kWst6/eZlhEeVd3
-         xOjX5yWGxHUiGYNd4q1jFyYpg0Xqpp7LTxtgunyOY/QIxeHUYPGJPOy7Cb4eFM53x8Ro
-         RzxT2un7EQLwTn2ip9QOlSYwmGiIDxlxvj9hxDn6kjhGLJU8r9A7iFhfFMeBYtHD8io8
-         3xk12RW6UHNBhOpe+gb4+G1ExXN52bVnwbCkNtem43uAVv6dYJYJPCjCqAQm/0/2T+rH
-         bAgWoGYGlPIbOGEt8wb28d0qPkoJHEz8xi2PAYvsziK25hi3u4cQGmjjnNyrRdLw1c94
-         DwzA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=pN80Rw0L9zuyYJtcOwbG8AKZcMeKTKgEirKbEwnLrKo=;
+        b=aJeOchJBN+qfSsXZfvjCOs2l/bBNh+k/RTSHbCWKnXRbBBh+r/rriq0kwiVELmpvyL
+         tFgyZYNRzTc+RJyAfnLkTUH6AzS23qiHPd/VZQYGhATzDjZHPN9CesrArKq9CrPtZ0FY
+         WstMvIaIjQuHBC9w+LoGICW//+w2tKYhu0jQI5OssFMaBlO5tRRH1V1IP2fi3VACfc9i
+         Oi9YN/hoDqwJFaXpfZBsJbQjmrPQuLqpQt9reNmeSj69SIrqdzUqKdC62JUTA6iQEGko
+         wKB+n1EhfnkJD5UtEGgdxr1xMxHL88LGcGJaqWmRsXgxkLjG9snSLMV4cUMJy7tdxGCE
+         V1MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7oaLS8ACfLUPYqaIS+pJ6VIS3KUj/1jvMEuK+sFryvM=;
-        b=Tg6TV8GtHYpQlte+wx0EnZEzwbi3fx8wNBNuEEXMUkMfAas3jn5MfrRrjx1aB2/VUo
-         shh3MZgFA/4H2fOtu+KCbmhINXgNz1adyrm3wLazu75oQpqxPjN6ITXS95ETac9Y+Krn
-         GbhnysIqR6oNKjgh/f8x0JKaV8HJCRlMpBwzemCqw6AmSLCYE1xqdeexdBhbfgtBqc4o
-         o+ifHY3A9krU7HHuCqGhjDY7tNUH/UnteC+H4KMUremJ//qVY9pnTuTuZ01o3pWVHtI7
-         ANKp5VCYGuYHP4qC+gGMtgrBAaEqto4BQ2AQg1anevxYF3q+ST5oTBlNf00Q31c7TTZ2
-         qPgw==
-X-Gm-Message-State: ABuFfogezW7FQ3aY5NpI1ItN+2iaMNs4+TZIT4eiuAt6/7XXwmmSeSnq
-        Qss/uBTfmqcSP0YdPk1riQxoEKIi
-X-Google-Smtp-Source: ACcGV613l1miQtb6kj41UOlVUvffXBLKWW0d8/O+lYvbbZG3PrT1P/BAPaE+DHp1xxngwbN9eVvbzw==
-X-Received: by 2002:a1c:f4e:: with SMTP id 75-v6mr3045159wmp.79.1538176750026;
-        Fri, 28 Sep 2018 16:19:10 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=pN80Rw0L9zuyYJtcOwbG8AKZcMeKTKgEirKbEwnLrKo=;
+        b=a/yv01ZE3cN/lC47ei9UB3gw2vnQRQVcMTwxUXgUhG9HgnJyyA0BlZgalxnLp85ro3
+         TK39L1iITI3WbRZlOmKlXO5n2795vWwpJrpZ+Y22NiZcIkergj5xCTkmO6Nh8Dgbm7ol
+         BxlMNNPV8f40pT9Qs1voO68sZVaeB1VC8Pgv1dBF3Z/UjJa+QwbMc15lF340me/cUnT6
+         CvV6wnw0YGEStEioiKL538NhetyHsXWuRiTG8X+7+rCMePu681miuBrfqrEaPDRn63tV
+         0DRAubiocLoPylBvqRXIbMbmu7lra9epRaCjaYOBPsXSwU9zcd49Qm0IVdun8+USvlk3
+         nN4Q==
+X-Gm-Message-State: ABuFfohkdDBf03mRkLgNl9T/Du9VeJqiu8+X1uKZH4pcYUK5p1LywvNe
+        mijxJHBDVbvYBmtVVy0e9ioJikha
+X-Google-Smtp-Source: ACcGV617jKXuU86Tk7xQEPEtpy8bP9Q5X5Gs/mHsR2U3NS8zkJSgAkyiNKY7exvcSGyjE1z+KMw1sQ==
+X-Received: by 2002:adf:9367:: with SMTP id 94-v6mr468849wro.211.1538176754240;
+        Fri, 28 Sep 2018 16:19:14 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm8590730wrb.95.2018.09.28.16.19.05
+        by smtp.gmail.com with ESMTPSA id 11-v6sm8590730wrb.95.2018.09.28.16.19.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 16:19:08 -0700 (PDT)
+        Fri, 28 Sep 2018 16:19:13 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -75,46 +76,41 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Eric Dumazet <edumazet@google.com>,
         linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net v2 0/7] net: usb: Check for Wake-on-LAN modes
-Date:   Fri, 28 Sep 2018 16:18:49 -0700
-Message-Id: <20180928231856.3587-1-f.fainelli@gmail.com>
+Subject: [PATCH net v2 1/7] asix: Check for supported Wake-on-LAN modes
+Date:   Fri, 28 Sep 2018 16:18:50 -0700
+Message-Id: <20180928231856.3587-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180928231856.3587-1-f.fainelli@gmail.com>
+References: <20180928231856.3587-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+The driver currently silently accepts unsupported Wake-on-LAN modes
+(other than WAKE_PHY or WAKE_MAGIC) without reporting that to the user,
+which is confusing.
 
-Most of our USB Ethernet drivers don't seem to be checking properly
-whether the user is supplying a correct Wake-on-LAN mode to enter, so
-the experience as an user could be confusing, since it would generally
-lead to either no wake-up, or the device not being marked for wake-up.
+Fixes: 2e55cc7210fe ("[PATCH] USB: usbnet (3/9) module for ASIX Ethernet adapters")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/usb/asix_common.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Please review!
-
-Changes in v2:
-
-- fixed lan78xx handling, thanks Woojung!
-
-Florian Fainelli (7):
-  asix: Check for supported Wake-on-LAN modes
-  ax88179_178a: Check for supported Wake-on-LAN modes
-  lan78xx: Check for supported Wake-on-LAN modes
-  sr9800: Check for supported Wake-on-LAN modes
-  r8152: Check for supported Wake-on-LAN Modes
-  smsc75xx: Check for Wake-on-LAN modes
-  smsc95xx: Check for Wake-on-LAN modes
-
- drivers/net/usb/asix_common.c  |  3 +++
- drivers/net/usb/ax88179_178a.c |  3 +++
- drivers/net/usb/lan78xx.c      | 17 ++++-------------
- drivers/net/usb/r8152.c        |  3 +++
- drivers/net/usb/smsc75xx.c     |  3 +++
- drivers/net/usb/smsc95xx.c     |  3 +++
- drivers/net/usb/sr9800.c       |  3 +++
- 7 files changed, 22 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/net/usb/asix_common.c b/drivers/net/usb/asix_common.c
+index e95dd12edec4..023b8d0bf175 100644
+--- a/drivers/net/usb/asix_common.c
++++ b/drivers/net/usb/asix_common.c
+@@ -607,6 +607,9 @@ int asix_set_wol(struct net_device *net, struct ethtool_wolinfo *wolinfo)
+ 	struct usbnet *dev = netdev_priv(net);
+ 	u8 opt = 0;
+ 
++	if (wolinfo->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
++		return -EINVAL;
++
+ 	if (wolinfo->wolopts & WAKE_PHY)
+ 		opt |= AX_MONITOR_LINK;
+ 	if (wolinfo->wolopts & WAKE_MAGIC)
 -- 
 2.17.1
 
