@@ -2,76 +2,68 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78E2C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F8BC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99950204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:19:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="r99slEnc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99950204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by mail.kernel.org (Postfix) with ESMTP id E69CB204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:20:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69CB204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbeI1Xoa (ORCPT
+        id S1729533AbeI1Xot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:44:30 -0400
-Received: from one.firstfloor.org ([193.170.194.197]:50606 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbeI1Xoa (ORCPT
+        Fri, 28 Sep 2018 19:44:49 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:49166 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeI1Xot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:44:30 -0400
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id BCBFB873AF; Fri, 28 Sep 2018 19:19:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1538155184;
-        bh=AN80b524CLLm2NxKqeXIscs5HVD+r5eIFVprc9a9Jqg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r99slEncG9p+vduK51FOFHiyTzvoDss5cprCM3cQXHaJkTSlsiekO8/0fxHK0tsir
-         7m987mdRh6Se0vISI/m4sHeTwoG/7zEpZmiEsQ+gfnNQrN9ynb/t05VgproS6aNXqV
-         nIQwu2wxaEEgHxt/kE+t5rBaUs9j8nW1k1t5jvso=
-Date:   Fri, 28 Sep 2018 10:19:44 -0700
-From:   Andi Kleen <andi@firstfloor.org>
-To:     leo.yan@linaro.org
-Cc:     Andi Kleen <andi@firstfloor.org>, acme@kernel.org,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v6 3/5] tools, perf, script: Add --call-trace and
- --call-ret-trace
-Message-ID: <20180928171944.sdejhgyqka4p3kc3@two.firstfloor.org>
-References: <20180920180540.14039-1-andi@firstfloor.org>
- <20180920180540.14039-4-andi@firstfloor.org>
- <20180928102331.GA15533@leoy-ThinkPad-X240s>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928102331.GA15533@leoy-ThinkPad-X240s>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 28 Sep 2018 19:44:49 -0400
+Received: from marcel-macbook.fritz.box (p4FEFC9BB.dip0.t-ipconnect.de [79.239.201.187])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 396F3CF29E;
+        Fri, 28 Sep 2018 19:27:20 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [PATCH] Bluetooth: hci_qca: Replace open-coded msleep()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <153815104962.119890.13155451003978822980@swboyd.mtv.corp.google.com>
+Date:   Fri, 28 Sep 2018 19:20:03 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Thierry Escande <thierry.escande@linaro.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <820F0357-DBD1-4278-8488-8C97A4107C19@holtmann.org>
+References: <20180626170654.96831-1-swboyd@chromium.org>
+ <153815104962.119890.13155451003978822980@swboyd.mtv.corp.google.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+X-Mailer: Apple Mail (2.3445.100.39)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Seems to me, these two features are _NOT_ only benefit for intel_pt,
-> other hardware tracing (e.g. Arm CoreSight) can enable these features
-> as well.  This patch is to document only for intel_pt, later if we
-> enable this feature on Arm platform we need to change the doc;
-> alternatively we can use more general description for these two options
-> at the first place.  How about you think for this?
+Hi Stephen,
 
-Likely it already works for CoreSight
+>> These three lines make up what msleep() already does, i.e. setting the
+>> task to uninterruptible, sleeping for so many jiffies, and then
+>> schedule() already puts the task state back to TASK_RUNNING when it
+>> returns. Make things clearer by just calling msleep() instead.
+>> 
+>> Cc: Thierry Escande <thierry.escande@linaro.org>
+>> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>> ---
+> 
+> Marcel, can you pick this patch up?
 
-I specified intel_pt, because if we just say traces the users won't
-know what PMU to specify for record. Being too abstract is
-often not helpful.
+I would do that, but unfortunately it does apply against bluetooth-next tree.
 
-If someone successfully tests it on CoreSight they could submit
-a patch to the documentation to add "or <coresightpmu>" to these
-two cases. That would make it then clear for those users too.
+Regards
 
--Andi
+Marcel
+
