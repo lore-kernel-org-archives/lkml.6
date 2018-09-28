@@ -6,44 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606BBC004D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96159C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E464206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E464206B8
+	by mail.kernel.org (Postfix) with ESMTP id 64326206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:51:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64326206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeI2ERL (ORCPT
+        id S1726981AbeI2ERQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:17:11 -0400
-Received: from smtprelay0021.hostedemail.com ([216.40.44.21]:59422 "EHLO
+        Sat, 29 Sep 2018 00:17:16 -0400
+Received: from smtprelay0201.hostedemail.com ([216.40.44.201]:40508 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725938AbeI2ERL (ORCPT
+        by vger.kernel.org with ESMTP id S1726734AbeI2ERP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:17:11 -0400
+        Sat, 29 Sep 2018 00:17:15 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id E0140100E86C4;
-        Fri, 28 Sep 2018 21:51:29 +0000 (UTC)
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 83C8C182CED34;
+        Fri, 28 Sep 2018 21:51:34 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: smell83_4715ffb24f109
-X-Filterd-Recvd-Size: 3069
+X-HE-Tag: hour17_47d467ab5fc0a
+X-Filterd-Recvd-Size: 2857
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:51:28 +0000 (UTC)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:51:33 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Kamil Debski <kamil@wypas.org>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        Kukjin Kim <kgene@kernel.org>
-Subject: Bad MAINTAINERS pattern in section 'ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT'
-Date:   Fri, 28 Sep 2018 14:51:26 -0700
-Message-Id: <20180928215127.28790-1-joe@perches.com>
+Cc:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Bad MAINTAINERS pattern in section 'ARM/Synaptics Berlin SoC support'
+Date:   Fri, 28 Sep 2018 14:51:32 -0700
+Message-Id: <20180928215132.28867-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,57 +51,55 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	2009	ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
-	2010	M:	Kyungmin Park <kyungmin.park@samsung.com>
-	2011	M:	Kamil Debski <kamil@wypas.org>
-	2012	M:	Jeongtae Park <jtp.park@samsung.com>
-	2013	M:	Andrzej Hajda <a.hajda@samsung.com>
-	2014	L:	linux-arm-kernel@lists.infradead.org
-	2015	L:	linux-media@vger.kernel.org
-	2016	S:	Maintained
--->	2017	F:	arch/arm/plat-samsung/s5p-dev-mfc.c
-	2018	F:	drivers/media/platform/s5p-mfc/
+	2111	ARM/Synaptics Berlin SoC support
+	2112	M:	Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+	2113	M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+	2114	L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+	2115	S:	Maintained
+	2116	F:	arch/arm/mach-berlin/
+	2117	F:	arch/arm/boot/dts/berlin*
+-->	2118	F:	arch/arm64/boot/dts/marvell/berlin*
 
 Commit that introduced this:
 
-commit 7683e9e529258d01ce99216ad3be21f59eff83ec
- Author: Linus Torvalds <torvalds@linux-foundation.org>
- Date:   Sun Jul 23 16:06:21 2017 -0700
+commit bc52497a595d2246923749177d99e4216703b0f4
+ Author: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+ Date:   Fri Mar 30 11:02:11 2018 +0800
  
-     Properly alphabetize MAINTAINERS file
+     MAINTAINERS: update entry for ARM/berlin
      
-     This adds a perl script to actually parse the MAINTAINERS file, clean up
-     some whitespace in it, warn about errors in it, and then properly sort
-     the end result.
+     Synaptics has acquired the Multimedia Solutions Business of Marvell[1].
+     So change the berlin entry name and move it to its alphabetical
+     location. We move to ARM/Synaptics instead of ARM/Marvell.
      
-     My perl-fu is atrocious, so the script has basically been created by
-     randomly putting various characters in a pile, mixing them around, and
-     then looking it the end result does anything interesting when used as a
-     perl script.
+     This patch also updates my email address from marvell to synaptics.
      
-     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+     [1] https://www.synaptics.com/company/news/conexant-marvell
+     
+     Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+     Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
  
-  MAINTAINERS                  | 3585 +++++++++++++++++++++---------------------
-  scripts/parse-maintainers.pl |   77 +
-  2 files changed, 1868 insertions(+), 1794 deletions(-)
+  MAINTAINERS | 18 +++++++++---------
+  1 file changed, 9 insertions(+), 9 deletions(-)
 
-Last commit with arch/arm/plat-samsung/s5p-dev-mfc.c
+Last commit with arch/arm64/boot/dts/marvell/berlin*
 
-commit b93b315d444faa1505b6a5e001c30f3024849e46
-Author: Kukjin Kim <kgene@kernel.org>
-Date:   Thu Jul 30 01:48:17 2015 +0900
+commit 031106ce95a201f6dd4c5ebf35abb900cf34e2ba
+Author: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Date:   Wed May 16 17:43:28 2018 +0800
 
-    ARM: SAMSUNG: make local s5p-dev-mfc in mach-exynos
+    arm64: dts: move berlin SoC files from marvell dir to synaptics dir
     
-    This patch moves s5p-dev-mfc from plat-samsung into mach-exynos
-    because it is used for only exynos no other platforms.
+    Move device tree files as part of transition from Marvell berlin to
+    Synaptics berlin.
     
-    Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-    Signed-off-by: Kukjin Kim <kgene@kernel.org>
+    Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
- arch/arm/mach-exynos/Kconfig                         | 5 +++++
- arch/arm/mach-exynos/Makefile                        | 2 ++
- arch/arm/{plat-samsung => mach-exynos}/s5p-dev-mfc.c | 0
- arch/arm/plat-samsung/Kconfig                        | 5 -----
- arch/arm/plat-samsung/Makefile                       | 1 -
- 5 files changed, 7 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/Makefile                                 | 1 +
+ arch/arm64/boot/dts/marvell/Makefile                         | 4 ----
+ arch/arm64/boot/dts/synaptics/Makefile                       | 4 ++++
+ arch/arm64/boot/dts/{marvell => synaptics}/berlin4ct-dmp.dts | 0
+ arch/arm64/boot/dts/{marvell => synaptics}/berlin4ct-stb.dts | 0
+ arch/arm64/boot/dts/{marvell => synaptics}/berlin4ct.dtsi    | 0
+ 6 files changed, 5 insertions(+), 4 deletions(-)
