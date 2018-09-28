@@ -6,40 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8BCC64E93
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AB6C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F31A20779
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:05:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F31A20779
+	by mail.kernel.org (Postfix) with ESMTP id A483720685
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:05:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A483720685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeI2Ea4 (ORCPT
+        id S1727625AbeI2EbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:30:56 -0400
-Received: from smtprelay0135.hostedemail.com ([216.40.44.135]:35297 "EHLO
+        Sat, 29 Sep 2018 00:31:05 -0400
+Received: from smtprelay0171.hostedemail.com ([216.40.44.171]:60435 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726441AbeI2Eaz (ORCPT
+        by vger.kernel.org with ESMTP id S1726441AbeI2EbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:30:55 -0400
+        Sat, 29 Sep 2018 00:31:05 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id DF819180A812F;
-        Fri, 28 Sep 2018 22:05:09 +0000 (UTC)
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id BBD2D100E86C1;
+        Fri, 28 Sep 2018 22:05:18 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: boat52_2cf841e38ea0f
-X-Filterd-Recvd-Size: 2282
+X-HE-Tag: boy49_2e34d1b349b42
+X-Filterd-Recvd-Size: 2961
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:05:08 +0000 (UTC)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:05:17 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org
-Subject: Bad MAINTAINERS pattern in section 'USER-MODE LINUX (UML)'
-Date:   Fri, 28 Sep 2018 15:05:07 -0700
-Message-Id: <20180928220507.31886-1-joe@perches.com>
+Cc:     Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Bad MAINTAINERS pattern in section 'VIDEOBUF2 FRAMEWORK'
+Date:   Fri, 28 Sep 2018 15:05:15 -0700
+Message-Id: <20180928220516.31962-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,54 +53,55 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	15491	USER-MODE LINUX (UML)
-	15492	M:	Jeff Dike <jdike@addtoit.com>
-	15493	M:	Richard Weinberger <richard@nod.at>
-	15494	L:	linux-um@lists.infradead.org
-	15495	W:	http://user-mode-linux.sourceforge.net
-	15496	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git
-	15497	S:	Maintained
-	15498	F:	Documentation/virtual/uml/
-	15499	F:	arch/um/
-	15500	F:	arch/x86/um/
-	15501	F:	fs/hostfs/
--->	15502	F:	fs/hppfs/
+	15636	VIDEOBUF2 FRAMEWORK
+	15637	M:	Pawel Osciak <pawel@osciak.com>
+	15638	M:	Marek Szyprowski <m.szyprowski@samsung.com>
+	15639	M:	Kyungmin Park <kyungmin.park@samsung.com>
+	15640	L:	linux-media@vger.kernel.org
+	15641	S:	Maintained
+-->	15642	F:	drivers/media/v4l2-core/videobuf2-*
+	15643	F:	include/media/videobuf2-*
 
 Commit that introduced this:
 
-commit 679655daffdd2725b66ba2c5a759bbcb316fca5a
- Author: Joe Perches <joe@perches.com>
- Date:   Tue Apr 7 20:44:32 2009 -0700
+commit 90d72ac6e1c3c65233a13816770fb85c8831bff2
+ Author: Mauro Carvalho Chehab <mchehab@redhat.com>
+ Date:   Sat Sep 15 17:59:42 2012 -0300
  
-     MAINTAINERS - Add file patterns
+     MAINTAINERS: fix the path for the media drivers that got renamed
      
-     Better description of file pattern tag "F:"
-     Add file exclusion tag "X:"
-     Add patterns to sections
+     Due to the media tree path renaming, several drivers change their
+     location. Update MAINTAINERS accordingly.
      
-     Signed-off-by: Joe Perches <joe@perches.com>
+     Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
  
-  MAINTAINERS | 1194 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-  1 file changed, 1193 insertions(+), 1 deletion(-)
+  MAINTAINERS | 43 +++++++++++++++++++++----------------------
+  1 file changed, 21 insertions(+), 22 deletions(-)
 
-Last commit with fs/hppfs/
+Last commit with drivers/media/v4l2-core/videobuf2-*
 
-commit f74a14e870c80d6261afed66d4bad779c1213e03
-Author: Richard Weinberger <richard@nod.at>
-Date:   Tue Apr 21 20:52:26 2015 +0200
+commit 03fbdb2fc2b8bb27b0ee0534fd3e9c57cdc3854a
+Author: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Date:   Thu Dec 21 08:29:39 2017 -0500
 
-    um: Remove hppfs
+    media: move videobuf2 to drivers/media/common
     
-    hppfs (honeypot procfs) was an attempt to use UML as honeypot.
-    It was never stable nor in heavy use.
+    Now that VB2 is used by both V4L2 and DVB core, move it to
+    the common part of the subsystem.
     
-    As Al Viro and Christoph Hellwig pointed some major issues out
-    it is better to let it die.
-    
-    Signed-off-by: Richard Weinberger <richard@nod.at>
+    Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
- arch/um/Kconfig.um |  15 --
- fs/Makefile        |   1 -
- fs/hppfs/Makefile  |   6 -
- fs/hppfs/hppfs.c   | 766 -----------------------------------------------------
- 4 files changed, 788 deletions(-)
+ drivers/media/common/Kconfig                       |  1 +
+ drivers/media/common/Makefile                      |  2 +-
+ drivers/media/common/videobuf/Kconfig              | 31 +++++++++++++++++++++
+ drivers/media/common/videobuf/Makefile             |  7 +++++
+ .../videobuf}/videobuf2-core.c                     |  0
+ .../videobuf}/videobuf2-dma-contig.c               |  0
+ .../videobuf}/videobuf2-dma-sg.c                   |  0
+ .../{v4l2-core => common/videobuf}/videobuf2-dvb.c |  0
+ .../videobuf}/videobuf2-memops.c                   |  0
+ .../videobuf}/videobuf2-v4l2.c                     |  0
+ .../videobuf}/videobuf2-vmalloc.c                  |  0
+ drivers/media/v4l2-core/Kconfig                    | 32 ----------------------
+ drivers/media/v4l2-core/Makefile                   |  7 -----
+ 13 files changed, 40 insertions(+), 40 deletions(-)
