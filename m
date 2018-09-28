@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B1CC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84ED5C04E87
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BEA21754
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50926216FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:40:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o+Kj425j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BEA21754
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDNixGuJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50926216FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbeI1MCC (ORCPT
+        id S1728958AbeI1MCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 08:02:02 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41759 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbeI1MCB (ORCPT
+        Fri, 28 Sep 2018 08:02:03 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35717 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbeI1MCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 08:02:01 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z3-v6so3591331pgv.8;
-        Thu, 27 Sep 2018 22:40:01 -0700 (PDT)
+        Fri, 28 Sep 2018 08:02:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v133-v6so3615562pgb.2;
+        Thu, 27 Sep 2018 22:40:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1mqzGKFVMjSnTLiDsAB/mdn2GuZtUkrT/vpmmy1PyQs=;
-        b=o+Kj425jnKP42HZw2x4xeAHlUiUb3CZEXHJRcINqCsnanOWKoDQcrLtOmLskp9VWzI
-         R49hevMHgx5Oqhb/KxZmZXFpqPT9XxjRA801Ch4IO4lGkq6dJWo7RJYA3OGLPLE/m1lX
-         shbtgZkw25oR0DBx4bBOEJGoSX5PJRB+9UDhiPtUqQEOu73eqgHSAJOFFpEcOwOmH3Ng
-         FkMF54STPwp6EWRRuKQ5s0l1a/DkGtmuQs9sspRRnxOXE7U790apW8hYjonhKa6WjS9J
-         gPyxjdzkZCTp/NGZ4sftBnnibXaHKNMuTdlafDkkORRZmUAS0dWpdNFtDx1bU9ChbQe8
-         Du1g==
+        bh=gTxV0aWUbi8aFwYtgG+7uDbNGSrkpXx/JtqQLR1W0X4=;
+        b=bDNixGuJlh/VViGK/IVdrd2Ya6UuePjmCtcsgKK/3jykSPzSHwUVjRr32fbM/h5Eu1
+         aWG7kNjNxKOjioZ+vW8NhCUe4/AWHvUKE+sTbc3smgAHTt2Mp1w3R3VVwRQwLhQ3upp4
+         z345xOHYP0aevKOufhDJEUGR/aRHBPJXIruZc5zPLn0NiTAHFetIb+GInBNx5Sked+RL
+         tQmMg7HH66UETFNKv4JaGPH4Qfp2ag0aQwKy08qRSMys5TZw49jJf7/sQ2I6+era5G/Z
+         Xnq3phaDVdsUDxIIQGQBKEDA8pNMdbl423L7RDkgYp5PhTSIB39uPk+cEli7RbXh2qHf
+         68Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1mqzGKFVMjSnTLiDsAB/mdn2GuZtUkrT/vpmmy1PyQs=;
-        b=Mf/DZj+XV8lBjl5JIbwZp0lC+bo+X1kIJz5V3WvgVwhM5UYyKaHOLnGpawYGNkEMz1
-         5JeAHil8Ku65Uz5qge89Jith+OLIp6KKOK6zUwyvc8gLKBl9Y6loUL8pGp1auiSk3Jtw
-         WIU/NQxVhPWMlm9jYa8KA62sCYQg+BYqqg8SKwo+nG+AElLOFkJH40FQWoydGkHY+kAQ
-         jQG+uUQKfN0uCo15UCQY56Te0Bi+PRzczZDJlnknJYZFFIov3kWtapf8+lP/Qdf4ZHZ3
-         n1tyB6D2ZpKnwvFLjp13U9V6/x0sqMXNC1OCJDrpCn2gbnDFPDkW/DnzFdf3zMf+DRHa
-         ZF9w==
-X-Gm-Message-State: ABuFfoi7nS0CYKAle7YBj0z6QqE4XqWbnVfBl+Oxl82dEGIacKxjA4Wt
-        u/V6qa7VT3k8ct4N1UXs8p8=
-X-Google-Smtp-Source: ACcGV63ypN7jtruDL64Blbt9oo1dr/8T7M2lG9FPtvldbr3uBAGfMxqPHuSYsSPqT8bCod53sR8lrw==
-X-Received: by 2002:a65:448a:: with SMTP id l10-v6mr13566667pgq.382.1538113200923;
-        Thu, 27 Sep 2018 22:40:00 -0700 (PDT)
+        bh=gTxV0aWUbi8aFwYtgG+7uDbNGSrkpXx/JtqQLR1W0X4=;
+        b=VJ1A2PO6bkoMqs9hwyB4oaZIcBRsnj5knWPd/OuXJEfuABfBRR/vgcH4ofPDwtXWWh
+         YO7dJ3VtHAupxGerOSDPlgxig3UuZoVeJjDxG581cHY7dryO+1mf3QYYaRN3rkaPMKvK
+         qdyRoHyf27eZriSE+0asiUIL3J4SDzbU06zVBU1i0csNT/1BGSVJyG2NvMTnQnWjZjf8
+         GyjnIHbAsPwFP6KyV81XEAXwh2ywAtKFcbPKLkxoq622b3He+yPePvx4QNNtGQw3d404
+         C5v0JwhbonLd+DZkF7OobPGIYmjvQJcEBEhwhV3BwWgnpCiOlKKg+x3UuKUp9Fq7s6gr
+         ljmw==
+X-Gm-Message-State: ABuFfoglYAdJn6JwY1/oCrZv75jOXocLu66VUp9lnfiJ6f2CGBII4V2N
+        9BBoZvLn/blsP+zu/gr4CRg=
+X-Google-Smtp-Source: ACcGV63rxOc0Wx8ndnvvnZLm+cbC7UMeUJ/O4wKjbN4LjtpvySOpDGyJ7dXg2lbQNGsJNDt27t9iSg==
+X-Received: by 2002:a63:531a:: with SMTP id h26-v6mr8070623pgb.441.1538113202538;
+        Thu, 27 Sep 2018 22:40:02 -0700 (PDT)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id u9-v6sm6569953pfi.104.2018.09.27.22.39.59
+        by smtp.gmail.com with ESMTPSA id u9-v6sm6569953pfi.104.2018.09.27.22.40.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 22:40:00 -0700 (PDT)
+        Thu, 27 Sep 2018 22:40:01 -0700 (PDT)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Matthew Wilcox <willy@infradead.org>,
@@ -71,9 +71,9 @@ To:     Matthew Wilcox <willy@infradead.org>,
 Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
         linux-rdma <linux-rdma@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 2/4] mm: introduce put_user_page(), placeholder version
-Date:   Thu, 27 Sep 2018 22:39:48 -0700
-Message-Id: <20180928053949.5381-4-jhubbard@nvidia.com>
+Subject: [PATCH 4/4] goldfish_pipe/mm: convert to the new release_user_pages() call
+Date:   Thu, 27 Sep 2018 22:39:49 -0700
+Message-Id: <20180928053949.5381-5-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180928053949.5381-1-jhubbard@nvidia.com>
 References: <20180928053949.5381-1-jhubbard@nvidia.com>
@@ -87,19 +87,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Hubbard <jhubbard@nvidia.com>
 
-Introduces put_user_page(), which simply calls put_page().
-This provides a way to update all get_user_pages*() callers,
-so that they call put_user_page(), instead of put_page().
-
-Also adds release_user_pages(), a drop-in replacement for
-release_pages(). This is intended to be easily grep-able,
-for later performance improvements, since release_user_pages
-is not batched like release_pages() is, and is significantly
-slower.
-
-Also: rename goldfish_pipe.c's release_user_pages(), in order
-to avoid a naming conflict with the new external function of
-the same name.
+For code that retains pages via get_user_pages*(),
+release those pages via the new release_user_pages(),
+instead of calling put_page().
 
 This prepares for eventually fixing the problem described
 in [1], and is following a plan listed in [2].
@@ -109,66 +99,27 @@ in [1], and is following a plan listed in [2].
 [2] https://lkml.kernel.org/r/20180709080554.21931-1-jhubbard@nvidia.com
     Proposed steps for fixing get_user_pages() + DMA problems.
 
-CC: Matthew Wilcox <willy@infradead.org>
-CC: Michal Hocko <mhocko@kernel.org>
-CC: Christopher Lameter <cl@linux.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: Jan Kara <jack@suse.cz>
 CC: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c |  4 ++--
- include/linux/mm.h                        | 14 ++++++++++++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 2da567540c2d..fad0345376e0 100644
+index fad0345376e0..1e9455a86698 100644
 --- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -332,7 +332,7 @@ static int pin_user_pages(unsigned long first_page, unsigned long last_page,
- 
+@@ -340,8 +340,9 @@ static void __release_user_pages(struct page **pages, int pages_count,
+ 	for (i = 0; i < pages_count; i++) {
+ 		if (!is_write && consumed_size > 0)
+ 			set_page_dirty(pages[i]);
+-		put_page(pages[i]);
+ 	}
++
++	release_user_pages(pages, pages_count);
  }
  
--static void release_user_pages(struct page **pages, int pages_count,
-+static void __release_user_pages(struct page **pages, int pages_count,
- 	int is_write, s32 consumed_size)
- {
- 	int i;
-@@ -410,7 +410,7 @@ static int transfer_max_buffers(struct goldfish_pipe *pipe,
- 
- 	*consumed_size = pipe->command_buffer->rw_params.consumed_size;
- 
--	release_user_pages(pages, pages_count, is_write, *consumed_size);
-+	__release_user_pages(pages, pages_count, is_write, *consumed_size);
- 
- 	mutex_unlock(&pipe->lock);
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index a61ebe8ad4ca..72caf803115f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -943,6 +943,20 @@ static inline void put_page(struct page *page)
- 		__put_page(page);
- }
- 
-+/* Placeholder version, until all get_user_pages*() callers are updated. */
-+static inline void put_user_page(struct page *page)
-+{
-+	put_page(page);
-+}
-+
-+/* A drop-in replacement for release_pages(): */
-+static inline void release_user_pages(struct page **pages,
-+				      unsigned long npages)
-+{
-+	while (npages)
-+		put_user_page(pages[--npages]);
-+}
-+
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- #define SECTION_IN_PAGE_FLAGS
- #endif
+ /* Populate the call parameters, merging adjacent pages together */
 -- 
 2.19.0
 
