@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB21C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04D3C004D1
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D75F2174E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3AE02170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wrVNc42o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D75F2174E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rlp2rkXW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3AE02170E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbeI1Stc (ORCPT
+        id S1729195AbeI1Stf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 14:49:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46122 "EHLO mail.kernel.org"
+        Fri, 28 Sep 2018 14:49:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbeI1Stb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 14:49:31 -0400
+        id S1727349AbeI1Ste (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 14:49:34 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 858ED2170E;
-        Fri, 28 Sep 2018 12:25:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 380322172C;
+        Fri, 28 Sep 2018 12:25:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538137558;
-        bh=68RrylPgXeMWF5trrFSYoBU1ZfDLjti2LFeDoXkznes=;
+        s=default; t=1538137561;
+        bh=fpUyK5TfZvG0m+v72eXZFTxVK9V2wFs3LJu3f4J9BWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wrVNc42otQsZ7Igugkkp/tz/OFb/tFeztKRCxkZMZO6snL1ieBtmUVhs7wFfzpUnk
-         mE7q9pJCCEtdGMm9vJoKSBRLIs+8qOqBCMbd9gMVLv+Aw504K45z3yO414RoJyX580
-         eDpmtdFuho8Tnu+xJFkT/K4uTmg8vkqnRqA4xdFI=
+        b=Rlp2rkXW1ZUt8SXxHnOfZ/R8dc6NMpORLAUlZuqQBnAvF/N6OmmMf+oH7mX/BEjmV
+         D4drLafenHg0tt2wCPWIdvIZDp8VOxNBHAmbdhyjgW/lRj7Ls/BQpYRJHPKrPStQSJ
+         jRIkFjKm6+lGx+jhnZE1rqgK8tw5/agBoeOGS7r4=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Milian Wolff <milian.wolff@kdab.com>,
         Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Sandipan Das <sandipan@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4/6] perf report: Use the offset address to find inline frames
-Date:   Fri, 28 Sep 2018 09:25:37 -0300
-Message-Id: <20180928122539.29326-5-acme@kernel.org>
+Subject: [PATCH 5/6] perf report: Don't crash on invalid inline debug information
+Date:   Fri, 28 Sep 2018 09:25:38 -0300
+Message-Id: <20180928122539.29326-6-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180928122539.29326-1-acme@kernel.org>
 References: <20180928122539.29326-1-acme@kernel.org>
@@ -58,52 +58,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Milian Wolff <milian.wolff@kdab.com>
 
-To correctly find inlined frames, we have to use the file offset instead
-of the virtual memory address. This was already fixed for displaying
-srcline information while displaying in commit 2a9d5050dc84fa20 ("perf
-script: Show correct offsets for DWARF-based unwinding"). We just need
-to use the same corrected address also when trying to find inline
-frames.
+When the function name for an inline frame is invalid, we must not try
+to demangle this symbol, otherwise we crash with:
 
-This is another follow-up to commit 19610184693c ("perf script: Show
-virtual addresses instead of offsets").
+  #0  0x0000555555895c01 in bfd_demangle ()
+  #1  0x0000555555823262 in demangle_sym (dso=0x555555d92b90, elf_name=0x0, kmodule=0) at util/symbol-elf.c:215
+  #2  dso__demangle_sym (dso=dso@entry=0x555555d92b90, kmodule=<optimized out>, kmodule@entry=0, elf_name=elf_name@entry=0x0) at util/symbol-elf.c:400
+  #3  0x00005555557fef4b in new_inline_sym (funcname=0x0, base_sym=0x555555d92b90, dso=0x555555d92b90) at util/srcline.c:89
+  #4  inline_list__append_dso_a2l (dso=dso@entry=0x555555c7bb00, node=node@entry=0x555555e31810, sym=sym@entry=0x555555d92b90) at util/srcline.c:264
+  #5  0x00005555557ff27f in addr2line (dso_name=dso_name@entry=0x555555d92430 "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf", addr=addr@entry=2888, file=file@entry=0x0,
+      line=line@entry=0x0, dso=dso@entry=0x555555c7bb00, unwind_inlines=unwind_inlines@entry=true, node=0x555555e31810, sym=0x555555d92b90) at util/srcline.c:313
+  #6  0x00005555557ffe7c in addr2inlines (sym=0x555555d92b90, dso=0x555555c7bb00, addr=2888, dso_name=0x555555d92430 "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf")
+      at util/srcline.c:358
 
+So instead handle the case where we get invalid function names for
+inlined frames and use a fallback '??' function name instead.
+
+While this crash was originally reported by Hadrien for rust code, I can
+now also reproduce it with trivial C++ code. Indeed, it seems like
+libbfd fails to interpret the debug information for the inline frame
+symbol name:
+
+  $ addr2line -e /home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf -if b48
+  main
+  /usr/include/c++/8.2.1/complex:610
+  ??
+  /usr/include/c++/8.2.1/complex:618
+  ??
+  /usr/include/c++/8.2.1/complex:675
+  ??
+  /usr/include/c++/8.2.1/complex:685
+  main
+  /home/milian/projects/kdab/rnd/hotspot/tests/test-clients/cpp-inlining/main.cpp:39
+
+I've reported this bug upstream and also attached a patch there which
+should fix this issue:
+
+https://sourceware.org/bugzilla/show_bug.cgi?id=23715
+
+Reported-by: Hadrien Grasland <grasland@lal.in2p3.fr>
 Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Sandipan Das <sandipan@linux.ibm.com>
-Fixes: 19610184693c ("perf script: Show virtual addresses instead of offsets")
-Link: http://lkml.kernel.org/r/20180926135207.30263-2-milian.wolff@kdab.com
+Link: http://lkml.kernel.org/r/20180926135207.30263-3-milian.wolff@kdab.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/srcline.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 0cb4f8bf3ca7..73a651f10a0f 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2317,9 +2317,6 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
- 	if (symbol_conf.hide_unresolved && entry->sym == NULL)
- 		return 0;
+diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+index 09d6746e6ec8..e767c4a9d4d2 100644
+--- a/tools/perf/util/srcline.c
++++ b/tools/perf/util/srcline.c
+@@ -85,6 +85,9 @@ static struct symbol *new_inline_sym(struct dso *dso,
+ 	struct symbol *inline_sym;
+ 	char *demangled = NULL;
  
--	if (append_inlines(cursor, entry->map, entry->sym, entry->ip) == 0)
--		return 0;
--
- 	/*
- 	 * Convert entry->ip from a virtual address to an offset in
- 	 * its corresponding binary.
-@@ -2327,6 +2324,9 @@ static int unwind_entry(struct unwind_entry *entry, void *arg)
- 	if (entry->map)
- 		addr = map__map_ip(entry->map, entry->ip);
- 
-+	if (append_inlines(cursor, entry->map, entry->sym, addr) == 0)
-+		return 0;
++	if (!funcname)
++		funcname = "??";
 +
- 	srcline = callchain_srcline(entry->map, entry->sym, addr);
- 	return callchain_cursor_append(cursor, entry->ip,
- 				       entry->map, entry->sym,
+ 	if (dso) {
+ 		demangled = dso__demangle_sym(dso, 0, funcname);
+ 		if (demangled)
 -- 
 2.14.4
 
