@@ -2,86 +2,147 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FB9C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BCEC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F0720657
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AA6120676
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:04:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jzIjVuoR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F0720657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=8chan.co header.i=@8chan.co header.b="sWgHPbVm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA6120676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=8chan.co
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbeI1X1w (ORCPT
+        id S1729468AbeI1X2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:27:52 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38920 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbeI1X1w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:27:52 -0400
-Received: by mail-io1-f68.google.com with SMTP id l7-v6so4688453iok.6
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FXAVLPPiD/Rujvmt4pV0XZrfngaOvc5BhCA1Pjr4Zm4=;
-        b=jzIjVuoRGd6j6kUhsBBoGF0OFedmwatKZvRZBjQdEwnhFyN12PwbRlpv1HPN5bu0WJ
-         gOuRgaKJMPQoQpbDhKayVFCOeXEpkDGq6iB3sZlCZHR2hAJwnU2/5lBWau6LnzzFTr4Z
-         Or7V5WeaLDzTzJ6tAWUaVSXwvYd3DLVE6l1yA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FXAVLPPiD/Rujvmt4pV0XZrfngaOvc5BhCA1Pjr4Zm4=;
-        b=A5iOAACGjjL3zkBJui+MvHacJV6PMculn3llfcQZJtqNgTdynaspYWDcmMxEvOobGb
-         RQH8hmgLfDP46tfBpD8rt7AxvkuwSAFPSy/GKggnPerASwTQ4V8j/aifYCjvy+pOv7BR
-         wVoWr5PJYnPmgITxCBVPk+ph69132LIGSI7DgN2HJGEi9sL8v9PE4JetD6kBw0Q6jqJ5
-         KmixiUuogeVQZxGRB47n8I0S+JoF5jK1uOpeBXEECuPiW64OgLLmjmIEQHdwsCm+PWfG
-         0CvivWbXvCI3UO4BSNEp4SGOVO4hqCcysIdgAA2zyCbyXVkgapAD/9SGaLJU2Dd/ZSfS
-         kxHg==
-X-Gm-Message-State: ABuFfojwDgBe6DJO9jp6eShyJDP1D56avJSC04ah6P5V6kmSe91g1Wcd
-        ue8V4T2i05sY8MEPuxpdPDptPAjCY9anhSV87p0fdA==
-X-Google-Smtp-Source: ACcGV60AkKep0cpavojw/XwkCBwmDJX6xVJIQuHZd+0AKcNSVeC4p5kHPYFfV5e6oUxItqGi1LQ3AlbssNkSqWY4y1o=
-X-Received: by 2002:a6b:5d12:: with SMTP id r18-v6mr12306348iob.170.1538154192122;
- Fri, 28 Sep 2018 10:03:12 -0700 (PDT)
+        Fri, 28 Sep 2018 19:28:46 -0400
+Received: from cock.li ([185.100.85.212]:60406 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbeI1X2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:28:45 -0400
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 10:03:11
- -0700 (PDT)
-In-Reply-To: <CAKv+Gu9VCZx=UHSoN7SexZeTzLK6yk9YAe5qMdhhDMUFnqTSCQ@mail.gmail.com>
-References: <1537351855-16618-1-git-send-email-clabbe@baylibre.com>
- <1537351855-16618-3-git-send-email-clabbe@baylibre.com> <CAKv+Gu9VCZx=UHSoN7SexZeTzLK6yk9YAe5qMdhhDMUFnqTSCQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 28 Sep 2018 19:03:11 +0200
-Message-ID: <CAKv+Gu8jgEyaUA2OOzxNT5nvWoC7qZgf+KazzH1Q5yWj60V2TQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] crypto: tools: Add cryptostat userspace
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        nhorman@tuxdriver.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8chan.co; s=mail;
+        t=1538154242; bh=1pm4y+bwewZkwnTMD11H/MPXWMI+t7VoASrMbW2MTLA=;
+        h=Date:From:To:Subject:From;
+        b=sWgHPbVmM5+diSMd8qFOYt8ryDQkmCwf32MZkAxbhzA1+JWaNk7AoIzs7JPasjZMZ
+         iclDCYAb2syBVB2n+pAmCWGi5BnR4OO/jrlxthFToNebiqBHedgwTvAwhGaKTVcGkn
+         mYpNKuriZWCtXKzik7TIxVLKFUaSSGPuZjRfjGYQaYO3mx/bbYwZ/m4knOqVHv9UhD
+         GRN85nHGeDrNmEYbVC5mH03kMw1xmf++0ElNg/y+S0HZdSHxxrQrwJAgrHbEP7IyTB
+         zpeLMfXqBE73fJML1BR503cyzdDn0oO5q6hgP+FkkJpwpcRYHqsMDxYT9ZJozN8yYM
+         8xbXkUFQtaC7w==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Fri, 28 Sep 2018 17:04:01 +0000
+From:   vwdfrwd@8chan.co
+To:     linux-kernel@vger.kernel.org
+Subject: Response to SFConservancy: Under US copyright, permission regarding a
+ GPL version 2 licensed work is revocable by the grantor.
+Message-ID: <278ff9f3bac71bd7f64d4fd4e088a93f@8chan.co>
+X-Sender: vwdfrwd@8chan.co
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 September 2018 at 15:13, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 19 September 2018 at 12:10, Corentin Labbe <clabbe@baylibre.com> wrote:
->> This patch adds an userspace tool for displaying kernel crypto API
->> statistics.
->>
->> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
->
-> How do I actually build this thing?
->
+The software freedom conservancy has tendered its response:
+http://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
+http://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
 
-Never mind.
+
+""
+"The GPLv2 have several provisions that, when taken together, can be 
+construed as an irrevocable license from each contributor. "
+""
+
+It cites:
+
+
+           " That license granted to downstream is irrevocable, again 
+provided that the downstream user complies with the license terms: 
+"[P]arties who have received copies, or rights, from you under this 
+License will not have their licenses terminated so long as such parties 
+remain in full compliance" (GPLv2§4). "
+
+However this is disingenuous
+
+The full text of section 4 is as follows:
+
+""
+   4. You may not copy, modify, sublicense, or distribute the Program
+except as expressly provided under this License.  Any attempt
+otherwise to copy, modify, sublicense or distribute the Program is
+void, and will automatically terminate your rights under this License.
+However, parties who have received copies, or rights, from you under
+this License will not have their licenses terminated so long as such
+parties remain in full compliance.
+""
+
+
+
+The "You" in section 4 is speaking of the licensee regarding 
+sub-licensees, it is not speaking to the licensor/copyright-holder.
+
+IE: if the licensee loses his license, through operation of the 
+automatic-revocation provisions, the sub-licensees do not also lose 
+their licenses.
+
+IE: The language is disclaiming a chain topography for license 
+distribution, and instead substituting a hub-and-spoke topography (all 
+licenses originating from the copyright holder, not the 
+previous-in-line)
+
+GPLv3 added a no-rescission clause for a reason: the reason being to 
+attempt to create an estoppel defense for the licensees against the 
+licensor. You will notice that Eben Moglen never speaks on these issues. 
+(He preumably is aware of the weaknesses vis a vis the US copyright 
+regime.)
+
+Section 6 further clarifies the hub-and-spoke model:
+""
+    6. Each time you redistribute the Program (or any work based on the
+Program), the recipient automatically receives a license from the
+original licensor to copy, distribute or modify the Program subject to
+these terms and conditions.  You may not impose any further
+restrictions on the recipients' exercise of the rights granted herein.
+You are not responsible for enforcing compliance by third parties to
+this License.
+""
+
+The memorandum posted then goes on to a discussion of estoppel, 
+detrimental reliance, etc; noting that users may have relied on the 
+software and their licenses may be estopped from being revoked from said 
+users since doing so might cause them unanticipated loss. This is 
+speaking of already published, existent, versions of the program used by 
+end users.
+
+The memorandum seems to ignore what happens to "upstream" once said 
+project  receives a revocation notice. Thought it may be possible that 
+users of a published piece of software may have defenses to license 
+revocation, the same is not true regarding the rescinded property 
+vis-a-vis future prospective versions of the software nor of future 
+prospective licensees of said software.
+
+That is: once the grant to use the code in question is rescinded, future 
+versions of the software may not use that code. Current users of the 
+software may be-able to raise an estoppel / detrimental reliance defense 
+regarding the current published software, however the programmers 
+working on the next version of said software cannot continue to use the 
+property in future versions of the software (such would be a copyright 
+violation once the gratuitous license is rescinded by the grantor).
+
+Additionally, prospective-licensees, once the grant was rescinded and 
+such was published, would have no same-such estoppel defense (not being 
+user-licensees at the time of revocation).
+
+(Ignoring this eventuality in the published memorandum, is, of-course, 
+by design.)
+(Now, to note: the free-software movement is focused on the freedom of 
+the user, not the progenitors of the software, so one could certainly 
+say that ignoring some developer-focused analysis is consistent with 
+their prerogative...)
