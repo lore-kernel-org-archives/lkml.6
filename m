@@ -2,218 +2,101 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CE1C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BC8C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BF12073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:37:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BF12073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C70A32073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:38:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COASzK69"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C70A32073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeI2CCo (ORCPT
+        id S1727204AbeI2CDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 22:02:44 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39883 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbeI2CCn (ORCPT
+        Fri, 28 Sep 2018 22:03:23 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:36014 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbeI2CDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 22:02:43 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c20-v6so562508otl.6;
-        Fri, 28 Sep 2018 12:37:28 -0700 (PDT)
+        Fri, 28 Sep 2018 22:03:23 -0400
+Received: by mail-qt1-f193.google.com with SMTP id e26-v6so7936656qtq.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 12:38:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1S3ijS/vlKACz0xD9uTGub0QMY2h2n3OgRzQwD6BjQ0=;
+        b=COASzK69ijwi56If2EH8U9rjQzSG8zJj/oY0lm4XzLY5+t2o1cXcqR9tJyjkrPCEWf
+         Awg1S+Je4PexU23+zKqr8PQX2VMvOE1XA0TlRVVaY2+Z2svIjXi+onqpgQ7ehuMFujHM
+         HcLloyEjkGKIaeKQ/7pU6BB/NTYiksJYW6OEmW0ZOanikyfaz3sI5owkl8xBHLCksYmI
+         Zz9iRPIvl31BmBqjnZWBLWGdpyuzaf73lolChpDLJ5qJk1yikYB1BTiCZeX8ckoxZirg
+         oabrttrgOkQzQDLocQT3SJpEammTW+NG9/NEtgtVjmo3lT8zJ+KbHFiPsH5W95kBSl7Q
+         jFXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K+qCV9SaBAMefNu93MVLFeCsJFl0wtxQ1dZwtJUyGPk=;
-        b=gPm4C3tgzGcbELAf7Er03OaV/gfxANt5UwF9Erqk3gzkqohMyRoxiTu42StBL7oTc9
-         trOcL3xz5I5IxNtPB1JTgaDLjIaqK53/UgUwJAgB5sEwC5LOR/LYvW0EQvzndSxpSAI6
-         Vuxg7nhPGmRNLJMTdutz4O2GyNgF0VPkuj/Cyq/dn2LxH7Z2zvKQxM2cuGV6SEhnWhak
-         2lGMmcR04kiZh8/NpiAJMonYRVRu68zarfFWuDT5vw/OSC61TJN5I0BcMIukvUU4Ul8F
-         0vYgsS0iKoJv+RWZkVqOaPL0UHWn3ycEhkFgyeH8Q+uJFI0Dmo0/URScmtPmvNwIjaT7
-         lBww==
-X-Gm-Message-State: ABuFfohf1pCxiR61Vp5rCHnZWlSgWpD3SKFs4spIlu6mO9goXrG+Pj1+
-        Qf6t9SIfwC/b26zCvZDt2mZ9epk1lAw=
-X-Google-Smtp-Source: ACcGV62F3qKOOOa8mVBjdVGnJkWm9pC8chv1eQECf5iQjKGQg+Syogqg+z/vLE6ku3hJ44+l9XA/eg==
-X-Received: by 2002:a9d:4e94:: with SMTP id v20-v6mr47514otk.255.1538163447770;
-        Fri, 28 Sep 2018 12:37:27 -0700 (PDT)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
-        by smtp.gmail.com with ESMTPSA id j80-v6sm2161122oib.33.2018.09.28.12.37.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 12:37:27 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id m23-v6so7159016otf.0;
-        Fri, 28 Sep 2018 12:37:26 -0700 (PDT)
-X-Received: by 2002:a9d:1b50:: with SMTP id l74-v6mr81460otl.112.1538163446517;
- Fri, 28 Sep 2018 12:37:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com> <1537747741-6245-7-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1537747741-6245-7-git-send-email-vabhav.sharma@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Fri, 28 Sep 2018 14:37:15 -0500
-X-Gmail-Original-Message-ID: <CADRPPNS1Zj=47M-yOBAJ=X=sjjxmh0k7tNcj1A8uY=cPM398tQ@mail.gmail.com>
-Message-ID: <CADRPPNS1Zj=47M-yOBAJ=X=sjjxmh0k7tNcj1A8uY=cPM398tQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] arm64: dts: add LX2160ARDB board support
-To:     vabhav.sharma@nxp.com
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, Scott Wood <oss@buserror.net>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        yamada.masahiro@socionext.com, udit.kumar@nxp.com,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, V.Sethi@nxp.com,
-        Sriram Dash <sriram.dash@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1S3ijS/vlKACz0xD9uTGub0QMY2h2n3OgRzQwD6BjQ0=;
+        b=Z7ydmPCEiZM1cPNx2awWsBXx7QY0zZooRcrILXZIBVG95UnYmrc33WcEF3ViKxjkt+
+         VrabL+kH1HtrtJhx1q+T3fnVnJdzujekKtdDvv0mAaCB4c5LVTA0Q4hKMemvS082HvW1
+         IFTW+lHnB94lFjerg8ogRJsiuO9fHn5rGdWW5VNJYIExCV5FbE64JztWL9yKVZYifjTv
+         JwQOuFXmNIoujaJHCQ0T5ZWLZ8IegyoK89rVCkKBIRPMe3BfuLHTRq2rXNU/viBHPvxK
+         rJzuwoRPoQErZlR5weIJK9cwuxSaVl3G52AdnRWoiDCshqLJYFcSqWXv+pr1JvJ8QG0e
+         4NSA==
+X-Gm-Message-State: ABuFfoh9oQCD2jpYqIKUcYzslC/N28sCuckwyoen0+qDP1u2LWzNxrwa
+        uB2/AwiOR2pr53Y0jUA3jWI=
+X-Google-Smtp-Source: ACcGV60klQ8upwtPa/DaqpNTRc5Ob1+k2lKRACBlDzEnNNfHQLvBr+rQq71eNA2i6VEVkGzCi+UCow==
+X-Received: by 2002:ac8:28e4:: with SMTP id j33-v6mr70131qtj.57.1538163486704;
+        Fri, 28 Sep 2018 12:38:06 -0700 (PDT)
+Received: from yosemite.fios-router.home (pool-108-16-81-143.phlapa.fios.verizon.net. [108.16.81.143])
+        by smtp.gmail.com with ESMTPSA id s73-v6sm4064556qkl.65.2018.09.28.12.38.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 28 Sep 2018 12:38:06 -0700 (PDT)
+From:   Jeff loughlin <loughlinjd@gmail.com>
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        pombredanne@nexb.com, brijesh.singh@amd.com,
+        thomas.lendacky@amd.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, Jeff Loughlin <loughlinjd@gmail.com>
+Subject: [PATCH] x86: init: Remove raw kernel pointer from printk
+Date:   Fri, 28 Sep 2018 15:37:40 -0400
+Message-Id: <1538163460-17173-1-git-send-email-loughlinjd@gmail.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 7:51 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
->
-> LX2160A reference design board (RDB) is a high-performance
-> computing, evaluation, and development platform with LX2160A
-> SoC.
+From: Jeff Loughlin <loughlinjd@gmail.com>
 
-Please send next version with Shawn Guo and me in the "to" recipient
-so that its less likely we will miss it.
+    printk message in set_real_mode_mem() contains a raw kernel pointer, which printk rightly changes to (ptrval).
+    This is useless in the dmesg log and should be removed.
 
->
-> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/Makefile            |  1 +
->  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 88 +++++++++++++++++++++++
->  2 files changed, 89 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
->
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 86e18ad..445b72b 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> new file mode 100644
-> index 0000000..1bbe663
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> @@ -0,0 +1,88 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +//
-> +// Device Tree file for LX2160ARDB
-> +//
-> +// Copyright 2018 NXP
-> +
-> +/dts-v1/;
-> +
-> +#include "fsl-lx2160a.dtsi"
-> +
-> +/ {
-> +       model = "NXP Layerscape LX2160ARDB";
-> +       compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
-> +
-> +       chosen {
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +};
-> +
-> +&uart0 {
-> +       status = "okay";
-> +};
-> +
-> +&uart1 {
-> +       status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +       status = "okay";
-> +       i2c-mux@77 {
-> +               compatible = "nxp,pca9547";
-> +               reg = <0x77>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               i2c@2 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0x2>;
-> +
-> +                       power-monitor@40 {
-> +                               compatible = "ti,ina220";
-> +                               reg = <0x40>;
-> +                               shunt-resistor = <1000>;
-> +                       };
-> +               };
-> +
-> +               i2c@3 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0x3>;
-> +
-> +                       temperature-sensor@4c {
-> +                               compatible = "nxp,sa56004";
-> +                               reg = <0x4c>;
+    Signed-off-by: Jeff Loughlin <loughlinjd@gmail.com>
+---
+ arch/x86/realmode/init.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Need a vcc-supply property according to the binding.
+diff --git a/arch/x86/realmode/init.c b/arch/x86/realmode/init.c
+index d101058..d76a138 100644
+--- a/arch/x86/realmode/init.c
++++ b/arch/x86/realmode/init.c
+@@ -20,8 +20,8 @@ void __init set_real_mode_mem(phys_addr_t mem, size_t size)
+ 	void *base = __va(mem);
+ 
+ 	real_mode_header = (struct real_mode_header *) base;
+-	printk(KERN_DEBUG "Base memory trampoline at [%p] %llx size %zu\n",
+-	       base, (unsigned long long)mem, size);
++	printk(KERN_DEBUG "Base memory trampoline at %llx size %zu\n",
++	       (unsigned long long)mem, size);
+ }
+ 
+ void __init reserve_real_mode(void)
+-- 
+2.1.4
 
-> +                       };
-> +
-> +                       temperature-sensor@4d {
-> +                               compatible = "nxp,sa56004";
-> +                               reg = <0x4d>;
-
-Ditto.
-
-> +                       };
-> +               };
-> +       };
-> +};
-> +
-> +&i2c4 {
-> +       status = "okay";
-> +
-> +       rtc@51 {
-> +               compatible = "nxp,pcf2129";
-> +               reg = <0x51>;
-> +               // IRQ10_B
-> +               interrupts = <0 150 0x4>;
-> +               };
-> +
-> +};
-> +
-> +&usb0 {
-> +       status = "okay";
-> +};
-> +
-> +&usb1 {
-> +       status = "okay";
-> +};
-> +
-> +&crypto {
-> +       status = "okay";
-> +};
-> --
-> 2.7.4
->
