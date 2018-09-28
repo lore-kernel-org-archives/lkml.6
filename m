@@ -2,102 +2,145 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE632C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D02C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 272AC2173D
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:08:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272AC2173D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mxic.com.tw
+	by mail.kernel.org (Postfix) with ESMTP id CA08C2173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA08C2173D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbeI1Ob2 (ORCPT
+        id S1728888AbeI1OfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:31:28 -0400
-Received: from twhmllg4.macronix.com ([122.147.135.202]:53004 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729015AbeI1Ob0 (ORCPT
+        Fri, 28 Sep 2018 10:35:00 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36016 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeI1OfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:31:26 -0400
-Received: from TWHMLLG4.macronix.com (localhost [127.0.0.2] (may be forged))
-        by TWHMLLG4.macronix.com with ESMTP id w8S7ZSY8019012
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 15:35:28 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id w8S7ZEhN018803;
-        Fri, 28 Sep 2018 15:35:16 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   masonccyang@mxic.com.tw
-To:     broonie@kernel.org, tpiepho@impinj.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Cc:     boris.brezillon@bootlin.com, juliensu@mxic.com.tw,
-        zhengxunli@mxic.com.tw, masonccyang@mxic.com.tw
-Subject: [PATCH v3 2/2] dt-bindings: spi: Document Macronix controller bindings
-Date:   Fri, 28 Sep 2018 15:35:12 +0800
-Message-Id: <1538120112-15530-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1538120112-15530-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1538120112-15530-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com w8S7ZEhN018803
+        Fri, 28 Sep 2018 10:35:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l10-v6so5359418wrp.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 01:12:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e6G1NBSTkJ/bhGl8Fn+Smcp7GAw+5rucnfxNIeZbOzo=;
+        b=S3CAsZfXlsBOq8TQoLW58hgTjLvILPpzf9fvkxcYfYNBjbyjsebGUx1EQx2KpfApF0
+         9I6UNgToYs37w6hp/0RZKFn8JsU5mF07OgnmEu3GMCU6BSnnJRzxe9wfTTtpvITYyPBP
+         Ny7Idkrh6qu1/uEftvfDPr5CZ/tioBs8VPARKJNuVzz92VtaoekOiPNgGVcqozy8QOgY
+         S2/g7cfzRI59N4xKdZRUrhdw83ukQKgexS/xRGAcw6MqqHEqcQUREsKvbqa+tVyhOi2V
+         8V/ArRGcGH6HlVezE5tXIzTt6q8+UBotUBRGR9XMRF8YLtnxKt1Zjfb7K+Sbt1un1upe
+         4zeQ==
+X-Gm-Message-State: ABuFfohUsDTm+qVREYc0hTtAeH4b5IJyuMQ1WqY5h0QW0i3H67rOfezr
+        Lgz0mO5vPYrzH1KBQFAjdM0=
+X-Google-Smtp-Source: ACcGV60s4Hcx4Z1suQRy8NNzLjwDF2+XOGXk2KDNV6GGFUnZ4tUlIpFt1RNyaGj1ni9K4GfzcTewMQ==
+X-Received: by 2002:adf:8024:: with SMTP id 33-v6mr11575338wrk.16.1538122345973;
+        Fri, 28 Sep 2018 01:12:25 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id x204-v6sm1141493wmg.27.2018.09.28.01.12.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 01:12:25 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id A486A125651; Fri, 28 Sep 2018 10:12:24 +0200 (CEST)
+Date:   Fri, 28 Sep 2018 10:12:24 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        pavel.tatashin@microsoft.com, dave.jiang@intel.com,
+        dave.hansen@intel.com, jglisse@redhat.com, rppt@linux.vnet.ibm.com,
+        dan.j.williams@intel.com, logang@deltatee.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+Message-ID: <20180928081224.GA25561@techadventures.net>
+References: <20180925200551.3576.18755.stgit@localhost.localdomain>
+ <20180925202053.3576.66039.stgit@localhost.localdomain>
+ <20180926075540.GD6278@dhcp22.suse.cz>
+ <6f87a5d7-05e2-00f4-8568-bb3521869cea@linux.intel.com>
+ <20180927110926.GE6278@dhcp22.suse.cz>
+ <20180927122537.GA20378@techadventures.net>
+ <20180927131329.GI6278@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927131329.GI6278@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mason Yang <masonccyang@mxic.com.tw>
+On Thu, Sep 27, 2018 at 03:13:29PM +0200, Michal Hocko wrote:
+> I would have to double check but is the hotplug lock really serializing
+> access to the state initialized by init_currently_empty_zone? E.g.
+> zone_start_pfn is a nice example of a state that is used outside of the
+> lock. zone's free lists are similar. So do we really need the hoptlug
+> lock? And more broadly, what does the hotplug lock is supposed to
+> serialize in general. A proper documentation would surely help to answer
+> these questions. There is way too much of "do not touch this code and
+> just make my particular hack" mindset which made the whole memory
+> hotplug a giant pile of mess. We really should start with some proper
+> engineering here finally.
 
-Document the bindings used by the Macronix controller.
+* Locking rules:
+*
+* zone_start_pfn and spanned_pages are protected by span_seqlock.
+* It is a seqlock because it has to be read outside of zone->lock,
+* and it is done in the main allocator path.  But, it is written
+* quite infrequently.
+*
+* Write access to present_pages at runtime should be protected by
+* mem_hotplug_begin/end(). Any reader who can't tolerant drift of
+* present_pages should get_online_mems() to get a stable value.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- Documentation/devicetree/bindings/spi/spi-mxic.txt | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-mxic.txt
+IIUC, looks like zone_start_pfn should be envolved with
+zone_span_writelock/zone_span_writeunlock, and since zone_start_pfn is changed
+in init_currently_empty_zone, I guess that the whole function should be within
+that lock.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-mxic.txt b/Documentation/devicetree/bindings/spi/spi-mxic.txt
-new file mode 100644
-index 0000000..529f2da
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-mxic.txt
-@@ -0,0 +1,34 @@
-+Macronix SPI controller Device Tree Bindings
-+--------------------------------------------
-+
-+Required properties:
-+- compatible: should be "mxicy,mx25f0a-spi"
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+- reg: should contain 2 entries, one for the registers and one for the direct
-+       mapping area
-+- reg-names: should contain "regs" and "dirmap"
-+- interrupts: interrupt line connected to the SPI controller
-+- clock-names: should contain "ps_clk", "send_clk" and "send_dly_clk"
-+- clocks: should contain 3 entries for the "ps_clk", "send_clk" and
-+	  "send_dly_clk" clocks
-+
-+Example:
-+
-+	spi@43c30000 {
-+		compatible = "mxicy,mx25f0a-spi";
-+		reg = <0x43c30000 0x10000>, <0xa0000000 0x20000000>;
-+		reg-names = "regs", "dirmap";
-+		clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 18>;
-+		clock-names = "send_clk", "send_dly_clk", "ps_clk";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <25000000>;
-+			spi-tx-bus-width = <4>;
-+			spi-rx-bus-width = <4>;
-+		};
-+	};
+So, a blind shot, but could we do something like the following?
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 898e1f816821..49f87252f1b1 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -764,14 +764,13 @@ void __ref move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+        int nid = pgdat->node_id;
+        unsigned long flags;
+ 
+-       if (zone_is_empty(zone))
+-               init_currently_empty_zone(zone, start_pfn, nr_pages);
+-
+        clear_zone_contiguous(zone);
+ 
+        /* TODO Huh pgdat is irqsave while zone is not. It used to be like that before */
+        pgdat_resize_lock(pgdat, &flags);
+        zone_span_writelock(zone);
++       if (zone_is_empty(zone))
++               init_currently_empty_zone(zone, start_pfn, nr_pages);
+        resize_zone_range(zone, start_pfn, nr_pages);
+        zone_span_writeunlock(zone);
+        resize_pgdat_range(pgdat, start_pfn, nr_pages);
+
+Then, we could take move_pfn_range_to_zone out of the hotplug lock.
+
+Although I am not sure about leaving memmap_init_zone unprotected.
+For the normal memory, that is not a problem since the memblock's lock
+protects us from touching the same pages at the same time in online/offline_pages,
+but for HMM/devm the story is different.
+
+I am totally unaware of HMM/devm, so I am not sure if its protected somehow.
+e.g: what happens if devm_memremap_pages and devm_memremap_pages_release are running
+at the same time for the same memory-range (with the assumption that the hotplug-lock
+does not protect move_pfn_range_to_zone anymore).
+
 -- 
-1.9.1
-
+Oscar Salvador
+SUSE L3
