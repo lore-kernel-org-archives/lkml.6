@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A734C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E5BC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E54120657
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E54120657
+	by mail.kernel.org (Postfix) with ESMTP id 37251206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37251206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbeI1Wav (ORCPT
+        id S1729502AbeI1Waj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:30:51 -0400
-Received: from mga07.intel.com ([134.134.136.100]:14956 "EHLO mga07.intel.com"
+        Fri, 28 Sep 2018 18:30:39 -0400
+Received: from mga03.intel.com ([134.134.136.65]:28126 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728126AbeI1Wav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:30:51 -0400
+        id S1729460AbeI1Waj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 18:30:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 09:06:25 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 09:06:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,315,1534834800"; 
-   d="scan'208";a="236917992"
+   d="scan'208";a="84226914"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga004.jf.intel.com with ESMTP; 28 Sep 2018 09:06:03 -0700
-Subject: [PATCH 1/8] x86/mm: clarify hardware vs. software "error_code"
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Sep 2018 09:06:13 -0700
+Subject: [PATCH 7/8] x86/mm/vsyscall: consider vsyscall page part of user address space
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         sean.j.christopherson@intel.com, peterz@infradead.org,
         tglx@linutronix.de, x86@kernel.org, luto@kernel.org,
         jannh@google.com
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Fri, 28 Sep 2018 09:02:20 -0700
+Date:   Fri, 28 Sep 2018 09:02:30 -0700
 References: <20180928160219.3402F0AA@viggo.jf.intel.com>
 In-Reply-To: <20180928160219.3402F0AA@viggo.jf.intel.com>
-Message-Id: <20180928160220.4A2272C9@viggo.jf.intel.com>
+Message-Id: <20180928160230.6E9336EE@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,23 +50,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-We pass around a variable called "error_code" all around the page
-fault code.  Sounds simple enough, especially since "error_code" looks
-like it exactly matches the values that the hardware gives us on the
-stack to report the page fault error code (PFEC in SDM parlance).
+The vsyscall page is weird.  It is in what is traditionally part of
+the kernel address space.  But, it has user permissions and we handle
+faults on it like we would on a user page: interrupts on.
 
-But, that's not how it works.
+Right now, we handle vsyscall emulation in the "bad_area" code, which
+is used for both user-address-space and kernel-address-space faults.
+Move the handling to the user-address-space code *only* and ensure we
+get there by "excluding" the vsyscall page from the kernel address
+space via a check in fault_in_kernel_space().
 
-For part of the page fault handler, "error_code" does exactly match
-PFEC.  But, during later parts, it diverges and starts to mean
-something a bit different.
+Since the fault_in_kernel_space() check is used on 32-bit, also add a
+64-bit check to make it clear we only use this path on 64-bit.  Also
+move the unlikely() to be in is_vsyscall_vaddr() itself.
 
-Give it two names for its two jobs.
-
-The place it diverges is also really screwy.  It's only in a spot
-where the hardware tells us we have kernel-mode access that occurred
-while we were in usermode accessing user-controlled address space.
-Add a warning in there.
+This helps clean up the kernel fault handling path by removing a case
+that can happen in normal[1] operation.  (Yeah, yeah, we can argue
+about the vsyscall page being "normal" or not.)  This also makes
+sanity checks easier, like the "we never take pkey faults in the
+kernel address space" check in the next patch.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
@@ -78,203 +80,76 @@ Cc: Jann Horn <jannh@google.com>
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
 
- b/arch/x86/mm/fault.c |   77 +++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 52 insertions(+), 25 deletions(-)
+ b/arch/x86/mm/fault.c |   38 +++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-diff -puN arch/x86/mm/fault.c~pkeys-fault-warnings-0 arch/x86/mm/fault.c
---- a/arch/x86/mm/fault.c~pkeys-fault-warnings-0	2018-09-27 10:17:21.481343572 -0700
-+++ b/arch/x86/mm/fault.c	2018-09-27 10:17:21.485343572 -0700
-@@ -1210,9 +1210,10 @@ static inline bool smap_violation(int er
-  * routines.
+diff -puN arch/x86/mm/fault.c~vsyscall-is-user-address-space arch/x86/mm/fault.c
+--- a/arch/x86/mm/fault.c~vsyscall-is-user-address-space	2018-09-27 10:17:24.487343564 -0700
++++ b/arch/x86/mm/fault.c	2018-09-27 10:17:24.490343564 -0700
+@@ -848,7 +848,7 @@ show_signal_msg(struct pt_regs *regs, un
   */
- static noinline void
--__do_page_fault(struct pt_regs *regs, unsigned long error_code,
-+__do_page_fault(struct pt_regs *regs, unsigned long hw_error_code,
- 		unsigned long address)
+ static bool is_vsyscall_vaddr(unsigned long vaddr)
  {
-+	unsigned long sw_error_code;
- 	struct vm_area_struct *vma;
- 	struct task_struct *tsk;
- 	struct mm_struct *mm;
-@@ -1238,17 +1239,17 @@ __do_page_fault(struct pt_regs *regs, un
- 	 * nothing more.
- 	 *
- 	 * This verifies that the fault happens in kernel space
--	 * (error_code & 4) == 0, and that the fault was not a
--	 * protection error (error_code & 9) == 0.
-+	 * (hw_error_code & 4) == 0, and that the fault was not a
-+	 * protection error (hw_error_code & 9) == 0.
- 	 */
- 	if (unlikely(fault_in_kernel_space(address))) {
--		if (!(error_code & (X86_PF_RSVD | X86_PF_USER | X86_PF_PROT))) {
-+		if (!(hw_error_code & (X86_PF_RSVD | X86_PF_USER | X86_PF_PROT))) {
- 			if (vmalloc_fault(address) >= 0)
- 				return;
- 		}
+-	return (vaddr & PAGE_MASK) == VSYSCALL_ADDR;
++	return unlikely((vaddr & PAGE_MASK) == VSYSCALL_ADDR);
+ }
  
- 		/* Can handle a stale RO->RW TLB: */
--		if (spurious_fault(error_code, address))
-+		if (spurious_fault(hw_error_code, address))
+ static void
+@@ -874,18 +874,6 @@ __bad_area_nosemaphore(struct pt_regs *r
+ 		if (is_errata100(regs, address))
  			return;
  
- 		/* kprobes don't want to hook the spurious faults: */
-@@ -1258,7 +1259,7 @@ __do_page_fault(struct pt_regs *regs, un
- 		 * Don't take the mm semaphore here. If we fixup a prefetch
- 		 * fault we could otherwise deadlock:
- 		 */
--		bad_area_nosemaphore(regs, error_code, address, NULL);
-+		bad_area_nosemaphore(regs, hw_error_code, address, NULL);
+-#ifdef CONFIG_X86_64
+-		/*
+-		 * Instruction fetch faults in the vsyscall page might need
+-		 * emulation.
+-		 */
+-		if (unlikely((error_code & X86_PF_INSTR) &&
+-			     is_vsyscall_vaddr(address))) {
+-			if (emulate_vsyscall(regs, address))
+-				return;
+-		}
+-#endif
+-
+ 		/*
+ 		 * To avoid leaking information about the kernel page table
+ 		 * layout, pretend that user-mode accesses to kernel addresses
+@@ -1194,6 +1182,14 @@ access_error(unsigned long error_code, s
  
- 		return;
- 	}
-@@ -1267,11 +1268,11 @@ __do_page_fault(struct pt_regs *regs, un
- 	if (unlikely(kprobes_fault(regs)))
- 		return;
- 
--	if (unlikely(error_code & X86_PF_RSVD))
--		pgtable_bad(regs, error_code, address);
-+	if (unlikely(hw_error_code & X86_PF_RSVD))
-+		pgtable_bad(regs, hw_error_code, address);
- 
--	if (unlikely(smap_violation(error_code, regs))) {
--		bad_area_nosemaphore(regs, error_code, address, NULL);
-+	if (unlikely(smap_violation(hw_error_code, regs))) {
-+		bad_area_nosemaphore(regs, hw_error_code, address, NULL);
- 		return;
- 	}
- 
-@@ -1280,11 +1281,18 @@ __do_page_fault(struct pt_regs *regs, un
- 	 * in a region with pagefaults disabled then we must not take the fault
- 	 */
- 	if (unlikely(faulthandler_disabled() || !mm)) {
--		bad_area_nosemaphore(regs, error_code, address, NULL);
-+		bad_area_nosemaphore(regs, hw_error_code, address, NULL);
- 		return;
- 	}
- 
- 	/*
-+	 * hw_error_code is literally the "page fault error code" passed to
-+	 * the kernel directly from the hardware.  But, we will shortly be
-+	 * modifying it in software, so give it a new name.
-+	 */
-+	sw_error_code = hw_error_code;
-+
+ static int fault_in_kernel_space(unsigned long address)
+ {
 +	/*
- 	 * It's safe to allow irq's after cr2 has been saved and the
- 	 * vmalloc fault has been handled.
- 	 *
-@@ -1293,7 +1301,26 @@ __do_page_fault(struct pt_regs *regs, un
- 	 */
- 	if (user_mode(regs)) {
- 		local_irq_enable();
--		error_code |= X86_PF_USER;
-+		/*
-+		 * Up to this point, X86_PF_USER set in hw_error_code
-+		 * indicated a user-mode access.  But, after this,
-+		 * X86_PF_USER in sw_error_code will indicate either
-+		 * that, *or* an implicit kernel(supervisor)-mode access
-+		 * which originated from user mode.
-+		 */
-+		if (!(hw_error_code & X86_PF_USER)) {
-+			/*
-+			 * The CPU was in user mode, but the CPU says
-+			 * the fault was not a user-mode access.
-+			 * Must be an implicit kernel-mode access,
-+			 * which we do not expect to happen in the
-+			 * user address space.
-+			 */
-+			pr_warn_once("kernel-mode error from user-mode: %lx\n",
-+					hw_error_code);
++	 * On 64-bit systems, the vsyscall page is at an address above
++	 * TASK_SIZE_MAX, but is not considered part of the kernel
++	 * address space.
++	 */
++	if (IS_ENABLED(CONFIG_X86_64) && is_vsyscall_vaddr(address))
++		return false;
 +
-+			sw_error_code |= X86_PF_USER;
-+		}
- 		flags |= FAULT_FLAG_USER;
- 	} else {
- 		if (regs->flags & X86_EFLAGS_IF)
-@@ -1302,9 +1329,9 @@ __do_page_fault(struct pt_regs *regs, un
+ 	return address >= TASK_SIZE_MAX;
+ }
  
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
- 
--	if (error_code & X86_PF_WRITE)
-+	if (sw_error_code & X86_PF_WRITE)
- 		flags |= FAULT_FLAG_WRITE;
--	if (error_code & X86_PF_INSTR)
-+	if (sw_error_code & X86_PF_INSTR)
+@@ -1361,6 +1357,22 @@ void do_user_addr_fault(struct pt_regs *
+ 	if (sw_error_code & X86_PF_INSTR)
  		flags |= FAULT_FLAG_INSTRUCTION;
  
++#ifdef CONFIG_X86_64
++	/*
++	 * Instruction fetch faults in the vsyscall page might need
++	 * emulation.  The vsyscall page is at a high address
++	 * (>PAGE_OFFSET), but is considered to be part of the user
++	 * address space.
++	 *
++	 * The vsyscall page does not have a "real" VMA, so do this
++	 * emulation before we go searching for VMAs.
++	 */
++	if ((sw_error_code & X86_PF_INSTR) && is_vsyscall_vaddr(address)) {
++		if (emulate_vsyscall(regs, address))
++			return;
++	}
++#endif
++
  	/*
-@@ -1324,9 +1351,9 @@ __do_page_fault(struct pt_regs *regs, un
- 	 * space check, thus avoiding the deadlock:
- 	 */
- 	if (unlikely(!down_read_trylock(&mm->mmap_sem))) {
--		if (!(error_code & X86_PF_USER) &&
-+		if (!(sw_error_code & X86_PF_USER) &&
- 		    !search_exception_tables(regs->ip)) {
--			bad_area_nosemaphore(regs, error_code, address, NULL);
-+			bad_area_nosemaphore(regs, sw_error_code, address, NULL);
- 			return;
- 		}
- retry:
-@@ -1342,16 +1369,16 @@ retry:
- 
- 	vma = find_vma(mm, address);
- 	if (unlikely(!vma)) {
--		bad_area(regs, error_code, address);
-+		bad_area(regs, sw_error_code, address);
- 		return;
- 	}
- 	if (likely(vma->vm_start <= address))
- 		goto good_area;
- 	if (unlikely(!(vma->vm_flags & VM_GROWSDOWN))) {
--		bad_area(regs, error_code, address);
-+		bad_area(regs, sw_error_code, address);
- 		return;
- 	}
--	if (error_code & X86_PF_USER) {
-+	if (sw_error_code & X86_PF_USER) {
- 		/*
- 		 * Accessing the stack below %sp is always a bug.
- 		 * The large cushion allows instructions like enter
-@@ -1359,12 +1386,12 @@ retry:
- 		 * 32 pointers and then decrements %sp by 65535.)
- 		 */
- 		if (unlikely(address + 65536 + 32 * sizeof(unsigned long) < regs->sp)) {
--			bad_area(regs, error_code, address);
-+			bad_area(regs, sw_error_code, address);
- 			return;
- 		}
- 	}
- 	if (unlikely(expand_stack(vma, address))) {
--		bad_area(regs, error_code, address);
-+		bad_area(regs, sw_error_code, address);
- 		return;
- 	}
- 
-@@ -1373,8 +1400,8 @@ retry:
- 	 * we can handle it..
- 	 */
- good_area:
--	if (unlikely(access_error(error_code, vma))) {
--		bad_area_access_error(regs, error_code, address, vma);
-+	if (unlikely(access_error(sw_error_code, vma))) {
-+		bad_area_access_error(regs, sw_error_code, address, vma);
- 		return;
- 	}
- 
-@@ -1416,13 +1443,13 @@ good_area:
- 			return;
- 
- 		/* Not returning to user mode? Handle exceptions or die: */
--		no_context(regs, error_code, address, SIGBUS, BUS_ADRERR);
-+		no_context(regs, sw_error_code, address, SIGBUS, BUS_ADRERR);
- 		return;
- 	}
- 
- 	up_read(&mm->mmap_sem);
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
--		mm_fault_error(regs, error_code, address, &pkey, fault);
-+		mm_fault_error(regs, sw_error_code, address, &pkey, fault);
- 		return;
- 	}
- 
+ 	 * Kernel-mode access to the user address space should only occur
+ 	 * on well-defined single instructions listed in the exception
 _
