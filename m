@@ -2,111 +2,135 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28583C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A126C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF87206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:16:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF87206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EE22A2082C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 18:20:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EllzHqvi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE22A2082C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbeI2AlU (ORCPT
+        id S1726337AbeI2ApD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 20:41:20 -0400
-Received: from mga05.intel.com ([192.55.52.43]:26694 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeI2AlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 20:41:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 11:16:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,316,1534834800"; 
-   d="scan'208";a="94378353"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga001.fm.intel.com with ESMTP; 28 Sep 2018 11:16:04 -0700
-Subject: [PATCH] libnvdimm,
- region: Fail badblocks listing for inactive regions
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 28 Sep 2018 11:04:17 -0700
-Message-ID: <153815785702.2023323.12153027860843602654.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Fri, 28 Sep 2018 20:45:03 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:46836 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbeI2ApC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 20:45:02 -0400
+Received: by mail-qt1-f194.google.com with SMTP id h22-v6so7603633qtr.13
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 11:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LcKmU7L+xBx0pBdhtJyMkoX3aJB7gK2IFsKoZuZ4G2o=;
+        b=EllzHqviTOTomyNkep9PH15pjXWKPAJAfkV9tztBHpEgJjzTP9O42Ih2+/+3pOFbsg
+         W/MpVC/KajS8rjW0f9TTOSMO8eSYIJz1oL7k63CCTrwaROtSlDdN34YY/ROIFCY1vZZF
+         kWy/YCJo0ltpnKZdYoMdCEY3sPM8qk6JtZS00=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LcKmU7L+xBx0pBdhtJyMkoX3aJB7gK2IFsKoZuZ4G2o=;
+        b=ioRuNavr4zLjr4uPkTo2H6fI3tJykwOCD3VFIKjc3c+ncovyWk401ZnBl3gywM0+On
+         BBt3jzRMSZh2JP3FAqOigY1GkN972gdR9LHtl9hbsT9DYFrxUjy0oCQmjrtYBlHrf+VY
+         Rz1DYpvwh7b3Ldx34kpFgD5aprwrlwvSWdizICXAgcXy9rgyct3L7Xtf6FuuiUEDiNNG
+         tIAO+Kswm53z1Jq5MD4sfbYuM5KO214XecKERFGf4q6BSnGVoj9jiO44GZ1AzURYI20d
+         mLVsp/akmmzf1NoZvv140PtSzOCBH1kJOm8IWOvWclQHGfpqmZN1icnQ8jDC+OFpiXhD
+         N+qg==
+X-Gm-Message-State: ABuFfogfOvoRTOYSjRfJMfMsmgAT47Nonz+M4v4/EYn7m9hkKWrsfUXG
+        xiucAW08FQLWNFqTT1CrySno6lu5wgPJy2KZED2V6g==
+X-Google-Smtp-Source: ACcGV62UJI1ojCXjTIlG1FKItuy7iG3uUcuqrji77E2oFGbeJGFYf2eEvo8EbPE6kqZ400304BOG8v65FV1ZkW/SVzY=
+X-Received: by 2002:ac8:1019:: with SMTP id z25-v6mr13780167qti.25.1538158802236;
+ Fri, 28 Sep 2018 11:20:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20180926205204.184898-1-ryandcase@chromium.org>
+ <20180926205204.184898-2-ryandcase@chromium.org> <153803059441.119890.891880266219521584@swboyd.mtv.corp.google.com>
+In-Reply-To: <153803059441.119890.891880266219521584@swboyd.mtv.corp.google.com>
+From:   Ryan Case <ryandcase@chromium.org>
+Date:   Fri, 28 Sep 2018 11:19:51 -0700
+Message-ID: <CACjz--=Qj8Jd9yCvox1MGh1PFkHAzpt1L0OwPkMhtV30_jCDWA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] spi: Introduce new driver for Qualcomm QuadSPI controller
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While experimenting with region driver loading the following backtrace
-was triggered:
+On Wed, Sep 26, 2018 at 11:43 PM Stephen Boyd <swboyd@chromium.org> wrote:
+> Quoting Ryan Case (2018-09-26 13:52:04)
+> > From: Girish Mahadevan <girishm@codeaurora.org>
+> > +#include <asm/unaligned.h>
+> > +
+> > +#define AHB_MIN_HZ             9600000UL
+>
+> Is this used?
 
- INFO: trying to register non-static key.
- the code is fine but needs lockdep annotation.
- turning off the locking correctness validator.
- [..]
- Call Trace:
-  dump_stack+0x85/0xcb
-  register_lock_class+0x571/0x580
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  __lock_acquire+0xd4/0x1310
-  ? dev_attr_show+0x1c/0x50
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  ? lock_acquire+0x9e/0x1a0
-  lock_acquire+0x9e/0x1a0
-  ? dev_attr_show+0x1c/0x50
-  badblocks_show+0x70/0x190
-  ? dev_attr_show+0x1c/0x50
-  dev_attr_show+0x1c/0x50
+Nope. Do you want all currently unused defines removed or specifically this
+one? I saw precedent in other drivers for defining registers/flags/values of
+supported but unused functionality so I left these (big endian, DDR, ...).
 
-This results from a missing successful call to devm_init_badblocks()
-from nd_region_probe(). Block attempts to show badblocks while the
-region is not enabled.
 
-Fixes: 6a6bef90425e ("libnvdimm: add mechanism to publish badblocks...")
-Cc: <stable@vger.kernel.org>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/region_devs.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+> > +       speed_hz = slv->max_speed_hz;
+> > +       if (xfer->speed_hz)
+> > +               speed_hz = xfer->speed_hz;
+> > +
+> > +       ret = clk_set_rate(ctrl->clks[QSPI_CLK_CORE].clk, speed_hz * 4);
+>
+> Why 4? Is that related to the number of wires?
 
-diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-index fa37afcd43ff..174a418cb171 100644
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -560,10 +560,17 @@ static ssize_t region_badblocks_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
- 	struct nd_region *nd_region = to_nd_region(dev);
-+	ssize_t rc;
- 
--	return badblocks_show(&nd_region->bb, buf, 0);
--}
-+	device_lock(dev);
-+	if (dev->driver)
-+		rc = badblocks_show(&nd_region->bb, buf, 0);
-+	else
-+		rc = -ENXIO;
-+	device_unlock(dev);
- 
-+	return rc;
-+}
- static DEVICE_ATTR(badblocks, 0444, region_badblocks_show, NULL);
- 
- static ssize_t resource_show(struct device *dev,
+In normal operation the core clock should be running at 4x the rate of the
+transfer clock regardless of number of wires used.
 
+> > +                       put_unaligned(rd_fifo, word_buf++);
+> > +               }
+> > +               ctrl->xfer.rx_buf = word_buf;
+> > +       }
+> > +
+> > +       if (bytes_to_read) {
+> > +               byte_buf = ctrl->xfer.rx_buf;
+>
+> Does this need to move forward by words_to_read bytes so that the left
+> over bytes are tacked onto the end? Or this should be an else if
+> statement?
+
+When the words block completes it updates the rx_buf location so it is already
+at the correct offset for bytes.
+
+> > +
+> > +       master->max_speed_hz = 300000000;
+> > +       master->num_chipselect = QSPI_NUM_CS;
+> > +       master->bus_num = pdev->id;
+>
+> Can this come from DT aliases? I've never thought about qspi and
+> "regular" spi being in the same spi bus numbering system, but I suppose
+> that will happen now and we need to make sure that qspi numbers start
+> after the regular ones?
+
+I'm not sure. Can look into it.
+
+>
+> > +       master->dev.of_node = pdev->dev.of_node;
+> > +       master->mode_bits = SPI_MODE_0 |
+> > +                           SPI_TX_DUAL | SPI_RX_DUAL |
+> > +                           SPI_TX_QUAD | SPI_RX_QUAD;
+> > +       master->flags = SPI_MASTER_HALF_DUPLEX;
+> > +       master->prepare_message = qcom_qspi_prepare_message;
+> > +       master->transfer_one = qcom_qspi_transfer_one;
