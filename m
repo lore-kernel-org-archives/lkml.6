@@ -2,116 +2,122 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB186C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE7CC64E93
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA5F206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B29A22073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:06:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VzWhVyXB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA5F206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TH7Iq+uO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B29A22073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeI2Fae (ORCPT
+        id S1727362AbeI2FcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 01:30:34 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:33049 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbeI2Fae (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 01:30:34 -0400
-Received: by mail-it1-f196.google.com with SMTP id h6-v6so1309386ith.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GWbnhXNs5XF/W3I2IPiSaq6qUYesoeDpj10rrKjDVak=;
-        b=VzWhVyXB/+gk5lL/rxDJVHpfmFsyTR+PvbW6pFh+6xji9CeY2xp8Dp7GP+cyFOfApF
-         5aCOYX2ohrKP8g+lyHtxXjimZrRNo8a759/HA1Rx+vOpVzh3ZPW1zPHkW9dpvmcFJHjK
-         wL/w9Wi/t7F8Q7gXqmOqZg7nMK7UdBfEUajrSQRgNbOg0Rk97fFAvTjRo5yQthrWMrhZ
-         xosWo5U+ua5abGucrTjUgCC+8gfAmUjrRGSpoEON5tcfC1ltcj4N/Yryz6iziwDaZzUU
-         G+ygVv66HI5b6iRfJSYBy70mC0Qfffp0GEBOAvmwJSP2gycbxAEDbv/3SDZmY+XDHPu5
-         EADA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GWbnhXNs5XF/W3I2IPiSaq6qUYesoeDpj10rrKjDVak=;
-        b=dg6+KeM8j6I4CGjA9SITKlcIRY1ZAmTBWentlxzIQCQhmOujjGBLQ+FuS9Aehb+RY8
-         PRjRLvEzcO7i/r5lNMkhh9c+glWHnszznRxQS/HTfHNPOk5QjQ22IWWlOzuo0rdAYjv/
-         QzQnlrjjhdU/ByQLEniChVqzUQSQPbTPTZLwqCFsxNhBeEVYggkTRFw/yy6IvTwXrr0b
-         Rs/SOXhTBAccnTWJUUlSiWCjzibK8rj8zb+NBqCziodpskg/OAo9fC9bS6iJkINwT8hg
-         /5+zGbKzikRI0RtXRXOOgUJIXp9BWNwuyY7W1393aIknA2T+wH6O5MGn2oka3YVs/OtZ
-         AqwA==
-X-Gm-Message-State: ABuFfohy4ei4EEQB1XqZW5Tz5byjS6XtXsiAHHx27z00WHBWo7dmXDew
-        uDdK7csPGnV4jEXbGc6fwFKLiQ==
-X-Google-Smtp-Source: ACcGV63PRpRcC0yAoTCJu6eSxsoo3xN/CgYTs5qKUsxqi71qogGKC/NgcS8yyVW1KDKliDvR9mNG8A==
-X-Received: by 2002:a24:3095:: with SMTP id q143-v6mr3278033itq.73.1538175875203;
-        Fri, 28 Sep 2018 16:04:35 -0700 (PDT)
-Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id m186-v6sm1468973itg.29.2018.09.28.16.04.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 16:04:33 -0700 (PDT)
-From:   Yu Zhao <yuzhao@google.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Steve Glendinning <steve.glendinning@shawell.net>
-Cc:     netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
-Subject: [PATCH] net/usb: cancel pending work when unbinding smsc75xx
-Date:   Fri, 28 Sep 2018 17:04:30 -0600
-Message-Id: <20180928230430.125003-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Sat, 29 Sep 2018 01:32:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726804AbeI2FcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 01:32:18 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0C17206B2;
+        Fri, 28 Sep 2018 23:06:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538175978;
+        bh=CyRSco7B+Z2g5xRJzIoEoSRiG6gj0ciuXLVIiseL/a4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TH7Iq+uOFEUAJPzOnXYq0uMWX73uHSP5B7ni1tEtobk0bQObPmG0TI++WDOLWnwnz
+         vJDByg5v/dG/MTbivs96xy4hPrjjI/Hp9qQXBF/gtHnmlVMdqGRQfeHRjXPBsXqc8l
+         GfIWi9BqcFLfVK/NYtHHdomHtj+xSI6q/RJzPxJ8=
+Date:   Fri, 28 Sep 2018 18:06:17 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@alien8.de>, linux-pci@vger.kernel.org
+Subject: Re: Bad MAINTAINERS pattern in section 'ACPI'
+Message-ID: <20180928230616.GA150287@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180928215054.28561-1-joe@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928215054.28561-1-joe@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cancel pending work before freeing smsc75xx private data structure
-during binding. This fixes the following crash in the driver:
+[+cc Tony, Borislav (ACPI APEI reviewers), linux-pci]
 
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000050
-IP: mutex_lock+0x2b/0x3f
-<snipped>
-Workqueue: events smsc75xx_deferred_multicast_write [smsc75xx]
-task: ffff8caa83e85700 task.stack: ffff948b80518000
-RIP: 0010:mutex_lock+0x2b/0x3f
-<snipped>
-Call Trace:
- smsc75xx_deferred_multicast_write+0x40/0x1af [smsc75xx]
- process_one_work+0x18d/0x2fc
- worker_thread+0x1a2/0x269
- ? pr_cont_work+0x58/0x58
- kthread+0xfa/0x10a
- ? pr_cont_work+0x58/0x58
- ? rcu_read_unlock_sched_notrace+0x48/0x48
- ret_from_fork+0x22/0x40
+On Fri, Sep 28, 2018 at 02:50:53PM -0700, Joe Perches wrote:
+> Please fix this defect appropriately.
+> 
+> linux-next MAINTAINERS section:
+> 
+> 	308	ACPI
+> 	309	M:	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+> 	310	M:	Len Brown <lenb@kernel.org>
+> 	311	L:	linux-acpi@vger.kernel.org
+> 	312	W:	https://01.org/linux-acpi
+> 	313	Q:	https://patchwork.kernel.org/project/linux-acpi/list/
+> 	314	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+> 	315	B:	https://bugzilla.kernel.org
+> 	316	S:	Supported
+> 	317	F:	drivers/acpi/
+> 	318	F:	drivers/pnp/pnpacpi/
+> 	319	F:	include/linux/acpi.h
+> 	320	F:	include/linux/fwnode.h
+> 	321	F:	include/acpi/
+> 	322	F:	Documentation/acpi/
+> 	323	F:	Documentation/ABI/testing/sysfs-bus-acpi
+> 	324	F:	Documentation/ABI/testing/configfs-acpi
+> 	325	F:	drivers/pci/*acpi*
+> 	326	F:	drivers/pci/*/*acpi*
+> -->	327	F:	drivers/pci/*/*/*acpi*
+> 	328	F:	tools/power/acpi/
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- drivers/net/usb/smsc75xx.c | 1 +
- 1 file changed, 1 insertion(+)
+My proposal to fix this:
 
-diff --git a/drivers/net/usb/smsc75xx.c b/drivers/net/usb/smsc75xx.c
-index 05553d252446..b64b1ee56d2d 100644
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -1517,6 +1517,7 @@ static void smsc75xx_unbind(struct usbnet *dev, struct usb_interface *intf)
- {
- 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
- 	if (pdata) {
-+		cancel_work_sync(&pdata->set_multicast);
- 		netif_dbg(dev, ifdown, dev->net, "free pdata\n");
- 		kfree(pdata);
- 		pdata = NULL;
--- 
-2.19.0.605.g01d371f741-goog
+commit a99051c0d3c59fd259fd76a8bbd9837b76b509d9
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Fri Sep 28 17:34:21 2018 -0500
 
+    MAINTAINERS: Remove obsolete drivers/pci pattern from ACPI section
+    
+    Prior to 256a45937093 ("PCI/AER: Squash aerdrv_acpi.c into aerdrv.c"),
+    drivers/pci/pcie/aer/aerdrv_acpi.c contained code to parse the ACPI HEST
+    table.  That code now lives in drivers/pci/pcie/aer.c.
+    
+    Remove the "F: drivers/pci/*/*/*acpi*" pattern because it matches nothing.
+    
+    We could add a "F: drivers/pci/pcie/aer.c" pattern to the ACPI APEI
+    section, but that file sees a lot of changes, almost none of which are of
+    interest to the ACPI folks.
+    
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 700408b7bc53..9babd8a0406b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -324,7 +324,6 @@ F:	Documentation/ABI/testing/sysfs-bus-acpi
+ F:	Documentation/ABI/testing/configfs-acpi
+ F:	drivers/pci/*acpi*
+ F:	drivers/pci/*/*acpi*
+-F:	drivers/pci/*/*/*acpi*
+ F:	tools/power/acpi/
+ 
+ ACPI APEI
