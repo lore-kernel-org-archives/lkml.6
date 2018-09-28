@@ -2,121 +2,134 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D76C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33923C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9075204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC1120645
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:30:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="ZJ093PMh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9075204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axtens.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="VjquitXH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC1120645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729362AbeI1Uye (ORCPT
+        id S1729387AbeI1Uyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:54:34 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45673 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727870AbeI1Uye (ORCPT
+        Fri, 28 Sep 2018 16:54:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41430 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbeI1Uyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:54:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a23-v6so4437267pfi.12
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 07:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=C10pPrxQZsgncFbuhvA3QlXsQ7xIxnM2i3AG0UKHjnA=;
-        b=ZJ093PMhczJgVstKIEkKO/fZJAgF3AIjw1T0H3tQg+KADEhZV2gALhxtKkTQk4Dkjg
-         HD+Z4JV4C3le8dnfEshLuHsTWJzrJGeuZ6tHU+sVX7kG5InWk5EXZaZAdFABKCgh8aT+
-         97C23F0CAzTpA3X4Lg3Qjvw9H/xOqb0ZCbsIw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=C10pPrxQZsgncFbuhvA3QlXsQ7xIxnM2i3AG0UKHjnA=;
-        b=UkNmMs/udTsEQkgdaccb3wk9pJOskcPY4/OqzoWR2SDN5jvz0pw8XHrwjEZUD9fxpv
-         4qxiogO/6+/QIJ+i9DPcH3SVBNc7NuWXRGEpQx7CoaI/wF0HWDVD95ezTID6ihsjedW0
-         7HMFmjs16LjdabXX50XNC77g1Bj33Nt9grnv5HKRcJZYX2zZWWmFuKBs6QZTg18R/dk4
-         lyOX/wCu9DKBahYkQ9WY3QsHUzlXxWg6sjEx/1J/zh74UwxN1+dZ0btNx2WcYImo3X84
-         YwrsHn8ZhRigStVzqCdL+t4FzLtqqy+7iM/Kc20Vetx3DbAoen/RqUmbqZQ43fNWz+ej
-         gBww==
-X-Gm-Message-State: ABuFfogKvWZZ/tQSvp6GSJ5ByGlcofan1Awfog4r3aQNabRdkIJOkffY
-        CkQMrmadlGbfAVHew5Nj9DwPbQ==
-X-Google-Smtp-Source: ACcGV62zTdlgnIqln5jxrt3XWK8+vMeRjoLUK5e1jYyBNb1rCoUdgcLEFqlCp4ytx8kgDlbTEacXgw==
-X-Received: by 2002:a63:2703:: with SMTP id n3-v6mr15630860pgn.113.1538145031002;
-        Fri, 28 Sep 2018 07:30:31 -0700 (PDT)
-Received: from localhost ([2001:67c:1562:8007::aac:4356])
-        by smtp.gmail.com with ESMTPSA id 25-v6sm8595113pfm.36.2018.09.28.07.30.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 07:30:29 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] powerpc: wire up memtest
-In-Reply-To: <5ccbb0b1ce0a86ef7a77e7b8dbb85c3637bf4628.1538087238.git.christophe.leroy@c-s.fr>
-References: <5ccbb0b1ce0a86ef7a77e7b8dbb85c3637bf4628.1538087238.git.christophe.leroy@c-s.fr>
-Date:   Sat, 29 Sep 2018 00:30:22 +1000
-Message-ID: <874le9k83l.fsf@linkitivity.dja.id.au>
+        Fri, 28 Sep 2018 16:54:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2UWy1P674fdC2Qlkkie+NNLdQvgKPWXFWXsHbfa2eb4=; b=VjquitXHo0TMFc9J4VSjafzTc
+        fEWxlr1GZvidL0WP1IlPCWIyIop8WGgbuqkc76tLTtX2vjSWV1pGLpjnIKxpOBwTxz8H+l+vzDZUW
+        LE9hDyUJ4hOQUTjsMUNGbwMskgzXyOAkm3aDzolHway587tkWbKPln2mwC+g+5Pq4fda0=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g5tn0-00007Q-Hb; Fri, 28 Sep 2018 14:30:42 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 04096440078; Fri, 28 Sep 2018 15:30:41 +0100 (BST)
+Date:   Fri, 28 Sep 2018 15:30:41 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [GIT PULL] spi fixes for v4.19
+Message-ID: <20180928143041.GQ20825@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xYEXny2b0/vlBQCR"
+Content-Disposition: inline
+X-Cookie: Disc space -- the final frontier!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christophe,
 
-> Add call to early_memtest() so that kernel compiled with
-> CONFIG_MEMTEST really perform memtest at startup when requested
-> via 'memtest' boot parameter.
->
-This works for me on an e6500.
+--xYEXny2b0/vlBQCR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tested-by: Daniel Axtens <dja@axtens.net>
+The following changes since commit 5223c9c1cbfc0cd4d0a1b50758e0949af3290fa1:
 
-However, you should also change Documentation/admin-guide/kernel-parameters.txt
-to reflect that memtest is supported natively on ppc with your patch.
+  spi: spi-fsl-dspi: fix broken DSPI_EOQ_MODE (2018-08-28 20:55:23 +0100)
 
-Regards,
-Daniel
+are available in the Git repository at:
 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  v2: moved the test after initmem_init() as PPC64 sets max_low_pfn later than PPC32.
->
->  arch/powerpc/kernel/setup-common.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-> index 93fa0c99681e..9ca9db707bcb 100644
-> --- a/arch/powerpc/kernel/setup-common.c
-> +++ b/arch/powerpc/kernel/setup-common.c
-> @@ -33,6 +33,7 @@
->  #include <linux/serial_8250.h>
->  #include <linux/percpu.h>
->  #include <linux/memblock.h>
-> +#include <linux/bootmem.h>
->  #include <linux/of_platform.h>
->  #include <linux/hugetlb.h>
->  #include <asm/debugfs.h>
-> @@ -966,6 +967,8 @@ void __init setup_arch(char **cmdline_p)
->  
->  	initmem_init();
->  
-> +	early_memtest(min_low_pfn << PAGE_SHIFT, max_low_pfn << PAGE_SHIFT);
-> +
->  #ifdef CONFIG_DUMMY_CONSOLE
->  	conswitchp = &dummy_con;
->  #endif
-> -- 
-> 2.13.3
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v4.19-rc5
+
+for you to fetch changes up to c949a8e8b43f2c75567269bcc9a50d704ae3c420:
+
+  spi: spi-mem: Move the DMA-able constraint doc to the kerneldoc header (2018-09-20 12:23:31 -0700)
+
+----------------------------------------------------------------
+spi: Fixes for v4.19
+
+Quite a few fixes for the Renesas drivers in here, plus a fix for the
+Tegra driver and some documentation fixes for the recently added spi-mem
+code.  The Tegra fix is relatively large but fairly straightforward and
+mechanical, it runs on probe so it's been reasonably well covered in
+-next testing.
+
+----------------------------------------------------------------
+
+There's also a small fix for error checking in the bitbanging GPIO
+driver I forgot to mention above.
+
+Boris Brezillon (2):
+      spi: spi-mem: Add missing description for data.nbytes field
+      spi: spi-mem: Move the DMA-able constraint doc to the kerneldoc header
+
+Gaku Inami (1):
+      spi: sh-msiof: Fix invalid SPI use during system suspend
+
+Geert Uytterhoeven (2):
+      spi: rspi: Fix invalid SPI use during system suspend
+      spi: rspi: Fix interrupted DMA transfers
+
+Hiromitsu Yamasaki (1):
+      spi: sh-msiof: Fix handling of write value for SISTR register
+
+Linus Walleij (1):
+      spi: gpio: Fix copy-and-paste error
+
+Marcel Ziswiler (1):
+      spi: tegra20-slink: explicitly enable/disable clock
+
+ drivers/spi/spi-gpio.c          |  4 ++--
+ drivers/spi/spi-rspi.c          | 34 ++++++++++++++++++++++++++++++----
+ drivers/spi/spi-sh-msiof.c      | 28 +++++++++++++++++++++++++++-
+ drivers/spi/spi-tegra20-slink.c | 31 +++++++++++++++++++++++--------
+ include/linux/spi/spi-mem.h     |  7 ++++---
+ 5 files changed, 86 insertions(+), 18 deletions(-)
+
+--xYEXny2b0/vlBQCR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluuOxEACgkQJNaLcl1U
+h9B7aggAgQW3GoHvmPvS9TM5XOANT/6KBbq5XAadZdUQMry0SNJx4FKtzsLFTf7G
+xeMXPAC5RgYwoNrVtLkJatWATXzt5Gc7tshwlZDiARIEWFHtsL99C3PyyRhlxw5m
+jVHJkyXxPXZbHRc5Ou2E0PouSB7W/ej5/53XWo92HsdaW1ld/Ll/ZYXaf9W8oT6M
+Zby2XpQRFsUrlF2l4aGw2zT576rpKlueSCN17aQfzt0+mJleroP7qWy0TxIaj6/j
+lCIxFxrBJcCxkJsVSD61wvFThQoOnfegXd5haeYxhb4WnTips+WMZQ3ewUCVGMbF
+wGX50uh7eWi++f57H3/VprB1RrY/7Q==
+=aExT
+-----END PGP SIGNATURE-----
+
+--xYEXny2b0/vlBQCR--
