@@ -2,90 +2,98 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C82EC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6266FC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB53C2073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:06:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB53C2073F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2759320779
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:07:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBL6cryp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2759320779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbeI2CcL (ORCPT
+        id S1727132AbeI2Cck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 22:32:11 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:53925 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbeI2CcL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 22:32:11 -0400
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1g5z2E-0000yI-6l; Fri, 28 Sep 2018 22:06:46 +0200
-Message-ID: <4c740fb03dec9dbd45264207da96fcd2051e634f.camel@pengutronix.de>
+        Fri, 28 Sep 2018 22:32:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726451AbeI2Cck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 22:32:40 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9241720779;
+        Fri, 28 Sep 2018 20:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538165239;
+        bh=8ceWlt+FzbQiWADpwWjP3zubqEZymXgsNtv1I1R9vaU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=MBL6cryp9Z6vYLJzamJ7TYaHFv4gyUJsPhqAzz0tvNjjePtrhydwp8gxrW3ZoMyJc
+         cmHvEJJ1vMLpk75YkqS0mBNL2TbAIzfrC0RVzdyXs66txLQUHvtQau2u035pg0UkjR
+         aDepIXyGpQMFgUXbwEt/xE572HWBCsnGWkErytMU=
+Received: by mail-qt1-f179.google.com with SMTP id c56-v6so3113021qtd.11;
+        Fri, 28 Sep 2018 13:07:19 -0700 (PDT)
+X-Gm-Message-State: ABuFfogvTBFGxujOfasuWuQiyhc0X5dghlFIaK+esGtdT0GGqCWAaGaP
+        6dQEosMlILsZLxsvn+qOL4OHgFTqsg2v/2I8Tg==
+X-Google-Smtp-Source: ACcGV615ydwOQE5KHku0hZnk45wbAeEPDYPi3wviHcgcLf7nZZu4M38GrG5PEHmoyjmRuIYwMfCqKg7tCHrAf/j/HAs=
+X-Received: by 2002:ac8:46d3:: with SMTP id h19-v6mr170261qto.188.1538165238817;
+ Fri, 28 Sep 2018 13:07:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <CADRPPNT0QiBkJtJnxjW95Yf-mirL5OzRrvqj8rC-O8fiz17VnA@mail.gmail.com>
+In-Reply-To: <CADRPPNT0QiBkJtJnxjW95Yf-mirL5OzRrvqj8rC-O8fiz17VnA@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 28 Sep 2018 15:07:05 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKRH8uEzSx6H6ZSRJF9Ecp4am1cNsxgQqf2OO5_aGR1zw@mail.gmail.com>
+Message-ID: <CAL_JsqKRH8uEzSx6H6ZSRJF9Ecp4am1cNsxgQqf2OO5_aGR1zw@mail.gmail.com>
 Subject: Re: drivers binding to device node with multiple compatible strings
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Frank Rowand <frowand.list@gmail.com>,
-        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Grant Likely <grant.likely@secretlab.ca>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+To:     Yang-Leo Li <leoyang.li@nxp.com>
+Cc:     Grant Likely <grant.likely@secretlab.ca>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Date:   Fri, 28 Sep 2018 22:06:41 +0200
-In-Reply-To: <ecbf11cd-a140-fe7e-392a-bccbf8224d14@gmail.com>
-References: <CADRPPNT0QiBkJtJnxjW95Yf-mirL5OzRrvqj8rC-O8fiz17VnA@mail.gmail.com>
-         <ecbf11cd-a140-fe7e-392a-bccbf8224d14@gmail.com>
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Frank Rowand <frowand.list@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Sep 27, 2018 at 5:25 PM Li Yang <leoyang.li@nxp.com> wrote:
+>
+> Hi Rob and Grant,
+>
+> Various device tree specs are recommending to include all the
+> potential compatible strings in the device node, with the order from
+> most specific to most general.  But it looks like Linux kernel doesn't
+> provide a way to bind the device to the most specific driver, however,
+> the first registered compatible driver will be bound.
+>
+> As more and more generic drivers are added to the Linux kernel, they
+> are competing with the more specific vendor drivers and causes problem
+> when both are built into the kernel.  I'm wondering if there is a
+> generic solution (or in plan) to make the most specific driver bound
+> to the device.   Or we have to disable the more general driver or
+> remove the more general compatible string from the device tree?
 
-Am Freitag, den 28.09.2018, 12:43 -0700 schrieb Frank Rowand:
-> + Frank
-> 
-> On 09/27/18 15:25, Li Yang wrote:
-> > Hi Rob and Grant,
-> > 
-> > Various device tree specs are recommending to include all the
-> > potential compatible strings in the device node, with the order from
-> > most specific to most general.  But it looks like Linux kernel doesn't
-> > provide a way to bind the device to the most specific driver, however,
-> > the first registered compatible driver will be bound.
-> > 
-> > As more and more generic drivers are added to the Linux kernel, they
-> > are competing with the more specific vendor drivers and causes problem
-> > when both are built into the kernel.  I'm wondering if there is a
-> > generic solution (or in plan) to make the most specific driver bound
-> > to the device.   Or we have to disable the more general driver or
-> > remove the more general compatible string from the device tree?
+It's been a known limitation for a long time. However, in practice it
+doesn't seem to be a common problem. Perhaps folks just remove the
+less specific compatible from their DT (though that's not ideal). For
+most modern bindings, there's so many other resources beyond
+compatible (clocks, resets, pinctrl, etc.) that there are few generic
+drivers that can work.
 
-Not really contributing to the solution, but the hard question to
-answer is when do you know what the most specific driver is? The most
-specific driver might well be a module that can be loaded at any time,
-while there might already be other less specific drivers around.
+I guess if we want to fix this, we'd need to have weighted matching in
+the driver core and unbind drivers when we get a better match. Though
+it could get messy if the better driver probe fails. Then we've got to
+rebind to the original driver.
 
-In general I would say that if your device is specific enough to
-warrant a whole new driver, it should not declare compatibility with
-the generic thing in the compatible, but then this is kind of exporting
-an Linux implementation detail to DT.
+Do you have a specific case where you hit this?
 
-Regards,
-Lucas
-
+Rob
