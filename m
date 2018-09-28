@@ -2,108 +2,86 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE38C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F44C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:29:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB694216C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:24:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB694216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 30E6D216C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:29:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aaathats3as.com header.i=@aaathats3as.com header.b="GqgPKqWH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E6D216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aaathats3as.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbeI1JqV (ORCPT
+        id S1728733AbeI1Jva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 05:46:21 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13139 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726060AbeI1JqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 05:46:20 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 52E5471CDDA82;
-        Fri, 28 Sep 2018 11:24:42 +0800 (CST)
-Received: from dessert.huawei.com (10.69.192.158) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 28 Sep 2018 11:24:36 +0800
-From:   Zeng Tao <prime.zeng@hisilicon.com>
-To:     <gregkh@linuxfoundation.org>, <stern@rowland.harvard.edu>,
-        <mathias.nyman@linux.intel.com>, <drinkcat@chromium.org>,
-        <felipe.balbi@linux.intel.com>, <drake@endlessm.com>,
-        <ravisadineni@chromium.org>, <joe@perches.com>
-CC:     <prime.zeng@hisilicon.com>, Jonathan Corbet <corbet@lwn.net>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "Thymo van Beers" <thymovanbeers@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Subject: [PATCH] usb: hub: try old enumeration scheme first for high speed devices
-Date:   Fri, 28 Sep 2018 19:27:52 +0800
-Message-ID: <1538134077-14542-1-git-send-email-prime.zeng@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 28 Sep 2018 05:51:30 -0400
+Received: from cock.li ([185.100.85.212]:56058 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbeI1Jva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 05:51:30 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.158]
-X-CFilter-Loop: Reflected
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aaathats3as.com;
+        s=mail; t=1538105392;
+        bh=3wUwRoRNZM7Ocma2Fep+cGIPhi+6OuHqGzW1erjI3yA=;
+        h=Date:From:To:Subject:From;
+        b=GqgPKqWHDuH7HqRh6UBxqNFnP+bH/caurTzqTuNf64Ojn0K7cOJjm1NE/WJGjBMei
+         1DPG+JW5R5Qit16MO4vsqejEMkIR/4Cw7Q9rj6kXmNS0wUeE+KSNVi7mQSdBS0BXUp
+         KyNZchyGY8eNz0nFFofMfB4BMUUxPkyziw7IuCbXW4KFA6JcHemRo0eRX/8pmBiXlj
+         SJzrQcza2jgz/mJZ5gcjjJWp7oyKn5OUqCB/ax1EAgWIDTIZ801qWNBUe1s7ZlDFDv
+         3x+wEnjoXzjAyhduyNcncFn/lbcQo+V0Vb80T1zfdnuyWGfaGO6t1TkffZoJtJ8yM0
+         ptgBUbEASxXHA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 28 Sep 2018 03:29:52 +0000
+From:   freedomfromruin@aaathats3as.com
+To:     linux-kernel@vger.kernel.org
+Subject: GPL v2 licensing, continued
+Message-ID: <85862189a9314c9425585b5b671a0106@aaathats3as.com>
+X-Sender: freedomfromruin@aaathats3as.com
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new scheme is required just to support legacy low and full-speed
-devices. For high speed devices, it will slower the enumeration speed.
-So in this patch we try the "old" enumeration scheme first for high speed
-devices, and this is what Windows does since Windows 8.
+Gnu GPL version 2, section 0:
+"Each licensee is addressed as "you". "
 
-Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Reviewed-by: Roger Quadros <rogerq@ti.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 3 ++-
- drivers/usb/core/hub.c                          | 4 +++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+The "you" is not referring to the licensor (copyright owner). It is 
+referring to the licensees and then future 
+sub-licensees/additional-licensees receiving the work from said previous 
+licensee.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 92eb1f4..151c527 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4610,7 +4610,8 @@
- 
- 	usbcore.old_scheme_first=
- 			[USB] Start with the old device initialization
--			scheme (default 0 = off).
-+			scheme,  applies only to low and full-speed devices
-+			 (default 0 = off).
- 
- 	usbcore.usbfs_memory_mb=
- 			[USB] Memory limit (in MB) for buffers allocated by
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 462ce49..fb4e6bb 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -2660,11 +2660,13 @@ static bool use_new_scheme(struct usb_device *udev, int retry,
- {
- 	int old_scheme_first_port =
- 		port_dev->quirks & USB_PORT_QUIRK_OLD_SCHEME;
-+	int quick_enumeration = (udev->speed == USB_SPEED_HIGH);
- 
- 	if (udev->speed >= USB_SPEED_SUPER)
- 		return false;
- 
--	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first);
-+	return USE_NEW_SCHEME(retry, old_scheme_first_port || old_scheme_first
-+			      || quick_enumeration);
- }
- 
- /* Is a USB 3.0 port in the Inactive or Compliance Mode state?
--- 
-2.7.4
+It is independently clear from the context of the clauses if you read 
+them in full.
+
+...and then section 0 comes around and makes it _explicit_ that "you" 
+refers to the licensee. (if you had any doubt)
+
+Additionally, you should know that the copyright owner is not bound by 
+the gratuitous license he proffers to potential licensees regarding his 
+property. The licensees are bound to his terms: he is the owner. They 
+take at his benefaction.
+
+<blockquote>
+                     GNU GENERAL PUBLIC LICENSE
+    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+   0. This License applies to any program or other work which contains
+a notice placed by the copyright holder saying it may be distributed
+under the terms of this General Public License.  The "Program", below,
+refers to any such program or work, and a "work based on the Program"
+means either the Program or any derivative work under copyright law:
+that is to say, a work containing the Program or a portion of it,
+either verbatim or with modifications and/or translated into another
+language.  (Hereinafter, translation is included without limitation in
+the term "modification".)  Each licensee is addressed as "you".
+</blockquote>
+
 
