@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876D8C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6B6C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 548EB2172E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:52:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548EB2172E
+	by mail.kernel.org (Postfix) with ESMTP id 481892174E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:52:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 481892174E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeI1HN0 (ORCPT
+        id S1728602AbeI1HNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 03:13:26 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:52931 "EHLO
+        Fri, 28 Sep 2018 03:13:35 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:59188 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726091AbeI1HN0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726091AbeI1HNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 03:13:26 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08872253|-1;CH=blue;FP=7344213741358826467|1|1|12|0|-1|-1|-1;HT=e02c03307;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.CwkaOHk_1538095931;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwkaOHk_1538095931)
-          by smtp.aliyun-inc.com(10.147.41.137);
-          Fri, 28 Sep 2018 08:52:11 +0800
+        Fri, 28 Sep 2018 03:13:35 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2730789|-1;CH=blue;FP=3405870843719145107|1|1|12|0|-1|-1|-1;HT=e02c03306;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=18;RT=18;SR=0;TI=SMTPD_---.CwkTG9O_1538095941;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CwkTG9O_1538095941)
+          by smtp.aliyun-inc.com(10.147.40.200);
+          Fri, 28 Sep 2018 08:52:21 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     akpm@linux-foundation.org, arnd@arndb.de,
         daniel.lezcano@linaro.org, davem@davemloft.net,
@@ -37,9 +37,9 @@ To:     akpm@linux-foundation.org, arnd@arndb.de,
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         devicetree@vger.kernel.org, green.hu@gmail.com,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V6 20/33] csky/dma: fix up dma_mapping error
-Date:   Fri, 28 Sep 2018 08:51:17 +0800
-Message-Id: <378d4064bf29863785f4cc637999e07507e2e926.1538058840.git.ren_guo@c-sky.com>
+Subject: [PATCH V6 26/33] MAINTAINERS: Add csky
+Date:   Fri, 28 Sep 2018 08:51:23 +0800
+Message-Id: <64738b50aea8b964e36550ec62fad0139ac5f0d7.1538058840.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <62098e7d0a7fbdd09f44d7e23333dad258a01bd2.1538058840.git.ren_guo@c-sky.com>
 References: <62098e7d0a7fbdd09f44d7e23333dad258a01bd2.1538058840.git.ren_guo@c-sky.com>
@@ -50,45 +50,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The arch_sync_dma_for_cpu()/arch_sync_dma_for_device() implementation is
-broken for some combinations that end up in a BUG() instead of performing
-the necessary flushes.
+Add a maintainer information for the csky(C-SKY) architecture.
 
-The implementation of arch should follow the following rules:
-         map             for_cpu         for_device      unmap
- TO_DEV  writeback       none            writeback       none
- TO_CPU  invalidate      invalidate*     invalidate      invalidate*
- BIDIR   writeback       invalidate      writeback       invalidate
-
-Link: https://lore.kernel.org/lkml/20180518215548.GH17671@n2100.armlinux.org.uk/
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- arch/csky/mm/dma-mapping.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ MAINTAINERS | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/csky/mm/dma-mapping.c b/arch/csky/mm/dma-mapping.c
-index 16c2087..30a2041 100644
---- a/arch/csky/mm/dma-mapping.c
-+++ b/arch/csky/mm/dma-mapping.c
-@@ -217,7 +217,8 @@ void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
- 		break;
- 	case DMA_FROM_DEVICE:
- 	case DMA_BIDIRECTIONAL:
--		BUG();
-+		dma_wbinv_range(vaddr + offset, vaddr + offset + size);
-+		break;
- 	default:
- 		BUG();
- 	}
-@@ -240,7 +241,7 @@ void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d870cb5..6b7c1be 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3211,6 +3211,22 @@ T:	git git://git.alsa-project.org/alsa-kernel.git
+ S:	Maintained
+ F:	sound/pci/oxygen/
  
- 	switch (dir) {
- 	case DMA_TO_DEVICE:
--		BUG();
-+		break;
- 	case DMA_FROM_DEVICE:
- 	case DMA_BIDIRECTIONAL:
- 		dma_wbinv_range(vaddr + offset, vaddr + offset + size);
++C-SKY ARCHITECTURE
++M:	Guo Ren <ren_guo@c-sky.com>
++T:	git https://github.com/c-sky/csky-linux.git
++S:	Supported
++F:	arch/csky/
++F:	Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
++F:	drivers/irqchip/irq-csky-mpintc.c
++F:	Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
++F:	drivers/irqchip/irq-csky-apb-intc.c
++F:	Documentation/devicetree/bindings/timer/csky,mptimer.txt
++F:	drivers/clocksource/csky_mptimer.c
++F:	Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
++F:	drivers/clocksource/timer-gx6605s.c
++K:	csky
++N:	csky
++
+ C6X ARCHITECTURE
+ M:	Mark Salter <msalter@redhat.com>
+ M:	Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
 -- 
 2.7.4
 
