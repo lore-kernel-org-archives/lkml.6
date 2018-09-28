@@ -2,134 +2,181 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C9AC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 790E6C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59B2921758
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:51:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B2921758
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 23A0B2168B
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23A0B2168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeI1TPP (ORCPT
+        id S1728869AbeI1TTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:15:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49152 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbeI1TPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:15:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB4FCED1;
-        Fri, 28 Sep 2018 05:51:36 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71C453F5D3;
-        Fri, 28 Sep 2018 05:51:34 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 13:51:31 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     joro@8bytes.org, thunder.leizhen@huawei.com,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
-        john.garry@huawei.com
-Subject: Re: [PATCH v8 3/7] iommu: Add "iommu.strict" command line option
-Message-ID: <20180928125130.GD1577@brain-police>
-References: <cover.1537458163.git.robin.murphy@arm.com>
- <799fad801970298385af3abc8ca82620ad62c000.1537458163.git.robin.murphy@arm.com>
+        Fri, 28 Sep 2018 15:19:47 -0400
+Received: from mga05.intel.com ([192.55.52.43]:45865 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbeI1TTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 15:19:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 05:56:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,315,1534834800"; 
+   d="scan'208";a="266755153"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Sep 2018 05:56:02 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 76446209CB; Fri, 28 Sep 2018 15:56:01 +0300 (EEST)
+Date:   Fri, 28 Sep 2018 15:56:01 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera
+ Sensor Interface (CSI)
+Message-ID: <20180928125601.6ye5tvrmh57amvh5@paasikivi.fi.intel.com>
+References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
+ <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com>
+ <14114604.4rraf0qJLU@avalon>
+ <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com>
+ <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <799fad801970298385af3abc8ca82620ad62c000.1537458163.git.robin.murphy@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 05:10:23PM +0100, Robin Murphy wrote:
-> From: Zhen Lei <thunder.leizhen@huawei.com>
-> 
-> Add a generic command line option to enable lazy unmapping via IOVA
-> flush queues, which will initally be suuported by iommu-dma. This echoes
-> the semantics of "intel_iommu=strict" (albeit with the opposite default
-> value), but in the driver-agnostic fashion of "iommu.passthrough".
-> 
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> [rm: move handling out of SMMUv3 driver, clean up documentation]
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
-> 
-> v8:
->  - Rename "non-strict" to "strict" to better match existing options
->  - Rewrite doc text/commit message
->  - Downgrade boot-time message from warn/taint to info
-> 
->  .../admin-guide/kernel-parameters.txt         | 12 ++++++++++
->  drivers/iommu/iommu.c                         | 23 +++++++++++++++++++
->  2 files changed, 35 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 9871e649ffef..92ae12aeabf4 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1749,6 +1749,18 @@
->  		nobypass	[PPC/POWERNV]
->  			Disable IOMMU bypass, using IOMMU for PCI devices.
->  
-> +	iommu.strict=	[ARM64] Configure TLB invalidation behaviour
-> +			Format: { "0" | "1" }
-> +			0 - Lazy mode.
-> +			  Request that DMA unmap operations use deferred
-> +			  invalidation of hardware TLBs, for increased
-> +			  throughput at the cost of reduced device isolation.
-> +			  Will fall back to strict mode if not supported by
-> +			  the relevant IOMMU driver.
-> +			1 - Strict mode (default).
-> +			  DMA unmap operations invalidate IOMMU hardware TLBs
-> +			  synchronously.
-> +
->  	iommu.passthrough=
->  			[ARM64] Configure DMA to bypass the IOMMU by default.
->  			Format: { "0" | "1" }
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 8c15c5980299..02b6603f0616 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -41,6 +41,7 @@ static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_IDENTITY;
->  #else
->  static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
->  #endif
-> +static bool iommu_dma_strict __read_mostly = true;
->  
->  struct iommu_callback_data {
->  	const struct iommu_ops *ops;
-> @@ -131,6 +132,21 @@ static int __init iommu_set_def_domain_type(char *str)
->  }
->  early_param("iommu.passthrough", iommu_set_def_domain_type);
->  
-> +static int __init iommu_dma_setup(char *str)
-> +{
-> +	int ret;
-> +
-> +	ret = kstrtobool(str, &iommu_dma_strict);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!iommu_dma_strict)
-> +		pr_info("Enabling deferred TLB invalidation for DMA; protection against malicious/malfunctioning devices may be reduced.\n");
+Hi Chen-Yu,
 
-Printing here isn't quite right, because if somebody boots with something
-like:
+On Fri, Sep 28, 2018 at 07:10:58PM +0800, Chen-Yu Tsai wrote:
+> On Fri, Sep 28, 2018 at 6:23 PM Sakari Ailus
+> <sakari.ailus@linux.intel.com> wrote:
+> >
+> > Hi Laurent,
+> >
+> > On Fri, Sep 28, 2018 at 12:45:12PM +0300, Laurent Pinchart wrote:
+> > > Hi Sakari,
+> > >
+> > > On Friday, 28 September 2018 12:38:33 EEST Sakari Ailus wrote:
+> > > > On Wed, Sep 26, 2018 at 04:40:04PM +0800, Yong Deng wrote:
+> > > > > Add binding documentation for Allwinner V3s CSI.
+> > > > >
+> > > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > >
+> > > > I know... but I have a few more comments.
+> > > >
+> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
+> > > > > ---
+> > > > >
+> > > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++
+> > > > >  1 file changed, 59 insertions(+)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
+> > > > > 100644
+> > > > > index 000000000000..2ff47a9507a6
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > > > @@ -0,0 +1,59 @@
+> > > > > +Allwinner V3s Camera Sensor Interface
+> > > > > +-------------------------------------
+> > > > > +
+> > > > > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+> > > > > +interface and CSI1 is used for parallel interface.
+> > > > > +
+> > > > > +Required properties:
+> > > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
+> > > > > +  - reg: base address and size of the memory-mapped region.
+> > > > > +  - interrupts: interrupt associated to this IP
+> > > > > +  - clocks: phandles to the clocks feeding the CSI
+> > > > > +    * bus: the CSI interface clock
+> > > > > +    * mod: the CSI module clock
+> > > > > +    * ram: the CSI DRAM clock
+> > > > > +  - clock-names: the clock names mentioned above
+> > > > > +  - resets: phandles to the reset line driving the CSI
+> > > > > +
+> > > > > +Each CSI node should contain one 'port' child node with one child
+> > > > > 'endpoint' +node, according to the bindings defined in
+> > > > > +Documentation/devicetree/bindings/media/video-interfaces.txt. As
+> > > > > mentioned
+> > > > > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
+> > > > > or +Bt656 for CSI1.
+> > > >
+> > > > Which port represents CSI0 and which one is CSI1? That needs to be
+> > > > documented.
+> > >
+> > > There are two CSI devices, named CSI0 and CSI1, with one port each. The CSI0
+> > > device supports CSI-2 only, and the CSI1 device parallel (BT.601 or BT.656)
+> > > only.
+> > >
+> > > > > +
+> > > > > +Endpoint node properties for CSI1
+> > > >
+> > > > How about CSI0? I'd expect at least data-lanes, and clock-lanes as well if
+> > > > the hardware supports lane mapping.
+> > >
+> > > I enquired about that too. As far as I understand, CSI0 isn't supported yet in
+> > > the driver due to lack of documentation and lack of open-source vendor-
+> > > provided source code. While DT bindings are not tied to driver
+> > > implementations, it's not the best idea to design DT bindings without at least
+> > > one working implementation to test them. I thus proposed just listing CSI0 as
+> > > being unsupported for now.
+> >
+> > Ack.
+> >
+> > We should still define which receiver corresponds to a given port. Probably
+> > 1 for CSI1 would make sense, in order to avoid changing the order the
+> > hardware already uses. 0 doesn't need to be documented no IMO.
+> >
+> > What do you think?
+> 
+> AFAICT it would be a completely seperate node, since they have different address
+> spaces, clocks and reset controls. So there's no possibility of confusion.
+> 
+> According to Yong, CSI0 is tied internally to some unknown MIPI CSI2-receiver,
+> which is the undocumented part. CSI1 has its parallel data pins exposed to the
+> outside.
 
-	"iommu.strict=1 iommu.strict=0 iommu.strict=0 iommu.strict=1"
+Thanks for clearing up the confusion. If these are truly different kinds of
+devices, then don't they also deserve different compatible strings? And
+possibly also different DT binding documentation in a separate file.
 
-then we'll print the wrong thing twice :)
+-- 
+Regards,
 
-I think we either need to drop the print, or move it to a the DMA domain
-initialisation.
-
-Will
+Sakari Ailus
+sakari.ailus@linux.intel.com
