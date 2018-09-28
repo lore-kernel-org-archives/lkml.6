@@ -2,124 +2,213 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1959C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21751C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6255B206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D215E206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:11:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IVlOwlTT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6255B206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y732KLdb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D215E206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeI2Efp (ORCPT
+        id S1726983AbeI2Ehi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:35:45 -0400
-Received: from mail-eopbgr720107.outbound.protection.outlook.com ([40.107.72.107]:38684
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726287AbeI2Efp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:35:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6yguIl9URadi869ejO4X3fptzrT1E7YWrznkh0jtBRU=;
- b=IVlOwlTT6U8C2S1ivGTvAU+jh6b/9ytVPC8RsJT44NHGSN4wFbWChCsltYwNXiZhdnc5Tmmp/PQy4ea2lSwLCyEe8pRS1isut6CI6KAk1CmkbT5DvXIE9b+eibUzX2Ihm2yZ3WwawP7c69BYzR72n6Z93QZZlboFp36uY5gdwGw=
-Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
- CY4PR21MB0696.namprd21.prod.outlook.com (10.175.121.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.7; Fri, 28 Sep 2018 22:09:56 +0000
-Received: from CY4PR21MB0773.namprd21.prod.outlook.com
- ([fe80::d1f6:46cd:d8b4:880c]) by CY4PR21MB0773.namprd21.prod.outlook.com
- ([fe80::d1f6:46cd:d8b4:880c%5]) with mapi id 15.20.1207.011; Fri, 28 Sep 2018
- 22:09:56 +0000
-From:   "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-To:     Yi Sun <yi.y.sun@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
-        "chao.gao@intel.com" <chao.gao@intel.com>,
-        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: RE: [PATCH v3 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
- Hyper-V
-Thread-Topic: [PATCH v3 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
- Hyper-V
-Thread-Index: AQHUVisPgLpvw7VxSEeLDWmxbZPH/qUGQyyg
-Date:   Fri, 28 Sep 2018 22:09:56 +0000
-Message-ID: <CY4PR21MB0773E72641E19C0FFBE9CD41DCEC0@CY4PR21MB0773.namprd21.prod.outlook.com>
-References: <1538028104-114050-1-git-send-email-yi.y.sun@linux.intel.com>
- <1538028104-114050-3-git-send-email-yi.y.sun@linux.intel.com>
-In-Reply-To: <1538028104-114050-3-git-send-email-yi.y.sun@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-09-28T22:09:55.0790542Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0696;6:j9RVp/VvdqGJDWiX78bq0JFhDG00ifwfPizYoFKUYWz9V7k37FDm1vhrxcrYGWsdJhCT5bZVovKiLn/6TNr1a4Z0eJBq8K7Zi/bFSUUfunYRU2aZvnf8Ees1jQxFsXCDX3NJ7DMajcBNU8uVov5Drrzknbkxs1NTSNp7Lxb7aYXx9bpJocHnxg7JLezx/+FJONrfCRubnbzcY+UQuw8IL527rVLKpPdMyoakOqRtd1r4niN+i6+QIoYBAbRdtp29RKKDnKq8C6M1yJfzwTSoRjVhqV5V2ywDegFIsLSlKIsBhhfD0OWxc3KdJE9Ll0R5bJVwPIi+H11IivlC8ZikdESpFR2KYRqP+D1Dosu3OWcoeJedxhbdVvj/MsiFKkeIhyzkHIGIULnaPRWDtM69kuaq6QWmK9Zc6BxK1TGSbC0nofcmDktadlVVocaHR3yXqkCviEumq0HUk+tZEDYgPw==;5:dfDZsVa9stqCaRjfMDxccd04w91FJwuXEFGXS+QIFMsvfSNykKsqKipdzpFtV/n6jTwV1SCmC/txbdSw9MwU/OAs8jJ4VukAIgaFDTUkSVXwWjafwNr2dfrDNRdpKjloBTt420B2JUFwX+sWWHAIsxUKwggZtdMt9rADKs+lEgY=;7:kzOdgwwCIcwIec0EcdFBxJpbU/eqCjs8SbbNvyQ5TeRtvCZkb7hHsPcCe9qlj3FB28iGZ8F/tNGb32q+CiDhM9zGopdR5h9pH1Zlzez8OVjZYA+ARliVXHJ5keTYj4ODFKcxq+WwuhonsPjjvdIUYPXGjxDJEdhn8GIWvB8CiEH40+4GTv3FahhevsbUqTzTcC5loD3dNIj1yLwVhVH6KNi+Ohw4ZpEfYS/uySrF6Al5bnqrmxe+pGiwE4hbwEqx
-x-ms-office365-filtering-correlation-id: d9807821-9667-4a8f-7a2d-08d6258f201e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0696;
-x-ms-traffictypediagnostic: CY4PR21MB0696:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michael.H.Kelley@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB06966008092095B0C99B7A8DDCEC0@CY4PR21MB0696.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0696;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0696;
-x-forefront-prvs: 0809C12563
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(39860400002)(396003)(366004)(199004)(189003)(256004)(72206003)(25786009)(186003)(8990500004)(53936002)(26005)(66066001)(11346002)(110136005)(54906003)(476003)(478600001)(446003)(6436002)(34290500001)(71200400001)(71190400001)(486006)(2501003)(10290500003)(6116002)(99286004)(316002)(22452003)(3846002)(68736007)(10090500001)(86612001)(305945005)(6506007)(2906002)(55016002)(74316002)(14454004)(86362001)(7736002)(5660300001)(2900100001)(97736004)(5250100002)(106356001)(76176011)(107886003)(9686003)(81156014)(81166006)(4326008)(102836004)(6246003)(33656002)(7696005)(105586002)(229853002)(8676002)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0696;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: wpbFLQ16eESv48x7PCmlRNw8z4T13aLMs4N5JdocVakEcAtB9s2W9vxFBpcH/n9TuOMZH/NSRqUtBfJmENBFGwocUNON5r0MmqX2H7Bvldm9x2rLzySnsHzcQvkRiUQEvhQnEbTd7AqQb7gsDqtdm0udWAK9SZL9L+VJIuYxd1lWuNAmv1jMbAFedUXdQro/g4ZPh1g0kQtMiXlWGk/rKQU+egq1DlEqPXhe6C/Wx473TIG2XG3CFZtFdBYPTpD0XBsBUAxxVCtKQDJzvuRVStGq8fGQfXfiV13XlsI7r6nE1wPTOuk+l/GlrMTmX1oyB8yRx49XrQGRAtvNDFyDKNjpEoeTgqU36wS0S3woXkE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 29 Sep 2018 00:37:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726441AbeI2Ehi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 29 Sep 2018 00:37:38 -0400
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19F06206B6;
+        Fri, 28 Sep 2018 22:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538172710;
+        bh=unjdaZAIpcVtsiihZ/Zbeq5GkczDyn1hRCMCkrMgXO8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=y732KLdb0onei8qZ/EQloFGLnQHT1oFH5hB6glTFTeUsYo8Fmr8IMgE5GbEKwnBBg
+         F9vuBGeQQ+Da6ziqVIq2PLkFdEdOAnpHAOvXgWnLE4JmIlzP2fHXlEW9ogYLZiJcCu
+         pZk6SGicwCnCRgVaUZYrfevU/reP95kKoaYCIvR8=
+Received: by mail-qk1-f170.google.com with SMTP id 84-v6so4859314qkf.0;
+        Fri, 28 Sep 2018 15:11:50 -0700 (PDT)
+X-Gm-Message-State: ABuFfohDzxbQlVYkUm21JilQ0Uc8fwU5k8mtLZvaOfS9JxK+yBLUjuiA
+        JGUd3WJHpl6vgAqo9kkDmoFbFaUcmQH0x8JG8Q==
+X-Google-Smtp-Source: ACcGV607EgGr7S1r/eF7OlZCt0cUI2UsxaFuR88gWAQ90SwPOe2AjqHabr2/axAllbY85O490oA0qEnDopaV3ahR5K8=
+X-Received: by 2002:a37:12d1:: with SMTP id 78-v6mr441887qks.147.1538172709313;
+ Fri, 28 Sep 2018 15:11:49 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9807821-9667-4a8f-7a2d-08d6258f201e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2018 22:09:56.7321
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0696
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-49-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-49-robh@kernel.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 28 Sep 2018 17:11:38 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLofcnkhOPx5v=5K6DAnq7J8wCtJuakh4doJTF8d3TLhw@mail.gmail.com>
+Message-ID: <CAL_JsqLofcnkhOPx5v=5K6DAnq7J8wCtJuakh4doJTF8d3TLhw@mail.gmail.com>
+Subject: Re: [PATCH] fbdev: Convert to using %pOFn instead of device_node.name
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yi Sun <yi.y.sun@linux.intel.com> Sent: Wednesday, September 26, 2018=
- 11:02 PM
-
-> Follow PV spinlock mechanism to implement the callback functions
-> to allow the CPU idling and kicking operations on Hyper-V.
->=20
-> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-> Cc: Haiyang Zhang <haiyangz@microsoft.com>
-> Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Michael Kelley (EOSG) <Michael.H.Kelley@microsoft.com>
-> Signed-off-by: Yi Sun <yi.y.sun@linux.intel.com>
+On Mon, Aug 27, 2018 at 8:55 PM Rob Herring <robh@kernel.org> wrote:
+>
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-fbdev@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
+>  drivers/video/fbdev/cg14.c        |  4 +---
+>  drivers/video/fbdev/cg3.c         |  2 +-
+>  drivers/video/fbdev/core/fbmon.c  |  4 ++--
+>  drivers/video/fbdev/imsttfb.c     |  2 +-
+>  drivers/video/fbdev/leo.c         |  2 +-
+>  drivers/video/fbdev/offb.c        | 12 ++++++++----
+>  drivers/video/fbdev/p9100.c       |  2 +-
+>  drivers/video/of_display_timing.c |  2 +-
+>  8 files changed, 16 insertions(+), 14 deletions(-)
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Ping!
+
+>
+> diff --git a/drivers/video/fbdev/cg14.c b/drivers/video/fbdev/cg14.c
+> index 8de88b129b62..9af54c2368fd 100644
+> --- a/drivers/video/fbdev/cg14.c
+> +++ b/drivers/video/fbdev/cg14.c
+> @@ -355,9 +355,7 @@ static int cg14_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
+>  static void cg14_init_fix(struct fb_info *info, int linebytes,
+>                           struct device_node *dp)
+>  {
+> -       const char *name = dp->name;
+> -
+> -       strlcpy(info->fix.id, name, sizeof(info->fix.id));
+> +       snprintf(info->fix.id, sizeof(info->fix.id), "%pOFn", dp);
+>
+>         info->fix.type = FB_TYPE_PACKED_PIXELS;
+>         info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
+> diff --git a/drivers/video/fbdev/cg3.c b/drivers/video/fbdev/cg3.c
+> index 6c334260cf53..1bd95b02f3aa 100644
+> --- a/drivers/video/fbdev/cg3.c
+> +++ b/drivers/video/fbdev/cg3.c
+> @@ -246,7 +246,7 @@ static int cg3_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
+>  static void cg3_init_fix(struct fb_info *info, int linebytes,
+>                          struct device_node *dp)
+>  {
+> -       strlcpy(info->fix.id, dp->name, sizeof(info->fix.id));
+> +       snprintf(info->fix.id, sizeof(info->fix.id), "%pOFn", dp);
+>
+>         info->fix.type = FB_TYPE_PACKED_PIXELS;
+>         info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
+> diff --git a/drivers/video/fbdev/core/fbmon.c b/drivers/video/fbdev/core/fbmon.c
+> index 852d86c1c527..dd3128990776 100644
+> --- a/drivers/video/fbdev/core/fbmon.c
+> +++ b/drivers/video/fbdev/core/fbmon.c
+> @@ -1480,8 +1480,8 @@ int of_get_fb_videomode(struct device_node *np, struct fb_videomode *fb,
+>         if (ret)
+>                 return ret;
+>
+> -       pr_debug("%pOF: got %dx%d display mode from %s\n",
+> -               np, vm.hactive, vm.vactive, np->name);
+> +       pr_debug("%pOF: got %dx%d display mode\n",
+> +               np, vm.hactive, vm.vactive);
+>         dump_fb_videomode(fb);
+>
+>         return 0;
+> diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
+> index ecdcf358ad5e..901ca4ed10e9 100644
+> --- a/drivers/video/fbdev/imsttfb.c
+> +++ b/drivers/video/fbdev/imsttfb.c
+> @@ -1473,7 +1473,7 @@ static int imsttfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>
+>         dp = pci_device_to_OF_node(pdev);
+>         if(dp)
+> -               printk(KERN_INFO "%s: OF name %s\n",__func__, dp->name);
+> +               printk(KERN_INFO "%s: OF name %pOFn\n",__func__, dp);
+>         else if (IS_ENABLED(CONFIG_OF))
+>                 printk(KERN_ERR "imsttfb: no OF node for pci device\n");
+>
+> diff --git a/drivers/video/fbdev/leo.c b/drivers/video/fbdev/leo.c
+> index 71862188f528..446ac3364bad 100644
+> --- a/drivers/video/fbdev/leo.c
+> +++ b/drivers/video/fbdev/leo.c
+> @@ -434,7 +434,7 @@ static int leo_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg)
+>  static void
+>  leo_init_fix(struct fb_info *info, struct device_node *dp)
+>  {
+> -       strlcpy(info->fix.id, dp->name, sizeof(info->fix.id));
+> +       snprintf(info->fix.id, sizeof(info->fix.id), "%pOFn", dp);
+>
+>         info->fix.type = FB_TYPE_PACKED_PIXELS;
+>         info->fix.visual = FB_VISUAL_TRUECOLOR;
+> diff --git a/drivers/video/fbdev/offb.c b/drivers/video/fbdev/offb.c
+> index 77c0a2f45b3b..31f769d67195 100644
+> --- a/drivers/video/fbdev/offb.c
+> +++ b/drivers/video/fbdev/offb.c
+> @@ -419,9 +419,13 @@ static void __init offb_init_fb(const char *name,
+>         var = &info->var;
+>         info->par = par;
+>
+> -       strcpy(fix->id, "OFfb ");
+> -       strncat(fix->id, name, sizeof(fix->id) - sizeof("OFfb "));
+> -       fix->id[sizeof(fix->id) - 1] = '\0';
+> +       if (name) {
+> +               strcpy(fix->id, "OFfb ");
+> +               strncat(fix->id, name, sizeof(fix->id) - sizeof("OFfb "));
+> +               fix->id[sizeof(fix->id) - 1] = '\0';
+> +       } else
+> +               snprintf(fix->id, sizeof(fix->id), "OFfb %pOFn", dp);
+> +
+>
+>         var->xres = var->xres_virtual = width;
+>         var->yres = var->yres_virtual = height;
+> @@ -644,7 +648,7 @@ static void __init offb_init_nodriver(struct device_node *dp, int no_real_node)
+>                 /* kludge for valkyrie */
+>                 if (strcmp(dp->name, "valkyrie") == 0)
+>                         address += 0x1000;
+> -               offb_init_fb(no_real_node ? "bootx" : dp->name,
+> +               offb_init_fb(no_real_node ? "bootx" : NULL,
+>                              width, height, depth, pitch, address,
+>                              foreign_endian, no_real_node ? NULL : dp);
+>         }
+> diff --git a/drivers/video/fbdev/p9100.c b/drivers/video/fbdev/p9100.c
+> index 64de5cda541d..c4283e9e95af 100644
+> --- a/drivers/video/fbdev/p9100.c
+> +++ b/drivers/video/fbdev/p9100.c
+> @@ -239,7 +239,7 @@ static int p9100_ioctl(struct fb_info *info, unsigned int cmd,
+>
+>  static void p9100_init_fix(struct fb_info *info, int linebytes, struct device_node *dp)
+>  {
+> -       strlcpy(info->fix.id, dp->name, sizeof(info->fix.id));
+> +       snprintf(info->fix.id, sizeof(info->fix.id), "%pOFn", dp);
+>
+>         info->fix.type = FB_TYPE_PACKED_PIXELS;
+>         info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
+> diff --git a/drivers/video/of_display_timing.c b/drivers/video/of_display_timing.c
+> index 5244e93ceafc..c2e7aa103fa5 100644
+> --- a/drivers/video/of_display_timing.c
+> +++ b/drivers/video/of_display_timing.c
+> @@ -170,7 +170,7 @@ struct display_timings *of_get_display_timings(const struct device_node *np)
+>                 goto entryfail;
+>         }
+>
+> -       pr_debug("%pOF: using %s as default timing\n", np, entry->name);
+> +       pr_debug("%pOF: using %pOFn as default timing\n", np, entry);
+>
+>         native_mode = entry;
+>
+> --
+> 2.17.1
+>
