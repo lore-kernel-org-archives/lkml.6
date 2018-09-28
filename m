@@ -2,138 +2,269 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277E5C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D910CC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1A91206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:48:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 787B2206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:51:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ertY0ADe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1A91206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sv1VrOic"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787B2206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeI2GPE (ORCPT
+        id S1727411AbeI2GRX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 02:15:04 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40860 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeI2GPD (ORCPT
+        Sat, 29 Sep 2018 02:17:23 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43959 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeI2GRX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 02:15:03 -0400
-Received: by mail-oi1-f195.google.com with SMTP id j68-v6so6843371oib.7
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:48:56 -0700 (PDT)
+        Sat, 29 Sep 2018 02:17:23 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r8-v6so7319516ljc.10;
+        Fri, 28 Sep 2018 16:51:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=chG0zSZWGt8bOeZpW3dBtKA3uVd1dx7gAMSUX5U1g0w=;
-        b=ertY0ADee0k/ArEL/K8//dJmloacGiFWJ4fuY36W8Einbdnl7ROrZud5d1wrOgZeUN
-         wpqDBUxOTmFTxwjat8kXP1QMnETJPgFgYK4T2eWC0+85NJoObQ7/BRUp6hk5XgHrWR7/
-         3hOTrrOsIwvlNl4/Svy28oyo5OGnRzaPle4p8/3ORLVDe/1HKlXNz+Pz2xQBfKZLSvlv
-         BD0blym9Pi9Ts/P+QnxWxr6tqLnRAmtceTzpAH06PYUSAQGVgqqoJJHDZOVu0TvS5j36
-         HA9lOFxpAZoah7i4u1m9Gqjn2Cjx1Hf6GAavSDI6XyLwrmSuYGcdQPTl0LjiNkFYlKiX
-         L/+Q==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TObcMEIo2UFf+JuXNN1ycWFBVq90kdbI3LpwatPuoTc=;
+        b=sv1VrOicxTT0B2McrK2NF5le7usatTCOkSmAgcYKjs4Y2HwbtS4EKlZz2kZaiDcOqd
+         KN4/3i1B2xogwvb9BBayhgFBJhm4fNzwKMuQ+3Nv45F31u/HXztmGqPrrRo4YndAGTlw
+         vuvYTfjAeenzdVxEPWTi3JILgCG/23DX0UxLX7cbvSv+NrJ6WjmmboGO+H+rPTeCyb7g
+         CuquwpVHiyvfgYukMox1q5wmuMIPiKBZDBc9fvH44TiNXQpQbZnsCzNVElsv9ISs3KQ5
+         CvYlp118pamipeabxhr1EW/X47WXWR9bdZ6ttMP866o6G8BA5X5TXdiOGluy9VagFs84
+         s0ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=chG0zSZWGt8bOeZpW3dBtKA3uVd1dx7gAMSUX5U1g0w=;
-        b=t8MxJgt35hrG8MY+P6uPJ1BOsxUlljemMzeFaRTH3j3mDJWlPFPAGQUwxiLNZ/vuxf
-         6I1HhJzOLfuJmXBTCzDrEn2r2qdbTgSW+A+QzTXMul92o8aTHG5szPD+mUi0DsSFdX4h
-         /A0pPIa88eTu3lJk/uuCAR+LQ5D2yvkEhnZLmaPIayZWxYmrkSDg3fGN7u+5betJdfSO
-         +wmFB0t8BYgUPuw8E9uzcEUT979eK+WQRdK6rxQhMclWMusDs0JAn4iid3GK5Qcus6Ih
-         jN+gZ4t8vfiy3bUVr+N6yQ5nufJGy9g8u8FQHxOK3pVp1mJxnTsYHVKxTt0htlQxbgy2
-         Hxbg==
-X-Gm-Message-State: ABuFfog3mADfSiOvJG1qWPdLU77wISgaffS0x9kvfpsJ/c8CN8kzeqjp
-        LGIKL/iigWId1a2VSVYbbrQBz5wddiMiTy80sQKeGQ==
-X-Google-Smtp-Source: ACcGV62xCLCIkldTDEm6qtJInbXSRDN+y+DtojW/3w6RHcIcyZcQzkbT76Blua0j+I9zdI/3d9ord6WKsV8aOjh7S6s=
-X-Received: by 2002:aca:4e81:: with SMTP id c123-v6mr488910oib.92.1538178535501;
- Fri, 28 Sep 2018 16:48:55 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TObcMEIo2UFf+JuXNN1ycWFBVq90kdbI3LpwatPuoTc=;
+        b=qIeYcjacOkNVL6ZNkCXej/0BMBQAFIOcADpPd7HYf7QFYzv8W+awUepklCUlWzMDL4
+         He8Shk0cffRlkMgqEicfOv6DUc85wP1s/S+YEfQIvWTNGlOKidLygyuomhWQ51aeMMRL
+         WE8ZW2Ru3JzL0+yMNup1rCEjbQv21ntuRrilCSJIvr8O5kOgRE5bkzAih12mnY9Kc+Fn
+         Zm6OZWNElJhfrD/gk0UGfP4qwc9GcHZrXNXsY1ztRn0Cj2BdMRm6LNQCOOwHgXSi7RGe
+         pGdHWGVJwPdbkhx+KlvDzm9r2Olw51SgE6xE1ZiOIbN2ge6/PIm6J31ErLCuU3E5VX6U
+         RzSw==
+X-Gm-Message-State: ABuFfohLxMNhT4UNycYoD7m5tlbMSf8bSjQ8OvhRf6ivSnvNxRaWNpnW
+        uRRmq4px3UFoKXWnxJ4U1r/ARXJ0
+X-Google-Smtp-Source: ACcGV60x/lNQQXMAwFHUwu7UHcj2qfEPVlm+Ki9yYQ4HP2VEbXBdd7YlBPuHGTm+L2cjVyKD4LEgPg==
+X-Received: by 2002:a2e:9b46:: with SMTP id o6-v6mr489605ljj.78.1538178673508;
+        Fri, 28 Sep 2018 16:51:13 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id n12-v6sm45529ljc.3.2018.09.28.16.51.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 16:51:12 -0700 (PDT)
+Subject: Re: [PATCH] regulator: core: Pass max_uV value to
+ regulator_set_voltage_rdev
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Maciej Purski <m.purski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Carlos Hernandez <ceh@ti.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20180615112916.GK112168@atomide.com>
+ <CGME20180618140856eucas1p281619f9bf003655a3c2eac356216ab25@eucas1p2.samsung.com>
+ <1529330913-11152-1-git-send-email-m.purski@samsung.com>
+ <20180702080505.GN112168@atomide.com>
+ <95655644-ef41-f5bd-7e8e-a257d48cd020@gmail.com>
+ <20180928202251.GM5662@atomide.com>
+ <2c0132ff-ea0f-f19e-ebfb-a0d077565d2c@gmail.com>
+ <20180928224109.GS5662@atomide.com>
+ <ea0a59ef-e201-986a-9499-a0638359b1b9@gmail.com>
+Message-ID: <d14cc796-8644-41a3-5135-299bd8820204@gmail.com>
+Date:   Sat, 29 Sep 2018 02:51:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20180928234703.15970-1-badhri@google.com> <20180928234703.15970-3-badhri@google.com>
-In-Reply-To: <20180928234703.15970-3-badhri@google.com>
-From:   Badhri Jagan Sridharan <badhri@google.com>
-Date:   Fri, 28 Sep 2018 16:48:18 -0700
-Message-ID: <CAPTae5JsW17LUkrkAaT8AGeB=c5=Sv_M5dk0gCahDNkLrGy45g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] [PATCH v2 3/3] usb: typec: tcpm: charge current
- handling for sink during hard reset
-To:     robh+dt@kernel.org, mark.rutland@arm.com,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        cw00.choi@samsung.com, a.hajda@samsung.com, jun.li@nxp.com,
-        Guenter Roeck <linux@roeck-us.net>, jackp@codeaurora.org
-Cc:     devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        USB <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ea0a59ef-e201-986a-9499-a0638359b1b9@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ jackp@codeaurora.org
-On Fri, Sep 28, 2018 at 4:47 PM Badhri Jagan Sridharan
-<badhri@google.com> wrote:
->
-> During the initial connect to a non-pd port, sink would hard reset
-> twice before deeming that the port partner is non-pd. TCPM sets the
-> the charge path to false during the hard reset. This causes unnecessary
-> connects/disconnects of charge path and makes port take longer to
-> charge from the non-pd ports. Avoid this by not setting the charge path
-> to false unless the partner has already identified to be pd capable.
->
-> When partner is a pd port, set the charge path to false in
-> SNK_HARD_RESET_SINK_OFF. Set the current limits to default value based
-> of CC pull up and resume the charge path when port enters
-> SNK_HARD_RESET_SINK_ON.
->
-> Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
->
-> --------
-> Changes in V2:
-> Based on feedback of jackp@codeaurora.org
-> - vsafe_5v_hard_reset flag from tcpc_config is removed
-> - Patch only differentiates between pd port partner and non-pd port
-> partner
->
-> V1 version of the patch is here:
-> https://lkml.org/lkml/2018/9/14/11
-> ---
->  drivers/usb/typec/tcpm.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index c3ac0e46106b4..c25a69922ee6a 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -3273,7 +3273,8 @@ static void run_state_machine(struct tcpm_port *port)
->         case SNK_HARD_RESET_SINK_OFF:
->                 memset(&port->pps_data, 0, sizeof(port->pps_data));
->                 tcpm_set_vconn(port, false);
-> -               tcpm_set_charge(port, false);
-> +               if (port->pd_capable)
-> +                       tcpm_set_charge(port, false);
->                 tcpm_set_roles(port, port->self_powered, TYPEC_SINK,
->                                TYPEC_DEVICE);
->                 /*
-> @@ -3305,6 +3306,12 @@ static void run_state_machine(struct tcpm_port *port)
->                  * Similar, dual-mode ports in source mode should transition
->                  * to PE_SNK_Transition_to_default.
->                  */
-> +               if (port->pd_capable) {
-> +                       tcpm_set_current_limit(port,
-> +                                              tcpm_get_current_limit(port),
-> +                                              5000);
-> +                       tcpm_set_charge(port, true);
-> +               }
->                 tcpm_set_attached_state(port, true);
->                 tcpm_set_state(port, SNK_STARTUP, 0);
->                 break;
-> --
-> 2.19.0.605.g01d371f741-goog
->
+On 9/29/18 2:17 AM, Dmitry Osipenko wrote:
+> On 9/29/18 1:41 AM, Tony Lindgren wrote:
+>> * Dmitry Osipenko <digetx@gmail.com> [180928 22:31]:
+>>> On 9/28/18 11:22 PM, Tony Lindgren wrote:
+>>>> * Dmitry Osipenko <digetx@gmail.com> [180928 20:13]:
+>>>>> Tony, could you please give a try to the patch below?
+>>>>>
+>>>>> Do the following:
+>>>>>
+>>>>> 1) git cherry-pick 696861761a58d8c93605b5663824929fb6540f16
+>>>>> 2) git cherry-pick 456e7cdf3b1a14e2606b8b687385ab2e3f23a49a
+>>>>> 3) Apply this patch:
+>>>>
+>>>> Seems to be getting closer, system boots up and starts
+>>>> init, but then I start getting tons of this on beagle-x15:
+>>>
+>>> Tony, could you please try this one? Fixed couple more bugs, should be good now.
+>>
+>> I'm still getting these errors after init:
+> 
+> Thank you very much again, seems I got what's wrong with your case. The ti-abb-regulator driver sets the "abb->current_info_idx = -EINVAL" on probe and that value is getting updated only after the first voltage change, hence _regulator_get_voltage() returns -22.
+> 
+> Please try this patch:
+
+I've revised the patch and here is the current final version.
+
+
+From 0332e230568d5bba470f917f0b36dd9ef9e6e511 Mon Sep 17 00:00:00 2001
+From: Dmitry Osipenko <digetx@gmail.com>
+Date: Fri, 28 Sep 2018 21:49:20 +0300
+Subject: [PATCH] Fixup regulator_balance_voltage() v4
+
+---
+ drivers/regulator/core.c | 58 +++++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 282511508698..17dce370f236 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3099,10 +3099,6 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
+ 	voltage->min_uV = min_uV;
+ 	voltage->max_uV = max_uV;
+ 
+-	ret = regulator_check_consumers(rdev, &min_uV, &max_uV, state);
+-	if (ret < 0)
+-		goto out2;
+-
+ 	/* for not coupled regulators this will just set the voltage */
+ 	ret = regulator_balance_voltage(rdev, state);
+ 	if (ret < 0)
+@@ -3187,7 +3183,9 @@ static int regulator_set_voltage_rdev(struct regulator_dev *rdev, int min_uV,
+ 	return ret;
+ }
+ 
+-static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
++static int regulator_get_optimal_voltage(struct regulator_dev *rdev,
++					 int *min_uV, int *max_uV,
++					 suspend_state_t state)
+ {
+ 	struct coupling_desc *c_desc = &rdev->coupling_desc;
+ 	struct regulator_dev **c_rdevs = c_desc->coupled_rdevs;
+@@ -3202,7 +3200,8 @@ static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
+ 	desired_max_uV = rdev->constraints->max_uV;
+ 	ret = regulator_check_consumers(rdev,
+ 					&desired_min_uV,
+-					&desired_max_uV, PM_SUSPEND_ON);
++					&desired_max_uV,
++					state);
+ 	if (ret < 0)
+ 		goto out;
+ 
+@@ -3210,8 +3209,10 @@ static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
+ 	 * If there are no coupled regulators, simply set the voltage demanded
+ 	 * by consumers.
+ 	 */
+-	if (n_coupled == 1) {
+-		ret = desired_min_uV;
++	if (n_coupled == 1 || state != PM_SUSPEND_ON) {
++		*min_uV = desired_min_uV;
++		*max_uV = desired_max_uV;
++		ret = 1;
+ 		goto out;
+ 	}
+ 
+@@ -3285,8 +3286,10 @@ static int regulator_get_optimal_voltage(struct regulator_dev *rdev)
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-	ret = possible_uV;
++	ret = (possible_uV == desired_min_uV);
+ 
++	*min_uV = possible_uV;
++	*max_uV = desired_max_uV;
+ out:
+ 	return ret;
+ }
+@@ -3298,7 +3301,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+ 	struct regulator_dev *best_rdev;
+ 	struct coupling_desc *c_desc = &rdev->coupling_desc;
+ 	int n_coupled;
+-	int i, best_delta, best_uV, ret = 1;
++	int i, best_delta, best_min_uV, best_max_uV, ret = 1;
++	bool last = false;
+ 
+ 	c_rdevs = c_desc->coupled_rdevs;
+ 	n_coupled = c_desc->n_coupled;
+@@ -3314,9 +3318,10 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+ 	 * Find the best possible voltage change on each loop. Leave the loop
+ 	 * if there isn't any possible change.
+ 	 */
+-	while (1) {
++	while (!last) {
+ 		best_delta = 0;
+-		best_uV = 0;
++		best_min_uV = 0;
++		best_max_uV = 0;
+ 		best_rdev = NULL;
+ 
+ 		/*
+@@ -3330,24 +3335,29 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+ 			 * max_spread constraint in order to balance
+ 			 * the coupled voltages.
+ 			 */
+-			int optimal_uV, current_uV;
++			int optimal_uV, optimal_max_uV, current_uV = 0;
+ 
+-			optimal_uV = regulator_get_optimal_voltage(c_rdevs[i]);
+-			if (optimal_uV < 0) {
+-				ret = optimal_uV;
++			ret = regulator_get_optimal_voltage(c_rdevs[i],
++							    &optimal_uV,
++							    &optimal_max_uV,
++							    state);
++			if (ret < 0)
+ 				goto out;
+-			}
+ 
+-			current_uV = _regulator_get_voltage(c_rdevs[i]);
+-			if (current_uV < 0) {
+-				ret = optimal_uV;
+-				goto out;
++			if (n_coupled > 1) {
++				current_uV = _regulator_get_voltage(c_rdevs[i]);
++				if (current_uV < 0) {
++					ret = current_uV;
++					goto out;
++				}
+ 			}
+ 
+ 			if (abs(best_delta) < abs(optimal_uV - current_uV)) {
+ 				best_delta = optimal_uV - current_uV;
+ 				best_rdev = c_rdevs[i];
+-				best_uV = optimal_uV;
++				best_min_uV = optimal_uV;
++				best_max_uV = optimal_max_uV;
++				last = (best_rdev == rdev && ret > 0);
+ 			}
+ 		}
+ 
+@@ -3357,8 +3367,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+ 			goto out;
+ 		}
+ 
+-		ret = regulator_set_voltage_rdev(best_rdev, best_uV,
+-						 best_uV, state);
++		ret = regulator_set_voltage_rdev(best_rdev, best_min_uV,
++						 best_max_uV, state);
+ 
+ 		if (ret < 0)
+ 			goto out;
+-- 
+2.19.0
+
+
+
