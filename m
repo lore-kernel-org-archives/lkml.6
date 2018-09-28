@@ -2,118 +2,88 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6382C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08DDC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D3D206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:19:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SEU3XydI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D3D206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id AE13D2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 19:19:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE13D2073F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeI2BoY (ORCPT
+        id S1727096AbeI2Bol (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 21:44:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42206 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbeI2BoY (ORCPT
+        Fri, 28 Sep 2018 21:44:41 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37913 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbeI2Bok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 21:44:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eJRn+NCJD19OKCs4nx+a2tKYlAg2+VbnS6n2puTD5fM=; b=SEU3XydIp2YjA85OIU6iKX5Ce
-        MBrsQryyV4GPNzvJBMBMOxbgS+U7/WAqzDC9Ic1kW7KdKFfyXR2ve9uQ7bP15uzMAFFr+/f/P5TOC
-        FmLnsF6ts2ElDAsVfZ3MIo8CzVEWAzmBqEFKgFSW5L/hB06vHe1K0n6EEwCyIAbDQhAV8xccM9jyP
-        Lkd/9i8nKFYQsXpvMQR/3kCpeIY6UtqajV+Y9fNLTBpBp/CjiVf6GNhReWierPyLA60EK9DBfAlfw
-        7mvzlvFfQ620vrsTfNTGGFHihcqZgHuEWwreCKRvNcXl1gOAJXc2yxxrsA3xeJnWOfNAxWyZvcZKr
-        DRv3TKvjw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g5yHy-00013j-4H; Fri, 28 Sep 2018 19:18:59 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A0274202C1A17; Fri, 28 Sep 2018 21:18:53 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 21:18:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kan.liang@linux.intel.com, mingo@redhat.com, len.brown@intel.com,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/cpu: Rename Denverton and Gemini Lake
-Message-ID: <20180928191853.GJ3439@hirez.programming.kicks-ass.net>
-References: <1533662247-17575-1-git-send-email-kan.liang@linux.intel.com>
- <1b7cb461-5321-86cf-3031-5ff545c3dc42@linux.intel.com>
- <20180807174851.GJ2494@hirez.programming.kicks-ass.net>
- <20180807183736.GR4238@tassilo.jf.intel.com>
- <alpine.DEB.2.21.1808072257080.1672@nanos.tec.linutronix.de>
- <20180807221725.GU4238@tassilo.jf.intel.com>
- <alpine.DEB.2.21.1808080653120.1672@nanos.tec.linutronix.de>
- <20180927142519.GB3439@hirez.programming.kicks-ass.net>
- <20180928170704.7e428738@alans-desktop>
+        Fri, 28 Sep 2018 21:44:40 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 204-v6so3884407qkd.5
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 12:19:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QZOy/tAJthGPa8dXT6OqDvHNXzBlN6/EmVfr6cB88wE=;
+        b=U8aQe7L3BUFIH61Pekxo/NdfgdQyQs0YYmgCa2Zo8yvC2Pvs+5j9R6tjIsJ6FyfOiP
+         ubomhi66/VJsp50kLHD2LVnqIeNTUvFbSE3J8dIiJz9wbQ/ZE0xNScplKu22HLV2n06T
+         qpW+bGJF6cd2z6vDFySva0pgJK1uJafReQLDKPF1aNJD4iJAOdCHlLvx+Z4ThrxuVzP7
+         PKk+D4RkkgoAL8aTlDw71GIP1tHD52wjDGBs+POcMGe9j5hOEM0w77owwwo2+3dGuB8N
+         xdSeiiQmCHt5khwbKwbc058NnyCub+KsbQ2fs0MpJelwGmiLHNdZFSoIREr0VFHvFTjr
+         OQ0A==
+X-Gm-Message-State: ABuFfojtDmtZkS+943a2cQYuScwlvjIxnrAoR+WMRVAaVTFgPBZv7Lss
+        Tv0ghhXv5/6iPqAmTT/oREBhsbxUEWmnunuvroxPkg==
+X-Google-Smtp-Source: ACcGV63xi4QFed2rBb5LWj3zE55gxId6hIcF16WIlG03t74Gymxu+9bXjvTqxsr61UfDhD7qUvUEXjPhWKq/t/f+nDQ=
+X-Received: by 2002:a37:6b03:: with SMTP id g3-v6mr14790qkc.107.1538162368718;
+ Fri, 28 Sep 2018 12:19:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928170704.7e428738@alans-desktop>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180926135110.13061-1-Jason@zx2c4.com> <CAK8P3a0+s6DM=QUqS_KrNp+95aDj2QTsWb+w73piwLsQFvq+pg@mail.gmail.com>
+ <CAHmME9o_6o_wB00kASJdqJyWt2wFH2FqdzXOm8RLA5VeCibDJg@mail.gmail.com>
+In-Reply-To: <CAHmME9o_6o_wB00kASJdqJyWt2wFH2FqdzXOm8RLA5VeCibDJg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 28 Sep 2018 21:19:12 +0200
+Message-ID: <CAK8P3a3riqD9kzGZHLxhYug7zO34e2icOaWddzH2JezbZKVNPg@mail.gmail.com>
+Subject: Re: [PATCH] arm: support big-endian for the virt architecture
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 05:07:04PM +0100, Alan Cox wrote:
-> > > SILVERMONT_CLIENT  	0x37	     Baytrail, Valleyview
-> 
-> There is no such product as Valleyview. Some things talk about
-> Valleyview 2 but shouldn't as that is Baytrail.
+On Fri, Sep 28, 2018 at 6:04 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Hi Arnd,
+>
+> On Fri, Sep 28, 2018 at 5:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > Applied for 4.20 with subject line changed s/arm/ARM/, thanks!
+>
+> Thanks.
+>
+> > I think most people just build a 'defconfig' kernel, which includes
+> > multiple platforms that use ARCH_SUPPORTS_BIG_ENDIAN.
+>
+> Right, that's what it looked like. In my case, I'm doing CI on some
+> homebrewed infra, where I'm building lots of kernels for lots of
+> architectures and testing them in qemu with various tests _for each
+> and every commit_. Not having a server farm as impressive as Intel's
+> 0-day infra, getting compilation times down is rather important.
 
-I couldn't find it either, but it is all over the linux code.
+You can probably work around it by enabling ARCH_HIGHBANK,
+which is a minimal platform with no other requirements, so it
+should only add a few milliseconds to the build.
 
-I'd be happy to remove it from this comment though.
+Another option would be to do the testing on top of linux-next,
+which should have your fix starting on Monday. Testing on
+linux-next carries a higher risk of running into unrelated
+regressions, but also lets you find out about conflicts with
+other patches early on.
 
-> > /* "Small Core" Processors (Atom) */
-> > 
-> > #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
-> > #define INTEL_FAM6_ATOM_BONNELL_MID	0x26 /* Silverthorne, Lincroft */
-> > 
-> > #define INTEL_FAM6_ATOM_SALTWELL	0x36 /* Cedarview */
-> > #define INTEL_FAM6_ATOM_SALTWELL_MID	0x27 /* Penwell */
-> > #define INTEL_FAM6_ATOM_SALTWELL_TABLET	0x35 /* Cloverview */
-> > 
-> > #define INTEL_FAM6_ATOM_SILVERMONT	0x37 /* Bay Trail, Valleyview */
-> > #define INTEL_FAM6_ATOM_SILVERMONT_X	0x4D /* Avaton, Rangely */
-> > #define INTEL_FAM6_ATOM_SILVERMONT_MID	0x4A /* Merriefield */
-> > 
-> > #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* Cherry Trail, Braswell */
-> > #define INTEL_FAM6_ATOM_AIRMONT_MID	0x5A /* Moorefield */
-> > 
-> > #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
-> > #define INTEL_FAM6_ATOM_GOLDMONT_X	0x5F /* Denvertor */
-> > #define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
-> 
-> Can you decide if you are going to consistently use the -view or the
-> -trail naming ? I think for our use cases you mean Pinetrail, Cedartrail,
-> Clovertrail, Cherrytrail as you are talking about platform (at least in
-> the Intel sense of the word).
-
-Like I said; I went with whatever is on this here page:
-
-  https://en.wikipedia.org/wiki/List_of_Intel_Atom_microprocessors
-
-There is no Cedar Trail, or Bayview. If you could do me a delta patch
-with the names you think are appropriate i'd be happy to fold it in.
-Alternatively, I can remove the tail comments entirely.
-
-I spend entirely too much time already trying to come up with sensible
-names already.
-
+       Arnd
