@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E644BC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0D7C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5C8E21708
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E036221708
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDnDEsZa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C8E21708
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hs/Os8vN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E036221708
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbeI1IJs (ORCPT
+        id S1728734AbeI1IJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:09:48 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44251 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeI1IJr (ORCPT
+        Fri, 28 Sep 2018 04:09:56 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36751 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbeI1IJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:09:47 -0400
-Received: by mail-qt1-f196.google.com with SMTP id c56-v6so105688qtd.11;
-        Thu, 27 Sep 2018 18:48:33 -0700 (PDT)
+        Fri, 28 Sep 2018 04:09:56 -0400
+Received: by mail-qk1-f196.google.com with SMTP id a85-v6so2923458qkg.3;
+        Thu, 27 Sep 2018 18:48:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :content-transfer-encoding:user-agent;
-        bh=az4VG2kDleDEIQbELh7WthCOA8Gd6LhdwtP9/ZvOfHo=;
-        b=kDnDEsZa7fFmjs2Tk74lWl3fl5P2Nef0SknMvfCe9e49J965GiWsQxosf0mo+zj3kB
-         0B39tgyLiAb6YPwF45t/zJShLbiJweqeUKY6+vZp22sdh2oSfT6zpnBEpv9IsbdJAL96
-         kjotqyDRWMvvtf8X5A9ldWrAs8LHlSNjDUlsit/SLCTDmzwi6Ja+l39OY5a5E1t6H1V+
-         htIjXGC57Gf/sq+gNRwjeQyqZU1sfl09I3MKRFJVEPy5oetgM0/02jwaMqn4MRbpA3z/
-         a/Hd5FTtgwuLxUKjWcJ0WHWlar+2iJKhHOKgt/yOG6nRmDGy8qAXnXSMqPBdFTODP/jg
-         0ipQ==
+        bh=Ml1FFJEZov3NZzRMfIOgz+x2FcVyTrOzctjRuk6MfEU=;
+        b=hs/Os8vN3OFq9MhYXzvai9Zxda/zMLh6bwiBNraISalZS6CVFd8vhXBUZGmyIJgUT8
+         JxnW+j1hk+G2mBMe+UKL4oWMBWv+MZ84aFzltqlJ3SnPDoZcW7E+FcqH1khVTzgoiIPv
+         xS/ZVGkxSvYHmbRJoLfQ5wESaanynBuxxZCgnRqeR1w2q+s6OIyGqgoxgqLpd3XCGdPo
+         M+U5rE1Se5EfIfydu+QLBTOzXNorkVTCG/N04yzH7Yi2zZ+BmjgsPd4mcXkm4K1zmvwJ
+         MCM7YlpD4/PuaU2B20sr+tZEgCveDt6CCdbwhxwUyYRoOQOl20bfXAuFjLQ/Y2U0rAK2
+         p/Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:content-transfer-encoding:user-agent;
-        bh=az4VG2kDleDEIQbELh7WthCOA8Gd6LhdwtP9/ZvOfHo=;
-        b=fucaNnsb2MCrYXicJFQVdBz4tlbbqlWyRpsaWZPaqwdHH2qBublHQ+7G7JmqJKaTgH
-         MeceavaGfUuXQxjELFtWlMDuA+RYjRKH8TrhFXLNrkUyeyFdTiua/Mj3YNI7MwwVlfuB
-         VP7XY0PmsmEM6Q4DO4rwX2FoaNjQgsHYRgT3stsFiiK+4nl9rMB0SvwLM0UR0cafYneE
-         4tf6vkTwq22l11w14/x/FSqW6ok8DvEtsPMYL7I3bk147MXczhoeLnf0TEs8++z5sLZS
-         2brj9ZwcUIkpAvDX4VDhx+nF85fgD/uwYmClOwmJ8/tlJ7YM0vq06U3E8bF5hIGSEYrj
-         9Lvw==
-X-Gm-Message-State: ABuFfogyv9/xhI7AkmKBt0QZ1tTYNz2UKyPss72wi4Ngf5txIZzMfoDi
-        kazy+uwNy3nzdFOKKFNkj+E=
-X-Google-Smtp-Source: ACcGV61GwrxPTv8Vy9LRQU8saNNx3O3W4U08M1DWAZpwwLzXFcn9KqlruyadY9tbVqyMzvXnocjS2Q==
-X-Received: by 2002:a0c:8834:: with SMTP id 49-v6mr10283618qvl.40.1538099313552;
-        Thu, 27 Sep 2018 18:48:33 -0700 (PDT)
+        bh=Ml1FFJEZov3NZzRMfIOgz+x2FcVyTrOzctjRuk6MfEU=;
+        b=H/822on9nxIRZu0Jv5CBc02MBzryjIlS1+1gAVYjOdWQOPPJk3hFPmYzBG9H5YDQwU
+         qIMwKCZftmYkUFvBW82JU5+mQajF1ou0etWAVFc+XxNOLAd5Jb7aANEjQ2syjcBGAaL8
+         iWWSc958ZxYBj9ovHyVZgnjl70gKkjrkhiuxqJqaeWgdni86FJLi0nTnXdtwpZm9wGop
+         jENs1KHsTQW2w3g0LDwMs1WXdVCx5irLIvD74qpsQrw9H42nsm0D27nkl5qNLPoZ7jsc
+         wGeL9wvojfNtlwcdF5sVOhVzADWcWksjLr1NW/FffWrcOcvYmLwWcNbzjKFwWkuBP6dT
+         GlJQ==
+X-Gm-Message-State: ABuFfogBOD0o1oQXWNsAydXXVGGJwk+ITbmyT0ouLna+6ljxHIURHwIT
+        HyICU0KV39rfOLvIe6CYqGaFOKbo
+X-Google-Smtp-Source: ACcGV603lpVz/o4820HBmGUtKp8uzyqtNxbevgQamUv20sDKfLg9SsMbQCzkxF7pgpZLuFppat1rbg==
+X-Received: by 2002:a37:8b46:: with SMTP id n67-v6mr6674160qkd.262.1538099321790;
+        Thu, 27 Sep 2018 18:48:41 -0700 (PDT)
 Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id o2-v6sm2538434qkl.63.2018.09.27.18.48.27
+        by smtp.gmail.com with ESMTPSA id y7-v6sm1931829qkf.38.2018.09.27.18.48.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 18:48:33 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 22:48:24 -0300
+        Thu, 27 Sep 2018 18:48:41 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 22:48:33 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH v3 2/7] drivers: nubus: Avoids building driver if
- CONFIG_NUBUS is disabled
-Message-ID: <20180928014824.GA10504@WindFlash>
+Subject: [PATCH v3 3/7] drivers: parisc: Avoids building driver if
+ CONFIG_PARISC is disabled
+Message-ID: <20180928014833.GA10505@WindFlash>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -86,30 +86,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoids building driver if 'make drivers/nubus/' is called and
-CONFIG_NUBUS is disabled.
-Avoids building proc.o if CONFIG_PROC_FS is enabled but
-CONFIG_NUBUS is disabled.
+Avoids building driver if 'make drivers/parisc/' is called and
+CONFIG_PARISC is disabled.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/nubus/Makefile | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/parisc/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nubus/Makefile b/drivers/nubus/Makefile
-index 6d063cde39d1..1daa51217e95 100644
---- a/drivers/nubus/Makefile
-+++ b/drivers/nubus/Makefile
-@@ -2,6 +2,7 @@
- # Makefile for the nubus specific drivers.
- #
+diff --git a/drivers/parisc/Makefile b/drivers/parisc/Makefile
+index 3cd5e6cb8478..80049d763aa0 100644
+--- a/drivers/parisc/Makefile
++++ b/drivers/parisc/Makefile
+@@ -24,5 +24,5 @@ obj-$(CONFIG_EISA)		+= eisa.o eisa_enumerator.o eisa_eeprom.o
+ obj-$(CONFIG_SUPERIO)		+= superio.o
+ obj-$(CONFIG_CHASSIS_LCD_LED)	+= led.o
+ obj-$(CONFIG_PDC_STABLE)	+= pdc_stable.o
+-obj-y				+= power.o
++obj-$(CONFIG_PARISC)		+= power.o
  
--obj-y := nubus.o bus.o
-+obj-$(CONFIG_NUBUS) := nubus_all.o
-+nubus_all-y += bus.o nubus.o
- 
--obj-$(CONFIG_PROC_FS) += proc.o
-+nubus_all-$(CONFIG_PROC_FS) += proc.o
 -- 
 2.19.0
 
