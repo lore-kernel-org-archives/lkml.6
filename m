@@ -2,78 +2,172 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA69C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DADEC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 481652172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:07:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 481652172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id A11B02172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 00:08:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Ht04pC4A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A11B02172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeI1G2I (ORCPT
+        id S1728523AbeI1G3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 02:28:08 -0400
-Received: from gate.crashing.org ([63.228.1.57]:46748 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbeI1G2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 02:28:08 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w8S06mRi025169;
-        Thu, 27 Sep 2018 19:06:49 -0500
-Message-ID: <514bd29960cb1573ead2f3956f18e1cbaa5f32f7.camel@kernel.crashing.org>
-Subject: Re: [PATCH 3/5] dma-direct: refine dma_direct_alloc zone selection
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 28 Sep 2018 10:06:48 +1000
-In-Reply-To: <20180927134922.GA8281@lst.de>
-References: <20180920185247.20037-1-hch@lst.de>
-         <20180920185247.20037-4-hch@lst.de>
-         <1811156d5a1df1166c7ab7522525619b951f047d.camel@kernel.crashing.org>
-         <20180927134922.GA8281@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 28 Sep 2018 02:29:04 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:22602 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725917AbeI1G3D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 02:29:03 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 28 Sep 2018 09:08:08 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 902E862EF8;
+        Fri, 28 Sep 2018 09:08:08 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,312,1534777200"; 
+   d="scan'208";a="292122082"
+Received: from mail-os2jpn01lp0144.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.144])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 28 Sep 2018 09:08:08 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KxBVu/IirqCUMYS/pMpM+QkrZT/dRfGoiez4DYCH/ro=;
+ b=Ht04pC4ADYMqcvKRsN74eRjBFpSQF8f2cUaDwPz8mmlf6ZBHbij7bcqbYrLvLJzfUFd/8bd0Avj7O6ashUC0+HETGH+8ZrGfT3LOcb6z8ygNbnjfswTHAamp+UibrCiNYb2Q7Ox0Q2R/Doa+o6/PGNqbuRXilR0nv7Put7k8Duw=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ TY1PR01MB1865.jpnprd01.prod.outlook.com (2603:1096:403:2::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.22; Fri, 28 Sep 2018 00:08:05 +0000
+Message-ID: <87k1n6trsf.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     jiada_wang@mentor.com
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-Kernel <linux-kernel@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, dragos_tarcatu@mentor.com,
+        twischer@de.adit-jv.com, tiwai@suse.com, perex@perex.cz
+Subject: Re: [PATCH linux-next 01/10] ASoC: rsnd: ssi: Request dedicated dma channels for busif1 to 7
+In-Reply-To: <20180927050407.17765-2-jiada_wang@mentor.com>
+References: <20180927050407.17765-1-jiada_wang@mentor.com>
+        <20180927050407.17765-2-jiada_wang@mentor.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 28 Sep 2018 00:08:05 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: OSAPR01CA0174.jpnprd01.prod.outlook.com
+ (2603:1096:604:c::18) To TY1PR01MB1865.jpnprd01.prod.outlook.com
+ (2603:1096:403:2::21)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8f9f6364-675c-4def-4fbc-08d624d67703
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1865;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;3:k6W9TFF0NmaB3jgi3YnRPlVnvll1KZYPprPisyTwVerjTU1UMbmLhdGq2LL/ieqN7UPdwQgH4z7fd4Aqcyi+I5oXDEmqvPjhp2bBwsNOKRSlxoIyFtpjVEWfbWHraUnlPmR1kNTNdKLByHhv8dD+t+3wr+0QxvEe2RJkO/vnFINknLPfxM5T0xG0/qdKRzzVmorroMng0dDcwwmq715bhZOQmewGTZ1dKj1eWt2wpzkvkbb/WWvS1ALpGnuXb/BD;25:CkQr8toAljaNCOgv67HmjRCxu78pood9kTlj98eN5lEBhzvroZq1SOvvfZW3sj7JTdydAig5kuJ7f+KIti51HhWE/aKdceELM+bxYX0DpZ93IrsMj9wd4/DZuCiU96BeQSqibF5UZrE1kp4jwZcJsKAU5o74QIJwyjiZVaPKGWlSl8NNexsGNVbqtR17cJkLcDfe7syFhYM8o2qApwQJPxEASKn8A6E70qefKjG3Rm563yVIH/f4sH8kEOhk1N/7ELcIvCM7W3p6Tl5PS5Xi087v0Ojm3+LclH98HwziFZEWN4EWodWDfeTb3SDvzek0kyfGkND/+Kz5LlCDosuF9Q==;31:0V3U199xbsJWquI2poVIb/KUcJloMX/515O2I/Tuoorn4RWzvZRLx+jUST94FG76mZwEH/xkXAi6hJoaYUhmlghXOfFaByrnhmE+NdTJo09JOi4K9+couqtWvlD45h5KJDoQb8/hwUmmE8l7vJ5j7TlpifHLNIXvcV/y+Pm+R+PbyqSC4FydxdnBDAMd60NX0BUlTcy/QzYaQlr2QoBbJibiO/q+3qCEy/NMaqC9evw=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1865:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:+bbL7XWFJZYVROtXOT0aTm+FwSBuiTs1flTR38ZnWqOZsQWpuhy09ldSQKFY1RXykGWuxFrxJObi0vEncuxGj6hIsG9jMFRg/T1Al3laXnQI2aHpeYVLPi2PtVdbm0rCTGI3MmvSrVkMH7vwEowTTxoskhNC0YQPSNVelSpg5r2Eq4m6MiGc90uPmhimYdUCno8pyum6TSwIvmkUKCExZrtb1NF9gulE6ByPBjWWXlEK4yf2f5hyorQo/MKmFkeokqlVUrJuavD7vqZpw3+I38ARDSmk5ToDBRF+oNTSdftpLCyD/Ob0/GpxFFA09QWbNIhLPki8O4Ozt74bF1JE2lFhIfsc5LCKhjWSeeHnfPIkCsyeUeJaifym/peON50668Dgy8+/m7fErlxvawBWb1Ei10fPaFQY8l5l/jEpaB1056m28VoIIsI7XD1cTDmgFnZlaUuSibL2ucf5vcoCYwt+yfAxVIHk9u88D10RsfRTEY8Vk7nf2d7ThI6akT+4;4:uYcl61fEWLrec44E0lNITdTzWFaH6oJd/t8YLi7yjVOeHNACigZh8XU0PRCpenFhBrD2ltcQyeeNSpIOeeoXrwtO7dnSQYpkQljIJh1ZrKtWxQnsHzapFEXMOBW9niopJDDET/AB7F14pfeSP+ZULYdz8vaYEXL7IIhwgAsgHjOBVbY5CARZvPWBlDk5KX+RJKRrZbeW5+qa2T/LiC6afboIKGCWs9igRaKNucAy9lOrnS2R5gdU+e0tmFIkvhIEdBN8nlbOXMmd+9+lx3bU1A==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB18652B90614A2FE578254682D4EC0@TY1PR01MB1865.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:TY1PR01MB1865;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1865;
+X-Forefront-PRVS: 0809C12563
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(376002)(346002)(396003)(136003)(199004)(189003)(305945005)(7736002)(476003)(446003)(956004)(69596002)(11346002)(6486002)(486006)(26005)(16526019)(81156014)(81166006)(8676002)(66066001)(186003)(6246003)(68736007)(86362001)(2616005)(8936002)(39060400002)(36756003)(50466002)(25786009)(229853002)(345774005)(478600001)(53936002)(47776003)(97736004)(7416002)(34290500001)(23726003)(6116002)(3846002)(4326008)(316002)(2906002)(54906003)(52116002)(7696005)(58126008)(53416004)(386003)(2361001)(5660300001)(14444005)(6916009)(106356001)(105586002)(76176011)(2351001)(16586007)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1865;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1865;23:STpg5LVlD+VjsEvROe28IYc/wcEIABYXD0jA6Socy?=
+ =?us-ascii?Q?TQrYqSCAsSIC3pYJMkJvN2mnFE7IPvRT6HnyQV1Pn6K3iWfdt72hqcVZx/0X?=
+ =?us-ascii?Q?epaIMHZ3tKrekhLqe/QaV6RJZBa+GL+4TkDXYHsdBM93h/dwNAdSvJdT1YEO?=
+ =?us-ascii?Q?xkeK6nC7p7C9vB5wABbVSNS/cfiljgy1z4YaoPotiV+ZX48AsDwn2CWh/sG5?=
+ =?us-ascii?Q?L3uxXPkNFU6tP4+xuYv/JOCMKxn1q7BiSMiexSSpA2SJpphctZ9P2Tzjpyj1?=
+ =?us-ascii?Q?E1jf5fSfs+2znc9Ds+cwCzuuPvZAkUWgLhflVKH8x/SQBdo1o+0/pddCgMsl?=
+ =?us-ascii?Q?tOqNRosM9COKrwIBqtcsLh255V6/cbJ8BMgvGPijKxVI+AeSfSMWD9/WCOAf?=
+ =?us-ascii?Q?1aQwDKfU/hCKh6IADFbGqn30JmB2YTbyZoejZK7aa4gxtrgD7yu+uSMBz2og?=
+ =?us-ascii?Q?ZivnruIBfjSRpZR4qrs6BL3XzGmeHWfzCcAZHQKOKsXXAytY13aZAsXUat/B?=
+ =?us-ascii?Q?iDyLFoGO4sJRphenXKBqsJqAxHk5jD2MPSnn7tCNCteQVGepMlVF9VA2t3Ug?=
+ =?us-ascii?Q?809wj7ysIW5WAYYtmKPWpuC0s9PuxA5oKgiYuPcg3FtvKHewvHZq8xYVfBOP?=
+ =?us-ascii?Q?2I+1BbUjCSbV7KgaoQZUwvAHTgC78qynM+uqlcy4ptnUJPrCeXBBexo4gFo6?=
+ =?us-ascii?Q?2ZJ6/w/xS3ldqA028BOWaU25+iEex/MmYU3JKvk32rPJ3ynfY/WeS4lDtJ0A?=
+ =?us-ascii?Q?B9xBkQbfZz0v03CW/M/KakVMga+dB2P0WgSUWY0/GBH962NFNIc3/ZBJjTSl?=
+ =?us-ascii?Q?2I+7LCfdzq5SB7QWdBkUlsUmBXhSULKpDaMzPbl2tOru5mIQ5ZLCnksn5z5o?=
+ =?us-ascii?Q?i2h8EkUzClmIXArdv+8RyugwV7rY6YwuJIYzhnLQe9Kt9MVuNZ0es6o4f9e8?=
+ =?us-ascii?Q?YqmL61bODXnRlpsg9HZIJT9MfTZnZktD28OYRYaZ1LFBHAYK6iGvsd0MPHZn?=
+ =?us-ascii?Q?AtgE1+kVyaYahVJerZyHsT5HEzI+qp7TXMvOQW1oI7H+EVnABIN+uLi5UYyl?=
+ =?us-ascii?Q?DcMHwFr5QZFviNjhY4FPTFP4PrWr5FzyUzF7CvA2KtPxoQffIuKLrBJmldhG?=
+ =?us-ascii?Q?XFLlwfpLzuCxgcsQJslpDbnSof6PzqYDMiYtv5e+Mtcau/0r6Ah/xYnMKujG?=
+ =?us-ascii?Q?Jj1DxXGlMTQH5wtXXt47w3xGFidtzAbraMBSO5nLtgEzcKfW+QAj+RN7vv/w?=
+ =?us-ascii?Q?4FuWvIrgIZJHg7rn9sdtnrRgbnMvJJ11OdwPZdHmV5C6si+GXych49z9aofN?=
+ =?us-ascii?Q?AWG5gPuStTUxzxIuMBkEXledhO0e1ur4iG+MwPXyj+xm9ywxcmQ7gexrckbZ?=
+ =?us-ascii?Q?EL6cXdDz9r8Ay/QQ3jxP53vdYDqnbVHF2oF/Ujk5BFQR3ZX?=
+X-Microsoft-Antispam-Message-Info: Lycp2iIARnQc/WVbJHEJDwGxHKoBgPCz9pz+GiMaSlV+tAiRFqO0ZOmUsbBrVpQt5D9nZe3f1zdVWYOi+2EBll7fq11vRA4tN0+EMsfTpItgSRFQKbsc5iHKwAhg+TxiG4H5BJ4olQhucO+i2nHE4Zs7D9yEimsPInBv/ZRI+B25knvDckiPI+7q7DlaA+1whiEPif5HfPMz7HFFDRUlMUeNcO3jdevDksiOqll/IvBiDFAF4/eit+fUub6P45x1yUr/Uvzeq5UlYL2Md64ul511ahp2JVO1f/sufy/bqFEl8YCOpxPsvFcvVAB90S9t+HTkiGT0lvFtn69lxRC3h7avWSpkLbzU1jcTHSAdYgA=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;6:EIR1fq99OBvNYurbV5SJiaOVjI34AOdCKTS4s0+44ONHC5+0bGNkoWxwXhiRDvWH6XAr7YqSisz9+CzZLdG+15gK+qQNMeJE18nabC/7syHEoAOpAFdyZw9Blk/tHekYT4wRH/jqgoMAQiSL0BIvMO34KFiIrg2GPmsTO9/55TJh7aN4FOx+bjm95jFaJJ30T/RfkdokQRoZW2wYvLQAyz/SViTENCU7J6Kz/BOZGlNixe5DefG0zyzqJ0UuIprAK/mzSzMolIpTJfF3rdRqig6CIBx5lVIvnap3RgjU+VwI5J4e/D9VPC/cqIz7Fq6zcE7jr0X11DuUuA2BYPQkVB/v9B4NF23EbHpU6B3xX2hJMbWb8xbH6PNzXa6M3KyFSt9Rmy9EdTNCg+5J2gdZFS0kftaMK9fw9iH+MKanUx/D2e4oLKdtIqLnl9J3aSpCMfNTz9CvAzOr4BGur5L9SA==;5:feolu3G7vnJ/wKLy/ln4Y7yiTHCr7pYauV3pJ+CXK7AfiAoYmnWcpKxn/VtgZd5tWe6NwcZzjYfOJmxLpXPMKkXaSg0+C4802M+wofol9rflZDHcdSqlq9rh7kNFvXN/r9xrollwjbigV75oqTGGxe90geLpoz0YsjeFNHiwXsU=;7:iYSglnfM3xwZ9YPKH75QH9Hrf/yz61ChHIJQCsO/dixe9Rk5EVjOmcroXNZJaydVC3yFFsmDT4b128Y6EyDdHyqzg9e71MuAf5/Tq7t5zfisdLRBoIDqoiqIQnpI+vzXlAL98i7/Atmvum5/c8qvF18zmk7nR55vISx2dHFmaB60RdT4s/JAEhqJns6BDFVjvgbzt8QjtDffkmKcKvfvkn//RKq3E8SlGYh35lyVtZ/n0vW5FBfCflDs96Q4sXwO
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1865;20:XNB1Nz6tU/j7zAoRaV9QLispWdTpRKuqoz1NYPdrrse6R+cdj0ko2C922RvO95mT/hMxRcEoqumANAS3Ub/ACzxN/Dz2dE8cGKAdVNPY6OaDG3Koc3ALEVGqx4m0PfR9SdHmVY+VLMi147RcXbuaSrbtg3/SiMaoYw8N68hmW4o=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2018 00:08:05.4685 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f9f6364-675c-4def-4fbc-08d624d67703
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1865
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-27 at 15:49 +0200, Christoph Hellwig wrote:
-> On Thu, Sep 27, 2018 at 11:45:15AM +1000, Benjamin Herrenschmidt wrote:
-> > I'm not sure this is entirely right.
-> > 
-> > Let's say the mask is 30 bits. You will return GFP_DMA32, which will
-> > fail if you allocate something above 1G (which is legit for
-> > ZONE_DMA32).
+
+Hi Jiada
+Cc: linux-renesas-soc ML
+
+Thank you for your patch
+
+> From: Jiada Wang <jiada_wang@mentor.com>
 > 
-> And then we will try GFP_DMA further down in the function:
+> Currently ssi driver only request dma channel for SSI_0,
+> which is used to transfer data to/from busif0.
 > 
-> 		if (IS_ENABLED(CONFIG_ZONE_DMA) &&
-> 		    dev->coherent_dma_mask < DMA_BIT_MASK(32) &&
-> 		    !(gfp & GFP_DMA)) {
-> 			gfp = (gfp & ~GFP_DMA32) | GFP_DMA;
-> 			goto again;
-> 		}
+> But since busif1 to busif7 also maybe used, dedicated dma channels
+> are request for data transfer between these busif.
 > 
-> This is and old optimization from x86, because chances are high that
-> GFP_DMA32 will give you suitable memory for the infamous 31-bit
-> dma mask devices (at least at boot time) and thus we don't have
-> to deplete the tiny ZONE_DMA pool.
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+(snip)
+> @@ -938,12 +940,20 @@ static struct dma_chan *rsnd_ssi_dma_req(struct rsnd_dai_stream *io,
+>  {
+>  	struct rsnd_priv *priv = rsnd_mod_to_priv(mod);
+>  	int is_play = rsnd_io_is_play(io);
+> -	char *name;
+> +	int busif = rsnd_ssi_get_busif(io);
+> +	char name[SSI_DMA_NAME_SIZE];
+>  
+> -	if (rsnd_ssi_use_busif(io))
+> -		name = is_play ? "rxu" : "txu";
+> -	else
+> -		name = is_play ? "rx" : "tx";
+> +	if (rsnd_ssi_use_busif(io)) {
+> +		if (is_play)
+> +			snprintf(name, SSI_DMA_NAME_SIZE, "rxu%d", busif);
+> +		else
+> +			snprintf(name, SSI_DMA_NAME_SIZE, "txu%d", busif);
+> +	} else {
+> +		if (is_play)
+> +			snprintf(name, SSI_DMA_NAME_SIZE, "rx");
+> +		else
+> +			snprintf(name, SSI_DMA_NAME_SIZE, "tx");
+> +	}
 
-I see, it's rather confusing :-) Wouldn't it be better to check against
-top of 32-bit memory instead here too ?
+Unfortunately, this patch breaks "git bisect", and Gen2 platforms.
+We need to keep existing "rxu/txu" more. Please consider compatibility.
+# we can remove it 2 or 3 version later ?
 
+If the commit which has this patch, but doesn't have [02/xx] or later,
+it can't use BUSIF.
 
-Cheers,
-Ben.
-
+And your patch doesn't care Gen2 series.
+DT compatibility is very sensitive...
