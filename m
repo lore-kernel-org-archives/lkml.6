@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB5AC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B573C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E84B21733
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA48621733
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 01:49:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWAp/ODn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E84B21733
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8SZdRT8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA48621733
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeI1IKE (ORCPT
+        id S1728789AbeI1IKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:10:04 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35518 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728742AbeI1IKE (ORCPT
+        Fri, 28 Sep 2018 04:10:14 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35534 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728742AbeI1IKO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:10:04 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z14-v6so5049794qtn.2;
-        Thu, 27 Sep 2018 18:48:50 -0700 (PDT)
+        Fri, 28 Sep 2018 04:10:14 -0400
+Received: by mail-qt1-f194.google.com with SMTP id z14-v6so5050076qtn.2;
+        Thu, 27 Sep 2018 18:48:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :content-transfer-encoding:user-agent;
-        bh=FnsE+PwbSYT7Ik4sfBLqTvLMfucbH50GCrBzd4xVqgg=;
-        b=LWAp/ODnG3g/fquiABxPcurrEfakZ99Tu80oGCcofFtOUhLF1bWOxFuRJ3Rf80PVL2
-         dm/9+Ktx27QUf6igqhEcYlR8YxWKDz5TOiSkD8FfVIIj8MISfvvfZsS8Rt/K11rMYt1J
-         Y+3KeJdI3v/2/zJjL6lsuAXDZrxuEcEoDn3LP9Dig/bSGd0VXqs2huu+tWciiHYtXBxf
-         0iYVGubIElYZiG/OOJTtuvcXoYxocSgR5g1Xh1aVqJpdOTJqrGD/VYRZirL4LrfRd8LO
-         eJkjlZPLopu1yOUQ+aPbsTWlwuLr3p4hGmskXdwKI3OA3vY2q3uhcC4bdIhpGRUHBW9v
-         czRQ==
+        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
+        b=c8SZdRT8uG27oQeqK7ZCzA/WksemdQTwt+kyyR+bEonEmei04H6YjdDbDlg2122FOG
+         T3cYP5zY0QTnz1iQaI24ZuCYzlIrFldDqR0TURihKRKun59nsNfPYbA76y8jr4BddIsV
+         y6XRn0ZBykh9amdfA0EMnSPcKd6pU5gl9k4SEXXPzIpUtk5wC1riIQrQ1FHfqVycvMCI
+         W+R5Qf/6WQh/57idCg4ZF4hE8OAD0lcvCWyrg4cEn6evO4i7PO83SgmtNK0XM/PUPkPg
+         6ifNF53OjVGuim2OtRj7lEfYcpi534CAF54EO14KGsfj5SBYZLT8vPD591b3bSWSWZVb
+         aIHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:content-transfer-encoding:user-agent;
-        bh=FnsE+PwbSYT7Ik4sfBLqTvLMfucbH50GCrBzd4xVqgg=;
-        b=lOphwBFK31wYCR2ApDgqZXgOZlcLbQG6QJkDgUZ9DsncwiCG8hr6ZKKPdouMTWF8RQ
-         fyffcJQ+Kg5N3Rhfm86IC4dI2l45EGSASsymHwsmI3xUGo1VxhcWjddVszecgurl0UJ6
-         tgNWPS8eb6sEKH5tD89Xv/Z/hi4Lk+OC35Bzdkg64qkIPBZqiVg0hGDwYMYiOnY63Zu6
-         Ij7Q+Vzd955n9S82xp6HYe6cEvjaApIrii/0mRE543h3owRjoA5/P/RXLA6IAYKxeCe5
-         jqySxq6VrNFN1t/G2InDoBOxAX+2kJNfEyA4e48i+i4jjXuCAV593zSGlpCAuNPpg6UR
-         5S8w==
-X-Gm-Message-State: ABuFfog/fO2TlslYzLkc9jbWNZ27UJsvRerj6ETRNWV8iAv339U9cVL7
-        lDf3CNKDaFSNzouijYCDM0A=
-X-Google-Smtp-Source: ACcGV63R/LlHErhiNWXpVRyOdAdylp7VkaNLTyysrV+Mmv7R0bTo24jVt1Hs3Oi1NZ83+DU5WWd0QQ==
-X-Received: by 2002:aed:2f27:: with SMTP id l36-v6mr10879466qtd.333.1538099330155;
-        Thu, 27 Sep 2018 18:48:50 -0700 (PDT)
+        bh=wFwPD257gEf6jcXSywUF4KDj7r7qvliCjiZQYQyJ1vc=;
+        b=mb2ZZyxjWVMc074eNO0ZPMy0s8RL6b1NiN7we7vAX2xMEvHh5swh3OwaxlMWZue4bA
+         c0HKoh1RPCcTi/2WZwTfQQpR0Fm1OmwiHufFfuDIBHFeLCjYU98RSTuhY1kyqgXzCc3+
+         9mhND/2z/km1d4zIqpA2U/a2AM8TX4TzvKwOSDe9SeDVn4nhNFCBVup9BV+EpFHzXVOR
+         6tzaMWXIWAS9SxcUZRxMfHHFyrMFXk6kfb6sZOrW/kfe4gG3CBYyEBZR2OLsM+T6xQWX
+         pd7BuXFN8RUAjl1OY8bG1Sz/FPlfD497dDXvfJMYuUED73BxZmiUsqiAd5jx1+tJBtKw
+         +gqA==
+X-Gm-Message-State: ABuFfoiy5RYHexy5n1pTrMfq2uOqJUMfHjgy7dvCEM1kbSR3D7Td3Nm8
+        oeeSj3peeVBGOY/KRbXDlMXOa5CE
+X-Google-Smtp-Source: ACcGV61hrLJe6Vh1+sdcXCNxSUhfr1YFWDxiRAC3Qp1ck9WvXcpgMlx1QPBYJveKh0sowCwKDUbkYg==
+X-Received: by 2002:a0c:fa52:: with SMTP id k18-v6mr2522052qvo.170.1538099339271;
+        Thu, 27 Sep 2018 18:48:59 -0700 (PDT)
 Received: from WindFlash ([179.159.21.48])
-        by smtp.gmail.com with ESMTPSA id f13-v6sm1847655qth.62.2018.09.27.18.48.44
+        by smtp.gmail.com with ESMTPSA id x76-v6sm2282427qkx.25.2018.09.27.18.48.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 18:48:49 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 22:48:42 -0300
+        Thu, 27 Sep 2018 18:48:58 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 22:48:50 -0300
 From:   Leonardo =?utf-8?B?QnLDoXM=?= <leobras.c@gmail.com>
 To:     lkcamp@lists.libreplanetbr.org
 Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -73,9 +73,9 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         oprofile-list@lists.sf.net, linux-parisc@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH v3 4/7] drivers: zorro: Avoids building proc.o if
- CONFIG_ZORRO is disabled
-Message-ID: <20180928014842.GA10506@WindFlash>
+Subject: [PATCH v3 5/7] drivers: s390: Avoids building drivers if ARCH is not
+ s390.
+Message-ID: <20180928014850.GA10508@WindFlash>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -86,32 +86,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoids building proc.o if 'make drivers/zorro/' is called and
-CONFIG_ZORRO is disabled, even if CONFIG_PROC_FS is enabled.
+Avoids building s390 drivers if 'make drivers/s390/' is called but
+ARCH is not s390.
 
 Signed-off-by: Leonardo Brás <leobras.c@gmail.com>
 ---
- drivers/zorro/Makefile | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/s390/Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/zorro/Makefile b/drivers/zorro/Makefile
-index b360ac4ea846..d580f9f08e0a 100644
---- a/drivers/zorro/Makefile
-+++ b/drivers/zorro/Makefile
-@@ -3,9 +3,10 @@
- # Makefile for the Zorro bus specific drivers.
+diff --git a/drivers/s390/Makefile b/drivers/s390/Makefile
+index a863b0462b43..0575f02dba45 100644
+--- a/drivers/s390/Makefile
++++ b/drivers/s390/Makefile
+@@ -3,7 +3,7 @@
+ # Makefile for the S/390 specific device drivers
  #
  
--obj-$(CONFIG_ZORRO)	+= zorro.o zorro-driver.o zorro-sysfs.o
--obj-$(CONFIG_PROC_FS)	+= proc.o
--obj-$(CONFIG_ZORRO_NAMES) +=  names.o
-+obj-$(CONFIG_ZORRO) 		:= zorro_all.o
-+zorro_all-y			+= zorro.o zorro-driver.o zorro-sysfs.o
-+zorro_all-$(CONFIG_ZORRO_NAMES) += names.o
-+zorro_all-$(CONFIG_PROC_FS)	+= proc.o
- 
- hostprogs-y 		:= gen-devlist
- 
+-obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
+-
+-drivers-y += drivers/s390/built-in.a
+-
++ifeq ($(ARCH),s390)
++	obj-y += cio/ block/ char/ crypto/ net/ scsi/ virtio/
++	drivers-y += drivers/s390/built-in.a
++endif
 -- 
 2.19.0
 
