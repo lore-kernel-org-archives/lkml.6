@@ -7,102 +7,95 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27C1C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEB5C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9521A21746
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DA9321746
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 07:36:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGz3YA9R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9521A21746
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZPsVZn/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA9321746
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbeI1N54 (ORCPT
+        id S1729069AbeI1N7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:57:56 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43126 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728804AbeI1N54 (ORCPT
+        Fri, 28 Sep 2018 09:59:14 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45357 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728804AbeI1N7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:57:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j26-v6so3702460pfi.10
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:35:31 -0700 (PDT)
+        Fri, 28 Sep 2018 09:59:14 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t70-v6so3803231pgd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 00:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=o7X4CZL8UiFJZ80UvtFpFuJrlBf6AP+FDJtO3KY32xI=;
-        b=NGz3YA9RsQGXJF0CJ38emR4EkU0K7mygloIAUY3ru1X+LIExkzQuNP1BQynzu2oTMI
-         CvWnH3q8ZwhXdzRuL1DlyKuVO12QAdME6XLnNMO0FyPWu6kGLxdUuI4qH02x7STuiHGQ
-         dACSjExzYpADXRYaKpJ/M4B4AYsKCYJT072dnLEi1bII5q23Sw7fEWjfdWGe3X6jMoLh
-         t4S2yd+vkNvziscJQHjQSKvz2tZ9Fmk2o2LbGe5bORdIp4TXMBCVpIAXMaQvmSivTicW
-         ksPKScwTwDq3OR2LB7xn7UHWJ+JghNABa/ci80+WamTm6tZd2EzZixZE3osg/BbAJRNp
-         7Gaw==
+        bh=Gp9w4xk/2ygmlptLb2U7Qz1G6agxATgiTwcn39pl2bU=;
+        b=EZPsVZn/7B97VY4+iBRc1vV5dVtI5XE5oZOh6wyJHqWc7v7kUIKh9S7IrZHjK7fO4m
+         TpCL9JXC5YsKtW9K1oBv0KdJ0Lvt0YUQMs1ZfFdADoltqIDtaWwFdbtiPRWs6DkifMhR
+         v5f525cbUth2OSa8tyk2Twpcrcgh5C5mbhPL/TY1Oc2Sm6c9eFYJ5LPCa2mGvqUDd/J+
+         9c3vlgjEc3KldywuE9xy+rbZMOIblAXpaUr7kk8twdbZJkzSXTEBm/eprA6+QJlcRYRb
+         JpTCHHjXdgj82YLeR2d5Kc7b2MlaoRs+6NEmMhAgn8LZMMtHi9MF/DHsLRfDy3h9Lmt9
+         5Mqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o7X4CZL8UiFJZ80UvtFpFuJrlBf6AP+FDJtO3KY32xI=;
-        b=CDcB3onjw5cpV3okmq19N0CssYKXkvoxMFLXHweED9sulZTC5QDL4RQBEBfsiZxzOH
-         JaT4JfVm+Vj7LmCJ67uEknxxCekkHvnkzVghfaT9Yti1j6vPycjn4YQ4UaWxc9EIdvXo
-         h/024BWFFgOf7VhhA7+4zz+iv0HFKBJXDz1uxe1+6M9eTmLq4BOVa+w0Bx1O7ECxedNd
-         sC5+X419DkIIOi4knn9/uDOOMCG3zS2N8cqYMLd3OEiMSKfym+tFCOWoVYx5h1vgZe1D
-         qpXDAv8rztFHGgpg4yF4NWCTB6N/tndPnc7Xl/m3Ztn0PQmmf7Vdxl2Th+FWo505VFO3
-         nk6Q==
-X-Gm-Message-State: ABuFfohfe916ZUS/4ErKSydpL6DJapw0axuaT//jwy0hB0p9REwRZBdf
-        4+fvtN6O/QZHct4V6QIPdiyd2lo3
-X-Google-Smtp-Source: ACcGV62W+GcumsVO672ZV5U4mrd82CX2vKIFjHI5l+pp9j9tgICg5QyUK3vZHfp0/anW7d3hcFbPgQ==
-X-Received: by 2002:a62:2459:: with SMTP id r86-v6mr15389561pfj.31.1538120130808;
-        Fri, 28 Sep 2018 00:35:30 -0700 (PDT)
+        bh=Gp9w4xk/2ygmlptLb2U7Qz1G6agxATgiTwcn39pl2bU=;
+        b=Sy8h6qqRsrUtvCyUZ7ob+TrnyCFAgAOJib5dLzlaEc2uUkrcb487i/ib4grVLjGS11
+         6fwiKfinmTCTMSsRdv3D0xBYTdLcUAxP1bkr6DcUFq3T/6ZKRASpAf3SvHSDmXVQChEp
+         Z2bYrkQvoMz8Bua6xRcUzd7M0Fr3Bj4zZCHi/E/bzoG2DheCNt3lxZm/4bsbcqPQvU55
+         P1Zna6tgAPssiXg3+JpcqJkE0SCzz23biDDDRacZ+Zt8e/tdYQwRjAeJu7D9XXhftjMy
+         y0zgxp6u6aMovli1zFDeNzeMpuT7/qe/teN6sctwbD9xRWwfRwuV0Xt/Ny8DhRuIEwq6
+         qO3Q==
+X-Gm-Message-State: ABuFfoiJI/9zLBiYLMY1YwBGcXGhPocRiYZG32RUJIYDxhqLew/2vrXT
+        lDYNHt1nxWFSVAfetf1Cd5U=
+X-Google-Smtp-Source: ACcGV62+VdDM9CUaIi059ADWyhsSUpuICN6OMHFGmcJLbuYGCID1p1k0I34ACBYu9O2pmkfDyJGm+Q==
+X-Received: by 2002:a63:5a54:: with SMTP id k20-v6mr13988257pgm.297.1538120208808;
+        Fri, 28 Sep 2018 00:36:48 -0700 (PDT)
 Received: from localhost ([110.70.14.151])
-        by smtp.gmail.com with ESMTPSA id v28-v6sm7112219pfk.12.2018.09.28.00.35.28
+        by smtp.gmail.com with ESMTPSA id o62-v6sm6297069pfb.0.2018.09.28.00.36.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Sep 2018 00:35:29 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 16:35:26 +0900
+        Fri, 28 Sep 2018 00:36:47 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 16:36:44 +0900
 From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 To:     Petr Mladek <pmladek@suse.com>
 Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        He Zhe <zhe.he@windriver.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len
- to command line
-Message-ID: <20180928073526.GA1160@jagdpanzerIV>
-References: <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
- <20180919023932.GA14090@jagdpanzerIV>
- <20180918224312.6e9aef50@vmware.local.home>
- <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
- <20180920123056.27b2cf18@gandalf.local.home>
- <20180921073753.mqayzofcofpmhiyu@pathway.suse.cz>
- <20180925120135.GB523@tigerII.localdomain>
- <20180925122300.qq5w4skwmxbzi6sy@pathway.suse.cz>
- <20180925133143.GB601@tigerII.localdomain>
- <20180926110500.vfroi373mookavua@pathway.suse.cz>
+Subject: Re: [PATCH] printk: CON_PRINTBUFFER console registration is a bit
+ racy
+Message-ID: <20180928073644.GB1160@jagdpanzerIV>
+References: <20180914023428.814-1-sergey.senozhatsky@gmail.com>
+ <20180914085934.m2bgixltdzpfh62o@pathway.suse.cz>
+ <20180914111953.GA20572@tigerII.localdomain>
+ <20180926113715.6llme2vmvynzuoa3@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180926110500.vfroi373mookavua@pathway.suse.cz>
+In-Reply-To: <20180926113715.6llme2vmvynzuoa3@pathway.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/26/18 13:05), Petr Mladek wrote:
-> First, I would move the check into log_buf_len_update() so that
-> we catch the overflow also in other situations.
+On (09/26/18 13:37), Petr Mladek wrote:
+> /*
+>  * Set exclusive_console still with disabled interrupts to
+>  * reduce race window with eventual console_flush_on_panic()
+>  * that ignores console_lock.
+>  */
 
-OK.
+Looks good to me.
 
-> Second, please, keep only the first line.
+> I am not against the change. It makes some sense and it does
+> not break anything. It is just not obvious
 
-OK.
-
-> It is enough to describe the problem.
-
-OK.
-He Zhe, will you pick it up?
+OK. Thanks.
+Will send v2.
 
 	-ss
