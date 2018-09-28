@@ -2,116 +2,106 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8233EC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E77CCC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DCB121566
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C1E42173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:59:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Vv3A3+3w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DCB121566
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HkEEXxqr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1E42173D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbeI1NSq (ORCPT
+        id S1728978AbeI1NVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 09:18:46 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:59305 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbeI1NSq (ORCPT
+        Fri, 28 Sep 2018 09:21:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46886 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbeI1NVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 09:18:46 -0400
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w8S6uCHf029636;
-        Fri, 28 Sep 2018 15:56:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w8S6uCHf029636
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1538117773;
-        bh=SX0KulU0KjKm7pTn45PqphOge/zr/+2SOu59bgjuc1c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Vv3A3+3wqJmoqAeEysIfAdGVV+5b/+vH2kxpguGeTYMH83P9zavuCVdFy2qz8deZS
-         M/O7Kfdq/XDqZ4lFNP156OxjvhXRNZerrytwU067u7OjvrpVS5Wwb+Rxp/Y/PmQhnJ
-         1Rmd296hn5VGENWqwdZ6NRPwlsqGU8FYUn9u2E2u5fCXiDeUIgoZSlnWc8Ti7OjxfM
-         WOMu5nojAx8OVBJPyv9JvjupWq3J0Q5Dp2xuhNvTtSVx+JBlRX6MtPH2tTMKf1H7gq
-         SMH3t1L1emTfG2AThnIb3SETphy1hMAm9OMv8h7slCYl0V6SmzeuNttPa8e70Xd97Y
-         SCpp5JDfmB8rw==
-X-Nifty-SrcIP: [209.85.221.180]
-Received: by mail-vk1-f180.google.com with SMTP id x140-v6so1183779vkd.6;
-        Thu, 27 Sep 2018 23:56:12 -0700 (PDT)
-X-Gm-Message-State: ABuFfohU2Ry3usISJqU+QXmbYrbtm16y6QIkxkgyFK/c6pUD1MQIbXGM
-        tDf5UHoNJZnCSy4X1BGOVX3/GJriYzheIZJonQE=
-X-Google-Smtp-Source: ACcGV61YjB5N1SGqInWv07Ss+IujV4RQuAyRvLZcFSioXsEoKRakTzeC4uuw6dXbMQdlQssHU/Sg2PoIMVB+kOjmxW4=
-X-Received: by 2002:a1f:8b84:: with SMTP id n126-v6mr5045247vkd.74.1538117771626;
- Thu, 27 Sep 2018 23:56:11 -0700 (PDT)
+        Fri, 28 Sep 2018 09:21:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=h39s6quH6b+0Mgkwn1Bqeti62DjMaThH+cxhzVfUwao=; b=HkEEXxqr/cV460iFbAqxm71s1
+        lXXXBKYZexyHBN/HTMhokqo+iF81FZvTGWzFNLYoU+Fk5jpyEsVEPudKvLrArz2SixUUvff47NCCc
+        MnLNbLc9F535avmFs8qGSG2rV3jowL9Rt6504VxMj9ILHTLKp/8uH9lX5UIOnSygAMD8DpTjwr8bD
+        FQOOMfb84qgHUqdSJ6eJRtVV871YOsLhH5U+wcDxMY8GEn/J07ZMghRPPZhKriXOim/a1iT0l6IEe
+        q7wGA7DBjpOiD60DBLhIAlPyMA0gef8TfZLBNsb+UuA6MfXXHopK9czWh0Rf2YCINqQFLE+MTB4Om
+        8y0FvqnEQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g5mjT-0003EC-8E; Fri, 28 Sep 2018 06:58:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 64D182107093F; Fri, 28 Sep 2018 08:58:30 +0200 (CEST)
+Date:   Fri, 28 Sep 2018 08:58:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>, fenghua.yu@intel.com,
+        tony.luck@intel.com, mingo@redhat.com, acme@kernel.org,
+        gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 0/6] perf and x86/intel_rdt: Fix lack of coordination
+ with perf
+Message-ID: <20180928065830.GE3439@hirez.programming.kicks-ass.net>
+References: <cover.1537377064.git.reinette.chatre@intel.com>
+ <20180920141150.GY24124@hirez.programming.kicks-ass.net>
+ <77383a1e-f343-7529-24cf-874f0999507d@intel.com>
+ <alpine.DEB.2.21.1809272123440.8118@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <1537243113-1710-1-git-send-email-yamada.masahiro@socionext.com>
- <2024081.XhWFmWp6tJ@blindfold> <CAK7LNAQrOhJpkUf=zxvwcbf8oWTAhKiWxemweHz8QPT55H+R-g@mail.gmail.com>
-In-Reply-To: <CAK7LNAQrOhJpkUf=zxvwcbf8oWTAhKiWxemweHz8QPT55H+R-g@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 28 Sep 2018 15:55:35 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ87H72iMEyrTin=CPRWiyfuiU_sEpxmCT-qCovjREHtw@mail.gmail.com>
-Message-ID: <CAK7LNAQ87H72iMEyrTin=CPRWiyfuiU_sEpxmCT-qCovjREHtw@mail.gmail.com>
-Subject: Re: [PATCH] samples: disable CONFIG_SAMPLES for UML
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>, linux-um@lists.infradead.org,
-        David Howells <dhowells@redhat.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809272123440.8118@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018=E5=B9=B49=E6=9C=8819=E6=97=A5(=E6=B0=B4) 15:58 Masahiro Yamada <yamada=
-.masahiro@socionext.com>:
->
-> Hi.
->
-> 2018-09-18 17:21 GMT+09:00 Richard Weinberger <richard@nod.at>:
-> > Am Dienstag, 18. September 2018, 05:58:33 CEST schrieb Masahiro Yamada:
-> >> Some samples require headers installation, so commit 3fca1700c4c3
-> >> ("kbuild: make samples really depend on headers_install") added
-> >> such dependency in the top Makefile.  However, UML fails to build
-> >> with CONFIG_SAMPLES=3Dy because UML does not support headers_install.
-> >>
-> >> Fixes: 3fca1700c4c3 ("kbuild: make samples really depend on headers_in=
-stall")
-> >> Reported-by: Kees Cook <keescook@chromium.org>
-> >> Cc: David Howells <dhowells@redhat.com>
-> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >
-> > Is there anything UML can do better?
-> > Not sure whether an arch like is supposed to install headers at all,
-> > I guess no. :)
->
-> I just thought suppressing CONFIG_SAMPLES was a big hammer.
->
-> We could install host-arch headers for UML if we like,
-> but I am not sure whether is is sensible...
->
-> Wait for comments in case somebody has a better solution.
->
+On Thu, Sep 27, 2018 at 10:39:01PM +0200, Thomas Gleixner wrote:
+> On Fri, 21 Sep 2018, Reinette Chatre wrote:
+> 
+> > Dear Maintainers,
+> 
+> Sorry for replying late.
+> 
+> > On 9/20/2018 7:11 AM, Peter Zijlstra wrote:
+> > > On Wed, Sep 19, 2018 at 10:29:05AM -0700, Reinette Chatre wrote:
+> > >> Reinette Chatre (6):
+> > >>   perf/core: Add sanity check to deal with pinned event failure
+> > >>   perf/x86: Add helper to obtain performance counter index
+> > >>   x86/intel_rdt: Remove local register variables
+> > >>   x86/intel_rdt: Create required perf event attributes
+> > >>   x86/intel_rdt: Use perf infrastructure for measurements
+> > >>   x86/intel_rdt: Re-enable pseudo-lock measurements
+> > >>
+> > >>  Documentation/x86/intel_rdt_ui.txt          |  22 +-
+> > >>  arch/x86/events/core.c                      |  21 ++
+> > >>  arch/x86/include/asm/perf_event.h           |   1 +
+> > >>  arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 372 ++++++++++++--------
+> > >>  kernel/events/core.c                        |   6 +
+> > >>  5 files changed, 261 insertions(+), 161 deletions(-)
+> > > 
+> > > Yeah, these look good, thanks!
+> > > 
+> > > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > 
+> > 
+> > Could you please consider this series for inclusion into v4.19?
+> 
+> So in principle I'm having no objections as this really is mostly a RDT
+> only issue.
+> 
+> Peter, any objections against the Perf part of it, aside the core patch
+> which is an obvious fix?
 
-
-I started to think this is a wrong hack.
-
-
-I posted a different solution:
-https://patchwork.kernel.org/patch/10619043/
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Nope, look up a few lines to observe my Ack ;-)
