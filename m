@@ -2,149 +2,143 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE1CC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A402C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BAD02073F
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6EDC206B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 20:54:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b4dOyw8j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BAD02073F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KYA1GWYh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6EDC206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeI2DUC (ORCPT
+        id S1727281AbeI2DUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 23:20:02 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:38509 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbeI2DUC (ORCPT
+        Fri, 28 Sep 2018 23:20:08 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46597 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727244AbeI2DUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 23:20:02 -0400
-Received: by mail-ot1-f51.google.com with SMTP id h15-v6so7333546otj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:54:33 -0700 (PDT)
+        Fri, 28 Sep 2018 23:20:07 -0400
+Received: by mail-yb1-f196.google.com with SMTP id o8-v6so3211177ybk.13
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=iFY6aqOxx6i+K5Q/DjbhTXWf4HP8ZHwThzBzWHhx/d0=;
-        b=b4dOyw8jLewPsNG9T8BzlZwg6RN6VEHzrA8MLbj+p/pTVbyLCXcaRpRSCN4EyqJ5G9
-         A+Vgj+ItK29D0xl/04AUR5IFVl7JgdbOznxJAxOnsqkKY72F2oPNjdumIt+XNov0mbAV
-         CVTHHbHQ3lDJBpdhu/WvgxMwYCXqYT+lKFRTc5Ax6IxYC+xdl/DOVJrXtNpzKq+fE+3K
-         r+tLLUguscdBOaoU/cmipv0jbEXL+El5uONnMzKSMSZwfLxIzfd+enm8GGoMSr5gOuwZ
-         QWNZ6yPQY22rWCDOLHsxMPw9WSaAzoTBlF55pe2Z3xy80emVVadQ4xzZANw/ZXy0Q9IF
-         7X7Q==
+        bh=eo/Y9cUiTa2FJkL9XobLvlA6LGBEt5Rqn8JaEc6iKEA=;
+        b=KYA1GWYhgim1f3rgeiEzJeYK5w0RKRABJKgJw/mdcckCmjBKBWlUUf1wI6wwy6iBoR
+         huHD9F3KL9DOvLGb6Tfn98L8B1ReFdxqUwNKbkJTv8wZA+0aXOY3uhP48jJD/wBMpNCA
+         8XRevKKdGAEElqKAfmwnjKOMyv/urFmzixK5w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=iFY6aqOxx6i+K5Q/DjbhTXWf4HP8ZHwThzBzWHhx/d0=;
-        b=qGjTEW3SkBk2FRfWhJPiqzHsRKmEG+DKqUQgiE/ekITjS4n3Y/ogZeGQFoe0ulrwod
-         ADbHboOM9VgOnRhthQ00ErQyMnSGYedt8YDcG7RZWHJmaXtgoJVclbh/QAtSb3f8p0pA
-         7Nyv3G5E2ccXEhIzw5qyQAX+OTiKKxXqcW19tij4tcycBcdIW3OsdJRgE8qKUe5k52ii
-         2x8UGg44s6Iu+ytRdo2NZ+LV0NU1NyYQaLdi0CuhN0xd+8nTIuFuY+JjVKlzM6VOfETD
-         0MTPcVvvwUqa3QNGyWDq+rQxQ6GBEhDFGFT8LI3GpeeEzlJMVG8EYgxS3nt4X2NUdHwS
-         bjxA==
-X-Gm-Message-State: ABuFfoj7+yv1c2PsDm4wcCyfkT9FbSlfjoSJG+7ancu7jNuMdVUUA009
-        d7CYBeBRT4iNpDezCLLoUm0jCWPmG8LEq43uzfVZ9A==
-X-Google-Smtp-Source: ACcGV625kNcnm/RXEbbg6UgBZzKSNyiTqgRMKnF4pFk1kNVHfkCuFKWqU72IpgjzdHIahz9sJ0CRvmGTHoJ6Kf4GXVs=
-X-Received: by 2002:a9d:4716:: with SMTP id a22-v6mr245736otf.242.1538168072259;
- Fri, 28 Sep 2018 13:54:32 -0700 (PDT)
+        bh=eo/Y9cUiTa2FJkL9XobLvlA6LGBEt5Rqn8JaEc6iKEA=;
+        b=Pj7BwgomXxQ3Ed5rQAa/HrgbWU8HKTSfqQOv+BCq2VTVRdQIb3ffftD9xq5HCgoK9K
+         EWBzY8XSXPjc4VfsEqgjFsQ9KPlE7F3U+TkVZl0r65fgdGpQ6wOl/tTlzK6ahVmJ7cnJ
+         LSJDmCxtp/l0QhkkWYzFB34F8CA7Sh6HUkuOXa2b4YeOse/mMMdcUqe+oH6T9L3L9c90
+         TQWGfIyt0MKcDn7LRpiERANzTn+NdaFrvRdfYCgwSbwSPsBUEDjY5E0YqtWGjc/zK/CY
+         032J76a2pwMmbZloPcf8zdShGUdNjR+6BaSgpfkZ63GO23Qwlbqx9s53PZnRHe0+EXES
+         rCRA==
+X-Gm-Message-State: ABuFfoiu9uRkJlx+fMgFFNFaEkVAKathCPMac+7gbHnsRu20ZpeHrfGt
+        eNoVAjhEveBe/rNu32JlMezPrVgvIWc=
+X-Google-Smtp-Source: ACcGV6190zDINXbatmuxt/OYv1nOBsjRYrTNVZbCo3MAh0u9ovKDfF4ruDVHWo81x46/nFiFvRbyjA==
+X-Received: by 2002:a25:f605:: with SMTP id t5-v6mr214597ybd.83.1538168077249;
+        Fri, 28 Sep 2018 13:54:37 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id r12-v6sm2301042ywg.67.2018.09.28.13.54.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 13:54:34 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id k66-v6so3191331ywa.10
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:54:34 -0700 (PDT)
+X-Received: by 2002:a81:2288:: with SMTP id i130-v6mr224963ywi.288.1538168074051;
+ Fri, 28 Sep 2018 13:54:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
- <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
- <20180928164111.i6nba2j6mnegwslw@lakrids.cambridge.arm.com>
- <20180928172340.GA32651@tassilo.jf.intel.com> <20180928174016.i7d24puv7y3jwzf6@lakrids.cambridge.arm.com>
- <20180928204930.GC32651@tassilo.jf.intel.com>
-In-Reply-To: <20180928204930.GC32651@tassilo.jf.intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 28 Sep 2018 22:54:05 +0200
-Message-ID: <CAG48ez16ECnLMNggTZQQJOuPK5ZJ8dLSkGDzvxwK1zVh1BFExw@mail.gmail.com>
-Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tursulin@ursulin.net,
-        kernel list <linux-kernel@vger.kernel.org>,
-        tvrtko.ursulin@linux.intel.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, maddy@linux.vnet.ibm.com,
-        alexey.budankov@linux.intel.com, Kees Cook <keescook@chromium.org>
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 13:54:33
+ -0700 (PDT)
+In-Reply-To: <145fab48-969f-0aed-74e8-ac0a5bb1c79b@tycho.nsa.gov>
+References: <20180925001832.18322-1-keescook@chromium.org> <e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
+ <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
+ <cb49b4c4-a379-7a8e-41a6-6e6a4afb6fe5@tycho.nsa.gov> <145fab48-969f-0aed-74e8-ac0a5bb1c79b@tycho.nsa.gov>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 28 Sep 2018 13:54:33 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKX9VCFqRrchr55_977kOA=1WzdB+YcEZq0y5CPcsp7Zw@mail.gmail.com>
+Message-ID: <CAGXu5jKX9VCFqRrchr55_977kOA=1WzdB+YcEZq0y5CPcsp7Zw@mail.gmail.com>
+Subject: Re: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 28, 2018 at 10:49 PM Andi Kleen <ak@linux.intel.com> wrote:
+On Fri, Sep 28, 2018 at 1:33 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 09/28/2018 04:25 PM, Stephen Smalley wrote:
+>>
+>> On 09/28/2018 04:01 PM, Kees Cook wrote:
+>>>
+>>> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com>
+>>> wrote:
+>>>>
+>>>> On 9/24/2018 5:18 PM, Kees Cook wrote:
+>>>>>
+>>>>> v3:
+>>>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
+>>>>
+>>>>
+>>>> Kees, you can add my
+>>>>
+>>>>          Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
+>>>>
+>>>> for this entire patch set. Thank you for taking this on, it's
+>>>> a significant and important chunk of the LSM infrastructure
+>>>> update.
+>>>
+>>>
+>>> Thanks!
+>>>
+>>> John, you'd looked at this a bit too -- do the results line up with
+>>> your expectations?
+>>>
+>>> Any thoughts from SELinux, TOMOYO, or IMA folks?
+>>
+>>
+>> What's it relative to?  First patch fails for me on current security/next.
 >
-> On Fri, Sep 28, 2018 at 06:40:17PM +0100, Mark Rutland wrote:
-> > On Fri, Sep 28, 2018 at 10:23:40AM -0700, Andi Kleen wrote:
-> > > > There's also been prior discussion on these feature in other contexts
-> > > > (e.g. android expoits resulting from out-of-tree drivers). It would be
-> > > > nice to see those considered.
-> > > >
-> > > > IIRC The conclusion from prior discussions (e.g. [1]) was that we wanted
-> > > > finer granularity of control such that we could limit PMU access to
-> > > > specific users -- e.g. disallow arbitrary android apps from poking *any*
-> > > > PMU, while allowing some more trusted apps/users to uses *some* specific
-> > > > PMUs.
-> > > >
-> > > > e.g. we could add /sys/bus/event_source/devices/${PMU}/device, protect
-> > > > this via the usual fs ACLs, and pass the fd to perf_event_open()
-> > > > somehow. A valid fd would act as a capability, taking precedence over
-> > > > perf_event_paranoid.
-> > >
-> > > That sounds like an orthogonal feature. I don't think the original
-> > > patchkit would need to be hold up for this. It would be something
-> > > in addition.
-> >
-> > I have to say that I disagree -- these controls will have to interact
-> > somehow, and the fewer of them we have, the less complexity we'll have
-> > to deal with longer-term.
->
-> You're proposing to completely redesign perf_event_open.
+> Never mind - user error ;)
 
-And I think it would be a very good redesign. :) I love things that
-use file descriptors to represent capabilities.
+FWIW, it's against v4.19-rc2.
 
-> This new file descriptor argument doesn't exist today so it would
-> need to create a new system call with more arguments
+>> Is there a branch in your repo that has the v3 patches?
+>
+> But still wondered about this one.
 
-Is that true? The first argument is a pointer to a struct that
-contains its own size, so it can be expanded without an ABI break. I
-don't see any reason why you couldn't cram more stuff in there.
+Oops! Sorry, I didn't push to kernel.org. Now pushed!
 
-> (and BTW it would be more than the normal 6 argument limit
-> we have, so actually it couldn't even be a standard sycall)
->
-> Obviously we would need to keep the old system call around
-> for compability, so you would need to worry about this
-> interaction in any case!
->
-> So tying it together doesn't make any sense, because
-> the problem has to be solved separately anyways.
->
-> >
-> > > BTW can't you already do that with the syscall filter? I assume
-> > > the Android sandboxes already use that. Just forbid perf_event_open
-> > > for the apps.
-> >
-> > Note that this was about providing access to *some* PMUs in some cases.
-> >
-> > IIUC, if that can be done today via a syscall filter, the same is true
-> > of per-pmu paranoid settings.
->
-> The difference is that the Android sandboxes likely already doing this
-> and have all the infrastructure, and it's just another rule.
->
-> Requiring syscall filters just to use the PMU on xn system
-> that otherwise doesn't need them would be very odd.
->
-> -Andi
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/ordering-v3
+
+(and "preview" v4 also with Reviewed-bys added and a cosmetic fix.)
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
