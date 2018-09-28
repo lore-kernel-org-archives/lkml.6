@@ -2,186 +2,143 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D9CC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AD1C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 821832168B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821832168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E35EC2174E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:37:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QFXh6uYw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E35EC2174E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbeI1UAk (ORCPT
+        id S1729285AbeI1UBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:00:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60762 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbeI1UAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:00:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 460CC20737; Fri, 28 Sep 2018 15:36:43 +0200 (CEST)
-Received: from localhost (nat-240.udc.es [193.144.61.240])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D26EA206D0;
-        Fri, 28 Sep 2018 15:36:42 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 15:36:42 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera
- Sensor Interface (CSI)
-Message-ID: <20180928133642.3vmjm766cdm2oh6e@flea>
-References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com>
- <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com>
- <14114604.4rraf0qJLU@avalon>
- <20180928102345.r2g342tg5mgcwfw6@paasikivi.fi.intel.com>
- <CAGb2v65YpPRHb5YiGJhC8NX5F5i3+1rW5y6Dq5L+pNN3U_uLdQ@mail.gmail.com>
- <20180928125601.6ye5tvrmh57amvh5@paasikivi.fi.intel.com>
+        Fri, 28 Sep 2018 16:01:05 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34521 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbeI1UBF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:01:05 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180928133715euoutp02d0b16f9ec4ace52a4497406138afc506~Yk9ml1kxQ1716017160euoutp02m
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 13:37:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180928133715euoutp02d0b16f9ec4ace52a4497406138afc506~Yk9ml1kxQ1716017160euoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1538141835;
+        bh=FDYGOMSm8FDpz6EcvrEqCjGSbgWUG4C5PTyozgGeWMY=;
+        h=To:Cc:From:Subject:Date:References:From;
+        b=QFXh6uYwfseKQ3VwNR6aLAercSSs5OJsbIjveXtSItpeeESib2GzfxLh9QVAyUnRa
+         uNbXVV80ueVj3iQkMx5y32uYAucO18v/pGyX+B0zsySd4POsC0D/hGiqFuzbDnXy35
+         N7LS9pWfW15SupH1lsK5vNaDi5v0wQItnCcjLdcA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180928133714eucas1p112322ce36e7bd1f9c8425c59c1a77eb5~Yk9lxTx7P0435904359eucas1p1Y;
+        Fri, 28 Sep 2018 13:37:14 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6B.D4.04806.A8E2EAB5; Fri, 28
+        Sep 2018 14:37:14 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d~Yk9kqY_Ga2124121241eucas1p1b;
+        Fri, 28 Sep 2018 13:37:13 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180928133713eusmtrp26fc4b4ec996c5188ea3013112824a862~Yk9kZU3aM0120601206eusmtrp2n;
+        Fri, 28 Sep 2018 13:37:13 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-51-5bae2e8af23e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A5.6A.04284.98E2EAB5; Fri, 28
+        Sep 2018 14:37:13 +0100 (BST)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180928133713eusmtip297c3da43a5ffc532f88889b6058ff17b~Yk9kDNZOC2726027260eusmtip2g;
+        Fri, 28 Sep 2018 13:37:12 +0000 (GMT)
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
+ non-Exynos platforms
+Date:   Fri, 28 Sep 2018 15:37:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928125601.6ye5tvrmh57amvh5@paasikivi.fi.intel.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsWy7djPc7pdeuuiDZ4tkLfYOGM9q0X/49fM
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZHFo6l5GB3aPy9cuMntsWtXJ5rF5Sb1H35ZVjB6fN8kF
+        sEZx2aSk5mSWpRbp2yVwZfy/fZq5YAZnxbrvx5gbGB+zdzFyckgImEhMaHsCZgsJrGCUmLek
+        vouRC8j+wihx8O4CRgjnM6PE1Z5XbDAdi79/ZIVILGeUWN/4EKrqPaNEw6W5YLNEBDQlrv/9
+        DlbFLPAKKDF7LxNIgk3ASmJi+ypGEFtYIFZi7Zr5zCA2i4CqxK7XW4BsDg5RgQiJ/jPqIGFe
+        AUGJkzOfsIDYzALyEtvfzmEGmSkh0M0usWPqNTaIojKJVx37GCHOc5FontLBDGELS7w6vgXq
+        URmJ/zvnM0E0T2eUePNrKQuEs55RYs2ZY0wQVdYSh49fZAW5ghnohfW79CHCjhJtmyGOkxDg
+        k7jxVhDiID6JSdumQ4V5JTrahCCq1SQ2LNvABrO2a+dKqHM8JCbsOM4KCetYiYstbSwTGBVm
+        IXlzFpI3ZyHcsICReRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgqjn97/jXHYz7/iQd
+        YhTgYFTi4U14tCZaiDWxrLgy9xCjBAezkgjvvuq10UK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+        +bTSooUE0hNLUrNTUwtSi2CyTBycUg2M0pvXyx3+yuvwTMB3TfqDLT3On5IMWL8c9Zl7eVqz
+        0rlz1w4liy6o7DuQM+vYgrPi7RxiwQ9rFzdVMtqUFLaHp07/H8m2/PL8/0umX9596iDrnYIX
+        Jf2yRu+2Wb+cd+JuIKew576nvRPPXbimom7B6v1nc5G9ldfLkJN/d3lzzrFvVJPdnzxntxJL
+        cUaioRZzUXEiAOyBu1kxAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42I5/e/4Pd1OvXXRBoffCVtsnLGe1aL/8Wtm
+        i/PnN7BbbHp8jdXi8q45bBYzzu9jsjg0dS+jA7vH5WsXmT02repk89i8pN6jb8sqRo/Pm+QC
+        WKP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mv7f
+        Ps1cMIOzYt33Y8wNjI/Zuxg5OSQETCQWf//I2sXIxSEksJRR4u3UiYxdjBxACRmJ4+vLIGqE
+        Jf5c62KDqHnLKNG77gwrSEJEQFPi+t/vYM3MAq8YJfZMPM8IkmATsJKY2L4KzBYWiJVYu2Y+
+        M4jNK2AnsWHKGTCbRUBVYtfrLWC2qECExK2HHSwQNYISJ2c+AbOZBdQl/sy7xAxhy0tsfzuH
+        eQIj/ywkZbOQlM1CUraAkXkVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYExsO/Zz8w7GSxuD
+        DzEKcDAq8fAmPFoTLcSaWFZcmXuIUYKDWUmEd1/12mgh3pTEyqrUovz4otKc1OJDjKZAh09k
+        lhJNzgfGa15JvKGpobmFpaG5sbmxmYWSOO95g8ooIYH0xJLU7NTUgtQimD4mDk6pBkbutqAT
+        RuafgyYs0G34kTb31A2V7teiJx3OvWs8ILBX4MKqOenChhNPCMx+zaMiXSTOXc2xsHbZ9oZP
+        q2Y5KHeIHG4/veElm+LGhU8i4nesUF0f/v3S/3dP5GV/p7I1C/++Yi1W0uwYP7t/zvoptf/O
+        WaY7OVmHiC49uk+tPfnXnC01k/bcO5OvxFKckWioxVxUnAgAhSnUtJ8CAAA=
+Message-Id: <20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d~Yk9kqY_Ga2124121241eucas1p1b@eucas1p1.samsung.com>
+X-CMS-MailID: 20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d
+References: <CGME20180928133713eucas1p16a15a68b61de9aa3310737f7fd77d20d@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+"Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
+config option) is not working properly (debug messages are not
+displayed after resume) on Exynos platforms because GPIOs restore
+code is not implemented.
 
-Thanks for taking the time to review.
+Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
+SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
 
-On Fri, Sep 28, 2018 at 03:56:01PM +0300, Sakari Ailus wrote:
-> Hi Chen-Yu,
-> 
-> On Fri, Sep 28, 2018 at 07:10:58PM +0800, Chen-Yu Tsai wrote:
-> > On Fri, Sep 28, 2018 at 6:23 PM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Laurent,
-> > >
-> > > On Fri, Sep 28, 2018 at 12:45:12PM +0300, Laurent Pinchart wrote:
-> > > > Hi Sakari,
-> > > >
-> > > > On Friday, 28 September 2018 12:38:33 EEST Sakari Ailus wrote:
-> > > > > On Wed, Sep 26, 2018 at 04:40:04PM +0800, Yong Deng wrote:
-> > > > > > Add binding documentation for Allwinner V3s CSI.
-> > > > > >
-> > > > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > >
-> > > > > I know... but I have a few more comments.
-> > > > >
-> > > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> > > > > > ---
-> > > > > >
-> > > > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++
-> > > > > >  1 file changed, 59 insertions(+)
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> > > > > > 100644
-> > > > > > index 000000000000..2ff47a9507a6
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > > @@ -0,0 +1,59 @@
-> > > > > > +Allwinner V3s Camera Sensor Interface
-> > > > > > +-------------------------------------
-> > > > > > +
-> > > > > > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> > > > > > +interface and CSI1 is used for parallel interface.
-> > > > > > +
-> > > > > > +Required properties:
-> > > > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > > > > > +  - reg: base address and size of the memory-mapped region.
-> > > > > > +  - interrupts: interrupt associated to this IP
-> > > > > > +  - clocks: phandles to the clocks feeding the CSI
-> > > > > > +    * bus: the CSI interface clock
-> > > > > > +    * mod: the CSI module clock
-> > > > > > +    * ram: the CSI DRAM clock
-> > > > > > +  - clock-names: the clock names mentioned above
-> > > > > > +  - resets: phandles to the reset line driving the CSI
-> > > > > > +
-> > > > > > +Each CSI node should contain one 'port' child node with one child
-> > > > > > 'endpoint' +node, according to the bindings defined in
-> > > > > > +Documentation/devicetree/bindings/media/video-interfaces.txt. As
-> > > > > > mentioned
-> > > > > > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
-> > > > > > or +Bt656 for CSI1.
-> > > > >
-> > > > > Which port represents CSI0 and which one is CSI1? That needs to be
-> > > > > documented.
-> > > >
-> > > > There are two CSI devices, named CSI0 and CSI1, with one port each. The CSI0
-> > > > device supports CSI-2 only, and the CSI1 device parallel (BT.601 or BT.656)
-> > > > only.
-> > > >
-> > > > > > +
-> > > > > > +Endpoint node properties for CSI1
-> > > > >
-> > > > > How about CSI0? I'd expect at least data-lanes, and clock-lanes as well if
-> > > > > the hardware supports lane mapping.
-> > > >
-> > > > I enquired about that too. As far as I understand, CSI0 isn't supported yet in
-> > > > the driver due to lack of documentation and lack of open-source vendor-
-> > > > provided source code. While DT bindings are not tied to driver
-> > > > implementations, it's not the best idea to design DT bindings without at least
-> > > > one working implementation to test them. I thus proposed just listing CSI0 as
-> > > > being unsupported for now.
-> > >
-> > > Ack.
-> > >
-> > > We should still define which receiver corresponds to a given port. Probably
-> > > 1 for CSI1 would make sense, in order to avoid changing the order the
-> > > hardware already uses. 0 doesn't need to be documented no IMO.
-> > >
-> > > What do you think?
-> > 
-> > AFAICT it would be a completely seperate node, since they have different address
-> > spaces, clocks and reset controls. So there's no possibility of confusion.
-> > 
-> > According to Yong, CSI0 is tied internally to some unknown MIPI CSI2-receiver,
-> > which is the undocumented part. CSI1 has its parallel data pins exposed to the
-> > outside.
-> 
-> Thanks for clearing up the confusion. If these are truly different kinds of
-> devices, then don't they also deserve different compatible strings? And
-> possibly also different DT binding documentation in a separate file.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/plat-samsung/Kconfig |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-It can, and will if it's ever supported, but I'm not quite sure what's
-confusing you about those bindings. It never claims to support CSI0,
-and we will only add a new document and compatible and whatever is
-needed when we'll have the need for it?
+Index: b/arch/arm/plat-samsung/Kconfig
+===================================================================
+--- a/arch/arm/plat-samsung/Kconfig	2018-09-28 15:20:06.041911426 +0200
++++ b/arch/arm/plat-samsung/Kconfig	2018-09-28 15:20:06.037911426 +0200
+@@ -238,7 +238,8 @@ comment "Power management"
+ 
+ config SAMSUNG_PM_DEBUG
+ 	bool "Samsung PM Suspend debug"
+-	depends on PM && DEBUG_KERNEL
++	depends on DEBUG_KERNEL
++	depends on PM && (PLAT_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210)
+ 	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
+ 	help
+ 	  Say Y here if you want verbose debugging from the PM Suspend and
 
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
