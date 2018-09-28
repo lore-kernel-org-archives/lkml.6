@@ -2,136 +2,440 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8FCC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE03C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A35AB204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 968E72082C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 15:47:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="UcCnOtMR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35AB204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GNv7J3wZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 968E72082C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbeI1WLt (ORCPT
+        id S1729645AbeI1WL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:11:49 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46392 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbeI1WLr (ORCPT
+        Fri, 28 Sep 2018 18:11:57 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53951 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729518AbeI1WL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:11:47 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d8-v6so4574536pfo.13
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 08:47:26 -0700 (PDT)
+        Fri, 28 Sep 2018 18:11:57 -0400
+Received: by mail-it1-f195.google.com with SMTP id q70-v6so3018916itb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 08:47:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CTlt9tT/JqYRyTbWztXKvohMtR5jImpfi8VGfxIvZW8=;
-        b=UcCnOtMRqvssVMt0J1bg/r1YuZKhuHoHeazQCj78rDNt82wdQAA1f29t89QUliBlHp
-         LGxU7vzJAsqHxtamt5OsTvkcqo3LK8z4KSdoCXwnqc4QzxDqFi3fg/85qV2N/J0yOF5Y
-         f/HGwuVLF0UgwuZoqnO5mL8TwrBoZjgtMrQpVT9uU16s/1V2jQLc2gh72ekU9XMvTgzS
-         rcQ51etM7V4SlpdVS/8q1vZjv2562v6LJJ83231bhP2kvDh733KHfGCwO9adfmI3aZN6
-         hGHwoYX+VRaZnMf7YiBskTUbBDHM0pSfj3rclVZu2G3R1FEvtljlnJFIrh3KJryatiNz
-         yaew==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cuv0RT5+UtJhg7bo8TnXknBMqyF1RtLChdX9Q8z3dK8=;
+        b=GNv7J3wZ7nJcXo9nLl8ptjITViiXcySAFFbzO6aQHkrBmYODfkMRtTFkv8/U5/uQzw
+         Nvvgt9ygEoKpoc9Vi9+QWd18rqiYN6kAP8Xet2Ez/F9vva1iDK8rD8fKKRPjTPyLBl5S
+         VXKyJEmCpfam5M0FP7vd5sMQbCaTAQKbqFv/8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=CTlt9tT/JqYRyTbWztXKvohMtR5jImpfi8VGfxIvZW8=;
-        b=F10dmKH2mQeeZkN/aREfr2VbqXRjM1ZZm/mlYxO2GtuRXYUDhVIhe6yu6RRcdmBJuL
-         gTjqcBWBrz9VIee63D2PRJFKMZ/J4NABTNjaxCeE9rOu82pBYF0rp32bDCd/K2qkNyV2
-         eqmk6KAbvJqh1JHVijQ8MsHQhL1hc/4umBn6SDFNu+UngynLi5YhORF1UjE1JzdHYaiN
-         1cG9tRWlFWFB4O+s7F4SHSRm47Hyt++UyU50e+I2dPn9c8NS2d3+kTra+GPQDfcTqhIP
-         Mej43UhRlvFJLrX+r+BgYaddDjUPIIusv+pLpcE9jMehhLcmzA/lxTkQTwudE2AglbSV
-         QILw==
-X-Gm-Message-State: ABuFfohb4ePipp+XVgFLqK7//ZixSJv1YMXz+uvUn2NjE3F/sc2BeXwe
-        rZnsxkiq7egtJjHvm66AXmzSTA==
-X-Google-Smtp-Source: ACcGV63ccX2hAgsXZVIyUvqe1G+C/MtfZ0/eUcq7HctgqcH7kctGIfS5oPPveUq/n/w8AkeaEWAeGg==
-X-Received: by 2002:a63:ec4b:: with SMTP id r11-v6mr15748200pgj.295.1538149646181;
-        Fri, 28 Sep 2018 08:47:26 -0700 (PDT)
-Received: from localhost.localdomain ([128.107.241.180])
-        by smtp.gmail.com with ESMTPSA id c69-v6sm321532pfg.2.2018.09.28.08.47.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 08:47:25 -0700 (PDT)
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: [PATCH 3/3] seccomp: introduce read protection for struct seccomp
-Date:   Fri, 28 Sep 2018 09:46:48 -0600
-Message-Id: <20180928154648.6320-3-tycho@tycho.ws>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180928154648.6320-1-tycho@tycho.ws>
-References: <20180928154648.6320-1-tycho@tycho.ws>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cuv0RT5+UtJhg7bo8TnXknBMqyF1RtLChdX9Q8z3dK8=;
+        b=Y6O17oLfYja/lDiY4Vqfvn3/y0d+2NGhKEt8UDtTIp7SdUvCmVodXLCqmQKB021+BK
+         29jw5KFZlPYXLEDJgZtz63zA4B97qgqiwGKYI18IGIQ1CKCAvbOrjO6nZvdMurIW4i1J
+         B8EZ+2L4gapv6hdRNWOP8Q26ieSt9f2zjak1GUqn9hsE7db0PYPqExNInWwgw9/8NzH/
+         VlrNu/wrU755+pT3Wx2JnA30x2OaTzpWBDTQxfoF7oZ4rqhZ4N5izASFnDA++Ez9tVa8
+         NUJl/kCDS7/xKEyMWJ4SiK7fh0cGjH9+5BJ0lIsKX8E062we6BaNtJCe5tDVz0DNiyW3
+         8jxw==
+X-Gm-Message-State: ABuFfoiXmSAoR+uBcuzKivL+y686QNQiASgMN366W6au+NpFOPAF6+Ab
+        DX22vXhdft+H4N/5wJDTlkhHefFYGYUB3Ftct3V8+g==
+X-Google-Smtp-Source: ACcGV630P0mw2b9xA2WQt85qfkL5XdvG7TIDyvZ2mURX5bSHT2QOZifp3YFYNGs5n8oI3inv/GVU/1x08yabKgoFAeU=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr1990161ite.123.1538149654750;
+ Fri, 28 Sep 2018 08:47:34 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 08:47:33
+ -0700 (PDT)
+In-Reply-To: <20180925145622.29959-5-Jason@zx2c4.com>
+References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-5-Jason@zx2c4.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 28 Sep 2018 17:47:33 +0200
+Message-ID: <CAKv+Gu9aOiYdEzHHrHFHUFK=hNfeS=zEsvMe9OWD8hEdAYkffg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 04/23] zinc: ChaCha20 x86_64 implementation
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Andy Polyakov <appro@openssl.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Jann pointed out, there is a race between SECCOMP_FILTER_FLAG_TSYNC and
-the ptrace code that can inspect a filter of another process. Let's
-introduce read locking into the two ptrace accesses so that we don't race.
+On 25 September 2018 at 16:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> This provides SSSE3, AVX-2, AVX-512F, and AVX-512VL implementations for
+> ChaCha20. The AVX-512F implementation is disabled on Skylake, due to
+> throttling, and the VL ymm implementation is used instead. These come
+> from Andy Polyakov's implementation, with the following modifications
+> from Samuel Neves:
+>
+>   - Some cosmetic changes, like renaming labels to .Lname, constants,
+>     and other Linux conventions.
+>
+>   - CPU feature checking is done in C by the glue code, so that has been
+>     removed from the assembly.
+>
+>   - Eliminate translating certain instructions, such as pshufb, palignr,
+>     vprotd, etc, to .byte directives. This is meant for compatibility
+>     with ancient toolchains, but presumably it is unnecessary here,
+>     since the build system already does checks on what GNU as can
+>     assemble.
+>
+>   - When aligning the stack, the original code was saving %rsp to %r9.
+>     To keep objtool happy, we use instead the DRAP idiom to save %rsp
+>     to %r10:
+>
+>       leaq    8(%rsp),%r10
+>       ... code here ...
+>       leaq    -8(%r10),%rsp
+>
+>   - The original code assumes the stack comes aligned to 16 bytes. This
+>     is not necessarily the case, and to avoid crashes,
+>     `andq $-alignment, %rsp` was added in the prolog of a few functions.
+>
+>   - The original hardcodes returns as .byte 0xf3,0xc3, aka "rep ret".
+>     We replace this by "ret". "rep ret" was meant to help with AMD K8
+>     chips, cf. http://repzret.org/p/repzret. It makes no sense to
+>     continue to use this kludge for code that won't even run on ancient
+>     AMD chips.
+>
+> While this is CRYPTOGAMS code, the originating code for this happens to
+> be the same as OpenSSL's commit cded951378069a478391843f5f8653c1eb5128da
+>
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-Reported-by: Jann Horn <jannh@google.com>
-CC: Kees Cook <keescook@chromium.org>
-CC: Andy Lutomirski <luto@amacapital.net>
----
- include/linux/seccomp.h |  4 ++--
- kernel/seccomp.c        | 10 ++++++++++
- 2 files changed, 12 insertions(+), 2 deletions(-)
+I'd still prefer the kernel side changes to be presented as a separate
+followup patch (preferably based on the .pl but I understand that is
+more difficult with x86 than with ARM code)
 
-diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
-index 8429bdda947a..30b27e898162 100644
---- a/include/linux/seccomp.h
-+++ b/include/linux/seccomp.h
-@@ -22,8 +22,8 @@ struct seccomp_filter;
-  * @filter: must always point to a valid seccomp-filter or NULL as it is
-  *          accessed without locking during system call entry.
-  *
-- *          @filter must only be accessed from the context of current as there
-- *          is no read locking.
-+ *          @filter is read-protected by task->signal->cred_guard_mutex when
-+ *          outside of current context.
-  */
- struct seccomp {
- 	int mode;
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index ef80dd19f268..f65d47650ac1 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -1042,7 +1042,12 @@ int seccomp_get_filter(struct task_struct *task, unsigned long filter_off,
- 		return -EACCES;
- 	}
- 
-+	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
-+	if (ret < 0)
-+		return ret;
-+
- 	filter = get_nth_filter(task, filter_off);
-+	mutex_unlock(&task->signal->cred_guard_mutex);
- 	if (IS_ERR(filter))
- 		return PTR_ERR(filter);
- 
-@@ -1088,7 +1093,12 @@ int seccomp_get_metadata(struct task_struct *task,
- 	if (copy_from_user(&kmd.filter_off, data, sizeof(kmd.filter_off)))
- 		return -EFAULT;
- 
-+	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
-+	if (ret < 0)
-+		return ret;
-+
- 	filter = get_nth_filter(task, kmd.filter_off);
-+	mutex_unlock(&task->signal->cred_guard_mutex);
- 	if (IS_ERR(filter))
- 		return PTR_ERR(filter);
- 
--- 
-2.17.1
+> Cycle counts on a Core i7 6700HQ using the AVX-2 codepath:
+>
+> size    old     new
+> ----    ----    ----
+> 0       62      52
+> 16      414     376
+> 32      410     400
+> 48      414     422
+> 64      362     356
+> 80      714     666
+> 96      714     700
+> 112     712     718
+> 128     692     646
+> 144     1042    674
+> 160     1042    694
+> 176     1042    726
+> 192     1018    650
+> 208     1366    686
+> 224     1366    696
+> 240     1366    722
+> 256     640     656
+> 272     988     1246
+> 288     988     1276
+> 304     992     1296
+> 320     972     1222
+> 336     1318    1256
+> 352     1318    1276
+> 368     1316    1294
+> 384     1294    1218
+> 400     1642    1258
+> 416     1642    1282
+> 432     1642    1302
+> 448     1628    1224
+> 464     1970    1258
+> 480     1970    1280
+> 496     1970    1300
+> 512     656     676
+> 528     1010    1290
+> 544     1010    1306
+> 560     1010    1332
+> 576     986     1254
+> 592     1340    1284
+> 608     1334    1310
+> 624     1340    1334
+> 640     1314    1254
+> 656     1664    1282
+> 672     1674    1306
+> 688     1662    1336
+> 704     1638    1250
+> 720     1992    1292
+> 736     1994    1308
+> 752     1988    1334
+> 768     1252    1254
+> 784     1596    1290
+> 800     1596    1314
+> 816     1596    1330
+> 832     1576    1256
+> 848     1922    1286
+> 864     1922    1314
+> 880     1926    1338
+> 896     1898    1258
+> 912     2248    1288
+> 928     2248    1320
+> 944     2248    1338
+> 960     2226    1268
+> 976     2574    1288
+> 992     2576    1312
+> 1008    2574    1340
+>
+> Cycle counts on a Xeon Gold 5120 using the AVX-512 codepath:
+>
+> size    old     new
+> ----    ----    ----
+> 0       64      54
+> 16      386     372
+> 32      388     396
+> 48      388     420
+> 64      366     350
+> 80      708     666
+> 96      708     692
+> 112     706     736
+> 128     692     648
+> 144     1036    682
+> 160     1036    708
+> 176     1036    730
+> 192     1016    658
+> 208     1360    684
+> 224     1362    708
+> 240     1360    732
+> 256     644     500
+> 272     990     526
+> 288     988     556
+> 304     988     576
+> 320     972     500
+> 336     1314    532
+> 352     1316    558
+> 368     1318    578
+> 384     1308    506
+> 400     1644    532
+> 416     1644    556
+> 432     1644    594
+> 448     1624    508
+> 464     1970    534
+> 480     1970    556
+> 496     1968    582
+> 512     660     624
+> 528     1016    682
+> 544     1016    702
+> 560     1018    728
+> 576     998     654
+> 592     1344    680
+> 608     1344    708
+> 624     1344    730
+> 640     1326    654
+> 656     1670    686
+> 672     1670    708
+> 688     1670    732
+> 704     1652    658
+> 720     1998    682
+> 736     1998    710
+> 752     1996    734
+> 768     1256    662
+> 784     1606    688
+> 800     1606    714
+> 816     1606    736
+> 832     1584    660
+> 848     1948    688
+> 864     1950    714
+> 880     1948    736
+> 896     1912    688
+> 912     2258    718
+> 928     2258    744
+> 944     2256    768
+> 960     2238    692
+> 976     2584    718
+> 992     2584    744
+> 1008    2584    770
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> Signed-off-by: Samuel Neves <sneves@dei.uc.pt>
 
+Please drop this SOB line: SOB is not about (co-)authorship but about
+who handled the patch on its way into mainline. You are sending the
+patch so your SOB should come last.
+
+> Co-developed-by: Samuel Neves <sneves@dei.uc.pt>
+> Based-on-code-from: Andy Polyakov <appro@openssl.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Greg KH <gregkh@linuxfoundation.org>
+> Cc: Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+> Cc: Andy Polyakov <appro@openssl.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: x86@kernel.org
+> ---
+>  lib/zinc/Makefile                        |    1 +
+>  lib/zinc/chacha20/chacha20-x86_64-glue.h |  105 +
+>  lib/zinc/chacha20/chacha20-x86_64.S      | 2632 ++++++++++++++++++++++
+>  lib/zinc/chacha20/chacha20.c             |    4 +-
+>  4 files changed, 2741 insertions(+), 1 deletion(-)
+>  create mode 100644 lib/zinc/chacha20/chacha20-x86_64-glue.h
+>  create mode 100644 lib/zinc/chacha20/chacha20-x86_64.S
+>
+> diff --git a/lib/zinc/Makefile b/lib/zinc/Makefile
+> index 3d80144d55a6..223a0816c918 100644
+> --- a/lib/zinc/Makefile
+> +++ b/lib/zinc/Makefile
+> @@ -3,4 +3,5 @@ ccflags-y += -D'pr_fmt(fmt)="zinc: " fmt'
+>  ccflags-$(CONFIG_ZINC_DEBUG) += -DDEBUG
+>
+>  zinc_chacha20-y := chacha20/chacha20.o
+> +zinc_chacha20-$(CONFIG_ZINC_ARCH_X86_64) += chacha20/chacha20-x86_64.o
+>  obj-$(CONFIG_ZINC_CHACHA20) += zinc_chacha20.o
+> diff --git a/lib/zinc/chacha20/chacha20-x86_64-glue.h b/lib/zinc/chacha20/chacha20-x86_64-glue.h
+> new file mode 100644
+> index 000000000000..9b47001661a6
+> --- /dev/null
+> +++ b/lib/zinc/chacha20/chacha20-x86_64-glue.h
+> @@ -0,0 +1,105 @@
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+> +/*
+> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+> + */
+> +
+> +#include <asm/fpu/api.h>
+> +#include <asm/cpufeature.h>
+> +#include <asm/processor.h>
+> +#include <asm/intel-family.h>
+> +
+> +#ifdef CONFIG_AS_SSSE3
+> +asmlinkage void hchacha20_ssse3(u32 *derived_key, const u8 *nonce,
+> +                               const u8 *key);
+> +asmlinkage void chacha20_ssse3(u8 *out, const u8 *in, const size_t len,
+> +                              const u32 key[8], const u32 counter[4]);
+> +#endif
+> +#ifdef CONFIG_AS_AVX2
+> +asmlinkage void chacha20_avx2(u8 *out, const u8 *in, const size_t len,
+> +                             const u32 key[8], const u32 counter[4]);
+> +#endif
+> +#ifdef CONFIG_AS_AVX512
+> +asmlinkage void chacha20_avx512(u8 *out, const u8 *in, const size_t len,
+> +                               const u32 key[8], const u32 counter[4]);
+> +asmlinkage void chacha20_avx512vl(u8 *out, const u8 *in, const size_t len,
+> +                                 const u32 key[8], const u32 counter[4]);
+> +#endif
+> +
+
+You can drop the #ifdefs above ...
+
+> +static bool chacha20_use_ssse3 __ro_after_init;
+> +static bool chacha20_use_avx2 __ro_after_init;
+> +static bool chacha20_use_avx512 __ro_after_init;
+> +static bool chacha20_use_avx512vl __ro_after_init;
+> +
+> +static void __init chacha20_fpu_init(void)
+> +{
+> +       chacha20_use_ssse3 = boot_cpu_has(X86_FEATURE_SSSE3);
+> +       chacha20_use_avx2 =
+> +               boot_cpu_has(X86_FEATURE_AVX) &&
+> +               boot_cpu_has(X86_FEATURE_AVX2) &&
+> +               cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM, NULL);
+> +       chacha20_use_avx512 =
+> +               boot_cpu_has(X86_FEATURE_AVX) &&
+> +               boot_cpu_has(X86_FEATURE_AVX2) &&
+> +               boot_cpu_has(X86_FEATURE_AVX512F) &&
+> +               cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM |
+> +                                 XFEATURE_MASK_AVX512, NULL) &&
+> +               /* Skylake downclocks unacceptably much when using zmm. */
+> +               boot_cpu_data.x86_model != INTEL_FAM6_SKYLAKE_X;
+> +       chacha20_use_avx512vl =
+> +               boot_cpu_has(X86_FEATURE_AVX) &&
+> +               boot_cpu_has(X86_FEATURE_AVX2) &&
+> +               boot_cpu_has(X86_FEATURE_AVX512F) &&
+> +               boot_cpu_has(X86_FEATURE_AVX512VL) &&
+> +               cpu_has_xfeatures(XFEATURE_MASK_SSE | XFEATURE_MASK_YMM |
+> +                                 XFEATURE_MASK_AVX512, NULL);
+> +}
+> +
+> +static inline bool chacha20_arch(struct chacha20_ctx *state, u8 *dst,
+> +                                const u8 *src, const size_t len,
+> +                                simd_context_t *simd_context)
+> +{
+> +       if (!chacha20_use_ssse3 || len <= CHACHA20_BLOCK_SIZE ||
+> +           !simd_use(simd_context))
+> +               return false;
+> +
+> +#ifdef CONFIG_AS_AVX512
+
+... and use IS_ENABLED(CONFIG_AS_AVX512) here inside the if().
+
+> +       if (chacha20_use_avx512 && len >= CHACHA20_BLOCK_SIZE * 8) {
+> +               chacha20_avx512(dst, src, len, state->key, state->counter);
+> +               goto success;
+> +       }
+> +       if (chacha20_use_avx512vl && len >= CHACHA20_BLOCK_SIZE * 4) {
+> +               chacha20_avx512vl(dst, src, len, state->key, state->counter);
+> +               goto success;
+> +       }
+> +#endif
+> +#ifdef CONFIG_AS_AVX2
+> +       if (chacha20_use_avx2 && len >= CHACHA20_BLOCK_SIZE * 4) {
+> +               chacha20_avx2(dst, src, len, state->key, state->counter);
+> +               goto success;
+> +       }
+> +#endif
+> +#ifdef CONFIG_AS_SSSE3
+> +       if (chacha20_use_ssse3) {
+> +               chacha20_ssse3(dst, src, len, state->key, state->counter);
+> +               goto success;
+> +       }
+> +#endif
+> +       return false;
+> +success:
+> +       state->counter[0] += (len + 63) / 64;
+> +       return true;
+> +}
+> +
+> +static inline bool hchacha20_arch(u32 derived_key[CHACHA20_KEY_WORDS],
+> +                                 const u8 nonce[HCHACHA20_NONCE_SIZE],
+> +                                 const u8 key[HCHACHA20_KEY_SIZE],
+> +                                 simd_context_t *simd_context)
+> +{
+> +#if defined(CONFIG_AS_SSSE3)
+> +       if (chacha20_use_ssse3 && simd_use(simd_context)) {
+> +               hchacha20_ssse3(derived_key, nonce, key);
+> +               return true;
+> +       }
+> +#endif
+> +       return false;
+> +}
+...
+> diff --git a/lib/zinc/chacha20/chacha20.c b/lib/zinc/chacha20/chacha20.c
+> index c82d9fc71f21..4354b874a6a5 100644
+> --- a/lib/zinc/chacha20/chacha20.c
+> +++ b/lib/zinc/chacha20/chacha20.c
+> @@ -14,7 +14,9 @@
+>  #include <linux/init.h>
+>  #include <crypto/algapi.h>
+>
+> -#ifndef HAVE_CHACHA20_ARCH_IMPLEMENTATION
+
+As I mentioned in reply to the previous patch, please get rid of this
+CPP symbol ^^^
+
+> +#if defined(CONFIG_ZINC_ARCH_X86_64)
+> +#include "chacha20-x86_64-glue.h"
+> +#else
+>  void __init chacha20_fpu_init(void)
+>  {
+>  }
+> --
+> 2.19.0
+>
