@@ -2,62 +2,67 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 008B2C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED70C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2307206B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:47:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2360E2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 23:47:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkOqPqY6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2307206B8
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TTZVld6g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2360E2083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeI2GNP (ORCPT
+        id S1727463AbeI2GNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 02:13:15 -0400
-Received: from mail-it1-f201.google.com ([209.85.166.201]:53918 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbeI2GNP (ORCPT
+        Sat, 29 Sep 2018 02:13:20 -0400
+Received: from mail-io1-f74.google.com ([209.85.166.74]:50458 "EHLO
+        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbeI2GNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 02:13:15 -0400
-Received: by mail-it1-f201.google.com with SMTP id e21-v6so3032476itc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:47:08 -0700 (PDT)
+        Sat, 29 Sep 2018 02:13:19 -0400
+Received: by mail-io1-f74.google.com with SMTP id z25-v6so7406811iog.17
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 16:47:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=WYhEGWFlZp8I00fOpL04YdCTY1rewGNsa3hhi7x38fI=;
-        b=hkOqPqY6CorgJ4JDlZP7VJpetlKZAbmVH/w7SZ6IhA/I7zCiTHAi9LiNPCyTb9oI2s
-         lxjGcJc8CFQ0B0zwd2Q7/33qzCZM7PBHlvqnxnlEPkNxRRYcgTs1Hrta3I6CxaDMqjBN
-         bJ5sj89LlhilWwQMUbOTRYHPpMLAVBVPZ88Qcpn/qdiy4kH7TiyNWQVy7c732S6sp1t7
-         tU95KAeoyjADInl+7dGjH9uJZ/GUgC96A2WaQZfrhSYlfjb4h4YZoMXCKXvnlt5Zv8S5
-         iZUcywCuJCfM9505uXd0xnWxiTBIl020EjuB7B5dyPTHvxOnHgSVm3ebPdNvwfujly/2
-         ywWA==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=VGBPC0+5MfgBeTwcQV7UNeHMjUpPM219+NLcZ6XjGzQ=;
+        b=TTZVld6gH0rnDFS07wFl5BIabshz9wyHmQX1fIo59S4A+1ZXrwnvYEpoZEVoGLJKwN
+         h7+ESC88kRrkaSfL3Dc0xlaE71v5ySVTtrWmUlM3xyOqs0HRhtLL7Gfne+VRIzN7b628
+         XVO4ud+Oo9zx3HNKIhBgGDm9YHyFduIHOK1+5f0BpDYT5p5QLr6xp0fDzoi+QtZ9bLWs
+         YtjFDVFlhdd7WGTPJ2Adl9Gf04C2I7a8Ic6ggHu/tAY7UPDIyoGqz9eI3e1ndnWGGoh0
+         Mru1l5vNV/mM+GaC4xgTmltnav6sAlj2zH++dtep0hkYnXIBuhEMdcFfoYTNx2KhaUYx
+         M6yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=WYhEGWFlZp8I00fOpL04YdCTY1rewGNsa3hhi7x38fI=;
-        b=qz+bKYZitsRO4SV+GoFEDq0/LcezNOvlQueG9XxwMI/Wm8gdzpdvsvJB2mEWvqhFHF
-         ipr9uuNE1KWgvjFgISwvDzKO0p4gyPVo2EAUApEWaarZKjOaPQgFQc9S2u8B7fReiaO4
-         s6Ryk9qsGu/8Odl4qjWZ7sy00AUB161JbA6dgMs1O7o80f6SnI5UjBS0YwYdAXQ7glMW
-         Fznvu3L8f/GJY0zVErC6EI+DqAdIT1Ohzf9uf3G7jUqqb7Q8Go8eipD8GQSdwMwj16rH
-         zbwzswP2hUTxf6y1FLW/iskCmXxrJwsyPmgsyiDKlRVv02dpvy78Je8Kz2lGIsiVyBrm
-         bOvQ==
-X-Gm-Message-State: ABuFfoj5NGQZd7ZR2iMIGT+BnI7MKsqe4IvCfRYNtJOAn6I5rB3D4Fbm
-        1rYBxcI+S+7cK4Dgp5iOqsU89cUgF7c=
-X-Google-Smtp-Source: ACcGV61g7rrQxKfWIvtPXvSVn+MwINlXGHoXUpuAaq9awaH6fZPuEyNrvr+s465Yw1+yZufP2gnFDzqq0Oo=
-X-Received: by 2002:a24:6794:: with SMTP id u142-v6mr197776itc.9.1538178428213;
- Fri, 28 Sep 2018 16:47:08 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 16:47:01 -0700
-Message-Id: <20180928234703.15970-1-badhri@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=VGBPC0+5MfgBeTwcQV7UNeHMjUpPM219+NLcZ6XjGzQ=;
+        b=ZGCMFPPoH9fSMBA0OnJPG7RF18kMYpTlGYUjr7pPhEjeDdaTQS5xaZmqli3GeI2dqi
+         Wz16meDYuvsbTTpVzeHanlqF6hbFjAQYWORTjfP92jkT8Pa0LzTyxWX/3rRjwQfqYHwC
+         0CS4jue0oZxUgVSjKbitRMPkSEkwma5gP+boZZnpHsLvkcoHlAeZIAF82DppP6wDZex7
+         Umy3p68P3HxKoGvhk+Ix1qm0T0CPSWvzcqlY8L/AUt9c8qHF5YZxU6uas9keuPv46ldQ
+         KCpHmyBKX1XlomQt8qD3S3juJqD3FoKfEIe45OsnzATReiBS0zbjigvVAo8gyGW9eXFB
+         NPMw==
+X-Gm-Message-State: ABuFfoh1C07T1z5fjPuEVdEciBmWdapyuHLT2wzCp5QSqKTByHqc2J9U
+        IJwYxoeCksGE47bJc7phF9orva2jxkk=
+X-Google-Smtp-Source: ACcGV61EoIXoXQ3l/UoDyCC1vOcEIp5oOqNhIgZlbcfMkBRfrbWhNhCXjp8uaFVRUKwFqpCELVuJmRi1MC8=
+X-Received: by 2002:a24:2414:: with SMTP id f20-v6mr3495212ita.0.1538178433353;
+ Fri, 28 Sep 2018 16:47:13 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 16:47:02 -0700
+In-Reply-To: <20180928234703.15970-1-badhri@google.com>
+Message-Id: <20180928234703.15970-2-badhri@google.com>
 Mime-Version: 1.0
+References: <20180928234703.15970-1-badhri@google.com>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
-Subject: [PATCH 1/3] [PATCH 1/3] dt-bindings: connector: Add self-powered property
+Subject: [PATCH 2/3] [PATCH v2 2/3] usb: typec: tcpm: Do not disconnect link
+ for self powered devices
 From:   Badhri Jagan Sridharan <badhri@google.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -75,6 +80,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+During HARD_RESET the data link is disconnected.
+For self powered device, the spec is advising against doing that.
+
 From USB_PD_R3_0
 7.1.5 Response to Hard Resets
 Device operation during and after a Hard Reset is defined as follows:
@@ -83,30 +91,96 @@ Self-powered devices Should Not disconnect from USB during a Hard Reset
 Bus powered devices will disconnect from USB during a Hard Reset due to the
 loss of their power source.
 
-Therefore it is necessary to know whether the port belongs to
-a device which is self powered or bus powered. This change
-adds "self-powered" flag to the connector class which present indicates
-that the port belongs to a device that is self powered. Else it is
-bus powered usb device.
+Tackle this by letting TCPM know whether the device is self or bus powered.
+
+This overcomes unnecessary port disconnections from hard reset.
+Also, speeds up the enumeration time when connected to Type-A ports.
 
 Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
----
- Documentation/devicetree/bindings/connector/usb-connector.txt | 2 ++
- 1 file changed, 2 insertions(+)
+---------
+Version history:
 
-diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-index 8855bfcfd7785..8f7a36ae29bf7 100644
---- a/Documentation/devicetree/bindings/connector/usb-connector.txt
-+++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-@@ -14,6 +14,8 @@ Optional properties:
- - label: symbolic name for the connector,
- - type: size of the connector, should be specified in case of USB-A, USB-B
-   non-fullsize connectors: "mini", "micro".
-+- self-powered: Set this property if the usb device that has its own power
-+  source.
+V2:
+Based on feedback from heikki.krogerus@linux.intel.com
+- self_powered added to the struct tcpm_port which is populated from
+  a. "connector" node of the device tree in tcpm_fw_get_caps()
+  b. "self_powered" node of the tcpc_config in tcpm_copy_caps
+
+Based on feedbase from linux@roeck-us.net
+- Code was refactored
+- SRC_HARD_RESET_VBUS_OFF sets the link state to false based
+  on self_powered flag
+
+V1 located here:
+https://lkml.org/lkml/2018/9/13/94
+---
+ drivers/usb/typec/tcpm.c | 12 ++++++++++--
+ include/linux/usb/tcpm.h |  1 +
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+index 4f1f4215f3d6e..c3ac0e46106b4 100644
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -317,6 +317,9 @@ struct tcpm_port {
+ 	/* Deadline in jiffies to exit src_try_wait state */
+ 	unsigned long max_wait;
  
- Optional properties for usb-c-connector:
- - power-role: should be one of "source", "sink" or "dual"(DRP) if typec
++	/* port belongs to a self powered device */
++	bool self_powered;
++
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry *dentry;
+ 	struct mutex logbuffer_lock;	/* log buffer access lock */
+@@ -3257,7 +3260,8 @@ static void run_state_machine(struct tcpm_port *port)
+ 	case SRC_HARD_RESET_VBUS_OFF:
+ 		tcpm_set_vconn(port, true);
+ 		tcpm_set_vbus(port, false);
+-		tcpm_set_roles(port, false, TYPEC_SOURCE, TYPEC_HOST);
++		tcpm_set_roles(port, port->self_powered, TYPEC_SOURCE,
++			       TYPEC_HOST);
+ 		tcpm_set_state(port, SRC_HARD_RESET_VBUS_ON, PD_T_SRC_RECOVER);
+ 		break;
+ 	case SRC_HARD_RESET_VBUS_ON:
+@@ -3270,7 +3274,8 @@ static void run_state_machine(struct tcpm_port *port)
+ 		memset(&port->pps_data, 0, sizeof(port->pps_data));
+ 		tcpm_set_vconn(port, false);
+ 		tcpm_set_charge(port, false);
+-		tcpm_set_roles(port, false, TYPEC_SINK, TYPEC_DEVICE);
++		tcpm_set_roles(port, port->self_powered, TYPEC_SINK,
++			       TYPEC_DEVICE);
+ 		/*
+ 		 * VBUS may or may not toggle, depending on the adapter.
+ 		 * If it doesn't toggle, transition to SNK_HARD_RESET_SINK_ON
+@@ -4409,6 +4414,8 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
+ 		return -EINVAL;
+ 	port->operating_snk_mw = mw / 1000;
+ 
++	port->self_powered = fwnode_property_read_bool(fwnode, "self-powered");
++
+ 	return 0;
+ }
+ 
+@@ -4717,6 +4724,7 @@ static int tcpm_copy_caps(struct tcpm_port *port,
+ 	port->typec_caps.prefer_role = tcfg->default_role;
+ 	port->typec_caps.type = tcfg->type;
+ 	port->typec_caps.data = tcfg->data;
++	port->self_powered = port->tcpc->config->self_powered;
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
+index 7e7fbfb84e8e3..50c74a77db55c 100644
+--- a/include/linux/usb/tcpm.h
++++ b/include/linux/usb/tcpm.h
+@@ -89,6 +89,7 @@ struct tcpc_config {
+ 	enum typec_port_data data;
+ 	enum typec_role default_role;
+ 	bool try_role_hw;	/* try.{src,snk} implemented in hardware */
++	bool self_powered;	/* port belongs to a self powered device */
+ 
+ 	const struct typec_altmode_desc *alt_modes;
+ };
 -- 
 2.19.0.605.g01d371f741-goog
 
