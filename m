@@ -2,110 +2,109 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E623C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A5CC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1435A215E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1435A215E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 33AC1215E4
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 03:41:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33AC1215E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbeI1KAo (ORCPT
+        id S1728733AbeI1KC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 06:00:44 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:6424 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728500AbeI1KAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 06:00:44 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id DCFC8F56C5D48;
-        Fri, 28 Sep 2018 11:24:35 +0800 (CST)
-Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.153]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0399.000;
- Fri, 28 Sep 2018 11:24:32 +0800
-From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
-To:     Greg KH <gregkh@linuxfoundation.org>, Roger Quadros <rogerq@ti.com>
-CC:     "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "mathias.nyman@linux.intel.com" <mathias.nyman@linux.intel.com>,
-        "drinkcat@chromium.org" <drinkcat@chromium.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
-        "drake@endlessm.com" <drake@endlessm.com>,
-        "ravisadineni@chromium.org" <ravisadineni@chromium.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Marc Zyngier" <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "David Rientjes" <rientjes@google.com>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: RE: [PATCH v3] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Topic: [PATCH v3] usb: hub: try old enumeration scheme first for high
- speed devices
-Thread-Index: AQHUOCmse8PdmwGt+UmhI1N8GN9kXKTHrzeAgDD2RACADJ1K4A==
-Date:   Fri, 28 Sep 2018 03:24:31 +0000
-Message-ID: <678F3D1BB717D949B966B68EAEB446ED0CA25F3F@dggemm526-mbx.china.huawei.com>
-References: <1534759484-44744-1-git-send-email-prime.zeng@hisilicon.com>
- <535e6c93-4369-c01e-953c-35e7041129e8@ti.com>
- <20180920103742.GD14252@kroah.com>
-In-Reply-To: <20180920103742.GD14252@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.222.15]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 28 Sep 2018 06:02:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:42613 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726121AbeI1KC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 06:02:56 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42LyC067Tvz9s3Z;
+        Fri, 28 Sep 2018 13:41:16 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc: wire up memtest
+In-Reply-To: <b3f2074b89ef0e3352fb11b69be30caeaa823fa0.1535360497.git.christophe.leroy@c-s.fr>
+References: <b3f2074b89ef0e3352fb11b69be30caeaa823fa0.1535360497.git.christophe.leroy@c-s.fr>
+Date:   Fri, 28 Sep 2018 13:41:13 +1000
+Message-ID: <871s9euw4m.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgZ3JlZzoNCg0KU29ycnkgZm9yIHRoZSBsYXRlIHJlc3BvbnNlLCBJIGhhdmUgYXBwbGllZCB0
-aGUgdGFncyBhbmQgcmVzZW5kLCBwbGVhc2UgcmVjZWl2ZSBpdCBhbmQgY2hlY2sNCg0KVGh4DQpa
-ZW5ndGFvIA0KDQo+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj5Gcm9tOiBHcmVnIEtIIFtt
-YWlsdG86Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmddDQo+U2VudDogVGh1cnNkYXksIFNlcHRl
-bWJlciAyMCwgMjAxOCA2OjM4IFBNDQo+VG86IFJvZ2VyIFF1YWRyb3MgPHJvZ2VycUB0aS5jb20+
-DQo+Q2M6IFplbmd0YW8gKEIpIDxwcmltZS56ZW5nQGhpc2lsaWNvbi5jb20+OyBzdGVybkByb3ds
-YW5kLmhhcnZhcmQuZWR1Ow0KPm1hdGhpYXMubnltYW5AbGludXguaW50ZWwuY29tOyBkcmlua2Nh
-dEBjaHJvbWl1bS5vcmc7DQo+ZmVsaXBlLmJhbGJpQGxpbnV4LmludGVsLmNvbTsgZHJha2VAZW5k
-bGVzc20uY29tOw0KPnJhdmlzYWRpbmVuaUBjaHJvbWl1bS5vcmc7IGpvZUBwZXJjaGVzLmNvbTsg
-Sm9uYXRoYW4gQ29yYmV0DQo+PGNvcmJldEBsd24ubmV0PjsgVGhvbWFzIEdsZWl4bmVyIDx0Z2x4
-QGxpbnV0cm9uaXguZGU+OyBJbmdvIE1vbG5hcg0KPjxtaW5nb0BrZXJuZWwub3JnPjsgUmFmYWVs
-IEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29ja2lAaW50ZWwuY29tPjsNCj5NYXJjIFp5bmdpZXIg
-PG1hcmMuenluZ2llckBhcm0uY29tPjsgS2FpLUhlbmcgRmVuZw0KPjxrYWkuaGVuZy5mZW5nQGNh
-bm9uaWNhbC5jb20+OyBUaHltbyB2YW4gQmVlcnMNCj48dGh5bW92YW5iZWVyc0BnbWFpbC5jb20+
-OyBGcmVkZXJpYyBXZWlzYmVja2VyDQo+PGZyZWRlcmljQGtlcm5lbC5vcmc+OyBLb25yYWQgUnpl
-c3p1dGVrIFdpbGsgPGtvbnJhZC53aWxrQG9yYWNsZS5jb20+Ow0KPkRhdmlkIFJpZW50amVzIDxy
-aWVudGplc0Bnb29nbGUuY29tPjsgTWlrZSBMb29pam1hbnMNCj48bWlrZS5sb29pam1hbnNAdG9w
-aWMubmw+OyBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOw0KPmxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LXVzYkB2Z2VyLmtlcm5lbC5vcmcNCj5TdWJqZWN0OiBSZTogW1BBVENI
-IHYzXSB1c2I6IGh1YjogdHJ5IG9sZCBlbnVtZXJhdGlvbiBzY2hlbWUgZmlyc3QgZm9yDQo+aGln
-aCBzcGVlZCBkZXZpY2VzDQo+DQo+T24gTW9uLCBBdWcgMjAsIDIwMTggYXQgMDk6NTU6NDlBTSAr
-MDMwMCwgUm9nZXIgUXVhZHJvcyB3cm90ZToNCj4+IE9uIDIwLzA4LzE4IDEzOjA0LCBaZW5nIFRh
-byB3cm90ZToNCj4+ID4gVGhlIG5ldyBzY2hlbWUgaXMgcmVxdWlyZWQganVzdCB0byBzdXBwb3J0
-IGxlZ2FjeSBsb3cgYW5kIGZ1bGwtc3BlZWQNCj4+ID4gZGV2aWNlcy4gRm9yIGhpZ2ggc3BlZWQg
-ZGV2aWNlcywgaXQgd2lsbCBzbG93ZXIgdGhlIGVudW1lcmF0aW9uIHNwZWVkLg0KPj4gPiBTbyBp
-biB0aGlzIHBhdGNoIHdlIHRyeSB0aGUgIm9sZCIgZW51bWVyYXRpb24gc2NoZW1lIGZpcnN0IGZv
-ciBoaWdoDQo+PiA+IHNwZWVkIGRldmljZXMsIGFuZCB0aGlzIGlzIHdoYXQgV2luZG93cyBkb2Vz
-IHNpbmNlIFdpbmRvd3MgOC4NCj4+ID4NCj4+ID4gU2lnbmVkLW9mZi1ieTogWmVuZyBUYW8gPHBy
-aW1lLnplbmdAaGlzaWxpY29uLmNvbT4NCj4+DQo+PiBZb3UgbmVlZCB0byBhZGQgQWxhbidzIEFj
-ayBoZXJlLiBJIGRvbid0IHRoaW5rIHlvdSBuZWVkIHRvIHJlc2VuZA0KPnRob3VnaC4NCj4+DQo+
-PiBSZXZpZXdlZC1ieTogUm9nZXIgUXVhZHJvcyA8cm9nZXJxQHRpLmNvbT4NCj4NCj5QbGVhc2Ug
-cmVzZW5kLCBJIG5lZWQgaGlzIGFjayBoZXJlIDopDQo+DQo+dGhhbmtzLA0KPg0KPmdyZWcgay1o
-DQo=
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> Add call to early_memtest() so that kernel compiled with
+> CONFIG_MEMTEST really perform memtest at startup when requested
+> via 'memtest' boot parameter.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/kernel/setup-common.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+> index 93fa0c99681e..904b728eb20d 100644
+> --- a/arch/powerpc/kernel/setup-common.c
+> +++ b/arch/powerpc/kernel/setup-common.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/serial_8250.h>
+>  #include <linux/percpu.h>
+>  #include <linux/memblock.h>
+> +#include <linux/bootmem.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/hugetlb.h>
+>  #include <asm/debugfs.h>
+> @@ -917,6 +918,8 @@ void __init setup_arch(char **cmdline_p)
+>  	/* Parse memory topology */
+>  	mem_topology_setup();
+>  
+> +	early_memtest(min_low_pfn << PAGE_SHIFT, max_low_pfn << PAGE_SHIFT);
+
+On a ppc64le VM this boils down to early_memtest(0, 0) for me.
+
+I think it's too early, we don't set up max_low_pfn until
+initmem_init().
+
+If I move it after initmem_init() then it does something more useful:
+
+early_memtest: # of tests: 17
+  0x0000000001450580 - 0x0000000001450800 pattern 4c494e5558726c7a
+  0x0000000001450c00 - 0x0000000003600000 pattern 4c494e5558726c7a
+  0x00000000047c0000 - 0x000000002fff0000 pattern 4c494e5558726c7a
+  0x0000000030000000 - 0x000000003ff24000 pattern 4c494e5558726c7a
+  0x000000003fff4000 - 0x000000003fff4c00 pattern 4c494e5558726c7a
+  0x000000003fff5000 - 0x000000003fff5300 pattern 4c494e5558726c7a
+  0x000000003fff5c00 - 0x000000003fff5f00 pattern 4c494e5558726c7a
+  0x000000003fff6800 - 0x000000003fff6b00 pattern 4c494e5558726c7a
+  0x000000003fff7400 - 0x000000003fff7700 pattern 4c494e5558726c7a
+  0x000000003fff8000 - 0x000000003fff8300 pattern 4c494e5558726c7a
+  0x000000003fff8c00 - 0x000000003fff8f00 pattern 4c494e5558726c7a
+  0x000000003fff9800 - 0x000000003fff9b00 pattern 4c494e5558726c7a
+  0x000000003fffa400 - 0x000000003fffa700 pattern 4c494e5558726c7a
+  0x000000003fffb000 - 0x000000003fffb300 pattern 4c494e5558726c7a
+  0x000000003fffbc00 - 0x000000003fffbf00 pattern 4c494e5558726c7a
+  0x000000003fffc800 - 0x000000003fffcb00 pattern 4c494e5558726c7a
+  0x000000003fffd400 - 0x000000003fffd700 pattern 4c494e5558726c7a
+  0x000000003fffe000 - 0x000000003fffe100 pattern 4c494e5558726c7a
+  0x0000000040000000 - 0x00000000ffc10000 pattern 4c494e5558726c7a
+  0x00000000fffa0000 - 0x00000000fffa5b00 pattern 4c494e5558726c7a
+  0x0000000100000000 - 0x00000001ffbe0000 pattern 4c494e5558726c7a
+  0x00000001fff60000 - 0x00000001fff61b00 pattern 4c494e5558726c7a
+  0x00000001fffec000 - 0x00000001fffec4b8 pattern 4c494e5558726c7a
+  0x00000001fffec524 - 0x00000001fffec528 pattern 4c494e5558726c7a
+
+
+cheers
