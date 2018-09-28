@@ -2,830 +2,139 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4198FC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EEEC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFEC520684
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED90620657
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 16:04:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIqmD448"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFEC520684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1bpEFBf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED90620657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeI1W0W (ORCPT
+        id S1729282AbeI1W2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 18:26:22 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35489 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728453AbeI1W0W (ORCPT
+        Fri, 28 Sep 2018 18:28:38 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33001 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726971AbeI1W2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 18:26:22 -0400
-Received: by mail-it1-f196.google.com with SMTP id 139-v6so3219535itf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 09:01:56 -0700 (PDT)
+        Fri, 28 Sep 2018 18:28:38 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y18-v6so4813308pge.0;
+        Fri, 28 Sep 2018 09:04:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=eu3yei24vOecC34qQDnLx294lkkYa5i1rlUL88TfUuE=;
-        b=NIqmD448rgr31OtS/k5IrkNdeATgQKKa8UkHQiwQiMXZUrfEDJLWiwuhoc5SHx7Fm7
-         B6igcnNcc49t5JOxvIHRUxElisG57xLPPNaZy8VCKLyGeEehktQ5zexETV5kinSxWrpQ
-         GtZlDJNZsyBPhHTqnC1+A2Uz2IGoeie+Ys4V0=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1oxWUr4Yz5vO5tthZOImQqqhgQTmD4zFt+6C8ckZEGg=;
+        b=k1bpEFBfRFUveThpgoi41y603CezUZny0YrXLer2V7bUj7dCWpNSCzpVW3YLQ0fo8X
+         C3VcpqxEirVlPjejbYbudvBe4HW7sAcHBiK1WgNslvywdPT0b/TddngUGU+K4HLC4zJj
+         muMDzvjNgHLnbKQO3iMhKZ5QQXIHZyzxcnl3HSTbXv7gyGHAGsad6tCA3Yflturun263
+         rS8cDi1USJi2uZAsiYlJhJX0z7Va7CYIAslZP990fS0JVX56Rjrt/q8g3U6gb5CyPVBT
+         jL9kIIloe4rQKk+b4xtRAgO8crdRMMAP/roY5CM+jxBgitGJDpKMhbFQCHVJJGTuvAgc
+         sBVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=eu3yei24vOecC34qQDnLx294lkkYa5i1rlUL88TfUuE=;
-        b=XyKtoklh480t9PsY/8l+jnHipiSTdIhhwFaX43FTdK2VXUv1H18OPDWID9MBPVU0Bq
-         uwloo9z+v9dWXADbrcaGvcEKyWt5q6ZEWzl6R4BEdAN7+8S6rokSTBPi0o3At5Sgd8ML
-         Jk1dpXziM6wNgK9p9EUIpdQssFH9MDf5Tk7pm3ahiYtwz/8dC/VUNwXCgKL01KgCcDJj
-         1AHlP3SWm4mz78kwf++e+NspNej7tFu112JoXjlo9JvcsjUHFFy/SALslW/jYBJVaAL3
-         oOU2nByqquqEmkcnIiGxdmEwxq4d+S5BP4an4lYPzZqze05n3MvPsAvhnu+3CVALxrcQ
-         nv+A==
-X-Gm-Message-State: ABuFfogrBcQgQtmGq24UK24QOdaWUbRx/YL/KMLQexbxE228xhWG9GCJ
-        iChawEd5UadAvXSIgNYCPNt31WH5wUdwhV7rkTVeOg==
-X-Google-Smtp-Source: ACcGV60tp9HZ6QXiI0PZ9azw6clFv/bQJOpSlQ7IWZLhK8a/+EDWxye33m92O69GTmtF0CNmRlDo+OiT6a1wSfXP9Mk=
-X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr2034652ite.123.1538150515679;
- Fri, 28 Sep 2018 09:01:55 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 09:01:55
- -0700 (PDT)
-In-Reply-To: <20180925145622.29959-8-Jason@zx2c4.com>
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-8-Jason@zx2c4.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 28 Sep 2018 18:01:55 +0200
-Message-ID: <CAKv+Gu8knzzmK4_KouFQWKzMdHFgEsk-CtBrcuAvk0bYkDFO=w@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 07/23] zinc: ChaCha20 ARM and ARM64 implementations
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1oxWUr4Yz5vO5tthZOImQqqhgQTmD4zFt+6C8ckZEGg=;
+        b=XfWsVC57hrU29nhq0APF+Pg+BUyEfnXdIJtqmWPzuiPGyjmsUY1EV25zLNUrrSOglz
+         gwfuq3enoqnJjtLqpqKm78zDpV0IAza1V+5R7kbQb8OKtjhrPZ7SHjp6jyyHvLanTTFo
+         ND2QEPh+ZTjdpp2ljmnmkrtRf546KCYVhEcGYM3AvFS7H1oeiGQkmxDTXfYm9tVuhVNt
+         1EYkFlZdvq+CXoul7OdCuv4tQ4U/QSKkh9p2rDuA6oWM21S01FMsw3LTYDt+ClBmcaO+
+         k3w+r5vpcBFKAm0ipgBZxptpM4NpE2IVcRnyjeNZR3PJeC1NHbVdRCI5hX8VdnLpQG4h
+         JMPg==
+X-Gm-Message-State: ABuFfogjOMsC7jzbQJOF99YX8L43OVdacNYv5IlO75888ei7zelT8XMG
+        QO1ZGkIV86i/a5YFDFYwdp32KXB+
+X-Google-Smtp-Source: ACcGV62IyGI0CNWEdDzVm3IM1/hwP9uU/A+YlEjSTi0/wt915XDi584PoQ0m5etPKPL4rlx7R8UAtw==
+X-Received: by 2002:a17:902:3143:: with SMTP id w61-v6mr3744282plb.85.1538150652322;
+        Fri, 28 Sep 2018 09:04:12 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id q25-v6sm7186719pfh.113.2018.09.28.09.04.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 09:04:11 -0700 (PDT)
+Date:   Fri, 28 Sep 2018 09:04:09 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        support.opensource@diasemi.com
+Subject: Re: [PATCH] usb: typec: tcpm: Report back negotiated PPS voltage and
+ current
+Message-ID: <20180928160409.GA10409@roeck-us.net>
+References: <20180928153349.DC14D3FAF0@swsrvapps-01.diasemi.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928153349.DC14D3FAF0@swsrvapps-01.diasemi.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 September 2018 at 16:56, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> These wire Andy Polyakov's implementations up to the kernel for ARMv7,8
-> NEON, and introduce Eric Biggers' ultra-fast scalar implementation for
-> CPUs without NEON or for CPUs with slow NEON (Cortex-A5,7).
->
-> This commit does the following:
->   - Adds the glue code for the assembly implementations.
->   - Renames the ARMv8 code into place, since it can at this point be
->     used wholesale.
->   - Merges Andy Polyakov's ARMv7 NEON code with Eric Biggers' <=ARMv7
->     scalar code.
->
-> Commit note: Eric Biggers' scalar code is brand new, and quite possibly
-> prematurely added to this commit, and so it may require a bit of revision.
->
-
-Please put comments like this below the ---
-
-> This commit delivers approximately the same or much better performance than
-> the existing crypto API's code and has been measured to do as such on:
->
->   - ARM1176JZF-S [ARMv6]
->   - Cortex-A7    [ARMv7]
->   - Cortex-A8    [ARMv7]
->   - Cortex-A9    [ARMv7]
->   - Cortex-A17   [ARMv7]
->   - Cortex-A53   [ARMv8]
->   - Cortex-A55   [ARMv8]
->   - Cortex-A73   [ARMv8]
->   - Cortex-A75   [ARMv8]
->
-> Interestingly, Andy Polyakov's scalar code is slower than Eric Biggers',
-> but is also significantly shorter. This has the advantage that it does
-> not evict other code from L1 cache -- particularly on ARM11 chips -- and
-> so in certain circumstances it can actually be faster. However, it wasn't
-> found that this had an affect on any code existing in the kernel today.
->
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> Co-authored-by: Eric Biggers <ebiggers@google.com>
-> Cc: Samuel Neves <sneves@dei.uc.pt>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Greg KH <gregkh@linuxfoundation.org>
-> Cc: Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: linux-arm-kernel@lists.infradead.org
+On Fri, Sep 28, 2018 at 04:33:49PM +0100, Adam Thomson wrote:
+> Currently when requesting a specific voltage or current through
+> the psy interface, for PPS, when reading back from that interface
+> the values will always be the same as previously given, if the
+> request was successful. However PPS only allows for 20mV voltage
+> steps and 50mA current steps, and the psy class expects microvolt
+> and micro amp requests, so inbetween values can be provided through
+> this interface. Really when reading back the true values negotiated
+> should be given, and not the ones originally asked for.
+> 
+> To report the actual values negotiated with the Source, the values
+> stored are now rounded down to the relevant step units prior to
+> building the PPS request, so that those values are later correctly
+> reported through the psy interface. In addition this improves the
+> adjustments made to meet the operating power requirements of the
+> platform, which previously could have been slightly out due to not
+> using valid PPS units of voltage and current.
+> 
+> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 > ---
->  lib/zinc/Makefile                             |   2 +
->  lib/zinc/chacha20/chacha20-arm-glue.h         |  88 +++
->  ...acha20-arm-cryptogams.S => chacha20-arm.S} | 502 ++++++++++++++++--
->  ...20-arm64-cryptogams.S => chacha20-arm64.S} |   0
->  lib/zinc/chacha20/chacha20.c                  |   2 +
->  5 files changed, 556 insertions(+), 38 deletions(-)
->  create mode 100644 lib/zinc/chacha20/chacha20-arm-glue.h
->  rename lib/zinc/chacha20/{chacha20-arm-cryptogams.S => chacha20-arm.S} (71%)
->  rename lib/zinc/chacha20/{chacha20-arm64-cryptogams.S => chacha20-arm64.S} (100%)
->
-> diff --git a/lib/zinc/Makefile b/lib/zinc/Makefile
-> index 223a0816c918..e47f64e12bbd 100644
-> --- a/lib/zinc/Makefile
-> +++ b/lib/zinc/Makefile
-> @@ -4,4 +4,6 @@ ccflags-$(CONFIG_ZINC_DEBUG) += -DDEBUG
->
->  zinc_chacha20-y := chacha20/chacha20.o
->  zinc_chacha20-$(CONFIG_ZINC_ARCH_X86_64) += chacha20/chacha20-x86_64.o
-> +zinc_chacha20-$(CONFIG_ZINC_ARCH_ARM) += chacha20/chacha20-arm.o
-> +zinc_chacha20-$(CONFIG_ZINC_ARCH_ARM64) += chacha20/chacha20-arm64.o
-
-Are these CONFIG_ symbols defined anywhere at this point?
-
-In any case, I don't think these is a reason for these, at least not
-on ARM/arm64. The 64-bitness is implied in both cases, and the
-dependency on !CPU_32v3 you introduce (looking at the version of
-Kconfig at the end of the series) seems spurious to me. Was that added
-because of some kbuild robot report? (we don't support ARMv3 in the
-kernel but ARCH_RPC is built in v3 mode because of historical reasons
-while the actual core is a v4)
-
->  obj-$(CONFIG_ZINC_CHACHA20) += zinc_chacha20.o
-> diff --git a/lib/zinc/chacha20/chacha20-arm-glue.h b/lib/zinc/chacha20/chacha20-arm-glue.h
-> new file mode 100644
-> index 000000000000..86cce851ed02
-> --- /dev/null
-> +++ b/lib/zinc/chacha20/chacha20-arm-glue.h
-> @@ -0,0 +1,88 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> +/*
-> + * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-> + */
-> +
-> +#include <asm/hwcap.h>
-> +#include <asm/neon.h>
-> +#if defined(CONFIG_ARM)
-> +#include <asm/system_info.h>
-> +#include <asm/cputype.h>
-> +#endif
-> +
-> +asmlinkage void chacha20_arm(u8 *out, const u8 *in, const size_t len,
-> +                            const u32 key[8], const u32 counter[4]);
-> +#if defined(CONFIG_ARM)
-> +asmlinkage void hchacha20_arm(const u32 state[16], u32 out[8]);
-> +#endif
-> +#if defined(CONFIG_KERNEL_MODE_NEON)
-> +asmlinkage void chacha20_neon(u8 *out, const u8 *in, const size_t len,
-> +                             const u32 key[8], const u32 counter[4]);
-> +#endif
+> Changes are based on usb-testing (ae8a2ca8a221)
+> 
+>  drivers/usb/typec/tcpm/tcpm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 4f1f421..33b3981 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -2433,6 +2433,10 @@ static int tcpm_pd_build_pps_request(struct tcpm_port *port, u32 *rdo)
+>  
+>  	flags = RDO_USB_COMM | RDO_NO_SUSPEND;
+>  
+> +	/* Round down output voltage and current to align with PPS valid steps */
+> +	out_mv = out_mv - (out_mv % RDO_PROG_VOLT_MV_STEP);
+> +	op_ma = op_ma - (op_ma % RDO_PROG_CURR_MA_STEP);
 > +
 
-No need to make asmlinkage declarations conditional
+The original intent was to have out_mv (ie out_volt) set to valid values.
+Some remnants of that are still in the code.
 
-> +static bool chacha20_use_neon __ro_after_init;
-> +
-> +static void __init chacha20_fpu_init(void)
-> +{
-> +#if defined(CONFIG_ARM64)
-> +       chacha20_use_neon = elf_hwcap & HWCAP_ASIMD;
-> +#elif defined(CONFIG_ARM)
-> +       switch (read_cpuid_part()) {
-> +       case ARM_CPU_PART_CORTEX_A7:
-> +       case ARM_CPU_PART_CORTEX_A5:
-> +               /* The Cortex-A7 and Cortex-A5 do not perform well with the NEON
-> +                * implementation but do incredibly with the scalar one and use
-> +                * less power.
-> +                */
-> +               break;
-> +       default:
-> +               chacha20_use_neon = elf_hwcap & HWCAP_NEON;
-> +       }
-> +#endif
-> +}
-> +
-> +static inline bool chacha20_arch(struct chacha20_ctx *state, u8 *dst,
-> +                                const u8 *src, size_t len,
-> +                                simd_context_t *simd_context)
-> +{
-> +#if defined(CONFIG_KERNEL_MODE_NEON)
+	out_mv += RDO_PROG_VOLT_MV_STEP - (out_mv % RDO_PROG_VOLT_MV_STEP);
 
-if (IS_ENABLED())
+	port->pps_data.out_volt =
+		min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
 
-> +       if (chacha20_use_neon && len >= CHACHA20_BLOCK_SIZE * 3 &&
-> +           simd_use(simd_context))
-> +               chacha20_neon(dst, src, len, state->key, state->counter);
-> +       else
-> +#endif
-> +               chacha20_arm(dst, src, len, state->key, state->counter);
-> +
-> +       state->counter[0] += (len + 63) / 64;
-> +       return true;
-> +}
-> +
-> +static inline bool hchacha20_arch(u32 derived_key[CHACHA20_KEY_WORDS],
-> +                                 const u8 nonce[HCHACHA20_NONCE_SIZE],
-> +                                 const u8 key[HCHACHA20_KEY_SIZE],
-> +                                 simd_context_t *simd_context)
-> +{
-> +#if defined(CONFIG_ARM)
-> +       u32 x[] = { CHACHA20_CONSTANT_EXPA,
-> +                   CHACHA20_CONSTANT_ND_3,
-> +                   CHACHA20_CONSTANT_2_BY,
-> +                   CHACHA20_CONSTANT_TE_K,
-> +                   get_unaligned_le32(key + 0),
-> +                   get_unaligned_le32(key + 4),
-> +                   get_unaligned_le32(key + 8),
-> +                   get_unaligned_le32(key + 12),
-> +                   get_unaligned_le32(key + 16),
-> +                   get_unaligned_le32(key + 20),
-> +                   get_unaligned_le32(key + 24),
-> +                   get_unaligned_le32(key + 28),
-> +                   get_unaligned_le32(nonce + 0),
-> +                   get_unaligned_le32(nonce + 4),
-> +                   get_unaligned_le32(nonce + 8),
-> +                   get_unaligned_le32(nonce + 12)
-> +       };
-> +       hchacha20_arm(x, derived_key);
+Somehow that got lost over time. Personally I think it would be better to set 
+port->pps_data.out_vol and port->pps_data.op_curr to valid step sizes instead
+of post-adjusting the values when used.
 
-"""
-if (!IS_ENABLED(CONFIG_ARM))
-   return false;
+Thanks,
+Guenter
 
-hchacha20_arm(x, derived_key);
-return true;
-"""
-
-and drop the #ifdefs
-
-
-> +       return true;
-> +#else
-> +       return false;
-> +#endif
-> +}
-> diff --git a/lib/zinc/chacha20/chacha20-arm-cryptogams.S b/lib/zinc/chacha20/chacha20-arm.S
-> similarity index 71%
-> rename from lib/zinc/chacha20/chacha20-arm-cryptogams.S
-> rename to lib/zinc/chacha20/chacha20-arm.S
-> index 770bab469171..5abedafcf129 100644
-> --- a/lib/zinc/chacha20/chacha20-arm-cryptogams.S
-> +++ b/lib/zinc/chacha20/chacha20-arm.S
-> @@ -1,13 +1,475 @@
->  /* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
->  /*
-> + * Copyright (C) 2018 Google, Inc.
->   * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
->   * Copyright (C) 2006-2017 CRYPTOGAMS by <appro@openssl.org>. All Rights Reserved.
-> - *
-> - * This is based in part on Andy Polyakov's implementation from CRYPTOGAMS.
->   */
->
->  #include <linux/linkage.h>
->
-> +/*
-> + * The following scalar routine was written by Eric Biggers.
-> + *
-> + * Design notes:
-> + *
-> + * 16 registers would be needed to hold the state matrix, but only 14 are
-> + * available because 'sp' and 'pc' cannot be used.  So we spill the elements
-> + * (x8, x9) to the stack and swap them out with (x10, x11).  This adds one
-> + * 'ldrd' and one 'strd' instruction per round.
-> + *
-> + * All rotates are performed using the implicit rotate operand accepted by the
-> + * 'add' and 'eor' instructions.  This is faster than using explicit rotate
-> + * instructions.  To make this work, we allow the values in the second and last
-> + * rows of the ChaCha state matrix (rows 'b' and 'd') to temporarily have the
-> + * wrong rotation amount.  The rotation amount is then fixed up just in time
-> + * when the values are used.  'brot' is the number of bits the values in row 'b'
-> + * need to be rotated right to arrive at the correct values, and 'drot'
-> + * similarly for row 'd'.  (brot, drot) start out as (0, 0) but we make it such
-> + * that they end up as (25, 24) after every round.
-> + */
-> +
-> +       // ChaCha state registers
-> +       X0      .req    r0
-> +       X1      .req    r1
-> +       X2      .req    r2
-> +       X3      .req    r3
-> +       X4      .req    r4
-> +       X5      .req    r5
-> +       X6      .req    r6
-> +       X7      .req    r7
-> +       X8_X10  .req    r8      // shared by x8 and x10
-> +       X9_X11  .req    r9      // shared by x9 and x11
-> +       X12     .req    r10
-> +       X13     .req    r11
-> +       X14     .req    r12
-> +       X15     .req    r14
-> +
-> +.Lexpand_32byte_k:
-> +       // "expand 32-byte k"
-> +       .word   0x61707865, 0x3320646e, 0x79622d32, 0x6b206574
-> +
-> +#ifdef __thumb2__
-> +#  define adrl adr
-> +#endif
-> +
-> +.macro __rev           out, in,  t0, t1, t2
-> +.if __LINUX_ARM_ARCH__ >= 6
-> +       rev             \out, \in
-> +.else
-> +       lsl             \t0, \in, #24
-> +       and             \t1, \in, #0xff00
-> +       and             \t2, \in, #0xff0000
-> +       orr             \out, \t0, \in, lsr #24
-> +       orr             \out, \out, \t1, lsl #8
-> +       orr             \out, \out, \t2, lsr #8
-> +.endif
-> +.endm
-> +
-> +.macro _le32_bswap     x,  t0, t1, t2
-> +#ifdef __ARMEB__
-> +       __rev           \x, \x,  \t0, \t1, \t2
-> +#endif
-> +.endm
-> +
-> +.macro _le32_bswap_4x  a, b, c, d,  t0, t1, t2
-> +       _le32_bswap     \a,  \t0, \t1, \t2
-> +       _le32_bswap     \b,  \t0, \t1, \t2
-> +       _le32_bswap     \c,  \t0, \t1, \t2
-> +       _le32_bswap     \d,  \t0, \t1, \t2
-> +.endm
-> +
-> +.macro __ldrd          a, b, src, offset
-> +#if __LINUX_ARM_ARCH__ >= 6
-> +       ldrd            \a, \b, [\src, #\offset]
-> +#else
-> +       ldr             \a, [\src, #\offset]
-> +       ldr             \b, [\src, #\offset + 4]
-> +#endif
-> +.endm
-> +
-> +.macro __strd          a, b, dst, offset
-> +#if __LINUX_ARM_ARCH__ >= 6
-> +       strd            \a, \b, [\dst, #\offset]
-> +#else
-> +       str             \a, [\dst, #\offset]
-> +       str             \b, [\dst, #\offset + 4]
-> +#endif
-> +.endm
-> +
-> +.macro _halfround      a1, b1, c1, d1,  a2, b2, c2, d2
-> +
-> +       // a += b; d ^= a; d = rol(d, 16);
-> +       add             \a1, \a1, \b1, ror #brot
-> +       add             \a2, \a2, \b2, ror #brot
-> +       eor             \d1, \a1, \d1, ror #drot
-> +       eor             \d2, \a2, \d2, ror #drot
-> +       // drot == 32 - 16 == 16
-> +
-> +       // c += d; b ^= c; b = rol(b, 12);
-> +       add             \c1, \c1, \d1, ror #16
-> +       add             \c2, \c2, \d2, ror #16
-> +       eor             \b1, \c1, \b1, ror #brot
-> +       eor             \b2, \c2, \b2, ror #brot
-> +       // brot == 32 - 12 == 20
-> +
-> +       // a += b; d ^= a; d = rol(d, 8);
-> +       add             \a1, \a1, \b1, ror #20
-> +       add             \a2, \a2, \b2, ror #20
-> +       eor             \d1, \a1, \d1, ror #16
-> +       eor             \d2, \a2, \d2, ror #16
-> +       // drot == 32 - 8 == 24
-> +
-> +       // c += d; b ^= c; b = rol(b, 7);
-> +       add             \c1, \c1, \d1, ror #24
-> +       add             \c2, \c2, \d2, ror #24
-> +       eor             \b1, \c1, \b1, ror #20
-> +       eor             \b2, \c2, \b2, ror #20
-> +       // brot == 32 - 7 == 25
-> +.endm
-> +
-> +.macro _doubleround
-> +
-> +       // column round
-> +
-> +       // quarterrounds: (x0, x4, x8, x12) and (x1, x5, x9, x13)
-> +       _halfround      X0, X4, X8_X10, X12,  X1, X5, X9_X11, X13
-> +
-> +       // save (x8, x9); restore (x10, x11)
-> +       __strd          X8_X10, X9_X11, sp, 0
-> +       __ldrd          X8_X10, X9_X11, sp, 8
-> +
-> +       // quarterrounds: (x2, x6, x10, x14) and (x3, x7, x11, x15)
-> +       _halfround      X2, X6, X8_X10, X14,  X3, X7, X9_X11, X15
-> +
-> +       .set brot, 25
-> +       .set drot, 24
-> +
-> +       // diagonal round
-> +
-> +       // quarterrounds: (x0, x5, x10, x15) and (x1, x6, x11, x12)
-> +       _halfround      X0, X5, X8_X10, X15,  X1, X6, X9_X11, X12
-> +
-> +       // save (x10, x11); restore (x8, x9)
-> +       __strd          X8_X10, X9_X11, sp, 8
-> +       __ldrd          X8_X10, X9_X11, sp, 0
-> +
-> +       // quarterrounds: (x2, x7, x8, x13) and (x3, x4, x9, x14)
-> +       _halfround      X2, X7, X8_X10, X13,  X3, X4, X9_X11, X14
-> +.endm
-> +
-> +.macro _chacha_permute nrounds
-> +       .set brot, 0
-> +       .set drot, 0
-> +       .rept \nrounds / 2
-> +        _doubleround
-> +       .endr
-> +.endm
-> +
-> +.macro _chacha         nrounds
-> +
-> +.Lnext_block\@:
-> +       // Stack: unused0-unused1 x10-x11 x0-x15 OUT IN LEN
-> +       // Registers contain x0-x9,x12-x15.
-> +
-> +       // Do the core ChaCha permutation to update x0-x15.
-> +       _chacha_permute \nrounds
-> +
-> +       add             sp, #8
-> +       // Stack: x10-x11 orig_x0-orig_x15 OUT IN LEN
-> +       // Registers contain x0-x9,x12-x15.
-> +       // x4-x7 are rotated by 'brot'; x12-x15 are rotated by 'drot'.
-> +
-> +       // Free up some registers (r8-r12,r14) by pushing (x8-x9,x12-x15).
-> +       push            {X8_X10, X9_X11, X12, X13, X14, X15}
-> +
-> +       // Load (OUT, IN, LEN).
-> +       ldr             r14, [sp, #96]
-> +       ldr             r12, [sp, #100]
-> +       ldr             r11, [sp, #104]
-> +
-> +       orr             r10, r14, r12
-> +
-> +       // Use slow path if fewer than 64 bytes remain.
-> +       cmp             r11, #64
-> +       blt             .Lxor_slowpath\@
-> +
-> +       // Use slow path if IN and/or OUT isn't 4-byte aligned.  Needed even on
-> +       // ARMv6+, since ldmia and stmia (used below) still require alignment.
-> +       tst             r10, #3
-> +       bne             .Lxor_slowpath\@
-> +
-> +       // Fast path: XOR 64 bytes of aligned data.
-> +
-> +       // Stack: x8-x9 x12-x15 x10-x11 orig_x0-orig_x15 OUT IN LEN
-> +       // Registers: r0-r7 are x0-x7; r8-r11 are free; r12 is IN; r14 is OUT.
-> +       // x4-x7 are rotated by 'brot'; x12-x15 are rotated by 'drot'.
-> +
-> +       // x0-x3
-> +       __ldrd          r8, r9, sp, 32
-> +       __ldrd          r10, r11, sp, 40
-> +       add             X0, X0, r8
-> +       add             X1, X1, r9
-> +       add             X2, X2, r10
-> +       add             X3, X3, r11
-> +       _le32_bswap_4x  X0, X1, X2, X3,  r8, r9, r10
-> +       ldmia           r12!, {r8-r11}
-> +       eor             X0, X0, r8
-> +       eor             X1, X1, r9
-> +       eor             X2, X2, r10
-> +       eor             X3, X3, r11
-> +       stmia           r14!, {X0-X3}
-> +
-> +       // x4-x7
-> +       __ldrd          r8, r9, sp, 48
-> +       __ldrd          r10, r11, sp, 56
-> +       add             X4, r8, X4, ror #brot
-> +       add             X5, r9, X5, ror #brot
-> +       ldmia           r12!, {X0-X3}
-> +       add             X6, r10, X6, ror #brot
-> +       add             X7, r11, X7, ror #brot
-> +       _le32_bswap_4x  X4, X5, X6, X7,  r8, r9, r10
-> +       eor             X4, X4, X0
-> +       eor             X5, X5, X1
-> +       eor             X6, X6, X2
-> +       eor             X7, X7, X3
-> +       stmia           r14!, {X4-X7}
-> +
-> +       // x8-x15
-> +       pop             {r0-r7}                 // (x8-x9,x12-x15,x10-x11)
-> +       __ldrd          r8, r9, sp, 32
-> +       __ldrd          r10, r11, sp, 40
-> +       add             r0, r0, r8              // x8
-> +       add             r1, r1, r9              // x9
-> +       add             r6, r6, r10             // x10
-> +       add             r7, r7, r11             // x11
-> +       _le32_bswap_4x  r0, r1, r6, r7,  r8, r9, r10
-> +       ldmia           r12!, {r8-r11}
-> +       eor             r0, r0, r8              // x8
-> +       eor             r1, r1, r9              // x9
-> +       eor             r6, r6, r10             // x10
-> +       eor             r7, r7, r11             // x11
-> +       stmia           r14!, {r0,r1,r6,r7}
-> +       ldmia           r12!, {r0,r1,r6,r7}
-> +       __ldrd          r8, r9, sp, 48
-> +       __ldrd          r10, r11, sp, 56
-> +       add             r2, r8, r2, ror #drot   // x12
-> +       add             r3, r9, r3, ror #drot   // x13
-> +       add             r4, r10, r4, ror #drot  // x14
-> +       add             r5, r11, r5, ror #drot  // x15
-> +       _le32_bswap_4x  r2, r3, r4, r5,  r9, r10, r11
-> +         ldr           r9, [sp, #72]           // load LEN
-> +       eor             r2, r2, r0              // x12
-> +       eor             r3, r3, r1              // x13
-> +       eor             r4, r4, r6              // x14
-> +       eor             r5, r5, r7              // x15
-> +         subs          r9, #64                 // decrement and check LEN
-> +       stmia           r14!, {r2-r5}
-> +
-> +       beq             .Ldone\@
-> +
-> +.Lprepare_for_next_block\@:
-> +
-> +       // Stack: x0-x15 OUT IN LEN
-> +
-> +       // Increment block counter (x12)
-> +       add             r8, #1
-> +
-> +       // Store updated (OUT, IN, LEN)
-> +       str             r14, [sp, #64]
-> +       str             r12, [sp, #68]
-> +       str             r9, [sp, #72]
-> +
-> +         mov           r14, sp
-> +
-> +       // Store updated block counter (x12)
-> +       str             r8, [sp, #48]
-> +
-> +         sub           sp, #16
-> +
-> +       // Reload state and do next block
-> +       ldmia           r14!, {r0-r11}          // load x0-x11
-> +       __strd          r10, r11, sp, 8         // store x10-x11 before state
-> +       ldmia           r14, {r10-r12,r14}      // load x12-x15
-> +       b               .Lnext_block\@
-> +
-> +.Lxor_slowpath\@:
-> +       // Slow path: < 64 bytes remaining, or unaligned input or output buffer.
-> +       // We handle it by storing the 64 bytes of keystream to the stack, then
-> +       // XOR-ing the needed portion with the data.
-> +
-> +       // Allocate keystream buffer
-> +       sub             sp, #64
-> +       mov             r14, sp
-> +
-> +       // Stack: ks0-ks15 x8-x9 x12-x15 x10-x11 orig_x0-orig_x15 OUT IN LEN
-> +       // Registers: r0-r7 are x0-x7; r8-r11 are free; r12 is IN; r14 is &ks0.
-> +       // x4-x7 are rotated by 'brot'; x12-x15 are rotated by 'drot'.
-> +
-> +       // Save keystream for x0-x3
-> +       __ldrd          r8, r9, sp, 96
-> +       __ldrd          r10, r11, sp, 104
-> +       add             X0, X0, r8
-> +       add             X1, X1, r9
-> +       add             X2, X2, r10
-> +       add             X3, X3, r11
-> +       _le32_bswap_4x  X0, X1, X2, X3,  r8, r9, r10
-> +       stmia           r14!, {X0-X3}
-> +
-> +       // Save keystream for x4-x7
-> +       __ldrd          r8, r9, sp, 112
-> +       __ldrd          r10, r11, sp, 120
-> +       add             X4, r8, X4, ror #brot
-> +       add             X5, r9, X5, ror #brot
-> +       add             X6, r10, X6, ror #brot
-> +       add             X7, r11, X7, ror #brot
-> +       _le32_bswap_4x  X4, X5, X6, X7,  r8, r9, r10
-> +         add           r8, sp, #64
-> +       stmia           r14!, {X4-X7}
-> +
-> +       // Save keystream for x8-x15
-> +       ldm             r8, {r0-r7}             // (x8-x9,x12-x15,x10-x11)
-> +       __ldrd          r8, r9, sp, 128
-> +       __ldrd          r10, r11, sp, 136
-> +       add             r0, r0, r8              // x8
-> +       add             r1, r1, r9              // x9
-> +       add             r6, r6, r10             // x10
-> +       add             r7, r7, r11             // x11
-> +       _le32_bswap_4x  r0, r1, r6, r7,  r8, r9, r10
-> +       stmia           r14!, {r0,r1,r6,r7}
-> +       __ldrd          r8, r9, sp, 144
-> +       __ldrd          r10, r11, sp, 152
-> +       add             r2, r8, r2, ror #drot   // x12
-> +       add             r3, r9, r3, ror #drot   // x13
-> +       add             r4, r10, r4, ror #drot  // x14
-> +       add             r5, r11, r5, ror #drot  // x15
-> +       _le32_bswap_4x  r2, r3, r4, r5,  r9, r10, r11
-> +       stmia           r14, {r2-r5}
-> +
-> +       // Stack: ks0-ks15 unused0-unused7 x0-x15 OUT IN LEN
-> +       // Registers: r8 is block counter, r12 is IN.
-> +
-> +       ldr             r9, [sp, #168]          // LEN
-> +       ldr             r14, [sp, #160]         // OUT
-> +       cmp             r9, #64
-> +         mov           r0, sp
-> +       movle           r1, r9
-> +       movgt           r1, #64
-> +       // r1 is number of bytes to XOR, in range [1, 64]
-> +
-> +.if __LINUX_ARM_ARCH__ < 6
-> +       orr             r2, r12, r14
-> +       tst             r2, #3                  // IN or OUT misaligned?
-> +       bne             .Lxor_next_byte\@
-> +.endif
-> +
-> +       // XOR a word at a time
-> +.rept 16
-> +       subs            r1, #4
-> +       blt             .Lxor_words_done\@
-> +       ldr             r2, [r12], #4
-> +       ldr             r3, [r0], #4
-> +       eor             r2, r2, r3
-> +       str             r2, [r14], #4
-> +.endr
-> +       b               .Lxor_slowpath_done\@
-> +.Lxor_words_done\@:
-> +       ands            r1, r1, #3
-> +       beq             .Lxor_slowpath_done\@
-> +
-> +       // XOR a byte at a time
-> +.Lxor_next_byte\@:
-> +       ldrb            r2, [r12], #1
-> +       ldrb            r3, [r0], #1
-> +       eor             r2, r2, r3
-> +       strb            r2, [r14], #1
-> +       subs            r1, #1
-> +       bne             .Lxor_next_byte\@
-> +
-> +.Lxor_slowpath_done\@:
-> +       subs            r9, #64
-> +       add             sp, #96
-> +       bgt             .Lprepare_for_next_block\@
-> +
-> +.Ldone\@:
-> +.endm  // _chacha
-> +
-> +/*
-> + * void chacha20_arm(u8 *out, const u8 *in, size_t len, const u32 key[8],
-> + *                  const u32 iv[4]);
-> + */
-> +ENTRY(chacha20_arm)
-> +       cmp             r2, #0                  // len == 0?
-> +       bxeq            lr
-> +
-> +       push            {r0-r2,r4-r11,lr}
-> +
-> +       // Push state x0-x15 onto stack.
-> +       // Also store an extra copy of x10-x11 just before the state.
-> +
-> +       ldr             r4, [sp, #48]           // iv
-> +       mov             r0, sp
-> +       sub             sp, #80
-> +
-> +       // iv: x12-x15
-> +       ldm             r4, {X12,X13,X14,X15}
-> +       stmdb           r0!, {X12,X13,X14,X15}
-> +
-> +       // key: x4-x11
-> +       __ldrd          X8_X10, X9_X11, r3, 24
-> +       __strd          X8_X10, X9_X11, sp, 8
-> +       stmdb           r0!, {X8_X10, X9_X11}
-> +       ldm             r3, {X4-X9_X11}
-> +       stmdb           r0!, {X4-X9_X11}
-> +
-> +       // constants: x0-x3
-> +       adrl            X3, .Lexpand_32byte_k
-> +       ldm             X3, {X0-X3}
-> +       __strd          X0, X1, sp, 16
-> +       __strd          X2, X3, sp, 24
-> +
-> +       _chacha         20
-> +
-> +       add             sp, #76
-> +       pop             {r4-r11, pc}
-> +ENDPROC(chacha20_arm)
-> +
-> +/*
-> + * void hchacha20_arm(const u32 state[16], u32 out[8]);
-> + */
-> +ENTRY(hchacha20_arm)
-> +       push            {r1,r4-r11,lr}
-> +
-> +       mov             r14, r0
-> +       ldmia           r14!, {r0-r11}          // load x0-x11
-> +       push            {r10-r11}               // store x10-x11 to stack
-> +       ldm             r14, {r10-r12,r14}      // load x12-x15
-> +       sub             sp, #8
-> +
-> +       _chacha_permute 20
-> +
-> +       // Skip over (unused0-unused1, x10-x11)
-> +       add             sp, #16
-> +
-> +       // Fix up rotations of x12-x15
-> +       ror             X12, X12, #drot
-> +       ror             X13, X13, #drot
-> +         pop           {r4}                    // load 'out'
-> +       ror             X14, X14, #drot
-> +       ror             X15, X15, #drot
-> +
-> +       // Store (x0-x3,x12-x15) to 'out'
-> +       stm             r4, {X0,X1,X2,X3,X12,X13,X14,X15}
-> +
-> +       pop             {r4-r11,pc}
-> +ENDPROC(hchacha20_arm)
-> +
-> +#ifdef CONFIG_KERNEL_MODE_NEON
-> +/*
-> + * This following NEON routine was ported from Andy Polyakov's implementation
-> + * from CRYPTOGAMS. It begins with parts of the CRYPTOGAMS scalar routine,
-> + * since certain NEON code paths actually branch to it.
-> + */
-> +
->  .text
->  #if defined(__thumb2__) || defined(__clang__)
->  .syntax        unified
-> @@ -22,39 +484,6 @@
->  #define ldrhsb ldrbhs
->  #endif
->
-> -.align 5
-> -.Lsigma:
-> -.long  0x61707865,0x3320646e,0x79622d32,0x6b206574     @ endian-neutral
-> -.Lone:
-> -.long  1,0,0,0
-> -.word  -1
-> -
-> -.align 5
-> -ENTRY(chacha20_arm)
-> -       ldr     r12,[sp,#0]             @ pull pointer to counter and nonce
-> -       stmdb   sp!,{r0-r2,r4-r11,lr}
-> -       cmp     r2,#0                   @ len==0?
-> -#ifdef __thumb2__
-> -       itt     eq
-> -#endif
-> -       addeq   sp,sp,#4*3
-> -       beq     .Lno_data_arm
-> -       ldmia   r12,{r4-r7}             @ load counter and nonce
-> -       sub     sp,sp,#4*(16)           @ off-load area
-> -#if __LINUX_ARM_ARCH__ < 7 && !defined(__thumb2__)
-> -       sub     r14,pc,#100             @ .Lsigma
-> -#else
-> -       adr     r14,.Lsigma             @ .Lsigma
-> -#endif
-> -       stmdb   sp!,{r4-r7}             @ copy counter and nonce
-> -       ldmia   r3,{r4-r11}             @ load key
-> -       ldmia   r14,{r0-r3}             @ load sigma
-> -       stmdb   sp!,{r4-r11}            @ copy key
-> -       stmdb   sp!,{r0-r3}             @ copy sigma
-> -       str     r10,[sp,#4*(16+10)]     @ off-load "rx"
-> -       str     r11,[sp,#4*(16+11)]     @ off-load "rx"
-> -       b       .Loop_outer_enter
-> -
->  .align 4
->  .Loop_outer:
->         ldmia   sp,{r0-r9}              @ load key material
-> @@ -748,11 +1177,8 @@ ENTRY(chacha20_arm)
->
->  .Ldone:
->         add     sp,sp,#4*(32+3)
-> -.Lno_data_arm:
->         ldmia   sp!,{r4-r11,pc}
-> -ENDPROC(chacha20_arm)
->
-> -#ifdef CONFIG_KERNEL_MODE_NEON
->  .align 5
->  .Lsigma2:
->  .long  0x61707865,0x3320646e,0x79622d32,0x6b206574     @ endian-neutral
-> diff --git a/lib/zinc/chacha20/chacha20-arm64-cryptogams.S b/lib/zinc/chacha20/chacha20-arm64.S
-> similarity index 100%
-> rename from lib/zinc/chacha20/chacha20-arm64-cryptogams.S
-> rename to lib/zinc/chacha20/chacha20-arm64.S
-> diff --git a/lib/zinc/chacha20/chacha20.c b/lib/zinc/chacha20/chacha20.c
-> index 4354b874a6a5..fc4f74fca653 100644
-> --- a/lib/zinc/chacha20/chacha20.c
-> +++ b/lib/zinc/chacha20/chacha20.c
-> @@ -16,6 +16,8 @@
->
->  #if defined(CONFIG_ZINC_ARCH_X86_64)
->  #include "chacha20-x86_64-glue.h"
-> +#elif defined(CONFIG_ZINC_ARCH_ARM) || defined(CONFIG_ZINC_ARCH_ARM64)
-
-As above, just use CONFIG_ARM / CONFIG_ARM64 directly
-
-> +#include "chacha20-arm-glue.h"
->  #else
->  void __init chacha20_fpu_init(void)
->  {
-> --
-> 2.19.0
->
+>  	op_mw = (op_ma * out_mv) / 1000;
+>  	if (op_mw < port->operating_snk_mw) {
+>  		/*
+> -- 
+> 1.9.1
+> 
