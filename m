@@ -2,215 +2,180 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE19C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8E1C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BFC42170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:20:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAE372170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 02:21:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MCal4byR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BFC42170E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="usNmOxfi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE372170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbeI1ImS (ORCPT
+        id S1728848AbeI1Img (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 04:42:18 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45995 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbeI1ImR (ORCPT
+        Fri, 28 Sep 2018 04:42:36 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45507 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728499AbeI1Imf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 04:42:17 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d9-v6so1999159ybr.12
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 19:20:54 -0700 (PDT)
+        Fri, 28 Sep 2018 04:42:35 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l2-v6so5017884qtr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 19:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GOKsD+KchkBKgT7nKYt8vN7PSnsq+jSh5jm3e7+wpnk=;
-        b=MCal4byRTXIKai+bi5VIh3R1hnr287+fnSCdFsttGGiZwRkV7LHJAL9e091vAptRJK
-         MzK1H7ObIIQPoKB0XZcb9F3EgAw+46NK3la1ibqO6tV08LtRClFoUe/MIK8/o+KQtuwD
-         oJl1vHTXM2OFhHBLzmGolFW//G6V002dE7/tY=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4tUHHwO7J91i4l2JdnkhWSShRf+dZSrclrHwPTvzrwM=;
+        b=usNmOxfiiqqR+n4iyMQndZRxYiyOT+T4GBltWZ7NPV9BI8jwBbIU9Ca70UloMkjy+M
+         hmqbNBJVZUVf3o3G4aWoUTm77GcnzrHq6aG4q137GzxfjSebM4b12UHnS5B7RD+exfuc
+         jMdnyRfyWaWTlNpsEhpCc0mz73hN/Xpzi34TcgNKml1wL8JCz9deMqZnsuuRKczyCqly
+         rFFbQ7l6JrB3hN0hy/CoHCNRIleuxvbDhKEuw8PvduY4JzvYhZpHXU2Z/zyCiv1thdHA
+         6YNynr5ZtgLVk8xlPwvfVgxqqJRBUiztjzxXHasFVS/8C8ZX6IODY6z1XE7cmg0uYwS2
+         6VEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GOKsD+KchkBKgT7nKYt8vN7PSnsq+jSh5jm3e7+wpnk=;
-        b=XxeaeVuvdrTvErsE64a9Sf77Ex5u5tKlE/B4LZyf2tnEUL+h1sg+6ymKrUIaE90Czb
-         t4y1C+APylWssGgfwCGUkm6h6tYk9G9sYNyLfBvw4HaqNc3kNgqJdOg6wSfBKr1xy6bF
-         YrNL+Wq7E3QirOdq+2ZBnMjTPQOqWGIRKsHXAqx+EZ++s7TJJNU8sTuewnXAVmzMsABo
-         e8fWLtnOCNHmzaZkqHdak4uzSMVSB960j7kopHunMos1DNnV1kWEBZjb8NsqFug8wsNz
-         VR1LHp65+j1ciOaRY0eONqY/AHCHARIi5Yck5YJXygjD4VpZueRN5YSswJcLNHxplJba
-         muyQ==
-X-Gm-Message-State: ABuFfoiLS786y5zp/71D8L0mENAJNFOZGY3a6wOx3cm1uzq3XoYF0kVy
-        AL+NghHmNM+LSJI8PMAsmCJCNhSZXaQ=
-X-Google-Smtp-Source: ACcGV60ARACp7zMzD7waaW0nSauoh9KklcXaVu8OU3lJOtKprTAwbOCe3UWqjAuROVoyZtrL8/sVgw==
-X-Received: by 2002:a25:2d58:: with SMTP id s24-v6mr7497235ybe.347.1538101253800;
-        Thu, 27 Sep 2018 19:20:53 -0700 (PDT)
-Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
-        by smtp.gmail.com with ESMTPSA id b7-v6sm3147888ywe.1.2018.09.27.19.20.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 19:20:52 -0700 (PDT)
-Received: by mail-yw1-f46.google.com with SMTP id y14-v6so1997225ywa.4
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Sep 2018 19:20:51 -0700 (PDT)
-X-Received: by 2002:a0d:fec6:: with SMTP id o189-v6mr6906088ywf.237.1538101251463;
- Thu, 27 Sep 2018 19:20:51 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4tUHHwO7J91i4l2JdnkhWSShRf+dZSrclrHwPTvzrwM=;
+        b=fvpFxjWaddEWrzfOxRIiMFsviTLNCv5xQPZRfy6j5Ph7GHkJcclc1GzsRh1eGlzjtz
+         Hq5q0ABwR/lzriJLzC0wHzqvmItL7NHTTS8aZRjvHOP1bcm4yDIqv0bThfJ9ctO9HG+c
+         47uvz+M3Pvf9NyCeHG3HCBO9VhW/lVff9oE1YlFMvL6s+z8pgyRin+JgZ+FWnvk+GttJ
+         qmo00GJTUoEgNfBdyRl4hQdh+f3Y5mBKW71v0IPfxZP8fBXSTAviBQkrjzp2A/BsUy0B
+         TrAiVQkfdWfVggw7P23jv9Ojij1W/V38OOmMB6G1l0ZD1ZWBocK5N6HHq9een7avI1ha
+         qSVg==
+X-Gm-Message-State: ABuFfogz9fiFDMcenALibS1ZgvJ9ejRJM7/JoLuQZ8K8fXxYOmttuy/R
+        EeNMUSqQ64RGjEG/pz6oOw==
+X-Google-Smtp-Source: ACcGV60QzjCI3G0tRkNfnyJ7Ex9weiWUrdiwAA4Umw7ZZJuuUY74wURc6hstguYGL13Xi/NwtJa+Cg==
+X-Received: by 2002:a0c:b584:: with SMTP id g4-v6mr10423414qve.94.1538101272779;
+        Thu, 27 Sep 2018 19:21:12 -0700 (PDT)
+Received: from gabell ([2601:18f:600:d880:61f5:1cd1:112d:c09c])
+        by smtp.gmail.com with ESMTPSA id g64-v6sm2022059qkc.37.2018.09.27.19.21.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 19:21:12 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 22:21:06 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Baoquan He <bhe@redhat.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] ACPI / NUMA: Add warning message if the padding
+ size for KASLR is not enough
+Message-ID: <20180928022105.f5tz2665morrunwo@gabell>
+References: <20180927203146.12201-1-msys.mizuma@gmail.com>
+ <20180927203146.12201-3-msys.mizuma@gmail.com>
+ <20180927211425.GC19687@zn.tnic>
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 27 Sep 2018 19:20:50
- -0700 (PDT)
-In-Reply-To: <CAGXu5jLOe0izpGoB8c-hAeH2SzA51dF1BuMcXbk-d=QwqfjxxQ@mail.gmail.com>
-References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-5-tycho@tycho.ws>
- <CAGXu5jLOe0izpGoB8c-hAeH2SzA51dF1BuMcXbk-d=QwqfjxxQ@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 27 Sep 2018 19:20:50 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJvkkNNsGj=MK+=Dg0=nauANRkp=b1MrvOOzxkpb+DVkg@mail.gmail.com>
-Message-ID: <CAGXu5jJvkkNNsGj=MK+=Dg0=nauANRkp=b1MrvOOzxkpb+DVkg@mail.gmail.com>
-Subject: Re: [PATCH v7 4/6] files: add a replace_fd_files() function
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927211425.GC19687@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 2:59 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Sep 27, 2018 at 8:11 AM, Tycho Andersen <tycho@tycho.ws> wrote:
->> Similar to fd_install/__fd_install, we want to be able to replace an fd of
->> an arbitrary struct files_struct, not just current's. We'll use this in the
->> next patch to implement the seccomp ioctl that allows inserting fds into a
->> stopped process' context.
->>
->> v7: new in v7
->>
->> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
->> CC: Alexander Viro <viro@zeniv.linux.org.uk>
->> CC: Kees Cook <keescook@chromium.org>
->> CC: Andy Lutomirski <luto@amacapital.net>
->> CC: Oleg Nesterov <oleg@redhat.com>
->> CC: Eric W. Biederman <ebiederm@xmission.com>
->> CC: "Serge E. Hallyn" <serge@hallyn.com>
->> CC: Christian Brauner <christian.brauner@ubuntu.com>
->> CC: Tyler Hicks <tyhicks@canonical.com>
->> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
->> ---
->>  fs/file.c            | 22 +++++++++++++++-------
->>  include/linux/file.h |  8 ++++++++
->>  2 files changed, 23 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/file.c b/fs/file.c
->> index 7ffd6e9d103d..3b3c5aadaadb 100644
->> --- a/fs/file.c
->> +++ b/fs/file.c
->> @@ -850,24 +850,32 @@ __releases(&files->file_lock)
->>  }
->>
->>  int replace_fd(unsigned fd, struct file *file, unsigned flags)
->> +{
->> +       return replace_fd_task(current, fd, file, flags);
->> +}
->> +
->> +/*
->> + * Same warning as __alloc_fd()/__fd_install() here.
->> + */
->> +int replace_fd_task(struct task_struct *task, unsigned fd,
->> +                   struct file *file, unsigned flags)
->>  {
->>         int err;
->> -       struct files_struct *files = current->files;
->
-> Same feedback as Jann: on a purely "smaller diff" note, this could
-> just be s/current/task/ here and all the other s/files/task->files/
-> would go away...
->
->>
->>         if (!file)
->> -               return __close_fd(files, fd);
->> +               return __close_fd(task->files, fd);
->>
->> -       if (fd >= rlimit(RLIMIT_NOFILE))
->> +       if (fd >= task_rlimit(task, RLIMIT_NOFILE))
->>                 return -EBADF;
->>
->> -       spin_lock(&files->file_lock);
->> -       err = expand_files(files, fd);
->> +       spin_lock(&task->files->file_lock);
->> +       err = expand_files(task->files, fd);
->>         if (unlikely(err < 0))
->>                 goto out_unlock;
->> -       return do_dup2(files, file, fd, flags);
->> +       return do_dup2(task->files, file, fd, flags);
->>
->>  out_unlock:
->> -       spin_unlock(&files->file_lock);
->> +       spin_unlock(&task->files->file_lock);
->>         return err;
->>  }
->>
->> diff --git a/include/linux/file.h b/include/linux/file.h
->> index 6b2fb032416c..f94277fee038 100644
->> --- a/include/linux/file.h
->> +++ b/include/linux/file.h
->> @@ -11,6 +11,7 @@
->>  #include <linux/posix_types.h>
->>
->>  struct file;
->> +struct task_struct;
->>
->>  extern void fput(struct file *);
->>
->> @@ -79,6 +80,13 @@ static inline void fdput_pos(struct fd f)
->>
->>  extern int f_dupfd(unsigned int from, struct file *file, unsigned flags);
->>  extern int replace_fd(unsigned fd, struct file *file, unsigned flags);
->> +/*
->> + * Warning! This is only safe if you know the owner of the files_struct is
->> + * stopped outside syscall context. It's a very bad idea to use this unless you
->> + * have similar guarantees in your code.
->> + */
->> +extern int replace_fd_task(struct task_struct *task, unsigned fd,
->> +                          struct file *file, unsigned flags);
->
-> Perhaps call this __replace_fd() to indicate the "please don't use
-> this unless you're very sure"ness of it?
->
->>  extern void set_close_on_exec(unsigned int fd, int flag);
->>  extern bool get_close_on_exec(unsigned int fd);
->>  extern int get_unused_fd_flags(unsigned flags);
->> --
->> 2.17.1
->>
->
-> If I can get an Ack from Al, that would be very nice. :)
+On Thu, Sep 27, 2018 at 11:14:25PM +0200, Borislav Petkov wrote:
+> On Thu, Sep 27, 2018 at 04:31:45PM -0400, Masayoshi Mizuma wrote:
+> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > 
+> > Add warning message if the padding size for KASLR,
+> > rand_mem_physical_padding, is not enough. The message also
+> > says the suitable padding size.
+> > 
+> > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > ---
+> >  arch/x86/include/asm/setup.h |  2 ++
+> >  drivers/acpi/numa.c          | 14 ++++++++++++++
+> >  2 files changed, 16 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+> > index ae13bc9..65a5bf8 100644
+> > --- a/arch/x86/include/asm/setup.h
+> > +++ b/arch/x86/include/asm/setup.h
+> > @@ -80,6 +80,8 @@ static inline unsigned long kaslr_offset(void)
+> >  	return (unsigned long)&_text - __START_KERNEL;
+> >  }
+> >  
+> > +extern int rand_mem_physical_padding;
+> > +
+> >  /*
+> >   * Do NOT EVER look at the BIOS memory size location.
+> >   * It does not work on many machines.
+> > diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> > index 8516760..9c3cc3c 100644
+> > --- a/drivers/acpi/numa.c
+> > +++ b/drivers/acpi/numa.c
+> > @@ -32,6 +32,7 @@
+> >  #include <linux/numa.h>
+> >  #include <linux/nodemask.h>
+> >  #include <linux/topology.h>
+> > +#include <asm/setup.h>
+> >  
+> >  static nodemask_t nodes_found_map = NODE_MASK_NONE;
+> >  
+> > @@ -435,6 +436,8 @@ acpi_table_parse_srat(enum acpi_srat_type id,
+> >  int __init acpi_numa_init(void)
+> >  {
+> >  	int cnt = 0;
+> > +	u32 max_phys_addr_tb;
+> > +	u64 max_phys_addr;
+> >  
+> >  	if (acpi_disabled)
+> >  		return -EINVAL;
+> > @@ -463,6 +466,17 @@ int __init acpi_numa_init(void)
+> >  
+> >  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+> >  					    acpi_parse_memory_affinity, 0);
+> > +
+> > +		if (parsed_numa_memblks && kaslr_enabled()) {
+> > +			max_phys_addr = PFN_PHYS(max_possible_pfn);
+> > +			max_phys_addr_tb = (roundup(max_phys_addr, 1ULL << 40)) >> 40;
+> > +
+> > +			if (max_phys_addr_tb > rand_mem_physical_padding)
+> > +				pr_warn("Set 'rand_mem_physical_padding=%d' "
+> > +					"as the kernel parameter. "
+> > +					"Otherwise, memory hotadd may be failed.\n",
+> > +					max_phys_addr_tb);
+> 
+> Please integrate scripts/checkpatch.pl into your patch creation
+> workflow. Some of the warnings/errors *actually* make sense:
+> 
+> WARNING: quoted string split across lines
+> #75: FILE: drivers/acpi/numa.c:476:
+> +                               pr_warn("Set 'rand_mem_physical_padding=%d' "
+> +                                       "as the kernel parameter. "
+> 
+> WARNING: quoted string split across lines
+> #76: FILE: drivers/acpi/numa.c:477:
+> +                                       "as the kernel parameter. "
+> +                                       "Otherwise, memory hotadd may be failed.\n",
+> 
+> total: 0 errors, 2 warnings, 40 lines checked
+> 
+> Also, that sentence needs polishing:
+> 
+> 				pr_warn("Set 'rand_mem_physical_padding=%d' to avoid memory hotadd failure.\n",
 
-In out-of-band feedback from Al, he's pointed out a much cleaner
-approach: do the work on the "current" side. i.e. current is stopped
-in __seccomp_filter in the case SECCOMP_RET_USER_NOTIFY. Instead of
-having the ioctl-handing process doing the work, have it done on the
-other side. This may cause some additional complexity on the ioctl
-return path, but it solves both this problem and the "ptrace attach"
-issue: have the work delayed until "current" gets caught by seccomp.
+Thank you for pointing it out.
+I'll fix it.
 
--Kees
+Thnaks,
+Masa
 
--- 
-Kees Cook
-Pixel Security
+> 
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
