@@ -6,39 +6,42 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A601CC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FC0C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74553206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:04:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74553206B6
+	by mail.kernel.org (Postfix) with ESMTP id 651DA2073F
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:05:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651DA2073F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeI2Eai (ORCPT
+        id S1727569AbeI2Eao (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:30:38 -0400
-Received: from smtprelay0016.hostedemail.com ([216.40.44.16]:60404 "EHLO
+        Sat, 29 Sep 2018 00:30:44 -0400
+Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:55021 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726569AbeI2Eai (ORCPT
+        by vger.kernel.org with ESMTP id S1726569AbeI2Eao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:30:38 -0400
+        Sat, 29 Sep 2018 00:30:44 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 61A71100E806B;
-        Fri, 28 Sep 2018 22:04:52 +0000 (UTC)
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 24F64181D337B;
+        Fri, 28 Sep 2018 22:04:58 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: snail70_2a755c297550b
-X-Filterd-Recvd-Size: 1906
+X-HE-Tag: club85_2b326dc16d834
+X-Filterd-Recvd-Size: 3863
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:04:51 +0000 (UTC)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:04:56 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: Bad MAINTAINERS pattern in section 'SYNOPSYS DESIGNWARE AXI DMAC DRIVER'
-Date:   Fri, 28 Sep 2018 15:04:50 -0700
-Message-Id: <20180928220450.31731-1-joe@perches.com>
+Cc:     Nishanth Menon <nm@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh@kernel.org>, Dave Gerlach <d-gerlach@ti.com>
+Subject: Bad MAINTAINERS pattern in section 'Texas Instruments' System Control Interface (TISCI) Protocol Driver'
+Date:   Fri, 28 Sep 2018 15:04:55 -0700
+Message-Id: <20180928220455.31806-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,36 +52,70 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	14171	SYNOPSYS DESIGNWARE AXI DMAC DRIVER
-	14172	M:	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-	14173	S:	Maintained
--->	14174	F:	drivers/dma/dwi-axi-dmac/
-	14175	F:	Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
+	14531	Texas Instruments' System Control Interface (TISCI) Protocol Driver
+	14532	M:	Nishanth Menon <nm@ti.com>
+	14533	M:	Tero Kristo <t-kristo@ti.com>
+	14534	M:	Santosh Shilimkar <ssantosh@kernel.org>
+	14535	L:	linux-arm-kernel@lists.infradead.org
+	14536	S:	Maintained
+	14537	F:	Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+	14538	F:	drivers/firmware/ti_sci*
+	14539	F:	include/linux/soc/ti/ti_sci_protocol.h
+	14540	F:	Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+-->	14541	F:	include/dt-bindings/genpd/k2g.h
+	14542	F:	drivers/soc/ti/ti_sci_pm_domains.c
+	14543	F:	Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+	14544	F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+	14545	F:	drivers/clk/keystone/sci-clk.c
+	14546	F:	drivers/reset/reset-ti-sci.c
 
 Commit that introduced this:
 
-commit 1fe20f1b84548bbcf48b6659ea171cd46618ea3a
- Author: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
- Date:   Tue Mar 6 14:46:14 2018 +0300
+commit 7cc119f29b197f967161ca94c9d5cb5073b4b52b
+ Author: Dave Gerlach <d-gerlach@ti.com>
+ Date:   Tue Apr 4 08:59:27 2017 -0700
  
-     dmaengine: Introduce DW AXI DMAC driver
+     dt-bindings: Add TI SCI PM Domains
      
-     This patch adds support for the DW AXI DMAC controller.
-     DW AXI DMAC is a part of HSDK development board from Synopsys.
+     Add a generic power domain implementation, TI SCI PM Domains, that
+     will hook into the genpd framework and allow the TI SCI protocol to
+     control device power states.
      
-     In this driver implementation only DMA_MEMCPY transfers are
-     supported.
+     Also, provide macros representing each device index as understood
+     by TI SCI to be used in the device node power-domain references.
+     These are identifiers for the K2G devices managed by the PMMC.
      
-     Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-     Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+     Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+     Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+     Acked-by: Rob Herring <robh@kernel.org>
+     Signed-off-by: Nishanth Menon <nm@ti.com>
+     Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+     Signed-off-by: Santosh Shilimkar <ssantosh@kernel.org>
  
-  MAINTAINERS                                    |    6 +
-  drivers/dma/Kconfig                            |   10 +
-  drivers/dma/Makefile                           |    1 +
-  drivers/dma/dw-axi-dmac/Makefile               |    1 +
-  drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 1008 ++++++++++++++++++++++++
-  drivers/dma/dw-axi-dmac/dw-axi-dmac.h          |  334 ++++++++
-  6 files changed, 1360 insertions(+)
+  .../devicetree/bindings/soc/ti/sci-pm-domain.txt   | 57 ++++++++++++++
+  MAINTAINERS                                        |  2 +
+  include/dt-bindings/genpd/k2g.h                    | 90 ++++++++++++++++++++++
+  3 files changed, 149 insertions(+)
 
-No commit with drivers/dma/dwi-axi-dmac/ found
+Last commit with include/dt-bindings/genpd/k2g.h
 
+commit d16645054d2f55e4011c9725ddf2dbe6177e942a
+Author: Dave Gerlach <d-gerlach@ti.com>
+Date:   Fri Jul 21 09:38:36 2017 -0700
+
+    dt-bindings: Drop k2g genpd device ID macros
+    
+    Commit 7cc119f29b19 ("dt-bindings: Add TI SCI PM Domains") introduced a
+    number of K2G_DEV_x macros to represent each device ID available on the
+    K2G platform for use by the genpd, clock, and reset drivers. Rather than
+    use these macros, which are only used in the device tree for property
+    values and not actually used by the drivers, let's just use the device
+    ID number directly in the device tree to avoid macro bloat.
+    
+    Acked-by: Rob Herring <robh@kernel.org>
+    Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+    Signed-off-by: Santosh Shilimkar <ssantosh@kernel.org>
+
+ .../devicetree/bindings/soc/ti/sci-pm-domain.txt   |  5 +-
+ include/dt-bindings/genpd/k2g.h                    | 90 ----------------------
+ 2 files changed, 3 insertions(+), 92 deletions(-)
