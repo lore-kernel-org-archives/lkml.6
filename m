@@ -2,121 +2,142 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820FBC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F077C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3929221748
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A2EB2170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 06:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tmobflfr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3929221748
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1Yx2Tu5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2EB2170E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbeI1Md7 (ORCPT
+        id S1728804AbeI1Me2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 08:33:59 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39884 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeI1Md6 (ORCPT
+        Fri, 28 Sep 2018 08:34:28 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45413 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbeI1Me2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 08:33:58 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8S6Bn2s092775;
-        Fri, 28 Sep 2018 01:11:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538115109;
-        bh=CtC43rlE2A3YpGLxLixL15l6Ka3b7splcBnMeyi7nGQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=tmobflfrHUfvsjCd1mqGw+AFK8tJ7Q3H5uIrBIHOhMSpkn9ghMrmsi9G55+Oza+Cs
-         rx1qB839bln5ucv9lls5yV7Xwh6OsBmvvpiW3Ouv3wIEdTAQorL6ww0li6YYRXGplj
-         gE3q3NsCh49stoylHKCXCPD9va5lvmq4dK14FgzM=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S6BnYE005406;
-        Fri, 28 Sep 2018 01:11:49 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 28
- Sep 2018 01:11:50 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 28 Sep 2018 01:11:50 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S6BkTV000615;
-        Fri, 28 Sep 2018 01:11:47 -0500
-Subject: Re: [PATCH 0/5] ti_am335x_tsc: Enable wakeup capability
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
-References: <20180630103318.25355-1-vigneshr@ti.com>
- <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com> <20180718074736.GA4641@dell>
- <20180718170902.vk7rahyoaevucxbi@penguin> <20180723053708.GA4213@dell>
- <2236aa96-ca56-fa30-157d-2f484c6968cc@ti.com> <20180725052621.GB5835@dell>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <f61848d8-57f6-14c0-eb74-cab488ceda50@ti.com>
-Date:   Fri, 28 Sep 2018 11:42:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 28 Sep 2018 08:34:28 -0400
+Received: by mail-pf1-f195.google.com with SMTP id a23-v6so3538868pfi.12;
+        Thu, 27 Sep 2018 23:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rgwFuKjgGYJdfcbFJ9WgTJf9FMxvKKHLJcVvrNVKkRM=;
+        b=O1Yx2Tu5PxBdWNtoTImkJn6DE6gNwmV9Oqo0LiCzvwT6VMjOUJ2QF1Qb7fiPFo8mN5
+         9CDHxbijIlXJYzEGuZUXjaBaCdDgsqMUvRW/+sKKzRCTAeaWtDFhaxA/fd9xA98VrR36
+         tEsVIUreZozDguVtUJHcLkeGUWBlW4+/OkLkELDIHpWV40VnZ//qTH9L8Cp3MJ7MrSC3
+         rhsK6GBlZ+ETkUSLso2PsHsNLLTepmmVM246TuWmlT4p2qUxX4ybeBS++Lr/PqRhL2Em
+         i9xxSG8GXipIAsVzeIaDsoUjKTu1FNAzw9XjLtMdyH3lr70+J7O5MOB1qu0Ldtlj+ZJ4
+         Bz9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rgwFuKjgGYJdfcbFJ9WgTJf9FMxvKKHLJcVvrNVKkRM=;
+        b=pZxx/R6YaGgHClaeflHdJUZF/kfXESLuOlW7Wh2NYsoVquhLxjI7X6YnB49eZoCwHI
+         5TF1vbrYceCJdz7B3AopOJ2v1fMHKcuooay7srj9RoQkBbTS/U/TvgTf5PHUJwIzAzIn
+         2djT2F0lstaCZpd16qpi8PkJlTxVsZxSEmh+x+1MSBHO+9t4d0JdKmef+KnM9L/Xjm3h
+         jjfxkXMmr3qXWEvssTP1VEBfLyyRF35kRav2sivAzJfpxKpVADkQ4jpnZGdj7UmWDcW5
+         4MoV4tKb2OF7GB4Hh4hcGY2bDgQ/J/j8R7pVWxl/nMrYFRt2b7YD4M1lLMZU42RUTJA2
+         TOgQ==
+X-Gm-Message-State: ABuFfoinx3jw0LBguwaQAatEfctatcNEh7De6yA8ZWgpVlfL0sYiqxBt
+        KyvOIADcdJ87Mk54yQvcq4vAR2py
+X-Google-Smtp-Source: ACcGV61sWaQyxPwLZfAPLIWv/znJQprJToF6O5PuIuyNxUJnsaKp8tAKevl9nf+KmU4qD8EUr1iAxA==
+X-Received: by 2002:a65:5286:: with SMTP id y6-v6mr13132923pgp.65.1538115140988;
+        Thu, 27 Sep 2018 23:12:20 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id 71-v6sm5602767pfx.182.2018.09.27.23.12.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 27 Sep 2018 23:12:20 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] KVM: LAPIC: Tune lapic_timer_advance_ns automatically
+Date:   Fri, 28 Sep 2018 14:12:16 +0800
+Message-Id: <1538115136-20092-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180725052621.GB5835@dell>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+From: Wanpeng Li <wanpengli@tencent.com>
 
-On Wednesday 25 July 2018 10:56 AM, Lee Jones wrote:
-[...]
->>>>>>>
->>>>>>> Vignesh R (5):
->>>>>>>   mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
->>>>>>>   Input: ti_am335x_tsc: Mark TSC device as wakeup source
->>>>>>>   mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup
->>>>>>>     capable
->>>>>>>   iio: adc: ti_am335x_adc: Disable ADC during suspend unconditionally
->>>>>>>   Input: ti_am335x_tsc: Mark IRQ as wakeup capable
->>>>>>>
->>>>>>>  drivers/iio/adc/ti_am335x_adc.c           | 12 ++++--------
->>>>>>>  drivers/input/touchscreen/ti_am335x_tsc.c | 22 +++++++++++++++++-----
->>>>>>>  drivers/mfd/ti_am335x_tscadc.c            | 14 +++++++++++++-
->>>>>>>  3 files changed, 34 insertions(+), 14 deletions(-)
->>>>>>>
->>>>>>
->>>>>> Gentle ping... Could you review/pick this series? MFD amd IIO bits are
->>>>>> already ACKed
->>>>>
->>>>> MFD patches are reviewed "for my own reference" meaning that we
->>>>> haven't yet agreed on a merge plan yet.
->>>>
->>>> I think this series makes sense to be pushed through a single tree as
->>>> opposed to being spread between 3, even if it could technically be
->>>> possible. It looks like Jonathan is fine with going it through either
->>>> his or some other tree, I am fine with it going through MFD.
->>>
->>> I'm happy either way.
->>>
->> Thanks Dmitry, Jonathan and Lee Jones!
->>
->> Could this be applied to one of the trees now? MFD perhaps?
-> 
-> It'll be applied, when it's applied. ;)
+In cloud environment, lapic_timer_advance_ns is needed to be tuned for every CPU 
+generations, and every host kernel versions(the kvm-unit-tests/tscdeadline_latency.flat 
+is 5700 cycles for upstream kernel and 9600 cycles for our 3.10 product kernel, 
+both preemption_timer=N, Skylake server).
 
-I see that this series was not picked up for v4.19. Could you consider
-this series for v4.20? Patches apply cleanly against linux-next.
+This patch adds the capability to automatically tune lapic_timer_advance_ns
+step by step, the initial value is 1000ns as d0659d946be05 (KVM: x86: add 
+option to advance tscdeadline hrtimer expiration) recommended, it will be 
+reduced when it is too early, and increased when it is too late. The guest_tsc 
+and tsc_deadline are hard to equal, so we assume we are done when the delta 
+is within a small scope e.g. 100 cycles. This patch reduces latency 
+(kvm-unit-tests/tscdeadline_latency, busy waits, preemption_timer enabled)
+from ~2600 cyles to ~1200 cyles on our Skylake server.
 
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kvm/lapic.c | 7 +++++++
+ arch/x86/kvm/x86.c   | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index fbb0e6d..b756f12 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -70,6 +70,8 @@
+ #define APIC_BROADCAST			0xFF
+ #define X2APIC_BROADCAST		0xFFFFFFFFul
+ 
++static bool __read_mostly lapic_timer_advance_adjust_done = false;
++
+ static inline int apic_test_vector(int vec, void *bitmap)
+ {
+ 	return test_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
+@@ -1492,6 +1494,11 @@ void wait_lapic_expire(struct kvm_vcpu *vcpu)
+ 	if (guest_tsc < tsc_deadline)
+ 		__delay(min(tsc_deadline - guest_tsc,
+ 			nsec_to_cycles(vcpu, lapic_timer_advance_ns)));
++	if (!lapic_timer_advance_adjust_done) {
++		lapic_timer_advance_ns += (s64)(guest_tsc - tsc_deadline) / 8;
++		if (abs(guest_tsc - tsc_deadline) < 100)
++			lapic_timer_advance_adjust_done = true;
++	}
+ }
+ 
+ static void start_sw_tscdeadline(struct kvm_lapic *apic)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index edbf00e..e865d12 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -136,7 +136,7 @@ static u32 __read_mostly tsc_tolerance_ppm = 250;
+ module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_IWUSR);
+ 
+ /* lapic timer advance (tscdeadline mode only) in nanoseconds */
+-unsigned int __read_mostly lapic_timer_advance_ns = 0;
++unsigned int lapic_timer_advance_ns = 1000;
+ module_param(lapic_timer_advance_ns, uint, S_IRUGO | S_IWUSR);
+ EXPORT_SYMBOL_GPL(lapic_timer_advance_ns);
+ 
 -- 
-Regards
-Vignesh
+2.7.4
+
