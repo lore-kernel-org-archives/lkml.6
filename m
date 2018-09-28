@@ -2,165 +2,136 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABE0C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6F3C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 311D2206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:10:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=8chan.co header.i=@8chan.co header.b="hrIui3WT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311D2206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=8chan.co
+	by mail.kernel.org (Postfix) with ESMTP id C433E204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:12:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C433E204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbeI1Xeo (ORCPT
+        id S1729176AbeI1Xgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:34:44 -0400
-Received: from cock.li ([185.100.85.212]:36958 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeI1Xen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:34:43 -0400
+        Fri, 28 Sep 2018 19:36:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53738 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbeI1Xgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:36:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4482018A;
+        Fri, 28 Sep 2018 10:12:01 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.emea.arm.com [10.4.12.239])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EDD13F5BD;
+        Fri, 28 Sep 2018 10:11:53 -0700 (PDT)
+Subject: Re: [PATCH] sched/fair: vruntime should normalize when switching from
+ fair
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Steve Muckle <smuckle@google.com>,
+        Miguel de Dios <migueldedios@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Todd Kjos <tkjos@google.com>, Paul Turner <pjt@google.com>,
+        quentin.perret@arm.com, Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Chris.Redpath@arm.com, Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        John Dias <joaodias@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>
+References: <20180817182728.76129-1-smuckle@google.com>
+ <dcd2fa21-7fef-d648-017d-9d42d11793e0@google.com>
+ <20180824093227.GN24124@hirez.programming.kicks-ass.net>
+ <20180824094742.GJ24142@hirez.programming.kicks-ass.net>
+ <ae94fb88-646b-1d82-b61d-103792965dbf@google.com>
+ <20180827111458.GB24124@hirez.programming.kicks-ass.net>
+ <2ed346fa-dbe8-4928-928b-a34338b2d8c9@arm.com>
+ <CANRm+CwEKf9bBj3zBQAL2nYjdt-zymz1xg7=PRcFz6DUOjLVJg@mail.gmail.com>
+ <62134bba-b6bd-ba16-a49b-e4887c326559@arm.com>
+ <CANRm+CzasXnjUtA_Xkm27=YDArc-gcpLmpSHv1cAqxihfocxRw@mail.gmail.com>
+ <fab279dd-0f6c-af7a-5a06-d26e77afad6a@arm.com>
+ <CANRm+CyJQ_D9BP70OmB6z6r0zxDPoB0y828+E0tqis0x=jsd5A@mail.gmail.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <e055dace-be32-e074-ab35-dfa84534d466@arm.com>
+Date:   Fri, 28 Sep 2018 19:11:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8chan.co; s=mail;
-        t=1538154599; bh=2+pV0E912BHmp4CzSkgZNjskHJWk8RcHLLkKZjdzZaE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hrIui3WT3n5294XJcS8VmYNto0UizYvVQf75+WCbClubFyGryjXDvsXfI2/cMydj/
-         SOrdeYeXXoNWoVD2xULTms/OmW8vZhzXrDSvYzvzKypSAn8ivjtlA6gvHmh+x/0Nba
-         Xlt4LVGZZuKii07t4swbTSwH7AnlScVCTLLrF1navMaeCK4G2HVfrAmVVfK792ugWF
-         ptPkPN4dwBWVS+ZEk7t7H7BJUU5lH/eTSvYL9oSDB2zVmWQjq6QBRQz3du+rWoFnL7
-         34o/dChmlzJJpOUnj5vWGH476FzCrWM1MwVsPq78YjUA/ai2sqngvqx+Vum76A1cjw
-         5017hnOg7LTpg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <CANRm+CyJQ_D9BP70OmB6z6r0zxDPoB0y828+E0tqis0x=jsd5A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 28 Sep 2018 17:09:58 +0000
-From:   vwdfrwd@8chan.co
-To:     Bruce Perens <bruce@perens.com>, linux-kernel@vger.kernel.org
-Cc:     Taiidan@gmx.com, dng <dng@lists.dyne.org>, rms@gnu.org
-Subject: Re: [DNG] Fwd: Re: Fwd: Re: GPL version 2 is a bare license. Recind.
- (Regarding (future) linux Code of Conduct Bannings).
-In-Reply-To: <CAK2MWOs1fmd8bLpWLJah+5Ckyke7SMnM46w-iKx9dENpBe7M4g@mail.gmail.com>
-References: <6b4a0cf6fa672938b8ab98acd1dea0a1@redchan.it>
- <BBFE2346-72C7-47D3-910A-DD720C7637DC@charter.net>
- <24cf6d6095c740903f16b56e22dd137c@redchan.it>
- <996c99ea4146a247730d87df14dfca1a@redchan.it>
- <E1g2TJn-0006lD-Lm@fencepost.gnu.org>
- <CAK2MWOssGczVO1Cd_SPVVb=ieCs2vkpFUfve9P3sh+gT1VfN7Q@mail.gmail.com>
- <4f926d0e5b96673926f3a4f163fdb590@redchan.it>
- <f3ac1e0424fed0fcbf782a6c9b1209a0@redchan.it>
- <20180919130952.2b2c23cc@mydesk.domain.cxm>
- <EF2143AF-4090-414E-B00B-EBF07361C741@getbackinthe.kitchen>
- <20180919213207.fx5ej6lopcdd7aft@katolaz.homeunix.net>
- <20180920144659.3598e2cb@mydesk.domain.cxm> <5BA3F750.3040908@signal100.com>
- <8bd5d183-6606-2f3d-4f66-fa918c8831f3@gmx.com>
- <CAK2MWOs1fmd8bLpWLJah+5Ckyke7SMnM46w-iKx9dENpBe7M4g@mail.gmail.com>
-Message-ID: <515a3104d6089dab10a5cded37d1881f@8chan.co>
-X-Sender: vwdfrwd@8chan.co
-User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Would trade it all, to be-able to marry cute young girls (as allowed by 
-YHWH (Devarim chapter 22, verse 28 (na'ar)) (also, obviously, in Sunni 
-Islam (see 5th book of Bukhari)).
-
-Banning men from having girl children as brides is the first thing you 
-"SJW"s (aka "whites") did over 100 years ago.
-
-And yes, Bruce Perens, we blaim you and yours for upholding said ban.
-
-Thankfully Sunni muslims will be overtaking your countries soon.
-They will lift the ban that you "whites" installed (in your reverent 
-worship of women), God willing.
-
-On 2018-09-27 21:11, Bruce Perens wrote:
-> I'm that Social Justice Warrior that you don't like. And if you are
-> using Devuan or Debian, if you've gotten a ham radio license since
-> 2007, or if you're doing various Open Source things you have already
-> benefited from things I've done in the name of social justice. So
-> would you please be more careful about who you think is evil.
+On 09/28/2018 02:43 AM, Wanpeng Li wrote:
+> On Thu, 27 Sep 2018 at 21:23, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>> On 09/27/2018 03:19 AM, Wanpeng Li wrote:
+>>> On Thu, 27 Sep 2018 at 06:38, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> On 09/26/2018 11:50 AM, Wanpeng Li wrote:
+>>>>> Hi Dietmar,
+>>>>> On Tue, 28 Aug 2018 at 22:55, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>>>>>
+>>>>>> On 08/27/2018 12:14 PM, Peter Zijlstra wrote:
+>>>>>>> On Fri, Aug 24, 2018 at 02:24:48PM -0700, Steve Muckle wrote:
+>>>>>>>> On 08/24/2018 02:47 AM, Peter Zijlstra wrote:
+>>>>>>>>>>> On 08/17/2018 11:27 AM, Steve Muckle wrote:
+>>>>
+>>>> [...]
+>>>>
+>>>>>>>>>>>> - later, when the prio is deboosted and the task is moved back
+>>>>>>>>>>>>         to the fair class, the fair rq's min_vruntime is added to
+>>>>>>>>>>>>         the task's vruntime, even though it wasn't subtracted earlier.
+>>>>>
+>>>>> Could you point out when the fair rq's min_vruntime is added to the
+>>>>> task's vruntime in your *later* scenario? attach_task_cfs_rq will not
+>>>>> do that the same reason as detach_task_cfs_rq. fair task's
+>>>>> sched_remote_wakeup is false which results in vruntime will not be
+>>>>> renormalized in enqueue_entity.
+>>>>
+>>>> The cfs_rq->min_vruntime is still added to the se->vruntime in
+>>>> enqueue_task_fair().
+>>>
+>>> I understand what your patch done,
+>>
+>> It's not my patch ;-) I just helped to find out under which
+>> circumstances this issue can happen.
+>>
+>>> On your CPU4:
+>>> scheduler_ipi()
+>>>    -> sched_ttwu_pending()
+>>>         -> ttwu_do_activate()    => p->sched_remote_wakeup should be
+>>> false, so ENQUEUE_WAKEUP is set, ENQUEUE_MIGRATED is not
+>>>              -> ttwu_activate()
+>>>                   -> activate_task()
+>>>                        -> enqueue_task()
+>>>                             -> enqueue_task_fair()
+>>>                                  -> enqueue_entity()
+>>>                                       bool renorm = !(flags &
+>>> ENQUEUE_WAKEUP) || (flags & ENQUEUE_MIGRATE)
+>>> so renorm is false in enqueue_entity(), why you mentioned that the
+>>> cfs_rq->min_vruntime is still added to the se->vruntime in
+>>> enqueue_task_fair()?
+>>
+>> Maybe this is a misunderstanding on my side but didn't you asked me to
+>> '... Could you point out when the fair rq's min_vruntime is added to the
+>> task's vruntime in your *later* scenario? ...'
 > 
-> On Thu, Sep 27, 2018, 13:21 Taiidan@gmx.com <Taiidan@gmx.com> wrote:
-> 
->> "Code of conduct" type policies are absolute bullshit meant to ruin
->> and
->> divide a community with conflict and strife.
->> 
->> I can't understand what has happened - perhaps "they" got to linus
->> somehow?
->> 
->> The people they want out are the ones who reject changes like rdrand
->> etc.
->> 
->> This is a plot to destroy linux and make it a corporate drone
->> project -
->> but hey after all I guess we aren't "ethical" enough like suicide
->> net
->> apple or killer drone software google so the cool kids are out to
->> get us.
->> 
->> The CoC snowflake types contribute nothing real and make absolutely
->> nothing innovative of course but yet somehow they always make the
->> rules?
->> what the hell? I bet they don't even use linux as their daily
->> driver.
->> 
->> We didn't vote to have a CoC it was forced on us like all these
->> changes.
->> 
->> Good things do not have to be forced on a community instead they are
->> voted for not shoved down our throats, a minority making the rules
->> for
->> the majority.
->> 
->> Female and minority coders plus community contributors such as
->> Joanna
->> Rutkowska who created qubes[1] and Leah Rowe who created
->> libreboot[2]
->> are both respectable and respected because they make real
->> contributions
->> to the world unlike the CoC jerks.
->> 
->> [1]Arguably the best security innovation and security operating
->> system
->> since the millennium.
->> 
->> [2]Leah kept the computing freedom movement going by spending 100K+
->> of
->> her own money on libre firmware ports for modern motherboards - I
->> also
->> believe without her bringing to life the kgpe-d16/kcma-d8 libre
->> firmware
->> ports there wouldn't have been a talos 2 either.
->> The end of owner controlled computing hardware was very, very
->> narrowly
->> averted thanks to them and a few others.
->> 
->> Note: I am always nice to people no matter their skin color,
->> political
->> leanings or who they want to date - I treat others as I wish to be
->> treated so I am not one of steve litt's hypothetical examples.
->> 
->> Hell how many of these SJW types have like to offer their seat on
->> the
->> bus/train to a tired non-white person because they too know what it
->> is
->> like to be tired and poor? zero.
->> 
->> They have cushy lives and invent fake problems because they do not
->> have
->> any real ones of their own to deal with.
->> _______________________________________________
->> Dng mailing list
->> Dng@lists.dyne.org
->> https://mailinglists.dyne.org/cgi-bin/mailman/listinfo/dng
-> _______________________________________________
-> Dng mailing list
-> Dng@lists.dyne.org
-> https://mailinglists.dyne.org/cgi-bin/mailman/listinfo/dng
+> Yeah, if the calltrace above and my analysis is correct, then the fair
+> rq's min_vruntime will not be added to the task's vruntime in your
+> *later* scenario, which means that your patch is not necessary.
+
+Ah, ok, both, the ENQUEUE_WAKEUP and the ENQUEUE_MIGRATED are not set in 
+the enqueue_entity() call so renorm is 1 (flags is 0xe).
+
+
+
+
