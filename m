@@ -2,94 +2,117 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCE2C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8369C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24C162168B
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:57:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C162168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 7D99621547
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:02:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D99621547
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbeI1TVL convert rfc822-to-8bit (ORCPT
+        id S1728901AbeI1T0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:21:11 -0400
-Received: from ozlabs.org ([203.11.71.1]:49651 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbeI1TVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:21:11 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42MBXl62q9z9s1x;
-        Fri, 28 Sep 2018 22:57:27 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe LEROY <christophe.leroy@c-s.fr>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kgdb-bugreport@lists.sourceforge.net, stable@vger.kernel.org,
-        me@tobin.cc
-Subject: Re: [PATCH] kdb: use correct pointer when 'btc' calls 'btt'
-In-Reply-To: <7cf2d115-a58b-4585-37fc-7e58169a43a3@c-s.fr>
-References: <ff05bd36b338f4f914780176e9eba8138e1b254b.1536927765.git.christophe.leroy@c-s.fr> <20180916190610.vzqxwps7zqy2zc6o@holly.lan> <5f0e0241-b7ab-b5fa-de0e-01abdbc85770@linaro.org> <760ed3ff-43d9-75e5-b36c-aaa7871ffe50@c-s.fr> <877ej7urh3.fsf@concordia.ellerman.id.au> <7cf2d115-a58b-4585-37fc-7e58169a43a3@c-s.fr>
-Date:   Fri, 28 Sep 2018 22:57:27 +1000
-Message-ID: <87zhw1srt4.fsf@concordia.ellerman.id.au>
+        Fri, 28 Sep 2018 15:26:07 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2693 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726440AbeI1T0G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 15:26:06 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8SCwsPN019782;
+        Fri, 28 Sep 2018 15:02:02 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mrj4mkby3-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 28 Sep 2018 15:02:02 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C8C0138;
+        Fri, 28 Sep 2018 13:02:01 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A531D4E6F;
+        Fri, 28 Sep 2018 13:02:01 +0000 (GMT)
+Received: from localhost (10.75.127.50) by SFHDAG5NODE2.st.com (10.75.127.14)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Sep 2018 15:02:00
+ +0200
+From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v3 0/7] Add-DMA-MDMA-chaining-support
+Date:   Fri, 28 Sep 2018 15:01:48 +0200
+Message-ID: <1538139715-24406-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> Le 27/09/2018 à 13:09, Michael Ellerman a écrit :
->> Christophe LEROY <christophe.leroy@c-s.fr> writes:
->>> Le 26/09/2018 à 13:11, Daniel Thompson a écrit :
->>>> On 16/09/2018 20:06, Daniel Thompson wrote:
->>>>> On Fri, Sep 14, 2018 at 12:35:44PM +0000, Christophe Leroy wrote:
->>>>>> On a powerpc 8xx, 'btc' fails as follows:
->>>>>> Entering kdb (current=0x(ptrval), pid 282) due to Keyboard Entry
->> ...
->>>>>>
->>>>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>>>>> Cc: <stable@vger.kernel.org> # 4.15+
->>>>>
->>>>> Would a Fixes: be better here?
->>>>> Fixes: ad67b74d2469d9b82 ("printk: hash addresses printed with %p")
->>>>
->>>> Christophe, When you add the Fixes: could you also add my
->>>>
->>>> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
->>>
->>> Ok, thanks for the review, but do I have to do anything really ?
->>>
->>> The Fixes: and now your Reviewed-by: appear automatically in patchwork
->>> (https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=65715),
->>> so I believe they'll be automatically included when Jason or someone
->>> else takes the patch, no ?
->> 
->> patchwork won't add the Fixes tag from the reply, it needs to be in the
->> original mail.
->> 
->> See:
->>    https://github.com/getpatchwork/patchwork/issues/151
->> 
->
-> Ok, so it accounts it and adds a '1' in the F column in the patches 
-> list, but won't take it into account.
+This serie adds support for M2M transfer triggered by STM32 DMA in order to
+transfer data from/to SRAM to/from DDR.
 
-Yes. The logic that populates the columns is separate from the logic
-that scrapes the tags, which is a bug :)
+Normally, this mode should not be needed as transferring data from/to DDR
+is supported by the STM32 DMA.
+However, the STM32 DMA don't have the ability to generate burst transfer
+on the DDR as it only embeds only a 4-word FIFO although the minimal burst
+length on the DDR is 8 words.
+Due to this constraint, the STM32 DMA transfers data from/to DDR in a
+single way and could lead to pollute the DDR.
+To avoid this, we have to use SRAM for all transfers where STM32 DMA is
+involved.
 
-> Then I'll send a v2 with revised commit text.
+An Hw design has been specially put in place to allow this chaining where DMA
+interrupt is connected on GIC and MDMA request line as well. This grants the
+possibility to trigger an MDMA transfer from the completion of DMA.
+At the same time MDMA has the ability to acknowlege DMA. The aim is to have an
+self refreching mechanism to transfer from/to device to/from DDR with minimal
+sw support.
+For instance the DMA is set in cyclic double buffering to feed SRAM and MDMA
+transfer to DDR thanks to LLI.
 
-Thanks.
+---
+  Version history:
+    v3:
+       * Solve KBuild warnings
+    v2:
+       * Rework binding content
+    v1:
+       * Initial
+---
 
-cheers
+Pierre-Yves MORDRET (3):
+  dt-bindings: stm32-dma: Add DMA/MDMA chaining support bindings
+  dt-bindings: stm32-dmamux: Add one cell to support DMA/MDMA chain
+  dt-bindings: stm32-mdma: Add DMA/MDMA chaining support bindings
+  dmaengine: stm32-dma: Add DMA/MDMA chaining support
+  dmaengine: stm32-mdma: Add DMA/MDMA chaining support
+  dmaengine: stm32-dma: enable descriptor_reuse
+  dmaengine: stm32-mdma: enable descriptor_reuse
+
+ .../devicetree/bindings/dma/stm32-dma.txt          |  27 +-
+ .../devicetree/bindings/dma/stm32-dmamux.txt       |   6 +-
+ .../devicetree/bindings/dma/stm32-mdma.txt         |  12 +-
+ drivers/dma/stm32-dma.c                            | 903 ++++++++++++++++++---
+ drivers/dma/stm32-mdma.c                           | 133 ++-
+ 5 files changed, 949 insertions(+), 132 deletions(-)
+
+-- 
+2.7.4
+
