@@ -2,118 +2,118 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F849C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AE6C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61770204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61770204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 1076E204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 14:31:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bNyWQ4Qx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1076E204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbeI1Uz3 (ORCPT
+        id S1729310AbeI1U4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:55:29 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:10446 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726867AbeI1Uz3 (ORCPT
+        Fri, 28 Sep 2018 16:56:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:47616 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeI1U4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:55:29 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8SET7bB025957;
-        Fri, 28 Sep 2018 16:30:58 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mnb6y2dc3-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 28 Sep 2018 16:30:58 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AD42C38;
-        Fri, 28 Sep 2018 14:30:57 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5059250E0;
-        Fri, 28 Sep 2018 14:30:57 +0000 (GMT)
-Received: from [10.129.6.39] (10.75.127.46) by SFHDAG5NODE2.st.com
- (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 28 Sep
- 2018 16:30:55 +0200
-Subject: Re: [PATCH v2 0/7] Add-DMA-MDMA-chaining-support
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        <devicetree@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1538123794-17085-1-git-send-email-pierre-yves.mordret@st.com>
-From:   Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <6bc2e022-1a36-f36c-b23b-e2ba7b16f2fc@st.com>
-Date:   Fri, 28 Sep 2018 16:30:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 28 Sep 2018 16:56:00 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8SESSg6184981;
+        Fri, 28 Sep 2018 14:31:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=WEhzwGiHdxfYyJFfJE2dEdATgcfRskocApAjCXznkCY=;
+ b=bNyWQ4Qx6BkO8Q6/Y4laP/i4KYeucg76JNBcZ8+jB8ibMQKDN0frzRF0VYLaOy5wJe72
+ g4cieKpUCeyOtWkNZUOgVdYUf2zfGjlUn83s18MM9VF7TSYzrr04xdaBs1L//e5wWhzw
+ N8IflxgdG1VnhxAyIspa8XC7hhtS80xfLWYZXr23T6w2zCB3mrPYQpe+ldBMymjNkXth
+ OIf4ZsYhhJrsEhV5wRsM8w3PvdKFlGF5B3o7dqBAessppEkCP54BXqlVvN85m76NM43G
+ K1DG/kYlLhjRcg4I4i98gvFI0nOaSiab43gxWBtDsgFi+XZ+3ISBgLwZ0hG9rJy0f+fw GA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2mndpq0jw1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Sep 2018 14:31:53 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8SEVlPX031597
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Sep 2018 14:31:47 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8SEVlQp032204;
+        Fri, 28 Sep 2018 14:31:47 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Sep 2018 07:31:47 -0700
+Date:   Fri, 28 Sep 2018 17:31:40 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     John Whitmore <johnfwhitmore@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH 05/13] staging:rtl8192u: Remove AdvCoding and GreenField
+ - Style
+Message-ID: <20180928143140.e5fwzgdpehiw527f@mwanda>
+References: <20180926191704.16322-1-johnfwhitmore@gmail.com>
+ <20180926191704.16322-6-johnfwhitmore@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1538123794-17085-1-git-send-email-pierre-yves.mordret@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-28_06:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180926191704.16322-6-johnfwhitmore@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9029 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809280146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
+On Wed, Sep 26, 2018 at 08:16:56PM +0100, John Whitmore wrote:
+> The member variables AdvCoding and GreenField are unused in code so
+> have been removed from the structure and associated initialisation
+> function.
+> 
+> This is a coding style change which should have no impact on runtime
+> code execution.
+> 
+> Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> ---
+>  drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h     | 2 --
+>  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 --
+>  2 files changed, 4 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> index 64d5359cf7e2..83fb8f34ccbd 100644
+> --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+> @@ -39,10 +39,8 @@ enum ht_extension_chan_offset {
+>  
+>  struct ht_capability_ele {
+>  	//HT capability info
+> -	u8	AdvCoding:1;
+>  	u8	ChlWidth:1;
+>  	u8	MimoPwrSave:2;
+> -	u8	GreenField:1;
+>  	u8	ShortGI20Mhz:1;
+>  	u8	ShortGI40Mhz:1;
+>  	u8	TxSTBC:1;
 
-I've submitted a V3 following a KBuild warning.
-You can thus drop this V2.
+I feel like we discussed this before.  I'm pretty sure this comes from
+the firmware and so the format can't be changed.  When I look at
+rtllib_parse_mife_generic() then I think that "info_element" probably
+comes from the firmware.
 
-Thanks and sorry for the spamming.
+I wouldn't want to accept this with out someone testing it.
 
-Have a nice weekend.
-Regards
+regards,
+dan carpenter
 
-On 09/28/2018 10:36 AM, Pierre-Yves MORDRET wrote:
-> This serie adds support for M2M transfer triggered by STM32 DMA in order to
-> transfer data from/to SRAM to/from DDR.
-> 
-> Normally, this mode should not be needed as transferring data from/to DDR
-> is supported by the STM32 DMA.
-> However, the STM32 DMA don't have the ability to generate burst transfer
-> on the DDR as it only embeds only a 4-word FIFO although the minimal burst
-> length on the DDR is 8 words.
-> Due to this constraint, the STM32 DMA transfers data from/to DDR in a
-> single way and could lead to pollute the DDR.
-> To avoid this, we have to use SRAM for all transfers where STM32 DMA is
-> involved.
-> 
-> An Hw design has been specially put in place to allow this chaining where DMA
-> interrupt is connected on GIC and MDMA request line as well. This grants the
-> possibility to trigger an MDMA transfer from the completion of DMA.
-> At the same time MDMA has the ability to acknowlege DMA. The aim is to have an
-> self refreching mechanism to transfer from/to device to/from DDR with minimal
-> sw support.
-> For instance the DMA is set in cyclic double buffering to feed SRAM and MDMA
-> transfer to DDR thanks to LLI.
-> 
-> M'boumba Cedric Madianga (7):
->   dt-bindings: stm32-dma: Add DMA/MDMA chaining support bindings
->   dt-bindings: stm32-dmamux: Add one cell to support DMA/MDMA chain
->   dt-bindings: stm32-mdma: Add DMA/MDMA chaining support bindings
->   dmaengine: stm32-dma: Add DMA/MDMA chaining support
->   dmaengine: stm32-mdma: Add DMA/MDMA chaining support
->   dmaengine: stm32-dma: enable descriptor_reuse
->   dmaengine: stm32-mdma: enable descriptor_reuse
-> 
->  .../devicetree/bindings/dma/stm32-dma.txt          |  27 +-
->  .../devicetree/bindings/dma/stm32-dmamux.txt       |   6 +-
->  .../devicetree/bindings/dma/stm32-mdma.txt         |  12 +-
->  drivers/dma/stm32-dma.c                            | 903 ++++++++++++++++++---
->  drivers/dma/stm32-mdma.c                           | 133 ++-
->  5 files changed, 949 insertions(+), 132 deletions(-)
-> 
