@@ -2,139 +2,153 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFECC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9615EC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5BF21580
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:22:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C5BF21580
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DD7321580
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:23:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RoUX+SGV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DD7321580
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbeI1Tp6 (ORCPT
+        id S1728873AbeI1Tqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 15:45:58 -0400
-Received: from mga12.intel.com ([192.55.52.136]:25931 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726349AbeI1Tp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 15:45:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 06:22:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,315,1534834800"; 
-   d="scan'208";a="266762049"
-Received: from tursulin-mobl.ger.corp.intel.com (HELO [10.252.0.58]) ([10.252.0.58])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Sep 2018 06:22:08 -0700
-Subject: Re: [RFC 0/5] perf: Per PMU access controls (paranoid setting)
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Tvrtko Ursulin <tursulin@ursulin.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
-References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
- <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
-From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Message-ID: <e89ec139-1a97-803e-343c-76eedf244d65@linux.intel.com>
-Date:   Fri, 28 Sep 2018 14:22:07 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Fri, 28 Sep 2018 15:46:52 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:56150 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeI1Tqw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 15:46:52 -0400
+Received: by mail-it1-f196.google.com with SMTP id c23-v6so2424852itd.5
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 06:23:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=amRdKKEpjP+mVpMOEiQ08RnVzTzV/GhaIt6h0/7THYQ=;
+        b=RoUX+SGVR2vK2dtMDrpqrMBQjfv7wJqfyNl/WiZI8Ano3Gu4aDyiW6cZ3qisjB0qSA
+         tNIfq1YiTj27wu13HGTldz4Y0EL0YhkAJLdm2+HSR+3Tifj820SIh7wIvGLLr0+XJIyd
+         E3vU8eR12lmFfyMvJDnqdjAdyU7bH2XzeYN4U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=amRdKKEpjP+mVpMOEiQ08RnVzTzV/GhaIt6h0/7THYQ=;
+        b=iTq0LzBLJ6uWuCIlC4OeI8vrFs1CI3iwL22oUcwrT21HJmYmI2QdvilfSSXqY2HFw4
+         sbIE8kPJFMg85cCu++7BG2Z6ds2jg/xhrGyUsDVKNYDqmgoedePwPbQt/C9rTD/Z+ANQ
+         4u5pZSnD33f2Z8jmp650z88/HZVxHllVFF8QnwUI4d9MvKXbzqndeQAZv8ztYEsVQw38
+         c8wV/SVMmzy+3k/tq2rZPsEjA04fqmrKBmYdYtAYNvobIFyyFhEeD/rHLdDi9AnGdN/+
+         pIyUPBxh3bqQutE7p1/kFB7TFWn2ac5lZ/TAT6U+rXPMktqHaCrpzMvbfW2fze2WVhYr
+         y72Q==
+X-Gm-Message-State: ABuFfogWcVXg6eEHamF2Wvls/zUusMT8/VetFN7aX2XKkSl6D2E5uPEw
+        BNvWfu9MxDaTFB5N6sfhn0ju2dlHIz4=
+X-Google-Smtp-Source: ACcGV61oPMZ+svw9E1TOkyX7/Ml112Nuv6K+5fPLZPZs/RHkm/zIAH+NWFQgLc1GpeW+AMwB1ofbPg==
+X-Received: by 2002:a24:7383:: with SMTP id y125-v6mr1459216itb.146.1538140985412;
+        Fri, 28 Sep 2018 06:23:05 -0700 (PDT)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id r126-v6sm952051ita.26.2018.09.28.06.23.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 06:23:04 -0700 (PDT)
+Subject: Re: [PATCH] soc: qcom: qmi: add a prompt to QCOM_QMI_HELPERS
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180427140358.30839-1-elder@linaro.org>
+ <ec0e7861-4bf0-f135-a881-1a1de4579277@linaro.org>
+ <20180928122616.GA5249@centauri.lan>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <4025f206-631a-55e9-9b7a-89dcf3370284@linaro.org>
+Date:   Fri, 28 Sep 2018 08:23:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809281151190.2004@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <20180928122616.GA5249@centauri.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi,
-
-On 28/09/2018 11:26, Thomas Gleixner wrote:
-> Tvrtko,
+On 09/28/2018 07:26 AM, Niklas Cassel wrote:
+> On Fri, Sep 28, 2018 at 06:41:11AM -0500, Alex Elder wrote:
+>> Was there something wrong with this patch?  I sent it a long time
+>> ago but it still applies cleanly.  I can re-send if you like.
 > 
-> On Wed, 19 Sep 2018, Tvrtko Ursulin wrote:
+> Hello Alex,
 > 
-> It would be very helpful if you cc all involved people on the cover letter
-> instead of just cc'ing your own pile of email addresses. CC'ed now.
+> This patch does not apply on top of
+> https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=for-next
 
-I accept it was by bad to miss adding Cc's on the cover letter, but my 
-own email addresses hopefully should not bother you. It is simply a 
-question of what I have in .gitconfig vs what I forgot to do manually.
+Sorry, I sent this before I tracked down where Andy's for-next
+tree was.  It applied OK to linus/master.
 
->> For situations where sysadmins might want to allow different level of
->> access control for different PMUs, we start creating per-PMU
->> perf_event_paranoid controls in sysfs.
->>
->> These work in equivalent fashion as the existing perf_event_paranoid
->> sysctl, which now becomes the parent control for each PMU.
->>
->> On PMU registration the global/parent value will be inherited by each PMU,
->> as it will be propagated to all registered PMUs when the sysctl is
->> updated.
->>
->> At any later point individual PMU access controls, located in
->> <sysfs>/device/<pmu-name>/perf_event_paranoid, can be adjusted to achieve
->> fine grained access control.
->>
->> Discussion from previous posting:
->> https://lkml.org/lkml/2018/5/21/156
+> When you don't specify a string for a Kconfig, then you won't be able to
+> select it via menuconfig, only through other Kconfigs, e.g.:
+> $ git grep QCOM_QMI_HELPERS
+> drivers/remoteproc/Kconfig:     select QCOM_QMI_HELPERS
 > 
-> This is really not helpful. The cover letter and the change logs should
-> contain a summary of that discussion and a proper justification of the
-> proposed change. Just saying 'sysadmins might want to allow' is not useful
-> at all, it's yet another 'I want a pony' thing.
+> What Kconfig is it that needs QCOM_QMI_HELPERS?
 
-Okay, for the next round I will expand the cover letter with at least 
-one concrete example on how it is usable and summarize the discussion a bit.
+IPA, which is not yet merged.
 
-> I read through the previous thread and there was a clear request to involve
-> security people into this. Especially those who are deeply involved with
-> hardware side channels. I don't see anyone Cc'ed on the whole series.
+The entry in "drivers/soc/qcom/Kconfig" for this option includes
+help text, so I presume it was an oversight not to include a
+string (prompt).  It is the only non-trivial entry in that file
+that does not include one.  Why should this entry not be listed
+in menus?
 
-Who would you recommend I add? Because I really don't know..
+> Why do you need to make is selectable via menuconfig?
+> Isn't it sufficient to add a "select QCOM_QMI_HELPERS" to that Kconfig?
 
-> For the record, I'm not buying the handwavy 'more noise' argument at
-> all. It wants a proper analysis and we need to come up with criteria which
-> PMUs can be exposed at all.
+I have CONFIG_IPA dependent on CONFIG_QCOM_QMI_HELPERS.  I could
+change that to select it instead but I still think this entry
+should be changed.
+
+I'll mention that SLIM_QCOM_NGD_CTRL in drivers/slimbus/Kconfig
+also depends on--rather than selects--QCOM_QMI_HELPERS.
+
+					-Alex
+
 > 
-> All of this want's a proper documentation clearly explaining the risks and
-> scope of these knobs per PMU. Just throwing magic knobs at sysadmins and
-> then saying 'its their problem to figure it out' is not acceptable.
+> Kind regards,
+> Niklas
+> 
+>>
+>> 					-Alex
+>>
+>> On 04/27/2018 09:03 AM, Alex Elder wrote:
+>>> Add a prompt to the "tristate" attribute in the Kconfig file in
+>>> which QCOM_QMI_HELPERS is defined; I find it doesn't get selected
+>>> without it.
+>>>
+>>> Signed-off-by: Alex Elder <elder@linaro.org>
+>>> ---
+>>>  drivers/soc/qcom/Kconfig | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+>>> index 5c4535b545cc..81a501765cd9 100644
+>>> --- a/drivers/soc/qcom/Kconfig
+>>> +++ b/drivers/soc/qcom/Kconfig
+>>> @@ -36,7 +36,7 @@ config QCOM_PM
+>>>  	  low power modes.
+>>>  
+>>>  config QCOM_QMI_HELPERS
+>>> -	tristate
+>>> +	tristate "Qualcomm QMI Helpers"
+>>>  	depends on ARCH_QCOM && NET
+>>>  	help
+>>>  	  Helper library for handling QMI encoded messages.  QMI encoded
+>>>
+>>
 
-Presumably you see adding fine grained control as diminishing the 
-overall security rather than raising it? Could you explain why? Because 
-incompetent sysadmin will turn it off for some PMU, while without having 
-the fine-grained control they wouldn't turn it off globally?
-
-This feature was requested by the exact opposite concern, that in order 
-to access the i915 PMU, one has to compromise the security of the entire 
-system by allowing access to *all* PMU's.
-
-Making this ability fine-grained sounds like a logical solution for 
-solving this weakening of security controls.
-
-Concrete example was that on video transcoding farms users want to 
-monitor the utilization of GPU engines (like CPU cores) and they can do 
-that via the i915 PMU. But for that to work today they have to dial down 
-the global perf_event_paranoid setting. Obvious improvement was to allow 
-them to only dial down the i915.perf_event_paranoid setting. As such, 
-for this specific use case at least, the security is increased.
-
-Regards,
-
-Tvrtko
