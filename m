@@ -2,199 +2,141 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFF4C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 09:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FACC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 09:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3CC216FA
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 09:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51F4D206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 09:53:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lu8VXRYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3CC216FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/qFR4vT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F4D206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbeI1QH7 (ORCPT
+        id S1729176AbeI1QQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 12:07:59 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51918 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729243AbeI1QH7 (ORCPT
+        Fri, 28 Sep 2018 12:16:11 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36204 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728936AbeI1QQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 12:07:59 -0400
-Received: from avalon.localnet (nat-242.udc.es [193.144.61.242])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C1BAFB8E;
-        Fri, 28 Sep 2018 11:44:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1538127900;
-        bh=OTMNMF2+v8TyXhJDjDskQjgGqVAisGbjtDYrIr3DRN0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lu8VXRYag8xMIL/aMs6MoBJww8iGp7NE0kZTeIkz5wB+gJ5DnBRComRXfh1A60ciy
-         ouVjms6FE/0t7ZRu6cURNiUu1VV9Hr56rdXrnwl7bhZWOD/GmS5ukytgaFJfj27W9b
-         PSmMdhtBo/pxRhkYwzufDlHCENZVwyEClgzPwjTg=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "\"David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v11 1/2] dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
-Date:   Fri, 28 Sep 2018 12:45:12 +0300
-Message-ID: <14114604.4rraf0qJLU@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com>
-References: <1537951204-24672-1-git-send-email-yong.deng@magewell.com> <20180928093833.gwmskm2jvby6x4s6@paasikivi.fi.intel.com>
+        Fri, 28 Sep 2018 12:16:11 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b7-v6so3981649pfo.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 02:53:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oYJhqrqnOxYBongsXjKG5tsCf6jK5aypglb+nXFuqkw=;
+        b=F/qFR4vTTlgHtZOF3TVQkAhiezTePrj1f1bvb7XUG6I4xEji2TReQuRt6HI8vQT2sh
+         0AcvkO4Jz8fGXKziqildLhVttQpIX3rKxUfg4odZOpsntjp7NMVEJwkqxsd4cyQaMrDK
+         lWRn83hsBZL23BJBWHRCHG0wPLPj1b00JPcb//0MCzzJ/+SbeZBtZrJxnbNYXd+IS7i5
+         s1WXwR68sdHSizkpBy1IY19wTW8RlanJ4+v9reMXiKG6SNk297h7S5YMn+rIkUbXqNUw
+         mT5KQ0FTFE6giov/E0tZ+qpETnLX6qT/8Nsx/weFZqsnPZv0mPBH2dGweEizsOqnjUld
+         WQUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oYJhqrqnOxYBongsXjKG5tsCf6jK5aypglb+nXFuqkw=;
+        b=W5mzrD+ZVLfJii5Ou0ckmLX4NENlR4noGht7uNteBtLe+ScqJLQUXDzV30SKHOTn4y
+         thbJzJR7/mLDFWG5pt+HT498upKd33vqSs2Rx7yMoonzg3Vhb/szXvbaorHJaz4QOKD4
+         9I0lweUlvdcjht7EpVlimqof+B3V6SydTw9TWUJgBWwRXnxFdODz6PBernEXbTXS7Sio
+         cNWbvyBWRa5RZKSCC7/cng13IxLf7GdyDZ8i2gC1iEkTJg7Hrlfszt3UbURSMXGIuYZF
+         ZcRfAeeTcSHPKUaCzko1g8c5ndgxqMuUio/f0YUcvHqhUk2Mr3IJLVulOf9n9hjt8Qdk
+         /bMA==
+X-Gm-Message-State: ABuFfojpZ/rmz+X8VMYiE0QadUpPGOWl13ss3XDKbtQeqxQlG9HbWeq7
+        NA2bbUxySmhjNYm1DDVPaEU=
+X-Google-Smtp-Source: ACcGV61YGXqbXHJC/BJFRFVsSh0JNnN0mT4A422x9ItHwRk2FOPHNVZYXCZIJt2cKPiGe1KCiJcIVA==
+X-Received: by 2002:a63:4b44:: with SMTP id k4-v6mr14258053pgl.51.1538128393616;
+        Fri, 28 Sep 2018 02:53:13 -0700 (PDT)
+Received: from localhost.localdomain ([110.70.14.151])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm8043121pfa.47.2018.09.28.02.53.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Sep 2018 02:53:11 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCHv2] printk: CON_PRINTBUFFER console registration is a bit racy
+Date:   Fri, 28 Sep 2018 18:53:04 +0900
+Message-Id: <20180928095304.9972-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+CON_PRINTBUFFER console registration requires us to do several
+preparation steps:
+- Rollback console_seq to replay logbuf messages which were already
+  seen on other consoles;
+- Set exclusive_console flag so console_unlock() will ->write() logbuf
+  messages only to the exclusive_console driver.
 
-On Friday, 28 September 2018 12:38:33 EEST Sakari Ailus wrote:
-> On Wed, Sep 26, 2018 at 04:40:04PM +0800, Yong Deng wrote:
-> > Add binding documentation for Allwinner V3s CSI.
-> > 
-> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> I know... but I have a few more comments.
-> 
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> > ---
-> > 
-> >  .../devicetree/bindings/media/sun6i-csi.txt        | 59 +++++++++++++++++
-> >  1 file changed, 59 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> > 100644
-> > index 000000000000..2ff47a9507a6
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > @@ -0,0 +1,59 @@
-> > +Allwinner V3s Camera Sensor Interface
-> > +-------------------------------------
-> > +
-> > +Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
-> > +interface and CSI1 is used for parallel interface.
-> > +
-> > +Required properties:
-> > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > +  - reg: base address and size of the memory-mapped region.
-> > +  - interrupts: interrupt associated to this IP
-> > +  - clocks: phandles to the clocks feeding the CSI
-> > +    * bus: the CSI interface clock
-> > +    * mod: the CSI module clock
-> > +    * ram: the CSI DRAM clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - resets: phandles to the reset line driving the CSI
-> > +
-> > +Each CSI node should contain one 'port' child node with one child
-> > 'endpoint' +node, according to the bindings defined in
-> > +Documentation/devicetree/bindings/media/video-interfaces.txt. As
-> > mentioned
-> > +above, the endpoint's bus type should be MIPI CSI-2 for CSI0 and parallel
-> > or +Bt656 for CSI1.
-> 
-> Which port represents CSI0 and which one is CSI1? That needs to be
-> documented.
+The way we do it, however, is a bit racy
 
-There are two CSI devices, named CSI0 and CSI1, with one port each. The CSI0 
-device supports CSI-2 only, and the CSI1 device parallel (BT.601 or BT.656) 
-only.
+	logbuf_lock_irqsave(flags);
+	console_seq = syslog_seq;
+	console_idx = syslog_idx;
+	logbuf_unlock_irqrestore(flags);
+						<< preemption enabled
+						<< irqs enabled
+	exclusive_console = newcon;
+	console_unlock();
 
-> > +
-> > +Endpoint node properties for CSI1
-> 
-> How about CSI0? I'd expect at least data-lanes, and clock-lanes as well if
-> the hardware supports lane mapping.
+We rollback console_seq under logbuf_lock with IRQs disabled, but
+we set exclusive_console with local IRQs enabled and logbuf unlocked.
+If the system oops-es or panic-s before we set exclusive_console - and
+given that we have IRQs and preemption enabled there is such a
+possibility - we will re-play all logbuf messages to every registered
+console, which may be a bit annoying and time consuming.
 
-I enquired about that too. As far as I understand, CSI0 isn't supported yet in 
-the driver due to lack of documentation and lack of open-source vendor-
-provided source code. While DT bindings are not tied to driver 
-implementations, it's not the best idea to design DT bindings without at least 
-one working implementation to test them. I thus proposed just listing CSI0 as 
-being unsupported for now.
+Move exclusive_console assignment to the same IRQs-disabled and
+logbuf_lock-protected section where we rollback console_seq.
 
-> > +---------------------------------
-> > +
-> > +- remote-endpoint	: (required) a phandle to the bus receiver's endpoint
-> > +			   node
-> > +- bus-width:		: (required) must be 8, 10, 12 or 16
-> > +- pclk-sample		: (optional) (default: sample on falling edge)
-> 
-> Could you add that video-interfaces.txt contains documentation of these
-> properties as well? There's a reference above but only discusses port and
-> endpoint nodes.
-> 
-> > +- hsync-active		: (only required for parallel)
-> > +- vsync-active		: (only required for parallel)
-> 
-> As you support both Bt656 and parallel (with sync signals), you can detect
-> the interface type from the presence of these properties. I think you
-> should also say that these properties are not allowed on Bt656. So I'd
-> change this to e.g.
-> 
-> 	(required; parallel-only)
-> 
-> > +
-> > +Example:
-> > +
-> > +csi1: csi@1cb4000 {
-> > +	compatible = "allwinner,sun8i-v3s-csi";
-> > +	reg = <0x01cb4000 0x1000>;
-> > +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > +	clocks = <&ccu CLK_BUS_CSI>,
-> > +		 <&ccu CLK_CSI1_SCLK>,
-> > +		 <&ccu CLK_DRAM_CSI>;
-> > +	clock-names = "bus", "mod", "ram";
-> > +	resets = <&ccu RST_BUS_CSI>;
-> > +
-> > +	port {
-> > +		/* Parallel bus endpoint */
-> > +		csi1_ep: endpoint {
-> > +			remote-endpoint = <&adv7611_ep>;
-> > +			bus-width = <16>;
-> > +
-> > +			/* If hsync-active/vsync-active are missing,
-> > +			   embedded BT.656 sync is used */
-> > +			hsync-active = <0>; /* Active low */
-> > +			vsync-active = <0>; /* Active low */
-> > +			pclk-sample = <1>;  /* Rising */
-> > +		};
-> > +	};
-> > +};
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+---
 
+v2: added comment (Petr)
+
+ kernel/printk/printk.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 308497194bd4..24a81ba9ec77 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2742,14 +2742,18 @@ void register_console(struct console *newcon)
+ 		logbuf_lock_irqsave(flags);
+ 		console_seq = syslog_seq;
+ 		console_idx = syslog_idx;
+-		logbuf_unlock_irqrestore(flags);
+ 		/*
+ 		 * We're about to replay the log buffer.  Only do this to the
+ 		 * just-registered console to avoid excessive message spam to
+ 		 * the already-registered consoles.
++		 *
++		 * Set exclusive_console with disabled interrupts to reduce
++		 * race window with eventual console_flush_on_panic() that
++		 * ignores console_lock.
+ 		 */
+ 		exclusive_console = newcon;
+ 		exclusive_console_stop_seq = console_seq;
++		logbuf_unlock_irqrestore(flags);
+ 	}
+ 	console_unlock();
+ 	console_sysfs_notify();
 -- 
-Regards,
-
-Laurent Pinchart
-
-
+2.19.0
 
