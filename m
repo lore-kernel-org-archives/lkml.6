@@ -2,90 +2,98 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F45C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E44C04E87
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFCC3216E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:57:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFCC3216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 41D7B216E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:58:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOaVEn0Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D7B216E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbeI1UVZ (ORCPT
+        id S1729012AbeI1UWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:21:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:50820 "EHLO foss.arm.com"
+        Fri, 28 Sep 2018 16:22:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeI1UVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:21:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 701A5ED1;
-        Fri, 28 Sep 2018 06:57:30 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D868C3F5B7;
-        Fri, 28 Sep 2018 06:57:24 -0700 (PDT)
-Date:   Fri, 28 Sep 2018 14:57:18 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
-        mark.rutland@arm.com, rjw@rjwysocki.net, robdclark@gmail.com,
-        linux-pm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        sboyd@kernel.org, tfiga@chromium.org, jcrouse@codeaurora.org,
-        sricharan@codeaurora.org, m.szyprowski@samsung.com,
-        architt@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v16 0/5] iommu/arm-smmu: Add runtime pm/sleep support
-Message-ID: <20180928135718.GA1599@brain-police>
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
+        id S1726121AbeI1UWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:22:25 -0400
+Received: from [10.80.45.152] (unknown [71.69.156.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 846E721546;
+        Fri, 28 Sep 2018 13:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538143110;
+        bh=Deu93XPZfuEJ9mpfV/Oq5EYyF8dFSBBGdahp/kPxwN4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BOaVEn0Y3qZuDKsLQRL7FWKJ7iU8NjUZcHpIdfMeAHWr1UO4OKoUAYlnm6OjRfIK2
+         eA2KqvyQGloiKfHvJ/SpT8NTqGo/gV6ipsmxhoejXrvFPywzDi2zxxf8GT7kRci43A
+         CDD7PgzU7mQ5rmDIYU9W6TWQJKw3/LBnfPH6xDeg=
+Subject: Re: [PATCH] PCI/AER: Clear uncorrectable error status for device
+To:     poza@codeaurora.org, Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Wei Zhang <wzhang@fb.com>, linux-kernel@vger.kernel.org,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <1537258829-15763-1-git-send-email-poza@codeaurora.org>
+ <20180926220848.GK28024@bhelgaas-glaptop.roam.corp.google.com>
+ <605a3c5d65ae2f42237c7258a6c3e21b@codeaurora.org>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <e7b35f31-c684-ddac-7393-435640c6af39@kernel.org>
+Date:   Fri, 28 Sep 2018 09:58:27 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <605a3c5d65ae2f42237c7258a6c3e21b@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
+On 9/28/2018 6:24 AM, poza@codeaurora.org wrote:
+> 1) Does that seem like the right place?
+> 
 
-On Thu, Aug 30, 2018 at 08:15:36PM +0530, Vivek Gautam wrote:
-> This series provides the support for turning on the arm-smmu's
-> clocks/power domains using runtime pm. This is done using
-> device links between smmu and client devices. The device link
-> framework keeps the two devices in correct order for power-cycling
-> across runtime PM or across system-wide PM.
-> 
-> With addition of a new device link flag DL_FLAG_AUTOREMOVE_SUPPLIER [7],
-> the device links created between arm-smmu and its clients will be
-> automatically purged when arm-smmu driver unbinds from its device.
-> 
-> As not all implementations support clock/power gating, we are checking
-> for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
-> power management for such smmu implementations that can support it.
-> Otherwise, the clocks are turned to be always on in .probe until .remove.
-> With conditional runtime pm now, we avoid touching dev->power.lock
-> in fastpaths for smmu implementations that don't need to do anything
-> useful with pm_runtime.
-> This lets us to use the much-argued pm_runtime_get_sync/put_sync()
-> calls in map/unmap callbacks so that the clients do not have to
-> worry about handling any of the arm-smmu's power.
-> 
-> This series also adds support for Qcom's arm-smmu-v2 variant that
-> has different clocks and power requirements.
-> 
-> Previous version of this patch series is @ [1].
-> 
-> Build tested the series based on 4.19-rc1.
+IMO, I think best is to call after driver callback in PCI core.
+A driver specific action can cause some of these errors.
+We don't want to return with outstanding errors.
 
-I'm going to send my pull request to Joerg early next week (probably
-Monday), but I'm not keen to include this whilst it has outstanding comments
-from Ulf. Your errata workaround patch is in a similar situation, with
-outstanding comments from Robin.
+> 2) I guess all we need now would be to remove the calls from the
+>     drivers?
+> 
 
-Will
+yes
+
+> 3) If we remove all the calls from the drivers, we should remove the
+>     declaration from include/linux/aer.h, too.
+> 
+
+makes sense
+
+> I can take care of these updates if we agree they're the right thing
+> to do.
+
+
+
