@@ -5,84 +5,159 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FFAC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D76C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175C22172C
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:24:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175C22172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BA0B2172C
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 08:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BA0B2172C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbeI1Oqp (ORCPT
+        id S1728672AbeI1OtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 10:46:45 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:41904 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728062AbeI1Oqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 10:46:45 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8S8Mv4j016995
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 28 Sep 2018 01:23:08 -0700
-Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 28 Sep
- 2018 01:22:45 -0700
-Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len to
- command line
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-CC:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        <linux-kernel@vger.kernel.org>
-References: <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
- <20180919023932.GA14090@jagdpanzerIV>
- <20180918224312.6e9aef50@vmware.local.home>
- <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
- <20180920123056.27b2cf18@gandalf.local.home>
- <20180921073753.mqayzofcofpmhiyu@pathway.suse.cz>
- <20180925120135.GB523@tigerII.localdomain>
- <20180925122300.qq5w4skwmxbzi6sy@pathway.suse.cz>
- <20180925133143.GB601@tigerII.localdomain>
- <20180926110500.vfroi373mookavua@pathway.suse.cz>
- <20180928073526.GA1160@jagdpanzerIV>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <4c68fc36-ddce-9a5f-e868-ab9135649792@windriver.com>
-Date:   Fri, 28 Sep 2018 16:22:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 28 Sep 2018 10:49:17 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45206 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbeI1OtR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 10:49:17 -0400
+Received: from guest-nat.fw1.untrust.par1.mozilla.net (185.155.181.200) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 7fb7cbbd1a1f1031; Fri, 28 Sep 2018 10:26:38 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Subject: Re: [PATCH v7 02/14] sched/cpufreq: Prepare schedutil for Energy Aware Scheduling
+Date:   Fri, 28 Sep 2018 10:23:42 +0200
+Message-ID: <2417577.QmA9JEQx1z@aspire.rjw.lan>
+In-Reply-To: <20180927121749.urdqtayq6ll4k7qn@queper01-lin>
+References: <20180912091309.7551-1-quentin.perret@arm.com> <CAJZ5v0gL+NurA8UcN5oweqwxfgS10HgO1Zjh_cod4_Sr5nWQHQ@mail.gmail.com> <20180927121749.urdqtayq6ll4k7qn@queper01-lin>
 MIME-Version: 1.0
-In-Reply-To: <20180928073526.GA1160@jagdpanzerIV>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.216]
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thursday, September 27, 2018 2:17:49 PM CEST Quentin Perret wrote:
+> Hi Rafael,
+> 
+> Very sorry for the late reply ...
+> 
+> On Tuesday 18 Sep 2018 at 23:33:22 (+0200), Rafael J. Wysocki wrote:
+> [...]
+> > The new "type" argument should be documented.
+> > 
+> > Also IMO using the special enum for it is quite confusing, because you
+> > ever only check one value from it directly.  What would be wrong with
+> > using a plain "bool" instead?
+> 
+> So, this part of the code was originally proposed by Peter. I basically
+> took it from the following message (hence the Suggested-by) which was
+> fine by me:
+> 
+> https://lore.kernel.org/lkml/20180709120138.GQ2494@hirez.programming.kicks-ass.net/
+> 
+> Also, one of the things that has been mentioned during reviews was that
+> other clients (such as cpuidle, IIRC) could potentially be interested
+> in a 'global' cpu util value. And since those clients might have
+> different needs than EAS or sugov, they might need a new entry in the
+> enum.
+> 
+> So that's probably the main argument for the enum, it is easy to extend.
 
+OK, so please document the enum type.
 
-On 2018年09月28日 15:35, Sergey Senozhatsky wrote:
-> On (09/26/18 13:05), Petr Mladek wrote:
->> First, I would move the check into log_buf_len_update() so that
->> we catch the overflow also in other situations.
-> OK.
->
->> Second, please, keep only the first line.
-> OK.
->
->> It is enough to describe the problem.
-> OK.
-> He Zhe, will you pick it up?
+> [...]
+> > > +static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+> > > +{
+> > > +       struct rq *rq = cpu_rq(sg_cpu->cpu);
+> > > +       unsigned long util = cpu_util_cfs(rq);
+> > > +
+> > > +       sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
+> > > +       sg_cpu->bw_dl = cpu_bw_dl(rq);
+> > > +
+> > > +       return schedutil_freq_util(sg_cpu->cpu, util, FREQUENCY_UTIL);
+> > 
+> > If you add a "max" argument to schedutil_freq_util(), you can avoid
+> > the second (and arguably redundant) evaluation of
+> > arch_scale_cpu_capacity() in there.
+> 
+> OK
+> 
+> [...]
+> > > +enum schedutil_type {
+> > > +       FREQUENCY_UTIL,
+> > > +       ENERGY_UTIL,
+> > > +};
+> > 
+> > As I said above, I would just use "bool" instead of this new enum (it
+> > has two values too) or the new type needs to be documented.
+> 
+> As I said above, the enum has the good side of being easier to extend.
+> So, if we care about that, I guess I'd rather add a doc for the new
+> type.
 
-Yes, I agree, I'll send v3 ASAP.
+Right, so please add a kerneldoc description here.
+
+> > > +
+> > >  #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+> > > +unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
+> > > +                                 enum schedutil_type type);
+> > > +
+> > >  static inline unsigned long cpu_bw_dl(struct rq *rq)
+> > >  {
+> > >         return (rq->dl.running_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > > @@ -2199,6 +2207,12 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
+> > >  {
+> > >         return READ_ONCE(rq->avg_rt.util_avg);
+> > >  }
+> > > +#else /* CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
+> > > +static inline unsigned long schedutil_freq_util(int cpu, unsigned long util,
+> > > +                                 enum schedutil_type type)
+> > > +{
+> > > +       return util;
+> > > +}
+> > >  #endif
+> > 
+> > And I would add a wrapper around schedutil_freq_util(), called say
+> > schedutil_energy_util(), that would pass a specific value as the
+> > "type".
+> 
+> OK, that's fine by me.
+> 
+> Other than that, do you think these changes could be done later ? Or do
+> you see that as mandatory before the patches can be picked up ?
+
+Documenting things properly is absolutely required.
+
+The other changes suggested by me are rather straightforward, so why would it
+be a problem to make them right away if you agree to make them?
 
 Thanks,
-Zhe
-
->
-> 	-ss
->
+Rafael
 
