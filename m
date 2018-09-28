@@ -2,120 +2,165 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C874C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABE0C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03CF206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:08:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 311D2206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:10:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UL65bXic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03CF206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=8chan.co header.i=@8chan.co header.b="hrIui3WT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311D2206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=8chan.co
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeI1Xdc (ORCPT
+        id S1729422AbeI1Xeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:33:32 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35246 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeI1Xdc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:33:32 -0400
-Received: by mail-lj1-f195.google.com with SMTP id w4-v6so6546181ljd.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:08:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FvrNmK0AcMIRiibloxyokLQsM+KkzTGMPrbzcQDEiPs=;
-        b=UL65bXicEW9B4AvP/NO2dm4SpGGqpyEzBWqtPCvV5mnqLAeOprsI4r+xE5UM0xC+sC
-         Hf3KwPTI2AEFQrG9JY1Hk4qbDVqS+1kuwFP0fkLwV7oCkV6ba7Jwsbz0Qy9qbo+zz5Hh
-         WPj7AUOv1fWSECxAwEhEi5keoCVTJn9zFkETahskV8qXzWEX7LJO01rbODxeXodfzrs5
-         q6TXLdSiR4nHqQUzxt01wUjwyeioznckwpbLKTbV9Lhrn2HmdcA2Vzk/tYUXy4bqcskE
-         ERdnkguVEkdGgYwVSGhQ12noMfT0M/njIl6SHtLPuVmTTAMcdBgsPWxR4Dp1FmipttYa
-         QHUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FvrNmK0AcMIRiibloxyokLQsM+KkzTGMPrbzcQDEiPs=;
-        b=KmwU0zSMQA59ZiumghOrSlA03hIukaIBI+Mflm2UE9DWCwNB7GX11sHwSwBWv6ma88
-         Dm0wBnxJdxc2I9H8ztcp3eqWQCZv9Zr7VEMvpmz5gNJb2hg8kH0yCvCRTSSfMtWrRITM
-         2buQX06Wes/qH8H7b5ISS8rFcp6iDEp/Ln2SM3pyZd53oEr2HnQsC7qo36gJFJJT8tvw
-         hSxlRgk8Bv7U0mMnWlms90VBZz8Duf26vADvmf1HzdS3fM4nIXukJoLw36JR5obBvIbJ
-         r4X9ezWg62sXiI7vTDY6MdZmS05hIKCkIkB4B2rWDNCKC3VXBrjLmwAyuBBlsWU0LXLJ
-         2XSw==
-X-Gm-Message-State: ABuFfogInkQjLwh3UBOa29OxWHfMuWj8Pik9N5mD6W7wMOXlwMJwacrn
-        ox1+/ojxCWtKKHz24W2d3Q==
-X-Google-Smtp-Source: ACcGV611PYVCvER5FYB1EgcVRQVOrOF0hpUA5lwwcPmOg0uuQYqM2sahCdDj5E/hGpTJQfNU8zzeWw==
-X-Received: by 2002:a2e:9cd3:: with SMTP id g19-v6mr4756647ljj.161.1538154528933;
-        Fri, 28 Sep 2018 10:08:48 -0700 (PDT)
-Received: from localhost.localdomain ([2001:999:51:565d:44e6:f5ff:fe2f:8bf6])
-        by smtp.gmail.com with ESMTPSA id g16-v6sm1122244lfj.15.2018.09.28.10.08.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Sep 2018 10:08:48 -0700 (PDT)
-From:   Emil Karlson <jekarlson@gmail.com>
-To:     Emil Renner Berthing <kernel@esmil.dk>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Stefan Adolfsson <sadolfsson@chromium.org>,
-        lee.jones@linaro.org, bleung@chromium.org, olof@lixom.net,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Emil Karlson <jekarlson@gmail.com>
-Subject: [PATCH] mfd: cros-ec: copy the whole event in get_next_event_xfer
-Date:   Fri, 28 Sep 2018 20:08:18 +0300
-Message-Id: <20180928170818.32124-1-jekarlson@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <22cc40a7-015b-6038-2093-8cd1ff0c807e@baylibre.com>
-References: <22cc40a7-015b-6038-2093-8cd1ff0c807e@baylibre.com>
+        Fri, 28 Sep 2018 19:34:44 -0400
+Received: from cock.li ([185.100.85.212]:36958 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726121AbeI1Xen (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:34:43 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8chan.co; s=mail;
+        t=1538154599; bh=2+pV0E912BHmp4CzSkgZNjskHJWk8RcHLLkKZjdzZaE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hrIui3WT3n5294XJcS8VmYNto0UizYvVQf75+WCbClubFyGryjXDvsXfI2/cMydj/
+         SOrdeYeXXoNWoVD2xULTms/OmW8vZhzXrDSvYzvzKypSAn8ivjtlA6gvHmh+x/0Nba
+         Xlt4LVGZZuKii07t4swbTSwH7AnlScVCTLLrF1navMaeCK4G2HVfrAmVVfK792ugWF
+         ptPkPN4dwBWVS+ZEk7t7H7BJUU5lH/eTSvYL9oSDB2zVmWQjq6QBRQz3du+rWoFnL7
+         34o/dChmlzJJpOUnj5vWGH476FzCrWM1MwVsPq78YjUA/ai2sqngvqx+Vum76A1cjw
+         5017hnOg7LTpg==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 28 Sep 2018 17:09:58 +0000
+From:   vwdfrwd@8chan.co
+To:     Bruce Perens <bruce@perens.com>, linux-kernel@vger.kernel.org
+Cc:     Taiidan@gmx.com, dng <dng@lists.dyne.org>, rms@gnu.org
+Subject: Re: [DNG] Fwd: Re: Fwd: Re: GPL version 2 is a bare license. Recind.
+ (Regarding (future) linux Code of Conduct Bannings).
+In-Reply-To: <CAK2MWOs1fmd8bLpWLJah+5Ckyke7SMnM46w-iKx9dENpBe7M4g@mail.gmail.com>
+References: <6b4a0cf6fa672938b8ab98acd1dea0a1@redchan.it>
+ <BBFE2346-72C7-47D3-910A-DD720C7637DC@charter.net>
+ <24cf6d6095c740903f16b56e22dd137c@redchan.it>
+ <996c99ea4146a247730d87df14dfca1a@redchan.it>
+ <E1g2TJn-0006lD-Lm@fencepost.gnu.org>
+ <CAK2MWOssGczVO1Cd_SPVVb=ieCs2vkpFUfve9P3sh+gT1VfN7Q@mail.gmail.com>
+ <4f926d0e5b96673926f3a4f163fdb590@redchan.it>
+ <f3ac1e0424fed0fcbf782a6c9b1209a0@redchan.it>
+ <20180919130952.2b2c23cc@mydesk.domain.cxm>
+ <EF2143AF-4090-414E-B00B-EBF07361C741@getbackinthe.kitchen>
+ <20180919213207.fx5ej6lopcdd7aft@katolaz.homeunix.net>
+ <20180920144659.3598e2cb@mydesk.domain.cxm> <5BA3F750.3040908@signal100.com>
+ <8bd5d183-6606-2f3d-4f66-fa918c8831f3@gmx.com>
+ <CAK2MWOs1fmd8bLpWLJah+5Ckyke7SMnM46w-iKx9dENpBe7M4g@mail.gmail.com>
+Message-ID: <515a3104d6089dab10a5cded37d1881f@8chan.co>
+X-Sender: vwdfrwd@8chan.co
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 57e94c8b974db2d83c60e1139c89a70806abbea0 caused cros-ec keyboard events
-be truncated on many chromebooks so that Left and Right keys on Column 12 were
-always 0. Use ret as memcpy len to fix this.
+Would trade it all, to be-able to marry cute young girls (as allowed by 
+YHWH (Devarim chapter 22, verse 28 (na'ar)) (also, obviously, in Sunni 
+Islam (see 5th book of Bukhari)).
 
-drivers/platform/chrome/cros_ec_proto.c:509
-get_next_event_xfer uses ret from cros_ec_cmd_xfer for memcpy for msg->data len
-drivers/platform/chrome/cros_ec_proto.c:445
-cros_ec_cmd_xfer gets ret from send_command
-drivers/platform/chrome/cros_ec_proto.c:93
-send_command gets ret from bus specific xfer_fn
-drivers/mfd/cros_ec_spi.c:598
-cros_ec_cmd_xfer_spi copies len amount to ec_msg->data and returns len as ret
-drivers/mfd/cros_ec_i2c.c:267
-cros_ec_cmd_xfer_i2c copies len amount to ec_msg->data and returns len as ret
+Banning men from having girl children as brides is the first thing you 
+"SJW"s (aka "whites") did over 100 years ago.
 
-so msg->data length is always the same as ret.
+And yes, Bruce Perens, we blaim you and yours for upholding said ban.
 
-Fixes: 57e94c8b974d ("mfd: cros-ec: Increase maximum mkbp event size")
-Signed-off-by: Emil Karlson <jekarlson@gmail.com>
----
- drivers/platform/chrome/cros_ec_proto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thankfully Sunni muslims will be overtaking your countries soon.
+They will lift the ban that you "whites" installed (in your reverent 
+worship of women), God willing.
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index 398393ab5df8..b6fd4838f60f 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -520,7 +520,7 @@ static int get_next_event_xfer(struct cros_ec_device *ec_dev,
- 	ret = cros_ec_cmd_xfer(ec_dev, msg);
- 	if (ret > 0) {
- 		ec_dev->event_size = ret - 1;
--		memcpy(&ec_dev->event_data, msg->data, ec_dev->event_size);
-+		memcpy(&ec_dev->event_data, msg->data, ret);
- 	}
- 
- 	return ret;
--- 
-2.19.0
-
+On 2018-09-27 21:11, Bruce Perens wrote:
+> I'm that Social Justice Warrior that you don't like. And if you are
+> using Devuan or Debian, if you've gotten a ham radio license since
+> 2007, or if you're doing various Open Source things you have already
+> benefited from things I've done in the name of social justice. So
+> would you please be more careful about who you think is evil.
+> 
+> On Thu, Sep 27, 2018, 13:21 Taiidan@gmx.com <Taiidan@gmx.com> wrote:
+> 
+>> "Code of conduct" type policies are absolute bullshit meant to ruin
+>> and
+>> divide a community with conflict and strife.
+>> 
+>> I can't understand what has happened - perhaps "they" got to linus
+>> somehow?
+>> 
+>> The people they want out are the ones who reject changes like rdrand
+>> etc.
+>> 
+>> This is a plot to destroy linux and make it a corporate drone
+>> project -
+>> but hey after all I guess we aren't "ethical" enough like suicide
+>> net
+>> apple or killer drone software google so the cool kids are out to
+>> get us.
+>> 
+>> The CoC snowflake types contribute nothing real and make absolutely
+>> nothing innovative of course but yet somehow they always make the
+>> rules?
+>> what the hell? I bet they don't even use linux as their daily
+>> driver.
+>> 
+>> We didn't vote to have a CoC it was forced on us like all these
+>> changes.
+>> 
+>> Good things do not have to be forced on a community instead they are
+>> voted for not shoved down our throats, a minority making the rules
+>> for
+>> the majority.
+>> 
+>> Female and minority coders plus community contributors such as
+>> Joanna
+>> Rutkowska who created qubes[1] and Leah Rowe who created
+>> libreboot[2]
+>> are both respectable and respected because they make real
+>> contributions
+>> to the world unlike the CoC jerks.
+>> 
+>> [1]Arguably the best security innovation and security operating
+>> system
+>> since the millennium.
+>> 
+>> [2]Leah kept the computing freedom movement going by spending 100K+
+>> of
+>> her own money on libre firmware ports for modern motherboards - I
+>> also
+>> believe without her bringing to life the kgpe-d16/kcma-d8 libre
+>> firmware
+>> ports there wouldn't have been a talos 2 either.
+>> The end of owner controlled computing hardware was very, very
+>> narrowly
+>> averted thanks to them and a few others.
+>> 
+>> Note: I am always nice to people no matter their skin color,
+>> political
+>> leanings or who they want to date - I treat others as I wish to be
+>> treated so I am not one of steve litt's hypothetical examples.
+>> 
+>> Hell how many of these SJW types have like to offer their seat on
+>> the
+>> bus/train to a tired non-white person because they too know what it
+>> is
+>> like to be tired and poor? zero.
+>> 
+>> They have cushy lives and invent fake problems because they do not
+>> have
+>> any real ones of their own to deal with.
+>> _______________________________________________
+>> Dng mailing list
+>> Dng@lists.dyne.org
+>> https://mailinglists.dyne.org/cgi-bin/mailman/listinfo/dng
+> _______________________________________________
+> Dng mailing list
+> Dng@lists.dyne.org
+> https://mailinglists.dyne.org/cgi-bin/mailman/listinfo/dng
