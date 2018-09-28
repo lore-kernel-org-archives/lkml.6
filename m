@@ -2,100 +2,125 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0DBC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A1DC43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 484732170E
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:26:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54172170E
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 05:27:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="V7Z/2+wl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 484732170E
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f8Go6/5v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54172170E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbeI1LsN (ORCPT
+        id S1728887AbeI1LtG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 07:48:13 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36706 "EHLO
+        Fri, 28 Sep 2018 07:49:06 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:36766 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbeI1LsM (ORCPT
+        with ESMTP id S1726121AbeI1LtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 07:48:12 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8S5PWj7082269;
-        Fri, 28 Sep 2018 00:25:32 -0500
+        Fri, 28 Sep 2018 07:49:05 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8S5QS4Q082419;
+        Fri, 28 Sep 2018 00:26:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538112332;
-        bh=NLRj02OMBwITXtmwG4jSgw3v0Q6kE5+5CPGQ5jXyDno=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=V7Z/2+wl2Qsv9Lfu11JEXD0KebV4SrGjnaQVRDbiu+VJpPvZg8rOkyF4Ld0Bae9fm
-         C25gNv3dgG4giwRgqbYmLa8Ya1qXAXkLPflPruhlR+yA+CVXrZq9eCRiUI6LI46VBc
-         s2zEVXttBE2ivkTfLp01h/CO/obeA2iIzldUnbCY=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5PWJ8021578;
-        Fri, 28 Sep 2018 00:25:32 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1538112388;
+        bh=2SK59Fm7J4tWTYyJ9580x17q0j5NjdzlB/V1FN1xZSQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=f8Go6/5v7Z8T748kZt148Bp2xum2hcrWnsNg6VCMpzEWnzLqv0ULIse3ucz7XaYBP
+         fPIGru3Q+Eh58KYEMwulmcc3AUH7tG6pvvoYVz/SSyFMtpIdof0FONaVTqvrk+Wxcs
+         BxMPeWPuuhC7ZgWjlZOduvIgp2dIixTvt0Mtaseg=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5QSle015055;
+        Fri, 28 Sep 2018 00:26:28 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 28
- Sep 2018 00:25:32 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ Sep 2018 00:26:28 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 28 Sep 2018 00:25:32 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5PMGq012173;
-        Fri, 28 Sep 2018 00:25:29 -0500
-From:   Vignesh R <vigneshr@ti.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+ Fri, 28 Sep 2018 00:26:27 -0500
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8S5QNnI007219;
+        Fri, 28 Sep 2018 00:26:24 -0500
+Subject: Re: [PATCH 1/2] dt-bindings: i2c-omap: Add new compatible for AM654
+ SoCs
+To:     Peter Rosin <peda@axentia.se>, Rob Herring <robh+dt@kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC:     Vignesh R <vigneshr@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        Nishanth Menon <nm@ti.com>, Peter Rosin <peda@axentia.se>,
-        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+CC:     "Nori, Sekhar" <nsekhar@ti.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Menon, Nishanth" <nm@ti.com>, "Kristo, Tero" <t-kristo@ti.com>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 2/2] i2c: busses: Kconfig: Enable I2C_OMAP for ARCH_K3
-Date:   Fri, 28 Sep 2018 10:55:57 +0530
-Message-ID: <20180928052557.21663-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180928052557.21663-1-vigneshr@ti.com>
-References: <20180928052557.21663-1-vigneshr@ti.com>
+References: <20180926115751.20421-1-vigneshr@ti.com>
+ <20180926115751.20421-2-vigneshr@ti.com>
+ <c3421929-1c40-513a-5c14-73e132a11d0f@axentia.se>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <3943f2b1-3850-ad1e-6318-cfaec0eff485@ti.com>
+Date:   Fri, 28 Sep 2018 10:57:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <c3421929-1c40-513a-5c14-73e132a11d0f@axentia.se>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow I2C_OMAP to be built for K3 platforms.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
 
-v2: No changes
+On Wednesday 26 September 2018 08:14 PM, Peter Rosin wrote:
+> On 2018-09-26 13:57, Vignesh R wrote:
+>> AM654 SoCs have similar I2C IP as OMAP SoCs. Add new compatible to
+>> handle AM654 SoCs.
+>>
+>> Signed-off-by: Vignesh R <vigneshr@ti.com>
+>> ---
+>>  Documentation/devicetree/bindings/i2c/i2c-omap.txt | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/i2c/i2c-omap.txt b/Documentation/devicetree/bindings/i2c/i2c-omap.txt
+>> index 7e49839d4124..11ce869d682d 100644
+>> --- a/Documentation/devicetree/bindings/i2c/i2c-omap.txt
+>> +++ b/Documentation/devicetree/bindings/i2c/i2c-omap.txt
+>> @@ -2,7 +2,8 @@ I2C for OMAP platforms
+>>  
+>>  Required properties :
+>>  - compatible : Must be "ti,omap2420-i2c", "ti,omap2430-i2c", "ti,omap3-i2c"
+>> -  or "ti,omap4-i2c"
+>> +  or "ti,omap4-i2c" for OMAP2+ SoCs
+>> +- compatible : Must "ti,am654-i2c", "ti,omap4-i2c" for AM654 SoCs
+>                       ^
+>                      be
+> 
+> Also, it looks bad with two 'compatible' entries in the properties list.
+> I think the trend is to list one valid compatible (plus fallbacks)
+> per line. So, you should consider reformatting, possibly like so:
+> 
+> - compatible : Must be one of
+> 	"ti,omap2420-i2c"
+> 	"ti,omap2430-i2c"
+> 	"ti,omap3-i2c"
+>         "ti,omap4-i2c"
+> 	"ti,am654-i2c", "ti,omap4-i2c"
+> 
 
- drivers/i2c/busses/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have sent v2 with these changes. Thanks for the review!
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 451d4ae50e66..ac4b09642f63 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -751,7 +751,7 @@ config I2C_OCORES
- 
- config I2C_OMAP
- 	tristate "OMAP I2C adapter"
--	depends on ARCH_OMAP
-+	depends on ARCH_OMAP || ARCH_K3
- 	default y if MACH_OMAP_H3 || MACH_OMAP_OSK
- 	help
- 	  If you say yes to this option, support will be included for the
+
 -- 
-2.19.0
-
+Regards
+Vignesh
