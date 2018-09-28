@@ -2,111 +2,80 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A8DC43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478D3C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB8C216E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB8C216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 05F58204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 12:06:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05F58204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=diehl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbeI1S2b (ORCPT
+        id S1727870AbeI1S36 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 14:28:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56952 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeI1S2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 14:28:30 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6374E206FF; Fri, 28 Sep 2018 14:05:00 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2E595208B7;
-        Fri, 28 Sep 2018 14:04:50 +0200 (CEST)
-Date:   Fri, 28 Sep 2018 14:04:51 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Denis OSTERLAND <denis.osterland@diehl.com>
-Cc:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        Fri, 28 Sep 2018 14:29:58 -0400
+Received: from enterprise01.smtp.diehl.com ([193.201.238.219]:53543 "EHLO
+        enterprise01.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726024AbeI1S36 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 14:29:58 -0400
+X-$ESA-Groupmapping: true
+X-IronPort-AV: E=Sophos;i="5.54,314,1534802400"; 
+   d="scan'208";a="57476047"
+From:   Denis OSTERLAND <denis.osterland@diehl.com>
+To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] rtc: isl1208: access i2c client via rtc parent
-Message-ID: <20180928120451.GR16644@piout.net>
+Thread-Topic: [PATCH] rtc: isl1208: access i2c client via rtc parent
+Thread-Index: AQHUVyGQKP+USsTTMEa4uID7TSMNXaUFdyGAgAAAcoA=
+Date:   Fri, 28 Sep 2018 12:06:27 +0000
+Message-ID: <1538136387.6162.10.camel@diehl.com>
 References: <20180928114832.27383-1-Denis.Osterland@diehl.com>
+         <20180928120451.GR16644@piout.net>
+In-Reply-To: <20180928120451.GR16644@piout.net>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8BE0801DBD03B2459E4F52DF3220D37F@diehl.internal>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180928114832.27383-1-Denis.Osterland@diehl.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TrailerSkip: 1
+X-GBS-PROC: 415AWy8o668fDtCxszluzzNQMPGhQkQzcd6oqm98zpHhwNYwnmNi6YoGhlOC0Boq
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On 28/09/2018 11:51:17+0000, Denis OSTERLAND wrote:
-> From: Denis Osterland <Denis.Osterland@diehl.com>
-> 
-> The move of atrim, dtrim usr sysfs properties from i2c device
-> to rtc device require to access them via dev->parent.
-> This patch also aligns timestamp0.
-> 
-> Fixes: 03df75dd03301307ec578ccd4e8c1c0117b8e65c
-> Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
-> ---
->  drivers/rtc/rtc-isl1208.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-> index 15094df12985..ec5ef518a09b 100644
-> --- a/drivers/rtc/rtc-isl1208.c
-> +++ b/drivers/rtc/rtc-isl1208.c
-> @@ -517,7 +517,7 @@ static ssize_t timestamp0_store(struct device *dev,
->  				struct device_attribute *attr,
->  				const char *buf, size_t count)
->  {
-> -	struct i2c_client *client = dev_get_drvdata(dev);
-> +	struct i2c_client *client = to_i2c_client(dev->parent);
->  	int sr;
-> 
->  	sr = isl1208_i2c_get_sr(client);
-> @@ -539,7 +539,7 @@ static ssize_t timestamp0_store(struct device *dev,
->  static ssize_t timestamp0_show(struct device *dev,
->  			       struct device_attribute *attr, char *buf)
->  {
-> -	struct i2c_client *client = dev_get_drvdata(dev);
-> +	struct i2c_client *client = to_i2c_client(dev->parent);
->  	u8 regs[ISL1219_EVT_SECTION_LEN] = { 0, };
->  	struct rtc_time tm;
->  	int sr;
-> @@ -649,7 +649,7 @@ static ssize_t
->  isl1208_sysfs_show_atrim(struct device *dev,
->  			 struct device_attribute *attr, char *buf)
->  {
-> -	int atr = isl1208_i2c_get_atr(to_i2c_client(dev));
-> +	int atr = isl1208_i2c_get_atr(to_i2c_client(dev->parent));
->  	if (atr < 0)
->  		return atr;
-> 
-> @@ -662,7 +662,7 @@ static ssize_t
->  isl1208_sysfs_show_dtrim(struct device *dev,
->  			 struct device_attribute *attr, char *buf)
->  {
-> -	int dtr = isl1208_i2c_get_dtr(to_i2c_client(dev));
-> +	int dtr = isl1208_i2c_get_dtr(to_i2c_client(dev->parent));
-
-Oh right, I actually had that but somehow, I stashed the patch instead
-of squashing it.
-
-If that is fine for you, I'll fold that in the original patch (I'll ad
-your SoB).
-
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+QW0gRnJlaXRhZywgZGVuIDI4LjA5LjIwMTgsIDE0OjA0ICswMjAwIHNjaHJpZWIgQWxleGFu
+ZHJlIEJlbGxvbmk6DQo+IEhlbGxvLA0KPsKgDQo+IE9oIHJpZ2h0LCBJIGFjdHVhbGx5IGhh
+ZCB0aGF0IGJ1dCBzb21laG93LCBJIHN0YXNoZWQgdGhlIHBhdGNoIGluc3RlYWQNCj4gb2Yg
+c3F1YXNoaW5nIGl0Lg0KPiANCj4gSWYgdGhhdCBpcyBmaW5lIGZvciB5b3UsIEknbGwgZm9s
+ZCB0aGF0IGluIHRoZSBvcmlnaW5hbCBwYXRjaCAoSSdsbCBhZA0KPiB5b3VyIFNvQikuDQo+
+IA0KPiANClNvdW5kcyBnb29kLg0KDQpSZWdhcmRzIERlbmlzDQoNCkRpZWhsIENvbm5lY3Rp
+dml0eSBTb2x1dGlvbnMgR21iSA0KR2VzY2jDpGZ0c2bDvGhydW5nOiBIb3JzdCBMZW9uYmVy
+Z2VyDQpTaXR6IGRlciBHZXNlbGxzY2hhZnQ6IE7DvHJuYmVyZyAtIFJlZ2lzdGVyZ2VyaWNo
+dDogQW10c2dlcmljaHQNCk7DvHJuYmVyZzogSFJCIDMyMzE1DQpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCg0KRGVyIEluaGFsdCBkZXIgdm9yc3Rl
+aGVuZGVuIEUtTWFpbCBpc3QgbmljaHQgcmVjaHRsaWNoIGJpbmRlbmQuIERpZXNlIEUtTWFp
+bCBlbnRoYWVsdCB2ZXJ0cmF1bGljaGUgdW5kL29kZXIgcmVjaHRsaWNoIGdlc2NodWV0enRl
+IEluZm9ybWF0aW9uZW4uDQpJbmZvcm1pZXJlbiBTaWUgdW5zIGJpdHRlLCB3ZW5uIFNpZSBk
+aWVzZSBFLU1haWwgZmFlbHNjaGxpY2hlcndlaXNlIGVyaGFsdGVuIGhhYmVuLiBCaXR0ZSBs
+b2VzY2hlbiBTaWUgaW4gZGllc2VtIEZhbGwgZGllIE5hY2hyaWNodC4NCkplZGUgdW5lcmxh
+dWJ0ZSBGb3JtIGRlciBSZXByb2R1a3Rpb24sIEJla2FubnRnYWJlLCBBZW5kZXJ1bmcsIFZl
+cnRlaWx1bmcgdW5kL29kZXIgUHVibGlrYXRpb24gZGllc2VyIEUtTWFpbCBpc3Qgc3RyZW5n
+c3RlbnMgdW50ZXJzYWd0Lg0KVGhlIGNvbnRlbnRzIG9mIHRoZSBhYm92ZSBtZW50aW9uZWQg
+ZS1tYWlsIGlzIG5vdCBsZWdhbGx5IGJpbmRpbmcuIFRoaXMgZS1tYWlsIGNvbnRhaW5zIGNv
+bmZpZGVudGlhbCBhbmQvb3IgbGVnYWxseSBwcm90ZWN0ZWQgaW5mb3JtYXRpb24uIFBsZWFz
+ZSBpbmZvcm0gdXMgaWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBlLW1haWwgYnkNCm1pc3Rh
+a2UgYW5kIGRlbGV0ZSBpdCBpbiBzdWNoIGEgY2FzZS4gRWFjaCB1bmF1dGhvcml6ZWQgcmVw
+cm9kdWN0aW9uLCBkaXNjbG9zdXJlLCBhbHRlcmF0aW9uLCBkaXN0cmlidXRpb24gYW5kL29y
+IHB1YmxpY2F0aW9uIG9mIHRoaXMgZS1tYWlsIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIA0K
