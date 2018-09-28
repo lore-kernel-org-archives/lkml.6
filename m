@@ -2,136 +2,86 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D673C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FB9C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE261204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:01:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE261204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 07F0720657
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 17:03:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jzIjVuoR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F0720657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeI1XZv (ORCPT
+        id S1729316AbeI1X1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 19:25:51 -0400
-Received: from mga14.intel.com ([192.55.52.115]:7266 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbeI1XZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 19:25:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Sep 2018 10:01:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,315,1534834800"; 
-   d="scan'208";a="266822787"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Sep 2018 10:01:11 -0700
-Message-ID: <459b7c5d85ef57b02985813d59f7dd3f7cc18368.camel@intel.com>
-Subject: Re: [RFC PATCH v4 01/27] x86/cpufeatures: Add CPUIDs for
- Control-flow Enforcement Technology (CET)
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Fri, 28 Sep 2018 09:56:32 -0700
-In-Reply-To: <20180928165118.GD20768@zn.tnic>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
-         <20180921150351.20898-2-yu-cheng.yu@intel.com>
-         <20180928165118.GD20768@zn.tnic>
+        Fri, 28 Sep 2018 19:27:52 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38920 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbeI1X1w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 19:27:52 -0400
+Received: by mail-io1-f68.google.com with SMTP id l7-v6so4688453iok.6
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Sep 2018 10:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=FXAVLPPiD/Rujvmt4pV0XZrfngaOvc5BhCA1Pjr4Zm4=;
+        b=jzIjVuoRGd6j6kUhsBBoGF0OFedmwatKZvRZBjQdEwnhFyN12PwbRlpv1HPN5bu0WJ
+         gOuRgaKJMPQoQpbDhKayVFCOeXEpkDGq6iB3sZlCZHR2hAJwnU2/5lBWau6LnzzFTr4Z
+         Or7V5WeaLDzTzJ6tAWUaVSXwvYd3DLVE6l1yA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=FXAVLPPiD/Rujvmt4pV0XZrfngaOvc5BhCA1Pjr4Zm4=;
+        b=A5iOAACGjjL3zkBJui+MvHacJV6PMculn3llfcQZJtqNgTdynaspYWDcmMxEvOobGb
+         RQH8hmgLfDP46tfBpD8rt7AxvkuwSAFPSy/GKggnPerASwTQ4V8j/aifYCjvy+pOv7BR
+         wVoWr5PJYnPmgITxCBVPk+ph69132LIGSI7DgN2HJGEi9sL8v9PE4JetD6kBw0Q6jqJ5
+         KmixiUuogeVQZxGRB47n8I0S+JoF5jK1uOpeBXEECuPiW64OgLLmjmIEQHdwsCm+PWfG
+         0CvivWbXvCI3UO4BSNEp4SGOVO4hqCcysIdgAA2zyCbyXVkgapAD/9SGaLJU2Dd/ZSfS
+         kxHg==
+X-Gm-Message-State: ABuFfojwDgBe6DJO9jp6eShyJDP1D56avJSC04ah6P5V6kmSe91g1Wcd
+        ue8V4T2i05sY8MEPuxpdPDptPAjCY9anhSV87p0fdA==
+X-Google-Smtp-Source: ACcGV60AkKep0cpavojw/XwkCBwmDJX6xVJIQuHZd+0AKcNSVeC4p5kHPYFfV5e6oUxItqGi1LQ3AlbssNkSqWY4y1o=
+X-Received: by 2002:a6b:5d12:: with SMTP id r18-v6mr12306348iob.170.1538154192122;
+ Fri, 28 Sep 2018 10:03:12 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Fri, 28 Sep 2018 10:03:11
+ -0700 (PDT)
+In-Reply-To: <CAKv+Gu9VCZx=UHSoN7SexZeTzLK6yk9YAe5qMdhhDMUFnqTSCQ@mail.gmail.com>
+References: <1537351855-16618-1-git-send-email-clabbe@baylibre.com>
+ <1537351855-16618-3-git-send-email-clabbe@baylibre.com> <CAKv+Gu9VCZx=UHSoN7SexZeTzLK6yk9YAe5qMdhhDMUFnqTSCQ@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 28 Sep 2018 19:03:11 +0200
+Message-ID: <CAKv+Gu8jgEyaUA2OOzxNT5nvWoC7qZgf+KazzH1Q5yWj60V2TQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] crypto: tools: Add cryptostat userspace
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        nhorman@tuxdriver.com,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-09-28 at 18:51 +0200, Borislav Petkov wrote:
-> On Fri, Sep 21, 2018 at 08:03:25AM -0700, Yu-cheng Yu wrote:
-> > Add CPUIDs for Control-flow Enforcement Technology (CET).
-> > 
-> > CPUID.(EAX=7,ECX=0):ECX[bit 7] Shadow stack
-> > CPUID.(EAX=7,ECX=0):EDX[bit 20] Indirect branch tracking
-> > 
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > ---
-> >  arch/x86/include/asm/cpufeatures.h | 2 ++
-> >  arch/x86/kernel/cpu/scattered.c    | 1 +
-> >  2 files changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/x86/include/asm/cpufeatures.h
-> > b/arch/x86/include/asm/cpufeatures.h
-> > index 89a048c2faec..fa69651a017e 100644
-> > --- a/arch/x86/include/asm/cpufeatures.h
-> > +++ b/arch/x86/include/asm/cpufeatures.h
-> > @@ -221,6 +221,7 @@
-> >  #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD
-> > family 0x17 (Zen) */
-> >  #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF
-> > workaround PTE inversion */
-> >  #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
-> > +#define X86_FEATURE_IBT			( 7*32+31) /* Indirect
-> > Branch Tracking */
-> >  
-> >  /* Virtualization flags: Linux defined, word 8 */
-> >  #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR
-> > Shadow */
-> > @@ -321,6 +322,7 @@
-> >  #define X86_FEATURE_PKU			(16*32+ 3) /* Protection
-> > Keys for Userspace */
-> >  #define X86_FEATURE_OSPKE		(16*32+ 4) /* OS Protection Keys
-> > Enable */
-> >  #define X86_FEATURE_AVX512_VBMI2	(16*32+ 6) /* Additional AVX512
-> > Vector Bit Manipulation Instructions */
-> > +#define X86_FEATURE_SHSTK		(16*32+ 7) /* Shadow Stack */
-> >  #define X86_FEATURE_GFNI		(16*32+ 8) /* Galois Field New
-> > Instructions */
-> >  #define X86_FEATURE_VAES		(16*32+ 9) /* Vector AES */
-> >  #define X86_FEATURE_VPCLMULQDQ		(16*32+10) /* Carry-Less
-> > Multiplication Double Quadword */
-> > diff --git a/arch/x86/kernel/cpu/scattered.c
-> > b/arch/x86/kernel/cpu/scattered.c
-> > index 772c219b6889..63cbb4d9938e 100644
-> > --- a/arch/x86/kernel/cpu/scattered.c
-> > +++ b/arch/x86/kernel/cpu/scattered.c
-> > @@ -21,6 +21,7 @@ struct cpuid_bit {
-> >  static const struct cpuid_bit cpuid_bits[] = {
-> >  	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
-> >  	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
-> > +	{ X86_FEATURE_IBT,		CPUID_EDX, 20, 0x00000007, 0},
-> 
-> If you haven't noticed, there's already a separate leaf:
-> 
-> /* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
-> 
-> in arch/x86/include/asm/cpufeatures.h
-> 
+On 28 September 2018 at 15:13, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 19 September 2018 at 12:10, Corentin Labbe <clabbe@baylibre.com> wrote:
+>> This patch adds an userspace tool for displaying kernel crypto API
+>> statistics.
+>>
+>> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+>
+> How do I actually build this thing?
+>
 
-I will change to that one.  Thanks!
-
-Yu-cheng
+Never mind.
