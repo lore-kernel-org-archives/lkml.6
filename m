@@ -2,43 +2,43 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLACK,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E095C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6870DC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF130206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:58:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF130206B7
+	by mail.kernel.org (Postfix) with ESMTP id 37199206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 21:59:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37199206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbeI2EYO (ORCPT
+        id S1726613AbeI2EZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:24:14 -0400
-Received: from smtprelay0009.hostedemail.com ([216.40.44.9]:54552 "EHLO
+        Sat, 29 Sep 2018 00:25:14 -0400
+Received: from smtprelay0096.hostedemail.com ([216.40.44.96]:60009 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726244AbeI2EYO (ORCPT
+        by vger.kernel.org with ESMTP id S1725938AbeI2EZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:24:14 -0400
+        Sat, 29 Sep 2018 00:25:14 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 41E68181D3417;
-        Fri, 28 Sep 2018 21:58:30 +0000 (UTC)
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 86B14100E86C2;
+        Fri, 28 Sep 2018 21:59:30 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: tank87_84587560e661f
-X-Filterd-Recvd-Size: 2729
+X-HE-Tag: silk25_8d1bd519aea45
+X-Filterd-Recvd-Size: 2750
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 21:58:29 +0000 (UTC)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 21:59:29 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@linux-mips.org
-Subject: Bad MAINTAINERS pattern in section 'MIPS/LOONGSON2 ARCHITECTURE'
-Date:   Fri, 28 Sep 2018 14:58:27 -0700
-Message-Id: <20180928215828.30526-1-joe@perches.com>
+Cc:     Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
+Subject: Bad MAINTAINERS pattern in section 'MIPS/LOONGSON3 ARCHITECTURE'
+Date:   Fri, 28 Sep 2018 14:59:28 -0700
+Message-Id: <20180928215928.30611-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,14 +49,15 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	9757	MIPS/LOONGSON2 ARCHITECTURE
-	9758	M:	Jiaxun Yang <jiaxun.yang@flygoat.com>
-	9759	L:	linux-mips@linux-mips.org
-	9760	S:	Maintained
-	9761	F:	arch/mips/loongson64/*{2e/2f}*
-	9762	F:	arch/mips/include/asm/mach-loongson64/
-	9763	F:	drivers/*/*loongson2*
--->	9764	F:	drivers/*/*/*loongson2*
+	9766	MIPS/LOONGSON3 ARCHITECTURE
+	9767	M:	Huacai Chen <chenhc@lemote.com>
+	9768	L:	linux-mips@linux-mips.org
+	9769	S:	Maintained
+	9770	F:	arch/mips/loongson64/
+	9771	F:	arch/mips/include/asm/mach-loongson64/
+	9772	F:	drivers/platform/mips/cpu_hwmon.c
+-->	9773	F:	drivers/*/*loongson3*
+	9774	F:	drivers/*/*/*loongson3*
 
 Commit that introduced this:
 
@@ -102,5 +103,5 @@ commit ffe1f9356fbe55df7dd7f7f6b050ee8b7136611f
   MAINTAINERS | 19 +++++++++++++++++++
   1 file changed, 19 insertions(+)
 
-No commit with drivers/*/*/*loongson2* found
+No commit with drivers/*/*loongson3* found
 
