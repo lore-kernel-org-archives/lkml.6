@@ -6,40 +6,42 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7CBC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7A1C004D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 058EF206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058EF206B6
+	by mail.kernel.org (Postfix) with ESMTP id 29D2D206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 22:01:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D2D206B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeI2E1D (ORCPT
+        id S1727399AbeI2E1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 29 Sep 2018 00:27:03 -0400
-Received: from smtprelay0198.hostedemail.com ([216.40.44.198]:35003 "EHLO
+        Sat, 29 Sep 2018 00:27:11 -0400
+Received: from smtprelay0126.hostedemail.com ([216.40.44.126]:56528 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726423AbeI2E1C (ORCPT
+        by vger.kernel.org with ESMTP id S1726423AbeI2E1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 29 Sep 2018 00:27:02 -0400
+        Sat, 29 Sep 2018 00:27:11 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 660F7180A8862;
-        Fri, 28 Sep 2018 22:01:18 +0000 (UTC)
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 8955118004A73;
+        Fri, 28 Sep 2018 22:01:26 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: shake07_b4f4d0b10d04
-X-Filterd-Recvd-Size: 2771
+X-HE-Tag: kite97_c6242f8cb220
+X-Filterd-Recvd-Size: 3279
 Received: from joe-laptop.perches.com (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 28 Sep 2018 22:01:17 +0000 (UTC)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 28 Sep 2018 22:01:24 +0000 (UTC)
 From:   Joe Perches <joe@perches.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        netdev@vger.kernel.org
-Subject: Bad MAINTAINERS pattern in section 'NET_FAILOVER MODULE'
-Date:   Fri, 28 Sep 2018 15:01:16 -0700
-Message-Id: <20180928220116.30923-1-joe@perches.com>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Florian Westphal <fw@strlen.de>
+Subject: Bad MAINTAINERS pattern in section 'NETWORKING [IPSEC]'
+Date:   Fri, 28 Sep 2018 15:01:23 -0700
+Message-Id: <20180928220123.30999-1-joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,50 +52,76 @@ Please fix this defect appropriately.
 
 linux-next MAINTAINERS section:
 
-	10085	NET_FAILOVER MODULE
-	10086	M:	Sridhar Samudrala <sridhar.samudrala@intel.com>
-	10087	L:	netdev@vger.kernel.org
-	10088	S:	Supported
--->	10089	F:	driver/net/net_failover.c
-	10090	F:	include/net/net_failover.h
-	10091	F:	Documentation/networking/net_failover.rst
+	10233	NETWORKING [IPSEC]
+	10234	M:	Steffen Klassert <steffen.klassert@secunet.com>
+	10235	M:	Herbert Xu <herbert@gondor.apana.org.au>
+	10236	M:	"David S. Miller" <davem@davemloft.net>
+	10237	L:	netdev@vger.kernel.org
+	10238	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec.git
+	10239	T:	git git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next.git
+	10240	S:	Maintained
+-->	10241	F:	net/core/flow.c
+	10242	F:	net/xfrm/
+	10243	F:	net/key/
+	10244	F:	net/ipv4/xfrm*
+	10245	F:	net/ipv4/esp4*
+	10246	F:	net/ipv4/ah4.c
+	10247	F:	net/ipv4/ipcomp.c
+	10248	F:	net/ipv4/ip_vti.c
+	10249	F:	net/ipv6/xfrm*
+	10250	F:	net/ipv6/esp6*
+	10251	F:	net/ipv6/ah6.c
+	10252	F:	net/ipv6/ipcomp6.c
+	10253	F:	net/ipv6/ip6_vti.c
+	10254	F:	include/uapi/linux/xfrm.h
+	10255	F:	include/net/xfrm.h
 
 Commit that introduced this:
 
-commit cfc80d9a11635404a40199a1c9471c96890f3f74
- Author: Sridhar Samudrala <sridhar.samudrala@intel.com>
- Date:   Thu May 24 09:55:15 2018 -0700
+commit 5826bdd1816fa2baa122b62e14905c0ad8e7b96a
+ Author: Fan Du <fan.du@windriver.com>
+ Date:   Sat Jan 18 09:55:28 2014 +0800
  
-     net: Introduce net_failover driver
+     flowcache: Bring net/core/flow.c under IPsec maintain scope
      
-     The net_failover driver provides an automated failover mechanism via APIs
-     to create and destroy a failover master netdev and manages a primary and
-     standby slave netdevs that get registered via the generic failover
-     infrastructure.
+     As flow cache is mainly manipulated from IPsec.
      
-     The failover netdev acts a master device and controls 2 slave devices. The
-     original paravirtual interface gets registered as 'standby' slave netdev and
-     a passthru/vf device with the same MAC gets registered as 'primary' slave
-     netdev. Both 'standby' and 'failover' netdevs are associated with the same
-     'pci' device. The user accesses the network interface via 'failover' netdev.
-     The 'failover' netdev chooses 'primary' netdev as default for transmits when
-     it is available with link up and running.
-     
-     This can be used by paravirtual drivers to enable an alternate low latency
-     datapath. It also enables hypervisor controlled live migration of a VM with
-     direct attached VF by failing over to the paravirtual datapath when the VF
-     is unplugged.
-     
-     Signed-off-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
-     Signed-off-by: David S. Miller <davem@davemloft.net>
+     Signed-off-by: Fan Du <fan.du@windriver.com>
+     Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
  
-  Documentation/networking/net_failover.rst |  26 +
-  MAINTAINERS                               |   8 +
-  drivers/net/Kconfig                       |  12 +
-  drivers/net/Makefile                      |   1 +
-  drivers/net/net_failover.c                | 836 ++++++++++++++++++++++++++++++
-  include/net/net_failover.h                |  40 ++
-  6 files changed, 923 insertions(+)
+  MAINTAINERS | 1 +
+  1 file changed, 1 insertion(+)
 
-No commit with driver/net/net_failover.c found
+Last commit with net/core/flow.c
 
+commit 09c7570480f7544ffbf8e6db365208b0b0c154c6
+Author: Florian Westphal <fw@strlen.de>
+Date:   Mon Jul 17 13:57:26 2017 +0200
+
+    xfrm: remove flow cache
+    
+    After rcu conversions performance degradation in forward tests isn't that
+    noticeable anymore.
+    
+    See next patch for some numbers.
+    
+    A followup patcg could then also remove genid from the policies
+    as we do not cache bundles anymore.
+    
+    Signed-off-by: Florian Westphal <fw@strlen.de>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+ include/net/flow.h              |  34 ---
+ include/net/flowcache.h         |  25 --
+ include/net/netns/xfrm.h        |  11 -
+ include/net/xfrm.h              |   8 -
+ net/core/Makefile               |   1 -
+ net/core/flow.c                 | 516 ----------------------------------------
+ net/ipv4/xfrm4_policy.c         |   9 -
+ net/ipv6/xfrm6_policy.c         |   9 -
+ net/key/af_key.c                |   6 -
+ net/xfrm/xfrm_device.c          |   2 -
+ net/xfrm/xfrm_policy.c          | 108 +--------
+ net/xfrm/xfrm_user.c            |   3 -
+ security/selinux/include/xfrm.h |   4 +-
+ 13 files changed, 2 insertions(+), 734 deletions(-)
