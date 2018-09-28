@@ -2,78 +2,58 @@ Return-Path: <SRS0=0/YT=MK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDC0C43382
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4A5C43382
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C828214C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:53:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C828214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 07CCF214C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 28 Sep 2018 13:53:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07CCF214C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbeI1UQv (ORCPT
+        id S1729329AbeI1UQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 28 Sep 2018 16:16:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37382 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726473AbeI1UQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 28 Sep 2018 16:16:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A3777B0C4;
-        Fri, 28 Sep 2018 13:52:56 +0000 (UTC)
-Subject: Re: [PATCH] xen/blkfront: correct purging of persistent grants
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org
-Cc:     roger.pau@citrix.com, konrad.wilk@oracle.com, axboe@kernel.dk
-References: <20180928072827.14229-1-jgross@suse.com>
- <95e32835-426f-36c9-a86a-09563f090f22@oracle.com>
- <772c3886-d4fe-b912-b125-a648b31a3074@suse.com>
- <b454645f-de15-2912-864e-18f00736013d@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <cfebb100-952b-4b86-9b27-222dd89031dd@suse.com>
-Date:   Fri, 28 Sep 2018 15:52:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 28 Sep 2018 16:16:55 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:42787 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeI1UQz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 28 Sep 2018 16:16:55 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 7923B40F47;
+        Fri, 28 Sep 2018 13:53:00 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bkfXeLTEicM4; Fri, 28 Sep 2018 13:53:00 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 1B09E40CBE;
+        Fri, 28 Sep 2018 13:52:34 +0000 (UTC)
+Subject: Re: [PATCH v6] selftests: add headers_install to lib.mk
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        bamv2005@gmail.com, brgl@bgdev.pl, pbonzini@redhat.com,
+        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
+        aarcange@redhat.com
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Shuah Khan <shuah@kernel.org>
+References: <20180809080402.24469-1-anders.roxell@linaro.org>
+ <20180904104721.27535-1-anders.roxell@linaro.org>
+ <87y3bmte9l.fsf@concordia.ellerman.id.au>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <4473d2b6-a760-1a48-68e7-9f90023b57b5@kernel.org>
+Date:   Fri, 28 Sep 2018 07:52:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <b454645f-de15-2912-864e-18f00736013d@oracle.com>
+In-Reply-To: <87y3bmte9l.fsf@concordia.ellerman.id.au>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,49 +62,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/09/2018 15:33, Boris Ostrovsky wrote:
-> On 9/28/18 9:13 AM, Juergen Gross wrote:
->> On 28/09/2018 14:45, Boris Ostrovsky wrote:
->>> On 9/28/18 3:28 AM, Juergen Gross wrote:
->>>> Commit a46b53672b2c2e3770b38a4abf90d16364d2584b ("xen/blkfront: cleanup
->>>> stale persistent grants") introduced a regression as purged persistent
->>>> grants were not pu into the list of free grants again. Correct that.
->>>>
->>>> Signed-off-by: Juergen Gross <jgross@suse.com>
->>>> ---
->>>>  drivers/block/xen-blkfront.c | 4 ++--
->>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
->>>> index a71d817e900d..429d20131c7e 100644
->>>> --- a/drivers/block/xen-blkfront.c
->>>> +++ b/drivers/block/xen-blkfront.c
->>>> @@ -2670,8 +2670,8 @@ static void purge_persistent_grants(struct blkfront_info *info)
->>>>  			list_del(&gnt_list_entry->node);
->>>>  			gnttab_end_foreign_access(gnt_list_entry->gref, 0, 0UL);
->>>>  			rinfo->persistent_gnts_c--;
->>>> -			__free_page(gnt_list_entry->page);
->>>> -			kfree(gnt_list_entry);
->>>> +			gnt_list_entry->gref = GRANT_INVALID_REF;
->>>> +			list_add_tail(&gnt_list_entry->node, &rinfo->grants);
->>> Sorry, I don't follow this. What is the purpose of removing the grant
->>> from rinfo->grants list with list_del() and then adding it back with
->>> list_add_tail()?
->> The persistent grants are at the list head and the non-persistent ones
->> at the tail.
+On 09/27/2018 10:52 PM, Michael Ellerman wrote:
+> [ + linuxppc-dev ]
 > 
-> Oh, I didn't realize that. But isn't that an optimization (and so not
-> following this rule should not cause errors)?
+> Anders Roxell <anders.roxell@linaro.org> writes:
+>> If the kernel headers aren't installed we can't build all the tests.
+>> Add a new make target rule 'khdr' in the file lib.mk to generate the
+>> kernel headers and that gets include for every test-dir Makefile that
+>> includes lib.mk If the testdir in turn have its own sub-dirs the
+>> top_srcdir needs to be set to the linux-rootdir to be able to generate
+>> the kernel headers.
+>>
+>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>> Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
+>> ---
+>>
+>> I sent this (v5) a month ago and wondered if it got lost. Resending
+>> unchanged.
+>>
+>> Cheers,
+>> Anders
+>>
+>>  Makefile                                           | 14 +-------------
+>>  scripts/subarch.include                            | 13 +++++++++++++
+>>  tools/testing/selftests/android/Makefile           |  2 +-
+>>  tools/testing/selftests/android/ion/Makefile       |  2 ++
+>>  tools/testing/selftests/futex/functional/Makefile  |  1 +
+>>  tools/testing/selftests/gpio/Makefile              |  7 ++-----
+>>  tools/testing/selftests/kvm/Makefile               |  7 ++-----
+>>  tools/testing/selftests/lib.mk                     | 12 ++++++++++++
+>>  tools/testing/selftests/net/Makefile               |  1 +
+>>  .../selftests/networking/timestamping/Makefile     |  1 +
+>>  tools/testing/selftests/vm/Makefile                |  4 ----
+>>  11 files changed, 36 insertions(+), 28 deletions(-)
+>>  create mode 100644 scripts/subarch.include
+> 
+> This broke all the powerpc selftests :(
 
-In theory: yes.
+Sorry for thr breakage.
 
-The persistent grant handling is rather complicated so I'd like to make
-sure not to deviate from the common standards.
+> 
+> Why did it go in at rc5?
+> 
 
-When I find some time I want to modify the persistent grant handling to
-be more explicit and controlled completely by the frontend (within the
-backend defined limits, of course). Until then we should try to modify
-persistent grants not too much IMO.
+This patch has been in linux-next for a sometime before I decided to send this.
+My original intent was to send this for rc2, and my schedule was messed up with
+traveling. Since I didn't hear any issues from linux-next soaking, I made a call
+on sending this in for rc5.
 
+On second thought I should have waited until 4.20. Sorry about that.
 
-Juergen
+thanks,
+-- Shuah
